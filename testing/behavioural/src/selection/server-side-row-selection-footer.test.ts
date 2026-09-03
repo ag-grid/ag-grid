@@ -56,6 +56,12 @@ describe('SSRM selection with a destroyed footer row node', () => {
         value: number;
     }
 
+    /** A row keyed as the root is reported, so these tests take the error rather than throwing on it. */
+    function expectReservedIdError(): MockInstance {
+        enableDevValidations({ throwOn: [] });
+        return vitest.spyOn(console, 'error').mockImplementation(() => {});
+    }
+
     function headerState(gridId: string): { checked: boolean; indeterminate: boolean } {
         const selector = `#${gridId} .ag-header-select-all .ag-checkbox-input-wrapper`;
         const classList = document.querySelector(selector)!.classList;
@@ -324,9 +330,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe(`a\t10\r\n${GRAND_TOTAL_ROW_ID}\t30`));
     });
 
-    // The grand total row resolves to the root, which has no route of its own, so selecting it means the
-    // whole tree - as it does client-side under `groupSelects: 'descendants'`.
-    test('GroupSelectsChildrenStrategy: selecting the grand total row selects the whole tree like CSRM', async () => {
+    async function createGroupGrid(): Promise<GridApi> {
         const api = gridMgr.createGrid('myGroupGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -370,6 +374,36 @@ describe('SSRM selection with a destroyed footer row node', () => {
         api.getRowNode('g-Ireland')!.setExpanded(true);
         await waitForNoLoadingRows(api);
 
+        return api;
+    }
+
+    // The root is excluded from the recompute from children client-side, so its own selection stands there
+    // too. The client-side half of this pair is in grouping-selection.test.ts, under the same name.
+    test('GroupSelectsChildrenStrategy: the grand total row keeps its own selection when a descendant is deselected', async () => {
+        const api = await createGroupGrid();
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        grandTotal.setSelected(true, true);
+        expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
+        expect(grandTotal.isSelected()).toBe(true);
+
+        api.setNodesSelected({ nodes: [api.getRowNode('ie-2')!], newValue: false, source: 'api' });
+        expect(api.getRowNode('g-Ireland')!.isSelected()).toBeUndefined();
+        expect(grandTotal.isSelected()).toBe(true);
+
+        // and it survives the round trip in that partial state
+        const partial = api.getServerSideSelectionState()!;
+        expect(JSON.stringify(partial)).toContain(ROOT_NODE_ID);
+        api.deselectAll();
+        api.setServerSideSelectionState(partial);
+        expect(grandTotal.isSelected()).toBe(true);
+        expect(api.getRowNode('ie-2')!.isSelected()).toBe(false);
+    });
+
+    // The grand total row resolves to the root, which has no route of its own, so selecting it means the
+    // whole tree - as it does client-side under `groupSelects: 'descendants'`.
+    test('GroupSelectsChildrenStrategy: selecting the grand total row selects the whole tree like CSRM', async () => {
+        const api = await createGroupGrid();
         const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
         expect(grandTotal.footer).toBe(true);
         expect(grandTotal.primaryRow.id).toBeUndefined();
@@ -401,15 +435,6 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
         expect(api.getRowNode('ie-2')!.isSelected()).toBe(true);
 
-        // deselecting a leaf leaves the tree partial, so the header reports neither all nor none
-        api.setNodesSelected({ nodes: [api.getRowNode('ie-2')!], newValue: false, source: 'api' });
-        const partial = api.getServerSideSelectionState()!;
-        expect(JSON.stringify(partial)).toContain(ROOT_NODE_ID);
-        api.deselectAll();
-        api.setServerSideSelectionState(partial);
-        expect(grandTotal.isSelected()).toBe(true);
-        expect(api.getRowNode('ie-2')!.isSelected()).toBe(false);
-
         // select all reaches the same rows, but the root is not one of them
         api.deselectAll();
         api.selectAll();
@@ -420,6 +445,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
     // Nothing stops a data row carrying the id the root is keyed under, so the two share a selection
     // slot. The outcome for that row is undefined, but the grid must stay operable either way.
     test('a data row whose id is ROOT_NODE_ID leaves the selection operable', async () => {
+        const errorSpy = expectReservedIdError();
         const api = gridMgr.createGrid('myClashGrid', {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
@@ -459,11 +485,15 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(clashRow.isSelected()).toBe(false);
         expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
         expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([]);
+
+        expect(errorSpy.mock.calls.flat().join(' ')).toContain('Row ID `ROOT_NODE_ID` is reserved by AG Grid');
+        errorSpy.mockRestore();
     });
 
     // Same clash under the group strategy, where the root is keyed among the root's children and the
     // redundancy pruning skips that key, so a real row carrying it is skipped too.
     test('GroupSelectsChildrenStrategy: a group row whose id is ROOT_NODE_ID leaves the selection operable', async () => {
+        const errorSpy = expectReservedIdError();
         const api = gridMgr.createGrid('myClashGroupGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -523,6 +553,9 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(clashGroup!.isSelected()).toBe(false);
         expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
         expect(api.getServerSideSelectionState()).toEqual({ nodeId: undefined, selectAllChildren: false });
+
+        expect(errorSpy.mock.calls.flat().join(' ')).toContain('Row ID `ROOT_NODE_ID` is reserved by AG Grid');
+        errorSpy.mockRestore();
     });
 
     test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {

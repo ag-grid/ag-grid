@@ -214,6 +214,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public isNodeSelected(node: RowNode): boolean | undefined {
         if (node.level === -1) {
+            // the root's selection is its own, not derived from its descendants, as client-side
             return this.selectedState.toggledNodes.has(ROOT_NODE_ID);
         }
         const path = this.getRouteToNode(node);

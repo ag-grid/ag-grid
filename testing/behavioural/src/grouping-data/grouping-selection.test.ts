@@ -606,6 +606,7 @@ describe('ag-grid grouping selection', () => {
         expect(irelandTotal.isSelected()).toBe(true);
     });
 
+    // The server-side half of this pair is in server-side-row-selection-footer.test.ts, under the same name.
     test('the grand total row keeps its own selection when a descendant is deselected', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },

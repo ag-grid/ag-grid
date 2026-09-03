@@ -9,7 +9,10 @@ import { BeanStub, ROOT_NODE_ID, _isMultiRowSelection, _isUsingNewRowSelectionAP
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
-/** The server-side root carries no id of its own, so it is keyed under the one the client-side root uses. */
+/**
+ * The root carries no id server-side, and the state serialises as `string[]`, so its key must be the string
+ * already reserved for the root. A data row using that id shares the slot.
+ */
 const selectionKey = (node: RowNode): string | undefined => node.id ?? (node.level === -1 ? ROOT_NODE_ID : undefined);
 
 /** `selectAll` is a base state for rows, and the root is not a row, so it never covers the root. */
