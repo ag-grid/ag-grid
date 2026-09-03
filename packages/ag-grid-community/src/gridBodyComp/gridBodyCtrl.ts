@@ -244,7 +244,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getHorizontalViewportWidth(): number {
-        return this.eGridViewport.getBoundingClientRect().width;
+        // Not `getBoundingClientRect`: that reports the post-transform box, so a grid inside a
+        // `transform: scale()` measures wider than its layout and suppresses the horizontal scrollbar.
+        return _getInnerWidth(this.eGridViewport);
     }
 
     public getViewportWidthWithoutScrollbar(
