@@ -18,7 +18,7 @@
             "showVersionBadge": true,
             "secondaryCta": {
                 "text": "View All Demos",
-                "url": "./example"
+                "url": "./example/"
             },
             "demo": {
                 "gridHeight": 600
@@ -164,7 +164,7 @@
                     "imgAlt": "Quick start guide for creating a JavaScript Data Grid in minutes",
                     "title": "Quick Start",
                     "content": "Create your first JavaScript Data Grid and learn the basics in just a few minutes.",
-                    "docs": "./javascript-data-grid/getting-started",
+                    "docs": "./javascript-data-grid/getting-started/",
                     "demo": "./examples/getting-started/quick-start-example/vanilla/"
                 },
                 {
@@ -173,7 +173,7 @@
                     "title": "Beginner Tutorial",
                     "content": "Learn key concepts by building a JavaScript Data Grid with common functionality & customisations.",
                     "docs": "./javascript-data-grid/deep-dive/",
-                    "demo": "./examples/deep-dive/testing-example/vanilla"
+                    "demo": "./examples/deep-dive/testing-example/vanilla/"
                 },
                 {
                     "img": "custom-themes.png",
@@ -181,7 +181,7 @@
                     "title": "Custom Styles",
                     "content": "Customise your JavaScript Data Grid with the Theming API to create a unique theme for your brand.",
                     "docs": "./javascript-data-grid/theming/",
-                    "demo": "./examples/theming-colors/color-customisation/vanilla"
+                    "demo": "./examples/theming-colors/color-customisation/vanilla/"
                 },
                 {
                     "img": "integrated-charts.png",
@@ -189,7 +189,7 @@
                     "title": "Integrated Charts",
                     "content": "Build & style charts programatically, or let users create their own from the grid.",
                     "docs": "./javascript-data-grid/integrated-charts/",
-                    "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/vanilla"
+                    "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/vanilla/"
                 }
             ]
         },
