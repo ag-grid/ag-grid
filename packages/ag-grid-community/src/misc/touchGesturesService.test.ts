@@ -256,6 +256,26 @@ describe('TouchGesturesService', () => {
         expect(onDoubleTap).toHaveBeenCalledOnce();
     });
 
+    test('a press held to the long-press mark does not count towards a double tap', () => {
+        const target = document.createElement('div');
+        root.appendChild(target);
+        const onDoubleTap = vi.fn();
+        let now = 1_000;
+        vi.spyOn(Date, 'now').mockImplementation(() => now);
+        service.registerDoubleTap({ element: target, onDoubleTap });
+
+        dispatchPointerEvent(target, 'pointerdown', { pointerId: 1 });
+        now += 550;
+        vi.advanceTimersByTime(550);
+        dispatchPointerEvent(document, 'pointerup', { pointerId: 1 });
+
+        now += 100;
+        dispatchPointerEvent(target, 'pointerdown', { pointerId: 2 });
+        dispatchPointerEvent(document, 'pointerup', { pointerId: 2 });
+
+        expect(onDoubleTap).not.toHaveBeenCalled();
+    });
+
     test('a moved or cancelled pointer does not count towards a double tap', () => {
         const target = document.createElement('div');
         root.appendChild(target);

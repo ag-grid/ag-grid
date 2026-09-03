@@ -84,11 +84,19 @@ export class TouchGesturesService extends BeanStub implements NamedBean {
         const { element, onDoubleTap } = params;
         const handlers: TempEventHandler[] = [];
         let lastTapTime = 0;
+        let holdTimer = 0;
         let pending: { pointerId: number; startEvent: PointerEvent } | undefined;
 
         const abandon = (resetLastTap: boolean) => {
             pending = undefined;
+
+            if (holdTimer) {
+                _getWindow(this.beans).clearTimeout(holdTimer);
+                holdTimer = 0;
+            }
+
             clearTempEventHandlers(handlers);
+
             if (resetLastTap) {
                 lastTapTime = 0;
             }
@@ -125,6 +133,11 @@ export class TouchGesturesService extends BeanStub implements NamedBean {
             }
             abandon(false);
             pending = { pointerId: event.pointerId, startEvent: event };
+            // a press held to the long-press mark is not a tap and must not seed a double tap
+            holdTimer = _getWindow(this.beans).setTimeout(() => {
+                holdTimer = 0;
+                abandon(true);
+            }, LONG_PRESS_MILLISECONDS);
             const doc = _getDocument(this.beans);
             const options = { capture: true, passive: true };
             addTempEventHandlers(
