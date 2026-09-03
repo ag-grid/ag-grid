@@ -73,9 +73,7 @@ test.describe('Demo page header layout', () => {
                 layouts[demo] = {
                     // The links and the reserved intro below them, with the heading's own height
                     // taken out — this is the height the reserve is responsible for.
-                    copyHeightBelowHeading: Math.round(
-                        (copyBox?.y ?? 0) + (copyBox?.height ?? 0) - headingBottom
-                    ),
+                    copyHeightBelowHeading: Math.round((copyBox?.y ?? 0) + (copyBox?.height ?? 0) - headingBottom),
                     // Relative to the copy column, not to the page scroll position.
                     linksX: Math.round((linksBox?.x ?? 0) - (copyBox?.x ?? 0)),
                     linksYBelowHeading: Math.round((linksBox?.y ?? 0) - headingBottom),
