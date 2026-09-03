@@ -2064,10 +2064,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public processDataFromClipboard: ProcessDataFromClipboard<TData> | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.
+     * Called exactly once every time the grid senses a filter change.
+     * Should return `true` if external filtering is active, otherwise `false`.
+     * If `true`, `doesExternalFilterPass` is called while filtering, otherwise it is not called.
+     * Supplying a new function reference re-runs external filtering.
      * @agModule `ExternalFilterModule`
      */
     @Input() public isExternalFilterPresent: IsExternalFilterPresent<TData> | undefined = undefined;
-    /** Should return `true` if external filter passes, otherwise `false`.
+    /** Called once for each row node in the grid.
+     * Should return `true` if external filter passes, otherwise `false`.
+     * If `false`, the node is excluded from the final set.
+     * Only runs if `isExternalFilterPresent` returns `true`.
+     * Supplying a new function reference re-runs external filtering.
      * @agModule `ExternalFilterModule`
      */
     @Input() public doesExternalFilterPass: DoesExternalFilterPass<TData> | undefined = undefined;
