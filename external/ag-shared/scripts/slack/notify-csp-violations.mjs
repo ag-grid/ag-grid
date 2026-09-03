@@ -24,7 +24,7 @@
  *     sourceFiles, pages, tests, accepted? }] }
  *
  * Env: CSP_REPORT_FILE (required), PREVIOUS_CSP_REPORT_FILE, RUN_COMPLETE, SLACK_CHANNEL,
- * SLACK_BOT_OAUTH_TOKEN, PROJECT_TITLE, SITE_URL, RUN_URL, COMMIT_SHA, DRY_RUN,
+ * SLACK_BOT_OAUTH_TOKEN, PROJECT_TITLE, SITE_URL, RUN_URL, REPO_URL, COMMIT_SHA, DRY_RUN,
  * GITHUB_STEP_SUMMARY.
  */
 import fs from 'node:fs';
@@ -45,6 +45,8 @@ const authToken = process.env.SLACK_BOT_OAUTH_TOKEN;
 const projectTitle = process.env.PROJECT_TITLE || 'AG';
 const runUrl = process.env.RUN_URL || '';
 const commitSha = process.env.COMMIT_SHA || '';
+// e.g. https://github.com/ag-grid/ag-grid; when set, the commit in the footer links to it.
+const repoUrl = (process.env.REPO_URL || '').replace(/\/+$/, '');
 const isDryRun = process.env.DRY_RUN === 'true';
 const isRunComplete = process.env.RUN_COMPLETE !== 'false';
 const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
@@ -171,8 +173,10 @@ const headline = enforced.length
       (added.length ? ` - ${added.length} new` : '')
     : `:white_check_mark: *${projectTitle}: CSP violations cleared*`;
 
+const commitLabel = `Commit ${commitSha.slice(0, 8)}`;
+const commitLink = repoUrl ? `<${repoUrl}/commit/${commitSha}|${commitLabel}>` : commitLabel;
 const footer = context(
-    [siteUrl && `Site: ${siteUrl}`, runUrl && `<${runUrl}|CI run>`, commitSha && `Commit ${commitSha.slice(0, 8)}`]
+    [siteUrl && `Site: ${siteUrl}`, runUrl && `<${runUrl}|CI run>`, commitSha && commitLink]
         .filter(Boolean)
         .join('  |  ')
 );
