@@ -155,6 +155,64 @@ describe('cspRules', () => {
         });
     });
 
+    describe('Google Ads conversion tracking (AW-873243008)', () => {
+        it('allows the conversion beacon hosts in connect-src', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            // The beacon tries fetch() to these before falling back to an <img> pixel, so the
+            // permissive img-src alone is not enough to stop it logging a violation.
+            expect(site['connect-src']).toContain('https://www.googleadservices.com');
+            expect(site['connect-src']).toContain('https://pagead2.googlesyndication.com');
+            // /ccm/s/collect, sent with the Fetch API once marketing consent is granted.
+            expect(site['connect-src']).toContain('https://ad.doubleclick.net');
+        });
+
+        it('allows the view-through conversion tag in script-src', () => {
+            // GTM injects /pagead/viewthroughconversion/<id> as an external <script>, so this
+            // is a script-src origin rather than a beacon target. Only fires once marketing
+            // consent is granted, which is why it did not show up in consent-denied testing.
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            expect(site['script-src']).toContain('https://googleads.g.doubleclick.net');
+        });
+
+        it('keeps the ads hosts out of the directive that does not need them', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            // The remarketing tag is a script source, not a fetch target...
+            expect(site['connect-src']).not.toContain('https://googleads.g.doubleclick.net');
+            // ...and the conversion beacon hosts are fetch targets, not script sources.
+            expect(site['script-src']).not.toContain('https://ad.doubleclick.net');
+            expect(site['script-src']).not.toContain('https://pagead2.googlesyndication.com');
+        });
+
+        it('trusts no ads origin that only appears as a dead gtag.js fallback', () => {
+            // Both show up as unreached fallbacks in every gtag.js payload; add them only if a
+            // violation actually shows up — see the note above GOOGLE_ADS_SDK_HOST.
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            const unused = ['https://adservice.google.com', 'https://ade.googlesyndication.com'];
+            for (let i = 0, len = unused.length; i < len; ++i) {
+                expect(site['script-src']).not.toContain(unused[i]);
+                expect(site['connect-src']).not.toContain(unused[i]);
+            }
+        });
+
+        it('applies in every scope, since GTM loads the tag site-wide', () => {
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce', 'blog'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                const directives = getCspDirectives({ env: 'production', scope: scopes[i] });
+                expect(directives['connect-src']).toContain('https://www.googleadservices.com');
+                expect(directives['connect-src']).toContain('https://pagead2.googlesyndication.com');
+                expect(directives['connect-src']).toContain('https://ad.doubleclick.net');
+                expect(directives['script-src']).toContain('https://googleads.g.doubleclick.net');
+            }
+        });
+
+        it('authorises the internal promo-tracking GA4 event tag by hash in the site scope', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='");
+            const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
+            expect(examples).not.toContain("'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='");
+        });
+    });
+
     describe('LinkedIn Insight Tag', () => {
         it('allows the tag SDK in script-src and its beacon hosts in connect-src', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
