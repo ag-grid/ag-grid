@@ -25,6 +25,23 @@ const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
 const PINNED_BORDER_WIDTH = cssVariable('pinnedRowBorderWidth', 'border', 1);
 const HEADER_ROW_BORDER_WIDTH = cssVariable('headerRowBorderWidth', 'border', 1);
 
+/**
+ * Legacy theme variables with no Theming API equivalent of the same name, mapped to the variable
+ * that replaces them. Deliberately limited to cases where the replacement is unambiguous, as this
+ * drives a warning - variables that both theming systems read must never be listed here.
+ */
+const LEGACY_ONLY_VARIABLES: Record<string, string> = {
+    '--ag-grid-size': '--ag-spacing',
+    '--ag-active-color': '--ag-accent-color',
+    '--ag-alpine-active-color': '--ag-accent-color',
+    '--ag-balham-active-color': '--ag-accent-color',
+    '--ag-material-primary-color': '--ag-accent-color',
+    '--ag-header-foreground-color': '--ag-header-text-color',
+    '--ag-control-panel-background-color': '--ag-chrome-background-color',
+    '--ag-cell-horizontal-border': '--ag-column-border',
+    '--ag-header-column-separator-color': '--ag-header-column-border',
+};
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
     for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
@@ -47,6 +64,10 @@ export class Environment
     >
     implements NamedBean
 {
+    private legacyVariablesReported = false;
+    /** Whether the Theming API is the active styling system, so legacy variables would be ignored. */
+    private themingApiActive = false;
+
     protected override initVariables(): void {
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.getSizeEl(ROW_HEIGHT);
@@ -116,6 +137,11 @@ export class Environment
         if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
+        // Catches variables a class swap introduces after grid creation. 'theme' is excluded
+        // because it fires before postProcessThemeChange updates themingApiActive.
+        if (change !== 'theme' && this.themingApiActive) {
+            this.warnOnLegacyOnlyVariables();
+        }
         super.fireStylesChangedEvent(change);
     }
 
@@ -139,6 +165,38 @@ export class Environment
             } else {
                 this.beans.log.error(239);
             }
+            this.themingApiActive = false;
+        } else {
+            this.themingApiActive = !!newGridTheme;
+            if (newGridTheme) {
+                this.warnOnLegacyOnlyVariables();
+            }
+        }
+    }
+
+    /**
+     * Warns about legacy theme variables set on the grid while the Theming API is active. The
+     * Theming API never reads them, so they are silently ignored - most visibly with
+     * `--ag-grid-size`, which applications set to change grid density and which does nothing.
+     * Only reported when the legacy stylesheet is absent, as loading it is already an error.
+     *
+     * Reported at most once per grid: every theme change re-runs this, and an application that
+     * animates a theme parameter would otherwise repeat the same warning on each frame.
+     */
+    private warnOnLegacyOnlyVariables(): void {
+        if (this.legacyVariablesReported) {
+            return;
+        }
+        const style = getComputedStyle(this.eRootDiv);
+        const replacements: string[] = [];
+        for (const legacyName of Object.keys(LEGACY_ONLY_VARIABLES)) {
+            if (style.getPropertyValue(legacyName).trim()) {
+                replacements.push(`${legacyName} (use ${LEGACY_ONLY_VARIABLES[legacyName]})`);
+            }
+        }
+        if (replacements.length > 0) {
+            this.legacyVariablesReported = true;
+            this.beans.log.warn(332, { replacements });
         }
     }
 
