@@ -269,7 +269,10 @@ export class RowNode<TData = any>
         this._expanded = value;
     }
 
-    /** If using footers, reference to the footer node for this group. */
+    /**
+     * If using footers, reference to the footer node for this group.
+     * `undefined` when there is no footer, and on a footer whose row has been destroyed.
+     */
     public sibling: RowNode;
 
     /** The height, in pixels, of this row */

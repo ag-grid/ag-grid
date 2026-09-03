@@ -584,7 +584,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let node = this.getRow(displayedIndex);
 
         if (node.footer) {
-            node = node.sibling;
+            const sibling = node.sibling;
+            if (!sibling) {
+                return displayedIndex;
+            }
+            node = sibling;
         }
 
         // find the top level node

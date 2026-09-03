@@ -239,7 +239,10 @@ interface GroupRowNode<TData = any> {
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
     footer: boolean | undefined;
-    /** If using footers, reference to the footer node for this group. */
+    /**
+     * If using footers, reference to the footer node for this group.
+     * `undefined` when there is no footer, and on a footer whose row has been destroyed.
+     */
     sibling: IRowNode<TData>;
 }
 

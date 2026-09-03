@@ -74,8 +74,14 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(grandTotal.footer).toBe(true);
         expect(grandTotal.sibling).toBeUndefined();
 
+        // the service dispatches on every call it forwards, whatever the strategy reports back, so an
+        // orphan-only call notifies with an unchanged selection rather than staying silent
+        const selectionChanged = vitest.fn();
+        api.addEventListener('selectionChanged', selectionChanged);
+
         expect(() => api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' })).not.toThrow();
         expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1']);
+        await waitFor(() => expect(selectionChanged).toHaveBeenCalledTimes(1));
     }
 
     // 'singleRow' takes the strategy's single-node fast path, 'multiRow' the node loop — both resolve
@@ -142,7 +148,11 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(groupTotal.footer).toBe(true);
         expect(groupTotal.sibling).toBeUndefined();
 
+        const selectionChanged = vitest.fn();
+        api.addEventListener('selectionChanged', selectionChanged);
+
         expect(() => api.setNodesSelected({ nodes: [groupTotal], newValue: true, source: 'api' })).not.toThrow();
         expect(JSON.stringify(api.getServerSideSelectionState())).toEqual(selectionState);
+        await waitFor(() => expect(selectionChanged).toHaveBeenCalledTimes(1));
     });
 });

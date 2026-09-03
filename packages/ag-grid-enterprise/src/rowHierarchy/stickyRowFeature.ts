@@ -70,7 +70,8 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      */
     private getFirstPixelOfGroup(row: RowNode): number {
         if (row.footer) {
-            return row.sibling.rowTop! + row.sibling.rowHeight! - 1;
+            const sibling = row.sibling;
+            return sibling ? sibling.rowTop! + sibling.rowHeight! - 1 : 0;
         }
 
         if (row.hasChildren()) {
@@ -514,7 +515,7 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
         if (noOrContiguousSiblings) {
             let storeBounds = row.childStore?.getStoreBounds();
             if (row.footer) {
-                storeBounds = row.sibling.childStore?.getStoreBounds();
+                storeBounds = row.sibling?.childStore?.getStoreBounds();
             }
             return (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
         }
@@ -542,7 +543,8 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
         // to find last px
         const noOrContiguousSiblings = !row.sibling || Math.abs(row.sibling.rowIndex! - row.rowIndex!) === 1;
         if (noOrContiguousSiblings) {
-            let lastAncestor = row.footer ? row.sibling : row;
+            // an orphaned footer is its own last row, which is what the non-contiguous branch below returns
+            let lastAncestor = (row.footer ? row.sibling : row) ?? row;
             while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                 if (lastAncestor.master && lastAncestor.detailNode) {
                     lastAncestor = lastAncestor.detailNode;

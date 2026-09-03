@@ -474,35 +474,40 @@ describe('SSRM group total row callback disagreeing with the footer sibling', ()
     // A function-valued `groupTotalRow` is re-evaluated on export, while the footer sibling row node is
     // only created when display indexes are assigned. An app whose callback answer changes without a
     // grid update leaves the two out of step — the export must skip the missing footer, not throw.
-    test.each(['top', 'bottom'] as const)(
-        'export skips a %s group total row with no footer sibling',
-        async (position) => {
-            let footerPosition: 'top' | 'bottom' | undefined = undefined;
+    async function exportSkipsFooterlessGroupTotalRow(position: 'top' | 'bottom'): Promise<void> {
+        let footerPosition: 'top' | 'bottom' | undefined = undefined;
 
-            const api = await gridManager.createGridAndWait(null, {
-                columnDefs: [
-                    { field: 'country', rowGroup: true, hide: true },
-                    { field: 'medals', headerName: 'Medals', aggFunc: 'sum' },
-                ],
-                autoGroupColumnDef: { headerName: 'Country', useValueFormatterForExport: false },
-                rowModelType: 'serverSide',
-                serverSideDatasource: createDatasource(),
-                getRowId: ({ data }: GetRowIdParams) => data.id,
-                groupTotalRow: () => footerPosition,
-            });
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'medals', headerName: 'Medals', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country', useValueFormatterForExport: false },
+            rowModelType: 'serverSide',
+            serverSideDatasource: createDatasource(),
+            getRowId: ({ data }: GetRowIdParams) => data.id,
+            groupTotalRow: () => footerPosition,
+        });
 
-            await ssrmExpandAndLoadAll(api);
-            await waitForNoLoadingRows(api);
+        await ssrmExpandAndLoadAll(api);
+        await waitForNoLoadingRows(api);
 
-            expect(api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')).toBeUndefined();
+        expect(api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')).toBeUndefined();
 
-            footerPosition = position;
+        footerPosition = position;
 
-            let csv: string | undefined;
-            expect(() => {
-                csv = api.getDataAsCsv({ suppressQuotes: true });
-            }).not.toThrow();
-            expect(csv).not.toContain('Total Ireland');
-        }
-    );
+        let csv: string | undefined;
+        expect(() => {
+            csv = api.getDataAsCsv({ suppressQuotes: true });
+        }).not.toThrow();
+        expect(csv).not.toContain('Total Ireland');
+    }
+
+    test('export skips a top group total row with no footer sibling', async () => {
+        await exportSkipsFooterlessGroupTotalRow('top');
+    });
+
+    test('export skips a bottom group total row with no footer sibling', async () => {
+        await exportSkipsFooterlessGroupTotalRow('bottom');
+    });
 });
