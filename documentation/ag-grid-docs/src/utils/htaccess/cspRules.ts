@@ -210,14 +210,36 @@ const ESM_SH_HOST = 'https://esm.sh';
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
 
-// Google Ads conversion tracking (GTM "Google tag" destination AW-873243008, added to the
-// shared GTM container alongside the existing GA4 tag). gtag.js's conversion/remarketing
-// beacon (`/pagead/conversion`, `/ccm/conversion`) tries these two hosts via fetch() before
-// falling back to an <img> pixel — confirmed live on staging: both throw and log a
-// connect-src violation, so the beacon was silently degrading to the less reliable image
-// fallback. www.google.com (already allowed above for reCAPTCHA) covers the third fallback
-// host gtag.js also tries for this same beacon.
-const GOOGLE_ADS_CONVERSION_HOSTS = ['https://www.googleadservices.com', 'https://pagead2.googlesyndication.com'];
+// Google Ads (GTM "Google tag" destination AW-873243008, added to the shared GTM container
+// alongside the existing GA4 tag). Nothing here references these origins directly — as with
+// Enzuzo and LinkedIn, the CSP is the only place the site declares them.
+//
+// MOST OF THIS ONLY FIRES ONCE MARKETING CONSENT IS GRANTED. Under the default
+// consent-denied state gtag.js sends a single non-personalised beacon (npa=1) and nothing
+// else, so testing without accepting cookies in the Enzuzo banner shows almost none of these
+// violations. Accept all cookies first, or the policy will look complete when it is not.
+//
+//  - googleads.g.doubleclick.net serves the view-through conversion / remarketing tag
+//    (/pagead/viewthroughconversion/<id>), injected as an external <script>, so it is
+//    script-src. Its own hn= parameter names googleadservices.com, which is a hint carried in
+//    the URL rather than a second request.
+//  - ad.doubleclick.net takes the /ccm/s/collect conversion hit, sent with the Fetch API and
+//    so governed by connect-src. Distinct from stats.g.doubleclick.net, already allowed above.
+//  - googleadservices.com and pagead2.googlesyndication.com take the /pagead/conversion and
+//    /ccm/conversion beacons, tried with fetch() before an <img> fallback; without them the
+//    beacon silently degrades to the less reliable pixel. www.google.com (already allowed for
+//    reCAPTCHA) is the third host the same beacon tries.
+//
+// Deliberately NOT allowed until a violation actually shows up, matching the LinkedIn note
+// below: adservice.google.com/pagead/regclk and ade.googlesyndication.com/ddm/activity, which
+// appear as dead fallbacks in every gtag.js payload, and the ad.doubleclick.net image pixels
+// the permissive img-src already covers.
+const GOOGLE_ADS_SDK_HOST = 'https://googleads.g.doubleclick.net';
+const GOOGLE_ADS_CONVERSION_HOSTS = [
+    'https://www.googleadservices.com',
+    'https://pagead2.googlesyndication.com',
+    'https://ad.doubleclick.net',
+];
 
 // The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
 // Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
@@ -380,6 +402,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
             LINKEDIN_SDK_HOST, // LinkedIn Insight Tag SDK (injected via GTM)
+            GOOGLE_ADS_SDK_HOST, // Google Ads view-through conversion / remarketing tag
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
