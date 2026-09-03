@@ -17,6 +17,20 @@ declare global {
 
 /** Inline script the site policy cannot authorise, used to prove CSP capture still works. */
 const CSP_SELF_CHECK_SCRIPT = 'window.__agCspSelfCheck = true;';
+/**
+ * SHA-256 of CSP_SELF_CHECK_SCRIPT: the hash the browser suggests when it blocks that script.
+ * Nothing on the site has this hash, so if a post-deploy report ever lists it as a new blocked
+ * inline script, the self-check test's clean-up (the afterEach beside it) did not run; the fix
+ * is there, never in cspRules.ts. The test asserts this stays in step with the script.
+ */
+const CSP_SELF_CHECK_HASH = 'sha256-7OSnlh1HS3NTqM1IBkxOwGCmWtSFJgwSwUQYW0y1FH4=';
+
+const isCspAnnotation = (annotation: { type: string }) =>
+    annotation.type === CSP_VIOLATION_ANNOTATION || annotation.type === CSP_HASH_HINT_ANNOTATION;
+
+// Index in the self-check test's annotations from which every CSP annotation is synthetic. Set
+// by the test once its real navigation has been recorded, consumed by the afterEach beside it.
+let selfCheckInjectionStart: number | undefined;
 
 // Chromium writes the policy name with spaces in some messages and hyphens in others.
 const isCspIssue = (msg: string) => /Content[- ]Security[- ]Policy|Refused to (load|execute|connect)/i.test(msg);
@@ -347,6 +361,24 @@ test.describe('Page Verification', () => {
 
     // --- CSP capture ---
 
+    // The synthetic violation is removed here rather than at the end of the test body: a timeout
+    // mid-reload abandons the body before it can clean up, but Playwright still runs afterEach.
+    // The CSP reporter reads every attempt's annotations, passed or not, so without this a flaky
+    // attempt leaked CSP_SELF_CHECK_HASH into the post-deploy report as a real violation.
+    test.afterEach(() => {
+        if (selfCheckInjectionStart === undefined) {
+            return;
+        }
+        const start = selfCheckInjectionStart;
+        selfCheckInjectionStart = undefined;
+        const annotations = test.info().annotations;
+        annotations.splice(
+            0,
+            annotations.length,
+            ...annotations.filter((annotation, index) => index < start || !isCspAnnotation(annotation))
+        );
+    });
+
     // Since no test fails on a CSP violation any more, a break in the capture path would
     // otherwise be invisible: the suite would stay green while quietly reporting nothing.
     // Serving an inline script the policy cannot authorise proves the whole path still works.
@@ -357,7 +389,7 @@ test.describe('Page Verification', () => {
         // a path prefix as well as at a domain root.
         await page.goto('/');
         const annotations = test.info().annotations;
-        const beforeInjection = annotations.length;
+        selfCheckInjectionStart = annotations.length;
 
         await page.route(page.url(), async (route) => {
             const response = await route.fetch();
@@ -367,19 +399,9 @@ test.describe('Page Verification', () => {
         await page.reload();
 
         // Only what the injected reload provoked is this test's own doing: anything the first
-        // navigation reported is a real violation and stays in the report. Removing it before
-        // the assertions means a failure here cannot leak the synthetic violation either.
-        const synthetic = annotations
-            .slice(beforeInjection)
-            .filter(
-                (annotation) =>
-                    annotation.type === CSP_VIOLATION_ANNOTATION || annotation.type === CSP_HASH_HINT_ANNOTATION
-            );
-        annotations.splice(
-            0,
-            annotations.length,
-            ...annotations.filter((annotation) => !synthetic.includes(annotation))
-        );
+        // navigation reported is a real violation and stays in the report. The afterEach above
+        // removes the synthetic part whether or not the assertions below get to run.
+        const synthetic = annotations.slice(selfCheckInjectionStart).filter(isCspAnnotation);
 
         expect(await page.evaluate(() => window.__agCspSelfCheck === true), 'injected script ran').toBe(false);
 
@@ -397,8 +419,9 @@ test.describe('Page Verification', () => {
         const hashes = synthetic
             .filter((annotation) => annotation.type === CSP_HASH_HINT_ANNOTATION)
             .map((annotation) => (JSON.parse(annotation.description ?? '{}') as CspHashHint).hash);
-        expect(hashes, 'the hash that would authorise the injected script').toContain(
+        expect(CSP_SELF_CHECK_HASH, 'the hash documented beside CSP_SELF_CHECK_SCRIPT').toBe(
             `sha256-${createHash('sha256').update(CSP_SELF_CHECK_SCRIPT, 'utf8').digest('base64')}`
         );
+        expect(hashes, 'the hash that would authorise the injected script').toContain(CSP_SELF_CHECK_HASH);
     });
 });
