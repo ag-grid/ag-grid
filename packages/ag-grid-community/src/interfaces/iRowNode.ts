@@ -240,8 +240,8 @@ interface GroupRowNode<TData = any> {
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
     footer: boolean | undefined;
     /**
-     * If using footers, reference to the footer node for this group.
-     * `undefined` when there is no footer, and on a footer whose row has been destroyed.
+     * On a group row, the footer row node for that group. On a footer row, the group row it belongs to.
+     * `undefined` when the group has no footer, and on either row once the footer has been destroyed.
      */
     sibling: IRowNode<TData>;
 }
@@ -265,7 +265,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * - If this is a **footer** row, returns its parent group row.
      * - If this is a **manually pinned** row, returns the source row in the main viewport.
      * - If both (pinned footer), follows both links to the primary group row.
-     * - Otherwise, returns `this`.
+     * - Otherwise, returns `this`, which includes a footer whose group row has been destroyed.
      */
     readonly primaryRow: IRowNode<TData>;
 

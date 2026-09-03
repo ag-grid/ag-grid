@@ -112,11 +112,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 this.error(130);
                 return 0;
             }
-            const rowNode = nodes[0];
-            // destroying a footer severs the sibling link but leaves the footer flag set, and the
-            // orphan represents nothing selectable — bail before the branch that clears the selection
-            const node = rowNode.footer ? rowNode.sibling : rowNode;
-            if (!node) {
+            const node = nodes[0].primaryRow;
+            // the grand total row resolves to the root node, which has no id and is not selectable
+            if (node.id === undefined) {
                 return 0;
             }
             if (newValue && node.selectable) {
@@ -135,11 +133,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             return 1;
         }
 
-        const updateNodeState = (rowNode: RowNode, value = newValue) => {
-            const node = rowNode.footer ? rowNode.sibling : rowNode;
-            if (!node) {
-                return;
-            }
+        const updateNodeState = (node: RowNode, value = newValue) => {
             if (value && node.selectable) {
                 this.selectedNodes[node.id!] = node;
             } else {
@@ -154,18 +148,22 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             }
         };
 
-        for (const node of nodes) {
-            updateNodeState(node);
+        let updatedCount = 0;
+        for (const rowNode of nodes) {
+            const node = rowNode.primaryRow;
+            if (node.id !== undefined) {
+                updateNodeState(node);
+                updatedCount++;
+            }
+        }
+        if (updatedCount === 0) {
+            return 0;
         }
 
         if (nodes.length === 1 && source === 'api') {
-            const rowNode = nodes[0];
-            const rootNode = rowNode.footer ? rowNode.sibling : rowNode;
-            if (rootNode) {
-                this.selectionCtx.setRoot(rootNode);
-            }
+            this.selectionCtx.setRoot(nodes[0].primaryRow);
         }
-        return 1;
+        return updatedCount;
     }
 
     public processNewRow(node: RowNode<any>): void {

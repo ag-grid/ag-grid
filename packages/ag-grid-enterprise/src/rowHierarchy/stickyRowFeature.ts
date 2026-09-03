@@ -70,9 +70,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      */
     private getFirstPixelOfGroup(row: RowNode): number {
         if (row.footer) {
-            // a destroyed footer keeps `footer` set but loses the sibling that carries the group's bounds
-            const sibling = row.sibling;
-            return sibling ? sibling.rowTop! + sibling.rowHeight! - 1 : 0;
+            return row.sibling.rowTop! + row.sibling.rowHeight! - 1;
         }
 
         if (row.hasChildren()) {
@@ -508,11 +506,6 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
 
 function getServerSideLastPixelOfGroup(row: RowNode): number {
     if (row.isExpandable() || row.footer) {
-        // a destroyed footer keeps `footer` set but loses the sibling that carries the group's bounds
-        if (row.footer && !row.sibling) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-
         if (row.master && row.detailNode) {
             return row.detailNode.rowTop! + row.detailNode.rowHeight!;
         }
@@ -538,9 +531,8 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
 
 function getClientSideLastPixelOfGroup(row: RowNode): number {
     if (row.isExpandable() || row.footer) {
-        // grand total row at top, nothing can push it out of sticky. Nor can anything push out a destroyed
-        // footer, which keeps `footer` set but loses the sibling that carries the group's bounds.
-        if (row.footer && (row.rowIndex === 0 || !row.sibling)) {
+        // grand total row at top, nothing can push it out of sticky.
+        if (row.footer && row.rowIndex === 0) {
             return Number.MAX_SAFE_INTEGER;
         }
 

@@ -125,7 +125,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const grandTotalNode = this.getGrandTotalNode();
         if (grandTotalNode) {
             this.parentRowNode.sibling = undefined as any;
-            grandTotalNode.sibling = undefined as any;
             this.blockUtils.destroyRowNode(grandTotalNode);
         }
     }
@@ -442,11 +441,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         sequence = { value: 0 },
         includeFooterNodes = false
     ): void {
-        const footerNode = this.getGroupTotalRowPosition();
-        // the position is re-evaluated here, but the footer sibling is only created when display
-        // indexes are assigned — so the two can disagree, and there may be no sibling to visit
-        if (footerNode === 'top' && this.parentRowNode.sibling) {
-            callback(this.parentRowNode.sibling, sequence.value++);
+        // the position is re-read here while the footer node is only created when display indexes are
+        // assigned, so both are required before visiting - as for the grand total row below
+        const groupTotalPosition = this.getGroupTotalRowPosition();
+        const groupTotalNode = this.parentRowNode.sibling;
+        if (groupTotalPosition === 'top' && groupTotalNode) {
+            callback(groupTotalNode, sequence.value++);
         }
 
         // Grand total at top
@@ -465,8 +465,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        if (footerNode === 'bottom' && this.parentRowNode.sibling) {
-            callback(this.parentRowNode.sibling, sequence.value++);
+        if (groupTotalPosition === 'bottom' && groupTotalNode) {
+            callback(groupTotalNode, sequence.value++);
         }
 
         // Grand total at bottom

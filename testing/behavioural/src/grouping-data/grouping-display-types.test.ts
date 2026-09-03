@@ -208,12 +208,17 @@ describe('ag-grid grouping display types and footers', () => {
             · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
         `);
 
-        // Prove the destroy path actually ran, otherwise the assertion below is vacuous.
+        // Prove the destroy path actually ran, otherwise the assertions below are vacuous.
         expect(irelandTotal.destroyed).toBe(true);
-        expect(irelandTotal.sibling).toBeUndefined();
         expect(irelandTotal.footer).toBe(true);
 
-        expect(() => irelandTotal.isSelected()).not.toThrow();
+        // The group drops its footer so nothing treats the destroyed node as a live total row, while the
+        // footer keeps pointing at its still-live group so `primaryRow` resolves rather than dead-ending.
+        const ireland = api.getRowNode('row-group-country-Ireland')!;
+        expect(ireland.sibling).toBeUndefined();
+        expect(irelandTotal.sibling).toBe(ireland);
+        expect(irelandTotal.primaryRow).toBe(ireland);
+
         expect(irelandTotal.isSelected()).toBe(false);
     });
 

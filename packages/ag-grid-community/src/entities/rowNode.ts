@@ -60,7 +60,7 @@ export class RowNode<TData = any>
             return groupData; // already set
         }
         if (this.footer) {
-            return this.sibling?.groupData; // footer takes data from the main row
+            return this.sibling?.groupData ?? null; // footer takes data from the main row
         }
         // CSRM loading of group data
         return this.beans.groupStage?.loadGroupData(this) ?? null;
@@ -270,8 +270,8 @@ export class RowNode<TData = any>
     }
 
     /**
-     * If using footers, reference to the footer node for this group.
-     * `undefined` when there is no footer, and on a footer whose row has been destroyed.
+     * On a group row, the footer row node for that group. On a footer row, the group row it belongs to.
+     * `undefined` when the group has no footer, and on either row once the footer has been destroyed.
      */
     public sibling: RowNode;
 

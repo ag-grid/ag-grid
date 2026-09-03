@@ -204,4 +204,28 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         expect(state.selectAll).toBe(false);
         expect([...state.toggledNodes].sort()).toEqual(['b', 'e']);
     });
+
+    // A purge destroys the row nodes while the rows themselves still exist, so `destroyed` here means
+    // "not currently cached", not "gone". Selection is keyed by id, so a handle captured before the
+    // purge still names a real row - filtering destroyed nodes out of `setNodesSelected` would break this.
+    test('selecting through a node handle destroyed by a purge still selects the live row', async () => {
+        const api = await createAndLoad('ssrmSelStateStaleHandle');
+
+        const staleHandle = api.getRowNode('b')!;
+
+        const loadsBeforeRefresh = loadCount;
+        api.refreshServerSide({ purge: true });
+        await waitFor(() => expect(loadCount).toBeGreaterThan(loadsBeforeRefresh));
+        await waitForNoLoadingRows(api);
+
+        const liveNode = api.getRowNode('b')!;
+        expect(staleHandle.destroyed).toBe(true);
+        expect(liveNode).not.toBe(staleHandle);
+
+        api.setNodesSelected({ nodes: [staleHandle], newValue: true, source: 'api' });
+
+        expect(selectedIds(api)).toEqual(['b']);
+        expect(liveNode.isSelected()).toBe(true);
+        expect([...(api.getServerSideSelectionState() as any).toggledNodes]).toEqual(['b']);
+    });
 });

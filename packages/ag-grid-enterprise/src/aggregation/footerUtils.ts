@@ -37,6 +37,7 @@ export function _destroyRowNodeFooter(rowNode: RowNode): void {
     }
 
     sibling._destroy(false);
+    // only the group drops its link: `group.sibling` means "my live footer", while a destroyed footer
+    // keeps pointing at its still-live group so `primaryRow` can resolve it
     rowNode.sibling = undefined as any;
-    sibling.sibling = undefined as any;
 }
