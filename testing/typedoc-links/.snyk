@@ -1,9 +1,4 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
-  SNYK-JS-ESBUILD-17750822:
-    - vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5:
-        reason: Test dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-07-15T10:47:53.096Z
 patch: {}

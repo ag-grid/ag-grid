@@ -953,11 +953,6 @@ ignore:
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-FORMDATA-10841150:
-    - request@2.88.2 > form-data@2.3.3:
-        reason: Only used for building and getting changelog/pipeline data
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2025-06-25T14:14:23.307Z
   SNYK-JS-ISAACSBRACEEXPANSION-15208653:
     - glob@11.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0:
         reason: braces is only used in development/testing - it's not used in the final
@@ -1760,30 +1755,6 @@ ignore:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-DEVALUE-16697433:
-    - '@astrojs/react@5.0.4 > devalue@5.7.1':
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - astro@6.1.9 > devalue@5.7.1:
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15307072:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15416075:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15456201:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-ADMZIP-17954277:
     - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > adm-zip@0.5.16':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
@@ -1795,16 +1766,6 @@ ignore:
         created: '2026-07-23T00:00:00.000Z'
   SNYK-JS-EXTRACTZIP-17660777:
     - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > extract-zip@2.0.1':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-TAR-17909068:
-    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > tar@7.5.15':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-TAR-17909152:
-    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > tar@7.5.15':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'

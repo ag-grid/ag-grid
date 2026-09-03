@@ -53,9 +53,4 @@ ignore:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-  SNYK-JS-PICOMATCH-15765511:
-    - typescript-eslint@8.59.0 > @typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > tinyglobby@0.2.15 > picomatch@4.0.3:
-        reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
 patch: {}

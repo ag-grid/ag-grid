@@ -16,31 +16,6 @@ ignore:
         reason: Test dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-14T15:40:46.089Z
-  SNYK-JS-PICOMATCH-15765511:
-    - vite@6.4.1 > tinyglobby@0.2.15 > picomatch@4.0.3:
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:44:22.391Z
-    - vite@6.4.1 > picomatch@4.0.3:
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:44:22.384Z
-    - vue-router@5.0.6 > picomatch@4.0.3:
-        reason: Build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
-    - vue-router@5.0.6 > tinyglobby@0.2.15 > picomatch@4.0.3:
-        reason: Build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
-    - vue-router@5.0.6 > unplugin@3.0.0 > picomatch@4.0.3:
-        reason: Build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
-    - vue-router@5.0.6 > @vue-macros/common@3.1.2 > unplugin-utils@0.3.1 > picomatch@4.0.3:
-        reason: Build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
   SNYK-JS-ROLLUP-15340920:
     - vite@6.4.1 > rollup@4.52.5:
         reason: Test dependency - not included in final production build

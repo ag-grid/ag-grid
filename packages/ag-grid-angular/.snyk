@@ -24,11 +24,6 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:36:02.259Z
-  SNYK-JS-VITE-17353904:
-    - '@angular/build@20.3.26 > vite@7.3.2':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:33:35.227Z
   SNYK-JS-TMP-17315641:
     - karma@6.4.4 > tmp@0.2.5:
         reason: Used in build & dev - not included in final production build
@@ -165,11 +160,6 @@ ignore:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-QS-14724253:
-    - karma@6.4.4 > body-parser@1.20.3 > qs@6.13.0:
-        reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-15268416:
     - 'karma@* > body-parser@* > qs@*':
         reason: Testing dependency - not included in final production build
@@ -183,42 +173,9 @@ ignore:
         reason: Angular build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15307072:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15416075:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15456201:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-TMP-16881240:
     - karma@6.4.4 > tmp@0.2.5:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-17909068:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-TAR-17909152:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
 patch: {}

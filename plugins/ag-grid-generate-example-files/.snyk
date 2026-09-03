@@ -6,11 +6,6 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:04:22.516Z
-  SNYK-JS-PICOMATCH-15765511:
-    - sucrase@3.35.1 > tinyglobby@0.2.15 > picomatch@4.0.3:
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:44:17.276Z
   SNYK-JS-MINIMATCH-15353389:
     - '@nx/devkit@20.8.4 > minimatch@9.0.3':
         reason: Used in build & dev - not included in final production build

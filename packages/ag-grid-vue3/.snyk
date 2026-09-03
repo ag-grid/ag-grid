@@ -48,15 +48,6 @@ ignore:
         reason: Glob is only used for testing and we control what files are passed in
         expires: 2027-03-02T00:00:00.000Z
         created: 2025-11-20T10:29:00.007Z
-  SNYK-JS-PICOMATCH-15765511:
-    - npm-run-all2@8.0.4 > picomatch@4.0.3:
-        reason: Build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
-    - vite-plugin-vue-devtools@8.1.1 > vite-plugin-inspect@11.3.3 > unplugin-utils@0.3.1 > picomatch@4.0.3:
-        reason: Build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-28T12:12:51.000Z
   SNYK-JS-JSCOOKIE-17816999:
     - '@vue/test-utils@2.4.6 > js-beautify@1.15.4 > js-cookie@3.0.5':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
