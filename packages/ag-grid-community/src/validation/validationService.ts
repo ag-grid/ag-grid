@@ -17,6 +17,7 @@ import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
+import { _findLegacyOnlyVariables } from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
 import { _createValidationWarning, _emitValidationWarning } from './validationTypes';
@@ -32,6 +33,7 @@ export class ValidationService extends BeanStub implements NamedBean {
      * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
      */
     private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
+    private legacyVariablesReported = false;
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -105,6 +107,25 @@ export class ValidationService extends BeanStub implements NamedBean {
                   reasonOrId: `\`${beanName}\``,
               })
             : undefined;
+    }
+
+    /**
+     * Warns about legacy theme variables set on the grid while the Theming API is active. The
+     * Theming API never reads them, so they are silently ignored - most visibly with
+     * `--ag-grid-size`, which applications set to change grid density and which does nothing.
+     *
+     * Reported at most once per grid: every theme change re-runs this, and an application that
+     * animates a theme parameter would otherwise repeat the same warning on each frame.
+     */
+    public checkLegacyThemeVariables(eRootDiv: HTMLElement): void {
+        if (this.legacyVariablesReported) {
+            return;
+        }
+        const replacements = _findLegacyOnlyVariables(eRootDiv);
+        if (replacements.length > 0) {
+            this.legacyVariablesReported = true;
+            this.warn(332, { replacements });
+        }
     }
 
     public checkRowEvents(eventType: RowNodeEventType): void {
