@@ -26,7 +26,7 @@ export async function getSitemapIgnorePaths() {
     ];
     const folderPaths = ignorePaths.map(addTrailingSlash);
 
-    return folderPaths.concat(urlWithBaseUrl('/404'));
+    return folderPaths.concat(urlWithBaseUrl('/404'), urlWithBaseUrl('/*searchQuery='));
 }
 
 export async function getSitemapAllowPaths() {
