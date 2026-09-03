@@ -1804,12 +1804,6 @@
                             "children": [
                                 {
                                     "type": "item",
-                                    "title": "API Reference",
-                                    "path": "excel-export-api",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Styles",
                                     "path": "excel-export-styles",
                                     "isEnterprise": true
@@ -1903,8 +1897,19 @@
                                     "title": "Data Protection",
                                     "path": "excel-export-data-protection",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API Reference",
+                                    "path": "excel-export-api",
+                                    "isEnterprise": true
                                 }
                             ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Excel Import",
+                            "path": "excel-import"
                         },
                         {
                             "type": "item",
@@ -1912,12 +1917,6 @@
                             "path": "pdf-export",
                             "isEnterprise": true,
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "API Reference",
-                                    "path": "pdf-export-api",
-                                    "isEnterprise": true
-                                },
                                 {
                                     "type": "item",
                                     "title": "Styles",
@@ -1977,6 +1976,12 @@
                                     "title": "Page Setup",
                                     "path": "pdf-export-page-setup",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API Reference",
+                                    "path": "pdf-export-api",
+                                    "isEnterprise": true
                                 }
                             ]
                         },
@@ -1995,11 +2000,6 @@
                             "type": "item",
                             "title": "Printing",
                             "path": "printing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Import Excel",
-                            "path": "excel-import"
                         }
                     ]
                 },

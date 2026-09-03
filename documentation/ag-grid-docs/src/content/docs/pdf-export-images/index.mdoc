@@ -72,6 +72,16 @@ The following example adds the AG Grid logo to every page header, selecting a li
 
 {% gridExampleRunner title="PDF Company Logo In Page Header" name="pdf-page-header-image" exampleHeight=500 /%}
 
+## Known Limitations
+
+- PNG and JPEG are the supported formats. Typical web images work as-is, including PNG transparency, palette PNGs, and progressive JPEGs.
+- GIF, SVG, WebP, animated images, interlaced PNG, 16-bit PNG, CMYK JPEG, lossless JPEG, and image collections are not supported.
+- Cell Renderer output and images referenced by HTML or CSS are not captured automatically.
+- A cell or page header/footer entry can contain one image.
+- Images cannot currently be used on cover pages or as watermarks.
+- Images cannot currently contain hyperlink annotations.
+- Source images are embedded at their supplied resolution. Use appropriately sized images to limit the exported file size.
+
 ## API
 
 ### Export Options
@@ -97,13 +107,3 @@ The following example adds the AG Grid logo to every page header, selecting a li
 ### PdfHeaderFooterImageContent
 
 {% interfaceDocumentation interfaceName="PdfHeaderFooterImageContent" /%}
-
-## Known Limitations
-
-- PNG and JPEG are the supported formats. Typical web images work as-is, including PNG transparency, palette PNGs, and progressive JPEGs.
-- GIF, SVG, WebP, animated images, interlaced PNG, 16-bit PNG, CMYK JPEG, lossless JPEG, and image collections are not supported.
-- Cell Renderer output and images referenced by HTML or CSS are not captured automatically.
-- A cell or page header/footer entry can contain one image.
-- Images cannot currently be used on cover pages or as watermarks.
-- Images cannot currently contain hyperlink annotations.
-- Source images are embedded at their supplied resolution. Use appropriately sized images to limit the exported file size.
