@@ -6,19 +6,4 @@ ignore:
         reason: Test dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-07-15T10:47:53.096Z
-  SNYK-JS-VITEST-17120326:
-    - vitest@2.1.9:
-        reason: Test dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-07-15T09:41:01.691Z
-  SNYK-JS-BRACEEXPANSION-16755174:
-    - typedoc@0.28.19 > minimatch@10.2.5 > brace-expansion@5.0.5:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-BRACEEXPANSION-17706650:
-    - typedoc@0.28.19 > minimatch@10.2.5 > brace-expansion@5.0.5:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
 patch: {}
