@@ -189,7 +189,7 @@ describe('cspRules', () => {
         });
 
         it('applies in every scope, since GTM loads the tag site-wide', () => {
-            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce', 'blog'] as const;
             for (let i = 0, len = scopes.length; i < len; ++i) {
                 const directives = getCspDirectives({ env: 'production', scope: scopes[i] });
                 expect(directives['connect-src']).toContain('https://www.googleadservices.com');
