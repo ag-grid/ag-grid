@@ -59,6 +59,7 @@ const dateFilterParams: IDateFilterParams = {
     },
 };
 
+const defaultColDef: ColDef = { flex: 1, minWidth: 120, filter: true };
 const columnDefs: ColDef<IOlympicData>[] = [
     { field: 'athlete', minWidth: 180 },
     { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80 },
@@ -69,15 +70,11 @@ const columnDefs: ColDef<IOlympicData>[] = [
         filter: 'agDateColumnFilter',
         filterParams: dateFilterParams,
     },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'total', filter: 'agNumberColumnFilter' },
 ];
 
 const GridExample = () => {
     const [ageType, setAgeType] = useState('everyone');
-
-    const defaultColDef = useMemo<ColDef>(() => ({ flex: 1, minWidth: 120, filter: true }), []);
 
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 

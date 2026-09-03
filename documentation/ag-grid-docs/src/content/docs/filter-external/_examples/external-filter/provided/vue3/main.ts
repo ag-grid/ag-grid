@@ -111,9 +111,7 @@ const VueExample = defineComponent({
                 filter: 'agDateColumnFilter',
                 filterParams: dateFilterParams,
             },
-            { field: 'gold', filter: 'agNumberColumnFilter' },
-            { field: 'silver', filter: 'agNumberColumnFilter' },
-            { field: 'bronze', filter: 'agNumberColumnFilter' },
+            { field: 'total', filter: 'agNumberColumnFilter' },
         ]);
 
         const defaultColDef = ref<ColDef>({

@@ -107,9 +107,7 @@ export class AppComponent {
             filter: 'agDateColumnFilter',
             filterParams: this.dateFilterParams,
         },
-        { field: 'gold', filter: 'agNumberColumnFilter' },
-        { field: 'silver', filter: 'agNumberColumnFilter' },
-        { field: 'bronze', filter: 'agNumberColumnFilter' },
+        { field: 'total', filter: 'agNumberColumnFilter' },
     ];
 
     public defaultColDef: ColDef = {
