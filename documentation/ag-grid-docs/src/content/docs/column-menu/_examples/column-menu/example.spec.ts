@@ -27,19 +27,24 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('opens the column menu from the empty header space', async ({ agIdFor, page }) => {
+        // the row data arrives asynchronously and adds a vertical scrollbar, which narrows the header row
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+
         const headerRow = page.locator('.ag-header-row').first();
         const rowBox = (await headerRow.boundingBox())!;
         const lastHeaderBox = (await agIdFor.headerCell('country').boundingBox())!;
         const lastHeaderRight = lastHeaderBox.x - rowBox.x + lastHeaderBox.width;
+        expect(lastHeaderRight).toBeLessThan(rowBox.width - 20);
 
         await headerRow.click({
             button: 'right',
             position: { x: (lastHeaderRight + rowBox.width) / 2, y: rowBox.height / 2 },
         });
 
-        await expect(page.locator('.ag-menu-option-text', { hasText: 'Choose Columns' })).toBeVisible();
+        // Reset Columns is the discriminator - a column's own menu also carries Choose Columns
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Reset Columns' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Choose Columns' })).toBeVisible();
         await page.keyboard.press('Escape');
-        await expect(agIdFor.menu()).toHaveCount(0);
+        await expect(page.locator('.ag-menu')).toHaveCount(0);
     });
 });
