@@ -8959,7 +8959,7 @@
 
 "@xmldom/xmldom@^0.9.10":
   version "0.9.12"
-  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.9.12.tgz#1f84c07cb95ccf28202299f77b5fd7fc257151e8"
+  resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.9.12.tgz#1f84c07cb95ccf28202299f77b5fd7fc257151e8"
   integrity sha512-5AXjrcMClTryPe9LgZrygpB1lj7s0S9E0+W+AHaVKAVyHanafK86iPSvG5xHVSp/jC+VH1UXu0TAEmY279xH7A==
 
 "@xtuc/ieee754@^1.2.0":
@@ -13082,7 +13082,7 @@ fast-string-width@^1.1.0:
 
 fast-uri@^3.0.1:
   version "3.1.7"
-  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.7.tgz#743157d957f3cbb4c65310e033dc2ad4ad7dc60a"
+  resolved "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz#743157d957f3cbb4c65310e033dc2ad4ad7dc60a"
   integrity sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==
 
 fast-wrap-ansi@^0.1.3:
@@ -14399,7 +14399,7 @@ homedir-polyfill@^1.0.1:
 
 hono@^4.11.4, hono@^4.11.5:
   version "4.13.5"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-4.13.5.tgz#3df9463c4668a0321c39515309f5891e388e9709"
+  resolved "https://registry.npmjs.org/hono/-/hono-4.13.5.tgz#3df9463c4668a0321c39515309f5891e388e9709"
   integrity sha512-O6+/eCYRkzzzy0rPWwKLiGBR1nFuUPZynnwjxN1MBA62NNqbT0wQEzQyK2gSO5yDIDB336sXQleAhOHrzlYyKw==
 
 hookable@^5.5.3:
@@ -22748,7 +22748,7 @@ svg-tags@^1.0.0:
 
 svg2ttf@^6.0.3:
   version "6.1.0"
-  resolved "https://registry.yarnpkg.com/svg2ttf/-/svg2ttf-6.1.0.tgz#10161ac9f168b335d35cf4c0618a30ca9b8ff7e8"
+  resolved "https://registry.npmjs.org/svg2ttf/-/svg2ttf-6.1.0.tgz#10161ac9f168b335d35cf4c0618a30ca9b8ff7e8"
   integrity sha512-EjxgcmhKcBpx/3fR1hPwVtJAbUc/ZsDpwOTF74SI3PbzCg4pDHnxVmoSuqgEqxVJGqqkSCI6+82cucpn2D5aOw==
   dependencies:
     "@xmldom/xmldom" "^0.9.10"
