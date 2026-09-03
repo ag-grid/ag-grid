@@ -179,6 +179,32 @@ describe('cspRules', () => {
         });
     });
 
+    describe('Google Ads conversion tracking (AW-873243008)', () => {
+        it('allows the conversion/remarketing beacon hosts in connect-src', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            // The beacon tries fetch() to these before falling back to an <img> pixel, so the
+            // permissive img-src alone is not enough to stop it logging a violation.
+            expect(site['connect-src']).toContain('https://www.googleadservices.com');
+            expect(site['connect-src']).toContain('https://pagead2.googlesyndication.com');
+        });
+
+        it('applies in every scope, since GTM loads the tag site-wide', () => {
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                const directives = getCspDirectives({ env: 'production', scope: scopes[i] });
+                expect(directives['connect-src']).toContain('https://www.googleadservices.com');
+                expect(directives['connect-src']).toContain('https://pagead2.googlesyndication.com');
+            }
+        });
+
+        it('authorises the internal promo-tracking GA4 event tag by hash in the site scope', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='");
+            const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
+            expect(examples).not.toContain("'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='");
+        });
+    });
+
     describe('LinkedIn Insight Tag', () => {
         it('allows the tag SDK in script-src and its beacon hosts in connect-src', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
