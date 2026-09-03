@@ -126,14 +126,14 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             }
             const node = nodes[0].primaryRow;
             const isRoot = node.level === -1;
-            if (!isRoot && node.id === undefined) {
+            // the resolved row is what selection acts on, so a request it cannot take is dropped, not cleared
+            if ((!isRoot && node.id === undefined) || (newValue && !node.selectable)) {
                 return 0;
             }
-            const select = newValue && node.selectable;
-            const selectRow = select && !isRoot;
+            const selectRow = newValue && !isRoot;
             this.selectedNodes = selectRow ? { [node.id!]: node } : {};
             this.selectedState = { selectAll: false, toggledNodes: new Set(selectRow ? [node.id!] : []) };
-            this.rootSelected = select && isRoot;
+            this.rootSelected = newValue && isRoot;
             return 1;
         }
 
@@ -224,15 +224,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectedRows(): any[] {
-        const nodes = this.getSelectedNodes() ?? [];
-        const selectedRows: any[] = [];
-        for (let i = 0, len = nodes.length; i < len; ++i) {
-            const data = nodes[i].data;
-            if (data != null) {
-                selectedRows.push(data);
-            }
-        }
-        return selectedRows;
+        const selectedNodes = this.getSelectedNodes() ?? [];
+        return selectedNodes.map((node) => node.data).filter((data) => data != null);
     }
 
     public getSelectionCount(): number {

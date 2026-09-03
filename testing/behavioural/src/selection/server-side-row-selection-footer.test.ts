@@ -676,4 +676,54 @@ describe('SSRM selection with a destroyed footer row node', () => {
         await asyncSetTimeout(0);
         expect(selectionChanged).toHaveBeenCalledTimes(1);
     });
+
+    // A footer copies `selectable` when it is created and `updateSelectable` never revisits it, so changing
+    // `isRowSelectable` afterwards leaves a selectable footer standing over an unselectable group.
+    test('selecting a group total row whose group became unselectable keeps the existing selection', async () => {
+        const api = gridMgr.createGrid(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'singleRow' },
+            groupTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<any>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const isRoot = params.request.groupKeys.length === 0;
+                    const rowData: any[] = isRoot
+                        ? [{ id: 'g-Ireland', key: 'Ireland', country: 'Ireland', value: 30, group: true }]
+                        : [
+                              { id: 'ie-1', country: 'Ireland', value: 10 },
+                              { id: 'ie-2', country: 'Ireland', value: 20 },
+                          ];
+                    setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        api.getRowNode('g-Ireland')!.setExpanded(true);
+        await waitForNoLoadingRows(api);
+
+        api.setNodesSelected({ nodes: [api.getRowNode('ie-1')!], newValue: true, source: 'api' });
+        expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
+
+        api.setGridOption('rowSelection', {
+            mode: 'singleRow',
+            isRowSelectable: (node) => node.id !== 'g-Ireland',
+        });
+        const group = api.getRowNode('g-Ireland')!;
+        const groupTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')!;
+        expect(group.selectable).toBe(false);
+        expect(groupTotal.selectable).toBe(true);
+
+        // the request cannot be honoured, so it is dropped rather than emptying the selection
+        api.setNodesSelected({ nodes: [groupTotal], newValue: true, source: 'api' });
+        expect(group.isSelected()).toBe(false);
+        expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
+    });
 });

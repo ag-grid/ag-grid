@@ -193,8 +193,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 return 0;
             }
             const node = nodes[0].primaryRow;
-            // selection is keyed by row id, and only the root is allowed to have none
-            if (node.id === undefined && node.level !== -1) {
+            // the resolved row is what selection acts on, so a request it cannot take is dropped, not cleared
+            if ((node.id === undefined && node.level !== -1) || (newValue && !node.selectable)) {
                 return 0;
             }
             this.deselectAllRowNodes();
