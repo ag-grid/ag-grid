@@ -70,6 +70,7 @@ export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
      * that, `fitCellContents` responds to any row data change and to viewport changes, because both change
      * what there is to measure, while the width-distribution strategies respond to new data, a page change
      * and a scrollbar appearing or disappearing — the changes to the width there is to share out.
+     * Viewport-driven re-sizes are debounced, so a scroll re-sizes once it settles rather than per frame.
      *
      * A column the user has resized themselves is left alone and treated as fixed width — a header drag, a
      * keyboard resize or a double-click auto-size — as is one given an explicit width through

@@ -315,6 +315,24 @@ describe('Continuous Column Autosize', () => {
             expect(reasons).toEqual(['dataChanged']);
         });
 
+        /**
+         * The viewport triggers are debounced so that a scroll re-sizes once it settles; a real scroll is
+         * not drivable in happy-dom, so the debounce itself is covered by the docs e2e suite. This pins the
+         * other half of that change: a data change must still be sized within the frame, not held back.
+         */
+        test('a data change is not held back by the viewport debounce', async () => {
+            const { api, reasons } = createGridRecordingReasons();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            api.setGridOption('rowData', LONGER_DATA);
+            // sampled well inside the viewport debounce, so a data change caught by it would be missed here
+            await flushScheduledResize();
+
+            expect(reasons).toContain('dataChanged');
+        });
+
         test('the strategy stays one-shot when `continuous` is omitted', async () => {
             const api = createGrid({
                 autoSizeStrategy: { type: 'fitCellContents', skipHeader: true },

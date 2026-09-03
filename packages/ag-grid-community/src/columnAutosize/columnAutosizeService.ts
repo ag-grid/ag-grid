@@ -1,4 +1,4 @@
-import { _getInnerWidth, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
+import { _debounce, _getInnerWidth, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
 
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
@@ -41,6 +41,12 @@ const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'co
 
 type AutoSizeReason = AutoSizeColumnsTriggerParams['reason'];
 
+/**
+ * Matches `SCROLL_END_TIMEOUT`, so viewport re-sizes settle when the grid considers scrolling finished
+ * rather than jittering once per frame through a scroll.
+ */
+const CONTINUOUS_VIEWPORT_DEBOUNCE = 150;
+
 /** Escalating waits for a continuous re-size that arrived before the grid had a width. */
 const CONTINUOUS_RETRY_DELAYS: readonly number[] = [0, 100, 500];
 
@@ -67,6 +73,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private pendingReasons: Set<AutoSizeReason> | null = null;
     private continuousRetries = 0;
     private continuousRetryScheduled = false;
+
+    private readonly scheduleViewportAutoSize = _debounce(
+        this,
+        () => this.scheduleContinuousAutoSize('viewportChanged'),
+        CONTINUOUS_VIEWPORT_DEBOUNCE
+    );
 
     public postConstruct(): void {
         const { gos } = this;
@@ -702,11 +714,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         this.addManagedEventListeners({
             // horizontal virtualisation renders new columns, which are then measurable for the first time
-            virtualColumnsChanged: () => this.scheduleContinuousAutoSize('viewportChanged'),
-            viewportChanged: () => this.scheduleContinuousAutoSize('viewportChanged'),
+            virtualColumnsChanged: () => this.scheduleViewportAutoSize(),
+            viewportChanged: () => this.scheduleViewportAutoSize(),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'horizontal') {
-                    this.scheduleContinuousAutoSize('viewportChanged');
+                    this.scheduleViewportAutoSize();
                 }
             },
         });
