@@ -20,20 +20,17 @@ export interface RowAccumulator {
     onColumn(column: AgColumn, index: number, node?: RowNode): void;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 interface GridHeaderCellBase {
     columnIndex: number;
     columnSpan: number;
     rowSpan: number;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridColumnHeaderCell extends GridHeaderCellBase {
     type: 'column';
     column: AgColumn;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridGroupHeaderCell extends GridHeaderCellBase {
     type: 'group' | 'padding';
     /** Backing group; padding cells created purely to tile a row have none. */
@@ -41,7 +38,6 @@ export interface GridGroupHeaderCell extends GridHeaderCellBase {
     collapsibleGroupRanges?: number[][];
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridCoveredHeaderCell extends GridHeaderCellBase {
     type: 'covered';
 }

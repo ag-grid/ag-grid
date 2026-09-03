@@ -12,7 +12,6 @@ import { _getCellTooltipComponentDefinition } from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveGroupTooltipValue } from './tooltipValueUtils';
 
 /**
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  * Tooltip state for one full-width row, keyed by the element(s) the row renders into. Owned by the
  * Tooltip module so full-width rows carry no tooltip code when the module is not registered.
  */

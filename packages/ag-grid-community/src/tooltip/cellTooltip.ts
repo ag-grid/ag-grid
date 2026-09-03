@@ -187,7 +187,6 @@ const resolveCellTooltip = (
     };
 };
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createCellTooltipSource(beans: BeanCollection, ctrl: CellCtrl): TooltipSource {
     const translate = _getLocaleTextFunc(beans.localeSvc);
     let resolved: ResolvedCellTooltip | null = null;
@@ -213,7 +212,6 @@ export function _createCellTooltipSource(beans: BeanCollection, ctrl: CellCtrl):
     };
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createCellEditorTooltipSource(
     beans: BeanCollection,
     cellCtrl: CellCtrl,

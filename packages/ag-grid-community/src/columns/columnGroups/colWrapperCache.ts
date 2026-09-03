@@ -11,7 +11,6 @@ interface WrapperEntry {
     buildToken: number;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColWrapperCache {
     private readonly entries = new Map<AgColumn, WrapperEntry>();
     private readonly context: Context;
