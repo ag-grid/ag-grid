@@ -10,6 +10,7 @@ import type {
     DataTypeService,
     JoinAdvancedFilterModel,
     NamedBean,
+    SetAdvancedFilterModel,
     ValueService,
 } from 'ag-grid-community';
 import { BeanStub, _classifyFilterOptions, _toFiniteNumber } from 'ag-grid-community';
@@ -38,6 +39,9 @@ import {
     getNumberParser,
     hasCustomNumberOperands,
 } from './filterExpressionUtils';
+import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
+import { addSetOperators, withSetOperators } from './set/setFilterExpressionOperators';
+import { SET_LIST_CLOSE_CHAR, SET_LIST_OPEN_CHAR, joinSetPath } from './set/setOperandsParser';
 
 /** What an unquoted operand cannot carry: a space or `)` ends it, a quote opens one, a `,` ends it in a pair. */
 function needsQuotes(operand: string, inPair?: boolean): boolean {
@@ -57,6 +61,16 @@ function quoteChar(operand: string): `'` | `"` | null {
     }
     return operand.includes(`'`) ? null : `'`;
 }
+
+/** A set value is always written quoted, so the list reads back segment for segment. */
+export function quoteSetValue(value: string): string {
+    const quote = quoteChar(value);
+    // No quote wraps a value holding both untouched, so the one that does is doubled instead.
+    return quote ? `${quote}${value}${quote}` : `"${value.replaceAll('"', '""')}"`;
+}
+
+/** The same path as an expression writes it: every segment quoted. */
+export const quoteSetPath = (path: readonly string[]): string => joinSetPath(path.map(quoteSetValue));
 
 /** The `filterParams` an Advanced Filter evaluator honours; the rest are column-filter UI concerns. */
 const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
@@ -82,6 +96,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private dataTypeSvc?: DataTypeService;
+    private advFilterSetSvc: AdvancedFilterSetService;
+
+    /** Whether the last model written held a set value the column's values could not spell. Caller-reset. */
+    public wroteUnresolvedSetValue = false;
 
     private readonly filterOperandGetters: Record<
         BaseCellDataType,
@@ -174,6 +192,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.dataTypeSvc = beans.dataTypeSvc;
+        this.advFilterSetSvc = beans.advFilterSetSvc as AdvancedFilterSetService;
     }
 
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } =
@@ -255,7 +274,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     private getModelOperator(model: ColumnAdvancedFilterModel): FilterExpressionOperator<any> | undefined {
-        return this.getExpressionOperator(model.filterType, model.type, this.colModel.getNonPivotColById(model.colId));
+        const filterType = model.filterType;
+        // `set` is an option a column adds, not a data type, so its operators live with the column's own.
+        const { column, baseCellDataType } = this.getColumnDetails(model.colId);
+        return this.getExpressionOperator(filterType === 'set' ? baseCellDataType : filterType, model.type, column);
     }
 
     public getOperandModelValue(
@@ -283,6 +305,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     /** The whole operand region: one value, or the comma-separated bracketed pair an option taking two writes. */
     private getOperandDisplayValue(model: ColumnAdvancedFilterModel): string {
+        if (model.filterType === 'set') {
+            return this.getSetOperandDisplayValue(model);
+        }
         const { filter, filterTo } = model as ColumnFilterModelOperands;
         const operator = this.getModelOperator(model);
         const numOperands = operator ? OPERAND_COUNT[operator.operands] : undefined;
@@ -294,6 +319,35 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return filter == null ? '' : ` ${this.formatOperand(model, filter)}`;
         }
         return ` (${this.formatOperand(model, filter, false, true)}, ${this.formatOperand(model, filterTo, false, true)})`;
+    }
+
+    /**
+     * The value list a set option writes: `["a", "b" › "c"]`, a value being a path where the column's Set
+     * Filter is a tree list. A key the current values no longer hold is written as it is stored, so a
+     * model the data cannot explain still round-trips.
+     */
+    private getSetOperandDisplayValue(model: SetAdvancedFilterModel): string {
+        const values = model.values;
+        // As the data-type branch does for a slot it has no value for: an unfinished condition writes
+        // nothing rather than an empty list, which is text no parser reads back.
+        if (!values?.length) {
+            return '';
+        }
+        const column = this.colModel.getNonPivotColById(model.colId);
+        // Keys with no text of their own share one, and that text already names every one of them.
+        const written = new Set<string>();
+        for (let i = 0, len = values.length; i < len; ++i) {
+            const key = values[i];
+            let path = column && this.advFilterSetSvc.getPath(column, key);
+            if (!path) {
+                // Recorded so a caller can tell text written from loaded values from text that fell back.
+                this.wroteUnresolvedSetValue = true;
+                // A blank's own label, since the empty string is a value of its own and would not read back.
+                path = [key ?? (column ? this.advFilterSetSvc.getBlankLabel(column) : undefined) ?? ''];
+            }
+            written.add(quoteSetPath(path));
+        }
+        return ` ${SET_LIST_OPEN_CHAR}${Array.from(written).join(', ')}${SET_LIST_CLOSE_CHAR}`;
     }
 
     /** One operand of a model, quoted for the expression unless the caller shows it on its own. */
@@ -464,27 +518,37 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         dataTypeOperators: DataTypeFilterExpressionOperators<any>,
         column: AgColumn
     ): ColumnOperators {
-        const filterOptions = getColumnFilterOptions(column);
-        if (!filterOptions) {
-            return { operators: dataTypeOperators, activeOperators: dataTypeOperators.defaultOperators };
-        }
-        // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
-        const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
-        const localeTextFunc = this.getLocaleTextFunc();
-        const operators = customOptions.size
-            ? createCustomOptionOperators(dataTypeOperators, customOptions, localeTextFunc)
+        const isSetColumn = this.advFilterSetSvc.isSetFilterColumn(column);
+        let operators = isSetColumn
+            ? addSetOperators(dataTypeOperators, (key) => this.translate(key))
             : dataTypeOperators;
-        const operatorsByKey = operators.operators;
-        const activeOperators: string[] = [];
-        for (const key of offered.keys()) {
-            if (_getOwn(operatorsByKey, key)) {
-                activeOperators.push(key);
+        // Only the data type's own table carries `defaultOperators`; a derived one does not.
+        let activeOperators = dataTypeOperators.defaultOperators;
+        // The set options come from the filter, not the data type, so a data type holding some of its own
+        // back — a date column and its relative options — must not take these with them.
+        if (isSetColumn && activeOperators) {
+            activeOperators = withSetOperators(activeOperators);
+        }
+        const filterOptions = getColumnFilterOptions(column);
+        if (filterOptions) {
+            // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
+            const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
+            if (customOptions.size) {
+                operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc());
+            }
+            const operatorsByKey = operators.operators;
+            const offeredOperators: string[] = [];
+            for (const key of offered.keys()) {
+                if (_getOwn(operatorsByKey, key)) {
+                    offeredOperators.push(key);
+                }
+            }
+            if (offeredOperators.length) {
+                // A list the column author wrote is the whole of what it offers, set options included.
+                activeOperators = offeredOperators;
             }
         }
-        return {
-            operators,
-            activeOperators: activeOperators.length ? activeOperators : dataTypeOperators.defaultOperators,
-        };
+        return { operators, activeOperators };
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {

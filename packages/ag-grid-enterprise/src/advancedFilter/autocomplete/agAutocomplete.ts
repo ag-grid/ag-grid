@@ -265,6 +265,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 autocompleteEntries: this.autocompleteListParams.entries!,
                 onConfirmed: () => this.confirmSelection(),
                 forceLastSelection: this.forceLastSelection,
+                rowComponentCreator: this.autocompleteListParams.rowComponentCreator,
             })
         );
         const ePopupGui = this.autocompleteList.getGui();

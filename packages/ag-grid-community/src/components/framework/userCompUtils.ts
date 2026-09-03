@@ -303,6 +303,7 @@ export function _getFilterCompKeys(frameworkOverrides: IFrameworkOverrides, def:
     return _getUserCompKeys(frameworkOverrides, def, FilterComponent);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _mergeFilterParamsWithApplicationProvidedParams(
     userCompFactory: UserComponentFactory,
     defObject: IFilterDef,

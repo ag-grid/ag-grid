@@ -1164,6 +1164,39 @@ describe('Advanced Filter', () => {
             `);
         });
 
+        test('the returned model is the caller’s own, so mutating it does not reach the applied filter', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+
+            applyModel(api, {
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'number', colId: 'age', type: 'equals', filter: 23 },
+                    { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Phelps' },
+                ],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            const model = api.getAdvancedFilterModel() as AdvancedFilterModel & { conditions: any[] };
+            expect(model).not.toBe(api.getAdvancedFilterModel());
+
+            model.type = 'OR';
+            model.conditions[0].filter = 99;
+            model.conditions.push({ filterType: 'text', colId: 'country', type: 'contains', filter: 'zz' });
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'number', colId: 'age', type: 'equals', filter: 23 },
+                    { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Phelps' },
+                ],
+            });
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
+
         test('compound model round-trip preserves structure', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
             await new GridColumns(api, `compound model round-trip preserves structure setup`).checkColumns(`
