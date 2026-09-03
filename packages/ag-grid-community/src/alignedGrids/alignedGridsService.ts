@@ -238,27 +238,21 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             case 'columnResized': {
                 const resizedEvent = colEvent as ColumnResizedEvent;
 
-                const columnWidths: {
-                    [key: string]: {
-                        key: string | AgColumn;
-                        newWidth: number;
-                    };
-                } = {};
-                for (const column of masterColumns) {
-                    columnWidths[column.getId()] = { key: column.colId, newWidth: column.getActualWidth() };
-                }
                 // don't set flex columns width
-                for (const col of resizedEvent.flexColumns ?? []) {
-                    if (columnWidths[col.getId()]) {
-                        delete columnWidths[col.getId()];
+                const flexColIds = new Set((resizedEvent.flexColumns ?? []).map((col) => col.getColId()));
+                const columnWidths: { key: string; newWidth: number }[] = [];
+                for (const column of masterColumns) {
+                    const colId = column.getColId();
+                    if (flexColIds.has(colId)) {
+                        continue;
                     }
+                    columnWidths.push({ key: colId, newWidth: column.getActualWidth() });
+                    // aligned grids are one logical column set, so width ownership travels with the width.
+                    // Without this, continuous auto-sizing in this grid would undo a user resize made in
+                    // the master — and, through the resize this grid fires back, undo it there as well.
+                    colModel.getNonPivotCol(colId)?.setUserSized(column.isUserSized());
                 }
-                colResize?.setColumnWidths(
-                    Object.values(columnWidths),
-                    false,
-                    resizedEvent.finished,
-                    'alignedGridChanged'
-                );
+                colResize?.setColumnWidths(columnWidths, false, resizedEvent.finished, 'alignedGridChanged');
                 break;
             }
         }
