@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, type OnInit, computed, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GridApi, GridReadyEvent, IDateFilterParams, IRowNode } from 'ag-grid-community';
+import type { ColDef, IDateFilterParams, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -68,17 +68,16 @@ ModuleRegistry.registerModules([
                 style="width: 100%; height: 100%;"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
-                [rowData]="rowData"
-                [isExternalFilterPresent]="isExternalFilterPresent"
-                [doesExternalFilterPass]="doesExternalFilterPass"
-                (gridReady)="onGridReady($event)"
+                [rowData]="rowData()"
+                [isExternalFilterPresent]="isExternalFilterPresent()"
+                [doesExternalFilterPass]="doesExternalFilterPass()"
             />
         </div>
     `,
 })
-export class AppComponent {
-    public ageType = 'everyone';
-    public rowData: IOlympicData[] | null = null;
+export class AppComponent implements OnInit {
+    public ageType = signal('everyone');
+    public rowData = signal<IOlympicData[] | null>(null);
 
     public dateFilterParams: IDateFilterParams = {
         comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -116,40 +115,42 @@ export class AppComponent {
         filter: true,
     };
 
-    // Arrow class fields: the grid sees the same reference on every change-detection run.
-    public isExternalFilterPresent = (): boolean => this.ageType !== 'everyone';
+    // Each computed produces a new function reference whenever ageType changes, and the grid
+    // re-runs external filtering as soon as it is given one.
+    public isExternalFilterPresent = computed(() => {
+        const ageType = this.ageType();
+        return (): boolean => ageType !== 'everyone';
+    });
 
-    public doesExternalFilterPass = (node: IRowNode<IOlympicData>): boolean => {
-        if (node.data) {
-            switch (this.ageType) {
-                case 'below25':
-                    return node.data.age < 25;
-                case 'between25and50':
-                    return node.data.age >= 25 && node.data.age <= 50;
-                case 'above50':
-                    return node.data.age > 50;
-                case 'dateAfter2008':
-                    return this.asDate(node.data.date) > new Date(2008, 0, 1);
-                default:
-                    return true;
+    public doesExternalFilterPass = computed(() => {
+        const ageType = this.ageType();
+        return (node: IRowNode<IOlympicData>): boolean => {
+            if (node.data) {
+                switch (ageType) {
+                    case 'below25':
+                        return node.data.age < 25;
+                    case 'between25and50':
+                        return node.data.age >= 25 && node.data.age <= 50;
+                    case 'above50':
+                        return node.data.age > 50;
+                    case 'dateAfter2008':
+                        return this.asDate(node.data.date) > new Date(2008, 0, 1);
+                    default:
+                        return true;
+                }
             }
-        }
-        return true;
-    };
+            return true;
+        };
+    });
 
-    private gridApi!: GridApi<IOlympicData>;
-
-    public onGridReady(params: GridReadyEvent<IOlympicData>) {
-        this.gridApi = params.api;
-
+    public ngOnInit() {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((response) => response.json())
-            .then((data: IOlympicData[]) => (this.rowData = data));
+            .then((data: IOlympicData[]) => this.rowData.set(data));
     }
 
     public onAgeTypeChanged(newValue: string) {
-        this.ageType = newValue;
-        this.gridApi.onFilterChanged();
+        this.ageType.set(newValue);
     }
 
     private asDate(dateAsString: string): Date {
