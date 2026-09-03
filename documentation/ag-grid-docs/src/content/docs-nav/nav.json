@@ -1804,12 +1804,6 @@
                             "children": [
                                 {
                                     "type": "item",
-                                    "title": "API Reference",
-                                    "path": "excel-export-api",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Styles",
                                     "path": "excel-export-styles",
                                     "isEnterprise": true
@@ -1902,6 +1896,12 @@
                                     "type": "item",
                                     "title": "Data Protection",
                                     "path": "excel-export-data-protection",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API Reference",
+                                    "path": "excel-export-api",
                                     "isEnterprise": true
                                 }
                             ]
