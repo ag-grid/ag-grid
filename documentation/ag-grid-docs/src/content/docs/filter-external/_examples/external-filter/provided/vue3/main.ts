@@ -103,9 +103,9 @@ const VueExample = defineComponent({
 
         const columnDefs = ref<ColDef<IOlympicData>[]>([
             { field: 'athlete', minWidth: 180 },
-            { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80 },
+            { field: 'age', filter: 'agNumberColumnFilter' },
             { field: 'country' },
-            { field: 'year', maxWidth: 90 },
+            { field: 'year' },
             {
                 field: 'date',
                 filter: 'agDateColumnFilter',
