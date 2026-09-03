@@ -128,7 +128,15 @@ export default defineConfig({
             // Dedicated project for post-deploy verification — run via post-deploy-verification.yml.
             // Not included in standard ./docs-e2e.sh runs (those use --project=chromium).
             name: 'page-verification',
-            use: { ...devices['Desktop Chrome'] },
+            use: {
+                ...devices['Desktop Chrome'],
+                // Well under the test timeout, so a navigation that really is stuck fails saying
+                // which URL never committed, instead of spending the whole test budget and
+                // reporting only "Test timeout of 60000ms exceeded". The spec navigates on
+                // 'commit', so reaching this at all means the document itself never arrived —
+                // a genuine site failure rather than a slow third-party tag.
+                navigationTimeout: 20_000,
+            },
             testMatch: '**/page-verification.spec.ts',
         },
 

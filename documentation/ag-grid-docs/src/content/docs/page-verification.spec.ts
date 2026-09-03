@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { Locator, Page } from '@playwright/test';
+import type { Locator, Page, Request } from '@playwright/test';
 import { createHash } from 'node:crypto';
 
 import type { CspHashHint, CspViolationRecord } from '../../utils/csp/cspViolationReport';
@@ -34,6 +34,116 @@ let selfCheckInjectionStart: number | undefined;
 
 // Chromium writes the policy name with spaces in some messages and hyphens in others.
 const isCspIssue = (msg: string) => /Content[- ]Security[- ]Policy|Refused to (load|execute|connect)/i.test(msg);
+
+/**
+ * Navigate without waiting for the load event.
+ *
+ * Playwright's default, `waitUntil: 'load'`, does not resolve until every subresource in the
+ * document's delay-the-load-event set has settled. On these pages that set reaches hosts nobody
+ * here controls: plausible.io on every page, img.youtube.com and img.shields.io on /community/,
+ * and whatever Google Tag Manager injects. One slow vendor therefore times out a navigation to a
+ * page the site rendered perfectly well — which is what turned three post-deploy runs red on
+ * 2 September 2026 while the deployed site was fine. Two runs that day tested the same commit
+ * minutes apart, one green and one red, so nothing in the build was ever the variable.
+ *
+ * `'domcontentloaded'` does not fix it: the Plausible tag is `defer`, and deferred scripts block
+ * DOMContentLoaded as well. `'commit'` resolves once the response starts, and the auto-waiting
+ * assertions in each test then do the real verification — as they always did, so nothing this
+ * suite checks is lost. The load event is still given a bounded chance to arrive afterwards, for
+ * the CSP report's sake; see settleThirdPartyTags.
+ */
+async function visit(page: Page, path: string): Promise<void> {
+    await page.goto(path, { waitUntil: 'commit' });
+}
+
+/**
+ * Requests still in flight per page, so a navigation that does time out can say what the browser
+ * was waiting for. Without this the failure reads only as "Test timeout of 60000ms exceeded": the
+ * three red runs on 2 September could be traced to the load event but never to a host, because
+ * traces are off for this project and nothing else recorded the network.
+ */
+const inFlightRequests = new WeakMap<Page, Set<Request>>();
+
+/** When the page last started a request, used to tell whether the tags have stopped arriving. */
+const lastRequestStartedAt = new WeakMap<Page, number>();
+
+/** Enough pending URLs to name the culprit; a stalled page can have dozens. */
+const MAX_REPORTED_IN_FLIGHT_URLS = 12;
+
+function annotateInFlightRequests(page: Page): void {
+    const pending = inFlightRequests.get(page);
+    if (!pending?.size) {
+        return;
+    }
+
+    const countByHost = new Map<string, number>();
+    for (const request of pending) {
+        const url = URL.canParse(request.url()) ? new URL(request.url()) : undefined;
+        // A request URL can be a scheme with no host (data:, blob:); group those under the scheme.
+        const host = url ? url.host || url.protocol : '?';
+        countByHost.set(host, (countByHost.get(host) ?? 0) + 1);
+    }
+    const hosts = [...countByHost]
+        .sort(([, a], [, b]) => b - a)
+        .map(([host, count]) => `${host}×${count}`)
+        .join(', ');
+    const urls = [...pending].slice(0, MAX_REPORTED_IN_FLIGHT_URLS).map((request) => `  ${request.url()}`);
+
+    test.info().annotations.push({
+        type: 'warning',
+        description: `[In flight] ${pending.size} request(s) unfinished when the test ended — ${hosts}\n${urls.join('\n')}`,
+    });
+}
+
+/**
+ * Total budget for letting the third-party tags finish once a test's assertions have passed.
+ *
+ * The CSP report is only as complete as the tags that got a chance to run, and navigating on
+ * 'commit' no longer waits for them — nor did waiting for 'load' ever really do it, since Google
+ * Tag Manager injects its children asynchronously and their violations can land after the load
+ * event. What used to buy the report that time was simply how long each test took; on 'commit' a
+ * test finishes in about a second, which is not long enough. So the wait is explicit here rather
+ * than incidental, and bounded: a hanging vendor costs this much for the test it hangs, plus an
+ * annotation, instead of the whole suite.
+ */
+const THIRD_PARTY_TAG_SETTLE_TIMEOUT = 10_000;
+
+/**
+ * How long without a new request starting counts as the tags having finished arriving. Deliberately
+ * not a list of vendor hostnames: the tag set is authored in GTM, outside this repo, so anything
+ * hardcoded here would silently stop covering whatever is added there next.
+ */
+const THIRD_PARTY_TAG_QUIET_PERIOD = 1_000;
+
+async function settleThirdPartyTags(page: Page): Promise<void> {
+    if (page.isClosed()) {
+        return;
+    }
+    const deadline = Date.now() + THIRD_PARTY_TAG_SETTLE_TIMEOUT;
+    const remaining = () => deadline - Date.now();
+
+    try {
+        await page.waitForLoadState('load', { timeout: Math.max(1, remaining()) });
+    } catch {
+        test.info().annotations.push({
+            type: 'warning',
+            description: `[Tags] page never reached 'load' within ${THIRD_PARTY_TAG_SETTLE_TIMEOUT}ms, so CSP capture for it may be incomplete`,
+        });
+        // The one moment worth naming the host: a green run whose tags never finished is the
+        // early warning that used to arrive only as a red run nobody could attribute.
+        annotateInFlightRequests(page);
+        return;
+    }
+
+    // Then wait out the asynchronously-injected tags, which the load event does not cover.
+    while (remaining() > 0) {
+        const quietFor = Date.now() - (lastRequestStartedAt.get(page) ?? 0);
+        if (quietFor >= THIRD_PARTY_TAG_QUIET_PERIOD) {
+            return;
+        }
+        await page.waitForTimeout(Math.min(THIRD_PARTY_TAG_QUIET_PERIOD - quietFor, remaining()));
+    }
+}
 
 // Console messages that are known browser/environment noise unrelated to the
 // site under test. Matched by substring so new message formats stay filtered.
@@ -98,6 +208,15 @@ async function setupPage(page: Page): Promise<void> {
         handle(`Uncaught exception: ${error.message}`, '[Exception]', page.url());
     });
 
+    const pending = new Set<Request>();
+    inFlightRequests.set(page, pending);
+    page.on('request', (request) => {
+        pending.add(request);
+        lastRequestStartedAt.set(page, Date.now());
+    });
+    page.on('requestfinished', (request) => pending.delete(request));
+    page.on('requestfailed', (request) => pending.delete(request));
+
     await watchCspViolations(page);
 }
 
@@ -131,7 +250,7 @@ test.describe('Page Verification', () => {
     test('homepage loads with title and header visible', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/');
+        await visit(page, '/');
         await expect(page).toHaveTitle(/AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -140,7 +259,7 @@ test.describe('Page Verification', () => {
     test('homepage shows Docs and Demos navigation links', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/');
+        await visit(page, '/');
         // Both links appear in the large and small nav – use first() to target the large (desktop) nav
         await expect(page.locator('.site-header').getByRole('link', { name: 'AG Grid Docs' }).first()).toBeVisible();
         await expect(page.locator('.site-header').getByRole('link', { name: 'AG Grid Demos' }).first()).toBeVisible();
@@ -151,7 +270,7 @@ test.describe('Page Verification', () => {
     test('demos page loads with an example grid', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/example');
+        await visit(page, '/example');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
         await expect(page.locator('.ag-root-wrapper')).toBeVisible();
     });
@@ -159,7 +278,7 @@ test.describe('Page Verification', () => {
     test('theme builder page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/theme-builder/');
+        await visit(page, '/theme-builder/');
         await expect(page).toHaveTitle(/Theme Builder/);
         await expect(page.locator('.site-header')).toBeVisible();
     });
@@ -167,7 +286,7 @@ test.describe('Page Verification', () => {
     test('API reference page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/react-data-grid/reference/');
+        await visit(page, '/react-data-grid/reference/');
         await expect(page).toHaveTitle(/Reference/);
         await expect(page.locator('#docs-mobile-nav-collapser')).toBeVisible();
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -176,7 +295,7 @@ test.describe('Page Verification', () => {
     test('community page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/community/');
+        await visit(page, '/community/');
         await expect(page).toHaveTitle(/Community/);
         await expect(page.locator('.site-header')).toBeVisible();
     });
@@ -184,7 +303,7 @@ test.describe('Page Verification', () => {
     test('about page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/about/');
+        await visit(page, '/about/');
         await expect(page).toHaveTitle(/About AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
     });
@@ -192,7 +311,7 @@ test.describe('Page Verification', () => {
     test('contact page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/contact/');
+        await visit(page, '/contact/');
         await expect(page).toHaveTitle(/Contact AG Grid/);
         await expect(page.locator('.site-header')).toBeVisible();
     });
@@ -200,7 +319,7 @@ test.describe('Page Verification', () => {
     test('pricing page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/license-pricing/');
+        await visit(page, '/license-pricing/');
         await expect(page).toHaveTitle(/Licence and Pricing/);
         await expect(page.locator('.site-header')).toBeVisible();
     });
@@ -213,7 +332,7 @@ test.describe('Page Verification', () => {
     test('cookies page loads with the Enzuzo policy loader in the content wrapper', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/cookies/');
+        await visit(page, '/cookies/');
         await expect(page).toHaveTitle(/Cookies Policy/);
         await expect(page.locator('.site-header')).toBeVisible();
 
@@ -235,7 +354,7 @@ test.describe('Page Verification', () => {
     test('docs getting-started page loads', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/react-data-grid/getting-started/');
+        await visit(page, '/react-data-grid/getting-started/');
         await expect(page).toHaveTitle(/Quick Start/);
         // Left docs nav is always visible at desktop widths (CSS overrides mobile collapse)
         await expect(page.locator('#docs-mobile-nav-collapser')).toBeVisible();
@@ -245,7 +364,7 @@ test.describe('Page Verification', () => {
     test('clicking a left-nav link navigates to the correct doc page', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/react-data-grid/getting-started/');
+        await visit(page, '/react-data-grid/getting-started/');
         // 'Key Features' is a flat (non-grouped) item in the Getting Started section
         await page.locator('#docs-mobile-nav-collapser').getByRole('link', { name: 'Key Features' }).click();
         await expect(page).toHaveURL(/key-features/);
@@ -267,7 +386,7 @@ test.describe('Page Verification', () => {
             { width: 1250, expectButton: false },
         ]) {
             await page.setViewportSize({ width, height: 900 });
-            await page.goto('/react-data-grid/getting-started/');
+            await visit(page, '/react-data-grid/getting-started/');
             await expect(docsButton, `docs button at ${width}px`).toBeVisible({ visible: expectButton });
             await expect(docsNav, `docs nav at ${width}px`).toBeVisible({ visible: !expectButton });
         }
@@ -290,7 +409,7 @@ test.describe('Page Verification', () => {
         };
 
         await page.setViewportSize({ width: 1110, height: 900 });
-        await page.goto('/react-data-grid/getting-started/');
+        await visit(page, '/react-data-grid/getting-started/');
         await expect(menuButton).toBeVisible();
 
         await page.evaluate(() => window.scrollTo(0, 1200));
@@ -317,7 +436,7 @@ test.describe('Page Verification', () => {
 
         // Reload rather than just resize: the open nav leaves inline heights on the collapsible.
         await page.setViewportSize({ width: 1250, height: 900 });
-        await page.goto('/react-data-grid/getting-started/');
+        await visit(page, '/react-data-grid/getting-started/');
         await expect(menuButton).toBeHidden();
         await page.evaluate(() => window.scrollTo(0, 1200));
         expect((await boxOf(header)).y, 'inline header stays pinned to the top').toBe(0);
@@ -340,7 +459,7 @@ test.describe('Page Verification', () => {
 
                 // The standalone example page renders the grid directly in the top-level
                 // document (no iframe), unlike the embedded docs-page runner.
-                await page.goto(`/examples/${pageName}/${exampleName}/${framework}`);
+                await visit(page, `/examples/${pageName}/${exampleName}/${framework}`);
                 await expect(page.locator('.ag-root-wrapper')).toBeVisible({ timeout: 30_000 });
             });
         }
@@ -351,7 +470,7 @@ test.describe('Page Verification', () => {
     test('product switcher opens and shows AG products', async ({ page }) => {
         await setupPage(page);
 
-        await page.goto('/');
+        await visit(page, '/');
         // The Products button opens the dropdown on hover (onMouseEnter)
         await page.getByRole('button', { name: 'Products' }).hover();
         // AG Charts and AG Studio links should now be visible in the dropdown
@@ -387,7 +506,7 @@ test.describe('Page Verification', () => {
 
         // Route the URL the run actually resolved, so this holds for a build deployed under
         // a path prefix as well as at a domain root.
-        await page.goto('/');
+        await visit(page, '/');
         const annotations = test.info().annotations;
         selfCheckInjectionStart = annotations.length;
 
@@ -396,7 +515,29 @@ test.describe('Page Verification', () => {
             const body = (await response.text()).replace('</head>', `<script>${CSP_SELF_CHECK_SCRIPT}</script></head>`);
             await route.fulfill({ response, body });
         });
-        await page.reload();
+        await page.reload({ waitUntil: 'commit' });
+
+        // 'commit' resolves before the parser has reached the injected <script>, so wait for the
+        // document to finish parsing. readyState leaves 'loading' at the end of parsing, ahead of
+        // the deferred scripts that block DOMContentLoaded — verified against staging with every
+        // third-party host stalled — so this barrier does not put a vendor back on the path.
+        await page.waitForFunction(() => document.readyState !== 'loading');
+
+        // The violation and the hash hint reach the test over an exposeBinding round-trip and a
+        // console message respectively, so wait for both rather than assuming they have landed by
+        // the time parsing finished. The assertions below then check their content, not arrival.
+        await expect
+            .poll(
+                () => {
+                    const recorded = annotations.slice(selfCheckInjectionStart).filter(isCspAnnotation);
+                    return {
+                        violation: recorded.some((annotation) => annotation.type === CSP_VIOLATION_ANNOTATION),
+                        hashHint: recorded.some((annotation) => annotation.type === CSP_HASH_HINT_ANNOTATION),
+                    };
+                },
+                { message: 'the blocked inline script reported a violation and a hash hint' }
+            )
+            .toEqual({ violation: true, hashHint: true });
 
         // Only what the injected reload provoked is this test's own doing: anything the first
         // navigation reported is a real violation and stays in the report. The afterEach above
@@ -423,5 +564,21 @@ test.describe('Page Verification', () => {
             `sha256-${createHash('sha256').update(CSP_SELF_CHECK_SCRIPT, 'utf8').digest('base64')}`
         );
         expect(hashes, 'the hash that would authorise the injected script').toContain(CSP_SELF_CHECK_HASH);
+    });
+
+    // Deliberately the last hook in the file, not the first: afterEach hooks run in declaration
+    // order, and the settle below collects CSP annotations that the self-check clean-up above
+    // would otherwise splice out as synthetic. Moving this up would quietly drop real violations
+    // from that test's contribution to the report.
+    test.afterEach(async ({ page }) => {
+        const info = test.info();
+        if (info.status !== info.expectedStatus) {
+            // A failed test wants the diagnostic, not another wait: say what the browser was
+            // still fetching and get out. This is the line that would have named the host behind
+            // the 2 September failures from a single run.
+            annotateInFlightRequests(page);
+            return;
+        }
+        await settleThirdPartyTags(page);
     });
 });
