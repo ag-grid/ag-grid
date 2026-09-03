@@ -202,7 +202,9 @@ function isExported(node: ts.Node): boolean {
  * they make the annotation mean exactly "member of the published internal entry point".
  */
 function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): string[] {
-    const exportedKeys = new Set(internalSymbols.map(({ sourceFilePath, originalName }) => `${sourceFilePath}::${originalName}`));
+    const exportedKeys = new Set(
+        internalSymbols.map(({ sourceFilePath, originalName }) => `${sourceFilePath}::${originalName}`)
+    );
     const exportedNames = new Set(internalSymbols.map(({ originalName }) => originalName));
     const violations: string[] = [];
 
@@ -228,11 +230,16 @@ function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): 
             // `export { Foo } from './x'` has no name of its own; the forward check accepts an
             // annotation here, so the reverse check must too when a re-exported name is internal.
             if (ts.isExportDeclaration(node)) {
-                const elements = node.exportClause && ts.isNamedExports(node.exportClause) ? node.exportClause.elements : [];
+                const elements =
+                    node.exportClause && ts.isNamedExports(node.exportClause) ? node.exportClause.elements : [];
                 if (elements.some((element) => exportedNames.has((element.propertyName ?? element.name).text))) {
                     return;
                 }
-                report(node, elements.map((element) => element.name.text).join(', ') || 'export', 'not re-exported from main-internal.ts');
+                report(
+                    node,
+                    elements.map((element) => element.name.text).join(', ') || 'export',
+                    'not re-exported from main-internal.ts'
+                );
                 return;
             }
 
