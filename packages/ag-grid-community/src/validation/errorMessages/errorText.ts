@@ -956,7 +956,7 @@ export const AG_GRID_ERRORS = {
     330: ({ fontFamily, registeredFamilies }: { fontFamily: string; registeredFamilies: string[] }) =>
         `PDF font family "${fontFamily}" is not registered. Registered families: ${(registeredFamilies ?? []).join(', ')}.`,
     331: ({ rowId }: { rowId: string }) =>
-        `Row ID \`${rowId}\` is reserved by AG Grid and cannot be returned from \`getRowId\`.` as const,
+        `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 

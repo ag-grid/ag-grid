@@ -441,7 +441,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         sequence = { value: 0 },
         includeFooterNodes = false
     ): void {
-        // the callback can answer before `setDisplayIndexes` has created the node, so both are required
+        // the node may not exist yet: `setDisplayIndexes` is what creates it
         const groupTotalPosition = this.getGroupTotalRowPosition();
         const groupTotalNode = this.parentRowNode.sibling;
         if (groupTotalPosition === 'top' && groupTotalNode) {

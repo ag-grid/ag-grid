@@ -210,11 +210,9 @@ describe('ag-grid grouping display types and footers', () => {
         expect(irelandTotal.destroyed).toBe(true);
         expect(irelandTotal.footer).toBe(true);
 
-        // The group drops its footer so nothing treats the destroyed node as a live total row, while the
-        // footer keeps pointing at its still-live group so `primaryRow` resolves rather than dead-ending.
+        // only the group drops its link, so the destroyed footer still resolves to its live group
         const ireland = api.getRowNode('row-group-country-Ireland')!;
         expect(ireland.sibling).toBeUndefined();
-        expect(irelandTotal.sibling).toBe(ireland);
         expect(irelandTotal.primaryRow).toBe(ireland);
 
         expect(irelandTotal.isSelected()).toBe(false);

@@ -442,7 +442,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         rootNode.childrenMapped = {};
         rootNode.updateHasChildren();
 
-        const sibling = rootNode.sibling;
+        const sibling: RowNode = rootNode.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             sibling.childrenMapped = rootNode.childrenMapped;

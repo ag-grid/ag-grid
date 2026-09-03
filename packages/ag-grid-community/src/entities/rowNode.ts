@@ -270,6 +270,7 @@ export class RowNode<TData = any>
         this._expanded = value;
     }
 
+    /** @inheritDoc */
     public sibling: RowNode;
 
     /** The height, in pixels, of this row */

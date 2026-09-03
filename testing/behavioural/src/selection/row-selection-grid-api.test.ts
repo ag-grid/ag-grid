@@ -1136,7 +1136,6 @@ describe('Row Selection Grid API', () => {
 
     describe('getSelectedRows', () => {
         // Row data is unconstrained, so a falsy row is a row like any other; only an absent one is skipped.
-        // The client-side model drops falsy entries when building nodes, so this is only reachable on SSRM.
         test('returns a row whose data is falsy', async () => {
             const [api] = createGrid({
                 columnDefs: [{ colId: 'value', valueGetter: (params) => params.data }],
@@ -1155,6 +1154,27 @@ describe('Row Selection Grid API', () => {
             api.setNodesSelected({ nodes: [api.getRowNode('row-0')!], newValue: true, source: 'api' });
 
             expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['row-0']);
+            expect(api.getSelectedRows()).toEqual([0]);
+        });
+
+        // `rowData` drops falsy entries client-side but a transaction does not, so the same row reaches
+        // the client-side model and its own selection service.
+        test('returns a client-side row added by transaction whose data is falsy', () => {
+            const [api] = createGrid({
+                columnDefs: [{ colId: 'value', valueGetter: (params) => params.data }],
+                rowSelection: { mode: 'multiRow' },
+                getRowId: ({ data }: GetRowIdParams) => `row-${data}`,
+                rowData: [1],
+            });
+
+            api.applyTransaction({ add: [0] });
+
+            // `getRowId` is asked whenever data is present, so a falsy row is still identified
+            const falsyRow = api.getRowNode('row-0')!;
+            expect(falsyRow).toBeDefined();
+            expect(falsyRow.data).toBe(0);
+
+            api.setNodesSelected({ nodes: [falsyRow], newValue: true, source: 'api' });
             expect(api.getSelectedRows()).toEqual([0]);
         });
     });

@@ -33,6 +33,7 @@ export function _destroyRowNodeFooter(rowNode: RowNode): void {
     const sibling = rowNode.sibling;
     if (sibling) {
         sibling._destroy(false);
-        rowNode.sibling = undefined as any; // the row drops its link, so a destroyed sibling keeps its primaryRow
+        // only the group's link is cleared, so a destroyed footer still resolves to its group
+        rowNode.sibling = undefined as any;
     }
 }

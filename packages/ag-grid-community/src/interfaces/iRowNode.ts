@@ -240,8 +240,8 @@ interface GroupRowNode<TData = any> {
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
     footer: boolean | undefined;
     /**
-     * On a group row, its live footer row node, `undefined` when it has none. On a footer row, the group
-     * row it belongs to, which is retained even after the footer has been destroyed.
+     * On a group row, its footer row node, `undefined` when it has none. On a footer row, the group row it
+     * belongs to, which is retained even after the footer has been destroyed.
      */
     sibling: IRowNode<TData>;
 }

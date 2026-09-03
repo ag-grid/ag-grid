@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 import type { MockInstance } from 'vitest';
 
@@ -35,6 +35,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
     });
 
     let warnSpy: MockInstance;
+    let errorSpy: MockInstance | undefined;
 
     beforeEach(() => {
         enableDevValidations({ throwOn: ALL_SEVERITIES });
@@ -48,6 +49,8 @@ describe('SSRM selection with a destroyed footer row node', () => {
 
         const warnings = warnSpy.mock.calls.map((call) => String(call[0]));
         warnSpy.mockRestore();
+        errorSpy?.mockRestore();
+        errorSpy = undefined;
         expect(warnings).toEqual([]);
     });
 
@@ -56,10 +59,11 @@ describe('SSRM selection with a destroyed footer row node', () => {
         value: number;
     }
 
-    /** A row keyed as the root is reported, so these tests take the error rather than throwing on it. */
+    /** A row keyed as the root reports error 331, so these tests take it while every other id still throws. */
     function expectReservedIdError(): MockInstance {
-        enableDevValidations({ throwOn: [] });
-        return vitest.spyOn(console, 'error').mockImplementation(() => {});
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [331] });
+        errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        return errorSpy;
     }
 
     function headerState(gridId: string): { checked: boolean; indeterminate: boolean } {
@@ -122,7 +126,8 @@ describe('SSRM selection with a destroyed footer row node', () => {
         const expectedLevels = mode === 'singleRow' ? [-1] : [0, -1];
         expect(api.getSelectedNodes().map((node) => node.level)).toEqual(expectedLevels);
         expect(grandTotal.isSelected()).toBe(true);
-        await waitFor(() => expect(selectionChanged).toHaveBeenCalledTimes(1));
+        await asyncSetTimeout(0);
+        expect(selectionChanged).toHaveBeenCalledTimes(1);
     }
 
     // 'singleRow' takes the strategy's single-node fast path, 'multiRow' the node loop.
@@ -204,8 +209,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe(`${GRAND_TOTAL_ROW_ID}\t30`));
     });
 
-    // The root is not a row, so select all must leave it alone, as it does client-side. Getting this
-    // wrong left the grand total row rendered as selected after deselectAll().
+    // The root is not a row, so select all must leave it alone, as it does client-side.
     test('select all does not mark the grand total row', async () => {
         const api = await createGrandTotalGrid('multiRow');
         const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
@@ -321,13 +325,50 @@ describe('SSRM selection with a destroyed footer row node', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        // the grand total first, so the selection holds the root ahead of a row it must be exported after
+        // the grand total is asked for first, yet the root is reported after the rows, never among them
         const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
         api.setNodesSelected({ nodes: [grandTotal, api.getRowNode('a')!], newValue: true, source: 'api' });
-        expect(api.getSelectedNodes().map((node) => node.level)).toEqual([-1, 0]);
+        expect(api.getSelectedNodes().map((node) => node.level)).toEqual([0, -1]);
 
         api.copySelectedRowsToClipboard();
         await waitFor(() => expect(clipboardUtils.getText()).toBe(`a\t10\r\n${GRAND_TOTAL_ROW_ID}\t30`));
+
+        // the root stays selected once its total row goes, and it has no values of its own to export
+        api.setGridOption('grandTotalRow', undefined);
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined());
+
+        api.copySelectedRowsToClipboard();
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('a\t10'));
+    });
+
+    test('copying a selection exports a pinned grand total row once', async () => {
+        const rows = [
+            { id: 'a', value: 10 },
+            { id: 'b', value: 20 },
+        ];
+        const api = gridMgr.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow' },
+            grandTotalRow: 'pinnedBottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const rowData: any[] = [...rows];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 30 });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: rows.length }), 0);
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        // the pinned container holds a clone of the total row, so the body must not emit it as well
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        api.copySelectedRowsToClipboard();
+        await waitFor(() => expect(clipboardUtils.getText()).toBe(`${GRAND_TOTAL_ROW_ID}\t30`));
     });
 
     async function createGroupGrid(): Promise<GridApi> {
@@ -473,8 +514,20 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(clashRow.data).toEqual({ id: ROOT_NODE_ID, value: 10 });
         expect(clashRow.level).toBe(0);
 
+        // the row and the root hold their selection apart, so selecting one leaves the other alone
         api.setNodesSelected({ nodes: [clashRow], newValue: true, source: 'api' });
+        expect(clashRow.isSelected()).toBe(true);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
         expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
+
+        // both selected at once: the state stays a set, so the shared id appears once, not twice
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([ROOT_NODE_ID]);
+
+        // and the reverse: selecting the grand total row does not select the row sharing its id
+        api.setNodesSelected({ nodes: [clashRow], newValue: false, source: 'api' });
+        expect(clashRow.isSelected()).toBe(false);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true);
 
         // an unrelated row is unaffected, and clearing the selection leaves nothing stuck behind
         api.setNodesSelected({ nodes: [api.getRowNode('b')!], newValue: true, source: 'api' });
@@ -487,7 +540,6 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect((api.getServerSideSelectionState() as { toggledNodes: string[] }).toggledNodes).toEqual([]);
 
         expect(errorSpy.mock.calls.flat().join(' ')).toContain('Row ID `ROOT_NODE_ID` is reserved by AG Grid');
-        errorSpy.mockRestore();
     });
 
     // Same clash under the group strategy, where the root is keyed among the root's children and the
@@ -544,9 +596,10 @@ describe('SSRM selection with a destroyed footer row node', () => {
         api.setNodesSelected({ nodes: [api.getRowNode('g-Italy')!], newValue: true, source: 'api' });
         expect(api.getRowNode('it-1')!.isSelected()).toBe(true);
 
-        // selecting the clashing group shares a slot with the root, which is undefined but must not break
-        api.setNodesSelected({ nodes: [clashGroup!], newValue: true, source: 'api' });
-        expect(typeof api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).not.toBe('object');
+        // the group and the root hold their selection apart, so selecting one leaves the other alone
+        api.setNodesSelected({ nodes: [clashGroup], newValue: true, source: 'api' });
+        expect(clashGroup.isSelected()).toBe(true);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
 
         api.deselectAll();
         expect(api.getRowNode('it-1')!.isSelected()).toBe(false);
@@ -555,10 +608,9 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(api.getServerSideSelectionState()).toEqual({ nodeId: undefined, selectAllChildren: false });
 
         expect(errorSpy.mock.calls.flat().join(' ')).toContain('Row ID `ROOT_NODE_ID` is reserved by AG Grid');
-        errorSpy.mockRestore();
     });
 
-    test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer is a no-op, not a throw', async () => {
+    test('GroupSelectsChildrenStrategy: selecting a destroyed group total footer selects its origin group', async () => {
         const api = gridMgr.createGrid(null, {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -621,6 +673,7 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(JSON.stringify(api.getServerSideSelectionState())).toContain('g-Ireland');
         expect(group.isSelected()).toBe(true);
         expect(groupTotal.isSelected()).toBe(true);
-        await waitFor(() => expect(selectionChanged).toHaveBeenCalledTimes(1));
+        await asyncSetTimeout(0);
+        expect(selectionChanged).toHaveBeenCalledTimes(1);
     });
 });

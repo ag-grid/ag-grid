@@ -160,7 +160,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            // a destroyed footer still resolves to a live group, so this asks about the row being selected
+            // the resolved group, not the footer, is what selection acts on
             if (newValue && node.destroyed) {
                 continue;
             }

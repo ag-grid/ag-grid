@@ -11,7 +11,7 @@ import type {
 export interface ISelectionStrategy extends Bean {
     getSelectedState(): IServerSideSelectionState | IServerSideGroupSelectionState;
     setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
-    /** @returns the rows the request was applied to, not the state transitions; a zero skips the follow-up work. */
+    /** @returns the number of rows whose selection changed, as the client-side model reports. */
     setNodesSelected(params: ISetNodesSelectedParams): number;
     isNodeSelected(node: RowNode): boolean | undefined;
     processNewRow(node: RowNode): void;

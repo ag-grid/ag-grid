@@ -606,7 +606,6 @@ describe('ag-grid grouping selection', () => {
         expect(irelandTotal.isSelected()).toBe(true);
     });
 
-    // The server-side half of this pair is in server-side-row-selection-footer.test.ts, under the same name.
     test('the grand total row keeps its own selection when a descendant is deselected', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
@@ -636,6 +635,36 @@ describe('ag-grid grouping selection', () => {
         api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: false, source: 'api' });
         expect(api.getRowNode('row-group-country-Ireland')!.isSelected()).toBeUndefined();
         expect(grandTotal.isSelected()).toBe(true);
+        assertSelectedRowsById(['1'], api);
+    });
+
+    test('deselecting the grand total row clears every descendant with it', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+        assertSelectedRowsById(['1'], api);
+
+        // the root's descendant sweep runs whether or not its own flag moves, so an already-unselected
+        // grand total row still empties the selection. The server-side strategies match this.
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: false, source: 'api' });
+        assertSelectedRowsById([], api);
     });
 
     test('a group total row reports its group as partially selected rather than unselected', async () => {
@@ -666,6 +695,9 @@ describe('ag-grid grouping selection', () => {
         // one of two leaves selected, so the group is indeterminate and its total row must say the same
         expect(ireland.isSelected()).toBeUndefined();
         expect(irelandTotal.isSelected()).toBeUndefined();
+
+        // neither the group nor its total row is a selected row in its own right
+        assertSelectedRowsById(['1'], api);
 
         api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: true, source: 'api' });
         expect(ireland.isSelected()).toBe(true);

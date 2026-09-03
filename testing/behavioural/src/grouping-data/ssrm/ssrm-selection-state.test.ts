@@ -206,7 +206,7 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
     });
 
     // a purge destroys the row nodes while the rows themselves still exist, and selection is keyed by id,
-    // so a handle captured before it still names a real row - filtering destroyed nodes out would break this
+    // so a handle captured before it still names a real row
     test('selecting through a node handle destroyed by a purge still selects the live row', async () => {
         const api = await createAndLoad('ssrmSelStateStaleHandle');
 

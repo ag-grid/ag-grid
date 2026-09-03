@@ -35,6 +35,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
+    /**
+     * The root has no route of its own, so its selection is held apart from the tree rather than keyed
+     * into it, where a data row carrying `ROOT_NODE_ID` would share the slot.
+     */
+    private rootSelected = false;
 
     constructor(private readonly selectionCtx: RowRangeSelectionContext) {
         super();
@@ -73,7 +78,13 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
             return normalisedState;
         };
-        return recursivelySerializeState(selectedState, 0);
+        const serialised = recursivelySerializeState(selectedState, 0);
+        const toggled = serialised.toggledNodes;
+        // the reader filters by nodeId, so a top-level row already holding the reserved id must not be doubled
+        if (this.rootSelected && !toggled?.some((entry) => entry.nodeId === ROOT_NODE_ID)) {
+            serialised.toggledNodes = [...(toggled ?? []), { nodeId: ROOT_NODE_ID }];
+        }
+        return serialised;
     }
 
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
@@ -117,10 +128,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 recursivelyDeserializeState(innerState, isThisNodeSelected),
             ]);
             const doesRedundantStateExist = convertedChildren?.some(
-                ([key, innerState]) =>
-                    key !== ROOT_NODE_ID &&
-                    isThisNodeSelected === innerState.selectAllChildren &&
-                    innerState.toggledNodes.size === 0
+                ([, innerState]) =>
+                    isThisNodeSelected === innerState.selectAllChildren && innerState.toggledNodes.size === 0
             );
             if (doesRedundantStateExist) {
                 this.error(247);
@@ -133,7 +142,15 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         };
 
         try {
-            this.selectedState = recursivelyDeserializeState(state, !!state.selectAllChildren);
+            // the root's entry is not a child, so it is taken out before the tree is read
+            const toggled = state.toggledNodes;
+            const rootSelected = Array.isArray(toggled) && toggled.some((entry) => entry?.nodeId === ROOT_NODE_ID);
+            const treeState = rootSelected
+                ? { ...state, toggledNodes: toggled!.filter((entry) => entry?.nodeId !== ROOT_NODE_ID) }
+                : state;
+
+            this.selectedState = recursivelyDeserializeState(treeState, !!treeState.selectAllChildren);
+            this.rootSelected = rootSelected;
         } catch {
             // do nothing - error already logged
         }
@@ -188,19 +205,22 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             const node = rowNode.primaryRow;
             if (node.level === -1) {
                 // the root has no route of its own, so selecting it means the whole tree
-                const toggledNodes = new Map<string, SelectionState>();
-                if (newValue) {
-                    toggledNodes.set(ROOT_NODE_ID, { selectAllChildren: newValue, toggledNodes: new Map() });
+                const wasSelected = this.rootSelected;
+                this.selectedState = { selectAllChildren: newValue, toggledNodes: new Map() };
+                this.rootSelected = newValue;
+                if (newValue !== wasSelected) {
+                    updatedCount++;
                 }
-                this.selectedState = { selectAllChildren: newValue, toggledNodes };
-                updatedCount++;
             } else if (node.id !== undefined) {
-                this.recursivelySelectNode(this.getRouteToNode(node), this.selectedState, newValue);
-                updatedCount++;
+                // the route is walked once and read either side of the mutation, not rebuilt three times
+                const route = this.getRouteToNode(node);
+                const state = this.selectedState;
+                const wasSelected = this.isNodePathSelected(route, state);
+                this.recursivelySelectNode(route, state, newValue);
+                if (this.isNodePathSelected(route, state) !== wasSelected) {
+                    updatedCount++;
+                }
             }
-        }
-        if (updatedCount === 0) {
-            return 0;
         }
 
         this.removeRedundantState();
@@ -215,7 +235,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     public isNodeSelected(node: RowNode): boolean | undefined {
         if (node.level === -1) {
             // the root's selection is its own, not derived from its descendants, as client-side
-            return this.selectedState.toggledNodes.has(ROOT_NODE_ID);
+            return this.rootSelected;
         }
         const path = this.getRouteToNode(node);
         return this.isNodePathSelected(path, this.selectedState);
@@ -268,10 +288,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             // clean up lowest level state first in order to calculate this levels state
             // from updated child state
             state.toggledNodes.forEach((value, key) => {
-                // the root is keyed among the children but is not one, so no child rule applies to it
-                if (key !== ROOT_NODE_ID) {
-                    forEachNodeStateDepthFirst(value, key, state);
-                }
+                forEachNodeStateDepthFirst(value, key, state);
             });
 
             if (thisKey) {
@@ -378,7 +395,15 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedRows(): any[] {
-        return this.getSelectedNodes()?.map((node) => node.data) ?? [];
+        const nodes = this.getSelectedNodes() ?? [];
+        const selectedRows: any[] = [];
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const data = nodes[i].data;
+            if (data != null) {
+                selectedRows.push(data);
+            }
+        }
+        return selectedRows;
     }
 
     public getSelectionCount(): number {
@@ -386,7 +411,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public isEmpty(): boolean {
-        return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size;
+        return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size && !this.rootSelected;
     }
 
     public selectAllRowNodes(): void {
@@ -399,13 +424,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     private reset(selectAllChildren: boolean): void {
         this.selectedState = { selectAllChildren, toggledNodes: new Map() };
+        this.rootSelected = false;
     }
 
     public getSelectAllState(): boolean | null {
         const { selectAllChildren, toggledNodes } = this.selectedState;
-        // the header checkbox reports on rows, and the root is not one, so its own state never sways it
-        const toggledRows = toggledNodes.size - (toggledNodes.has(ROOT_NODE_ID) ? 1 : 0);
-        if (toggledRows > 0) {
+        if (toggledNodes.size > 0) {
             return null;
         }
         return selectAllChildren;
