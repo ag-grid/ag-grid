@@ -17,23 +17,13 @@ export interface SelectableFilterState {
 }
 
 export interface FilterState {
-    /**
-     * Filter model for [Column Filters](./filtering/)
-     */
+    /** Filter model for Column Filters */
     filterModel?: FilterModel;
-    /**
-     * State of each [Column Filter](./filtering/) component, keyed by column, for filters that keep
-     * state beyond their model
-     */
+    /** State of each Column Filter component, keyed by column, for filters that keep state beyond their model */
     columnFilterState?: ColumnFilterState;
-    /**
-     * Filter model for [Advanced Filter](./filter-advanced/#filter-model--api)
-     */
+    /** Filter model for Advanced Filter */
     advancedFilterModel?: AdvancedFilterModel;
-    /**
-     * Currently [selected filter](./tool-panel-filters-new/#changing-selectable-filters) when using the
-     * new filter tool panel with `agSelectableColumnFilter`
-     */
+    /** Currently selected filter when using the new filter tool panel with `agSelectableColumnFilter` */
     selectableFilters?: SelectableFilterState;
 }
 
@@ -148,7 +138,7 @@ export interface PivotSortModelItem {
 export interface PivotState {
     pivotMode: boolean;
     pivotColIds: string[];
-    /** [Pivot label sort](./pivoting-column-groups/#sorting-pivot-columns) direction of each pivot column */
+    /** Pivot label sort direction of each pivot column */
     pivotSortModel?: PivotSortModelItem[];
 }
 
@@ -183,7 +173,7 @@ export interface ColumnGroupHeaderNameState {
 
 export interface ColumnGroupState {
     openColumnGroupIds: string[];
-    /** [User-edited group header names](./column-headers/#editable-header-name), keyed by group id. */
+    /** User-edited group header names, keyed by group id. */
     headerNames?: ColumnGroupHeaderNameState[];
 }
 
@@ -219,12 +209,12 @@ export interface ColumnHeaderNameColumnState {
 }
 
 export interface ColumnHeaderNameState {
-    /** [User-edited column header names](./column-headers/#editable-header-name), keyed by column id. */
+    /** User-edited column header names, keyed by column id. */
     columnHeaderNames: ColumnHeaderNameColumnState[];
 }
 
 export interface RowPinningState {
-    /** Row IDs of rows [pinned](./row-pinning) to the top container */
+    /** Row IDs of rows pinned to the top container */
     top: string[];
     /** Row IDs of rows pinned to the bottom container */
     bottom: string[];
@@ -233,60 +223,60 @@ export interface RowPinningState {
 export interface GridState {
     /** Grid version number */
     version?: string;
-    /** [Aggregation Functions](./aggregation/) (column state) */
+    /** Aggregation Functions (column state) */
     aggregation?: AggregationState;
-    /** Opened [Column Groups](./column-groups/), and column group header names edited by end users */
+    /** Opened Column Groups, and column group header names edited by end users */
     columnGroup?: ColumnGroupState;
-    /** [Column Order](./column-moving/) (column state) */
+    /** Column Order (column state) */
     columnOrder?: ColumnOrderState;
-    /** Left/right [Pinned Columns](./column-pinning/) (column state) */
+    /** Left/right Pinned Columns (column state) */
     columnPinning?: ColumnPinningState;
-    /** [Column Sizes](./column-sizing/) - width/flex (column state) */
+    /** Column Sizes - width/flex (column state) */
     columnSizing?: ColumnSizingState;
-    /** [Hidden Columns](./column-properties/#reference-display-hide) (column state) */
+    /** Hidden Columns (column state) */
     columnVisibility?: ColumnVisibilityState;
-    /** [Column Header Names](./column-headers/#editable-header-name) edited by end users (column state) */
+    /** Column Header Names edited by end users (column state) */
     columnHeaderName?: ColumnHeaderNameState;
-    /** [Column Filters](./filtering/) and [Advanced Filter](./filter-advanced/#filter-model--api) */
+    /** Column Filters and Advanced Filter */
     filter?: FilterState;
-    /** Currently [focused cell](./keyboard-navigation/). Works for [Client-Side Row Model](./row-models/) only */
+    /** Currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;
-    /** Current [page](./row-pagination/) */
+    /** Current page */
     pagination?: PaginationState;
-    /** Currently manually [pinned rows](./row-pinning) */
+    /** Currently manually pinned rows */
     rowPinning?: RowPinningState;
-    /** Current [pivot mode and pivot columns](./pivoting/), and pivot column label sort (column state) */
+    /** Current pivot mode and pivot columns, and pivot column label sort (column state) */
     pivot?: PivotState;
-    /** Currently selected [cell ranges](./cell-selection/) */
+    /** Currently selected cell ranges */
     cellSelection?: CellSelectionState;
     /**
      * Includes currently selected cell ranges
      * @deprecated v32.2 Use `cellSelection` instead.
      */
     rangeSelection?: RangeSelectionState;
-    /** Current [Row Group Columns](./grouping/) (column state) */
+    /** Current Row Group Columns (column state) */
     rowGroup?: RowGroupState;
-    /** Currently [expanded group rows](./grouping-opening-groups/) */
+    /** Currently expanded group rows */
     rowGroupExpansion?: RowGroupExpansionState;
-    /** Currently expanded [Server-Side Row Model](./server-side-model-grouping/) group rows when using `ssrmExpandAllAffectsAllRows` */
+    /** Currently expanded Server-Side Row Model group rows when using `ssrmExpandAllAffectsAllRows` */
     ssrmRowGroupExpansion?: RowGroupExpansionState | RowGroupBulkExpansionState;
     /**
-     * Currently [selected rows](./row-selection/).
+     * Currently selected rows.
      * For Server-Side Row Model, will be `ServerSideRowSelectionState | ServerSideRowGroupSelectionState`,
      * for other row models, will be an array of row IDs.
      * Can only be set for Client-Side Row Model and Server-Side Row Model.
      */
     rowSelection?: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState;
-    /** Current scroll position. Works for [Client-Side Row Model](./row-models/) only */
+    /** Current scroll position. Works for Client-Side Row Model only */
     scroll?: ScrollState;
-    /** Current [Side Bar](./side-bar/) positioning and opened tool panel, including the state of each open tool panel */
+    /** Current Side Bar positioning and opened tool panel, including the state of each open tool panel */
     sideBar?: SideBarState;
-    /** Current [sort](./row-sorting/) columns and direction (column state) */
+    /** Current sort columns and direction (column state) */
     sort?: SortState;
-    /** The per-column ["Show Values As"](./aggregation-show-values-as/) mode (column state) */
+    /** The per-column "Show Values As" mode (column state) */
     showValuesAs?: ShowValuesAsState;
     /**
-     * Columns the user created or removed at runtime, such as [Calculated Columns](./calculated-columns/),
+     * Columns the user created or removed at runtime, such as Calculated Columns,
      * along with the column definition properties they changed. Unlike the other sections, which configure
      * existing columns, this section can create and remove them.
      */

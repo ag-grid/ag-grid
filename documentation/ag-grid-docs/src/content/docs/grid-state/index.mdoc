@@ -41,9 +41,15 @@ The state is also passed in the [Grid Pre-Destroyed Event](./grid-lifecycle/#gri
 
 ## State Contents
 
-The grid state is made up of the sections below, each of which can be provided or omitted independently.
+The grid state is made up of the sections below, each of which can be provided or omitted independently. If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
 
-{% interfaceDocumentation interfaceName="GridState" /%}
+`partialColumnState` controls _which_ column state sections you supply, not whether those sections may themselves be partial. Any section you include must match its documented shape.
+
+The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
+
+The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
+
+{% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" /%}
 
 {% note %}
 When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
@@ -53,16 +59,6 @@ additional configuration is required:
 - For the Infinite Row Model - set the `infiniteInitialRowCount` property to a value which includes the rows to be shown.
 
 {% /note %}
-
-All state properties are optional, so a property can be excluded if you do not want to restore it.
-
-If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
-
-`partialColumnState` controls _which_ column state sections you supply, not whether those sections may themselves be partial. Any section you include must match its documented shape.
-
-The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
-
-The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
 
 ## Column and Group IDs
 
@@ -86,9 +82,9 @@ The best way to restore grid state is via initial state as described above. Howe
 `setState` should only be used to restore grid state. The grid does not support being used as a controlled component, so do not call this on every state update.
 {% /note %}
 
-{% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
-
 It is possible to maintain the existing state for individual state contents by passing a second argument to `setState` that contains the top-level properties to ignore. E.g. `api.setState(state, ['filter'])` will maintain the existing filter state in the grid.
+
+{% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
 
 ## Converting Column State to Grid State
 
