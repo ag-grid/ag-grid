@@ -471,9 +471,10 @@ export class GridBodyCtrl extends BeanStub {
         const isOnGridViewport =
             eTarget != null && (eTarget === this.eGridViewport || this.eGridViewport.contains(eTarget));
         const isOnRenderedRow = !!eTarget?.closest('.ag-row, .ag-header-row');
+        const isOnRenderedSpanCell = !!eTarget?.closest(".ag-spanned-cell");
         const isOnPinnedTopSection = !!eTarget?.closest('.ag-grid-pinned-top-rows');
 
-        if (isOnGridViewport && !isOnRenderedRow && !isOnPinnedTopSection) {
+        if (isOnGridViewport && !isOnRenderedRow &&!isOnRenderedSpanCell && !isOnPinnedTopSection) {
             // show it
             this.beans.contextMenuSvc?.showContextMenu({
                 mouseEvent,
