@@ -430,6 +430,15 @@
             },
             {
                 "label": {
+                    "name": "PDF Export",
+                    "link": "grid:./pdf-export/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Clipboard Operations",
                     "link": "grid:./clipboard/"
                 },
