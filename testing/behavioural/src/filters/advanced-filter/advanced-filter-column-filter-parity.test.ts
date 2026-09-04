@@ -257,8 +257,8 @@ describe('Advanced Filter matches the column filter', () => {
         expect(getDisplayedIds(api as GridApi<TestRow>)).toEqual([0, 1]);
     });
 
-    // A `dateString` column's `comparator` and `isValidDate` are the grid's own, so the same gate keeps an
-    // unreadable date out of the comparison on both sides.
+    // Both sides refuse a date they cannot read, by different routes: the column filter through the grid's own
+    // `isValidDate`, the Advanced Filter through the parse its `valueConverter` already does.
     test('an unreadable date compares rather than throwing, in both', async () => {
         expect(await withColumnFilter('date', { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' })).toEqual([
             0,
@@ -719,16 +719,21 @@ describe('Advanced Filter matches the column filter', () => {
 
         // A Set Filter's `comparator` orders its list — `(a, b)` over two cell values — so reading it as a
         // date comparison compares the wrong things. One that calls every pair equal would match every row.
-        test('a Set Filter column ignores its list `comparator`', async () => {
-            const columnDefs = timedDefs({ comparator: () => 0 }, 'agSetColumnFilter');
+        // `filter: true` is the reachable case: under enterprise it resolves to the Set Filter, so the name
+        // alone does not say which filter owns the parameter.
+        test.each(['agSetColumnFilter' as const, true as const])(
+            'a Set Filter column ignores its list `comparator` (`filter: %s`)',
+            async (filter) => {
+                const columnDefs = timedDefs({ comparator: () => 0 }, filter);
 
-            expect(
-                await timedAdvancedFilter(
-                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
-                    columnDefs
-                )
-            ).toEqual([1]);
-        });
+                expect(
+                    await timedAdvancedFilter(
+                        { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                        columnDefs
+                    )
+                ).toEqual([1]);
+            }
+        );
 
         // `comparator` is the Date Filter's key; a custom component's `filterParams` are its own, and the
         // ordinary `(a, b)` sort shape is the inverse of `IDateComparatorFunc`, so reading it flips every option.
@@ -877,6 +882,82 @@ describe('Advanced Filter matches the column filter', () => {
                     { filterType: 'date', colId: 'when', type: 'equals', filter: '2010-01-01' },
                     columnDefs,
                     rowData
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // The child that does the comparing owns the comparison's settings whatever it filters on, so a number
+        // column reads them a level down exactly as a date one does.
+        test("a Multi Filter number column reads its number child's `inRangeInclusive`, in both", async () => {
+            const columnDefs = [
+                { field: 'id' },
+                {
+                    field: 'age',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [{ filter: 'agNumberColumnFilter', filterParams: { inRangeInclusive: true } }],
+                    },
+                },
+            ];
+            const rowData = [
+                { id: 0, age: 1 },
+                { id: 1, age: 2 },
+                { id: 2, age: 3 },
+                { id: 3, age: 4 },
+            ];
+
+            const columnFilterIds = await withColumnFilter(
+                'age',
+                {
+                    filterType: 'multi',
+                    filterModels: [{ filterType: 'number', type: 'inRange', filter: 1, filterTo: 3 }],
+                },
+                columnDefs,
+                rowData
+            );
+
+            expect(columnFilterIds).toEqual([0, 1, 2]); // both ends included
+            expect(
+                await withAdvancedFilter(
+                    { filterType: 'number', colId: 'age', type: 'inRange', filter: 1, filterTo: 3 },
+                    columnDefs,
+                    rowData
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // A Custom Filter Option's predicate is author code too, and the column filter maps its operands inside
+        // the per-row comparison, so one that normalises what it is handed must see a fresh value each row.
+        test('a custom filter option predicate is given a fresh operand per row, in both', async () => {
+            const columnDefs = timedDefs({
+                filterOptions: [
+                    {
+                        displayKey: 'dayAfter',
+                        displayName: 'Day After',
+                        numberOfInputs: 1,
+                        predicate: ([filterValue]: any[], cellValue: any) => {
+                            filterValue.setDate(filterValue.getDate() + 1);
+                            return midnightComparator(filterValue, cellValue) === 0;
+                        },
+                    },
+                ],
+            });
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'date', type: 'dayAfter', dateFrom: '2008-08-23' },
+                columnDefs
+            );
+
+            expect(columnFilterIds).toEqual([0, 1]); // the day after the operand, for every row
+            expect(
+                await timedAdvancedFilter(
+                    {
+                        filterType: 'date',
+                        colId: 'when',
+                        type: 'dayAfter',
+                        filter: '2008-08-23',
+                    } as ColumnAdvancedFilterModel,
+                    columnDefs
                 )
             ).toEqual(columnFilterIds);
         });

@@ -12,7 +12,7 @@ import type {
     FilterExpressionOperator,
     OperandsKind,
 } from './filterExpressionOperators';
-import { getEntries } from './filterExpressionOperators';
+import { freshOperand, getEntries } from './filterExpressionOperators';
 
 /** A list the column author wrote, as opposed to the one its data type supplies; an empty list narrows nothing. */
 function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef)[] | undefined {
@@ -76,11 +76,12 @@ function createCustomOptionOperator(
             operands = 'none';
             break;
         case 1:
-            evaluator = (value, _node, _params, operand1) => predicate([operand1], value);
+            evaluator = (value, _node, _params, operand1) => predicate([freshOperand(operand1)], value);
             operands = 'one';
             break;
         default:
-            evaluator = (value, _node, _params, operand1, operand2) => predicate([operand1, operand2], value);
+            evaluator = (value, _node, _params, operand1, operand2) =>
+                predicate([freshOperand(operand1), freshOperand(operand2)], value);
             operands = 'range';
             break;
     }

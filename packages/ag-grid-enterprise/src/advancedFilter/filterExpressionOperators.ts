@@ -27,8 +27,8 @@ export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = Conve
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
 }
 
-/** The column filter maps its model per row, so a comparator is free to normalise the operand it is handed. */
-function freshOperand<T>(operand: T): T {
+/** The column filter maps its model per row, so author code is free to normalise the operand it is handed. */
+export function freshOperand<T>(operand: T): T {
     return operand instanceof Date ? (new Date(operand.getTime()) as T) : operand;
 }
 
@@ -447,7 +447,7 @@ const PRESET_DATE_OPERATOR_LOCALE_KEYS: Record<ISimpleFilterModelPresetType, key
         last24Months: 'advancedFilterLast24Months',
     };
 
-/** One cache for every date column, since a relative range depends on nothing but the clock. */
+/** One cache per data type table, since a relative range depends on nothing but the clock. */
 function addRelativeDateOperators(
     operators: { [operator: string]: FilterExpressionOperator<any> },
     translate: AdvancedFilterTranslate

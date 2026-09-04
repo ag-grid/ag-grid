@@ -530,7 +530,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         let operators = isSetColumn
             ? addSetOperators(dataTypeOperators, (key) => this.translate(key))
             : dataTypeOperators;
-        // The shared table's, since the set-derived one offers those keys on top rather than instead.
+        // The shared table's: `addSetOperators` returns a table carrying no `defaultOperators` of its own.
         let activeOperators = dataTypeOperators.defaultOperators;
         // The set options come from the filter, not the data type, so a data type holding some of its own
         // back — a date column and its relative options — must not take these with them.
@@ -562,7 +562,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     /**
      * The params of the Date Filter a column filters through, if it filters through one at all: `comparator`
      * is also a Set Filter's list sort and a custom filter component's own parameter, neither of them a date
-     * comparison. A Multi Filter carries the Date Filter as a child, as `getColumnFilterOptions` reads it.
+     * comparison. A Multi Filter carries the Date Filter as one of its children.
      */
     private getDateFilterParams(
         column: AgColumn,
@@ -656,10 +656,14 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 params = { valueConverter: (v: any) => v };
                 break;
         }
-        // A Multi Filter hands its Date Filter child that child's parameters alone, so the parent's own never
-        // stand in for the ones it omits.
-        const dateFilterParams = this.getDateFilterParams(column, baseCellDataType);
-        const source = dateFilterParams ?? column.colDef.filterParams;
+        // A Multi Filter configures each filter on its own child, so the child that does the comparing owns
+        // these too; the parent's never stand in for the ones that child omits.
+        const { filter, filterParams } = column.colDef;
+        const childParams =
+            filter === 'agMultiColumnFilter'
+                ? getMultiFilterChild(filterParams, _getDefaultSimpleFilter(baseCellDataType))?.filterParams
+                : undefined;
+        const source = childParams ?? filterParams;
         if (source) {
             for (let i = 0, len = COPIED_FILTER_PARAMS.length; i < len; ++i) {
                 const param = COPIED_FILTER_PARAMS[i];
@@ -669,6 +673,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 }
             }
         }
+        const dateFilterParams = this.getDateFilterParams(column, baseCellDataType);
         if (dateFilterParams) {
             // What the grid supplies restates the parse `valueConverter` does, and a comparator skips that
             // conversion, so only where none is in play is the grid's own gate already covered.

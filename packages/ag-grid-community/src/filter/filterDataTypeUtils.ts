@@ -83,7 +83,7 @@ function isValidDate(value: any): boolean {
 // Merged onto `colDef.filterParams` by `setColDefPropsForDataType`, so nothing else tells one from the author's.
 const gridSuppliedFilterParams = new WeakSet<object>();
 
-function gridSupplied<T extends object>(fn: T): T {
+function gridSupplied<T extends (...args: any[]) => any>(fn: T): T {
     gridSuppliedFilterParams.add(fn);
     return fn;
 }
