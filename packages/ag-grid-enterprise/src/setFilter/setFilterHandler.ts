@@ -15,7 +15,7 @@ import type {
     SetFilterModelValue,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isClientSideRowModel } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _isBlank, _isClientSideRowModel } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -480,10 +480,17 @@ export class SetFilterHandler<TValue = string>
                 return;
             }
             this.noValueFormatterSupplied = true;
-            // ref data is handled by ValueService
-            if (!isRefData) {
-                valueFormatter = (params) => _toStringOrNull(params.value)!;
-            }
+            // Naming the blank here, not at render time, is what keeps a supplied formatter able to override it.
+            valueFormatter = (params) => {
+                const value = params.value;
+                if (_isBlank(value)) {
+                    return translateForSetFilter(this, 'blanks');
+                }
+                // ref data is handled by ValueService
+                return isRefData
+                    ? this.beans.valueSvc.formatValue(params.column as AgColumn, null, value, undefined, false)!
+                    : _toStringOrNull(value)!;
+            };
         }
         this.valueFormatter = valueFormatter;
     }

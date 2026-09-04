@@ -140,6 +140,40 @@ describe('Advanced Filter - Set Filter autocomplete rendering', () => {
         expect(document.querySelectorAll('.ag-autocomplete-list em').length).toBe(2);
         expect(document.querySelectorAll('.ag-autocomplete-list b').length).toBe(0);
     });
+
+    test('a blank reaches a cell renderer named, the same spelling the list offers', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        cellRenderer: (p: { valueFormatted?: string | null }) => `<em>${p.valueFormatted || ''}</em>`,
+                    },
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+
+        expect(af.autocompleteEntries()).toEqual([
+            '(Blanks)',
+            'Jamaica',
+            'Poland',
+            'United Kingdom',
+            'United States',
+        ]);
+        expect(Array.from(document.querySelectorAll('.ag-autocomplete-list em')).map((el) => el.textContent)).toEqual([
+            '(Blanks)',
+            'Jamaica',
+            'Poland',
+            'United Kingdom',
+            'United States',
+        ]);
+    });
 });
 
 describe('Advanced Filter - Set Filter editing a written list', () => {

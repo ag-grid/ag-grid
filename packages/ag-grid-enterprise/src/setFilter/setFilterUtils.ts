@@ -38,15 +38,14 @@ export function setFilterNullIfBlank<T>(value?: T): T | null {
     return value == null || _isBlank(value) ? null : value;
 }
 
-/** `refData` answers '' for a key it cannot map, but a formatter owns its own output. */
+/** The Set Filter formats with its own formatter only, never the column's. */
 export function setFilterFormattedValue(
     beans: BeanCollection,
     column: AgColumn,
     value: unknown,
     valueFormatter: ((params: ValueFormatterParams) => string) | undefined
 ): string | null {
-    const formattedValue = beans.valueSvc.formatValue(column, null, value, valueFormatter, false);
-    return !valueFormatter && formattedValue === '' && _isBlank(value) ? null : formattedValue;
+    return beans.valueSvc.formatValue(column, null, value, valueFormatter, false);
 }
 
 export function translateForSetFilter(
