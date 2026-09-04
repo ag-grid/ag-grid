@@ -189,6 +189,11 @@ export const AG_GRID_LOCALE_FI = {
     advancedFilterValidationMessage: 'Lausekkeessa on virhe. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Lausekkeessa on virhe. ${variable} lausekkeen lopussa.',
     advancedFilterValidationMessageOnly: 'Lausekkeessa on virhe. ${variable}.',
+    advancedFilterValidationMustBeGreaterThan: '${variable} on oltava suurempi kuin ${variable}',
+    advancedFilterValidationMustBeGreaterThanOrEqualTo:
+        '${variable} täytyy olla suurempi tai yhtä suuri kuin ${variable}',
+    advancedFilterValidationMustBeAfter: '${variable} on oltava jälkeen ${variable}',
+    advancedFilterValidationMustBeOnOrAfter: '${variable} on oltava ${variable} tai myöhempi',
     advancedFilterBuilderTitle: 'Tarkennettu suodatin',
     advancedFilterBuilderApply: 'Käytä',
     advancedFilterBuilderClear: 'Tyhjennä',

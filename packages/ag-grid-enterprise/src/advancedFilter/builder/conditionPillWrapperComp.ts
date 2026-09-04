@@ -84,7 +84,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         this.eColumnPill = this.createPill({
             key: filterModel.colId,
             displayValue:
-                this.advFilterExpSvc.getColumnDisplayValue(filterModel) ?? this.getDefaultColumnDisplayValue(),
+                this.advFilterExpSvc.getColumnDisplayValue(filterModel.colId) ?? this.getDefaultColumnDisplayValue(),
             cssClass: 'ag-advanced-filter-builder-column-pill',
             isSelect: true,
             getEditorParams: () => ({ values: this.advFilterExpSvc.getColumnAutocompleteEntries() }),

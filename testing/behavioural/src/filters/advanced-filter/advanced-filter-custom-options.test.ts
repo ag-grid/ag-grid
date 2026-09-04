@@ -1427,7 +1427,7 @@ describe('Advanced Filter - custom filter options', () => {
             await new FilterDom(api, 'a reversed custom pair').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Age] is outside (38, 21)"
-                valid: false — Expression has an error. Must be greater than 38.
+                valid: false — Expression has an error. Age must be greater than 38.
                 buttons: Apply ⊘ | Builder
                 model:
                   filterType: "number"

@@ -224,8 +224,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return this.expressionJoinOperators[type] ?? type;
     }
 
-    public getColumnDisplayValue(model: ColumnAdvancedFilterModel): string | undefined {
-        const { colId } = model;
+    public getColumnDisplayValue(colId: string): string | undefined {
         const columnEntries = this.getColumnAutocompleteEntries();
         const columnEntry = columnEntries.find(({ key }) => key === colId);
         let columnName;
@@ -381,7 +380,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
-        const columnName = this.getColumnDisplayValue(model) ?? '';
+        const columnName = this.getColumnDisplayValue(model.colId) ?? '';
         const operator = this.getOperatorDisplayValue(model) ?? '';
         const operands = this.getOperandDisplayValue(model);
         return `[${columnName}] ${operator}${operands}`;

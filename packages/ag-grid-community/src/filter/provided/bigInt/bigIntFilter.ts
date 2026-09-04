@@ -1,7 +1,7 @@
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel } from '../iSimpleFilter';
-import { _bindFilterCallback, _getValidityMessageKey } from '../simpleFilterUtils';
+import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
@@ -78,7 +78,7 @@ export class BigIntFilter extends TextInputSimpleFilter<
         if (targetInvalid) {
             validityMessage = this.getLocaleTextFunc()('invalidBigInt', 'Invalid BigInt');
         } else if (isRange && !otherInvalid) {
-            const localeKey = _getValidityMessageKey(fromValue, toValue, isFrom, this.params.inRangeInclusive);
+            const localeKey = getValidityMessageKey(fromValue, toValue, isFrom, this.params.inRangeInclusive);
             if (localeKey) {
                 validityMessage = this.translate(localeKey, [String(other.getValue())]);
             }
