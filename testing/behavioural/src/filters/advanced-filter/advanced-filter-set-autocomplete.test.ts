@@ -159,13 +159,7 @@ describe('Advanced Filter - Set Filter autocomplete rendering', () => {
 
         await af.type('[Country] is any of [');
 
-        expect(af.autocompleteEntries()).toEqual([
-            '(Blanks)',
-            'Jamaica',
-            'Poland',
-            'United Kingdom',
-            'United States',
-        ]);
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
         expect(Array.from(document.querySelectorAll('.ag-autocomplete-list em')).map((el) => el.textContent)).toEqual([
             '(Blanks)',
             'Jamaica',
