@@ -258,14 +258,20 @@
         cursor: default;
     }
 
+    .ag-advanced-filter-builder-virtual-list-viewport {
+        scrollbar-width: thin;
+    }
+
     .ag-advanced-filter-builder-virtual-list-container {
         top: var(--ag-grid-size);
+        overflow: visible;
     }
 
     .ag-advanced-filter-builder-virtual-list-item {
         display: flex;
         cursor: default;
         height: var(--ag-list-item-height);
+        min-width: max-content;
 
         &:hover {
             background-color: var(--ag-row-hover-color);

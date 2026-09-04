@@ -26,7 +26,7 @@ export interface IAdvancedFilterBuilderParams {
     pillSelectMinWidth?: number;
     /**
      * Max width in pixels of the Advanced Filter Builder pill select popup.
-     * @default 200
+     * Unset, the popup grows to its widest option, bounded by the width of the Advanced Filter Builder.
      */
     pillSelectMaxWidth?: number;
     /**

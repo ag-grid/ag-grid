@@ -122,7 +122,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     constructor(
         public readonly item: AdvancedFilterBuilderItem,
         private readonly dragFeature: AdvancedFilterBuilderDragFeature,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly eBuilder: HTMLElement
     ) {
         super(AdvancedFilterBuilderItemElement);
     }
@@ -387,9 +388,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         const onUpdated = this.onPillUpdated(params.update);
         if (params.isSelect === true) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue, displayValue } = params;
-            const advancedFilterBuilderParams = this.gos.get('advancedFilterBuilderParams');
-            const minPickerWidth = `${advancedFilterBuilderParams?.pillSelectMinWidth ?? 140}px`;
-            const maxPickerWidth = `${advancedFilterBuilderParams?.pillSelectMaxWidth ?? 200}px`;
+            const { pillSelectMinWidth, pillSelectMaxWidth } = this.gos.get('advancedFilterBuilderParams') ?? {};
             const comp = this.createBean(
                 new SelectPillComp({
                     pickerAriaLabelKey,
@@ -402,8 +401,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     valueFormatter: (value: AutocompleteEntry) =>
                         value == null ? '' : (value.displayValue ?? value.key),
                     variableWidth: true,
-                    minPickerWidth,
-                    maxPickerWidth,
+                    minPickerWidth: pillSelectMinWidth ?? 140,
+                    maxPickerWidth: pillSelectMaxWidth,
+                    eBuilder: this.eBuilder,
                     getEditorParams,
                     wrapperClassName: cssClass,
                     ariaLabel,

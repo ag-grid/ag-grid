@@ -262,7 +262,13 @@
     cursor: default;
 }
 
+.ag-advanced-filter-builder-virtual-list-viewport {
+    scrollbar-width: thin;
+}
+
 .ag-advanced-filter-builder-virtual-list-container {
+    --ag-internal-virtual-list-overflow: visible;
+
     top: var(--ag-spacing);
 }
 
@@ -270,6 +276,7 @@
     display: flex;
     cursor: default;
     height: var(--ag-list-item-height);
+    min-width: max-content;
 }
 
 .ag-advanced-filter-builder-virtual-list-item:hover {

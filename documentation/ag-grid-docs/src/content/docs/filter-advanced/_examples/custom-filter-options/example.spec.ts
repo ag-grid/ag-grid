@@ -107,4 +107,32 @@ test.agExample(import.meta, () => {
             expect(dates.filter((date) => date <= '2008-08-20' || date >= '2008-08-25')).toEqual([]);
         }).toPass();
     });
+
+    // A two-input condition is wider than the Builder, so its buttons are only reachable by scrolling.
+    test.eachFramework('should keep a condition wider than the builder reachable', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await applyExpression(page, '[Date] Between (Exclusive) ("2008-08-20", "2008-08-25")');
+        await page.getByRole('button', { name: 'Builder' }).click();
+
+        const viewport = page.locator('.ag-advanced-filter-builder .ag-virtual-list-viewport');
+        await expect(viewport).toBeVisible();
+        const viewportBox = (await viewport.boundingBox())!;
+
+        // Scrolled by wheel rather than `scrollIntoViewIfNeeded`, which also scrolls `overflow: hidden`
+        // ancestors and so passes on a list the user cannot move at all.
+        await page.mouse.move(viewportBox.x + viewportBox.width / 2, viewportBox.y + viewportBox.height / 2);
+        await page.mouse.wheel(viewportBox.width, 0);
+
+        const removeButton = page
+            .locator('.ag-advanced-filter-builder-virtual-list-item', { hasText: 'Between (Exclusive)' })
+            .getByRole('button', { name: 'Remove' });
+        await expect(removeButton).toBeVisible();
+        await expect(async () => {
+            const buttonBox = (await removeButton.boundingBox())!;
+            expect(buttonBox.x).toBeGreaterThanOrEqual(viewportBox.x);
+            expect(buttonBox.x + buttonBox.width).toBeLessThanOrEqual(viewportBox.x + viewportBox.width);
+        }).toPass({ timeout: 5_000 });
+    });
 });
