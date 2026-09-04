@@ -551,6 +551,7 @@ Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#
     # temporary redirect for tracking of partnership   
     RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
     
+    Redirect 301 /sitemap.xml https://www.ag-grid.com/sitemap-index.xml
     Redirect 301 /introducing-the-ag-grid-model-context-protocol-mcp-server/ https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
     Redirect 301 /javascript-data-grid/grouping-sticky-groups/ /javascript-data-grid/grouping-display-types/
     Redirect 301 /javascript-data-grid/global-style-upgrading-to-v28/ /javascript-data-grid/theming-v32-upgrading-to-v28/
