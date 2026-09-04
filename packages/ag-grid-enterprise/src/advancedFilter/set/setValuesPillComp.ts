@@ -72,7 +72,11 @@ export class SetValuesPillComp extends PillComp {
     }
 
     protected override open(): void {
-        if (this.filterUi || this.opening) {
+        if (this.opening) {
+            return;
+        }
+        if (this.filterUi) {
+            this.hidePicker(true);
             return;
         }
         const { column, update } = this.params;
@@ -105,10 +109,12 @@ export class SetValuesPillComp extends PillComp {
                 keepWithinBounds: true,
             };
             const addPopupRes = this.popupSvc.addPopup({
+                modal: true,
                 eChild: ePopupGui,
                 closeOnEsc: true,
                 closedCallback: (event) => this.hidePicker(event instanceof KeyboardEvent),
                 anchorToElement: this.ePill,
+                eventSourceToIgnore: this.ePill,
                 positionCallback: () => this.popupSvc.positionPopupByComponent(positionParams),
                 ariaLabel: this.params.ariaLabel,
             });

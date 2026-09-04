@@ -173,6 +173,53 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         expect(picker!.querySelector('.ag-set-filter-list')).not.toBeNull();
         expect(picker!.querySelector('.ag-mini-filter')).not.toBeNull();
     });
+
+    test('the pill toggles the Set Filter it opened', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+
+        api.setAdvancedFilterModel({
+            filterType: 'set',
+            colId: 'country',
+            type: 'isAnyOf',
+            values: ['Jamaica'],
+        });
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [item] = await builder.conditionItems();
+        const pill = builder.valuePills(item)[0];
+
+        await firePointerLikeClick(pill);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder-set-picker')).not.toBeNull();
+
+        await firePointerLikeClick(pill);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder-set-picker')).toBeNull();
+
+        await firePointerLikeClick(pill);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder-set-picker')).not.toBeNull();
+    });
+
+    test('a click away from the pill closes the Set Filter it opened', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+
+        api.setAdvancedFilterModel({
+            filterType: 'set',
+            colId: 'country',
+            type: 'isAnyOf',
+            values: ['Jamaica'],
+        });
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [item] = await builder.conditionItems();
+
+        await firePointerLikeClick(builder.valuePills(item)[0]);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder-set-picker')).not.toBeNull();
+
+        await firePointerLikeClick(document.body);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder-set-picker')).toBeNull();
+    });
 });
 
 describe('Advanced Filter - Set Filter Builder round trip', () => {
