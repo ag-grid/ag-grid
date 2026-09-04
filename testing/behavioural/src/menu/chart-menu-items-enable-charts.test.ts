@@ -178,6 +178,7 @@ describe('enableCharts gates the built-in chart context-menu tokens', () => {
                 rowData,
                 suppressCsvExport: true,
                 suppressExcelExport: true,
+                suppressPdfExport: true,
                 getContextMenuItems: () => ['export'],
             });
 
