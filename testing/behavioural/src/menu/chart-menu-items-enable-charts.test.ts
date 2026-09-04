@@ -9,6 +9,7 @@
  * The application-created path (`api.createRangeChart` / `api.createPivotChart`) is deliberately NOT
  * gated by `enableCharts` and must stay ungated — see `charts/chart-range-handle.test.ts`.
  */
+import { waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 
@@ -122,6 +123,64 @@ describe('enableCharts gates the built-in chart context-menu tokens', () => {
         showContextMenu(api);
 
         expect(await openMenuOption('Pivot Chart')).toBeTruthy();
+    });
+
+    /**
+     * Right-click a cell for real: the gated tokens are dropped while the menu items are mapped, so
+     * a list which consists only of gated tokens has to be treated like an empty list — no grid menu
+     * and no `preventDefault`, leaving the browser's own context menu to show (AG-18246 review).
+     */
+    describe('a menu whose every item is gated away leaves the browser menu to show', () => {
+        async function rightClickFirstCell(api: GridApi): Promise<MouseEvent> {
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const cell = await waitFor(() => {
+                const found = gridDiv.querySelector<HTMLElement>('.ag-cell[col-id="athlete"]');
+                if (!found) {
+                    throw new Error('cell not rendered');
+                }
+                return found;
+            });
+            const event = new MouseEvent('contextmenu', {
+                bubbles: true,
+                cancelable: true,
+                clientX: 10,
+                clientY: 10,
+            });
+            cell.dispatchEvent(event);
+            return event;
+        }
+
+        test('getContextMenuItems returning only chartRange opens no menu with enableCharts false', async () => {
+            restoreOffsetParent ??= polyfillOffsetParent();
+            const api = await gridMgr.createGridAndWait('charts-off-only-gated-token', {
+                columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+                rowData,
+                cellSelection: true,
+                enableCharts: false,
+                getContextMenuItems: () => ['chartRange'],
+            });
+
+            const event = await rightClickFirstCell(api);
+
+            expect(document.querySelector('.ag-menu')).toBeNull();
+            expect(event.defaultPrevented).toBe(false);
+        });
+
+        test('the same menu opens and claims the gesture with enableCharts true', async () => {
+            restoreOffsetParent ??= polyfillOffsetParent();
+            const api = await gridMgr.createGridAndWait('charts-on-only-gated-token', {
+                columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+                rowData,
+                cellSelection: true,
+                enableCharts: true,
+                getContextMenuItems: () => ['chartRange'],
+            });
+
+            const event = await rightClickFirstCell(api);
+
+            expect(await openMenuOption('Chart Range')).toBeTruthy();
+            expect(event.defaultPrevented).toBe(true);
+        });
     });
 
     test('the default context menu offers Chart Range out of pivot mode and Pivot Chart in it', async () => {
