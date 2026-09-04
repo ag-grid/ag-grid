@@ -127,6 +127,24 @@ describe('cspRules', () => {
         });
     });
 
+    describe('blog scope (reverse-proxied Ghost blog)', () => {
+        it('allows the Mailchimp newsletter signup end to end', () => {
+            const blog = getCspDirectives({ env: 'production', scope: 'blog' });
+            // The signup form loads mc-validate.js, which submits via jQuery JSONP — a
+            // <script src> pointing at /subscribe/post-json on the list-manage origin —
+            // so that origin needs script-src on top of the base form-action entry.
+            expect(blog['script-src']).toContain('https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js');
+            expect(blog['script-src']).toContain('https://ag-grid.us11.list-manage.com');
+            expect(blog['form-action']).toContain('https://ag-grid.us11.list-manage.com');
+        });
+
+        it('does not leak the blog script hosts into the site scope', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            expect(site['script-src']).not.toContain('https://ag-grid.us11.list-manage.com');
+            expect(site['script-src']).not.toContain('https://platform.twitter.com');
+        });
+    });
+
     describe('Enzuzo cookie-consent banner (replaces OneTrust)', () => {
         it('allows the banner bundle in script-src and its APIs in connect-src', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
