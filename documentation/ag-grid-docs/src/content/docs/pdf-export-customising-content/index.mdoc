@@ -1,0 +1,49 @@
+---
+title: "PDF Export - Customising Content"
+enterprise: true
+---
+
+Exported values follow the grid's Value Getters and Value Formatters. Export callbacks replace the resulting text without changing the grid.
+
+## Customising Cell and Row Group Values
+
+Cell and row group values can be customised for PDF export using the following function params, either in a call to the `exportDataAsPdf` API method or in `defaultPdfExportParams`.
+
+```{% frameworkTransform=true %}
+gridApi.exportDataAsPdf({
+    processCellCallback(params) {
+        return params.value == null ? 'Not invoiced' : params.formatValue(params.value);
+    },
+    processRowGroupCallback(params) {
+        return `Region: ${params.node.key ?? ''}`;
+    },
+});
+```
+
+Row group indentation is applied independently of `processRowGroupCallback`, so the returned text does not need to account for it.
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["processCellCallback", "processRowGroupCallback"] config={"description":""} /%}
+
+## Customising Column Headers and Group Header Values
+
+Column headers and column-group headers can be customised using the following function params.
+
+```{% frameworkTransform=true %}
+gridApi.exportDataAsPdf({
+    processHeaderCallback(params) {
+        const { headerName } = params.column.getColDef();
+        return (headerName ?? params.column.getColId()).toUpperCase();
+    },
+    processGroupHeaderCallback(params) {
+        return `${params.columnGroup.getColGroupDef()?.headerName ?? ''} (grouped)`;
+    },
+});
+```
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["processHeaderCallback", "processGroupHeaderCallback"] config={"description":""} /%}
+
+The following example applies all four callbacks. The exported PDF has row groups prefixed with `Region: `, upper-case column headers, column-group headers suffixed with `(grouped)`, and the missing order total replaced with `Not invoiced`.
+
+{% gridExampleRunner title="PDF Export - Customising Content" name="pdf-customising-content" /%}
+
+These callbacks return text. To style the result, use `processStyleCallback` as described in [PDF Export - Styles](./pdf-export-styles/); its `value` is the final exported string.
