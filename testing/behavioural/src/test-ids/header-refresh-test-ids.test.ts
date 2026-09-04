@@ -44,9 +44,15 @@ describe('header test IDs survive a header refresh', () => {
 
         await waitFor(() => expect(getHeaderTestId(api, 'price')).toBe(agTestIdFor.headerCell('price')));
 
+        api.setGridOption('context', { reportingCurrency: 'USD' });
+
+        // Let every stamping pass the context change may have scheduled run to completion, so that
+        // the refresh below is the only thing the service could react to. Without this the test
+        // passes on a pending debounce landing after the refresh rather than on the refresh itself.
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
         // refreshHeader() destroys and recreates the header row, so every test id stamped on the old
         // header DOM goes with it. The service must stamp the replacement.
-        api.setGridOption('context', { reportingCurrency: 'USD' });
         api.refreshHeader();
 
         await waitFor(() => expect(getHeaderTestId(api, 'price')).toBe(agTestIdFor.headerCell('price')));
