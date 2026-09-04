@@ -886,6 +886,44 @@ describe('Advanced Filter matches the column filter', () => {
             ).toEqual(columnFilterIds);
         });
 
+        // A Multi Filter child that sets nothing is given nothing: falling back to the parent would reach a
+        // child that never asked for it. A number column shows it, having no grid-supplied child params to hide
+        // the fallback. `agTextColumnFilter` is the no-matching-child case, which must resolve the same way.
+        test.each([
+            { child: 'agNumberColumnFilter', name: 'a bare matching child' },
+            { child: 'agTextColumnFilter', name: 'no matching child' },
+        ])('a Multi Filter number column takes no parameters from its parent ($name), in both', async ({ child }) => {
+            const columnDefs = [
+                { field: 'id' },
+                {
+                    field: 'age',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { includeBlanksInEquals: true, filters: [{ filter: child }] },
+                },
+            ];
+            const rowData = [
+                { id: 0, age: 1 },
+                { id: 1, age: 2 },
+                { id: 2, age: null },
+            ];
+
+            const columnFilterIds = await withColumnFilter(
+                'age',
+                { filterType: 'multi', filterModels: [{ filterType: 'number', type: 'equals', filter: 1 }] },
+                columnDefs,
+                rowData
+            );
+
+            expect(columnFilterIds).toEqual([0]); // the blank row is not admitted by the parent's flag
+            expect(
+                await withAdvancedFilter(
+                    { filterType: 'number', colId: 'age', type: 'equals', filter: 1 },
+                    columnDefs,
+                    rowData
+                )
+            ).toEqual(columnFilterIds);
+        });
+
         // The child that does the comparing owns the comparison's settings whatever it filters on, so a number
         // column reads them a level down exactly as a date one does.
         test("a Multi Filter number column reads its number child's `inRangeInclusive`, in both", async () => {

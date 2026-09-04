@@ -659,11 +659,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         // A Multi Filter configures each filter on its own child, so the child that does the comparing owns
         // these too; the parent's never stand in for the ones that child omits.
         const { filter, filterParams } = column.colDef;
-        const childParams =
+        const source =
             filter === 'agMultiColumnFilter'
                 ? getMultiFilterChild(filterParams, _getDefaultSimpleFilter(baseCellDataType))?.filterParams
-                : undefined;
-        const source = childParams ?? filterParams;
+                : filterParams;
         if (source) {
             for (let i = 0, len = COPIED_FILTER_PARAMS.length; i < len; ++i) {
                 const param = COPIED_FILTER_PARAMS[i];
