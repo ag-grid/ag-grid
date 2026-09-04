@@ -391,7 +391,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     ): AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp {
         const itemComp = this.createBean(
             item.filterModel
-                ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper)
+                ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper, this.getGui())
                 : new AdvancedFilterBuilderItemAddComp(item, focusWrapper)
         );
 

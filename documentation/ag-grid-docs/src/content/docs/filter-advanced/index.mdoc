@@ -201,22 +201,15 @@ The Advanced Filter names each of them as a phrase, where the Date Filter names 
 | is in last 12 months | `last12Months` |
 | is in last 24 months | `last24Months` |
 
-They take no value, so an expression is the column and the option alone, and the filter model holds only the option key:
-
-```text
-[Date] is in last year
-```
+They take no value, so an expression is the column and the option alone — `[Date] is in last year` — and the filter model holds only the option key:
 
 ```js
 const advancedFilterModel = { filterType: 'date', colId: 'date', type: 'lastYear' };
 ```
 
 Taking no value also means one cannot be a bound of `is between`. Write a span of consecutive options as a join
-of them, which stays relative where a written pair of dates would not:
-
-```text
-[Date] is yesterday OR [Date] is today OR [Date] is tomorrow
-```
+of them — `[Date] is yesterday OR [Date] is today OR [Date] is tomorrow` — which stays relative where a written
+pair of dates would not.
 
 The option stays relative to the current date rather than being resolved to fixed dates when it is applied, so a saved filter model means the same thing whenever it is restored. With the Server-Side Row Model the option key reaches the server with no values, as the Date Filter's does — see [Preset Date Range Filters](./server-side-model-filtering/#preset-date-range-filters).
 
@@ -258,12 +251,7 @@ const gridOptions = {
 }
 ```
 
-An option is written in an expression under its `displayName`, or its [localised](./localisation/) text where the `displayKey` has an entry, followed by as many values as it takes. An option whose name is blank once resolved is written under its `displayKey` instead, so it stays usable. Two values are separated by a comma, and are conventionally wrapped in brackets, which are optional:
-
-```text
-[Age] Even Numbers
-[Age] Between (Exclusive) (30, 40)
-```
+An option is written in an expression under its `displayName`, or its [localised](./localisation/) text where the `displayKey` has an entry, followed by as many values as it takes. An option whose name is blank once resolved is written under its `displayKey` instead, so it stays usable. Two values are separated by a comma, and are conventionally wrapped in brackets, which are optional — `[Age] Even Numbers`, `[Age] Between (Exclusive) (30, 40)`.
 
 Each value is quoted according to its Cell Data Type, as for the built-in options: `number` and `bigint` values are unquoted, all others are quoted. A value that would otherwise end early — one containing a space or a closing bracket, starting with a quote, or holding the comma that separates a pair — is quoted whatever its type. A `number` or `bigint` value that contains both kinds of quote cannot be wrapped in either, so it is written as the plain number instead.
 

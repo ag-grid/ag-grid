@@ -1397,6 +1397,12 @@
         width: 100%;
     }
 
+    // lets a rendered row report the width its content wants, so the list can grow to it
+    :where(.ag-virtual-list-grow-to-content) .ag-virtual-list-item {
+        min-width: 100%;
+        width: max-content;
+    }
+
     // /**
     //  ****************************
     //  * Floating Top and Bottom

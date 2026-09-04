@@ -41,6 +41,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
     private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
+    private contentWidthCallback?: (width: number) => boolean;
     private loadMoreRowsThreshold = 10;
     private stateAnnouncementCallback?: (value: string) => void;
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
@@ -199,6 +200,41 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.refreshSelectedItems();
         if (this.lastRowHovered !== -1) {
             this.updateRenderedHighlightState(this.lastRowHovered);
+        }
+        // Measured last: the refreshes above write classes on these same rows, and reading before them thrashes.
+        this.reportContentWidth();
+    }
+
+    /**
+     * Opts the list into reporting the width its rows want. Rows are laid out at their content width to be
+     * measurable, which stops them eliding, so the callback returning false ends both.
+     */
+    public setContentWidthCallback(callback: (width: number) => boolean): void {
+        this.contentWidthCallback = callback;
+        this.getGui().classList.add('ag-virtual-list-grow-to-content');
+    }
+
+    /** Only rendered rows can be measured, so scrolling to a wider one is what reveals it. */
+    private reportContentWidth(): void {
+        const callback = this.contentWidthCallback;
+        if (!callback) {
+            return;
+        }
+
+        let widest = 0;
+        this.forEachRenderedRow((comp) => {
+            widest = Math.max(widest, comp.getGui().getBoundingClientRect().width);
+        });
+        if (widest === 0) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        // clientWidth drops the border and any vertical scrollbar, which the picker still has to fit. Taken off
+        // the fractional rect rather than offsetWidth, so a sub-pixel border cannot round the allowance away.
+        if (!callback(Math.ceil(widest + eGui.getBoundingClientRect().width - eGui.clientWidth))) {
+            this.contentWidthCallback = undefined;
+            eGui.classList.remove('ag-virtual-list-grow-to-content');
         }
     }
 
