@@ -252,6 +252,39 @@ describe('Advanced Filter — builder editing', () => {
         `);
     });
 
+    test('closing the builder without applying discards the edit, and reopening shows the applied model', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+        api.setAdvancedFilterModel({ filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bo' });
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        await builder.setValue(condition, 'Ng');
+        await builder.close();
+
+        const reopened = await AdvancedFilterBuilderHarness.open(api);
+        await new FilterDom(api, 'builder reopened after cancel', { mode: 'builder', skipValidation: true })
+            .checkFilterDom(`
+                BUILDER
+                AND
+                  Athlete contains "Bo"
+                  + add
+                buttons: Apply | Cancel
+                model:
+                  filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "Bo"
+            `);
+        const [reopenedCondition] = await reopened.conditionItems();
+        expect(reopened.valuePillText(reopenedCondition)).toBe('"Bo"');
+        await new GridRows(api, 'rows unchanged after cancel').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Bolt" age:25
+            └── LEAF id:1 athlete:"Bond" age:40
+        `);
+    });
+
     test("changing a condition's operator pill re-filters the rows", async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         api.setAdvancedFilterModel({ filterType: 'text', colId: 'athlete', type: 'equals', filter: 'Bolt' });

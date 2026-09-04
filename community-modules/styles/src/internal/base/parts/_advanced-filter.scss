@@ -286,4 +286,16 @@
         color: var(--ag-invalid-color);
         cursor: default;
     }
+
+    .ag-advanced-filter-builder-set-picker {
+        // The popup service positions popups with inline top/left, which only apply once the child is taken
+        // out of flow: unpositioned, this lands at the foot of the popup parent at its full width.
+        position: absolute;
+
+        // A popup has no size of its own, and the Set Filter list inside it would otherwise take the viewport.
+        width: 240px;
+        background-color: var(--ag-menu-background-color);
+        border: var(--ag-borders) var(--ag-menu-border-color);
+        border-radius: var(--ag-card-radius);
+    }
 }

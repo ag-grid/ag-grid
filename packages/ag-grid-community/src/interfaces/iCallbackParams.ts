@@ -82,7 +82,7 @@ export interface PostProcessPopupParams<TData = any, TContext = any> extends AgG
     /**
      * The different types are:
      * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor', 'chart',
-     * 'advancedFilterBuilder', 'colorPicker', 'columnChooser', 'subMenu', 'tooltip'
+     * 'advancedFilterBuilder', 'advancedFilterBuilderSet', 'colorPicker', 'columnChooser', 'subMenu', 'tooltip'
      */
     type: string;
     /** If the popup is as a result of a button click (eg menu button),

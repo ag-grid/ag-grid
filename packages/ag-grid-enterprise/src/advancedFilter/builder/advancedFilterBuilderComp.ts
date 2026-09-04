@@ -623,4 +623,7 @@ const clearCondition = (filterModel: PartialColumnFilterModel) => {
     delete filterModel.type;
     delete filterModel.filter;
     delete filterModel.filterTo;
+    delete filterModel.values;
+    // `set` is a member the arity chose, so it goes with the option rather than outliving it.
+    delete filterModel.filterType;
 };

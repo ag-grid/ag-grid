@@ -12,7 +12,6 @@ import type {
     AgEventTypeParams,
     AgGridCommon,
     BeanCollection,
-    Component,
     ElementParams,
     GridOptionsService,
     GridOptionsWithDefaults,
@@ -22,12 +21,11 @@ import { KeyCode, _clamp } from 'ag-grid-community';
 import { VirtualList } from '../../widgets/virtualList';
 import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteRow } from './agAutocompleteRow';
-import type { AutocompleteEntry } from './autocompleteParams';
-
-type AutocompleteRowComponent = Component<any> & {
-    updateSelected(selected: boolean): void;
-    setSearchString(searchString: string): void;
-};
+import type {
+    AutocompleteEntry,
+    AutocompleteRowComponent,
+    AutocompleteRowComponentCreator,
+} from './autocompleteParams';
 
 const AgAutocompleteListElement: ElementParams = {
     tag: 'div',
@@ -70,7 +68,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             autoSizeList?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
-            rowComponentCreator?: (value: AutocompleteEntry, selected: boolean) => AutocompleteRowComponent;
+            rowComponentCreator?: AutocompleteRowComponentCreator;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
             onActiveOptionChanged?: (optionId: string | null) => void;
         }

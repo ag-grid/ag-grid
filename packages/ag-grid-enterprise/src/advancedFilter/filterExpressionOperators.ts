@@ -35,10 +35,10 @@ type FilterExpressionEvaluator<ConvertedTValue, TValue = ConvertedTValue> = (
  * What an option takes, shape and constraint in one field: `range` is two values compared as ordered bounds.
  * A two that is not ordered, or a set of values, is a further member rather than a flag that can contradict.
  */
-export type OperandsKind = 'none' | 'one' | 'range';
+export type OperandsKind = 'none' | 'one' | 'range' | 'list';
 
 /** How many of `filter` / `filterTo` the option fills, for the sites that care about shape and not order. */
-export const OPERAND_COUNT: Record<OperandsKind, number> = { none: 0, one: 1, range: 2 };
+export const OPERAND_COUNT: Record<OperandsKind, number> = { none: 0, one: 1, range: 2, list: 0 };
 
 export interface FilterExpressionOperator<ConvertedTValue, TValue = ConvertedTValue> {
     displayValue: string;

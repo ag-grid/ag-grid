@@ -293,3 +293,15 @@
 :where(.ag-advanced-filter-builder-virtual-list-item-highlight) .ag-advanced-filter-builder-item-button:focus-visible {
     opacity: 1;
 }
+
+.ag-advanced-filter-builder-set-picker {
+    /* The popup service positions popups with inline top/left, which only apply once the child is taken
+       out of flow: unpositioned, this lands at the foot of the popup parent at its full width. */
+    position: absolute;
+
+    /* A popup has no size of its own, and the Set Filter list inside it would otherwise take the viewport. */
+    width: 240px;
+    background-color: var(--ag-menu-background-color);
+    border: var(--ag-border-width) solid var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+}

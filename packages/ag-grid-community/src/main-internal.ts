@@ -71,6 +71,7 @@ export {
     _getFilterDetails,
     _getFloatingFilterCompDetails,
     _getInnerCellRendererDetails,
+    _mergeFilterParamsWithApplicationProvidedParams,
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';

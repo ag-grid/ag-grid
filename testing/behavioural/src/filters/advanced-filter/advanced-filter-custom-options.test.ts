@@ -162,13 +162,21 @@ describe('Advanced Filter - custom filter options', () => {
             expect(af.autocompleteEntries()).toEqual(['=', 'Even Numbers', 'Between (Exclusive)']);
         });
 
-        test('a column with no options of its own still offers every built-in for its data type', async () => {
+        test('a column with no options of its own offers every built-in for its data type, plus the ones its filter adds', async () => {
             const api = gridsManager.createGrid('grid1', opts());
             await asyncSetTimeout(0);
             const af = AdvancedFilterHarness.get(api);
 
+            // `filter: true` resolves to the Set Filter here, which adds its own two options to the built-ins.
             await af.type('[Won] ');
-            expect(af.autocompleteEntries()).toEqual(['is true', 'is false', 'is blank', 'is not blank']);
+            expect(af.autocompleteEntries()).toEqual([
+                'is true',
+                'is false',
+                'is blank',
+                'is not blank',
+                'is any of',
+                'is none of',
+            ]);
         });
 
         // `empty` is the column filter's placeholder entry and names no operator here, so narrowing to it

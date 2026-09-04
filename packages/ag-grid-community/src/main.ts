@@ -290,6 +290,8 @@ export type {
     NumberAdvancedFilterModel,
     ObjectAdvancedFilterModel,
     ScalarAdvancedFilterModelType,
+    SetAdvancedFilterModel,
+    SetAdvancedFilterModelType,
     TextAdvancedFilterModel,
     TextAdvancedFilterModelType,
 } from './interfaces/advancedFilterModel';

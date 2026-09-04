@@ -176,6 +176,11 @@ export class AdvancedFilterBuilderHarness {
         return this.valuePills(item)[index]?.querySelector(PILL_DISPLAY)?.textContent?.trim() ?? '';
     }
 
+    /** Display text of the operator pill on `item`. */
+    public operatorPillText(item: HTMLElement): string {
+        return this.liveItem(item).querySelector(`${OPTION_PILL} ${PILL_DISPLAY}`)?.textContent?.trim() ?? '';
+    }
+
     /** Clicks value pill `index` on `item` and returns the editor input it opens. */
     public async openValueEditor(item: HTMLElement, index = 0): Promise<HTMLInputElement> {
         const pill = this.valuePills(item)[index];

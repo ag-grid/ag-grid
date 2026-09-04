@@ -1,11 +1,18 @@
 import { _removeFromParent, _toStringOrNull } from 'ag-stack';
 
-import type { AgColumn, BaseCellDataType, BeanCollection, ColumnAdvancedFilterModel } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BaseCellDataType,
+    BeanCollection,
+    ColumnAdvancedFilterModel,
+    SetAdvancedFilterModel,
+    SetFilterModelValue,
+} from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
-import type { FilterExpressionOperator } from '../filterExpressionOperators';
+import type { FilterExpressionOperator, OperandsKind } from '../filterExpressionOperators';
 import { OPERAND_COUNT } from '../filterExpressionOperators';
 import type { ColumnFilterModelOperands, PartialColumnFilterModel } from '../filterExpressionUtils';
 import { OPERAND_KEYS, getConditionValidationMessage, getNumberParser } from '../filterExpressionUtils';
@@ -13,9 +20,8 @@ import type {
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     CreatePillParams,
+    Pill,
 } from './iAdvancedFilterBuilder';
-import type { InputPillComp } from './inputPillComp';
-import type { SelectPillComp } from './selectPillComp';
 
 export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEvents> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
@@ -25,24 +31,22 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     private item: AdvancedFilterBuilderItem;
-    private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
+    private createPill: (params: CreatePillParams) => Pill;
     private filterModel: ColumnAdvancedFilterModel;
     private baseCellDataType: BaseCellDataType;
     private column: AgColumn | undefined;
-    private numOperands: number;
-    private eColumnPill: SelectPillComp | InputPillComp;
-    private eOperatorPill: SelectPillComp | InputPillComp | undefined;
-    private readonly eOperandPills: (SelectPillComp | InputPillComp)[] = [];
+    private operands: OperandsKind;
+    private eColumnPill: Pill;
+    private eOperatorPill: Pill | undefined;
+    private readonly eOperandPills: Pill[] = [];
+    private hasSetValuesPill = false;
     private validationMessage: string | null = null;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-advanced-filter-builder-item-condition', role: 'presentation' });
     }
 
-    public init(params: {
-        item: AdvancedFilterBuilderItem;
-        createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
-    }): void {
+    public init(params: { item: AdvancedFilterBuilderItem; createPill: (params: CreatePillParams) => Pill }): void {
         const { item, createPill } = params;
         this.item = item;
         this.createPill = createPill;
@@ -75,7 +79,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         const columnDetails = this.advFilterExpSvc.getColumnDetails(filterModel.colId);
         this.baseCellDataType = columnDetails.baseCellDataType;
         this.column = columnDetails.column;
-        this.numOperands = this.getNumOperands(filterModel.type);
+        this.setOperands(filterModel.type);
 
         this.eColumnPill = this.createPill({
             key: filterModel.colId,
@@ -144,7 +148,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
 
     /** Two pills both called "Value" are indistinguishable to a screen reader, hence the from/to labels. */
     private getOperandAriaLabel(index: number): string {
-        if (this.numOperands < 2) {
+        if (this.operands !== 'range') {
             return this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderValue');
         }
         const translate = this.getLocaleTextFunc();
@@ -154,6 +158,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     private destroyOperandPills(): void {
+        this.hasSetValuesPill = false;
         const eOperandPills = this.eOperandPills;
         for (let i = 0, len = eOperandPills.length; i < len; ++i) {
             const eOperandPill = eOperandPills[i];
@@ -165,11 +170,21 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
 
     /** Call after every change to the count: the first pill is named From only while there is a second. */
     private syncOperandPills(): void {
-        const { eOperandPills, numOperands } = this;
+        const { eOperandPills, operands } = this;
+        const numOperands = OPERAND_COUNT[operands];
         for (let i = numOperands, len = OPERAND_KEYS.length; i < len; ++i) {
             this.setOperandModelValue(i, undefined);
         }
-        if (eOperandPills.length === numOperands) {
+        if (operands === 'list') {
+            if (!this.hasSetValuesPill) {
+                this.destroyOperandPills();
+                this.createSetValuesPill();
+            }
+            return;
+        }
+        // `values` is not one of `OPERAND_KEYS`, so leaving a list option has to drop it separately.
+        delete (this.filterModel as PartialColumnFilterModel).values;
+        if (eOperandPills.length === numOperands && !this.hasSetValuesPill) {
             return;
         }
         this.destroyOperandPills();
@@ -178,14 +193,39 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         }
     }
 
+    /** The whole value list is one pill, opening the column's own Set Filter to choose in. */
+    private createSetValuesPill(): void {
+        const column = this.column;
+        if (!column) {
+            return;
+        }
+        this.hasSetValuesPill = true;
+        const filterModel = this.filterModel as SetAdvancedFilterModel;
+        filterModel.values ??= [];
+        const ePill = this.createPill({
+            key: '',
+            column,
+            values: filterModel.values,
+            cssClass: 'ag-advanced-filter-builder-value-pill',
+            isSelect: 'set',
+            update: (values: SetFilterModelValue) => {
+                filterModel.values = values;
+                this.validate();
+            },
+            ariaLabel: this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderValue'),
+        });
+        this.eOperandPills.push(ePill);
+        this.getGui().appendChild(ePill.getGui());
+    }
+
     private getOperandModelValue(index: number): string | number | undefined {
-        const model: ColumnFilterModelOperands = this.filterModel;
+        const model = this.filterModel as ColumnFilterModelOperands;
         return model[OPERAND_KEYS[index]];
     }
 
     /** Undefined removes the slot, so the model this builds carries no key the chosen option does not use. */
     private setOperandModelValue(index: number, value: string | number | undefined): void {
-        const model: ColumnFilterModelOperands = this.filterModel;
+        const model = this.filterModel as ColumnFilterModelOperands;
         const key = OPERAND_KEYS[index];
         if (value === undefined) {
             delete model[key];
@@ -214,7 +254,6 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         this.column = column;
         this.baseCellDataType = baseCellDataType;
         this.filterModel.colId = colId;
-        this.filterModel.filterType = baseCellDataType;
 
         // A data type change takes the operator with it; within one type the column's own options decide.
         const keepOperator =
@@ -233,20 +272,29 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         // A pill's editor and display come from the column's own parser and formatter.
         if (previousColumn !== column) {
             this.destroyOperandPills();
+            // A Set Filter key names a value of one column, so it cannot follow the condition to another.
+            delete (this.filterModel as PartialColumnFilterModel).values;
         }
-        this.numOperands = this.getNumOperands(this.filterModel.type);
+        this.setOperands(this.filterModel.type);
         this.syncOperandPills();
         this.validate();
     }
 
     private setOperatorKey(operator: string): void {
-        const newNumOperands = this.getNumOperands(operator);
-        if (newNumOperands !== this.numOperands) {
-            this.numOperands = newNumOperands;
+        const previousOperands = this.operands;
+        this.setOperands(operator);
+        if (this.operands !== previousOperands) {
             this.syncOperandPills();
         }
         (this.filterModel as PartialColumnFilterModel).type = operator;
         this.validate();
+    }
+
+    /** The kind decides the member: an option taking a list writes a `set` model, not the data type's. */
+    private setOperands(operator: string | undefined): void {
+        const operands = this.getExpressionOperator(operator)?.operands ?? 'none';
+        this.operands = operands;
+        (this.filterModel as PartialColumnFilterModel).filterType = operands === 'list' ? 'set' : this.baseCellDataType;
     }
 
     private setOperand(operand: string, index: number): void {
@@ -260,13 +308,8 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         this.validate();
     }
 
-    private getExpressionOperator(operator: string): FilterExpressionOperator<any> | undefined {
+    private getExpressionOperator(operator: string | undefined): FilterExpressionOperator<any> | undefined {
         return this.advFilterExpSvc.getExpressionOperator(this.baseCellDataType, operator, this.column);
-    }
-
-    private getNumOperands(operator: string): number {
-        const expressionOperator = this.getExpressionOperator(operator);
-        return expressionOperator ? OPERAND_COUNT[expressionOperator.operands] : 0;
     }
 
     private validate(): void {
@@ -276,7 +319,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
             this.filterModel,
             this.column,
             this.baseCellDataType,
-            this.getExpressionOperator(this.filterModel.type ?? '')
+            this.getExpressionOperator(this.filterModel.type)
         );
 
         this.item.valid = !validationMessage;

@@ -1,4 +1,15 @@
-import type { AdvancedFilterModel, AgEvent, BaseCellDataType, JoinAdvancedFilterModel } from 'ag-grid-community';
+import type {
+    AdvancedFilterModel,
+    AgColumn,
+    AgEvent,
+    BaseCellDataType,
+    JoinAdvancedFilterModel,
+    SetFilterModelValue,
+} from 'ag-grid-community';
+
+import type { SetValuesPillComp } from '../set/setValuesPillComp';
+import type { InputPillComp } from './inputPillComp';
+import type { SelectPillComp } from './selectPillComp';
 
 interface AdvancedFilterBuilderItemEvent<T extends AdvancedFilterBuilderEvents> extends AgEvent<T> {
     item: AdvancedFilterBuilderItem;
@@ -24,7 +35,16 @@ export interface AdvancedFilterBuilderItem {
     showMove?: boolean;
 }
 
-export type CreatePillParams = CreateInputPillParams | CreateSelectPillParams;
+export type CreatePillParams = CreateInputPillParams | CreateSelectPillParams | CreateSetPillParams;
+
+/** What `createPill` returns, for the three wrappers that pass it around without knowing which it built. */
+export type Pill = SelectPillComp | InputPillComp | SetValuesPillComp;
+
+interface CreateSetPillParams extends BaseCreatePillParams<SetFilterModelValue> {
+    isSelect: 'set';
+    column: AgColumn;
+    values: SetFilterModelValue;
+}
 
 interface CreateInputPillParams extends BaseCreatePillParams {
     isSelect: false;
@@ -42,10 +62,10 @@ interface CreateSelectPillParams extends BaseCreatePillParams {
     pickerAriaLabelValue: string;
 }
 
-interface BaseCreatePillParams {
+interface BaseCreatePillParams<TValue = string> {
     key: string;
     cssClass: string;
-    update: (key: string) => void;
+    update: (value: TValue) => void;
     ariaLabel: string;
 }
 

@@ -16,7 +16,7 @@ import {
     TextFilterModule,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
 interface TestRow {
     id: number;
@@ -58,6 +58,7 @@ describe('Advanced Filter matches the column filter', () => {
             NumberFilterModule,
             DateFilterModule,
             BigIntFilterModule,
+            SetFilterModule,
             AdvancedFilterModule,
             ClientSideRowModelModule,
         ],
@@ -140,6 +141,46 @@ describe('Advanced Filter matches the column filter', () => {
 
             expectFiltered(columnFilterIds);
             expect(advancedFilterIds).toEqual(columnFilterIds);
+        });
+    });
+
+    describe('a Set Filter column', () => {
+        const setDefs = COLUMN_DEFS!.map((def) =>
+            (def as { field?: string }).field === 'athlete' ? { ...def, filter: 'agSetColumnFilter' } : def
+        );
+
+        const advancedModel = (type: 'isAnyOf' | 'isNoneOf', values: (string | null)[]) =>
+            ({ filterType: 'set', colId: 'athlete', type, values }) as ColumnAdvancedFilterModel;
+
+        test('`isAnyOf` filters the same rows as the equivalent selection', async () => {
+            const selections: Record<string, (string | null)[]> = {
+                'one value': ['Alpha'],
+                'two values': ['Alpha', 'Beta'],
+                'a blank': [null],
+                'a blank among values': [null, 'Alpha'],
+            };
+            const outcomes: Record<string, number[]> = {};
+            const expected: Record<string, number[]> = {};
+
+            for (const [name, values] of Object.entries(selections)) {
+                const columnFilterIds = await withColumnFilter('athlete', { filterType: 'set', values }, setDefs);
+                expectFiltered(columnFilterIds);
+                expected[name] = columnFilterIds;
+                outcomes[name] = await withAdvancedFilter(advancedModel('isAnyOf', values), setDefs);
+            }
+
+            expect(outcomes).toEqual(expected);
+        });
+
+        test('`isNoneOf` leaves exactly the rows the selection excludes', async () => {
+            const values = ['Alpha', 'Beta'];
+            const selected = await withColumnFilter('athlete', { filterType: 'set', values }, setDefs);
+            const excluded = await withAdvancedFilter(advancedModel('isNoneOf', values), setDefs);
+
+            expectFiltered(selected);
+            expectFiltered(excluded);
+            const byId = (a: number, b: number) => a - b;
+            expect([...selected, ...excluded].sort(byId)).toEqual(ROW_DATA.map(({ id }) => id).sort(byId));
         });
     });
 

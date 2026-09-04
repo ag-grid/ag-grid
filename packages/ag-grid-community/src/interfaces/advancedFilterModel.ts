@@ -1,5 +1,6 @@
 import type { CheckDataTypes } from '../entities/dataType';
 import type { CustomFilterOptionKey, ISimpleFilterModelPresetType } from '../filter/provided/iSimpleFilter';
+import type { SetFilterModelValue } from './iSetFilter';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 
@@ -37,6 +38,8 @@ export type ScalarAdvancedFilterModelType =
 export type DateAdvancedFilterModelType = ScalarAdvancedFilterModelType | ISimpleFilterModelPresetType;
 
 export type BooleanAdvancedFilterModelType = 'true' | 'false' | 'blank' | 'notBlank';
+
+export type SetAdvancedFilterModelType = 'isAnyOf' | 'isNoneOf';
 
 /** Represents a single filter condition for a text column */
 export interface TextAdvancedFilterModel {
@@ -153,6 +156,17 @@ export interface DateTimeStringAdvancedFilterModel {
     filterTo?: string;
 }
 
+/** Represents a single filter condition for a column configured with a Set Filter */
+export interface SetAdvancedFilterModel {
+    filterType: 'set';
+    /** The ID of the column being filtered. */
+    colId: string;
+    /** The filter option that is being applied. */
+    type: SetAdvancedFilterModelType;
+    /** The Set Filter keys to filter on, as stored by the Set Filter model. */
+    values: SetFilterModelValue;
+}
+
 /** Represents a single filter condition on a column */
 export type ColumnAdvancedFilterModel =
     | BooleanAdvancedFilterModel
@@ -163,10 +177,15 @@ export type ColumnAdvancedFilterModel =
     | DateTimeStringAdvancedFilterModel
     | BigIntAdvancedFilterModel
     | NumberAdvancedFilterModel
-    | TextAdvancedFilterModel;
+    | TextAdvancedFilterModel
+    | SetAdvancedFilterModel;
 
-// Line below used for type checking
+// Line below used for type checking. `set` is excluded because it comes from the column's filter rather
+// than its Cell Data Type, and a key outside `BaseCellDataType` makes the check pass on anything.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type _CheckColumnAdvancedFilterModel = CheckDataTypes<{
-    [K in ColumnAdvancedFilterModel['filterType']]: ColumnAdvancedFilterModel & { filterType: K };
+    [K in Exclude<ColumnAdvancedFilterModel['filterType'], 'set'>]: ColumnAdvancedFilterModel & { filterType: K };
 }>;
+// The exclusion above leaves `set` the one member with no check, so it gets its own.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _CheckSetAdvancedFilterModel = SetAdvancedFilterModel extends ColumnAdvancedFilterModel ? true : never;
