@@ -562,10 +562,10 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     defaultHeaderStyle?: PdfCellStyle;
     /**
      * Controls exported column widths. Use `auto` to size from exported content, `grid` to use the
-     * current grid width, a number for a width in points, or a callback for per-column control.
+     * current column width in the grid, a number for a width in points, or a callback for
+     * per-column control.
      * Widths are proportionally reduced when their total exceeds the printable page width.
-     * By default, current grid widths are used except for the Row Numbers column, which is sized
-     * from its exported content.
+     * By default, columns use their current width in the grid.
      */
     columnWidth?: PdfColumnWidth | PdfColumnWidthCallback;
     /**

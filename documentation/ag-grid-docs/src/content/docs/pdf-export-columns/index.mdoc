@@ -54,8 +54,6 @@ api.exportDataAsPdf({
 });
 ```
 
-When `columnWidth` is omitted, the exported Row Numbers column is sized automatically from its contents. A global or per-column `columnWidth` configuration can override this behaviour.
-
 The example below demonstrates header suppression, visible or hidden column selection, and Row Numbers export.
 
 {% gridExampleRunner title="PDF Export - Columns" name="pdf-export-columns" exampleHeight=350 /%}
@@ -69,7 +67,7 @@ The `columnWidth` option accepts:
 - A number to use a fixed width in points.
 - A callback to return a custom value for each column.
 
-When `columnWidth` is omitted, regular columns use `'grid'` and the Row Numbers column uses `'auto'`. A `columnWidth` value overrides those defaults; a callback result overrides the default for that column. Returning `null` or `undefined` from the callback uses the column's default mode.
+When `columnWidth` is omitted, columns use `'grid'`. A `columnWidth` value overrides that default; a callback result overrides the default for that column. Returning `null` or `undefined` from the callback uses the column's default mode.
 
 Auto widths are measured before page scaling. If the combined widths exceed the printable page width, every column is reduced proportionally. Smaller tables are not stretched. Horizontal pagination and automatically expanding the page size are not supported.
 

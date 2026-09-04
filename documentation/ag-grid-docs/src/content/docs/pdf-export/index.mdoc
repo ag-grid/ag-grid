@@ -23,7 +23,7 @@ Set `suppressPdfExport=true` to disable both `exportDataAsPdf()` and `getDataAsP
 
 The export uses the current column order and visibility, together with the filtered, sorted, and grouped row data. Exported values are produced independently of the rendered grid cells, using Value Getters and, by default, [Value Formatters](./value-formatters/#formatting-for-export).
 
-By default, regular columns use their current grid widths and the Row Numbers column is sized from its exported content. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
+By default, columns use their current width in the grid. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
 
 PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default. Register static TrueType font families to export Unicode text or use right-to-left text layout.
 
