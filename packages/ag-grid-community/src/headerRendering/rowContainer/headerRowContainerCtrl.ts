@@ -142,12 +142,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         this.restoreFocusOnHeader(focusSvc, focusedHeaderPosition);
 
-        // The ctrls are recreated (not reused) whenever `keepColumns` is false, which replaces the
-        // header DOM. Comparing identity rather than just the count means consumers that track the
-        // header rows themselves - aria row indexes, header height, test id stamping - are told when
-        // the rows they were holding have been thrown away.
-        const ctrlsChanged = oldCtrls.length !== allCtrls.length || allCtrls.some((ctrl, i) => ctrl !== oldCtrls[i]);
-        if (ctrlsChanged) {
+        if (oldCtrls.length !== allCtrls.length) {
             this.beans.eventSvc.dispatchEvent({
                 type: 'headerRowsChanged',
             });
