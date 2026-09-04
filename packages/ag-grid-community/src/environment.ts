@@ -47,9 +47,6 @@ export class Environment
     >
     implements NamedBean
 {
-    /** Whether the Theming API is the active styling system, so legacy variables would be ignored. */
-    private themingApiActive = false;
-
     protected override initVariables(): void {
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.getSizeEl(ROW_HEIGHT);
@@ -119,9 +116,9 @@ export class Environment
         if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
-        // Catches variables a class swap introduces after grid creation. 'theme' is excluded
-        // because it fires before postProcessThemeChange updates themingApiActive.
-        if (change !== 'theme' && this.themingApiActive) {
+        // catches variables a class swap introduces after grid creation; 'theme' is covered by
+        // postProcessThemeChange, which runs after the new theme is in place
+        if (change !== 'theme') {
             this.checkLegacyThemeVariables();
         }
         super.fireStylesChangedEvent(change);
@@ -147,20 +144,12 @@ export class Environment
             } else {
                 this.beans.log.error(239);
             }
-            this.themingApiActive = false;
-        } else {
-            this.themingApiActive = !!newGridTheme;
-            if (newGridTheme) {
-                this.checkLegacyThemeVariables();
-            }
+        } else if (newGridTheme) {
+            this.checkLegacyThemeVariables();
         }
     }
 
-    /**
-     * Legacy theme variables are ignored by the Theming API, so setting one has no effect. The
-     * reporting lives in the ValidationModule; without it registered, nothing is checked. Only
-     * called when the legacy stylesheet is absent, as loading it is already an error.
-     */
+    /** The reporting lives in the ValidationModule; without it registered, nothing is checked. */
     private checkLegacyThemeVariables(): void {
         this.beans.validation?.checkLegacyThemeVariables(this.eRootDiv);
     }

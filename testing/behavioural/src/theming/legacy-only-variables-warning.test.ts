@@ -5,14 +5,9 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations, themeQuartz } from 'ag-grid-community';
 
 /**
- * The Theming API does not read the v32 legacy theme variables, so setting one has no effect at
- * all. Nothing used to say so, which is how a "compact" preset built from `--ag-grid-size` came to
- * look like a grid bug: the preset lowers `--ag-grid-size` and `--ag-font-size`, the grid ignores
- * the former outright and clamps the latter with `max(iconSize, cellFontSize)`, so the row height
- * never moves. That is a silently ignored variable, not a row-model defect.
- *
- * Loading the legacy stylesheet alongside the Theming API is a different mistake, already reported
- * as error #106/#239, so these variables are only reported when that stylesheet is absent.
+ * The Theming API does not read the v32 legacy theme variables, so setting one has no effect - a
+ * "compact" preset built from `--ag-grid-size` looks like a row-height bug rather than an ignored
+ * variable. Loading the legacy stylesheet alongside is the separate error #106/#239.
  */
 describe('legacy-only theme variables under the Theming API', () => {
     const gridsManager = new TestGridsManager({
@@ -21,7 +16,7 @@ describe('legacy-only theme variables under the Theming API', () => {
     let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
-        // This file asserts on validation diagnostics; the global throw-on-validation must be off here.
+        // this file asserts on validation diagnostics, so the global throw-on-validation must be off
         enableDevValidations({ throwOn: [] });
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
@@ -35,13 +30,8 @@ describe('legacy-only theme variables under the Theming API', () => {
     const gridOptions = { columnDefs: [{ field: 'a' }], rowData: [{ a: 1 }] };
 
     /**
-     * Applications set theme variables on their own wrapper - `document.body` in the docs example
-     * these repros came from - and CSS inheritance carries them down to the grid's styled root,
-     * which is where the grid resolves them. happy-dom's `getComputedStyle` does not implement
-     * custom-property inheritance, so the variables are set directly on that styled root here.
-     *
-     * `beans` is not public API, but the styled root is created by the grid and has no accessor;
-     * `document.querySelector` is not usable because popups add styled roots of their own.
+     * The grid resolves variables on its styled root, and happy-dom does not inherit custom
+     * properties, so they are set there directly rather than on a wrapper as an application would.
      */
     const styledRootOf = (api: GridApi): HTMLElement =>
         (api.getDisplayedRowAtIndex(0) as any).beans.environment.eRootDiv;
@@ -96,8 +86,7 @@ describe('legacy-only theme variables under the Theming API', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
         consoleWarnSpy.mockClear();
 
-        // Switching away from a Theming API theme is what actually re-runs the check; setting
-        // `theme` to the value it already holds fires no property change at all.
+        // switching away from a Theming API theme is what re-runs the check
         styledRootOf(api).style.setProperty('--ag-grid-size', '3px');
         api.setGridOption('theme', 'legacy');
 

@@ -33,7 +33,6 @@ export class ValidationService extends BeanStub implements NamedBean {
      * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
      */
     private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
-    private legacyVariablesReported = false;
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -109,21 +108,13 @@ export class ValidationService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    /**
-     * Warns about legacy theme variables set on the grid while the Theming API is active. The
-     * Theming API never reads them, so they are silently ignored - most visibly with
-     * `--ag-grid-size`, which applications set to change grid density and which does nothing.
-     *
-     * Reported at most once per grid: every theme change re-runs this, and an application that
-     * animates a theme parameter would otherwise repeat the same warning on each frame.
-     */
+    /** Legacy theme variables are silently ignored under the Theming API, so setting one has no effect. */
     public checkLegacyThemeVariables(eRootDiv: HTMLElement): void {
-        if (this.legacyVariablesReported) {
+        if (this.gos.get('theme') === 'legacy') {
             return;
         }
         const replacements = _findLegacyOnlyVariables(eRootDiv);
         if (replacements.length > 0) {
-            this.legacyVariablesReported = true;
             this.warn(332, { replacements });
         }
     }
