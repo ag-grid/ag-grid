@@ -156,6 +156,30 @@ For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Ty
 - `includeBlanksInGreaterThan = true`
 - `includeBlanksInRange = true`
 
+For `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Types, the Date Filter's [`comparator`](./filter-date/#filter-comparator) also decides the column's comparisons here, including the [relative date options](#relative-date-options) below. This is how a column whose cells carry a time is compared by date alone. The comparator is given the cell value as the column holds it, and `isValidDate` gates every comparison alongside it:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            cellDataType: 'date',
+            filter: 'agDateColumnFilter',
+            filterParams: {
+                // ignore the time the cell carries, so `[Date] = 24/08/2008` matches the whole day
+                comparator: (filterLocalDateAtMidnight, cellValue) => {
+                    const cellDate = new Date(cellValue);
+                    cellDate.setHours(0, 0, 0, 0);
+                    return cellDate.getTime() - filterLocalDateAtMidnight.getTime();
+                },
+            },
+        },
+    ],
+}
+```
+
+It applies equally where the Date Filter is a child of a Multi Filter. A Set Filter column's `comparator` orders its values instead, and a custom filter component's `filterParams` are its own.
+
 These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
 
 ### Relative Date Options

@@ -7,16 +7,35 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
+import type { AdvancedFilterModel, ColDef, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import {
     BigIntFilterModule,
     ClientSideRowModelModule,
+    CustomFilterModule,
     DateFilterModule,
     NumberFilterModule,
     TextFilterModule,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+
+/** A filter component that filters nothing: only its `filterParams` matter here. */
+class MinimalFilter {
+    public init(): void {}
+    public getGui(): HTMLElement {
+        return document.createElement('div');
+    }
+    public isFilterActive(): boolean {
+        return false;
+    }
+    public doesFilterPass(): boolean {
+        return true;
+    }
+    public getModel(): null {
+        return null;
+    }
+    public setModel(): void {}
+}
 
 interface TestRow {
     id: number;
@@ -59,6 +78,8 @@ describe('Advanced Filter matches the column filter', () => {
             DateFilterModule,
             BigIntFilterModule,
             SetFilterModule,
+            MultiFilterModule,
+            CustomFilterModule,
             AdvancedFilterModule,
             ClientSideRowModelModule,
         ],
@@ -72,8 +93,13 @@ describe('Advanced Filter matches the column filter', () => {
     afterEach(() => gridsManager.reset());
 
     /** The rows a column filter shows for `model`, applied to a grid with no Advanced Filter. */
-    async function withColumnFilter(colId: string, model: object, columnDefs = COLUMN_DEFS): Promise<number[]> {
-        const api = gridsManager.createGrid('columnFilterGrid', { columnDefs, rowData: ROW_DATA });
+    async function withColumnFilter(
+        colId: string,
+        model: object,
+        columnDefs: GridOptions['columnDefs'] = COLUMN_DEFS,
+        rowData: object[] = ROW_DATA
+    ): Promise<number[]> {
+        const api = gridsManager.createGrid('columnFilterGrid', { columnDefs, rowData });
         await asyncSetTimeout(0);
         await api.setColumnFilterModel(colId, model);
         api.onFilterChanged();
@@ -84,12 +110,12 @@ describe('Advanced Filter matches the column filter', () => {
     }
 
     /** The rows the Advanced Filter shows for the equivalent condition. */
-    async function withAdvancedFilter(model: AdvancedFilterModel, columnDefs = COLUMN_DEFS): Promise<number[]> {
-        const api = gridsManager.createGrid('advancedFilterGrid', {
-            columnDefs,
-            rowData: ROW_DATA,
-            enableAdvancedFilter: true,
-        });
+    async function withAdvancedFilter(
+        model: AdvancedFilterModel,
+        columnDefs: GridOptions['columnDefs'] = COLUMN_DEFS,
+        rowData: object[] = ROW_DATA
+    ): Promise<number[]> {
+        const api = gridsManager.createGrid('advancedFilterGrid', { columnDefs, rowData, enableAdvancedFilter: true });
         await asyncSetTimeout(0);
         api.setAdvancedFilterModel(model);
         api.onFilterChanged();
@@ -100,9 +126,9 @@ describe('Advanced Filter matches the column filter', () => {
     }
 
     /** Anchors the comparison: were either side to stop filtering, both would return every row and agree. */
-    function expectFiltered(ids: number[]): void {
+    function expectFiltered(ids: number[], total = ROW_DATA.length): void {
         expect(ids.length).toBeGreaterThan(0);
-        expect(ids.length).toBeLessThan(ROW_DATA.length);
+        expect(ids.length).toBeLessThan(total);
     }
 
     /**
@@ -231,8 +257,8 @@ describe('Advanced Filter matches the column filter', () => {
         expect(getDisplayedIds(api as GridApi<TestRow>)).toEqual([0, 1]);
     });
 
-    // The column filter's `isValid(cellValue)` gate keeps an unreadable date out of the comparison; the
-    // Advanced Filter has no equivalent and converts before it compares.
+    // A `dateString` column's `comparator` and `isValidDate` are the grid's own, so the same gate keeps an
+    // unreadable date out of the comparison on both sides.
     test('an unreadable date compares rather than throwing, in both', async () => {
         expect(await withColumnFilter('date', { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' })).toEqual([
             0,
@@ -433,6 +459,485 @@ describe('Advanced Filter matches the column filter', () => {
 
             expect(await withAdvancedFilter({ ...model, filter: '9', filterTo: '10' })).toEqual([]);
             expect(await withAdvancedFilter({ ...model, filter: '10', filterTo: '9' })).toEqual([0, 1, 2, 3, 4, 5, 6]);
+        });
+    });
+
+    /**
+     * A date column's `filterParams.comparator` decides its comparisons in both filters. Cells carry a time
+     * here, which is what makes a day-only comparator change the answer rather than merely restate it.
+     */
+    describe('a date comparator', () => {
+        interface TimedRow {
+            id: number;
+            when: Date | null;
+        }
+
+        const TIMED_ROWS: TimedRow[] = [
+            { id: 0, when: new Date(2008, 7, 24, 13, 45) },
+            { id: 1, when: new Date(2008, 7, 24) },
+            { id: 2, when: new Date(2012, 7, 5, 9, 30) },
+            { id: 3, when: new Date(2020, 6, 23, 23, 59) },
+            { id: 4, when: null },
+        ];
+
+        /** The ticket's own comparator: compare the day, ignore the time the cell carries. */
+        function midnightComparator(filterDate: Date, cellValue: any): number {
+            const cellDate = new Date(cellValue);
+            cellDate.setHours(0, 0, 0, 0);
+            if (cellDate < filterDate) {
+                return -1;
+            }
+            if (cellDate > filterDate) {
+                return 1;
+            }
+            return 0;
+        }
+
+        function timedDefs(
+            filterParams: object,
+            filter: ColDef['filter'] = 'agDateColumnFilter'
+        ): GridOptions<TimedRow>['columnDefs'] {
+            return [{ field: 'id' }, { field: 'when', cellDataType: 'date', filter, filterParams }];
+        }
+
+        const timedColumnFilter = (
+            model: object,
+            columnDefs: GridOptions<TimedRow>['columnDefs'],
+            rowData: object[] = TIMED_ROWS
+        ) => withColumnFilter('when', model, columnDefs, rowData);
+
+        const timedAdvancedFilter = (
+            model: AdvancedFilterModel,
+            columnDefs: GridOptions<TimedRow>['columnDefs'],
+            rowData: object[] = TIMED_ROWS
+        ) => withAdvancedFilter(model, columnDefs, rowData);
+
+        // `greaterThanOrEqual` and `lessThanOrEqual` are not among the Date Filter's default options, so the
+        // column has to name them for there to be anything to compare the Advanced Filter against.
+        const comparatorParams = {
+            comparator: midnightComparator,
+            filterOptions: [
+                'equals',
+                'notEqual',
+                'greaterThan',
+                'greaterThanOrEqual',
+                'lessThan',
+                'lessThanOrEqual',
+                'inRange',
+                'blank',
+                'notBlank',
+            ],
+        };
+        const comparatorDefs = timedDefs(comparatorParams);
+
+        // The reported case: without the comparator only the cell that happens to sit at midnight matches.
+        test('`equals` matches every cell on the day, in both', async () => {
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' },
+                comparatorDefs
+            );
+
+            expect(columnFilterIds).toEqual([0, 1]);
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                    comparatorDefs
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // Each option maps to a different sign of the comparator's result, so a mapping that drifts from the
+        // column filter's shows up as a different set of rows for that option alone.
+        test.each(['notEqual', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual'])(
+            '`%s` filters the same rows as the Date Filter',
+            async (type) => {
+                // A day every option leaves some rows on either side of, and one the timed cell sits on.
+                const columnFilterIds = await timedColumnFilter(
+                    { filterType: 'date', type, dateFrom: '2012-08-05' },
+                    comparatorDefs
+                );
+
+                expectFiltered(columnFilterIds, TIMED_ROWS.length);
+                expect(
+                    await timedAdvancedFilter(
+                        { filterType: 'date', colId: 'when', type, filter: '2012-08-05' } as ColumnAdvancedFilterModel,
+                        comparatorDefs
+                    )
+                ).toEqual(columnFilterIds);
+            }
+        );
+
+        test('`inRange` takes both bounds through the comparator, in both', async () => {
+            const model = { type: 'inRange', dateFrom: '2008-08-24', dateTo: '2020-07-23' };
+            const advancedModel = {
+                filterType: 'date' as const,
+                colId: 'when',
+                type: 'inRange' as const,
+                filter: '2008-08-24',
+                filterTo: '2020-07-23',
+            };
+
+            const exclusiveIds = await timedColumnFilter({ filterType: 'date', ...model }, comparatorDefs);
+            expect(exclusiveIds).toEqual([2]); // both end days are excluded, times and all
+            expect(await timedAdvancedFilter(advancedModel, comparatorDefs)).toEqual(exclusiveIds);
+
+            const inclusiveDefs = timedDefs({ ...comparatorParams, inRangeInclusive: true });
+            const inclusiveIds = await timedColumnFilter({ filterType: 'date', ...model }, inclusiveDefs);
+            expect(inclusiveIds).toEqual([0, 1, 2, 3]);
+            expect(await timedAdvancedFilter(advancedModel, inclusiveDefs)).toEqual(inclusiveIds);
+        });
+
+        // A relative range is half-open, so which side each bound is compared on is what the day boundary pins.
+        // The comparator reads a cell as the day before it holds, which is what puts the raw value and the
+        // compared day on opposite sides of that boundary: converting instead of comparing picks the other row.
+        test('a relative date option compares its bounds through the comparator, in both', async () => {
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+            const at = (dayOffset: number, hours: number) => {
+                const date = new Date(startOfToday);
+                date.setDate(date.getDate() + dayOffset);
+                date.setHours(hours, 0);
+                return date;
+            };
+            const rowData = [
+                { id: 0, when: at(0, 9) },
+                { id: 1, when: at(1, 9) },
+                { id: 2, when: at(2, 9) },
+            ];
+            const columnDefs = timedDefs({
+                comparator: (filterDate: Date, cellValue: any) => {
+                    const cellDate = new Date(cellValue);
+                    cellDate.setDate(cellDate.getDate() - 1);
+                    return midnightComparator(filterDate, cellDate);
+                },
+                filterOptions: ['today', 'equals'],
+            });
+
+            const columnFilterIds = await timedColumnFilter({ filterType: 'date', type: 'today' }, columnDefs, rowData);
+
+            expect(columnFilterIds).toEqual([1]); // tomorrow's cell is the one that reads as today
+            expect(
+                await timedAdvancedFilter({ filterType: 'date', colId: 'when', type: 'today' }, columnDefs, rowData)
+            ).toEqual(columnFilterIds);
+        });
+
+        // A comparator is handed whatever the cell holds, so `isValidDate` is what keeps a value it cannot
+        // read out of the comparison — the pairing the Date Filter's own documentation describes.
+        test('`isValidDate` keeps an unreadable cell out of every comparison but `notEqual`, in both', async () => {
+            const columnDefs = timedDefs({
+                ...comparatorParams,
+                isValidDate: (value: any) => value instanceof Date && !isNaN(+value),
+            });
+            const rowData = [
+                { id: 0, when: new Date(2008, 7, 24, 13, 45) },
+                { id: 1, when: new Date(NaN) },
+            ];
+
+            for (const [type, expected] of [
+                ['equals', [0]],
+                ['notEqual', [1]],
+                ['lessThanOrEqual', [0]],
+            ] as [string, number[]][]) {
+                const columnFilterIds = await timedColumnFilter(
+                    { filterType: 'date', type, dateFrom: '2008-08-24' },
+                    columnDefs,
+                    rowData
+                );
+                expect(columnFilterIds).toEqual(expected);
+                expect(
+                    await timedAdvancedFilter(
+                        { filterType: 'date', colId: 'when', type, filter: '2008-08-24' } as ColumnAdvancedFilterModel,
+                        columnDefs,
+                        rowData
+                    )
+                ).toEqual(columnFilterIds);
+            }
+
+            // `inRange` and the relative options gate through paths of their own. Both need a cell the
+            // comparator would otherwise admit, or the range excludes it anyway and the gate proves nothing.
+            const rangeDefs = timedDefs({
+                ...comparatorParams,
+                isValidDate: (value: any) => value.getFullYear() >= 1900,
+            });
+            const rangeRows = [
+                { id: 0, when: new Date(1899, 5, 15) },
+                { id: 1, when: new Date(2008, 7, 24) },
+            ];
+            const rangeModel = { type: 'inRange', dateFrom: '1899-01-01', dateTo: '2020-01-01' };
+
+            const rangeColumnIds = await timedColumnFilter({ filterType: 'date', ...rangeModel }, rangeDefs, rangeRows);
+            expect(rangeColumnIds).toEqual([1]); // 1899 sits inside the range and is refused by `isValidDate`
+            expect(
+                await timedAdvancedFilter(
+                    {
+                        filterType: 'date',
+                        colId: 'when',
+                        type: 'inRange',
+                        filter: '1899-01-01',
+                        filterTo: '2020-01-01',
+                    },
+                    rangeDefs,
+                    rangeRows
+                )
+            ).toEqual(rangeColumnIds);
+
+            const todayDefs = timedDefs({
+                ...comparatorParams,
+                isValidDate: (value: any) => value.getHours() !== 3,
+                filterOptions: ['today', 'equals'],
+            });
+            const todayAt = (hours: number) => {
+                const date = new Date();
+                date.setHours(hours, 0, 0, 0);
+                return date;
+            };
+            const todayRows = [
+                { id: 0, when: todayAt(10) },
+                { id: 1, when: todayAt(3) }, // today too, and refused by `isValidDate` alone
+            ];
+
+            const todayColumnIds = await timedColumnFilter({ filterType: 'date', type: 'today' }, todayDefs, todayRows);
+            expect(todayColumnIds).toEqual([0]);
+            expect(
+                await timedAdvancedFilter({ filterType: 'date', colId: 'when', type: 'today' }, todayDefs, todayRows)
+            ).toEqual(todayColumnIds);
+        });
+
+        test('a blank is still answered by `includeBlanksInEquals`, not by the comparator', async () => {
+            const columnDefs = timedDefs({ ...comparatorParams, includeBlanksInEquals: true });
+            const model = { type: 'equals', dateFrom: '2008-08-24' };
+
+            const columnFilterIds = await timedColumnFilter({ filterType: 'date', ...model }, columnDefs);
+            expect(columnFilterIds).toEqual([0, 1, 4]); // 4 holds a null date
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                    columnDefs
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // A Set Filter's `comparator` orders its list — `(a, b)` over two cell values — so reading it as a
+        // date comparison compares the wrong things. One that calls every pair equal would match every row.
+        test('a Set Filter column ignores its list `comparator`', async () => {
+            const columnDefs = timedDefs({ comparator: () => 0 }, 'agSetColumnFilter');
+
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                    columnDefs
+                )
+            ).toEqual([1]);
+        });
+
+        // `comparator` is the Date Filter's key; a custom component's `filterParams` are its own, and the
+        // ordinary `(a, b)` sort shape is the inverse of `IDateComparatorFunc`, so reading it flips every option.
+        test('a custom filter component column ignores its own `comparator`', async () => {
+            const columnDefs = timedDefs({ comparator: (a: any, b: any) => (a > b ? 1 : -1) }, MinimalFilter);
+
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'greaterThan', filter: '2010-01-01' },
+                    columnDefs
+                )
+            ).toEqual([2, 3]);
+        });
+
+        // A Multi Filter carries the Date Filter as a child, so its comparator lives a level down.
+        test("a Multi Filter column reads its date child's `comparator`, in both", async () => {
+            const columnDefs = timedDefs(
+                { filters: [{ filter: 'agDateColumnFilter', filterParams: comparatorParams }] },
+                'agMultiColumnFilter'
+            );
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'multi', filterModels: [{ filterType: 'date', type: 'equals', dateFrom: '2008-08-24' }] },
+                columnDefs
+            );
+
+            expect(columnFilterIds).toEqual([0, 1]); // the timed cell too, since the comparator drops its time
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                    columnDefs
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // The child carries the rest of the comparison's configuration as well as the comparator.
+        test("a Multi Filter column reads its date child's `inRangeInclusive`, in both", async () => {
+            const columnDefs = timedDefs(
+                {
+                    filters: [
+                        {
+                            filter: 'agDateColumnFilter',
+                            filterParams: { ...comparatorParams, inRangeInclusive: true },
+                        },
+                    ],
+                },
+                'agMultiColumnFilter'
+            );
+            const model = { type: 'inRange', dateFrom: '2008-08-24', dateTo: '2020-07-23' };
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'multi', filterModels: [{ filterType: 'date', ...model }] },
+                columnDefs
+            );
+
+            expect(columnFilterIds).toEqual([0, 1, 2, 3]); // both end days included, times and all
+            expect(
+                await timedAdvancedFilter(
+                    {
+                        filterType: 'date',
+                        colId: 'when',
+                        type: 'inRange',
+                        filter: '2008-08-24',
+                        filterTo: '2020-07-23',
+                    },
+                    columnDefs
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // The Multi Filter hands a child that child's own parameters, so a flag set only on the parent reaches
+        // neither filter. Row 4 holds a null date and is what a leaked `includeBlanksInEquals` would admit.
+        test("a Multi Filter column leaves its parent's `includeBlanksInEquals` to the parent, in both", async () => {
+            const columnDefs = timedDefs(
+                {
+                    includeBlanksInEquals: true,
+                    filters: [{ filter: 'agDateColumnFilter', filterParams: comparatorParams }],
+                },
+                'agMultiColumnFilter'
+            );
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'multi', filterModels: [{ filterType: 'date', type: 'equals', dateFrom: '2008-08-24' }] },
+                columnDefs
+            );
+
+            expect(columnFilterIds).toEqual([0, 1]);
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                    columnDefs
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // A `date` column converts by identity, so the grid's own `isValidDate` is the only thing between an
+        // unreadable cell and `getTime()` being called on it.
+        test('a `date` column holding a cell that is not a date compares rather than throwing, in both', async () => {
+            const columnDefs = timedDefs({});
+            const rowData = [
+                { id: 0, when: new Date(2008, 7, 24) },
+                { id: 1, when: 'not a date' },
+            ];
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' },
+                columnDefs,
+                rowData
+            );
+
+            expect(columnFilterIds).toEqual([0]);
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' },
+                    columnDefs,
+                    rowData
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // The column filter maps its model inside the per-row comparison, so a comparator that normalises the
+        // date it is handed gets a fresh one each time. One operand shared across rows accumulates the mutation.
+        test('a comparator that mutates the date it is handed is given a fresh one per row, in both', async () => {
+            const columnDefs = timedDefs({
+                comparator: (filterDate: Date, cellValue: any) => {
+                    filterDate.setDate(filterDate.getDate() + 1);
+                    return midnightComparator(filterDate, cellValue);
+                },
+                filterOptions: ['equals'],
+            });
+            const rowData = [
+                { id: 0, when: new Date(2010, 0, 1) },
+                { id: 1, when: new Date(2010, 0, 2) },
+                { id: 2, when: new Date(2010, 0, 3) },
+            ];
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'date', type: 'equals', dateFrom: '2010-01-01' },
+                columnDefs,
+                rowData
+            );
+
+            expect(columnFilterIds).toEqual([1]); // the day after the operand, for every row
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type: 'equals', filter: '2010-01-01' },
+                    columnDefs,
+                    rowData
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // `isValidDate` is the column filter's gate whether or not a comparator sits beside it. The 1899 cell is
+        // the one it refuses, so every option but the negation loses it.
+        test.each([
+            { type: 'lessThan', expected: [] as number[] },
+            { type: 'equals', expected: [] as number[] },
+            { type: 'notEqual', expected: [0, 1] },
+        ])('`isValidDate` alone gates `$type`, in both', async ({ type, expected }) => {
+            const columnDefs = timedDefs({
+                isValidDate: (value: any) => value instanceof Date && value.getFullYear() >= 1900,
+            });
+            const rowData = [
+                { id: 0, when: new Date(1899, 0, 1) },
+                { id: 1, when: new Date(2012, 7, 5) },
+            ];
+
+            const columnFilterIds = await timedColumnFilter(
+                { filterType: 'date', type, dateFrom: '2000-01-01' },
+                columnDefs,
+                rowData
+            );
+
+            expect(columnFilterIds).toEqual(expected);
+            expect(
+                await timedAdvancedFilter(
+                    { filterType: 'date', colId: 'when', type, filter: '2000-01-01' } as ColumnAdvancedFilterModel,
+                    columnDefs,
+                    rowData
+                )
+            ).toEqual(columnFilterIds);
+        });
+
+        // The cell value reaches a comparator as the column holds it, which is the whole reason a column
+        // whose data the data type cannot read supplies one.
+        test('the comparator reads the cell value, not the value the data type converts it to', async () => {
+            const seen: unknown[] = [];
+            const defs = COLUMN_DEFS!.map((def) =>
+                (def as { field?: string }).field === 'date'
+                    ? {
+                          ...def,
+                          filterParams: {
+                              comparator: (filterDate: Date, cellValue: any) => {
+                                  seen.push(cellValue);
+                                  return midnightComparator(filterDate, new Date(cellValue));
+                              },
+                          },
+                      }
+                    : def
+            );
+
+            const advancedIds = await withAdvancedFilter(
+                { filterType: 'dateString', colId: 'date', type: 'equals', filter: '2008-08-24' },
+                defs
+            );
+
+            expect(advancedIds).toEqual([0]);
+            expect(seen.length).toBeGreaterThan(0);
+            expect(seen.every((value) => typeof value === 'string')).toBe(true);
         });
     });
 });

@@ -80,6 +80,25 @@ function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
 
+// Merged onto `colDef.filterParams` by `setColDefPropsForDataType`, so nothing else tells one from the author's.
+const gridSuppliedFilterParams = new WeakSet<object>();
+
+function gridSupplied<T extends object>(fn: T): T {
+    gridSuppliedFilterParams.add(fn);
+    return fn;
+}
+
+// One identity for every `date` column; the `dateString` pair closes over its definition, so it registers per call.
+const gridSuppliedIsValidDate = gridSupplied(isValidDate);
+
+/**
+ * Whether a `filterParams` function is the grid's own for the cell data type, rather than the column author's.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isGridSuppliedFilterParam(value: unknown): boolean {
+    return typeof value === 'function' && gridSuppliedFilterParams.has(value);
+}
+
 type FilterParamsDefArgs = {
     formatValue: DataTypeFormatValueFunc;
     t: LocaleTextFunc;
@@ -145,9 +164,9 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
         // A copy per column, so editing the list one colDef carries cannot reach the others.
         filterOptions: [...BOOLEAN_FILTER_OPTIONS],
     }),
-    date: () => ({ isValidDate }),
+    date: () => ({ isValidDate: gridSuppliedIsValidDate }),
     dateString: ({ dataTypeDefinition }) => ({
-        comparator: (filterDate: Date, cellValue: string | undefined) => {
+        comparator: gridSupplied((filterDate: Date, cellValue: string | undefined) => {
             const cellAsDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(cellValue)!;
             if (cellValue == null || cellAsDate < filterDate) {
                 return -1;
@@ -156,10 +175,12 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
                 return 1;
             }
             return 0;
-        },
-        isValidDate: (value: any) =>
-            typeof value === 'string' &&
-            isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
+        }),
+        isValidDate: gridSupplied(
+            (value: any) =>
+                typeof value === 'string' &&
+                isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value))
+        ),
     }),
     dateTime: (args) => filterParamsForEachDataType.date(args),
     dateTimeString: (args) => filterParamsForEachDataType.dateString(args),
