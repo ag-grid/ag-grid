@@ -10,6 +10,7 @@ mcp.json
 !/skills/technology-stack/
 !/skills/docs-e2e-tests/
 !/skills/testing/
+!/skills/theme-migration/
 
 # Plugin-delivered agents — all agents live in plugins
 /subagents/*.md
