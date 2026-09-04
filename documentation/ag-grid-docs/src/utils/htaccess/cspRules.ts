@@ -385,6 +385,10 @@ const BLOG_SCRIPT_HOSTS = [
     'https://platform.twitter.com', // embedded tweets (widgets.js)
     'https://widget.spreaker.com', // podcast embeds
     'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
+    // The newsletter signup form submits via mc-validate's jQuery JSONP: the subscribe
+    // call is loaded as a <script src> pointing at /subscribe/post-json on this origin,
+    // so it needs script-src on top of the form-action entry in the base policy.
+    'https://ag-grid.us11.list-manage.com',
 ];
 
 const BLOG_STYLE_HOSTS = ['https://cdn-images.mailchimp.com']; // Mailchimp embed stylesheet
