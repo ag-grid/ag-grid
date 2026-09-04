@@ -490,7 +490,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 }
                 case 'csvExport':
-                    return csvCreator
+                    return csvCreator && !gos.get('suppressCsvExport')
                         ? {
                               name: localeTextFunc('csvExport', 'CSV Export'),
                               icon: _createIconNoSpan('csvExport', beans, null),
@@ -498,7 +498,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'excelExport':
-                    return excelCreator
+                    return excelCreator && !gos.get('suppressExcelExport')
                         ? {
                               name: localeTextFunc('excelExport', 'Excel Export'),
                               icon: _createIconNoSpan('excelExport', beans, null),
@@ -506,7 +506,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pdfExport':
-                    return pdfCreator
+                    return pdfCreator && !gos.get('suppressPdfExport')
                         ? {
                               name: localeTextFunc('pdfExport', 'PDF Export'),
                               icon: _createIconNoSpan('pdfExport', beans, null),
