@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 name: theme-migration
-description: 'Convert a legacy (v32) AG Grid theme customisation to the Theming API. Use when an application sets `--ag-*` CSS variables, imports `ag-grid-community/styles/*.css`, uses an `ag-theme-*` class or the Sass API, when grid styling silently has no effect, or when a user reports error/warning #106, #239 or #331.'
+description: 'Convert a legacy (v32) AG Grid theme customisation to the Theming API. Use when an application sets `--ag-*` CSS variables, imports `ag-grid-community/styles/*.css`, uses an `ag-theme-*` class or the Sass API, when grid styling silently has no effect, or when a user reports error/warning #106, #239 or #332.'
 ---
 
 # Migrating a legacy theme to the Theming API
@@ -32,7 +32,7 @@ It splits variables into four groups, and each needs different handling:
 4. **Removed with no replacement** — report these explicitly with "use a CSS rule", never invent a
    parameter name for them.
 
-The runtime warning (#331) covers only the small subset of group 1/2 variables whose replacement is
+The runtime warning (#332) covers only the small subset of group 1/2 variables whose replacement is
 unambiguous; it is not the mapping. It lives in
 `packages/ag-grid-community/src/validation/rules/themeValidations.ts`.
 
@@ -44,14 +44,23 @@ unambiguous; it is not the mapping. It lives in
    (`ag-grid-community/styles/ag-grid.css` or `ag-theme-*.css`) *and* uses the Theming API, that is
    error #106/#239 and must be fixed before anything else — remove the CSS imports, or set
    `theme: 'legacy'` to stay on the old system deliberately.
-3. **Classify each variable** into the four groups above.
-4. **Emit the theme.** Kebab-case CSS names become camelCase parameters
+3. **Reduce Sass usage to variables before classifying it.** There is no parameter-by-parameter Sass
+   mapping to work from — the migration page's Sass section says only to stop using the Sass API — so
+   do not translate a mixin argument by its resemblance to a parameter name. Instead take each key of
+   the `@include` parameter map and look for the legacy variable of the same name (`foreground-color`
+   → `--ag-foreground-color`) **in the migration page's tables**. A key that appears there is
+   classified and converted like any other variable; a key that does not is reported as
+   unconverted — name it, and ask the user for the compiled CSS or the theme's rendered
+   `--ag-*` values rather than inferring what it set. The Sass API's own mixins, functions and
+   `$params` plumbing are then deleted, not migrated: the Theming API replaces the mechanism.
+4. **Classify each variable** into the four groups above.
+5. **Emit the theme.** Kebab-case CSS names become camelCase parameters
    (`--ag-tooltip-text-color` → `tooltipTextColor`). Verify every parameter name you emit exists —
    the `CoreParams` type in `packages/ag-grid-community/src/theming/core/core-css.ts` is the list;
    `withParams` is typed, so a wrong name is a compile error for the user, not a silent no-op.
-5. **Report what could not be converted**, grouped: semantics changed, needs a CSS rule, needs a
+6. **Report what could not be converted**, grouped: semantics changed, needs a CSS rule, needs a
    docs page. Do not quietly drop a variable the user set.
-6. **Offer the CSS alternative.** Parameters can equally be set as `--ag-*` CSS variables of the
+7. **Offer the CSS alternative.** Parameters can equally be set as `--ag-*` CSS variables of the
    *new* names; the JS form is only preferred because it is type-checked. Users with a build that
    cannot import the theme object should get the CSS form.
 
@@ -68,12 +77,14 @@ const myTheme = themeQuartz.withParams({
 
 Followed by the unconvertible list, e.g.:
 
-- `--ag-grid-size: 4px` — replaced by `spacing`, but the meaning differs (padding, not element
-  size). Start at `spacing: 4px` and adjust to taste rather than assuming it matches.
+- `--ag-grid-size: 4px` — `spacing` is the nearest parameter, but it sets the padding around elements
+  where grid size set the elements themselves, so there is no value that reproduces this. Pick a
+  `spacing` from how the grid should look, starting from the theme default rather than from `4px`.
 - `--ag-secondary-border-color` — removed; target the specific border with a CSS rule.
 
 ## Do not
 
 - Guess a parameter name that is not in `CoreParams` or the migration docs page.
 - Convert a group-3 variable (borders, checkboxes, sidebar, toggle buttons, icons) 1:1.
+- Translate a Sass mixin argument that you cannot find as a legacy variable on the migration page.
 - Leave the legacy CSS imports in place alongside the new theme.
