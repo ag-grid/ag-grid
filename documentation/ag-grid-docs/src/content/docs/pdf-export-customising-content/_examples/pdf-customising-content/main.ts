@@ -52,7 +52,10 @@ const gridOptions: GridOptions<OrderData> = {
     rowData,
     defaultPdfExportParams: {
         columnWidth: 'auto',
-        processCellCallback: (params) => (params.value == null ? 'Not invoiced' : params.formatValue(params.value)),
+        processCellCallback: (params) => {
+            const isMissingTotal = params.column.getColId() === 'total' && !params.node?.group && params.value == null;
+            return isMissingTotal ? 'Not invoiced' : params.formatValue(params.value);
+        },
         processRowGroupCallback: (params) => `Region: ${params.node.key ?? ''}`,
         processHeaderCallback: (params) => {
             const { headerName } = params.column.getColDef();

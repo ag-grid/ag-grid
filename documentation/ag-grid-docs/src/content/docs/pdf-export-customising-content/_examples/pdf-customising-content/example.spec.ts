@@ -22,7 +22,8 @@ test.agExample(import.meta, () => {
         expect(pdfContent).toContain('(Region: EMEA) Tj');
         expect(pdfContent).toContain('(CUSTOMER) Tj');
         expect(pdfContent).toContain('(Customer Details \\(grouped\\)) Tj');
-        expect(pdfContent).toContain('(Not invoiced) Tj');
+        // only the single missing order total is labelled, not every blank cell on the group rows
+        expect(pdfContent.split('(Not invoiced) Tj')).toHaveLength(2);
         expect(pdfContent.trimEnd().endsWith('%%EOF')).toBe(true);
     });
 });

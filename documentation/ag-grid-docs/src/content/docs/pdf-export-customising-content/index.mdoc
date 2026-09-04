@@ -12,7 +12,8 @@ Cell and row group values can be customised for PDF export using the following f
 ```{% frameworkTransform=true %}
 gridApi.exportDataAsPdf({
     processCellCallback(params) {
-        return params.value == null ? 'Not invoiced' : params.formatValue(params.value);
+        const isMissingTotal = params.column.getColId() === 'total' && !params.node?.group && params.value == null;
+        return isMissingTotal ? 'Not invoiced' : params.formatValue(params.value);
     },
     processRowGroupCallback(params) {
         return `Region: ${params.node.key ?? ''}`;
