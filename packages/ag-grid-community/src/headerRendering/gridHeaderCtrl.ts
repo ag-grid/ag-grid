@@ -199,11 +199,11 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private isHeaderBackgroundTarget(target: EventTarget | null): boolean {
-        const { menuSvc, ctrlsSvc } = this.beans;
-        if (!menuSvc?.isHeaderContextMenuEnabled()) {
+        if (!this.beans.menuSvc?.isHeaderContextMenuEnabled()) {
             return false;
         }
-        return target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport;
+        // header cells' own contextmenu events bubble up to this listener and must not also open the grid-level menu
+        return target instanceof Element && !target.closest('.ag-header-cell, .ag-header-group-cell');
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent): void {
