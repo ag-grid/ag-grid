@@ -30,3 +30,4 @@ export { AG_GRID_LOCALE_TR } from './tr-TR';
 export { AG_GRID_LOCALE_UA } from './uk-UA';
 export { AG_GRID_LOCALE_PK } from './ur-PK';
 export { AG_GRID_LOCALE_VN } from './vi-VN';
+export { AG_GRID_LOCALE_RU } from './ru-RU';
