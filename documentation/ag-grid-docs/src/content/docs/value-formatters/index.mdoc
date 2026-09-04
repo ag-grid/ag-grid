@@ -58,6 +58,7 @@ Using the value formatter for export applies to the following features:
 - [Copy Range Down](./cell-selection/#copy-cell-range-down)
 - [CSV Export](./csv-export/)
 - [Excel Export](./excel-export-customising-content/)
+- [PDF Export](./pdf-export/)
 
 Using a value formatter for export is normally used in conjunction with [Using a Value Parser for Import](./value-parsers/#use-value-parser-for-import), where a [Value Parser](./value-parsers/) is defined that does the reverse of the value formatter.
 
@@ -73,3 +74,4 @@ Note that if any of the following conditions are true, then `useValueFormatterFo
 - If `processCellCallback` is provided when using CSV export.
 - If `processCellCallback` or [Excel Data Types](./excel-export-data-types/) are provided when using Excel export.
 - If the underlying value is a number when using Excel export. To export formatted number values to Excel, please use the [Excel Data Type](./excel-export-data-types/#strings-number-and-booleans) feature.
+- If `processCellCallback` is provided when using PDF export.
