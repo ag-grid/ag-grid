@@ -11,6 +11,16 @@ test.agExample(import.meta, () => {
         await expect(toolbar.locator(':scope > .ag-toolbar-button-wrapper')).toHaveCount(2);
     });
 
+    test.eachFramework('Export toolbar item offers CSV, Excel and PDF', async ({ page }) => {
+        await waitForGridContent(page);
+
+        await page.locator('.ag-toolbar-button-wrapper', { hasText: 'Export' }).click();
+
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'CSV Export' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Excel Export' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'PDF Export' })).toBeVisible();
+    });
+
     test.eachFramework('Typing into quick filter reduces displayed rows', async ({ agIdFor, page }) => {
         await waitForGridContent(page);
 
