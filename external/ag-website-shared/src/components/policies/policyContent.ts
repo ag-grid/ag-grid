@@ -28,12 +28,12 @@ export const POLICY_CONTENT = {
         metaTitle: 'Privacy Policy',
         description:
             'We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR.',
-        meta: ['Effective Date: 6 July 2022'],
+        meta: ['Last Updated: 2 September 2026'],
         intro: [
-            "Welcome to AG Grid's Privacy Policy.",
+            'Welcome to the Privacy Policy of AG Grid Ltd (<strong>AG Grid</strong>).',
             '<strong>Your privacy is important to us.</strong>',
-            'At ag-grid, we are fully committed to protecting your personal data and complying with all data privacy laws.',
-            'This policy serves as a guide and reference point for how we may collect and use personal information, and the rights and choices available to all our visitors and customers.',
+            'At AG Grid, we are fully committed to protecting your personal data and complying with all data privacy laws.',
+            'This policy serves as a guide and reference point for how we may collect and use personal information, and the rights and choices available to all our website visitors and customers.',
             'We strongly recommend you read our policy and understand what we collect, how we collect it, what we do with it, how we protect it, and your rights regarding information, <strong>before</strong> you use or access any of our services.',
         ],
     },

@@ -1,8 +1,6 @@
 import { ConsentCheckbox } from '@ag-website-shared/components/consent-fields/ConsentCheckbox';
-import {
-    CONSENT_LABELS,
-    DATA_PROCESSING_CONSENT_REQUIRED,
-} from '@ag-website-shared/components/consent-fields/consentMessages';
+import { ProcessingNotice } from '@ag-website-shared/components/consent-fields/ProcessingNotice';
+import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/consentMessages';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TRIAL_LICENCE_FORM_URL, ZI_FORM_ID } from '@constants';
 import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
@@ -115,7 +113,6 @@ async function submitTrialLicenceFormData({
     lastName,
     email,
     company,
-    dataProcessingConsent,
     marketingEmailConsent,
     emailTrackingConsent,
     franceOrItaly,
@@ -125,7 +122,6 @@ async function submitTrialLicenceFormData({
     lastName: string;
     email: string;
     company: string;
-    dataProcessingConsent: boolean;
     marketingEmailConsent: boolean;
     emailTrackingConsent: boolean;
     franceOrItaly: boolean;
@@ -138,7 +134,6 @@ async function submitTrialLicenceFormData({
                 lastName,
                 email,
                 company,
-                dataProcessingConsent,
                 marketingEmailConsent,
                 emailTrackingConsent,
                 franceOrItaly,
@@ -174,9 +169,6 @@ function useTrialForm({ submitUrl }: Props) {
     } = useRequiredValidation();
     const lastNameError = wasValidated && validatedLastNameError ? validatedLastNameError : '';
 
-    const { checked: dataProcessingConsent, handleCheckedChange: handleDataProcessingConsentChange } = useCheckbox();
-    const dataProcessingConsentError = wasValidated && !dataProcessingConsent ? DATA_PROCESSING_CONSENT_REQUIRED : '';
-
     const { checked: marketingEmailConsent, handleCheckedChange: handleMarketingEmailConsentChange } = useCheckbox();
 
     const {
@@ -202,7 +194,7 @@ function useTrialForm({ submitUrl }: Props) {
             e.preventDefault();
             setWasValidated(true);
 
-            if (validatedEmailError || validatedFirstNameError || validatedLastNameError || !dataProcessingConsent) {
+            if (validatedEmailError || validatedFirstNameError || validatedLastNameError) {
                 setFormState('error');
                 return;
             }
@@ -220,7 +212,6 @@ function useTrialForm({ submitUrl }: Props) {
                     lastName,
                     email,
                     company,
-                    dataProcessingConsent,
                     marketingEmailConsent,
                     emailTrackingConsent,
                     franceOrItaly: isFranceOrItaly,
@@ -261,7 +252,6 @@ function useTrialForm({ submitUrl }: Props) {
             firstName,
             lastName,
             email,
-            dataProcessingConsent,
             marketingEmailConsent,
             emailTrackingConsent,
             isFranceOrItaly,
@@ -280,9 +270,6 @@ function useTrialForm({ submitUrl }: Props) {
         lastName,
         lastNameError,
         handleLastNameChange,
-        dataProcessingConsent,
-        dataProcessingConsentError,
-        handleDataProcessingConsentChange,
         marketingEmailConsent,
         handleMarketingEmailConsentChange,
         emailTrackingConsent,
@@ -306,9 +293,6 @@ export const TrialLicenceFormStudio: FunctionComponent<Props> = ({ submitUrl }: 
         lastName,
         lastNameError,
         handleLastNameChange,
-        dataProcessingConsent,
-        dataProcessingConsentError,
-        handleDataProcessingConsentChange,
         marketingEmailConsent,
         handleMarketingEmailConsentChange,
         emailTrackingConsent,
@@ -317,7 +301,7 @@ export const TrialLicenceFormStudio: FunctionComponent<Props> = ({ submitUrl }: 
         handleFranceOrItalyChange,
         handleFormSubmit,
     } = useTrialForm({ submitUrl });
-    const hasFormError = Boolean(emailError || firstNameError || lastNameError || dataProcessingConsentError);
+    const hasFormError = Boolean(emailError || firstNameError || lastNameError);
 
     return (
         <form id={ZI_FORM_ID} noValidate className={styles.trialForm} onSubmit={handleFormSubmit}>
@@ -374,18 +358,6 @@ export const TrialLicenceFormStudio: FunctionComponent<Props> = ({ submitUrl }: 
 
             <div className={styles.consents}>
                 <ConsentCheckbox
-                    id="data-processing-consent"
-                    label={CONSENT_LABELS.dataProcessing}
-                    error={dataProcessingConsentError}
-                    inputProps={{
-                        name: 'data-processing-consent',
-                        checked: dataProcessingConsent,
-                        onChange: handleDataProcessingConsentChange,
-                        required: true,
-                    }}
-                />
-
-                <ConsentCheckbox
                     id="marketing-email-consent"
                     label={CONSENT_LABELS.marketingEmail}
                     inputProps={{
@@ -418,6 +390,8 @@ export const TrialLicenceFormStudio: FunctionComponent<Props> = ({ submitUrl }: 
                     />
                 )}
             </div>
+
+            <ProcessingNotice />
 
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
                 <button
