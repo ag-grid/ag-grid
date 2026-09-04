@@ -1,6 +1,6 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
-import type { AgColumn, IFilterOptionDef } from 'ag-grid-community';
+import type { AgColumn, IFilterOptionDef, IMultiFilterDef } from 'ag-grid-community';
 import {
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
@@ -12,7 +12,7 @@ import type {
     FilterExpressionOperator,
     OperandsKind,
 } from './filterExpressionOperators';
-import { getEntries } from './filterExpressionOperators';
+import { freshOperand, getEntries } from './filterExpressionOperators';
 
 /** A list the column author wrote, as opposed to the one its data type supplies; an empty list narrows nothing. */
 function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef)[] | undefined {
@@ -20,11 +20,23 @@ function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef
     return !filterOptions?.length || _isGridSuppliedFilterOptions(filterOptions) ? undefined : filterOptions;
 }
 
+/** The child a Multi Filter wraps for `filterName`, where that filter's own parameters live. */
+export function getMultiFilterChild(filterParams: any, filterName: string): IMultiFilterDef | undefined {
+    const filters: IMultiFilterDef[] | undefined = filterParams?.filters;
+    for (let i = 0, len = filters?.length ?? 0; i < len; ++i) {
+        const child = filters![i];
+        if (child?.filter === filterName) {
+            return child;
+        }
+    }
+    return undefined;
+}
+
 /** The options a column narrows itself to, or `undefined` where it narrows nothing of its own. */
 export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptionDef)[] | undefined {
     const filterParams = column.colDef.filterParams;
     // A Multi Filter writes `filterOptions` on a child, so its own level is read only after them.
-    const filters: { filterParams?: any }[] | undefined = filterParams?.filters;
+    const filters: IMultiFilterDef[] | undefined = filterParams?.filters;
     for (let i = 0, len = filters?.length ?? 0; i < len; ++i) {
         const childOptions = getAuthoredFilterOptions(filters![i]?.filterParams);
         if (childOptions) {
@@ -64,11 +76,12 @@ function createCustomOptionOperator(
             operands = 'none';
             break;
         case 1:
-            evaluator = (value, _node, _params, operand1) => predicate([operand1], value);
+            evaluator = (value, _node, _params, operand1) => predicate([freshOperand(operand1)], value);
             operands = 'one';
             break;
         default:
-            evaluator = (value, _node, _params, operand1, operand2) => predicate([operand1, operand2], value);
+            evaluator = (value, _node, _params, operand1, operand2) =>
+                predicate([freshOperand(operand1), freshOperand(operand2)], value);
             operands = 'range';
             break;
     }
