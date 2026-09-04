@@ -1,14 +1,6 @@
 import { ConsentCheckbox } from '@ag-website-shared/components/consent-fields/ConsentCheckbox';
-<<<<<<< HEAD
-import {
-    CONSENT_LABELS,
-    DATA_PROCESSING_CONSENT_REQUIRED,
-} from '@ag-website-shared/components/consent-fields/consentMessages';
-=======
 import { ProcessingNotice } from '@ag-website-shared/components/consent-fields/ProcessingNotice';
 import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/consentMessages';
-import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
->>>>>>> fdf48f00bd4 (AG-18371: Privacy policy copy updates (#15038))
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
