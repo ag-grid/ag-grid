@@ -166,6 +166,41 @@ describe('enableCharts gates the built-in chart context-menu tokens', () => {
             expect(event.defaultPrevented).toBe(false);
         });
 
+        /**
+         * The gate is not chart-specific: a submenu token whose children are all suppressed maps to
+         * `null` in exactly the same way, so `export` with every exporter suppressed must also leave
+         * the browser menu to show (AG-18246 review).
+         */
+        test('getContextMenuItems returning only an export submenu that maps to nothing opens no menu', async () => {
+            restoreOffsetParent ??= polyfillOffsetParent();
+            const api = await gridMgr.createGridAndWait('exports-suppressed-only-submenu', {
+                columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+                rowData,
+                suppressCsvExport: true,
+                suppressExcelExport: true,
+                getContextMenuItems: () => ['export'],
+            });
+
+            const event = await rightClickFirstCell(api);
+
+            expect(document.querySelector('.ag-menu')).toBeNull();
+            expect(event.defaultPrevented).toBe(false);
+        });
+
+        test('the same export submenu opens and claims the gesture when the exporters are not suppressed', async () => {
+            restoreOffsetParent ??= polyfillOffsetParent();
+            const api = await gridMgr.createGridAndWait('exports-allowed-only-submenu', {
+                columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+                rowData,
+                getContextMenuItems: () => ['export'],
+            });
+
+            const event = await rightClickFirstCell(api);
+
+            expect(await openMenuOption('Export')).toBeTruthy();
+            expect(event.defaultPrevented).toBe(true);
+        });
+
         test('the same menu opens and claims the gesture with enableCharts true', async () => {
             restoreOffsetParent ??= polyfillOffsetParent();
             const api = await gridMgr.createGridAndWait('charts-on-only-gated-token', {
