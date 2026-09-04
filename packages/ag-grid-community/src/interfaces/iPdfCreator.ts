@@ -121,7 +121,9 @@ export interface PdfImage {
 export interface PdfTextStyle {
     /**
      * Font size in points.
-     * @default 10 in body cells, 11 in header cells, 9 in page headers and footers
+     * The default depends on where the style is used: see `defaultCellStyle`,
+     * `defaultHeaderStyle`, `documentTitleStyle`, `documentSubtitleStyle`,
+     * `headerFooterConfig` and `watermark`.
      */
     fontSize?: number;
     /**
@@ -176,12 +178,14 @@ export interface PdfCellStyle extends PdfTextStyle {
     borderWidth?: number;
     /**
      * Padding inside the cell in points. A number applies to all sides.
-     * @default 4
+     * The default depends on where the style is used: see `defaultCellStyle`,
+     * `documentTitleStyle` and `documentSubtitleStyle`.
      */
     padding?: number | PdfMargin;
     /**
      * Horizontal alignment for the cell text.
-     * @default 'left'
+     * The default depends on where the style is used: see `defaultCellStyle`,
+     * `documentTitleStyle` and `documentSubtitleStyle`.
      */
     alignment?: PdfTextAlignment;
     /**
@@ -390,7 +394,10 @@ interface PdfHeaderFooterContentBase {
      * When omitted, array entries default to left, centre, and right in order.
      */
     position?: 'Left' | 'Center' | 'Right';
-    /** Text styling for this entry. */
+    /**
+     * Text styling for this entry.
+     * Unset properties default to 9 points with no padding, aligned to the entry position.
+     */
     style?: PdfTextStyle;
 }
 
@@ -434,7 +441,10 @@ export interface PdfWatermark {
      * @default 'all'
      */
     pages?: PdfWatermarkPageSelection;
-    /** Text styling for the watermark. */
+    /**
+     * Text styling for the watermark.
+     * When `fontSize` is unset, it is scaled from the page size.
+     */
     style?: PdfTextStyle;
 }
 
@@ -494,6 +504,9 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     documentTitle?: string;
     /**
      * Styling for the visible document title.
+     * Unset properties default to centred text, with padding and a bottom margin
+     * separating it from the content below, at a font size derived from the header
+     * font size.
      */
     documentTitleStyle?: PdfDocumentHeadingStyle;
     /**
@@ -502,6 +515,9 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     documentSubtitle?: string;
     /**
      * Styling for the visible document subtitle.
+     * Unset properties default to centred text, with padding and a bottom margin
+     * separating it from the content below, at a font size derived from the header
+     * font size.
      */
     documentSubtitleStyle?: PdfDocumentHeadingStyle;
     /**
@@ -553,13 +569,15 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * Default style applied to every body cell, including custom content rows.
      * Grid styles, row and cell styles, and `processStyleCallback` results
      * override these values.
-     * When no style is provided, body cells use `Helvetica` at 10 points.
+     * When no style is provided, body cells use `Helvetica` at 10 points,
+     * 4 points of padding and left-aligned text.
      */
     defaultCellStyle?: PdfCellStyle;
     /**
      * Default style applied to header and group-header cells.
      * Each unset property inherits from `defaultCellStyle`; values set here
-     * take precedence. If neither style sets `fontSize`, headers use 11 points.
+     * take precedence. If neither style sets `fontSize`, headers use 11 points
+     * and the same 4 points of padding and left-aligned text as body cells.
      * If no font weight is inherited or set, headers use the bold variant of
      * the resolved body font.
      */
