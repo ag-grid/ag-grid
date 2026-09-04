@@ -121,6 +121,7 @@ export interface PdfImage {
 export interface PdfTextStyle {
     /**
      * Font size in points.
+     * @default 10 in body cells, 11 in header cells, 9 in page headers and footers
      */
     fontSize?: number;
     /**
@@ -170,19 +171,22 @@ export interface PdfCellStyle extends PdfTextStyle {
     borderColor?: string;
     /**
      * Border width in points.
-     * Defaults to 1 when `borderColor` is set, otherwise 0.
+     * @default 1 when borderColor is set, otherwise 0
      */
     borderWidth?: number;
     /**
      * Padding inside the cell in points. A number applies to all sides.
+     * @default 4
      */
     padding?: number | PdfMargin;
     /**
      * Horizontal alignment for the cell text.
+     * @default 'left'
      */
     alignment?: PdfTextAlignment;
     /**
      * Whether text should wrap onto multiple lines. Wrapped content increases the row height as required.
+     * @default false
      */
     wrapText?: boolean;
     /**
