@@ -110,6 +110,7 @@ const gridOptions: GridOptions<ProjectData> = {
             budget: 125000,
         },
     ],
+    onGridReady: (params) => params.api.setGridOption('defaultPdfExportParams', getPdfExportParams()),
 };
 
 function getPdfExportParams(): PdfExportParams {
@@ -129,8 +130,11 @@ function getPdfExportParams(): PdfExportParams {
     };
 }
 
-function onBtExport() {
+function onExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

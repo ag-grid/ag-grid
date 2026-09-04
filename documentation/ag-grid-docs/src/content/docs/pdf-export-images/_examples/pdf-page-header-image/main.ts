@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
 
@@ -18,14 +18,12 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
     },
-    defaultPdfExportParams: {
-        documentTitle: 'Annual Revenue',
-    },
     rowData: Array.from({ length: 35 }, (_, index) => ({
         region: ['Americas', 'EMEA', 'APAC'][index % 3],
         product: ['Analytics', 'Data Grid', 'Reporting'][index % 3],
         revenue: `$${(125000 + index * 7350).toLocaleString('en-US')}`,
     })),
+    onGridReady: (params) => params.api.setGridOption('defaultPdfExportParams', getPdfExportParams()),
 };
 
 function getHeaderLogo() {
@@ -39,8 +37,9 @@ function getHeaderLogo() {
         : { id: 'company-logo-light', base64: companyLogoLightTheme };
 }
 
-function onBtExport() {
-    gridApi.exportDataAsPdf({
+function getPdfExportParams(): PdfExportParams {
+    return {
+        documentTitle: 'Annual Revenue',
         headerFooterConfig: {
             all: {
                 header: [
@@ -60,7 +59,11 @@ function onBtExport() {
                 ],
             },
         },
-    });
+    };
+}
+
+function onBtExport() {
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

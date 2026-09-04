@@ -24,17 +24,19 @@ const gridOptions: GridOptions<LanguageSample> = {
         { text: 'PDFには日本語の文字が埋め込まれています。' },
         { text: 'このグリッドでは一つのフォントを使用します。' },
     ],
+    onGridReady: (params) => {
+        loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
+            params.api.setGridOption('defaultPdfExportParams', {
+                fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
+                defaultCellStyle: { fontFamily },
+                language: 'ja',
+            });
+        });
+    },
 };
 
 function onBtExport() {
-    loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
-        gridApi.setGridOption('defaultPdfExportParams', {
-            fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
-            defaultCellStyle: { fontFamily },
-            language: 'ja',
-        });
-        gridApi.exportDataAsPdf();
-    });
+    gridApi.exportDataAsPdf();
 }
 
 const fontBaseUrl = '${baseWWWUrl}/fonts/pdf-export/';

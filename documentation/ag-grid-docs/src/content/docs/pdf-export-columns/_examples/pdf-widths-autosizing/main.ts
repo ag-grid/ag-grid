@@ -60,6 +60,7 @@ const gridOptions: GridOptions<ProductData> = {
     defaultColDef: { resizable: true },
     rowNumbers: true,
     rowData,
+    onGridReady: (params) => params.api.setGridOption('defaultPdfExportParams', getPdfExportParams()),
 };
 
 function getPdfExportParams(): PdfExportParams {
@@ -87,8 +88,11 @@ function getPdfExportParams(): PdfExportParams {
     return params;
 }
 
-function onBtExport() {
+function onExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

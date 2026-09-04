@@ -49,6 +49,7 @@ const gridOptions: GridOptions<InventoryData> = {
         minWidth: 100,
     },
     rowData,
+    onGridReady: (params) => params.api.setGridOption('defaultPdfExportParams', getPdfExportParams()),
 };
 
 function getPageSize(): PdfPageSize {
@@ -92,8 +93,11 @@ function getPdfExportParams(): PdfExportParams {
     };
 }
 
-function onBtExport() {
+function onExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

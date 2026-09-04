@@ -2,23 +2,26 @@
     <div class="controls">
         <button onclick="onBtExport()">Export to PDF</button>
         <label for="pageSize">Page size</label>
-        <select id="pageSize">
+        <select id="pageSize" onchange="onExportOptionsChanged()">
             <option value="A4">A4</option>
             <option value="Letter">Letter</option>
             <option value="custom">Custom small page</option>
         </select>
         <label for="orientation">Orientation</label>
-        <select id="orientation">
+        <select id="orientation" onchange="onExportOptionsChanged()">
             <option value="landscape">Landscape</option>
             <option value="portrait">Portrait</option>
         </select>
         <label for="margin">Margins</label>
-        <select id="margin">
+        <select id="margin" onchange="onExportOptionsChanged()">
             <option value="standard">Standard</option>
             <option value="compact">Compact</option>
             <option value="wide">Wide</option>
         </select>
-        <label><input id="repeatHeader" type="checkbox" checked /> Repeat table headers</label>
+        <label
+            ><input id="repeatHeader" type="checkbox" checked onchange="onExportOptionsChanged()" /> Repeat table
+            headers</label
+        >
     </div>
     <div id="myGrid"></div>
 </div>

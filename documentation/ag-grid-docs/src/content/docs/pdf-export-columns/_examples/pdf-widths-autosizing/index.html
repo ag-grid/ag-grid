@@ -2,7 +2,7 @@
     <div class="controls">
         <button onclick="onBtExport()">Export to PDF</button>
         <label for="widthMode">Column widths</label>
-        <select id="widthMode">
+        <select id="widthMode" onchange="onExportOptionsChanged()">
             <option value="grid">Grid</option>
             <option value="auto">Auto</option>
             <option value="custom">Custom</option>

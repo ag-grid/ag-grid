@@ -76,6 +76,7 @@ const gridOptions: GridOptions<OrderData> = {
     },
     rowNumbers: true,
     rowData,
+    onGridReady: (params) => params.api.setGridOption('defaultPdfExportParams', getPdfExportParams()),
 };
 
 function isChecked(id: string): boolean {
@@ -100,8 +101,11 @@ function getPdfExportParams(): PdfExportParams {
     return params;
 }
 
-function onBtExport() {
+function onExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

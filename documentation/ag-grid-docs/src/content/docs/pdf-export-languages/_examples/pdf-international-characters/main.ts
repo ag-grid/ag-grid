@@ -84,6 +84,11 @@ const gridOptions: GridOptions<LanguageSample> = {
         sortable: true,
         resizable: true,
     },
+    onGridReady: (params) => {
+        loadFonts().then((fonts) =>
+            params.api.setGridOption('defaultPdfExportParams', getDefaultPdfExportParams(fonts))
+        );
+    },
 };
 
 function getDefaultPdfExportParams(fonts: PdfFontFamilyDefinition[]): PdfExportParams {
@@ -104,10 +109,7 @@ function getDefaultPdfExportParams(fonts: PdfFontFamilyDefinition[]): PdfExportP
 }
 
 function onBtExport() {
-    loadFonts().then((fonts) => {
-        gridApi.setGridOption('defaultPdfExportParams', getDefaultPdfExportParams(fonts));
-        gridApi.exportDataAsPdf();
-    });
+    gridApi.exportDataAsPdf();
 }
 
 async function loadFonts(): Promise<PdfFontFamilyDefinition[]> {
