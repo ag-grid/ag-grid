@@ -30,9 +30,9 @@ describe('header test IDs survive a header refresh', () => {
 
     function getHeaderTestId(api: GridApi, colId: string): string | null | undefined {
         const gridEl = getGridElement(api) as HTMLElement | null;
-        return gridEl?.querySelector(`.ag-header-cell:not(.ag-floating-filter)[col-id="${colId}"]`)?.getAttribute(
-            'data-testid'
-        );
+        return gridEl
+            ?.querySelector(`.ag-header-cell:not(.ag-floating-filter)[col-id="${colId}"]`)
+            ?.getAttribute('data-testid');
     }
 
     test('refreshHeader re-stamps the header cell test IDs it recreates', async () => {
