@@ -126,6 +126,11 @@ export class Environment
         if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
+        // catches variables a class swap introduces after grid creation; 'theme' is covered by
+        // postProcessThemeChange, which runs after the new theme is in place
+        if (change !== 'theme') {
+            this.checkLegacyThemeVariables();
+        }
         super.fireStylesChangedEvent(change);
     }
 
@@ -149,7 +154,14 @@ export class Environment
             } else {
                 this.beans.log.error(239);
             }
+        } else if (newGridTheme) {
+            this.checkLegacyThemeVariables();
         }
+    }
+
+    /** The reporting lives in the ValidationModule; without it registered, nothing is checked. */
+    private checkLegacyThemeVariables(): void {
+        this.beans.validation?.checkLegacyThemeVariables(this.eRootDiv);
     }
 
     protected override getAdditionalCss(): Map<string, string[]> {
