@@ -17,15 +17,35 @@ async function boundingBoxOf(locator: Locator, what: string) {
 
 // Opens the chart toolbar popup menu and navigates to the "Set Up" (data) tab,
 // making the series pill list visible.
+//
+// Each of the three clicks can be swallowed: the toolbar button is rendered before the chart menu
+// is wired up (firefox and webkit both lose the first click and the menu never opens), and the
+// same is true of the menu option and the tab. So this drives a small state machine instead of a
+// fixed click sequence - it inspects what is actually on screen and issues only the click that
+// advances it, which means a lost click is simply re-issued and a click is never sent to something
+// already open.
 async function openChartDataPanel(page: Page): Promise<void> {
     // The example creates its chart in onFirstDataRendered, after an async getData(), so a ready
-    // grid does not imply the chart exists yet. Clicking the toolbar button before it does leaves
-    // "Edit Chart" unreachable until the test times out.
+    // grid does not imply the chart exists yet.
     await page.locator('.ag-chart').waitFor({ state: 'visible' });
-    await page.locator('.ag-chart-menu-toolbar-button').first().click();
-    await page.locator('.ag-menu-option-text', { hasText: 'Edit Chart' }).click();
-    await page.locator('.ag-tab', { hasText: 'Set Up' }).click();
-    await seriesPillPanel(page).waitFor({ state: 'visible' });
+
+    const menuButton = page.locator('.ag-chart-menu-toolbar-button').first();
+    const editChartOption = page.locator('.ag-menu-option-text', { hasText: 'Edit Chart' });
+    const setUpTab = page.locator('.ag-tab', { hasText: 'Set Up' });
+    const pillPanel = seriesPillPanel(page);
+
+    await expect(async () => {
+        if (!(await pillPanel.isVisible())) {
+            if (await setUpTab.isVisible()) {
+                await setUpTab.click();
+            } else if (await editChartOption.isVisible()) {
+                await editChartOption.click();
+            } else {
+                await menuButton.click();
+            }
+        }
+        await expect(pillPanel).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
 }
 
 // Drags the series pill labelled `label` to the front of the series list.
