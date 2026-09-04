@@ -41,9 +41,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         type: 'fitCellContents',
         continuous: true,
     },
-    // `fitCellContents` can only measure the columns that are rendered, so every column has to be
-    // rendered for all ten to re-fit around each page's content rather than only once scrolled into view
-    suppressColumnVirtualisation: true,
 };
 
 // setup the grid after the page has finished loading
