@@ -40,7 +40,7 @@ async function openChartDataPanel(page: Page): Promise<void> {
 // the index completely untouched; above every pill is the one branch that is both deterministic
 // and idempotent. The Y is clamped inside the panel: leaving the drop container mid-rearrange
 // removes the series from the chart.
-async function reorderSeriesPillToFront(page: Page, label: string): Promise<void> {
+async function dragSeriesPillToFront(page: Page, label: string): Promise<void> {
     const panel = seriesPillPanel(page);
     const pills = panel.locator('.ag-column-drop-cell');
     // Substring match, not an anchored one: the pill's text content includes the whitespace of its
@@ -68,6 +68,20 @@ async function reorderSeriesPillToFront(page: Page, label: string): Promise<void
     // rather than only against the layout that existed when the drag entered the drop zone.
     await mouse.move(dropX, dropY);
     await mouse.up();
+}
+
+// Moves the named series pill to the front, retrying until it is there.
+//
+// A grid model update in flight (a row group being applied, a chart being rebuilt) can rebuild the
+// pill panel while the drag is under way, which drops the drop and leaves the order untouched. The
+// drag is idempotent - dragging a pill that is already first leaves it first - so retrying it is
+// safe, and it is the only way to make the reorder deterministic against an asynchronous rebuild
+// the test cannot observe from outside.
+async function reorderSeriesPillToFront(page: Page, label: string): Promise<void> {
+    await expect(async () => {
+        await dragSeriesPillToFront(page, label);
+        await expect(seriesPills(page).first()).toHaveText(label, { timeout: 2000 });
+    }).toPass({ timeout: 20_000 });
 }
 
 test.agExample(import.meta, () => {
