@@ -15,7 +15,7 @@
 import { waitFor } from '@testing-library/dom';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
@@ -41,6 +41,18 @@ describe('Continuous Column Autosize', () => {
      */
     // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize scheduling frame; every assertion that follows it is negative
     const flushScheduledResize = (): Promise<void> => asyncSetTimeout(50);
+
+    /**
+     * Shorter than the 150ms debounce the streaming triggers settle on
+     * (`CONTINUOUS_STREAMING_DEBOUNCE` in `columnAutosizeService.ts`), so a trigger sent after this wait
+     * still lands inside the window opened by the previous one and postpones it again.
+     */
+    // eslint-disable-next-line no-restricted-syntax -- samples inside the continuous-resize debounce window, which is the behaviour under test
+    const insideDebounceWindow = (): Promise<void> => asyncSetTimeout(40);
+
+    /** Stands in for an internal trigger the grid would dispatch itself, payload and all. */
+    const dispatchGridEvent = (api: GridApi, event: { type: string } & Record<string, unknown>): void =>
+        api.dispatchEvent(event as AgEvent);
 
     const expectWidth = (api: GridApi, colId: string, width: number): Promise<void> =>
         waitFor(() => expect(widthOf(api, colId)).toBe(width));
@@ -313,6 +325,78 @@ describe('Continuous Column Autosize', () => {
 
             await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
             expect(reasons).toEqual(['dataChanged']);
+        });
+
+        /**
+         * A real scroll is not drivable in happy-dom — there is no laid-out body viewport to scroll — so
+         * the debounce is driven through the `viewportChanged` event the row renderer would dispatch as
+         * new rows come into view, which is what makes a scroll re-size at all.
+         */
+        test('a stream of viewport triggers re-sizes once, after the triggers stop', async () => {
+            const { api, reasons } = createGridRecordingReasons();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            // a scroll's worth of triggers, each arriving inside the 150ms debounce window of the last
+            for (let firstRow = 0; firstRow < 5; firstRow++) {
+                dispatchGridEvent(api, { type: 'viewportChanged', firstRow, lastRow: firstRow + 10 });
+                await insideDebounceWindow();
+            }
+
+            // 200ms of triggers so far, and every one of them still postponed
+            expect(reasons).toEqual([]);
+
+            await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
+        });
+
+        /** A data change must still be sized within the frame, rather than held back by the debounce. */
+        test('a data change is not held back by the debounce', async () => {
+            const { api, reasons } = createGridRecordingReasons();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            api.setGridOption('rowData', LONGER_DATA);
+            // sampled well inside the debounce window, so a data change caught by it would be missed here
+            await flushScheduledResize();
+
+            expect(reasons).toContain('dataChanged');
+        });
+
+        /**
+         * A resize drag streams `gridSizeChanged` the way a scroll streams viewport changes, so it settles
+         * on the same debounce — for the width-distribution strategies too, which is where the widths visibly
+         * chase the drag.
+         */
+        test('a stream of grid-size triggers re-sizes once, after the triggers stop', async () => {
+            const reasons: string[] = [];
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitGridWidth',
+                    continuous: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            for (let i = 0; i < 5; i++) {
+                dispatchGridEvent(api, { type: 'gridSizeChanged', clientWidth: 400 + i, clientHeight: 300 });
+                await insideDebounceWindow();
+            }
+
+            expect(reasons).toEqual([]);
+
+            await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
         });
 
         test('the strategy stays one-shot when `continuous` is omitted', async () => {
