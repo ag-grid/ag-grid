@@ -22,12 +22,8 @@ test.agExample(import.meta, () => {
 
         await page.selectOption('#currency', 'USD');
 
-        // Header value getter now shows the new reporting currency. Located by `col-id` rather than
-        // by test id: the test id is re-stamped asynchronously after the headerValueGetter re-render,
-        // so it can be momentarily absent. `col-id` is the attribute the test id is derived from, so
-        // this denotes the same element. `:not(.ag-floating-filter)` excludes the floating filter
-        // cell, which carries the same `col-id`.
-        await expect(page.locator('.ag-header-cell:not(.ag-floating-filter)[col-id="price_1"]')).toContainText('USD');
+        // Header value getter now shows the new reporting currency.
+        await expect(agIdFor.headerCell('price_1')).toContainText('USD');
 
         // Product 3 GBP 429 * exchangeRates.USD.GBP (0.67) = 287.43 => $287.43
         await expect(agIdFor.cell('2', 'price_1')).toContainText('$287.43');

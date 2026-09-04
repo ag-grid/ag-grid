@@ -62,6 +62,9 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             modelUpdated: setup,
             sideBarUpdated: setup,
             pinnedHeightChanged: setup,
+            // The header rows are destroyed and recreated by `api.refreshHeader()`, which replaces
+            // the header DOM and so drops every test id stamped on it.
+            headerRowsChanged: setup,
             gridReady: setup,
             overlayExclusiveChanged: setup,
             rowGroupOpened: setup,
