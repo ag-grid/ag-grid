@@ -3,7 +3,7 @@ title: "PDF Export - Extra Content"
 enterprise: true
 ---
 
-PDF Export uses Value Getters and Value Formatters but does not export Cell Renderer output. Export callbacks can replace the resulting text without changing the grid.
+PDF Export can add document headings, page headers and footers, cover pages, and content before, after, or within the exported table.
 
 ## Document Headings
 
@@ -90,24 +90,6 @@ const defaultPdfExportParams = {
 
 {% gridExampleRunner title="PDF Cover Page" name="pdf-cover-page" exampleHeight=520 /%}
 
-## Customising Exported Values
-
-```{% frameworkTransform=true %}
-api.exportDataAsPdf({
-    processCellCallback: (params) => params.formatValue(params.value),
-    processHeaderCallback: (params) => params.column.getColDef().headerName ?? params.column.getColId(),
-    processGroupHeaderCallback: (params) => params.columnGroup.getColGroupDef()?.headerName ?? '',
-    processRowGroupCallback: (params) => `Group: ${params.node.key ?? ''}`,
-});
-```
-
-- `processCellCallback` customises body cell text.
-- `processHeaderCallback` customises column header text.
-- `processGroupHeaderCallback` customises column-group header text.
-- `processRowGroupCallback` customises row-group text. Group indentation is applied independently.
-
-These callbacks return text. To style the processed result, use `processStyleCallback`; its `value` is the final exported string.
-
 ## Additional Content
 
 Use `prependContent`, `appendContent`, or `getCustomContentBelowRow` to add content that is not displayed in the grid. Strings create full-width rows. Use `PdfCell[][]` for explicit spans and styling.
@@ -120,7 +102,7 @@ See [PDF Export - Master Detail](./pdf-export-master-detail/) for an example tha
 
 ### Export Options
 
-{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["documentTitle", "documentTitleStyle", "documentSubtitle", "documentSubtitleStyle", "coverPage", "headerFooterConfig", "processCellCallback", "processHeaderCallback", "processGroupHeaderCallback", "processRowGroupCallback", "prependContent", "appendContent", "getCustomContentBelowRow"] config={"description":""} /%}
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["documentTitle", "documentTitleStyle", "documentSubtitle", "documentSubtitleStyle", "coverPage", "headerFooterConfig", "prependContent", "appendContent", "getCustomContentBelowRow"] config={"description":""} /%}
 
 ### PdfDocumentHeadingStyle
 

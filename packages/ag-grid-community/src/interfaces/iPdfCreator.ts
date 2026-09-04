@@ -183,6 +183,7 @@ export interface PdfCellStyle extends PdfTextStyle {
     alignment?: PdfTextAlignment;
     /**
      * Whether text should wrap onto multiple lines. Wrapped content increases the row height as required.
+     * @default false
      */
     wrapText?: boolean;
     /**
@@ -322,37 +323,37 @@ export interface PdfCellImageResult {
 export interface PdfColors {
     /**
      * Background colour for the PDF page.
-     * Defaults to the theme `backgroundColor`.
+     * @default theme backgroundColor
      */
     backgroundColor?: string;
     /**
      * Background colour for body rows.
-     * Defaults to the theme `dataBackgroundColor`.
+     * @default theme dataBackgroundColor
      */
     dataBackgroundColor?: string;
     /**
      * Alternate background colour for odd body rows.
-     * Defaults to the theme `oddRowBackgroundColor`.
+     * @default theme oddRowBackgroundColor
      */
     oddRowBackgroundColor?: string;
     /**
      * Text colour for body rows.
-     * Defaults to the theme `foregroundColor`.
+     * @default theme foregroundColor
      */
     foregroundColor?: string;
     /**
      * Background colour for header rows.
-     * Defaults to the theme `headerBackgroundColor`.
+     * @default theme headerBackgroundColor
      */
     headerBackgroundColor?: string;
     /**
      * Text colour for header rows.
-     * Defaults to the theme `headerTextColor`.
+     * @default theme headerTextColor
      */
     headerTextColor?: string;
     /**
      * Border colour for cell outlines.
-     * Defaults to the theme `borderColor`.
+     * @default theme borderColor
      */
     borderColor?: string;
 }
@@ -469,6 +470,7 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     /**
      * Custom static TrueType font families available to this export.
      * Font data must be loaded by the application before export.
+     * @default []
      */
     fonts?: PdfFontFamilyDefinition[];
     /**
@@ -481,6 +483,7 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * the grid's `enableRtl` setting. Individual `PdfCellStyle.direction`
      * values take precedence for text. An export-level value of `rtl` also
      * renders table columns in right-to-left order.
+     * @default grid enableRtl setting
      */
     direction?: PdfTextDirection;
     /**
@@ -543,6 +546,7 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     addImageToCell?(params: PdfCellImageCallbackParams): PdfCellImageResult | null | undefined;
     /**
      * Page size, orientation and margins.
+     * @default { size: 'A4', orientation: 'landscape', margin: 36 }
      */
     page?: PdfPageSetup;
     /**
@@ -550,6 +554,7 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * Grid styles, row and cell styles, and `processStyleCallback` results
      * override these values.
      * When no style is provided, body cells use `Helvetica` at 10 points.
+     * @default { fontFamily: 'Helvetica', fontSize: 10, padding: 4 }
      */
     defaultCellStyle?: PdfCellStyle;
     /**
@@ -558,14 +563,14 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
      * take precedence. If neither style sets `fontSize`, headers use 11 points.
      * If no font weight is inherited or set, headers use the bold variant of
      * the resolved body font.
+     * @default { fontFamily: 'Helvetica-Bold', fontSize: 11, padding: 4 }
      */
     defaultHeaderStyle?: PdfCellStyle;
     /**
      * Controls exported column widths. Use `auto` to size from exported content, `grid` to use the
-     * current grid width, a number for a width in points, or a callback for per-column control.
+     * current column width in the grid, a number for a width in points, or a callback for per-column control.
      * Widths are proportionally reduced when their total exceeds the printable page width.
-     * By default, current grid widths are used except for the Row Numbers column, which is sized
-     * from its exported content.
+     * @default 'grid'
      */
     columnWidth?: PdfColumnWidth | PdfColumnWidthCallback;
     /**
@@ -575,10 +580,12 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
     rowGroupIndentSize?: number;
     /**
      * Height of body rows in points. If omitted, calculated from font size and padding.
+     * @default calculated from font size and padding
      */
     rowHeight?: number;
     /**
      * Height of header rows in points. If omitted, calculated from header font size and padding.
+     * @default calculated from header font size and padding
      */
     headerRowHeight?: number;
     /**

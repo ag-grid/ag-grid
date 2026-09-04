@@ -14,6 +14,7 @@ interface LanguageSample {
 }
 
 let gridApi: GridApi<LanguageSample>;
+let preparePdfExport: Promise<void>;
 
 const fontFamily = 'IBM Plex Sans JP';
 
@@ -24,15 +25,11 @@ const gridOptions: GridOptions<LanguageSample> = {
         { text: 'PDFには日本語の文字が埋め込まれています。' },
         { text: 'このグリッドでは一つのフォントを使用します。' },
     ],
+    suppressPdfExport: true,
 };
 
 function onBtExport() {
-    loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
-        gridApi.setGridOption('defaultPdfExportParams', {
-            fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
-            defaultCellStyle: { fontFamily },
-            language: 'ja',
-        });
+    preparePdfExport.then(() => {
         gridApi.exportDataAsPdf();
     });
 }
@@ -49,4 +46,12 @@ async function loadFont(fileName: string): Promise<ArrayBuffer> {
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+    preparePdfExport = loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
+        gridApi.setGridOption('defaultPdfExportParams', {
+            fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
+            defaultCellStyle: { fontFamily },
+            language: 'ja',
+        });
+        gridApi.setGridOption('suppressPdfExport', false);
+    });
 });
