@@ -28,6 +28,7 @@ describe('buildLicensePricingMarkdown', () => {
         // A known grid feature row: MCP Server, linked to its docs page. (The origin is
         // baked in from GRID_URL, which is unset under test, so assert only the path.)
         expect(output).toMatch(/\[MCP Server\]\([^)]*mcp-server/);
+        expect(output).toMatch(/\[PDF Export\]\([^)]*pdf-export/);
         expect(output).toContain('✓');
         expect(output).toContain('✗');
     });

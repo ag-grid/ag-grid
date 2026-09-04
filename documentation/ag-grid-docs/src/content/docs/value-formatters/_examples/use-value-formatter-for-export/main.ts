@@ -12,6 +12,7 @@ import {
     ColumnMenuModule,
     ContextMenuModule,
     ExcelExportModule,
+    PdfExportModule,
 } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -24,6 +25,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ClipboardModule,
     ExcelExportModule,
+    PdfExportModule,
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,

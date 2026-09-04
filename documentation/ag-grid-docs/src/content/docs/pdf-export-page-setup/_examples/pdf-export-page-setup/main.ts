@@ -49,6 +49,16 @@ const gridOptions: GridOptions<InventoryData> = {
         minWidth: 100,
     },
     rowData,
+    defaultPdfExportParams: {
+        documentTitle: 'Quarterly Inventory',
+        page: {
+            size: 'A4',
+            orientation: 'landscape',
+            margin: 36,
+        },
+        repeatHeader: true,
+        columnWidth: 'auto',
+    },
 };
 
 function getPageSize(): PdfPageSize {
@@ -92,8 +102,11 @@ function getPdfExportParams(): PdfExportParams {
     };
 }
 
-function onBtExport() {
+function onPdfExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

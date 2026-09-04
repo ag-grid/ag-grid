@@ -1937,6 +1937,12 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "Customising Content",
+                                    "path": "pdf-export-customising-content",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Images",
                                     "path": "pdf-export-images",
                                     "isEnterprise": true

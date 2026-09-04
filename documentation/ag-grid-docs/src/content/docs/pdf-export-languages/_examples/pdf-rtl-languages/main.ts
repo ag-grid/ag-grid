@@ -29,6 +29,7 @@ interface LanguageSample {
 }
 
 let gridApi: GridApi<LanguageSample>;
+let preparePdfExport: Promise<void>;
 
 const gridOptions: GridOptions<LanguageSample> = {
     columnDefs: [
@@ -72,6 +73,7 @@ const gridOptions: GridOptions<LanguageSample> = {
         resizable: true,
     },
     enableRtl: true,
+    suppressPdfExport: true,
 };
 
 function getDefaultPdfExportParams(fonts: PdfFontFamilyDefinition[]): PdfExportParams {
@@ -93,8 +95,7 @@ function getDefaultPdfExportParams(fonts: PdfFontFamilyDefinition[]): PdfExportP
 }
 
 function onBtExport() {
-    loadFonts().then((fonts) => {
-        gridApi.setGridOption('defaultPdfExportParams', getDefaultPdfExportParams(fonts));
+    preparePdfExport.then(() => {
         gridApi.exportDataAsPdf();
     });
 }
@@ -137,4 +138,8 @@ async function loadFont(fileName: string): Promise<ArrayBuffer> {
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+    preparePdfExport = loadFonts().then((fonts) => {
+        gridApi.setGridOption('defaultPdfExportParams', getDefaultPdfExportParams(fonts));
+        gridApi.setGridOption('suppressPdfExport', false);
+    });
 });
