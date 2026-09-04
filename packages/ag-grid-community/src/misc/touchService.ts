@@ -77,9 +77,6 @@ export class TouchService extends BeanStub implements NamedBean {
     public setupForHeader(comp: AgColumnHeader): void {
         const { gos, menuSvc, touchGesturesSvc } = this.beans;
 
-        if (gos.get('suppressTouch')) {
-            return;
-        }
         const { params } = comp;
         const isHeaderContextMenuEnabled = !!menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn);
         const shouldOpenMenuOnLongPress = _shouldOpenHeaderMenuOnLongPress(

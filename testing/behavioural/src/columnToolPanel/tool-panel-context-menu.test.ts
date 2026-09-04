@@ -203,6 +203,29 @@ describe('ToolPanelContextMenu', () => {
             dispatchTouchPointer(document, 'pointerup');
         });
 
+        test('suppressContextMenu leaves the native menu to the browser on a touch press', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid-cell-suppress-context-menu', {
+                columnDefs: [{ field: 'athlete' }],
+                rowData: rowDataFactory(),
+                suppressContextMenu: true,
+            });
+            const div = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => {
+                const el = div.querySelector('.ag-cell') as HTMLElement | null;
+                expect(el).not.toBeNull();
+                return el!;
+            });
+
+            dispatchTouchPointer(cell, 'pointerdown');
+            const contextMenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+            cell.dispatchEvent(contextMenuEvent);
+            await asyncSetTimeout(0);
+
+            expect(contextMenuEvent.defaultPrevented).toBe(false);
+            expect(document.querySelectorAll('.ag-menu')).toHaveLength(0);
+            dispatchTouchPointer(document, 'pointerup');
+        });
+
         test('a native contextmenu during a touch press opens the grid context menu exactly once', async () => {
             const api = await gridMgr.createGridAndWait('myGrid-cell-native-contextmenu', {
                 columnDefs: [{ field: 'athlete', tooltip: true }],

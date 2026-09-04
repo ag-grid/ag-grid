@@ -180,10 +180,12 @@ describe('TouchGesturesService', () => {
         expect(onDomContextMenu).toHaveBeenCalledOnce();
     });
 
-    test('suppresses the browser menu during a gesture even when no registration is eligible', () => {
+    test('leaves the browser menu alone when no registration is eligible', () => {
         const target = document.createElement('div');
         root.appendChild(target);
         const onLongPress = vi.fn();
+        const onDomContextMenu = vi.fn();
+        target.addEventListener('contextmenu', onDomContextMenu);
         service.registerLongPress({ element: target, isEnabled: () => false, onLongPress });
 
         dispatchPointerEvent(target, 'pointerdown');
@@ -191,7 +193,8 @@ describe('TouchGesturesService', () => {
         target.dispatchEvent(contextMenuEvent);
         vi.advanceTimersByTime(550);
 
-        expect(contextMenuEvent.defaultPrevented).toBe(true);
+        expect(contextMenuEvent.defaultPrevented).toBe(false);
+        expect(onDomContextMenu).toHaveBeenCalledOnce();
         expect(onLongPress).not.toHaveBeenCalled();
     });
 

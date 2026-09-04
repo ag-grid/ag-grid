@@ -242,13 +242,12 @@ export class TouchGesturesService extends BeanStub implements NamedBean {
             return;
         }
 
-        // the browser's own context menu never belongs over a grid long press
-        event.preventDefault();
-
         const registration = this.resolveLongPressRegistration(gesture);
+
         if (!registration) {
             return;
         }
+        event.preventDefault();
         if (registration.priority === 'normal') {
             // the winner opens its own menu; the grid's contextmenu listeners must not double-open it
             event.stopImmediatePropagation();

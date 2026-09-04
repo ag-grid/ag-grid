@@ -251,6 +251,22 @@ describe('column header popup toggle buttons (AG-16350)', () => {
         expect(gridsManager.getGrid(eGridDiv)?.getColumn('athlete')?.getSort()).toBeUndefined();
     });
 
+    test('suppressTouch disables the header long press', async () => {
+        const eGridDiv = await createGrid('suppress-touch-header', {
+            columnDefs: [{ field: 'athlete', suppressHeaderContextMenu: true }],
+            rowData: [{ athlete: 'Michael Phelps' }],
+            columnMenu: 'legacy',
+            suppressTouch: true,
+        });
+        const headerText = eGridDiv.querySelector<HTMLElement>('.ag-header-cell-text')!;
+
+        const touch = touchStart(headerText);
+        await asyncSetTimeout(0);
+        touchEnd(touch);
+
+        expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
+    });
+
     test.each(['new', 'legacy'] as const)(
         'Escape restores focus to the floating-filter button with the %s column menu',
         async (columnMenu) => {
