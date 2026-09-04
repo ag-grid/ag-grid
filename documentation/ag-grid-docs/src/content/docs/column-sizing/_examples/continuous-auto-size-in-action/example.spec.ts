@@ -8,6 +8,29 @@ async function waitForWidths(page: Page): Promise<void> {
     await expect(page.locator('.ag-animate-autosize')).toHaveCount(0);
 }
 
+/** The page's first-row number in the paging summary, which changes as soon as the new page lands. */
+function firstRowOnPage(page: Page) {
+    return page.locator('.ag-paging-row-summary-panel-number').first();
+}
+
+/**
+ * Whether this page's content has moved any column off `initialWidths`. The re-size is asynchronous even
+ * once the rows are rendered, so the widths are polled rather than sampled once — a page that leaves them
+ * alone costs the settle window before it is ruled out, which is why that window is kept short.
+ */
+async function widthsChangedFrom(page: Page, initialWidths: number[]): Promise<boolean> {
+    try {
+        await expect
+            .poll(async () => (await columnWidths(page)).some((width, index) => width !== initialWidths[index]), {
+                timeout: 2000,
+            })
+            .toBe(true);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 async function columnWidths(page: Page): Promise<number[]> {
     const widths: number[] = [];
     for (const colId of COLUMNS) {
@@ -36,13 +59,18 @@ test.agExample(import.meta, () => {
 
         const initialWidths = await columnWidths(page);
 
+        // the first page whose content is wide enough somewhere to move a column off its initial width
         let changed = false;
         for (let i = 0; i < 5 && !changed; i++) {
+            // the previous page's rows are still on screen right after the click, so wait on the page
+            // number rather than on row content, which would match before the new page had rendered
+            const previousFirstRow = await firstRowOnPage(page).textContent();
             await page.getByRole('button', { name: 'Next Page' }).click();
+            await expect(firstRowOnPage(page)).not.toHaveText(previousFirstRow ?? '');
             await waitForGridContent(page);
             await waitForWidths(page);
-            const widths = await columnWidths(page);
-            changed = widths.some((width, index) => width !== initialWidths[index]);
+
+            changed = await widthsChangedFrom(page, initialWidths);
         }
 
         expect(changed).toBe(true);
