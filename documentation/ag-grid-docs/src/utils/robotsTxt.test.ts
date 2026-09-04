@@ -17,7 +17,7 @@ const INTERNAL_EXAMPLE_DISALLOWS = [
     '/charts/debug/gallery-examples',
 ];
 // Non-example blocks that always apply.
-const OTHER_DISALLOWS = ['/debug/', '/*-data-grid/*-test/', '/404'];
+const OTHER_DISALLOWS = ['/debug/', '/*-data-grid/*-test/', '/404', '/*searchQuery='];
 // Everything the AI group must still enforce (internal fixtures + other blocks).
 const AI_KEPT_DISALLOWS = [...INTERNAL_EXAMPLE_DISALLOWS, ...OTHER_DISALLOWS];
 const DISALLOW_PATHS = [...PUBLIC_EXAMPLE_DISALLOWS, ...AI_KEPT_DISALLOWS];
