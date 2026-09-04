@@ -168,16 +168,40 @@ export function getNumberOfInputs(type: FilterOptionKey | null | undefined, opti
     return 1;
 }
 
-/** `from` must be below `to`, or equal where the range is inclusive; the message goes on the end being edited. */
-export function getValidityMessageKey<V extends number | bigint>(
+/**
+ * `from` must be below `to`, or equal where the range is inclusive: an inclusive range of one value is an
+ * exact match, so only a strict one has nothing left to match.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isRangeOutOfOrder<V extends number | bigint | Date>(
+    fromValue: V | null,
+    toValue: V | null,
+    inclusive?: boolean
+): boolean {
+    if (fromValue == null || toValue == null) {
+        return false;
+    }
+    return inclusive ? fromValue > toValue : fromValue >= toValue;
+}
+
+/**
+ * The column filter's message for a range whose bounds are out of order: it goes on the end being edited
+ * and names the other end, in the words of whichever kind of value it is.
+ */
+export function getValidityMessageKey<V extends number | bigint | Date>(
     fromValue: V | null,
     toValue: V | null,
     isFrom: boolean,
     inclusive?: boolean
 ): FilterLocaleTextKey | null {
-    // An inclusive range of one value is an exact match, so only a strict one has nothing left to match.
-    if (fromValue == null || toValue == null || fromValue < toValue || (inclusive && fromValue === toValue)) {
+    if (!_isRangeOutOfOrder(fromValue, toValue, inclusive)) {
         return null;
+    }
+    if (fromValue instanceof Date) {
+        if (inclusive) {
+            return isFrom ? 'maxDateInclusiveValidation' : 'minDateInclusiveValidation';
+        }
+        return isFrom ? 'maxDateValidation' : 'minDateValidation';
     }
     if (inclusive) {
         return isFrom ? 'maxValueValidation' : 'minValueValidation';

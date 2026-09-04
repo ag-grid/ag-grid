@@ -260,9 +260,11 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 // other pages.
                 // onlySelectedNonStandardModel: if user wants selected in non standard row model
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
-                const selectedNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
+                // the root carries no values, and must resolve before sorting to land at its displayed position
+                const selectedNodes = (this.beans.selectionSvc?.getSelectedNodes() ?? []).map((node) =>
+                    node.level === -1 && node.sibling?.footer ? node.sibling : node
+                );
                 this.replicateSortedOrder(selectedNodes);
-                // serialize each node
                 selectedNodes.forEach(processBodyRow);
             }
             // here is everything else - including standard row model and selected. we don't use

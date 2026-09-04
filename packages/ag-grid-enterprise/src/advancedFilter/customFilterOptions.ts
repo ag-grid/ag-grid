@@ -7,7 +7,11 @@ import {
     _isGridSuppliedFilterOptions,
 } from 'ag-grid-community';
 
-import type { DataTypeFilterExpressionOperators, FilterExpressionOperator } from './filterExpressionOperators';
+import type {
+    DataTypeFilterExpressionOperators,
+    FilterExpressionOperator,
+    OperandsKind,
+} from './filterExpressionOperators';
 import { getEntries } from './filterExpressionOperators';
 
 /** A list the column author wrote, as opposed to the one its data type supplies; an empty list narrows nothing. */
@@ -51,15 +55,22 @@ function createCustomOptionOperator(
     localeTextFunc: LocaleTextFunc
 ): FilterExpressionOperator<any> {
     const predicate = option.predicate!;
-    const numOperands = _getCustomOptionNumberOfInputs(option);
     // Arity bound here rather than branched on per row; the predicate gets the raw cell value.
     let evaluator: FilterExpressionOperator<any>['evaluator'];
-    if (numOperands === 0) {
-        evaluator = (value) => predicate([], value);
-    } else if (numOperands === 1) {
-        evaluator = (value, _node, _params, operand1) => predicate([operand1], value);
-    } else {
-        evaluator = (value, _node, _params, operand1, operand2) => predicate([operand1, operand2], value);
+    let operands: OperandsKind;
+    switch (_getCustomOptionNumberOfInputs(option)) {
+        case 0:
+            evaluator = (value) => predicate([], value);
+            operands = 'none';
+            break;
+        case 1:
+            evaluator = (value, _node, _params, operand1) => predicate([operand1], value);
+            operands = 'one';
+            break;
+        default:
+            evaluator = (value, _node, _params, operand1, operand2) => predicate([operand1, operand2], value);
+            operands = 'range';
+            break;
     }
-    return { displayValue: _getCustomOptionDisplayName(option, localeTextFunc), evaluator, numOperands };
+    return { displayValue: _getCustomOptionDisplayName(option, localeTextFunc), evaluator, operands };
 }

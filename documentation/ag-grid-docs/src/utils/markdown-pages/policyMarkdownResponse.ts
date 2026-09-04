@@ -12,6 +12,7 @@ import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
 import { createGridMarkdownResolvers } from '@utils/markdoc/renderMarkdocResolvers';
 
 import markdocConfig from '../../../markdoc.config';
+import { GRID_PRODUCT_NAME, gridSiteFrontmatter } from './gridFrontmatter';
 
 /** The raw `.mdoc` body each policy renders from. Cookies has none — see `buildCookiesMarkdown`. */
 const POLICY_BODIES: Record<MdocPolicyName, string> = {
@@ -29,16 +30,19 @@ export async function policyMarkdownResponse(policy: PolicyName): Promise<Respon
         return new Response(null, { status: 404 });
     }
 
+    const siteFrontmatter = gridSiteFrontmatter({ pageUrl: `/${policy}/`, siteRoot: SITE_URL });
+
     const markdown =
         policy === 'cookies'
-            ? buildCookiesMarkdown({ name: 'AG Grid', siteRoot: SITE_URL })
+            ? buildCookiesMarkdown({ name: GRID_PRODUCT_NAME, siteRoot: SITE_URL, siteFrontmatter })
             : await buildPolicyMarkdown({
                   policy,
-                  name: 'AG Grid',
+                  name: GRID_PRODUCT_NAME,
                   body: POLICY_BODIES[policy],
                   markdocConfig,
                   resolvers: createGridMarkdownResolvers({ siteRoot: SITE_URL }),
                   siteRoot: SITE_URL,
+                  siteFrontmatter,
               });
 
     return new Response(markdown, {

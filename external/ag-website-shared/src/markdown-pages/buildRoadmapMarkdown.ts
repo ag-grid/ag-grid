@@ -1,6 +1,8 @@
 import type { RoadmapItem } from '@ag-website-shared/components/roadmap/types';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from './markdownFrontmatter';
+
 /**
  * A roadmap item as this builder needs it. `status` is widened from `RoadmapItem`'s union to
  * `string` so the raw JSON import type-checks — the twin only prints the status as a label,
@@ -27,6 +29,8 @@ export interface BuildRoadmapMarkdownOptions {
      * `new Date()`; passed in here so the generated markdown is deterministic for the build.
      */
     year: number;
+    /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
+    siteFrontmatter?: SiteFrontmatterFields;
 }
 
 /** Matches the page's `formatLastUpdated`, so both render the date identically. */
@@ -53,14 +57,14 @@ export function buildRoadmapMarkdown({
     siteRoot,
     resolveUrl,
     year,
+    siteFrontmatter,
 }: BuildRoadmapMarkdownOptions): string {
     const document: string[] = [
-        [
-            '---',
-            `title: ${JSON.stringify(`Roadmap | ${productName}`)}`,
-            `description: ${JSON.stringify(`${productName} Roadmap - see what we are building next, including planned features, items in progress, and recently shipped work.`)}`,
-            '---',
-        ].join('\n'),
+        buildMarkdownFrontmatter({
+            ...siteFrontmatter,
+            title: `Roadmap | ${productName}`,
+            description: `${productName} Roadmap - see what we are building next, including planned features, items in progress, and recently shipped work.`,
+        }),
         "# What we're building next",
     ];
 

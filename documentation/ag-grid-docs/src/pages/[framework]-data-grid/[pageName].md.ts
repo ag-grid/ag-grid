@@ -1,8 +1,12 @@
+import type { Framework } from '@ag-grid-types';
 import { type MarkdownFramework, renderMarkdocToMarkdown } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { getDocsPages } from '@components/docs/utils/pageData';
 import { DISABLE_MARKDOWN_DOCS, SITE_URL, agGridVersion } from '@constants';
+import { docsPageDescription } from '@utils/docsPageDescription';
+import { getDocsRelatedLinks } from '@utils/docsRelatedLinks';
 import { createGridMarkdownResolvers } from '@utils/markdoc/renderMarkdocResolvers';
-import { type CollectionEntry, getCollection } from 'astro:content';
+import { GRID_PRODUCT_NAME, llmsTxtUrl } from '@utils/markdown-pages/gridFrontmatter';
+import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
 
 import markdocConfig from '../../../markdoc.config';
 
@@ -34,15 +38,35 @@ export async function GET({
     const siteRoot = SITE_URL;
     const resolvers = createGridMarkdownResolvers({ siteRoot });
 
+    const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
+    const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
+
     const markdown = await renderMarkdocToMarkdown({
         body: page.body ?? '',
         framework,
         pageName,
         frontmatter: {
             title: page.data.title,
-            description: page.data.description,
+            // The description the HTML page puts in its meta tag: the page's own frontmatter
+            // where it has one, otherwise its opening paragraph. Without the SEO tagline the
+            // HTML appends, which is marketing copy rather than a summary of the page.
+            description: docsPageDescription({
+                framework: framework as Framework,
+                pageDescription: page.data.description,
+                body: page.body ?? '',
+            }),
             enterprise: page.data.enterprise,
         },
+        product: GRID_PRODUCT_NAME,
+        // The page's nav neighbours, so a reader holding only this file can still navigate.
+        related: getDocsRelatedLinks({
+            navSections: [docsNavData.sections, apiNavData.sections],
+            pageName,
+            framework: framework as Framework,
+            siteRoot,
+            overrides: page.data.related,
+        }),
+        llmsTxt: llmsTxtUrl(siteRoot),
         // Release version only — drop the beta/build suffix (e.g. 36.0.0-beta.2026… → 36.0.0).
         version: agGridVersion.split('-')[0],
         // Per-page Markdoc variables the site injects via <Content> props, so tags like

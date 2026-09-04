@@ -1,5 +1,7 @@
 import { CONTACT_CONTENT, contactSocialLinks } from '@ag-website-shared/components/contact-us/contactContent';
 
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from './markdownFrontmatter';
+
 /**
  * Build the markdown twin of the contact page. The page's substance is an interactive form, which
  * markdown cannot carry — so the twin renders the same headline and standfirst, then points at the
@@ -8,14 +10,21 @@ import { CONTACT_CONTENT, contactSocialLinks } from '@ag-website-shared/componen
  * Product-agnostic: AG Grid, AG Charts and AG Studio share this module and differ only in the
  * `library` they pass (which selects the GitHub repository).
  */
-export function buildContactMarkdown({ library, contactUrl }: { library: string; contactUrl: string }): string {
+export function buildContactMarkdown({
+    library,
+    contactUrl,
+    siteFrontmatter,
+}: {
+    library: string;
+    contactUrl: string;
+    siteFrontmatter?: SiteFrontmatterFields;
+}): string {
     const document = [
-        [
-            '---',
-            `title: ${JSON.stringify(CONTACT_CONTENT.title)}`,
-            `description: ${JSON.stringify(CONTACT_CONTENT.description)}`,
-            '---',
-        ].join('\n'),
+        buildMarkdownFrontmatter({
+            ...siteFrontmatter,
+            title: CONTACT_CONTENT.title,
+            description: CONTACT_CONTENT.description,
+        }),
         `# ${CONTACT_CONTENT.headline}`,
         `*${CONTACT_CONTENT.eyebrow}*`,
         CONTACT_CONTENT.subhead,

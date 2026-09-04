@@ -22,6 +22,9 @@ const SEMVER = /^\d+\.\d+(?:\.\d+)?$/;
 const UNVERSIONED = 'Unversioned';
 const TABLE_HEADERS = ['Issue', 'Type', 'Summary'];
 const DEFAULT_PRODUCT = 'AG Grid';
+// Site the frontmatter's llms.txt link points at. Hard-coded because this module stays
+// dependency-free for the production cron, which rules out reading the site's constants.
+const DEFAULT_SITE_URL = 'https://www.ag-grid.com';
 
 /** Flatten a Jira rich-text HTML fragment to a single line of readable plain text. */
 export function htmlToText(html) {
@@ -79,8 +82,20 @@ function compareVersionsDesc(a, b) {
     return 0;
 }
 
-function frontmatter(title, description) {
-    return ['---', `title: "${title}"`, `description: "${description}"`, '---'].join('\n');
+/*
+ * The frontmatter block, matching the one every other markdown twin opens with (see
+ * `markdownFrontmatter.ts`). These two pages are generated indexes with no place in the site
+ * footer, so they carry no `related` list — the entries they group ARE their related links.
+ */
+function frontmatter(title, description, product, siteUrl) {
+    return [
+        '---',
+        `product: "${product}"`,
+        `title: "${title}"`,
+        `description: "${description}"`,
+        `llms: "${siteUrl}/llms.txt"`,
+        '---',
+    ].join('\n');
 }
 
 function markdownTable(rows) {
@@ -168,14 +183,16 @@ function allChangesSection(versionKeys, groups) {
     return blocks.join('\n\n');
 }
 
-export function changelogToMarkdown(entries, product = DEFAULT_PRODUCT) {
+export function changelogToMarkdown(entries, product = DEFAULT_PRODUCT, siteUrl = DEFAULT_SITE_URL) {
     const groups = groupByVersion(entries);
     const versionKeys = sortedVersionKeys(groups);
 
     return joinSections([
         frontmatter(
             `${product} Changelog`,
-            `Every completed ${product} change by release, with all breaking changes and deprecations listed across releases.`
+            `Every completed ${product} change by release, with all breaking changes and deprecations listed across releases.`,
+            product,
+            siteUrl
         ),
         `# ${product} Changelog`,
         `Completed ${product} changes, newest release first. The Breaking Changes and Deprecations sections collect those items across every release; All Changes lists every entry.`,
@@ -238,7 +255,7 @@ function comparePipelineGroups(a, b) {
     return a.localeCompare(b);
 }
 
-export function pipelineToMarkdown(entries, product = DEFAULT_PRODUCT) {
+export function pipelineToMarkdown(entries, product = DEFAULT_PRODUCT, siteUrl = DEFAULT_SITE_URL) {
     const groups = new Map();
     for (const entry of entries) {
         const key = pipelineStatus(entry);
@@ -252,7 +269,9 @@ export function pipelineToMarkdown(entries, product = DEFAULT_PRODUCT) {
     const sections = [
         frontmatter(
             `${product} Pipeline`,
-            `Feature requests and active bugs in the ${product} backlog, grouped by their scheduled release.`
+            `Feature requests and active bugs in the ${product} backlog, grouped by their scheduled release.`,
+            product,
+            siteUrl
         ),
         `# ${product} Pipeline`,
         `Feature requests and active bugs in the ${product} backlog, grouped by scheduled release. Items scheduled for the next release appear under "Scheduled"; unscheduled items under "Backlog".`,
@@ -267,9 +286,11 @@ export function pipelineToMarkdown(entries, product = DEFAULT_PRODUCT) {
 /* ------------------------------------------------------------------------ cli */
 
 function runCli(args) {
-    const [kind, inputPath, outputPath, product = DEFAULT_PRODUCT] = args;
+    const [kind, inputPath, outputPath, product = DEFAULT_PRODUCT, siteUrl = DEFAULT_SITE_URL] = args;
     if (!kind || !inputPath || !outputPath) {
-        console.error('Usage: node jiraDataToMarkdown.mjs <changelog|pipeline> <input.json> <output.md> [product]');
+        console.error(
+            'Usage: node jiraDataToMarkdown.mjs <changelog|pipeline> <input.json> <output.md> [product] [siteUrl]'
+        );
         process.exit(1);
     }
     const transform = kind === 'changelog' ? changelogToMarkdown : kind === 'pipeline' ? pipelineToMarkdown : null;
@@ -278,7 +299,7 @@ function runCli(args) {
         process.exit(1);
     }
     const entries = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
-    fs.writeFileSync(outputPath, transform(entries, product), 'utf-8');
+    fs.writeFileSync(outputPath, transform(entries, product, siteUrl), 'utf-8');
     console.log(`Wrote ${kind} markdown (${entries.length} entries) to ${outputPath}`);
 }
 

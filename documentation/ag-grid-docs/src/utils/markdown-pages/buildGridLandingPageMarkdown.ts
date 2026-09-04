@@ -7,6 +7,8 @@ import { getFrameworkFromInternalFramework } from '@utils/framework';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
+import { gridSiteFrontmatter } from './gridFrontmatter';
+
 /**
  * Bind the shared landing-page markdown builder to AG Grid's URL helpers. Kept separate from the
  * endpoint so it is free of `astro:content` and therefore unit-testable against the real
@@ -34,5 +36,8 @@ export function buildGridLandingPageMarkdown({
         // FAQ answers are Markdoc rendered per-framework by renderFAQAnswers, so their './' links
         // are framework-relative and need the prefixing helper to land on the right docs page.
         resolveFaqUrl: (url) => urlWithPrefix({ framework, url }),
+        // No pageUrl: the SEO landing pages are not listed in the footer, so they carry the
+        // product and llms.txt fields but no related links.
+        siteFrontmatter: gridSiteFrontmatter({ siteRoot }),
     });
 }

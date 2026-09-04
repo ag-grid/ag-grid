@@ -120,29 +120,31 @@ For all [Cell Data Types](./cell-data-types/), the available filter options can 
 
 The available options are as follows:
 
-| Option Name      | Option Key           | Cell Data Type                                                                            |
-| ---------------- | -------------------- | ----------------------------------------------------------------------------------------- |
-| contains         | `contains`           | `text`, `object`                                                                          |
-| does not contain | `notContains`        | `text`, `object`                                                                          |
-| equals           | `equals`             | `text`, `object`                                                                          |
-| =                | `equals`             | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| does not equal   | `notEqual`           | `text`, `object`                                                                          |
-| !=               | `notEqual`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| begins with      | `startsWith`         | `text`, `object`                                                                          |
-| ends with        | `endsWith`           | `text`, `object`                                                                          |
-| is blank         | `blank`              | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
-| is not blank     | `notBlank`           | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
-| >                | `greaterThan`        | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| >=               | `greaterThanOrEqual` | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| <                | `lessThan`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| <=               | `lessThanOrEqual`    | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| is between       | `inRange`            | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
-| is true          | `true`               | `boolean`                                                                                 |
-| is false         | `false`              | `boolean`                                                                                 |
+| Option Name      | Option Key           | Cell Data Type                                                                                      |
+| ---------------- | -------------------- | --------------------------------------------------------------------------------------------------- |
+| contains         | `contains`           | `text`, `object`                                                                                    |
+| does not contain | `notContains`        | `text`, `object`                                                                                    |
+| equals           | `equals`             | `text`, `object`                                                                                    |
+| =                | `equals`             | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| does not equal   | `notEqual`           | `text`, `object`                                                                                    |
+| !=               | `notEqual`           | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| begins with      | `startsWith`         | `text`, `object`                                                                                    |
+| ends with        | `endsWith`           | `text`, `object`                                                                                    |
+| is blank         | `blank`              | `text`, `number`, `bigint`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| is not blank     | `notBlank`           | `text`, `number`, `bigint`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| >                | `greaterThan`        | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| >=               | `greaterThanOrEqual` | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <                | `lessThan`           | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <=               | `lessThanOrEqual`    | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| is between       | `inRange`            | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| is true          | `true`               | `boolean`                                                                                           |
+| is false         | `false`              | `boolean`                                                                                           |
+| is any of        | `isAnyOf`            | any, on a [Set Filter](./filter-set/) column — see [Set Filters](#set-filters)                      |
+| is none of       | `isNoneOf`           | any, on a [Set Filter](./filter-set/) column — see [Set Filters](#set-filters)                      |
 
 `is between` takes two values, written as a comma-separated pair: `[Age] is between (21, 38)`. The range is exclusive of both ends unless `inRangeInclusive = true` is set, exactly as it is in the [Number Filter](./filter-number/) and the [Date Filter](./filter-date/).
 
-The Advanced Filter does not validate the order of the two values, where the column filters refuse to apply a range whose first value is not below its second. A reversed range is applied here and matches no row.
+The two values are validated against each other, as the column filters validate the pair of inputs they show for a range: the first must be below the second, or equal to it where `inRangeInclusive = true` is set. A range whose values are in the wrong order is invalid and is not applied.
 
 For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to enable case sensitivity.
 
@@ -201,22 +203,15 @@ The Advanced Filter names each of them as a phrase, where the Date Filter names 
 | is in last 12 months | `last12Months` |
 | is in last 24 months | `last24Months` |
 
-They take no value, so an expression is the column and the option alone, and the filter model holds only the option key:
-
-```text
-[Date] is in last year
-```
+They take no value, so an expression is the column and the option alone — `[Date] is in last year` — and the filter model holds only the option key:
 
 ```js
 const advancedFilterModel = { filterType: 'date', colId: 'date', type: 'lastYear' };
 ```
 
 Taking no value also means one cannot be a bound of `is between`. Write a span of consecutive options as a join
-of them, which stays relative where a written pair of dates would not:
-
-```text
-[Date] is yesterday OR [Date] is today OR [Date] is tomorrow
-```
+of them — `[Date] is yesterday OR [Date] is today OR [Date] is tomorrow` — which stays relative where a written
+pair of dates would not.
 
 The option stays relative to the current date rather than being resolved to fixed dates when it is applied, so a saved filter model means the same thing whenever it is restored. With the Server-Side Row Model the option key reaches the server with no values, as the Date Filter's does — see [Preset Date Range Filters](./server-side-model-filtering/#preset-date-range-filters).
 
@@ -227,9 +222,58 @@ The following example demonstrates the built-in range and relative date options:
 
 {% gridExampleRunner title="Built-in Range and Relative Date Options" name="built-in-filter-options" /%}
 
+### Set Filters
+
+A column configured with a [Set Filter](./filter-set/) gains the `is any of` and `is none of` options, in addition to everything its Cell Data Type already offers. Both take a list of values:
+
+```text
+[Country] is any of ["Australia", "Italy"]
+[Country] is none of ["Australia", "Italy"]
+```
+
+Typing inside the list suggests the column's Set Filter values, with no opening quote required. Selecting one writes it quoted and ready for the next; values already in the list are not suggested again, and deleting one returns it to the list. In the [Advanced Filter Builder](#advanced-filter-builder) the value pill opens the column's own Set Filter.
+
+Quotes are only needed where a value would otherwise be read as something else. A value written without them may contain spaces, and is trimmed:
+
+```text
+[Country] is any of [New Zealand, Italy]
+```
+
+Blank values are offered as `(Blanks)`, the name the Set Filter gives them, and are written quoted: bare, the value's own parentheses can be read as the brackets of a list holding `Blanks`, which names nothing. The model stores `null` for it.
+
+```text
+[Country] is any of ["(Blanks)", Italy]
+```
+
+The Set Filter configuration on the column is reused rather than duplicated, so `colDef.keyCreator`, `filterParams.valueFormatter`, `filterParams.cellRenderer`, `filterParams.treeList`, `filterParams.caseSensitive` and `colDef.filterValueGetter` all behave as they do in the Set Filter itself, and the rows an expression matches are the rows the equivalent Set Filter selection matches. This row test runs under the Client-Side Row Model; with the Server-Side Row Model the option reaches the server in the filter model, where the server-side filtering logic decides what it means.
+
+`filterParams.values` is reused as well, and the Advanced Filter resolves a column's values through a handler of its own rather than the column filter's. A callback that fetches them can therefore be asked again for the same column: write it so it can be called more than once.
+
+Values are displayed the way the Set Filter displays them. Where only `colDef.valueFormatter` is set, the underlying values are shown; where `filterParams.valueFormatter` is set, the formatted values are shown and matched, while the filter model continues to store the underlying keys. To store formatted values in the model instead, provide `colDef.filterValueGetter`.
+
+An expression names a value by its text, so each value needs text of its own. Where a `valueFormatter` maps two keys to the same text, the first keeps that text and the rest are written as their key instead. Where a key is itself another value's formatted text there is no text left to tell the two apart, so they share one entry and a condition naming it filters on both.
+
+With `treeList` enabled, a value is written as a path, and `›` drills into a group. Typing `>` or `/` drills in too, since neither is on the same key as `›`:
+
+```text
+[Location] is any of ["Europe" › "Italy"]
+```
+
+Typing searches the whole hierarchy rather than the level on show, so a value deep in the tree is suggested without drilling to it first; choosing one writes the whole path. A value that itself contains one of those characters is read as a path first and as the text it is second, so `[Date] is any of [2024/01]` still names the value it looks like wherever no path is spelled that way. Quoting says which you meant: `["a › b"]` is one value holding the character, `["a" › "b"]` is a path of two segments.
+
+Advanced Filter expressions are the source of truth, so changes to the row data never rewrite them. An expression naming a value the data no longer holds is reported against that value and cannot be applied, while an expression already applied keeps its model and keeps filtering.
+
+{% note %}
+The filter model for these options is a `SetAdvancedFilterModel`, with `filterType: 'set'` and a `values` array of Set Filter keys, rather than the `filter` / `filterTo` of the other options.
+{% /note %}
+
+In the following example, **Country** uses a plain Set Filter, **Sport** formats its values through `filterParams.valueFormatter`, and **Date** is a Tree List:
+
+{% gridExampleRunner title="Advanced Filter Set Filters" name="set-filters" /%}
+
 ### Custom Filter Options
 
-`filterOptions` also accepts [Custom Filter Options](./filter-conditions/#custom-filter-options). The Advanced Filter evaluates the same `predicate` as the column filter, and supports options taking 0, 1 or 2 values. As with the settings above, the `predicate` runs only under the Client-Side Row Model: with the Server-Side Row Model the option reaches the server as its `displayKey` in the filter model, where the server-side filtering logic decides what it means.
+`filterOptions` also accepts [Custom Filter Options](./filter-conditions/#custom-filter-options). The Advanced Filter evaluates the same `predicate` as the column filter, and supports options taking 0, 1 or 2 values. An option taking two values has them validated against each other in the same way as `is between`, as the column filter validates the two inputs it shows for one. As with the settings above, the `predicate` runs only under the Client-Side Row Model: with the Server-Side Row Model the option reaches the server as its `displayKey` in the filter model, where the server-side filtering logic decides what it means.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -258,12 +302,7 @@ const gridOptions = {
 }
 ```
 
-An option is written in an expression under its `displayName`, or its [localised](./localisation/) text where the `displayKey` has an entry, followed by as many values as it takes. An option whose name is blank once resolved is written under its `displayKey` instead, so it stays usable. Two values are separated by a comma, and are conventionally wrapped in brackets, which are optional:
-
-```text
-[Age] Even Numbers
-[Age] Between (Exclusive) (30, 40)
-```
+An option is written in an expression under its `displayName`, or its [localised](./localisation/) text where the `displayKey` has an entry, followed by as many values as it takes. An option whose name is blank once resolved is written under its `displayKey` instead, so it stays usable. Two values are separated by a comma, and are conventionally wrapped in brackets, which are optional — `[Age] Even Numbers`, `[Age] Between (Exclusive) (30, 40)`.
 
 Each value is quoted according to its Cell Data Type, as for the built-in options: `number` and `bigint` values are unquoted, all others are quoted. A value that would otherwise end early — one containing a space or a closing bracket, starting with a quote, or holding the comma that separates a pair — is quoted whatever its type. A `number` or `bigint` value that contains both kinds of quote cannot be wrapped in either, so it is written as the plain number instead.
 
@@ -282,6 +321,8 @@ const advancedFilterModel = {
 A `displayKey` is resolved against the column being filtered, so different columns can reuse the same key. Reusing an Option Key from the table above replaces that built-in option for the column, the same as it does in the column filter.
 
 A column's list decides what the Advanced Filter suggests for it, not what it can read. An expression naming an option the list leaves out — one saved before the list was narrowed, for example — still applies, so changing `filterOptions` does not discard filters that have already been stored. Where a list names no option the Advanced Filter has, the column keeps the standard options for its Cell Data Type — which for a date column means the standard options rather than the relative date ones, since those are never standard.
+
+On a Set Filter column, `is any of` and `is none of` come from the column's filter rather than from its Cell Data Type, so they join the standard options for that Cell Data Type. A `filterOptions` list replaces those options in full, so it must name `isAnyOf` and `isNoneOf` for the column to keep offering them.
 
 The following example demonstrates custom filter options taking different numbers of values:
 
@@ -329,6 +370,19 @@ const advancedFilterModel = {
         filter: 'united',
       }
     ]
+};
+```
+
+A condition on a [Set Filter](./filter-set/) column is a `SetAdvancedFilterModel`, which carries a `values` array in place of `filter` / `filterTo`:
+
+{% interfaceDocumentation interfaceName="SetAdvancedFilterModel" config={"description":""} /%}
+
+```js
+const advancedFilterModel = {
+    filterType: 'set',
+    colId: 'country',
+    type: 'isAnyOf',
+    values: ['Australia', 'Italy'],
 };
 ```
 
@@ -422,6 +476,8 @@ All of the [Cell Data Types](./cell-data-types) are supported in the Advanced Fi
 - **Date** and **Date Time** - The value in the input is converted to a `Date` via the [Value Parser](./value-parsers/#value-parser).
 - **Date String** and **Date Time String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string). This is compared against the cell values, which are also converted using the Date Parser.
 - **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
+
+The `is any of` and `is none of` options a [Set Filter](./filter-set/) column adds are matched differently from all of the above, whatever the cell data type: the written values are resolved to Set Filter keys and the row is tested by that column's own Set Filter. See [Set Filters](#set-filters) above.
 
 ## Aggregation / Pivoting
 

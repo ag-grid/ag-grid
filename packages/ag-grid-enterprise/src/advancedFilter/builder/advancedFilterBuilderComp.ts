@@ -20,7 +20,7 @@ import type { AdvancedFilterExpressionService } from '../advancedFilterExpressio
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AdvancedFilterService } from '../advancedFilterService';
 import type { PartialColumnFilterModel } from '../filterExpressionUtils';
-import { hasEveryOperand } from '../filterExpressionUtils';
+import { getConditionValidationMessage } from '../filterExpressionUtils';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
@@ -336,17 +336,19 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
 
     private refreshList(softRefresh: boolean): void {
         if (!softRefresh) {
-            const invalidModels: AdvancedFilterModel[] = [];
+            // Carried by model identity, message included: a rebuild makes new items for the same conditions.
+            const invalid = new Map<AdvancedFilterModel, string | null | undefined>();
             for (const item of this.items) {
                 if (!item.valid) {
-                    invalidModels.push(item.filterModel!);
+                    invalid.set(item.filterModel!, item.validationMessage);
                 }
             }
             this.buildList();
-            if (invalidModels.length) {
+            if (invalid.size) {
                 for (const item of this.items) {
-                    if (item.filterModel && invalidModels.includes(item.filterModel)) {
+                    if (item.filterModel && invalid.has(item.filterModel)) {
                         item.valid = false;
+                        item.validationMessage = invalid.get(item.filterModel);
                     }
                 }
             }
@@ -389,7 +391,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     ): AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp {
         const itemComp = this.createBean(
             item.filterModel
-                ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper)
+                ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper, this.getGui())
                 : new AdvancedFilterBuilderItemAddComp(item, focusWrapper)
         );
 
@@ -568,19 +570,27 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationAlreadyApplied');
             }
         } else {
-            validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
+            // An invalid condition that said why beats the generic message, which claims it is merely unfinished.
+            validationMessage =
+                this.items.find((item) => !item.valid)?.validationMessage ??
+                this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
         }
         this.eButtons?.updateValidity(isValid, validationMessage);
     }
 
-    /** The only pass every item gets: a row the virtual list has not mounted has no component to validate it. */
+    /**
+     * The only pass every item gets: a row the virtual list has not mounted has no component to validate it.
+     * It decides validity rather than only withdrawing it, so a condition its column stops rejecting recovers
+     * without the user having to scroll it into view.
+     */
     private validateItems(): void {
         const advFilterExpSvc = this.advFilterExpSvc;
         for (const item of this.items) {
-            if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
+            if (!item.filterModel || item.filterModel.filterType === 'join') {
                 continue;
             }
             const { filterModel } = item;
+            item.validationMessage = null;
             const { colId } = filterModel;
             const hasColumn = advFilterExpSvc.getColumnAutocompleteEntries().find(({ key }) => key === colId);
             const { column, baseCellDataType } = advFilterExpSvc.getColumnDetails(colId);
@@ -594,9 +604,17 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             if (!operator) {
                 item.valid = false;
                 clearCondition(filterModel);
-            } else if (!hasEveryOperand(advFilterExpSvc, filterModel, operator.numOperands)) {
-                item.valid = false;
+                continue;
             }
+            item.validationMessage = getConditionValidationMessage(
+                advFilterExpSvc,
+                this.gos,
+                filterModel,
+                column,
+                baseCellDataType,
+                operator
+            );
+            item.valid = !item.validationMessage;
         }
     }
 }
@@ -605,4 +623,7 @@ const clearCondition = (filterModel: PartialColumnFilterModel) => {
     delete filterModel.type;
     delete filterModel.filter;
     delete filterModel.filterTo;
+    delete filterModel.values;
+    // `set` is a member the arity chose, so it goes with the option rather than outliving it.
+    delete filterModel.filterType;
 };

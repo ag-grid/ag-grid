@@ -217,7 +217,11 @@ Every strategy re-runs when the displayed columns change and when the grid is re
 - `fitCellContents` re-runs on any change to the row data, and on viewport changes, because both change what there is to measure — scrolling is what brings new cell content into view.
 - The width-distribution strategies, `fitGridWidth` and `fitProvidedWidth`, are arithmetic over the current column set, so scrolling cannot change their result. They re-run on new data, a page change, and a scrollbar appearing or disappearing — the changes to the width there is to share out.
 
-Triggers arriving in the same frame are coalesced into a single re-size.
+Triggers arriving in the same frame are coalesced into a single re-size. Viewport and grid-size changes are debounced on top of that, so scrolling and resizing the grid re-size once the gesture settles rather than on every frame.
+
+The example below uses `fitCellContents` continuously over a grouped, paginated grid. Move between pages, or change the page size, and the columns re-fit to the content of the rows now on screen — the medal columns stay narrow while "Athlete" and "Sport" grow and shrink around the longest names on each page.
+
+{% gridExampleRunner title="Continuous Auto-Sizing in Action" name="continuous-auto-size-in-action" /%}
 
 Provide `shouldAutoSizeColumns` to take control of each re-size. It is called first, with the eligible `columns` and a `reason` of `'dataChanged'`, `'columnsChanged'`, `'viewportChanged'` or `'gridSizeChanged'`. Return `false` to skip that re-size, leaving the widths untouched. The callback has no effect unless `continuous` is `true`.
 

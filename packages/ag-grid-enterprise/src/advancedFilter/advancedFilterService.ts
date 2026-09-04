@@ -1,5 +1,3 @@
-import { _exists } from 'ag-stack';
-
 import type {
     AdvancedFilterModel,
     BeanCollection,
@@ -23,6 +21,7 @@ import type {
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
 } from './filterExpressionUtils';
+import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
 
 export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
     beanName = 'advancedFilter' as const;
@@ -31,6 +30,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private colModel: ColumnModel;
     private dataTypeSvc?: DataTypeService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
+    private advFilterSetSvc: AdvancedFilterSetService;
     private filterValueSvc: FilterValueService;
     private filterManager?: FilterManager;
 
@@ -39,6 +39,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.colModel = beans.colModel;
         this.dataTypeSvc = beans.dataTypeSvc;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
+        this.advFilterSetSvc = beans.advFilterSetSvc as AdvancedFilterSetService;
         this.filterValueSvc = beans.filterValueSvc!;
         this.filterManager = beans.filterManager;
     }
@@ -48,6 +49,15 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private expressionProxy: ExpressionProxy;
     private appliedExpression: string | null = null;
+    /**
+     * The model the applied expression resolved to, held alongside the function built from it rather than
+     * re-derived on every read: a Set Filter value whose text stops resolving falls back to that text as
+     * its key, so re-deriving would report a key the applied filter is not using.
+     */
+    private appliedModel: AdvancedFilterModel | null = null;
+    private appliedBuilderModel: AdvancedFilterModel | null = null;
+    /** Gates the re-render: without it, every data change would rebuild each column's values to re-read them. */
+    private appliedTextUnresolved = false;
     /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
     private expressionFunction: FilterExpressionFunction | null;
@@ -73,6 +83,9 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.addManagedEventListeners({
             dataTypesInferred: () => this.revalidateAndApply(),
         });
+        this.addManagedListeners(this.advFilterSetSvc, {
+            valuesChanged: () => this.refreshAppliedExpressionText(),
+        });
     }
 
     private revalidateAndApply(): void {
@@ -94,41 +107,74 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     public getModel(): AdvancedFilterModel | null {
-        return this.parseAppliedExpressionModel(false);
+        return cloneModel(this.appliedModel);
     }
 
     /**
      * As `getModel`, but with operands in the form the builder should edit rather than canonical model
-     * form, so a value typed in a syntax the model cannot reproduce survives the round-trip.
+     * form, so a value typed in a syntax the model cannot reproduce survives the round-trip. The builder
+     * edits what it is given in place, so it must be its own copy.
      */
     public getBuilderModel(): AdvancedFilterModel | null {
-        return this.parseAppliedExpressionModel(true);
+        return cloneModel(this.appliedBuilderModel);
     }
 
-    private parseAppliedExpressionModel(forBuilder: boolean): AdvancedFilterModel | null {
-        const expressionParser = this.createExpressionParser(this.appliedExpression);
-        expressionParser?.parseExpression();
-        return expressionParser?.getModel(forBuilder) ?? null;
+    /** The expression text a model is written as. */
+    private modelToExpression(model: AdvancedFilterModel, isFirstParent?: boolean): string | null {
+        if (model.filterType === 'join') {
+            const operator = this.advFilterExpSvc.parseJoinOperator(model);
+            const expression = model.conditions
+                .map((condition) => this.modelToExpression(condition))
+                // A join with no conditions of its own writes nothing, which would join as a stray operator.
+                .filter((condition) => condition != null && condition !== '')
+                .join(` ${operator} `);
+            return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
+        }
+        return this.advFilterExpSvc.parseColumnFilterModel(model);
+    }
+
+    /** The expression a model is written as, recording whether any set value had to fall back to its key. */
+    private writeExpression(model: AdvancedFilterModel | null): string | null {
+        const advFilterExpSvc = this.advFilterExpSvc;
+        advFilterExpSvc.wroteUnresolvedSetValue = false;
+        const expression = model ? this.modelToExpression(model, true) : null;
+        this.appliedTextUnresolved = advFilterExpSvc.wroteUnresolvedSetValue;
+        return expression;
+    }
+
+    /**
+     * A set value written before its column's values loaded falls back to its stored key, so the text can
+     * name it in a form the list never offers. The model is what the filter matches on, so re-render it.
+     */
+    private refreshAppliedExpressionText(): void {
+        // Only text that fell back can be stale. Every other case leaves here without touching the
+        // values, which would otherwise be rebuilt eagerly on each data change just to be re-read.
+        if (!this.appliedTextUnresolved) {
+            return;
+        }
+        const appliedModel = this.appliedModel;
+        // Text the author has not applied yet is theirs, so it is never overwritten.
+        if (!appliedModel || this.expression !== this.appliedExpression) {
+            return;
+        }
+        const expression = this.writeExpression(appliedModel);
+        if (expression !== this.expression) {
+            this.expression = expression;
+            this.appliedExpression = expression;
+        }
+        // Refreshed even where the text is unchanged: a value that now resolves clears the fault it reported,
+        // and a blank is written the same way whether or not it resolved.
+        this.ctrl.refreshComp();
     }
 
     public setModel(model: AdvancedFilterModel | null): void {
-        const parseModel = (model: AdvancedFilterModel, isFirstParent?: boolean): string | null => {
-            if (model.filterType === 'join') {
-                const operator = this.advFilterExpSvc.parseJoinOperator(model);
-                const expression = model.conditions
-                    .map((condition) => parseModel(condition))
-                    .filter((condition) => _exists(condition))
-                    .join(` ${operator} `);
-                return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
-            } else {
-                return this.advFilterExpSvc.parseColumnFilterModel(model);
-            }
-        };
-
-        const expression = model ? parseModel(model, true) : null;
+        const expression = this.writeExpression(model);
+        const unresolved = this.appliedTextUnresolved;
 
         this.setExpressionDisplayValue(expression);
         this.applyExpression();
+        // Applying clears the flag, since text normally comes from the input; here it came from `model`.
+        this.appliedTextUnresolved = unresolved;
         this.ctrl.refreshComp();
         this.ctrl.refreshBuilderComp();
     }
@@ -157,6 +203,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             dataTypeSvc: this.dataTypeSvc,
             valueSvc: this.valueSvc,
             advFilterExpSvc: this.advFilterExpSvc,
+            advFilterSetSvc: this.advFilterSetSvc,
         });
     }
 
@@ -205,11 +252,15 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     private applyExpressionFromParser(expressionParser: FilterExpressionParser | null): void {
+        // The text being applied is the author's own, so nothing about it is ours to re-render.
+        this.appliedTextUnresolved = false;
         this.isValid = !expressionParser || expressionParser.isValid();
         if (!expressionParser || !this.isValid) {
             this.expressionFunction = null;
             this.expressionParams = null;
             this.appliedExpression = null;
+            this.appliedModel = null;
+            this.appliedBuilderModel = null;
             return;
         }
 
@@ -218,6 +269,9 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.expressionFunction = expressionFunction;
         this.expressionParams = params;
         this.appliedExpression = this.expression;
+        // Taken from the same parse as the function, so the model always names what the filter matches on.
+        this.appliedModel = expressionParser.getModel();
+        this.appliedBuilderModel = expressionParser.getModel(true);
     }
 
     public updateValidity(): boolean {
@@ -226,11 +280,40 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         expressionParser?.parseExpression();
         const isValid = !expressionParser || expressionParser.isValid();
 
-        const updatedValidity = isValid !== this.isValid;
+        const wasValid = this.isValid;
+        const wasApplied = this.appliedExpression;
+        const wasPresent = !!this.expressionFunction;
 
-        this.applyExpressionFromParser(expressionParser);
+        // Valid and still reporting a fault is the advisory case: an unresolved value reads back as the
+        // text it was written as, so re-applying would rebuild the filter from that instead of its key.
+        if (isValid && expressionParser?.getValidationMessage()) {
+            this.isValid = true;
+        } else {
+            this.applyExpressionFromParser(expressionParser);
+        }
         this.ctrl.refreshComp();
         this.ctrl.refreshBuilderComp();
-        return updatedValidity;
+        // The advisory branch leaves the applied state alone, so validity alone does not say whether
+        // the rows need another pass.
+        return (
+            isValid !== wasValid || this.appliedExpression !== wasApplied || !!this.expressionFunction !== wasPresent
+        );
     }
 }
+
+/** The applied model is held rather than re-parsed per read, so a reader must not get the live instance. */
+const cloneModel = (model: AdvancedFilterModel | null): AdvancedFilterModel | null => {
+    if (!model) {
+        return null;
+    }
+    if (model.filterType === 'join') {
+        const conditions = model.conditions;
+        const len = conditions.length;
+        const cloned: AdvancedFilterModel[] = new Array(len);
+        for (let i = 0; i < len; ++i) {
+            cloned[i] = cloneModel(conditions[i])!;
+        }
+        return { ...model, conditions: cloned };
+    }
+    return model.filterType === 'set' ? { ...model, values: [...model.values] } : { ...model };
+};

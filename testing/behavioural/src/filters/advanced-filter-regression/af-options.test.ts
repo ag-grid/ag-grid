@@ -664,13 +664,12 @@ describe('Advanced Filter — Set Filter column (current behaviour)', () => {
         `);
     });
 
-    test('there is no set-membership (IN) operator today', async () => {
+    test('`in` is not an operator, set membership being written as `is any of`', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
 
         await AdvancedFilterHarness.get(api).applyExpression('[Country] in ["Jamaica", "Poland"]');
         await asyncSetTimeout(0);
 
-        // No `in` operator exists for a text column → rejected. AG-8950 will introduce it.
         expect(api.getAdvancedFilterModel()).toBeNull();
         await new FilterDom(api, 'set IN rejected').checkFilterDom(`
             ADVANCED FILTER

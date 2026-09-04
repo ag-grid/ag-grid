@@ -243,7 +243,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private validateValue(): string | null {
-        return this.expressionParser?.isValid() ? null : (this.expressionParser?.getValidationMessage() ?? null);
+        return this.expressionParser?.getValidationMessage() ?? null;
     }
 
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {

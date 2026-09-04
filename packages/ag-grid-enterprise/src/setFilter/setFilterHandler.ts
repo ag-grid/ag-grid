@@ -18,6 +18,7 @@ import type {
 import { BeanStub, _addGridCommonParams, _isClientSideRowModel } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import {
     processDataPath,
@@ -26,6 +27,7 @@ import {
     translateForSetFilter,
 } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
+import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
 
@@ -130,7 +132,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     public doesFilterPass(params: DoesFilterPassParams<any, SetFilterModel>): boolean {
-        const { appliedModel, treeDataTreeList, groupingTreeList } = this;
+        const appliedModel = this.appliedModel;
         if (appliedModel.isNull()) {
             return true;
         }
@@ -140,27 +142,73 @@ export class SetFilterHandler<TValue = string>
             return false;
         }
 
-        const { node } = params;
-        if (treeDataTreeList) {
-            return this.doesFilterPassForTreeData(node);
+        return this.matchesKeys(params.node, appliedModel) ?? false;
+    }
+
+    /**
+     * The pass test for a selection this filter did not make, folded and matched by its own rules.
+     * `undefined` is a node with no key to test, which a negating caller must not invert into a pass.
+     */
+    public createKeysMatcher(keys: SetFilterModelValue): (node: IRowNode) => boolean | undefined {
+        const model = new SetFilterAppliedModel(this.caseFormat.bind(this));
+        // The fold is part of the model's state: `update` applies it to the keys once, where `has` applies
+        // it to each row's key live. A definition change flipping the rule leaves the two disagreeing, and
+        // the caller cannot re-make the matcher: it is compiled into an expression it does not own.
+        let foldedCaseSensitive = this.caseSensitive;
+        model.update({ filterType: 'set', values: keys });
+        return (node) => {
+            if (foldedCaseSensitive !== this.caseSensitive) {
+                foldedCaseSensitive = this.caseSensitive;
+                model.update({ filterType: 'set', values: keys });
+            }
+            return this.matchesKeys(node, model);
+        };
+    }
+
+    private matchesKeys(node: IRowNode, model: SetFilterAppliedModel): boolean | undefined {
+        if (this.treeDataTreeList) {
+            return this.doesFilterPassForTreeData(node, model);
         }
-        if (groupingTreeList) {
-            return this.doesFilterPassForGrouping(node);
+        if (this.groupingTreeList) {
+            return this.doesFilterPassForGrouping(node, model);
         }
 
         const value = this.params.getValue(node);
 
         if (value != null && Array.isArray(value)) {
             if (value.length === 0) {
-                return appliedModel.has(null);
+                return model.has(null);
             }
-            return value.some((v) => appliedModel.has(this.createKey(v, node)));
+            return value.some((v) => model.has(this.createKey(v, node)));
         }
 
-        return appliedModel.has(this.createKey(value, node));
+        return model.has(this.createKey(value, node));
     }
 
-    private getFormattedValue(key: string | null): string | null {
+    /**
+     * The display-value tree every key falls under, by root tree key, for a tree list column: without one
+     * there is no path getter and every value flattens to `String(value)` with a warning. Built fresh rather
+     * than shared with the UI's own model, whose contents track what the list is currently showing.
+     */
+    public createDisplayValueTree(keys: SetFilterModelValue): Map<string | null, SetFilterModelTreeItem> {
+        const filterParams = this.params.filterParams;
+        const model = new TreeSetDisplayValueModel<any>(
+            this.beans.log,
+            filterParams.textFormatter ?? ((value) => value ?? null),
+            filterParams.treeListPathGetter,
+            filterParams.treeListFormatter,
+            this.isTreeDataOrGrouping()
+        );
+        model.updateDisplayedValuesToAllAvailable(
+            (key) => this.valueModel.getValueForFormatter(key),
+            keys,
+            new Set(keys),
+            'reload'
+        );
+        return model.getSelectAllItem().children!;
+    }
+
+    public getFormattedValue(key: string | null): string | null {
         let value: TValue | string | null = this.valueModel.getValueForFormatter(key);
         if (this.noValueFormatterSupplied && this.isTreeDataOrGrouping() && Array.isArray(value)) {
             // essentially get back the cell value
@@ -362,33 +410,31 @@ export class SetFilterHandler<TValue = string>
         return this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
-    private doesFilterPassForTreeData(node: IRowNode): boolean {
+    private doesFilterPassForTreeData(node: IRowNode, model: SetFilterAppliedModel): boolean | undefined {
         if (node.childrenAfterGroup?.length) {
             // only perform checking on leaves. The core filtering logic for tree data won't work properly otherwise
-            return false;
+            return undefined;
         }
-        const { gos, appliedModel } = this;
-        return appliedModel.has(
+        return model.has(
             this.createKey(
                 processDataPath(
                     (node as RowNode).getRoute() ?? [node.key ?? node.id!],
                     true,
-                    gos.get('groupAllowUnbalanced')
+                    this.gos.get('groupAllowUnbalanced')
                 ) as any
             ) as any
         );
     }
 
-    private doesFilterPassForGrouping(node: IRowNode): boolean {
+    private doesFilterPassForGrouping(node: IRowNode, model: SetFilterAppliedModel): boolean {
         const {
-            appliedModel,
             params,
             gos,
             beans: { rowGroupColsSvc, valueSvc },
         } = this;
         const dataPath = (rowGroupColsSvc?.columns ?? []).map((groupCol) => valueSvc.getKeyForNode(groupCol, node));
         dataPath.push(params.getValue(node));
-        return appliedModel.has(
+        return model.has(
             this.createKey(processDataPath(dataPath, false, gos.get('groupAllowUnbalanced')) as any) as any
         );
     }

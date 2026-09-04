@@ -15,6 +15,8 @@ const defaultPdfExportParams = {
 };
 ```
 
+Export the following example to see the effect of these overrides: the exported PDF uses the configured header and row colours rather than the grid's on-screen theme.
+
 {% gridExampleRunner title="PDF Styling" name="pdf-styling" exampleHeight=520 /%}
 
 ## Automatic Grid Styles
@@ -72,6 +74,8 @@ Styles returned by `processStyleCallback` take precedence over automatic grid st
 
 `processStyleCallback` still runs when `skipGridStyles=true`.
 
+Export the following example to see the callback override the "Late" cells with a red, bold style in the PDF:
+
 {% gridExampleRunner title="Rows And Cells Override" name="pdf-rows-and-cells-override" exampleHeight=520 /%}
 
 ## Text And Box Styles
@@ -111,7 +115,3 @@ When neither style sets a font size, body cells use 10pt text and headers use 11
 ### PdfCellStyle
 
 {% interfaceDocumentation interfaceName="PdfCellStyle" /%}
-
-### PdfStyleCallbackParams
-
-{% interfaceDocumentation interfaceName="PdfStyleCallbackParams" config={"asCode":true} /%}

@@ -137,8 +137,14 @@ jobs:
         # Always notify on failure. On success, only notify if the previous run
         # failed - a "back to green" signal - so a routine passing run doesn't
         # spam the channel.
+        #
+        # Only ever for latest. The channel watches the deployed site, and a run from a topic
+        # branch is somebody exercising this workflow or a candidate build, so its result says
+        # nothing the channel can act on. Those runs log the outcome instead, in the step below.
+        # `workflow_run` is filtered to latest and reports the default branch as its ref, so in
+        # practice this only excludes a `workflow_dispatch` from a branch.
         if: >
-          always() &&
+          always() && github.ref_name == 'latest' &&
           (steps.run_tests.outcome == 'failure' ||
            (steps.run_tests.outcome == 'success' && steps.prev_run.outputs.outcome == 'failure'))
         uses: ./external/ag-shared/github/actions/slack-integration
@@ -150,6 +156,37 @@ jobs:
           CURRENT_COMMIT_SHA: ${{ github.sha }}
           PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
           IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}
+
+      # The counterpart to the step above: off latest the outcome still has to be visible, just
+      # to whoever dispatched the run rather than to the channel. The job's own conclusion is
+      # untouched either way, so a failure here is still a red run.
+      - name: Log verification result
+        if: always() && github.ref_name != 'latest'
+        env:
+          CTRF_REPORT_FILE: reports/ag-grid-examples-interactive-default.json
+          OUTCOME: ${{ steps.run_tests.outcome }}
+        run: |
+          {
+            echo "### Page verification: \`${OUTCOME}\`"
+            echo
+            echo "Ref \`${GITHUB_REF_NAME}\` is not \`latest\`, so no Slack notification was sent."
+            echo
+            if [ -f "${CTRF_REPORT_FILE}" ]; then
+              jq -r '
+                .results.summary as $s
+                | "Tests: \($s.tests) — passed \($s.passed), failed \($s.failed), skipped \($s.skipped)",
+                  "",
+                  (
+                    [.results.tests[] | select(.status != "passed")]
+                    | if length == 0 then "No failing tests recorded."
+                      else "Not passed:", (.[] | "- `\(.status)` \(.name)")
+                      end
+                  )
+              ' "${CTRF_REPORT_FILE}"
+            else
+              echo "No CTRF report at \`${CTRF_REPORT_FILE}\`, so there is nothing to summarise."
+            fi
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
   # CSP violations are reported, not gated: a hash in the site policy goes stale whenever a tag
   # is edited in Google Tag Manager, which breaks no page but does need fixing. Keeping this out
@@ -237,6 +274,7 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: '#dev-ops-status'
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
           COMMIT_SHA: ${{ github.sha }}
           DRY_RUN: ${{ inputs.csp_dry_run || false }}
           # A run that failed part way through sees fewer violations than the site has, which

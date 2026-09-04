@@ -37,7 +37,6 @@ export function _createValidationWarning<TId extends ErrorId>(
 
 /**
  * As {@link _createValidationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}).
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _createDeprecationWarning<TId extends ErrorId>(
     errorId: TId,

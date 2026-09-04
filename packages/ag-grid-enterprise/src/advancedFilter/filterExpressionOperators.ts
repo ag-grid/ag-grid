@@ -31,10 +31,19 @@ type FilterExpressionEvaluator<ConvertedTValue, TValue = ConvertedTValue> = (
     operand2?: ConvertedTValue
 ) => boolean;
 
+/**
+ * What an option takes, shape and constraint in one field: `range` is two values compared as ordered bounds.
+ * A two that is not ordered, or a set of values, is a further member rather than a flag that can contradict.
+ */
+export type OperandsKind = 'none' | 'one' | 'range' | 'list';
+
+/** How many of `filter` / `filterTo` the option fills, for the sites that care about shape and not order. */
+export const OPERAND_COUNT: Record<OperandsKind, number> = { none: 0, one: 1, range: 2, list: 0 };
+
 export interface FilterExpressionOperator<ConvertedTValue, TValue = ConvertedTValue> {
     displayValue: string;
     evaluator: FilterExpressionEvaluator<ConvertedTValue, TValue>;
-    numOperands: number;
+    operands: OperandsKind;
 }
 
 export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = ConvertedTValue> {
@@ -135,47 +144,47 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
                 displayValue: translate('advancedFilterContains'),
                 evaluator: (value, node, params, operand1) =>
                     this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
-                numOperands: 1,
+                operands: 'one',
             },
             notContains: {
                 displayValue: translate('advancedFilterNotContains'),
                 evaluator: (value, node, params, operand1) =>
                     this.evaluateExpression(value, node, params, operand1!, true, (v, o) => !v.includes(o)),
-                numOperands: 1,
+                operands: 'one',
             },
             equals: {
                 displayValue: translate('advancedFilterTextEquals'),
                 evaluator: (value, node, params, operand1) =>
                     this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v === o),
-                numOperands: 1,
+                operands: 'one',
             },
             notEqual: {
                 displayValue: translate('advancedFilterTextNotEqual'),
                 evaluator: (value, node, params, operand1) =>
                     this.evaluateExpression(value, node, params, operand1!, true, (v, o) => v != o),
-                numOperands: 1,
+                operands: 'one',
             },
             startsWith: {
                 displayValue: translate('advancedFilterStartsWith'),
                 evaluator: (value, node, params, operand1) =>
                     this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.startsWith(o)),
-                numOperands: 1,
+                operands: 'one',
             },
             endsWith: {
                 displayValue: translate('advancedFilterEndsWith'),
                 evaluator: (value, node, params, operand1) =>
                     this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.endsWith(o)),
-                numOperands: 1,
+                operands: 'one',
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
                 evaluator: _isBlank,
-                numOperands: 0,
+                operands: 'none',
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
                 evaluator: _hasValue,
-                numOperands: 0,
+                operands: 'none',
             },
         };
     }
@@ -231,7 +240,7 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInEquals,
                         equals
                     ),
-                numOperands: 1,
+                operands: 'one',
             },
             notEqual: {
                 displayValue: translate('advancedFilterNotEqual'),
@@ -245,7 +254,7 @@ export class ScalarFilterExpressionOperators<
                         (v, o) => !equals(v, o),
                         true
                     ),
-                numOperands: 1,
+                operands: 'one',
             },
             greaterThan: {
                 displayValue: translate('advancedFilterGreaterThan'),
@@ -258,7 +267,7 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInGreaterThan,
                         (v, o) => v > o
                     ),
-                numOperands: 1,
+                operands: 'one',
             },
             greaterThanOrEqual: {
                 displayValue: translate('advancedFilterGreaterThanOrEqual'),
@@ -271,7 +280,7 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInGreaterThan,
                         (v, o) => v >= o
                     ),
-                numOperands: 1,
+                operands: 'one',
             },
             lessThan: {
                 displayValue: translate('advancedFilterLessThan'),
@@ -284,7 +293,7 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInLessThan,
                         (v, o) => v < o
                     ),
-                numOperands: 1,
+                operands: 'one',
             },
             lessThanOrEqual: {
                 displayValue: translate('advancedFilterLessThanOrEqual'),
@@ -297,23 +306,23 @@ export class ScalarFilterExpressionOperators<
                         !!params.includeBlanksInLessThan,
                         (v, o) => v <= o
                     ),
-                numOperands: 1,
+                operands: 'one',
             },
             inRange: {
                 displayValue: translate('advancedFilterInRange'),
                 evaluator: (value, node, params, operand1, operand2) =>
                     this.evaluateRangeExpression(value, node, params, operand1!, operand2!),
-                numOperands: 2,
+                operands: 'range',
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
                 evaluator: _isBlank,
-                numOperands: 0,
+                operands: 'none',
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
                 evaluator: _hasValue,
-                numOperands: 0,
+                operands: 'none',
             },
         };
         if (relativeDates) {
@@ -415,7 +424,7 @@ function addRelativeDateOperators(
                 const time = +convertedValue;
                 return time >= fromTime && time < toTime;
             },
-            numOperands: 0,
+            operands: 'none',
         };
     }
 }
@@ -437,22 +446,22 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
             true: {
                 displayValue: translate('advancedFilterTrue'),
                 evaluator: (value) => !!value,
-                numOperands: 0,
+                operands: 'none',
             },
             false: {
                 displayValue: translate('advancedFilterFalse'),
                 evaluator: (value) => value === false,
-                numOperands: 0,
+                operands: 'none',
             },
             blank: {
                 displayValue: translate('advancedFilterBlank'),
                 evaluator: _isBlank,
-                numOperands: 0,
+                operands: 'none',
             },
             notBlank: {
                 displayValue: translate('advancedFilterNotBlank'),
                 evaluator: _hasValue,
-                numOperands: 0,
+                operands: 'none',
             },
         };
     }

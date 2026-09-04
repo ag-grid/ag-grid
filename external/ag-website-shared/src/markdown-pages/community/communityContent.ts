@@ -9,6 +9,8 @@ import tools from '@ag-website-shared/content/community/tools-extensions.json';
 import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 
+import type { SiteFrontmatterFields } from '../markdownFrontmatter';
+
 // Shared renderers for the /community landing twin and the community subpage twins, all reading
 // the same community JSON the pages render, so the markdown cannot drift from the site. The
 // community section is shared across AG products, so the builders are parameterised by the
@@ -23,6 +25,8 @@ export interface CommunityMarkdownOptions {
     currentSite: CommunitySite;
     /** Canonical site root with trailing slash, for absolutising internal links. */
     siteRoot?: string;
+    /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
+    siteFrontmatter?: SiteFrontmatterFields;
 }
 
 export interface CommunityEvent {

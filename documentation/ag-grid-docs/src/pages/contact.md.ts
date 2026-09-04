@@ -1,6 +1,7 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { buildContactMarkdown } from '@ag-website-shared/markdown-pages/buildContactMarkdown';
 import { DISABLE_MARKDOWN_DOCS, LIBRARY, SITE_URL } from '@constants';
+import { gridSiteFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
 
 // Served at /contact.md — the markdown twin of the /contact page, built from the same shared copy
 // and links the page renders. Content-negotiates from the HTML URL on Accept: text/markdown
@@ -13,6 +14,7 @@ export function GET() {
     const output = buildContactMarkdown({
         library: LIBRARY,
         contactUrl: toAbsoluteUrl('/contact/', SITE_URL),
+        siteFrontmatter: gridSiteFrontmatter({ pageUrl: '/contact/', siteRoot: SITE_URL }),
     });
 
     return new Response(output, {

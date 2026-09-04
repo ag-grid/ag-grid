@@ -29,6 +29,7 @@ import {
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { SetValuesPillComp } from '../set/setValuesPillComp';
 import { AddDropdownComp } from './addDropdownComp';
 import type {
     AdvancedFilterBuilderDragFeature,
@@ -44,6 +45,7 @@ import type {
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
     CreatePillParams,
+    Pill,
 } from './iAdvancedFilterBuilder';
 import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';
@@ -120,7 +122,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     constructor(
         public readonly item: AdvancedFilterBuilderItem,
         private readonly dragFeature: AdvancedFilterBuilderDragFeature,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly eBuilder: HTMLElement
     ) {
         super(AdvancedFilterBuilderItemElement);
     }
@@ -377,22 +380,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.updateAriaLabel();
     }
 
-    private createPill(params: CreatePillParams): SelectPillComp | InputPillComp {
-        const { key, cssClass, update, ariaLabel } = params;
-        const onUpdated = (key: string) => {
-            if (key == null) {
-                return;
-            }
-            update(key);
-            this.dispatchLocalEvent({
-                type: 'advancedFilterBuilderValueChanged',
-            });
-        };
-        if (params.isSelect) {
+    private createPill(params: CreatePillParams): Pill {
+        const { key, cssClass, ariaLabel } = params;
+        if (params.isSelect === 'set') {
+            return this.createBean(new SetValuesPillComp({ ...params, update: this.onPillUpdated(params.update) }));
+        }
+        const onUpdated = this.onPillUpdated(params.update);
+        if (params.isSelect === true) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue, displayValue } = params;
-            const advancedFilterBuilderParams = this.gos.get('advancedFilterBuilderParams');
-            const minPickerWidth = `${advancedFilterBuilderParams?.pillSelectMinWidth ?? 140}px`;
-            const maxPickerWidth = `${advancedFilterBuilderParams?.pillSelectMaxWidth ?? 200}px`;
+            const { pillSelectMinWidth, pillSelectMaxWidth } = this.gos.get('advancedFilterBuilderParams') ?? {};
             const comp = this.createBean(
                 new SelectPillComp({
                     pickerAriaLabelKey,
@@ -405,8 +401,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     valueFormatter: (value: AutocompleteEntry) =>
                         value == null ? '' : (value.displayValue ?? value.key),
                     variableWidth: true,
-                    minPickerWidth,
-                    maxPickerWidth,
+                    minPickerWidth: pillSelectMinWidth ?? 140,
+                    maxPickerWidth: pillSelectMaxWidth,
+                    eBuilder: this.eBuilder,
                     getEditorParams,
                     wrapperClassName: cssClass,
                     ariaLabel,
@@ -432,6 +429,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.addManagedListeners(comp, { fieldValueChanged: ({ value }: FieldValueEvent) => onUpdated(value) });
             return comp;
         }
+    }
+
+    /** A pill reports nothing when its editor is emptied, which is not a value to store. */
+    private onPillUpdated<TValue>(update: (value: TValue) => void): (value: TValue | null | undefined) => void {
+        return (value) => {
+            if (value == null) {
+                return;
+            }
+            update(value);
+            this.dispatchLocalEvent({ type: 'advancedFilterBuilderValueChanged' });
+        };
     }
 
     private setupDragging(): void {

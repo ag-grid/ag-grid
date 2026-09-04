@@ -3,7 +3,13 @@ import { assertSelectedRowsById } from 'ag-test-utils/test-utils-assertions';
 import { waitForEvent } from 'ag-test-utils/test-utils-events';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    RowSelectionModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../selection/utils';
@@ -555,5 +561,146 @@ describe('ag-grid grouping selection', () => {
 
         actions.toggleCheckboxByIndex(6, { shiftKey: true });
         assertSelectedRowsById(['row-group-team-A', 'a1', 'a2', 'a3', 'row-group-team-B', 'b1', 'b2', 'c1'], api);
+    });
+
+    test('a destroyed group total row still reports and forwards its group selection', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+            { id: '3', country: 'Italy', athlete: 'Mario Rossi', gold: 3 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'self' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // captured before the destroy, which drops the group's own link to it
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland')!;
+        const ireland = api.getRowNode('row-group-country-Ireland')!;
+
+        ireland.setSelected(true);
+        expect(irelandTotal.isSelected()).toBe(true);
+
+        api.setGridOption('groupTotalRow', undefined);
+        expect(irelandTotal.destroyed).toBe(true);
+        expect(irelandTotal.isSelected()).toBe(true);
+
+        api.setNodesSelected({ nodes: [irelandTotal], newValue: false, source: 'api' });
+        expect(ireland.isSelected()).toBe(false);
+        expect(irelandTotal.isSelected()).toBe(false);
+        assertSelectedRowsById([], api);
+
+        // selecting through the stale handle reaches the live group too, exactly as deselecting does
+        api.setNodesSelected({ nodes: [irelandTotal], newValue: true, source: 'api' });
+        expect(ireland.isSelected()).toBe(true);
+        expect(irelandTotal.isSelected()).toBe(true);
+    });
+
+    test('the grand total row keeps its own selection when a descendant is deselected', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        grandTotal.setSelected(true);
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect(grandTotal.isSelected()).toBe(true);
+
+        // the root is excluded from the recompute from children, so its own selection stands
+        api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: false, source: 'api' });
+        expect(api.getRowNode('row-group-country-Ireland')!.isSelected()).toBeUndefined();
+        expect(grandTotal.isSelected()).toBe(true);
+        assertSelectedRowsById(['1'], api);
+    });
+
+    test('deselecting the grand total row clears every descendant with it', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+        assertSelectedRowsById(['1'], api);
+
+        // the root's descendant sweep runs whether or not its own flag moves, so an already-unselected
+        // grand total row still empties the selection. The server-side strategies match this.
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: false, source: 'api' });
+        assertSelectedRowsById([], api);
+    });
+
+    test('a group total row reports its group as partially selected rather than unselected', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const ireland = api.getRowNode('row-group-country-Ireland')!;
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland')!;
+
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+
+        // one of two leaves selected, so the group is indeterminate and its total row must say the same
+        expect(ireland.isSelected()).toBeUndefined();
+        expect(irelandTotal.isSelected()).toBeUndefined();
+
+        // neither the group nor its total row is a selected row in its own right
+        assertSelectedRowsById(['1'], api);
+
+        api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: true, source: 'api' });
+        expect(ireland.isSelected()).toBe(true);
+        expect(irelandTotal.isSelected()).toBe(true);
     });
 });

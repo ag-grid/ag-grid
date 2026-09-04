@@ -641,6 +641,8 @@ describe('Number Range Filter', () => {
         await filter.setNumber(9, 0);
         await filter.setNumber(1, 1);
         expect(filter.input('number', 1).validity.valid).toBe(false);
+        // Both values are well-formed, so ordering is the only thing that can be refusing them.
+        expect(filter.input('number', 1).validationMessage).toBe('Must be greater than 9');
 
         api.hidePopupMenu();
         await asyncSetTimeout(0);

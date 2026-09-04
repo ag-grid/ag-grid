@@ -16,6 +16,7 @@ import type {
     RowNodeEventType,
     RowPinnedType,
 } from '../interfaces/iRowNode';
+import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { AgColumn } from './agColumn';
 import { _resolvePivotColumnForRow } from './agColumn';
@@ -60,7 +61,7 @@ export class RowNode<TData = any>
             return groupData; // already set
         }
         if (this.footer) {
-            return this.sibling?.groupData; // footer takes data from the main row
+            return this.sibling?.groupData ?? null; // footer takes data from the main row
         }
         // CSRM loading of group data
         return this.beans.groupStage?.loadGroupData(this) ?? null;
@@ -269,7 +270,7 @@ export class RowNode<TData = any>
         this._expanded = value;
     }
 
-    /** If using footers, reference to the footer node for this group. */
+    /** @inheritDoc */
     public sibling: RowNode;
 
     /** The height, in pixels, of this row */
@@ -366,7 +367,6 @@ export class RowNode<TData = any>
      * Like {@link updateData}, but does NOT mirror the data onto `this.sibling`. Used for
      * row nodes whose sibling must not share data — e.g. the SSRM grand total node, whose
      * sibling is the root.
-     * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
      */
     public _updateDataNoSibling(data: TData): void {
         this.setDataCommon(data, 'updateNoSibling');
@@ -466,39 +466,36 @@ export class RowNode<TData = any>
     }
 
     private setId(id?: string): void {
-        // see if user is providing the id's
-        const getRowIdFunc = _getRowIdCallback(this.beans);
-
-        if (getRowIdFunc) {
-            // if user is providing the id's, then we set the id only after the data has been set.
-            // this is important for virtual pagination and viewport, where empty rows exist.
-            if (this.data) {
-                // we pass 'true' as we skip this level when generating keys,
-                // as we don't always have the key for this level (eg when updating
-                // data via transaction on SSRM, we are getting key to look up the
-                // RowNode, don't have the RowNode yet, thus no way to get the current key)
-                const parentKeys = this.parent?.getRoute() ?? [];
-                this.id = getRowIdFunc({
-                    data: this.data,
-                    parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
-                    level: this.level,
-                    rowPinned: this.rowPinned,
-                });
-
-                // make sure id provided doesn't start with 'row-group-' as this is reserved.
-                if (this.id.startsWith(ROW_ID_PREFIX_ROW_GROUP)) {
-                    this.beans.log.error(14, {
-                        groupPrefix: ROW_ID_PREFIX_ROW_GROUP,
-                    });
-                }
-            } else {
-                // this can happen if user has set blank into the rowNode after the row previously
-                // having data. this happens in virtual page row model, when data is delete and
-                // the page is refreshed.
-                this.id = undefined;
-            }
-        } else {
+        const beans = this.beans;
+        const getRowIdFunc = _getRowIdCallback(beans);
+        if (!getRowIdFunc) {
             this.id = id;
+            return;
+        }
+
+        // the callback is asked only once data has arrived, as empty rows exist under virtual
+        // pagination and viewport, and data can be blanked again when a page is refreshed
+        const data = this.data;
+        if (data == null) {
+            this.id = undefined;
+            return;
+        }
+
+        // this level's own key is left out of the route: it is not always known yet, as an SSRM
+        // transaction looks a RowNode up by key before that node exists
+        const parentKeys = this.parent?.getRoute() ?? [];
+        const rowId = getRowIdFunc({
+            data,
+            parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+            level: this.level,
+            rowPinned: this.rowPinned,
+        });
+        this.id = rowId;
+
+        if (rowId.startsWith(ROW_ID_PREFIX_ROW_GROUP)) {
+            beans.log.error(14, { groupPrefix: ROW_ID_PREFIX_ROW_GROUP });
+        } else if (rowId === ROOT_NODE_ID) {
+            beans.log.error(331, { rowId });
         }
     }
 
@@ -763,7 +760,6 @@ export class RowNode<TData = any>
     public isSelected(): boolean | undefined {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) {
-            // destroying a footer severs the sibling link but leaves the footer flag set
             const sibling = this.sibling;
             return sibling ? sibling.isSelected() : false;
         }

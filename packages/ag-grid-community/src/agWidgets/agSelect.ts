@@ -30,7 +30,6 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     placeholder?: string;
 }
 type AgSelectEvent = 'selectedItem';
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
     /** The keydown that committed the value, when committed via keyboard. Absent for mouse commits. */
     keyboardEvent?: KeyboardEvent;

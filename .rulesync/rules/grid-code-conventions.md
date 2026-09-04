@@ -24,6 +24,22 @@ Enforced by ESLint plus team preferences.
 - Destructure only for 2+ fields; single field uses dot access.
 - `import type` for compile-time-only imports; separate `import type { Foo }` statements, no inline `{ type Foo, Bar }`.
 
+## Annotate only the published internal entry point with `AG_GRID_INTERNAL`
+
+`/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */` marks
+membership of a package's published internal entry point — nothing else. Only `ag-grid-community` and
+`ag-stack` have one (`src/main-internal.ts`).
+
+- Add it to a top-level declaration **only** when `main-internal.ts` re-exports that declaration, and add
+  it whenever it does.
+- Never add it to a class member, a property, a non-exported declaration, or an exported symbol
+  `main-internal.ts` does not re-export. It is not a general "this is internal" marker — the `_` name
+  prefix already carries that.
+- Never add it in a package with no `main-internal.ts`, which has no internal entry point to belong to.
+
+`main-internal.test.ts` enforces both directions in each package, so a speculative annotation fails CI.
+Removing an annotation is a comment-only change: nothing in the build reads `@internal`.
+
 ## Prefer inline null checks over `_exists` / `_missing`
 
 Do not use `_exists` / `_missing` in new code. They wrap a cheap null check in a function call and add a `!== ''` empty-string test that is usually unwanted:

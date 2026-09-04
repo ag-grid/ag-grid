@@ -71,6 +71,7 @@ export {
     _getFilterDetails,
     _getFloatingFilterCompDetails,
     _getInnerCellRendererDetails,
+    _mergeFilterParamsWithApplicationProvidedParams,
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
@@ -160,6 +161,7 @@ export {
     _getCustomOptionNumberOfInputs,
     _hasValue,
     _isBlank,
+    _isRangeOutOfOrder,
 } from './filter/provided/simpleFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';

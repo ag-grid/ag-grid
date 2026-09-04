@@ -418,6 +418,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.rootNode = new RowNode(this.beans);
         this.rootNode.group = true;
         this.rootNode.level = -1;
+        this.beans.selectionSvc?.syncInRowNode(this.rootNode);
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();
@@ -745,7 +746,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 result = rowNode.detailNode;
             }
         });
-        if (id === ROOT_NODE_ID) {
+        // a data row is free to carry this id, and it wins over the synthetic root, as client-side
+        if (!result && id === ROOT_NODE_ID) {
             return this.rootNode;
         }
         if (!result && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {

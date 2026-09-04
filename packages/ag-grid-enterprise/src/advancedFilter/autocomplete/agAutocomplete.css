@@ -8,6 +8,15 @@
     }
 }
 
+.ag-autocomplete-row-path-parent {
+    opacity: 0.5;
+}
+
+.ag-autocomplete-row-group-count {
+    opacity: 0.5;
+    margin-left: var(--ag-spacing);
+}
+
 .ag-autocomplete-list-popup {
     position: absolute;
     user-select: none;
