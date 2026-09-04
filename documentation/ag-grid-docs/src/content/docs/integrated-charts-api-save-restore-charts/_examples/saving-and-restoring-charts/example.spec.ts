@@ -43,7 +43,10 @@ async function openChartDataPanel(page: Page): Promise<void> {
 async function reorderSeriesPillToFront(page: Page, label: string): Promise<void> {
     const panel = seriesPillPanel(page);
     const pills = panel.locator('.ag-column-drop-cell');
-    const handle = pills.filter({ hasText: new RegExp(`^${label}$`) }).locator('.ag-drag-handle');
+    // Substring match, not an anchored one: the pill's text content includes the whitespace of its
+    // template, so an exact-match regex never resolves. No series label here is a substring of
+    // another, so a substring match is unambiguous.
+    const handle = pills.filter({ hasText: label }).locator('.ag-drag-handle');
 
     const panelBox = await boundingBoxOf(panel, 'the series pill panel');
     const firstPillBox = await boundingBoxOf(pills.first(), 'the first series pill');
