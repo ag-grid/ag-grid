@@ -82,6 +82,14 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationMessageAtEnd: (variableValues: string[]) =>
         `Expression has an error. ${variableValues[0]} at end of expression.`,
     advancedFilterValidationMessageOnly: (variableValues: string[]) => `Expression has an error. ${variableValues[0]}.`,
+    advancedFilterValidationMustBeGreaterThan: (variableValues: string[]) =>
+        `${variableValues[0]} must be greater than ${variableValues[1]}`,
+    advancedFilterValidationMustBeGreaterThanOrEqualTo: (variableValues: string[]) =>
+        `${variableValues[0]} must be greater than or equal to ${variableValues[1]}`,
+    advancedFilterValidationMustBeAfter: (variableValues: string[]) =>
+        `${variableValues[0]} must be after ${variableValues[1]}`,
+    advancedFilterValidationMustBeOnOrAfter: (variableValues: string[]) =>
+        `${variableValues[0]} must be on or after ${variableValues[1]}`,
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
     advancedFilterBuilderCancel: 'Cancel',

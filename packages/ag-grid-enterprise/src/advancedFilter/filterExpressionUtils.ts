@@ -1,6 +1,6 @@
 import { _parseBigIntOrNull, _parseDateTimeFromString, _toStringOrNull } from 'ag-stack';
 
-import { _bindFilterCallback, _getValidityMessageKey, _toFiniteNumber, _translateForFilter } from 'ag-grid-community';
+import { _bindFilterCallback, _isRangeOutOfOrder, _toFiniteNumber } from 'ag-grid-community';
 import type {
     AgColumn,
     BaseCellDataType,
@@ -93,8 +93,8 @@ export function getConditionValidationMessage(
 type RangeBound = number | bigint | Date | null;
 
 /**
- * The column filter's own message for a range whose bounds are out of order, or null where they are in order.
- * One definition of the rule and one of the wording, so the two filters cannot come to disagree on either.
+ * The message for a range whose bounds are out of order, or null where they are in order. Shares the column
+ * filter's rule, and names the column: an expression is read away from the inputs the pair of bounds came from.
  */
 export function getRangeOrderMessage(
     advFilterExpSvc: AdvancedFilterExpressionService,
@@ -104,8 +104,17 @@ export function getRangeOrderMessage(
     fromDisplayValue: string
 ): string | null {
     const { inRangeInclusive } = advFilterExpSvc.getExpressionEvaluatorParams(colId);
-    const key = _getValidityMessageKey(from, to, false, inRangeInclusive);
-    return key ? _translateForFilter(advFilterExpSvc, key, [fromDisplayValue]) : null;
+    if (!_isRangeOutOfOrder(from, to, inRangeInclusive)) {
+        return null;
+    }
+    const isDate = from instanceof Date;
+    let key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT;
+    if (inRangeInclusive) {
+        key = isDate ? 'advancedFilterValidationMustBeOnOrAfter' : 'advancedFilterValidationMustBeGreaterThanOrEqualTo';
+    } else {
+        key = isDate ? 'advancedFilterValidationMustBeAfter' : 'advancedFilterValidationMustBeGreaterThan';
+    }
+    return advFilterExpSvc.translate(key, [advFilterExpSvc.getColumnDisplayValue(colId) ?? colId, fromDisplayValue]);
 }
 
 /**

@@ -189,6 +189,11 @@ export const AG_GRID_LOCALE_HU = {
     advancedFilterValidationMessage: 'A kifejezés hibát tartalmaz. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'A kifejezés hibát tartalmaz. ${variable} a kifejezés végén.',
     advancedFilterValidationMessageOnly: 'A kifejezés hibát tartalmaz. ${variable}.',
+    advancedFilterValidationMustBeGreaterThan: '${variable}-nak/nek nagyobbnak kell lennie, mint ${variable}',
+    advancedFilterValidationMustBeGreaterThanOrEqualTo:
+        '${variable}-nak/nek nagyobbnak vagy egyenlőnek kell lennie ${variable}-val/vel',
+    advancedFilterValidationMustBeAfter: '${variable}-nak/nek későbbinek kell lennie, mint ${variable}',
+    advancedFilterValidationMustBeOnOrAfter: '${variable}-nak/nek ${variable} vagy annál későbbinek kell lennie',
     advancedFilterBuilderTitle: 'Speciális Szűrő',
     advancedFilterBuilderApply: 'Alkalmaz',
     advancedFilterBuilderClear: 'Törlés',

@@ -397,9 +397,9 @@ describe('Advanced Filter matches the column filter', () => {
             expect(advanced).not.toEqual(column);
         });
 
-        // There is no invalid-range wording in the grid: the rule belongs to the column filter, so the
-        // Advanced Filter reports it in the column filter's own words, naming the bound the value must clear.
-        test("a reversed range is reported in the column filter's own words", async () => {
+        // The rule belongs to the column filter, and so does the wording, except that an expression is read
+        // away from the pair of inputs a column filter shows and so has to name the column it is about.
+        test('a reversed range is reported against the same bound as the column filter, naming the column', async () => {
             const columnDefs: GridOptions<TestRow>['columnDefs'] = [
                 { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['inRange'] } },
             ];
@@ -424,7 +424,7 @@ describe('Advanced Filter matches the column filter', () => {
             await asyncSetTimeout(0);
 
             expect(columnMessage).toBe('Must be greater than 38');
-            expect(advanced.input.validationMessage).toBe(`Expression has an error. ${columnMessage}.`);
+            expect(advanced.input.validationMessage).toBe('Expression has an error. Age must be greater than 38.');
         });
 
         // Bigints are ordered as numbers, where the decimal text the model stores them as would put 9 above 10.

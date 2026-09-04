@@ -159,9 +159,9 @@ export {
     _classifyFilterOptions,
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
-    _getValidityMessageKey,
     _hasValue,
     _isBlank,
+    _isRangeOutOfOrder,
 } from './filter/provided/simpleFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
