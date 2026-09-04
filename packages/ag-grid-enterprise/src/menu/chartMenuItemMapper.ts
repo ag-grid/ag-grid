@@ -17,7 +17,9 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
         const beans = this.beans;
         const chartSvc = beans.chartSvc;
         const isPivot = key === 'pivotChart';
-        if (!chartSvc) {
+        // `enableCharts` governs the user-initiated (menu) path only; the grid API for creating
+        // charts programmatically is deliberately not gated by it. AG-18246.
+        if (!chartSvc || !this.gos.get('enableCharts')) {
             return null;
         }
 

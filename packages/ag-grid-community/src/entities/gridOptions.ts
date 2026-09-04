@@ -814,7 +814,9 @@ export interface GridOptions<TData = any> {
 
     // *** Integrated Charts *** //
     /**
-     * Set to `true` to Enable Charts.
+     * Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
+     * `chartRange` and `pivotChart` context menu items. Charts created programmatically through
+     * the Grid API do not require this option.
      * @default false
      * @agModule `IntegratedChartsModule`
      */
