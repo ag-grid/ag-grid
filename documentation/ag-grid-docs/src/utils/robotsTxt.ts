@@ -46,6 +46,7 @@ export const AI_CRAWLERS = [
     'Applebot-Extended',
     'CCBot',
     'Bytespider',
+    'Meta-ExternalAgent',
 ];
 
 // Public example pages we actively want AI to crawl and train on. Internal `/debug/` example
