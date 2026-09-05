@@ -73,7 +73,7 @@ const gridOptions: GridOptions<LanguageSample> = {
         resizable: true,
     },
     enableRtl: true,
-    suppressPdfExport: true,
+    loading: true,
 };
 
 function getDefaultPdfExportParams(fonts: PdfFontFamilyDefinition[]): PdfExportParams {
@@ -140,6 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
     preparePdfExport = loadFonts().then((fonts) => {
         gridApi.setGridOption('defaultPdfExportParams', getDefaultPdfExportParams(fonts));
-        gridApi.setGridOption('suppressPdfExport', false);
+        gridApi.setGridOption('loading', false);
     });
 });

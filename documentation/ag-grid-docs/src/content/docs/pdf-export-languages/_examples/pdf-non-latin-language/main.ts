@@ -25,7 +25,7 @@ const gridOptions: GridOptions<LanguageSample> = {
         { text: 'PDFには日本語の文字が埋め込まれています。' },
         { text: 'このグリッドでは一つのフォントを使用します。' },
     ],
-    suppressPdfExport: true,
+    loading: true,
 };
 
 function onBtExport() {
@@ -52,6 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
             defaultCellStyle: { fontFamily },
             language: 'ja',
         });
-        gridApi.setGridOption('suppressPdfExport', false);
+        gridApi.setGridOption('loading', false);
     });
 });
