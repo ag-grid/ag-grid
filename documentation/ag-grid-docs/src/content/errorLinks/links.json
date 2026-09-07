@@ -435,5 +435,17 @@
         "errorIds": [291],
         "text": "Installing Your Licence Key",
         "url": "./license-install/"
+    },
+    {
+        "errorIds": [252],
+        "text": "Grid Lifecycle",
+        "url": "./grid-lifecycle/",
+        "description": "Events for running logic once the grid has finished rendering."
+    },
+    {
+        "errorIds": [252],
+        "text": "Cell Renderer",
+        "url": "./component-cell-renderer/",
+        "description": "The component lifecycle this error is most often raised from."
     }
 ]

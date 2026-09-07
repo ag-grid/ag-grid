@@ -1,0 +1,59 @@
+---
+description: A column's cell data type is 'object', which needs a Value Formatter to display and a Value Parser to edit.
+---
+
+## Object Column Without a Formatter
+
+The column named in the message holds values the grid treats as the `'object'` [cell data type](./cell-data-types/#object). An object has no single sensible way to be shown in a cell or turned back into a value after editing, so the grid cannot supply one: it needs a Value Formatter to display the column, and a Value Parser as well if the column is editable.
+
+Until one is provided, cells in this column show the result of calling `toString()` on the value — usually `[object Object]`.
+
+Which one the message asks for tells you which half is missing:
+
+- **Value `Formatter`** — the column cannot be displayed. Raised for any object column.
+- **Value `Parser`** — the column cannot be edited. Raised only when the column also has `editable: true`, so a read-only object column never asks for one.
+
+### Was the type inferred?
+
+The message says `(inferred)` when you did not ask for this type — the grid worked it out from your data. Inference reads the value at the column's `field` and, when it matches none of the [pre-defined types](./cell-data-types/#pre-defined-cell-data-types), falls back to `'object'`. So an inferred object column usually means the field holds something the grid has no built-in handling for: a nested object, an array, or a class instance.
+
+If that is a surprise, check what the field actually contains — a field pointing at `{ first, last }` rather than at a string is the common case.
+
+Without `(inferred)`, `cellDataType: 'object'` was set explicitly on the column, its column type, or the default column definition.
+
+### Fix it on the column
+
+The most direct fix. Add whichever the message asks for to the column definition:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'name',
+            editable: true,
+            valueFormatter: (params) => params.value == null ? '' : `${params.value.first} ${params.value.last}`,
+            valueParser: (params) => {
+                const [first, ...rest] = (params.newValue ?? '').split(' ');
+                return { first, last: rest.join(' ') };
+            },
+        },
+    ],
+}
+```
+
+Note that `params.value` can be `null` or `undefined` — group rows among others — so format defensively.
+
+### Fix it on a data type definition
+
+Better where several columns hold the same shape of object, or where you want sorting and filtering to follow the same formatting. Define your own cell data type once and point the columns at it, rather than repeating the callbacks per column. See [Providing Custom Cell Data Types](./cell-data-types/#providing-custom-cell-data-types).
+
+Adding a `dataTypeMatcher` also lets inference pick your type automatically, instead of falling back to `'object'`.
+
+### Or take the column out of the type system
+
+If the column does not need the behaviour that cell data types bring — sorting, filtering and editing tuned to the type — you can opt out instead of supplying callbacks:
+
+- Set `cellDataType: false` on the column to [disable inference](./cell-data-types/#disabling-inference) for it, or on the default column definition to disable it everywhere.
+- Set a `valueGetter` on the column to derive a primitive from your object. A `valueGetter` also prevents inference, so one returning a string leaves you with a plain text column.
+
+A [Cell Renderer](./component-cell-renderer/) will change how the cell looks, but it does not stop the message: only `valueGetter`, `valueParser` and `refData` prevent inference (along with [Sparklines](./sparklines-overview/)), so an object column with a custom renderer is still an object column as far as the grid is concerned.

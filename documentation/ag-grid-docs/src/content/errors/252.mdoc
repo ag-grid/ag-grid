@@ -1,0 +1,51 @@
+---
+description: A grid API that redraws rows was called from code already running inside a redraw.
+---
+
+## Grid API Called During a Redraw
+
+The grid was part-way through drawing its rows when something asked it to draw them again. It cannot service the second request while the first is unfinished, so it throws rather than continue from an inconsistent state — which means this one breaks your application, not just the grid.
+
+The cause is always the same shape: a grid API that rebuilds rows, called from code that itself runs _as part of_ a redraw. The stack trace in your console is the fastest way to find it — the frames between the grid's own render call and your API call are the code responsible.
+
+### What counts as a redraw
+
+Anything that makes the grid rebuild its rows, including:
+
+- `redrawRows()`
+- Changing `rowData`, or applying a transaction
+- Changing pinned row data
+- Changing `domLayout`
+- Moving to another page
+
+### Where the call is usually coming from
+
+The code that runs during a redraw is the code the grid calls _to_ draw, so look first at:
+
+- **Cell Renderers** — the constructor, `init`, `refresh` or `destroy` of a [Cell Renderer](./component-cell-renderer/), including a framework component's mount or effect hooks.
+- **Cell Editors** — the same lifecycle points on a [Cell Editor](./cell-editors/).
+- **Grid event handlers that fire while rows are being drawn**, where the handler goes on to change grid state.
+
+A renderer that dispatches to a store, and a store subscription that pushes new `rowData` straight back into the grid, is the most common version of this. The renderer runs inside the redraw, so the new data arrives before the first redraw has finished.
+
+### The quick unblock
+
+As the message says, deferring the call to the next tick breaks the re-entry, because the first redraw completes before the second begins:
+
+```{% frameworkTransform=true %}
+setTimeout(() => api.redrawRows(), 0);
+```
+
+This does stop the error. Treat it as a stopgap: it leaves your rendering driving your data, so the grid still does two passes of work where one would do, and the extra frame can show as a flicker.
+
+### The actual fix
+
+Move the state change out of rendering. Rendering code should describe what a cell looks like, not change what the grid is showing.
+
+- If you are reacting to data arriving, do the work before handing the data to the grid rather than from a renderer.
+- If you need to run something once the grid has drawn, use the [lifecycle events](./grid-lifecycle/) — `firstDataRendered` for one-off setup after the first draw, or `modelUpdated` to react to the row model settling.
+- If a renderer genuinely needs to trigger a refresh, have it request one through your own state layer and let that update flow back in through `rowData`, instead of calling a grid API from inside the renderer.
+
+{% note %}
+This one is thrown rather than logged, so it reaches production whether or not the `ValidationModule` is in your bundle — leaving the module out only reduces the exception's message to this link. If you are looking at an `error #252` with no other detail, that is why.
+{% /note %}
