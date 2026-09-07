@@ -393,5 +393,10 @@ describe('Advanced Filter - Set Filter value list', () => {
         // Readied for the next value, as selecting anywhere else in the list is.
         await af.selectAutocomplete();
         expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)", ]');
+
+        // Applying finishes the list, so the separator the caret was still sitting behind goes too.
+        await af.apply();
+        expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)"]');
+        expect(af.getModel().values).toEqual(['Jamaica', null]);
     });
 });

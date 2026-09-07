@@ -215,20 +215,16 @@ export class AdvancedFilterComp extends Component {
 
     private onValueChanged(value: string | null): void {
         value = _makeNull(value);
-        let parser = this.advancedFilter.createExpressionParser(value);
-        let updatedExpression = parser?.parseExpression() ?? null;
+        this.expressionParser = this.advancedFilter.createExpressionParser(value);
+        let updatedExpression = this.expressionParser?.parseExpression() ?? null;
         const caretPosition = this.eAutocomplete.getCaretPosition();
-        const stripped = parser?.stripRedundantSeparators(caretPosition) ?? null;
+        const stripped = this.stripRedundantSeparators(caretPosition);
         let position: number | undefined;
         if (stripped != null) {
             // Every span removed sits before the caret, so what it loses is what the caret moves back by.
             position = caretPosition - (updatedExpression!.length - stripped.length);
             updatedExpression = stripped;
-            // Parsed again: the positions the first parse recorded belong to the text it read, not this one.
-            parser = this.advancedFilter.createExpressionParser(stripped);
-            parser!.parseExpression();
         }
-        this.expressionParser = parser;
         if (updatedExpression != null && updatedExpression !== value) {
             value = updatedExpression;
             this.eAutocomplete.setValue({ value, position, silent: true, restoreFocus: true });
@@ -236,11 +232,37 @@ export class AdvancedFilterComp extends Component {
         this.advancedFilter.setExpressionDisplayValue(value);
     }
 
+    /**
+     * Removes the separators the parse found redundant, reporting the text left or null where none was.
+     * Parsed again, since the positions the first parse recorded belong to the text it read.
+     */
+    private stripRedundantSeparators(caretPosition: number): string | null {
+        const stripped = this.expressionParser?.stripRedundantSeparators(caretPosition) ?? null;
+        if (stripped != null) {
+            this.expressionParser = this.advancedFilter.createExpressionParser(stripped);
+            this.expressionParser!.parseExpression();
+        }
+        return stripped;
+    }
+
     private onValueConfirmed(isValid: boolean): void {
         if (!isValid || this.isApplyDisabled) {
             return;
         }
         this.eButtons?.updateValidity(false);
+        // Applying finishes every list the expression holds, so a separator naming no value in one is
+        // redundant wherever the caret sits: it never has to have left the list, or moved at all.
+        const stripped = this.stripRedundantSeparators(this.eAutocomplete.getValue()?.length ?? 0);
+        if (stripped != null) {
+            // The list is only updated if one is open, so tidying the text cannot open one.
+            this.eAutocomplete.setValue({
+                value: stripped,
+                position: stripped.length,
+                silent: true,
+                updateListOnlyIfOpen: true,
+            });
+            this.advancedFilter.setExpressionDisplayValue(stripped);
+        }
         this.advancedFilter.applyExpression();
         this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
     }
