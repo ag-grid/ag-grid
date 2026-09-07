@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager } from 'ag-test-utils';
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IServerSideDatasource, Toolbar } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -178,6 +178,60 @@ describe('StateService - Find State', () => {
             });
         });
 
+        test('should keep the saved page when going to the active match pages away from it', async () => {
+            // Pagination is restored before Find, and going to a match on another page moves off it.
+            const api = gridsManager.createGrid('set-state-find-pagination', {
+                columnDefs,
+                rowData,
+                toolbar,
+                pagination: true,
+                paginationPageSize: 2,
+                paginationPageSizeSelector: false,
+            });
+            // The state service starts caching Find at firstDataRendered, so let the grid get there.
+            await waitForEvent('firstDataRendered', api);
+
+            api.setGridOption('findSearchValue', 'c');
+            api.findNext();
+            await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
+
+            // The user leaves the match's page before saving.
+            api.paginationGoToPage(1);
+            const state = await waitFor(() => {
+                expect(api.getState().pagination?.page).toBe(1);
+                expect(api.getState().find).toEqual({ searchValue: 'c', activeMatch: 1 });
+                return api.getState();
+            });
+
+            api.setState(state);
+
+            await waitFor(() => {
+                expect(api.paginationGetCurrentPage()).toBe(1);
+                expect(api.findGetActiveMatch()?.numOverall).toBe(1);
+            });
+        });
+
+        test('should clear an active match the restored state omits', async () => {
+            const api = await createGrid('set-state-clears-active-match');
+
+            api.setGridOption('findSearchValue', 'c');
+            const state = await waitFor(() => {
+                expect(api.getState().find).toEqual({ searchValue: 'c' });
+                return api.getState();
+            });
+
+            api.findNext();
+            await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
+
+            // The search value is unchanged, so the option write is a no-op and cannot clear it.
+            api.setState(state);
+
+            await waitFor(() => {
+                expect(api.findGetActiveMatch()).toBeUndefined();
+                expect(api.getState().find).toEqual({ searchValue: 'c' });
+            });
+        });
+
         test('should leave the search value alone when find is ignored', async () => {
             const api = await createGrid('set-state-ignores-find');
 
@@ -214,6 +268,30 @@ describe('StateService - Find State', () => {
                 expect(api.getState().find).toBeUndefined();
             });
             expect(api.getGridOption('findSearchValue')).toBe('dog');
+        });
+
+        test('should capture once the toolbar gains the find item', async () => {
+            const api = await createGrid('toolbar-item-added', { toolbar: undefined });
+
+            api.setGridOption('findSearchValue', 'c');
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
+            expect(api.getState().find).toBeUndefined();
+
+            // Ownership changes without any Find event of its own.
+            api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
+
+            await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
+        });
+
+        test('should drop the captured section once the toolbar loses the find item', async () => {
+            const api = await createGrid('toolbar-item-removed');
+
+            api.setGridOption('findSearchValue', 'c');
+            await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
+
+            api.setGridOption('toolbar', undefined);
+
+            await waitFor(() => expect(api.getState().find).toBeUndefined());
         });
 
         test('should not clear the grid option on setState', async () => {

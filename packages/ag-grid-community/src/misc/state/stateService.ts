@@ -372,6 +372,7 @@ export class StateService extends BeanStub implements NamedBean {
             find: findState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
+            pagination: paginationState,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -386,6 +387,11 @@ export class StateService extends BeanStub implements NamedBean {
         // scroll position is the one the user was actually left on.
         if (shouldSetState('find', findState)) {
             this.setFindState(findState, source);
+            // Going to the active match also pages to it, so a saved page is restored again afterwards
+            // for the same reason as the scroll position.
+            if (findState?.activeMatch != null && paginationState && !ignoreSet?.has('pagination')) {
+                this.setPaginationState(paginationState, source);
+            }
         }
         if (shouldSetState('scroll', scrollState)) {
             this.setScrollState(scrollState);
@@ -427,6 +433,8 @@ export class StateService extends BeanStub implements NamedBean {
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
             findChanged: () => updateCachedState('find', this.getFindState()),
         });
+        // Capture is gated on the toolbar's find item, so ownership can change without a Find event.
+        this.addManagedPropertyListener('toolbar', () => updateCachedState('find', this.getFindState()));
     }
 
     private getColumnGridState(): {

@@ -320,6 +320,10 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
         if (activeMatch != null) {
             this.goTo(activeMatch);
+        } else if (this.activeMatch) {
+            // A state that omits the active match must clear the current one. An unchanged search value
+            // is skipped by the options service, so the property listener that would wipe it never runs.
+            this.setActive(undefined);
         }
     }
 
