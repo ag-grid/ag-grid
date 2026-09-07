@@ -7,24 +7,28 @@ The Client-Side Row Model can display skeleton rows instead of the loading overl
 
 ## Enabling Loading Rows
 
-Set `loading` to `LoadingOptions` with `type='rows'` to display loading rows.
-Ten rows are displayed by default, or set `rowCount` to configure the number displayed.
+Set `loadingRows=true` to use skeleton rows when `loading=true`.
+Ten rows are displayed by default. Alternatively, provide `LoadingRowsOptions` with `rowCount` to configure the number displayed.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    loading: {
-        type: 'rows',
+    loading: true,
+    loadingRows: {
         rowCount: 10,
     },
 };
 ```
 
-{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading", "loadingRows"] /%}
 
 {% gridExampleRunner title="Loading Rows" name="client-side-loading-rows" /%}
 
 Loading rows are visual placeholders and are not included in Client-Side Row Model operations such as sorting, filtering, grouping or selection.
-When loading finishes, set `loading=false` to display the row data.
+When loading finishes, set `loading=false` to display the row data. Keep `loadingRows` configured so the same skeleton settings apply the next time `loading` is set to `true`.
+
+`loadingRows` configures the appearance; it does not start loading. When `loading` is undefined, the grid retains its automatic initial loading overlay behaviour.
+
+Both options can be updated at runtime. Update `loadingRows` to change the row count while loading, or set it to `false` to switch back to the overlay without ending the loading state.
 
 ## Custom Loading Cells
 

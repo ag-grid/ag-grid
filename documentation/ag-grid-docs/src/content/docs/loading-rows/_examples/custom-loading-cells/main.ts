@@ -12,7 +12,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    loading: { type: 'rows', rowCount: 10 },
+    loading: true,
+    loadingRows: { rowCount: 10 },
     columnDefs: [
         {
             field: 'athlete',

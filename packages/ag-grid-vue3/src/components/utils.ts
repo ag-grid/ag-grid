@@ -74,7 +74,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
-    LoadingOptions,
+    LoadingRowsOptions,
     LocaleText,
     MenuItemDef,
     NavigateToNextCell,
@@ -888,13 +888,18 @@ export interface Props<TData> {
          */
     debug?: boolean,
     /** Show or hide the loading UI.
-         * - `true`: the loading overlay is shown.
-         * - `false`: the loading overlay is hidden.
-         * - `LoadingOptions`: configure the loading UI.
+         * - `true`: the loading overlay is shown, or skeleton rows if `loadingRows` is enabled (Client-Side Row Model only).
+         * - `false`: the loading UI is hidden.
          * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
          * @default undefined
          */
-    loading?: boolean | LoadingOptions,
+    loading?: boolean,
+    /** Display skeleton rows instead of the loading overlay when `loading=true` (Client-Side Row Model only).
+         * Set to `true` to display ten rows, or provide options to configure the row count.
+         * This option does not start loading; set `loading=true` to show the skeleton rows.
+         * @default false
+         */
+    loadingRows?: boolean | LoadingRowsOptions,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -2332,6 +2337,7 @@ export function getProps() {
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
+        loadingRows: undefined,
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,

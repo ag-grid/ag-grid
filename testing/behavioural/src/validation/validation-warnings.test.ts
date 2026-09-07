@@ -23,6 +23,26 @@ describe('ag-grid validation warnings', () => {
         consoleWarnSpy.mockRestore();
     });
 
+    test('validates loadingRows rowCount and accepts runtime configuration updates', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }],
+            loading: true,
+            loadingRows: { rowCount: 0 },
+        });
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.stringContaining('loadingRows.rowCount: value should be an integer greater than or equal to 1'),
+            expect.any(String)
+        );
+        expect(api.getDisplayedRowCount()).toBe(10);
+
+        consoleWarnSpy.mockClear();
+        api.setGridOption('loadingRows', { rowCount: 3 });
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
     describe('invalid property names', () => {
         test('warns for unknown gridOptions properties', () => {
             gridsManager.createGrid('myGrid', {

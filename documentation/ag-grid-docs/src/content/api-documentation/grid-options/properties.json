@@ -978,9 +978,15 @@
             "more": {
                 "name": "Loading",
                 "url": "./overlays-provided/#loading"
+            }
+        },
+        "loadingRows": {
+            "more": {
+                "name": "Loading Rows",
+                "url": "./loading-rows/"
             },
             "interfaceHierarchyOverrides": {
-                "include": ["LoadingOptions"]
+                "include": ["LoadingRowsOptions"]
             }
         },
         "overlayComponent": {
