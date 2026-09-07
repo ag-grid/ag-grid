@@ -403,9 +403,8 @@ describe('ag-grid formulas interactive workflows', () => {
         `);
     });
     // AG-18276: bulk edit (Ctrl+Enter) of a formula across a cell range - `applyBulkEdit` is reachable
-    // only from the cell's Enter handler. The value is set through the editor instance (as the other
-    // formula tests here do, the formula editor being no plain input) and the selection is set last:
-    // `addCellRange` appends, so any earlier collapsed range would still be in the set.
+    // only from the cell's Enter handler. The value is set through the editor instance, as the other
+    // formula tests here do, the formula editor being no plain input.
     async function bulkEditFormula(
         api: GridApi,
         rowIndex: number,
@@ -417,8 +416,9 @@ describe('ag-grid formulas interactive workflows', () => {
         api.startEditingCell({ rowIndex, colKey: 'total' });
         await started;
 
-        // The selection is set before the value: an open formula editor treats a new cell range as a
-        // reference to insert, so setting the value last is what leaves the typed formula in place.
+        // The ranges must be added before the value: an open formula editor treats a new cell range
+        // as a reference to insert, which would prefix the typed formula. `addCellRange` appends, so
+        // clear first or the cell that started editing stays in the set as its own range.
         api.clearCellSelection();
         for (const range of ranges) {
             api.addCellRange(range);
