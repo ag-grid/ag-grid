@@ -383,25 +383,30 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetState('cellSelection', cellSelectionState)) {
             this.setCellSelectionState(cellSelectionState);
         }
-        // Runs before the scroll restore: going to the active match scrolls to it, and the captured
-        // scroll position is the one the user was actually left on.
-        if (shouldSetState('find', findState)) {
-            this.setFindState(findState, source);
-            // Going to the active match also pages to it, so a saved page is restored again afterwards
-            // for the same reason as the scroll position.
-            if (findState?.activeMatch != null && paginationState && !ignoreSet?.has('pagination')) {
-                this.setPaginationState(paginationState, source);
-            }
-        }
-        if (shouldSetState('scroll', scrollState)) {
-            this.setScrollState(scrollState);
-        }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
         const deferredFilterState = this.deferredFilterState;
         if (deferredFilterState) {
             this.deferredFilterState = undefined;
             this.setFilterState(deferredFilterState, source);
+        }
+
+        // Runs after the pivot columns and the deferred filter state: the active match is an ordinal
+        // over the visible columns and the filtered rows, so those have to be in place to resolve it
+        // against the same match list it was captured from. Runs before the scroll and pagination
+        // restores: going to the active match scrolls and pages to it, and the captured position is
+        // the one the user was actually left on.
+        if (shouldSetState('find', findState)) {
+            this.setFindState(findState, source);
+            const savedPage = paginationState?.page;
+            if (findState?.activeMatch != null && savedPage != null && !ignoreSet?.has('pagination')) {
+                // The grid is live by now, so this navigates rather than taking the initialisation
+                // path, which only assigns the page number without recalculating the rows shown.
+                this.beans.pagination?.goToPage(savedPage);
+            }
+        }
+        if (shouldSetState('scroll', scrollState)) {
+            this.setScrollState(scrollState);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);

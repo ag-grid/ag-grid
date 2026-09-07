@@ -211,6 +211,31 @@ describe('StateService - Find State', () => {
             });
         });
 
+        test('should keep the saved page as the rendered one, not just the reported one', async () => {
+            // The initialisation path only assigns the page number, so a restore has to navigate.
+            const api = gridsManager.createGrid('initial-state-find-pagination', {
+                columnDefs,
+                rowData,
+                toolbar,
+                pagination: true,
+                paginationPageSize: 2,
+                paginationPageSizeSelector: false,
+                initialState: {
+                    find: { searchValue: 'c', activeMatch: 1 },
+                    pagination: { page: 1, pageSize: 2 },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+
+            // The reported page and the displayed rows must agree: match 1 lives on page 0, and the
+            // initialisation path would leave the bounds there while reporting page 1.
+            await waitFor(() => {
+                expect(api.paginationGetCurrentPage()).toBe(1);
+                expect(api.getFirstDisplayedRowIndex()).toBe(2);
+                expect(api.getLastDisplayedRowIndex()).toBe(3);
+            });
+        });
+
         test('should clear an active match the restored state omits', async () => {
             const api = await createGrid('set-state-clears-active-match');
 
