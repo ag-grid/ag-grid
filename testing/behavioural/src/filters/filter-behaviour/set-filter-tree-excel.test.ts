@@ -402,7 +402,7 @@ describe('Set Filter — treeListPathGetter and treeListFormatter', () => {
     });
 });
 
-describe('Set Filter — excelMode', () => {
+describe('Set Filter — a tree path several values share', () => {
     const gridsManager = new TestGridsManager({
         modules: [SetFilterModule, ClientSideRowModelModule],
     });
@@ -413,6 +413,278 @@ describe('Set Filter — excelMode', () => {
     });
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    /** Lossy on purpose: `US` and `USA` give the same one-segment path, so they share a single row. */
+    const FLAT_PREFIX_PARAMS = {
+        treeList: true,
+        treeListPathGetter: (value: string | null) => (value ? [value.slice(0, 2)] : null),
+    } satisfies ISetFilterParams;
+
+    /** As above, one level deeper: the shared leaf `US` sits under group `U`. */
+    const NESTED_PREFIX_PARAMS = {
+        treeList: true,
+        treeListPathGetter: (value: string | null) => (value ? [value[0], value.slice(0, 2)] : null),
+    } satisfies ISetFilterParams;
+
+    const PREFIX_ROWS = [{ country: 'US' }, { country: 'USA' }, { country: 'IT' }];
+
+    test('unticking a shared row excludes every value it stands for', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams: FLAT_PREFIX_PARAMS }],
+            rowData: PREFIX_ROWS,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        // One row, because nothing in the path tells the two values apart.
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'IT', 'US']);
+
+        await filter.toggleSetItem('US');
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'set', values: ['IT'] });
+        await new GridRows(api, 'shared tree path unticked').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 country:"IT"
+        `);
+    });
+
+    test('Select All under a mini filter covers every value a shared row stands for', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams: FLAT_PREFIX_PARAMS }],
+            rowData: PREFIX_ROWS,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        // Only with a mini filter does Select All work from the displayed rows rather than every key.
+        await filter.miniFilterSearch('US');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'US']);
+
+        await filter.toggleSetItem('(Select All)');
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'set', values: ['IT'] });
+        await new GridRows(api, 'shared tree path deselected under mini filter').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 country:"IT"
+        `);
+    });
+
+    test('a shared row reads as partly selected when a model names only one of its values', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams: FLAT_PREFIX_PARAMS }],
+            rowData: PREFIX_ROWS,
+        });
+
+        // A model can name one of the two values, which nothing in the list can do; the row is then neither
+        // wholly in nor wholly out, and must not read as ticked while a value it covers is filtered away.
+        await api.setColumnFilterModel('country', { filterType: 'set', values: ['US'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await ColumnFilterHarness.open(api, 'country');
+        await new FilterDom(api, 'shared tree path partly selected', { colId: 'country' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ▪ (Select All)
+            ☐ IT
+            ▪ US
+            model:
+              filterType: "set"
+              values:
+                - "US"
+        `);
+
+        await new GridRows(api, 'shared tree path partly selected rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 country:"US"
+        `);
+    });
+
+    test('a shared row stays in the list while any value it stands for is still available', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: FLAT_PREFIX_PARAMS },
+                { field: 'region', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [
+                { country: 'US', region: 'West' },
+                { country: 'USA', region: 'East' },
+                { country: 'IT', region: 'East' },
+            ],
+        });
+
+        // The region filter leaves `US` with no rows, but `USA`, which shares its row, still has one.
+        await api.setColumnFilterModel('region', { filterType: 'set', values: ['East'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await ColumnFilterHarness.open(api, 'country');
+        await new FilterDom(api, 'shared row still available', { colId: 'country' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ☑ (Select All)
+            ☑ IT
+            ☑ US
+            model: null
+        `);
+    });
+
+    test('a group reads as partly selected when a shared leaf under it is', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams: NESTED_PREFIX_PARAMS }],
+            rowData: PREFIX_ROWS,
+        });
+
+        await api.setColumnFilterModel('country', { filterType: 'set', values: ['IT', 'US'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await ColumnFilterHarness.open(api, 'country');
+        await toggleGroupExpand('U');
+
+        // `U` holds one leaf standing for `US` and `USA`, and only `US` is selected.
+        await new FilterDom(api, 'shared leaf under a group', { colId: 'country' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ▪ (Select All)
+            ☑ I
+            ▪ U
+              ▪ US
+            model:
+              filterType: "set"
+              values:
+                - "IT"
+                - "US"
+        `);
+    });
+
+    test('unticking a group excludes every value a shared leaf under it stands for', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams: NESTED_PREFIX_PARAMS }],
+            rowData: PREFIX_ROWS,
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'I', 'U']);
+
+        await filter.toggleSetItem('U');
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'set', values: ['IT'] });
+        await new GridRows(api, 'group holding a shared leaf unticked').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 country:"IT"
+        `);
+    });
+
+    test('defaultToNothingSelected still renders a shared row as partly selected', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { ...FLAT_PREFIX_PARAMS, defaultToNothingSelected: true },
+                },
+            ],
+            rowData: PREFIX_ROWS,
+        });
+
+        await api.setColumnFilterModel('country', { filterType: 'set', values: ['US'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await ColumnFilterHarness.open(api, 'country');
+        await new FilterDom(api, 'shared row under defaultToNothingSelected', { colId: 'country' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ▪ (Select All)
+            ☐ IT
+            ▪ US
+            model:
+              filterType: "set"
+              values:
+                - "US"
+        `);
+    });
+
+    test('a date column shares a path with no custom path getter at all', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', cellDataType: 'date', filter: 'agSetColumnFilter' }],
+            rowData: [{ when: new Date(2020, 0, 5) }, { when: 'abc' }, { when: null }],
+        });
+
+        // An unreadable value and a missing one are two keys, and the default date path getter gives both an
+        // empty path, so the shape needs no lossy getter to arise.
+        const filter = await ColumnFilterHarness.open(api, 'when');
+        const labels = filter.setFilterItemLabels();
+        expect(labels.length).toBe(3);
+
+        // By position, so the test does not pin what that row is labelled.
+        await filter.toggleSetItem(labels[1]);
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'set', values: ['2020-01-05'] });
+        await new GridRows(api, 'date tree shared blank path unticked').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 when:"2020-01-05"
+        `);
+    });
+
+    test('a path segment that is also a value of its own can be unticked', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'path',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        treeList: true,
+                        treeListPathGetter: (value: string | null) => (value ? value.split('/') : null),
+                    } satisfies ISetFilterParams,
+                },
+            ],
+            rowData: [{ path: 'Europe/Italy' }, { path: 'Europe' }, { path: 'Asia' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'path');
+        await toggleGroupExpand('Europe');
+
+        // `Europe` is a group and a value: it has a child, and it is also the whole path of a row of its own.
+        await new FilterDom(api, 'group that is also a value', { colId: 'path' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ☑ (Select All)
+            ☑ Asia
+            ☑ Europe
+              ☑ Italy
+            model: null
+        `);
+
+        await filter.toggleSetItem('Europe');
+        await asyncSetTimeout(0);
+
+        expect(filter.getModel()).toEqual({ filterType: 'set', values: ['Asia'] });
+        await new GridRows(api, 'group that is also a value unticked').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 path:"Asia"
+        `);
+    });
+});
+
+describe('Set Filter — excelMode', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [SetFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => {
+        gridsManager.reset();
+        // One test suppresses #207, which would otherwise stay suppressed for every describe after it.
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
 
     test('windows mode shows Apply + Cancel buttons and puts (Blanks) last', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {

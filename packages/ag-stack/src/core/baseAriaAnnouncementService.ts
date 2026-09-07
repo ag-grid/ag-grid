@@ -14,6 +14,11 @@ const ANNOUNCE_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 200;
 /** Gap that makes a screen reader re-announce after the container is blanked; same reasoning. */
 const ANNOUNCE_REPEAT_DELAY = FAST_TEST_TIMINGS ? 0 : 50;
 
+type PendingAnnouncement = {
+    generation: number;
+    value: string;
+};
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class BaseAriaAnnouncementService<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -29,7 +34,9 @@ export class BaseAriaAnnouncementService<
 
     private descriptionContainer: HTMLElement | null = null;
 
-    private readonly pendingAnnouncements: Map<string, string> = new Map();
+    private readonly pendingAnnouncements = new Map<string, PendingAnnouncement>();
+    // outlives the queue so a same-key update can cancel a value already waiting for its delayed DOM write.
+    private readonly announcementGenerations = new Map<string, number>();
     private lastAnnouncement: string = '';
 
     constructor() {
@@ -52,7 +59,9 @@ export class BaseAriaAnnouncementService<
      * @param key used for debouncing calls
      */
     public announceValue(value: string, key: string): void {
-        this.pendingAnnouncements.set(key, value);
+        const generation = (this.announcementGenerations.get(key) ?? 0) + 1;
+        this.announcementGenerations.set(key, generation);
+        this.pendingAnnouncements.set(key, { generation, value });
         this.updateAnnouncement();
     }
 
@@ -61,12 +70,21 @@ export class BaseAriaAnnouncementService<
             return;
         }
 
-        const value = Array.from(this.pendingAnnouncements.values()).join('. ');
+        const announcements = Array.from(this.pendingAnnouncements, ([key, announcement]) => ({
+            ...announcement,
+            key,
+        }));
         this.pendingAnnouncements.clear();
         // screen readers announce a change in content, so we set it to an empty value
         // and then use a setTimeout to force the Screen Reader announcement
         this.descriptionContainer.textContent = '';
         setTimeout(() => {
+            // A same-key update may arrive after this batch left the debounce queue but before its delayed
+            // delivery. Drop only the superseded entry; unrelated announcements in this batch still apply.
+            const value = announcements
+                .filter(({ generation, key }) => this.announcementGenerations.get(key) === generation)
+                .map(({ value }) => value)
+                .join('. ');
             this.handleAnnouncementUpdate(value);
         }, ANNOUNCE_REPEAT_DELAY);
     }
@@ -97,5 +115,6 @@ export class BaseAriaAnnouncementService<
 
         this.descriptionContainer = null;
         this.pendingAnnouncements.clear();
+        this.announcementGenerations.clear();
     }
 }

@@ -859,6 +859,51 @@ describe('ag-grid grouping simple data', () => {
         `);
     });
 
+    // A cell formatter has no say over the group heading, so an empty answer from one does not suppress it.
+    // The substitution is keyed on the group being blank, not on the formatter answering nothing.
+    test('a blank group is labelled even when refData or a formatter yields an empty string', async () => {
+        const api = gridsManager.createGrid('blank-groups-formatted', {
+            columnDefs: [
+                { field: 'ref', rowGroup: true, hide: true, refData: { ie: 'Ireland' } },
+                {
+                    field: 'fmt',
+                    rowGroup: true,
+                    hide: true,
+                    valueFormatter: ({ value }) => (value === 'y' ? 'Yes' : ''),
+                },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowData: [
+                { id: '0', ref: 'ie', fmt: 'y', athlete: 'Ada Lovelace' },
+                { id: '1', ref: null, fmt: null, athlete: 'No Ref' },
+                { id: '2', ref: '', fmt: '', athlete: 'Empty Ref' },
+                // `n` is a real key the formatter empties, so its heading stays empty rather than (Blanks).
+                { id: '3', ref: 'ie', fmt: 'n', athlete: 'Hidden Fmt' },
+            ],
+        });
+
+        await new GridRows(api, 'formatted blank groups').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-ref-ie ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-ref-ie-fmt-y ag-Grid-AutoColumn:"Yes"
+            │ │ ├── LEAF id:0 ref:"Ireland" fmt:"Yes" athlete:"Ada Lovelace"
+            │ │ └─ footer id:rowGroupFooter_row-group-ref-ie-fmt-y ag-Grid-AutoColumn:"Total Yes"
+            │ ├─┬ LEAF_GROUP id:row-group-ref-ie-fmt-n ag-Grid-AutoColumn:""
+            │ │ ├── LEAF id:3 ref:"Ireland" fmt:"" athlete:"Hidden Fmt"
+            │ │ └─ footer id:rowGroupFooter_row-group-ref-ie-fmt-n ag-Grid-AutoColumn:"Total "
+            │ └─ footer id:rowGroupFooter_row-group-ref-ie ag-Grid-AutoColumn:"Total Ireland"
+            └─┬ filler id:row-group-ref- ag-Grid-AutoColumn:"(Blanks)"
+            · ├─┬ LEAF_GROUP id:row-group-ref--fmt- ag-Grid-AutoColumn:"(Blanks)"
+            · │ ├── LEAF id:1 ref:null fmt:null athlete:"No Ref"
+            · │ ├── LEAF id:2 ref:"" fmt:"" athlete:"Empty Ref"
+            · │ └─ footer id:rowGroupFooter_row-group-ref--fmt- ag-Grid-AutoColumn:"Total (Blanks)"
+            · └─ footer id:rowGroupFooter_row-group-ref- ag-Grid-AutoColumn:"Total (Blanks)"
+        `);
+    });
+
     test('deep group hierarchy', async () => {
         // Create a deep hierarchy: Level1 -> Level2 -> Level3 -> Level4 -> Level5
         const rowData = [

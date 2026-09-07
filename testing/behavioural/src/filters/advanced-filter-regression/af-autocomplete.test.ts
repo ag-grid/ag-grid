@@ -599,7 +599,7 @@ describe('Advanced Filter — column & operator editing branches', () => {
             '>=',
             '<',
             '<=',
-            'between',
+            'is between',
             'is blank',
             'is not blank',
         ]);
@@ -624,7 +624,7 @@ describe('Advanced Filter — column & operator editing branches', () => {
             '>=',
             '<',
             '<=',
-            'between',
+            'is between',
             'is blank',
             'is not blank',
         ]);

@@ -715,6 +715,19 @@
         background-color: var(--ag-selected-row-background-color);
     }
 
+    .ag-autocomplete-row-path-parent {
+        opacity: 0.5;
+    }
+
+    .ag-autocomplete-row-group-count {
+        opacity: 0.5;
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
+    }
+
     ////////////////////////////////////////
     // PILL
     ////////////////////////////////////////

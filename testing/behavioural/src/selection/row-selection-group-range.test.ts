@@ -1321,9 +1321,6 @@ describe('Row Selection Grid Options', () => {
 
                     await actions.collapseGroupRowByIndex(12, { count: 1 });
 
-                    // With Gymnastics collapsed, 12 is that group row and 15 the Russia leaf below it: the
-                    // range covers a group whose own leaves are no longer displayed. Recorded as it behaves
-                    // today, hidden leaves included, so a change to that is visible rather than silent.
                     actions.toggleCheckboxByIndex(11);
                     actions.toggleCheckboxByIndex(15, { shiftKey: true });
 
@@ -1343,8 +1340,8 @@ describe('Row Selection Grid Options', () => {
                             │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                             │ │ └── LEAF selected id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
                             │ └─┬ LEAF_GROUP selected collapsed id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                            │ · ├── LEAF selected hidden id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                            │ · └── LEAF selected hidden id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                            │ · ├── LEAF hidden id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                            │ · └── LEAF hidden id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
                             ├─┬ filler selected id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
                             │ └─┬ LEAF_GROUP selected id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
                             │ · └── LEAF selected id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"

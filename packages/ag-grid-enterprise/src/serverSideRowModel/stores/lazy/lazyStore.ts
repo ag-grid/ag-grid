@@ -125,7 +125,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const grandTotalNode = this.getGrandTotalNode();
         if (grandTotalNode) {
             this.parentRowNode.sibling = undefined as any;
-            grandTotalNode.sibling = undefined as any;
             this.blockUtils.destroyRowNode(grandTotalNode);
         }
     }
@@ -442,9 +441,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         sequence = { value: 0 },
         includeFooterNodes = false
     ): void {
-        const footerNode = this.getGroupTotalRowPosition();
-        if (footerNode === 'top') {
-            callback(this.parentRowNode.sibling, sequence.value++);
+        // the node may not exist yet: `setDisplayIndexes` is what creates it
+        const groupTotalPosition = this.getGroupTotalRowPosition();
+        const groupTotalNode = this.parentRowNode.sibling;
+        if (groupTotalPosition === 'top' && groupTotalNode) {
+            callback(groupTotalNode, sequence.value++);
         }
 
         // Grand total at top
@@ -463,8 +464,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        if (footerNode === 'bottom') {
-            callback(this.parentRowNode.sibling, sequence.value++);
+        if (groupTotalPosition === 'bottom' && groupTotalNode) {
+            callback(groupTotalNode, sequence.value++);
         }
 
         // Grand total at bottom
@@ -681,8 +682,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 // if last row index was known, add a row back for lazy loading.
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
+                const lastInferred = this.cache.isLastRowIndexInferred();
                 this.destroyBean(this.cache);
-                this.cache = this.createManagedBean(new LazyCache(this, oldCount, lastKnown, this.storeParams));
+                this.cache = this.createManagedBean(
+                    new LazyCache(this, oldCount, lastKnown, this.storeParams, lastInferred)
+                );
                 return;
             }
 

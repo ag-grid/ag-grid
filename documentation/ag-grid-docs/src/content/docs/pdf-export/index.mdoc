@@ -5,46 +5,29 @@ enterprise: true
 
 PDF Export creates a paginated PDF representation of grid data without requiring third-party libraries. The export follows the grid's current data state and displayed columns, but it is not a screenshot and does not reproduce every visual feature rendered in the browser.
 
+Reorder columns or apply filtering and sorting in the following example, then export from the context menu or with the **Export to PDF** button.
+
+{% gridExampleRunner title="Default PDF Export" name="pdf-default-export" exampleHeight=600 /%}
+
 ## Enabling PDF Export
 
-PDF export is available through the [Grid API](./grid-api/):
+Export from the enterprise [Context Menu](./context-menu/) using the **PDF Export** item, or call the [Grid API](./grid-api/) directly. For module-based builds, register `PdfExportModule`.
 
 ```{% frameworkTransform=true %}
 api.exportDataAsPdf();
-```
-
-The enterprise [Context Menu](./context-menu/) also includes a **PDF Export** item. For module-based builds, register `PdfExportModule` and register `ContextMenuModule` when the menu item is required:
-
-```js
-import { ModuleRegistry } from 'ag-grid-community';
-import { ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
-
-ModuleRegistry.registerModules([
-    PdfExportModule,
-    ContextMenuModule,
-]);
 ```
 
 Set `suppressPdfExport=true` to disable both `exportDataAsPdf()` and `getDataAsPdf()`.
 
 ## Default PDF Export
 
-The export uses the current column order and visibility, together with the filtered, sorted, and grouped row data. Exported values are produced independently of the rendered grid cells:
-
-- Value Getters are used.
-- Value Formatters are used by default through [Use Value Formatter for Export](./value-formatters/#formatting-for-export).
-- Cell Renderer output and HTML are not exported.
-- Supported grid styles can be reused, but browser rendering and CSS classes are not copied into the PDF.
-
-Reorder columns or apply filtering and sorting in the following example, then export from the context menu or with the **Export to PDF** button.
-
-{% gridExampleRunner title="Default PDF Export" name="pdf-default-export" exampleHeight=600 /%}
+The export uses the current column order and visibility, together with the filtered, sorted, and grouped row data. Exported values are produced independently of the rendered grid cells, using Value Getters and, by default, [Value Formatters](./value-formatters/#formatting-for-export).
 
 By default, regular columns use their current grid widths and the Row Numbers column is sized from its exported content. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
 
 PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default. Register static TrueType font families to export Unicode text or use right-to-left text layout.
 
-## Support And Limitations
+The table below summarises what is supported and what is not:
 
 | Area       | Supported                                                                                                                                                                            | Not Supported                                                                                                            |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
@@ -56,7 +39,6 @@ PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default.
 
 ## PDF Export Sections
 
-- **[API Reference](./pdf-export-api/)**: PDF export methods, grid options, interfaces, and types.
 - **[Styles](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
 - **[Languages](./pdf-export-languages/)**: Register TrueType font families and export Unicode or right-to-left text.
 - **[Extra Content](./pdf-export-extra-content/)**: Customise exported values, titles, and additional content.
@@ -67,3 +49,4 @@ PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default.
 - **[Hyperlinks](./pdf-export-hyperlinks/)**: Add external URI links to grid cells and custom content.
 - **[Master Detail](./pdf-export-master-detail/)**: Include a PDF representation of detail data below master rows.
 - **[Page Setup](./pdf-export-page-setup/)**: Configure page size, orientation, margins, and repeated table headers.
+- **[API Reference](./pdf-export-api/)**: PDF export methods, grid options, interfaces, and types.

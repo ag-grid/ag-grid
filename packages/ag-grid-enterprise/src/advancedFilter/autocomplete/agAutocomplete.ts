@@ -66,7 +66,6 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private autocompleteListParams: AutocompleteListParams;
     private lastPosition: number = 0;
     private valid: boolean = true;
-    private validationMessage: string | null;
     private listAriaLabel: string;
     private listGenerator?: (value: string | null, position: number) => AutocompleteListParams;
     private validator?: (value: string | null) => string | null;
@@ -248,7 +247,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         if (!this.validator) {
             return;
         }
-        const validationMessage = (this.validationMessage = this.validator(value));
+        const validationMessage = this.validator(value);
         this.eAutocompleteInput.getInputElement().setCustomValidity(validationMessage ?? '');
         this.valid = !validationMessage;
         this.dispatchLocalEvent<AutocompleteValidChangedEvent>({
@@ -266,6 +265,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 autocompleteEntries: this.autocompleteListParams.entries!,
                 onConfirmed: () => this.confirmSelection(),
                 forceLastSelection: this.forceLastSelection,
+                rowComponentCreator: this.autocompleteListParams.rowComponentCreator,
             })
         );
         const ePopupGui = this.autocompleteList.getGui();

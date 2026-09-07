@@ -1244,6 +1244,69 @@ describe('getStructuredSchema - enterprise features', () => {
     });
 });
 
+describe('getStructuredSchema - advanced filter on a Set Filter column', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, AiToolkitModule, AdvancedFilterModule, SetFilterModule],
+    });
+    afterEach(() => gridsManager.reset());
+
+    test('a Set Filter column contributes a set model with values, not a data-type model', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'name', cellDataType: 'text' },
+                { field: 'country', cellDataType: 'text', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [{ name: 'Alice', country: 'Italy' }],
+            enableAdvancedFilter: true,
+        });
+        await new GridColumns(api, `set filter column contributes a set model setup`).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── country "Country" width:200
+        `);
+
+        const defs = toJSON(api.getStructuredSchema()).$defs;
+        const set = defs.setAdvancedFilterModel;
+        expect(set.properties.filterType.enum).toEqual(['set']);
+        expect(set.properties.colId.enum).toEqual(['country']);
+        expect(set.properties.type.enum).toEqual(['isAnyOf', 'isNoneOf']);
+        expect(set.properties.values.type).toBe('array');
+        // An empty list is a fault the parser rejects, discarding the whole model, so it must not be emittable.
+        expect(set.properties.values.minItems).toBe(1);
+        expect(set.properties.filter).toBeUndefined();
+
+        // No data-type model may advertise the set options: their model has no `filter` to fill.
+        const offeringSetOptions = Object.keys(defs).filter((name) =>
+            defs[name].properties?.type?.enum?.includes('isAnyOf')
+        );
+        expect(offeringSetOptions).toEqual(['setAdvancedFilterModel']);
+    });
+
+    test('Set Filter columns of different data types share one set model, listed as its columns', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', cellDataType: 'text', filter: 'agSetColumnFilter' },
+                { field: 'age', cellDataType: 'number', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [{ country: 'Italy', age: 30 }],
+            enableAdvancedFilter: true,
+        });
+        await new GridColumns(api, `set filter columns of different data types setup`).checkColumns(`
+            CENTER
+            ├── country "Country" width:200
+            └── age "Age" width:200
+        `);
+
+        const defs = toJSON(api.getStructuredSchema()).$defs;
+        // A list option writes `filterType: 'set'` whatever the column's data type, so one shape serves both.
+        expect(defs.setAdvancedFilterModel.properties.colId.enum).toEqual(['country', 'age']);
+        expect(defs.setAdvancedFilterModel2).toBeUndefined();
+
+        expect(defs.textAdvancedFilterModel.properties.colId.enum).toEqual(['country']);
+        expect(defs.numberAdvancedFilterModel.properties.colId.enum).toEqual(['age']);
+    });
+});
+
 describe('getStructuredSchema - advanced filter', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, AiToolkitModule, AdvancedFilterModule],

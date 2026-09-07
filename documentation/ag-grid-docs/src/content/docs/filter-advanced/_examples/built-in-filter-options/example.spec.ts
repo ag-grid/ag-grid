@@ -43,7 +43,7 @@ test.agExample(import.meta, () => {
             '>=',
             '<',
             '<=',
-            'between',
+            'is between',
             'is blank',
             'is not blank',
         ]);
@@ -60,12 +60,12 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList).toBeVisible();
         await expect(autocompleteList.locator('.ag-autocomplete-row')).toHaveText([
             '=',
-            'between',
-            'Last 7 Days',
-            'Last 30 Days',
-            'This Year',
-            'Last Year',
-            'Last 24 Months',
+            'is between',
+            'is in last 7 days',
+            'is in last 30 days',
+            'is in this year',
+            'is in last year',
+            'is in last 24 months',
         ]);
     });
 
@@ -73,7 +73,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await applyExpression(page, '[Age] between (20, 25)');
+        await applyExpression(page, '[Age] is between (20, 25)');
         await expect(async () => {
             const ages = await orderedValues(page, 'age');
             expect(ages.length).toBeGreaterThan(0);
@@ -86,13 +86,41 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         const sevenDaysAgo = daysAgo(7);
-        await applyExpression(page, '[Date] Last 7 Days');
+        await applyExpression(page, '[Date] is in last 7 days');
         await expectDates(page, (date) => date < sevenDaysAgo);
 
-        await applyExpression(page, '[Date] Last 30 Days');
+        await applyExpression(page, '[Date] is in last 30 days');
         await expectDates(page, (date) => date < daysAgo(30));
 
-        await applyExpression(page, `[Date] between ("${daysAgo(30)}", "${daysAgo(1)}")`);
+        await applyExpression(page, `[Date] is between ("${daysAgo(30)}", "${daysAgo(1)}")`);
         await expectDates(page, (date) => date <= daysAgo(30) || date >= daysAgo(1));
+    });
+
+    // Needs a real browser: the picker is sized from the pill, so only layout says whether the options still fit.
+    test.eachFramework('should size the builder operator dropdown to its longest option', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await applyExpression(page, '[Date] is in last 7 days');
+        await page.getByRole('button', { name: 'Builder' }).click();
+        await page.getByRole('combobox', { name: 'Option' }).click();
+
+        const picker = page.locator('.ag-rich-select-list');
+        await expect(picker).toBeVisible();
+        await expect(page.locator('.ag-rich-select-row')).not.toHaveCount(0);
+
+        const { pickerWidth, overflowing } = await picker.evaluate((ePicker) => ({
+            pickerWidth: ePicker.clientWidth,
+            // Row width against the picker's content box, so no border or scroll offset has to be accounted for.
+            overflowing: [...ePicker.querySelectorAll('.ag-rich-select-row')]
+                .filter((row) => row.getBoundingClientRect().width > ePicker.clientWidth)
+                .map((row) => row.textContent),
+        }));
+
+        // Two assertions because each catches a different half. Sizing the picker from the pill leaves it at
+        // `pillSelectMinWidth`, so only the width discriminates there; laying the rows out at their content
+        // width without resizing the popup keeps every row untruncated, so only their right edges do.
+        expect(pickerWidth).toBeGreaterThan(140);
+        expect(overflowing).toEqual([]);
     });
 });

@@ -17,19 +17,19 @@ ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
 const columnDefs: (ColDef | ColGroupDef)[] = [
     {
         field: 'athlete',
-        tooltipField: 'athlete',
+        tooltip: true,
         width: 130,
     },
     {
         field: 'country',
-        tooltipField: 'country',
+        tooltip: true,
         headerName: 'Country of Athlete',
         headerTooltip: 'Country of Athlete',
         width: 100,
     },
     {
         field: 'sport',
-        tooltipField: 'sport',
+        tooltip: true,
     },
 ];
 

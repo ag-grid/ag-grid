@@ -36,6 +36,7 @@ mcp.json
 !/rules/examples.md
 !/rules/framework-view-layers.md
 !/rules/grid-code-conventions.md
+!/rules/grid-state.md
 !/rules/grid-styling.md
 !/rules/integrated-charts.md
 !/rules/testing.md

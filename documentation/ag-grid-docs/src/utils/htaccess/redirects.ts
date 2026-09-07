@@ -402,6 +402,10 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
 ];
 
 export const SITE_301_REDIRECTS: Redirect[] = [
+    // SE-186: Bing still probes the conventional /sitemap.xml location; the real sitemap lives at
+    // /sitemap-index.xml, already registered via the Sitemap: line in robots.txt.
+    { from: '/sitemap.xml', to: 'https://www.ag-grid.com/sitemap-index.xml' },
+
     // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
     // announcement actually lives, preserving the content for external links / historical index entries.
     // SE-91: retargeted from blog.ag-grid.com to the self-hosted /blog/ path. Left pointing at the old

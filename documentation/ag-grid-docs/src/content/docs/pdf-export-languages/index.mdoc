@@ -37,6 +37,8 @@ const gridOptions = {
 
 {% gridExampleRunner title="PDF Export - Non Latin Language" name="pdf-non-latin-language" exampleHeight=380 /%}
 
+### Loading Font Files
+
 Font files are not fetched by AG Grid. The application is responsible for loading the bytes before starting the export and for complying with the font's licence. When the font's embedding permissions allow it, PDF Export embeds only the characters used by the document instead of the complete font file. This process, known as font subsetting, reduces the size of the exported PDF. Fonts that prohibit subsetting are embedded in full.
 
 The `fontFamily` value must exactly match a registered or built-in family. If it does not, PDF Export reports the unknown family and the available alternatives, then cancels the export without creating a file.
@@ -106,10 +108,6 @@ PDF Export shapes registered TrueType fonts using supported OpenType layout tabl
 
 The fonts used by the examples are unmodified Noto and IBM Plex files distributed under the SIL Open Font License 1.1. See the included [Noto licence](/fonts/pdf-export/OFL-Noto.license) and [IBM Plex licence](/fonts/pdf-export/OFL-IBM-Plex.license).
 
-## API
-
-{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "defaultCellStyle", "language", "direction"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}
-
 ## Known Limitations
 
 - The built-in PDF fonts support WinAnsi characters only. Register an appropriate TrueType font to export other characters.
@@ -119,3 +117,7 @@ The fonts used by the examples are unmodified Noto and IBM Plex files distribute
 - GPOS mark-to-ligature positioning (lookup type 5) is not supported. OpenType lookup filtering flags, including `IgnoreMarks` and mark-filtering sets, are also not supported. Diacritics attached to ligatures may therefore be positioned incorrectly.
 - Vertical writing is not supported.
 - Bidirectional text spanning multiple independently styled runs is not supported.
+
+## API
+
+{% interfaceDocumentation interfaceName="PdfExportParams" names=["fonts", "defaultCellStyle", "language", "direction"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid values."} /%}

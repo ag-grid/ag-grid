@@ -36,10 +36,11 @@ export class PopupService
     ): void {
         const callback = this.gos.getCallback('postProcessPopup');
         if (callback) {
-            const { column, rowNode } = params ?? {};
+            const { column, rowNode, tooltipLocation } = params ?? {};
             const postProcessParams: WithoutGridCommon<PostProcessPopupParams> = {
                 column,
                 rowNode,
+                tooltipLocation,
                 ePopup,
                 type,
                 eventSource,

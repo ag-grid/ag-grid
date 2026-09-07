@@ -34,7 +34,7 @@ describe('Tooltips - the show, hide and switch delays', () => {
     // the popup actually being destroyed, not just marked hidden - is still covered, once, for 1s.
     test('destroys the tooltip element once the fade-out window has passed', async () => {
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-destroy', {
-            columnDefs: [{ field: 'A', tooltipValueGetter: () => 'Base tooltip' }],
+            columnDefs: [{ field: 'A', tooltip: () => 'Base tooltip' }],
             rowData: [{ A: 'value' }],
             tooltipShowDelay: 0,
             tooltipSwitchShowDelay: 0,
@@ -57,7 +57,7 @@ describe('Tooltips - the show, hide and switch delays', () => {
 
     test('respects tooltipShowDelay and tooltipHideDelay', async () => {
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipValueGetter: () => 'Delay tooltip' }],
+            columnDefs: [{ field: 'A', tooltip: () => 'Delay tooltip' }],
             rowData: [{ A: 'value' }],
             tooltipShowDelay: 200,
             tooltipHideDelay: 300,
@@ -98,7 +98,7 @@ describe('Tooltips - the show, hide and switch delays', () => {
 
     test('respects tooltipSwitchShowDelay when moving between cells', async () => {
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipValueGetter: (params) => `Row ${params.node?.id}` }],
+            columnDefs: [{ field: 'A', tooltip: (params) => `Row ${params.node?.id}` }],
             rowData: [{ A: 'one' }, { A: 'two' }],
             tooltipShowDelay: 500,
             tooltipHideDelay: 200,

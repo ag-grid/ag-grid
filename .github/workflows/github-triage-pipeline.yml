@@ -261,7 +261,7 @@ jobs:
             stage: ${{ steps.pf.outputs.stage }}
             issue_key: ${{ steps.pf.outputs.issue_key }}
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -323,7 +323,7 @@ jobs:
             # action's CLAUDE.md § "Confidence-gap auto-refresh".
             confidence_gap: ${{ steps.pipeline.outputs.confidence_gap }}
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -390,7 +390,7 @@ jobs:
             issues: write # mint → reply → label → close, all mechanical
             packages: read
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -453,7 +453,7 @@ jobs:
         outputs:
             reproduces: ${{ steps.pipeline.outputs.reproduces }}
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -501,7 +501,7 @@ jobs:
             issues: read
             packages: read
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts
@@ -560,7 +560,7 @@ jobs:
             issues: read
             packages: read
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
             - name: Install @ag-grid/dev-prompts

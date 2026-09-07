@@ -23,6 +23,8 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _getCellCtrl, _getRowCtrl } from './controllers';
+import { _announceChangedValidationErrors } from './validationAnnouncements';
+import { _formatValidationMessages } from './validationMessages';
 
 export const UNEDITED = Symbol('unedited');
 
@@ -60,6 +62,10 @@ export function _setupEditors(
     const { valueSvc, editSvc, editModelSvc } = beans;
     const { rowNode, column } = position ?? {};
 
+    // One pass shared across the row's attaches: each attach revalidates, so an unseeded k-th editor
+    // would re-run every validator before it.
+    const validationCache: EditorValidationCache = new Map();
+
     for (const cellPosition of editingCells) {
         const { rowNode: cellRowNode, column: cellColumn } = cellPosition;
         const curCellCtrl = _getCellCtrl(beans, cellPosition);
@@ -88,14 +94,16 @@ export function _setupEditors(
 
         const shouldStartEditing = cellStartedEdit && rowNode === curCellCtrl.rowNode && curCellCtrl.column === column;
 
-        _setupEditor(
-            beans,
-            { rowNode: rowNode!, column: curCellCtrl.column },
-            {
-                key: shouldStartEditing ? key : null,
-                event: shouldStartEditing ? event : null,
-                cellStartedEdit: shouldStartEditing && cellStartedEdit,
-            }
+        editSvc!.withEditorAttachValidationCache(validationCache, curCellCtrl, () =>
+            _setupEditor(
+                beans,
+                { rowNode: rowNode!, column: curCellCtrl.column },
+                {
+                    key: shouldStartEditing ? key : null,
+                    event: shouldStartEditing ? event : null,
+                    cellStartedEdit: shouldStartEditing && cellStartedEdit,
+                }
+            )
         );
     }
 }
@@ -221,24 +229,27 @@ function dispatchEditingStarted(
 function _valueFromEditor(
     beans: BeanCollection,
     cellEditor: ICellEditor,
-    params?: { isCancelling?: boolean; isStopping?: boolean }
+    params?: { isCancelling?: boolean; isStopping?: boolean },
+    knownInvalid?: boolean
 ): { editorValue?: any; editorValueExists: boolean; isCancelAfterEnd?: boolean } {
     const noValueResult = { editorValueExists: false };
 
-    if (beans.editSvc!.hasValidationRules()) {
-        const validationErrors = cellEditor.getValidationErrors?.();
-
-        if ((validationErrors?.length ?? 0) > 0) {
-            return noValueResult;
-        }
-    }
-
+    // Cancellation discards the live editor value, so neither its value nor its validation result is needed.
+    // In particular, custom validators must not be able to delay or prevent an explicit cancel.
     if (params?.isCancelling) {
         return noValueResult;
     }
 
+    if (knownInvalid === undefined && beans.editSvc!.hasValidationRules()) {
+        const validationErrors = cellEditor.getValidationErrors?.();
+        knownInvalid = (validationErrors?.length ?? 0) > 0;
+    }
+    if (knownInvalid) {
+        return noValueResult;
+    }
+
     if (params?.isStopping) {
-        const isCancelAfterEnd = cellEditor?.isCancelAfterEnd?.();
+        const isCancelAfterEnd = cellEditor.isCancelAfterEnd?.();
         if (isCancelAfterEnd) {
             return { ...noValueResult, isCancelAfterEnd };
         }
@@ -426,15 +437,31 @@ export function _flushEditors(beans: BeanCollection): void {
  * Block mode can't hold an invalid editor whose popup is gone, so the caller must revert: an orphaned
  * editor would leave the cell uneditable.
  */
-const isPopupEditBlockedInvalid = (beans: BeanCollection, cellCtrl: CellCtrl): boolean => {
-    if (!beans.editSvc!.cellEditingInvalidCommitBlocks()) {
-        return false;
-    }
+const getPopupEditValidation = (
+    beans: BeanCollection,
+    cellCtrl: CellCtrl
+): { revertBlockedInvalid: boolean; validationCache?: EditorValidationCache } => {
     // Buffered input has to reach the value first, or it reads as the old valid one.
     _flushEditors(beans);
-    _populateModelValidationErrors(beans);
+
+    if (!beans.editSvc!.cellEditingInvalidCommitBlocks()) {
+        // Revert mode only closes this cell, so snapshot its verdict alone: a full populate would
+        // restyle and announce every open editor on a plain popup dismiss.
+        const editor = cellCtrl.comp?.getCellEditor();
+        let validationCache: EditorValidationCache | undefined;
+        if (editor && beans.editSvc!.hasValidationRules()) {
+            validationCache = new Map();
+            cacheEditorValidation(validationCache, editor, _unwrapUserComp(editor));
+        }
+        return { revertBlockedInvalid: false, validationCache };
+    }
+
+    const validationCache = _populateModelValidationErrors(beans);
     // Cell-scoped: a row-level error, or a sibling's, is not this value's fault, and reverting cannot fix it.
-    return !!beans.editModelSvc?.getCellValidationModel().hasCellValidation(cellCtrl);
+    return {
+        revertBlockedInvalid: !!beans.editModelSvc?.getCellValidationModel().hasCellValidation(cellCtrl),
+        validationCache,
+    };
 };
 
 /**
@@ -457,7 +484,9 @@ export const _onPopupEditorClosed = (
     const isEscape = isKeyboardEvent && e.key === KeyCode.ESCAPE;
 
     const fullRow = beans.gos.get('editType') === 'fullRow';
-    const revertBlockedInvalid = !isEscape && isPopupEditBlockedInvalid(beans, cellCtrl);
+    const popupValidation = !isEscape ? getPopupEditValidation(beans, cellCtrl) : undefined;
+    const revertBlockedInvalid = popupValidation?.revertBlockedInvalid ?? false;
+    const validationCache = popupValidation?.validationCache;
     const batch = editSvc.isBatchEditing();
 
     // Full-row owns its own stop (Escape, Enter, grid focus loss); ending it because a popup closed
@@ -465,9 +494,9 @@ export const _onPopupEditorClosed = (
     const { rowNode, column } = cellCtrl;
     if (!isEscape && fullRow && editSvc.isRowEditing(rowNode, { checkSiblings: true })) {
         if (revertBlockedInvalid) {
-            editSvc.revertCellEdit({ rowNode, column });
+            editSvc.revertCellEdit({ rowNode, column }, validationCache);
         } else {
-            editSvc.closeCellEditor({ rowNode, column });
+            editSvc.closeCellEditor({ rowNode, column }, validationCache);
         }
         return;
     }
@@ -475,27 +504,83 @@ export const _onPopupEditorClosed = (
     // Mid-batch a mouse-driven cancel is a no-op (only Escape cancels), so revert this cell
     // directly; that also keeps any earlier staged value, as per-cell Escape does.
     if (revertBlockedInvalid && batch) {
-        editSvc.revertCellEdit({ rowNode, column });
+        editSvc.revertCellEdit({ rowNode, column }, validationCache);
         return;
     }
 
     // note: this happens because of a click outside of the grid or if the popupEditor
     // is closed with `Escape` key. if another cell was clicked, then the editing will
     // have already stopped and returned on the conditional above.
-    editSvc.stopEditing(cellCtrl, {
-        source: batch ? 'ui' : 'api',
-        cancel: isEscape || revertBlockedInvalid,
-        event: isKeyboardEvent || isMouseEvent ? e : undefined,
-    });
+    editSvc.stopEditing(
+        cellCtrl,
+        {
+            source: batch ? 'ui' : 'api',
+            cancel: isEscape || revertBlockedInvalid,
+            event: isKeyboardEvent || isMouseEvent ? e : undefined,
+        },
+        validationCache
+    );
 
     if (isEscape) {
         cellCtrl.focusCell({ forceBrowserFocus: true, sourceEvent: e });
     }
 };
 
+type SyncEditorParams = { persist?: boolean; isCancelling?: boolean; isStopping?: boolean };
+
+/** Validation results captured for one explicit pass, keyed by the editor instance that produced them. */
+export type EditorValidationCache = Map<ICellEditor, string[]>;
+
+type EditorValidationVisitor = (ctrl: CellCtrl, editor: ICellEditor, errorMessages: string[]) => void;
+
+/** Returns the editor's cached verdict, running its validator once and snapshotting the result on a miss. */
+const cacheEditorValidation = (
+    validationCache: EditorValidationCache,
+    cellEditorComp: ICellEditor,
+    editor: ICellEditor
+): string[] => {
+    // Keyed by editor instance — row/column is not enough: virtualisation can replace the editor at the
+    // same position mid-pass.
+    let errorMessages = validationCache.get(cellEditorComp);
+    if (errorMessages === undefined) {
+        // Snapshot the result: custom editors may reuse and mutate the same array between passes.
+        errorMessages = [...(editor.getValidationErrors?.() ?? [])];
+        validationCache.set(cellEditorComp, errorMessages);
+    }
+    return errorMessages;
+};
+
+/**
+ * Runs each live editor validator once and snapshots the result against the editor instance that produced it.
+ * The optional visitor lets a full validation pass update its models without a second controller scan.
+ */
+const collectEditorValidation = (
+    beans: BeanCollection,
+    visitor?: EditorValidationVisitor,
+    validationCache: EditorValidationCache = new Map()
+): EditorValidationCache => {
+    for (const ctrl of beans.rowRenderer.getCellCtrls()) {
+        const cellEditorComp = ctrl.comp?.getCellEditor();
+        if (!cellEditorComp) {
+            continue;
+        }
+
+        const editor = _unwrapUserComp(cellEditorComp);
+        const errorMessages = cacheEditorValidation(validationCache, cellEditorComp, editor);
+        visitor?.(ctrl, editor, errorMessages);
+    }
+
+    return validationCache;
+};
+
+/** Captures editor validation without changing validation models, styles or announcements. */
+export const _collectEditorValidationCache = (beans: BeanCollection): EditorValidationCache =>
+    collectEditorValidation(beans);
+
 export const _syncFromEditors = (
     beans: BeanCollection,
-    params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
+    params: SyncEditorParams & { persist: boolean },
+    validationCache?: EditorValidationCache
 ): void => {
     // As in _flushEditors, and for the same reason: this runs per keystroke, and getEditPositions would
     // allocate a position plus a copy of every edit value to reach the two fields read here.
@@ -504,7 +589,7 @@ export const _syncFromEditors = (
         position.rowNode = rowNode;
         for (const column of editRow.keys()) {
             position.column = column;
-            _syncFromEditorComp(beans, position, params);
+            _syncFromEditorComp(beans, position, params, validationCache);
         }
     });
 };
@@ -513,7 +598,8 @@ export const _syncFromEditors = (
 export const _syncFromEditorComp = (
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
+    params: SyncEditorParams & { persist: boolean },
+    validationCache?: EditorValidationCache
 ): void => {
     const editor = _getCellCtrl(beans, position)?.comp?.getCellEditor();
 
@@ -521,7 +607,10 @@ export const _syncFromEditorComp = (
         return;
     }
 
-    const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
+    const cachedValidationErrors = validationCache?.get(editor);
+    // A cache miss means this editor attached after the pass; it must validate itself, not be assumed valid.
+    const knownInvalid = cachedValidationErrors === undefined ? undefined : cachedValidationErrors.length > 0;
+    const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params, knownInvalid);
 
     if (isCancelAfterEnd) {
         const { cellStartedEditing, cellStoppedEditing } = beans.editModelSvc?.getEdit(position)?.editorState || {};
@@ -530,26 +619,30 @@ export const _syncFromEditorComp = (
         });
     }
 
-    _syncFromEditor(beans, position, editorValue, undefined, !editorValueExists, params);
+    syncFromEditorValue(beans, position, editorValue, !editorValueExists, params);
 };
 
 export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     editorValue?: any,
-    _source?: string,
-    valueSameAsSource?: boolean,
-    params?: { persist?: boolean; isCancelling?: boolean; isStopping?: boolean }
+    params?: SyncEditorParams
+): void {
+    syncFromEditorValue(beans, position, editorValue, false, params);
+}
+
+function syncFromEditorValue(
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    editorValue: any,
+    valueSameAsSource: boolean,
+    params?: SyncEditorParams
 ): void {
     const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
         return;
     }
     const { rowNode, column } = position;
-
-    if (!(rowNode && column)) {
-        return;
-    }
 
     let edit = editModelSvc.getEdit(position);
 
@@ -614,10 +707,11 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
 export function _destroyEditors(
     beans: BeanCollection,
     edits: Required<EditPosition>[],
-    params: DestroyEditorParams = {}
+    params: DestroyEditorParams = {},
+    validationCache?: EditorValidationCache
 ): void {
     for (let i = 0, len = edits.length; i < len; ++i) {
-        _destroyEditor(beans, edits[i], params);
+        _destroyEditor(beans, edits[i], params, undefined, validationCache);
     }
 }
 
@@ -631,9 +725,15 @@ export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     params: DestroyEditorParams,
-    cellCtrl: CellCtrl | undefined = _getCellCtrl(beans, position)
+    cellCtrl: CellCtrl | undefined = _getCellCtrl(beans, position),
+    validationCache?: EditorValidationCache
 ): void {
     const editModelSvc = beans.editModelSvc;
+
+    if (cellCtrl) {
+        // Do not let a delayed framework editor apply this validation pass after cancellation or recycling.
+        beans.editSvc?.clearPendingEditorAttachValidation(cellCtrl);
+    }
 
     const edit = editModelSvc?.getEdit(position);
 
@@ -683,8 +783,10 @@ export function _destroyEditor(
         return;
     }
 
-    if (beans.editSvc!.hasValidationRules()) {
-        const errorMessages = edit && cellEditor?.getValidationErrors?.();
+    if (!params.cancel && beans.editSvc!.hasValidationRules()) {
+        const cachedValidationErrors = cellEditor ? validationCache?.get(cellEditor) : undefined;
+        // A cached empty array means known-valid; `??` must not invoke a stateful validator again.
+        const errorMessages = edit && (cachedValidationErrors ?? cellEditor?.getValidationErrors?.());
         const cellValidationModel = editModelSvc?.getCellValidationModel();
 
         if (errorMessages?.length) {
@@ -811,66 +913,70 @@ export function _scanEditorsForValidation(beans: BeanCollection): boolean {
     return false;
 }
 
-export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
+export function _populateModelValidationErrors(
+    beans: BeanCollection,
+    force?: boolean,
+    validationCache?: EditorValidationCache
+): EditorValidationCache {
     const editSvc = beans.editSvc;
     if (!(force || editSvc?.hasValidationRules() || beans.editModelSvc?.hasValidationErrors())) {
-        return;
+        return new Map();
     }
 
     const cellValidationModel = new EditCellValidationModel();
-
-    const { ariaAnnounce, localeSvc, editModelSvc } = beans;
-    const translate = _getLocaleTextFunc(localeSvc);
-    const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
+    const { editModelSvc } = beans;
+    const previousCellValidationModel = editModelSvc?.getCellValidationModel();
+    const previousRowValidationModel = editModelSvc?.getRowValidationModel();
+    const translate = _getLocaleTextFunc(beans.localeSvc);
     const rowCtrlSet = new Set<RowCtrl>();
-    for (const ctrl of beans.rowRenderer.getCellCtrls()) {
-        const cellEditorComp = ctrl.comp?.getCellEditor();
-        if (!cellEditorComp) {
-            continue;
-        }
+    validationCache = collectEditorValidation(
+        beans,
+        (ctrl, editor, errorMessages) => {
+            const { rowNode, column } = ctrl;
+            const isInvalid = errorMessages.length > 0;
+            const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
 
-        const editor = _unwrapUserComp(cellEditorComp);
-        const { rowNode, column } = ctrl;
-        const errorMessages = editor.getValidationErrors?.() ?? [];
-        const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
+            if (el) {
+                const invalidMessage = isInvalid ? _formatValidationMessages(errorMessages, translate, 'inline') : '';
 
-        if (el) {
-            const isInvalid = errorMessages != null && errorMessages.length > 0;
-            const invalidMessage = isInvalid ? errorMessages.join('. ') : '';
+                _setAriaInvalid(el, isInvalid);
 
-            _setAriaInvalid(el, isInvalid);
-            if (isInvalid) {
-                ariaAnnounce.announceValue(`${ariaValidationErrorPrefix} ${errorMessages}`, 'editorValidation');
-            }
-
-            if (el instanceof HTMLInputElement) {
-                el.setCustomValidity(invalidMessage);
-            } else {
-                el.classList.toggle('invalid', isInvalid);
-            }
-        }
-
-        if (errorMessages?.length > 0) {
-            cellValidationModel.setCellValidation(
-                {
-                    rowNode,
-                    column,
-                },
-                {
-                    errorMessages,
+                if (el instanceof HTMLInputElement) {
+                    el.setCustomValidity(invalidMessage);
+                } else {
+                    el.classList.toggle('invalid', isInvalid);
                 }
-            );
-        }
-        rowCtrlSet.add(ctrl.rowCtrl);
-    }
+            }
 
-    _syncFromEditors(beans, { persist: false });
+            if (isInvalid) {
+                cellValidationModel.setCellValidation(
+                    {
+                        rowNode,
+                        column,
+                    },
+                    {
+                        errorMessages,
+                    }
+                );
+            }
+            rowCtrlSet.add(ctrl.rowCtrl);
+        },
+        validationCache
+    );
 
-    // the cellValidationModel should probably be reused to avoid
-    // the second loop over mappedEditor below
+    _syncFromEditors(beans, { persist: false }, validationCache);
     editModelSvc?.setCellValidationModel(cellValidationModel);
 
+    // Keep this after cell verdict collection: invalid editors sync to source, so the row rule sees stageable values.
     _populateRowValidationErrors(beans);
+
+    if (editModelSvc && previousCellValidationModel && previousRowValidationModel) {
+        _announceChangedValidationErrors(
+            beans,
+            { cell: previousCellValidationModel, row: previousRowValidationModel },
+            { cell: cellValidationModel, row: editModelSvc.getRowValidationModel() }
+        );
+    }
 
     for (const rowCtrl of rowCtrlSet.values()) {
         editSvc?.applyRowEditStyles(rowCtrl);
@@ -880,6 +986,8 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
             editSvc?.applyCellEditStyles(cellCtrl);
         }
     }
+
+    return validationCache;
 }
 
 /** The row half of {@link _populateModelValidationErrors}: cell errors, and the editors behind them, untouched.
@@ -893,29 +1001,17 @@ export const _populateRowValidationErrors = (beans: BeanCollection): void => {
 const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
     const rowValidationModel = new EditRowValidationModel();
     const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
-    // populate row-level errors (read-only iteration — no map copy needed)
     const editMap = beans.editModelSvc?.getEditMap();
 
-    if (!editMap) {
+    if (!getFullRowEditValidationErrors || !editMap) {
         return rowValidationModel;
     }
 
-    for (const rowNode of editMap.keys()) {
-        const rowEditMap = editMap.get(rowNode);
-
-        if (!rowEditMap) {
-            continue;
-        }
-
+    for (const [rowNode, rowEditMap] of editMap) {
         const editorsState: EditingCellPosition[] = [];
         const { rowIndex, rowPinned } = rowNode;
 
-        for (const column of rowEditMap.keys()) {
-            const editValue = rowEditMap.get(column);
-            if (!editValue) {
-                continue;
-            }
-
+        for (const [column, editValue] of rowEditMap) {
             const { editorValue, pendingValue, sourceValue } = editValue;
 
             const newValue = editorValue ?? (pendingValue === UNEDITED ? undefined : pendingValue) ?? sourceValue;
@@ -930,7 +1026,7 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
             });
         }
 
-        const errorMessages = getFullRowEditValidationErrors?.({ editorsState }) ?? [];
+        const errorMessages = getFullRowEditValidationErrors({ editorsState }) ?? [];
 
         if (errorMessages.length > 0) {
             rowValidationModel.setRowValidation({ rowNode }, { errorMessages });

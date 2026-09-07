@@ -4,6 +4,8 @@ import { htmlInlineToMarkdown } from '@ag-website-shared/markdoc/htmlInlineToMar
 import type { MarkdocConfigLike, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { renderMarkdocToMarkdown } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from '../markdownFrontmatter';
+
 /** Policies whose page renders a `.mdoc` body. `cookies` renders the Enzuzo embed instead. */
 export type MdocPolicyName = Exclude<PolicyName, 'cookies'>;
 
@@ -17,6 +19,8 @@ export interface BuildPolicyMarkdownOptions {
     markdocConfig: MarkdocConfigLike;
     resolvers?: MarkdownResolvers;
     siteRoot?: string;
+    /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
+    siteFrontmatter?: SiteFrontmatterFields;
 }
 
 /**
@@ -35,6 +39,7 @@ export async function buildPolicyMarkdown({
     markdocConfig,
     resolvers,
     siteRoot,
+    siteFrontmatter,
 }: BuildPolicyMarkdownOptions): Promise<string> {
     const content = POLICY_CONTENT[policy];
     const heading = policyHeading(policy, name);
@@ -52,7 +57,7 @@ export async function buildPolicyMarkdown({
     const policyBody = renderedBody.replace(/^---\n[\s\S]*?\n---\n+/, '').trim();
 
     const document = [
-        frontmatter(policy, name),
+        frontmatter(policy, name, siteFrontmatter),
         `# ${heading}`,
         ...content.meta.map((line) => htmlInlineToMarkdown(line, siteRoot)),
         ...content.intro.map((line) => htmlInlineToMarkdown(line, siteRoot)),
@@ -68,12 +73,20 @@ export async function buildPolicyMarkdown({
  * the way the other policies' twins re-render their `.mdoc`. Point readers at the page instead of
  * fetching the embed at build time, which would make the build depend on a third-party request.
  */
-export function buildCookiesMarkdown({ name, siteRoot }: { name: string; siteRoot?: string }): string {
+export function buildCookiesMarkdown({
+    name,
+    siteRoot,
+    siteFrontmatter,
+}: {
+    name: string;
+    siteRoot?: string;
+    siteFrontmatter?: SiteFrontmatterFields;
+}): string {
     const policy = 'cookies';
     const url = `${(siteRoot ?? '/').replace(/\/$/, '')}/cookies/`;
 
     const document = [
-        frontmatter(policy, name),
+        frontmatter(policy, name, siteFrontmatter),
         `# ${policyHeading(policy, name)}`,
         `${POLICY_CONTENT[policy].description} It is generated from our consent-management platform, which scans the site for the cookies actually in use, and is published in full at [${url}](${url}).`,
     ];
@@ -82,13 +95,12 @@ export function buildCookiesMarkdown({ name, siteRoot }: { name: string; siteRoo
 }
 
 /** The frontmatter block every policy twin opens with, from the copy shared with its page. */
-function frontmatter(policy: PolicyName, name: string): string {
+function frontmatter(policy: PolicyName, name: string, siteFrontmatter?: SiteFrontmatterFields): string {
     const content = POLICY_CONTENT[policy];
 
-    return [
-        '---',
-        `title: ${JSON.stringify(`${name}: ${content.metaTitle}`)}`,
-        `description: ${JSON.stringify(content.description)}`,
-        '---',
-    ].join('\n');
+    return buildMarkdownFrontmatter({
+        ...siteFrontmatter,
+        title: `${name}: ${content.metaTitle}`,
+        description: content.description,
+    });
 }

@@ -1,9 +1,7 @@
-import { RefPlaceholder, _exists, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import { _exists, _setDisplayed } from 'ag-stack';
 
 import type {
     BaseCellDataType,
-    BeanCollection,
-    ElementParams,
     FieldValueEvent,
     GridInputDateField,
     GridInputTextField,
@@ -13,12 +11,11 @@ import {
     AgInputDateField,
     AgInputNumberField,
     AgInputTextField,
-    Component,
     KeyCode,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
-import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import { PillComp } from './pillComp';
 
 type InputPillCompEvent = 'fieldValueChanged';
 
@@ -41,36 +38,7 @@ const inputComponentDescriptors: {
     dateTimeString: [AgInputDateField, (i: GridInputDateField) => i.setIncludeTime(true)],
 };
 
-const InputPillElement: ElementParams = {
-    tag: 'div',
-    cls: 'ag-advanced-filter-builder-pill-wrapper',
-    role: 'presentation',
-    children: [
-        {
-            tag: 'div',
-            ref: 'ePill',
-            cls: 'ag-advanced-filter-builder-pill',
-            role: 'button',
-            children: [
-                {
-                    tag: 'span',
-                    ref: 'eLabel',
-                    cls: 'ag-advanced-filter-builder-pill-display',
-                },
-            ],
-        },
-    ],
-};
-export class InputPillComp extends Component<InputPillCompEvent> {
-    private advFilterExpSvc: AdvancedFilterExpressionService;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
-    }
-
-    private readonly ePill: HTMLElement = RefPlaceholder;
-    private readonly eLabel: HTMLElement = RefPlaceholder;
-
+export class InputPillComp extends PillComp<InputPillCompEvent> {
     private eEditor: GridInputTextField | undefined;
     /** What the editor opened with, so closing it untouched is not read back as an edit. */
     private editorOpenedWith: string | undefined;
@@ -87,45 +55,18 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             ariaLabel: string;
         }
     ) {
-        super(InputPillElement);
+        super(params);
         const { value, valueFormatter } = params;
         this.value = value;
         this.displayValue = valueFormatter(value);
     }
 
-    public postConstruct(): void {
-        const { cssClass, ariaLabel } = this.params;
-
-        this.ePill.classList.add(cssClass);
-        this.activateTabIndex([this.ePill]);
-
-        this.eLabel.id = `${this.getCompId()}`;
-        _setAriaDescribedBy(this.ePill, this.eLabel.id);
-        _setAriaLabel(this.ePill, ariaLabel);
-
-        this.renderValue();
-
-        this.addManagedListeners(this.ePill, {
-            click: (event: MouseEvent) => {
-                event.preventDefault();
-                this.showEditor();
-            },
-            keydown: (event: KeyboardEvent) => {
-                if (event.key === KeyCode.ENTER) {
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.showEditor();
-                }
-            },
-        });
+    public override postConstruct(): void {
+        super.postConstruct();
         this.addDestroyFunc(() => this.destroyBean(this.eEditor));
     }
 
-    public override getFocusableElement(): HTMLElement {
-        return this.ePill;
-    }
-
-    private showEditor(): void {
+    protected override open(): void {
         if (this.eEditor) {
             return;
         }
@@ -185,27 +126,18 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         }
     }
 
-    private renderValue(): void {
-        let value: string;
-        const { displayValue, eLabel, params } = this;
-        const { type } = params;
-        const { classList } = eLabel;
-        classList.remove(
-            'ag-advanced-filter-builder-value-empty',
-            'ag-advanced-filter-builder-value-number',
-            'ag-advanced-filter-builder-value-text'
-        );
+    protected override renderValue(): void {
+        const displayValue = this.displayValue;
         if (!_exists(displayValue)) {
-            value = this.advFilterExpSvc.translate('advancedFilterBuilderEnterValue');
-            classList.add('ag-advanced-filter-builder-value-empty');
-        } else if (type === 'number' || type === 'bigint') {
-            value = displayValue;
-            classList.add('ag-advanced-filter-builder-value-number');
-        } else {
-            value = `"${displayValue}"`;
-            classList.add('ag-advanced-filter-builder-value-text');
+            this.writeLabel(null);
+            return;
         }
-        eLabel.textContent = value;
+        const type = this.params.type;
+        if (type === 'number' || type === 'bigint') {
+            this.writeLabel(displayValue, 'ag-advanced-filter-builder-value-number');
+            return;
+        }
+        this.writeLabel(`"${displayValue}"`, 'ag-advanced-filter-builder-value-text');
     }
 
     private updateValue(keepFocus: boolean): void {

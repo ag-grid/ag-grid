@@ -14,7 +14,8 @@ if [ "$#" -lt 3 ]
     echo "For example: ./scripts/deployments/prep_and_archive/patchUncachedArchives.sh 36.1.0 14.1.0 user@host clear"
     echo ""
     echo "Nothing has to clear this: a production docs deploy emits an empty in-flight block,"
-    echo "so going live restores normal caching on its own."
+    echo "so going live restores normal caching on its own. That cuts both ways - a docs deploy"
+    echo "mid-cycle drops the exemption too, so re-run this if one lands before GA."
     echo ""
     echo "Requires \$SSH_FILE, \$SSH_PORT and \$GRID_ROOT_DIR, as the other deploy scripts do."
     exit 1
@@ -82,17 +83,26 @@ function patchFailed {
     exit 1;
 }
 
-echo "scp -i $SSH_LOCATION -P $SSH_PORT $CURRENT_HOST:$GRID_ROOT_DIR/$REMOTE -> local"
 if ! scp -i $SSH_LOCATION -P $SSH_PORT $CURRENT_HOST:$GRID_ROOT_DIR/$REMOTE "$LIVE_HTACCESS"
 then
     patchFailed "Could not fetch the live root .htaccess.";
 fi
 
-node "$PATCHER" "$LIVE_HTACCESS" "$ACTION" "$VERSION" "$CHARTS_VERSION" || patchFailed "Patching failed."
+BEFORE=$(cksum < "$LIVE_HTACCESS")
+OUTCOME=$(node "$PATCHER" "$LIVE_HTACCESS" "$ACTION" "$VERSION" "$CHARTS_VERSION") || patchFailed "Patching failed."
+
+# A clear that finds nothing of ours leaves the file untouched. Stop here rather than
+# uploading it back: the write cannot fail a release it was never going to change, and a
+# stale invocation cannot overwrite a newer state it never looked at.
+if [ "$(cksum < "$LIVE_HTACCESS")" = "$BEFORE" ]
+then
+    rm -f "$LIVE_HTACCESS";
+    echo "$GRID_ROOT_DIR/$REMOTE: $OUTCOME";
+    exit 0;
+fi
 
 # Keep a timestamped copy on the box, so a bad patch is one cp away from being undone without
 # needing this script or a deploy.
-echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cp $GRID_ROOT_DIR/$REMOTE $BACKUP\""
 if ! ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cp $GRID_ROOT_DIR/$REMOTE $BACKUP"
 then
     patchFailed "Could not back up the live root .htaccess.";
@@ -101,7 +111,6 @@ fi
 # Upload beside the live file and rename over it: scp writes in place, so an interrupted
 # transfer straight onto .htaccess would leave the site with a truncated one. mv within the
 # same directory is atomic, so a reader sees either the old file or the new one.
-echo "scp -i $SSH_LOCATION -P $SSH_PORT local -> $CURRENT_HOST:$STAGED"
 if ! scp -i $SSH_LOCATION -P $SSH_PORT "$LIVE_HTACCESS" $CURRENT_HOST:$STAGED
 then
     patchFailed "Could not upload the patched root .htaccess.";
@@ -112,6 +121,4 @@ then
 fi
 rm -f "$LIVE_HTACCESS"
 
-echo "Root .htaccess patched. Previous copy kept at $BACKUP"
-echo "NOTE: a docs deploy resets the in-flight block. That is how the exemption is removed at"
-echo "      GA, but it also means a mid-cycle docs deploy drops it - re-run this if so."
+echo "$GRID_ROOT_DIR/$REMOTE: $OUTCOME (previous copy at $BACKUP)"

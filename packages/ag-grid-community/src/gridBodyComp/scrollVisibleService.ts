@@ -1,4 +1,4 @@
-import { _getScrollbarWidth } from 'ag-stack';
+import { _getScrollbarWidth, _isInvisibleScrollbar } from 'ag-stack';
 
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { NamedBean } from '../context/bean';
@@ -107,15 +107,24 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private calculateScrollVisibilityState(gridBodyCtrl: GridBodyCtrl): ScrollVisibilityState {
-        const verticalScrollShowing = this.calculateVerticalScrollShowing(gridBodyCtrl);
+        // Resolve both axes from the layout without a horizontal scrollbar. Otherwise two scrollbars that
+        // only overflow because of each other can become a stable, but incorrect, visibility state.
+        const verticalScrollShowingWithoutHorizontal = this.calculateVerticalScrollShowing(gridBodyCtrl, false);
+        const horizontalScrollShowing = this.calculateHorizontalScrollShowing(
+            gridBodyCtrl,
+            verticalScrollShowingWithoutHorizontal
+        );
+        const verticalScrollShowing =
+            verticalScrollShowingWithoutHorizontal ||
+            (horizontalScrollShowing && this.calculateVerticalScrollShowing(gridBodyCtrl, true));
 
         return {
-            horizontalScrollShowing: this.calculateHorizontalScrollShowing(gridBodyCtrl, verticalScrollShowing),
+            horizontalScrollShowing,
             verticalScrollShowing,
         };
     }
 
-    private calculateVerticalScrollShowing(gridBodyCtrl: GridBodyCtrl): boolean {
+    private calculateVerticalScrollShowing(gridBodyCtrl: GridBodyCtrl, horizontalScrollShowing: boolean): boolean {
         if (this.gos.get('alwaysShowVerticalScroll')) {
             return true;
         }
@@ -124,9 +133,30 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const bodyViewportHeight = gridBodyCtrl.getBodyViewportHeight(gridBodyCtrl.eGridViewport.clientHeight);
+        // clientHeight already excludes an applied fake horizontal scrollbar, so restore that space before
+        // evaluating the requested visibility state.
+        const viewportHeightWithoutHorizontalScroll =
+            gridBodyCtrl.eGridViewport.clientHeight + this.getAppliedHorizontalScrollbarLayoutHeight();
+        const viewportHeight =
+            viewportHeightWithoutHorizontalScroll - this.getHorizontalScrollbarLayoutHeight(horizontalScrollShowing);
+        const bodyViewportHeight = gridBodyCtrl.getBodyViewportHeight(viewportHeight);
         const rowContainerHeight = this.beans.rowContainerHeight.uiContainerHeight ?? 0;
         return rowContainerHeight > bodyViewportHeight;
+    }
+
+    private getHorizontalScrollbarLayoutHeight(horizontalScrollShowing: boolean): number {
+        if (!horizontalScrollShowing || this.gos.get('suppressHorizontalScroll') || _isInvisibleScrollbar()) {
+            return 0;
+        }
+        return this.getScrollbarWidth() || 0;
+    }
+
+    private getAppliedHorizontalScrollbarLayoutHeight(): number {
+        if (this.gos.get('suppressHorizontalScroll') || _isInvisibleScrollbar()) {
+            return 0;
+        }
+        const height = Number.parseFloat(this.ctrlsSvc.get('fakeHScrollComp')?.getGui().style.height ?? '');
+        return Number.isFinite(height) ? height : 0;
     }
 
     private calculateHorizontalScrollShowing(gridBodyCtrl: GridBodyCtrl, verticalScrollShowing: boolean): boolean {

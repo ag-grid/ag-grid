@@ -20,6 +20,48 @@ function createList<TValue>(params?: Partial<RichSelectParams<TValue>>) {
     return { list, wrapper };
 }
 
+const GROW_CLASS = 'ag-virtual-list-grow-to-content';
+
+/**
+ * A list whose rendered rows report `rowWidths`, and whose own box is `boxWidth` wide with a 2px border, so the
+ * width the callback receives is `max(rowWidths) + 2`. `draw()` runs one `drawVirtualRows` pass over them.
+ */
+function createMeasurableList(rowWidths: number[], boxWidth = 500) {
+    const { list } = createList<string>();
+    const gui = list.getGui() as HTMLElement;
+
+    Object.defineProperty(gui, 'getBoundingClientRect', { value: () => ({ width: boxWidth }), configurable: true });
+    Object.defineProperty(gui, 'clientWidth', { value: boxWidth - 2, configurable: true });
+
+    (list as any).forEachRenderedRow = (callback: (cmp: any, idx: number) => void) => {
+        rowWidths.forEach((width, idx) =>
+            callback(
+                {
+                    getCompId: () => `${idx}`,
+                    getValue: () => 'value',
+                    toggleHighlighted: vi.fn(),
+                    updateSelected: vi.fn(),
+                    getGui: () => ({ getBoundingClientRect: () => ({ width }) }),
+                },
+                idx
+            )
+        );
+    };
+    (list as any).refresh = vi.fn();
+    (list as any).ensureIndexVisible = vi.fn();
+    list.setCurrentList(rowWidths.map((_, idx) => `row-${idx}`));
+
+    const virtualListPrototype = Object.getPrototypeOf(Object.getPrototypeOf(list));
+    const drawSpy = vi.spyOn(virtualListPrototype, 'drawVirtualRows').mockImplementation(() => {});
+
+    return {
+        list,
+        gui,
+        draw: () => (list as any).drawVirtualRows(true),
+        restore: () => drawSpy.mockRestore(),
+    };
+}
+
 describe('AgRichSelectList', () => {
     it('clears active option attributes when highlight is removed', () => {
         const { list, wrapper } = createList<string>();
@@ -215,6 +257,68 @@ describe('AgRichSelectList', () => {
         (list as any).onGuiScroll();
 
         expect(callback).toHaveBeenCalled();
+    });
+
+    it('reports the widest rendered row plus the width its own border takes', () => {
+        const { list, draw, restore } = createMeasurableList([120, 180.4, 90]);
+        const reportContentWidth = vi.fn().mockReturnValue(true);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).toHaveBeenCalledTimes(1);
+        expect(reportContentWidth).toHaveBeenCalledWith(183);
+    });
+
+    it('lays rows out at their content width only while armed', () => {
+        const { list, gui, draw, restore } = createMeasurableList([120]);
+
+        try {
+            expect(gui.classList.contains(GROW_CLASS)).toBe(false);
+
+            list.setContentWidthCallback(vi.fn().mockReturnValue(true));
+            expect(gui.classList.contains(GROW_CLASS)).toBe(true);
+
+            draw();
+            expect(gui.classList.contains(GROW_CLASS)).toBe(true);
+        } finally {
+            restore();
+        }
+    });
+
+    it('stops measuring and restores elision once the callback reports no room left', () => {
+        const { list, gui, draw, restore } = createMeasurableList([120]);
+        const reportContentWidth = vi.fn().mockReturnValue(false);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).toHaveBeenCalledTimes(1);
+        expect(gui.classList.contains(GROW_CLASS)).toBe(false);
+    });
+
+    it('stays armed when a draw renders no rows, so a later draw can still measure', () => {
+        const { list, gui, draw, restore } = createMeasurableList([]);
+        const reportContentWidth = vi.fn().mockReturnValue(false);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).not.toHaveBeenCalled();
+        expect(gui.classList.contains(GROW_CLASS)).toBe(true);
     });
 
     it('announces loading and no-matches state transitions', () => {

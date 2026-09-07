@@ -97,10 +97,11 @@ export class AgListItem<
         const tooltipCtrl = {
             getTooltipValue: () => this.label,
             getGui: () => this.getGui(),
-            getLocation: () => 'UNKNOWN',
+            getTooltipComponentDefinition: () => undefined,
+            getLocation: () => 'listItem',
             // only show tooltips for items where the text cannot be fully displayed
             shouldDisplayTooltip: () => _isHorizontalScrollShowing(this.eText),
-        } as TooltipCtrl<'UNKNOWN', any>;
+        } as TooltipCtrl<'listItem', any>;
 
         const tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(

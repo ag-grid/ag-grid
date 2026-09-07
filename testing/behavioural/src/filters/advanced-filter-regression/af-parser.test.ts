@@ -689,7 +689,19 @@ describe('Advanced Filter — parser edge cases', () => {
             await af.type('[Big] = abc');
             await asyncSetTimeout(0);
 
-            expect(af.input.validationMessage).toContain('Value is not a big integer');
+            expect(af.input.validationMessage).toContain('Value is not a BigInt');
+            expect(api.getAdvancedFilterModel()).toBeNull();
+        });
+
+        test('a decimal bigint operand is rejected as a BigInt, not as a number', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', OPTS);
+            const af = AdvancedFilterHarness.get(api);
+
+            // `1.5` is a perfectly good number, so the number message would be untrue here.
+            await af.type('[Big] = 1.5');
+            await asyncSetTimeout(0);
+
+            expect(af.input.validationMessage).toContain('Value is not a BigInt');
             expect(api.getAdvancedFilterModel()).toBeNull();
         });
 

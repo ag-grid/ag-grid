@@ -9,8 +9,19 @@ import type {
     SortDef,
     SortDirection,
     SortIndicatorComp,
+    TooltipCallbackParams,
+    TooltipLocation,
 } from 'ag-grid-community';
-import { Component, DragSourceType, KeyCode, _createElement, _resolvePivotSort } from 'ag-grid-community';
+import {
+    Component,
+    DragSourceType,
+    KeyCode,
+    _addGridCommonParams,
+    _createElement,
+    _getHeaderTooltipComponentDefinition,
+    _resolveHeaderTooltipValue,
+    _resolvePivotSort,
+} from 'ag-grid-community';
 
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
@@ -95,7 +106,40 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     protected getTooltip(): string | null | undefined {
-        return this.column.colDef.headerTooltip;
+        const colDef = this.column.colDef;
+        return _resolveHeaderTooltipValue(
+            colDef,
+            _addGridCommonParams<TooltipCallbackParams>(this.gos, {
+                location: this.getTooltipLocation(),
+                colDef,
+                column: this.column,
+                value: this.displayName,
+                valueFormatted: this.displayName,
+            })
+        );
+    }
+
+    protected override getTooltipLocation(): TooltipLocation {
+        switch (this.dropZonePurpose) {
+            case 'rowGroup':
+                return 'rowGroupColumnsList';
+            case 'pivot':
+                return 'pivotColumnsList';
+            case 'aggregation':
+                return 'valueColumnsList';
+        }
+    }
+
+    protected override getTooltipParams() {
+        return {
+            colDef: this.column.colDef,
+            column: this.column,
+            valueFormatted: this.displayName,
+        };
+    }
+
+    protected override getTooltipComponentDefinition() {
+        return _getHeaderTooltipComponentDefinition(this.column.colDef);
     }
 
     protected override addAdditionalAriaInstructions(

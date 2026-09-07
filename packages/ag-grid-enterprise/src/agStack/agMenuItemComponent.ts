@@ -182,6 +182,7 @@ export class AgMenuItemComponent<
     private contextParams: WithoutCommon<TCommon, TMenuActionParams>;
     private menuItemComp: IComponent<AgMenuItemParams<TMenuActionParams, TCommon>> & IMenuItem;
     private isActive = false;
+    private isMouseActivation = false;
     private hideSubMenu: (() => void) | null;
     private subMenuIsOpen = false;
     private subMenuIsOpening = false;
@@ -541,10 +542,20 @@ export class AgMenuItemComponent<
 
         if (this.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
-            this.activateTimeoutId = window.setTimeout(() => this.activate(true), ACTIVATION_DELAY);
+            this.activateTimeoutId = window.setTimeout(() => this.activateOnMouseEnter(), ACTIVATION_DELAY);
         } else {
             // activate immediately
+            this.activateOnMouseEnter();
+        }
+    }
+
+    private activateOnMouseEnter(): void {
+        // Preserve menu navigation focus without treating hover as a tooltip focus trigger.
+        this.isMouseActivation = true;
+        try {
             this.activate(true);
+        } finally {
+            this.isMouseActivation = false;
         }
     }
 
@@ -657,9 +668,11 @@ export class AgMenuItemComponent<
             false,
             {
                 getGui: () => this.getGui(),
+                getTooltipComponentDefinition: () => undefined,
                 getTooltipValue: () => this.tooltip,
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,
+                shouldDisplayTooltipOnFocus: () => !this.isMouseActivation,
             } as TooltipCtrl<string, any>
         );
 
