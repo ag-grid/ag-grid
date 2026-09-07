@@ -53,7 +53,7 @@ The grid state is designed to be serialisable, so any functions will be stripped
 
 The `quickFilter` section only takes part in grid state when the [Quick Access Toolbar](./toolbar/) is configured with `agQuickFilterToolbarItem`. Without that item the [Quick Filter](./filter-quick/) is driven by the `quickFilterText` grid option alone, and is neither captured nor restored.
 
-When the section does apply, restoring it writes the text back into the `quickFilterText` grid option, so the restored state takes precedence over a value set in the grid options. If the provided state has no `quickFilter` section, the grid option is used as provided.
+When the section does apply, restoring it writes the text back into the `quickFilterText` grid option, so the restored state takes precedence over a value set in the grid options. If the provided state has no `quickFilter` section, the grid option is used as provided. A restore through `api.setState()` reports `api` as the source on the resulting [Filter Changed](./filtering-overview/) event, where a user's own edit in the toolbar input reports `quickFilter`.
 
 {% note %}
 When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),

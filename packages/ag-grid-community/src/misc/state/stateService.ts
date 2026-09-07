@@ -763,7 +763,10 @@ export class StateService extends BeanStub implements NamedBean {
         const { text } = quickFilterState ?? {};
         // An `api` restore resets what it omits, so a state without the text clears the Quick Filter. At
         // initialisation an absent value instead leaves the `quickFilterText` grid option as provided.
-        this.beans.quickFilter?.setState({ text: source === 'api' ? (text ?? '') : text });
+        this.beans.quickFilter?.setState(
+            { text: source === 'api' ? (text ?? '') : text },
+            source === 'api' ? 'api' : undefined
+        );
     }
 
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */

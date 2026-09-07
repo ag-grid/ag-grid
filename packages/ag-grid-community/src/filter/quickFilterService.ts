@@ -1,3 +1,4 @@
+import type { AgEvent } from 'ag-stack';
 import { _exists } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
@@ -5,10 +6,17 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import type { FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { QuickFilterState } from '../interfaces/gridState';
 
 type QuickFilterServiceEvent = 'quickFilterChanged';
+
+export interface QuickFilterChangedEvent extends AgEvent<QuickFilterServiceEvent> {
+    /** Source to report on the resulting `filterChanged` event, when the change did not come from the user. */
+    source?: FilterChangedEventSourceType;
+}
+
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilter' as const;
 
@@ -18,6 +26,8 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
     private parser?: (quickFilter: string) => string[];
+    /** Set for the duration of a state restore, so the resulting `filterChanged` reports its source. */
+    private stateSource?: FilterChangedEventSourceType;
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
     public postConstruct(): void {
@@ -102,10 +112,17 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     /** An absent `text` leaves the `quickFilterText` grid option as it is. */
-    public setState({ text }: QuickFilterState): void {
-        if (text !== undefined) {
-            // This service's own property listener is the apply path.
+    public setState({ text }: QuickFilterState, source?: FilterChangedEventSourceType): void {
+        if (text === undefined) {
+            return;
+        }
+        // The option write applies synchronously through this service's own property listener, so the
+        // source is readable by the dispatch it triggers and gone again by the time this returns.
+        this.stateSource = source;
+        try {
             this.gos.updateGridOptions({ options: { quickFilterText: text } });
+        } finally {
+            this.stateSource = undefined;
         }
     }
 
@@ -137,7 +154,10 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setFilterParts();
-            this.dispatchLocalEvent({ type: 'quickFilterChanged' });
+            this.dispatchLocalEvent<QuickFilterChangedEvent>({
+                type: 'quickFilterChanged',
+                source: this.stateSource,
+            });
         }
     }
 

@@ -194,7 +194,7 @@ describe('Grid state - quick filter text', () => {
         `);
     });
 
-    test('reports source quickFilter when applied through state', async () => {
+    test('reports source api when applied through setState', async () => {
         const api = gridMgr.createGrid('quick-filter-state-source', {
             columnDefs,
             rowData,
@@ -206,6 +206,22 @@ describe('Grid state - quick filter text', () => {
         api.addEventListener('filterChanged', ({ source }) => sources.push(source));
 
         api.setState({ quickFilter: { text: 'canada' } });
+
+        await waitFor(() => expect(sources).toEqual(['api']));
+    });
+
+    test('reports source quickFilter when the user types in the toolbar input', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-source-user', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const sources: (string | undefined)[] = [];
+        api.addEventListener('filterChanged', ({ source }) => sources.push(source));
+
+        await typeInToolbar(api, 'canada');
 
         await waitFor(() => expect(sources).toEqual(['quickFilter']));
     });

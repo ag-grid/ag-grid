@@ -15,7 +15,7 @@ import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHos
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/mergeDeep';
 import type { ColumnFilterService } from './columnFilterService';
-import type { QuickFilterService } from './quickFilterService';
+import type { QuickFilterChangedEvent, QuickFilterService } from './quickFilterService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterManager extends BeanStub implements NamedBean {
@@ -67,7 +67,9 @@ export class FilterManager extends BeanStub implements NamedBean {
 
         if (this.quickFilter) {
             this.addManagedListeners(this.quickFilter, {
-                quickFilterChanged: () => this.onFilterChanged({ source: 'quickFilter' }),
+                // A state restore supplies its own source; a user edit of the quick filter has none.
+                quickFilterChanged: ({ source }: QuickFilterChangedEvent) =>
+                    this.onFilterChanged({ source: source ?? 'quickFilter' }),
             });
         }
 
