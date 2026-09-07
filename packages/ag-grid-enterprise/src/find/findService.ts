@@ -8,6 +8,7 @@ import type {
     FindGroupRowRendererParams,
     FindMatch,
     FindPart,
+    FindState,
     GridApi,
     IClientSideRowModel,
     IFindService,
@@ -296,6 +297,32 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     // updates all the matches
+    public getState(): FindState | undefined {
+        if (!_isClientSideRowModel(this.gos)) {
+            // Find only searches the Client-Side Row Model, so there is nothing to restore elsewhere.
+            return undefined;
+        }
+        // This service holds a trimmed, case-converted form, so the option is the round-trippable value.
+        const searchValue = this.gos.get('findSearchValue') || undefined;
+        // The active match is meaningless without a search value, and is wiped whenever the value changes.
+        return searchValue ? { searchValue, activeMatch: this.activeMatch?.numOverall } : undefined;
+    }
+
+    /** An absent `searchValue` leaves the `findSearchValue` grid option as it is. */
+    public setState({ searchValue, activeMatch }: FindState): void {
+        if (!_isClientSideRowModel(this.gos)) {
+            return;
+        }
+        if (searchValue !== undefined) {
+            // This service's own property listener is the apply path, and it recalculates the matches
+            // synchronously, so the active match below can be resolved straight after.
+            this.gos.updateGridOptions({ options: { findSearchValue: searchValue } });
+        }
+        if (activeMatch != null) {
+            this.goTo(activeMatch);
+        }
+    }
+
     public refresh(maintainActive: boolean): void {
         const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
         this.topNodes = [];

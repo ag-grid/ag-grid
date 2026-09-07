@@ -812,42 +812,27 @@ export class StateService extends BeanStub implements NamedBean {
 
     /**
      * Find is only state-managed when the Quick Access Toolbar owns an input for it; otherwise the
-     * `findSearchValue` grid option is the only source and state leaves it alone. Find also only
-     * searches the Client-Side Row Model, so there is nothing to restore elsewhere.
+     * `findSearchValue` grid option is the only source and state leaves it alone.
      */
     private isFindStateManaged(): boolean {
-        return this.isClientSideRowModel && !!this.beans.toolbar?.hasItem('agFindToolbarItem');
+        return !!this.beans.toolbar?.hasItem('agFindToolbarItem');
     }
 
     private getFindState(): FindState | undefined {
-        const findSvc = this.beans.findSvc;
-        // Without the module the option is inert, and writing it on restore reports a missing-module error.
-        if (!findSvc || !this.isFindStateManaged()) {
-            return undefined;
-        }
-        // The service holds a trimmed, case-converted form, so the option is the round-trippable value.
-        const searchValue = this.gos.get('findSearchValue') || undefined;
-        // The active match is meaningless without a search value, and is wiped whenever the value changes.
-        return searchValue ? { searchValue, activeMatch: findSvc.activeMatch?.numOverall } : undefined;
+        return this.isFindStateManaged() ? this.beans.findSvc?.getState() : undefined;
     }
 
     private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
-        const findSvc = this.beans.findSvc;
-        if (!findSvc || !this.isFindStateManaged()) {
+        if (!this.isFindStateManaged()) {
             return;
         }
         const { searchValue, activeMatch } = findState ?? {};
-        // An `api` restore resets what it omits, so a state without a search value clears Find.
-        // At initialisation an absent state instead leaves the `findSearchValue` grid option as provided.
-        const newSearchValue = source === 'api' ? (searchValue ?? '') : searchValue;
-        if (newSearchValue !== undefined) {
-            // The find service's own property listener is the apply path, and it recalculates the
-            // matches synchronously, so the active match below can be resolved straight after.
-            this.gos.updateGridOptions({ options: { findSearchValue: newSearchValue } });
-        }
-        if (activeMatch != null) {
-            findSvc.goTo(activeMatch);
-        }
+        // An `api` restore resets what it omits, so a state without a search value clears Find. At
+        // initialisation an absent value instead leaves the `findSearchValue` grid option as provided.
+        this.beans.findSvc?.setState({
+            searchValue: source === 'api' ? (searchValue ?? '') : searchValue,
+            activeMatch,
+        });
     }
 
     private getScrollState(): ScrollState | undefined {
