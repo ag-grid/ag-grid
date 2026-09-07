@@ -13,12 +13,15 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props;
-const { title } = page.data;
+const { title, frameworks } = page.data;
 const { pageName } = Astro.params;
 
 // Static links to every framework version of this page, so crawlers landing on the
 // framework-agnostic redirect page can discover and pass link equity to the real pages.
-const frameworkLinks = FRAMEWORKS.map((framework) => ({
+// Restricted pages (`frameworks` frontmatter) only link to the framework pages that are
+// actually generated, matching `getDocsPages`.
+const supportedFrameworks = FRAMEWORKS.filter((framework) => !frameworks || frameworks.includes(framework));
+const frameworkLinks = supportedFrameworks.map((framework) => ({
     href: urlWithPrefix({ framework, url: `./${pageName}` }),
     text: `${getFrameworkDisplayText(framework)} Data Grid: ${title}`,
 }));
