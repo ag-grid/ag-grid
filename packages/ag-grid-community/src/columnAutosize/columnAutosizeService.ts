@@ -56,7 +56,7 @@ const CONTINUOUS_REASON_PRIORITY: readonly AutoSizeReason[] = [
     'dataChanged',
     'columnsChanged',
     'gridSizeChanged',
-    'viewportChanged',
+    'scrollChanged',
 ];
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
@@ -689,8 +689,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     /**
      * Registers the triggers for continuous sizing. Every strategy responds to data, column and grid-size
-     * changes; only `fitCellContents` also responds to the viewport, since scrolling changes what can be
-     * measured but not the arithmetic of the width-distribution strategies.
+     * changes. Only `fitCellContents` can respond to scrolling, since that changes what can be measured but
+     * not the arithmetic of the width-distribution strategies — and only when `shouldAutoSizeColumns` is
+     * there to allow it, as re-fitting columns mid-scroll is rarely wanted.
      */
     private initContinuousAutoSize(strategy: AutoSizeStrategy): void {
         const measuresContent = strategy.type === 'fitCellContents';
@@ -728,19 +729,20 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             rowNodeDataChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
         });
 
-        if (!measuresContent) {
-            // the width-distribution strategies are arithmetic over the current column set, so what is
-            // scrolled into view cannot change their result
+        // the width-distribution strategies are arithmetic over the current column set, so what is scrolled
+        // into view cannot change their result. For `fitCellContents` it can, but the re-size is opt-in:
+        // without a callback to allow it, the grid never raises `scrollChanged`
+        if (!measuresContent || !strategy.shouldAutoSizeColumns) {
             return;
         }
 
         this.addManagedEventListeners({
             // horizontal virtualisation renders new columns, which are then measurable for the first time
-            virtualColumnsChanged: () => this.scheduleDebouncedContinuousAutoSize('viewportChanged'),
-            viewportChanged: () => this.scheduleDebouncedContinuousAutoSize('viewportChanged'),
+            virtualColumnsChanged: () => this.scheduleDebouncedContinuousAutoSize('scrollChanged'),
+            viewportChanged: () => this.scheduleDebouncedContinuousAutoSize('scrollChanged'),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'horizontal') {
-                    this.scheduleDebouncedContinuousAutoSize('viewportChanged');
+                    this.scheduleDebouncedContinuousAutoSize('scrollChanged');
                 }
             },
         });

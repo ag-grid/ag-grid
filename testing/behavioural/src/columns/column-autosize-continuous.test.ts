@@ -332,7 +332,7 @@ describe('Continuous Column Autosize', () => {
          * the debounce is driven through the `viewportChanged` event the row renderer would dispatch as
          * new rows come into view, which is what makes a scroll re-size at all.
          */
-        test('a stream of viewport triggers re-sizes once, after the triggers stop', async () => {
+        test('a stream of scroll triggers re-sizes once, after the triggers stop', async () => {
             const { api, reasons } = createGridRecordingReasons();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
             await flushScheduledResize();
@@ -347,7 +347,21 @@ describe('Continuous Column Autosize', () => {
             // 200ms of triggers so far, and every one of them still postponed
             expect(reasons).toEqual([]);
 
-            await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
+            await waitFor(() => expect(reasons).toEqual(['scrollChanged']));
+        });
+
+        /** Scrolling is its own category, and without a callback to allow it the grid never re-sizes on it. */
+        test('a scroll trigger is ignored when no callback opts into it', async () => {
+            const api = createGrid();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            dispatchGridEvent(api, { type: 'viewportChanged', firstRow: 0, lastRow: 10 });
+            // past the debounce window, so an opted-in grid would have re-sized by now
+            await asyncSetTimeout(300);
+
+            expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
         });
 
         /** A data change must still be sized within the frame, rather than held back by the debounce. */
@@ -470,7 +484,7 @@ describe('Continuous Column Autosize', () => {
          * fire during startup and on a column change, and would be reported here if the width-distribution
          * strategies had been wired to them. The scroll itself is covered by the docs e2e suite.
          */
-        test('the width-distribution strategies never report a viewport change', async () => {
+        test('the width-distribution strategies never report a scroll change', async () => {
             const reasons: string[] = [];
             const api = createGrid({
                 columnDefs: [
@@ -496,7 +510,7 @@ describe('Continuous Column Autosize', () => {
             await waitFor(() => expect(reasons).toContain('columnsChanged'));
             await flushScheduledResize();
 
-            expect(reasons).not.toContain('viewportChanged');
+            expect(reasons).not.toContain('scrollChanged');
         });
     });
 
@@ -522,7 +536,7 @@ describe('Continuous Column Autosize', () => {
             expect(last.api).toBe(api);
             // only `eligible` is a candidate — `pinned` sets `suppressAutoSize`
             expect(last.columns.map((col) => col.getColId())).toEqual(['eligible']);
-            expect(['dataChanged', 'columnsChanged', 'viewportChanged', 'gridSizeChanged']).toContain(last.reason);
+            expect(['dataChanged', 'columnsChanged', 'scrollChanged', 'gridSizeChanged']).toContain(last.reason);
         });
 
         test('returning false suppresses the resize', async () => {

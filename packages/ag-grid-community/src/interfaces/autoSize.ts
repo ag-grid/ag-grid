@@ -54,7 +54,7 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
 /** Params for the `shouldAutoSizeColumns` callback of a continuous auto-size strategy. */
 export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** What changed in the grid to make it want to re-size columns. */
-    reason: 'dataChanged' | 'columnsChanged' | 'viewportChanged' | 'gridSizeChanged';
+    reason: 'dataChanged' | 'columnsChanged' | 'scrollChanged' | 'gridSizeChanged';
     /**
      * All eligible columns — those the user has not resized, and not otherwise excluded.
      * For `fitCellContents`, the grid may only be able to measure the subset that is currently rendered.
@@ -67,11 +67,14 @@ export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
     /**
      * If `true`, the strategy is re-applied whenever the grid changes in a way that affects column widths,
      * not only on first render. Every type responds to displayed-column changes and to grid resizes. Beyond
-     * that, `fitCellContents` responds to any row data change and to viewport changes, because both change
-     * what there is to measure, while the width-distribution strategies respond to new data, a page change
-     * and a scrollbar appearing or disappearing — the changes to the width there is to share out.
-     * Viewport and grid-size changes are debounced, so scrolling or resizing the grid re-sizes once the
-     * gesture settles rather than once per frame.
+     * that, `fitCellContents` responds to any row data change, because that changes what there is to
+     * measure, while the width-distribution strategies respond to new data, a page change and a scrollbar
+     * appearing or disappearing — the changes to the width there is to share out. Grid-size changes are
+     * debounced, so resizing the grid re-sizes once the gesture settles rather than once per frame.
+     *
+     * Scrolling is excluded by default: `fitCellContents` re-sizes on a `'scrollChanged'` reason only when
+     * `shouldAutoSizeColumns` is provided to allow it, since re-fitting columns under the pointer as the
+     * user scrolls is rarely wanted.
      *
      * A column the user has resized themselves is left alone and treated as fixed width — a header drag, a
      * keyboard resize or a double-click auto-size — as is one given an explicit width through
@@ -83,6 +86,9 @@ export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
     /**
      * Called before each continuous re-size, with the columns eligible to be re-sized and the reason the
      * grid wants to re-size them. Return `false` to skip this one. Requires `continuous`.
+     *
+     * Providing this callback is also what opts `fitCellContents` into scroll-driven re-sizing: without it
+     * a `'scrollChanged'` reason is never raised, so return `true` for it to enable that.
      */
     shouldAutoSizeColumns?: (params: AutoSizeColumnsTriggerParams<TData, TContext>) => boolean;
 }
