@@ -57,6 +57,17 @@
 .ag-menu-option-active,
 .ag-compact-menu-option-active {
     background-color: var(--ag-row-hover-color);
+
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
+}
+
+/* icons get no text backplate, so they sit directly on the fill and need its paired colour */
+@media (forced-colors: active) {
+    :where(.ag-menu-option-active, .ag-compact-menu-option-active) .ag-icon::before {
+        background-color: SelectedItemText;
+    }
 }
 
 :where(.ag-menu-list-no-focus-ring) .ag-menu-option:focus-visible,

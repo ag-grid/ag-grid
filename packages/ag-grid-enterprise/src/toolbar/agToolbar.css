@@ -45,6 +45,10 @@
     line-height: 1;
     white-space: nowrap;
     outline: none;
+
+    @media (forced-colors: active) {
+        outline: revert;
+    }
 }
 
 :where(.ag-toolbar-button) .ag-icon {
@@ -155,6 +159,10 @@
     border-radius: var(--ag-input-border-radius);
     width: 100%;
     padding-block: calc(var(--ag-spacing) * 0.5);
+
+    @media (forced-colors: active) {
+        outline: revert;
+    }
 }
 
 /*

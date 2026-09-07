@@ -34,6 +34,11 @@
     outline: none;
     box-shadow: inset var(--ag-focus-shadow);
 
+    /* box-shadow is discarded in forced colors, so let the UA draw its own focus ring */
+    @media (forced-colors: active) {
+        outline: revert;
+    }
+
     &:where(.invalid) {
         box-shadow: inset var(--ag-focus-error-shadow);
     }

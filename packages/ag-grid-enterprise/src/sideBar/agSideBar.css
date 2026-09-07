@@ -120,6 +120,11 @@
 
 .ag-side-button.ag-selected::before {
     background-color: var(--ag-side-button-selected-underline-color);
+
+    /* the accent underline and the selected background both flatten to Canvas */
+    @media (forced-colors: active) {
+        background-color: Highlight;
+    }
 }
 
 .ag-side-button-button {

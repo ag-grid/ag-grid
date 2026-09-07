@@ -287,6 +287,12 @@
     border-color: var(--ag-range-selection-border-color);
     border-style: var(--ag-range-selection-border-style);
     outline: initial;
+
+    /* every border collapses to CanvasText, so only an outline can mark the focused cell */
+    @media (forced-colors: active) {
+        outline: 2px solid Highlight;
+        outline-offset: -2px;
+    }
 }
 
 /* remove the box shadow added by default to all focussed divs because rows
@@ -402,6 +408,15 @@
 
 .ag-row.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
+
+    @media (forced-colors: active) {
+        --ag-internal-row-overlay-color: SelectedItem;
+
+        /* icons default to CanvasText, which has no contrast against the SelectedItem fill */
+        .ag-icon::before {
+            background-color: SelectedItemText;
+        }
+    }
 }
 
 .ag-row-hover:not(.ag-full-width-row),
@@ -420,6 +435,11 @@
         var(--ag-selected-row-background-color),
         var(--ag-selected-row-background-color)
     );
+
+    /* the gradient is discarded, so hovering would otherwise drop the selection colour */
+    @media (forced-colors: active) {
+        --ag-internal-row-overlay-color: SelectedItem;
+    }
 }
 
 /* stylelint-enable no-descending-specificity */

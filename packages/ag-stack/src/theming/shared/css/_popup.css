@@ -14,4 +14,9 @@
 
 .ag-popup-child:where(:not(.ag-tooltip-custom)) {
     box-shadow: var(--ag-popup-shadow);
+
+    /* box-shadow is discarded, leaving no boundary against the grid behind */
+    @media (forced-colors: active) {
+        border: 1px solid CanvasText;
+    }
 }

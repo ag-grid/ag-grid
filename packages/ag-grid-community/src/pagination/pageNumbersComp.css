@@ -28,12 +28,20 @@
 .ag-paging-page-number:focus-visible {
     outline: none;
     box-shadow: var(--ag-focus-shadow);
+
+    @media (forced-colors: active) {
+        outline: revert;
+    }
 }
 
 .ag-paging-page-number-current {
     cursor: default;
     font-weight: 600;
     background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 5%);
+
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-paging-page-number-ellipsis {

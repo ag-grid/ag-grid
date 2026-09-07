@@ -19,6 +19,10 @@
     overflow-y: hidden;
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
+
+    @media (forced-colors: active) {
+        outline: revert;
+    }
 }
 
 .ag-content-editable-field-input::-webkit-scrollbar {

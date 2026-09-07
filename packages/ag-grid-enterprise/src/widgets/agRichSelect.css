@@ -56,11 +56,20 @@
 
 .ag-rich-select-row-selected {
     background-color: var(--ag-selected-row-background-color);
+
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-rich-select-row:hover,
 .ag-rich-select-row-highlighted {
     background-image: linear-gradient(var(--ag-row-hover-color), var(--ag-row-hover-color));
+
+    /* gradients are discarded entirely, so this needs a plain fill */
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-rich-select-row-text-highlight {

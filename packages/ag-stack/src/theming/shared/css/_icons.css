@@ -1,6 +1,12 @@
 :where(.ag-icon)::before {
     content: '';
     background-color: currentcolor;
+
+    /* currentcolor is not a system color, so it maps to Canvas and the masked glyph vanishes */
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+    }
+
     display: flex;
     align-items: center;
     justify-content: center;

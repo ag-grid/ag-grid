@@ -17,6 +17,10 @@
     &:focus-visible {
         outline: none;
         box-shadow: var(--ag-focus-shadow);
+
+        @media (forced-colors: active) {
+            outline: revert;
+        }
     }
 }
 

@@ -73,4 +73,9 @@
 
 .ag-tab.ag-tab-selected::after {
     opacity: 1;
+
+    /* the accent underline and the selected background both flatten to Canvas */
+    @media (forced-colors: active) {
+        background-color: Highlight;
+    }
 }

@@ -23,6 +23,29 @@
         opacity: 0.5;
         filter: grayscale();
     }
+
+    /* the fill and its masked tick both collapse to Canvas, leaving an empty outline */
+    @media (forced-colors: active) {
+        background-color: Field;
+        border-color: FieldText;
+
+        /* selected rows use SelectedItem as their background, so the border must contrast with
+           the fill rather than match it or the box vanishes inside one */
+        &:where(.ag-checked) {
+            background-color: SelectedItem;
+            border-color: SelectedItemText;
+        }
+
+        &:where(.ag-checked)::after {
+            background-color: SelectedItemText;
+        }
+
+        &:where(.ag-disabled) {
+            opacity: 1;
+            filter: none;
+            border-color: GrayText;
+        }
+    }
 }
 
 .ag-checkbox-input,
@@ -50,6 +73,12 @@
 .ag-checkbox-input-wrapper:where(:focus-within, :active),
 .ag-radio-button-input-wrapper:where(:focus-within, :active) {
     box-shadow: var(--ag-focus-shadow);
+
+    /* the UA ring lands on the opacity:0 input, so the wrapper must carry the indicator itself */
+    @media (forced-colors: active) {
+        outline: 2px solid Highlight;
+        outline-offset: 1px;
+    }
 }
 
 .ag-checkbox-input-wrapper {
@@ -67,6 +96,18 @@
     &:where(.ag-indeterminate)::after {
         background-color: var(--ag-checkbox-indeterminate-shape-color);
         mask-image: var(--ag-checkbox-indeterminate-shape-image);
+    }
+
+    /* restated because the rules above match this specificity and come first in source order */
+    @media (forced-colors: active) {
+        &:where(.ag-indeterminate) {
+            background-color: SelectedItem;
+            border-color: SelectedItemText;
+        }
+
+        &:where(.ag-indeterminate)::after {
+            background-color: SelectedItemText;
+        }
     }
 }
 

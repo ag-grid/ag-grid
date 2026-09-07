@@ -52,6 +52,10 @@
         background-color: var(--ag-input-focus-background-color);
         border: var(--ag-input-focus-border);
         color: var(--ag-input-focus-text-color);
+
+        @media (forced-colors: active) {
+            outline: revert;
+        }
     }
 
     &:where(:invalid) {
