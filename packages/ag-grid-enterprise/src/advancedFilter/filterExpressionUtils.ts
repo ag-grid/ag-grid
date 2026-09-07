@@ -156,6 +156,11 @@ export interface FilterExpressionParserParams {
     valueSvc: ValueService;
     advFilterExpSvc: AdvancedFilterExpressionService;
     advFilterSetSvc: AdvancedFilterSetService;
+    /**
+     * Where a written list ends with a separator that names no value. Collected as the list is read and
+     * removed once it is, since deleting characters mid-parse would shift every position read after them.
+     */
+    redundantSeparators?: { startPosition: number; endPosition: number }[];
 }
 
 export interface AutocompleteUpdate {
