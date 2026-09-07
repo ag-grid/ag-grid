@@ -12,6 +12,7 @@ import {
 import type { GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    NumberFilterModule,
     TextEditorModule,
     UndoRedoEditModule,
     agTestIdFor,
@@ -27,6 +28,7 @@ describe('ag-grid formulas interactive workflows', () => {
         modules: [
             ClientSideRowModelModule,
             FormulaModule,
+            NumberFilterModule,
             TextEditorModule,
             UndoRedoEditModule,
             CellSelectionModule,
@@ -129,6 +131,84 @@ describe('ag-grid formulas interactive workflows', () => {
             ├── LEAF id:r3 row-number:"3" a:3 b:30 total:33
             └── LEAF id:r4 row-number:"4" a:4 b:40 total:44
         `);
+    });
+
+    // AG-18276: the fill walks displayed rows while formula refs shift in formula-row space, so a
+    // filter makes the two diverge unless the offset is measured between the target rows.
+    test('fill handle drag down offsets formula refs by the target row when a filter is active', async () => {
+        const api = await createGrid('fx-fill-handle-filtered', {
+            cellSelection: { handle: { mode: 'fill' } },
+            rowData: [
+                {
+                    id: 'r1',
+                    a: 1,
+                    b: 10,
+                    // The third term is an absolute ref, which must stay pinned to row 1 (adding 100)
+                    // in every filled cell however the relative terms move.
+                    total: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))+REF(COLUMN("b",true),ROW("1",true))*10',
+                },
+                { id: 'r2', a: 2, b: 20, total: null },
+                { id: 'r3', a: 3, b: 30, total: null },
+                { id: 'r4', a: 4, b: 40, total: null },
+                { id: 'r5', a: 5, b: 50, total: null },
+                { id: 'r6', a: 6, b: 60, total: null },
+            ],
+            columnDefs: [{ field: 'a', filter: 'agNumberColumnFilter' }, { field: 'b' }, { field: 'total' }],
+        });
+
+        // Hide r2 and r4 so the visible rows are non-consecutive in formulaRows space.
+        const filterChanged = waitForEvent('filterChanged', api);
+        api.setFilterModel({
+            a: {
+                filterType: 'number',
+                operator: 'OR',
+                conditions: [
+                    { filterType: 'number', type: 'equals', filter: 1 },
+                    { filterType: 'number', type: 'equals', filter: 3 },
+                    { filterType: 'number', type: 'equals', filter: 5 },
+                    { filterType: 'number', type: 'equals', filter: 6 },
+                ],
+            },
+        });
+        await filterChanged;
+
+        // row-number reflects formulaRowIndex + 1, so the gaps at 2 and 4 are visible here.
+        await new GridRows(api, 'before fill (filtered)', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:111
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:null
+            ├── LEAF id:r5 row-number:"5" a:5 b:50 total:null
+            └── LEAF id:r6 row-number:"6" a:6 b:60 total:null
+        `);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        api.setFocusedCell(0, 'total');
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['total'] });
+
+        const fillHandle = await waitFor(() => {
+            const element = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            expect(element).toBeTruthy();
+            return element;
+        });
+        const fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(fillHandle);
+        await fillEnd;
+
+        // Each filled cell references its own row, plus the unshifted absolute term.
+        await new GridRows(api, 'after fill down (filtered)', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:111
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:133
+            ├── LEAF id:r5 row-number:"5" a:5 b:50 total:155
+            └── LEAF id:r6 row-number:"6" a:6 b:60 total:166
+        `);
+
+        // The hidden rows must not be written to by the fill.
+        for (const id of ['r2', 'r4']) {
+            const node = api.getRowNode(id)!;
+            expect(api.getCellValue({ rowNode: node, colKey: 'total', useFormatter: false })).toBeNull();
+        }
     });
 
     test('batch-edit commit persists formula edits and their computed values', async () => {
