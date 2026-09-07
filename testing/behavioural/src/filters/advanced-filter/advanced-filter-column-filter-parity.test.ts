@@ -615,6 +615,30 @@ describe('Advanced Filter matches the column filter', () => {
 
             expect(await withExpression({}, '[Name] contains "cafe"', columnDefs)).toEqual([4]);
         });
+
+        // 'Café' and 'cafe' differ only in case, so the flag alone decides whether they are one match or two.
+        test('`caseSensitive` decides the comparison the same way in both', async () => {
+            expect(await withColumnModel({}, contains('Caf'))).toEqual([3, 4]);
+            expect(await withExpression({}, '[Name] contains "Caf"')).toEqual([3, 4]);
+
+            const params = { caseSensitive: true };
+            expect(await withColumnModel(params, contains('Caf'))).toEqual([3]);
+            expect(await withExpression(params, '[Name] contains "Caf"')).toEqual([3]);
+        });
+
+        // Unlike `textFormatter`, a Set Filter's `caseSensitive` folds the keys it matches rows by, so the
+        // Advanced Filter reading it on such a column is what keeps the two in step.
+        test('a Set Filter column reads `caseSensitive`, which its own matching folds by', async () => {
+            const setDefs = (filterParams: object): GridOptions['columnDefs'] => [
+                { field: 'id' },
+                { field: 'name', filter: 'agSetColumnFilter', filterParams },
+            ];
+
+            expect(await withExpression({}, '[Name] contains "Caf"', setDefs({}))).toEqual([3, 4]);
+
+            const params = { caseSensitive: true };
+            expect(await withExpression(params, '[Name] contains "Caf"', setDefs(params))).toEqual([3]);
+        });
     });
 
     // The same `source` the `textMatcher` gets, on the callbacks that read a value rather than a row. Both

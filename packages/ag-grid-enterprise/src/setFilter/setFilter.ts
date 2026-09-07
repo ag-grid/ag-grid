@@ -17,7 +17,13 @@ import type {
     SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, KeyCode, ProvidedFilter, _createIconNoSpan } from 'ag-grid-community';
+import {
+    AgInputTextFieldSelector,
+    KeyCode,
+    ProvidedFilter,
+    _bindFilterCallback,
+    _createIconNoSpan,
+} from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
@@ -31,7 +37,7 @@ import type {
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
-import { setFilterNullIfBlank, translateForSetFilter } from './setFilterUtils';
+import { setFilterNullIfBlank, translateForSetFilter, unformattedSetFilterText } from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
@@ -78,7 +84,8 @@ export class SetFilter<V = string>
 
         const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = params;
 
-        this.formatter = textFormatter ?? ((value) => value ?? null);
+        this.formatter =
+            _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
@@ -136,9 +143,10 @@ export class SetFilter<V = string>
             this.createVirtualListModel(newParams);
         }
 
-        const { textFormatter, treeListPathGetter, treeListFormatter } = newParams;
+        const { column, textFormatter, treeListPathGetter, treeListFormatter } = newParams;
 
-        this.formatter = textFormatter ?? ((value) => value ?? null);
+        this.formatter =
+            _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
         if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
             this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);

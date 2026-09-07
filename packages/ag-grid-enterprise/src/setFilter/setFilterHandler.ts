@@ -15,7 +15,13 @@ import type {
     SetFilterModelValue,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isBlank, _isClientSideRowModel } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _bindFilterCallback,
+    _isBlank,
+    _isClientSideRowModel,
+} from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -25,6 +31,7 @@ import {
     setFilterFormattedValue,
     setFilterNullIfBlank,
     translateForSetFilter,
+    unformattedSetFilterText,
 } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
@@ -194,7 +201,8 @@ export class SetFilterHandler<TValue = string>
         const filterParams = this.params.filterParams;
         const model = new TreeSetDisplayValueModel<any>(
             this.beans.log,
-            filterParams.textFormatter ?? ((value) => value ?? null),
+            _bindFilterCallback(filterParams.textFormatter, this.beans.gos, this.params.column, 'columnFilter') ??
+                unformattedSetFilterText,
             filterParams.treeListPathGetter,
             filterParams.treeListFormatter,
             this.isTreeDataOrGrouping()
