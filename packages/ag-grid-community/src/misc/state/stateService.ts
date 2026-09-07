@@ -747,9 +747,7 @@ export class StateService extends BeanStub implements NamedBean {
     private hasToolbarItem(itemName: string): boolean {
         return !!this.gos
             .get('toolbar')
-            ?.items?.some(
-                (item) => item === itemName || (typeof item === 'object' && item.toolbarItem === itemName)
-            );
+            ?.items?.some((item) => item === itemName || (typeof item === 'object' && item.toolbarItem === itemName));
     }
 
     /**
