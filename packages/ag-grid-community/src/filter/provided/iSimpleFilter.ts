@@ -1,5 +1,5 @@
 import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
-import type { IFilterParams } from '../../interfaces/iFilter';
+import type { FilterInputCallbackParams, IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
 import type { OptionsFactory } from './optionsFactory';
@@ -9,8 +9,8 @@ export interface IFilterOptionDef {
     displayKey: string;
     /** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */
     displayName: string;
-    /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
-    predicate?: (filterValues: any[], cellValue: any) => boolean;
+    /** Custom filter logic returning a boolean from the `filterValues` and `cellValue`; `params` names the column and the calling filter. */
+    predicate?: (filterValues: any[], cellValue: any, params: FilterInputCallbackParams) => boolean;
     /** Number of inputs for this option, and the values an Advanced Filter writes. Defaults to `1`, clamped to 0-2. */
     numberOfInputs?: 0 | 1 | 2;
 }

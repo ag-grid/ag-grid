@@ -304,6 +304,9 @@ export interface FilterWrapperParams {
     readOnly?: boolean;
 }
 
+/** Which filter is invoking a callback: both read the column's one `filterParams`. */
+export type FilterCallbackSource = 'columnFilter' | 'advancedFilter';
+
 /**
  * Passed to a filter callback that reads or judges a value rather than a row, such as a parser, a formatter
  * or an input rule. It names the column so that one callback can serve every column it is configured on.
@@ -313,6 +316,8 @@ export interface FilterInputCallbackParams<TData = any, TContext = any> extends 
     colDef: ColDef<TData>;
     /** The column this filter is on. */
     column: Column;
+    /** Which filter is invoking the callback. */
+    source: FilterCallbackSource;
 }
 
 export interface SharedFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

@@ -4,16 +4,22 @@ import {
     _PRESET_DATE_FILTER_RANGES,
     _PRESET_DATE_FILTER_TYPES,
     _RelativeDateRangeCache,
+    _TEXT_COMPARISONS,
+    _defaultLowercaseFormatter,
     _hasValue,
     _isBlank,
 } from 'ag-grid-community';
-import type { BaseCellDataType, IRowNode, ISimpleFilterModelPresetType } from 'ag-grid-community';
+import type { BaseCellDataType, IRowNode, ISimpleFilterModelPresetType, TextFormatter } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 
 export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
     caseSensitive?: boolean;
+    /** Normalises both sides before they are compared; replaces the case handling rather than adding to it. */
+    textFormatter?: TextFormatter;
+    /** Replaces the built-in text comparison. */
+    textMatcher?: (filterOption: string, value: string | null, filterText: string | null, node: IRowNode) => boolean;
     includeBlanksInEquals?: boolean;
     includeBlanksInNotEqual?: boolean;
     includeBlanksInLessThan?: boolean;
@@ -132,6 +138,8 @@ interface FilterExpressionOperatorsParams {
     translate: AdvancedFilterTranslate;
 }
 
+const identity: TextFormatter = (from) => from ?? null;
+
 export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<
     string,
     TValue
@@ -151,38 +159,32 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         this.operators = {
             contains: {
                 displayValue: translate('advancedFilterContains'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
+                evaluator: this.createEvaluator('contains', false),
                 operands: 'one',
             },
             notContains: {
                 displayValue: translate('advancedFilterNotContains'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => !v.includes(o)),
+                evaluator: this.createEvaluator('notContains', true),
                 operands: 'one',
             },
             equals: {
                 displayValue: translate('advancedFilterTextEquals'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v === o),
+                evaluator: this.createEvaluator('equals', false),
                 operands: 'one',
             },
             notEqual: {
                 displayValue: translate('advancedFilterTextNotEqual'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => v != o),
+                evaluator: this.createEvaluator('notEqual', true),
                 operands: 'one',
             },
             startsWith: {
                 displayValue: translate('advancedFilterStartsWith'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.startsWith(o)),
+                evaluator: this.createEvaluator('startsWith', false),
                 operands: 'one',
             },
             endsWith: {
                 displayValue: translate('advancedFilterEndsWith'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.endsWith(o)),
+                evaluator: this.createEvaluator('endsWith', false),
                 operands: 'one',
             },
             blank: {
@@ -198,20 +200,28 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         };
     }
 
-    private evaluateExpression(
-        value: TValue | null | undefined,
-        node: IRowNode,
-        params: FilterExpressionEvaluatorParams<string, TValue>,
-        operand: string,
-        nullsMatch: boolean,
-        expression: (value: string, operand: string) => boolean
-    ): boolean {
-        if (value == null) {
-            return nullsMatch;
-        }
-        return params.caseSensitive
-            ? expression(params.valueConverter(value, node), operand)
-            : expression(params.valueConverter(value, node).toLocaleLowerCase(), operand.toLocaleLowerCase());
+    private createEvaluator(
+        filterOption: keyof typeof _TEXT_COMPARISONS,
+        nullsMatch: boolean
+    ): FilterExpressionEvaluator<string, TValue> {
+        // Bound once per operator, and the key type is what makes the table's entry certain.
+        const compare = _TEXT_COMPARISONS[filterOption];
+        return (value, node, params, operand1) => {
+            if (value == null) {
+                return nullsMatch;
+            }
+            const formatter = params.textFormatter ?? (params.caseSensitive ? identity : _defaultLowercaseFormatter);
+            const formattedValue = formatter(params.valueConverter(value, node));
+            const formattedOperand = formatter(operand1!);
+            // Reached with either side null, as the Text Filter reaches its own matcher, which decides.
+            const matcher = params.textMatcher;
+            if (matcher) {
+                return matcher(filterOption, formattedValue, formattedOperand, node);
+            }
+            return formattedValue == null || formattedOperand == null
+                ? false
+                : compare(formattedValue, formattedOperand);
+        };
     }
 }
 

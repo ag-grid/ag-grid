@@ -1,26 +1,34 @@
 import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { Column } from '../../interfaces/iColumn';
-import type { FilterInputCallbackParams } from '../../interfaces/iFilter';
+import type { FilterCallbackSource, FilterInputCallbackParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { PRESET_DATE_FILTER_TYPES } from './date/relativeDateRanges';
 import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
-/** Built per call, not per binding: `context` is a grid option, so a captured one would go stale. */
-export function filterCallbackParams(gos: GridOptionsService, column: Column): FilterInputCallbackParams {
-    return _addGridCommonParams<FilterInputCallbackParams>(gos, { column, colDef: column.getColDef() });
+/**
+ * Built per call, not per binding: `context` is a grid option, so a captured one would go stale.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function filterCallbackParams(
+    gos: GridOptionsService,
+    column: Column,
+    source: FilterCallbackSource
+): FilterInputCallbackParams {
+    return _addGridCommonParams<FilterInputCallbackParams>(gos, { column, colDef: column.getColDef(), source });
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _bindFilterCallback<A, R>(
     callback: ((value: A, params: FilterInputCallbackParams) => R) | undefined,
     gos: GridOptionsService,
-    column: Column | null | undefined
+    column: Column | null | undefined,
+    source: FilterCallbackSource
 ): ((value: A) => R) | undefined {
     // A column is needed to name the callback's subject, so without one the default reading stands.
-    return callback && column ? (value) => callback(value, filterCallbackParams(gos, column)) : undefined;
+    return callback && column ? (value) => callback(value, filterCallbackParams(gos, column, source)) : undefined;
 }
 
 /** `NaN` is below it too: every comparison against it is false, so left through it would cap nothing. */
@@ -65,16 +73,14 @@ export function getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): Join
 export function evaluateCustomFilter<V>(
     customFilterOption: IFilterOptionDef | undefined,
     values: Tuple<V>,
-    cellValue: V | null | undefined
+    cellValue: V | null | undefined,
+    gos: GridOptionsService,
+    column: Column
 ): boolean | undefined {
-    if (customFilterOption == null) {
-        return;
-    }
-
-    const { predicate } = customFilterOption;
     // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
+    const predicate = customFilterOption?.predicate;
     if (predicate != null && !values.some((v) => v == null)) {
-        return predicate(values, cellValue);
+        return predicate(values, cellValue, filterCallbackParams(gos, column, 'columnFilter'));
     }
 
     // No custom filter invocation, indicate that to the caller.
