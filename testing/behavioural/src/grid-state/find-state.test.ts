@@ -268,6 +268,57 @@ describe('StateService - Find State', () => {
             await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
             expect(api.getGridOption('findSearchValue')).toBe('c');
         });
+
+        test('should keep a collapsed group collapsed when the active match is inside it', async () => {
+            // The saved expansion wins over revealing the match: going to a match normally expands
+            // every ancestor of a hidden row, which would undo the restored collapse.
+            const groupColumnDefs = [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }];
+            const groupRowData = [
+                { country: 'Ireland', value: 'cat' },
+                { country: 'Spain', value: 'dog' },
+            ];
+            const source = gridsManager.createGrid('find-collapsed-group-source', {
+                columnDefs: groupColumnDefs,
+                rowData: groupRowData,
+                toolbar,
+                groupDefaultExpanded: -1,
+            });
+            await waitForEvent('firstDataRendered', source);
+
+            source.setGridOption('findSearchValue', 'cat');
+            source.findNext();
+            await waitFor(() => expect(source.findGetActiveMatch()?.numOverall).toBe(1));
+
+            // The user collapses the match's group before saving; the match stays active while hidden.
+            source.setRowNodeExpanded(source.getRowNode('row-group-country-Ireland')!, false);
+            const state = await waitFor(() => {
+                // Ireland is absent from the expanded set: that is the collapse the restore must keep.
+                expect(source.getState().rowGroupExpansion?.expandedRowGroupIds).toEqual(['row-group-country-Spain']);
+                expect(source.getState().find).toEqual({ searchValue: 'cat', activeMatch: 1 });
+                return source.getState();
+            });
+
+            // A fresh grid is the scenario that exercises the expansion path: restoring onto the
+            // source grid asks for the match that is already active, which `goTo` skips.
+            const api = gridsManager.createGrid('find-collapsed-group-restore', {
+                columnDefs: groupColumnDefs,
+                rowData: groupRowData,
+                toolbar,
+                groupDefaultExpanded: -1,
+                initialState: state,
+            });
+            await waitForEvent('firstDataRendered', api);
+
+            await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
+            expect(api.getRowNode('row-group-country-Ireland')!.expanded).toBe(false);
+            await new GridRows(api, 'collapsed group preserved').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ └── LEAF hidden id:0 country:"Ireland" value:"cat"
+                └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+                · └── LEAF id:1 country:"Spain" value:"dog"
+            `);
+        });
     });
 
     describe('without the toolbar item', () => {
