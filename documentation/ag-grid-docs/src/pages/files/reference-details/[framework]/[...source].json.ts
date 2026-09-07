@@ -46,7 +46,7 @@ export async function GET({ params }: { params: Record<string, string> }) {
         allModules: flattenModules(modules),
     });
 
-    const details: Record<string, string[]> = {};
+    const details: Record<string, string> = {};
     if (model?.type === 'multiple') {
         for (const [section, { properties }] of model.entries) {
             for (const [name, property] of Object.entries(properties)) {

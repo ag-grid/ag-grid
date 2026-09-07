@@ -206,9 +206,9 @@ export interface PropertyViewModel {
     /** Key into the reference-details file named by `Config.detailsUrl`. */
     detailsKey?: string;
     /** Sent with the page instead, where the detail cannot be keyed by source alone. */
-    detailsCode?: string[];
+    detailsCode?: string;
     /** Only populated for `Config.showSnippets`, which ObjectCodeSample needs the raw entry for. */
-    definition?: ChildDocEntry;
+    definition?: Properties;
 }
 
 export type PropertyViewModelMap = Record<string, PropertyViewModel>;

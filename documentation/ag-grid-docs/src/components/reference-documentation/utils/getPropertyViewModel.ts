@@ -157,7 +157,7 @@ export function getPropertyViewModel({
     config: Config;
     allModules?: GridModule[];
     detailsKey?: string;
-    detailsCode?: string[];
+    detailsCode?: string;
 }): PropertyViewModel {
     const { isObject, description } = getDescription({ definition, gridOpProp, framework });
     const { formattedDefaultValue, isInitial, modules } = getTagsData({

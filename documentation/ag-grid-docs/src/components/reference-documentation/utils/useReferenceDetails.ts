@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-type ReferenceDetails = Record<string, string[]>;
+type ReferenceDetails = Record<string, string>;
 
 const requests = new Map<string, Promise<ReferenceDetails>>();
 
