@@ -63,7 +63,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         }
     }
 
-    public getValidationErrors(): string[] | null {
+    public getValidationErrors(untouched: boolean): string[] | null {
         const { eEditor, params } = this;
         const date = _parseDateTimeFromString(eEditor.getInputElement().value) ?? undefined;
         const value = this.formatDate(date);
@@ -74,7 +74,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         }
 
         return params.getValidationErrors({
-            value: this.parseEditorValue(value),
+            value: untouched ? params.value : this.parseEditorValue(value),
             cellEditorParams: params,
             internalErrors,
         });
