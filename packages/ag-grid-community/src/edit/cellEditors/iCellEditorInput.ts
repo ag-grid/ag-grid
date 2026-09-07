@@ -9,7 +9,8 @@ export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends 
     init(eInput: I, params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
-    getValidationErrors(): string[] | null;
+    /** When `untouched`, the widget still holds its seed, so `params.value` is what a commit would write. */
+    getValidationErrors(untouched: boolean): string[] | null;
     setCaret?(): void;
     /** Commit any buffered input to the field's value before the grid reads it on stop (e.g. a Firefox date segment). */
     flushInput?(): void;

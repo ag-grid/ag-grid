@@ -17,6 +17,8 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
     private cachedRaw: unknown = this;
     /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
     private cachedParsed: any;
+    /** Read off the widget, not from `getStartValue`, because the widget normalises what it is given. */
+    private seededText: string | null | undefined | this = this;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -37,6 +39,7 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
         // replicate the provided editors’ behaviour: if we started from a printable key, seed with that;
         // backspace/delete clears; otherwise use the existing value.
         let startValue: string | null | undefined;
+        let seeded = false;
         if (cellStartedEdit) {
             this.focusAfterAttached = true;
             if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
@@ -45,14 +48,17 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
                 startValue = eventKey;
             } else {
                 startValue = this.getStartValue(params);
+                seeded = true;
             }
         } else {
             startValue = this.getStartValue(params);
+            seeded = true;
         }
 
         const initialValue = startValue == null ? '' : String(startValue);
         this.eEditor.setEditingCellRef(params.column, params.rowIndex);
         this.eEditor.setValue(initialValue, true);
+        this.seededText = seeded ? this.eEditor.getCurrentValue() : this;
     }
 
     private onFormulaInputKeyDown(event: KeyboardEvent, onKeyDown: (event: KeyboardEvent) => void) {
@@ -95,6 +101,7 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
         this.params.value = value;
         const startValue = this.getStartValue(this.params);
         this.eEditor.setValue(startValue ?? '', true);
+        this.seededText = this.eEditor.getCurrentValue();
     }
 
     public override isPopup(): boolean {
@@ -125,6 +132,10 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
         // commit in their intended type.
         if (typeof rawValue === 'string' && this.isFormulaText(rawValue)) {
             return rawValue;
+        }
+
+        if (rawValue === this.seededText) {
+            return value;
         }
 
         if (rawValue == null && value == null) {

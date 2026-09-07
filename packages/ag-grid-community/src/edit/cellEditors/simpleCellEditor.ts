@@ -12,6 +12,9 @@ export class SimpleCellEditor<
 > extends AgAbstractCellEditor<ICellEditorParams, TValue, string> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
+    /** Read off the element, not from `getStartValue`: the widget normalises what it is given, and
+     * withholds its value entirely while the input breaks a native bound. */
+    private seededText: string | this = this;
     protected readonly eEditor: I = RefPlaceholder;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
@@ -36,6 +39,7 @@ export class SimpleCellEditor<
         cellEditorInput.init(eEditor, params);
         let startValue: string | null | undefined;
         let shouldSetStartValue = true;
+        let seeded = false;
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (cellStartedEdit) {
@@ -51,6 +55,7 @@ export class SimpleCellEditor<
                 }
             } else {
                 startValue = cellEditorInput.getStartValue();
+                seeded = true;
 
                 if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -59,11 +64,13 @@ export class SimpleCellEditor<
         } else {
             this.focusAfterAttached = false;
             startValue = cellEditorInput.getStartValue();
+            seeded = true;
         }
 
         if (shouldSetStartValue && startValue != null) {
             eEditor.setStartValue(startValue);
         }
+        this.seededText = seeded ? eEditor.getInputElement().value : this;
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => {
             const { key } = event;
@@ -113,14 +120,19 @@ export class SimpleCellEditor<
         this.cellEditorInput.flushInput?.();
     }
 
+    private isUntouched(): boolean {
+        return this.eEditor.getInputElement().value === this.seededText;
+    }
+
     public getValue(): TValue | null | undefined {
-        return this.cellEditorInput.getValue();
+        return this.isUntouched() ? this.params.value : this.cellEditorInput.getValue();
     }
 
     public override agSetEditValue(value: TValue | null | undefined): void {
         this.params.value = value;
         const startValue = this.cellEditorInput.getStartValue();
         this.eEditor.setStartValue(startValue ?? null);
+        this.seededText = this.eEditor.getInputElement().value;
     }
 
     public override isPopup() {
@@ -132,6 +144,6 @@ export class SimpleCellEditor<
     }
 
     public getValidationErrors(): string[] | null {
-        return this.cellEditorInput.getValidationErrors();
+        return this.cellEditorInput.getValidationErrors(this.isUntouched());
     }
 }
