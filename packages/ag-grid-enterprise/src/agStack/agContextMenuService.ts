@@ -204,6 +204,8 @@ export class AgContextMenuService<
             TMenuActionParams,
             TDefaultMenuItem
         > | null = null;
+        // The mapper only stores this thunk on the `action` of the items it builds, so it is called
+        // when an item is clicked - long after `menuRef` has been assigned below - never while mapping.
         const mappedMenuItems = mapMenuItems
             ? mapMenuItems(menuItems, menuActionParams, () => menuRef!.getGui())
             : menuItems;
