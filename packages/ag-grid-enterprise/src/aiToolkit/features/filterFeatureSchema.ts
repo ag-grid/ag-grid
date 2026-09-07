@@ -1,4 +1,5 @@
 import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
+import { _classifyFilterOptions } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
 import { getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
@@ -110,18 +111,10 @@ function buildColumnFilterSchema(
 
     if (SimpleFilterKeys.includes(filterKey)) {
         const maxConditions = filterParams?.maxNumConditions;
+        // The filter's own definition of a usable entry, so the schema cannot offer a `type` it drops.
+        // Read-only, so an entry it drops is not warned about again here.
         const filterOptions = filterParams?.filterOptions
-            ? filterParams.filterOptions
-                  .map((option: any) => {
-                      if (typeof option === 'string') {
-                          return option;
-                      }
-                      if (typeof option === 'object' && option.displayKey) {
-                          return option.displayKey;
-                      }
-                      return null;
-                  })
-                  .filter(Boolean)
+            ? [..._classifyFilterOptions(filterParams.filterOptions, () => {}).offered.keys()]
             : undefined;
         const useIsoSeparator = filterParams?.useIsoSeparator || false;
 

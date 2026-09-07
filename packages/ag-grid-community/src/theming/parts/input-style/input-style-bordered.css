@@ -8,7 +8,7 @@
     textarea
 ) {
     &:focus {
-        box-shadow: var(--ag-focus-shadow);
+        box-shadow: var(--ag-input-focus-shadow);
 
         &:where(:invalid),
         &:where(.invalid) {

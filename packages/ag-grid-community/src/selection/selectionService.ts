@@ -160,8 +160,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            if (newValue && rowNode.destroyed) {
-                continue; // skip destroyed nodes
+            // the resolved group, not the footer, is what selection acts on
+            if (newValue && node.destroyed) {
+                continue;
             }
 
             const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
@@ -249,7 +250,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const selectedRows: any[] = [];
         for (const rowNode of this.selectedNodes.values()) {
             const data = rowNode.data;
-            if (data) {
+            if (data != null) {
                 selectedRows.push(data);
             }
         }

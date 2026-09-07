@@ -282,6 +282,7 @@ export type {
     BooleanAdvancedFilterModelType,
     ColumnAdvancedFilterModel,
     DateAdvancedFilterModel,
+    DateAdvancedFilterModelType,
     DateStringAdvancedFilterModel,
     DateTimeAdvancedFilterModel,
     DateTimeStringAdvancedFilterModel,
@@ -289,6 +290,8 @@ export type {
     NumberAdvancedFilterModel,
     ObjectAdvancedFilterModel,
     ScalarAdvancedFilterModelType,
+    SetAdvancedFilterModel,
+    SetAdvancedFilterModelType,
     TextAdvancedFilterModel,
     TextAdvancedFilterModelType,
 } from './interfaces/advancedFilterModel';
@@ -619,7 +622,13 @@ export type { IViewportDatasource, IViewportDatasourceParams } from './interface
 // widgets
 export type { PopupPositionParams } from './interfaces/iPopupPositionParams';
 export { TouchListener } from './widgets/touchListener';
-export type { DoubleTapEvent, LongTapEvent, TapEvent, TouchListenerEvent } from './widgets/touchListener';
+export type {
+    DoubleTapEvent,
+    LongTapEvent,
+    TapEvent,
+    TouchListenerEvent,
+    TouchListenerOptions,
+} from './widgets/touchListener';
 
 // SideBar
 export type { SideBarDef, ToolPanelDef } from './interfaces/iSideBar';
@@ -947,6 +956,7 @@ export type {
     DoesExternalFilterPass,
     FillOperation,
     FillOperationParams,
+    FillOperationResult,
     FocusGridInnerElement,
     FocusGridInnerElementParams,
     FullRowEditValidationParams,
@@ -1025,7 +1035,14 @@ export type {
 export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from './interfaces/iHeader';
 
 // Tooltips
-export type { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltipComponent';
+export type {
+    ITooltipComp,
+    ITooltipParams,
+    TooltipCallbackFunc,
+    TooltipCallbackParams,
+    TooltipDefinition,
+    TooltipLocation,
+} from './tooltip/tooltipComponent';
 
 // Menus
 export type {

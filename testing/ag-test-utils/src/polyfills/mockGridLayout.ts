@@ -27,6 +27,9 @@ export const mockGridLayout = {
     columnWidth: 150,
     dragHandleWidth: 20,
 
+    /** Width reported by the browser's native scrollbar probe. */
+    nativeScrollbarWidth: 0,
+
     /** Must match the widget's `LIST_ITEM_HEIGHT` default: the virtual list hit-tests clicks by
      * clientY, so a mismatch drifts row selection past the first couple of rows. */
     listItemHeight: 24,
@@ -382,7 +385,8 @@ function init(): boolean {
                 // Ahead of the mode checks: every suite measures the probe, not only those opting into
                 // real dimensions, and a rect of 0 would leave it inconclusive for both.
                 if (isScrollbarProbe(this)) {
-                    return Number.parseFloat(this.style[axis]) || 0;
+                    const size = Number.parseFloat(this.style[axis]) || 0;
+                    return prop === 'clientWidth' ? Math.max(0, size - mockGridLayout.nativeScrollbarWidth) : size;
                 }
                 if (mockGridLayout.useRealOffsetDimensions) {
                     return this.getBoundingClientRect()[axis];

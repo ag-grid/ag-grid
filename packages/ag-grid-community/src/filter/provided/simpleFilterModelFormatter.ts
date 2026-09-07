@@ -5,6 +5,7 @@ import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
 import type { FilterOptionKey, ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
+import { _getCustomOptionDisplayName, _getCustomOptionNumberOfInputs } from './simpleFilterUtils';
 
 export const SCALAR_FILTER_TYPE_KEYS = {
     equals: 'Equals',
@@ -75,16 +76,16 @@ export abstract class SimpleFilterModelFormatter<
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
-            const { displayKey, displayName, numberOfInputs } = customOption || {};
-            if (displayKey && displayName && numberOfInputs === 0) {
-                return translate(displayKey, displayName);
+            const numberOfInputs = customOption ? _getCustomOptionNumberOfInputs(customOption) : undefined;
+            if (customOption && numberOfInputs === 0) {
+                return _getCustomOptionDisplayName(customOption, translate);
             }
             return this.conditionToString(
                 condition,
                 forToolPanel,
                 condition.type === 'inRange' || numberOfInputs === 2,
-                displayKey,
-                displayName
+                customOption?.displayKey,
+                customOption?.displayName
             );
         }
     }

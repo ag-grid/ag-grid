@@ -275,8 +275,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 }
 
 /** First/last (`last`) leaf under `group`, walking `children` or `displayedChildren` (`displayed`) — the
- *  `get(Displayed)LeafColumns()` edge without allocating the array; `null` if empty.
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+ *  `get(Displayed)LeafColumns()` edge without allocating the array; `null` if empty. */
 export const edgeLeafColumn = (group: AgColumnGroup, displayed: boolean, last: boolean): AgColumn | null => {
     const children = displayed ? group.displayedChildren : group.children;
     if (children) {

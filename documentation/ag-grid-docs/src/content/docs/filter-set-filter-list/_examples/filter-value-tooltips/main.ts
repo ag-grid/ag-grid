@@ -38,12 +38,12 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'colA',
-            tooltipField: 'colA',
+            tooltip: true,
             filter: 'agSetColumnFilter',
         },
         {
             field: 'colB',
-            tooltipField: 'colB',
+            tooltip: true,
             filter: 'agSetColumnFilter',
             filterParams: {
                 showTooltips: true,
@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
         },
         {
             field: 'colC',
-            tooltipField: 'colC',
+            tooltip: true,
             tooltipComponent: CustomTooltip,
             filter: 'agSetColumnFilter',
             filterParams: {

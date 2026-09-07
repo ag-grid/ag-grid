@@ -13,6 +13,7 @@ import {
 import {
     CheckboxEditorModule,
     DateEditorModule,
+    NumberEditorModule,
     TextEditorModule,
     UndoRedoEditModule,
     agTestIdFor,
@@ -29,6 +30,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             BatchEditModule,
             UndoRedoEditModule,
             TextEditorModule,
+            NumberEditorModule,
             CheckboxEditorModule,
             DateEditorModule,
         ],
@@ -140,6 +142,152 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1', 'ROW_2']);
         expect(valueSetterCalls).toBe(2);
+    });
+
+    test('setFillValue can include an unchanged value in subsequent callback values', async () => {
+        const valuesSeen: number[][] = [];
+        const updatedRows: string[] = [];
+
+        const api = await gridMgr.createGridAndWait('fillHandleUseValue', {
+            cellSelection: {
+                handle: {
+                    mode: 'fill',
+                    setFillValue: (params) => {
+                        valuesSeen.push([...params.values]);
+                        const nextValue = params.values[params.values.length - 1] + 10;
+                        return params.useValue(nextValue);
+                    },
+                },
+            },
+            columnDefs: [
+                {
+                    field: 'value',
+                    editable: true,
+                    valueSetter: (params) => {
+                        updatedRows.push(params.data.id);
+                        params.data.value = params.newValue;
+                        return true;
+                    },
+                },
+            ],
+            rowData: [
+                { id: 'ROW_0', value: 10 },
+                { id: 'ROW_1', value: 20 },
+                { id: 'ROW_2', value: 0 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const sourceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'value')));
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(sourceCell);
+        await cellSelectionChanged;
+
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        const fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(fillHandle);
+        await fillEnd;
+
+        expect(valuesSeen).toEqual([[10], [10, 20]]);
+        expect(updatedRows).toEqual(['ROW_2']);
+        await new GridRows(api, 'after explicitly including an unchanged fill value').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 value:10
+            ├── LEAF id:ROW_1 value:20
+            └── LEAF id:ROW_2 value:30
+        `);
+    });
+
+    test('setFillValue preserves the legacy current-value skip behaviour', async () => {
+        const valuesSeen: number[][] = [];
+
+        const api = await gridMgr.createGridAndWait('fillHandleLegacySkip', {
+            cellSelection: {
+                handle: {
+                    mode: 'fill',
+                    setFillValue: (params) => {
+                        valuesSeen.push([...params.values]);
+                        return params.values[params.values.length - 1] + 10;
+                    },
+                },
+            },
+            columnDefs: [{ field: 'value', editable: true }],
+            rowData: [
+                { id: 'ROW_0', value: 10 },
+                { id: 'ROW_1', value: 20 },
+                { id: 'ROW_2', value: 0 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const sourceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'value')));
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(sourceCell);
+        await cellSelectionChanged;
+
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        const fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(fillHandle);
+        await fillEnd;
+
+        expect(valuesSeen).toEqual([[10], [10]]);
+        await new GridRows(api, 'after legacy current-value skip').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 value:10
+            ├── LEAF id:ROW_1 value:20
+            └── LEAF id:ROW_2 value:20
+        `);
+    });
+
+    test('setFillValue distinguishes useValue(false) from the legacy default signal', async () => {
+        const api = await gridMgr.createGridAndWait('fillHandleFalseValue', {
+            cellSelection: {
+                handle: {
+                    mode: 'fill',
+                    setFillValue: (params) => {
+                        return params.column.getColId() === 'explicit' ? params.useValue(false) : false;
+                    },
+                },
+            },
+            columnDefs: [
+                { field: 'explicit', editable: true },
+                { field: 'legacy', editable: true },
+            ],
+            rowData: [
+                { id: 'ROW_0', explicit: true, legacy: true },
+                { id: 'ROW_1', explicit: true, legacy: false },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const explicitSource = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'explicit')));
+        let cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(explicitSource);
+        await cellSelectionChanged;
+
+        let fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        let fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(fillHandle);
+        await fillEnd;
+
+        cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        const legacySource = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'legacy')));
+        fireGridPointerDown(legacySource);
+        await cellSelectionChanged;
+
+        fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(fillHandle);
+        await fillEnd;
+
+        await new GridRows(api, 'after explicit and legacy false fill results').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 explicit:true legacy:true
+            └── LEAF id:ROW_1 explicit:false legacy:true
+        `);
     });
 
     test('fill handle is offered on a contiguous multi-column range', async () => {

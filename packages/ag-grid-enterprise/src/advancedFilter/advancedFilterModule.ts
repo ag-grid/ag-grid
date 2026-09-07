@@ -18,6 +18,7 @@ import {
 } from './advancedFilterApi';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
+import { AdvancedFilterSetService } from './set/advancedFilterSetService';
 
 /**
  * @feature Filtering -> Advanced Filter
@@ -26,7 +27,7 @@ import { AdvancedFilterService } from './advancedFilterService';
 export const AdvancedFilterModule: _ModuleWithApi<_AdvancedFilterGridApi> = {
     moduleName: 'AdvancedFilter',
     version: VERSION,
-    beans: [AdvancedFilterService, AdvancedFilterExpressionService],
+    beans: [AdvancedFilterService, AdvancedFilterExpressionService, AdvancedFilterSetService],
     icons: {
         // Builder button in Advanced Filter
         advancedFilterBuilder: 'group',

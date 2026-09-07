@@ -20,7 +20,7 @@ describe('buildAboutMarkdown', () => {
     });
 
     it('keeps external and in-page-anchor timeline links intact', () => {
-        expect(output).toContain('[AG Charts Community](https://ag-grid.com/charts/)');
+        expect(output).toContain('[AG Charts Community](https://www.ag-grid.com/charts/)');
         expect(output).toContain('[John Masterson](#leadership-section)');
     });
 

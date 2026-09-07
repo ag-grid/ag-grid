@@ -11,12 +11,19 @@ const AgAutocompleteRowElement: ElementParams = {
 };
 
 export class AgAutocompleteRow extends Component {
-    private value: string | undefined;
+    protected value: string | undefined;
     private hasHighlighting = false;
 
     constructor() {
         super(AgAutocompleteRowElement);
     }
+
+    protected getLabel(): HTMLElement {
+        return this.getGui().lastElementChild as HTMLElement;
+    }
+
+    /** Called whenever the label's content is replaced, for a subclass to append to what was written. */
+    protected afterLabelRendered(): void {}
 
     public setState(value: string, selected: boolean): void {
         this.value = value;
@@ -40,7 +47,7 @@ export class AgAutocompleteRow extends Component {
                 this.hasHighlighting = true;
                 const highlightEndIndex = index + searchString.length;
 
-                const child = this.getGui().lastElementChild! as HTMLElement;
+                const child = this.getLabel();
                 _clearElement(child);
                 child.append(
                     // Start part
@@ -50,6 +57,7 @@ export class AgAutocompleteRow extends Component {
                     // End part
                     value.slice(highlightEndIndex)
                 );
+                this.afterLabelRendered();
             }
         }
         if (!keepHighlighting && this.hasHighlighting) {
@@ -58,8 +66,9 @@ export class AgAutocompleteRow extends Component {
         }
     }
 
-    private render() {
+    protected render() {
         // putting in blank if missing, so at least the user can click on it
-        this.getGui().lastElementChild!.textContent = this.value ?? '\u00A0';
+        this.getLabel().textContent = this.value ?? '\u00A0';
+        this.afterLabelRendered();
     }
 }

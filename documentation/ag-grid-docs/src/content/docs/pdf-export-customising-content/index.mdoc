@@ -1,0 +1,43 @@
+---
+title: "PDF Export - Customising Content"
+enterprise: true
+---
+
+PDF Export uses Value Getters and, by default, [Value Formatters](./value-formatters/#formatting-for-export). Export callbacks can replace the resulting text without changing the values displayed in the grid.
+
+## Customising Cell and Row Group Values
+
+Use `processCellCallback` and `processRowGroupCallback` in `defaultPdfExportParams` to customise exported body cells and row groups.
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    processCellCallback: (params) => `_${params.value ?? ''}_`,
+    processRowGroupCallback: (params) => `row group: ${params.node.key ?? ''}`,
+};
+```
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["processRowGroupCallback", "processCellCallback"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported grid cell and row group values."} /%}
+
+The following example adds the prefix `row group: ` to row-group values and surrounds body-cell values with underscores in the exported PDF.
+
+{% gridExampleRunner title="PDF Export - Customising Row Groups" name="pdf-export-customising-row-groups" exampleHeight=520 /%}
+
+## Customising Column Headers and Group Header Values
+
+Use `processHeaderCallback` and `processGroupHeaderCallback` to customise exported column headers and column-group headers.
+
+```{% frameworkTransform=true %}
+const defaultPdfExportParams = {
+    processHeaderCallback: (params) => `header: ${params.api.getDisplayNameForColumn(params.column, null)}`,
+    processGroupHeaderCallback: (params) =>
+        `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`,
+};
+```
+
+{% interfaceDocumentation interfaceName="PdfExportParams" overrideSrc="pdf-export/pdf.json" names=["processGroupHeaderCallback", "processHeaderCallback"] config={"description":"See below the functions on the `PdfExportParams` interface to customise exported column group headers and headers."} /%}
+
+The following example prefixes exported headers with `header: ` and exported group headers with `group header: `.
+
+{% gridExampleRunner title="PDF Export - Customising Column Group Headers" name="pdf-export-customising-column-group-headers" exampleHeight=520 /%}
+
+These callbacks return text. To style the processed result, use `processStyleCallback`; its `value` is the final exported string.

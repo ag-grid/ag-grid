@@ -15,8 +15,8 @@
 import { waitFor } from '@testing-library/dom';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { AutoSizeColumnsTriggerParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
+import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
 const MEASURED_WIDTH = 120;
@@ -24,7 +24,7 @@ const START_WIDTH = 300;
 
 describe('Continuous Column Autosize', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnAutoSizeModule],
+        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule],
     });
 
     afterEach(() => {
@@ -41,6 +41,18 @@ describe('Continuous Column Autosize', () => {
      */
     // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize scheduling frame; every assertion that follows it is negative
     const flushScheduledResize = (): Promise<void> => asyncSetTimeout(50);
+
+    /**
+     * Shorter than the 150ms debounce the streaming triggers settle on
+     * (`CONTINUOUS_STREAMING_DEBOUNCE` in `columnAutosizeService.ts`), so a trigger sent after this wait
+     * still lands inside the window opened by the previous one and postpones it again.
+     */
+    // eslint-disable-next-line no-restricted-syntax -- samples inside the continuous-resize debounce window, which is the behaviour under test
+    const insideDebounceWindow = (): Promise<void> => asyncSetTimeout(40);
+
+    /** Stands in for an internal trigger the grid would dispatch itself, payload and all. */
+    const dispatchGridEvent = (api: GridApi, event: { type: string } & Record<string, unknown>): void =>
+        api.dispatchEvent(event as AgEvent);
 
     const expectWidth = (api: GridApi, colId: string, width: number): Promise<void> =>
         waitFor(() => expect(widthOf(api, colId)).toBe(width));
@@ -315,6 +327,78 @@ describe('Continuous Column Autosize', () => {
             expect(reasons).toEqual(['dataChanged']);
         });
 
+        /**
+         * A real scroll is not drivable in happy-dom — there is no laid-out body viewport to scroll — so
+         * the debounce is driven through the `viewportChanged` event the row renderer would dispatch as
+         * new rows come into view, which is what makes a scroll re-size at all.
+         */
+        test('a stream of viewport triggers re-sizes once, after the triggers stop', async () => {
+            const { api, reasons } = createGridRecordingReasons();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            // a scroll's worth of triggers, each arriving inside the 150ms debounce window of the last
+            for (let firstRow = 0; firstRow < 5; firstRow++) {
+                dispatchGridEvent(api, { type: 'viewportChanged', firstRow, lastRow: firstRow + 10 });
+                await insideDebounceWindow();
+            }
+
+            // 200ms of triggers so far, and every one of them still postponed
+            expect(reasons).toEqual([]);
+
+            await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
+        });
+
+        /** A data change must still be sized within the frame, rather than held back by the debounce. */
+        test('a data change is not held back by the debounce', async () => {
+            const { api, reasons } = createGridRecordingReasons();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            api.setGridOption('rowData', LONGER_DATA);
+            // sampled well inside the debounce window, so a data change caught by it would be missed here
+            await flushScheduledResize();
+
+            expect(reasons).toContain('dataChanged');
+        });
+
+        /**
+         * A resize drag streams `gridSizeChanged` the way a scroll streams viewport changes, so it settles
+         * on the same debounce — for the width-distribution strategies too, which is where the widths visibly
+         * chase the drag.
+         */
+        test('a stream of grid-size triggers re-sizes once, after the triggers stop', async () => {
+            const reasons: string[] = [];
+            const api = createGrid({
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitGridWidth',
+                    continuous: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            for (let i = 0; i < 5; i++) {
+                dispatchGridEvent(api, { type: 'gridSizeChanged', clientWidth: 400 + i, clientHeight: 300 });
+                await insideDebounceWindow();
+            }
+
+            expect(reasons).toEqual([]);
+
+            await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+        });
+
         test('the strategy stays one-shot when `continuous` is omitted', async () => {
             const api = createGrid({
                 autoSizeStrategy: { type: 'fitCellContents', skipHeader: true },
@@ -587,6 +671,102 @@ describe('Continuous Column Autosize', () => {
 
             expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
             expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+        });
+    });
+
+    describe('aligned grids', () => {
+        /**
+         * Two bidirectionally aligned grids, each continuously auto-sizing its own columns. A resize in
+         * either grid is propagated to the other as an `alignedGridChanged` resize.
+         */
+        const createAlignedGrids = (grid2Eligible: ColDef = {}): { api1: GridApi; api2: GridApi } => {
+            const options = (eligible: ColDef = {}): GridOptions => ({
+                columnDefs: [
+                    {
+                        colId: 'pinned',
+                        field: 'pinned',
+                        width: START_WIDTH,
+                        minWidth: MEASURED_WIDTH,
+                        suppressAutoSize: true,
+                    },
+                    {
+                        colId: 'eligible',
+                        field: 'eligible',
+                        initialWidth: START_WIDTH,
+                        minWidth: MEASURED_WIDTH,
+                        resizable: true,
+                        ...eligible,
+                    },
+                ],
+                rowData: [{ pinned: 'a', eligible: 'b' }],
+                autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+            });
+            const api1 = gridsManager.createGrid('grid1', options());
+            const api2 = gridsManager.createGrid('grid2', options(grid2Eligible));
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+            return { api1, api2 };
+        };
+
+        test('a user resize in one grid takes ownership in both', async () => {
+            const { api1, api2 } = createAlignedGrids();
+            await expectWidth(api1, 'eligible', MEASURED_WIDTH);
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+
+            const eResize = document.querySelector('#grid2 [col-id="eligible"] .ag-header-cell-resize');
+            expect(eResize).not.toBeNull();
+
+            const dispatcher = new DragEventDispatcher('mouse', null, false);
+            await dispatcher.startDrag(eResize!, 100, 10);
+            await dispatcher.movePointer(eResize!, 220, 10);
+            await dispatcher.finishDrag();
+
+            const draggedWidth = widthOf(api2, 'eligible');
+            expect(draggedWidth).toBeGreaterThan(MEASURED_WIDTH);
+            expect(widthOf(api1, 'eligible')).toBe(draggedWidth);
+
+            // the propagated resize is owned in grid1 too, so its own continuous pass must not undo it —
+            // nor, through the resize grid1 would fire back, the resize the user made in grid2
+            api1.setGridOption('rowData', LONGER_DATA);
+            api2.setGridOption('rowData', LONGER_DATA);
+            await flushScheduledResize();
+
+            expect(widthOf(api2, 'eligible')).toBe(draggedWidth);
+            expect(widthOf(api1, 'eligible')).toBe(draggedWidth);
+        });
+
+        test('an api resize propagated between the grids leaves both columns eligible', async () => {
+            const { api1, api2 } = createAlignedGrids();
+            await expectWidth(api1, 'eligible', MEASURED_WIDTH);
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+
+            api1.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            await expectWidth(api2, 'eligible', START_WIDTH);
+
+            api1.setGridOption('rowData', LONGER_DATA);
+            api2.setGridOption('rowData', LONGER_DATA);
+
+            await expectWidth(api1, 'eligible', MEASURED_WIDTH);
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a width this grid rejects leaves the column eligible', async () => {
+            // grid2 caps the column below the width grid1 propagates, so `setColumnWidths` rejects the set
+            const REJECTED_WIDTH = 400;
+            const { api1, api2 } = createAlignedGrids({ maxWidth: 250 });
+            await expectWidth(api1, 'eligible', MEASURED_WIDTH);
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+
+            // an explicit state width takes ownership in grid1, so ownership is there to be propagated
+            api1.applyColumnState({ state: [{ colId: 'eligible', width: REJECTED_WIDTH }] });
+            await expectWidth(api1, 'eligible', REJECTED_WIDTH);
+            expect(widthOf(api2, 'eligible')).toBe(MEASURED_WIDTH);
+
+            // widen grid2 without owning it, so its return to 120 proves it is still being auto-sized
+            api2.setColumnWidths([{ key: 'eligible', newWidth: 240 }]);
+            api2.setGridOption('rowData', LONGER_DATA);
+
+            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
         });
     });
 });

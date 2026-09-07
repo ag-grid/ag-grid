@@ -191,6 +191,21 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 this.selectRowNode(node, isNodeSelected, undefined, source);
             }
         });
+
+        this.syncRootNode(source);
+    }
+
+    /** `forEachNode` skips the root, whose selection the grand total row reports as its own. */
+    private syncRootNode(source?: SelectionEventSourceType): void {
+        const rootNode = this.beans.rowModel.rootNode;
+        if (!rootNode) {
+            return;
+        }
+
+        const isRootSelected = this.selectionStrategy.isNodeSelected(rootNode);
+        if (isRootSelected !== rootNode.isSelected()) {
+            this.selectRowNode(rootNode, isRootSelected, undefined, source);
+        }
     }
 
     public getSelectedNodes(): RowNode<any>[] {
@@ -264,6 +279,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             this.selectRowNode(node, true, undefined, params.source);
         });
 
+        this.syncRootNode(params.source);
         this.dispatchSelectionChanged(params.source);
     }
 
@@ -281,6 +297,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             this.selectRowNode(node, false, undefined, params.source);
         });
 
+        this.syncRootNode(params.source);
         this.dispatchSelectionChanged(params.source);
     }
 

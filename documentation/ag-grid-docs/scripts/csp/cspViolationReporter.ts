@@ -8,6 +8,7 @@ import {
     CSP_VIOLATION_ANNOTATION,
     aggregateCspViolations,
 } from '../../src/utils/csp/cspViolationReport';
+import { ACCEPTED_CSP_VIOLATIONS } from '../../src/utils/htaccess/cspRules';
 
 interface Options {
     outputFile: string;
@@ -59,16 +60,17 @@ export default class CspViolationReporter implements Reporter {
     onEnd(): void {
         const report: CspViolationReport = {
             baseUrl: this.baseUrl,
-            violations: aggregateCspViolations(this.records, this.hints),
+            violations: aggregateCspViolations(this.records, this.hints, ACCEPTED_CSP_VIOLATIONS),
         };
 
         fs.mkdirSync(path.dirname(this.outputFile), { recursive: true });
         fs.writeFileSync(this.outputFile, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 
-        const enforced = report.violations.filter((violation) => violation.disposition === 'enforce').length;
+        const enforced = report.violations.filter((violation) => violation.disposition === 'enforce');
+        const accepted = enforced.filter((violation) => violation.accepted !== undefined).length;
         process.stdout.write(
-            `CSP report written to ${this.outputFile}: ${enforced} enforced, ` +
-                `${report.violations.length - enforced} report-only.\n`
+            `CSP report written to ${this.outputFile}: ${enforced.length - accepted} enforced, ` +
+                `${accepted} accepted, ${report.violations.length - enforced.length} report-only.\n`
         );
     }
 }

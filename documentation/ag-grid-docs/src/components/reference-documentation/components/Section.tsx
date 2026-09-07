@@ -30,7 +30,7 @@ const Breadcrumbs = ({ breadcrumbs }: { breadcrumbs: Record<string, string> }) =
         if (index < breadcrumbsLength - 1) {
             links.push(
                 <Fragment key={key}>
-                    <a href={`#${href}`} title={text}>
+                    <a tabIndex={0} href={`#${href}`} title={text}>
                         {key}
                     </a>{' '}
                     &gt;{' '}
@@ -90,7 +90,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
             isObject = true;
         }
 
-        line += `: ${isObject ? `<a href='#reference-${id}.${key}'>${type}</a>` : getLinkedType(type, framework)};`;
+        line += `: ${isObject ? `<a tabindex='0' href='#reference-${id}.${key}'>${type}</a>` : getLinkedType(type, framework)};`;
 
         if (definition.default != null) {
             line += ` // default: ${formatJson(definition.default)}`;
@@ -139,7 +139,7 @@ const SectionHeader = ({
             {!hideHeader && (
                 <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
                     {displayName}
-                    <a href={`#reference-${id}`} className="docs-header-icon">
+                    <a tabIndex={0} href={`#reference-${id}`} className="docs-header-icon">
                         <Icon name="link" />
                     </a>
                 </HeaderTag>
@@ -148,7 +148,11 @@ const SectionHeader = ({
             {descriptionDisplay && <p dangerouslySetInnerHTML={{ __html: descriptionDisplay }}></p>}
             {page && (
                 <p>
-                    See <a href={urlWithPrefix({ url: page.url, framework })}>{page.name}</a> for more information.
+                    See{' '}
+                    <a tabIndex={0} href={urlWithPrefix({ url: page.url, framework })}>
+                        {page.name}
+                    </a>{' '}
+                    for more information.
                 </p>
             )}
 

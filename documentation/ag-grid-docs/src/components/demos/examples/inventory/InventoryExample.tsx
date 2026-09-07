@@ -111,7 +111,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 cellRenderer: StockCellRenderer,
                 headerClass: 'header-inventory',
                 sortable: false,
-                tooltipValueGetter: ({ data: { available, variants } }) => `${available} Stock / ${variants} Variants`,
+                tooltip: ({ data: { available, variants } }) => `${available} Stock / ${variants} Variants`,
             },
             {
                 field: 'incoming',

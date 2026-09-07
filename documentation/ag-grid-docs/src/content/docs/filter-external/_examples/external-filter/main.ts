@@ -47,17 +47,15 @@ const dateFilterParams: IDateFilterParams = {
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 180 },
-    { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80 },
+    { field: 'age', filter: 'agNumberColumnFilter' },
     { field: 'country' },
-    { field: 'year', maxWidth: 90 },
+    { field: 'year' },
     {
         field: 'date',
         filter: 'agDateColumnFilter',
         filterParams: dateFilterParams,
     },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'total', filter: 'agNumberColumnFilter' },
 ];
 
 let gridApi: GridApi<IOlympicData>;

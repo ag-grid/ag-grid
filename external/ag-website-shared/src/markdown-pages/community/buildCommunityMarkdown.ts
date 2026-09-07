@@ -4,6 +4,7 @@ import {
     COMMUNITY_TOOLS_LIMIT,
 } from '@ag-website-shared/components/community/constants';
 
+import { buildMarkdownFrontmatter } from '../markdownFrontmatter';
 import {
     type CommunityMarkdownOptions,
     allTools,
@@ -23,13 +24,17 @@ import {
  * its content are shared across AG products, so this reads the same community JSON and is
  * parameterised by product brand and current site.
  */
-export function buildCommunityMarkdown({ product, currentSite, siteRoot }: CommunityMarkdownOptions): string {
-    const frontmatter = [
-        '---',
-        `title: "${product} Community"`,
-        `description: "Dedicated to our open-source ${product} community. Browse open-source projects, find 3rd party Data Grid tools, and stay up-to-date with the latest news."`,
-        '---',
-    ].join('\n');
+export function buildCommunityMarkdown({
+    product,
+    currentSite,
+    siteRoot,
+    siteFrontmatter,
+}: CommunityMarkdownOptions): string {
+    const frontmatter = buildMarkdownFrontmatter({
+        ...siteFrontmatter,
+        title: `${product} Community`,
+        description: `Dedicated to our open-source ${product} community. Browse open-source projects, find 3rd party Data Grid tools, and stay up-to-date with the latest news.`,
+    });
 
     const document = [
         frontmatter,

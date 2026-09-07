@@ -1,3 +1,5 @@
+import { PRODUCTION_GRID_SITE_URL } from '@constants';
+
 /**
  * Builders for schema.org JSON-LD structured data emitted in the page <head>.
  *
@@ -167,7 +169,7 @@ export function siteRootUrl(canonicalUrlBase: string): string {
     return canonicalUrlBase.endsWith('/') ? canonicalUrlBase : `${canonicalUrlBase}/`;
 }
 
-export const getOrganizationId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#organization`;
+export const getOrganizationId = (): string => `${PRODUCTION_GRID_SITE_URL}/#organization`;
 export const getWebSiteId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#website`;
 export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
     `${siteRootUrl(canonicalUrlBase)}#software-application`;
@@ -194,7 +196,7 @@ export function buildOrganization({
 }: OrgInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'Organization',
-        '@id': getOrganizationId(canonicalUrlBase),
+        '@id': getOrganizationId(),
         name,
         url: siteRootUrl(canonicalUrlBase),
         logo: logoUrl,
@@ -239,7 +241,7 @@ export function buildWebSite({ canonicalUrlBase, name, description }: WebSiteInp
         name,
         description,
         inLanguage: 'en',
-        publisher: { '@id': getOrganizationId(canonicalUrlBase) },
+        publisher: { '@id': getOrganizationId() },
     };
 }
 
@@ -260,7 +262,7 @@ export function buildSoftwareApplication({
         operatingSystem,
         softwareVersion: version,
         url: siteRootUrl(canonicalUrlBase),
-        publisher: { '@id': getOrganizationId(canonicalUrlBase) },
+        publisher: { '@id': getOrganizationId() },
     };
     if (offers && offers.length > 0) {
         result.offers = offers;
@@ -287,7 +289,7 @@ export function buildTechArticle({
         url: pageUrl,
         mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
         isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
-        publisher: { '@id': getOrganizationId(canonicalUrlBase) },
+        publisher: { '@id': getOrganizationId() },
     };
     if (aboutEntityId) {
         result.about = { '@id': aboutEntityId };
@@ -356,7 +358,7 @@ export function buildContactPage({ canonicalUrlBase, pageUrl, name }: ContactPag
         url: pageUrl,
         name,
         isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
-        mainEntity: { '@id': getOrganizationId(canonicalUrlBase) },
+        mainEntity: { '@id': getOrganizationId() },
     };
 }
 

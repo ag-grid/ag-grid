@@ -2,6 +2,19 @@ import { defineConfig, devices } from '@playwright/test';
 
 import { wafBypassSecret } from './src/utils/grid/test/wafBypass';
 
+// The dev server takes its port from `PORT`, but `docs-e2e.sh` runs Playwright directly rather than through Nx,
+// so Nx's own dotenv loading never reaches here and a moved port would be tested at the one it moved off.
+// Neither file is required, and an already-set variable wins, so the shell still overrides both.
+for (const envFile of ['../../.env.local', '../../.env']) {
+    try {
+        process.loadEnvFile(new URL(envFile, import.meta.url));
+    } catch {
+        // absent in a checkout that has not overridden anything
+    }
+}
+
+const LOCAL_PORT = process.env.PORT || '4610';
+
 const PRE_34_VERSION = process.env.PRE_34_VERSION;
 
 const PREV_URL = PRE_34_VERSION && `https://www.ag-grid.com/archive/${PRE_34_VERSION}/`;
@@ -12,7 +25,7 @@ const BASE_URL = process.env.BASE_URL;
 // unless it ends in a slash, so a URL passed without one would silently lose the prefix.
 const withTrailingSlash = (url: string): string => (url.endsWith('/') ? url : `${url}/`);
 
-const baseURL = withTrailingSlash(BASE_URL || PREV_URL || PROD_URL || 'https://localhost:4610');
+const baseURL = withTrailingSlash(BASE_URL || PREV_URL || PROD_URL || `https://localhost:${LOCAL_PORT}`);
 
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
@@ -128,7 +141,15 @@ export default defineConfig({
             // Dedicated project for post-deploy verification — run via post-deploy-verification.yml.
             // Not included in standard ./docs-e2e.sh runs (those use --project=chromium).
             name: 'page-verification',
-            use: { ...devices['Desktop Chrome'] },
+            use: {
+                ...devices['Desktop Chrome'],
+                // Well under the test timeout, so a navigation that really is stuck fails saying
+                // which URL never committed, instead of spending the whole test budget and
+                // reporting only "Test timeout of 60000ms exceeded". The spec navigates on
+                // 'commit', so reaching this at all means the document itself never arrived —
+                // a genuine site failure rather than a slow third-party tag.
+                navigationTimeout: 20_000,
+            },
             testMatch: '**/page-verification.spec.ts',
         },
 

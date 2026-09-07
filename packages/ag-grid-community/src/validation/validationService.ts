@@ -17,6 +17,7 @@ import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
+import { _findLegacyOnlyVariables } from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
 import { _createValidationWarning, _emitValidationWarning } from './validationTypes';
@@ -105,6 +106,17 @@ export class ValidationService extends BeanStub implements NamedBean {
                   reasonOrId: `\`${beanName}\``,
               })
             : undefined;
+    }
+
+    /** Legacy theme variables are silently ignored under the Theming API, so setting one has no effect. */
+    public checkLegacyThemeVariables(eRootDiv: HTMLElement): void {
+        if (this.gos.get('theme') === 'legacy') {
+            return;
+        }
+        const replacements = _findLegacyOnlyVariables(eRootDiv);
+        if (replacements.length > 0) {
+            this.warn(332, { replacements });
+        }
     }
 
     public checkRowEvents(eventType: RowNodeEventType): void {

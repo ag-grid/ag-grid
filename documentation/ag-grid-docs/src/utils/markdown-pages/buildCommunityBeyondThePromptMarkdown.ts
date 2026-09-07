@@ -2,6 +2,8 @@ import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { PAGE_CONTENT, SESSIONS, SPEAKERS } from '@utils/beyondThePromptSessions';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
+import { buildGridFrontmatter } from './gridFrontmatter';
+
 /**
  * Build the markdown twin of /community/beyond-the-prompt: the AG Grid × Bryntum conference on
  * building AI-assisted applications that hold up in production. The prose, programme and speakers
@@ -9,12 +11,13 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
  * routes), so the twin cannot drift; each session lists its speakers and links to its recording.
  */
 export function buildCommunityBeyondThePromptMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
-    const frontmatter = [
-        '---',
-        'title: "Beyond the Prompt: AG Grid & Bryntum Conference"',
-        'description: "A one-day conference from AG Grid and Bryntum on building AI-assisted applications that hold up in production."',
-        '---',
-    ].join('\n');
+    const frontmatter = buildGridFrontmatter({
+        pageUrl: '/community/beyond-the-prompt/',
+        siteRoot,
+        title: 'Beyond the Prompt: AG Grid & Bryntum Conference',
+        description:
+            'A one-day conference from AG Grid and Bryntum on building AI-assisted applications that hold up in production.',
+    });
 
     const { intro, programme, notify } = PAGE_CONTENT;
 

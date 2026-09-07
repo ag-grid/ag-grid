@@ -239,11 +239,14 @@ interface GroupRowNode<TData = any> {
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
     footer: boolean | undefined;
-    /** If using footers, reference to the footer node for this group. */
+    /**
+     * On a group row, its footer row node, `undefined` when it has none. On a footer row, the group row it
+     * belongs to, which is retained even after the footer has been destroyed.
+     */
     sibling: IRowNode<TData>;
 }
 
-/** The row ID of the root node (`'ROOT_NODE_ID'`). Use with `api.getRowNode(ROOT_NODE_ID)`. */
+/** The reserved row ID of the root node (`'ROOT_NODE_ID'`). Use with `api.getRowNode(ROOT_NODE_ID)`. */
 export const ROOT_NODE_ID = 'ROOT_NODE_ID';
 
 /** Prefix for group total (footer) row IDs (`'rowGroupFooter_'`). A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`. */
@@ -259,7 +262,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /**
      * The primary (canonical) row node, resolving footer and pinned sibling relationships.
      *
-     * - If this is a **footer** row, returns its parent group row.
+     * - If this is a **footer** row, returns the group row it belongs to, even if either row has been destroyed.
      * - If this is a **manually pinned** row, returns the source row in the main viewport.
      * - If both (pinned footer), follows both links to the primary group row.
      * - Otherwise, returns `this`.

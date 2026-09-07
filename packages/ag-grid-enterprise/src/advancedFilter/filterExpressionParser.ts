@@ -31,7 +31,10 @@ export class FilterExpressionParser {
         if (!error) {
             return null;
         }
-        const { message, startPosition, endPosition } = error;
+        const { message, startPosition, endPosition, selfContained } = error;
+        if (selfContained) {
+            return this.params.advFilterExpSvc.translate('advancedFilterValidationMessageOnly', [message]);
+        }
         return startPosition < this.params.expression.length
             ? this.params.advFilterExpSvc.translate('advancedFilterValidationMessage', [
                   message,

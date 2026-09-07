@@ -36,7 +36,7 @@ const columnDefs: ColDef[] = [
         rowGroup: true,
         hide: true,
         // inherited by group rows in the group column
-        tooltipValueGetter: (params) => `Country: ${params.value}`,
+        tooltip: (params) => `Country: ${params.value}`,
     },
     {
         field: 'year',
@@ -44,7 +44,7 @@ const columnDefs: ColDef[] = [
         rowGroup: true,
         hide: true,
         // inherited by group rows in the group column
-        tooltipValueGetter: (params) => `Year: ${params.value}`,
+        tooltip: (params) => `Year: ${params.value}`,
     },
     { field: 'athlete', width: 200 },
     { field: 'age', width: 90 },
@@ -58,7 +58,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         headerTooltip: 'Group',
         minWidth: 190,
         // applies to leaf rows only; group rows inherit from their colDef
-        tooltipValueGetter: (params) => `Athlete: ${params.value}`,
+        tooltip: (params) => `Athlete: ${params.value}`,
     },
     defaultColDef: {
         flex: 1,

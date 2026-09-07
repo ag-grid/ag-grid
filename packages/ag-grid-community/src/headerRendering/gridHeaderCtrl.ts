@@ -199,14 +199,15 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        const { menuSvc, ctrlsSvc } = this.beans;
+        const { menuSvc } = this.beans;
         if ((!mouseEvent && !touchEvent) || !menuSvc?.isHeaderContextMenuEnabled()) {
             return;
         }
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport) {
+        // header cells' own contextmenu events bubble up to this listener and must not also open the grid-level menu
+        if (target instanceof Element && !target.closest('.ag-header-cell, .ag-header-group-cell')) {
             menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }

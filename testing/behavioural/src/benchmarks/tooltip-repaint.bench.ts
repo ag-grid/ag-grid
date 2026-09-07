@@ -52,7 +52,7 @@ const buildCols = (cellRenderer: unknown, withColDefTooltip: boolean): ColDef[] 
             col.cellRenderer = cellRenderer;
         }
         if (withColDefTooltip) {
-            col.tooltipValueGetter = (params) => `Tip ${params.value}`;
+            col.tooltip = (params) => `Tip ${params.value}`;
         }
         cols.push(col);
     }

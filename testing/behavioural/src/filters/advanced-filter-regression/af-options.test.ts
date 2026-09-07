@@ -5,11 +5,14 @@ import {
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
     DateFilterModule,
     LocaleModule,
     NumberFilterModule,
@@ -19,12 +22,11 @@ import {
 } from 'ag-grid-community';
 import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-/**
- * Regression baseline for Advanced Filter grid options and current operator behaviour: display-name/colId
- * resolution, `includeHiddenColumnsInAdvancedFilter`, `suppressAdvancedFilterEval`, `advancedFilterParent`;
- * operators the tickets will ADD but don't offer today (AG-10029 presets, AG-10029/10819 inRange, AG-10819
- * custom filterOptions); and Set Filter columns treated as text (AG-8950). Locks each so tickets are visible diffs.
- */
+/** Regression baseline for Advanced Filter grid options, and which operators a column offers. */
+
+// The suggestion list virtualises, so without a layout it renders one row and assertions read that truncation.
+beforeAll(() => installFilterLayoutMock());
+afterAll(() => uninstallFilterLayoutMock());
 
 describe('Advanced Filter — grid options', () => {
     interface Row {
@@ -39,7 +41,13 @@ describe('Advanced Filter — grid options', () => {
     ];
 
     const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, NumberFilterModule, AdvancedFilterModule, ClientSideRowModelModule],
+        modules: [
+            TextFilterModule,
+            NumberFilterModule,
+            AdvancedFilterModule,
+            ColumnApiModule,
+            ClientSideRowModelModule,
+        ],
     });
 
     afterEach(() => gridsManager.reset());
@@ -83,6 +91,38 @@ describe('Advanced Filter — grid options', () => {
                 valid: false — Expression has an error. Column not found - [Athlete] equals "Bolt".
                 buttons: Apply ⊘ | Builder
                 model: null
+            `);
+        });
+
+        test('a header renamed after the grid is built swaps which name the expression takes', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', OPTS);
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.applyExpression('[Competitor] equals "Bolt"');
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            // Cleared first: an invalid expression leaves the previous filter applied, reading as the old name.
+            await af.applyExpression('');
+            await asyncSetTimeout(0);
+            api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Runner' }] });
+            await asyncSetTimeout(0);
+
+            await af.applyExpression('[Competitor] equals "Bolt"');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            await af.applyExpression('[Runner] equals "Bolt"');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'equals',
+                filter: 'Bolt',
+            });
+            await new GridRows(api, 'renamed header applied under its new name').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"Bolt" age:25
             `);
         });
 
@@ -237,7 +277,7 @@ describe('Advanced Filter — grid options', () => {
     });
 });
 
-describe('Advanced Filter — currently-unsupported operators (baseline)', () => {
+describe('Advanced Filter — built-in range and relative date operators', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             TextFilterModule,
@@ -251,8 +291,7 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
     afterEach(() => gridsManager.reset());
 
     describe('relative-date-preset column (filterOptions with preset keys)', () => {
-        // Preset keys are strings, so AF lists them as active operators and must reconcile each
-        // against the built-in AF operators (which exclude presets) without crashing.
+        // A preset is offered only where the column names it, so the list decides the whole dropdown.
         const OPTS: GridOptions = {
             columnDefs: [
                 {
@@ -273,27 +312,28 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             await af.type('[Date] ');
             await asyncSetTimeout(0);
 
-            // Before the getEntries guard this threw (preset key not in the AF operator map) and the
-            // popup never opened.
+            // A key the column names but this filter has no operator for must be skipped rather than
+            // reaching the operator table, or the popup never opens at all.
             expect(af.isAutocompleteOpen()).toBe(true);
         });
 
-        test('a preset key is not an AF operator; a standard operator from the list still applies', async () => {
+        test('a preset the list names applies, as does a standard operator beside it', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
-            // `today` is a preset, not an AF operator → rejected today (AG-10029 will add it).
-            await AdvancedFilterHarness.get(api).applyExpression('[Date] today');
+            // Written under the Advanced Filter's own name for it, which is what the dropdown offers.
+            await AdvancedFilterHarness.get(api).applyExpression('[Date] is today');
             await asyncSetTimeout(0);
-            expect(api.getAdvancedFilterModel()).toBeNull();
-            await new FilterDom(api, 'preset operator rejected').checkFilterDom(`
+            await new FilterDom(api, 'preset operator applied').checkFilterDom(`
                 ADVANCED FILTER
-                input: "[Date] today"
-                valid: false — Expression has an error. Option not found - today.
+                input: "[Date] is today"
+                valid: true
                 buttons: Apply ⊘ | Builder
-                model: null
+                model:
+                  filterType: "dateString"
+                  colId: "date"
+                  type: "today"
             `);
 
-            // `equals` is in the list and is a real AF operator → applies.
             await AdvancedFilterHarness.get(api).applyExpression('[Date] = "2024-06-15"');
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual({
@@ -308,31 +348,40 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             `);
         });
 
-        // A preset key names no AF option, so it can make none available: the list leaves only `equals`.
-        test('an operator absent from the preset list is not offered', async () => {
+        // The list is the whole dropdown, but the grammar is the data type's, so an operator typed
+        // rather than picked still reads.
+        test('an operator absent from the preset list is not suggested, but still reads', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
+            const af = AdvancedFilterHarness.get(api);
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Date] > "2024-03-01"');
+            await af.type('[Date] ');
+            expect(af.autocompleteEntries()).toEqual(['is today', 'is yesterday', '=']);
+
+            await af.applyExpression('[Date] > "2024-03-01"');
             await asyncSetTimeout(0);
 
-            await new FilterDom(api, 'preset column greaterThan not offered').checkFilterDom(`
+            await new FilterDom(api, 'preset column greaterThan typed').checkFilterDom(`
                 ADVANCED FILTER
                 input: "[Date] > "2024-03-01""
-                valid: false — Expression has an error. Option not found - > "2024-03-01".
+                valid: true
                 buttons: Apply ⊘ | Builder
-                model: null
+                model:
+                  filterType: "dateString"
+                  colId: "date"
+                  type: "greaterThan"
+                  filter: "2024-03-01"
             `);
         });
     });
 
-    describe('inRange is not offered today', () => {
+    describe('an option is written under its name, not its key', () => {
         const OPTS: GridOptions = {
             columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter' }],
             rowData: [{ age: 10 }, { age: 20 }, { age: 30 }],
             enableAdvancedFilter: true,
         };
 
-        test('a hand-typed inRange expression is rejected', async () => {
+        test('a hand-typed `inRange` is rejected — the name of the option is `is between`', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] inRange 15');
@@ -353,51 +402,57 @@ describe('Advanced Filter — currently-unsupported operators (baseline)', () =>
             `);
         });
     });
+});
 
-    describe('custom (object) filterOptions are ignored today', () => {
-        const EVEN: IFilterOptionDef = {
-            displayKey: 'even',
-            displayName: 'Is even',
-            numberOfInputs: 0,
-            predicate: (_v, cellValue) => typeof cellValue === 'number' && cellValue % 2 === 0,
-        };
-        const OPTS: GridOptions = {
-            columnDefs: [
-                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['equals', EVEN] } },
-            ],
-            rowData: [{ age: 10 }, { age: 15 }, { age: 20 }],
-            enableAdvancedFilter: true,
-        };
+/** Where a Custom Filter Option has a `displayName`, its `displayKey` is not a name an expression can use. */
+describe('Advanced Filter — custom filterOptions entries', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [TextFilterModule, NumberFilterModule, AdvancedFilterModule, ClientSideRowModelModule],
+    });
 
-        test('the custom option key is not an AF operator, but standard operators still work', async () => {
-            const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
+    afterEach(() => gridsManager.reset());
 
-            // The object option makes the whole list "not all strings", so AF falls back to its default
-            // operators — the custom key is unknown.
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] even');
-            await asyncSetTimeout(0);
-            expect(api.getAdvancedFilterModel()).toBeNull();
-            await new FilterDom(api, 'custom option rejected').checkFilterDom(`
-                ADVANCED FILTER
-                input: "[Age] even"
-                valid: false — Expression has an error. Option not found - even.
-                buttons: Apply ⊘ | Builder
-                model: null
-            `);
+    const EVEN: IFilterOptionDef = {
+        displayKey: 'even',
+        displayName: 'Is even',
+        numberOfInputs: 0,
+        predicate: (_v, cellValue) => typeof cellValue === 'number' && cellValue % 2 === 0,
+    };
+    const OPTS: GridOptions = {
+        columnDefs: [
+            { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['equals', EVEN] } },
+        ],
+        rowData: [{ age: 10 }, { age: 15 }, { age: 20 }],
+        enableAdvancedFilter: true,
+    };
 
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] = 20');
-            await asyncSetTimeout(0);
-            expect(api.getAdvancedFilterModel()).toEqual({
-                filterType: 'number',
-                colId: 'age',
-                type: 'equals',
-                filter: 20,
-            });
-            await new GridRows(api, 'custom column standard operator applied').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:2 age:20
-            `);
+    test('the displayKey is not an operator name, and the built-ins the list keeps still work', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', OPTS);
+
+        // `Is even` is what the option is called in an expression; `even` only identifies it in the model.
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] even');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toBeNull();
+        await new FilterDom(api, 'custom option rejected').checkFilterDom(`
+            ADVANCED FILTER
+            input: "[Age] even"
+            valid: false — Expression has an error. Option not found - even.
+            buttons: Apply ⊘ | Builder
+            model: null
+        `);
+
+        await AdvancedFilterHarness.get(api).applyExpression('[Age] = 20');
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'number',
+            colId: 'age',
+            type: 'equals',
+            filter: 20,
         });
+        await new GridRows(api, 'custom column standard operator applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 age:20
+        `);
     });
 });
 
@@ -443,77 +498,101 @@ describe('Advanced Filter — string filterOptions restrict the options', () => 
         `);
     });
 
-    test('an option the list omits is not a known option', async () => {
+    // The list decides what is suggested; the data type decides what can be written.
+    test('an option the list omits is not suggested, but an expression naming it applies', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', optionsWithNotContainsNamed());
+        const af = AdvancedFilterHarness.get(api);
 
-        await AdvancedFilterHarness.get(api).applyExpression('[Name] contains "o"');
+        await af.type('[Name] ');
+        expect(af.autocompleteEntries()).toEqual(['equals']);
+
+        await af.applyExpression('[Name] contains "o"');
         await asyncSetTimeout(0);
 
         await new FilterDom(api, 'an omitted option').checkFilterDom(`
             ADVANCED FILTER
             input: "[Name] contains "o""
-            valid: false — Expression has an error. Option not found - contains "o".
+            valid: true
             buttons: Apply ⊘ | Builder
-            model: null
+            model:
+              filterType: "text"
+              colId: "name"
+              type: "contains"
+              filter: "o"
+        `);
+        // The model is what the editor holds; the rows are what the row model did with it.
+        await new GridRows(api, 'an omitted option filters').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Bolt"
         `);
     });
 
-    test('a model naming an option the list omits does not apply', async () => {
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', optionsWithNotContainsNamed());
-
-        api.setAdvancedFilterModel({ filterType: 'text', colId: 'name', type: 'contains', filter: 'o' });
-        await asyncSetTimeout(0);
-
-        await new FilterDom(api, 'a model naming an omitted option').checkFilterDom(`
-            ADVANCED FILTER
-            input: "[Name] contains "o""
-            valid: false — Expression has an error. Option not found - contains "o".
-            buttons: Apply ⊘ | Builder
-            model: null
-        `);
-    });
-
-    test('an omitted longer name does not beat the shorter one it starts with', async () => {
+    test('an omitted longer name beats the shorter offered one it starts with', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', optionsWithNotContainsNamed('equals not'));
 
-        // `equals not` names the omitted `notContains`, so only `equals` is in the running: `not` becomes its
-        // operand and `"Bolt"` is left where a join operator belongs.
+        // The offered `equals` matches first, and the wider set then lengthens it into the omitted `notContains`.
         await AdvancedFilterHarness.get(api).applyExpression('[Name] equals not "Bolt"');
         await asyncSetTimeout(0);
 
         await new FilterDom(api, 'an omitted longer name').checkFilterDom(`
             ADVANCED FILTER
             input: "[Name] equals not "Bolt""
-            valid: false — Expression has an error. Join operator not found - "Bolt".
+            valid: true
             buttons: Apply ⊘ | Builder
-            model: null
+            model:
+              filterType: "text"
+              colId: "name"
+              type: "notContains"
+              filter: "Bolt"
         `);
     });
 
-    // Presets have no expression form yet, so a list of only presets names nothing the parser can offer.
-    test('a list naming no Advanced Filter option leaves the column unfilterable', async () => {
+    // `empty` is the column filter's placeholder entry and names no operator here, so a list of only it
+    // names nothing this filter can offer: narrowing to nothing would leave the column unusable, so the
+    // built-ins stand as they do for a list whose every entry was dropped.
+    test('a list naming no Advanced Filter option leaves the built-ins standing', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
                     field: 'date',
                     cellDataType: 'dateString',
                     filter: 'agDateColumnFilter',
-                    filterParams: { filterOptions: ['today', 'yesterday'] },
+                    filterParams: { filterOptions: ['empty'] },
                 },
             ],
             rowData: [{ date: '2024-01-01' }],
             enableAdvancedFilter: true,
         });
 
-        await AdvancedFilterHarness.get(api).applyExpression('[Date] = "2024-01-01"');
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Date] ');
+        await asyncSetTimeout(0);
+        // Every built-in, since "standing" is the whole list rather than a survivor from it.
+        expect(af.autocompleteEntries()).toEqual([
+            '=',
+            '!=',
+            '>',
+            '>=',
+            '<',
+            '<=',
+            'is between',
+            'is blank',
+            'is not blank',
+        ]);
+
+        await af.applyExpression('[Date] = "2024-01-01"');
         await asyncSetTimeout(0);
 
         await new FilterDom(api, 'a list naming no AF option').checkFilterDom(`
             ADVANCED FILTER
             input: "[Date] = "2024-01-01""
-            valid: false — Expression has an error. Option not found - = "2024-01-01".
+            valid: true
             buttons: Apply ⊘ | Builder
-            model: null
+            model:
+              filterType: "dateString"
+              colId: "date"
+              type: "equals"
+              filter: "2024-01-01"
         `);
     });
 });
@@ -585,13 +664,12 @@ describe('Advanced Filter — Set Filter column (current behaviour)', () => {
         `);
     });
 
-    test('there is no set-membership (IN) operator today', async () => {
+    test('`in` is not an operator, set membership being written as `is any of`', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
 
         await AdvancedFilterHarness.get(api).applyExpression('[Country] in ["Jamaica", "Poland"]');
         await asyncSetTimeout(0);
 
-        // No `in` operator exists for a text column → rejected. AG-8950 will introduce it.
         expect(api.getAdvancedFilterModel()).toBeNull();
         await new FilterDom(api, 'set IN rejected').checkFilterDom(`
             ADVANCED FILTER

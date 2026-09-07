@@ -1,5 +1,6 @@
 import { buildWhatsNewMarkdown } from '@ag-website-shared/markdown-pages/buildWhatsNewMarkdown';
 import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
+import { gridSiteFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
@@ -20,6 +21,7 @@ export async function GET() {
         // Highlight and release-note paths are framework-relative; the page resolves them against
         // the reader's remembered framework, so the twin picks the framework-agnostic core.
         resolveUrl: (url) => urlWithPrefix({ framework: 'javascript', url }),
+        siteFrontmatter: gridSiteFrontmatter({ pageUrl: '/whats-new/', siteRoot: SITE_URL }),
     });
 
     return new Response(output, {

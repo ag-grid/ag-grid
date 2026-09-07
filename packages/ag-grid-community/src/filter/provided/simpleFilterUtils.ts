@@ -4,6 +4,7 @@ import type { Column } from '../../interfaces/iColumn';
 import type { FilterInputCallbackParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { PRESET_DATE_FILTER_TYPES } from './date/relativeDateRanges';
 import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
@@ -94,35 +95,68 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
     'empty',
     'notBlank',
     'blank',
-    'today',
-    'yesterday',
-    'tomorrow',
-    'thisWeek',
-    'lastWeek',
-    'nextWeek',
-    'thisMonth',
-    'lastMonth',
-    'nextMonth',
-    'thisQuarter',
-    'lastQuarter',
-    'nextQuarter',
-    'thisYear',
-    'lastYear',
-    'nextYear',
-    'yearToDate',
-    'last7Days',
-    'last30Days',
-    'last90Days',
-    'last6Months',
-    'last12Months',
-    'last24Months',
+    ...PRESET_DATE_FILTER_TYPES,
 ]);
+
+/** An entry missing any of these cannot be offered; they are listed so the warning can name the missing one. */
+const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
+
+/**
+ * One definition of what a `filterOptions` list offers, so the column filter and the Advanced Filter cannot disagree.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _classifyFilterOptions(
+    configuredOptions: (IFilterOptionDef | string)[],
+    warnMissing: (keys: string[]) => void
+): { offered: Map<string, IFilterOptionDef | string>; customOptions: Map<string, IFilterOptionDef> } {
+    // A `Map` holds a key at the position it was first set in, so it dedupes without reordering the dropdown.
+    const offered = new Map<string, IFilterOptionDef | string>();
+    const customOptions = new Map<string, IFilterOptionDef>();
+    for (let i = 0, len = configuredOptions.length; i < len; ++i) {
+        const option = configuredOptions[i];
+        if (option == null) {
+            continue; // `typeof null` is `'object'`, so a hole would read as an option with no properties
+        } else if (typeof option === 'string') {
+            offered.set(option, offered.get(option) ?? option); // a definition already stored outranks a bare key
+        } else {
+            const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
+            if (missing.length) {
+                warnMissing(missing);
+                continue;
+            }
+            const key = option.displayKey;
+            offered.set(key, option);
+            customOptions.set(key, option);
+        }
+    }
+    return { offered, customOptions };
+}
+
+/**
+ * The name an option is shown and written under: localised text, then `displayName`, then its key.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getCustomOptionDisplayName(
+    option: IFilterOptionDef,
+    translate: (key: string, defaultValue: string) => string
+): string {
+    const displayKey = String(option.displayKey);
+    return translate(displayKey, option.displayName).trim() || displayKey.trim();
+}
+
+/**
+ * How many values an option takes; the declared `0 | 1 | 2` is no check on a JS caller, hence the clamp.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getCustomOptionNumberOfInputs(option: IFilterOptionDef): number {
+    const count = Math.trunc(option.numberOfInputs ?? 1);
+    return count > 0 ? Math.min(count, 2) : 0;
+}
 
 export function getNumberOfInputs(type: FilterOptionKey | null | undefined, optionsFactory: OptionsFactory): number {
     const customOpts = optionsFactory.getCustomOption(type);
     if (customOpts) {
-        const { numberOfInputs } = customOpts;
-        return numberOfInputs != null ? numberOfInputs : 1;
+        return _getCustomOptionNumberOfInputs(customOpts);
     }
 
     if (type && zeroInputTypes.has(type)) {
@@ -134,16 +168,40 @@ export function getNumberOfInputs(type: FilterOptionKey | null | undefined, opti
     return 1;
 }
 
-/** `from` must be below `to`, or equal where the range is inclusive; the message goes on the end being edited. */
-export function getValidityMessageKey<V extends number | bigint>(
+/**
+ * `from` must be below `to`, or equal where the range is inclusive: an inclusive range of one value is an
+ * exact match, so only a strict one has nothing left to match.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isRangeOutOfOrder<V extends number | bigint | Date>(
+    fromValue: V | null,
+    toValue: V | null,
+    inclusive?: boolean
+): boolean {
+    if (fromValue == null || toValue == null) {
+        return false;
+    }
+    return inclusive ? fromValue > toValue : fromValue >= toValue;
+}
+
+/**
+ * The column filter's message for a range whose bounds are out of order: it goes on the end being edited
+ * and names the other end, in the words of whichever kind of value it is.
+ */
+export function getValidityMessageKey<V extends number | bigint | Date>(
     fromValue: V | null,
     toValue: V | null,
     isFrom: boolean,
     inclusive?: boolean
 ): FilterLocaleTextKey | null {
-    // An inclusive range of one value is an exact match, so only a strict one has nothing left to match.
-    if (fromValue == null || toValue == null || fromValue < toValue || (inclusive && fromValue === toValue)) {
+    if (!_isRangeOutOfOrder(fromValue, toValue, inclusive)) {
         return null;
+    }
+    if (fromValue instanceof Date) {
+        if (inclusive) {
+            return isFrom ? 'maxDateInclusiveValidation' : 'minDateInclusiveValidation';
+        }
+        return isFrom ? 'maxDateValidation' : 'minDateValidation';
     }
     if (inclusive) {
         return isFrom ? 'maxValueValidation' : 'minValueValidation';

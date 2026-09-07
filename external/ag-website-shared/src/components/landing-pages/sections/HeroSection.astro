@@ -29,7 +29,7 @@ const { section, pageContent, latestVersion, urlWithBaseUrl, styles } = Astro.pr
 // Resolve URLs with defaults
 const secondaryCtaUrl = section.secondaryCta?.url
     ? urlWithBaseUrl(section.secondaryCta.url)
-    : urlWithBaseUrl('./example');
+    : urlWithBaseUrl('./example/');
 
 // Analytics event names
 const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;

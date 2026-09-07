@@ -247,6 +247,7 @@ export class RowNumbersService
             'headerComponentParams',
             'suppressHeaderKeyboardEvent',
             'suppressNavigable',
+            'tooltip',
             'tooltipField',
             'tooltipValueGetter',
             'tooltipComponent',

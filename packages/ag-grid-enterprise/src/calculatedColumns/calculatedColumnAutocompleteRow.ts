@@ -1,6 +1,7 @@
+import type { HighlightTooltipEventType } from 'ag-stack';
 import { _isHorizontalScrollShowing } from 'ag-stack';
 
-import type { ElementParams, ITooltipCtrl, TooltipFeature } from 'ag-grid-community';
+import type { ElementParams, TooltipFeature } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
 import type { ColumnSuggestion } from './calculatedColumnFormTypes';
@@ -16,7 +17,7 @@ const CalculatedColumnAutocompleteRowElement: ElementParams = {
     children: [{ tag: 'div', cls: 'ag-autocomplete-row-label ag-calculated-column-suggestion-label' }],
 };
 
-export class CalculatedColumnAutocompleteRow extends Component {
+export class CalculatedColumnAutocompleteRow extends Component<HighlightTooltipEventType> {
     private suggestion!: ColumnSuggestion;
     private tooltipValue: string | null = null;
     private tooltipFeature?: TooltipFeature;
@@ -28,15 +29,14 @@ export class CalculatedColumnAutocompleteRow extends Component {
     public postConstruct(): void {
         // Mirrors AgListItem: a tooltip that only shows when the row text is truncated.
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<TooltipFeature>(
-                'highlightTooltipFeature',
-                false,
+            this.beans.tooltipSvc?.createHighlightTooltip(
                 {
                     getGui: () => this.getGui(),
+                    getTooltipComponentDefinition: () => undefined,
                     getTooltipValue: () => this.tooltipValue,
-                    getLocation: () => 'UNKNOWN',
+                    getLocation: () => 'calculatedColumnAutocomplete',
                     shouldDisplayTooltip: () => this.isTruncated(),
-                } as ITooltipCtrl,
+                },
                 this
             )
         );
@@ -50,6 +50,7 @@ export class CalculatedColumnAutocompleteRow extends Component {
 
     public updateSelected(selected: boolean): void {
         this.toggleCss('ag-autocomplete-row-selected', selected);
+        this.dispatchLocalEvent({ type: 'itemHighlighted', highlighted: selected });
     }
 
     public setSearchString(_searchString: string): void {

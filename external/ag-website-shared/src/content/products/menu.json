@@ -20,7 +20,7 @@
             {
                 "title": "Bryntum Gantt",
                 "description": "Speed-tuned Gantt chart for project planning",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-gantt"
+                "url": "https://www.ag-grid.com/campaigns/bryntum-gantt/"
             }
         ]
     },
@@ -30,22 +30,22 @@
             {
                 "title": "Bryntum Scheduler",
                 "description": "Resource scheduling timeline component",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler"
+                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler/"
             },
             {
                 "title": "Bryntum Scheduler Pro",
                 "description": "Scheduler with auto-scheduling and constraints",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro"
+                "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro/"
             },
             {
                 "title": "Bryntum Calendar",
                 "description": "Flexible JavaScript event calendar",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-calendar"
+                "url": "https://www.ag-grid.com/campaigns/bryntum-calendar/"
             },
             {
                 "title": "Bryntum Task Board",
                 "description": "Kanban-style task board component",
-                "url": "https://www.ag-grid.com/campaigns/bryntum-task-board"
+                "url": "https://www.ag-grid.com/campaigns/bryntum-task-board/"
             }
         ]
     }

@@ -4,16 +4,22 @@ import { _clearElement, _exists, _isElementOverflowingCallback, _setAriaSelected
 import type {
     AgPromise,
     BeanCollection,
+    ComponentInstanceClaim,
     ElementParams,
+    ICellRendererComp,
     IRichCellEditorRendererParams,
-    ITooltipCtrl,
-    Registry,
     RichSelectParams,
     TooltipFeature,
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { Component, _addGridCommonParams, _createElement, _getEditorRendererDetails } from 'ag-grid-community';
+import {
+    Component,
+    ComponentInstanceGuard,
+    _addGridCommonParams,
+    _createElement,
+    _getEditorRendererDetails,
+} from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
 import { _bindCellRendererToHtmlElement, resolveRichSelectValueFormatter } from './agRichSelect';
@@ -21,17 +27,17 @@ import { _bindCellRendererToHtmlElement, resolveRichSelectValueFormatter } from 
 const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', role: 'presentation' };
 export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> {
     private userCompFactory: UserComponentFactory;
-    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
-        this.registry = beans.registry;
     }
 
     private value: TValue;
     private parsedValue: string | null;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
+    private cellRenderer?: ICellRendererComp;
+    private readonly rendererGuard = new ComponentInstanceGuard();
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(private readonly params: RichSelectParams<TValue>) {
@@ -41,13 +47,13 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
 
     public postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>(
-                'highlightTooltipFeature',
-                false,
+            this.beans.tooltipSvc?.createHighlightTooltip(
                 {
                     getGui: () => this.getGui(),
+                    getTooltipComponentDefinition: () => undefined,
+                    getLocation: () => 'richSelectListItem',
                     shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-                } as ITooltipCtrl,
+                },
                 this
             )
         );
@@ -55,8 +61,13 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
 
     public setState(value: TValue): void {
         const formattedValue = this.valueFormatter(value);
+        const rendererClaim = this.rendererGuard.claim();
+        this.cellRenderer = this.destroyBean(this.cellRenderer);
+        this.shouldDisplayTooltip = undefined;
+        this.tooltipFeature?.setTooltipAndRefresh(null);
+        _clearElement(this.getGui());
 
-        const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
+        const rendererSuccessful = this.populateWithRenderer(value, formattedValue, rendererClaim);
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, formattedValue);
         }
@@ -146,11 +157,14 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
         span.textContent = _exists(value) ? value : '\u00A0';
     }
 
-    private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
+    private populateWithRenderer(
+        value: TValue,
+        valueFormatted: string,
+        rendererClaim: ComponentInstanceClaim
+    ): boolean {
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
         const { cellRenderer, cellRendererParams } = this.params;
-
         if (cellRenderer) {
             const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
@@ -166,8 +180,10 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
                     },
                     setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                         this.gos.assertModuleRegistered('Tooltip', 3);
-                        this.shouldDisplayTooltip = shouldDisplayTooltip;
-                        this.tooltipFeature?.setTooltipAndRefresh(value);
+                        if (rendererClaim.isCurrent()) {
+                            this.shouldDisplayTooltip = shouldDisplayTooltip;
+                            this.tooltipFeature?.setTooltipAndRefresh(value);
+                        }
                     },
                 })
             );
@@ -178,17 +194,22 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
         }
 
         if (cellRendererPromise) {
-            _bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
-        }
-
-        if (cellRendererPromise) {
-            cellRendererPromise.then((childComponent) => {
-                this.addDestroyFunc(() => {
+            _bindCellRendererToHtmlElement(cellRendererPromise, this.getGui(), (childComponent) => {
+                if (!this.isAlive() || !rendererClaim.isCurrent()) {
                     this.destroyBean(childComponent);
-                });
+                    return false;
+                }
+                this.cellRenderer = childComponent;
+                return true;
             });
             return true;
         }
         return false;
+    }
+
+    public override destroy(): void {
+        this.rendererGuard.invalidate();
+        this.cellRenderer = this.destroyBean(this.cellRenderer);
+        super.destroy();
     }
 }

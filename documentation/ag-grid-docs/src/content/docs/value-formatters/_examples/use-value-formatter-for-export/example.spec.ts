@@ -1,4 +1,5 @@
 import { dragFillHandleOverTo, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { readFile } from 'node:fs/promises';
 
 test.agExample(import.meta, () => {
     // fields 'a' and 'b'. Formatter: '£' + value (no digit grouping). Parser strips a leading '£'.
@@ -43,5 +44,25 @@ test.agExample(import.meta, () => {
         // The source value is exported via the formatter and re-imported via the parser,
         // so the filled cell displays the same formatted value.
         await expect(target).toContainText('£6912');
+    });
+
+    test.eachFramework('PDF export uses the value formatter', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await agIdFor.cell('0', 'a').click({ button: 'right' });
+        await page.locator('.ag-menu-option-text', { hasText: 'Export' }).hover();
+
+        const [download] = await Promise.all([
+            page.waitForEvent('download'),
+            page.locator('.ag-menu-option-text', { hasText: 'PDF Export' }).click(),
+        ]);
+        const downloadPath = await download.path();
+        if (!downloadPath) {
+            throw new Error('Expected PDF export to create a downloadable file.');
+        }
+
+        const pdfContent = await readFile(downloadPath, 'latin1');
+        expect(pdfContent).toContain('(\\2436912) Tj');
     });
 });

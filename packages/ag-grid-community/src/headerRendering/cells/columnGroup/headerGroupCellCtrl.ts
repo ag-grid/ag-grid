@@ -3,6 +3,7 @@ import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
 import { setupCompBean } from '../../../components/emptyBean';
+import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -14,6 +15,7 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
+import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -61,6 +63,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private expandable: boolean;
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
+    /** Tooltip supplied by a custom header component via `setTooltip`. */
+    private componentTooltip: ComponentTooltip = {};
+    private readonly headerCompGuard = new ComponentInstanceGuard();
     private ariaAnnouncement?: string;
 
     public override wireComp(
@@ -127,7 +132,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
-        compBean.addDestroyFunc(() => this.clearComponent());
+        compBean.addDestroyFunc(() => {
+            this.headerCompGuard.invalidate();
+            this.clearComponentTooltip();
+            this.clearComponent();
+        });
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
@@ -234,6 +243,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const { gos, enterpriseMenuFactory } = this.beans;
         const columnGroup = this.column;
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
+        const componentClaim = this.headerCompGuard.provisionalClaim();
         return _addGridCommonParams(gos, {
             displayName: this.displayName!,
             columnGroup,
@@ -242,7 +252,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             },
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.setupTooltip(value, shouldDisplayTooltip);
+                if (componentClaim.isCurrent()) {
+                    this.setComponentTooltip(value, shouldDisplayTooltip);
+                }
             },
             showColumnMenu: (buttonElement, onClosedCallback) =>
                 enterpriseMenuFactory?.showMenuAfterButtonClick(
@@ -265,6 +277,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private setupUserComp(): void {
         const compDetails = _getHeaderGroupCompDetails(this.beans.userCompFactory, this.createUserCompParams());
         if (compDetails) {
+            // Adopting a new component supersedes every earlier claim; a kept component's claims stay live.
+            this.headerCompGuard.supersede();
             this.comp.setUserCompDetails(compDetails);
         }
     }
@@ -310,13 +324,21 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
     }
 
-    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+    private setupTooltip(): void {
         this.tooltipFeature = this.beans.tooltipSvc?.setupHeaderGroupTooltip(
-            this.tooltipFeature,
             this,
-            value,
-            shouldDisplayTooltip
+            this.tooltipFeature,
+            () => this.componentTooltip
         );
+    }
+
+    private setComponentTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+        this.componentTooltip = { value, shouldDisplay: shouldDisplayTooltip };
+        this.tooltipFeature?.refreshTooltip();
+    }
+
+    private clearComponentTooltip(): void {
+        this.componentTooltip = {};
     }
 
     private setupExpandable(compBean: BeanStub): void {
@@ -359,8 +381,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.displayName = this.beans.colNames.getDisplayNameForColumnGroup(this.column, 'header');
         // Prefer an in-place refresh of the existing component; only recreate if it can't refresh.
         if (!this.attemptUserCompRefresh()) {
+            this.clearComponentTooltip();
             this.setupUserComp();
         }
+        this.tooltipFeature?.refreshTooltip();
         this.refreshAnnouncement();
     }
 

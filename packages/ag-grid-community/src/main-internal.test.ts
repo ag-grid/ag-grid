@@ -223,3 +223,131 @@ describe('main.ts and main-internal.ts exports do not overlap', () => {
         expect(overlapping).toEqual([]);
     });
 });
+
+const AG_GRID_INTERNAL = 'AG_GRID_INTERNAL';
+
+function collectSourceFiles(dir: string, out: string[] = []): string[] {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            collectSourceFiles(fullPath, out);
+        } else if (entry.name.endsWith('.ts') && !entry.name.endsWith('.test.ts')) {
+            out.push(fullPath);
+        }
+    }
+    return out;
+}
+
+function getDeclarationName(node: ts.Node): string | null {
+    if (ts.isVariableStatement(node)) {
+        const [declaration] = node.declarationList.declarations;
+        return declaration && ts.isIdentifier(declaration.name) ? declaration.name.text : null;
+    }
+    const name = (node as ts.NamedDeclaration).name;
+    return name && ts.isIdentifier(name) ? name.text : null;
+}
+
+function isExported(node: ts.Node): boolean {
+    const mods = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined;
+    return mods?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false;
+}
+
+/**
+ * Finds every `AG_GRID_INTERNAL` annotation under `srcDir` that does not sit on a declaration
+ * re-exported from `main-internal.ts`. This is the reverse of the forward check above: together
+ * they make the annotation mean exactly "member of the published internal entry point".
+ */
+function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): string[] {
+    const exportedKeys = new Set(
+        internalSymbols.map(({ sourceFilePath, originalName }) => `${sourceFilePath}::${originalName}`)
+    );
+    const exportedNames = new Set(internalSymbols.map(({ originalName }) => originalName));
+    const violations: string[] = [];
+
+    for (const filePath of collectSourceFiles(srcDir)) {
+        const text = fs.readFileSync(filePath, 'utf-8');
+        // Cheap pre-filter: only parse files that actually carry the annotation.
+        if (!text.includes(AG_GRID_INTERNAL)) {
+            continue;
+        }
+
+        const { sourceFile } = getSourceFile(filePath);
+        const relativePath = path.relative(srcDir, filePath);
+        // A declaration and its `export` modifier share a full-start, so the same JSDoc is
+        // reported twice. `forEachChild` visits parents first, so the first visit wins.
+        const seenComments = new Set<number>();
+
+        const report = (node: ts.Node, name: string, reason: string) => {
+            const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
+            violations.push(`${relativePath}:${line} ${name} (${reason})`);
+        };
+
+        const classify = (node: ts.Node) => {
+            // `export { Foo } from './x'` has no name of its own; the forward check accepts an
+            // annotation here, so the reverse check must too when a re-exported name is internal.
+            if (ts.isExportDeclaration(node)) {
+                const elements: readonly ts.ExportSpecifier[] =
+                    node.exportClause && ts.isNamedExports(node.exportClause) ? node.exportClause.elements : [];
+                if (elements.some((element) => exportedNames.has((element.propertyName ?? element.name).text))) {
+                    return;
+                }
+                report(
+                    node,
+                    elements.map((element) => element.name.text).join(', ') || 'export',
+                    'not re-exported from main-internal.ts'
+                );
+                return;
+            }
+
+            const name = getDeclarationName(node);
+            if (name == null) {
+                report(node, ts.SyntaxKind[node.kind], 'annotated node is not a named declaration');
+                return;
+            }
+            if (node.parent !== sourceFile) {
+                report(node, name, 'not a top-level declaration');
+                return;
+            }
+            if (!isExported(node)) {
+                report(node, name, 'not exported');
+                return;
+            }
+            if (!exportedKeys.has(`${filePath}::${name}`)) {
+                report(node, name, 'not exported from main-internal.ts');
+            }
+        };
+
+        const visit = (node: ts.Node) => {
+            const annotated = ts
+                .getLeadingCommentRanges(text, node.getFullStart())
+                ?.find(
+                    (comment) =>
+                        comment.kind === ts.SyntaxKind.MultiLineCommentTrivia &&
+                        text.startsWith('/**', comment.pos) &&
+                        text.slice(comment.pos, comment.end).includes(AG_GRID_INTERNAL)
+                );
+            if (annotated && !seenComments.has(annotated.pos)) {
+                seenComments.add(annotated.pos);
+                classify(node);
+            }
+            ts.forEachChild(node, visit);
+        };
+
+        // Start from the statements: a SourceFile's full-start is 0, so it would claim the file's
+        // first leading comment and the dedupe would then discard the real declaration's visit.
+        for (const statement of sourceFile.statements) {
+            visit(statement);
+        }
+    }
+
+    return violations;
+}
+
+// Run at module scope so the scan cost is load time rather than test time.
+const surplusAnnotations = findSurplusAnnotations(COMMUNITY_SRC, symbols);
+
+describe('AG_GRID_INTERNAL annotations are limited to main-internal.ts exports', () => {
+    test('should have no AG_GRID_INTERNAL annotation outside the internal entry point', () => {
+        expect(surplusAnnotations).toEqual([]);
+    });
+});

@@ -44,6 +44,11 @@ const defaultPdfExportParams = {
 
 The watermark is marked as a PDF artefact, so assistive technologies do not announce it as document content on every page.
 
+## Known Limitations
+
+- Watermarks support text only. Image watermarks are not supported.
+- One watermark configuration can be applied to an export.
+
 ## API
 
 ### Export Options
@@ -53,12 +58,3 @@ The watermark is marked as a PDF artefact, so assistive technologies do not anno
 ### PdfWatermark
 
 {% interfaceDocumentation interfaceName="PdfWatermark" /%}
-
-### PdfWatermarkPageSelection
-
-{% interfaceDocumentation interfaceName="PdfWatermarkPageSelection" config={"asCode":true} /%}
-
-## Known Limitations
-
-- Watermarks support text only. Image watermarks are not supported.
-- One watermark configuration can be applied to an export.

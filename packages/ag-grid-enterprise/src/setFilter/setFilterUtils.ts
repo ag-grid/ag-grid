@@ -1,7 +1,8 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _defaultComparator, _last, _makeNull, _toStringOrNull, _translate } from 'ag-stack';
+import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack';
 
-import type { BeanCollection, ISetFilterParams } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ISetFilterParams, ValueFormatterParams } from 'ag-grid-community';
+import { _isBlank } from 'ag-grid-community';
 
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
@@ -16,7 +17,7 @@ export function processDataPath(
         return null;
     }
 
-    processedDataPath = processedDataPath.map((treeKey) => _toStringOrNull(_makeNull(treeKey)));
+    processedDataPath = processedDataPath.map((treeKey) => _toStringOrNull(setFilterNullIfBlank(treeKey)));
 
     // leave `null`s in the path unless unbalanced groups
     if (!treeData && groupAllowUnbalanced && processedDataPath.some((treeKey) => treeKey == null)) {
@@ -26,6 +27,25 @@ export function processDataPath(
         return processedDataPath.filter((treeKey) => treeKey != null);
     }
     return processedDataPath;
+}
+
+/**
+ * The Set Filter's missing value. Whitespace counts, so a blank cannot split into several keys the list
+ * then renders as separate empty rows.
+ */
+export function setFilterNullIfBlank<T>(value?: T): T | null {
+    // `_isBlank` is not a type predicate, so the null test is what narrows `undefined` away, not redundancy.
+    return value == null || _isBlank(value) ? null : value;
+}
+
+/** The Set Filter formats with its own formatter only, never the column's. */
+export function setFilterFormattedValue(
+    beans: BeanCollection,
+    column: AgColumn,
+    value: unknown,
+    valueFormatter: ((params: ValueFormatterParams) => string) | undefined
+): string | null {
+    return beans.valueSvc.formatValue(column, null, value, valueFormatter, false);
 }
 
 export function translateForSetFilter(

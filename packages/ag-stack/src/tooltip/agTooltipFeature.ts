@@ -80,6 +80,11 @@ export class AgTooltipFeature<
         }
     }
 
+    private readonly getLatestTooltip = (): any => {
+        this.updateTooltipText();
+        return this.tooltip;
+    };
+
     private createTooltipFeatureIfNeeded(): void {
         if (this.tooltipManager == null) {
             const tooltipManager = this.beans.registry.createDynamicBean<
@@ -93,7 +98,7 @@ export class AgTooltipFeature<
                     TTooltipCtrlParams,
                     TLocation
                 >
-            >('tooltipStateManager', true, this.ctrl, () => this.tooltip);
+            >('tooltipStateManager', true, this.ctrl, this.getLatestTooltip);
             if (tooltipManager) {
                 this.tooltipManager = this.createBean(tooltipManager, this.beans.context);
             }
@@ -123,9 +128,8 @@ export class AgTooltipFeature<
             tooltipManager.hideTooltip(true);
         }
 
-        this.updateTooltipText();
-
         if (this.browserTooltips) {
+            this.updateTooltipText();
             this.setBrowserTooltip(this.tooltip);
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         } else {
@@ -135,6 +139,7 @@ export class AgTooltipFeature<
     }
 
     public override destroy() {
+        this.setBrowserTooltip(null);
         this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         super.destroy();
     }

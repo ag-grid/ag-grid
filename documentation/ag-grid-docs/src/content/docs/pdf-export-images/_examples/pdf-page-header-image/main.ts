@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
 
@@ -39,8 +39,9 @@ function getHeaderLogo() {
         : { id: 'company-logo-light', base64: companyLogoLightTheme };
 }
 
-function onBtExport() {
-    gridApi.exportDataAsPdf({
+function getPdfExportParams(): PdfExportParams {
+    return {
+        documentTitle: 'Annual Revenue',
         headerFooterConfig: {
             all: {
                 header: [
@@ -60,9 +61,14 @@ function onBtExport() {
                 ],
             },
         },
-    });
+    };
+}
+
+function onBtExport() {
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
 });

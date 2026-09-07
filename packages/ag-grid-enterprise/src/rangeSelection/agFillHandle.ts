@@ -7,6 +7,7 @@ import type {
     CellRange,
     ElementParams,
     FillOperationParams,
+    FillOperationResult,
     RowNode,
     RowPosition,
 } from 'ag-grid-community';
@@ -38,6 +39,32 @@ interface ValueContext {
     value: any;
     column: AgColumn;
     rowNode: RowNode;
+}
+
+const fillOperationResultType = Symbol('fillOperationResultType');
+type FillOperationDecision =
+    | { readonly [fillOperationResultType]: 'value'; readonly value: any }
+    | { readonly [fillOperationResultType]: 'skip' | 'default' };
+
+const skipCellResult: FillOperationDecision = { [fillOperationResultType]: 'skip' };
+const useDefaultResult: FillOperationDecision = { [fillOperationResultType]: 'default' };
+
+function useFillValue(value: any): FillOperationResult {
+    return { [fillOperationResultType]: 'value', value } as unknown as FillOperationResult;
+}
+
+function skipFillCell(): FillOperationResult {
+    return skipCellResult as unknown as FillOperationResult;
+}
+
+function useDefaultFill(): FillOperationResult {
+    return useDefaultResult as unknown as FillOperationResult;
+}
+
+function getFillOperationDecision(value: any): FillOperationDecision | undefined {
+    return value != null && typeof value === 'object' && fillOperationResultType in value
+        ? (value as FillOperationDecision)
+        : undefined;
 }
 
 type FillDirection = 'x' | 'y';
@@ -362,22 +389,24 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 );
                 withinInitialRange = updateInitialSet();
             } else {
-                const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
-                    event: e,
-                    values: currentValues,
-                    initialValues,
-                    initialNonAggregatedValues,
-                    initialFormattedValues,
-                    col,
-                    rowNode,
-                    idx: idx++,
-                });
+                const { value, fromUserFunction, sourceCol, sourceRowNode, includeUnchangedValue, skipCell } =
+                    this.processValues({
+                        event: e,
+                        values: currentValues,
+                        initialValues,
+                        initialNonAggregatedValues,
+                        initialFormattedValues,
+                        col,
+                        rowNode,
+                        idx: idx++,
+                    });
 
                 valueSourceCol = sourceCol ?? col;
                 valueSourceRowNode = sourceRowNode ?? rowNode;
 
                 currentValue = value;
-                if (col.isCellEditable(rowNode)) {
+                skipValue = skipCell ?? false;
+                if (!skipValue && col.isCellEditable(rowNode)) {
                     const cellValue = valueSvc.getValue(col, rowNode, 'edit');
 
                     if (!fromUserFunction) {
@@ -406,10 +435,11 @@ export class AgFillHandle extends AbstractSelectionHandle {
                             );
                         }
                     }
-                    if (!fromUserFunction || cellValue !== currentValue) {
-                        rowNode.setDataValue(col, currentValue, 'rangeSvc');
+                    const isUnchangedUserValue = fromUserFunction && cellValue === currentValue;
+                    if (isUnchangedUserValue) {
+                        skipValue = !includeUnchangedValue;
                     } else {
-                        skipValue = true;
+                        rowNode.setDataValue(col, currentValue, 'rangeSvc');
                     }
                 }
             }
@@ -463,7 +493,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
         col: AgColumn;
         rowNode: RowNode;
         idx: number;
-    }): { value: any; fromUserFunction: boolean; sourceCol?: AgColumn; sourceRowNode?: RowNode } {
+    }): {
+        value: any;
+        fromUserFunction: boolean;
+        sourceCol?: AgColumn;
+        sourceRowNode?: RowNode;
+        includeUnchangedValue?: boolean;
+        skipCell?: boolean;
+    } {
         const { formula, valueSvc } = this.beans;
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
@@ -479,20 +516,35 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params = _addGridCommonParams<FillOperationParams>(this.gos, {
+            const currentCellValue = valueSvc.getValue(col, rowNode, 'edit');
+            const callbackParams = _addGridCommonParams<FillOperationParams>(this.gos, {
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,
                 initialNonAggregatedValues,
                 initialFormattedValues,
                 currentIndex: idx,
-                currentCellValue: valueSvc.getValue(col, rowNode, 'edit'),
+                currentCellValue,
                 direction,
                 column: col,
                 rowNode: rowNode,
+                useValue: useFillValue,
+                skipCell: skipFillCell,
+                useDefault: useDefaultFill,
             });
-            const userResult = userFillOperation(params);
-            if (userResult !== false) {
+            const userResult = userFillOperation(callbackParams);
+            const decision = getFillOperationDecision(userResult);
+
+            if (decision) {
+                const decisionType = decision[fillOperationResultType];
+                if (decisionType === 'value') {
+                    return { value: decision.value, fromUserFunction: true, includeUnchangedValue: true };
+                }
+
+                if (decisionType === 'skip') {
+                    return { value: currentCellValue, fromUserFunction: true, skipCell: true };
+                }
+            } else if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };
             }
         }

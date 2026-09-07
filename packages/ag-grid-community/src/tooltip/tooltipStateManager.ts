@@ -3,12 +3,14 @@ import { BaseTooltipStateManager } from 'ag-stack';
 
 import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { BeanCollection } from '../context/context';
+import { isColumn } from '../entities/agColumn';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { AgGridCommon } from '../interfaces/iCommon';
+import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
 import type { ITooltipParams, TooltipLocation } from './tooltipComponent';
-import type { ITooltipCtrlParams } from './tooltipFeature';
+import type { TooltipSource, TooltipSourceParams } from './tooltipFeature';
 
 export class TooltipStateManager extends BaseTooltipStateManager<
     BeanCollection,
@@ -17,16 +19,41 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     AgGridCommon<any, any>,
     GridOptionsService,
     ITooltipParams,
-    ITooltipCtrlParams,
+    TooltipSourceParams,
     TooltipLocation
 > {
     private onColumnMovedEventCallback: (() => null) | undefined;
+
+    public override postConstruct(): void {
+        super.postConstruct();
+
+        const unregister = this.beans.tooltipTouchSvc?.registerSource(
+            this.tooltipCtrl.getGui(),
+            () => this.canShowTooltip(),
+            (touchStart) => this.prepareToShowTooltip(touchStart, 0)
+        );
+        if (unregister) {
+            this.addDestroyFunc(unregister);
+        }
+    }
+
+    public override onMouseEnter(event: MouseEvent): void {
+        if (this.beans.tooltipTouchSvc?.isCompatibilityMouseEvent(this.tooltipCtrl.getGui())) {
+            return;
+        }
+        super.onMouseEnter(event);
+    }
 
     protected override createTooltipComp(
         params: ITooltipParams<any, any, any>,
         callback: (comp: IComponent<ITooltipParams<any, any, any>>) => void
     ): void {
-        const userDetails = _getTooltipCompDetails(this.beans.userCompFactory, params);
+        const source = this.tooltipCtrl as TooltipSource;
+        const userDetails = _getTooltipCompDetails(
+            this.beans.userCompFactory,
+            params,
+            source.getTooltipComponentDefinition?.()
+        );
         userDetails?.newAgStackInstance().then(callback);
     }
 
@@ -39,5 +66,15 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     protected override clearEventHandlers(): void {
         this.onColumnMovedEventCallback?.();
         this.onColumnMovedEventCallback = undefined;
+    }
+
+    protected override getPopupPositionParams(): PopupPositionParams {
+        const params = this.tooltipCtrl.getAdditionalParams?.();
+        const column = params?.column;
+        return {
+            column: column && isColumn(column) ? column : undefined,
+            rowNode: params?.node,
+            tooltipLocation: this.tooltipCtrl.getLocation?.() ?? 'UNKNOWN',
+        };
     }
 }

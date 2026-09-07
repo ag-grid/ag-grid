@@ -20,7 +20,6 @@ export function getFocusHeaderRowCount(beans: BeanCollection): number {
     return beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function getAriaHeaderRowCount(beans: BeanCollection): number {
     const { ctrlsSvc, colModel, filterManager } = beans;
     const renderedHeaderRowCount = ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount();

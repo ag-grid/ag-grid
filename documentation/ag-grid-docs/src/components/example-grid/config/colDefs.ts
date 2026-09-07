@@ -233,7 +233,7 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                     filterList: true,
                     highlightMatch: true,
                 },
-                tooltipField: 'game.name',
+                tooltip: true,
                 cellClass: () => 'alphabet',
                 filterParams: {
                     filters: [

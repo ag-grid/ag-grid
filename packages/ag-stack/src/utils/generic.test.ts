@@ -1,4 +1,30 @@
-import { _defaultComparator, _makeNull } from './generic';
+import { _defaultComparator, _getOwn, _hasOwn, _makeNull } from './generic';
+
+describe('own-property lookup', () => {
+    it('resolves a table entry and not an inherited one', () => {
+        const table = { contains: 'a value' };
+
+        expect(_hasOwn(table, 'contains')).toBe(true);
+        expect(_getOwn(table, 'contains')).toBe('a value');
+        expect(_hasOwn(table, 'toString')).toBe(false);
+        expect(_getOwn(table, 'toString')).toBeUndefined();
+    });
+
+    it('refuses `__proto__`, even where a parsed payload planted it as an own property', () => {
+        const planted = JSON.parse('{"__proto__": "attacker value", "contains": "a value"}');
+        // The premise the refusal rests on: it really is an own data property here.
+        expect(Object.prototype.hasOwnProperty.call(planted, '__proto__')).toBe(true);
+
+        expect(_hasOwn(planted, '__proto__')).toBe(false);
+        expect(_getOwn(planted, '__proto__')).toBeUndefined();
+        expect(_getOwn(planted, 'contains')).toBe('a value');
+    });
+
+    it('reads nothing from an absent table', () => {
+        expect(_getOwn(null, 'contains')).toBeUndefined();
+        expect(_getOwn(undefined, 'contains')).toBeUndefined();
+    });
+});
 
 describe('_makeNull', () => {
     it.each([4, 'string', new Date()])('returns value if not null: %s', (value) => {

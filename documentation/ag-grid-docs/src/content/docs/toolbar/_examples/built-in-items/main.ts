@@ -10,7 +10,7 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ContextMenuModule, ExcelExportModule, FindModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, ExcelExportModule, FindModule, PdfExportModule, ToolbarModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -25,6 +25,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     CsvExportModule,
     ExcelExportModule,
+    PdfExportModule,
     FindModule,
     QuickFilterModule,
     ToolbarModule,
@@ -61,9 +62,9 @@ const gridOptions: GridOptions<IOlympicData> = {
                 icon: 'save',
                 alignment: 'right',
                 label: 'Export',
-                tooltip: 'Export as CSV or Excel',
+                tooltip: 'Export as CSV, Excel or PDF',
                 toolbarItemParams: {
-                    menuItems: ['csvExport', 'excelExport'],
+                    menuItems: ['csvExport', 'excelExport', 'pdfExport'],
                 },
             },
         ],

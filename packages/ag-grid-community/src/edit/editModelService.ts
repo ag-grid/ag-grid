@@ -431,7 +431,8 @@ export class EditCellValidationModel {
         if (!this.cellValidations.has(rowNode)) {
             this.cellValidations.set(rowNode, new Map());
         }
-        this.cellValidations.get(rowNode)!.set(column, validation);
+        // validators may reuse and mutate their array; retain the historical result used for change detection.
+        this.cellValidations.get(rowNode)!.set(column, { errorMessages: [...validation.errorMessages] });
     }
 
     public clearCellValidation(position: Required<EditPosition>): void {
@@ -475,7 +476,8 @@ export class EditRowValidationModel {
     }
 
     public setRowValidation({ rowNode }: Required<EditRowPosition>, rowValidation: EditValidation): void {
-        this.rowValidations.set(rowNode, rowValidation);
+        // Validators may reuse and mutate their array; retain the historical result used for change detection.
+        this.rowValidations.set(rowNode, { errorMessages: [...rowValidation.errorMessages] });
     }
 
     public clearRowValidation({ rowNode }: Required<EditRowPosition>): void {

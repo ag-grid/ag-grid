@@ -9,7 +9,6 @@ import { AllEnterpriseModules, AllGridCommunityModules, baseModule, moduleCombin
 
 interface ModuleSizeResult {
     modules: string[];
-    expectedSize: number;
     selfSize: number;
     gzipSelfSize: number;
     fileSize: number;
@@ -42,8 +41,8 @@ function reverseWords(str: string): string {
 // Rewrite src/App_AUTO.tsx so it registers/imports exactly the given modules.
 // Mirrors the previous moduleUpdater.ts transform, kept in-process to avoid a spawn per combination.
 function updateAppSource(source: string, modules: string[]): string {
-    const communityModules = modules.filter((module) => AllGridCommunityModules[module] >= 0);
-    const enterpriseModules = modules.filter((module) => AllEnterpriseModules[module] >= 0);
+    const communityModules = modules.filter((module) => Object.hasOwn(AllGridCommunityModules, module));
+    const enterpriseModules = modules.filter((module) => Object.hasOwn(AllEnterpriseModules, module));
 
     const replacement = communityModules.join(', ');
     const regex = new RegExp(`${placeholderStartRgx}[\\s\\S]*?${placeholderEndRgx}`, 'g');
@@ -152,7 +151,7 @@ async function run() {
     let baseGzipSize = 0;
 
     for (let i = 0, len = combinations.length; i < len; ++i) {
-        const { modules, expectedSize } = combinations[i];
+        const { modules } = combinations[i];
         const { fileSize, gzipSize } = await measureCombination(appSource, modules);
 
         let selfSize: number;
@@ -170,7 +169,7 @@ async function run() {
         console.log(`Modules: ${modules.join(', ')}`);
         console.log(`File size: ${fileSize} kB | gzip size: ${gzipSize} kB`);
 
-        results.push({ modules, selfSize, gzipSelfSize, fileSize, gzipSize, expectedSize });
+        results.push({ modules, selfSize, gzipSelfSize, fileSize, gzipSize });
     }
 
     fs.writeFileSync('module-size-results.json', JSON.stringify(results, null, 2));

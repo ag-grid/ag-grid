@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [ "$#" -lt 2 ]
+if [ "$#" -lt 3 ]
   then
-    echo "You must supply a release version & host"
-    echo "For example: ./scripts/deployments/prep_and_archive/uploadAndUnzipArchive.sh 19.1.2"
+    echo "You must supply a grid version, a charts version & a host"
+    echo "For example: ./scripts/deployments/prep_and_archive/uploadAndUnzipArchive.sh 36.1.0 14.1.0 user@host"
+    echo ""
+    echo "Both archives are exempted from caching while they are under test. Nothing undoes"
+    echo "that explicitly: a production docs deploy emits an empty in-flight block, so going"
+    echo "live restores normal caching on its own."
     exit 1
 fi
 
@@ -17,7 +21,9 @@ function checkFileExists {
 }
 
 VERSION=$1
-CURRENT_HOST=$2
+# The charts version cut alongside this grid version.
+CHARTS_VERSION=$2
+CURRENT_HOST=$3
 
 export SSH_LOCATION=$SSH_FILE
 
@@ -25,6 +31,12 @@ export SSH_LOCATION=$SSH_FILE
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
     echo "Version isn't in the expected format. Valid format is: Number.Number.number. For example 19.1.2";
+    exit 1;
+fi
+
+if ! [[ "$CHARTS_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+then
+    echo "Charts version isn't in the expected format. Valid format is: Number.Number.Number. For example 14.1.0";
     exit 1;
 fi
 
@@ -55,5 +67,7 @@ ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/$VERS
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"chmod -R 755 $GRID_ROOT_DIR/archive/$VERSION\""
 ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "chmod -R 755 $GRID_ROOT_DIR/archive/$VERSION"
 
-
-
+# Exempt this release candidate from caching until it goes live.
+PATCHER="$(dirname "$0")/patchUncachedArchives.sh"
+checkFileExists "$PATCHER"
+"$PATCHER" "$VERSION" "$CHARTS_VERSION" "$CURRENT_HOST" set || exit 1

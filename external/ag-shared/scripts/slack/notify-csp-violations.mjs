@@ -5,27 +5,34 @@
  * need fixing, so this notifies the owning team instead of failing the run.
  *
  * Posts only when the violation set has changed against the previous run's report, so a policy
- * that stays broken for a week does not repeat itself on every deploy. Exits non-zero only when
- * Slack itself rejects the message.
+ * that stays broken for a week does not repeat itself on every deploy. The channel sees a single
+ * headline (count, how many are new, links); the individual violations go into a thread under
+ * it, so a bad deploy does not fill the channel. Exits non-zero only when Slack itself rejects a
+ * message.
  *
  * A baseline is only usable if it describes the same site, and only a complete run can say a
  * violation is gone: a run that died mid-suite reports fewer violations than the site has, which
  * would otherwise read as a policy being fixed. Set RUN_COMPLETE=false for such a run and it will
  * still report anything new, without claiming anything was resolved.
  *
+ * A violation the suite marked `accepted` — one the policy knowingly produces and will not be
+ * changed to fix, with the reason carried on the record — is neither counted nor diffed. It is
+ * listed in the step summary so the decision stays visible, and never posted to Slack.
+ *
  * Expects a report as written by the suite's CSP reporter:
  *   { baseUrl?: string, violations: [{ key, directive, blockedUri, disposition, suggestedHashes,
- *     sourceFiles, pages, tests }] }
+ *     sourceFiles, pages, tests, accepted? }] }
  *
  * Env: CSP_REPORT_FILE (required), PREVIOUS_CSP_REPORT_FILE, RUN_COMPLETE, SLACK_CHANNEL,
- * SLACK_BOT_OAUTH_TOKEN, PROJECT_TITLE, SITE_URL, RUN_URL, COMMIT_SHA, DRY_RUN,
+ * SLACK_BOT_OAUTH_TOKEN, PROJECT_TITLE, SITE_URL, RUN_URL, REPO_URL, COMMIT_SHA, DRY_RUN,
  * GITHUB_STEP_SUMMARY.
  */
 import fs from 'node:fs';
 
 import { sendSlackMessage } from './send-slack-message.mjs';
 
-const MAX_VIOLATION_BLOCKS = 10;
+// Slack allows 50 blocks per message; the thread details are chunked into replies of this size.
+const MAX_BLOCKS_PER_REPLY = 40;
 const MAX_RESOLVED_LISTED = 10;
 // Slack rejects the whole message when any block's text exceeds its limit, which would turn the
 // reporting job red over a long blocked URI. Well under the 3000-character limit.
@@ -38,6 +45,8 @@ const authToken = process.env.SLACK_BOT_OAUTH_TOKEN;
 const projectTitle = process.env.PROJECT_TITLE || 'AG';
 const runUrl = process.env.RUN_URL || '';
 const commitSha = process.env.COMMIT_SHA || '';
+// e.g. https://github.com/ag-grid/ag-grid; when set, the commit in the footer links to it.
+const repoUrl = (process.env.REPO_URL || '').replace(/\/+$/, '');
 const isDryRun = process.env.DRY_RUN === 'true';
 const isRunComplete = process.env.RUN_COMPLETE !== 'false';
 const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
@@ -54,7 +63,12 @@ const readReport = (file) => {
     }
 };
 
-const enforcedOf = (report) => (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce');
+const isAccepted = (violation) => typeof violation.accepted === 'string';
+// Enforced and not accepted: what the owning team is being asked to act on.
+const enforcedOf = (report) =>
+    (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce' && !isAccepted(violation));
+const acceptedOf = (report) =>
+    (report?.violations ?? []).filter((violation) => violation.disposition === 'enforce' && isAccepted(violation));
 
 const truncate = (text, limit = MAX_BLOCK_TEXT) => (text.length > limit ? `${text.slice(0, limit - 3)}...` : text);
 
@@ -88,7 +102,8 @@ if (!report) {
 
 const siteUrl = process.env.SITE_URL || report.baseUrl || '';
 const enforced = enforcedOf(report);
-const reportOnlyCount = (report.violations ?? []).length - enforced.length;
+const accepted = acceptedOf(report);
+const reportOnlyCount = (report.violations ?? []).length - enforced.length - accepted.length;
 
 const candidateBaseline = readReport(previousReportFile);
 // A manual run can target any URL, and its report is uploaded like any other, so the most recent
@@ -108,8 +123,11 @@ const resolved = isRunComplete ? enforcedOf(previousReport).filter((violation) =
 for (const violation of enforced) {
     console.log(`::warning title=CSP violation::${describe(violation)}`);
 }
+for (const violation of accepted) {
+    console.log(`::notice title=Accepted CSP violation::${describe(violation)} - ${violation.accepted}`);
+}
 console.log(
-    `${enforced.length} enforced violation(s), ${reportOnlyCount} report-only, ` +
+    `${enforced.length} enforced violation(s), ${accepted.length} accepted, ${reportOnlyCount} report-only, ` +
         `${added.length} new, ${resolved.length} resolved` +
         (previousReport ? '' : ' (no usable baseline to compare against)') +
         (isRunComplete ? '' : ' (incomplete run: not reporting anything as resolved)')
@@ -121,9 +139,19 @@ if (stepSummaryFile) {
               `### CSP violations on ${projectTitle} (${siteUrl})`,
               '',
               ...enforced.map((violation) => `- ${added.includes(violation) ? '**new** ' : ''}${describe(violation)}`),
-              ...(reportOnlyCount ? ['', `${reportOnlyCount} report-only violation(s) not listed.`] : []),
           ]
         : [`### No enforced CSP violations on ${projectTitle} (${siteUrl})`];
+    if (accepted.length) {
+        summary.push(
+            '',
+            `#### Accepted (${accepted.length})`,
+            '',
+            ...accepted.map((violation) => `- ${describe(violation)}<br>${violation.accepted}`)
+        );
+    }
+    if (reportOnlyCount) {
+        summary.push('', `${reportOnlyCount} report-only violation(s) not listed.`);
+    }
     fs.appendFileSync(stepSummaryFile, `${summary.join('\n')}\n`, 'utf8');
 }
 
@@ -145,19 +173,40 @@ const headline = enforced.length
       (added.length ? ` - ${added.length} new` : '')
     : `:white_check_mark: *${projectTitle}: CSP violations cleared*`;
 
-const blocks = [section(headline)];
-for (const violation of enforced.slice(0, MAX_VIOLATION_BLOCKS)) {
-    blocks.push(section(truncate(`${added.includes(violation) ? ':new: ' : ''}${describe(violation)}`)));
-}
-if (enforced.length > MAX_VIOLATION_BLOCKS) {
-    blocks.push(context(`${enforced.length - MAX_VIOLATION_BLOCKS} further violation(s) in the run report.`));
-}
+const commitLabel = `Commit ${commitSha.slice(0, 8)}`;
+const commitLink = repoUrl ? `<${repoUrl}/commit/${commitSha}|${commitLabel}>` : commitLabel;
+const footer = context(
+    [siteUrl && `Site: ${siteUrl}`, runUrl && `<${runUrl}|CI run>`, commitSha && commitLink]
+        .filter(Boolean)
+        .join('  |  ')
+);
+
+const baseMessage = {
+    channel,
+    username: 'ag-grid CI',
+    icon_url: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png',
+    // The footer links to the site and the CI run; a preview card for either only adds noise.
+    unfurl_links: false,
+    unfurl_media: false,
+};
+
+// The channel post: headline and links only. Everything per-violation goes in the thread.
+const message = {
+    ...baseMessage,
+    // Notification fallback: strip Slack's markdown but leave :emoji: shortcodes intact.
+    text: headline.replace(/[*`]/g, ''),
+    blocks: [section(headline), footer],
+};
+
+const detailBlocks = enforced.map((violation) =>
+    section(truncate(`${added.includes(violation) ? ':new: ' : ''}${describe(violation)}`))
+);
 if (resolved.length) {
     const cleared = resolved
         .slice(0, MAX_RESOLVED_LISTED)
         .map((violation) => `\`${violation.directive}\` / \`${violation.blockedUri}\``);
     const remainder = resolved.length - cleared.length;
-    blocks.push(
+    detailBlocks.push(
         context(
             truncate(
                 `No longer blocked since the previous run: ${cleared.join(', ')}` +
@@ -166,26 +215,32 @@ if (resolved.length) {
         )
     );
 }
-blocks.push(
-    context(
-        [siteUrl && `Site: ${siteUrl}`, runUrl && `<${runUrl}|CI run>`, commitSha && `Commit ${commitSha.slice(0, 8)}`]
-            .filter(Boolean)
-            .join('  |  ')
-    )
-);
+if (accepted.length) {
+    detailBlocks.push(context(`${accepted.length} accepted violation(s) not listed; see the run summary.`));
+}
 
-const message = {
-    channel,
-    username: 'ag-grid CI',
-    icon_url: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png',
-    // Notification fallback: strip Slack's markdown but leave :emoji: shortcodes intact.
-    text: headline.replace(/[*`]/g, ''),
-    blocks,
+const chunk = (items, size) => {
+    const chunks = [];
+    for (let i = 0; i < items.length; i += size) {
+        chunks.push(items.slice(i, i + size));
+    }
+    return chunks;
 };
+
+// Thread replies under the channel post, in the order the violations are listed.
+const replies = chunk(detailBlocks, MAX_BLOCKS_PER_REPLY).map((blocks, index, all) => ({
+    ...baseMessage,
+    text: all.length > 1 ? `CSP violation details (${index + 1}/${all.length})` : 'CSP violation details',
+    blocks,
+}));
 
 if (isDryRun) {
     console.log(`DRY_RUN: would post to ${channel || '(no channel set)'}:`);
     console.log(JSON.stringify(message, null, 2));
+    for (const reply of replies) {
+        console.log('DRY_RUN: would reply in thread:');
+        console.log(JSON.stringify(reply, null, 2));
+    }
     process.exit(0);
 }
 
@@ -194,9 +249,17 @@ if (!authToken || !channel) {
     process.exit(1);
 }
 
-const results = await sendSlackMessage({ authToken, data: message });
-if (results.error || !results.ok) {
-    console.error('Error sending Slack message:', results.error ?? results);
-    process.exit(1);
+const post = async (data) => {
+    const results = await sendSlackMessage({ authToken, data });
+    if (results.error || !results.ok) {
+        console.error('Error sending Slack message:', results.error ?? results);
+        process.exit(1);
+    }
+    return results;
+};
+
+const { ts: threadTs } = await post(message);
+for (const reply of replies) {
+    await post({ ...reply, thread_ts: threadTs });
 }
-console.log(`Posted CSP report to ${channel}.`);
+console.log(`Posted CSP report to ${channel}${replies.length ? ` with ${replies.length} thread reply(ies)` : ''}.`);

@@ -8,7 +8,7 @@ test.agExample(import.meta, () => {
         // Exclude the previous, fading-out tooltip when moving between hover targets.
         const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
 
-        // Age column uses a fixed-message tooltipValueGetter.
+        // Age column uses a fixed tooltip string.
         await agIdFor.cell('0', 'age').hover();
         await expect(tooltip).toBeVisible();
         await expect(tooltip).toContainText('This is the Athlete');

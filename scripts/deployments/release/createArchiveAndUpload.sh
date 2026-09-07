@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 
-if [ "$#" -lt 1 ]
+if [ "$#" -lt 3 ]
   then
-    echo "You must supply a release version number"
-    echo "For example: ./scripts/release/createArchiveAndUpload.sh.sh 19.1.2"
+    echo "You must supply a grid version, a charts version & a host"
+    echo "For example: ./scripts/deployments/release/createArchiveAndUpload.sh 36.1.0 14.1.0 user@host"
     exit 1
 fi
 
 VERSION=$1
+CHARTS_VERSION=$2
+CURRENT_HOST=$3
 
-# store the command output so that we can capture the archive filename
 ./scripts/deployments/prep_and_archive/createDocsArchiveBundle.sh $VERSION
-ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
-# $2 is optional skipWarning argument
-./scripts/deployments/prep_and_archive/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2
+./scripts/deployments/prep_and_archive/uploadAndUnzipArchive.sh $VERSION $CHARTS_VERSION $CURRENT_HOST

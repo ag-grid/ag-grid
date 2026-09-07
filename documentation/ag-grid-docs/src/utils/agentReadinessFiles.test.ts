@@ -54,6 +54,53 @@ describe('buildLlmsTxt', () => {
         expect(urls.length).toBeGreaterThan(0);
         expect(urls.every((u) => u.startsWith('(https://www.ag-grid.com/'))).toBe(true);
     });
+
+    describe('page index', () => {
+        const DOCS_INDEX = [
+            {
+                title: 'Core Features > Editing',
+                links: [
+                    { title: 'Cell Editing', url: 'https://www.ag-grid.com/javascript-data-grid/cell-editing/' },
+                    { title: 'Cell Editors', url: 'https://www.ag-grid.com/javascript-data-grid/cell-editors/' },
+                ],
+            },
+        ];
+        const SITE_INDEX = [{ title: 'General', links: [{ title: 'About', url: 'https://www.ag-grid.com/about/' }] }];
+        const indexed = buildLlmsTxt({ ...INPUT, docsIndex: DOCS_INDEX, siteIndex: SITE_INDEX });
+
+        test('publishes the docs under their navigation groups, in the order given', () => {
+            expect(indexed).toContain('## Documentation');
+            expect(indexed).toContain(
+                [
+                    '### Core Features > Editing',
+                    '- [Cell Editing](https://www.ag-grid.com/javascript-data-grid/cell-editing/)',
+                    '- [Cell Editors](https://www.ag-grid.com/javascript-data-grid/cell-editors/)',
+                ].join('\n')
+            );
+        });
+
+        test('states the framework substitution instead of repeating the docs four times', () => {
+            expect(indexed).toContain('replace `javascript-data-grid` with `<framework>-data-grid`');
+            expect(indexed).not.toContain('react-data-grid/cell-editing');
+        });
+
+        test('publishes the rest of the site under its sitemap groups', () => {
+            expect(indexed).toContain('## Site pages');
+            expect(indexed).toContain('### General\n- [About](https://www.ag-grid.com/about/)');
+        });
+
+        test('keeps the curated sections above the index', () => {
+            expect(indexed.indexOf('## Products')).toBeLessThan(indexed.indexOf('## Documentation'));
+            expect(indexed.indexOf('## Optional')).toBeLessThan(indexed.indexOf('## Documentation'));
+            expect(indexed.indexOf('## Documentation')).toBeLessThan(indexed.indexOf('## Site pages'));
+        });
+
+        test('emits no index headings when there is nothing to index', () => {
+            expect(txt).not.toContain('## Documentation');
+            expect(txt).not.toContain('## Site pages');
+            expect(buildLlmsTxt({ ...INPUT, docsIndex: [], siteIndex: [] })).toBe(txt);
+        });
+    });
 });
 
 describe('buildAgentsMd', () => {

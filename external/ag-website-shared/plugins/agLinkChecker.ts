@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import path from 'path';
 
+import { describeInternalLinkShapeIssue, getInternalLinkShapeIssues } from '../src/utils/internalLinkShape';
+
 const { TestSuites, TestSuite, TestCase } = junitProcessor;
 
 type Options = {
@@ -86,7 +88,25 @@ function outputJunitReport(validationResults: any) {
 const checkLinks = async (dir: string, files: string[], options: Options) => {
     const anchors = new Set<string>();
     const linksToValidate: Record<string, { filePaths: Set<string> }> = {};
+    // Links whose shape alone would cost a redirect (no trailing slash, non-canonical host, ...),
+    // keyed by the offending href. Recorded for every internal link, including the absolute
+    // `https://www.ag-grid.com/...` ones and the query/fragment links the existence checks below
+    // leave alone, because the redirect happens before the target is consulted.
+    const shapeIssues: Record<string, { message: string; filePaths: Set<string> }> = {};
     const { prefix, frameworkRedirect } = options;
+
+    const fileSet = new Set(files);
+    // A page served as `foo.html` rather than `foo/index.html` has no trailing-slash form.
+    const isHtmlFile = (pathname: string) => {
+        let relative = pathname;
+        if (prefix != null && relative.startsWith(prefix)) {
+            relative = relative.slice(prefix.length);
+        }
+        if (relative.startsWith('/')) {
+            relative = relative.slice(1);
+        }
+        return fileSet.has(`${relative}.html`);
+    };
 
     for (let i = 0; i < files.length; i++) {
         const filePath = files[i];
@@ -97,7 +117,21 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
 
         const thisFileUrl = filePathToUrl(filePath);
 
+        const recordShapeIssues = (href: string) => {
+            for (const issue of getInternalLinkShapeIssues(href, { isHtmlFile })) {
+                const key = `${issue.type} ${href}`;
+                const entry = shapeIssues[key] ?? {
+                    message: describeInternalLinkShapeIssue(issue),
+                    filePaths: new Set<string>(),
+                };
+                entry.filePaths.add(filePath);
+                shapeIssues[key] = entry;
+            }
+        };
+
         const recordUsage = (href: string) => {
+            recordShapeIssues(href);
+
             // Query links and anchors injected client-side (API/example
             // references, the about-page contact form) have no static target
             // to resolve against.
@@ -259,6 +293,14 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                 );
             }
         }
+    });
+
+    // A link that resolves but redirects first is still a defect: every visitor and crawler
+    // takes the extra hop, and the redirecting form is a second address for the same page.
+    Object.entries(shapeIssues).forEach(([key, { message, filePaths }]) => {
+        const error = `${message} (${filePathsString(filePaths, options)})`;
+        errors.push(error);
+        validationResults[key] = { error };
     });
 
     outputJunitReport(validationResults);

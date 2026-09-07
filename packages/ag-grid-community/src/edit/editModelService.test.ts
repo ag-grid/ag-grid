@@ -202,6 +202,16 @@ describe('EditModelService', () => {
     });
 
     describe('cell validation map', () => {
+        it('snapshots error messages supplied by validators', () => {
+            const errorMessages = ['first'];
+            const validationModel = editModelService.getCellValidationModel();
+            validationModel.setCellValidation(position1, { errorMessages });
+
+            errorMessages[0] = 'second';
+
+            expect(validationModel.getCellValidation(position1)?.errorMessages).toEqual(['first']);
+        });
+
         it('drops an emptied row so size and hasCellValidation stay accurate', () => {
             const positionSameRow: Required<EditPosition> = { rowNode: rowNode1, column: column2 };
             const validationModel = editModelService.getCellValidationModel();
@@ -219,6 +229,18 @@ describe('EditModelService', () => {
             expect(validationModel.hasCellValidation()).toBe(false);
             expect(validationModel.hasCellValidation({ rowNode: rowNode1 })).toBe(false);
             expect(validationModel.getCellValidationMap().size).toBe(0);
+        });
+    });
+
+    describe('row validation map', () => {
+        it('snapshots error messages supplied by validators', () => {
+            const errorMessages = ['first'];
+            const validationModel = editModelService.getRowValidationModel();
+            validationModel.setRowValidation({ rowNode: rowNode1 }, { errorMessages });
+
+            errorMessages[0] = 'second';
+
+            expect(validationModel.getRowValidation({ rowNode: rowNode1 })?.errorMessages).toEqual(['first']);
         });
     });
 

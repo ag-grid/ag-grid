@@ -1,12 +1,13 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { RenderApiModule, TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { GridOptions, Module } from 'ag-grid-community';
+import type { GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
 
-// Kept in its own file: the interactive tooltip lock (`isLocked`) is module-global shared state,
-// so a run that leaves it stuck would poison sibling tests. Per-file isolation contains that.
+// Kept in its own file because the interactive tooltip lock and timing transitions are shared by
+// tooltip instances within a grid.
 describe('Tooltip interaction', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
@@ -23,7 +24,7 @@ describe('Tooltip interaction', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'athlete' }, // empty cell, so leaving it has no tooltip to interact with
-                { field: 'age', tooltipValueGetter: () => 'Age tooltip' },
+                { field: 'age', tooltip: () => 'Age tooltip' },
             ],
             rowData: [{ athlete: '', age: 19 }],
             tooltipInteraction: true,
@@ -59,7 +60,7 @@ describe('Tooltip interaction', () => {
 
     test('AG-17885 moving cursor cell -> tooltip -> cell keeps the interactive tooltip open', async () => {
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'age', tooltipValueGetter: () => 'Age tooltip' }],
+            columnDefs: [{ field: 'age', tooltip: () => 'Age tooltip' }],
             rowData: [{ age: 19 }],
             tooltipInteraction: true,
             tooltipShowDelay: 200,
@@ -100,7 +101,7 @@ describe('Tooltip interaction', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'athlete' }, // empty cell, so leaving it has no tooltip to interact with
-                { field: 'age', tooltipValueGetter: () => 'Age tooltip' },
+                { field: 'age', tooltip: () => 'Age tooltip' },
             ],
             rowData: [{ athlete: '', age: 19 }],
             tooltipInteraction: true,
@@ -126,5 +127,57 @@ describe('Tooltip interaction', () => {
         // without the spurious lock the tooltip shows after ~SHOW_DELAY; a lock would add
         // INTERACTIVE_HIDE_DELAY on top. Assert we land below the midpoint of those two timings.
         expect(elapsed).toBeLessThan(SHOW_DELAY + INTERACTIVE_HIDE_DELAY / 2);
+    });
+
+    test('connects an interactive tooltip to its source and supports keyboard entry and dismissal', async () => {
+        class InteractiveTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            public init(params: ITooltipParams): void {
+                const input = document.createElement('input');
+                const button = document.createElement('button');
+                button.textContent = String(params.value);
+                this.eGui.append(input, button);
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
+        const api = await gridMgr.createGridAndWait('tooltip-interaction-keyboard', {
+            columnDefs: [{ field: 'age', tooltip: true, tooltipComponent: InteractiveTooltip }],
+            rowData: [{ age: 19 }],
+            tooltipInteraction: true,
+            tooltipTrigger: 'focus',
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
+
+        ageCell.focus();
+        const tooltip = await waitFor(() => {
+            const current = visibleTooltip();
+            expect(current).toBeDefined();
+            return current!;
+        });
+        const input = tooltip.querySelector('input')!;
+        const button = tooltip.querySelector('button')!;
+        const tooltipId = tooltip.id;
+
+        expect(tooltip).toHaveAttribute('role', 'dialog');
+        expect(tooltipId).not.toBe('');
+        expect(ageCell.getAttribute('aria-describedby')?.split(/\s+/)).toContain(tooltipId);
+
+        await userEvent.keyboard('{Tab}');
+        expect(input).toHaveFocus();
+
+        await userEvent.keyboard('{Tab}');
+        expect(button).toHaveFocus();
+        expect(visibleTooltip()).toBe(tooltip);
+
+        await userEvent.keyboard('{Escape}');
+        await waitFor(() => expect(visibleTooltip()).toBeUndefined());
+        expect(ageCell.getAttribute('aria-describedby') ?? '').not.toContain(tooltipId);
+        expect(ageCell).toHaveFocus();
     });
 });

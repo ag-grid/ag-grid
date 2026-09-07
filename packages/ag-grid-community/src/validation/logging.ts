@@ -279,7 +279,6 @@ function combineMissingModuleParams(reports: MissingModuleReportParams[]): GetEr
  * deduped per grid by module+reason. The console output is always batched (even in production without the
  * ValidationModule); the overlay capture is added when capture is enabled and the id is not suppressed.
  * Throw-on-severity stays synchronous and per-module so throw mode keeps its call stack and fails fast.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _reportMissingModule(params: MissingModuleReportParams): void {
     const key = missingModuleKey(params);
@@ -520,7 +519,6 @@ export function _warnForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'warning', true, gridId);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _deprecatedForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'deprecation', true, gridId);
 }

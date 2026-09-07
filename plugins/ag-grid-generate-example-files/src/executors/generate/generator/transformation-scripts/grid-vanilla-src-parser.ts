@@ -582,10 +582,11 @@ export function parser(
     gridOptionsTypes: Record<string, GridOptionsType>
 ) {
     const typedBindings = internalParser(examplePath, srcFile, true, gridOptionsTypes, html, providedExamples);
-    const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, providedExamples);
-    // We need to copy the imports from the typed bindings to the non-typed bindings
-    bindings.imports = typedBindings.imports;
-    return { bindings, typedBindings };
+    // The untyped pass used to be parsed separately, doubling the TypeScript and cheerio work per
+    // example. Its only consumers read `imports` (which was copied from the typed bindings anyway)
+    // and `exampleName` (identical in both passes), and neither mutates what it reads - so the
+    // typed bindings serve both roles.
+    return { bindings: typedBindings, typedBindings };
 }
 
 export default parser;

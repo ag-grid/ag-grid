@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, PdfExportParams } from 'ag-grid-community';
+import type { GridApi, GridOptions, PdfColumnWidthCallback, PdfExportParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -77,6 +77,8 @@ const rowData: ProjectData[] = [
 
 let gridApi: GridApi<ProjectData>;
 
+const columnWidth: PdfColumnWidthCallback = ({ column }) => (column?.getColId() === 'summary' ? 190 : 'auto');
+
 const gridOptions: GridOptions<ProjectData> = {
     columnDefs: [
         { field: 'division', rowGroup: true, hide: true },
@@ -110,6 +112,13 @@ const gridOptions: GridOptions<ProjectData> = {
             budget: 125000,
         },
     ],
+    defaultPdfExportParams: {
+        rowGroupIndentSize: 16,
+        defaultCellStyle: {
+            overflow: 'ellipsis',
+        },
+        columnWidth,
+    },
 };
 
 function getPdfExportParams(): PdfExportParams {
@@ -125,12 +134,15 @@ function getPdfExportParams(): PdfExportParams {
             maxLines: limitLines ? 2 : undefined,
             overflow: 'ellipsis',
         },
-        columnWidth: ({ column }) => (column?.getColId() === 'summary' ? 190 : 'auto'),
+        columnWidth,
     };
 }
 
-function onBtExport() {
+function onPdfExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

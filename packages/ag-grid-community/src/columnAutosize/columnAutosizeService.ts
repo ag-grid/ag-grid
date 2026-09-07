@@ -1,4 +1,4 @@
-import { _getInnerWidth, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
+import { _debounce, _getInnerWidth, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
 
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
@@ -41,6 +41,13 @@ const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'co
 
 type AutoSizeReason = AutoSizeColumnsTriggerParams['reason'];
 
+/**
+ * Matches `SCROLL_END_TIMEOUT`, so a re-size driven by a gesture that streams events — a scroll, a
+ * resize drag — settles when the grid considers that gesture finished, rather than jittering once per
+ * frame throughout it.
+ */
+const CONTINUOUS_STREAMING_DEBOUNCE = 150;
+
 /** Escalating waits for a continuous re-size that arrived before the grid had a width. */
 const CONTINUOUS_RETRY_DELAYS: readonly number[] = [0, 100, 500];
 
@@ -67,6 +74,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private pendingReasons: Set<AutoSizeReason> | null = null;
     private continuousRetries = 0;
     private continuousRetryScheduled = false;
+
+    private readonly runDebouncedContinuousAutoSize = _debounce(
+        this,
+        () => this.scheduleContinuousAutoSize(),
+        CONTINUOUS_STREAMING_DEBOUNCE
+    );
 
     public postConstruct(): void {
         const { gos } = this;
@@ -682,7 +695,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
             displayedColumnsChanged: () => this.scheduleContinuousAutoSize('columnsChanged'),
             newColumnsLoaded: () => this.scheduleContinuousAutoSize('columnsChanged'),
-            gridSizeChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+            // a resize drag streams one event per frame, so it settles like a scroll does
+            gridSizeChanged: () => this.scheduleDebouncedContinuousAutoSize('gridSizeChanged'),
             // a scrollbar appearing or disappearing changes the width there is to work with. A row count
             // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
             // the width-distribution strategies this is the only signal that one happened
@@ -702,20 +716,32 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         this.addManagedEventListeners({
             // horizontal virtualisation renders new columns, which are then measurable for the first time
-            virtualColumnsChanged: () => this.scheduleContinuousAutoSize('viewportChanged'),
-            viewportChanged: () => this.scheduleContinuousAutoSize('viewportChanged'),
+            virtualColumnsChanged: () => this.scheduleDebouncedContinuousAutoSize('viewportChanged'),
+            viewportChanged: () => this.scheduleDebouncedContinuousAutoSize('viewportChanged'),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'horizontal') {
-                    this.scheduleContinuousAutoSize('viewportChanged');
+                    this.scheduleDebouncedContinuousAutoSize('viewportChanged');
                 }
             },
         });
     }
 
+    /**
+     * Holds a re-size off until the triggers stop arriving, for the gestures that stream them — a scroll,
+     * a resize drag. The reason is recorded as it arrives, so a gesture overlapping another still reports
+     * the most significant of them once the run lands.
+     */
+    private scheduleDebouncedContinuousAutoSize(reason: AutoSizeReason): void {
+        (this.pendingReasons ??= new Set()).add(reason);
+        this.runDebouncedContinuousAutoSize();
+    }
+
     /** Coalesces every trigger in the current frame into at most one evaluation. */
-    private scheduleContinuousAutoSize(reason: AutoSizeReason): void {
+    private scheduleContinuousAutoSize(reason?: AutoSizeReason): void {
         const pendingReasons = (this.pendingReasons ??= new Set());
-        pendingReasons.add(reason);
+        if (reason) {
+            pendingReasons.add(reason);
+        }
 
         // a run in flight picks these up on completion, so no nested run may start
         if (this.continuousRunning || this.continuousFrameScheduled) {

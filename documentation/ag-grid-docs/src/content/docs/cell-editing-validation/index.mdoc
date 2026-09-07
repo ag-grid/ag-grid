@@ -11,13 +11,13 @@ These editors support validation automatically by checking the constraints defin
 - `Number` editors validate against min and max constraints.
 - `Date` editors ensure the value is a valid date string.
 
-Validation is performed when editing ends, and the Grid will handle invalid values based on the selected [Validation Modes](#validation-modes).
+Provided editors validate as their value changes and run a final validation when editing ends. The Grid handles invalid values based on the selected [Validation Modes](#validation-modes).
 
 {% gridExampleRunner title="Cell Editor Validation" name="cell-editor-validation" /%}
 
 ## Overriding Validation
 
-To add custom validation logic to a Provided Editor, use the `getValidationErrors()` callback inside the `ICellEditorParams`. This allows you to define additional rules that are specific to your application.
+To customise validation in a Provided Editor, use the `getValidationErrors()` callback inside `ICellEditorParams`. The callback receives the editor's `internalErrors`, and its return value replaces the Provided Editor's validation result. Include `internalErrors` in the returned array if the built-in constraints should still apply alongside your custom rules.
 
 {% interfaceDocumentation interfaceName="ICellEditorParams" names=["getValidationErrors"] /%}
 
@@ -28,12 +28,13 @@ const gridOptions = {
             field: 'athlete',
             cellEditorParams: {
                 getValidationErrors: (params) => {
-                    const { value } = params;
+                    const { value, internalErrors } = params;
+                    const errors = [...(internalErrors ?? [])];
                     if (!value || value.length < 3) {
-                        return ['The value has to be at least 3 characters long.'];
+                        errors.push('The value has to be at least 3 characters long.');
                     }
 
-                    return null;
+                    return errors.length ? errors : null;
                 },
             },
         },
@@ -54,10 +55,10 @@ This is demonstrated in the following example, note that:
 
 The Grid supports two modes for handling invalid edits, configured via the grid option `invalidEditValueMode`:
 
-| Mode                 | Description                                                                                                                                         |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `'revert'` (default) | Cancels the edit and reverts the cell to its original value if the value is invalid.                                                                |
-| `'block'`            | Prevents the editor from closing until a valid value is provided. Other editors cannot be started until the current edit is completed or cancelled. |
+| Mode                 | Description                                                                                                                                                                |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'revert'` (default) | Cancels the edit and reverts the cell to its original value if the value is invalid.                                                                                       |
+| `'block'`            | Keeps the invalid editing session open until a valid value is provided or the edit is cancelled. Full Row Editing still allows navigation between editors in the same row. |
 
 Use the `'block'` mode when you want to strictly enforce valid input before allowing the user to proceed.
 
@@ -75,15 +76,22 @@ When using [Full Row Editing](./cell-editing-full-row/), the Grid will validate 
 
 In addition, the Grid can also perform cross-field validation by using the optional callback `getFullRowEditValidationErrors(params)`. This allows you to implement logic that checks relationships between fields — for example, ensuring that one field is greater than another.
 
-This callback should return an array of error strings if the row is in an invalid state. If no errors are found, it should return `null`.
+This callback should return an array of non-empty, user-facing error strings if the row is in an invalid state. If no errors are found, it should return `null`.
+
+The row data is not updated until the edit is committed. Use `editorsState` to validate the proposed row values; each entry contains the column ID together with its old and new values.
 
 {% apiDocumentation source="grid-options/properties.json" section="editing" names=["getFullRowEditValidationErrors"] /%}
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
-    getFullRowEditValidationErrors: (params) => {
-        const { data } = params;
-        if (data.min > data.max) {
+    getFullRowEditValidationErrors: ({ editorsState }) => {
+        const values = Object.fromEntries(
+            editorsState.map(({ colId, newValue }) => [colId, newValue]),
+        );
+        const min = Number(values.min);
+        const max = Number(values.max);
+
+        if (min > max) {
             return ['Min cannot be greater than Max'];
         }
         return null;
@@ -93,10 +101,18 @@ const gridOptions = {
 
 A row edit will only complete successfully if **both** the individual cell editors **and** the full-row validation return no errors.
 
+### Accessibility
+
+When a cell or full-row validation error is added, or its wording changes, the Grid announces the relevant error details to screen reader users. Revalidating unchanged errors, for example when navigating between editors in the same row, does not repeat the announcement.
+
+If `invalidEditValueMode` is set to `'block'` and prevents the user from completing a full-row edit, the Grid announces a summary of the current errors even if they were announced previously. Cell editor errors are identified by their column name. Errors returned by `getFullRowEditValidationErrors` apply to the row as a whole, so each error message should identify the fields or condition that the user needs to correct.
+
+The full-row announcement text can be customised through the `ariaFullRowValidationError` and `ariaFullRowEditValidationFailed` [localisation keys](./localisation/). In a blocked-completion summary, `ariaRowIndex` identifies errors that belong to another edited row and distinguishes errors from multiple rows.
+
 This is demonstrated in the following example. Note the following validation rules:
 
-- `Weight` has to be a positive value below `500`.
-- `Height` has to be a positive value below `300`.
+- `Weight` has to be between `0` and `500`, inclusive.
+- `Height` has to be between `0` and `300`, inclusive.
 - **Full Row Edit Validation** ensures that the Body Mass Index (BMI), calculated using height and weight, is between `10` and `80`.
 
 {% gridExampleRunner title="Full Row Editing Validation" name="full-row-editing-validation" /%}

@@ -38,6 +38,9 @@ function getColumnDropAreaName(columnDrop: Element): string | undefined {
 export class TestIdService extends BeanStub implements NamedBean, ITestIdService {
     beanName: BeanName = 'testIdSvc';
 
+    private headerObserver?: MutationObserver;
+    private observedHeader?: Element;
+
     public postConstruct(): void {
         // Add a delayed setup that is also debounced to be more robust with Reacts async rendering.
         const delayedDebounce = _debounce(this, () => this.setupAllTestIds(), 500);
@@ -89,6 +92,24 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         };
         root.addEventListener('scroll', onScroll, { capture: true });
         this.addDestroyFunc(() => root.removeEventListener('scroll', onScroll, { capture: true }));
+
+        // `api.refreshHeader()` throws away the header rows and builds new ones, which drops every
+        // test ID stamped on the old header DOM. No grid event reports that, so the replacement is
+        // watched for in the DOM instead - the same approach as the scroll listener above.
+        this.headerObserver = new MutationObserver(setup);
+        this.addDestroyFunc(() => this.headerObserver?.disconnect());
+    }
+
+    /** Watch this grid's own header for rows being replaced. Called as the header is first stamped. */
+    private observeHeader(gridWrapper: Element | null): void {
+        const header = gridWrapper?.querySelector('.ag-header');
+        if (!header || header === this.observedHeader) {
+            return;
+        }
+        // Only child lists are observed, so the attributes stamped below cannot re-trigger this.
+        this.headerObserver?.disconnect();
+        this.headerObserver?.observe(header, { childList: true, subtree: true });
+        this.observedHeader = header;
     }
 
     public setupAllTestIds(): void {
@@ -99,6 +120,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         const gridId = getGridId(this.beans);
         const gridWrapper = root.querySelector(`[grid-id="${gridId}"]`);
         setTestId(gridWrapper, agTestIdFor.grid(gridId));
+
+        this.observeHeader(gridWrapper);
 
         /** Headers */
 

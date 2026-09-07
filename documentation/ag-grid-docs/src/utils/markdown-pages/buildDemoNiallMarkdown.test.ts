@@ -1,27 +1,27 @@
+import { demoContent, demoNames } from '@components/demos/demoContent';
 import { describe, expect, it } from 'vitest';
 
 import niallData from '../../content/about/niall.json';
-import demosData from '../../content/demos/demos.json';
-import { type DemoName, buildDemoMarkdown, demoContent } from './buildDemoMarkdown';
+import { buildDemoMarkdown } from './buildDemoMarkdown';
 import { buildNiallMarkdown } from './buildNiallMarkdown';
 
 const SITE_ROOT = 'https://www.ag-grid.com/';
 
 describe('buildDemoMarkdown', () => {
-    describe.each(Object.keys(demosData) as DemoName[])('%s', (demo) => {
+    describe.each(demoNames)('%s', (demo) => {
         const output = buildDemoMarkdown({ demo, siteRoot: SITE_ROOT });
         const content = demoContent(demo);
 
         it('emits frontmatter and copy from the same content the page renders', () => {
-            expect(output).toContain(`title: ${JSON.stringify(content.metaTitle)}`);
-            expect(output).toContain(`description: ${JSON.stringify(content.metaDescription)}`);
-            expect(output).toContain(`# ${content.heading}`);
-            expect(output).toContain(content.bodyText);
+            expect(output).toContain(`title: ${JSON.stringify(content.seoTitle)}`);
+            expect(output).toContain(`description: ${JSON.stringify(content.seoDescription)}`);
+            expect(output).toContain(`# ${content.seoH1}`);
+            expect(output).toContain(content.intro);
         });
 
         it('points at the demo source and the live page', () => {
             expect(output).toContain(`[See on GitHub](${content.githubUrl})`);
-            expect(output).toContain(`https://www.ag-grid.com/example-${demo}/`);
+            expect(output).toContain(`https://www.ag-grid.com${content.href}`);
             expect(output).toContain('https://www.ag-grid.com/contact/');
         });
 

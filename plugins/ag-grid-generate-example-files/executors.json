@@ -5,6 +5,11 @@
             "batchImplementation": "./dist/src/executors/generate/batch-executor.js",
             "schema": "./src/executors/generate/schema.json",
             "description": "generate example files"
+        },
+        "generate-all": {
+            "implementation": "./dist/src/executors/generate-all/executor.js",
+            "schema": "./src/executors/generate-all/schema.json",
+            "description": "generate every docs example in a single task"
         }
     }
 }

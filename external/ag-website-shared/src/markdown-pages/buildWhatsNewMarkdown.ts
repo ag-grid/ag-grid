@@ -2,6 +2,8 @@ import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from './markdownFrontmatter';
+
 /** How many versions the page lists; the twin matches it so the two show the same releases. */
 const MAX_VERSIONS = 12;
 
@@ -28,6 +30,8 @@ export interface BuildWhatsNewMarkdownOptions {
     resolveUrl: (url: string) => string;
     /** Resolve a highlight's `chartsPath` into the charts docs, as the page's `Highlight` does. */
     resolveChartsUrl?: (url: string) => string;
+    /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
+    siteFrontmatter?: SiteFrontmatterFields;
 }
 
 /** The page title and description, shared so the twin's frontmatter matches the page's meta. */
@@ -52,6 +56,7 @@ export function buildWhatsNewMarkdown({
     siteRoot,
     resolveUrl,
     resolveChartsUrl,
+    siteFrontmatter,
 }: BuildWhatsNewMarkdownOptions): string {
     const { name, blogPrefix } = whatsNewData[site];
     const { title, description } = whatsNewMeta(site);
@@ -59,7 +64,7 @@ export function buildWhatsNewMarkdown({
     const versions = versionsData.filter((version) => version.highlights).slice(0, MAX_VERSIONS);
 
     const document: string[] = [
-        ['---', `title: ${JSON.stringify(title)}`, `description: ${JSON.stringify(description)}`, '---'].join('\n'),
+        buildMarkdownFrontmatter({ ...siteFrontmatter, title, description }),
         `# What's New in ${name}`,
         `See what's new in recent ${name} versions.`,
     ];

@@ -18,7 +18,7 @@
             "showVersionBadge": true,
             "secondaryCta": {
                 "text": "View All Demos",
-                "url": "./example"
+                "url": "./example/"
             },
             "demo": {
                 "gridHeight": 600
@@ -164,7 +164,7 @@
                     "imgAlt": "Quick start guide for creating a Vue Data Grid in minutes",
                     "title": "Quick Start",
                     "content": "Create your first Vue Data Grid and learn the basics in just a few minutes.",
-                    "docs": "./vue-data-grid/getting-started",
+                    "docs": "./vue-data-grid/getting-started/",
                     "demo": "./examples/getting-started/quick-start-example/vue3/"
                 },
                 {
@@ -173,7 +173,7 @@
                     "title": "Beginner Tutorial",
                     "content": "Learn key concepts by building a Vue Data Grid with common functionality & customisations.",
                     "docs": "./vue-data-grid/deep-dive/",
-                    "demo": "./examples/deep-dive/testing-example/vue3"
+                    "demo": "./examples/deep-dive/testing-example/vue3/"
                 },
                 {
                     "img": "custom-themes.png",
@@ -181,7 +181,7 @@
                     "title": "Custom Styles",
                     "content": "Customise your Vue Data Grid with the Theming API to create a unique theme for your brand.",
                     "docs": "./vue-data-grid/theming/",
-                    "demo": "./examples/theming-colors/color-customisation/vue3"
+                    "demo": "./examples/theming-colors/color-customisation/vue3/"
                 },
                 {
                     "img": "integrated-charts.png",
@@ -189,7 +189,7 @@
                     "title": "Integrated Charts",
                     "content": "Build & style charts programatically, or let users create their own from the grid.",
                     "docs": "./vue-data-grid/integrated-charts/",
-                    "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/vue3"
+                    "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/vue3/"
                 }
             ]
         },

@@ -535,7 +535,8 @@ export interface Props<TData> {
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
          */
     suppressStartEditOnTab?: boolean,
-    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+    /** Validates the Full Row Edit. Return non-empty, user-facing error messages, or `null` when the row is valid.
+         * Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     getFullRowEditValidationErrors?: GetFullRowEditValidationErrors,
@@ -1269,7 +1270,7 @@ export interface Props<TData> {
          */
     masterDefaultExpanded?: number,
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-         * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
+         * Cell tooltip properties set here (`tooltip`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>,
@@ -1885,10 +1886,18 @@ export interface Props<TData> {
          */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>,
     /** Grid calls this method to know if an external filter is present.
+         * Called exactly once every time the grid senses a filter change.
+         * Should return `true` if external filtering is active, otherwise `false`.
+         * If `true`, `doesExternalFilterPass` is called while filtering, otherwise it is not called.
+         * Supplying a new function reference re-runs external filtering.
          * @agModule `ExternalFilterModule`
          */
     isExternalFilterPresent?: IsExternalFilterPresent<TData>,
-    /** Should return `true` if external filter passes, otherwise `false`.
+    /** Called once for each row node in the grid.
+         * Should return `true` if external filter passes, otherwise `false`.
+         * If `false`, the node is excluded from the final set.
+         * Only runs if `isExternalFilterPresent` returns `true`.
+         * Supplying a new function reference re-runs external filtering.
          * @agModule `ExternalFilterModule`
          */
     doesExternalFilterPass?: DoesExternalFilterPass<TData>,

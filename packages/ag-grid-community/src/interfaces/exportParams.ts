@@ -127,6 +127,7 @@ export interface ExportParams<T> extends BaseExportParams {
 
     /**
      * Set to `true` to allow the contents of the Row Numbers column to be exported.
+     * @default false
      */
     exportRowNumbers?: boolean;
 }

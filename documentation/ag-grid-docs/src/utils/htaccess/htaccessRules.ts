@@ -34,27 +34,51 @@ export const PERMISSIONS_POLICY_VALUE = 'geolocation=(), microphone=(), camera=(
  * Note: when changing this file please add/update the tests in
  * documentation/ag-grid-docs/testing/htaccess-harness
  */
-const modExpiresRules = `
-<IfModule mod_expires.c>
-    # Adds caching headers
-    ExpiresActive On
-
-    # Default directive
-    ExpiresDefault "access plus 1 year"
-
-    ExpiresByType application/json "access plus 1 hour"
-    ExpiresByType text/html "access plus 1 hour"
-    ExpiresByType text/markdown "access plus 1 hour"
-    ExpiresByType text/plain "access plus 1 hour"
-    ExpiresByType text/richtext "access plus 1 hour"
-    ExpiresByType text/xml "access plus 1 hour"
-    ExpiresByType text/xsd "access plus 1 hour"
-    ExpiresByType text/xsl "access plus 1 hour"
-
-    # CSS
-    ExpiresByType text/css "access plus 1 month"
-</IfModule>
+// Without Cache-Control, browsers heuristically cache for ~10% of a page's age - the
+// "had to hard-refresh" behaviour. no-cache (store, but always revalidate) removes it while
+// keeping back/forward navigation. Archived versions keep the heuristic window: immutable,
+// and cheaper to leave cached.
+const documentNoCacheRules = `
+# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 `;
+
+// Long-cache content-addressed assets. Matched on hash SHAPE rather than the /_astro/
+// directory so anything unhashed is never cached: a changed hash is a different URL, so a
+// fix can never be served stale. Replaces an inert mod_expires block - hence no <IfModule>
+// guard here, so a missing module fails loudly rather than silently.
+const hashedAssetCacheRules = `
+# Content-addressed assets - the filename carries a content hash, so changed content is
+# always a different URL. Matched by hash shape, so anything unhashed is not cached.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
+`;
+
+// Archived Studio versions are never cached; /studio/ itself caches normally.
+const studioArchiveNoCacheRules = `
+# Archived Studio versions: never cached. Does not apply to /studio/ itself.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
+`;
+
+// Delimiters for the in-place patchable block. Exported so the patch script and the tests
+// use the same literals rather than duplicating them.
+export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
+export const IN_FLIGHT_END = '# END in-flight release archives';
+
+// Archives under release testing must serve fresh, so they opt out of the caching released
+// archives get. Emitted last, so it overrides the archive exclusion and the hashed-asset rule.
+export function getInFlightArchiveRules(grid: string | null, charts: string | null): string {
+    // Single backslash in the emitted regex, so Apache reads a literal dot.
+    const escape = (v: string) => v.replace(/\./g, '\\.');
+    const rules = [
+        grid && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/archive/${escape(grid)}/#"`,
+        charts && `Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/charts/archive/${escape(charts)}/#"`,
+    ].filter(Boolean);
+    // Always emitted, so scripts/uncached-archives.mjs can patch the deployed file between them.
+    return `
+${IN_FLIGHT_BEGIN}${rules.length ? '\n' + rules.join('\n') : ''}
+${IN_FLIGHT_END}
+`;
+}
 
 const modDeflateRules = `
 <IfModule mod_deflate.c>
@@ -82,12 +106,6 @@ const modDeflateRules = `
     AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
-
-    # Remove browser bugs (only needed for really old browsers)
-    BrowserMatch ^Mozilla/4 gzip-only-text/html
-    BrowserMatch ^Mozilla/4\\.0[678] no-gzip
-    BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
-    Header append Vary User-Agent
 </IfModule>
 `;
 
@@ -462,8 +480,11 @@ AddType text/markdown md
 AddCharset utf-8 .md
 `;
 
-function getStagingHtaccessContent(): string {
+function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
+${documentNoCacheRules}
+${studioArchiveNoCacheRules}
+${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
 
@@ -481,9 +502,12 @@ Options -Indexes
 `;
 }
 
-function getProductionHtaccessContent(): string {
+function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
-${modExpiresRules}
+${documentNoCacheRules}
+${hashedAssetCacheRules}
+${studioArchiveNoCacheRules}
+${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
 
@@ -576,6 +600,16 @@ export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMo
     ].join('\n');
 }
 
-export function getHtaccessContent(options: { env: HtaccessEnv }): string {
-    return options.env === 'staging' ? getStagingHtaccessContent() : getProductionHtaccessContent();
+// A build always emits an EMPTY in-flight block; the deployed root .htaccess owns that state.
+// The archive options exist only so the tests can generate the populated form.
+export function getHtaccessContent(options: {
+    env: HtaccessEnv;
+    uncachedGridArchive?: string | null;
+    uncachedChartsArchive?: string | null;
+}): string {
+    const inFlight = getInFlightArchiveRules(
+        options.uncachedGridArchive ?? null,
+        options.uncachedChartsArchive ?? null
+    );
+    return options.env === 'staging' ? getStagingHtaccessContent(inFlight) : getProductionHtaccessContent(inFlight);
 }

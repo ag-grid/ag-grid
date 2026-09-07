@@ -166,7 +166,7 @@ function createDefaultCols(): (ColDef | ColGroupDef)[] {
                     width: 180,
                     editable: true,
                     filter: 'agSetColumnFilter',
-                    tooltipField: 'game.name',
+                    tooltip: true,
                     cellClass: () => {
                         return 'alphabet';
                     },

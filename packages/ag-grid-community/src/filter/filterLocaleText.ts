@@ -90,7 +90,6 @@ export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;
 /**
  * An option key is a locale key only when the grid itself defines text for it, so an own-property test: `toString`
  * and friends are legal option keys and reach `_translate` as a function, which throws.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function isFilterLocaleTextKey(key: string): key is FilterLocaleTextKey {
     return _hasOwn(FILTER_LOCALE_TEXT, key);
@@ -99,7 +98,6 @@ export function isFilterLocaleTextKey(key: string): key is FilterLocaleTextKey {
 /**
  * A filter option key the grid does not define is its own default, so `getLocaleText` is never handed the
  * `undefined` its `defaultValue: string` contract forbids.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function translateFilterOptionKey(
     bean: { getLocaleTextFunc(): LocaleTextFunc },

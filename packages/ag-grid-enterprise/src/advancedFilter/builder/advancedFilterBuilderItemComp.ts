@@ -16,8 +16,6 @@ import type {
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
     GridDragSource,
-    ITooltipCtrl,
-    Registry,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -31,6 +29,7 @@ import {
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { SetValuesPillComp } from '../set/setValuesPillComp';
 import { AddDropdownComp } from './addDropdownComp';
 import type {
     AdvancedFilterBuilderDragFeature,
@@ -46,6 +45,7 @@ import type {
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
     CreatePillParams,
+    Pill,
 } from './iAdvancedFilterBuilder';
 import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';
@@ -97,12 +97,10 @@ const AdvancedFilterBuilderItemElement: ElementParams = {
 export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBuilderEvents> {
     private dragAndDrop: DragAndDropService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
-    private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDrop = beans.dragAndDrop!;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
-        this.registry = beans.registry;
     }
 
     private readonly eTreeLines: HTMLElement = RefPlaceholder;
@@ -124,7 +122,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     constructor(
         public readonly item: AdvancedFilterBuilderItem,
         private readonly dragFeature: AdvancedFilterBuilderDragFeature,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly eBuilder: HTMLElement
     ) {
         super(AdvancedFilterBuilderItemElement);
     }
@@ -246,12 +245,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     private setupValidation(): void {
         this.eValidation.appendChild(_createIconNoSpan('advancedFilterBuilderInvalid', this.beans)!);
         this.validationTooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eValidation,
+                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.ePillWrapper.getValidationMessage(),
                 getTooltipShowDelayOverride: () => 1000,
-            } as ITooltipCtrl)
+            })
         );
         this.updateValidity();
     }
@@ -273,11 +273,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.eAddButton.appendChild(eAddButton.getGui());
 
         this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eAddButton,
+                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
-            } as ITooltipCtrl)
+            })
         );
     }
 
@@ -295,11 +296,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         });
 
         this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eRemoveButton,
+                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'),
-            } as ITooltipCtrl)
+            })
         );
         _setAriaLabel(this.eRemoveButton, this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'));
 
@@ -322,14 +324,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
 
             this.moveUpTooltipFeature = this.createOptionalManagedBean(
-                this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eMoveUpButton,
+                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'advancedFilter',
                     getTooltipValue: () =>
                         this.moveUpDisabled
                             ? null
                             : this.advFilterExpSvc.translate('advancedFilterBuilderMoveUpButtonTooltip'),
-                } as ITooltipCtrl)
+                })
             );
             _setAriaLabel(
                 this.eMoveUpButton,
@@ -349,14 +352,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
 
             this.moveDownTooltipFeature = this.createOptionalManagedBean(
-                this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eMoveDownButton,
+                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'advancedFilter',
                     getTooltipValue: () =>
                         this.moveDownDisabled
                             ? null
                             : this.advFilterExpSvc.translate('advancedFilterBuilderMoveDownButtonTooltip'),
-                } as ITooltipCtrl)
+                })
             );
             _setAriaLabel(
                 this.eMoveDownButton,
@@ -376,22 +380,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.updateAriaLabel();
     }
 
-    private createPill(params: CreatePillParams): SelectPillComp | InputPillComp {
-        const { key, cssClass, update, ariaLabel } = params;
-        const onUpdated = (key: string) => {
-            if (key == null) {
-                return;
-            }
-            update(key);
-            this.dispatchLocalEvent({
-                type: 'advancedFilterBuilderValueChanged',
-            });
-        };
-        if (params.isSelect) {
+    private createPill(params: CreatePillParams): Pill {
+        const { key, cssClass, ariaLabel } = params;
+        if (params.isSelect === 'set') {
+            return this.createBean(new SetValuesPillComp({ ...params, update: this.onPillUpdated(params.update) }));
+        }
+        const onUpdated = this.onPillUpdated(params.update);
+        if (params.isSelect === true) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue, displayValue } = params;
-            const advancedFilterBuilderParams = this.gos.get('advancedFilterBuilderParams');
-            const minPickerWidth = `${advancedFilterBuilderParams?.pillSelectMinWidth ?? 140}px`;
-            const maxPickerWidth = `${advancedFilterBuilderParams?.pillSelectMaxWidth ?? 200}px`;
+            const { pillSelectMinWidth, pillSelectMaxWidth } = this.gos.get('advancedFilterBuilderParams') ?? {};
             const comp = this.createBean(
                 new SelectPillComp({
                     pickerAriaLabelKey,
@@ -404,8 +401,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     valueFormatter: (value: AutocompleteEntry) =>
                         value == null ? '' : (value.displayValue ?? value.key),
                     variableWidth: true,
-                    minPickerWidth,
-                    maxPickerWidth,
+                    minPickerWidth: pillSelectMinWidth ?? 140,
+                    maxPickerWidth: pillSelectMaxWidth,
+                    eBuilder: this.eBuilder,
                     getEditorParams,
                     wrapperClassName: cssClass,
                     ariaLabel,
@@ -431,6 +429,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.addManagedListeners(comp, { fieldValueChanged: ({ value }: FieldValueEvent) => onUpdated(value) });
             return comp;
         }
+    }
+
+    /** A pill reports nothing when its editor is emptied, which is not a value to store. */
+    private onPillUpdated<TValue>(update: (value: TValue) => void): (value: TValue | null | undefined) => void {
+        return (value) => {
+            if (value == null) {
+                return;
+            }
+            update(value);
+            this.dispatchLocalEvent({ type: 'advancedFilterBuilderValueChanged' });
+        };
     }
 
     private setupDragging(): void {

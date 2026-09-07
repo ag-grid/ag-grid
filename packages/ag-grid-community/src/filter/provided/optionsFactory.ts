@@ -1,8 +1,6 @@
 import type { LogService } from '../../validation/logService';
 import type { IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
-
-/** An entry missing any of these cannot be offered; they are listed so the warning can name the missing one. */
-const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
+import { _classifyFilterOptions } from './simpleFilterUtils';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
@@ -40,26 +38,7 @@ export class OptionsFactory {
     }
 
     private collectUsableOptions(log: LogService, configuredOptions: (IFilterOptionDef | string)[]): void {
-        // A `Map` holds a key at the position it was first set in, so it dedupes without reordering the dropdown.
-        const offered = new Map<string, IFilterOptionDef | string>();
-        const customOptions = new Map<string, IFilterOptionDef>();
-        for (let i = 0, len = configuredOptions.length; i < len; ++i) {
-            const option = configuredOptions[i];
-            if (option == null) {
-                continue; // `typeof null` is `'object'`, so a hole would read as an option with no properties
-            } else if (typeof option === 'string') {
-                offered.set(option, offered.get(option) ?? option); // a definition already stored outranks a bare key
-            } else {
-                const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
-                if (missing.length) {
-                    log.warn(72, { keys: missing });
-                    continue;
-                }
-                const key = option.displayKey;
-                offered.set(key, option);
-                customOptions.set(key, option);
-            }
-        }
+        const { offered, customOptions } = _classifyFilterOptions(configuredOptions, (keys) => log.warn(72, { keys }));
         this.offeredOptions = offered;
         this.filterOptions = [...offered.values()];
         this.customFilterOptions = customOptions;

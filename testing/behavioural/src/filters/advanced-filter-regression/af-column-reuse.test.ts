@@ -13,10 +13,10 @@ import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, setupAg
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 /**
- * Regression baseline for the column-filter behaviours Advanced Filter will reuse: the built-in
- * In Range / Between (2-input) option (AG-10029 / AG-10819) — bound exclusivity, two-input model,
- * incomplete/reversed validation — and the Set Filter (AG-8950) — distinct-value derivation, value
- * formatting, blanks, mini-filter, select-all and the `{filterType:'set'}` model. Black-box via popup.
+ * Regression baseline for the column-filter behaviours the Advanced Filter reuses: the built-in
+ * In Range / Between (2-input) option — bound exclusivity, two-input model, incomplete/reversed
+ * validation — and the Set Filter — distinct-value derivation, value formatting, blanks, mini-filter,
+ * select-all and the `{filterType:'set'}` model. Black-box via popup.
  */
 describe('Simple Filter — In Range (2-input) reuse surface', () => {
     const gridsManager = new TestGridsManager({

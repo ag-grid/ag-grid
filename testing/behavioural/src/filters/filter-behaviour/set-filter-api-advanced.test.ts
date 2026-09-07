@@ -15,6 +15,8 @@ import type {
     GridApi,
     ISetFilterCellRendererParams,
     ISetFilterParams,
+    ITooltipComp,
+    ITooltipParams,
     KeyCreatorParams,
     SetFilterHandler,
     SetFilterValuesFuncParams,
@@ -34,7 +36,7 @@ function handler(api: GridApi, colId: string): SetFilterHandler {
 
 describe('Set Filter — handler value manipulation API', () => {
     const gridsManager = new TestGridsManager({
-        modules: [SetFilterModule, ClientSideRowModelModule],
+        modules: [SetFilterModule, ClientSideRowModelModule, TooltipModule],
     });
 
     beforeAll(() => {
@@ -569,11 +571,26 @@ describe('Set Filter — list rendering', () => {
     });
 
     test('showTooltips shows the value in a tooltip on hover', async () => {
+        class SetFilterTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            public init(params: ITooltipParams): void {
+                this.eGui.classList.add('set-filter-tooltip');
+                this.eGui.textContent = `Set Filter: ${params.value}`;
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
                     field: 'country',
                     filter: 'agSetColumnFilter',
+                    tooltip: false,
+                    tooltipComponent: SetFilterTooltip,
                     filterParams: { showTooltips: true } as ISetFilterParams,
                 },
             ],
@@ -596,6 +613,8 @@ describe('Set Filter — list rendering', () => {
 
         await userEvent.hover(label);
         await waitForTooltips(1);
-        expect(getVisibleTooltips()[0].textContent).toContain('Italy');
+        const tooltip = getVisibleTooltips()[0];
+        expect(tooltip.classList.contains('set-filter-tooltip')).toBe(true);
+        expect(tooltip.textContent).toBe('Set Filter: Italy');
     });
 });

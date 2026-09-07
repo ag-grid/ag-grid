@@ -19,6 +19,8 @@ const cssVariable = <K extends keyof CssChangeKeys>(
 ): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue });
 
 const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
+const CELL_WIDGET_SPACING = cssVariable('cellWidgetSpacing', 'length', 12);
+const ICON_SIZE = cssVariable('iconSize', 'length', 16);
 const ROW_HEIGHT = cssVariable('rowHeight', 'length', 42);
 const HEADER_HEIGHT = cssVariable('headerHeight', 'length', 48);
 const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
@@ -81,6 +83,14 @@ export class Environment
         return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
     }
 
+    public getDefaultCellWidgetSpacing(): number {
+        return this.getCSSVariablePixelValue(CELL_WIDGET_SPACING);
+    }
+
+    public getDefaultIconSize(): number {
+        return this.getCSSVariablePixelValue(ICON_SIZE);
+    }
+
     public getDefaultColumnMinWidth(): number {
         // This replaces a table of hard-coded defaults for each theme, and is a
         // reasonable default that somewhat approximates the old table. This
@@ -116,6 +126,11 @@ export class Environment
         if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
+        // catches variables a class swap introduces after grid creation; 'theme' is covered by
+        // postProcessThemeChange, which runs after the new theme is in place
+        if (change !== 'theme') {
+            this.checkLegacyThemeVariables();
+        }
         super.fireStylesChangedEvent(change);
     }
 
@@ -139,7 +154,14 @@ export class Environment
             } else {
                 this.beans.log.error(239);
             }
+        } else if (newGridTheme) {
+            this.checkLegacyThemeVariables();
         }
+    }
+
+    /** The reporting lives in the ValidationModule; without it registered, nothing is checked. */
+    private checkLegacyThemeVariables(): void {
+        this.beans.validation?.checkLegacyThemeVariables(this.eRootDiv);
     }
 
     protected override getAdditionalCss(): Map<string, string[]> {
@@ -167,6 +189,8 @@ export class Environment
 }
 
 interface CssChangeKeys extends BaseCssChangeKeys {
+    cellWidgetSpacing: true;
+    iconSize: true;
     headerHeight: true;
     headerRowBorderWidth: true;
     rowHeight: true;

@@ -10,16 +10,28 @@ interface Params {
 
 export const agChartsVersion = 'latest'; // TODO have this set properly
 
+// Versions are constant for the lifetime of a generation run, but getPackageJson is called once per
+// framework per example - without this cache that is ~36k redundant reads and parses of six files.
+const versionCache = new Map<string, string>();
+
 function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
     const path = isModule
         ? `${process.cwd()}/community-modules/${packageName}/package.json`
         : `${process.cwd()}/packages/${packageName}/package.json`;
+
+    const cached = versionCache.get(path);
+    if (cached !== undefined) {
+        return cached;
+    }
+
     const packageJsonStr = readFileSync(path, 'utf-8');
     const packageJson = JSON.parse(packageJsonStr);
     // Strip pre-release suffix (e.g. "35.1.0-beta.20260218.1143" → "35.1.0")
     // This enables Plunker to locate types via the dummy package.json.
     // These have to be published externally.
-    return (packageJson.version as string).replace(/-.*$/, '');
+    const version = (packageJson.version as string).replace(/-.*$/, '');
+    versionCache.set(path, version);
+    return version;
 }
 
 export function getPackageJson({ isLocale, internalFramework, isIntegratedCharts }: Params) {

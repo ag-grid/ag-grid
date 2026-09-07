@@ -13,9 +13,9 @@ import {
     type UrlParams,
     getExampleCodeSandboxUrl,
     getExampleContentsUrl,
+    getExampleLinkUrl,
     getExamplePlunkrUrl,
     getExampleRunnerExampleUrl,
-    getExampleUrl,
 } from '../utils/urlPaths';
 
 interface Props {
@@ -136,7 +136,7 @@ const DocsExampleRunnerInner = ({
     });
     const urls = {
         exampleRunnerExampleUrl: getExampleRunnerExampleUrl(urlConfig),
-        exampleUrl: getExampleUrl(urlConfig),
+        exampleUrl: getExampleLinkUrl(urlConfig),
         plunkrHtmlUrl: getExamplePlunkrUrl(urlConfig),
         codeSandboxHtmlUrl: getExampleCodeSandboxUrl(urlConfig),
     };

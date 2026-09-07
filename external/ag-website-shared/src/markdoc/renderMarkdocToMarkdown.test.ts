@@ -42,7 +42,7 @@ function render(body: string, overrides: Partial<RenderMarkdocToMarkdownOptions>
 }
 
 describe('renderMarkdocToMarkdown', () => {
-    it('emits YAML frontmatter with title, framework and version, then the H1 (description omitted)', async () => {
+    it('emits YAML frontmatter with title, description, framework and version, then the H1', async () => {
         const output = await render('Body paragraph.', {
             framework: 'angular',
             version: '33.1.0',
@@ -51,12 +51,58 @@ describe('renderMarkdocToMarkdown', () => {
 
         expect(output.startsWith('---\n')).toBe(true);
         expect(output).toContain('title: "Cell Editing"');
+        expect(output).toContain('description: "How to edit cells."');
         expect(output).toContain('framework: angular');
         expect(output).toContain('version: "33.1.0"');
         expect(output).toContain('\n# Cell Editing\n');
         expect(output).toContain('Body paragraph.');
-        // The description is deliberately not repeated in the body.
-        expect(output).not.toContain('How to edit cells.');
+        // The description lives in the frontmatter; the body is not made to repeat it.
+        expect(output.split('\n---\n')[1]).not.toContain('How to edit cells.');
+    });
+
+    it('emits the product, related links and llms.txt link the site supplies', async () => {
+        const output = await render('Body paragraph.', {
+            product: 'AG Grid',
+            llmsTxt: 'https://www.ag-grid.com/llms.txt',
+            related: [
+                { title: 'Cell Editors', url: 'https://www.ag-grid.com/react-data-grid/cell-editors/' },
+                { title: 'Cell Data Types', url: 'https://www.ag-grid.com/react-data-grid/cell-data-types/' },
+            ],
+            frontmatter: { title: 'Cell Editing' },
+        });
+
+        expect(output).toContain('product: "AG Grid"');
+        expect(output).toContain(
+            [
+                'related:',
+                '    - title: "Cell Editors"',
+                '      url: "https://www.ag-grid.com/react-data-grid/cell-editors/"',
+                '    - title: "Cell Data Types"',
+                '      url: "https://www.ag-grid.com/react-data-grid/cell-data-types/"',
+            ].join('\n')
+        );
+        expect(output).toContain('llms: "https://www.ag-grid.com/llms.txt"');
+    });
+
+    it('omits the site-supplied fields when the caller gives none, rather than emitting empty ones', async () => {
+        const output = await render('Body paragraph.', { frontmatter: { title: 'Cell Editing' } });
+
+        expect(output).not.toContain('product:');
+        expect(output).not.toContain('related:');
+        expect(output).not.toContain('llms:');
+        expect(output).not.toContain('description:');
+    });
+
+    it('passes the page name to resolveLinkHref, so a same-page anchor can be resolved', async () => {
+        const resolveLinkHref = vi.fn(({ href, pageName }) => `/react-data-grid/${pageName}/${href}`);
+        const output = await render('[Editors](#editors)', { resolvers: { resolveLinkHref } });
+
+        expect(resolveLinkHref).toHaveBeenCalledWith({
+            href: '#editors',
+            framework: 'react',
+            pageName: 'test-page',
+        });
+        expect(output).toContain('[Editors](/react-data-grid/test-page/#editors)');
     });
 
     it('flags an Enterprise-only page in the frontmatter', async () => {
