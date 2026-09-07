@@ -24,4 +24,11 @@ test.agExample(import.meta, () => {
         // No other rows should be visible
         await expect(agIdFor.rowNode('3')).not.toBeVisible();
     });
+
+    test.eachFramework('Export menu includes PDF Export', async ({ page }) => {
+        await waitForGridContent(page);
+
+        await page.getByRole('button', { name: 'Export' }).click();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'PDF Export' })).toBeVisible();
+    });
 });
