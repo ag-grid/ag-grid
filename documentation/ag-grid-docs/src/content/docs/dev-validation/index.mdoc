@@ -79,11 +79,11 @@ Defaults to `[]` (never throws).
 
 ### Reacting to Diagnostics in Code
 
-The `diagnosticRaised` event fires for every captured diagnostic, so tooling can react to problems programmatically instead of watching the console. This suits CI gates, test harnesses and AI-assisted development loops that need to collect diagnostics and act on them.
+The `issueRaised` event fires for every captured diagnostic, so tooling can react to problems programmatically instead of watching the console. This suits CI gates, test harnesses and AI-assisted development loops that need to collect diagnostics and act on them.
 
 ```js
 const gridOptions = {
-    onDiagnosticRaised: (event) => {
+    onIssueRaised: (event) => {
         // { id: 307, severity: 'warning', message: '...', attributedToThisGrid: true }
         collectForReport(event);
     },
@@ -93,7 +93,7 @@ const gridOptions = {
 As with any grid event, you can also subscribe with the API:
 
 ```js
-api.addEventListener('diagnosticRaised', (event) => collectForReport(event));
+api.addEventListener('issueRaised', (event) => collectForReport(event));
 ```
 
 The event provides:
@@ -109,14 +109,14 @@ The event is not filtered by `showOverlayOn` or `throwOn`: it fires for every di
 
 In the example below, a column definition includes a property the grid does not recognise, and the resulting diagnostics are listed under the grid:
 
-{% gridExampleRunner title="Reacting to Diagnostics" name="diagnostic-raised" /%}
+{% gridExampleRunner title="Reacting to Diagnostics" name="issue-raised" /%}
 
 The same diagnostic can be raised more than once. The event fires each time, so deduplicate in your handler if you only want each distinct problem once:
 
 ```js
 const seen = new Set();
 const gridOptions = {
-    onDiagnosticRaised: (event) => {
+    onIssueRaised: (event) => {
         const key = `${event.severity}#${event.id}:${event.message}`;
         if (!seen.has(key)) {
             seen.add(key);

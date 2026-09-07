@@ -267,7 +267,7 @@ export class GridOptionsService
             };
 
             // Queueing a diagnostic would deliver it after `onGridReady`, and drop it if the grid never gets there.
-            if (this.gridReadyFired || eventName === 'diagnosticRaised') {
+            if (this.gridReadyFired || eventName === 'issueRaised') {
                 fireEvent(eventName, event);
             } else if (eventName === 'gridReady') {
                 fireEvent(eventName, event);

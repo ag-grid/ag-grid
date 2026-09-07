@@ -1,10 +1,10 @@
 import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { DiagnosticRaisedEvent, GridOptions } from 'ag-grid-community';
+import type { GridOptions, IssueRaisedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 
-describe('diagnosticRaised event', () => {
+describe('issueRaised event', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ValidationModule],
     });
@@ -29,14 +29,14 @@ describe('diagnosticRaised event', () => {
         consoleErrorSpy.mockRestore();
     });
 
-    test('fires the onDiagnosticRaised callback with id, severity and message', () => {
+    test('fires the onIssueRaised callback with id, severity and message', () => {
         enableDevValidations({ showOverlayOn: [] });
-        const onDiagnosticRaised = vitest.fn();
-        gridsManager.createGrid('myGrid', withUnknownOption({ onDiagnosticRaised }));
+        const onIssueRaised = vitest.fn();
+        gridsManager.createGrid('myGrid', withUnknownOption({ onIssueRaised }));
 
-        expect(onDiagnosticRaised).toHaveBeenCalled();
-        const event: DiagnosticRaisedEvent = onDiagnosticRaised.mock.calls[0][0];
-        expect(event.type).toBe('diagnosticRaised');
+        expect(onIssueRaised).toHaveBeenCalled();
+        const event: IssueRaisedEvent = onIssueRaised.mock.calls[0][0];
+        expect(event.type).toBe('issueRaised');
         expect(event.id).toBe(307);
         expect(event.severity).toBe('warning');
         expect(event.message).toContain('thisOptionDoesNotExist');
@@ -48,14 +48,14 @@ describe('diagnosticRaised event', () => {
         enableDevValidations({ showOverlayOn: [] });
         const listener = vitest.fn();
         const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
-        api.addEventListener('diagnosticRaised', listener);
+        api.addEventListener('issueRaised', listener);
 
         // An out-of-range page size raises warning #317 after the grid is up.
         api.setGridOption('paginationPageSize', 0);
 
         expect(listener).toHaveBeenCalledTimes(1);
         expect(listener.mock.calls[0][0]).toMatchObject({
-            type: 'diagnosticRaised',
+            type: 'issueRaised',
             id: 317,
             severity: 'warning',
             attributedToThisGrid: true,
@@ -64,10 +64,10 @@ describe('diagnosticRaised event', () => {
 
     test('fires for a severity the overlay is filtering out', () => {
         enableDevValidations({ showOverlayOn: ['error'] });
-        const onDiagnosticRaised = vitest.fn();
-        gridsManager.createGrid('myGrid', withUnknownOption({ onDiagnosticRaised }));
+        const onIssueRaised = vitest.fn();
+        gridsManager.createGrid('myGrid', withUnknownOption({ onIssueRaised }));
 
-        const severities = onDiagnosticRaised.mock.calls.map((call) => call[0].severity);
+        const severities = onIssueRaised.mock.calls.map((call) => call[0].severity);
         expect(severities).toContain('warning');
     });
 
@@ -77,7 +77,7 @@ describe('diagnosticRaised event', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
-            onDiagnosticRaised: (e) => seen.push(e.id as number),
+            onIssueRaised: (e) => seen.push(e.id as number),
         });
 
         enableDevValidations({ showOverlayOn: [], throwOn: ALL_SEVERITIES });
@@ -91,31 +91,31 @@ describe('diagnosticRaised event', () => {
     // pre-init diagnostic.
     test('does not fire for a diagnostic that aborts grid creation', () => {
         enableDevValidations({ showOverlayOn: [], throwOn: ALL_SEVERITIES });
-        const onDiagnosticRaised = vitest.fn();
+        const onIssueRaised = vitest.fn();
 
-        expect(() => gridsManager.createGrid('myGrid', withUnknownOption({ onDiagnosticRaised }))).toThrow();
+        expect(() => gridsManager.createGrid('myGrid', withUnknownOption({ onIssueRaised }))).toThrow();
 
-        expect(onDiagnosticRaised).not.toHaveBeenCalled();
+        expect(onIssueRaised).not.toHaveBeenCalled();
     });
 
     test('is silenced for a suppressed id', () => {
         // An unrecognised option raises both the per-property warning (307) and the summary (310).
         enableDevValidations({ showOverlayOn: [], suppress: [307, 310] });
-        const onDiagnosticRaised = vitest.fn();
-        gridsManager.createGrid('myGrid', withUnknownOption({ onDiagnosticRaised }));
+        const onIssueRaised = vitest.fn();
+        gridsManager.createGrid('myGrid', withUnknownOption({ onIssueRaised }));
 
-        expect(onDiagnosticRaised).not.toHaveBeenCalled();
+        expect(onIssueRaised).not.toHaveBeenCalled();
     });
 
     test('a throwing handler does not break the raising code path, and is reported', () => {
         enableDevValidations({ showOverlayOn: [] });
-        const onDiagnosticRaised = vitest.fn(() => {
+        const onIssueRaised = vitest.fn(() => {
             throw new Error('handler blew up');
         });
 
-        expect(() => gridsManager.createGrid('myGrid', withUnknownOption({ onDiagnosticRaised }))).not.toThrow();
-        expect(onDiagnosticRaised).toHaveBeenCalled();
-        expect(consoleErrorSpy.mock.calls.some((call) => call.join(' ').includes('#330'))).toBe(true);
+        expect(() => gridsManager.createGrid('myGrid', withUnknownOption({ onIssueRaised }))).not.toThrow();
+        expect(onIssueRaised).toHaveBeenCalled();
+        expect(consoleErrorSpy.mock.calls.some((call) => call.join(' ').includes('#333'))).toBe(true);
     });
 
     test('a handler that itself raises a diagnostic does not recurse', () => {
@@ -124,7 +124,7 @@ describe('diagnosticRaised event', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
-            onDiagnosticRaised: () => {
+            onIssueRaised: () => {
                 calls++;
                 // Raises another diagnostic from inside the handler.
                 api.setGridOption('paginationPageSize', 0);
@@ -142,7 +142,7 @@ describe('diagnosticRaised event', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
-            onDiagnosticRaised: () => {
+            onIssueRaised: () => {
                 throw new Error('handler blew up');
             },
         });
@@ -150,23 +150,23 @@ describe('diagnosticRaised event', () => {
         // The caller sees the diagnostic's own throw, not the handler's - reporting the handler failure
         // as a diagnostic would throw first, from inside the listener loop.
         expect(() => api.setGridOption('paginationPageSize', 0)).toThrow(/#317/);
-        expect(consoleErrorSpy.mock.calls.some((call) => call.join(' ').includes('#330'))).toBe(true);
+        expect(consoleErrorSpy.mock.calls.some((call) => call.join(' ').includes('#333'))).toBe(true);
     });
 
     // An API call on a destroyed grid is raised with no grid attribution, so it reaches every live
     // grid's listener. The flag is what lets a consumer tell it apart from this grid's own problems.
     test('flags a diagnostic that is not attributed to this grid', () => {
         enableDevValidations({ showOverlayOn: [] });
-        const onDiagnosticRaised = vitest.fn();
+        const onIssueRaised = vitest.fn();
         const destroyedApi = gridsManager.createGrid('doomedGrid', { columnDefs, rowData });
-        gridsManager.createGrid('survivingGrid', { columnDefs, rowData, onDiagnosticRaised });
+        gridsManager.createGrid('survivingGrid', { columnDefs, rowData, onIssueRaised });
 
         destroyedApi.destroy();
-        onDiagnosticRaised.mockClear();
+        onIssueRaised.mockClear();
         destroyedApi.getDisplayedRowCount();
 
-        expect(onDiagnosticRaised).toHaveBeenCalledTimes(1);
-        expect(onDiagnosticRaised.mock.calls[0][0]).toMatchObject({
+        expect(onIssueRaised).toHaveBeenCalledTimes(1);
+        expect(onIssueRaised.mock.calls[0][0]).toMatchObject({
             id: 26,
             attributedToThisGrid: false,
         });
@@ -178,10 +178,10 @@ describe('diagnosticRaised event', () => {
         enableDevValidations({ showOverlayOn: [] });
         gridsManager.createGrid('firstGrid', withUnknownOption({}));
 
-        const onDiagnosticRaised = vitest.fn();
-        gridsManager.createGrid('laterGrid', { columnDefs, rowData, onDiagnosticRaised });
+        const onIssueRaised = vitest.fn();
+        gridsManager.createGrid('laterGrid', { columnDefs, rowData, onIssueRaised });
 
-        const ids = onDiagnosticRaised.mock.calls.map((call) => call[0].id);
+        const ids = onIssueRaised.mock.calls.map((call) => call[0].id);
         expect(ids).not.toContain(307);
         expect(ids).not.toContain(310);
     });

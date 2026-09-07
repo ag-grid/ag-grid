@@ -1,11 +1,11 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { _registerModule } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
-import { DiagnosticEventService } from './diagnosticEventService';
 import { renderBootstrapPanel } from './errorOverlay/bootstrapPanel';
 import errorOverlayCSS from './errorOverlay/errorOverlay.css';
 import { ErrorOverlayComponent } from './errorOverlay/errorOverlayComponent';
 import { ErrorOverlayService } from './errorOverlay/errorOverlayService';
+import { IssueEventService } from './issueEventService';
 import { _provideBootstrapPanelRenderer } from './logging';
 import type { DevValidationOptions } from './validationConfig';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
@@ -42,7 +42,7 @@ type ValidationModuleType = {
 export const ValidationModule: ValidationModuleType = {
     moduleName: 'Validation',
     version: VERSION,
-    beans: [ValidationService, ErrorOverlayService, DiagnosticEventService],
+    beans: [ValidationService, ErrorOverlayService, IssueEventService],
     userComponents: {
         agErrorOverlay: ErrorOverlayComponent,
     },

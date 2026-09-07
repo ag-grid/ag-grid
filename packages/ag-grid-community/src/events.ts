@@ -132,7 +132,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         findChanged: FindChangedEvent<TData, TContext>;
         rowResizeStarted: RowResizeStartedEvent<TData, TContext>;
         rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
-        diagnosticRaised: DiagnosticRaisedEvent<TData, TContext>;
+        issueRaised: IssueRaisedEvent<TData, TContext>;
         // Internal events
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
         keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
@@ -497,11 +497,7 @@ export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGl
     state: GridState;
 }
 
-export interface DiagnosticRaisedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'diagnosticRaised',
-    TData,
-    TContext
-> {
+export interface IssueRaisedEvent<TData = any, TContext = any> extends AgGlobalEvent<'issueRaised', TData, TContext> {
     /** Id of the diagnostic, matching the `#id` in the console message and the `errors/<id>` documentation page. */
     id: ErrorId;
     /** Whether the diagnostic is an error, a warning or a deprecation. */

@@ -5,13 +5,13 @@ import type { CapturedDiagnostic } from './logging';
 import { _addDiagnosticListener, _errMsg, _getDiagnosticMessage } from './logging';
 
 /**
- * Dev-only bean (ValidationModule) that turns captured diagnostics into the public `diagnosticRaised`
+ * Dev-only bean (ValidationModule) that turns captured diagnostics into the public `issueRaised`
  * event, so tooling can react to them programmatically. Every captured diagnostic is dispatched: unlike
  * the overlay this surface is not filtered by severity, as a consumer gets the severity in the payload
  * and decides for itself.
  */
-export class DiagnosticEventService extends BeanStub implements NamedBean {
-    beanName = 'diagnosticEvents' as const;
+export class IssueEventService extends BeanStub implements NamedBean {
+    beanName = 'issueEvents' as const;
 
     /**
      * A consumer's handler may itself raise a diagnostic (calling a deprecated API, say), which would
@@ -32,7 +32,7 @@ export class DiagnosticEventService extends BeanStub implements NamedBean {
         this.dispatching = true;
         try {
             this.eventSvc.dispatchEvent({
-                type: 'diagnosticRaised',
+                type: 'issueRaised',
                 id: diagnostic.id,
                 severity: diagnostic.severity,
                 message: _getDiagnosticMessage(diagnostic),
@@ -41,7 +41,7 @@ export class DiagnosticEventService extends BeanStub implements NamedBean {
         } catch (e) {
             // Reported straight to the console rather than raised as a diagnostic: raising it would throw
             // again under a matching `throwOn`, from inside the listener loop the guard exists to protect.
-            _errorOnce(_errMsg(330, { error: e }));
+            _errorOnce(_errMsg(333, { error: e }));
         } finally {
             this.dispatching = false;
         }

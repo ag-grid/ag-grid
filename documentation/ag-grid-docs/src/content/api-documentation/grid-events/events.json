@@ -497,7 +497,7 @@
                 "url": "./dev-validation/"
             }
         },
-        "diagnosticRaised": {
+        "issueRaised": {
             "more": {
                 "name": "Development Validation",
                 "url": "./dev-validation/#reacting-to-diagnostics-in-code"

@@ -5,7 +5,7 @@ test.agExample(import.meta, () => {
         'Example',
         async ({ page }) => {
             await ensureGridReady(page);
-            await expect(page.locator('#diagnosticList li').first()).toBeVisible();
+            await expect(page.locator('#issueList li').first()).toBeVisible();
         },
         // The example intentionally adds an unrecognised colDef property, surfacing warnings #307 and #310.
         { allowedConsoleMessages: ['warning #307', 'warning #310'] }

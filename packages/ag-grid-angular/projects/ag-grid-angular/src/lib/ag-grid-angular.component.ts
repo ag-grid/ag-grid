@@ -88,7 +88,6 @@ import type {
     CutStartEvent,
     DataTypeDefinitions,
     DefaultChartMenuItem,
-    DiagnosticRaisedEvent,
     DisplayedColumnsChangedEvent,
     DoesExternalFilterPass,
     DomLayoutType,
@@ -162,6 +161,7 @@ import type {
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
+    IssueRaisedEvent,
     LoadingCellRendererSelectorFunc,
     LoadingOptions,
     LocaleText,
@@ -2630,9 +2630,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * receive them.
      * @agModule `ValidationModule`
      */
-    @Output() public diagnosticRaised: EventEmitter<DiagnosticRaisedEvent<TData>> = new EventEmitter<
-        DiagnosticRaisedEvent<TData>
-    >();
+    @Output() public issueRaised: EventEmitter<IssueRaisedEvent<TData>> = new EventEmitter<IssueRaisedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
      *
      *  - The page size changes.

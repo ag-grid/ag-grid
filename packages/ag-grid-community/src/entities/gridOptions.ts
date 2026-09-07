@@ -59,7 +59,6 @@ import type {
     ContextMenuVisibleChangedEvent,
     CutEndEvent,
     CutStartEvent,
-    DiagnosticRaisedEvent,
     DisplayedColumnsChangedEvent,
     DragCancelledEvent,
     DragStartedEvent,
@@ -80,6 +79,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderFocusedEvent,
+    IssueRaisedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -2950,7 +2950,7 @@ export interface GridOptions<TData = any> {
      * receive them.
      * @agModule `ValidationModule`
      */
-    onDiagnosticRaised?(event: DiagnosticRaisedEvent<TData>): void;
+    onIssueRaised?(event: IssueRaisedEvent<TData>): void;
 
     // *** Pagination *** //
     /**
