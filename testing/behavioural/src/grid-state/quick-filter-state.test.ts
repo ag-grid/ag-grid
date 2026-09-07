@@ -261,6 +261,38 @@ describe('Grid state - quick filter text', () => {
         `);
     });
 
+    test('captures once the toolbar gains the quick filter item', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-toolbar-added', {
+            columnDefs,
+            rowData,
+            quickFilterText: 'canada',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(api.getState().quickFilter).toBeUndefined();
+
+        // Ownership changes without the text itself changing.
+        api.setGridOption('toolbar', toolbar);
+
+        await waitFor(() => expect(api.getState().quickFilter).toEqual({ text: 'canada' }));
+    });
+
+    test('drops the captured section once the toolbar loses the quick filter item', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-toolbar-removed', {
+            columnDefs,
+            rowData,
+            toolbar,
+            quickFilterText: 'canada',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        await waitFor(() => expect(api.getState().quickFilter).toEqual({ text: 'canada' }));
+
+        api.setGridOption('toolbar', undefined);
+
+        await waitFor(() => expect(api.getState().quickFilter).toBeUndefined());
+    });
+
     test('restores against pivot result columns when pivot mode is enabled', async () => {
         // With the default `applyQuickFilterBeforePivotOrAgg`, quick filter searches the aggregated values of
         // the pivot result columns, so a gold total only matches once those columns exist.

@@ -333,6 +333,10 @@ export class StateService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('quickFilterText', () =>
             updateCachedState('quickFilter', this.getQuickFilterState())
         );
+        // Capture is gated on the toolbar's quick filter item, so ownership can change on its own.
+        this.addManagedPropertyListener('toolbar', () =>
+            updateCachedState('quickFilter', this.getQuickFilterState())
+        );
 
         const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
