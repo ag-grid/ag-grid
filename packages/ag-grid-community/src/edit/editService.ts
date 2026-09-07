@@ -93,7 +93,7 @@ type StopContext = {
 type StopOutcome = { edits: EditMap; res: boolean };
 
 type BulkEditFormulaProgress = {
-    rowDelta: number;
+    value: EditValue['pendingValue'];
     lastRowNode?: RowNode;
 };
 
@@ -1943,10 +1943,10 @@ export class EditService extends BeanStub implements NamedBean {
 
         const isFormula = formula?.isFormula(editValue) ?? false;
 
-        // The ranges shift as one run, so each carries its offset into the next.
-        let formulaProgress: BulkEditFormulaProgress = { rowDelta: 0 };
+        // Carry the shifted formula so refs that cannot move keep their last valid position.
+        let formulaProgress: BulkEditFormulaProgress = { value: editValue };
         for (let i = 0, len = ranges.length; i < len; ++i) {
-            formulaProgress = this.applyBulkEditToRange(ranges[i], edits, editValue, isFormula, formulaProgress);
+            formulaProgress = this.applyBulkEditToRange(ranges[i], edits, isFormula, formulaProgress);
         }
 
         // One bulk edit however many ranges it spans, so commit once: a stopped event per range leaves
@@ -1981,7 +1981,6 @@ export class EditService extends BeanStub implements NamedBean {
     private applyBulkEditToRange(
         range: CellRange,
         edits: EditMap,
-        editValue: EditValue['pendingValue'],
         isFormula: boolean,
         progress: BulkEditFormulaProgress
     ): BulkEditFormulaProgress {
@@ -1989,7 +1988,7 @@ export class EditService extends BeanStub implements NamedBean {
         const { formula } = beans;
         const rangeColumns = range.columns as AgColumn[];
         const shiftFormulaPerRow = isFormula && rangeColumns.some((col) => col?.allowFormula);
-        let { rowDelta, lastRowNode } = progress;
+        let { value, lastRowNode } = progress;
         let firstRow = true;
 
         rangeSvc?.forEachRowInRange(range, (position) => {
@@ -1999,6 +1998,7 @@ export class EditService extends BeanStub implements NamedBean {
             }
 
             const lastRowIndex = lastRowNode?.rowIndex;
+            let rowDelta = lastRowNode ? 1 : 0;
             // Only displayed-adjacent ranges include the hidden-row gap at their boundary.
             if (
                 shiftFormulaPerRow &&
@@ -2008,21 +2008,20 @@ export class EditService extends BeanStub implements NamedBean {
                         rowNode.rowPinned === lastRowNode.rowPinned &&
                         rowNode.rowIndex === lastRowIndex + 1))
             ) {
-                rowDelta += getFormulaRowDelta(lastRowNode, rowNode) - 1;
+                rowDelta = getFormulaRowDelta(lastRowNode, rowNode);
             }
-            const rowValue =
-                rowDelta === 0 ? editValue : formula?.updateFormulaByOffset({ value: editValue, rowDelta });
+            const rowValue = rowDelta === 0 ? value : formula?.updateFormulaByOffset({ value, rowDelta });
 
             this.applyBulkEditToRow(rowNode, rangeColumns, edits, rowValue, isFormula);
 
             firstRow = false;
             if (shiftFormulaPerRow) {
-                rowDelta++;
+                value = rowValue;
                 lastRowNode = rowNode;
             }
         });
 
-        return { rowDelta, lastRowNode };
+        return { value, lastRowNode };
     }
 
     /** Writes `value` into every editable cell of `rowNode` across `rangeColumns`, one column step per formula column. */

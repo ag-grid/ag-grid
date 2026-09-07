@@ -16,6 +16,38 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('2', 'total').first()).toHaveText('$ 5.28');
     });
 
+    test.eachFramework(
+        'Bulk editing keeps the last valid row reference at the grid boundary',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+
+            const firstCell = agIdFor.cell('1', 'subtotal').first();
+            await firstCell.click();
+            for (let i = 0; i < 3; i++) {
+                await page.keyboard.press('Shift+ArrowDown');
+            }
+            await page.keyboard.press('F2');
+
+            const editable = page.locator('.ag-cell-inline-editing [contenteditable]').first();
+            await expect(editable).toBeVisible();
+            await page.keyboard.press('ControlOrMeta+A');
+            await page.keyboard.type('=B7');
+            await page.keyboard.press('Control+Enter');
+            await expect(editable).toHaveCount(0);
+
+            for (const [row, formula] of [
+                ['1', '=B7'],
+                ['2', '=B8'],
+                ['3', '=B8'],
+                ['4', '=B8'],
+            ]) {
+                await agIdFor.cell(row, 'subtotal').first().dblclick();
+                await expect(editable).toHaveText(formula);
+                await page.keyboard.press('Escape');
+            }
+        }
+    );
+
     // Editing a referenced cell recomputes the dependent formula cells.
     test.eachFramework('Editing quantity recomputes dependent formulas', async ({ agIdFor, page }) => {
         await ensureGridReady(page);

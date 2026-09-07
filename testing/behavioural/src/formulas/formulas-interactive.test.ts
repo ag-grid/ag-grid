@@ -511,6 +511,277 @@ describe('ag-grid formulas interactive workflows', () => {
         `);
     });
 
+    test.each([
+        {
+            name: 'single reference',
+            formula: '=REF(COLUMN("a"),ROW("r3"))',
+            expectedFormulas: [3, 4, 4, 4].map((row) => `=REF(COLUMN("a"),ROW("r${row}"))`),
+            expectedValues: [3, 4, 4, 4],
+        },
+        {
+            name: 'independent relative and absolute references',
+            formula: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r3"))+REF(COLUMN("B",true),ROW("1",true))',
+            expectedFormulas: [1, 2, 3, 4].map(
+                (row) =>
+                    `=REF(COLUMN("a"),ROW("r${row}"))+REF(COLUMN("b"),ROW("r${row === 1 ? 3 : 4}"))+REF(COLUMN("B",true),ROW("1",true))`
+            ),
+            expectedValues: [41, 52, 53, 54],
+        },
+        {
+            name: 'range endpoints',
+            formula: '=SUM(REF(COLUMN("a"),ROW("r2"),COLUMN("a"),ROW("r3")))',
+            expectedFormulas: [
+                '=SUM(REF(COLUMN("a"),ROW("r2"),COLUMN("a"),ROW("r3")))',
+                '=SUM(REF(COLUMN("a"),ROW("r3"),COLUMN("a"),ROW("r4")))',
+                '=SUM(REF(COLUMN("a"),ROW("r4"),COLUMN("a"),ROW("r4")))',
+                '=SUM(REF(COLUMN("a"),ROW("r4"),COLUMN("a"),ROW("r4")))',
+            ],
+            expectedValues: [5, 7, 4, 4],
+        },
+    ])('bulk edit retains last valid row references: $name', async ({ formula, expectedFormulas, expectedValues }) => {
+        const api = await createGrid('fx-bulk-edit-row-boundary', {
+            cellSelection: true,
+            rowData: bulkEditRowData(4),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        await bulkEditFormula(api, 0, formula, [{ rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] }]);
+
+        const nodes = [1, 2, 3, 4].map((row) => api.getRowNode(`r${row}`)!);
+        expect(nodes.map((node) => node.data.total)).toEqual(expectedFormulas);
+        expect(nodes.map((rowNode) => api.getCellValue({ rowNode, colKey: 'total', useFormatter: false }))).toEqual(
+            expectedValues
+        );
+    });
+
+    const boundaryLayouts: {
+        name: string;
+        ranges: { rowStartIndex: number; rowEndIndex: number; columns: ('total' | 'total2' | 'text')[] }[];
+        batch?: boolean;
+        readOnlyRow?: number;
+    }[] = [
+        { name: 'single', ranges: [{ rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] }] },
+        {
+            name: 'adjacent',
+            ranges: [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+                { rowStartIndex: 2, rowEndIndex: 3, columns: ['total'] },
+            ],
+        },
+        {
+            name: 'disjoint',
+            ranges: [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+                { rowStartIndex: 3, rowEndIndex: 3, columns: ['total'] },
+            ],
+        },
+        {
+            name: 'reverse order',
+            ranges: [
+                { rowStartIndex: 3, rowEndIndex: 3, columns: ['total'] },
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+            ],
+        },
+        {
+            name: 'overlapping',
+            ranges: [
+                { rowStartIndex: 0, rowEndIndex: 2, columns: ['total'] },
+                { rowStartIndex: 1, rowEndIndex: 3, columns: ['total'] },
+            ],
+        },
+        { name: 'reversed endpoints', ranges: [{ rowStartIndex: 3, rowEndIndex: 0, columns: ['total'] }] },
+        {
+            name: 'leading text',
+            ranges: [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['text'] },
+                { rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] },
+            ],
+        },
+        {
+            name: 'intervening text',
+            ranges: [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+                { rowStartIndex: 2, rowEndIndex: 3, columns: ['text'] },
+                { rowStartIndex: 2, rowEndIndex: 3, columns: ['total'] },
+            ],
+        },
+        {
+            name: 'trailing text',
+            ranges: [
+                { rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] },
+                { rowStartIndex: 0, rowEndIndex: 3, columns: ['text'] },
+            ],
+        },
+        { name: 'multiple columns', ranges: [{ rowStartIndex: 0, rowEndIndex: 3, columns: ['total', 'total2'] }] },
+        { name: 'read-only row', ranges: [{ rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] }], readOnlyRow: 2 },
+        { name: 'batch', ranges: [{ rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] }], batch: true },
+    ];
+
+    test.each(boundaryLayouts.flatMap((layout) => [1, 2, 3, 4].map((reference) => ({ ...layout, reference }))))(
+        'bulk edit boundary compatibility: $name, reference r$reference',
+        async ({ ranges, reference, readOnlyRow, batch }) => {
+            const api = await createGrid('fx-bulk-edit-boundary-compatibility', {
+                cellSelection: true,
+                defaultColDef: { allowFormula: true, editable: ({ node }) => node.rowIndex !== readOnlyRow },
+                rowData: bulkEditRowData(4).map((row) => ({ ...row, total2: null, text: null })),
+                columnDefs: [
+                    ...bulkEditColumnDefs,
+                    { field: 'total2' },
+                    { field: 'text', allowFormula: false, cellDataType: 'text' },
+                ],
+            });
+            const initialFormula = `=REF(COLUMN("a"),ROW("r${reference}"))`;
+            const expected: Record<'total' | 'total2' | 'text', string | null>[] = Array.from(
+                { length: 4 },
+                (_, i) => ({
+                    total: i === 0 ? initialFormula : null,
+                    total2: null,
+                    text: null,
+                })
+            );
+            let nextReference = reference;
+            for (const range of ranges) {
+                const start = Math.min(range.rowStartIndex, range.rowEndIndex);
+                const end = Math.max(range.rowStartIndex, range.rowEndIndex);
+                for (let row = start; row <= end; row++) {
+                    for (const [index, column] of range.columns.entries()) {
+                        if (row !== readOnlyRow) {
+                            expected[row][column] =
+                                `=REF(COLUMN("${index === 0 ? 'a' : 'b'}"),ROW("r${nextReference}"))`;
+                        }
+                    }
+                    if (range.columns.some((column) => column !== 'text')) {
+                        nextReference = Math.min(nextReference + 1, 4);
+                    }
+                }
+            }
+
+            if (batch) {
+                api.startBatchEdit();
+            }
+            await bulkEditFormula(api, 0, initialFormula, ranges);
+            if (batch) {
+                api.commitBatchEdit();
+            }
+
+            for (let row = 0; row < 4; row++) {
+                expect(api.getRowNode(`r${row + 1}`)!.data).toEqual({
+                    id: `r${row + 1}`,
+                    a: row + 1,
+                    b: (row + 1) * 10,
+                    ...expected[row],
+                });
+            }
+        }
+    );
+
+    test.each([false, true])(
+        'bulk edit retains valid refs across filtered and pinned boundaries (split=%s)',
+        async (split) => {
+            const api = await createGrid('fx-bulk-edit-filtered-pinned-limit', {
+                cellSelection: true,
+                rowData: bulkEditRowData(6),
+                columnDefs: bulkEditColumnDefs,
+                pinnedTopRowData: [
+                    { id: 'pt1', total: null },
+                    { id: 'pt2', total: null },
+                ],
+                pinnedBottomRowData: [
+                    { id: 'pb1', total: null },
+                    { id: 'pb2', total: null },
+                ],
+            });
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel({
+                a: {
+                    filterType: 'number',
+                    operator: 'OR',
+                    conditions: [1, 3, 4].map((filter) => ({ filterType: 'number', type: 'equals', filter })),
+                },
+            });
+            await filterChanged;
+
+            const ranges: CellRangeParams[] = split
+                ? [
+                      {
+                          rowStartIndex: 0,
+                          rowStartPinned: 'top',
+                          rowEndIndex: 1,
+                          rowEndPinned: 'top',
+                          columns: ['total'],
+                      },
+                      { rowStartIndex: 0, rowEndIndex: 0, columns: ['total'] },
+                      { rowStartIndex: 1, rowEndIndex: 2, columns: ['total'] },
+                      {
+                          rowStartIndex: 0,
+                          rowStartPinned: 'bottom',
+                          rowEndIndex: 1,
+                          rowEndPinned: 'bottom',
+                          columns: ['total'],
+                      },
+                  ]
+                : [
+                      {
+                          rowStartIndex: 0,
+                          rowStartPinned: 'top',
+                          rowEndIndex: 1,
+                          rowEndPinned: 'bottom',
+                          columns: ['total'],
+                      },
+                  ];
+            await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r3"))', ranges);
+
+            const nodes = [
+                api.getPinnedTopRow(0)!,
+                api.getPinnedTopRow(1)!,
+                api.getRowNode('r1')!,
+                api.getRowNode('r3')!,
+                api.getRowNode('r4')!,
+                api.getPinnedBottomRow(0)!,
+                api.getPinnedBottomRow(1)!,
+            ];
+            // A two-row jump from r5 cannot resolve r7; the following one-row step can still reach r6.
+            const expectedRefs = [3, 4, 5, 5, 6, 6, 6];
+            expect(nodes.map((node) => node.data.total)).toEqual(
+                expectedRefs.map((row) => `=REF(COLUMN("a"),ROW("r${row}"))`)
+            );
+            expect(nodes.map((rowNode) => api.getCellValue({ rowNode, colKey: 'total', useFormatter: false }))).toEqual(
+                expectedRefs
+            );
+            for (const id of ['r2', 'r5', 'r6']) {
+                expect(api.getRowNode(id)!.data.total).toBeNull();
+            }
+        }
+    );
+
+    test('bulk edit at a row boundary remains one undoable operation across ranges', async () => {
+        const events: string[] = [];
+        const api = await createGrid('fx-bulk-edit-boundary-undo', {
+            cellSelection: true,
+            undoRedoCellEditing: true,
+            rowData: bulkEditRowData(4),
+            columnDefs: bulkEditColumnDefs,
+            onBulkEditingStarted: () => events.push('start'),
+            onBulkEditingStopped: () => events.push('stop'),
+        });
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r3"))', [
+            { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+            { rowStartIndex: 2, rowEndIndex: 3, columns: ['total'] },
+        ]);
+
+        const nodes = [1, 2, 3, 4].map((row) => api.getRowNode(`r${row}`)!);
+        const formulas = [3, 4, 4, 4].map((row) => `=REF(COLUMN("a"),ROW("r${row}"))`);
+        expect(nodes.map((node) => node.data.total)).toEqual(formulas);
+        expect(events).toEqual(['start', 'stop']);
+        expect(api.getCurrentUndoSize()).toBe(1);
+
+        api.undoCellEditing();
+        expect(nodes.map((node) => node.data.total)).toEqual([null, null, null, null]);
+        api.redoCellEditing();
+        expect(nodes.map((node) => node.data.total)).toEqual(formulas);
+    });
+
     test('bulk edit across two ranges continues the formula offset from one range into the next', async () => {
         const api = await createGrid('fx-bulk-edit-multi-range', {
             cellSelection: true,
