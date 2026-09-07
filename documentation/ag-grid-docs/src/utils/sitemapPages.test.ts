@@ -7,4 +7,10 @@ describe('getSitemapIgnorePaths', () => {
         expect(ignorePaths).toContain('/*searchQuery=');
         expect(ignorePaths).not.toContain('/*searchQuery=/');
     });
+
+    test('does not block the /data-grid/ framework redirect pages, so crawlers can follow their framework links', async () => {
+        const ignorePaths = await getSitemapIgnorePaths();
+
+        expect(ignorePaths).not.toContain('/data-grid/');
+    });
 });
