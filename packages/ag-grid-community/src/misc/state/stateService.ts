@@ -810,11 +810,26 @@ export class StateService extends BeanStub implements NamedBean {
         rangeSvc.setCellRanges(cellRanges);
     }
 
+    /** Whether the Quick Access Toolbar is configured with the given provided item. */
+    private hasToolbarItem(itemName: string): boolean {
+        return !!this.gos
+            .get('toolbar')
+            ?.items?.some((item) => item === itemName || (typeof item === 'object' && item.toolbarItem === itemName));
+    }
+
+    /**
+     * Find is only state-managed when the Quick Access Toolbar owns an input for it; otherwise the
+     * `findSearchValue` grid option is the only source and state leaves it alone. Find also only
+     * searches the Client-Side Row Model, so there is nothing to restore elsewhere.
+     */
+    private isFindStateManaged(): boolean {
+        return this.isClientSideRowModel && this.hasToolbarItem('agFindToolbarItem');
+    }
+
     private getFindState(): FindState | undefined {
         const findSvc = this.beans.findSvc;
-        // Find only searches the Client-Side Row Model, so there is nothing to restore elsewhere. Without
-        // the module the option is inert, and writing it on restore reports a missing-module error.
-        if (!findSvc || !this.isClientSideRowModel) {
+        // Without the module the option is inert, and writing it on restore reports a missing-module error.
+        if (!findSvc || !this.isFindStateManaged()) {
             return undefined;
         }
         // The service holds a trimmed, case-converted form, so the option is the round-trippable value.
@@ -825,11 +840,12 @@ export class StateService extends BeanStub implements NamedBean {
 
     private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
         const findSvc = this.beans.findSvc;
-        if (!findSvc || !this.isClientSideRowModel) {
+        if (!findSvc || !this.isFindStateManaged()) {
             return;
         }
         const { searchValue, activeMatch } = findState ?? {};
         // An `api` restore resets what it omits, so a state without a search value clears Find.
+        // At initialisation an absent state instead leaves the `findSearchValue` grid option as provided.
         const newSearchValue = source === 'api' ? (searchValue ?? '') : searchValue;
         if (newSearchValue !== undefined) {
             // The find service's own property listener is the apply path, and it recalculates the

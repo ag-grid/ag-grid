@@ -28,7 +28,9 @@ export interface FilterState {
 }
 
 /**
- * Find state. Works for Client-Side Row Model only.
+ * Find state. Works for Client-Side Row Model only, and only when the Quick Access Toolbar is
+ * configured with the `agFindToolbarItem` item; otherwise the `findSearchValue` grid option is the
+ * only source.
  */
 export interface FindState {
     /** Current search value */
@@ -249,7 +251,10 @@ export interface GridState {
     columnHeaderName?: ColumnHeaderNameState;
     /** Column Filters and Advanced Filter */
     filter?: FilterState;
-    /** Find search value and active match. Works for Client-Side Row Model only */
+    /**
+     * Find search value and active match. Works for Client-Side Row Model only, and only
+     * when the Quick Access Toolbar is configured with the `agFindToolbarItem` item
+     */
     find?: FindState;
     /** Currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;

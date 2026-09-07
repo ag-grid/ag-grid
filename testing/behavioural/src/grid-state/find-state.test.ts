@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager } from 'ag-test-utils';
 
-import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import type { GridApi, GridOptions, IServerSideDatasource, Toolbar } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('StateService - Find State', () => {
@@ -11,6 +11,8 @@ describe('StateService - Find State', () => {
 
     const rowData = [{ value: 'cat' }, { value: 'dog' }, { value: 'car' }, { value: 'cup' }];
     const columnDefs = [{ field: 'value' }];
+    // Find only takes part in grid state when the Quick Access Toolbar owns an input for it.
+    const toolbar: Toolbar = { items: ['agFindToolbarItem'] };
 
     beforeEach(() => {
         gridsManager.reset();
@@ -21,7 +23,7 @@ describe('StateService - Find State', () => {
     });
 
     async function createGrid(gridId: string, gridOptions: GridOptions = {}): Promise<GridApi> {
-        const api = gridsManager.createGrid(gridId, { columnDefs, rowData, ...gridOptions });
+        const api = gridsManager.createGrid(gridId, { columnDefs, rowData, toolbar, ...gridOptions });
         await new GridRows(api, `${gridId} setup`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 value:"cat"
@@ -72,6 +74,7 @@ describe('StateService - Find State', () => {
         test('should not capture a find section for the Server-Side Row Model', async () => {
             const api = await gridsManager.createGridAndWait('ssrm-no-find', {
                 columnDefs,
+                toolbar,
                 rowModelType: 'serverSide',
                 serverSideDatasource: {
                     getRows: (params) => params.success({ rowData, rowCount: rowData.length }),
@@ -112,6 +115,7 @@ describe('StateService - Find State', () => {
             const api = await gridsManager.createGridAndWait('initial-active-match-pinned', {
                 columnDefs,
                 rowData,
+                toolbar,
                 pinnedTopRowData: [{ value: 'cog' }],
                 pinnedBottomRowData: [{ value: 'cab' }],
                 initialState: { find: { searchValue: 'c', activeMatch: 2 } },
@@ -127,6 +131,7 @@ describe('StateService - Find State', () => {
             const api = await gridsManager.createGridAndWait('initial-active-match-pinned-bottom', {
                 columnDefs,
                 rowData,
+                toolbar,
                 pinnedTopRowData: [{ value: 'cog' }],
                 pinnedBottomRowData: [{ value: 'cab' }],
                 initialState: { find: { searchValue: 'c', activeMatch: 5 } },
@@ -183,6 +188,41 @@ describe('StateService - Find State', () => {
 
             await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
             expect(api.getGridOption('findSearchValue')).toBe('c');
+        });
+    });
+
+    describe('without the toolbar item', () => {
+        test('should not capture a find section', async () => {
+            const api = await createGrid('no-toolbar-item-capture', { toolbar: undefined });
+
+            api.setGridOption('findSearchValue', 'c');
+
+            await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
+            expect(api.getState().find).toBeUndefined();
+        });
+
+        test('should leave the grid option as the only source', async () => {
+            const api = await createGrid('no-toolbar-item-restore', {
+                toolbar: undefined,
+                findSearchValue: 'dog',
+                initialState: { find: { searchValue: 'c' } },
+            });
+
+            // The state section is ignored in both directions, so the grid option stands.
+            await waitFor(() => {
+                expect(api.findGetTotalMatches()).toBe(1);
+                expect(api.getState().find).toBeUndefined();
+            });
+            expect(api.getGridOption('findSearchValue')).toBe('dog');
+        });
+
+        test('should not clear the grid option on setState', async () => {
+            const api = await createGrid('no-toolbar-item-set-state', { toolbar: undefined, findSearchValue: 'c' });
+
+            api.setState({});
+
+            await waitFor(() => expect(api.getGridOption('findSearchValue')).toBe('c'));
+            expect(api.findGetTotalMatches()).toBe(3);
         });
     });
 
