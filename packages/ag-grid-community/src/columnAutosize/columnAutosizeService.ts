@@ -56,7 +56,7 @@ const CONTINUOUS_REASON_PRIORITY: readonly AutoSizeReason[] = [
     'dataChanged',
     'columnsChanged',
     'gridSizeChanged',
-    'scrollChanged',
+    'viewportChanged',
 ];
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
@@ -731,18 +731,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         // the width-distribution strategies are arithmetic over the current column set, so what is scrolled
         // into view cannot change their result. For `fitCellContents` it can, but the re-size is opt-in:
-        // without a callback to allow it, the grid never raises `scrollChanged`
+        // without a callback to allow it, the grid never raises `viewportChanged`
         if (!measuresContent || !strategy.shouldAutoSizeColumns) {
             return;
         }
 
         this.addManagedEventListeners({
             // horizontal virtualisation renders new columns, which are then measurable for the first time
-            virtualColumnsChanged: () => this.scheduleDebouncedContinuousAutoSize('scrollChanged'),
-            viewportChanged: () => this.scheduleDebouncedContinuousAutoSize('scrollChanged'),
+            virtualColumnsChanged: () => this.scheduleDebouncedContinuousAutoSize('viewportChanged'),
+            viewportChanged: () => this.scheduleDebouncedContinuousAutoSize('viewportChanged'),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'horizontal') {
-                    this.scheduleDebouncedContinuousAutoSize('scrollChanged');
+                    this.scheduleDebouncedContinuousAutoSize('viewportChanged');
                 }
             },
         });
