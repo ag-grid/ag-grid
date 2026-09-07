@@ -23,11 +23,8 @@ export const TEXT_COMPARISONS: Record<
     notContains: (value, filterText) => !value.includes(filterText),
     equals: (value, filterText) => value === filterText,
     notEqual: (value, filterText) => value != filterText,
-    startsWith: (value, filterText) => value.indexOf(filterText) === 0,
-    endsWith: (value, filterText) => {
-        const index = value.lastIndexOf(filterText);
-        return index >= 0 && index === value.length - filterText.length;
-    },
+    startsWith: (value, filterText) => value.startsWith(filterText),
+    endsWith: (value, filterText) => value.endsWith(filterText),
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

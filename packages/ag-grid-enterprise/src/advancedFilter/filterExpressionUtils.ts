@@ -301,9 +301,10 @@ export function getTextFilterParams(
     if (filter === 'agMultiColumnFilter') {
         return getMultiFilterChild(colDef?.filterParams, 'agTextColumnFilter')?.filterParams;
     }
-    // A custom component's are its own, and a Set Filter's `textFormatter` formats its list, not a comparison.
-    const ownsItsParams = typeof filter === 'function' || (filter != null && typeof filter === 'object');
-    return ownsItsParams || advFilterSetSvc.isSetFilterColumn(column) ? undefined : colDef?.filterParams;
+    // Named as readily as supplied, so any other component's params are its own; a Set Filter's `textFormatter`
+    // formats its list rather than a comparison, and `filter: true` resolves to one under enterprise.
+    const isTextFilter = filter == null || filter === true || filter === 'agTextColumnFilter';
+    return isTextFilter && !advFilterSetSvc.isSetFilterColumn(column) ? colDef?.filterParams : undefined;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

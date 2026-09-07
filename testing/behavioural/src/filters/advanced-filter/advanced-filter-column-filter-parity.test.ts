@@ -616,6 +616,26 @@ describe('Advanced Filter matches the column filter', () => {
             expect(await withExpression({}, '[Name] contains "cafe"', columnDefs)).toEqual([4]);
         });
 
+        // A component named through `components` owns its `filterParams` exactly as one supplied directly does.
+        test('a custom filter component registered by name keeps its own `filterParams`', async () => {
+            const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
+                columnDefs: [
+                    { field: 'id' },
+                    { field: 'name', filter: 'myFilter', filterParams: { textFormatter: () => 'carpet' } },
+                ],
+                components: { myFilter: MinimalFilter },
+                rowData: TEXT_ROWS,
+                enableAdvancedFilter: true,
+            });
+            await AdvancedFilterHarness.get(api).applyExpression('[Name] contains "carpet"');
+            await asyncSetTimeout(0);
+            const ids = getDisplayedIds(api);
+            api.destroy();
+
+            // Read as a Text Filter's, the formatter would make every row read 'carpet' and so match them all.
+            expect(ids).toEqual([1]);
+        });
+
         // 'Café' and 'cafe' differ only in case, so the flag alone decides whether they are one match or two.
         test('`caseSensitive` decides the comparison the same way in both', async () => {
             expect(await withColumnModel({}, contains('Caf'))).toEqual([3, 4]);
