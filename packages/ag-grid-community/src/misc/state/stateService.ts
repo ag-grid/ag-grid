@@ -748,20 +748,12 @@ export class StateService extends BeanStub implements NamedBean {
      * otherwise the `quickFilterText` grid option is the only source and state leaves it alone.
      */
     private isQuickFilterStateManaged(): boolean {
-        if (!this.beans.quickFilter) {
-            // Without the module the option is inert, and writing it on restore reports a missing-module error.
-            return false;
-        }
         return !!this.beans.toolbar?.hasItem('agQuickFilterToolbarItem');
     }
 
     private getQuickFilterState(): QuickFilterState | undefined {
-        if (!this.isQuickFilterStateManaged()) {
-            return undefined;
-        }
-        // The service holds an uppercased, parsed form; the option is the round-trippable value.
-        const text = this.gos.get('quickFilterText') || undefined;
-        return text ? { text } : undefined;
+        // Without the module the option is inert, and writing it on restore reports a missing-module error.
+        return this.isQuickFilterStateManaged() ? this.beans.quickFilter?.getState() : undefined;
     }
 
     private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
@@ -769,13 +761,9 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { text } = quickFilterState ?? {};
-        // An `api` restore resets what it omits, so a state without the text clears the Quick Filter.
-        // At initialisation an absent state instead leaves the `quickFilterText` grid option as provided.
-        const newText = source === 'api' ? (text ?? '') : text;
-        if (newText !== undefined) {
-            // The quick filter service's own property listener is the apply path.
-            this.gos.updateGridOptions({ options: { quickFilterText: newText } });
-        }
+        // An `api` restore resets what it omits, so a state without the text clears the Quick Filter. At
+        // initialisation an absent value instead leaves the `quickFilterText` grid option as provided.
+        this.beans.quickFilter?.setState({ text: source === 'api' ? (text ?? '') : text });
     }
 
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */

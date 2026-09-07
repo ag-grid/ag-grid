@@ -6,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { QuickFilterState } from '../interfaces/gridState';
 
 type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
@@ -92,6 +93,20 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
     public getText(): string | undefined {
         return this.gos.get('quickFilterText');
+    }
+
+    public getState(): QuickFilterState | undefined {
+        // This service holds an uppercased, parsed form; the option is the round-trippable value.
+        const text = this.getText() || undefined;
+        return text ? { text } : undefined;
+    }
+
+    /** An absent `text` leaves the `quickFilterText` grid option as it is. */
+    public setState({ text }: QuickFilterState): void {
+        if (text !== undefined) {
+            // This service's own property listener is the apply path.
+            this.gos.updateGridOptions({ options: { quickFilterText: text } });
+        }
     }
 
     private setFilterParts(): void {
