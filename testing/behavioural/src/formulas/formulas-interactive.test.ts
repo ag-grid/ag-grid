@@ -4,12 +4,13 @@ import {
     GridColumns,
     GridRows,
     TestGridsManager,
+    asyncSetTimeout,
     clipboardUtils,
     initPointerEventPolyfill,
     waitForEvent,
 } from 'ag-test-utils';
 
-import type { GridOptions, Module } from 'ag-grid-community';
+import type { GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -399,6 +400,169 @@ describe('ag-grid formulas interactive workflows', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:r1 row-number:"1" a:2 b:20
             └── LEAF id:r2 row-number:"2" a:3 b:300
+        `);
+    });
+    // AG-18276: bulk edit (Ctrl+Enter) of a formula across a cell range - `applyBulkEdit` is reachable
+    // only from the cell's Enter handler. The value is set through the editor instance (as the other
+    // formula tests here do, the formula editor being no plain input) and the selection is set last:
+    // `addCellRange` appends, so any earlier collapsed range would still be in the set.
+    async function bulkEditFormula(
+        api: GridApi,
+        rowIndex: number,
+        formula: string,
+        ranges: { rowStartIndex: number; rowEndIndex: number; columns: string[] }[]
+    ) {
+        const started = waitForEvent('cellEditingStarted', api);
+        api.setFocusedCell(rowIndex, 'total');
+        api.startEditingCell({ rowIndex, colKey: 'total' });
+        await started;
+
+        // The selection is set before the value: an open formula editor treats a new cell range as a
+        // reference to insert, so setting the value last is what leaves the typed formula in place.
+        api.clearCellSelection();
+        for (const range of ranges) {
+            api.addCellRange(range);
+        }
+
+        const [editor] = api.getCellEditorInstances() as unknown as [
+            { agSetEditValue?: (v: unknown) => void; getValidationElement?: () => HTMLElement },
+        ];
+        editor?.agSetEditValue?.(formula);
+
+        const contentEl = editor?.getValidationElement?.();
+        contentEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, bubbles: true }));
+        await asyncSetTimeout(0);
+    }
+
+    // `a_i + b_j = i + 10j` is injective over these rows, so any wrong row reference produces a value
+    // distinct from every correct one.
+    const bulkEditRowData = (count: number) =>
+        Array.from({ length: count }, (_, i) => ({ id: `r${i + 1}`, a: i + 1, b: (i + 1) * 10, total: null }));
+
+    const bulkEditColumnDefs = [{ field: 'a', filter: 'agNumberColumnFilter' }, { field: 'b' }, { field: 'total' }];
+
+    test('bulk edit offsets formula refs by the target row when a filter is active', async () => {
+        const api = await createGrid('fx-bulk-edit-filtered', {
+            cellSelection: true,
+            rowData: bulkEditRowData(6),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        // Hide r2 and r4 so the visible rows are non-consecutive in formulaRows space.
+        const filterChanged = waitForEvent('filterChanged', api);
+        api.setFilterModel({
+            a: {
+                filterType: 'number',
+                operator: 'OR',
+                conditions: [
+                    { filterType: 'number', type: 'equals', filter: 1 },
+                    { filterType: 'number', type: 'equals', filter: 3 },
+                    { filterType: 'number', type: 'equals', filter: 5 },
+                    { filterType: 'number', type: 'equals', filter: 6 },
+                ],
+            },
+        });
+        await filterChanged;
+
+        await new GridRows(api, 'before bulk edit (filtered)', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:null
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:null
+            ├── LEAF id:r5 row-number:"5" a:5 b:50 total:null
+            └── LEAF id:r6 row-number:"6" a:6 b:60 total:null
+        `);
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+            { rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] },
+        ]);
+
+        // Each row's formula references its own row, not one step per visited row (which would give
+        // r3:22, r5:33, r6:44).
+        await new GridRows(api, 'after bulk edit (filtered)', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:33
+            ├── LEAF id:r5 row-number:"5" a:5 b:50 total:55
+            └── LEAF id:r6 row-number:"6" a:6 b:60 total:66
+        `);
+
+        // The filtered-out rows are not in the range, so they are never written to.
+        for (const id of ['r2', 'r4']) {
+            const node = api.getRowNode(id)!;
+            expect(api.getCellValue({ rowNode: node, colKey: 'total', useFormatter: false })).toBeNull();
+        }
+    });
+
+    test('bulk edit with no filter offsets formula refs by one row per row in the range', async () => {
+        const api = await createGrid('fx-bulk-edit-unfiltered', {
+            cellSelection: true,
+            rowData: bulkEditRowData(4),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+            { rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] },
+        ]);
+
+        // Consecutive displayed rows are consecutive in formula-row space, so this is unchanged.
+        await new GridRows(api, 'after bulk edit (unfiltered)', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
+            ├── LEAF id:r2 row-number:"2" a:2 b:20 total:22
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:33
+            └── LEAF id:r4 row-number:"4" a:4 b:40 total:44
+        `);
+    });
+
+    test('bulk edit across two ranges restarts the formula offset at each range', async () => {
+        const api = await createGrid('fx-bulk-edit-multi-range', {
+            cellSelection: true,
+            rowData: bulkEditRowData(4),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+            { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+            { rowStartIndex: 3, rowEndIndex: 3, columns: ['total'] },
+        ]);
+
+        // The offset is measured from each range's own start row, so r4 - the start of the second
+        // range - takes the typed formula unshifted (11) rather than continuing the first range's
+        // progression (which would give 33). Deliberate: a non-accumulating offset cannot continue
+        // across ranges, and `getCellRanges()` returns creation order, so accumulating would go
+        // negative for a later range sitting above an earlier one.
+        await new GridRows(api, 'after bulk edit across two ranges', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
+            ├── LEAF id:r2 row-number:"2" a:2 b:20 total:22
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:null
+            └── LEAF id:r4 row-number:"4" a:4 b:40 total:11
+        `);
+    });
+
+    test('bulk edit measures the formula offset from the top of the range, not the edited cell', async () => {
+        const api = await createGrid('fx-bulk-edit-anchor-mid-range', {
+            cellSelection: true,
+            rowData: bulkEditRowData(6),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        // The edited cell is the third row of a range that starts at r1.
+        await bulkEditFormula(api, 2, '=REF(COLUMN("a"),ROW("r3"))+REF(COLUMN("b"),ROW("r3"))', [
+            { rowStartIndex: 0, rowEndIndex: 3, columns: ['total'] },
+        ]);
+
+        // Pre-existing behaviour, preserved deliberately: the range's start row keeps the typed
+        // formula and every row below it - including the edited cell itself - is shifted by its
+        // offset from the range top, so r3 ends up referencing r5.
+        await new GridRows(api, 'after bulk edit (anchor mid-range)', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:33
+            ├── LEAF id:r2 row-number:"2" a:2 b:20 total:44
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:55
+            ├── LEAF id:r4 row-number:"4" a:4 b:40 total:66
+            ├── LEAF id:r5 row-number:"5" a:5 b:50 total:null
+            └── LEAF id:r6 row-number:"6" a:6 b:60 total:null
         `);
     });
 });
