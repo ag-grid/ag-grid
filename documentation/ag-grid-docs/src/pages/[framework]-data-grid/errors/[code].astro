@@ -11,8 +11,9 @@ import { FRAMEWORK_REDIRECT_PATH, FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@
 import Layout from '@layouts/Layout.astro';
 import { getIsArchive } from '@utils/env';
 import { getFrameworkDisplayText } from '@utils/framework';
-import { getErrorText } from '@utils/getErrorText';
+import { getErrorTextDetails } from '@utils/getErrorText';
 import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
+import { getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
@@ -71,16 +72,26 @@ const { data: allErrorLinks } = (await getEntry('errorLinks', 'links')) as Colle
 const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
-const defaultErrorText = isUnknownCode ? '' : getErrorText({ errorCode: errorCode as ErrorId });
+// The query string is only available client-side, so a statically rendered page has none of the
+// parameters its error takes. Errors taking no parameters (most of them) render their complete text
+// here and never show the warning; the inline script drops it for the rest once it has read the URL and
+// found the message can be completed.
+const { text: defaultErrorText, hasPlaceholders } = isUnknownCode
+    ? { text: '', hasPlaceholders: false }
+    : getErrorTextDetails({ errorCode: errorCode as ErrorId });
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
 const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
 const relatedDocPages = { slug: getTabItemSlug('related-doc-pages'), depth: 2, text: 'Related Doc Pages' };
+// Error content lives in `content/errors/`, not under `content/docs/<pageName>`, so partials shared
+// between related error pages are resolved against that directory instead.
+const errorsContentPath = pathJoin(getContentRootFileUrl().pathname, 'errors');
 let headings = errorPage
     ? await getHeadings({
           title,
           pageName,
+          partialBasePath: errorsContentPath,
           markdocContent: errorPage.body,
           framework,
           getTabItemSlug,
@@ -132,25 +143,28 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
                         </Note>
                     ) : (
                         <>
-                            <div class="missing-params-message">
-                                <Warning>
-                                    Full error message cannot be shown because there are missing parameters in the URL.
-                                    Please follow the full link from the developer tool logs.
-                                </Warning>
-                            </div>
-                            <div class="full-error-message">
-                                <pre id="errorCodeText">{defaultErrorText}</pre>
-                                <Note>
-                                    To show this error text in the dev console,{' '}
-                                    <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
-                                        enable development validations
-                                    </a>
-                                    .
-                                </Note>
-                            </div>
+                            <pre id="errorCodeText">{defaultErrorText}</pre>
+                            {hasPlaceholders && (
+                                <div id="error-missing-params">
+                                    <Warning>
+                                        This URL does not carry the specifics of your error, so the message above shows
+                                        placeholders (<code>&lt;name&gt;</code>) in their place. Follow the full link
+                                        from your browser's developer console to see the complete message.
+                                    </Warning>
+                                </div>
+                            )}
+                            <Note>
+                                To show this error text in the dev console,{' '}
+                                <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
+                                    enable development validations
+                                </a>
+                                .
+                            </Note>
                         </>
                     )
                 }
+
+                {Content ? <Content framework={framework} /> : undefined}
 
                 {
                     errorLinks.length > 0 ? (
@@ -171,8 +185,6 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
                         </>
                     ) : undefined
                 }
-
-                {Content ? <Content framework={framework} /> : undefined}
             </div>
         </div>
 
@@ -181,7 +193,7 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
 </Layout>
 
 <script>
-    import { getErrorText } from '@utils/getErrorText';
+    import { getErrorTextDetails, cleanErrorParamValue } from '@utils/getErrorText';
     import {
         AG_GRID_ERRORS,
         type ErrorId,
@@ -190,9 +202,9 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
     import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
     import { pathJoin } from '@utils/pathJoin';
 
-    const MISSING_PARAMS_MESSAGE_SELECTOR = '.missing-params-message';
-    const FULL_ERROR_MESSAGE_SELECTOR = '.full-error-message';
+    const MISSING_PARAMS_ID = 'error-missing-params';
     const ERROR_CODE_TEXT_ID = 'errorCodeText';
+    const ERROR_PARAM_SELECTOR = '[data-error-param]';
 
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
@@ -200,29 +212,39 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
     const searchParams = new URLSearchParams(window.location.search);
     const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
-    if (!_version_) {
-        // Missing version number, show a warning message. Both blocks are absent on an unknown code's page.
-        const missingParamsMessage = document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement | null;
-        const fullErrorMessage = document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement | null;
+    // Redirect first, so the hop to the archive can never sit downstream of a failing text lookup.
+    // Absent `_version_` there is nothing to compare against, so the page stays where it is.
+    const errorRedirectBaseUrl = _version_
+        ? getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION })
+        : undefined;
 
-        if (missingParamsMessage) {
-            missingParamsMessage.style.display = 'block';
-        }
-        if (fullErrorMessage) {
-            fullErrorMessage.style.display = 'none';
-        }
-    } else {
-        // Redirect first, so the hop to the archive can never sit downstream of a failing text lookup.
-        const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
+    if (errorRedirectBaseUrl) {
+        // `replace` does not halt this script, so everything below has to be an explicit `else`.
+        const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
+        window.location.replace(redirectUrl);
+    } else if (errorCode in AG_GRID_ERRORS) {
+        const typedErrorCode = errorCode as ErrorId;
 
-        if (errorRedirectBaseUrl) {
-            // `replace` does not halt this script, so the text update below has to be an explicit `else`.
-            const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
-            window.location.replace(redirectUrl);
-        } else if (errorCode in AG_GRID_ERRORS) {
-            const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
-            if (errorCodeTextEl) {
-                errorCodeTextEl.textContent = getErrorText({ errorCode: errorCode as ErrorId, params });
+        const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: typedErrorCode, params });
+
+        const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
+        if (errorCodeTextEl) {
+            errorCodeTextEl.textContent = text;
+        }
+
+        // The static page is rendered without a query string, so it always warns for a parameterised
+        // error. Now that the URL has been read, drop the warning if the message came out complete.
+        if (!hasPlaceholders) {
+            document.getElementById(MISSING_PARAMS_ID)?.remove();
+        }
+
+        // Replace each `errorParam` tag's fallback with this reader's own value, so the guidance below
+        // describes their grid rather than a worked example.
+        for (const el of document.querySelectorAll<HTMLElement>(ERROR_PARAM_SELECTOR)) {
+            const name = el.dataset.errorParam;
+            const value = name === undefined ? undefined : params[name];
+            if (value !== undefined) {
+                el.textContent = `${cleanErrorParamValue(value)}${el.dataset.errorParamSuffix ?? ''}`;
             }
         }
     }

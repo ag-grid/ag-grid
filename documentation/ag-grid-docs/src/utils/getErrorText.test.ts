@@ -1,5 +1,5 @@
 import { BASE_URL } from '../../../../packages/ag-grid-community/src/baseUrl';
-import { getErrorText } from './getErrorText';
+import { getErrorParamNames, getErrorText, getErrorTextDetails, getMissingErrorParams } from './getErrorText';
 
 // `BASE_URL` is rewritten at release time — localhost while developing, the archive URL on a
 // `b<major>.<minor>.<patch>` branch — so normalise it out before snapshotting. The docs path is
@@ -135,5 +135,81 @@ describe('getErrorText param reconstruction', () => {
         }).not.toThrow();
 
         expect(text).toContain('Unable to use `rowSelection` as `RowSelectionModule` is not registered.');
+    });
+});
+
+describe('missing param handling', () => {
+    it('reports no params for an error whose text takes none', () => {
+        expect(getErrorParamNames(239)).toEqual([]);
+        expect(getMissingErrorParams({ errorCode: 239 })).toEqual([]);
+    });
+
+    it('renders an error taking no params in full with no params supplied', () => {
+        expect(getErrorText({ errorCode: 239 })).toContain('Theming API and CSS File Themes');
+    });
+
+    it('reads the destructured param names of an error that takes them', () => {
+        expect(getErrorParamNames(48)).toEqual(['property', 'inferred', 'colId']);
+    });
+
+    it('reports only the params the URL did not carry', () => {
+        expect(getMissingErrorParams({ errorCode: 48, params: { property: 'Parser' } })).toEqual(['inferred', 'colId']);
+    });
+
+    it('substitutes a placeholder for an absent param rather than rendering `undefined`', () => {
+        const text = getErrorText({ errorCode: 36 });
+
+        expect(text).toBe('`colDef.type` `<t>` does not correspond to defined `gridOptions.columnTypes`');
+        expect(text).not.toContain('undefined');
+    });
+
+    it('substitutes placeholders only for the absent params', () => {
+        const text = getErrorText({ errorCode: 26, params: { fnName: 'setRowData' } });
+
+        expect(text).toContain('`setRowData()`');
+        expect(text).toContain('<preDestroyLink>');
+    });
+
+    it('reports a nested object param as missing even though its text cannot be completed', () => {
+        // A placeholder is a string, so error #9 reading `variable.cssName` off it still renders nothing
+        // useful. The page relies on the missing-param report, not the text, to explain itself.
+        expect(getMissingErrorParams({ errorCode: 9 })).toEqual(['variable']);
+    });
+});
+
+describe('hasPlaceholders', () => {
+    it('is false for an error taking no params', () => {
+        expect(getErrorTextDetails({ errorCode: 239 }).hasPlaceholders).toBe(false);
+    });
+
+    it('is true when a param the message interpolates is absent', () => {
+        expect(getErrorTextDetails({ errorCode: 36 }).hasPlaceholders).toBe(true);
+    });
+
+    it('is false for a #200 link carrying only the params the grid actually logs', () => {
+        // #200 declares several optional params (`reports`, `isUmd`, `usesAgGridProvider`, `additionalText`)
+        // that a console link never sends, so a missing-param count would warn on every real link.
+        const { text, hasPlaceholders } = getErrorTextDetails({
+            errorCode: 200,
+            params: {
+                reasonOrId: 'Row Grouping',
+                moduleName: 'RowGrouping',
+                gridScoped: 'false',
+                gridId: 'myGrid1',
+                rowModelType: 'clientSide',
+            },
+        });
+
+        expect(hasPlaceholders).toBe(false);
+        expect(text).toContain('RowGroupingModule');
+        expect(text).not.toContain('<');
+    });
+
+    it('reports placeholders when a #200 link carries nothing at all', () => {
+        const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: 200 });
+
+        expect(hasPlaceholders).toBe(true);
+        expect(text).not.toContain('undefined');
+        expect(text).toContain('<unknown>');
     });
 });

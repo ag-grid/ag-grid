@@ -222,8 +222,20 @@ function getTextFromChildren(node: Node): string {
 /**
  * Find partials and add it to the AST
  */
-async function resolvePartials({ pageName, ast, framework }: { pageName: string; ast: Node; framework: Framework }) {
-    const pagePath = getPagePath({ pageName });
+async function resolvePartials({
+    pageName,
+    partialBasePath,
+    ast,
+    framework,
+}: {
+    pageName: string;
+    partialBasePath?: string;
+    ast: Node;
+    framework: Framework;
+}) {
+    // `getPagePath` resolves under `content/docs/<pageName>`, which is where all but one collection
+    // lives. Error pages are the exception (`content/errors/<code>.mdoc`), so they pass their own base.
+    const pagePath = partialBasePath ?? getPagePath({ pageName });
     for (const node of ast.walk()) {
         if (node.type === 'tag' && node.tag === 'partial') {
             const { file } = node.attributes;
@@ -266,6 +278,7 @@ export async function getHeadings({
     pageHeadings,
     title,
     pageName,
+    partialBasePath,
     markdocContent,
     framework,
     getTabItemSlug,
@@ -274,6 +287,8 @@ export async function getHeadings({
     pageHeadings: MarkdownHeading[];
     title: string;
     pageName: string;
+    /** Directory a `{% partial %}` path is resolved against, when not `content/docs/<pageName>`. */
+    partialBasePath?: string;
     markdocContent: string;
     framework: Framework;
     getTabItemSlug: (id: string) => string;
@@ -297,7 +312,7 @@ export async function getHeadings({
     const transformAst = (ast: Node) => {
         ast.children = ast.children.map(updateWithApiDocsHeadings);
 
-        resolvePartials({ pageName, ast, framework });
+        resolvePartials({ pageName, partialBasePath, ast, framework });
     };
     const { ast, renderTree } = transformMarkdoc({ framework, markdocContent, transformAst });
     if (!renderTree) {

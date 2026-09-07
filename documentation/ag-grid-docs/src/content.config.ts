@@ -94,7 +94,9 @@ const moduleMappings = defineCollection({
 });
 
 const errors = defineCollection({
-    loader: glob({ pattern: '*.mdoc', base: './src/content/errors' }),
+    // Numeric names only: an error page is looked up by its code, and `_`-prefixed files in here are
+    // partials shared between related error pages rather than pages in their own right.
+    loader: glob({ pattern: '[0-9]*.mdoc', base: './src/content/errors' }),
     schema: z.object({
         description: z.string().optional(),
     }),
