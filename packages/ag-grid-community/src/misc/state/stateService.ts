@@ -743,6 +743,15 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
+    /** Whether the Quick Access Toolbar is configured with the given provided item. */
+    private hasToolbarItem(itemName: string): boolean {
+        return !!this.gos
+            .get('toolbar')
+            ?.items?.some(
+                (item) => item === itemName || (typeof item === 'object' && item.toolbarItem === itemName)
+            );
+    }
+
     /**
      * The Quick Filter text is only state-managed when the Quick Access Toolbar owns an input for it;
      * otherwise the `quickFilterText` grid option is the only source and state leaves it alone.
@@ -752,13 +761,7 @@ export class StateService extends BeanStub implements NamedBean {
             // Without the module the option is inert, and writing it on restore reports a missing-module error.
             return false;
         }
-        return !!this.gos
-            .get('toolbar')
-            ?.items?.some(
-                (item) =>
-                    item === 'agQuickFilterToolbarItem' ||
-                    (typeof item === 'object' && item.toolbarItem === 'agQuickFilterToolbarItem')
-            );
+        return this.hasToolbarItem('agQuickFilterToolbarItem');
     }
 
     private getQuickFilterState(): QuickFilterState | undefined {
