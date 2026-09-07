@@ -229,6 +229,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         }
         const eInput = this.eAutocompleteInput.getInputElement();
         eInput.setSelectionRange(position, position);
+        // Read back rather than taken as given: the caret has moved, and the input clamps where to.
+        this.updateLastPosition();
         if (position === eInput.value.length) {
             // ensure the caret is visible
             eInput.scrollLeft = eInput.scrollWidth;
@@ -310,6 +312,11 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
     public getValue(): string | null {
         return _makeNull(this.eAutocompleteInput.getValue());
+    }
+
+    /** Where the caret was when the value last changed, which is what says where the author is working. */
+    public getCaretPosition(): number {
+        return this.lastPosition;
     }
 
     public setInputPlaceholder(placeholder: string): this {

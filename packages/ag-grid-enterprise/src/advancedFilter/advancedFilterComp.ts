@@ -215,12 +215,25 @@ export class AdvancedFilterComp extends Component {
 
     private onValueChanged(value: string | null): void {
         value = _makeNull(value);
-        this.advancedFilter.setExpressionDisplayValue(value);
-        this.expressionParser = this.advancedFilter.createExpressionParser(value);
-        const updatedExpression = this.expressionParser?.parseExpression();
-        if (updatedExpression && updatedExpression !== value) {
-            this.eAutocomplete.setValue({ value: updatedExpression, silent: true, restoreFocus: true });
+        let parser = this.advancedFilter.createExpressionParser(value);
+        let updatedExpression = parser?.parseExpression() ?? null;
+        const caretPosition = this.eAutocomplete.getCaretPosition();
+        const stripped = parser?.stripRedundantSeparators(caretPosition) ?? null;
+        let position: number | undefined;
+        if (stripped != null) {
+            // Every span removed sits before the caret, so what it loses is what the caret moves back by.
+            position = caretPosition - (updatedExpression!.length - stripped.length);
+            updatedExpression = stripped;
+            // Parsed again: the positions the first parse recorded belong to the text it read, not this one.
+            parser = this.advancedFilter.createExpressionParser(stripped);
+            parser!.parseExpression();
         }
+        this.expressionParser = parser;
+        if (updatedExpression != null && updatedExpression !== value) {
+            value = updatedExpression;
+            this.eAutocomplete.setValue({ value, position, silent: true, restoreFocus: true });
+        }
+        this.advancedFilter.setExpressionDisplayValue(value);
     }
 
     private onValueConfirmed(isValid: boolean): void {
