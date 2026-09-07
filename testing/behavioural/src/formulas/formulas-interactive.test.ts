@@ -514,7 +514,7 @@ describe('ag-grid formulas interactive workflows', () => {
         `);
     });
 
-    test('bulk edit across two ranges restarts the formula offset at each range', async () => {
+    test('bulk edit across two ranges continues the formula offset from one range into the next', async () => {
         const api = await createGrid('fx-bulk-edit-multi-range', {
             cellSelection: true,
             rowData: bulkEditRowData(4),
@@ -526,17 +526,36 @@ describe('ag-grid formulas interactive workflows', () => {
             { rowStartIndex: 3, rowEndIndex: 3, columns: ['total'] },
         ]);
 
-        // The offset is measured from each range's own start row, so r4 - the start of the second
-        // range - takes the typed formula unshifted (11) rather than continuing the first range's
-        // progression (which would give 33). Deliberate: a non-accumulating offset cannot continue
-        // across ranges, and `getCellRanges()` returns creation order, so accumulating would go
-        // negative for a later range sitting above an earlier one.
+        // The ranges shift as one run: the second range carries the two rows the first shifted by, so
+        // r4 references r3 (33) rather than restarting at the typed formula (11). The rows skipped
+        // between the ranges do not count - only the rows actually written to advance the offset.
         await new GridRows(api, 'after bulk edit across two ranges', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
             ├── LEAF id:r2 row-number:"2" a:2 b:20 total:22
             ├── LEAF id:r3 row-number:"3" a:3 b:30 total:null
-            └── LEAF id:r4 row-number:"4" a:4 b:40 total:11
+            └── LEAF id:r4 row-number:"4" a:4 b:40 total:33
+        `);
+    });
+
+    test('bulk edit across two adjacent ranges shifts every row as if the ranges were one', async () => {
+        const api = await createGrid('fx-bulk-edit-adjacent-ranges', {
+            cellSelection: true,
+            rowData: bulkEditRowData(4),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+            { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+            { rowStartIndex: 2, rowEndIndex: 3, columns: ['total'] },
+        ]);
+
+        await new GridRows(api, 'after bulk edit across two adjacent ranges', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
+            ├── LEAF id:r2 row-number:"2" a:2 b:20 total:22
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:33
+            └── LEAF id:r4 row-number:"4" a:4 b:40 total:44
         `);
     });
 

@@ -1930,7 +1930,7 @@ export class EditService extends BeanStub implements NamedBean {
         if (!ranges || ranges.length === 0) {
             return;
         }
-        const { beans, rangeSvc, valueSvc } = this;
+        const { beans } = this;
         const { formula } = beans;
 
         _syncFromEditors(beans, { persist: true });
@@ -1947,70 +1947,10 @@ export class EditService extends BeanStub implements NamedBean {
 
         const isFormula = formula?.isFormula(editValue) ?? false;
 
+        // The ranges shift as one run, so each carries its offset into the next.
+        let carriedRowDelta = 0;
         for (let i = 0, len = ranges.length; i < len; ++i) {
-            const range = ranges[i];
-            const rangeColumns = range.columns as AgColumn[];
-            const hasFormulaColumnsInRange = rangeColumns.some((col) => col?.allowFormula);
-            const shiftFormulaPerRow = isFormula && hasFormulaColumnsInRange;
-            // The walk below starts at the range's start row, so every row's formula is derived from
-            // the value typed into the editor, shifted by that row's own offset from the start row.
-            const startRowPosition = rangeSvc?.getRangeStartRow(range);
-            const startRowNode = startRowPosition && _getRowNode(beans, startRowPosition);
-            // Ordinal of the current row within this range's walk, zero for the start row.
-            let rowOrdinal = 0;
-            rangeSvc?.forEachRowInRange(range, (position) => {
-                const rowNode = _getRowNode(beans, position);
-                if (rowNode === undefined) {
-                    return;
-                }
-
-                const editRow: EditRow = edits.get(rowNode) ?? new Map();
-                const rowDelta = shiftFormulaPerRow ? getFormulaRowDelta(startRowNode, rowNode, rowOrdinal) : 0;
-                let valueForColumn =
-                    rowDelta === 0 ? editValue : formula?.updateFormulaByOffset({ value: editValue, rowDelta });
-                for (const column of rangeColumns) {
-                    if (!column) {
-                        continue;
-                    }
-
-                    const isFormulaForColumn = !!isFormula && column.allowFormula;
-
-                    if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const sourceValue = valueSvc.getValueFromData(column as AgColumn, rowNode, true);
-                        let pendingValue = valueSvc.parseValue(
-                            column as AgColumn,
-                            rowNode ?? null,
-                            valueForColumn,
-                            sourceValue
-                        );
-
-                        if (Number.isNaN(pendingValue)) {
-                            // non-number was bulk edited into a number column
-                            pendingValue = null;
-                        }
-
-                        editRow.set(column, {
-                            editorValue: undefined,
-                            pendingValue,
-                            sourceValue,
-                            state: 'changed',
-                            editorState: {
-                                isCancelAfterEnd: undefined,
-                                isCancelBeforeStart: undefined,
-                            },
-                        });
-                    }
-                    if (isFormulaForColumn) {
-                        valueForColumn = formula?.updateFormulaByOffset({ value: valueForColumn, columnDelta: 1 });
-                    }
-                }
-                if (editRow.size > 0) {
-                    edits.set(rowNode, editRow);
-                }
-                if (shiftFormulaPerRow) {
-                    rowOrdinal++;
-                }
-            });
+            carriedRowDelta = this.applyBulkEditToRange(ranges[i], edits, editValue, isFormula, carriedRowDelta);
         }
 
         // One bulk edit however many ranges it spans, so commit once: a stopped event per range leaves
@@ -2039,6 +1979,100 @@ export class EditService extends BeanStub implements NamedBean {
         const cellCtrl = _getCellCtrl(beans, { rowNode, column })!;
         if (cellCtrl) {
             cellCtrl.focusCell({ forceBrowserFocus: true });
+        }
+    }
+
+    /**
+     * Applies the bulk-edited value across one range, returning the row offset the next range starts from.
+     *
+     * `carriedRowDelta` is what the ranges before this one already shifted by, so a multi-range bulk edit
+     * progresses as a single run rather than repeating the typed formula at the top of every range.
+     */
+    private applyBulkEditToRange(
+        range: CellRange,
+        edits: EditMap,
+        editValue: EditValue['pendingValue'],
+        isFormula: boolean,
+        carriedRowDelta: number
+    ): number {
+        const { beans, rangeSvc } = this;
+        const { formula } = beans;
+        const rangeColumns = range.columns as AgColumn[];
+        const shiftFormulaPerRow = isFormula && rangeColumns.some((col) => col?.allowFormula);
+        // The walk below starts at the range's start row, so every row's formula is derived from the
+        // value typed into the editor, shifted by that row's own offset from the start row.
+        const startRowPosition = rangeSvc?.getRangeStartRow(range);
+        const startRowNode = startRowPosition && _getRowNode(beans, startRowPosition);
+        // Ordinal of the current row within this range's walk, zero for the start row.
+        let rowOrdinal = 0;
+        let lastRowDelta = -1;
+
+        rangeSvc?.forEachRowInRange(range, (position) => {
+            const rowNode = _getRowNode(beans, position);
+            if (rowNode === undefined) {
+                return;
+            }
+
+            const rowDelta = shiftFormulaPerRow
+                ? carriedRowDelta + getFormulaRowDelta(startRowNode, rowNode, rowOrdinal)
+                : 0;
+            const rowValue =
+                rowDelta === 0 ? editValue : formula?.updateFormulaByOffset({ value: editValue, rowDelta });
+
+            this.applyBulkEditToRow(rowNode, rangeColumns, edits, rowValue, isFormula);
+
+            rowOrdinal++;
+            lastRowDelta = rowDelta;
+        });
+
+        return shiftFormulaPerRow && lastRowDelta >= 0 ? lastRowDelta + 1 : carriedRowDelta;
+    }
+
+    /** Writes `value` into every editable cell of `rowNode` across `rangeColumns`, one column step per formula column. */
+    private applyBulkEditToRow(
+        rowNode: RowNode,
+        rangeColumns: AgColumn[],
+        edits: EditMap,
+        value: EditValue['pendingValue'],
+        isFormula: boolean
+    ): void {
+        const { beans, valueSvc } = this;
+        const { formula } = beans;
+        const editRow: EditRow = edits.get(rowNode) ?? new Map();
+        let valueForColumn = value;
+
+        for (const column of rangeColumns) {
+            if (!column) {
+                continue;
+            }
+
+            if (this.isCellEditable({ rowNode, column }, 'api')) {
+                const sourceValue = valueSvc.getValueFromData(column, rowNode, true);
+                let pendingValue = valueSvc.parseValue(column, rowNode, valueForColumn, sourceValue);
+
+                if (Number.isNaN(pendingValue)) {
+                    // non-number was bulk edited into a number column
+                    pendingValue = null;
+                }
+
+                editRow.set(column, {
+                    editorValue: undefined,
+                    pendingValue,
+                    sourceValue,
+                    state: 'changed',
+                    editorState: {
+                        isCancelAfterEnd: undefined,
+                        isCancelBeforeStart: undefined,
+                    },
+                });
+            }
+            if (isFormula && column.allowFormula) {
+                valueForColumn = formula?.updateFormulaByOffset({ value: valueForColumn, columnDelta: 1 });
+            }
+        }
+
+        if (editRow.size > 0) {
+            edits.set(rowNode, editRow);
         }
     }
 
