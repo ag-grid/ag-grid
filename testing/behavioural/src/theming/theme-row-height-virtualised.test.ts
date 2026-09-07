@@ -21,6 +21,13 @@ import { ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterp
 const NEW_ROW_HEIGHT = 64;
 const SECOND_ROW_HEIGHT = 48;
 const ROOT_ONLY_ROW_HEIGHT = 100;
+/**
+ * Below the 42px Quartz default, unlike every other height here. A compact theme shrinks rows, and
+ * `onRowHeightStyleChanged`'s `lastDefaultRowHeight` guard plus `resetRowHeights` are the only
+ * things standing between that and a row height that never comes back down (AG-13042 QA).
+ * 26px is what `spacing: 3px` actually resolves to: `max(iconSize, cellFontSize) + spacing * 3.25`.
+ */
+const COMPACT_ROW_HEIGHT = 26;
 
 /**
  * Simulates a theme size parameter change: the environment now measures `height` for the row-height
@@ -103,6 +110,30 @@ describe('theme row height in virtualised row models', () => {
             await asyncSetTimeout(0);
 
             expectUniformRowLayout(api, NEW_ROW_HEIGHT);
+        });
+
+        test('row heights shrink below the default on a compact theme change', async () => {
+            const api = await createLoadedSsrmGrid();
+
+            const before = api.getDisplayedRowAtIndex(0)!.rowHeight!;
+            expect(before).toBeGreaterThan(COMPACT_ROW_HEIGHT);
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), COMPACT_ROW_HEIGHT);
+            await asyncSetTimeout(0);
+
+            expectUniformRowLayout(api, COMPACT_ROW_HEIGHT);
+        });
+
+        test('a grow followed by a shrink both land, so the no-op guard is not a one-way latch', async () => {
+            const api = await createLoadedSsrmGrid();
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
+            await asyncSetTimeout(0);
+            expectUniformRowLayout(api, NEW_ROW_HEIGHT);
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), COMPACT_ROW_HEIGHT);
+            await asyncSetTimeout(0);
+            expectUniformRowLayout(api, COMPACT_ROW_HEIGHT);
         });
 
         test('a repeated theme change at the same height does not update the model', async () => {
