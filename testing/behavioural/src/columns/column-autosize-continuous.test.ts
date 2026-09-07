@@ -50,6 +50,13 @@ describe('Continuous Column Autosize', () => {
     // eslint-disable-next-line no-restricted-syntax -- samples inside the continuous-resize debounce window, which is the behaviour under test
     const insideDebounceWindow = (): Promise<void> => asyncSetTimeout(40);
 
+    /**
+     * Past the 150ms debounce and the frame that follows it, so a re-size the grid had decided to run has
+     * landed by now. Every assertion using this is negative — that no re-size was scheduled at all.
+     */
+    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize debounce window; every assertion that follows it is negative
+    const pastDebounceWindow = (): Promise<void> => asyncSetTimeout(300);
+
     /** Stands in for an internal trigger the grid would dispatch itself, payload and all. */
     const dispatchGridEvent = (api: GridApi, event: { type: string } & Record<string, unknown>): void =>
         api.dispatchEvent(event as AgEvent);
@@ -358,8 +365,7 @@ describe('Continuous Column Autosize', () => {
 
             api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
             dispatchGridEvent(api, { type: 'viewportChanged', firstRow: 0, lastRow: 10 });
-            // past the debounce window, so an opted-in grid would have re-sized by now
-            await asyncSetTimeout(300);
+            await pastDebounceWindow();
 
             expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
         });
