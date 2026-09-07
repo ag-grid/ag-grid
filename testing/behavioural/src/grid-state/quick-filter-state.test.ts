@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 
 import type { GridApi, Toolbar } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule } from 'ag-grid-community';
@@ -27,6 +27,9 @@ describe('Grid state - quick filter text', () => {
         gridMgr.reset();
         pivotGridMgr.reset();
     });
+
+    // The toolbar input's debounce collapses to 0ms under FAST_TEST_TIMINGS, but still a macrotask.
+    const INPUT_DEBOUNCE_WAIT_MS = 50;
 
     function getInput(api: GridApi): HTMLInputElement {
         return TestGridsManager.getHTMLElement(api)!.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
@@ -258,6 +261,35 @@ describe('Grid state - quick filter text', () => {
         await new GridRows(api, `setState does not clear the grid option without the toolbar item`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('a restore beats an edit still pending in the input debounce', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-pending-edit', {
+            columnDefs,
+            rowData,
+            toolbar,
+            quickFilterText: 'canada',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        // Typed but not yet written back, and the restore below writes the value the option already
+        // holds — so there is no property change for the input to follow.
+        const input = getInput(api);
+        input.value = 'ireland';
+        input.dispatchEvent(new Event('input'));
+
+        api.setState({ quickFilter: { text: 'canada' } });
+
+        // Give the pending debounce every chance to fire: the restore has to survive it, not merely
+        // precede it.
+        await asyncSetTimeout(INPUT_DEBOUNCE_WAIT_MS);
+
+        expect(api.getGridOption('quickFilterText')).toBe('canada');
+        expect(getInput(api).value).toBe('canada');
+        await new GridRows(api, `a restore beats an edit still pending in the input debounce`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Canada"
         `);
     });
 

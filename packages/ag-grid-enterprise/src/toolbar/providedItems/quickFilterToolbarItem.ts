@@ -63,12 +63,23 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
             input: () => (quickFilterTextTimeout = updateQuickFilterText()),
         });
 
-        // An external write (`setGridOption`, a state restore) filters the rows, so the input must follow.
-        // A write from this input is a no-op here: the field already holds that value, so `setValue` bails out.
-        this.addManagedPropertyListener('quickFilterText', ({ currentValue }) => {
+        // An external write (`setGridOption`, a state restore) filters the rows, so the input must follow,
+        // and any edit still waiting in the debounce is stale. A write from this input is a no-op here:
+        // the field already holds that value, so `setValue` bails out.
+        const syncInput = (value?: string) => {
             clearTimeout(quickFilterTextTimeout);
-            this.eInputField.setValue(currentValue ?? '', true);
-        });
+            this.eInputField.setValue(value ?? '', true);
+        };
+        this.addManagedPropertyListener('quickFilterText', ({ currentValue }) => syncInput(currentValue));
+
+        const quickFilterSvc = this.beans.quickFilter;
+        if (quickFilterSvc) {
+            // A restore of the value the option already holds changes nothing to listen to above, but
+            // still has to beat a pending edit.
+            this.addManagedListeners(quickFilterSvc, {
+                quickFilterStateApplied: () => syncInput(this.gos.get('quickFilterText')),
+            });
+        }
     }
 
     public refresh(params: IToolbarItemParams<any, any, IInputToolbarItemParams>): boolean {
