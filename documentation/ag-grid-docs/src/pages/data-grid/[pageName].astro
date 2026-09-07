@@ -3,6 +3,9 @@ import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
 import { getDocsPages } from '@components/docs/utils/pageData';
+import { FRAMEWORKS } from '@constants';
+import { getFrameworkDisplayText } from '@utils/framework';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -12,6 +15,13 @@ export async function getStaticPaths() {
 const { page } = Astro.props;
 const { title } = page.data;
 const { pageName } = Astro.params;
+
+// Static links to every framework version of this page, so crawlers landing on the
+// framework-agnostic redirect page can discover and pass link equity to the real pages.
+const frameworkLinks = FRAMEWORKS.map((framework) => ({
+    href: urlWithPrefix({ framework, url: `./${pageName}` }),
+    text: `${getFrameworkDisplayText(framework)} Data Grid: ${title}`,
+}));
 ---
 
 <Layout
@@ -19,8 +29,18 @@ const { pageName } = Astro.params;
     description={'View the AG Grid Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'}
     showSearchBar={false}
     showDocsNav={false}
+    hidePageFromSearchEngines={true}
 >
     <FrameworkRedirectPage redirectPageName={pageName}>
         <h1>Redirecting to "{title}" page</h1>
+        <ul>
+            {
+                frameworkLinks.map(({ href, text }) => (
+                    <li>
+                        <a href={href}>{text}</a>
+                    </li>
+                ))
+            }
+        </ul>
     </FrameworkRedirectPage>
 </Layout>
