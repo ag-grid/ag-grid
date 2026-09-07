@@ -810,20 +810,13 @@ export class StateService extends BeanStub implements NamedBean {
         rangeSvc.setCellRanges(cellRanges);
     }
 
-    /** Whether the Quick Access Toolbar is configured with the given provided item. */
-    private hasToolbarItem(itemName: string): boolean {
-        return !!this.gos
-            .get('toolbar')
-            ?.items?.some((item) => item === itemName || (typeof item === 'object' && item.toolbarItem === itemName));
-    }
-
     /**
      * Find is only state-managed when the Quick Access Toolbar owns an input for it; otherwise the
      * `findSearchValue` grid option is the only source and state leaves it alone. Find also only
      * searches the Client-Side Row Model, so there is nothing to restore elsewhere.
      */
     private isFindStateManaged(): boolean {
-        return this.isClientSideRowModel && this.hasToolbarItem('agFindToolbarItem');
+        return this.isClientSideRowModel && !!this.beans.toolbar?.hasItem('agFindToolbarItem');
     }
 
     private getFindState(): FindState | undefined {
