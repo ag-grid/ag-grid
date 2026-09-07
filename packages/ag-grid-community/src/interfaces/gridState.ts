@@ -33,11 +33,15 @@ export interface FilterState {
      * Currently selected filter when using new filter tool panel with `agSelectableColumnFilter`
      */
     selectableFilters?: SelectableFilterState;
-    /**
-     * Search text for Quick Filter, mirroring the `quickFilterText` grid option.
-     * Absent when the text is empty.
-     */
-    quickFilterText?: string;
+}
+
+/**
+ * Quick Filter state. Only captured and restored when the Quick Access Toolbar is configured with
+ * `agQuickFilterToolbarItem`; otherwise the `quickFilterText` grid option is the only source.
+ */
+export interface QuickFilterState {
+    /** Search text, mirroring the `quickFilterText` grid option. Absent when the text is empty. */
+    text?: string;
 }
 
 export interface CellSelectionCellState {
@@ -252,6 +256,11 @@ export interface GridState {
     columnHeaderName?: ColumnHeaderNameState;
     /** Includes Column Filters and Advanced Filter */
     filter?: FilterState;
+    /**
+     * Includes the Quick Filter search text. Only captured and restored when the Quick Access Toolbar
+     * is configured with `agQuickFilterToolbarItem`
+     */
+    quickFilter?: QuickFilterState;
     /** Includes currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;
     /** Includes current page */

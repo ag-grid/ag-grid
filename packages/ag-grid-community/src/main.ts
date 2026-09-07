@@ -707,6 +707,7 @@ export type {
     PaginationState,
     PivotSortModelItem,
     PivotState,
+    QuickFilterState,
     RangeSelectionCellState,
     RangeSelectionState,
     RowGroupState,

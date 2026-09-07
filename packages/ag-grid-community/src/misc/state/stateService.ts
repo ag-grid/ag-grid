@@ -24,6 +24,7 @@ import type {
     GridStateKey,
     PaginationState,
     PivotState,
+    QuickFilterState,
     RowGroupState,
     RowPinningState,
     ScrollState,
@@ -278,6 +279,7 @@ export class StateService extends BeanStub implements NamedBean {
     ): void {
         const {
             filter: filterState,
+            quickFilter: quickFilterState,
             rowGroupExpansion: rowGroupExpansionState,
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
@@ -289,6 +291,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (shouldSetState('filter', filterState)) {
             this.setFilterStateDeferringPivot(filterState, source);
+        }
+        if (shouldSetState('quickFilter', quickFilterState)) {
+            this.setQuickFilterState(quickFilterState, source);
         }
         if (
             shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
@@ -308,6 +313,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const updateCachedState = this.updateCachedState.bind(this);
         updateCachedState('filter', this.getFilterState());
+        updateCachedState('quickFilter', this.getQuickFilterState());
         this.updateGroupExpansionState();
 
         updateCachedState('rowSelection', this.getRowSelectionState());
@@ -323,6 +329,10 @@ export class StateService extends BeanStub implements NamedBean {
             this.updateGroupExpansionState();
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
+        // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
+        this.addManagedPropertyListener('quickFilterText', () =>
+            updateCachedState('quickFilter', this.getQuickFilterState())
+        );
 
         const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
@@ -358,8 +368,6 @@ export class StateService extends BeanStub implements NamedBean {
                 selectedFilterChanged: updateFilterState,
             });
         }
-        // A case-only edit (`abc` -> `ABC`) is equal once uppercased, so it dispatches no `filterChanged`.
-        this.addManagedPropertyListener('quickFilterText', updateFilterState);
     }
 
     private setFirstDataRenderedState(
@@ -706,24 +714,19 @@ export class StateService extends BeanStub implements NamedBean {
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
         const selectableFilters = selectableFilter?.getState();
-        // The service holds an uppercased, parsed form; the option is the round-trippable value. Without the
-        // module the option is inert, and writing it on restore reports a missing-module error.
-        const quickFilterText = this.beans.quickFilter ? this.gos.get('quickFilterText') || undefined : undefined;
-        return filterModel || advancedFilterModel || columnFilterState || selectableFilters || quickFilterText
-            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters, quickFilterText }
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
 
     private setFilterState(filterState?: FilterState, source: 'gridInitializing' | 'api' = 'api'): void {
         const { filterManager, selectableFilter } = this.beans;
-        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters, quickFilterText } =
-            filterState ?? {
-                filterModel: null,
-                columnFilterState: null,
-                advancedFilterModel: null,
-                selectableFilters: null,
-                quickFilterText: null,
-            };
+        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
+            filterModel: null,
+            columnFilterState: null,
+            advancedFilterModel: null,
+            selectableFilters: null,
+        };
         if (selectableFilters !== undefined) {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
@@ -738,11 +741,46 @@ export class StateService extends BeanStub implements NamedBean {
             const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
         }
-        // An `api` restore resets what it omits, so a `filter` section without the text clears the quick filter.
-        const newQuickFilterText = quickFilterText ?? (isApi ? '' : undefined);
-        if (newQuickFilterText !== undefined && this.beans.quickFilter) {
+    }
+
+    /**
+     * The Quick Filter text is only state-managed when the Quick Access Toolbar owns an input for it;
+     * otherwise the `quickFilterText` grid option is the only source and state leaves it alone.
+     */
+    private isQuickFilterStateManaged(): boolean {
+        if (!this.beans.quickFilter) {
+            // Without the module the option is inert, and writing it on restore reports a missing-module error.
+            return false;
+        }
+        return !!this.gos
+            .get('toolbar')
+            ?.items?.some(
+                (item) =>
+                    item === 'agQuickFilterToolbarItem' ||
+                    (typeof item === 'object' && item.toolbarItem === 'agQuickFilterToolbarItem')
+            );
+    }
+
+    private getQuickFilterState(): QuickFilterState | undefined {
+        if (!this.isQuickFilterStateManaged()) {
+            return undefined;
+        }
+        // The service holds an uppercased, parsed form; the option is the round-trippable value.
+        const text = this.gos.get('quickFilterText') || undefined;
+        return text ? { text } : undefined;
+    }
+
+    private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.isQuickFilterStateManaged()) {
+            return;
+        }
+        const { text } = quickFilterState ?? {};
+        // An `api` restore resets what it omits, so a state without the text clears the Quick Filter.
+        // At initialisation an absent state instead leaves the `quickFilterText` grid option as provided.
+        const newText = source === 'api' ? (text ?? '') : text;
+        if (newText !== undefined) {
             // The quick filter service's own property listener is the apply path.
-            this.gos.updateGridOptions({ options: { quickFilterText: newQuickFilterText } });
+            this.gos.updateGridOptions({ options: { quickFilterText: newText } });
         }
     }
 

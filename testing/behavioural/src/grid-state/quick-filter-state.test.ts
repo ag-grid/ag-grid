@@ -47,11 +47,11 @@ describe('Grid state - quick filter text', () => {
         });
         await waitForEvent('firstDataRendered', api);
 
-        expect(api.getState().filter).toBeUndefined();
+        expect(api.getState().quickFilter).toBeUndefined();
 
         await typeInToolbar(api, 'canada');
 
-        expect(api.getState().filter?.quickFilterText).toBe('canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
         await new GridRows(api, `captures text typed in the toolbar input filtered`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice" country:"Canada"
@@ -67,11 +67,11 @@ describe('Grid state - quick filter text', () => {
         await waitForEvent('firstDataRendered', api);
 
         await typeInToolbar(api, 'canada');
-        expect(api.getState().filter?.quickFilterText).toBe('canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
 
         await typeInToolbar(api, '');
 
-        expect(api.getState().filter?.quickFilterText).toBeUndefined();
+        expect(api.getState().quickFilter?.text).toBeUndefined();
         await new GridRows(api, `an empty input produces no state entry unfiltered`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 name:"Alice" country:"Canada"
@@ -88,14 +88,14 @@ describe('Grid state - quick filter text', () => {
         await waitForEvent('firstDataRendered', api);
 
         await typeInToolbar(api, 'canada');
-        expect(api.getState().filter?.quickFilterText).toBe('canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
 
         // Uppercasing makes this equal to the previous filter, so no `filterChanged` is dispatched.
         const input = getInput(api);
         input.value = 'CANADA';
         input.dispatchEvent(new Event('input'));
 
-        await waitFor(() => expect(api.getState().filter?.quickFilterText).toBe('CANADA'));
+        await waitFor(() => expect(api.getState().quickFilter?.text).toBe('CANADA'));
     });
 
     test('initialState restores the text, the rows and the toolbar input', async () => {
@@ -103,12 +103,12 @@ describe('Grid state - quick filter text', () => {
             columnDefs,
             rowData,
             toolbar,
-            initialState: { filter: { quickFilterText: 'canada' } },
+            initialState: { quickFilter: { text: 'canada' } },
         });
         await waitForEvent('firstDataRendered', api);
 
         expect(api.getGridOption('quickFilterText')).toBe('canada');
-        expect(api.getState().filter?.quickFilterText).toBe('canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
         expect(getInput(api).value).toBe('canada');
         await new GridRows(api, `initialState restores the text, the rows and the toolbar input`).check(`
             ROOT id:ROOT_NODE_ID
@@ -122,7 +122,7 @@ describe('Grid state - quick filter text', () => {
             rowData,
             toolbar,
             quickFilterText: 'ireland',
-            initialState: { filter: { quickFilterText: 'canada' } },
+            initialState: { quickFilter: { text: 'canada' } },
         });
         await waitForEvent('firstDataRendered', api);
 
@@ -134,7 +134,7 @@ describe('Grid state - quick filter text', () => {
         `);
     });
 
-    test('setState without a filter section clears the text', async () => {
+    test('setState without a quickFilter section clears the text', async () => {
         const api = gridMgr.createGrid('quick-filter-state-clear', {
             columnDefs,
             rowData,
@@ -146,16 +146,16 @@ describe('Grid state - quick filter text', () => {
         api.setState({});
 
         await waitFor(() => expect(api.getGridOption('quickFilterText')).toBe(''));
-        expect(api.getState().filter?.quickFilterText).toBeUndefined();
+        expect(api.getState().quickFilter?.text).toBeUndefined();
         expect(getInput(api).value).toBe('');
-        await new GridRows(api, `setState without a filter section clears the text`).check(`
+        await new GridRows(api, `setState without a quickFilter section clears the text`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 name:"Alice" country:"Canada"
             └── LEAF id:1 name:"Bob" country:"Ireland"
         `);
     });
 
-    test('setState with a filter section but no text clears the text', async () => {
+    test('setState with a filter section but no quickFilter section clears the text', async () => {
         const api = gridMgr.createGrid('quick-filter-state-clear-partial-filter', {
             columnDefs: [{ field: 'name', filter: true }, { field: 'country' }],
             rowData,
@@ -167,9 +167,9 @@ describe('Grid state - quick filter text', () => {
         api.setState({ filter: { filterModel: { name: { filterType: 'text', type: 'contains', filter: 'o' } } } });
 
         await waitFor(() => expect(api.getGridOption('quickFilterText')).toBe(''));
-        expect(api.getState().filter?.quickFilterText).toBeUndefined();
+        expect(api.getState().quickFilter?.text).toBeUndefined();
         expect(getInput(api).value).toBe('');
-        await new GridRows(api, `setState with a filter section but no text clears the text`).check(`
+        await new GridRows(api, `setState with a filter section but no quickFilter section clears the text`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:1 name:"Bob" country:"Ireland"
         `);
@@ -205,24 +205,43 @@ describe('Grid state - quick filter text', () => {
         const sources: (string | undefined)[] = [];
         api.addEventListener('filterChanged', ({ source }) => sources.push(source));
 
-        api.setState({ filter: { quickFilterText: 'canada' } });
+        api.setState({ quickFilter: { text: 'canada' } });
 
         await waitFor(() => expect(sources).toEqual(['quickFilter']));
     });
 
-    test('captured and restored without the toolbar item', async () => {
+    test('the grid option is the only source without the toolbar item', async () => {
         const api = gridMgr.createGrid('quick-filter-state-no-toolbar', {
             columnDefs,
             rowData,
-            initialState: { filter: { quickFilterText: 'canada' } },
+            quickFilterText: 'ireland',
+            initialState: { quickFilter: { text: 'canada' } },
         });
         await waitForEvent('firstDataRendered', api);
 
-        expect(api.getGridOption('quickFilterText')).toBe('canada');
-        expect(api.getState().filter?.quickFilterText).toBe('canada');
-        await new GridRows(api, `captured and restored without the toolbar item`).check(`
+        // The state section is ignored in both directions, so the grid option stands.
+        expect(api.getGridOption('quickFilterText')).toBe('ireland');
+        expect(api.getState().quickFilter).toBeUndefined();
+        await new GridRows(api, `the grid option is the only source without the toolbar item`).check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 name:"Alice" country:"Canada"
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('setState does not clear the grid option without the toolbar item', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-no-toolbar-clear', {
+            columnDefs,
+            rowData,
+            quickFilterText: 'ireland',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.setState({});
+
+        expect(api.getGridOption('quickFilterText')).toBe('ireland');
+        await new GridRows(api, `setState does not clear the grid option without the toolbar item`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 name:"Bob" country:"Ireland"
         `);
     });
 
@@ -240,11 +259,12 @@ describe('Grid state - quick filter text', () => {
                 { name: 'Bob', country: 'Ireland', gold: 222 },
             ],
             pivotMode: true,
-            initialState: { filter: { quickFilterText: '111' } },
+            toolbar,
+            initialState: { quickFilter: { text: '111' } },
         });
         await waitForEvent('firstDataRendered', api);
 
-        expect(api.getState().filter?.quickFilterText).toBe('111');
+        expect(api.getState().quickFilter?.text).toBe('111');
         await new GridRows(api, `restores against pivot result columns when pivot mode is enabled`).check(`
             ROOT id:ROOT_NODE_ID pivot_country_Canada_gold:111 pivot_country_Ireland_gold:222
             └─┬ LEAF_GROUP collapsed id:row-group-name-Alice ag-Grid-AutoColumn:"Alice" pivot_country_Canada_gold:111 pivot_country_Ireland_gold:null
