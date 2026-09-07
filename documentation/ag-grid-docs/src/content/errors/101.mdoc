@@ -1,0 +1,49 @@
+---
+description: A component was referenced by name, but that name is not in the grid's registered components.
+---
+
+## Component Name Not Registered
+
+A column or grid option asked for a component by name — {% errorParam name="propertyName" fallback="cellRenderer" /%} was set to the string {% errorParam name="componentName" fallback="StatusRenderer" /%} — and the grid could not find that name when it came to render. The cell falls back to the grid's default component.
+
+This message means the name is neither one of the grid's own components nor one you have registered. It is worth knowing that the grid tells those two cases apart: if you name a _built-in_ component whose module is not registered, you get [error #200](./errors/200) naming the module instead. So arriving here means the grid believes this is your component.
+
+That leaves two causes, and the message's `Did you mean` suggestions usually settle which:
+
+- **A typo, or a mismatch in case.** Names are matched exactly, so `statusRenderer` and `StatusRenderer` are different components.
+- **The component was never registered**, or was registered on a different grid than the one rendering this column.
+
+### Register it by name
+
+Names are resolved from the `components` grid option, which maps each name to its implementation. The name in the map must match the string on the column exactly.
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    components: {
+        StatusRenderer: StatusRenderer,
+    },
+    columnDefs: [
+        { field: 'status', cellRenderer: 'StatusRenderer' },
+    ],
+}
+```
+
+See [Registering Custom Components](./components/#registering-custom-components) for the full detail, including the framework-specific forms.
+
+### Or skip the name entirely
+
+Referencing the component directly avoids this class of error, because a wrong name becomes a compile-time or import error rather than something discovered at render:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'status', cellRenderer: StatusRenderer },
+    ],
+}
+```
+
+Registering by name is still worth it when the name has to come from configuration or data — from a saved layout, or a server response — since a string is all you have in that case.
+
+### If several grids need it
+
+The `components` option applies to one grid. A grid that defines its own `components` map does not see another grid's. To make a component available to every grid, register it through [Global Grid Options](./grid-interface/#global-grid-options) with the `deep` merge strategy, so a grid's own map is merged with the global one rather than replacing it. All component types share one registry, so names must be unique across it.

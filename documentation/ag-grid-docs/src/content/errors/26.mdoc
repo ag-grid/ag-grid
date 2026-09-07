@@ -1,0 +1,50 @@
+---
+description: A grid API method was called after the grid was destroyed, so the call did nothing.
+---
+
+## Grid API Called After Destroy
+
+The grid API object outlives the grid. Once the grid is destroyed its methods remain callable but have nothing to act on, so the call named in the message did nothing.
+
+This is a warning rather than an error because the call is simply ignored — but it usually means some part of your application still believes the grid is there, so whatever the call was meant to achieve has silently not happened.
+
+Note that a different message, [error #200](./errors/200), covers an API method that is unavailable because its module is not registered. Arriving here means the grid itself is gone.
+
+### Where the stale call comes from
+
+Almost always a reference to the API captured earlier and used after teardown:
+
+- **A timer or interval** that outlives the component holding the grid.
+- **A subscription or event listener** — a store, a websocket, a router — still holding the API in its closure.
+- **A promise or async function** that resolves after the grid has gone, for example a fetch whose `then` calls `setGridOption`.
+- **A resize or intersection observer** that was never disconnected.
+
+In each case the fix is the same: cancel the thing that outlived the grid, as part of the same teardown that destroys the grid.
+
+{% if isFramework("react") %}
+In React this is usually a missing cleanup in an effect. Return a cleanup function that clears the timer or unsubscribes, so it runs when the component unmounts. Note that React's Strict Mode deliberately mounts, unmounts and remounts components in development — an effect that starts something without cleaning it up will leave the first grid's API behind, which is why this often appears in development but not production.
+{% /if %}
+
+{% if isFramework("angular") %}
+In Angular, unsubscribe in `ngOnDestroy` — or use `takeUntilDestroyed` — so nothing survives the component that hosted the grid.
+{% /if %}
+
+{% if isFramework("vue") %}
+In Vue, clear timers and unsubscribe in `onUnmounted`, so nothing survives the component that hosted the grid.
+{% /if %}
+
+### Guarding a call you cannot move
+
+Where a call genuinely may or may not happen after teardown, `isDestroyed()` lets you check first:
+
+```js
+if (!api.isDestroyed()) {
+    api.redrawRows();
+}
+```
+
+Treat this as a guard of last resort. It stops the warning, but the call is still not doing what it was written to do — if the work matters, the teardown is the thing to fix.
+
+### Doing work before the grid goes
+
+If the intent was to run something as the grid is torn down — saving state, releasing resources — use the `gridPreDestroyed` event, which fires while the grid is still usable. See [Grid Pre-Destroyed](./grid-lifecycle/#grid-pre-destroyed).

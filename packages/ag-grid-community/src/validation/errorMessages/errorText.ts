@@ -290,7 +290,7 @@ export const AG_GRID_ERRORS = {
     25: ({ id }: { id: any }) =>
         [`The \`getRowId\` callback must return a string. The ID `, id, ` is being cast to a string.`] as const,
     26: ({ fnName, preDestroyLink }: { fnName: string; preDestroyLink: string }) => {
-        return `Grid API function \`${fnName}()\` cannot be called as the grid has been destroyed.\n Either clear local references to the grid api, when it is destroyed, or check \`gridApi.isDestroyed()\` to avoid calling methods against a destroyed grid.\n To run logic when the grid is about to be destroyed use the \`gridPreDestroy\` event. See: ${preDestroyLink}` as const;
+        return `Grid API function \`${fnName}()\` cannot be called as the grid has been destroyed.\n Either clear local references to the grid api, when it is destroyed, or check \`gridApi.isDestroyed()\` to avoid calling methods against a destroyed grid.\n To run logic when the grid is about to be destroyed use the \`gridPreDestroyed\` event. See: ${preDestroyLink}` as const;
     },
     27: ({ fnName, module }: { fnName: string; module: string }) =>
         `API function \`${fnName}\` not registered to module \`${module}\`` as const,

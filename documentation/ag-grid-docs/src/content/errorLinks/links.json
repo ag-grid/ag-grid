@@ -447,5 +447,17 @@
         "text": "Cell Renderer",
         "url": "./component-cell-renderer/",
         "description": "The component lifecycle this error is most often raised from."
+    },
+    {
+        "errorIds": [29],
+        "text": "Grid Size",
+        "url": "./grid-size/",
+        "description": "Giving the grid's container a size for the columns to be fitted to."
+    },
+    {
+        "errorIds": [101],
+        "text": "Components",
+        "url": "./components/",
+        "description": "Building and registering your own grid components."
     }
 ]
