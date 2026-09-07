@@ -67,6 +67,8 @@ If using `Date` objects, the default date comparator assumes that the `Date`s do
 
 If you are not using Cell Data Types (and the cell value is not a `Date` object, which will also work automatically), then a `comparator` needs to be configured to allow the Date Filter to perform the date comparisons.
 
+A `comparator` set here also decides the column's comparisons in the [Advanced Filter](./filter-advanced/#filter-parameters), under the Client-Side Row Model.
+
 {% interfaceDocumentation interfaceName="IDateFilterParams" names=["comparator"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The `comparator` function takes two parameters. The first parameter is a JavaScript `Date` object for the selected date in the filter (with the time set to midnight). The second parameter is the current value of the cell in the row being evaluated. The function must return:

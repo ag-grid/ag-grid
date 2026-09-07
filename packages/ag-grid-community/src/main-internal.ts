@@ -142,6 +142,7 @@ export {
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
     _isGridSuppliedFilterOptions,
+    _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export {
