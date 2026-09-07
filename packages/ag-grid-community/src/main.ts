@@ -319,6 +319,7 @@ export type {
     DoesFilterPassParams,
     FilterAction,
     FilterActionParams,
+    FilterCallbackSource,
     FilterDisplay,
     FilterDisplayComp,
     FilterDisplayParams,

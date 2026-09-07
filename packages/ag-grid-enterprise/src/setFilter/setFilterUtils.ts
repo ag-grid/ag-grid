@@ -1,11 +1,20 @@
 import type { LocaleTextFunc } from 'ag-stack';
 import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack';
 
-import type { AgColumn, BeanCollection, ISetFilterParams, ValueFormatterParams } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    ISetFilterParams,
+    TextFormatter,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 import { _isBlank } from 'ag-grid-community';
 
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
+
+/** What the Mini Filter searches when the column configures no `textFormatter`. */
+export const unformattedSetFilterText: TextFormatter = (value) => value ?? null;
 
 export function processDataPath(
     dataPath: string[] | null,

@@ -848,4 +848,51 @@ describe('ag-grid formulas interactive workflows', () => {
             └── LEAF id:r6 row-number:"6" a:6 b:60 total:null
         `);
     });
+
+    // A normalising parser is the discriminating input: without one the value round-trips unchanged
+    // and an untouched commit looks correct whether or not it is guarded.
+    test('opening and closing a formula cell without typing does not run the value parser', async () => {
+        const api = await createGrid('untouched-commit', {
+            columnDefs: [{ field: 'a', valueParser: (p) => String(p.newValue).toUpperCase() }],
+            rowData: [{ id: 'r0', a: 'abc' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await started;
+
+        const stopped = waitForEvent('cellEditingStopped', api);
+        api.stopEditing();
+        await stopped;
+
+        await new GridRows(api, 'untouched formula cell keeps its value', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r0 row-number:"1" a:"abc"
+        `);
+    });
+
+    // `agSetEditValue` is the `setDataValue(..., 'edit')` path, so it is handed a model value that
+    // has already been parsed; running the column parser over it again would parse it twice.
+    test('a value pushed into an open formula editor commits without re-parsing', async () => {
+        const api = await createGrid('typed-commit', {
+            columnDefs: [{ field: 'a', valueParser: (p) => String(p.newValue).toUpperCase() }],
+            rowData: [{ id: 'r0', a: 'abc' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await started;
+
+        const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+        editor?.agSetEditValue?.('xyz');
+
+        const stopped = waitForEvent('cellEditingStopped', api);
+        api.stopEditing();
+        await stopped;
+
+        await new GridRows(api, 'pushed formula cell value is not re-parsed', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r0 row-number:"1" a:"xyz"
+        `);
+    });
 });

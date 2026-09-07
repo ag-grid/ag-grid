@@ -1,4 +1,5 @@
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
+import { _trimInputForFilter } from 'ag-grid-community';
 
 import { quoteSetValue } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -22,6 +23,7 @@ import {
     getNumberParser,
     getRangeOrderMessage,
     getSearchString,
+    getTextFilterParams,
     updateExpression,
 } from './filterExpressionUtils';
 import { SET_LIST_OPEN_CHAR, SET_TREE_SEPARATOR, SetOperandsParser } from './set/setOperandsParser';
@@ -372,8 +374,11 @@ class OperandParser implements Parser {
     }
 
     private parseOperand(fromComplete: boolean, position: number): void {
-        const { advFilterExpSvc } = this.params;
+        const { advFilterExpSvc, advFilterSetSvc } = this.params;
         this.endPosition = position;
+        if (getTextFilterParams(this.column, this.baseCellDataType, advFilterSetSvc)?.trimInput) {
+            this.operand = _trimInputForFilter(this.operand) ?? this.operand;
+        }
         this.modelValue = this.operand;
         if (fromComplete && this.quotes) {
             // missing end quote

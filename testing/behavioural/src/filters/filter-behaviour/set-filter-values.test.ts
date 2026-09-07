@@ -10,6 +10,7 @@ import {
 } from 'ag-test-utils';
 
 import type {
+    FilterInputCallbackParams,
     GridApi,
     GridOptions,
     ISetFilterCellRendererParams,
@@ -115,6 +116,35 @@ describe('Set Filter — value model & UI (coverage)', () => {
             ├── LEAF id:1 country:"Austria"
             └── LEAF id:2 country:"Italy"
         `);
+    });
+
+    // One `textFormatter` on `defaultColDef.filterParams` reaches Text and Set columns alike, so calling it
+    // with no params here would hand a shared function `undefined` on exactly the Set ones.
+    test('the mini-filter `textFormatter` is given the column params, not called bare', async () => {
+        const sources: (string | undefined)[] = [];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        textFormatter: (from: string, params: FilterInputCallbackParams) => {
+                            sources.push(params?.source);
+                            return from;
+                        },
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ country: 'Australia' }, { country: 'Austria' }, { country: 'Italy' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        await filter.miniFilterSearch('aus');
+        await asyncSetTimeout(0);
+
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Australia', 'Austria']);
+        expect(sources.length).toBeGreaterThan(0);
+        expect([...new Set(sources)]).toEqual(['columnFilter']);
     });
 
     test('caseSensitive mini-filter only matches the exact case', async () => {
