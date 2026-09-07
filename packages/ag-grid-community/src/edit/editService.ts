@@ -92,6 +92,11 @@ type StopContext = {
 
 type StopOutcome = { edits: EditMap; res: boolean };
 
+type BulkEditFormulaProgress = {
+    rowDelta: number;
+    lastRowNode?: RowNode;
+};
+
 type StopValidationDecision = {
     blockRejected: boolean;
     skipAllCommits: boolean;
@@ -130,21 +135,12 @@ const CHECK_SIBLING = { checkSiblings: true };
 const FORCE_REFRESH = { force: true, suppressFlash: true };
 const FORCE_REFRESH_FLASH = { force: true };
 
-/**
- * Row offset from a range's start row to `rowNode`, for shifting a formula bulk-edited into that row.
- *
- * Relative row refs are shifted in formula-row space (`RowNode.formulaRowIndex`) while a cell range is
- * walked in displayed-row space, and the two diverge whenever rows are filtered out - with formulas
- * active, filtering is soft, so hidden rows keep a formula row index. Measuring the gap between the
- * rows themselves therefore keeps each row's formula pointing at that row rather than advancing one
- * step per row visited. `formulaRowIndex` is read raw: the `getFormulaRowIndex()` accessor falls back
- * to `rowIndex`, i.e. the displayed-row space this avoids. A row outside formula-row space (a pinned
- * clone, whose index is `null`) falls back to its ordinal within the walk, one step per row.
- */
-function getFormulaRowDelta(startRowNode: RowNode | undefined, rowNode: RowNode, rowOrdinal: number): number {
-    const from = startRowNode?.formulaRowIndex;
+// Raw formula indices retain hidden-row gaps; getFormulaRowIndex() falls back to displayed indices.
+// Rows outside formula-row space advance the accumulated offset by one.
+function getFormulaRowDelta(previousRowNode: RowNode, rowNode: RowNode): number {
+    const from = previousRowNode.formulaRowIndex;
     const to = rowNode.formulaRowIndex;
-    return from == null || to == null ? rowOrdinal : to - from;
+    return from == null || to == null ? 1 : to - from;
 }
 
 export class EditService extends BeanStub implements NamedBean {
@@ -1948,9 +1944,9 @@ export class EditService extends BeanStub implements NamedBean {
         const isFormula = formula?.isFormula(editValue) ?? false;
 
         // The ranges shift as one run, so each carries its offset into the next.
-        let carriedRowDelta = 0;
+        let formulaProgress: BulkEditFormulaProgress = { rowDelta: 0 };
         for (let i = 0, len = ranges.length; i < len; ++i) {
-            carriedRowDelta = this.applyBulkEditToRange(ranges[i], edits, editValue, isFormula, carriedRowDelta);
+            formulaProgress = this.applyBulkEditToRange(ranges[i], edits, editValue, isFormula, formulaProgress);
         }
 
         // One bulk edit however many ranges it spans, so commit once: a stopped event per range leaves
@@ -1982,30 +1978,19 @@ export class EditService extends BeanStub implements NamedBean {
         }
     }
 
-    /**
-     * Applies the bulk-edited value across one range, returning the row offset the next range starts from.
-     *
-     * `carriedRowDelta` is what the ranges before this one already shifted by, so a multi-range bulk edit
-     * progresses as a single run rather than repeating the typed formula at the top of every range.
-     */
     private applyBulkEditToRange(
         range: CellRange,
         edits: EditMap,
         editValue: EditValue['pendingValue'],
         isFormula: boolean,
-        carriedRowDelta: number
-    ): number {
+        progress: BulkEditFormulaProgress
+    ): BulkEditFormulaProgress {
         const { beans, rangeSvc } = this;
         const { formula } = beans;
         const rangeColumns = range.columns as AgColumn[];
         const shiftFormulaPerRow = isFormula && rangeColumns.some((col) => col?.allowFormula);
-        // The walk below starts at the range's start row, so every row's formula is derived from the
-        // value typed into the editor, shifted by that row's own offset from the start row.
-        const startRowPosition = rangeSvc?.getRangeStartRow(range);
-        const startRowNode = startRowPosition && _getRowNode(beans, startRowPosition);
-        // Ordinal of the current row within this range's walk, zero for the start row.
-        let rowOrdinal = 0;
-        let lastRowDelta = -1;
+        let { rowDelta, lastRowNode } = progress;
+        let firstRow = true;
 
         rangeSvc?.forEachRowInRange(range, (position) => {
             const rowNode = _getRowNode(beans, position);
@@ -2013,19 +1998,31 @@ export class EditService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const rowDelta = shiftFormulaPerRow
-                ? carriedRowDelta + getFormulaRowDelta(startRowNode, rowNode, rowOrdinal)
-                : 0;
+            const lastRowIndex = lastRowNode?.rowIndex;
+            // Only displayed-adjacent ranges include the hidden-row gap at their boundary.
+            if (
+                shiftFormulaPerRow &&
+                lastRowNode &&
+                (!firstRow ||
+                    (lastRowIndex != null &&
+                        rowNode.rowPinned === lastRowNode.rowPinned &&
+                        rowNode.rowIndex === lastRowIndex + 1))
+            ) {
+                rowDelta += getFormulaRowDelta(lastRowNode, rowNode) - 1;
+            }
             const rowValue =
                 rowDelta === 0 ? editValue : formula?.updateFormulaByOffset({ value: editValue, rowDelta });
 
             this.applyBulkEditToRow(rowNode, rangeColumns, edits, rowValue, isFormula);
 
-            rowOrdinal++;
-            lastRowDelta = rowDelta;
+            firstRow = false;
+            if (shiftFormulaPerRow) {
+                rowDelta++;
+                lastRowNode = rowNode;
+            }
         });
 
-        return shiftFormulaPerRow && lastRowDelta >= 0 ? lastRowDelta + 1 : carriedRowDelta;
+        return { rowDelta, lastRowNode };
     }
 
     /** Writes `value` into every editable cell of `rowNode` across `rangeColumns`, one column step per formula column. */

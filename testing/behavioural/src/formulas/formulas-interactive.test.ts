@@ -10,10 +10,11 @@ import {
     waitForEvent,
 } from 'ag-test-utils';
 
-import type { GridApi, GridOptions, Module } from 'ag-grid-community';
+import type { CellRangeParams, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberFilterModule,
+    PinnedRowModule,
     TextEditorModule,
     UndoRedoEditModule,
     agTestIdFor,
@@ -30,6 +31,7 @@ describe('ag-grid formulas interactive workflows', () => {
             ClientSideRowModelModule,
             FormulaModule,
             NumberFilterModule,
+            PinnedRowModule,
             TextEditorModule,
             UndoRedoEditModule,
             CellSelectionModule,
@@ -405,12 +407,7 @@ describe('ag-grid formulas interactive workflows', () => {
     // AG-18276: bulk edit (Ctrl+Enter) of a formula across a cell range - `applyBulkEdit` is reachable
     // only from the cell's Enter handler. The value is set through the editor instance, as the other
     // formula tests here do, the formula editor being no plain input.
-    async function bulkEditFormula(
-        api: GridApi,
-        rowIndex: number,
-        formula: string,
-        ranges: { rowStartIndex: number; rowEndIndex: number; columns: string[] }[]
-    ) {
+    async function bulkEditFormula(api: GridApi, rowIndex: number, formula: string, ranges: CellRangeParams[]) {
         const started = waitForEvent('cellEditingStarted', api);
         api.setFocusedCell(rowIndex, 'total');
         api.startEditingCell({ rowIndex, colKey: 'total' });
@@ -556,6 +553,273 @@ describe('ag-grid formulas interactive workflows', () => {
             ├── LEAF id:r2 row-number:"2" a:2 b:20 total:22
             ├── LEAF id:r3 row-number:"3" a:3 b:30 total:33
             └── LEAF id:r4 row-number:"4" a:4 b:40 total:44
+        `);
+    });
+
+    test.each([
+        {
+            name: 'gap at the first boundary',
+            ranges: [
+                [0, 0],
+                [1, 3],
+            ],
+        },
+        {
+            name: 'gap at the second boundary',
+            ranges: [
+                [0, 1],
+                [2, 3],
+            ],
+        },
+        {
+            name: 'gaps at multiple boundaries',
+            ranges: [
+                [0, 0],
+                [1, 1],
+                [2, 3],
+            ],
+        },
+    ])('bulk edit across filtered adjacent ranges: $name', async ({ ranges }) => {
+        const api = await createGrid('fx-bulk-edit-filtered-adjacent', {
+            cellSelection: true,
+            rowData: bulkEditRowData(6),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        const filterChanged = waitForEvent('filterChanged', api);
+        api.setFilterModel({
+            a: {
+                filterType: 'number',
+                operator: 'AND',
+                conditions: [
+                    { filterType: 'number', type: 'notEqual', filter: 2 },
+                    { filterType: 'number', type: 'notEqual', filter: 4 },
+                ],
+            },
+        });
+        await filterChanged;
+
+        await bulkEditFormula(
+            api,
+            0,
+            '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))',
+            ranges.map(([rowStartIndex, rowEndIndex]) => ({ rowStartIndex, rowEndIndex, columns: ['total'] }))
+        );
+
+        await new GridRows(api, 'after bulk edit across filtered adjacent ranges', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:33
+            ├── LEAF id:r5 row-number:"5" a:5 b:50 total:55
+            └── LEAF id:r6 row-number:"6" a:6 b:60 total:66
+        `);
+        for (const id of ['r1', 'r3', 'r5', 'r6']) {
+            expect(api.getRowNode(id)!.data.total).toBe(`=REF(COLUMN("a"),ROW("${id}"))+REF(COLUMN("b"),ROW("${id}"))`);
+        }
+        for (const id of ['r2', 'r4']) {
+            expect(api.getRowNode(id)!.data.total).toBeNull();
+        }
+    });
+
+    test.each([
+        { name: 'body to bottom pinned', top: false, split: false, visibleRows: [1, 3, 5], batch: false },
+        { name: 'split body and bottom pinned ranges', top: false, split: true, visibleRows: [1, 3, 5], batch: false },
+        {
+            name: 'top pinned through body to bottom pinned',
+            top: true,
+            split: false,
+            visibleRows: [1, 3, 5],
+            batch: false,
+        },
+        {
+            name: 'split top, body and bottom pinned ranges',
+            top: true,
+            split: true,
+            visibleRows: [1, 3, 5],
+            batch: false,
+        },
+        {
+            name: 'consecutive body rows to bottom pinned',
+            top: false,
+            split: false,
+            visibleRows: [1, 2, 3],
+            batch: false,
+        },
+        { name: 'batch edit body to bottom pinned', top: false, split: false, visibleRows: [1, 3, 5], batch: true },
+    ])(
+        'bulk edit preserves formula progression across pinned rows: $name',
+        async ({ top, split, visibleRows, batch }) => {
+            const api = await createGrid('fx-bulk-edit-pinned-boundary', {
+                cellSelection: true,
+                rowData: bulkEditRowData(9),
+                columnDefs: bulkEditColumnDefs,
+                pinnedTopRowData: top
+                    ? [
+                          { id: 'pt1', total: null },
+                          { id: 'pt2', total: null },
+                      ]
+                    : [],
+                pinnedBottomRowData: [
+                    { id: 'pb1', total: null },
+                    { id: 'pb2', total: null },
+                ],
+            });
+
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel({
+                a: {
+                    filterType: 'number',
+                    operator: 'OR',
+                    conditions: visibleRows.map((filter) => ({ filterType: 'number', type: 'equals', filter })),
+                },
+            });
+            await filterChanged;
+            expect(
+                Array.from({ length: api.getDisplayedRowCount() }, (_, i) => api.getDisplayedRowAtIndex(i)!.id)
+            ).toEqual(visibleRows.map((row) => `r${row}`));
+
+            const ranges: CellRangeParams[] = [];
+            if (split) {
+                if (top) {
+                    ranges.push({
+                        rowStartIndex: 0,
+                        rowStartPinned: 'top',
+                        rowEndIndex: 1,
+                        rowEndPinned: 'top',
+                        columns: ['total'],
+                    });
+                }
+                ranges.push(
+                    { rowStartIndex: 0, rowEndIndex: 2, columns: ['total'] },
+                    {
+                        rowStartIndex: 0,
+                        rowStartPinned: 'bottom',
+                        rowEndIndex: 1,
+                        rowEndPinned: 'bottom',
+                        columns: ['total'],
+                    }
+                );
+            } else {
+                ranges.push({
+                    rowStartIndex: 0,
+                    rowStartPinned: top ? 'top' : null,
+                    rowEndIndex: 1,
+                    rowEndPinned: 'bottom',
+                    columns: ['total'],
+                });
+            }
+
+            if (batch) {
+                api.startBatchEdit();
+            }
+            await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', ranges);
+            if (batch) {
+                api.commitBatchEdit();
+            }
+
+            const topRowCount = top ? 2 : 0;
+            const nodes = [
+                ...Array.from({ length: topRowCount }, (_, i) => api.getPinnedTopRow(i)!),
+                ...visibleRows.map((row) => api.getRowNode(`r${row}`)!),
+                api.getPinnedBottomRow(0)!,
+                api.getPinnedBottomRow(1)!,
+            ];
+            const lastBodyRef = visibleRows[2] + topRowCount;
+            const expectedRefs = [
+                ...Array.from({ length: topRowCount }, (_, i) => i + 1),
+                ...visibleRows.map((row) => row + topRowCount),
+                lastBodyRef + 1,
+                lastBodyRef + 2,
+            ];
+            expect(nodes.map((node) => node.data.total)).toEqual(
+                expectedRefs.map((row) => `=REF(COLUMN("a"),ROW("r${row}"))+REF(COLUMN("b"),ROW("r${row}"))`)
+            );
+            expect(nodes.map((rowNode) => api.getCellValue({ rowNode, colKey: 'total', useFormatter: false }))).toEqual(
+                expectedRefs.map((row) => row * 11)
+            );
+            for (let row = 1; row <= 9; row++) {
+                if (!visibleRows.includes(row)) {
+                    expect(api.getRowNode(`r${row}`)!.data.total).toBeNull();
+                }
+            }
+        }
+    );
+
+    test.each([false, true])(
+        'bulk edit retains the carried formula in text-only ranges without advancing it (batch=%s)',
+        async (batch) => {
+            const api = await createGrid('fx-bulk-edit-text-range', {
+                cellSelection: true,
+                rowData: bulkEditRowData(6).map((row) => ({ ...row, text: null })),
+                columnDefs: [...bulkEditColumnDefs, { field: 'text', allowFormula: false, cellDataType: 'text' }],
+            });
+
+            if (batch) {
+                api.startBatchEdit();
+            }
+            await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+                { rowStartIndex: 2, rowEndIndex: 3, columns: ['text'] },
+                { rowStartIndex: 4, rowEndIndex: 5, columns: ['total'] },
+            ]);
+            if (batch) {
+                api.commitBatchEdit();
+            }
+
+            const carriedFormula = '=REF(COLUMN("a"),ROW("r3"))+REF(COLUMN("b"),ROW("r3"))';
+            for (const id of ['r3', 'r4']) {
+                const rowNode = api.getRowNode(id)!;
+                expect(api.getCellValue({ rowNode, colKey: 'text', useFormatter: false })).toBe(carriedFormula);
+                expect(rowNode.data.total).toBeNull();
+            }
+            expect(api.getRowNode('r5')!.data.total).toBe(carriedFormula);
+            expect(api.getCellValue({ rowNode: api.getRowNode('r5')!, colKey: 'total', useFormatter: false })).toBe(33);
+            expect(api.getCellValue({ rowNode: api.getRowNode('r6')!, colKey: 'total', useFormatter: false })).toBe(44);
+        }
+    );
+
+    test('bulk edit preserves filtered adjacency across an intervening text-only range', async () => {
+        const api = await createGrid('fx-bulk-edit-filtered-text-range', {
+            cellSelection: true,
+            rowData: bulkEditRowData(4).map((row) => ({ ...row, text: null })),
+            columnDefs: [...bulkEditColumnDefs, { field: 'text', allowFormula: false, cellDataType: 'text' }],
+        });
+
+        const filterChanged = waitForEvent('filterChanged', api);
+        api.setFilterModel({ a: { filterType: 'number', type: 'notEqual', filter: 2 } });
+        await filterChanged;
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+            { rowStartIndex: 0, rowEndIndex: 0, columns: ['total'] },
+            { rowStartIndex: 0, rowEndIndex: 0, columns: ['text'] },
+            { rowStartIndex: 1, rowEndIndex: 2, columns: ['total'] },
+        ]);
+
+        expect(api.getRowNode('r1')!.data.text).toBe('=REF(COLUMN("a"),ROW("r2"))+REF(COLUMN("b"),ROW("r2"))');
+        for (const id of ['r1', 'r3', 'r4']) {
+            expect(api.getRowNode(id)!.data.total).toBe(`=REF(COLUMN("a"),ROW("${id}"))+REF(COLUMN("b"),ROW("${id}"))`);
+        }
+        expect(api.getRowNode('r2')!.data.total).toBeNull();
+    });
+
+    test('bulk edit preserves progression when ranges are created from bottom to top', async () => {
+        const api = await createGrid('fx-bulk-edit-reverse-ranges', {
+            cellSelection: true,
+            rowData: bulkEditRowData(4),
+            columnDefs: bulkEditColumnDefs,
+        });
+
+        await bulkEditFormula(api, 0, '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))', [
+            { rowStartIndex: 3, rowEndIndex: 3, columns: ['total'] },
+            { rowStartIndex: 0, rowEndIndex: 1, columns: ['total'] },
+        ]);
+
+        await new GridRows(api, 'after bulk edit across reversed ranges', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:1 b:10 total:22
+            ├── LEAF id:r2 row-number:"2" a:2 b:20 total:33
+            ├── LEAF id:r3 row-number:"3" a:3 b:30 total:null
+            └── LEAF id:r4 row-number:"4" a:4 b:40 total:11
         `);
     });
 
