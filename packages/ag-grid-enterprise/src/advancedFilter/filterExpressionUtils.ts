@@ -10,6 +10,7 @@ import type {
     GridOptionsService,
     IBigIntFilterParams,
     IRowNode,
+    ITextFilterParams,
     NumberFilterParams,
     SetAdvancedFilterModel,
     SetFilterModelValue,
@@ -18,6 +19,7 @@ import type {
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import { getMultiFilterChild } from './customFilterOptions';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 import { OPERAND_COUNT } from './filterExpressionOperators';
 import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
@@ -248,10 +250,10 @@ export const getBigIntParser = (
     column: AgColumn | null | undefined,
     gos: GridOptionsService
 ): FilterOperandParser<bigint> =>
-    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column) ?? _parseBigIntOrNull;
+    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column, 'advancedFilter') ?? _parseBigIntOrNull;
 
 export const getBigIntFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
-    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column);
+    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column, 'advancedFilter');
 
 /**
  * The `filterParams` of a number column whose operands are written in its own syntax rather than as plain
@@ -271,13 +273,37 @@ export const getNumberParser = (
     column: AgColumn | null | undefined,
     gos: GridOptionsService
 ): FilterOperandParser<number> =>
-    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column) ?? parseNumberOrNull;
+    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column, 'advancedFilter') ??
+    parseNumberOrNull;
 
 export const getNumberFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
-    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column);
+    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column, 'advancedFilter');
 
 export function hasCustomNumberOperands(column: AgColumn | null | undefined): boolean {
     return customNumberOperandParams(column) != null;
+}
+
+/**
+ * The params the column's Text Filter compares with — for a Multi Filter, its Text Filter child's alone, as
+ * the child is created with (`MultiFilterHandler` merges the column's own params in only on a later refresh).
+ */
+export function getTextFilterParams(
+    column: AgColumn | null | undefined,
+    baseCellDataType: BaseCellDataType | undefined,
+    advFilterSetSvc: AdvancedFilterSetService
+): ITextFilterParams | undefined {
+    // An unresolved data type reads as text, as its converter does.
+    if (baseCellDataType != null && baseCellDataType !== 'text' && baseCellDataType !== 'object') {
+        return undefined;
+    }
+    const colDef = column?.colDef;
+    const filter = colDef?.filter;
+    if (filter === 'agMultiColumnFilter') {
+        return getMultiFilterChild(colDef?.filterParams, 'agTextColumnFilter')?.filterParams;
+    }
+    // A custom component's are its own, and a Set Filter's `textFormatter` formats its list, not a comparison.
+    const ownsItsParams = typeof filter === 'function' || (filter != null && typeof filter === 'object');
+    return ownsItsParams || advFilterSetSvc.isSetFilterColumn(column) ? undefined : colDef?.filterParams;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

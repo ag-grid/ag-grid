@@ -1,12 +1,13 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
-import type { AgColumn, IFilterOptionDef, IMultiFilterDef } from 'ag-grid-community';
+import type { AgColumn, FilterInputCallbackParams, IFilterOptionDef, IMultiFilterDef } from 'ag-grid-community';
 import {
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
     _isGridSuppliedFilterOptions,
 } from 'ag-grid-community';
 
+import { getChildFilter } from '../multiFilter/multiFilterUtil';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionOperator,
@@ -25,7 +26,7 @@ export function getMultiFilterChild(filterParams: any, filterName: string): IMul
     const filters: IMultiFilterDef[] | undefined = filterParams?.filters;
     for (let i = 0, len = filters?.length ?? 0; i < len; ++i) {
         const child = filters![i];
-        if (child?.filter === filterName) {
+        if (child && getChildFilter(child) === filterName) {
             return child;
         }
     }
@@ -50,21 +51,23 @@ export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptio
 export function createCustomOptionOperators(
     dataTypeOperators: DataTypeFilterExpressionOperators<any>,
     customOptions: Map<string, IFilterOptionDef>,
-    localeTextFunc: LocaleTextFunc
+    localeTextFunc: LocaleTextFunc,
+    callbackParams: () => FilterInputCallbackParams
 ): DataTypeFilterExpressionOperators<any> {
     const operators: { [operator: string]: FilterExpressionOperator<any> } = Object.assign(
         Object.create(null),
         dataTypeOperators.operators
     );
     customOptions.forEach((option, key) => {
-        operators[key] = createCustomOptionOperator(option, localeTextFunc);
+        operators[key] = createCustomOptionOperator(option, localeTextFunc, callbackParams);
     });
     return { operators, getEntries: (activeOperators) => getEntries(operators, activeOperators) };
 }
 
 function createCustomOptionOperator(
     option: IFilterOptionDef,
-    localeTextFunc: LocaleTextFunc
+    localeTextFunc: LocaleTextFunc,
+    callbackParams: () => FilterInputCallbackParams
 ): FilterExpressionOperator<any> {
     const predicate = option.predicate!;
     // Arity bound here rather than branched on per row; the predicate gets the raw cell value.
@@ -72,16 +75,17 @@ function createCustomOptionOperator(
     let operands: OperandsKind;
     switch (_getCustomOptionNumberOfInputs(option)) {
         case 0:
-            evaluator = (value) => predicate([], value);
+            evaluator = (value) => predicate([], value, callbackParams());
             operands = 'none';
             break;
         case 1:
-            evaluator = (value, _node, _params, operand1) => predicate([freshOperand(operand1)], value);
+            evaluator = (value, _node, _params, operand1) =>
+                predicate([freshOperand(operand1)], value, callbackParams());
             operands = 'one';
             break;
         default:
             evaluator = (value, _node, _params, operand1, operand2) =>
-                predicate([freshOperand(operand1), freshOperand(operand2)], value);
+                predicate([freshOperand(operand1), freshOperand(operand2)], value, callbackParams());
             operands = 'range';
             break;
     }

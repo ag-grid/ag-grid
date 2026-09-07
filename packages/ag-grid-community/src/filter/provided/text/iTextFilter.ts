@@ -1,6 +1,6 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
 import type { IAutoCompleteComponentParams } from '../../../interfaces/iAutoComplete';
-import type { IFilterParams } from '../../../interfaces/iFilter';
+import type { FilterCallbackSource, FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
 import type {
     CustomFilterOptionKey,
@@ -50,12 +50,15 @@ export interface TextMatcherParams extends BaseColDefParams {
      * the value will have been converted to lower case.
      */
     filterText: string | null;
+    /** The column's `textFormatter`, with its own params already supplied. */
     textFormatter?: TextFormatter;
+    /** Which filter is doing the matching. */
+    source: FilterCallbackSource;
 }
 
 export type TextMatcher = (params: TextMatcherParams) => boolean;
 
-export type TextFormatter = (from?: string | null) => string | null;
+export type TextFormatter = (from?: string | null, params?: FilterInputCallbackParams) => string | null;
 
 /**
  * Parameters provided by the grid to the `init` method of a `TextFilter`.
@@ -85,7 +88,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      * Formats the text before applying the filter compare logic.
      * Useful if you want to substitute accented characters, for example.
      */
-    textFormatter?: (from: string) => string | null;
+    textFormatter?: (from: string, params: FilterInputCallbackParams) => string | null;
     /**
      * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.
      * If only whitespace is entered, it will be left as-is.
