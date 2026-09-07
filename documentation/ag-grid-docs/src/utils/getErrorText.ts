@@ -53,6 +53,26 @@ function placeholderFor(name: string): string {
 const UNKNOWN_PLACEHOLDER = '<unknown>';
 
 /**
+ * Renders one part of a message that is built as an array. Those arrays carry values as well as text --
+ * the row data #5 could not match, the column key #12 could not find -- because the console logs each
+ * part as its own argument and gets a readable object for free. Joining them into a string does not, so
+ * a value has to be serialised here or it reaches the reader as `[object Object]`, which is precisely
+ * the detail the message exists to show.
+ */
+function formatTextPart(part: unknown): string {
+    if (typeof part === 'string') {
+        return part;
+    }
+    try {
+        return JSON.stringify(part) ?? String(part);
+    } catch {
+        // Circular, or something else JSON cannot take. Better than nothing, and never worse than the
+        // coercion this replaces.
+        return String(part);
+    }
+}
+
+/**
  * The parameter names an error's text function reads. An error taking no parameters returns an empty
  * list, which is what lets the page tell "this message is complete" apart from "this message is missing
  * details from the URL" — most error codes take no parameters at all, so their text is always complete.
@@ -115,7 +135,7 @@ export function getErrorTextDetails({
             const textOutput = errorTextFn(renderParams as any);
             const textOutputArray = typeof textOutput === 'string' ? [textOutput] : textOutput;
 
-            return textOutputArray.filter(Boolean).join('\n');
+            return textOutputArray.filter(Boolean).map(formatTextPart).join('\n');
         } catch {
             // A template that reads a property off an absent parameter, or calls a method on it, throws.
             return '';

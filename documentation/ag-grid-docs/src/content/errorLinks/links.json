@@ -459,5 +459,11 @@
         "text": "Components",
         "url": "./components/",
         "description": "Building and registering your own grid components."
+    },
+    {
+        "errorIds": [2, 5],
+        "text": "Transaction Updates",
+        "url": "./data-update-transactions/#identifying-rows-for-update-and-remove",
+        "description": "How the grid matches a data item against a row it holds."
     }
 ]

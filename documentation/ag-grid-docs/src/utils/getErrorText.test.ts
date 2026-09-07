@@ -228,3 +228,26 @@ describe('known edge: a message whose own text says "undefined"', () => {
         expect(text).toContain('<unknown> values are not allowed');
     });
 });
+
+describe('message parts that are values rather than text', () => {
+    it('serialises the row data #5 could not match, rather than coercing it', () => {
+        // #5's whole purpose is showing which object the grid could not find, so `[object Object]` here
+        // loses the only detail worth having.
+        const { text } = getErrorTextDetails({
+            errorCode: 5,
+            params: { data: JSON.stringify({ id: 1, name: 'John' }) },
+        });
+
+        expect(text).toContain('{"id":1,"name":"John"}');
+        expect(text).not.toContain('[object Object]');
+    });
+
+    it('leaves a message with no params to render complete and unflagged', () => {
+        // `data` absent drops out of the array, and what remains reads correctly, so nothing is missing
+        // from the reader's point of view.
+        const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: 5 });
+
+        expect(hasPlaceholders).toBe(false);
+        expect(text).toContain('Consider using `getRowId`');
+    });
+});
