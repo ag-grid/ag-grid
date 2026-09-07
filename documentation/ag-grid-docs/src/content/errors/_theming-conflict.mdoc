@@ -1,14 +1,23 @@
-There are two ways to resolve this error, either adopt the new Theming API or continue with the legacy themes.
+There are two ways to resolve this, either adopt the Theming API or continue with the legacy themes.
 
-### Adopt the new Theming API
+### Adopt the Theming API
 
-To adopt the new Theming API follow the steps outlined in [Adopt the Theming API](./theming-migration/#adopt-the-theming-api).
+Remove the legacy CSS, then pass a theme object to the `theme` grid option. Follow the steps in [Adopt the Theming API](./theming-migration/#adopt-the-theming-api).
+
+Only `ag-grid.css` sets the marker the grid detects, so removing it silences the message. Remove the `ag-theme-*.css` files along with it, or you will be left with part of a legacy theme applied over the new one.
+
+The import is easy to miss, because it can be in any of these places:
+
+- A side-effect import in an entry file or component, such as `import 'ag-grid-community/styles/ag-grid.css'`.
+- A `@use` or `@import` in a global stylesheet.
+- A `<link>` tag in your HTML, often pointing at a copy of the file rather than the package.
+- A build configuration, such as the `styles` array in `angular.json`, or global CSS registered by a framework's app shell.
 
 ### Continue with legacy Themes
 
-Set the grid option: `theme='legacy'`. See [Continue with Legacy Themes](./theming-migration/#continue-with-legacy-themes) for more information.
+Pass the string `legacy` to the `theme` grid option and keep the CSS files as they are. See [Continue with Legacy Themes](./theming-migration/#continue-with-legacy-themes).
 
-If you have multiple grids you may find using a [Global Grid Option](./grid-interface/#global-grid-options) to be a convenient way to set the theme to `"legacy"` for all grids in your application.
+Where you have several grids, a [Global Grid Option](./grid-interface/#global-grid-options) sets this once for all of them:
 
 ```ts
 import { provideGlobalGridOptions } from 'ag-grid-community';
@@ -18,5 +27,5 @@ provideGlobalGridOptions({ theme: 'legacy' });
 ```
 
 {% note %}
-For a comprehensive guide on migrating from v32 please see [Migrating to the Theming API](./theming-migration).
+For the full picture, see [Migrating to the Theming API](./theming-migration).
 {% /note %}
