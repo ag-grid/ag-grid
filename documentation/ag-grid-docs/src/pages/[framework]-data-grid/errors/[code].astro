@@ -109,6 +109,9 @@ if (errorLinks.length > 0) {
 
 const isArchive = getIsArchive();
 const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH, 'migration');
+// A code this version does not recognise cannot be redirected without a version to redirect to, so the
+// archive index is the one link that always helps: the reader picks the version they are running.
+const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
 ---
 
 <Layout
@@ -138,8 +141,11 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
                 {
                     isUnknownCode ? (
                         <Note>
-                            Error #{code} is not recognised in AG Grid {VERSION}. If you followed this link from an
-                            older version of AG Grid, you will be redirected to that version's documentation.
+                            Error #{code} is not recognised in AG Grid {VERSION} — it either applies to an older
+                            version, or is not an error AG Grid raises. Following the link from your browser's developer
+                            console will bring you to the documentation for the version you are running; if you reached
+                            this page another way, find your version in the{' '}
+                            <a href={archiveUrl}>documentation archive</a>.
                         </Note>
                     ) : (
                         <>
