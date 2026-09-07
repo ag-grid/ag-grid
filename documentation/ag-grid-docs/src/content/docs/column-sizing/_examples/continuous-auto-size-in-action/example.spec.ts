@@ -46,8 +46,8 @@ test.agExample(import.meta, () => {
         await remoteApi.logEvent('columnResized', ['finished', 'source']);
         const autoSizePasses = () =>
             remoteGrid.eventLog.filter(
-                ([type, detail]: [string, { finished?: boolean; source?: string }]) =>
-                    type === 'columnResized' && detail?.finished && detail?.source === 'autosizeColumns'
+                ([eventType, eventData]) =>
+                    eventType === 'columnResized' && eventData.finished && eventData.source === 'autosizeColumns'
             ).length;
 
         /**
