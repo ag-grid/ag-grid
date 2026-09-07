@@ -225,7 +225,11 @@ export const Property: FunctionComponent<{
 
                     {hasDetails && isExpanded && (
                         <div id={getDetailsId(idName)} className={styles.expandedContent}>
-                            {expandedCode && <Code code={expandedCode} keepMarkup={true} />}
+                            {expandedCode ? (
+                                <Code code={expandedCode} keepMarkup={true} />
+                            ) : (
+                                <p className="text-secondary">Loading type details&hellip;</p>
+                            )}
                         </div>
                     )}
                 </div>

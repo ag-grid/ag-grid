@@ -7,7 +7,18 @@ const requests = new Map<string, Promise<ReferenceDetails>>();
 function loadReferenceDetails(url: string) {
     let request = requests.get(url);
     if (!request) {
-        request = fetch(url).then((response) => response.json());
+        request = fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`${response.status} fetching ${url}`);
+                }
+                return response.json();
+            })
+            .catch((error) => {
+                // Drop the failure so the next expand retries rather than reusing a rejected promise.
+                requests.delete(url);
+                throw error;
+            });
         requests.set(url, request);
     }
 
@@ -24,11 +35,16 @@ export function useReferenceDetails({ url, enabled }: { url?: string; enabled: b
         }
 
         let active = true;
-        loadReferenceDetails(url).then((loaded) => {
-            if (active) {
-                setDetails(loaded);
-            }
-        });
+        loadReferenceDetails(url)
+            .then((loaded) => {
+                if (active) {
+                    setDetails(loaded);
+                }
+            })
+            .catch((error) => {
+                // eslint-disable-next-line no-console
+                console.error('<api-documentation>: could not load type details.', error);
+            });
 
         return () => {
             active = false;
