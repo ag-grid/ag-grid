@@ -41,9 +41,11 @@ describe('menu tooltip triggers', () => {
             ],
         });
         restoreOffsetParent = polyfillOffsetParent();
-        document.querySelector('.ag-cell')!.dispatchEvent(
-            new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
-        );
+        document
+            .querySelector('.ag-cell')!
+            .dispatchEvent(
+                new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+            );
         return (await openMenuOption('First')).closest<HTMLElement>('.ag-menu-option')!;
     }
 
