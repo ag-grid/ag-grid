@@ -213,3 +213,18 @@ describe('hasPlaceholders', () => {
         expect(text).toContain('<unknown>');
     });
 });
+
+describe('known edge: a message whose own text says "undefined"', () => {
+    it('scrubs #190\'s legitimate "undefined" along with the absent params', () => {
+        // #190 is the one parameterised error whose text genuinely contains the word (\"null and
+        // undefined values are not allowed...\"), so an incomplete link to it loses that word to the
+        // anonymous placeholder. Accepted rather than fixed: narrowing the scrub to only the last-resort
+        // branch would regress #9, which renders a real `undefined` through the placeholder path because
+        // its `variable` param is an object. #190 is far less trafficked, the loss is one cosmetic word,
+        // and the page shows the missing-parameter warning alongside it.
+        const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: 190, params: {} });
+
+        expect(hasPlaceholders).toBe(true);
+        expect(text).toContain('<unknown> values are not allowed');
+    });
+});
