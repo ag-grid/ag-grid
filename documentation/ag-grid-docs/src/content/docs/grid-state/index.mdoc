@@ -47,10 +47,6 @@ The grid state is made up of the sections below, each of which can be provided o
 
 The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
 
-The `find` section only takes part in grid state when the [Quick Access Toolbar](./toolbar/) is configured with `agFindToolbarItem`. Without that item [Find](./find/) is driven by the `findSearchValue` grid option alone, and is neither captured nor restored.
-
-When the section does apply, restoring it writes the search value back into the `findSearchValue` grid option, so the restored state takes precedence over a value set in the grid options. An `initialState` with no `find` section leaves the grid option as provided, whereas `api.setState()` with no `find` section clears the search — pass `api.setState(state, ['find'])` to keep the current one. The section is applied before the `scroll` and `pagination` states, so a saved scroll position and page win over the scroll to the active match.
-
 The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
 
 {% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" /%}

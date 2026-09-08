@@ -30,7 +30,8 @@ export interface FilterState {
 /**
  * Find state. Works for Client-Side Row Model only, and only when the Quick Access Toolbar is
  * configured with the `agFindToolbarItem` item; otherwise the `findSearchValue` grid option is the
- * only source.
+ * only source. Restoring this state writes the search value back into the `findSearchValue` grid
+ * option, so it takes precedence over a value set in the grid options.
  */
 export interface FindState {
     /** Current search value */
