@@ -72,10 +72,8 @@ const { data: allErrorLinks } = (await getEntry('errorLinks', 'links')) as Colle
 const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
-// The query string is only available client-side, so a statically rendered page has none of the
-// parameters its error takes. Errors taking no parameters (most of them) render their complete text
-// here and never show the warning; the inline script drops it for the rest once it has read the URL and
-// found the message can be completed.
+// No query string at build time, so a parameterised error renders with placeholders here and the
+// script re-renders it from the URL.
 const { text: defaultErrorText, hasPlaceholders } = isUnknownCode
     ? { text: '', hasPlaceholders: false }
     : getErrorTextDetails({ errorCode: errorCode as ErrorId });
@@ -84,8 +82,7 @@ const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
 const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
 const relatedDocPages = { slug: getTabItemSlug('related-doc-pages'), depth: 2, text: 'Related Doc Pages' };
-// Error content lives in `content/errors/`, not under `content/docs/<pageName>`, so partials shared
-// between related error pages are resolved against that directory instead.
+// Error content lives in `content/errors/`, so partials resolve against that rather than `content/docs`.
 const errorsContentPath = pathJoin(getContentRootFileUrl().pathname, 'errors');
 let headings = errorPage
     ? await getHeadings({
@@ -109,8 +106,7 @@ if (errorLinks.length > 0) {
 
 const isArchive = getIsArchive();
 const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH, 'migration');
-// A code this version does not recognise cannot be redirected without a version to redirect to, so the
-// archive index is the one link that always helps: the reader picks the version they are running.
+// Without a version to redirect to, the archive index is the one link that helps.
 const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
 ---
 
@@ -151,13 +147,19 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
                         <>
                             <pre id="errorCodeText">{defaultErrorText}</pre>
                             {hasPlaceholders && (
-                                <div id="error-missing-params">
-                                    <Warning>
-                                        This URL does not carry the specifics of your error, so the message above shows
-                                        placeholders (<code>&lt;name&gt;</code>) in their place. Follow the full link
-                                        from your browser's developer console to see the complete message.
-                                    </Warning>
-                                </div>
+                                <>
+                                    <div id="error-missing-params" hidden>
+                                        <Warning>
+                                            This URL does not carry the specifics of your error, so the message above
+                                            shows placeholders (<code>&lt;name&gt;</code>) in their place. Follow the
+                                            full link from your browser's developer console to see the complete message.
+                                        </Warning>
+                                    </div>
+                                    {/* Nothing reveals the warning without JS, so CSS does it there. */}
+                                    <noscript>
+                                        <style is:inline set:html="#error-missing-params[hidden] { display: block }" />
+                                    </noscript>
+                                </>
                             )}
                             <Note>
                                 To show this error text in the dev console,{' '}
@@ -218,8 +220,7 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
     const searchParams = new URLSearchParams(window.location.search);
     const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
-    // Redirect first, so the hop to the archive can never sit downstream of a failing text lookup.
-    // Absent `_version_` there is nothing to compare against, so the page stays where it is.
+    // Redirect first, so the hop to the archive never sits downstream of a failing text lookup.
     const errorRedirectBaseUrl = _version_
         ? getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION })
         : undefined;
@@ -238,14 +239,15 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
             errorCodeTextEl.textContent = text;
         }
 
-        // The static page is rendered without a query string, so it always warns for a parameterised
-        // error. Now that the URL has been read, drop the warning if the message came out complete.
-        if (!hasPlaceholders) {
-            document.getElementById(MISSING_PARAMS_ID)?.remove();
+        // Hidden until now, so a complete message never flashes the warning.
+        const missingParamsEl = document.getElementById(MISSING_PARAMS_ID);
+        if (hasPlaceholders) {
+            missingParamsEl?.removeAttribute('hidden');
+        } else {
+            missingParamsEl?.remove();
         }
 
-        // Replace each `errorParam` tag's fallback with this reader's own value, so the guidance below
-        // describes their grid rather than a worked example.
+        // Swap each `errorParam` fallback for this reader's own value.
         for (const el of document.querySelectorAll<HTMLElement>(ERROR_PARAM_SELECTOR)) {
             const name = el.dataset.errorParam;
             const value = name === undefined ? undefined : params[name];

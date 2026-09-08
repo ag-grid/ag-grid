@@ -171,8 +171,7 @@ describe('missing param handling', () => {
     });
 
     it('reports a nested object param as missing even though its text cannot be completed', () => {
-        // A placeholder is a string, so error #9 reading `variable.cssName` off it still renders nothing
-        // useful. The page relies on the missing-param report, not the text, to explain itself.
+        // A placeholder is a string, so #9 reading `variable.cssName` off it still renders nothing useful.
         expect(getMissingErrorParams({ errorCode: 9 })).toEqual(['variable']);
     });
 });
@@ -187,8 +186,7 @@ describe('hasPlaceholders', () => {
     });
 
     it('is false for a #200 link carrying only the params the grid actually logs', () => {
-        // #200 declares several optional params (`reports`, `isUmd`, `usesAgGridProvider`, `additionalText`)
-        // that a console link never sends, so a missing-param count would warn on every real link.
+        // #200 declares optional params a console link never sends, so a count would warn on every link.
         const { text, hasPlaceholders } = getErrorTextDetails({
             errorCode: 200,
             params: {
@@ -216,12 +214,8 @@ describe('hasPlaceholders', () => {
 
 describe('known edge: a message whose own text says "undefined"', () => {
     it('scrubs #190\'s legitimate "undefined" along with the absent params', () => {
-        // #190 is the one parameterised error whose text genuinely contains the word (\"null and
-        // undefined values are not allowed...\"), so an incomplete link to it loses that word to the
-        // anonymous placeholder. Accepted rather than fixed: narrowing the scrub to only the last-resort
-        // branch would regress #9, which renders a real `undefined` through the placeholder path because
-        // its `variable` param is an object. #190 is far less trafficked, the loss is one cosmetic word,
-        // and the page shows the missing-parameter warning alongside it.
+        // #190's own text says "undefined", so an incomplete link loses that word. Accepted: narrowing
+        // the scrub to the last-resort branch would regress #9, and #190 is far less trafficked.
         const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: 190, params: {} });
 
         expect(hasPlaceholders).toBe(true);
@@ -231,8 +225,7 @@ describe('known edge: a message whose own text says "undefined"', () => {
 
 describe('message parts that are values rather than text', () => {
     it('serialises the row data #5 could not match, rather than coercing it', () => {
-        // #5's whole purpose is showing which object the grid could not find, so `[object Object]` here
-        // loses the only detail worth having.
+        // #5 exists to show which object the grid could not find; `[object Object]` loses that.
         const { text } = getErrorTextDetails({
             errorCode: 5,
             params: { data: JSON.stringify({ id: 1, name: 'John' }) },
@@ -243,8 +236,7 @@ describe('message parts that are values rather than text', () => {
     });
 
     it('leaves a message with no params to render complete and unflagged', () => {
-        // `data` absent drops out of the array, and what remains reads correctly, so nothing is missing
-        // from the reader's point of view.
+        // `data` absent drops out of the array, and what remains reads correctly.
         const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: 5 });
 
         expect(hasPlaceholders).toBe(false);

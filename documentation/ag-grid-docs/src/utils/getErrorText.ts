@@ -5,21 +5,16 @@ import {
     type ErrorId,
 } from '../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
 
+// In production the console carries only the code and a link here, so this page is the only copy of the
+// message: a detail the URL did not carry must show as a visible gap, never as `undefined`.
+
 type Params = Record<string, string>;
 
-/**
- * Matches the destructured parameter names of an error text function, i.e. the `a, b: c` of
- * `({ a, b: c }: { ... }) => ...`. Only the key before any `:` is captured as the name, so the pattern
- * holds for a minified bundle: a destructured key is tied to the object property and cannot be renamed,
- * only aliased to a shorter local binding.
- */
+// Spans the destructuring pattern of `({ a, b: c }: { ... }) => ...`. Safe under minification: a
+// destructured key is tied to the object property, so only its local alias after `:` can be renamed.
 const DESTRUCTURED_PARAMS_PATTERN = /^\s*\(\s*\{([^}]*)\}/;
 
-/**
- * Reverses the serialisation a parameter went through to reach the URL (see `stringifyValue` in the
- * grid's logging util), so it can be fed back into the error text template. Also used to echo a raw
- * parameter into a page's guidance, via the `errorParam` markdoc tag.
- */
+/** Reverses the serialisation a param went through to reach the URL (see the grid's `stringifyValue`). */
 export function cleanErrorParamValue(value: string): unknown {
     if (value.startsWith('[') || value.startsWith('{')) {
         // Reconstruct arrays/objects that were serialised as JSON
@@ -44,20 +39,16 @@ function cleanParams(params: Params) {
     return Object.fromEntries(Object.entries(params).map(([key, value]) => [key, cleanErrorParamValue(value)]));
 }
 
-/** The placeholder substituted for a parameter the URL did not carry, e.g. `<moduleName>`. */
 function placeholderFor(name: string): string {
     return `<${name}>`;
 }
 
-/** Stands in for a detail the URL did not carry that cannot be traced back to a named parameter. */
+/** Stands in for a missing detail that cannot be traced back to a named parameter. */
 const UNKNOWN_PLACEHOLDER = '<unknown>';
 
 /**
- * Renders one part of a message that is built as an array. Those arrays carry values as well as text --
- * the row data #5 could not match, the column key #12 could not find -- because the console logs each
- * part as its own argument and gets a readable object for free. Joining them into a string does not, so
- * a value has to be serialised here or it reaches the reader as `[object Object]`, which is precisely
- * the detail the message exists to show.
+ * Some messages are built as arrays carrying values as well as text — the row data #5 could not match,
+ * say. Joining them needs the value serialised, or it reads as `[object Object]`.
  */
 function formatTextPart(part: unknown): string {
     if (typeof part === 'string') {
@@ -66,21 +57,16 @@ function formatTextPart(part: unknown): string {
     try {
         return JSON.stringify(part) ?? String(part);
     } catch {
-        // Circular, or something else JSON cannot take. Better than nothing, and never worse than the
-        // coercion this replaces.
+        // Circular, or otherwise not JSON-able.
         return String(part);
     }
 }
 
-/**
- * The parameter names an error's text function reads. An error taking no parameters returns an empty
- * list, which is what lets the page tell "this message is complete" apart from "this message is missing
- * details from the URL" — most error codes take no parameters at all, so their text is always complete.
- */
+/** The parameter names an error's text function destructures. */
 export function getErrorParamNames(errorCode: ErrorId): string[] {
     const errorTextFn = AG_GRID_ERRORS[errorCode];
 
-    if (!errorTextFn || errorTextFn.length === 0) {
+    if (!errorTextFn) {
         return [];
     }
 
@@ -94,12 +80,6 @@ export function getErrorParamNames(errorCode: ErrorId): string[] {
     );
 }
 
-/**
- * The parameters this error's text needs that `params` does not supply. A non-empty result means the
- * rendered text contains `<name>` placeholders, so the page can say which details are missing rather
- * than hiding the message altogether — in production the page is the only copy of the message, as the
- * console carries just the error code and this link unless the `ValidationModule` is registered.
- */
 export function getMissingErrorParams({ errorCode, params = {} }: { errorCode: ErrorId; params?: Params }): string[] {
     return getErrorParamNames(errorCode).filter((name) => params[name] === undefined);
 }
@@ -107,11 +87,9 @@ export function getMissingErrorParams({ errorCode, params = {} }: { errorCode: E
 export interface ErrorTextDetails {
     text: string;
     /**
-     * Whether `text` had to stand a placeholder in for a detail the URL did not carry. This, rather than
-     * the list of absent parameters, is what tells a reader their message is incomplete: an error's text
-     * function cannot say which of its parameters are optional (optionality is a type-level distinction,
-     * gone by the time this runs), and a message like #200's takes several that a console link never
-     * sends. Asking whether a placeholder actually survived into the text sidesteps that entirely.
+     * Whether a missing detail had to be shown as a placeholder. Asked of the rendered text rather than
+     * of the absent params, because optionality is type-level and gone at runtime: #200 declares several
+     * params a console link never sends.
      */
     hasPlaceholders: boolean;
 }
@@ -137,7 +115,7 @@ export function getErrorTextDetails({
 
             return textOutputArray.filter(Boolean).map(formatTextPart).join('\n');
         } catch {
-            // A template that reads a property off an absent parameter, or calls a method on it, throws.
+            // A template reading a property off an absent param throws.
             return '';
         }
     };
@@ -147,14 +125,8 @@ export function getErrorTextDetails({
         return { text: render(cleanedParams), hasPlaceholders: false };
     }
 
-    // An absent parameter renders as the string `undefined`, or makes the template throw and render
-    // nothing at all. Substituting a visible `<name>` placeholder gives a message that still reads as
-    // itself — which matters because in production this page is the only copy of the message, the console
-    // carrying just the code and this link unless the `ValidationModule` is registered.
-    //
-    // The accurate render wins wherever it is already usable, though: a placeholder is a truthy string, so
-    // substituting one for an optional parameter can send the template down a branch meant for a value the
-    // grid never reported (`isUmd` on #200, say).
+    // Prefer the accurate render where it is already usable: a placeholder is truthy, so substituting one
+    // for an optional param can divert the template down a branch the grid never reported (#200's `isUmd`).
     const rawText = render(cleanedParams);
     if (rawText && !rawText.includes('undefined')) {
         return { text: rawText, hasPlaceholders: false };
@@ -165,11 +137,8 @@ export function getErrorTextDetails({
         withPlaceholders[name] = placeholderFor(name);
     }
 
-    // Neither render is guaranteed to be clean: a heavily parameterised message (#200 builds import
-    // statements out of module names) can come back empty once placeholders divert it, leaving the raw
-    // text and its `undefined`s as the only candidate. Name what can be named, and fall back to a single
-    // anonymous placeholder for the rest — only ever on this path, where a parameter is known to be
-    // missing, so a message that legitimately talks about `undefined` is left alone.
+    // Placeholders can divert a heavily parameterised message (#200) into rendering nothing, leaving the
+    // raw text and its `undefined`s. Scrub those anonymously; only reachable with a param known missing.
     const text = (render(withPlaceholders) || rawText).replaceAll('undefined', UNKNOWN_PLACEHOLDER);
 
     return { text, hasPlaceholders: true };

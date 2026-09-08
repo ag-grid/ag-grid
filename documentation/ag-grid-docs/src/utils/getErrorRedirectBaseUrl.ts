@@ -23,9 +23,7 @@ export function getErrorRedirectBaseUrl({ errorVersion, pageVersion }: Params) {
         return;
     }
 
-    // Build the archive path from the release version, dropping any pre-release tag. `isVersionMatch`
-    // has already decided the tag is irrelevant, and the archive is only ever published per release, so
-    // carrying it into the URL sent a nightly/beta user to an archive path that does not exist.
+    // The archive is only published per release, so a pre-release tag has to be dropped from the path.
     const { major, minor, patchNum } = parseVersion(errorVersion);
 
     return `${GRID_ARCHIVE_BASE_URL}/${major}.${minor}.${patchNum}`;

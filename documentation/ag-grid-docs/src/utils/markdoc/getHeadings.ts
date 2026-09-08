@@ -233,8 +233,7 @@ async function resolvePartials({
     ast: Node;
     framework: Framework;
 }) {
-    // `getPagePath` resolves under `content/docs/<pageName>`, which is where all but one collection
-    // lives. Error pages are the exception (`content/errors/<code>.mdoc`), so they pass their own base.
+    // `getPagePath` resolves under `content/docs/<pageName>`; error pages live elsewhere and pass a base.
     const pagePath = partialBasePath ?? getPagePath({ pageName });
     for (const node of ast.walk()) {
         if (node.type === 'tag' && node.tag === 'partial') {
