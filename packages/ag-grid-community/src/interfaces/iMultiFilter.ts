@@ -2,7 +2,8 @@ import type { AgPromise } from 'ag-stack';
 
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
-import type { FilterOptionsConfig } from '../filter/provided/iSimpleFilter';
+import type { FilterOptionsConfig, ISimpleFilterModelType } from '../filter/provided/iSimpleFilter';
+import type { AdvancedFilterOnlyOptionKey } from './advancedFilterModel';
 import type {
     ColumnFilter,
     IFilter,
@@ -66,7 +67,7 @@ export interface IMultiFilterParams {
      * The options the column offers, applied over what its child filters offer. A Multi Filter has no
      * options of its own, so this is where the column as a whole is spoken for.
      */
-    filterOptions?: FilterOptionsConfig;
+    filterOptions?: FilterOptionsConfig<ISimpleFilterModelType | AdvancedFilterOnlyOptionKey>;
     /**
      * If true, all UI inputs managed by this filter are for display only, and the filter can only
      * be affected by API calls. Does NOT affect child filters, they need to be individually

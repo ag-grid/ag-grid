@@ -1721,6 +1721,67 @@ describe('Column filter — the list a data type supplies', () => {
     });
 });
 
+describe('`filterOptions` record on a column whose data type states its own options', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [TextFilterModule, ColumnMenuModule, AdvancedFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    const booleanGrid = (enableAdvancedFilter?: boolean): GridOptions =>
+        ({
+            columnDefs: [{ field: 'won', filter: 'agTextColumnFilter' }],
+            defaultColDef: { filterParams: { filterOptions: { false: false } } },
+            rowData: [{ won: true }, { won: false }],
+            enableAdvancedFilter,
+        }) as GridOptions;
+
+    test('a definition in the record adds a custom option to what the data type states', async () => {
+        const SHOUT: IFilterOptionDef = {
+            displayKey: 'shout',
+            displayName: 'Shout',
+            numberOfInputs: 0,
+            predicate: (_values, cellValue) => cellValue === true,
+        };
+        const api: GridApi = await gridsManager.createGridAndWait('grid3', {
+            columnDefs: [{ field: 'won', filter: 'agTextColumnFilter' }],
+            defaultColDef: { filterParams: { filterOptions: { shout: SHOUT } } },
+            rowData: [{ won: true }, { won: false }],
+        } as GridOptions);
+
+        const filter = await ColumnFilterHarness.open(api, 'won');
+        expect(await filter.operatorOptions()).toEqual(['Choose one', 'True', 'False', 'Shout']);
+
+        await filter.selectOperator('Shout');
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'the custom option added by a record evaluates').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 won:true
+        `);
+    });
+
+    test("the column filter adjusts the data type's options, not the text filter's", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', booleanGrid());
+
+        const filter = await ColumnFilterHarness.open(api, 'won');
+        expect(await filter.operatorOptions()).toEqual(['Choose one', 'True']);
+    });
+
+    test("the Advanced Filter adjusts its own operators, which are not the column filter's", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid2', booleanGrid(true));
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Won] ');
+        // Its own boolean operators minus the one withheld, rather than the column filter's resolved list.
+        expect(af.autocompleteEntries()).toEqual(['is true', 'is blank', 'is not blank']);
+    });
+});
+
 describe('Column filter — an Advanced Filter option named in `filterOptions`', () => {
     const gridsManager = new TestGridsManager({
         modules: [TextFilterModule, SetFilterModule, ColumnMenuModule, AdvancedFilterModule, ClientSideRowModelModule],

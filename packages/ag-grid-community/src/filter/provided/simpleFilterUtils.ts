@@ -190,7 +190,7 @@ export function _classifyFilterOptions(
     configuredOptions: FilterOptionsConfig,
     warnMissing: (keys: string[]) => void,
     /** The list a record names its changes against; `null` where only a whole list is meaningful. */
-    baseKeys: readonly string[] | null,
+    baseKeys: readonly (IFilterOptionDef | string)[] | null,
     /** Keys this reader cannot evaluate, so a bare one names an option meant for another reader. */
     excludedKeys: Record<string, true> | null
 ): { offered: Map<string, IFilterOptionDef | string>; customOptions: Map<string, IFilterOptionDef> } {
@@ -216,7 +216,12 @@ export function _classifyFilterOptions(
     if (!Array.isArray(configuredOptions)) {
         // The default list first, so it keeps its order and a key naming one of them changes it in place.
         for (let i = 0, len = baseKeys?.length ?? 0; i < len; ++i) {
-            offerBareKey(baseKeys![i]);
+            const option = baseKeys![i];
+            if (typeof option === 'string') {
+                offerBareKey(option);
+            } else {
+                addDefinition(option, option.displayKey);
+            }
         }
         applyOptionChanges(configuredOptions, offered, offerBareKey, addDefinition);
         return { offered, customOptions };
