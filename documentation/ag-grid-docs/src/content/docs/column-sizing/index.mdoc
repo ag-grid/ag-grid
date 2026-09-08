@@ -212,14 +212,16 @@ const gridOptions = {
 }
 ```
 
-Every strategy re-runs when the displayed columns change and when the grid is resized. Beyond that the two kinds of strategy react to different things:
+When `continuous` is enabled, column sizing is automatically reapplied when changes to the grid could affect the calculated column widths.
 
-- `fitCellContents` re-runs on any change to the row data, because that changes what there is to measure.
-- The width-distribution strategies, `fitGridWidth` and `fitProvidedWidth`, are arithmetic over the current column set. They re-run on new data, a page change, and a scrollbar appearing or disappearing — the changes to the width there is to share out.
+- `fitCellContents` updates as row data or displayed columns change.
+- `fitGridWidth` and `fitProvidedWidth` update when the available grid width or displayed columns change, including changes caused by pagination or scrollbars.
 
-Scrolling is a category of its own, reported as `'viewportChanged'`, and is excluded by default. Scrolling brings new cell content into view, so it can change what `fitCellContents` measures, but re-fitting columns under the pointer mid-scroll is rarely wanted. To opt in, provide `shouldAutoSizeColumns` and return `true` for that reason; without the callback the grid never re-sizes on a scroll. The width-distribution strategies ignore scrolling entirely, as it cannot change their result.
+Scrolling does not resize columns by default. When using `fitCellContents`, you can opt into resizing as new rows are scrolled into view by providing `shouldAutoSizeColumns` and allowing the `'viewportChanged'` reason.
 
-Triggers arriving in the same frame are coalesced into a single re-size. Viewport and grid-size changes are debounced on top of that, so scrolling and resizing the grid re-size once the gesture settles rather than on every frame.
+`fitGridWidth` and `fitProvidedWidth` are not affected by scrolling.
+
+Updates are debounced while scrolling or resizing the grid.
 
 The example below uses `fitCellContents` continuously over a grouped, paginated grid of 34 columns and over 8,000 rows. Move between pages, change the page size, or scroll horizontally through the generated text columns, and the columns re-fit to the content of the rows now on screen — the medal columns stay narrow while the text columns grow and shrink around the longest values on each page.
 
