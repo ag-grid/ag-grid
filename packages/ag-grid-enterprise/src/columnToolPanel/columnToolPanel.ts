@@ -43,6 +43,8 @@ const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
+    /** The `initialState` object last applied, so a re-render can be told apart from a restore. */
+    private appliedInitialState: ColumnToolPanelState | undefined;
     private params: ToolPanelColumnCompParams;
 
     private readonly childDestroyFuncs: (() => void)[] = [];
@@ -458,8 +460,17 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public refresh(params: ToolPanelColumnCompParams): boolean {
+        // The panel is rebuilt from scratch here, so expansion only survives if it is fed back in as
+        // the state to apply. A new `initialState` object (which is what an `api.setState` restore
+        // provides) is a restore and wins; otherwise the live expansion is re-presented, so a plain
+        // `api.refreshToolPanel()` is not a reset back to the construction state.
+        const { initialState } = params;
+        const isRestoringState = !!initialState && initialState !== this.appliedInitialState;
+        const stateToApply = isRestoringState ? initialState : this.getState();
+        this.appliedInitialState = initialState;
+
         this.destroyChildren();
-        this.init(params);
+        this.init({ ...params, initialState: stateToApply });
         return true;
     }
 

@@ -145,7 +145,19 @@ export class ToolPanelWrapper extends Component {
     }
 
     public refresh(): void {
-        this.toolPanelCompInstance?.refresh(this.params);
+        // `refresh` is optional on `IToolPanelComp`, and a plain JS tool panel is the user's own class
+        // (no wrapper supplying the method), so it can genuinely be absent.
+        this.toolPanelCompInstance?.refresh?.(this.params);
+    }
+
+    /**
+     * Refreshes the panel with new params (a `sideBar` option update or an `api.setState` restore) and
+     * keeps them as the cached params, so a later `api.refreshToolPanel()` presents the current params
+     * rather than re-presenting the ones the panel was constructed with.
+     */
+    public refreshWithParams(params: IToolPanelParams): boolean | void {
+        this.params = params;
+        return this.toolPanelCompInstance?.refresh?.(params);
     }
 
     public animateDisplayed(displayed: boolean): void {
