@@ -20,6 +20,7 @@ const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
 const VALUE_PILL = '.ag-advanced-filter-builder-value-pill';
 const PILL_DISPLAY = '.ag-advanced-filter-builder-pill-display';
 const JOIN_PILL = '.ag-advanced-filter-builder-join-pill';
+const ADD_DROPDOWN = '.ag-advanced-filter-builder-item-button';
 
 /** Column-pill captions in rendered order — the observable signature of the builder's item list. */
 function columnPillOrder(): string {
@@ -148,16 +149,18 @@ export class AdvancedFilterBuilderHarness {
         });
     }
 
-    /** Adds a new condition via the builder add-item button. */
+    /** Adds an empty condition through the add row's dropdown, which is the only row offering one. */
     public async addCondition(): Promise<this> {
-        const addButton = document.querySelector<HTMLElement>(
-            '.ag-advanced-filter-builder-item-button.ag-advanced-filter-builder-add-item-button, .ag-advanced-filter-builder-item-add .ag-advanced-filter-builder-item-button'
+        const addRow = (await this.items()).find(
+            (item) => !item.querySelector(COLUMN_PILL) && !item.querySelector(JOIN_PILL)
         );
-        if (!addButton) {
-            throw new Error('Advanced filter builder add-condition button not found');
+        const eDropdown = addRow?.querySelector<HTMLElement>(ADD_DROPDOWN);
+        if (!eDropdown) {
+            throw new Error('Advanced filter builder add dropdown not found');
         }
-        await firePointerLikeClick(addButton);
-        await asyncSetTimeout(0);
+        await openPicker(eDropdown);
+        await selectRichSelectRow('Add Filter');
+        await this.ensureItemsRendered();
         return this;
     }
 
