@@ -156,6 +156,7 @@ export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
+    _ADVANCED_FILTER_ONLY_OPTIONS,
     _bindFilterCallback,
     _classifyFilterOptions,
     filterCallbackParams as _filterCallbackParams,

@@ -786,7 +786,8 @@ export class ColFilterExpressionParser {
             return null;
         }
 
-        const baseCellDataType = this.getBaseCellDataTypeFromOperatorAutocompleteType(type);
+        // The parse's own, not the open popup's: the column it is paired with comes from here too.
+        const baseCellDataType = columnParser!.baseCellDataType;
         const operands = this.getOperandsKindFor(baseCellDataType, updateEntry.key);
         const isList = operands === 'list';
         const hasOperand = operands !== 'none';
@@ -1011,13 +1012,8 @@ export class ColFilterExpressionParser {
         return { updatedValue, updatedPosition: startPosition + updatedValuePart.length };
     }
 
-    private getBaseCellDataTypeFromOperatorAutocompleteType(type?: string): BaseCellDataType | undefined {
-        // `operator-<dataType>-<colId>`: no data type holds a hyphen, and a colId may.
-        return type?.split('-')[1] as BaseCellDataType;
-    }
-
-    private getOperandsKindFor(baseCellDataType: BaseCellDataType | undefined, operator: string): OperandsKind {
-        if (!baseCellDataType || !operator) {
+    private getOperandsKindFor(baseCellDataType: BaseCellDataType, operator: string): OperandsKind {
+        if (!operator) {
             return 'one';
         }
         const column = this.columnParser?.column;

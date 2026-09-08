@@ -546,7 +546,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const filterOptions = getColumnFilterOptions(column);
         if (filterOptions) {
             // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
-            const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
+            const { offered, customOptions } = _classifyFilterOptions(
+                filterOptions,
+                (keys) => this.warn(72, { keys }),
+                null // the Advanced Filter is the reader the excluded keys exist for
+            );
             if (customOptions.size) {
                 const gos = this.gos;
                 operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc(), () =>
