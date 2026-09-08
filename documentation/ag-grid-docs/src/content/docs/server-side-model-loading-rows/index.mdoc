@@ -49,7 +49,7 @@ const gridOptions = {
 
 ### Custom Loading Cells
 
-The default grid behaviour can be overridden in order to provide renderers on a per-column basis.
+Set `loadingCellRenderer` on a column definition to customise its loading cells.
 
 {% gridExampleRunner title="Custom Cell Loading Renderer" name="custom-cell-loading-renderer" /%}
 
@@ -70,6 +70,6 @@ The above example demonstrates the following:
 
 - `suppressServerSideFullWidthLoadingRow` is enabled, preventing the grid from defaulting to full width loading.
 - `loadingCellRenderer` is configured on the _Country_ column, allowing a loading spinner to be displayed for just this column.
-- `loadingCellRenderer` is configured on the `defaultColDef` providing an empty cell renderer in order to prevent the default grid loading renderer from displaying on other columns.
+- `loadingCellRenderer` is configured on `defaultColDef` to leave loading cells empty in the other columns.
 
 See [Loading Cell Component](./component-loading-cell-renderer/) for the shared component API.

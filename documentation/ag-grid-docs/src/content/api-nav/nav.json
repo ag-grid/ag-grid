@@ -41,14 +41,7 @@
                 {
                     "type": "item",
                     "title": "Custom Components",
-                    "path": "components",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "Loading Cell Component",
-                            "path": "component-loading-cell-renderer"
-                        }
-                    ]
+                    "path": "components"
                 }
             ]
         },

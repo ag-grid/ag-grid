@@ -1864,7 +1864,7 @@
         "suppressServerSideFullWidthLoadingRow": {
             "more": {
                 "name": "Cell Loading",
-                "url": "./component-loading-cell-renderer/#skeleton-loading"
+                "url": "./server-side-model-loading-rows/#skeleton-loading"
             }
         },
         "purgeClosedRowNodes": {

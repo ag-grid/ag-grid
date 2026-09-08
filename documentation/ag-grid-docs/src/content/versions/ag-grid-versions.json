@@ -637,7 +637,7 @@
             },
             {
                 "text": "Skeleton Content Displayed in Loading Grid Cells",
-                "path": "./component-loading-cell-renderer/#skeleton-loading"
+                "path": "./server-side-model-loading-rows/#skeleton-loading"
             },
             {
                 "text": "Global Grid Options to Apply to All AG Grid Instances",
