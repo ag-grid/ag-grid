@@ -53,7 +53,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     cellSelection: true,
-    enableCharts: true,
     allowContextMenuWithControlKey: true,
     getContextMenuItems: getContextMenuItems,
 };
