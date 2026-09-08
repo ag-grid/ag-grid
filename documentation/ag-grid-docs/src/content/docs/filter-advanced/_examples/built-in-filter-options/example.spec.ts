@@ -3,6 +3,9 @@ import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from
 
 const filterInput = (page: Page) => page.locator('.ag-advanced-filter input[type=text]');
 
+/** The built-in options a number column with no `filterOptions` of its own documents, in order. */
+const BUILT_IN_NUMBER_OPTIONS = ['=', '!=', '>', '>=', '<', '<=', 'is between', 'is blank', 'is not blank'];
+
 /** Types `expression`, closes the suggestion popup covering the buttons, then applies it. */
 async function applyExpression(page: Page, expression: string): Promise<void> {
     await filterInput(page).fill(expression);
@@ -36,17 +39,19 @@ test.agExample(import.meta, () => {
 
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
-        await expect(autocompleteList.locator('.ag-autocomplete-row')).toHaveText([
-            '=',
-            '!=',
-            '>',
-            '>=',
-            '<',
-            '<=',
-            'is between',
-            'is blank',
-            'is not blank',
-        ]);
+
+        // Filtered to the built-in options rather than asserted as a whole list. Which *further*
+        // operators a column is offered depends on the filter modules registered around it: a column
+        // inheriting `filter: true` is a Set Filter column wherever the Set Filter module is present
+        // (`_isSetFilterByDefault`), which adds `is any of` / `is none of`. That is not what this test
+        // is about - its subject is that a column naming no `filterOptions` of its own is still offered
+        // the built-in number options, `is between` among them, in the documented order.
+        const operatorRows = autocompleteList.locator('.ag-autocomplete-row');
+        await expect(operatorRows.first()).toBeVisible();
+        await expect(async () => {
+            const labels = (await operatorRows.allInnerTexts()).map((label) => label.trim());
+            expect(labels.filter((label) => BUILT_IN_NUMBER_OPTIONS.includes(label))).toEqual(BUILT_IN_NUMBER_OPTIONS);
+        }).toPass();
     });
 
     // Asserted as a whole list, so the narrowing the page describes is covered as well as the options.
