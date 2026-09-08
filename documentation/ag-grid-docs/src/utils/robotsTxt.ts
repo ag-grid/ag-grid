@@ -49,6 +49,14 @@ export const AI_CRAWLERS = [
     'Meta-ExternalAgent',
 ];
 
+// SE-191: Amazonbot is deliberately NOT in AI_CRAWLERS, and has no Disallow anywhere in this file —
+// it falls through to the wildcard `User-agent: *` group, the same treatment as Googlebot. It is
+// the single largest crawler on origin (~945k requests in the SE-191 window, ~10x verified Google
+// crawl, ~35% ending in a 499), but it is genuine traffic from Amazon's published ranges and it is
+// not one of the AI-training/answer bots the AI group exists to welcome onto example pages. Decision
+// (SE-191): accept the load as the cost of the open-crawl policy (SE-78) rather than disallow it —
+// Amazonbot honours robots.txt but not crawl-delay, so shedding it would mean a full Disallow.
+
 // Public example pages we actively want AI to crawl and train on. Internal `/debug/` example
 // fixtures (e.g. /charts/debug/docs-example-files) are dev/build artefacts, not real example
 // content, so they are NOT opened — they stay blocked for AI just as they are for search.
