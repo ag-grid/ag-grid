@@ -120,6 +120,19 @@ describe('Advanced Filter - Set Filter autocomplete rendering', () => {
         expect(highlighted).toEqual(['nit', 'nit']);
     });
 
+    test('the first value matching is the one suggested, and every match is marked up', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        // Both values begin with it, and the later one is the shorter: the order the column offers
+        // them in is what decides, not their length.
+        await af.type('[Country] is any of ["United');
+
+        expect(af.autocompleteEntries()).toEqual(['United Kingdom', 'United States']);
+        expect(af.selectedAutocompleteEntry()).toBe('United Kingdom');
+        expect(af.autocompleteMatches()).toEqual(['United', 'United']);
+    });
+
     test('a cell renderer owns the row, so the match is not marked up inside it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
