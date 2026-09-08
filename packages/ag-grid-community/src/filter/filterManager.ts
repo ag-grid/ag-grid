@@ -41,14 +41,23 @@ export class FilterManager extends BeanStub implements NamedBean {
         if (!base) {
             return undefined; // The merge has already combined them key by key, which is what records mean.
         }
-        let resolved = base;
+        // Merged before they are applied: in turn, a record withholding an option drops its definition
+        // before a nearer one can put it back, leaving a bare key with no predicate to evaluate.
+        // No prototype, so a key named `__proto__` is stored as one instead of silently setting it.
+        const changes: FilterOptions = Object.create(null);
         for (let i = 0, len = configs.length; i < len; ++i) {
             const config = configs[i];
-            if (!Array.isArray(config)) {
-                resolved = _applyFilterOptionChanges(resolved, config as FilterOptions);
+            if (Array.isArray(config)) {
+                continue;
+            }
+            for (const key of Object.keys(config)) {
+                const value = config[key];
+                if (value != null) {
+                    changes[key] = value; // A key naming nothing is no opinion, so it does not overrule one.
+                }
             }
         }
-        return resolved;
+        return _applyFilterOptionChanges(base, changes);
     }
 
     private quickFilter?: QuickFilterService;

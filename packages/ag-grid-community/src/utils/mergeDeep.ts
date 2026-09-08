@@ -16,25 +16,34 @@ export const _isPlainObject = (value: unknown): value is Record<string, unknown>
     value !== null && typeof value === 'object' && isPlainProto(value);
 
 const setKey = (out: any, key: string | number, value: any, copyUndef: boolean, simpleObjects: boolean): void => {
-    let destValue: any = out[key];
-    if (destValue === value) {
-        return;
-    }
+    const destValue: any = out[key];
     if (value === null || typeof value !== 'object') {
-        if (copyUndef || value !== undefined) {
+        if (destValue !== value && (copyUndef || value !== undefined)) {
             out[key] = value;
         }
         return;
     }
-    if (simpleObjects && destValue == null && isPlainProto(value)) {
-        destValue = {};
-        out[key] = destValue;
+    if (simpleObjects && isPlainProto(value)) {
+        // Answered before the identity check, or a destination already holding the source keeps sharing it.
+        if (destValue !== value && destValue !== null && typeof destValue === 'object' && !Array.isArray(destValue)) {
+            _mergeDeep(destValue, value, copyUndef, simpleObjects);
+            return;
+        }
+        const copy = {};
+        out[key] = copy;
+        _mergeDeep(copy, value, copyUndef, simpleObjects);
+        return;
     }
+    if (destValue === value) {
+        return;
+    }
+    // Both plain, or the merge invents a hybrid: an array over an object leaves the object's own keys
+    // beside numeric ones, which is not a value any option can hold.
     if (destValue !== null && typeof destValue === 'object' && !Array.isArray(destValue) && !Array.isArray(value)) {
         _mergeDeep(destValue, value, copyUndef, simpleObjects);
-    } else {
-        out[key] = value;
+        return;
     }
+    out[key] = value;
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -168,10 +168,10 @@ const NUMBER_FILTER_OPTIONS = [
 const DATE_FILTER_OPTIONS = ['equals', 'notEqual', 'lessThan', 'greaterThan', 'inRange', 'blank', 'notBlank'];
 
 /** Text is the fallback, as it is for the schema builders themselves. */
-const DEFAULT_OPTIONS_BY_FILTER: { [key: string]: string[] } = {
+const DEFAULT_OPTIONS_BY_FILTER: { [key: string]: string[] } = Object.assign(Object.create(null), {
     [DateFilterKey]: DATE_FILTER_OPTIONS,
     [NumberFilterKey]: NUMBER_FILTER_OPTIONS,
-};
+});
 
 const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaParams) => {
     if (filterKey === DateFilterKey) {

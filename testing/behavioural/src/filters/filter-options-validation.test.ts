@@ -37,6 +37,13 @@ const MULTIPLE_OF_AGE: IFilterOptionDef = {
     predicate: ([value], cellValue) => cellValue != null && cellValue % value === 0,
 };
 
+const STARTS_WITH_P: IFilterOptionDef = {
+    displayKey: 'startsWithP',
+    displayName: 'Starts with P',
+    numberOfInputs: 0,
+    predicate: (_values, cellValue) => `${cellValue}`.startsWith('P'),
+};
+
 /** No `predicate` and no `test`, so the grid cannot evaluate it. */
 const NO_PREDICATE_OPTION = {
     displayKey: 'noPredicate',
@@ -1837,6 +1844,83 @@ describe('`filterOptions` inherited from `defaultColDef`', () => {
         const filter = await ColumnFilterHarness.open(api, 'country');
         // Resolved in pairs, the column's list would meet the type's list and the record would already be gone.
         expect(await filter.operatorOptions()).toEqual(['Equals', 'Begins with']);
+    });
+
+    test('a record re-enabling a custom option keeps the definition, not a bare key', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    type: 'withheld',
+                    filterParams: { filterOptions: { startsWithP: true } },
+                },
+            ],
+            columnTypes: { withheld: { filterParams: { filterOptions: { startsWithP: false } } } },
+            defaultColDef: {
+                filterParams: {
+                    filterOptions: ['contains', STARTS_WITH_P],
+                    debounceMs: 0,
+                    maxNumConditions: 1,
+                },
+            },
+            rowData: [{ country: 'Jamaica' }, { country: 'Poland' }],
+        } as GridOptions);
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Starts with P']);
+
+        // Re-enabled as a bare key it would carry no predicate, so it would be offered and filter nothing.
+        await filter.selectOperator('Starts with P');
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'the re-enabled custom option evaluates').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 country:"Poland"
+        `);
+    });
+
+    test('a key named `__proto__` does not stop the rest of a record applying', async () => {
+        // Reachable from serialised state, where it is an own key rather than a literal's prototype.
+        const changes = JSON.parse('{"__proto__": true, "startsWith": false}');
+        const api: GridApi = await createGrid(
+            { filterOptions: ['contains', 'startsWith', 'endsWith'] },
+            { filterOptions: changes }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Ends with', '__proto__']);
+        expect(({} as any).startsWith).toBeUndefined();
+    });
+
+    test('a custom option named after an `Object.prototype` member is offered and evaluates', async () => {
+        const api: GridApi = await createGrid(
+            {
+                filterOptions: [
+                    'contains',
+                    {
+                        displayKey: 'toString',
+                        displayName: 'Spells like',
+                        numberOfInputs: 1,
+                        predicate: ([value], cellValue) => `${cellValue}` === `${value}`,
+                    },
+                ],
+                debounceMs: 0,
+                maxNumConditions: 1,
+            },
+            { filterOptions: { toString: true } }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        // Read through the prototype it would be a function, so offered as a definition rather than dropped.
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Spells like']);
+
+        await filter.selectOperator('Spells like');
+        await filter.setText('Poland', 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'a custom option named toString evaluates').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 country:"Poland"
+        `);
     });
 
     test('a record on each merges per option', async () => {

@@ -171,6 +171,25 @@ describe('_mergeDeep', () => {
         expect(dest.x).toEqual({ a: 1 });
     });
 
+    test('makeCopyOfSimpleObjects=true copies even when the destination already holds the source object', () => {
+        const shared = { a: 1 };
+        const source = { x: shared };
+        const dest: any = { x: shared };
+        _mergeDeep(dest, source, true, true);
+        expect(dest.x).not.toBe(shared);
+        dest.x.a = 999;
+        expect(shared.a).toBe(1);
+    });
+
+    test('makeCopyOfSimpleObjects=true copies an object that replaces an array, leaving the source alone', () => {
+        const source = { x: { a: 1 } };
+        const dest: any = { x: [1, 2] };
+        _mergeDeep(dest, source, true, true);
+        _mergeDeep(dest, { x: { a: 2 } }, true, true);
+        expect(dest.x).toEqual({ a: 2 });
+        expect(source.x).toEqual({ a: 1 });
+    });
+
     test('source array replaces destination object', () => {
         const dest: any = { x: { a: 1 } };
         _mergeDeep(dest, { x: [1, 2] });
