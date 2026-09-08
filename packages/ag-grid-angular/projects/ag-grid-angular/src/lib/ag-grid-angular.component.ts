@@ -895,10 +895,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public filterHandlers: FilterHandlers<TData> | undefined = undefined;
-    /** Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
-     * `chartRange` and `pivotChart` context menu items shown by default. Menu items requested by
-     * name via `getContextMenuItems` or `colDef.contextMenuItems` are shown regardless, and charts
-     * created programmatically through the Grid API do not require this option.
+    /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
      */
