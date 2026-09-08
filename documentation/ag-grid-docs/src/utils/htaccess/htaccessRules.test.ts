@@ -907,6 +907,7 @@ describe('htaccessRules', () => {
             '/cookies/',
             '/modern-slavery/',
             '/privacy/',
+            '/terms-of-use/',
             '/example-finance/',
             '/example-hr/',
             '/example-inventory/',
