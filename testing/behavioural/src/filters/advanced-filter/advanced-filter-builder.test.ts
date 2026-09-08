@@ -563,37 +563,36 @@ describe('Advanced Filter - Builder UI', () => {
 
     describe('Changing a condition column', () => {
         test('the operator pill offers the new column options, not the ones it was opened with', async () => {
-            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
-            await asyncSetTimeout(0);
+            const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 
             const builder = await AdvancedFilterBuilderHarness.open(api);
+            await builder.addCondition();
             const [item] = await builder.conditionItems();
 
             await builder.selectColumn(item, 'Age');
             expect(await builder.operatorOptions(item)).toEqual([
-                'Equals',
-                'Does not equal',
-                'Greater than',
-                'Greater than or equal to',
-                'Less than',
-                'Less than or equal to',
-                'Between',
-                'Not between',
-                'Is blank',
-                'Is not blank',
+                '=',
+                '!=',
+                '>',
+                '>=',
+                '<',
+                '<=',
+                'is between',
+                'is blank',
+                'is not blank',
             ]);
 
             // No operator has been chosen, so nothing the pill displays changes with the column.
             await builder.selectColumn(item, 'Athlete');
             expect(await builder.operatorOptions(item)).toEqual([
-                'Contains',
-                'Does not contain',
-                'Equals',
-                'Does not equal',
-                'Begins with',
-                'Ends with',
-                'Is blank',
-                'Is not blank',
+                'contains',
+                'does not contain',
+                'equals',
+                'does not equal',
+                'begins with',
+                'ends with',
+                'is blank',
+                'is not blank',
             ]);
         });
     });
