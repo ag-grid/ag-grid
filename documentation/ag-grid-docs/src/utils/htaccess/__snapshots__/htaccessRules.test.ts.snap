@@ -29,6 +29,12 @@ Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQ
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 
 
+# Root static files (robots.txt, favicon.ico): unhashed but low-churn, so a moderate
+# max-age is enough to cut repeat crawler fetches (SE-189 measured /robots.txt refetched
+# ~25x/day with no header at all) without risking a stale copy for long after a real change.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(robots\\.txt|favicon\\.ico)$#"
+
+
 # BEGIN in-flight release archives - patched in place, do not edit by hand
 # END in-flight release archives
 
@@ -2994,6 +3000,12 @@ Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !(
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
+
+
+# Root static files (robots.txt, favicon.ico): unhashed but low-churn, so a moderate
+# max-age is enough to cut repeat crawler fetches (SE-189 measured /robots.txt refetched
+# ~25x/day with no header at all) without risking a stale copy for long after a real change.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(robots\\.txt|favicon\\.ico)$#"
 
 
 # BEGIN in-flight release archives - patched in place, do not edit by hand
