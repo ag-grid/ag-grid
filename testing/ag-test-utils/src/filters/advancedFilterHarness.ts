@@ -72,6 +72,19 @@ export class AdvancedFilterHarness {
         );
     }
 
+    /** The entry the list is suggesting, which is what Enter would confirm. */
+    public selectedAutocompleteEntry(): string | null {
+        const row = document.querySelector('.ag-autocomplete-list .ag-autocomplete-row-selected');
+        return row?.textContent?.trim() ?? null;
+    }
+
+    /** What each rendered entry marks up as matching the search, `''` where a row marks nothing. */
+    public autocompleteMatches(): string[] {
+        return Array.from(document.querySelectorAll('.ag-autocomplete-list .ag-autocomplete-row')).map(
+            (row) => row.querySelector('b')?.textContent ?? ''
+        );
+    }
+
     /** Selects the highlighted autocomplete entry (Enter). */
     public async selectAutocomplete(): Promise<this> {
         return this.pressKey('Enter');

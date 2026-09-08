@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { AdvancedFilterBuilderHarness, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
@@ -558,6 +558,43 @@ describe('Advanced Filter - Builder UI', () => {
                 ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
                 └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
             `);
+        });
+    });
+
+    describe('Changing a condition column', () => {
+        test('the operator pill offers the new column options, not the ones it was opened with', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            const [item] = await builder.conditionItems();
+
+            await builder.selectColumn(item, 'Age');
+            expect(await builder.operatorOptions(item)).toEqual([
+                'Equals',
+                'Does not equal',
+                'Greater than',
+                'Greater than or equal to',
+                'Less than',
+                'Less than or equal to',
+                'Between',
+                'Not between',
+                'Is blank',
+                'Is not blank',
+            ]);
+
+            // No operator has been chosen, so nothing the pill displays changes with the column.
+            await builder.selectColumn(item, 'Athlete');
+            expect(await builder.operatorOptions(item)).toEqual([
+                'Contains',
+                'Does not contain',
+                'Equals',
+                'Does not equal',
+                'Begins with',
+                'Ends with',
+                'Is blank',
+                'Is not blank',
+            ]);
         });
     });
 });

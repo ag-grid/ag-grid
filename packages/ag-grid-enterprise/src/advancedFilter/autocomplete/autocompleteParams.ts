@@ -12,6 +12,8 @@ export interface AutocompleteListParams {
     searchString?: string;
     entries?: AutocompleteEntry[];
     rowComponentCreator?: AutocompleteRowComponentCreator;
+    /** Suggest the first match rather than the closest one, the list being in an order of its own. */
+    suggestFirstMatch?: boolean;
 }
 
 export interface AutocompleteEntry {
