@@ -36,18 +36,6 @@ The following is a list of all the default built in menu items with the rules ab
 
 Menu items also require the relevant [Module](./modules/) to be loaded in order to be displayed.
 
-The rules below describe when each item appears in the **default** menu. They do not remove an item
-that is requested by name via `getContextMenuItems` or `colDef.contextMenuItems` — a menu item asked
-for explicitly is shown even when the feature behind it is turned off, and may then do nothing when
-clicked. The grid options that shape the default list, such as `enableCharts` and `suppressCsvExport`,
-are therefore filters on that list rather than absolute switches.
-
-Sub menu items are the exception, because they still need something to expand to. `export` is built
-from whichever of `csvExport`, `excelExport` and `pdfExport` remain available, so suppressing all
-three hides `export` even when it is requested by name; `pinRowSubMenu` likewise needs
-[Row Pinning](./row-pinning) enabled. Request the child items by name if you need one of them
-regardless.
-
 - `autoSizeAll`: Auto-size all columns. Not shown by default.
 - `expandAll`: When set, it's only shown if grouping by at least one column. Not shown by default.
 - `contractAll`: Collapse all groups. When set, it's only shown if grouping by at least one column. Not shown by default.
