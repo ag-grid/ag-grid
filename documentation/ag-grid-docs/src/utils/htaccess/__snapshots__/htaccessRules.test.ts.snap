@@ -2594,7 +2594,7 @@ Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#
     RedirectMatch 301 "^/documentation/angular/charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
     RedirectMatch 301 "^/documentation/react/charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/documentation/vue/charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
-    RedirectMatch 301 "^/archive/$" "/documentation-archive"
+    RedirectMatch 301 "^/archive/$" "/documentation-archive/"
     Redirect 301 /javascript-data-grid/component-types/ /javascript-data-grid/components/
     Redirect 301 /angular-data-grid/component-types/ /angular-data-grid/components/
     Redirect 301 /react-data-grid/component-types/ /react-data-grid/components/
