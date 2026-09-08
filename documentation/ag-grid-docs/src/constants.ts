@@ -35,6 +35,9 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
 
 export const DISABLE_EXAMPLE_RUNNER = isTruthy(import.meta.env?.DISABLE_EXAMPLE_RUNNER);
 
+// Turn off the hidden, crawlable copy of each example's source that docs pages embed at build time
+export const DISABLE_EXAMPLE_SOURCE_EMBED = isTruthy(import.meta.env?.DISABLE_EXAMPLE_SOURCE_EMBED);
+
 // Turn off per-page markdown (`.md`) generation for LLMs. When set, no `.md`
 // routes are emitted and the docs pages omit the markdown affordances
 export const DISABLE_MARKDOWN_DOCS = isTruthy(import.meta.env?.DISABLE_MARKDOWN_DOCS);
