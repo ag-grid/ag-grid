@@ -1984,6 +1984,31 @@ describe('`filterOptions` inherited from `defaultColDef`', () => {
         `);
     });
 
+    test('a definition under a built-in key replaces that option, as it does in a list', async () => {
+        const IS_EXACTLY: IFilterOptionDef = {
+            displayKey: 'equals',
+            displayName: 'Is exactly',
+            numberOfInputs: 1,
+            predicate: ([value], cellValue) => `${cellValue}` === `${value}`,
+        };
+        const api: GridApi = await createGrid(
+            { filterOptions: ['contains', 'equals'], debounceMs: 0, maxNumConditions: 1 },
+            { filterOptions: { equals: IS_EXACTLY } }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        // In the place the list gave the key, so the replacement does not move to the end.
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Is exactly']);
+
+        await filter.selectOperator('Is exactly');
+        await filter.setText('Poland', 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'the replacement definition evaluates').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 country:"Poland"
+        `);
+    });
+
     test('a record on each merges per option', async () => {
         const api: GridApi = await createGrid(
             { filterOptions: { contains: false } },
