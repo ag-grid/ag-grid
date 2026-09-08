@@ -313,14 +313,14 @@ export const AG_GRID_ERRORS = {
         `the column type \`${key}\` is a default column type and cannot be overridden.` as const,
     35: () =>
         `Column type definitions \`columnTypes\` with a \`type\` attribute are not supported because a column type cannot refer to another column type. Only column definitions \`columnDefs\` can use the \`type\` attribute to refer to a column type.` as const,
-    36: ({ t }: { t: string }) =>
-        `\`colDef.type\` \`${t}\` does not correspond to defined \`gridOptions.columnTypes\`` as const,
+    36: ({ type }: { type: string }) =>
+        `\`colDef.type\` \`${type}\` does not correspond to defined \`gridOptions.columnTypes\`` as const,
     37: () => `Changing the column pinning status is not allowed with \`domLayout='print'\`` as const,
     38: ({ iconName }: { iconName: string }) =>
         `provided icon \`${iconName}\` needs to be a string or a function` as const,
     39: () =>
         'Applying column order broke a group where columns should be married together. Applying new order has been discarded.' as const,
-    40: ({ e, method }: { e: any; method: string }) => `${e}\n${clipboardApiError(method)}` as const,
+    40: ({ error, method }: { error: any; method: string }) => `${error}\n${clipboardApiError(method)}` as const,
     41: () =>
         "Browser did not allow `document.execCommand('copy')`. Ensure `api.copySelectedRowsToClipboard()` is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
     42: () => "Browser does not support `document.execCommand('copy')` for clipboard operations" as const,

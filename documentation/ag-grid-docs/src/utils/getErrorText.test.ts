@@ -159,7 +159,7 @@ describe('missing param handling', () => {
     it('substitutes a placeholder for an absent param rather than rendering `undefined`', () => {
         const text = getErrorText({ errorCode: 36 });
 
-        expect(text).toBe('`colDef.type` `<t>` does not correspond to defined `gridOptions.columnTypes`');
+        expect(text).toBe('`colDef.type` `<type>` does not correspond to defined `gridOptions.columnTypes`');
         expect(text).not.toContain('undefined');
     });
 
