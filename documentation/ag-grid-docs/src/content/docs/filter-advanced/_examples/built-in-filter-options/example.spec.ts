@@ -40,17 +40,13 @@ test.agExample(import.meta, () => {
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
 
-        // Filtered to the built-in options rather than asserted as a whole list. Which *further*
-        // operators a column is offered depends on the filter modules registered around it: a column
-        // inheriting `filter: true` is a Set Filter column wherever the Set Filter module is present
-        // (`_isSetFilterByDefault`), which adds `is any of` / `is none of`. That is not what this test
-        // is about - its subject is that a column naming no `filterOptions` of its own is still offered
-        // the built-in number options, `is between` among them, in the documented order.
+        // Asserted whole: the example withholds the set options, so what the Set Filter module adds
+        // wherever it is registered cannot vary the list between the frameworks and the UMD build.
         const operatorRows = autocompleteList.locator('.ag-autocomplete-row');
         await expect(operatorRows.first()).toBeVisible();
         await expect(async () => {
             const labels = (await operatorRows.allInnerTexts()).map((label) => label.trim());
-            expect(labels.filter((label) => BUILT_IN_NUMBER_OPTIONS.includes(label))).toEqual(BUILT_IN_NUMBER_OPTIONS);
+            expect(labels).toEqual(BUILT_IN_NUMBER_OPTIONS);
         }).toPass();
     });
 

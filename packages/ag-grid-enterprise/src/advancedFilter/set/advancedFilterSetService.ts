@@ -5,6 +5,7 @@ import type {
     AgPromise,
     BaseFilterParams,
     BeanCollection,
+    ColDef,
     FilterDisplayParams,
     FilterDisplayState,
     FilterHandlerParams,
@@ -32,6 +33,7 @@ import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import { translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { getMultiFilterChild } from '../customFilterOptions';
 import { AgSetValueAutocompleteRow } from './agSetValueAutocompleteRow';
 import { namesSetOperator } from './setFilterExpressionOperators';
 import { joinSetPath, splitSetPath, writeSetPath } from './setOperandsParser';
@@ -434,7 +436,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             filterModifiedCallback: () => {},
             source: 'init',
         };
-        return _getFilterDetails(this.userCompFactory, column.getColDef(), params, 'agSetColumnFilter');
+        return _getFilterDetails(this.userCompFactory, this.getSetColDef(column), params, 'agSetColumnFilter');
     }
 
     /** `true` = forFloatingFilter, whose always-true `doesRowPassOtherFilter` is what offers every row's value. */
@@ -443,12 +445,28 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         return this.beans.colFilter!.createBaseFilterParams(column, true);
     }
 
+    /**
+     * The definition the value list is built and drawn from. Another filter's is written for itself: its
+     * component is not this one, and a Date Filter's `comparator` reaching a value list is called with
+     * two cell values and throws.
+     */
+    private getSetColDef(column: AgColumn): ColDef {
+        const colDef = column.getColDef();
+        if (this.hasSetFilter(column)) {
+            return colDef;
+        }
+        // A Multi Filter keeps the value list's configuration on its Set Filter child; any other filter's
+        // params are written for itself, a Date Filter's `comparator` being called with two cell values here.
+        const child =
+            colDef.filter === 'agMultiColumnFilter'
+                ? getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter')
+                : undefined;
+        return { ...colDef, filter: 'agSetColumnFilter', filterParams: child?.filterParams };
+    }
+
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
-        const userColDef = column.getColDef();
-        // Another filter's `filterParams` are written for it, not for a value list: a Date Filter's
-        // `comparator` reaching this one is called with two cell values and throws.
-        const colDef = this.hasSetFilter(column) ? userColDef : { ...userColDef, filterParams: undefined };
+        const colDef = this.getSetColDef(column);
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),
             model: null,
@@ -503,16 +521,28 @@ const createValues = (): Omit<SetColumnValues, 'entries'> => ({
 });
 
 /**
+ * A path is drawn with its segments as they stand but searched for as a path, so typing one whose
+ * segment holds a separator still finds it. A value of one segment is text, and is searched as it reads.
+ */
+const createEntry = (path: string[], setKey: string | null, tree: boolean): SetValueEntry => {
+    const key = joinSetPath(path);
+    const searchValue = tree && path.length > 1 ? joinSetPath(splitSetPath(key)) : key;
+    return { key, setKey, path, searchValue: searchValue === key ? undefined : searchValue };
+};
+
+/**
  * Registers one leaf under the path it is written as. Keys that format alike are told apart by writing the
  * later ones as their key; where that collides too, or a lossy path getter gave two the same path, one entry
  * names them all. `path` is mutated in place, its last segment substituted, so no caller may reuse it.
+ * `into` is null where the path resolves to a key without being offered as a value of its own.
  */
 const addLeaf = (
     handler: SetFilterHandler,
     values: Omit<SetColumnValues, 'entries'>,
     path: string[],
     keys: readonly (string | null)[],
-    into?: SetValueEntry[]
+    into: SetValueEntry[] | null,
+    tree: boolean
 ): void => {
     const { keysByPath, sharedKeysByPath, pathsByKey } = values;
     const last = path.length - 1;
@@ -527,7 +557,7 @@ const addLeaf = (
         _pushToMapArray(sharedKeysByPath, folded, key);
     } else {
         keysByPath.set(folded, key);
-        into?.push({ key: joinSetPath(path), setKey: key, path });
+        into?.push(createEntry(path, key, tree));
     }
     for (let i = 1, len = keys.length; i < len; ++i) {
         const shared = keys[i];
@@ -542,7 +572,7 @@ const buildFlatValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
     const values = createValues();
     for (let i = 0, len = allKeys.length; i < len; ++i) {
         const key = allKeys[i];
-        addLeaf(handler, values, [handler.getFormattedValue(key) ?? ''], [key], entries);
+        addLeaf(handler, values, [handler.getFormattedValue(key) ?? ''], [key], entries, false);
     }
     return { entries, ...values };
 };
@@ -568,12 +598,12 @@ const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
                 // A path getter can land a value on a group's own path. The group holds the only row, so
                 // the value is not offered separately, but the path still has to resolve to it.
                 if (keys) {
-                    addLeaf(handler, values, itemPath, keys);
+                    addLeaf(handler, values, itemPath, keys, null, true);
                 }
                 continue;
             }
             if (keys) {
-                addLeaf(handler, values, itemPath, keys, entries);
+                addLeaf(handler, values, itemPath, keys, entries, true);
             }
         }
     };

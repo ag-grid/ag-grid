@@ -17,6 +17,7 @@ export interface AutocompleteListParams {
 export interface AutocompleteEntry {
     key: string;
     displayValue?: string;
+    searchValue?: string;
 }
 
 /** How a list renders one row; returning nothing leaves the default row in place. */

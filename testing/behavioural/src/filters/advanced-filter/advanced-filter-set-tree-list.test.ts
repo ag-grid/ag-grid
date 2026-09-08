@@ -95,6 +95,45 @@ describe('Advanced Filter - Set Filter tree list', () => {
         expect(parents()).toEqual(['Europe › ']);
     });
 
+    test('a cell renderer under a treeListFormatter draws the label the row is named by', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...TREE_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        treeList: true,
+                        treeListPathGetter: (value: string | null) => (value ? value.split('/') : null),
+                        // Every level, leaf included, so the label and the tree key beneath it differ.
+                        treeListFormatter: (pathKey: string | null) => `${pathKey}!`,
+                        cellRenderer: (p: { value: string | null }) => `<em>${p.value ?? ''}</em>`,
+                    } satisfies ISetFilterParams,
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+
+        // The leaf is drawn as the formatter labelled it, which is the text the row is named and written
+        // by; the raw tree key would leave the renderer disagreeing with the label beside it.
+        expect(Array.from(document.querySelectorAll('.ag-autocomplete-list em')).map((e) => e.textContent)).toEqual([
+            'Jamaica!',
+            'Poland!',
+            'United Kingdom!',
+        ]);
+        expect(
+            Array.from(document.querySelectorAll('.ag-autocomplete-list .ag-autocomplete-row-path-parent')).map(
+                (e) => e.textContent
+            )
+        ).toEqual(['Americas! › ', 'Europe! › ', 'Europe! › ']);
+
+        await af.selectAutocomplete();
+        expect(af.value).toBe('[Country] is any of ["Americas! > Jamaica!", ');
+    });
+
     test('a flat value holding the separator is not drawn as though it were a path', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...TREE_OPTIONS,
@@ -226,7 +265,7 @@ describe('Advanced Filter - Set Filter tree list', () => {
         const af = AdvancedFilterHarness.get(api);
 
         const FORMS: Record<string, string> = {
-            'the written separator': '[Country] is any of ["Europe > Poland"]',
+            'the written separator': '[Country] is any of ["Europe › Poland"]',
             'the ASCII arrow a keyboard offers': '[Country] is any of ["Europe > Poland"]',
             'no spacing around it': '[Country] is any of ["Europe>Poland"]',
             'bare, with no quotes at all': '[Country] is any of [Europe > Poland]',
@@ -654,7 +693,12 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
         // The keys are the group paths, which only exist once the grouping stage has run over the new rows.
         await af.type('');
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toContain('Kenya › Marathon › Eliud Kipchoge');
+        expect(af.autocompleteEntries()).toEqual([
+            'Jamaica › Sprint › Usain Bolt',
+            'Kenya › Marathon › Eliud Kipchoge',
+            'Poland › Sprint › Anna Kowalski',
+            'Poland › Swimming › Jan Nowak',
+        ]);
 
         await af.applyExpression('[Group] is any of ["Kenya" > "Marathon" > "Eliud Kipchoge"]');
         expect(af.input.validationMessage).toBe('');
@@ -909,6 +953,32 @@ describe('Advanced Filter - Set Filter tree list holding the separators', () => 
         ]);
     });
 
+    test('a path is still offered once enough of it is typed to reach a separator inside a segment', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        // The list is searched by the text it drew, so typing that text back cannot lose the row it
+        // came from, whichever separator divides the path and whichever one a segment holds.
+        const TYPED: Record<string, string> = {
+            'a quoted segment holding the written separator': '[Country] is any of ["Arrow > Group',
+            'the same segment unquoted': '[Country] is any of [Arrow > Group',
+            'a leaf holding the drawn separator': '[Country] is any of ["Plain > Guillemet › Leaf',
+            'a whole path, written': '[Country] is any of ["Plain > Guillemet',
+        };
+        const offered: Record<string, string[]> = {};
+        for (const name of Object.keys(TYPED)) {
+            await af.type(TYPED[name]);
+            offered[name] = af.autocompleteEntries();
+        }
+
+        expect(offered).toEqual({
+            'a quoted segment holding the written separator': ['Arrow > Group › Leaf'],
+            'the same segment unquoted': ['Arrow > Group › Leaf'],
+            'a leaf holding the drawn separator': ['Plain › Guillemet › Leaf'],
+            'a whole path, written': ['Plain › Guillemet › Leaf'],
+        });
+    });
+
     test('choosing a segment holding a separator writes it quoted, so the path still reads', async () => {
         const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
@@ -932,28 +1002,15 @@ describe('Advanced Filter - Set Filter tree list holding the separators', () => 
         const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        await af.type('[Country] is any of [');
-        const offered = af.autocompleteEntries();
-        const outcomes: Record<string, unknown> = {};
-
-        for (let i = 0; i < offered.length; ++i) {
-            await af.type('[Country] is any of [');
-            for (let down = 0; down < i; ++down) {
-                await af.pressKey('ArrowDown');
-            }
-            await af.selectAutocomplete();
-            await af.append(']');
-            await af.apply();
-            outcomes[offered[i]] = af.input.validationMessage || af.getModel().values;
-        }
+        const outcomes = await chooseEveryOffered(af, '[Country] is any of [');
 
         // The keys come from the row data, so a path offered under the wrong text, or written in a form
         // that reads back as a different path, fails here rather than agreeing with itself.
-        expect(outcomes).toEqual({
-            'Arrow > Group › Leaf': ['Arrow > Group|Leaf'],
-            'Plain › Guillemet › Leaf': ['Plain|Guillemet › Leaf'],
-            'Slash / Group › 2024/01': ['Slash / Group|2024/01'],
-        });
+        expect(outcomes).toEqual([
+            ['Arrow > Group › Leaf', ['Arrow > Group|Leaf']],
+            ['Plain › Guillemet › Leaf', ['Plain|Guillemet › Leaf']],
+            ['Slash / Group › 2024/01', ['Slash / Group|2024/01']],
+        ]);
     });
 
     test('segments are quoted one at a time, so a path may mix quoted and bare ones', async () => {

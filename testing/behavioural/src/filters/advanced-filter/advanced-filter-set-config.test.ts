@@ -26,7 +26,7 @@ import {
     TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, MultiFilterModule } from 'ag-grid-enterprise';
 
 import type { TestRow } from './advancedFilterSetFixture';
 import {
@@ -1127,7 +1127,7 @@ describe('Advanced Filter - Set Filter and grid state', () => {
 });
 
 describe('Advanced Filter - a column opted in to the set operators', () => {
-    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, DateFilterModule] });
+    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, DateFilterModule, MultiFilterModule] });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -1160,5 +1160,47 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
         expect(seen).toEqual([]);
         expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+    });
+
+    test("a Multi Filter reads the value list off its Set Filter child, whose params are a list's", async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        enableSetOperators: true,
+                        filters: [
+                            { filter: 'agTextColumnFilter' },
+                            {
+                                filter: 'agSetColumnFilter',
+                                filterParams: {
+                                    valueFormatter: ({ value }) => (value == null ? value : `${value}!`),
+                                } satisfies ISetFilterParams,
+                            },
+                        ],
+                    },
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+        // The child's formatter: the column's own params are a Multi Filter's, and hold no value list.
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual([
+            '(Blanks)',
+            'Jamaica!',
+            'Poland!',
+            'United Kingdom!',
+            'United States!',
+        ]);
+
+        await af.applyExpression('[Country] is any of ["Jamaica!"]');
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
     });
 });

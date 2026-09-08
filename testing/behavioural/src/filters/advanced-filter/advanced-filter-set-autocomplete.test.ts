@@ -394,6 +394,26 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(af.value).toBe('[Country] is any of ["(Blanks)", "Poland"]');
     });
 
+    test('a list option opens its own bracket over a range, whose bracket spells a different operand', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { enableSetOperators: true } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        // A range's `(` is not a list already open, so the list option opens one rather than writing its
+        // values outside the brackets it needs.
+        const written = '[Age] is any (20, 26)';
+        await af.type(written, written.indexOf(' (20'));
+        await af.selectAutocomplete();
+
+        expect(af.value).toBe('[Age] is any of [(20, 26)');
+    });
+
     test('a caret before the end bracket of a closed list can still start another value', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
