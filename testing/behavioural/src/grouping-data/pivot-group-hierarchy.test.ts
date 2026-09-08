@@ -562,6 +562,46 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['date']);
     });
 
+    test('a list naming hierarchy levels is honoured literally, a bare source col still seats them all', async () => {
+        const api = createHierarchyGrid('hierarchyExplicitLevels');
+        await asyncSetTimeout(0);
+        const ids = () => api.getRowGroupColumns().map((c) => c.getColId());
+        expect(ids()).toEqual([YEAR_COL, MONTH_COL, 'date']);
+
+        // Naming a level explicitly selects exactly the named levels — the only way to group by one of them.
+        api.setRowGroupColumns([MONTH_COL, 'date']);
+        await asyncSetTimeout(0);
+        expect(ids()).toEqual([MONTH_COL, 'date']);
+
+        // Still a pure function of the list: naming no level seats every configured one, however we got here.
+        api.setRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        expect(ids()).toEqual([YEAR_COL, MONTH_COL, 'date']);
+        api.setRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        expect(ids()).toEqual([YEAR_COL, MONTH_COL, 'date']);
+    });
+
+    test('a removed hierarchy level is not re-seated by a later full-list set (drop-zone add / reorder)', async () => {
+        const api = createHierarchyGrid('hierarchyRemovalSurvivesSet');
+        await asyncSetTimeout(0);
+        const ids = () => api.getRowGroupColumns().map((c) => c.getColId());
+
+        api.removeRowGroupColumns([YEAR_COL]);
+        await asyncSetTimeout(0);
+        expect(ids()).toEqual([MONTH_COL, 'date']);
+
+        // The drop zone commits an add or a reorder as a full-list set of the remaining pills. The level the
+        // user removed must not come back with it.
+        api.setRowGroupColumns(ids());
+        await asyncSetTimeout(0);
+        expect(ids()).toEqual([MONTH_COL, 'date']);
+
+        api.setRowGroupColumns([...ids(), 'country']);
+        await asyncSetTimeout(0);
+        expect(ids()).toEqual([MONTH_COL, 'date', 'country']);
+    });
+
     test('removePivotColumns drops one hierarchy level without disturbing the rest', async () => {
         const api = gridsManager.createGrid('hierarchyRemovePivotLevel', {
             columnDefs: [

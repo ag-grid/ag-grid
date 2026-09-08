@@ -38,10 +38,13 @@ function withoutColumns(columns: AgColumn[], toRemove: AgColumn[]): AgColumn[] {
 }
 
 /** A fresh role draft (`rowGroup` / `pivot`) holding `columns`, plus the removals commit must re-apply.
- *  `carriedRemovals` is the previous draft's removal set: consecutive pill removals accumulate, because
- *  commit's single `setColumns(colIds)` re-seats every hierarchy virtual of the columns that remain. An
- *  explicit `set` passes nothing, so a full-list set stays a pure function of its list — the same result
- *  the immediate strategy gives. */
+ *
+ *  `setColumns` honours a list that names hierarchy levels explicitly, so a draft that still holds some of a
+ *  source col's levels needs no help. The one state a colId list cannot express is a source col with *none*
+ *  of its levels — a bare `['date']` means "every configured level" by definition, so stripping the last
+ *  level has to be recorded separately or it returns on Apply. `carriedRemovals` is the previous draft's
+ *  removal set, which keeps consecutive pill removals accumulating; a colId named again in a later list is
+ *  dropped from it. */
 function roleColIdsDraft(
     columns: AgColumn[],
     removedColumns: AgColumn[],
