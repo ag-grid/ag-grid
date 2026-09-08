@@ -41,9 +41,11 @@ describe('buildRoadmapMarkdown', () => {
     });
 
     it('marks each item with its status, so an agent can tell shipped from planned', () => {
-        expect(output).toContain('(shipped)');
-        expect(output).toContain('(in progress)');
-        expect(output).toContain('(planned)');
+        // Derived from the data rather than hard-coded: which statuses are present changes
+        // every release (a release can ship the last in-progress item, as 36.2.0 does).
+        for (const status of new Set(roadmapData.items.map((item) => item.status))) {
+            expect(output).toContain(`(${status.replace(/-/g, ' ')})`);
+        }
     });
 
     it('resolves item links into the framework docs', () => {
