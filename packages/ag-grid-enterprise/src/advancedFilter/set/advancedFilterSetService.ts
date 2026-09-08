@@ -5,6 +5,7 @@ import type {
     AgPromise,
     BaseFilterParams,
     BeanCollection,
+    ColDef,
     FilterDisplayParams,
     FilterDisplayState,
     FilterHandlerParams,
@@ -30,31 +31,31 @@ import {
 import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import { translateForSetFilter } from '../../setFilter/setFilterUtils';
-import { quoteSetPath } from '../advancedFilterExpressionService';
+import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { getMultiFilterChild } from '../customFilterOptions';
 import { AgSetValueAutocompleteRow } from './agSetValueAutocompleteRow';
-import { joinSetPath } from './setOperandsParser';
+import { namesSetOperator } from './setFilterExpressionOperators';
+import { joinSetPath, splitSetPath, writeSetPath } from './setOperandsParser';
 
-/** One entry the value autocomplete can offer: a leaf value, or a tree group to drill into. */
-interface SetValueEntry {
-    /** The value, or the path segment for a tree list, as it is written in the expression. */
-    readonly displayValue: string;
-    /** The Set Filter key this resolves to; absent on a group, which is not a value of its own. */
-    readonly key?: string | null;
-    /** How many children a group still offers. A flattened match keeps it without keeping `children`. */
-    readonly childCount?: number;
-    /** Set on a flattened match: the path from where the caret is to the value, as it must be written. */
-    readonly relativePath?: string[];
-    /** A group's children, held directly so a walk never re-joins the path to look them up. */
-    readonly children?: SetValueEntry[];
+/**
+ * One value the autocomplete can offer, in the shape the list takes so it is offered without a copy.
+ * A tree list is offered flat, so every entry is a leaf and its `key` is the whole path as written.
+ */
+interface SetValueEntry extends AutocompleteEntry {
+    /** The Set Filter key this resolves to. */
+    readonly setKey: string | null;
+    /** The segments the value is made of; one for an ordinary value, the whole path for a tree list. */
+    readonly path: string[];
 }
+
+/** The list offers these objects themselves, so one chosen from it comes back carrying its own path. */
+const isSetValueEntry = (entry: AutocompleteEntry): entry is SetValueEntry => 'path' in entry;
 
 /** A column's Set Filter values, rebuilt whenever the underlying value model reloads. */
 interface SetColumnValues {
-    /** Top-level entries: the whole list where there is no tree, the root groups where there is. */
+    /** Every value the column offers, in the Set Filter's own order. */
     readonly entries: SetValueEntry[];
-    /** Children by joined parent path; empty for a flat list. */
-    readonly childrenByPath: Map<string, SetValueEntry[]>;
     /** Every leaf path to its key, for reading an expression into the model. */
     readonly keysByPath: Map<string, string | null>;
     /** The further keys a path names; apart from `keysByPath` so an ordinary column allocates nothing. */
@@ -85,6 +86,9 @@ const SET_VALUE_AUTOCOMPLETE_TYPE = 'set-value';
 /** Joins path segments into one map key; a control character, so no value collides with it. */
 const PATH_JOINER = '\u0000';
 
+/** Shared, so a column whose values have not loaded allocates nothing on every keystroke. */
+const NO_ENTRIES: SetValueEntry[] = [];
+
 /**
  * The value list offered at one caret, and the token identifying it. `AgAutocomplete` rebuilds its popup
  * when the token changes, so the token has to change exactly when the list does.
@@ -92,12 +96,10 @@ const PATH_JOINER = '\u0000';
 interface SetValueList {
     readonly type: string;
     readonly colId: string;
-    readonly path: readonly string[];
     readonly usedKeys: ReadonlySet<string | null>;
-    /** Whether the entries are the flattened whole-hierarchy form; only a tree list has one. */
-    readonly flattened: boolean;
     readonly entries: AutocompleteEntry[];
-    readonly sourceByDisplay?: Map<string, SetValueEntry>;
+    /** Whether the values are paths, so a separator written inside one segment still names a level. */
+    readonly isTree: boolean;
     /** How the list draws a row, where the column asks for more than the plain one. */
     readonly rowComponentCreator?: (entry: AutocompleteEntry) => AgSetValueAutocompleteRow;
 }
@@ -138,7 +140,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const columns = this.columns;
         for (const [colId, setColumn] of columns) {
             const column = this.beans.colModel.getNonPivotColById(colId);
-            if (setColumn && column && this.isSetFilterColumn(column)) {
+            if (setColumn && column && this.offersSetOperators(column)) {
                 const handler = setColumn.handler;
                 handler.refresh(this.createHandlerParams(column, 'colDef'));
                 // `refresh` re-reads the definitions; the grouping reaches the keys through the values.
@@ -163,15 +165,28 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     /** Whether the column offers `is any of` / `is none of`; cheap enough to ask on every parse. */
-    public isSetFilterColumn(column: AgColumn | null | undefined): boolean {
+    public offersSetOperators(column: AgColumn | null | undefined): boolean {
         // Without the module there is no handler to filter with, so the options are not offered either.
-        const gos = this.gos;
-        if (!column || !gos.isModuleRegistered('SetFilter')) {
+        if (!column || !this.gos.isModuleRegistered('SetFilter')) {
             return false;
         }
-        // Read from the definition alone, so asking does not instantiate anything.
+        // An option list naming them is the most specific statement there is, so it outranks the flag.
+        if (namesSetOperator(column)) {
+            return true;
+        }
+        // What the column asks for, then what its own filter implies.
+        return column.colDef.filterParams?.enableSetOperators ?? this.isSetFilterDef(column);
+    }
+
+    /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */
+    public hasSetFilter(column: AgColumn | null | undefined): boolean {
+        return !!column && this.gos.isModuleRegistered('SetFilter') && this.isSetFilterDef(column);
+    }
+
+    /** Read from the definition alone, so asking does not instantiate anything. */
+    private isSetFilterDef(column: AgColumn): boolean {
         const filter = column.colDef.filter;
-        return filter === 'agSetColumnFilter' || (filter === true && _isSetFilterByDefault(gos));
+        return filter === 'agSetColumnFilter' || (filter === true && _isSetFilterByDefault(this.gos));
     }
 
     /** The Set Filter keys a written path names, or `undefined` where the path names no value at all. */
@@ -216,56 +231,37 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     /**
-     * The value list at a caret. Regenerated on every keystroke but only rebuilt when it is a different
-     * list, so a column with a value per row is not re-filtered for a result that is thrown away.
+     * The value list at a caret: every value the column still offers, a tree list flattened to whole paths.
+     * Asked for on every keystroke but rebuilt only when it is a different list, a column having a value per row.
      */
-    public getAutocompleteList(
-        column: AgColumn,
-        path: readonly string[],
-        usedKeys: ReadonlySet<string | null>,
-        searching: boolean
-    ): SetValueList {
+    public getAutocompleteList(column: AgColumn, usedKeys: ReadonlySet<string | null>): SetValueList {
         const colId = column.getColId();
-        const setColumn = this.getSetColumn(column);
-        // Keyed on this rather than on `searching`: without a tree there is nothing to flatten, and a flat
-        // column would otherwise rebuild an identical list whenever a search starts or is cleared.
-        const flattened = searching && !!setColumn?.handler.params.filterParams.treeList;
         const cached = this.list;
-        if (
-            cached?.colId === colId &&
-            cached.flattened === flattened &&
-            _areEqual(cached.path, path) &&
-            sameKeys(cached.usedKeys, usedKeys)
-        ) {
+        if (cached?.colId === colId && sameKeys(cached.usedKeys, usedKeys)) {
             return cached;
         }
-        // Resolved once for the whole walk: every level would otherwise re-look-up the column's values.
+        const setColumn = this.getSetColumn(column);
         const values = setColumn && this.getValues(setColumn);
-        let source: SetValueEntry[] = [];
-        if (values) {
-            const available = getAvailableEntries(getEntriesAtPath(values, setColumn.handler, path), usedKeys);
-            source = flattened ? getFlattenedEntries(available, path) : available;
-        }
-        const entries: AutocompleteEntry[] = [];
-        // Only a flattened match stands for a path that differs from the value it displays.
-        const sourceByDisplay = flattened ? new Map<string, SetValueEntry>() : undefined;
-        for (let i = 0, len = source.length; i < len; ++i) {
-            const entry = source[i];
-            const displayValue = entry.displayValue;
-            entries.push({ key: displayValue, displayValue, childCount: entry.childCount });
-            sourceByDisplay?.set(displayValue, entry);
+        const source = values?.entries ?? NO_ENTRIES;
+        // The column's own entries, offered as they stand: a value picked or dropped rebuilds this list,
+        // so copying each one would allocate per value of the column on every pick.
+        let entries: AutocompleteEntry[] = source;
+        if (usedKeys.size) {
+            entries = [];
+            for (let i = 0, len = source.length; i < len; ++i) {
+                const entry = source[i];
+                if (!usedKeys.has(entry.setKey)) {
+                    entries.push(entry);
+                }
+            }
         }
         const list: SetValueList = {
             type: `${SET_VALUE_AUTOCOMPLETE_TYPE}-${++this.listCount}`,
             colId,
-            path,
             usedKeys,
-            flattened,
             entries,
-            sourceByDisplay,
-            rowComponentCreator: values
-                ? this.createRowCreator(column, values.keysByPath, setColumn.handler, sourceByDisplay)
-                : undefined,
+            isTree: !!setColumn?.handler.params.filterParams.treeList,
+            rowComponentCreator: values ? this.createRowCreator(column, setColumn.handler) : undefined,
         };
         // Values load asynchronously; an empty list built before they arrive must not stand in for them.
         if (values) {
@@ -274,14 +270,24 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         return list;
     }
 
-    /** How a chosen entry is written: a flattened match spells out the whole path it stands for. */
-    public getWrittenValue(type: string, entry: AutocompleteEntry): string | undefined {
-        const cached = this.list;
-        const relativePath =
-            cached?.type === type
-                ? cached.sourceByDisplay?.get(entry.displayValue ?? entry.key)?.relativePath
-                : undefined;
-        return relativePath && quoteSetPath(relativePath);
+    /**
+     * How a path is written into an expression: the whole path as one quoted value, unless re-reading
+     * that text would reach somewhere else — a segment holding the separator, or a value spelled alike.
+     */
+    public writePath(column: AgColumn, path: readonly string[]): string {
+        if (path.length < 2) {
+            return quoteSetValue(path[0]);
+        }
+        const written = writeSetPath(path);
+        // Judged by the reader's own rule, so a segment holding any separator keeps its own quotes.
+        const readsBack = _areEqual(splitSetPath(written), path) && !this.getKeys(column, [written]);
+        return readsBack ? quoteSetValue(written) : quoteSetPath(path);
+    }
+
+    /** How a chosen entry is written, which is the same spelling a stored model of it would produce. */
+    public writeEntry(column: AgColumn, entry: AutocompleteEntry): string {
+        // Read off the entry, not looked up by its text: two values can be written the same way.
+        return isSetValueEntry(entry) ? this.writePath(column, entry.path) : quoteSetValue(entry.key);
     }
 
     public isSetValueType(type: string | undefined): type is string {
@@ -289,14 +295,12 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     /**
-     * How a value list renders its rows: the Set Filter's `cellRenderer`, and a tree group's remaining
-     * child count. Resolved once per list, since a virtual list rebuilds its rows on every scroll.
+     * How a value list renders its rows: the Set Filter's `cellRenderer`, and a path's de-emphasised
+     * parents. Resolved once per list, since a virtual list rebuilds its rows on every scroll.
      */
     private createRowCreator(
         column: AgColumn,
-        keysByPath: ReadonlyMap<string, string | null>,
-        handler: SetFilterHandler,
-        sourceByDisplay: Map<string, SetValueEntry> | undefined
+        handler: SetFilterHandler
     ): ((entry: AutocompleteEntry) => AgSetValueAutocompleteRow) | undefined {
         const filterParams = handler.params.filterParams;
         const cellRenderer = filterParams.cellRenderer;
@@ -304,33 +308,30 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             return undefined;
         }
         const colDef = column.getColDef();
+        // A tree item names itself by its already-formatted segment, as the Set Filter's own list draws it.
+        const isTree = !!filterParams.treeList;
         return (entry) => {
             const displayValue = entry.displayValue ?? entry.key;
-            const childCount = entry.childCount;
-            // A flattened match displays the whole path but stands for its leaf, which is what the Set
-            // Filter's own list draws; the key comes with it rather than being looked up by that text.
-            const source = sourceByDisplay?.get(displayValue);
-            const label = source?.relativePath ? _last(source.relativePath)! : displayValue;
-            // A group is a path segment, not a value, so there is nothing for a renderer to draw.
-            const createCellRenderer =
-                cellRenderer && childCount == null
-                    ? () => {
-                          // Only a flat value has text that names it on its own; a tree leaf is drawn from
-                          // its segment, as the Set Filter draws it, however the list reached the leaf.
-                          const key = keysByPath.get(handler.caseFormat(displayValue));
-                          return _getCellRendererDetails(
-                              this.userCompFactory,
-                              filterParams,
-                              _addGridCommonParams(this.gos, {
-                                  value: key === undefined ? label : handler.valueModel.allValues.get(key),
-                                  valueFormatted: label,
-                                  colDef,
-                                  column,
-                              })
-                          );
-                      }
-                    : undefined;
-            return new AgSetValueAutocompleteRow(displayValue, childCount, createCellRenderer);
+            const source = isSetValueEntry(entry) ? entry : undefined;
+            // A path displays every segment but stands for its leaf, which is what a renderer draws.
+            const label = source ? _last(source.path)! : displayValue;
+            // Taken from the path rather than sought in the text, so a value holding a separator of its
+            // own is not read as one.
+            const parentLength = isTree && source && source.path.length > 1 ? displayValue.length - label.length : 0;
+            const createCellRenderer = cellRenderer
+                ? () =>
+                      _getCellRendererDetails(
+                          this.userCompFactory,
+                          filterParams,
+                          _addGridCommonParams(this.gos, {
+                              value: isTree || !source ? label : handler.valueModel.allValues.get(source.setKey),
+                              valueFormatted: label,
+                              colDef,
+                              column,
+                          })
+                      )
+                : undefined;
+            return new AgSetValueAutocompleteRow(displayValue, parentLength, createCellRenderer);
         };
     }
 
@@ -382,7 +383,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     private createSetColumn(column: AgColumn): SetColumn | null {
-        if (!this.isSetFilterColumn(column)) {
+        if (!this.offersSetOperators(column)) {
             return null;
         }
         const handler = this.registry.createDynamicBean<SetFilterHandler>('agSetColumnFilterHandler', false);
@@ -435,18 +436,37 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             filterModifiedCallback: () => {},
             source: 'init',
         };
-        return _getFilterDetails(this.userCompFactory, column.getColDef(), params, 'agSetColumnFilter');
+        return _getFilterDetails(this.userCompFactory, this.getSetColDef(column), params, 'agSetColumnFilter');
     }
 
     /** `true` = forFloatingFilter, whose always-true `doesRowPassOtherFilter` is what offers every row's value. */
     private createSharedParams(column: AgColumn): BaseFilterParams {
-        // Guaranteed by the SetFilter module gate in `isSetFilterColumn`, which depends on the filter module.
+        // Guaranteed by the SetFilter module gate in `offersSetOperators`, which depends on the filter module.
         return this.beans.colFilter!.createBaseFilterParams(column, true);
+    }
+
+    /**
+     * The definition the value list is built and drawn from. Another filter's is written for itself: its
+     * component is not this one, and a Date Filter's `comparator` reaching a value list is called with
+     * two cell values and throws.
+     */
+    private getSetColDef(column: AgColumn): ColDef {
+        const colDef = column.getColDef();
+        if (this.hasSetFilter(column)) {
+            return colDef;
+        }
+        // A Multi Filter keeps the value list's configuration on its Set Filter child; any other filter's
+        // params are written for itself, a Date Filter's `comparator` being called with two cell values here.
+        const child =
+            colDef.filter === 'agMultiColumnFilter'
+                ? getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter')
+                : undefined;
+        return { ...colDef, filter: 'agSetColumnFilter', filterParams: child?.filterParams };
     }
 
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
-        const colDef = column.getColDef();
+        const colDef = this.getSetColDef(column);
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),
             model: null,
@@ -494,23 +514,35 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
 const joinPath = (segments: readonly string[]): string => segments.join(PATH_JOINER);
 
-const createKeyMaps = (): Pick<SetColumnValues, 'keysByPath' | 'sharedKeysByPath' | 'pathsByKey'> => ({
+const createValues = (): Omit<SetColumnValues, 'entries'> => ({
     keysByPath: new Map(),
     sharedKeysByPath: new Map(),
     pathsByKey: new Map(),
 });
 
 /**
+ * A path is drawn with its segments as they stand but searched for as the reader splits one, so every
+ * row a typed separator could name is offered. Which one it resolves to is the parser's to decide.
+ */
+const createEntry = (path: string[], setKey: string | null, tree: boolean): SetValueEntry => {
+    const key = joinSetPath(path);
+    const searchValue = tree ? joinSetPath(splitSetPath(key)) : key;
+    return { key, setKey, path, searchValue: searchValue === key ? undefined : searchValue };
+};
+
+/**
  * Registers one leaf under the path it is written as. Keys that format alike are told apart by writing the
  * later ones as their key; where that collides too, or a lossy path getter gave two the same path, one entry
  * names them all. `path` is mutated in place, its last segment substituted, so no caller may reuse it.
+ * `into` is null where the path resolves to a key without being offered as a value of its own.
  */
 const addLeaf = (
     handler: SetFilterHandler,
-    values: Pick<SetColumnValues, 'keysByPath' | 'sharedKeysByPath' | 'pathsByKey'>,
+    values: Omit<SetColumnValues, 'entries'>,
     path: string[],
     keys: readonly (string | null)[],
-    into?: SetValueEntry[]
+    into: SetValueEntry[] | null,
+    tree: boolean
 ): void => {
     const { keysByPath, sharedKeysByPath, pathsByKey } = values;
     const last = path.length - 1;
@@ -525,7 +557,7 @@ const addLeaf = (
         _pushToMapArray(sharedKeysByPath, folded, key);
     } else {
         keysByPath.set(folded, key);
-        into?.push({ displayValue: path[last], key });
+        into?.push(createEntry(path, key, tree));
     }
     for (let i = 1, len = keys.length; i < len; ++i) {
         const shared = keys[i];
@@ -537,22 +569,22 @@ const addLeaf = (
 const buildFlatValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): SetColumnValues => {
     const handler = setColumn.handler;
     const entries: SetValueEntry[] = [];
-    const values = createKeyMaps();
+    const values = createValues();
     for (let i = 0, len = allKeys.length; i < len; ++i) {
         const key = allKeys[i];
-        addLeaf(handler, values, [handler.getFormattedValue(key) ?? ''], [key], entries);
+        addLeaf(handler, values, [handler.getFormattedValue(key) ?? ''], [key], entries, false);
     }
-    return { entries, childrenByPath: new Map(), ...values };
+    return { entries, ...values };
 };
 
+/** A tree list is offered as one flat level of whole paths, so only its leaves become entries. */
 const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): SetColumnValues => {
     const handler = setColumn.handler;
     const treeListFormatter = handler.params.filterParams.treeListFormatter;
 
     const entries: SetValueEntry[] = [];
-    const childrenByPath = new Map<string, SetValueEntry[]>();
-    const values = createKeyMaps();
-    const walk = (items: Map<string | null, SetFilterModelTreeItem>, path: string[], into: SetValueEntry[]): void => {
+    const values = createValues();
+    const walk = (items: Map<string | null, SetFilterModelTreeItem>, path: string[]): void => {
         for (const item of items.values()) {
             // A blank names itself the way the Set Filter's own list names it, so the two offer one label.
             const formatted =
@@ -562,93 +594,21 @@ const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
             const children = item.children;
             const keys = item.keys;
             if (children?.size) {
-                const childEntries: SetValueEntry[] = [];
-                childrenByPath.set(handler.caseFormat(joinPath(itemPath)), childEntries);
-                walk(children, itemPath, childEntries);
-                into.push({ displayValue: formatted, childCount: childEntries.length, children: childEntries });
+                walk(children, itemPath);
                 // A path getter can land a value on a group's own path. The group holds the only row, so
                 // the value is not offered separately, but the path still has to resolve to it.
                 if (keys) {
-                    addLeaf(handler, values, itemPath, keys);
+                    addLeaf(handler, values, itemPath, keys, null, true);
                 }
                 continue;
             }
             if (keys) {
-                addLeaf(handler, values, itemPath, keys, into);
+                addLeaf(handler, values, itemPath, keys, entries, true);
             }
         }
     };
-    walk(handler.createDisplayValueTree(allKeys), [], entries);
-    return { entries, childrenByPath, ...values };
-};
-
-/** The entries offered at a path: the top level for an empty path, a group's children otherwise. */
-const getEntriesAtPath = (
-    values: SetColumnValues,
-    handler: SetFilterHandler,
-    parentPath: readonly string[]
-): SetValueEntry[] => {
-    if (!parentPath.length) {
-        return values.entries;
-    }
-    // Folded as `keysByPath` is, so a group typed in another case offers its children.
-    return values.childrenByPath.get(handler.caseFormat(joinPath(parentPath))) ?? [];
-};
-
-/**
- * The entries still worth offering. A value already written is dropped, and so is a group with nothing
- * left beneath it; a group's count is of what it still offers, not of what it holds.
- */
-const getAvailableEntries = (entries: SetValueEntry[], usedKeys: ReadonlySet<string | null>): SetValueEntry[] => {
-    if (!usedKeys.size) {
-        return entries;
-    }
-    const available: SetValueEntry[] = [];
-    for (let i = 0, len = entries.length; i < len; ++i) {
-        const entry = entries[i];
-        const children = entry.children;
-        if (!children) {
-            if (!usedKeys.has(entry.key!)) {
-                available.push(entry);
-            }
-            continue;
-        }
-        // What the group still offers is both the count to show and the reason to show it at all.
-        const availableChildren = getAvailableEntries(children, usedKeys);
-        if (availableChildren.length) {
-            available.push({ ...entry, childCount: availableChildren.length, children: availableChildren });
-        }
-    }
-    return available;
-};
-
-/**
- * Everything on offer anywhere beneath a path, named by the rest of the path to it: groups to drill
- * into as well as values, so typing searches the whole hierarchy rather than one level of it.
- */
-const getFlattenedEntries = (entries: SetValueEntry[], parentPath: readonly string[]): SetValueEntry[] => {
-    const flattened: SetValueEntry[] = [];
-    const parentLength = parentPath.length;
-    const walk = (level: SetValueEntry[], path: readonly string[]): void => {
-        for (let i = 0, len = level.length; i < len; ++i) {
-            const entry = level[i];
-            const childPath = [...path, entry.displayValue];
-            // Searching from the root is the common case, and there the whole path is the relative one.
-            const relativePath = parentLength ? childPath.slice(parentLength) : childPath;
-            flattened.push({
-                displayValue: joinSetPath(relativePath),
-                key: entry.key,
-                childCount: entry.childCount,
-                relativePath,
-            });
-            const children = entry.children;
-            if (children) {
-                walk(children, childPath);
-            }
-        }
-    };
-    walk(entries, parentPath);
-    return flattened;
+    walk(handler.createDisplayValueTree(allKeys), []);
+    return { entries, ...values };
 };
 
 const sameKeys = (a: ReadonlySet<string | null>, b: ReadonlySet<string | null>): boolean => {

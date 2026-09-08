@@ -1,4 +1,5 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
+import type { AdvancedFilterOnlyOptionKey } from '../../../interfaces/advancedFilterModel';
 import type { IAutoCompleteComponentParams } from '../../../interfaces/iAutoComplete';
 import type { FilterCallbackSource, FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
@@ -71,7 +72,7 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
 
 export interface ITextFilterParams extends ISimpleFilterParams {
     /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | TextFilterOptionKey)[];
+    filterOptions?: (IFilterOptionDef | TextFilterOptionKey | AdvancedFilterOnlyOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: TextFilterOptionKey | CustomFilterOptionKey;
     /**

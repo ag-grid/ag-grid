@@ -159,7 +159,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         let topStartsWith = false;
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const text = entry.displayValue ?? entry.key;
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
             const index = text.toLocaleLowerCase().indexOf(lowerCaseSearchString);
             if (index < 0) {
                 continue;
@@ -184,7 +184,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         const matches: AutocompleteEntry[] = [];
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const text = entry.displayValue ?? entry.key;
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
             if (text.toLocaleLowerCase().startsWith(lowerCaseSearchString)) {
                 matches.push(entry);
             }

@@ -1,5 +1,9 @@
 import type { CheckDataTypes } from '../entities/dataType';
-import type { CustomFilterOptionKey, ISimpleFilterModelPresetType } from '../filter/provided/iSimpleFilter';
+import type {
+    CustomFilterOptionKey,
+    ISimpleFilterModelPresetType,
+    ISimpleFilterModelType,
+} from '../filter/provided/iSimpleFilter';
 import type { SetFilterModelValue } from './iSetFilter';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
@@ -40,6 +44,15 @@ export type DateAdvancedFilterModelType = ScalarAdvancedFilterModelType | ISimpl
 export type BooleanAdvancedFilterModelType = 'true' | 'false' | 'blank' | 'notBlank';
 
 export type SetAdvancedFilterModelType = 'isAnyOf' | 'isNoneOf';
+
+/**
+ * The keys only the Advanced Filter has an operator for: a column offers them through `filterOptions`,
+ * but no column filter can select one. Derived, so neither side can gain an option the other never hears of.
+ */
+export type AdvancedFilterOnlyOptionKey = Exclude<
+    SetAdvancedFilterModelType | BooleanAdvancedFilterModelType,
+    ISimpleFilterModelType
+>;
 
 /** Represents a single filter condition for a text column */
 export interface TextAdvancedFilterModel {

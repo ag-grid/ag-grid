@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_DE = {
     advancedFilterValidationMissingCondition: 'Bedingung fehlt',
     advancedFilterValidationJoinOperatorMismatch: 'Verknüpfungsoperatoren innerhalb einer Bedingung müssen gleich sein',
     advancedFilterValidationInvalidJoinOperator: 'Verknüpfungsoperator nicht gefunden',
+    advancedFilterValidationMissingListStartBracket: 'Öffnende eckige Klammer fehlt',
+    advancedFilterValidationMissingListEndBracket: 'Schließende eckige Klammer fehlt',
     advancedFilterValidationMissingEndBracket: 'Endklammer fehlt',
     advancedFilterValidationExtraEndBracket: 'Zu viele Endklammern',
     advancedFilterValidationMessage: 'Ausdruck enthält einen Fehler. ${variable} - ${variable}.',

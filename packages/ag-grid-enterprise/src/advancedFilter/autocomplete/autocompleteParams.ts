@@ -17,8 +17,7 @@ export interface AutocompleteListParams {
 export interface AutocompleteEntry {
     key: string;
     displayValue?: string;
-    /** Immediate children, where the entry groups others; absent on an entry that stands for itself. */
-    childCount?: number;
+    searchValue?: string;
 }
 
 /** How a list renders one row; returning nothing leaves the default row in place. */

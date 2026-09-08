@@ -89,7 +89,7 @@ export class AgVirtualList<
     private isScrolling = false;
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
-    private readonly eContainer: HTMLElement = RefPlaceholder;
+    protected readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
 

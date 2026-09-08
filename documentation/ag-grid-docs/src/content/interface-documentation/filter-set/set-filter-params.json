@@ -94,6 +94,12 @@
                 "name": "Tree List",
                 "url": "./filter-set-tree-list"
             }
+        },
+        "enableSetOperators": {
+            "more": {
+                "name": "Advanced Filter Set Operators",
+                "url": "./filter-advanced/#offering-the-options-on-any-column"
+            }
         }
     }
 }

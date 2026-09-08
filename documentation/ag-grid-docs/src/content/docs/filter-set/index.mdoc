@@ -45,9 +45,13 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 Where the [Advanced Filter](./filter-advanced/#set-filters) is enabled, a Set Filter column also offers `is any of` and `is none of` there, reusing the column's own Set Filter configuration and matching the same rows a selection in the Filter List would.
 
+`filterParams.enableSetOperators` decides this for any column: set it to `false` to withhold the two options from a Set Filter column, or to `true` to offer them on a column with a different filter. See [Offering the Options on Any Column](./filter-advanced/#offering-the-options-on-any-column).
+
 ## Suppress Set Filter by Default
 
 When `filter = true`, the Set Filter is used for AG Grid Enterprise by default. To use the [Text Filter](./filter-text/), [Number Filter](./filter-number/) or [Date Filter](./filter-date/) instead based on the [Cell Data Type](./cell-data-types/) (as in AG Grid Community), set the grid option `suppressSetFilterByDefault = true`.
+
+Since the column is then no longer a Set Filter, it also stops offering `is any of` and `is none of` in the [Advanced Filter](./filter-advanced/#set-filters) unless `filterParams.enableSetOperators` says otherwise.
 
 ## Set Filter Parameters
 

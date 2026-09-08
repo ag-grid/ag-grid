@@ -278,6 +278,7 @@ export type { TextFilter } from './filter/provided/text/textFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export type {
     AdvancedFilterModel,
+    AdvancedFilterOnlyOptionKey,
     BooleanAdvancedFilterModel,
     BooleanAdvancedFilterModelType,
     ColumnAdvancedFilterModel,

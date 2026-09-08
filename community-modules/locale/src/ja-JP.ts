@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_JP = {
     advancedFilterValidationMissingCondition: '条件が欠落しています',
     advancedFilterValidationJoinOperatorMismatch: '条件内の結合演算子は同じである必要があります',
     advancedFilterValidationInvalidJoinOperator: '結合演算子が見つかりません',
+    advancedFilterValidationMissingListStartBracket: '開始の角括弧が欠落しています',
+    advancedFilterValidationMissingListEndBracket: '終端の角括弧が欠落しています',
     advancedFilterValidationMissingEndBracket: '終端の括弧が欠落しています',
     advancedFilterValidationExtraEndBracket: '終端の括弧が多すぎます',
     advancedFilterValidationMessage: '式にエラーがあります。${variable} - ${variable}。',

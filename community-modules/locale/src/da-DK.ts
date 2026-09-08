@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_DK = {
     advancedFilterValidationMissingCondition: 'Betingelse mangler',
     advancedFilterValidationJoinOperatorMismatch: 'Join-operatører inden for en betingelse skal være ens',
     advancedFilterValidationInvalidJoinOperator: 'Join-operator ikke fundet',
+    advancedFilterValidationMissingListStartBracket: 'Mangler indledende kantet parentes',
+    advancedFilterValidationMissingListEndBracket: 'Mangler afsluttende kantet parentes',
     advancedFilterValidationMissingEndBracket: 'Mangler afsluttende parentes',
     advancedFilterValidationExtraEndBracket: 'For mange afsluttende parenteser',
     advancedFilterValidationMessage: 'Udtrykket har en fejl. ${variable} - ${variable}.',

@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_SE = {
     advancedFilterValidationMissingCondition: 'Villkor saknas',
     advancedFilterValidationJoinOperatorMismatch: 'Kombinatorer inom ett villkor måste vara desamma',
     advancedFilterValidationInvalidJoinOperator: 'Kombinator hittades inte',
+    advancedFilterValidationMissingListStartBracket: 'Saknar inledande hakparentes',
+    advancedFilterValidationMissingListEndBracket: 'Saknar avslutande hakparentes',
     advancedFilterValidationMissingEndBracket: 'Saknar slutparentes',
     advancedFilterValidationExtraEndBracket: 'För många slutparenteser',
     advancedFilterValidationMessage: 'Uttrycket har ett fel. ${variable} - ${variable}.',

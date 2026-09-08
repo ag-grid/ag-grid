@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterValidationMissingCondition: 'Lipsă condiție',
     advancedFilterValidationJoinOperatorMismatch: 'Operatorii de unire din cadrul unei condiții trebuie să fie aceeași',
     advancedFilterValidationInvalidJoinOperator: 'Operator de unire negăsit',
+    advancedFilterValidationMissingListStartBracket: 'Lipsă paranteză dreaptă de deschidere',
+    advancedFilterValidationMissingListEndBracket: 'Lipsă paranteză dreaptă de închidere',
     advancedFilterValidationMissingEndBracket: 'Lipsă paranteză de încheiere',
     advancedFilterValidationExtraEndBracket: 'Prea multe paranteze de încheiere',
     advancedFilterValidationMessage: 'Expresia are o eroare. ${variable} - ${variable}.',
