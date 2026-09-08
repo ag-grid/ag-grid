@@ -219,7 +219,7 @@ Every strategy re-runs when the displayed columns change and when the grid is re
 
 Triggers arriving in the same frame are coalesced into a single re-size. Viewport and grid-size changes are debounced on top of that, so scrolling and resizing the grid re-size once the gesture settles rather than on every frame.
 
-The example below uses `fitCellContents` continuously over a grouped, paginated grid. Move between pages, or change the page size, and the columns re-fit to the content of the rows now on screen — the medal columns stay narrow while "Athlete" and "Sport" grow and shrink around the longest names on each page.
+The example below uses `fitCellContents` continuously over a grouped, paginated grid of 34 columns and over 8,000 rows. Move between pages, change the page size, or scroll horizontally through the generated text columns, and the columns re-fit to the content of the rows now on screen — the medal columns stay narrow while the text columns grow and shrink around the longest values on each page.
 
 {% gridExampleRunner title="Continuous Auto-Sizing in Action" name="continuous-auto-size-in-action" /%}
 
