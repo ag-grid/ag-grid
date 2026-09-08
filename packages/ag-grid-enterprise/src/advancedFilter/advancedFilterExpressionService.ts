@@ -8,7 +8,9 @@ import type {
     ColumnModel,
     ColumnNameService,
     DataTypeService,
+    FilterOptionsConfig,
     IDateFilterParams,
+    IFilterOptionDef,
     JoinAdvancedFilterModel,
     NamedBean,
     SetAdvancedFilterModel,
@@ -539,18 +541,40 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         // The shared table's: `addSetOperators` returns a table carrying no `defaultOperators` of its own.
         let activeOperators = dataTypeOperators.defaultOperators;
         // The set options come from the filter, not the data type, so a data type holding some of its own
-        // back — a date column and its relative options — must not take these with them.
-        if (isSetColumn && activeOperators) {
+        // back — a date column and its relative options — must not take these with them. In the base only
+        // where the column's own filter supplies them: where a record names one, that record adds it.
+        const inheritsSetOperators = this.advFilterSetSvc.hasSetFilter(column);
+        if (inheritsSetOperators && activeOperators) {
             activeOperators = withSetOperators(activeOperators);
         }
         const filterOptions = getColumnFilterOptions(column);
-        if (filterOptions) {
-            // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
-            const { offered, customOptions } = _classifyFilterOptions(
-                filterOptions,
-                (keys) => this.warn(72, { keys }),
-                null // the Advanced Filter is the reader the excluded keys exist for
-            );
+        if (filterOptions.length) {
+            // What the column already offers is what a record adjusts, so naming one option keeps the rest.
+            let resolved =
+                activeOperators ??
+                Object.keys(inheritsSetOperators ? operators.operators : dataTypeOperators.operators);
+            const customOptions = new Map<string, IFilterOptionDef>();
+            // Reported here too: a column filtered only through the Advanced Filter builds no `OptionsFactory`.
+            const warn = (keys: string[]) => this.warn(72, { keys });
+            const apply = (config: FilterOptionsConfig): void => {
+                const classified = _classifyFilterOptions(config, warn, resolved, null);
+                resolved = [...classified.offered.keys()];
+                for (const [key, option] of classified.customOptions) {
+                    customOptions.set(key, option);
+                }
+            };
+            // A list states the whole of what a level offers, so the first one found is the base; a second
+            // would answer a question already settled. A record only adjusts, so every one of them applies.
+            const firstList = filterOptions.find((config) => Array.isArray(config));
+            if (firstList) {
+                apply(firstList);
+            }
+            for (let i = 0, len = filterOptions.length; i < len; ++i) {
+                const config = filterOptions[i];
+                if (!Array.isArray(config)) {
+                    apply(config);
+                }
+            }
             if (customOptions.size) {
                 const gos = this.gos;
                 operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc(), () =>
@@ -559,7 +583,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             }
             const operatorsByKey = operators.operators;
             const offeredOperators: string[] = [];
-            for (const key of offered.keys()) {
+            for (let i = 0, len = resolved.length; i < len; ++i) {
+                const key = resolved[i];
                 if (_getOwn(operatorsByKey, key)) {
                     offeredOperators.push(key);
                 }

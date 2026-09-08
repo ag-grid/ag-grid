@@ -243,6 +243,8 @@ export type {
     CustomFilterOptionKey,
     DateFilterOptionKey,
     FilterOptionKey,
+    FilterOptions,
+    FilterOptionsConfig,
     FilterPlaceholderFunction,
     ICombinedSimpleModel,
     IFilterOptionDef,

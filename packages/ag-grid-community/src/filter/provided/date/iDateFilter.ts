@@ -4,7 +4,7 @@ import type { IScalarFilterParams } from '../iScalarFilter';
 import type {
     CustomFilterOptionKey,
     DateFilterOptionKey,
-    IFilterOptionDef,
+    FilterOptionsConfig,
     ISimpleFilterModel,
     ISimpleFilterModelPresetType,
 } from '../iSimpleFilter';
@@ -61,8 +61,8 @@ export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TD
  */
 
 export interface IDateFilterParams extends IScalarFilterParams {
-    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | DateFilterOptionKey | AdvancedFilterOnlyOptionKey)[];
+    /** The options the column offers, to the column filter and the Advanced Filter alike: the whole list in order, or an object naming one option at a time. */
+    filterOptions?: FilterOptionsConfig<DateFilterOptionKey | AdvancedFilterOnlyOptionKey>;
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: DateFilterOptionKey | CustomFilterOptionKey;
     /**

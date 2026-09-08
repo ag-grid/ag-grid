@@ -8,7 +8,15 @@ import type { FilterCallbackSource, FilterInputCallbackParams } from '../../inte
 import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { PRESET_DATE_FILTER_TYPES } from './date/relativeDateRanges';
-import type { FilterOptionKey, IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
+import type {
+    FilterOptionKey,
+    FilterOptions,
+    FilterOptionsConfig,
+    IFilterOptionDef,
+    ISimpleFilterModelType,
+    JoinOperator,
+    Tuple,
+} from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 /**
@@ -111,7 +119,8 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
 const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
 
 /**
- * What a column filter withholds from a `filterOptions` list, having no operator for any of it.
+ * The options only the Advanced Filter can evaluate. A column filter never offers one, however its
+ * `filterOptions` names it: the key is a statement to the other reader of that same list.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const _ADVANCED_FILTER_ONLY_OPTIONS: Record<AdvancedFilterOnlyOptionKey, true> = {
@@ -122,37 +131,104 @@ export const _ADVANCED_FILTER_ONLY_OPTIONS: Record<AdvancedFilterOnlyOptionKey, 
 };
 
 /**
+ * A record over a list adjusts that list rather than the data type's options: the list states the whole of
+ * what its level offers, so a nearer level naming options one at a time changes those and inherits the rest.
+ */
+export function _applyFilterOptionChanges(
+    base: (IFilterOptionDef | string)[],
+    changes: FilterOptions
+): (IFilterOptionDef | string)[] {
+    // Keyed, so a definition replaces a bare key in the place the list first gave that key.
+    const combined = new Map<string, IFilterOptionDef | string>();
+    for (let i = 0, len = base.length; i < len; ++i) {
+        const option = base[i];
+        if (option != null) {
+            combined.set(typeof option === 'string' ? option : option.displayKey, option);
+        }
+    }
+    applyOptionChanges(
+        changes,
+        combined,
+        (key) => {
+            if (!combined.has(key)) {
+                combined.set(key, key);
+            }
+        },
+        (option, key) => combined.set(key, option)
+    );
+    return [...combined.values()];
+}
+
+/** What each value in a record says, so the two readers of one cannot disagree about `true`, `false` or a definition. */
+function applyOptionChanges(
+    changes: FilterOptions,
+    offered: Map<string, IFilterOptionDef | string>,
+    offerBareKey: (key: string) => void,
+    addDefinition: (option: IFilterOptionDef, key: string) => void
+): void {
+    for (const key of Object.keys(changes)) {
+        const value = changes[key];
+        if (value == null) {
+            continue; // No opinion, which is what an inherited key overridden back to nothing leaves.
+        } else if (value === false) {
+            offered.delete(key);
+        } else if (value === true) {
+            offerBareKey(key);
+        } else {
+            addDefinition(value, key);
+        }
+    }
+}
+
+/**
  * One definition of what a `filterOptions` list offers, so the column filter and the Advanced Filter cannot disagree.
  * `excludedKeys` withholds the ones the caller has no operator for; a definition under such a key is its own
  * statement of what it means, so only a bare key is dropped.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _classifyFilterOptions(
-    configuredOptions: (IFilterOptionDef | string)[],
+    configuredOptions: FilterOptionsConfig,
     warnMissing: (keys: string[]) => void,
+    /** The list a record names its changes against; `null` where only a whole list is meaningful. */
+    baseKeys: readonly string[] | null,
+    /** Keys this reader cannot evaluate, so a bare one names an option meant for another reader. */
     excludedKeys: Record<string, true> | null
 ): { offered: Map<string, IFilterOptionDef | string>; customOptions: Map<string, IFilterOptionDef> } {
     // A `Map` holds a key at the position it was first set in, so it dedupes without reordering the dropdown.
     const offered = new Map<string, IFilterOptionDef | string>();
     const customOptions = new Map<string, IFilterOptionDef>();
+    const addDefinition = (option: IFilterOptionDef, key: string): void => {
+        const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
+        if (missing.length) {
+            warnMissing(missing);
+            return;
+        }
+        offered.set(key, option);
+        customOptions.set(key, option);
+    };
+    // A bare key names a built-in, so one this reader has no operator for is not its option to offer. A
+    // definition under the same name is the author's own, and is added whichever order the two arrive in.
+    const offerBareKey = (key: string): void => {
+        if (!excludedKeys || !_getOwn(excludedKeys, key)) {
+            offered.set(key, offered.get(key) ?? key);
+        }
+    };
+    if (!Array.isArray(configuredOptions)) {
+        // The default list first, so it keeps its order and a key naming one of them changes it in place.
+        for (let i = 0, len = baseKeys?.length ?? 0; i < len; ++i) {
+            offerBareKey(baseKeys![i]);
+        }
+        applyOptionChanges(configuredOptions, offered, offerBareKey, addDefinition);
+        return { offered, customOptions };
+    }
     for (let i = 0, len = configuredOptions.length; i < len; ++i) {
         const option = configuredOptions[i];
         if (option == null) {
             continue; // `typeof null` is `'object'`, so a hole would read as an option with no properties
         } else if (typeof option === 'string') {
-            if (excludedKeys && _getOwn(excludedKeys, option)) {
-                continue;
-            }
-            offered.set(option, offered.get(option) ?? option); // a definition already stored outranks a bare key
+            offerBareKey(option);
         } else {
-            const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);
-            if (missing.length) {
-                warnMissing(missing);
-                continue;
-            }
-            const key = option.displayKey;
-            offered.set(key, option);
-            customOptions.set(key, option);
+            addDefinition(option, option.displayKey);
         }
     }
     return { offered, customOptions };

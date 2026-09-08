@@ -30,7 +30,7 @@ const setKey = (out: any, key: string | number, value: any, copyUndef: boolean, 
         destValue = {};
         out[key] = destValue;
     }
-    if (destValue !== null && typeof destValue === 'object' && !Array.isArray(destValue)) {
+    if (destValue !== null && typeof destValue === 'object' && !Array.isArray(destValue) && !Array.isArray(value)) {
         _mergeDeep(destValue, value, copyUndef, simpleObjects);
     } else {
         out[key] = value;

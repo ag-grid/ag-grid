@@ -403,6 +403,31 @@ describe('getStructuredSchema - filter feature', () => {
             `);
         });
 
+        test('a `filterOptions` record narrows the operations rather than emptying them', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agTextColumnFilter',
+                        filterParams: { filterOptions: { contains: false } },
+                    },
+                ],
+                rowData: [{ name: 'Alice' }],
+            });
+            await new GridRows(api, `filterOptions record schema setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const column = schema.properties.filter.properties.filterModel.properties.name;
+            const operations = column.properties.conditions.items.properties.type.enum;
+            // A record adjusts what the filter offers, so the ones it does not name are still published.
+            expect(operations).not.toContain('contains');
+            expect(operations).toContain('equals');
+            expect(operations).toContain('startsWith');
+        });
+
         test('includes number filter schema', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter' }],

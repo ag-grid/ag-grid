@@ -1,4 +1,4 @@
-import type { AgColumn, IRowNode } from 'ag-grid-community';
+import type { AgColumn, IFilterOptionDef, IRowNode } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -8,17 +8,46 @@ import { getEntries } from '../filterExpressionOperators';
 
 const SET_OPERATOR_KEYS = ['isAnyOf', 'isNoneOf'] as const;
 
-/** Whether the column's own option list names a set operator, which is how any filter asks for them. */
-export function namesSetOperator(column: AgColumn): boolean {
-    const options = getColumnFilterOptions(column);
-    for (let i = 0, len = options?.length ?? 0; i < len; ++i) {
-        const option = options![i];
-        // A key only: a definition under one of these names is the author's own option, not this one.
-        if (option === 'isAnyOf' || option === 'isNoneOf') {
-            return true;
+/** What a column's option list says about each set operator; absent where it says nothing about that one. */
+interface SetOperatorsNamed {
+    isAnyOf?: boolean;
+    isNoneOf?: boolean;
+}
+
+/**
+ * What the column's own option list says about the set operators, per option: a column can offer one and
+ * withhold the other, so they are answered apart and only combined against what the column inherits.
+ * A key only, since a definition under one of these names is the author's own option rather than this one.
+ */
+export function namesSetOperator(column: AgColumn): SetOperatorsNamed {
+    const configs = getColumnFilterOptions(column);
+    // Tracked apart, since a column can offer one option without the other; the options themselves are
+    // narrowed later, so what is decided here is only whether either survives to be installed at all.
+    const named: SetOperatorsNamed = {};
+    // The first list is the whole of what that level offers, as it is for the options themselves; a list
+    // naming neither says nothing here, so the column's own filter still decides.
+    const firstList = configs.find((config) => Array.isArray(config));
+    for (let i = 0, len = firstList?.length ?? 0; i < len; ++i) {
+        const option = (firstList as (string | IFilterOptionDef)[])[i];
+        if (typeof option === 'string' && SET_OPERATOR_KEYS.includes(option as (typeof SET_OPERATOR_KEYS)[number])) {
+            named[option as (typeof SET_OPERATOR_KEYS)[number]] = true;
         }
     }
-    return false;
+    // Every record adjusts, innermost first, so the level nearest the column has the last word.
+    for (let i = 0, len = configs.length; i < len; ++i) {
+        const config = configs[i];
+        if (Array.isArray(config)) {
+            continue;
+        }
+        for (let j = 0, jLen = SET_OPERATOR_KEYS.length; j < jLen; ++j) {
+            const key = SET_OPERATOR_KEYS[j];
+            const value = config[key];
+            if (typeof value === 'boolean') {
+                named[key] = value;
+            }
+        }
+    }
+    return named;
 }
 
 /**

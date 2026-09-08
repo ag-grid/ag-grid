@@ -116,7 +116,7 @@ const gridOptions = {
 }
 ```
 
-For all [Cell Data Types](./cell-data-types/), the available filter options can be set via `filterOptions`. `enableSetOperators` decides whether the column offers the Advanced Filter's [`is any of` and `is none of`](#offering-the-options-on-any-column) options.
+For all [Cell Data Types](./cell-data-types/), the available filter options can be set via `filterOptions`, which also decides whether the column offers the Advanced Filter's [`is any of` and `is none of`](#offering-the-options-on-any-column) options.
 
 The available options are as follows:
 
@@ -139,8 +139,8 @@ The available options are as follows:
 | is between       | `inRange`            | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
 | is true          | `true`               | `boolean`                                                                                           |
 | is false         | `false`              | `boolean`                                                                                           |
-| is any of        | `isAnyOf`            | any, where `enableSetOperators` allows it — see [Set Filters](#set-filters)                         |
-| is none of       | `isNoneOf`           | any, where `enableSetOperators` allows it — see [Set Filters](#set-filters)                         |
+| is any of        | `isAnyOf`            | any, where `filterOptions` allows it — see [Set Filters](#set-filters)                              |
+| is none of       | `isNoneOf`           | any, where `filterOptions` allows it — see [Set Filters](#set-filters)                              |
 
 `is between` takes two values, written as a comma-separated pair: `[Age] is between (21, 38)`. The range is exclusive of both ends unless `inRangeInclusive = true` is set, exactly as it is in the [Number Filter](./filter-number/) and the [Date Filter](./filter-date/).
 
@@ -311,22 +311,28 @@ In the following example, **Country** uses a plain Set Filter, **Sport** formats
 
 ### Offering the Options on Any Column
 
-`filterParams.enableSetOperators` decides whether a column offers the two options, whatever filter it has. It defaults to `true` where the column's own filter is a Set Filter and to `false` otherwise, so it only needs setting to depart from that:
+A column offers the two options where its own filter is a Set Filter. Any other column can be given them by naming them in [`filterOptions`](./filter-conditions/#choosing-which-options-a-column-offers), and a Set Filter column can have them withheld the same way:
 
 ```js
 const gridOptions = {
     columnDefs: [
-        // Keeps its Number Filter, and offers the two options as well.
-        { field: 'age', filter: 'agNumberColumnFilter', filterParams: { enableSetOperators: true } },
+        // Keeps its Number Filter, and offers `is any of` as well.
+        { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: { isAnyOf: true } } },
         // A Set Filter column that offers only the options of its Cell Data Type.
-        { field: 'country', filter: 'agSetColumnFilter', filterParams: { enableSetOperators: false } },
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: { filterOptions: { isAnyOf: false, isNoneOf: false } },
+        },
     ],
-    // What a column setting neither of its own falls back to.
-    defaultColDef: { filterParams: { enableSetOperators: true } },
+    // What a column naming neither of its own falls back to.
+    defaultColDef: { filterParams: { filterOptions: { isAnyOf: true, isNoneOf: true } } },
 };
 ```
 
-It resolves in order: the column's `filterParams`, then `defaultColDef.filterParams`, then what the column's own filter implies. A [`filterOptions`](#custom-filter-options) list naming `isAnyOf` or `isNoneOf` offers them whatever any of those say, being the more specific statement of what a column offers.
+The two are named separately, so a column can offer one without the other. Being options like any other, they follow the same resolution as the rest: the object form merges through `defaultColDef` per option, and a list is the whole of what that column offers, so a list must name them for the column to keep them.
+
+Because they are the only options a column filter cannot evaluate, naming one never adds it to the column's own filter dropdown; it speaks to the Advanced Filter alone.
 
 The column's own filter is unchanged, and its `filterParams` are left to it: those were written for that filter rather than for a value list. A Set Filter column configures the list with them as described above, and a [Multi Filter](./filter-multi/) column with those of its Set Filter child; a column with any other filter offers its values unconfigured, apart from `colDef.keyCreator` and `colDef.filterValueGetter`. The `SetFilterModule` must be registered, since it is what reads the column's values.
 
@@ -381,7 +387,7 @@ A `displayKey` is resolved against the column being filtered, so different colum
 
 A column's list decides what the Advanced Filter suggests for it, not what it can read. An expression naming an option the list leaves out — one saved before the list was narrowed, for example — still applies, so changing `filterOptions` does not discard filters that have already been stored. Where a list names no option the Advanced Filter has, the column keeps the standard options for its Cell Data Type — which for a date column means the standard options rather than the relative date ones, since those are never standard.
 
-On a Set Filter column, `is any of` and `is none of` come from the column's filter rather than from its Cell Data Type, so they join the standard options for that Cell Data Type. A `filterOptions` list replaces those options in full, so it must name `isAnyOf` and `isNoneOf` for the column to keep offering them. Naming them also offers them on a column with any other filter, the same as [`enableSetOperators`](#offering-the-options-on-any-column) does and outranking it, with the values resolved as [Set Filters](#set-filters) describes. The column filter leaves them out of its own dropdown, having no operator for either; a Custom Filter Option under one of their keys is offered there like any other.
+On a Set Filter column, `is any of` and `is none of` come from the column's filter rather than from its Cell Data Type, so they join the standard options for that Cell Data Type. A list replaces those options in full, so it must name `isAnyOf` and `isNoneOf` for the column to keep offering them; see [Offering the Options on Any Column](#offering-the-options-on-any-column). A Custom Filter Option under one of those keys is a definition rather than a bare key, so the column filter offers it like any other.
 
 The following example demonstrates custom filter options taking different numbers of values:
 
@@ -536,7 +542,7 @@ All of the [Cell Data Types](./cell-data-types) are supported in the Advanced Fi
 - **Date String** and **Date Time String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string). This is compared against the cell values, which are also converted using the Date Parser.
 - **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
 
-The `is any of` and `is none of` options, wherever `enableSetOperators` offers them, are matched differently from all of the above, whatever the cell data type: the written values are resolved to Set Filter keys and the row is tested by a Set Filter over the column's values. See [Set Filters](#set-filters) above.
+The `is any of` and `is none of` options, wherever `filterOptions` offers them, are matched differently from all of the above, whatever the cell data type: the written values are resolved to Set Filter keys and the row is tested by a Set Filter over the column's values. See [Set Filters](#set-filters) above.
 
 ## Aggregation / Pivoting
 

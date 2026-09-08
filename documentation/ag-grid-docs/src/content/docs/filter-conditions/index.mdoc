@@ -22,6 +22,30 @@ Each filter's default filter options can be found on their respective pages:
 
 Information on defining [Custom Filter Options](#custom-filter-options) can be found below.
 
+### Choosing which Options a Column Offers
+
+`filterParams.filterOptions` can be written two ways. Prefer the object form: it names only what you are changing, so the column keeps the options its Cell Data Type already gives it, and anything set on `defaultColDef` merges in one option at a time.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        // Everything a Text Filter offers, without 'contains'.
+        { field: 'athlete', filterParams: { filterOptions: { contains: false } } },
+        // Only these two, in this order.
+        { field: 'country', filterParams: { filterOptions: ['equals', 'startsWith'] } },
+    ],
+};
+```
+
+- **An object** describes the changes to make to the options the column already offers, which its [Cell Data Type](./cell-data-types/) decides. `true` adds one, `false` withholds one, and anything you do not name is left alone. Because each option is a separate property, an object on `defaultColDef.filterParams` merges with a column's own **per option**, so a column can withhold a single option without respelling the rest.
+- **A list** is the whole of what the column offers, in the order given. It replaces the data type's options outright, so every option you still want has to be named, and a list on `defaultColDef` is replaced wholesale by a column's own.
+
+So an object inherits twice over: from the options the data type supplies, and then from `defaultColDef`. A list starts from nothing both times.
+
+Where the two levels use different forms, the list is the base and the object adjusts it, whichever level each came from. A column's object therefore changes the list `defaultColDef` gave it rather than the data type's options, and an object on `defaultColDef` still applies to a column that states its own list.
+
+Use a list when the order matters or the column offers a short bespoke set; use an object the rest of the time.
+
 ## Filter Value
 
 Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'inRange') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
@@ -44,8 +68,8 @@ The Join Operator decides how the Filter Conditions are joined, using either `AN
 
 The following example demonstrates Filter Condition configuration that can be applied to any Simple Filter.
 
-- The **Athlete** column shows a Text Filter with default behaviour for all options.
-- The **Country** column shows a Text Filter with `filterOptions` set to show a different list of available options, and `defaultOption` set to change the default option selected.
+- The **Athlete** column shows a Text Filter with `filterOptions` set as an object, keeping everything the Text Filter offers except `contains`.
+- The **Country** column shows a Text Filter with `filterOptions` set as a list, so it offers only those three in that order, and `defaultOption` set to change the default option selected.
 - The **Sport** column shows a Text Filter with `maxNumConditions` set to `10` so that up to ten conditions can be entered.
 - The **Age** column has a Number Filter with `numAlwaysVisibleConditions` set to `2` so that two conditions are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
 - The **Date** column has a Date Filter with `maxNumConditions` set to `1`, so that only the first condition is shown.
@@ -72,7 +96,30 @@ The number of `filterValues` and corresponding inputs is controlled by the optio
 
 Custom Filter Options are also offered by the [Advanced Filter](./filter-advanced/#custom-filter-options), which evaluates them with the same `predicate`.
 
-Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `string` keys as shown below:
+A custom option can be given in either form. In the object form it is the value under its own key, so it can be added without respelling the built-in options:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                filterOptions: {
+                    lessThanWithNulls: {
+                        displayKey: 'lessThanWithNulls',
+                        displayName: 'Less Than with Nulls',
+                        predicate: ([filterValue], cellValue) => cellValue == null
+                            || cellValue < filterValue,
+                    },
+                },
+            },
+        },
+    ],
+}
+```
+
+In the list form they are supplied alongside the built-in filter option `string` keys, and the list is the whole of what the column offers:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

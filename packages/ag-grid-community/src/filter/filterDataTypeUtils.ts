@@ -14,7 +14,7 @@ import type {
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
-import type { IFilterOptionDef, ISimpleFilterParams } from './provided/iSimpleFilter';
+import type { FilterOptionsConfig, IFilterOptionDef, ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';
 import { _isBlank } from './provided/simpleFilterUtils';
 import type { ITextFilterParams } from './provided/text/iTextFilter';
@@ -281,6 +281,14 @@ export function _getFilterParamsForDataType(
                   ...existingFilterParams,
               }
             : newFilterParams;
+    // The spread keeps only the column's, so a record naming one option would drop the list a data type
+    // supplies. The data type is simply the outermost level, and reads the same way as the colDef's own.
+    const dataTypeOptions = (newFilterParams as { filterOptions?: FilterOptionsConfig } | undefined)?.filterOptions;
+    const ownOptions = existingFilterParams?.filterOptions;
+    if (dataTypeOptions && ownOptions && filterParams) {
+        filterParams.filterOptions =
+            beans.filterManager?.resolveFilterOptions([dataTypeOptions, ownOptions]) ?? filterParams.filterOptions;
+    }
     return { filterParams, filterValueGetter };
 }
 

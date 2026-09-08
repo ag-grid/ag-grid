@@ -2,6 +2,7 @@ import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
+import type { FilterOptionsConfig } from '../filter/provided/iSimpleFilter';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { convertColumnTypes } from './columnUtils';
@@ -34,18 +35,27 @@ export function _addColumnDefaultAndTypes(
     const res: ColDef = {} as ColDef;
 
     const defaultColDef = gos.get('defaultColDef');
-    _mergeDeep(res, defaultColDef, false, true);
+    const filterOptionsConfigs: FilterOptionsConfig[] = [];
+    mergeColDefInto(res, defaultColDef, filterOptionsConfigs);
 
     const dataTypeDefinitionColumnType = dataTypeSvc?.updateColDefAndGetColumnType(res, colDef, colId);
     const columnTypes = colDef.type ?? dataTypeDefinitionColumnType ?? res.type;
     res.type = columnTypes;
     if (columnTypes) {
-        assignColumnTypes(beans, convertColumnTypes(columnTypes), res);
+        assignColumnTypes(beans, convertColumnTypes(columnTypes), res, filterOptionsConfigs);
     }
 
     const cellDataType = res.cellDataType;
 
-    _mergeDeep(res, colDef, false, true);
+    mergeColDefInto(res, colDef, filterOptionsConfigs);
+
+    // Once, with every level in hand: resolving in pairs loses a record as soon as a nearer level states a list.
+    if (filterOptionsConfigs.length > 1) {
+        const resolved = beans.filterManager?.resolveFilterOptions(filterOptionsConfigs);
+        if (resolved) {
+            res.filterParams.filterOptions = resolved;
+        }
+    }
 
     if (cellDataType !== undefined) {
         // `cellDataType: true` in provided def would overwrite inferred result type otherwise
@@ -69,7 +79,24 @@ export function _addColumnDefaultAndTypes(
     return res;
 }
 
-function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerged: ColDef): void {
+/**
+ * `filterOptions` takes two shapes, which `_mergeDeep` cannot reconcile, so each level's is kept for the
+ * filter module to read together once every level is in. Collected here because this is where they meet.
+ */
+function mergeColDefInto(res: ColDef, source: ColDef | undefined, configs: FilterOptionsConfig[]): void {
+    const own = source?.filterParams?.filterOptions;
+    if (own) {
+        configs.push(own);
+    }
+    _mergeDeep(res, source, false, true);
+}
+
+function assignColumnTypes(
+    beans: BeanCollection,
+    typeKeys: string[],
+    colDefMerged: ColDef,
+    configs: FilterOptionsConfig[]
+): void {
     const typeKeysLen = typeKeys.length;
     if (typeKeysLen === 0) {
         return;
@@ -77,7 +104,7 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
     const userTypes = beans.gos.get('columnTypes');
     // Fast path: no user types — read `DefaultColumnTypes` directly, skipping the merged-map copy and validation walk.
     if (userTypes == null) {
-        mergeTypeKeys(beans, colDefMerged, typeKeys, typeKeysLen, DefaultColumnTypes);
+        mergeTypeKeys(beans, colDefMerged, typeKeys, typeKeysLen, DefaultColumnTypes, configs);
         return;
     }
     const allColumnTypes = { ...DefaultColumnTypes };
@@ -94,7 +121,7 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
             allColumnTypes[key] = value;
         }
     }
-    mergeTypeKeys(beans, colDefMerged, typeKeys, typeKeysLen, allColumnTypes);
+    mergeTypeKeys(beans, colDefMerged, typeKeys, typeKeysLen, allColumnTypes, configs);
 }
 
 function mergeTypeKeys(
@@ -102,13 +129,14 @@ function mergeTypeKeys(
     colDefMerged: ColDef,
     typeKeys: string[],
     typeKeysLen: number,
-    typeMap: { [key: string]: ColDef }
+    typeMap: { [key: string]: ColDef },
+    configs: FilterOptionsConfig[]
 ): void {
     for (let i = 0; i < typeKeysLen; ++i) {
         const t = typeKeys[i].trim();
         const typeColDef = typeMap[t];
         if (typeColDef) {
-            _mergeDeep(colDefMerged, typeColDef, false, true);
+            mergeColDefInto(colDefMerged, typeColDef, configs);
         } else {
             beans.log.warn(36, { t });
         }

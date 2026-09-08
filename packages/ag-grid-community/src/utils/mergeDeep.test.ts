@@ -171,10 +171,16 @@ describe('_mergeDeep', () => {
         expect(dest.x).toEqual({ a: 1 });
     });
 
-    test('source array recurses into destination object, setting numeric keys (does not replace)', () => {
+    test('source array replaces destination object', () => {
         const dest: any = { x: { a: 1 } };
         _mergeDeep(dest, { x: [1, 2] });
-        expect(dest.x).toEqual({ a: 1, 0: 1, 1: 2 });
+        expect(dest.x).toEqual([1, 2]);
+    });
+
+    test('source array replaces destination array, rather than merging by index', () => {
+        const dest: any = { x: [1, 2, 3] };
+        _mergeDeep(dest, { x: [9] });
+        expect(dest.x).toEqual([9]);
     });
 
     test('makeCopyOfSimpleObjects=true clones nested plain objects (no shared reference)', () => {

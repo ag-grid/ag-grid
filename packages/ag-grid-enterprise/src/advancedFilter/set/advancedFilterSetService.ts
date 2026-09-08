@@ -170,12 +170,12 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         if (!column || !this.gos.isModuleRegistered('SetFilter')) {
             return false;
         }
-        // An option list naming them is the most specific statement there is, so it outranks the flag.
-        if (namesSetOperator(column)) {
-            return true;
-        }
-        // What the column asks for, then what its own filter implies.
-        return column.colDef.filterParams?.enableSetOperators ?? this.isSetFilterDef(column);
+        // The option list is the most specific statement there is, then what the column's own filter implies.
+        // Each option answered against what the column inherits, then combined: withholding one must not
+        // take the other with it, and naming one must not bring the other along.
+        const named = namesSetOperator(column);
+        const inherited = this.isSetFilterDef(column);
+        return (named.isAnyOf ?? inherited) || (named.isNoneOf ?? inherited);
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */

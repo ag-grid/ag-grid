@@ -1783,3 +1783,116 @@ describe('Column filter — an Advanced Filter option named in `filterOptions`',
         `);
     });
 });
+
+describe('`filterOptions` inherited from `defaultColDef`', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [TextFilterModule, ColumnMenuModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    const createGrid = (defaultFilterParams: ITextFilterParams, colFilterParams: ITextFilterParams) =>
+        gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: colFilterParams }],
+            defaultColDef: { filterParams: defaultFilterParams },
+            rowData: [{ country: 'Jamaica' }, { country: 'Poland' }],
+        } as GridOptions);
+
+    test("a record adjusts a boolean column's own options, not the text filter's", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'flag', cellDataType: 'boolean' }],
+            defaultColDef: { filter: true, filterParams: { filterOptions: { false: false } } },
+            rowData: [{ flag: true }, { flag: false }],
+        } as GridOptions);
+
+        const filter = await ColumnFilterHarness.open(api, 'flag');
+        // The data type supplies `true`/`false`; withholding one keeps the other rather than falling back
+        // to the text filter's comparisons, which a boolean column cannot evaluate.
+        const options = await filter.operatorOptions();
+        expect(options).toContain('True');
+        expect(options).not.toContain('False');
+        expect(options).not.toContain('Contains');
+    });
+
+    test('a record on `defaultColDef` still adjusts a list two levels nearer', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    type: 'narrowed',
+                    filterParams: { filterOptions: ['contains', 'equals', 'startsWith'] },
+                },
+            ],
+            columnTypes: { narrowed: { filterParams: { filterOptions: ['contains', 'equals'] } } },
+            defaultColDef: { filterParams: { filterOptions: { contains: false } } },
+            rowData: [{ country: 'Jamaica' }, { country: 'Poland' }],
+        } as GridOptions);
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        // Resolved in pairs, the column's list would meet the type's list and the record would already be gone.
+        expect(await filter.operatorOptions()).toEqual(['Equals', 'Begins with']);
+    });
+
+    test('a record on each merges per option', async () => {
+        const api: GridApi = await createGrid(
+            { filterOptions: { contains: false } },
+            { filterOptions: { equals: false } }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual([
+            'Does not contain',
+            'Does not equal',
+            'Begins with',
+            'Ends with',
+            'Blank',
+            'Not blank',
+        ]);
+    });
+
+    test("a column's record adjusts a list on `defaultColDef`, not the data type's options", async () => {
+        const api: GridApi = await createGrid(
+            { filterOptions: ['contains', 'equals', 'startsWith'] },
+            { filterOptions: { equals: false } }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Begins with']);
+    });
+
+    test("a record on `defaultColDef` adjusts a column's list, which is the base rather than the last word", async () => {
+        const api: GridApi = await createGrid(
+            { filterOptions: { startsWith: true } },
+            { filterOptions: ['contains', 'equals'] }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Equals', 'Begins with']);
+    });
+
+    test("options a record adds are appended in the record's own key order, the base keeping its places", async () => {
+        const api: GridApi = await createGrid(
+            { filterOptions: ['contains', 'equals'] },
+            { filterOptions: { endsWith: true, startsWith: true } }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Equals', 'Ends with', 'Begins with']);
+    });
+
+    test('a list on each leaves the nearer one, a list being the whole of what its level offers', async () => {
+        const api: GridApi = await createGrid(
+            { filterOptions: ['startsWith', 'endsWith'] },
+            { filterOptions: ['contains', 'equals'] }
+        );
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Equals']);
+    });
+});

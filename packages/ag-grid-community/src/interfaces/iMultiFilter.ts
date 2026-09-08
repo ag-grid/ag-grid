@@ -2,6 +2,7 @@ import type { AgPromise } from 'ag-stack';
 
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
+import type { FilterOptionsConfig } from '../filter/provided/iSimpleFilter';
 import type {
     ColumnFilter,
     IFilter,
@@ -62,11 +63,10 @@ export interface IMultiFilterParams {
     /** An array of filter definition objects. */
     filters?: IMultiFilterDef[];
     /**
-     * Whether the column offers the Advanced Filter's `is any of` and `is none of` options, whatever filter it has.
-     * The values come from the Set Filter child where there is one, and from the column itself otherwise.
-     * @agModule `AdvancedFilterModule`
+     * The options the column offers, applied over what its child filters offer. A Multi Filter has no
+     * options of its own, so this is where the column as a whole is spoken for.
      */
-    enableSetOperators?: boolean;
+    filterOptions?: FilterOptionsConfig;
     /**
      * If true, all UI inputs managed by this filter are for display only, and the filter can only
      * be affected by API calls. Does NOT affect child filters, they need to be individually

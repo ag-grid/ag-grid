@@ -15,11 +15,41 @@ import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHos
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/mergeDeep';
 import type { ColumnFilterService } from './columnFilterService';
+import type { FilterOptions, FilterOptionsConfig, IFilterOptionDef } from './provided/iSimpleFilter';
+import { _applyFilterOptionChanges } from './provided/simpleFilterUtils';
 import type { QuickFilterService } from './quickFilterService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
+
+    /**
+     * Every level's `filterOptions` read as one. The nearest list states the whole of what the column offers,
+     * so it is the base; a record only adjusts, so each applies in turn with the nearest having the last word.
+     * Resolved together rather than in pairs, or a record is lost the moment a nearer level states a list.
+     * Records only stay a record, so a later level supplying a list still has something to adjust it.
+     */
+    public resolveFilterOptions(configs: FilterOptionsConfig[]): FilterOptionsConfig | undefined {
+        let base: (IFilterOptionDef | string)[] | undefined;
+        for (let i = configs.length - 1; i >= 0; --i) {
+            const config = configs[i];
+            if (Array.isArray(config)) {
+                base = config;
+                break;
+            }
+        }
+        if (!base) {
+            return undefined; // The merge has already combined them key by key, which is what records mean.
+        }
+        let resolved = base;
+        for (let i = 0, len = configs.length; i < len; ++i) {
+            const config = configs[i];
+            if (!Array.isArray(config)) {
+                resolved = _applyFilterOptionChanges(resolved, config as FilterOptions);
+            }
+        }
+        return resolved;
+    }
 
     private quickFilter?: QuickFilterService;
     private advancedFilter: IAdvancedFilterService;
