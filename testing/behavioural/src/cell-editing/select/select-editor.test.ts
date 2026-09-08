@@ -143,4 +143,39 @@ describe('Select cell editor', () => {
             expect(api.getFocusedCell()?.rowIndex).toBe(0);
         });
     });
+
+    describe('untouched commit', () => {
+        // The picker shows `values[0]` when the stored value is not an option, so an untouched commit
+        // must keep the stored value; picking that same option is a real choice and must commit.
+        test('opening and closing without picking keeps a value that is not in the list', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef({ values: ['x', 'y'] })],
+                rowData: [{ id: '0', a: 'zzz' }],
+                getRowId: (p) => p.data.id,
+            });
+
+            await openEditor(api, 0, 'a');
+            api.stopEditing();
+
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+            expect(getAllRows(api)[0].data.a).toBe('zzz');
+        });
+
+        test('explicitly picking the fallback option commits it', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef({ values: ['x', 'y'] })],
+                rowData: [{ id: '0', a: 'zzz' }],
+                getRowId: (p) => p.data.id,
+            });
+
+            await openEditor(api, 0, 'a');
+            const option = Array.from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR)).find(
+                (el) => el.textContent?.trim() === 'x'
+            )!;
+            await firePointerLikeClick(option);
+
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+            expect(getAllRows(api)[0].data.a).toBe('x');
+        });
+    });
 });

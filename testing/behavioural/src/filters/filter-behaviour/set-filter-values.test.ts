@@ -10,6 +10,7 @@ import {
 } from 'ag-test-utils';
 
 import type {
+    FilterInputCallbackParams,
     GridApi,
     GridOptions,
     ISetFilterCellRendererParams,
@@ -115,6 +116,35 @@ describe('Set Filter — value model & UI (coverage)', () => {
             ├── LEAF id:1 country:"Austria"
             └── LEAF id:2 country:"Italy"
         `);
+    });
+
+    // One `textFormatter` on `defaultColDef.filterParams` reaches Text and Set columns alike, so calling it
+    // with no params here would hand a shared function `undefined` on exactly the Set ones.
+    test('the mini-filter `textFormatter` is given the column params, not called bare', async () => {
+        const sources: (string | undefined)[] = [];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        textFormatter: (from: string, params: FilterInputCallbackParams) => {
+                            sources.push(params?.source);
+                            return from;
+                        },
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ country: 'Australia' }, { country: 'Austria' }, { country: 'Italy' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        await filter.miniFilterSearch('aus');
+        await asyncSetTimeout(0);
+
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Australia', 'Austria']);
+        expect(sources.length).toBeGreaterThan(0);
+        expect([...new Set(sources)]).toEqual(['columnFilter']);
     });
 
     test('caseSensitive mini-filter only matches the exact case', async () => {
@@ -511,15 +541,15 @@ describe('Set Filter — value model & UI (coverage)', () => {
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '(Blanks)', 'Ada']);
     });
 
-    // A custom cellRenderer replaces the label, so it needs the same blank signal the built-in label gets.
-    test('a custom filterParams.cellRenderer is told a blank is blank', async () => {
+    // The blanks label is a formatted value, so it reaches a custom cellRenderer like any other label.
+    test('a custom filterParams.cellRenderer is given the blanks label on every untyped column', async () => {
         const seen: unknown[] = [];
         class LabelRenderer {
             private eGui!: HTMLElement;
             public init(params: ISetFilterCellRendererParams): void {
-                seen.push(params.valueFormatted);
+                seen.push(params.value);
                 this.eGui = document.createElement('span');
-                this.eGui.textContent = params.valueFormatted ?? 'MISSING';
+                this.eGui.textContent = params.valueFormatted || '<empty>';
             }
             public getGui(): HTMLElement {
                 return this.eGui;
@@ -528,23 +558,126 @@ describe('Set Filter — value model & UI (coverage)', () => {
                 return false;
             }
         }
+        const cellRenderer = { cellRenderer: LabelRenderer } as ISetFilterParams;
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', filter: 'agSetColumnFilter', refData: { it: 'Italy' }, filterParams: cellRenderer },
+                { field: 'name', filter: 'agSetColumnFilter', filterParams: cellRenderer },
+                { field: 'age', cellDataType: 'number', filter: 'agSetColumnFilter', filterParams: cellRenderer },
+            ],
+            rowData: [
+                { country: 'it', name: 'Ada', age: 42 },
+                { country: null, name: null, age: null },
+            ],
+        });
+
+        expect((await ColumnFilterHarness.open(api, 'country')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '(Blanks)',
+            'Italy',
+        ]);
+        expect((await ColumnFilterHarness.open(api, 'name')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '(Blanks)',
+            'Ada',
+        ]);
+        expect((await ColumnFilterHarness.open(api, 'age')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '(Blanks)',
+            '42',
+        ]);
+        // The key stays null, so a renderer that wants to treat a blank differently still can.
+        expect(seen).toContain(null);
+    });
+
+    // Returning nothing declines to name the blank, so the grid names it for the renderer as it does for the label.
+    test('a filterParams.valueFormatter answering nothing leaves the blank named for a cellRenderer too', async () => {
+        class LabelRenderer {
+            private eGui!: HTMLElement;
+            public init(params: ISetFilterCellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = params.valueFormatted || '<empty>';
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return false;
+            }
+        }
+        // The reference-data value-handler docs example: a lookup that misses answers `undefined`.
+        const valueFormatter = ({ value }: ValueFormatterParams) => ({ cb: 'Cadet Blue' })[value as string];
 
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
-                    field: 'country',
+                    field: 'colour',
                     filter: 'agSetColumnFilter',
-                    refData: { it: 'Italy' },
-                    filterParams: { cellRenderer: LabelRenderer } as ISetFilterParams,
+                    filterParams: { valueFormatter, cellRenderer: LabelRenderer } as ISetFilterParams,
                 },
+                { field: 'other', filter: 'agSetColumnFilter', filterParams: { valueFormatter } as ISetFilterParams },
             ],
-            rowData: [{ country: 'it' }, { country: null }],
+            rowData: [
+                { colour: 'cb', other: 'cb' },
+                { colour: null, other: null },
+            ],
         });
 
-        const filter = await ColumnFilterHarness.open(api, 'country');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'MISSING', 'Italy']);
-        // The blank arrives as nullish rather than '', which is what lets a renderer tell it apart.
-        expect(seen).toContain(null);
+        expect((await ColumnFilterHarness.open(api, 'colour')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '(Blanks)',
+            'Cadet Blue',
+        ]);
+        // The built-in label has always named it; the cellRenderer now agrees.
+        expect((await ColumnFilterHarness.open(api, 'other')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '(Blanks)',
+            'Cadet Blue',
+        ]);
+    });
+
+    test('a supplied filterParams.valueFormatter still owns the blank label, cellRenderer or not', async () => {
+        class LabelRenderer {
+            private eGui!: HTMLElement;
+            public init(params: ISetFilterCellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = params.valueFormatted || '<empty>';
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return false;
+            }
+        }
+        const valueFormatter = ({ value }: ValueFormatterParams) => (value == null ? 'nothing here' : String(value));
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'name', filter: 'agSetColumnFilter', filterParams: { valueFormatter } as ISetFilterParams },
+                {
+                    field: 'other',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { valueFormatter, cellRenderer: LabelRenderer } as ISetFilterParams,
+                },
+            ],
+            rowData: [
+                { name: 'Ada', other: 'Ada' },
+                { name: null, other: null },
+            ],
+        });
+
+        expect((await ColumnFilterHarness.open(api, 'name')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            'nothing here',
+            'Ada',
+        ]);
+        expect((await ColumnFilterHarness.open(api, 'other')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            'nothing here',
+            'Ada',
+        ]);
     });
 
     // The filter summary resolves the label independently of the Filter List.

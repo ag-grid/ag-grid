@@ -21,6 +21,11 @@ export interface TooltipCtrl<TLocation extends string, TParams> {
     getTooltipSwitchShowDelayOverride?(): number;
     getTooltipHideDelayOverride?(): number;
     shouldDisplayTooltip?(): boolean;
+    /**
+     * Only needed for components that move focus on hover, such as menu items, to suppress hover-driven focus tooltips.
+     * Checked synchronously on focusin, before scheduling tooltip display.
+     */
+    shouldDisplayTooltipOnFocus?(): boolean;
 
     /** Additional params to be passed to the tooltip */
     getAdditionalParams?(): TParams;

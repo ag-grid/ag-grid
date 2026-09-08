@@ -4,23 +4,38 @@ import {
     _PRESET_DATE_FILTER_RANGES,
     _PRESET_DATE_FILTER_TYPES,
     _RelativeDateRangeCache,
+    _TEXT_COMPARISONS,
+    _defaultLowercaseFormatter,
     _hasValue,
     _isBlank,
 } from 'ag-grid-community';
-import type { BaseCellDataType, IRowNode, ISimpleFilterModelPresetType } from 'ag-grid-community';
+import type { BaseCellDataType, IRowNode, ISimpleFilterModelPresetType, TextFormatter } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 
 export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
     caseSensitive?: boolean;
+    /** Normalises both sides before they are compared; replaces the case handling rather than adding to it. */
+    textFormatter?: TextFormatter;
+    /** Replaces the built-in text comparison. */
+    textMatcher?: (filterOption: string, value: string | null, filterText: string | null, node: IRowNode) => boolean;
     includeBlanksInEquals?: boolean;
     includeBlanksInNotEqual?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
     includeBlanksInRange?: boolean;
     inRangeInclusive?: boolean;
+    /** The column's own comparison, reading the cell value itself as the column filter's does. */
+    comparator?: (operand: ConvertedTValue, value: TValue) => number;
+    /** Gates every comparison, as it does in the column filter; a value it rejects matches only a negation. */
+    isValid?: (value: TValue) => boolean;
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
+}
+
+/** The column filter maps its model per row, so author code is free to normalise the operand it is handed. */
+export function freshOperand<T>(operand: T): T {
+    return operand instanceof Date ? (new Date(operand.getTime()) as T) : operand;
 }
 
 type FilterExpressionEvaluator<ConvertedTValue, TValue = ConvertedTValue> = (
@@ -123,6 +138,8 @@ interface FilterExpressionOperatorsParams {
     translate: AdvancedFilterTranslate;
 }
 
+const identity: TextFormatter = (from) => from ?? null;
+
 export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<
     string,
     TValue
@@ -142,38 +159,32 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         this.operators = {
             contains: {
                 displayValue: translate('advancedFilterContains'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
+                evaluator: this.createEvaluator('contains', false),
                 operands: 'one',
             },
             notContains: {
                 displayValue: translate('advancedFilterNotContains'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => !v.includes(o)),
+                evaluator: this.createEvaluator('notContains', true),
                 operands: 'one',
             },
             equals: {
                 displayValue: translate('advancedFilterTextEquals'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v === o),
+                evaluator: this.createEvaluator('equals', false),
                 operands: 'one',
             },
             notEqual: {
                 displayValue: translate('advancedFilterTextNotEqual'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, true, (v, o) => v != o),
+                evaluator: this.createEvaluator('notEqual', true),
                 operands: 'one',
             },
             startsWith: {
                 displayValue: translate('advancedFilterStartsWith'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.startsWith(o)),
+                evaluator: this.createEvaluator('startsWith', false),
                 operands: 'one',
             },
             endsWith: {
                 displayValue: translate('advancedFilterEndsWith'),
-                evaluator: (value, node, params, operand1) =>
-                    this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.endsWith(o)),
+                evaluator: this.createEvaluator('endsWith', false),
                 operands: 'one',
             },
             blank: {
@@ -189,20 +200,28 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         };
     }
 
-    private evaluateExpression(
-        value: TValue | null | undefined,
-        node: IRowNode,
-        params: FilterExpressionEvaluatorParams<string, TValue>,
-        operand: string,
-        nullsMatch: boolean,
-        expression: (value: string, operand: string) => boolean
-    ): boolean {
-        if (value == null) {
-            return nullsMatch;
-        }
-        return params.caseSensitive
-            ? expression(params.valueConverter(value, node), operand)
-            : expression(params.valueConverter(value, node).toLocaleLowerCase(), operand.toLocaleLowerCase());
+    private createEvaluator(
+        filterOption: keyof typeof _TEXT_COMPARISONS,
+        nullsMatch: boolean
+    ): FilterExpressionEvaluator<string, TValue> {
+        // Bound once per operator, and the key type is what makes the table's entry certain.
+        const compare = _TEXT_COMPARISONS[filterOption];
+        return (value, node, params, operand1) => {
+            if (value == null) {
+                return nullsMatch;
+            }
+            const formatter = params.textFormatter ?? (params.caseSensitive ? identity : _defaultLowercaseFormatter);
+            const formattedValue = formatter(params.valueConverter(value, node));
+            const formattedOperand = formatter(operand1!);
+            // Reached with either side null, as the Text Filter reaches its own matcher, which decides.
+            const matcher = params.textMatcher;
+            if (matcher) {
+                return matcher(filterOption, formattedValue, formattedOperand, node);
+            }
+            return formattedValue == null || formattedOperand == null
+                ? false
+                : compare(formattedValue, formattedOperand);
+        };
     }
 }
 
@@ -210,6 +229,14 @@ interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterE
     equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
     relativeDates?: boolean;
 }
+
+/** Where the cell sits against the operand, as `comparator` reports it: the column filter's own mapping. */
+const isEqualTo = (result: number) => result === 0;
+const isNotEqualTo = (result: number) => result !== 0;
+const isAbove = (result: number) => result > 0;
+const isAtLeast = (result: number) => result >= 0;
+const isBelow = (result: number) => result < 0;
+const isAtMost = (result: number) => result <= 0;
 
 export class ScalarFilterExpressionOperators<
     ConvertedTValue extends number | Date | bigint,
@@ -238,7 +265,8 @@ export class ScalarFilterExpressionOperators<
                         params,
                         operand1!,
                         !!params.includeBlanksInEquals,
-                        equals
+                        equals,
+                        isEqualTo
                     ),
                 operands: 'one',
             },
@@ -252,6 +280,7 @@ export class ScalarFilterExpressionOperators<
                         operand1!,
                         !!params.includeBlanksInNotEqual,
                         (v, o) => !equals(v, o),
+                        isNotEqualTo,
                         true
                     ),
                 operands: 'one',
@@ -265,7 +294,8 @@ export class ScalarFilterExpressionOperators<
                         params,
                         operand1!,
                         !!params.includeBlanksInGreaterThan,
-                        (v, o) => v > o
+                        (v, o) => v > o,
+                        isAbove
                     ),
                 operands: 'one',
             },
@@ -278,7 +308,8 @@ export class ScalarFilterExpressionOperators<
                         params,
                         operand1!,
                         !!params.includeBlanksInGreaterThan,
-                        (v, o) => v >= o
+                        (v, o) => v >= o,
+                        isAtLeast
                     ),
                 operands: 'one',
             },
@@ -291,7 +322,8 @@ export class ScalarFilterExpressionOperators<
                         params,
                         operand1!,
                         !!params.includeBlanksInLessThan,
-                        (v, o) => v < o
+                        (v, o) => v < o,
+                        isBelow
                     ),
                 operands: 'one',
             },
@@ -304,7 +336,8 @@ export class ScalarFilterExpressionOperators<
                         params,
                         operand1!,
                         !!params.includeBlanksInLessThan,
-                        (v, o) => v <= o
+                        (v, o) => v <= o,
+                        isAtMost
                     ),
                 operands: 'one',
             },
@@ -343,6 +376,17 @@ export class ScalarFilterExpressionOperators<
         if (value == null || _isBlank(value)) {
             return !!params.includeBlanksInRange;
         }
+        const { comparator, isValid } = params;
+        if (isValid && !isValid(value)) {
+            return false;
+        }
+        if (comparator) {
+            // The upper bound only where the lower one admits the row: the comparator is the column's own code.
+            const fromResult = comparator(freshOperand(from), value);
+            return params.inRangeInclusive
+                ? fromResult >= 0 && comparator(freshOperand(to), value) <= 0
+                : fromResult > 0 && comparator(freshOperand(to), value) < 0;
+        }
         const convertedValue = params.valueConverter(value, node);
         if (convertedValue == null) {
             return false;
@@ -359,12 +403,22 @@ export class ScalarFilterExpressionOperators<
         operand: ConvertedTValue,
         nullsMatch: boolean,
         expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean,
+        sign: (result: number) => boolean,
         isNegated?: boolean
     ): boolean {
         // A scalar has no use for a blank string, so it counts as absent — as it does in the column filter.
         // The `== null` half is what narrows `value`; `_isBlank` alone would not.
         if (value == null || _isBlank(value)) {
             return nullsMatch;
+        }
+        const { comparator, isValid } = params;
+        if (isValid && !isValid(value)) {
+            return !!isNegated;
+        }
+        // The column's own comparison reads the cell value, never a converted one: that is the whole reason
+        // a column with data the data type cannot read supplies one.
+        if (comparator) {
+            return sign(comparator(freshOperand(operand), value));
         }
         const convertedValue = params.valueConverter(value, node);
         // A value the data type cannot read is nothing to compare against, as the column filter's own validity
@@ -403,7 +457,7 @@ const PRESET_DATE_OPERATOR_LOCALE_KEYS: Record<ISimpleFilterModelPresetType, key
         last24Months: 'advancedFilterLast24Months',
     };
 
-/** One cache per data type, since a relative range depends on nothing but the clock. */
+/** One cache per data type table, since a relative range depends on nothing but the clock. */
 function addRelativeDateOperators(
     operators: { [operator: string]: FilterExpressionOperator<any> },
     translate: AdvancedFilterTranslate
@@ -416,7 +470,19 @@ function addRelativeDateOperators(
             displayValue: translate(PRESET_DATE_OPERATOR_LOCALE_KEYS[key]),
             evaluator: (value, node, params) => {
                 // A range has nothing to match a blank against, as the column filter has nothing either.
-                const convertedValue = value == null || _isBlank(value) ? null : params.valueConverter(value, node);
+                if (value == null || _isBlank(value)) {
+                    return false;
+                }
+                const { comparator, isValid } = params;
+                if (isValid && !isValid(value)) {
+                    return false;
+                }
+                if (comparator) {
+                    // A fresh pair each row, as the column filter builds one per comparison.
+                    const { fromTime, toTime } = cache.getRange(key, rangeFn);
+                    return comparator(new Date(fromTime), value) >= 0 && comparator(new Date(toTime), value) < 0;
+                }
+                const convertedValue = params.valueConverter(value, node);
                 if (convertedValue == null) {
                     return false;
                 }

@@ -142,6 +142,7 @@ export {
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
     _isGridSuppliedFilterOptions,
+    _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export {
@@ -157,12 +158,18 @@ export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     _bindFilterCallback,
     _classifyFilterOptions,
+    filterCallbackParams as _filterCallbackParams,
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
     _hasValue,
     _isBlank,
     _isRangeOutOfOrder,
 } from './filter/provided/simpleFilterUtils';
+export {
+    defaultLowercaseFormatter as _defaultLowercaseFormatter,
+    TEXT_COMPARISONS as _TEXT_COMPARISONS,
+    trimInputForFilter as _trimInputForFilter,
+} from './filter/provided/text/textFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
 export { GridCoreCreator } from './grid';

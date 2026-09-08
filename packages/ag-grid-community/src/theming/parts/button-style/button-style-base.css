@@ -32,22 +32,24 @@
     background-color: var(--ag-button-background-color);
     border: var(--ag-button-border);
     padding: var(--ag-button-vertical-padding) var(--ag-button-horizontal-padding);
-
-    &:active {
-        color: var(--ag-button-active-text-color);
-        background-color: var(--ag-button-active-background-color);
-        border: var(--ag-button-active-border);
-    }
-
-    &:disabled {
-        color: var(--ag-button-disabled-text-color);
-        background-color: var(--ag-button-disabled-background-color);
-        border: var(--ag-button-disabled-border);
-    }
 }
 
+/* These three tie on specificity, so source order decides: `:hover` matches throughout a press
+   and must come first, and `:disabled` must come last. */
 .ag-standard-button:hover:where(:not(:disabled)) {
     color: var(--ag-button-hover-text-color);
     background-color: var(--ag-button-hover-background-color);
     border: var(--ag-button-hover-border);
+}
+
+.ag-standard-button:active {
+    color: var(--ag-button-active-text-color);
+    background-color: var(--ag-button-active-background-color);
+    border: var(--ag-button-active-border);
+}
+
+.ag-standard-button:disabled {
+    color: var(--ag-button-disabled-text-color);
+    background-color: var(--ag-button-disabled-background-color);
+    border: var(--ag-button-disabled-border);
 }

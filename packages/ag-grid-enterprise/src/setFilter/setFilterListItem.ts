@@ -401,6 +401,10 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         } else {
             formattedValue = this.getFormattedValue(column as AgColumn, value);
         }
+        // A formatter answering nothing for a blank declined to name it, so the label and a cellRenderer agree here.
+        if (formattedValue == null && value == null) {
+            formattedValue = this.translate('blanks');
+        }
         this.formattedValue = formattedValue;
 
         this.setTooltipAndCellRendererParams(value, formattedValue);
@@ -483,7 +487,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private renderCellWithoutCellRenderer(): void {
         const { valueFormatted, value } = this.cellRendererParams;
-        let valueToRender = (valueFormatted == null ? value : valueFormatted) ?? this.translate('blanks');
+        let valueToRender = valueFormatted == null ? value : valueFormatted;
         if (typeof valueToRender !== 'string') {
             this.beans.log.warn(208);
             valueToRender = '';

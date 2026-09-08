@@ -8,17 +8,28 @@ import type {
     ColumnModel,
     ColumnNameService,
     DataTypeService,
+    IDateFilterParams,
     JoinAdvancedFilterModel,
     NamedBean,
     SetAdvancedFilterModel,
+    TextMatcherParams,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _classifyFilterOptions, _toFiniteNumber } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _bindFilterCallback,
+    _classifyFilterOptions,
+    _filterCallbackParams,
+    _getDefaultSimpleFilter,
+    _isGridSuppliedFilterParam,
+    _toFiniteNumber,
+} from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { COL_FILTER_EXPRESSION_END_CHAR, COL_FILTER_EXPRESSION_START_CHAR } from './colFilterExpressionParser';
-import { createCustomOptionOperators, getColumnFilterOptions } from './customFilterOptions';
+import { createCustomOptionOperators, getColumnFilterOptions, getMultiFilterChild } from './customFilterOptions';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
@@ -37,6 +48,7 @@ import {
     getBigIntParser,
     getNumberFormatter,
     getNumberParser,
+    getTextFilterParams,
     hasCustomNumberOperands,
 } from './filterExpressionUtils';
 import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
@@ -82,6 +94,8 @@ const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
     'includeBlanksInRange',
     'inRangeInclusive',
 ];
+
+const DATE_FILTER = 'agDateColumnFilter';
 
 /** A column's operators and the keys it narrows them to, classified together from its one `filterOptions`. */
 interface ColumnOperators {
@@ -521,7 +535,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         let operators = isSetColumn
             ? addSetOperators(dataTypeOperators, (key) => this.translate(key))
             : dataTypeOperators;
-        // Only the data type's own table carries `defaultOperators`; a derived one does not.
+        // The shared table's: `addSetOperators` returns a table carrying no `defaultOperators` of its own.
         let activeOperators = dataTypeOperators.defaultOperators;
         // The set options come from the filter, not the data type, so a data type holding some of its own
         // back — a date column and its relative options — must not take these with them.
@@ -533,7 +547,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
             const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
             if (customOptions.size) {
-                operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc());
+                const gos = this.gos;
+                operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc(), () =>
+                    _filterCallbackParams(gos, column, 'advancedFilter')
+                );
             }
             const operatorsByKey = operators.operators;
             const offeredOperators: string[] = [];
@@ -548,6 +565,28 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             }
         }
         return { operators, activeOperators };
+    }
+
+    /**
+     * The params a date column's comparisons read; a custom filter component's are its own. A Set Filter's are
+     * included so an author-written `isValidDate` still gates, the grid supplying none there.
+     */
+    private getDateFilterParams(
+        column: AgColumn,
+        baseCellDataType: BaseCellDataType | undefined
+    ): IDateFilterParams | undefined {
+        // The four date types are exactly those the Date Filter is the default for, so the table owns the list.
+        if (_getDefaultSimpleFilter(baseCellDataType) !== DATE_FILTER) {
+            return undefined;
+        }
+        const { filter, filterParams } = column.colDef;
+        if (filter === 'agMultiColumnFilter') {
+            return getMultiFilterChild(filterParams, DATE_FILTER)?.filterParams;
+        }
+        // `filter: true` is the data type's default, which under enterprise resolves to the Set Filter instead.
+        return filter === true || filter === DATE_FILTER || this.advFilterSetSvc.isSetFilterColumn(column)
+            ? filterParams
+            : undefined;
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {
@@ -589,12 +628,15 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
 
         const baseCellDataType = this.dataTypeSvc?.getBaseDataType(column);
+        // Only a converter that parses can stand in for a validity gate, so it is recorded where it is chosen.
+        let converterParses = false;
         switch (baseCellDataType) {
             case 'dateTimeString':
             case 'dateString':
                 params = {
                     valueConverter: this.dataTypeSvc?.getDateParserFunction(column) ?? ((v: any) => v),
                 };
+                converterParses = true;
                 break;
             case 'object':
                 // If there's a filter value getter, assume the value is already a string. Otherwise we need to format it.
@@ -620,19 +662,73 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 params = { valueConverter: (v: any) => v };
                 break;
         }
-        const { filterParams } = column.colDef;
-        if (filterParams) {
+        // A Multi Filter configures each filter on its own child, so the child that does the comparing owns
+        // these too; the parent's never stand in for the ones that child omits.
+        const { filter, filterParams } = column.colDef;
+        const source =
+            filter === 'agMultiColumnFilter'
+                ? getMultiFilterChild(filterParams, _getDefaultSimpleFilter(baseCellDataType))?.filterParams
+                : filterParams;
+        if (source) {
             for (let i = 0, len = COPIED_FILTER_PARAMS.length; i < len; ++i) {
                 const param = COPIED_FILTER_PARAMS[i];
-                const paramValue = filterParams[param];
+                const paramValue = source[param];
                 if (paramValue) {
                     params[param] = paramValue;
                 }
             }
         }
+        this.addTextFilterParams(params, column, baseCellDataType);
+        const dateFilterParams = this.getDateFilterParams(column, baseCellDataType);
+        if (dateFilterParams) {
+            // What the grid supplies restates the parse `valueConverter` does, and a comparator skips that
+            // conversion, so only where none is in play is the grid's own gate already covered.
+            const { comparator, isValidDate } = dateFilterParams;
+            // A Set Filter's `comparator` orders its list over two cell values, which is not a date comparison.
+            const ownComparator =
+                comparator && !_isGridSuppliedFilterParam(comparator) && !this.advFilterSetSvc.isSetFilterColumn(column)
+                    ? comparator
+                    : undefined;
+            const coveredByConversion = converterParses && !ownComparator;
+            params.comparator = ownComparator;
+            params.isValid = coveredByConversion && _isGridSuppliedFilterParam(isValidDate) ? undefined : isValidDate;
+        }
         this.expressionEvaluatorParams[colId] = params;
 
         return params;
+    }
+
+    private addTextFilterParams(
+        params: FilterExpressionEvaluatorParams<any, any>,
+        column: AgColumn,
+        baseCellDataType: BaseCellDataType | undefined
+    ): void {
+        const textParams = getTextFilterParams(column, baseCellDataType, this.advFilterSetSvc);
+        if (!textParams) {
+            return;
+        }
+        const { textFormatter, textMatcher } = textParams;
+        const gos = this.gos;
+        const boundFormatter = _bindFilterCallback(textFormatter, gos, column, 'advancedFilter');
+        params.textFormatter = boundFormatter;
+        if (!textMatcher) {
+            return;
+        }
+        // Built per row rather than captured: `context` is a grid option, so a held copy would go stale.
+        params.textMatcher = (filterOption, value, filterText, node) =>
+            textMatcher(
+                _addGridCommonParams<TextMatcherParams>(gos, {
+                    colDef: column.colDef,
+                    column,
+                    node,
+                    data: node.data,
+                    filterOption,
+                    value,
+                    filterText,
+                    textFormatter: boundFormatter,
+                    source: 'advancedFilter',
+                })
+            );
     }
 
     public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {

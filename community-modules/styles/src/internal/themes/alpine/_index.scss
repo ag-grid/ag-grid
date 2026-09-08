@@ -148,7 +148,7 @@
             background-color: var(--ag-row-hover-color);
         }
 
-        &:active {
+        &:not(:disabled):active {
             border-color: var(--ag-alpine-active-color);
             background-color: var(--ag-alpine-active-color);
             color: var(--ag-background-color);

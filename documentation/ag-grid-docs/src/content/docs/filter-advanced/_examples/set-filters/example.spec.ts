@@ -1,5 +1,14 @@
 import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from '@utils/grid/test-utils';
 
+/**
+ * Mirrors `SET_TREE_SEPARATOR` in
+ * `packages/ag-grid-enterprise/src/advancedFilter/set/setOperandsParser.ts`, which a docs spec cannot
+ * import: the bare specifier resolves to the package's built `dist`, and the docs test run pre-builds
+ * only `ag-grid-community`. `setOperandsParser.test.ts` pins the constant to this value, so a change to
+ * it fails in the package suite rather than silently here.
+ */
+const SET_TREE_SEPARATOR = '\u203A';
+
 test.agExample(import.meta, () => {
     test.eachFramework('offers the set options on a Set Filter column', async ({ page }) => {
         await ensureGridReady(page);
@@ -67,6 +76,6 @@ test.agExample(import.meta, () => {
 
         // Whichever year is first: choosing a group drills into it rather than ending the value.
         await filterInput.press('Enter');
-        await expect(filterInput).toHaveValue(/ > $/);
+        await expect(filterInput).toHaveValue(new RegExp(` ${SET_TREE_SEPARATOR} $`));
     });
 });

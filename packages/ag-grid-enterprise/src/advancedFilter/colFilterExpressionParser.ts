@@ -1,4 +1,5 @@
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
+import { _trimInputForFilter } from 'ag-grid-community';
 
 import { quoteSetValue } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -22,6 +23,7 @@ import {
     getNumberParser,
     getRangeOrderMessage,
     getSearchString,
+    getTextFilterParams,
     updateExpression,
 } from './filterExpressionUtils';
 import { SET_LIST_OPEN_CHAR, SET_TREE_SEPARATOR, SetOperandsParser } from './set/setOperandsParser';
@@ -372,8 +374,11 @@ class OperandParser implements Parser {
     }
 
     private parseOperand(fromComplete: boolean, position: number): void {
-        const { advFilterExpSvc } = this.params;
+        const { advFilterExpSvc, advFilterSetSvc } = this.params;
         this.endPosition = position;
+        if (getTextFilterParams(this.column, this.baseCellDataType, advFilterSetSvc)?.trimInput) {
+            this.operand = _trimInputForFilter(this.operand) ?? this.operand;
+        }
         this.modelValue = this.operand;
         if (fromComplete && this.quotes) {
             // missing end quote
@@ -802,10 +807,16 @@ export class ColFilterExpressionParser {
             startPosition = findStartPosition(expression, columnParser!.endPosition! + 1, endPosition);
         }
         let openBracket: string | undefined;
-        if (isList) {
-            openBracket = SET_LIST_OPEN_CHAR;
-        } else if (operands === 'range') {
-            openBracket = '(';
+        let appendQuote = false;
+        // An operand already written after the option is left as it stands: opening a second list or
+        // quote there would leave the text holding both.
+        if (hasOperand && !opensOperand(expression, endPosition + (empty ? 0 : 1))) {
+            if (isList) {
+                openBracket = SET_LIST_OPEN_CHAR;
+            } else if (operands === 'range') {
+                openBracket = '(';
+            }
+            appendQuote = isList || this.doesOperandNeedQuotes(baseCellDataType);
         }
         const update = updateExpression(
             expression,
@@ -813,7 +824,7 @@ export class ColFilterExpressionParser {
             endPosition,
             updateEntry.displayValue ?? updateEntry.key,
             hasOperand,
-            hasOperand && (isList || this.doesOperandNeedQuotes(baseCellDataType)),
+            appendQuote,
             empty,
             openBracket
         );
@@ -1010,4 +1021,10 @@ export class ColFilterExpressionParser {
 
 function addToListAndGetIndex<T>(list: T[], value: T): number {
     return list.push(value) - 1;
+}
+
+/** Whether the text from `position` already opens an operand region: a list, a range, or a quoted value. */
+function opensOperand(expression: string, position: number): boolean {
+    const char = expression[findStartPosition(expression, position, expression.length)];
+    return char === SET_LIST_OPEN_CHAR || char === '(' || char === '"' || char === `'`;
 }

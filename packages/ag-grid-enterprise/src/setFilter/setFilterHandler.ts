@@ -15,7 +15,13 @@ import type {
     SetFilterModelValue,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isClientSideRowModel } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _bindFilterCallback,
+    _isBlank,
+    _isClientSideRowModel,
+} from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -25,6 +31,7 @@ import {
     setFilterFormattedValue,
     setFilterNullIfBlank,
     translateForSetFilter,
+    unformattedSetFilterText,
 } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
@@ -194,7 +201,8 @@ export class SetFilterHandler<TValue = string>
         const filterParams = this.params.filterParams;
         const model = new TreeSetDisplayValueModel<any>(
             this.beans.log,
-            filterParams.textFormatter ?? ((value) => value ?? null),
+            _bindFilterCallback(filterParams.textFormatter, this.beans.gos, this.params.column, 'columnFilter') ??
+                unformattedSetFilterText,
             filterParams.treeListPathGetter,
             filterParams.treeListFormatter,
             this.isTreeDataOrGrouping()
@@ -480,10 +488,17 @@ export class SetFilterHandler<TValue = string>
                 return;
             }
             this.noValueFormatterSupplied = true;
-            // ref data is handled by ValueService
-            if (!isRefData) {
-                valueFormatter = (params) => _toStringOrNull(params.value)!;
-            }
+            // Naming the blank here, not at render time, is what keeps a supplied formatter able to override it.
+            valueFormatter = (params) => {
+                const value = params.value;
+                if (_isBlank(value)) {
+                    return translateForSetFilter(this, 'blanks');
+                }
+                // ref data is handled by ValueService
+                return isRefData
+                    ? this.beans.valueSvc.formatValue(params.column as AgColumn, null, value, undefined, false)!
+                    : _toStringOrNull(value)!;
+            };
         }
         this.valueFormatter = valueFormatter;
     }

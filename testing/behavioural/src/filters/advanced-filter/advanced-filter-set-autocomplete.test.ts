@@ -140,6 +140,34 @@ describe('Advanced Filter - Set Filter autocomplete rendering', () => {
         expect(document.querySelectorAll('.ag-autocomplete-list em').length).toBe(2);
         expect(document.querySelectorAll('.ag-autocomplete-list b').length).toBe(0);
     });
+
+    test('a blank reaches a cell renderer named, the same spelling the list offers', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        cellRenderer: (p: { valueFormatted?: string | null }) => `<em>${p.valueFormatted || ''}</em>`,
+                    },
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+        expect(Array.from(document.querySelectorAll('.ag-autocomplete-list em')).map((el) => el.textContent)).toEqual([
+            '(Blanks)',
+            'Jamaica',
+            'Poland',
+            'United Kingdom',
+            'United States',
+        ]);
+    });
 });
 
 describe('Advanced Filter - Set Filter editing a written list', () => {
@@ -328,6 +356,32 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'United Kingdom', 'United States']);
     });
 
+    test('closing the list drops the separator left behind by the value before it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of ["Jamaica", ');
+        await af.append(']');
+        expect(af.value).toBe('[Country] is any of ["Jamaica"]');
+
+        // The same list arriving whole, as a paste of it does.
+        await af.applyExpression('[Country] is any of ["Jamaica", "Poland", ]');
+        expect(af.value).toBe('[Country] is any of ["Jamaica", "Poland"]');
+        expect(af.input.validationMessage).toBe('');
+        expect(af.getModel().values).toEqual(['Jamaica', 'Poland']);
+    });
+
+    test('retargeting the option leaves the list already written alone', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        const partial = '[Country] is none ["Jamaica"]';
+        await af.type(partial, partial.indexOf(' ["'));
+        await af.selectAutocomplete();
+
+        expect(af.value).toBe('[Country] is none of ["Jamaica"]');
+    });
+
     test('a caret before the end bracket of a closed list can still start another value', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
@@ -339,5 +393,10 @@ describe('Advanced Filter - Set Filter value list', () => {
         // Readied for the next value, as selecting anywhere else in the list is.
         await af.selectAutocomplete();
         expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)", ]');
+
+        // Applying finishes the list, so the separator the caret was still sitting behind goes too.
+        await af.apply();
+        expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)"]');
+        expect(af.getModel().values).toEqual(['Jamaica', null]);
     });
 });

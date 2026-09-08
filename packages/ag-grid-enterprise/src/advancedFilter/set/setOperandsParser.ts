@@ -60,6 +60,8 @@ export class SetOperandsParser {
     private pendingQuoteClose = false;
     /** Set once a value is read and the next character must be a separator or the end bracket. */
     private expectSeparator = false;
+    /** Where a separator with no value yet after it was read, so closing the list makes it redundant. */
+    private separatorPosition = -1;
     private readonly validation: RegionValidation;
 
     constructor(
@@ -250,6 +252,11 @@ export class SetOperandsParser {
             this.finishValue(position - 1, true);
             if (!this.values.length) {
                 this.validation.reject('advancedFilterValidationMissingValue', position);
+            } else if (this.separatorPosition >= 0) {
+                (this.params.redundantSeparators ??= []).push({
+                    startPosition: this.separatorPosition,
+                    endPosition: position - 1,
+                });
             }
             return false;
         }
@@ -268,6 +275,7 @@ export class SetOperandsParser {
                 return this.validation.reject('advancedFilterValidationMissingValue', position);
             }
             this.finishValue(position - 1, true);
+            this.separatorPosition = position;
             return undefined;
         }
 
@@ -292,6 +300,7 @@ export class SetOperandsParser {
     }
 
     private startSegment(char: string, position: number): void {
+        this.separatorPosition = -1;
         if (!this.value) {
             this.value = {
                 segments: [],

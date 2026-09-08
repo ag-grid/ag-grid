@@ -17,7 +17,7 @@
         "pageType": "Dashboard",
         "framework": "React",
         "features": ["Live data updates", "Integrated sparklines", "Pivoting & aggregation"],
-        "seoTitle": "Finance Dashboard Example - Live Data Grid & Sparklines | AG Grid",
+        "seoTitle": "Finance Dashboard Example - Live Grid & Sparklines | AG Grid",
         "seoH1": "Finance Dashboard Example",
         "seoDescription": "An interactive finance dashboard built with AG Grid: live-updating prices, integrated sparklines and high-frequency data. Explore the demo.",
         "intro": "An interactive finance dashboard showing live-updating prices, integrated sparklines and high-frequency data in a single AG Grid.",

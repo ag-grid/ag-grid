@@ -41,6 +41,33 @@ interface ValueContext {
     rowNode: RowNode;
 }
 
+/**
+ * Row offset to apply to a formula being filled into `rowNode`.
+ *
+ * Formula refs are shifted in formula-row space (`RowNode.formulaRowIndex`) while the fill walks
+ * displayed rows, and a filter makes those two spaces diverge, so measure the gap between the
+ * target rows rather than counting one step per filled cell. A row outside formula-row space (a
+ * pinned clone) has no index, and there a single step is the best available guess.
+ */
+function getFormulaRowDelta(
+    direction: 'up' | 'down' | 'left' | 'right',
+    rowNode: RowNode,
+    previousRowNode?: RowNode
+): number {
+    const singleStep = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
+    if (singleStep === 0) {
+        return 0;
+    }
+
+    const from = previousRowNode?.formulaRowIndex;
+    const to = rowNode.formulaRowIndex;
+    if (from == null || to == null) {
+        return singleStep;
+    }
+
+    return to - from;
+}
+
 const fillOperationResultType = Symbol('fillOperationResultType');
 type FillOperationDecision =
     | { readonly [fillOperationResultType]: 'value'; readonly value: any }
@@ -317,6 +344,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         let withinInitialRange = true;
         let idx = 0;
+        // The row of the last value pushed to `values` - formula row offsets are measured between
+        // target rows, not counted per filled cell.
+        let previousRowNode: RowNode | undefined;
 
         const resetValues = () => {
             values.length = 0;
@@ -324,6 +354,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             initialNonAggregatedValues.length = 0;
             initialFormattedValues.length = 0;
             idx = 0;
+            previousRowNode = undefined;
         };
 
         const iterateAcrossCells = (column?: AgColumn, columns?: AgColumn[]) => {
@@ -398,6 +429,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                         initialFormattedValues,
                         col,
                         rowNode,
+                        previousRowNode,
                         idx: idx++,
                     });
 
@@ -445,6 +477,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
 
             if (!skipValue) {
+                // Tracks the row of the value the next formula shift is measured from, so the base
+                // formula and the row gap stay in the same frame when a cell is skipped.
+                previousRowNode = rowNode;
                 currentValues.push({
                     value: currentValue,
                     column: valueSourceCol,
@@ -492,6 +527,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         initialFormattedValues: any[];
         col: AgColumn;
         rowNode: RowNode;
+        previousRowNode?: RowNode;
         idx: number;
     }): {
         value: any;
@@ -502,8 +538,17 @@ export class AgFillHandle extends AbstractSelectionHandle {
         skipCell?: boolean;
     } {
         const { formula, valueSvc } = this.beans;
-        const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
-            params;
+        const {
+            event,
+            values,
+            initialValues,
+            initialNonAggregatedValues,
+            initialFormattedValues,
+            col,
+            rowNode,
+            previousRowNode,
+            idx,
+        } = params;
 
         const userFillOperation = _getFillHandle(this.gos)?.setFillValue;
         const isVertical = this.dragAxis === 'y';
@@ -579,7 +624,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             if (fromFormula) {
                 // Compute the row and column delta based on drag direction
-                const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
+                const rowDelta = getFormulaRowDelta(direction, rowNode, previousRowNode);
                 const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
                 processedValue = formula!.updateFormulaByOffset({ value: valueForFunctions, rowDelta, columnDelta });
             } else {

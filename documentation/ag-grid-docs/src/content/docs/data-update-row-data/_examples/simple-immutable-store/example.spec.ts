@@ -1,4 +1,11 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import {
+    ensureGridReady,
+    expect,
+    expectRowIdAtIndex,
+    test,
+    waitForGridContent,
+    waitForRowAnimations,
+} from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     const rows = (page: any) => page.locator('.ag-grid-scrolling-container .ag-row[row-id]');
@@ -21,16 +28,20 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const topSymbol = () =>
-            page.locator('.ag-grid-scrolling-container .ag-row[row-index="0"] [col-id="symbol"]').innerText();
-        const before = await topSymbol();
+        // `getRowId` is the symbol, so the row-id at index 0 is the top row's symbol.
+        const topRow = page.locator('.ag-grid-scrolling-container .ag-row[row-index="0"]');
+        const before = (await topRow.first().getAttribute('row-id'))!;
+        expect(before).toBeTruthy();
 
         await page.getByRole('button', { name: 'Reverse', exact: true }).click();
 
-        // Same rows, but reordered so the top row is now a different symbol
+        // Reversing re-sets the same five rows in place, so the row count is already correct before the
+        // reorder renders - wait on the row that actually moves instead, retried until the move settles.
+        await waitForRowAnimations(page);
+        await expectRowIdAtIndex(page, 0, before, { not: true });
+
+        // Same rows, now that they have been reordered
         await expect(rows(page)).toHaveCount(5);
-        const after = await topSymbol();
-        expect(after).not.toBe(before);
     });
 
     test.eachFramework('Grouping can be toggled on and off', async ({ page }) => {

@@ -474,6 +474,40 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
                 `
             );
         });
+
+        test('retargeting the operator leaves the operand already written alone', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            const partial = '[Athlete] eq "Bolt"';
+            typeInto(input, partial, partial.indexOf(' "Bolt"'));
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+
+            expect(input.value).toBe('[Athlete] equals "Bolt"');
+            applyFilter(input);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual([]);
+        });
+
+        test('a range operator does not reopen a bracket the expression already has', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            const partial = '[Age] betw (20, 26)';
+            typeInto(input, partial, partial.indexOf(' (20'));
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+
+            expect(input.value).toBe('[Age] is between (20, 26)');
+            applyFilter(input);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual(['Michael Phelps', 'Usain Bolt']);
+        });
     });
 
     describe('Full autocomplete flow → filter applied', () => {

@@ -14,6 +14,7 @@ import {
     _getPageBody,
     _getRootNode,
     _initStyledRoot,
+    _isKeyboardMode,
     _isPromise,
     _isVisible,
 } from 'ag-stack';
@@ -22,7 +23,6 @@ import type { AgCloseMenuEvent, AgMenuItemCallbacks, AgMenuItemDef } from './agM
 import { AgMenuList } from './agMenuList';
 
 const CSS_MENU = 'ag-menu';
-const SEPARATOR = 'separator';
 const CSS_CONTEXT_MENU_LOADING_ICON = 'ag-context-menu-loading-icon';
 
 export interface AgContextMenuServiceParams<
@@ -97,6 +97,9 @@ export class AgContextMenuService<
         anchorToElement?: HTMLElement
     ): boolean {
         const { getMenuItems, shouldBlockMenuOpen: shouldBlockMenu } = this.params;
+        // Capture the opening interaction before asynchronous menu items can outlive the input mode.
+        const suppressInitialTooltip =
+            mouseEvent instanceof MouseEvent ? mouseEvent.target != null && !_isKeyboardMode() : true;
         const menuItems = getMenuItems(menuActionParams, mouseEvent);
 
         if (_isPromise<(TDefaultMenuItem | AgMenuItemDef<TMenuActionParams, TCommon>)[]>(menuItems)) {
@@ -124,7 +127,13 @@ export class AgContextMenuService<
                     !shouldBlockMenu?.();
 
                 if (shouldShowMenu) {
-                    this.createContextMenu({ menuItems, menuActionParams, mouseEvent, anchorToElement });
+                    this.createContextMenu({
+                        menuItems,
+                        menuActionParams,
+                        mouseEvent,
+                        anchorToElement,
+                        suppressInitialTooltip,
+                    });
                 }
 
                 this.destroyLoadingSpinner?.();
@@ -136,7 +145,9 @@ export class AgContextMenuService<
             return false;
         }
 
-        return this.createContextMenu({ menuItems, menuActionParams, mouseEvent, anchorToElement });
+        this.createContextMenu({ menuItems, menuActionParams, mouseEvent, anchorToElement, suppressInitialTooltip });
+
+        return true;
     }
 
     private createLoadingIcon(mouseEvent: MouseEvent | Touch) {
@@ -178,7 +189,8 @@ export class AgContextMenuService<
         menuActionParams: WithoutCommon<TCommon, TMenuActionParams>;
         mouseEvent: MouseEvent | Touch;
         anchorToElement?: HTMLElement;
-    }): boolean {
+        suppressInitialTooltip: boolean;
+    }): void {
         const {
             mapMenuItems,
             menuItemCallbacks,
@@ -188,33 +200,12 @@ export class AgContextMenuService<
             onVisibleChanged,
             onMenuOpen,
         } = this.params;
-        const { menuItems, menuActionParams, mouseEvent, anchorToElement } = params;
+        const { menuItems, menuActionParams, mouseEvent, anchorToElement, suppressInitialTooltip } = params;
         const popupSvc = this.beans.popupSvc;
 
-        // Map up front so that a list which maps to nothing - e.g. `chartRange` supplied by the user
-        // while `enableCharts` is false - is treated exactly like an empty list, leaving the browser
-        // to show its own context menu rather than the grid showing an empty one. AG-18246.
-        let menuRef: ContextMenu<
-            TBeanCollection,
-            TProperties,
-            TGlobalEvents,
-            TCommon,
-            TPropertiesService,
-            TComponentSelectorType,
-            TMenuActionParams,
-            TDefaultMenuItem
-        > | null = null;
-        // The mapper only stores this thunk on the `action` of the items it builds, so it is called
-        // when an item is clicked - long after `menuRef` has been assigned below - never while mapping.
-        const mappedMenuItems = mapMenuItems
-            ? mapMenuItems(menuItems, menuActionParams, () => menuRef!.getGui())
-            : menuItems;
-
-        if (!mappedMenuItems.some((item) => item !== SEPARATOR)) {
-            return false;
-        }
-
-        const getMenuItems = () => mappedMenuItems;
+        const getMenuItems = mapMenuItems
+            ? (getGui: () => HTMLElement) => mapMenuItems(menuItems, menuActionParams, getGui)
+            : () => menuItems;
 
         const menu = new ContextMenu<
             TBeanCollection,
@@ -225,8 +216,7 @@ export class AgContextMenuService<
             TComponentSelectorType,
             TMenuActionParams,
             TDefaultMenuItem
-        >(getMenuItems, menuActionParams, menuItemCallbacks);
-        menuRef = menu;
+        >(getMenuItems, menuActionParams, menuItemCallbacks, suppressInitialTooltip);
         this.createBean(menu);
 
         const eMenuGui = menu.getGui();
@@ -307,8 +297,6 @@ export class AgContextMenuService<
         // generates a `mousedown` event to display the context menu.
         const isApi = mouseEvent && mouseEvent instanceof MouseEvent && mouseEvent.type === 'mousedown';
         onVisibleChanged?.(true, isApi ? 'api' : 'ui');
-
-        return true;
     }
 
     public override destroy(): void {
@@ -352,7 +340,8 @@ class ContextMenu<
             getGui: () => HTMLElement
         ) => (AgMenuItemDef<TMenuActionParams, TCommon> | TDefaultMenuItem)[],
         private readonly menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
-        private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>
+        private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>,
+        private readonly suppressInitialTooltip: boolean
     ) {
         super({ tag: 'div', cls: CSS_MENU, role: 'presentation' });
     }
@@ -386,7 +375,7 @@ class ContextMenu<
 
         const menuList = this.menuList;
         if (menuList) {
-            this.callbacks.preserveRangesWhile(this.beans, () => menuList.focusInto());
+            this.callbacks.preserveRangesWhile(this.beans, () => menuList.focusInto(this.suppressInitialTooltip));
         }
     }
 }
