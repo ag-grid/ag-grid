@@ -43,8 +43,8 @@ const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
-    /** The `initialState` object last applied, so a re-render can be told apart from a restore. */
-    private appliedInitialState: ColumnToolPanelState | undefined;
+    /** The params object state was last applied from, so a refresh can be told apart from a restore. */
+    private appliedParams: ToolPanelColumnCompParams | undefined;
     private params: ToolPanelColumnCompParams;
 
     private readonly childDestroyFuncs: (() => void)[] = [];
@@ -95,6 +95,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
+        // Construction state counts as applied, so the first `api.refreshToolPanel()` is not read as
+        // a restore. `refresh` records the params it was handed after calling back in here.
+        this.appliedParams = params;
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
@@ -461,16 +464,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public refresh(params: ToolPanelColumnCompParams): boolean {
         // The panel is rebuilt from scratch here, so expansion only survives if it is fed back in as
-        // the state to apply. A new `initialState` object (which is what an `api.setState` restore
-        // provides) is a restore and wins; otherwise the live expansion is re-presented, so a plain
-        // `api.refreshToolPanel()` is not a reset back to the construction state.
-        const { initialState } = params;
-        const isRestoringState = !!initialState && initialState !== this.appliedInitialState;
-        const stateToApply = isRestoringState ? initialState : this.getState();
-        this.appliedInitialState = initialState;
+        // the state to apply. An `api.setState` restore builds a new params object and wins;
+        // `api.refreshToolPanel()` re-presents the params already applied, so the live expansion is
+        // fed back instead of resetting to the construction state. The state object cannot be
+        // compared instead: restoring one saved snapshot twice passes the very same object.
+        const isRestoringState = !!params.initialState && params !== this.appliedParams;
+        const stateToApply = isRestoringState ? params.initialState : this.getState();
 
         this.destroyChildren();
         this.init({ ...params, initialState: stateToApply });
+        this.appliedParams = params;
         return true;
     }
 

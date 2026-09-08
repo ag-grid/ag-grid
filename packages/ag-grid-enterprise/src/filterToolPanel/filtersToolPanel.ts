@@ -35,6 +35,12 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
+    /**
+     * The params object state was last applied from. Only this level still holds the object the side
+     * bar handed over — the list panel merges its own defaults into a fresh object every init — so
+     * the restore decision is made here and passed down.
+     */
+    private appliedParams: ToolPanelFiltersCompParams | undefined;
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
@@ -64,9 +70,16 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         };
         this.params = newParams;
 
+        // An `api.setState` restore arrives as a newly built params object, whereas
+        // `api.refreshToolPanel()` re-presents the params already applied and must leave the live
+        // expansion alone. The state object itself cannot be compared: restoring one saved snapshot
+        // twice passes the very same object.
+        const isStateRestore = !!params.initialState && params !== this.appliedParams;
+        this.appliedParams = params;
+
         const { filtersToolPanelHeaderPanel, filtersToolPanelListPanel } = this;
         filtersToolPanelHeaderPanel.init(newParams);
-        filtersToolPanelListPanel.init(newParams);
+        filtersToolPanelListPanel.init(newParams, isStateRestore);
 
         const { suppressExpandAll: hideExpand, suppressFilterSearch: hideSearch } = newParams;
 

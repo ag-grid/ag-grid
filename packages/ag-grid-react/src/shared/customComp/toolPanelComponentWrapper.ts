@@ -8,7 +8,7 @@ export class ToolPanelComponentWrapper
     implements IToolPanel
 {
     private state: any;
-    private appliedInitialState: any;
+    private appliedParams: IToolPanelParams | undefined;
     private readonly onStateChange = (state: any) => this.updateState(state);
 
     public override init(params: IToolPanelParams): AgPromise<void> {
@@ -25,15 +25,16 @@ export class ToolPanelComponentWrapper
 
     /**
      * `state` is documented as initially the same value as `initialState`, which the grid provides at
-     * construction and again on every `api.setState` restore. A new object is a restore; the same one
-     * is a re-render, and must not overwrite the state the component has since reported.
+     * construction and again on every `api.setState` restore. Each restore comes with a newly built
+     * params object, whereas `api.refreshToolPanel()` re-presents the params already applied and must
+     * not overwrite the state the component has since reported. The state object cannot be compared
+     * instead: restoring one saved snapshot twice passes the very same object.
      */
     private applyInitialState(params: IToolPanelParams): void {
-        const { initialState } = params;
-        if (initialState !== undefined && initialState !== this.appliedInitialState) {
-            this.state = initialState;
+        if (params.initialState !== undefined && params !== this.appliedParams) {
+            this.state = params.initialState;
         }
-        this.appliedInitialState = initialState;
+        this.appliedParams = params;
     }
 
     public getState(): any {

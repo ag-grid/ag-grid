@@ -28,12 +28,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     private initialised = false;
     /**
-     * The `initialState` object last applied to the panel. `initialState` is an apply-now signal: it
-     * arrives at construction and again on every `api.setState` restore (each of which builds new
-     * params). Internal re-renders (column changes) re-use the same params object, so comparing the
-     * reference is what tells a genuine restore apart from a re-render, and keeps live expansion.
+     * Set when the panel is (re-)initialised for a state restore, and consumed by the next rebuild:
+     * `initialState` is an apply-now signal, so it must not be re-applied over the expansion the user
+     * has since changed when a column event rebuilds the list.
      */
-    private appliedInitialState: FiltersToolPanelState | undefined;
+    private pendingStateRestore = false;
     private isRestoringState = false;
 
     private params: ToolPanelFiltersCompParams;
@@ -50,8 +49,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         super({ tag: 'div', cls: 'ag-filter-list-panel', role: 'group' });
     }
 
-    public init(params: ToolPanelFiltersCompParams): void {
+    public init(params: ToolPanelFiltersCompParams, isStateRestore = false): void {
         this.initialised = true;
+        this.pendingStateRestore = isStateRestore;
 
         const defaultParams: Partial<ToolPanelFiltersCompParams> = _addGridCommonParams(this.gos, {
             suppressExpandAll: false,
@@ -124,9 +124,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         // We can therefore restore focus if an element in the filter tool panel was focused.
         const activeElement = _getActiveDomElement(this.beans) as HTMLElement;
 
-        const { initialState } = this.params;
-        this.isRestoringState = !!initialState && initialState !== this.appliedInitialState;
-        this.appliedInitialState = initialState;
+        this.isRestoringState = this.pendingStateRestore && !!this.params.initialState;
+        this.pendingStateRestore = false;
 
         // Want to restore the expansion state where possible.
         const expansionState = this.getExpansionState();
@@ -319,7 +318,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
-            this.init(this.params);
+            // First init, so any provided state is still the state to apply.
+            this.init(this.params, true);
         }
     }
 

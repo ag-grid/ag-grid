@@ -147,6 +147,29 @@ describe('Tool Panel state', () => {
             expect((await openFiltersPanel(api)).isGroupExpandedByTitle('Age')).toBe(false);
         });
 
+        test('re-restoring one saved snapshot object is authoritative after a user change', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs,
+                rowData,
+                sideBar: FILTERS_SIDEBAR,
+            });
+            const panel = await openFiltersPanel(api);
+            await panel.expandGroup('Age');
+            // The same object the app saved, restored twice with a user change in between: the state
+            // object's identity cannot be the restore signal.
+            const saved = api.getState();
+
+            restoreSideBar(api, saved.sideBar!);
+            await waitForFilterExpanded(api, 'Age', true);
+
+            await (await openFiltersPanel(api)).collapseGroup('Age');
+            await waitForFilterExpanded(api, 'Age', false);
+
+            api.setState(saved);
+
+            await waitForFilterExpanded(api, 'Age', true);
+        });
+
         test('refreshToolPanel and column changes preserve live expansion', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
                 columnDefs,
@@ -224,6 +247,20 @@ describe('Tool Panel state', () => {
             const api = await createColumnsGrid();
 
             api.setState({ sideBar: columnsState(['gA']) });
+
+            await waitForColumnsState(api, ['gA']);
+        });
+
+        test('re-restoring one saved snapshot object is authoritative after a user change', async () => {
+            const api = await createColumnsGrid();
+            api.setState({ sideBar: columnsState(['gA']) });
+            await waitForColumnsState(api, ['gA']);
+            const saved = api.getState();
+
+            // A user change, then the very same saved object again.
+            api.setState({ sideBar: columnsState(['gA', 'gB']) });
+            await waitForColumnsState(api, ['gA', 'gB']);
+            api.setState(saved);
 
             await waitForColumnsState(api, ['gA']);
         });
