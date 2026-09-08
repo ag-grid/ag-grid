@@ -2009,6 +2009,43 @@ describe('`filterOptions` inherited from `defaultColDef`', () => {
         `);
     });
 
+    test('a definition a record supplied survives being withheld and re-enabled', async () => {
+        const SPELLS: IFilterOptionDef = {
+            displayKey: 'spells',
+            displayName: 'Spells like',
+            numberOfInputs: 1,
+            predicate: ([value], cellValue) => `${cellValue}` === `${value}`,
+        };
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agTextColumnFilter',
+                    type: ['defines', 'withholds'],
+                    filterParams: { filterOptions: { spells: true } },
+                },
+            ],
+            columnTypes: {
+                defines: { filterParams: { filterOptions: { spells: SPELLS } } },
+                withholds: { filterParams: { filterOptions: { spells: false } } },
+            },
+            defaultColDef: { filterParams: { filterOptions: ['contains'], debounceMs: 0, maxNumConditions: 1 } },
+            rowData: [{ country: 'Jamaica' }, { country: 'Poland' }],
+        } as GridOptions);
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Spells like']);
+
+        // Re-enabled as a bare key it would carry no predicate, so it would filter nothing.
+        await filter.selectOperator('Spells like');
+        await filter.setText('Poland', 0);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'the re-enabled record definition evaluates').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 country:"Poland"
+        `);
+    });
+
     test('a record on each merges per option', async () => {
         const api: GridApi = await createGrid(
             { filterOptions: { contains: false } },

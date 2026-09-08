@@ -114,7 +114,10 @@ function buildColumnFilterSchema(
         // The filter's own definition of a usable entry, so the schema cannot offer a `type` it drops.
         // Read-only, so an entry it drops is not warned about again here.
         // A record adjusts what the filter already offers, so the schema's own default list is its base.
-        const defaultOptions = DEFAULT_OPTIONS_BY_FILTER[filterKey] ?? TEXT_FILTER_OPTIONS;
+        // The column's own base first, as `OptionsFactory` reads it: a cell data type stating options of its
+        // own is what a record adjusts, so the schema cannot publish the filter class's instead.
+        const defaultOptions =
+            filterParams?.dataTypeFilterOptions ?? DEFAULT_OPTIONS_BY_FILTER[filterKey] ?? TEXT_FILTER_OPTIONS;
         const filterOptions = filterParams?.filterOptions
             ? [
                   ..._classifyFilterOptions(

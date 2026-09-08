@@ -45,6 +45,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         // before a nearer one can put it back, leaving a bare key with no predicate to evaluate.
         // No prototype, so a key named `__proto__` is stored as one instead of silently setting it.
         const changes: FilterOptions = Object.create(null);
+        const definitions: { [key: string]: IFilterOptionDef } = Object.create(null);
         for (let i = 0, len = configs.length; i < len; ++i) {
             const config = configs[i];
             if (Array.isArray(config)) {
@@ -52,9 +53,15 @@ export class FilterManager extends BeanStub implements NamedBean {
             }
             for (const key of Object.keys(config)) {
                 const value = config[key];
-                if (value != null) {
-                    changes[key] = value; // A key naming nothing is no opinion, so it does not overrule one.
+                if (value == null) {
+                    continue; // A key naming nothing is no opinion, so it does not overrule one.
                 }
+                if (value !== true && value !== false) {
+                    definitions[key] = value;
+                }
+                // Enabling an option a further level defined means that definition, not a bare key: only the
+                // level that supplied it says what it evaluates.
+                changes[key] = value === true ? (definitions[key] ?? true) : value;
             }
         }
         return _applyFilterOptionChanges(base, changes);
