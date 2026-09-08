@@ -521,12 +521,12 @@ const createValues = (): Omit<SetColumnValues, 'entries'> => ({
 });
 
 /**
- * A path is drawn with its segments as they stand but searched for as a path, so typing one whose
- * segment holds a separator still finds it. A value of one segment is text, and is searched as it reads.
+ * A path is drawn with its segments as they stand but searched for as the reader splits one, so every
+ * row a typed separator could name is offered. Which one it resolves to is the parser's to decide.
  */
 const createEntry = (path: string[], setKey: string | null, tree: boolean): SetValueEntry => {
     const key = joinSetPath(path);
-    const searchValue = tree && path.length > 1 ? joinSetPath(splitSetPath(key)) : key;
+    const searchValue = tree ? joinSetPath(splitSetPath(key)) : key;
     return { key, setKey, path, searchValue: searchValue === key ? undefined : searchValue };
 };
 

@@ -1209,18 +1209,24 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
         expect(displayedAthletes(api)).toEqual(['child']);
     });
 
-    test('a search reads a separator as a level, the same precedence the parser applies', async () => {
+    test('a search offers every row a typed separator could name, whichever character spells it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', AMBIGUOUS_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        // Both characters name a level while typing, so both spellings search for the same path and offer
-        // the two rows drawn that way: the root value spelled with the guillemet, and the path itself.
+        // Searching does not have to pick a reading the way the parser does, so every row the text could
+        // name is offered: the three root values spelling the separator, and the path through the group.
         // Each is still chosen by picking its own row, which is what the entry carrying its path is for.
+        const OFFERED = ['Hello > World', 'Hello › World', 'Hello>World', 'Hello › World'];
+
         await af.type('[Country] is any of ["Hello > Wor');
-        expect(af.autocompleteEntries()).toEqual(['Hello › World', 'Hello › World']);
+        expect(af.autocompleteEntries()).toEqual(OFFERED);
 
         await af.type('[Country] is any of ["Hello › Wor');
-        expect(af.autocompleteEntries()).toEqual(['Hello › World', 'Hello › World']);
+        expect(af.autocompleteEntries()).toEqual(OFFERED);
+
+        // A slash divides nothing, so it narrows to the one value whose own text holds it.
+        await af.type('[Country] is any of ["Hello/Wor');
+        expect(af.autocompleteEntries()).toEqual(['Hello/World']);
     });
 
     test('two rows written the same way are still two rows, and each is chosen by picking its own', async () => {
