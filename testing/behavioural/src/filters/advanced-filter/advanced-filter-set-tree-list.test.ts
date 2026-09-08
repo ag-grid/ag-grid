@@ -11,7 +11,7 @@ import {
 import type { GridOptions, ISetFilterParams, KeyCreatorParams, SetAdvancedFilterModel } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
+import { SET_MODULES, chooseEveryOffered, displayedAthletes } from './advancedFilterSetFixture';
 
 describe('Advanced Filter - Set Filter tree list', () => {
     const gridsManager = new TestGridsManager({ modules: SET_MODULES });
@@ -40,19 +40,20 @@ describe('Advanced Filter - Set Filter tree list', () => {
         enableAdvancedFilter: true,
     };
 
-    test('the list drills into groups and reports how many children each still offers', async () => {
+    test('the whole hierarchy is offered flat, with no level to drill into', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Americas [1]', 'Europe [2]']);
+        expect(af.autocompleteEntries()).toEqual(['Americas › Jamaica', 'Europe › Poland', 'Europe › United Kingdom']);
 
+        // A path half written by hand is a half-written value, so it must not be reported as naming
+        // nothing. The unclosed list is still flagged, which is what the caret is actually missing.
         await af.type('[Country] is any of ["Europe" > ');
-        expect(af.autocompleteEntries()).toEqual(['Poland', 'United Kingdom']);
-        // Drilling in is a half-written value, so it must not be reported as naming nothing. The
-        // unclosed list is still flagged, which is what the caret is actually missing.
         expect(af.input.validationMessage).not.toContain('Value not found');
-        expect(af.input.validationMessage).toContain('Missing end bracket');
+        expect(af.input.validationMessage).toContain('Missing closing square bracket');
+        // Past the separator the search is the path so far, so only what lies under it is still offered.
+        expect(af.autocompleteEntries()).toEqual(['Europe › Poland', 'Europe › United Kingdom']);
     });
 
     test('a cell renderer draws the leaves of a tree list, and not the groups', async () => {
@@ -75,20 +76,47 @@ describe('Advanced Filter - Set Filter tree list', () => {
 
         const rendered = () =>
             Array.from(document.querySelectorAll('.ag-autocomplete-list em')).map((e) => e.textContent);
+        const parents = () =>
+            Array.from(document.querySelectorAll('.ag-autocomplete-list .ag-autocomplete-row-path-parent')).map(
+                (e) => e.textContent
+            );
 
-        // A group is a path segment rather than a value, so there is nothing for a renderer to draw.
+        // The row displays the whole path, but only its leaf is the renderer's to draw: the Set Filter's
+        // own tree list draws a leaf from its tree key, so the same value reaches here.
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Americas [1]', 'Europe [2]']);
-        expect(rendered()).toEqual([]);
-
-        // The Set Filter's own tree list draws a leaf from its tree key, so the same value reaches here.
-        await af.type('[Country] is any of ["Europe" > ');
-        expect(af.autocompleteEntries()).toEqual(['Poland', 'United Kingdom']);
-        expect(rendered()).toEqual(['Poland', 'United Kingdom']);
+        expect(rendered()).toEqual(['Jamaica', 'Poland', 'United Kingdom']);
+        // The parents are still drawn beside the renderer, or a flat list of paths would offer several
+        // rows with the same leaf and nothing to tell them apart.
+        expect(parents()).toEqual(['Americas › ', 'Europe › ', 'Europe › ']);
 
         // Searching reaches the same leaf by another route, so it must draw it the same way.
         await af.type('[Country] is any of [Pol');
         expect(rendered()).toEqual(['Poland']);
+        expect(parents()).toEqual(['Europe › ']);
+    });
+
+    test('a flat value holding the separator is not drawn as though it were a path', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...TREE_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { cellRenderer: (p: { value: string | null }) => `<em>${p.value ?? ''}</em>` },
+                },
+            ],
+            rowData: [{ athlete: 'Anna Kowalski', country: 'Guillemet › Land' }],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+
+        // No tree list, so the separator in the value's own text is text, and none of it is a parent.
+        expect(Array.from(document.querySelectorAll('.ag-autocomplete-list em')).map((e) => e.textContent)).toEqual([
+            'Guillemet › Land',
+        ]);
+        expect(document.querySelectorAll('.ag-autocomplete-list .ag-autocomplete-row-path-parent')).toHaveLength(0);
     });
 
     test('a blank value is offered and filtered on by the same label the Set Filter gives it', async () => {
@@ -109,13 +137,13 @@ describe('Advanced Filter - Set Filter tree list', () => {
         `);
     });
 
-    test('a group with every leaf already chosen drops out of the list', async () => {
+    test('a path already written drops out of the list', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        await af.type('[Country] is any of ["Americas" > "Jamaica", ');
+        await af.type('[Country] is any of ["Americas › Jamaica", ');
 
-        expect(af.autocompleteEntries()).toEqual(['Europe [2]']);
+        expect(af.autocompleteEntries()).toEqual(['Europe › Poland', 'Europe › United Kingdom']);
     });
 
     test('a written path filters the rows it names', async () => {
@@ -164,8 +192,9 @@ describe('Advanced Filter - Set Filter tree list', () => {
         const FORMS: Record<string, string> = {
             'the written separator': '[Country] is any of ["Europe" › "Poland"]',
             'the ASCII arrow a keyboard offers': '[Country] is any of ["Europe" > "Poland"]',
-            'a slash': '[Country] is any of ["Europe" / "Poland"]',
             'no spacing around it': '[Country] is any of ["Europe">"Poland"]',
+            // A slash is not one, so nothing separates the two values and the list is left unclosed.
+            'a slash, which separates nothing': '[Country] is any of ["Europe" / "Poland"]',
         };
         const outcomes: Record<string, unknown> = {};
         for (const name of Object.keys(FORMS)) {
@@ -177,8 +206,9 @@ describe('Advanced Filter - Set Filter tree list', () => {
         expect(outcomes).toEqual({
             'the written separator': ['Europe/Poland'],
             'the ASCII arrow a keyboard offers': ['Europe/Poland'],
-            'a slash': ['Europe/Poland'],
             'no spacing around it': ['Europe/Poland'],
+            'a slash, which separates nothing':
+                'Expression has an error. Missing closing square bracket - ["Europe" /.',
         });
     });
 
@@ -191,13 +221,41 @@ describe('Advanced Filter - Set Filter tree list', () => {
         expect((api.getAdvancedFilterModel() as SetAdvancedFilterModel).values).toEqual(['Europe/Poland']);
     });
 
-    test('a group written in another case offers its children, as the same path resolves', async () => {
+    test('a path written whole reads with whichever separator was typed, quoted or bare', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        await af.type('[Country] is any of ["EUROPE" > ');
+        const FORMS: Record<string, string> = {
+            'the written separator': '[Country] is any of ["Europe > Poland"]',
+            'the ASCII arrow a keyboard offers': '[Country] is any of ["Europe > Poland"]',
+            'no spacing around it': '[Country] is any of ["Europe>Poland"]',
+            'bare, with no quotes at all': '[Country] is any of [Europe > Poland]',
+            // A slash is not a separator, so this is one value, and no value is named `Europe / Poland`.
+            'a slash, which separates nothing': '[Country] is any of ["Europe / Poland"]',
+        };
+        const outcomes: Record<string, unknown> = {};
+        for (const name of Object.keys(FORMS)) {
+            await af.applyExpression(FORMS[name]);
+            outcomes[name] =
+                af.input.validationMessage || (api.getAdvancedFilterModel() as SetAdvancedFilterModel).values;
+        }
 
-        expect(af.autocompleteEntries()).toEqual(['Poland', 'United Kingdom']);
+        expect(outcomes).toEqual({
+            'the written separator': ['Europe/Poland'],
+            'the ASCII arrow a keyboard offers': ['Europe/Poland'],
+            'no spacing around it': ['Europe/Poland'],
+            'bare, with no quotes at all': ['Europe/Poland'],
+            'a slash, which separates nothing': 'Expression has an error. Value not found - "Europe / Poland".',
+        });
+    });
+
+    test('a path written in another case resolves, so it drops out of the list', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of ["EUROPE › POLAND", ');
+
+        expect(af.autocompleteEntries()).toEqual(['Americas › Jamaica', 'Europe › United Kingdom']);
     });
 
     test('caseSensitive makes the fold the identity, so only a path in its own case resolves', async () => {
@@ -258,7 +316,11 @@ describe('Advanced Filter - Set Filter tree list', () => {
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Americas region [1]', 'Europe region [2]']);
+        expect(af.autocompleteEntries()).toEqual([
+            'Americas region › Jamaica',
+            'Europe region › Poland',
+            'Europe region › United Kingdom',
+        ]);
 
         await af.applyExpression('[Country] is any of ["Europe region" > "Poland"]');
 
@@ -278,7 +340,7 @@ describe('Advanced Filter - Set Filter tree list', () => {
         });
         await asyncSetTimeout(0);
 
-        expect(af.value).toBe('[Country] is any of ["Europe" › "Poland"]');
+        expect(af.value).toBe('[Country] is any of ["Europe > Poland"]');
     });
 
     /** `Europe` lands on the path `EU`, which `Europe/Poland` also groups under: one row, two roles. */
@@ -327,21 +389,15 @@ describe('Advanced Filter - Set Filter tree list', () => {
         `);
     });
 
-    test('typing at the root searches the whole hierarchy, not just the level shown', async () => {
+    test('typing searches the whole path, so a leaf and a parent both narrow the list', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        // `Poland` is a child of `Europe`, so the drill-down level alone would offer nothing.
         await af.type('[Country] is any of [Pol');
         expect(af.autocompleteEntries()).toEqual(['Europe › Poland']);
-    });
-
-    test('a group is searchable too, so it can still be drilled into from a search', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
-        const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] is any of [Euro');
-        expect(af.autocompleteEntries()).toEqual(['Europe [2]', 'Europe › Poland', 'Europe › United Kingdom']);
+        expect(af.autocompleteEntries()).toEqual(['Europe › Poland', 'Europe › United Kingdom']);
     });
 
     test('a searched path draws its parents back, so the leaf is what the row names', async () => {
@@ -357,38 +413,68 @@ describe('Advanced Filter - Set Filter tree list', () => {
         expect(bold('.ag-autocomplete-list')).toEqual(['Pol']);
 
         // A match landing in a parent is still marked, so the drawn-back span has to be split around it
-        // rather than wrapping whole nodes. The group row has no path, so it gets no parent span at all.
+        // rather than wrapping whole nodes.
         await af.type('[Country] is any of [Euro');
-        expect(af.autocompleteEntries()).toEqual(['Europe [2]', 'Europe › Poland', 'Europe › United Kingdom']);
+        expect(af.autocompleteEntries()).toEqual(['Europe › Poland', 'Europe › United Kingdom']);
         expect(parents()).toEqual(['Europe › ', 'Europe › ']);
         expect(bold('.ag-autocomplete-row-path-parent')).toEqual(['Euro', 'Euro']);
     });
 
-    test('choosing a match found by searching writes the whole path it stands for', async () => {
+    test('choosing a match writes the whole path it stands for as one value', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] is any of [Pol');
         await af.selectAutocomplete();
 
-        expect(af.value).toBe('[Country] is any of ["Europe" › "Poland", ');
-        await af.applyExpression('[Country] is any of ["Europe" > "Poland"]');
+        expect(af.value).toBe('[Country] is any of ["Europe > Poland", ');
+
+        await af.append(']');
+        await af.apply();
+        expect(af.value).toBe('[Country] is any of ["Europe > Poland"]');
         expect((api.getAdvancedFilterModel() as SetAdvancedFilterModel).values).toEqual(['Europe/Poland']);
     });
 
-    test('the search is relative to the path already written', async () => {
+    test('a path being written by hand is searched for whole, segments included', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        // Inside `Europe` only its own descendants are searched, so Jamaica is out of scope.
-        await af.type('[Country] is any of ["Europe" > n');
-        expect(af.autocompleteEntries()).toEqual(['Poland', 'United Kingdom']);
+        await af.type('[Country] is any of ["Europe" > Pol');
+        expect(af.autocompleteEntries()).toEqual(['Europe › Poland']);
 
+        // The search covers the segments already written, so a leaf under another parent is out of scope.
         await af.type('[Country] is any of ["Europe" > Jam');
         expect(af.autocompleteEntries()).toEqual([]);
     });
 
-    test('clearing the search puts the drill-down level back', async () => {
+    test('the search narrows however the separator is typed, quoted or bare', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        const SEARCHES: Record<string, string> = {
+            'segments quoted, the drawn separator': '[Country] is any of ["Europe" › Pol',
+            'segments quoted, the ASCII arrow': '[Country] is any of ["Europe" > Pol',
+            'one quoted value, the drawn separator': '[Country] is any of ["Europe › Pol',
+            'one quoted value, the ASCII arrow': '[Country] is any of ["Europe > Pol',
+            'bare, the drawn separator': '[Country] is any of [Europe › Pol',
+            'bare, the ASCII arrow': '[Country] is any of [Europe > Pol',
+        };
+        const outcomes: Record<string, string[]> = {};
+        for (const name of Object.keys(SEARCHES)) {
+            await af.type(SEARCHES[name]);
+            outcomes[name] = af.autocompleteEntries();
+        }
+
+        // The typed character never reaches the match: the segments are rejoined as the list draws them,
+        // so every spelling searches for the same path.
+        const expected: Record<string, string[]> = {};
+        for (const name of Object.keys(SEARCHES)) {
+            expected[name] = ['Europe › Poland'];
+        }
+        expect(outcomes).toEqual(expected);
+    });
+
+    test('clearing the search puts the whole list back', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
@@ -396,7 +482,7 @@ describe('Advanced Filter - Set Filter tree list', () => {
         expect(af.autocompleteEntries()).toEqual(['Europe › Poland']);
 
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Americas [1]', 'Europe [2]']);
+        expect(af.autocompleteEntries()).toEqual(['Americas › Jamaica', 'Europe › Poland', 'Europe › United Kingdom']);
     });
 
     test('a value already written is not offered by the search either', async () => {
@@ -408,21 +494,18 @@ describe('Advanced Filter - Set Filter tree list', () => {
         await af.type('[Country] is any of [Pol');
         expect(af.autocompleteEntries()).toEqual(['Europe › Poland']);
 
-        await af.type('[Country] is any of ["Europe" > "Poland", Pol');
+        await af.type('[Country] is any of ["Europe › Poland", Pol');
         expect(af.autocompleteEntries()).toEqual([]);
     });
 
-    test('selecting a group drills in and selecting a leaf completes the value', async () => {
+    test('choosing over a path half written by hand replaces the whole of it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        await af.type('[Country] is any of [Euro');
-        await af.selectAutocomplete();
-        expect(af.value).toBe('[Country] is any of ["Europe" › ');
-
         await af.type('[Country] is any of ["Europe" > Pol');
         await af.selectAutocomplete();
-        expect(af.value).toBe('[Country] is any of ["Europe" > "Poland", ');
+
+        expect(af.value).toBe('[Country] is any of ["Europe > Poland", ');
     });
 });
 
@@ -461,18 +544,51 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
         enableAdvancedFilter: true,
     };
 
-    test('the value list is the group path, one level at a time', async () => {
+    test('the auto group column is not offered, whatever filter it is given', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Employee',
+                filter: 'agSetColumnFilter',
+                filterParams: { treeList: true } satisfies ISetFilterParams,
+            },
+            rowData: [
+                { country: 'Jamaica', athlete: 'Usain Bolt' },
+                { country: 'Poland', athlete: 'Anna Kowalski' },
+            ],
+            groupDefaultExpanded: -1,
+            enableAdvancedFilter: true,
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        // The column exists and carries that header, so the empty list below is it being left out of the
+        // Advanced Filter rather than never having been created.
+        expect(api.getColumn('ag-Grid-AutoColumn')?.getColDef().headerName).toBe('Employee');
+
+        // `Country` is hidden, so the whole searchable list is the one ordinary column.
+        await af.type('[A');
+        expect(af.autocompleteEntries()).toEqual(['Athlete']);
+
+        // `Emp` matches the auto group column's own header and nothing else, so an empty list is the
+        // column being absent rather than the search having narrowed it away.
+        await af.type('[Emp');
+        expect(af.autocompleteEntries()).toEqual([]);
+    });
+
+    test('the value list is every group path, flat', async () => {
         const api = await gridsManager.createGridAndWait('grid1', GROUPING_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica [1]', 'Poland [2]']);
 
-        await af.type('[Group] is any of ["Poland" > ');
-        expect(af.autocompleteEntries()).toEqual(['Sprint [1]', 'Swimming [1]']);
-
-        await af.type('[Group] is any of ["Poland" > "Sprint" > ');
-        expect(af.autocompleteEntries()).toEqual(['Anna Kowalski']);
+        expect(af.autocompleteEntries()).toEqual([
+            'Jamaica › Sprint › Usain Bolt',
+            'Poland › Sprint › Anna Kowalski',
+            'Poland › Swimming › Jan Nowak',
+        ]);
     });
 
     test('a written group path filters to the leaf it names', async () => {
@@ -523,7 +639,11 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica [1]', 'Poland [2]']);
+        expect(af.autocompleteEntries()).toEqual([
+            'Jamaica › Sprint › Usain Bolt',
+            'Poland › Sprint › Anna Kowalski',
+            'Poland › Swimming › Jan Nowak',
+        ]);
 
         api.setGridOption('rowData', [
             ...GROUPING_OPTIONS.rowData!,
@@ -534,7 +654,7 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
         // The keys are the group paths, which only exist once the grouping stage has run over the new rows.
         await af.type('');
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica [1]', 'Kenya [1]', 'Poland [2]']);
+        expect(af.autocompleteEntries()).toContain('Kenya › Marathon › Eliud Kipchoge');
 
         await af.applyExpression('[Group] is any of ["Kenya" > "Marathon" > "Eliud Kipchoge"]');
         expect(af.input.validationMessage).toBe('');
@@ -559,7 +679,7 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
         api.setAdvancedFilterModel(model);
         await asyncSetTimeout(0);
 
-        expect(af.value).toBe('[Group] is any of ["Poland" › "Sprint" › "Anna Kowalski"]');
+        expect(af.value).toBe('[Group] is any of ["Poland > Sprint > Anna Kowalski"]');
         expect(api.getAdvancedFilterModel()).toEqual(model);
     });
 
@@ -568,7 +688,11 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica [1]', 'Poland [2]']);
+        expect(af.autocompleteEntries()).toEqual([
+            'Jamaica › Sprint › Usain Bolt',
+            'Poland › Sprint › Anna Kowalski',
+            'Poland › Swimming › Jan Nowak',
+        ]);
 
         // The key a row gets is built from the row group columns, so dropping one shortens every path.
         api.setRowGroupColumns(['country']);
@@ -576,10 +700,11 @@ describe('Advanced Filter - Set Filter on a row group column', () => {
 
         await af.type('');
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica [1]', 'Poland [2]']);
-
-        await af.type('[Group] is any of ["Poland" > ');
-        expect(af.autocompleteEntries()).toEqual(['Anna Kowalski', 'Jan Nowak']);
+        expect(af.autocompleteEntries()).toEqual([
+            'Jamaica › Usain Bolt',
+            'Poland › Anna Kowalski',
+            'Poland › Jan Nowak',
+        ]);
     });
 
     test('a path from the old grouping no longer names a row once a group column is dropped', async () => {
@@ -648,15 +773,13 @@ describe('Advanced Filter - Set Filter on a tree data column', () => {
         enableAdvancedFilter: true,
     };
 
-    test('the value list is the data path, one level at a time', async () => {
+    test('the value list is every data path, flat', async () => {
         const api = await gridsManager.createGridAndWait('grid1', TREE_DATA_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Group] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['docs [2]', 'src [1]']);
 
-        await af.type('[Group] is any of ["docs" > ');
-        expect(af.autocompleteEntries()).toEqual(['notes.txt', 'plan.txt']);
+        expect(af.autocompleteEntries()).toEqual(['docs › notes.txt', 'docs › plan.txt', 'src › main.ts']);
     });
 
     test('is none of a data path leaves every other leaf', async () => {
@@ -778,39 +901,92 @@ describe('Advanced Filter - Set Filter tree list holding the separators', () => 
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Arrow > Group [1]', 'Plain [1]', 'Slash / Group [1]']);
 
-        await af.type('[Country] is any of ["Slash / Group" > ');
-        expect(af.autocompleteEntries()).toEqual(['2024/01']);
+        expect(af.autocompleteEntries()).toEqual([
+            'Arrow > Group › Leaf',
+            'Plain › Guillemet › Leaf',
+            'Slash / Group › 2024/01',
+        ]);
     });
 
     test('choosing a segment holding a separator writes it quoted, so the path still reads', async () => {
         const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        await af.type('[Country] is any of [Slash');
+        // The joined spelling would split on the `>` inside the group name, so the segments keep their
+        // quotes: a chosen value is written exactly as a stored model of it would be.
+        await af.type('[Country] is any of [Arrow');
         await af.selectAutocomplete();
-        expect(af.value).toBe('[Country] is any of ["Slash / Group" › ');
+        expect(af.value).toBe('[Country] is any of ["Arrow > Group" > "Leaf", ');
 
-        await af.append('2024');
-        await af.selectAutocomplete();
-        expect(af.value).toBe('[Country] is any of ["Slash / Group" › "2024/01", ');
-
-        await af.applyExpression('[Country] is any of ["Slash / Group" > "2024/01"]');
+        await af.append(']');
+        await af.apply();
         expect(af.input.validationMessage).toBe('');
         await new GridRows(api, 'separator in a tree segment').check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:1 athlete:"B" country:"Slash / Group|2024/01"
+            └── LEAF id:0 athlete:"A" country:"Arrow > Group|Leaf"
         `);
     });
 
-    test('a stored path holding a separator is written back quoted segment by segment', async () => {
+    test('every path the list offers can be chosen and applied, separators and all', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+        const offered = af.autocompleteEntries();
+        const outcomes: Record<string, unknown> = {};
+
+        for (let i = 0; i < offered.length; ++i) {
+            await af.type('[Country] is any of [');
+            for (let down = 0; down < i; ++down) {
+                await af.pressKey('ArrowDown');
+            }
+            await af.selectAutocomplete();
+            await af.append(']');
+            await af.apply();
+            outcomes[offered[i]] = af.input.validationMessage || af.getModel().values;
+        }
+
+        // The keys come from the row data, so a path offered under the wrong text, or written in a form
+        // that reads back as a different path, fails here rather than agreeing with itself.
+        expect(outcomes).toEqual({
+            'Arrow > Group › Leaf': ['Arrow > Group|Leaf'],
+            'Plain › Guillemet › Leaf': ['Plain|Guillemet › Leaf'],
+            'Slash / Group › 2024/01': ['Slash / Group|2024/01'],
+        });
+    });
+
+    test('segments are quoted one at a time, so a path may mix quoted and bare ones', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        // Quoting the first segment is what says its `>` is text; the second needs no quotes of its own,
+        // and either separator may join them.
+        const EXPRESSIONS: Record<string, string> = {
+            'both quoted': '[Country] is any of ["Arrow > Group" > "Leaf"]',
+            'second bare': '[Country] is any of ["Arrow > Group" › Leaf]',
+            'second bare, ASCII arrow': '[Country] is any of ["Arrow > Group" > Leaf]',
+        };
+        const outcomes: Record<string, unknown> = {};
+        for (const name of Object.keys(EXPRESSIONS)) {
+            await af.applyExpression(EXPRESSIONS[name]);
+            outcomes[name] = af.input.validationMessage || af.getModel().values;
+        }
+
+        expect(outcomes).toEqual({
+            'both quoted': ['Arrow > Group|Leaf'],
+            'second bare': ['Arrow > Group|Leaf'],
+            'second bare, ASCII arrow': ['Arrow > Group|Leaf'],
+        });
+    });
+
+    test('a stored path is written back in whichever spelling reads as itself', async () => {
         const api = await gridsManager.createGridAndWait('grid1', SEPARATOR_TREE_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
         const KEYS: Record<string, string> = {
             'the written separator in a group name': 'Arrow > Group|Leaf',
-            'a slash in a leaf name': 'Slash / Group|2024/01',
+            'a slash, which is not one': 'Slash / Group|2024/01',
             'a guillemet in a leaf name': 'Plain|Guillemet › Leaf',
         };
         const outcomes: Record<string, unknown> = {};
@@ -824,17 +1000,19 @@ describe('Advanced Filter - Set Filter tree list holding the separators', () => 
             };
         }
 
+        // A segment holding a separator would split out of the joined spelling into a longer path naming
+        // nothing, so those keep their own quotes; a slash divides nothing, so that one joins.
         expect(outcomes).toEqual({
             'the written separator in a group name': {
-                written: '[Country] is any of ["Arrow > Group" › "Leaf"]',
+                written: '[Country] is any of ["Arrow > Group" > "Leaf"]',
                 readBack: ['Arrow > Group|Leaf'],
             },
-            'a slash in a leaf name': {
-                written: '[Country] is any of ["Slash / Group" › "2024/01"]',
+            'a slash, which is not one': {
+                written: '[Country] is any of ["Slash / Group > 2024/01"]',
                 readBack: ['Slash / Group|2024/01'],
             },
             'a guillemet in a leaf name': {
-                written: '[Country] is any of ["Plain" › "Guillemet › Leaf"]',
+                written: '[Country] is any of ["Plain" > "Guillemet › Leaf"]',
                 readBack: ['Plain|Guillemet › Leaf'],
             },
         });
@@ -858,8 +1036,8 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
-    // Three things a written `Hello > World` could plausibly mean: two root values that hold the separator
-    // themselves, and the path through the group that shares their name. Paths split on `|`.
+    // Everything a written `Hello › World` could plausibly mean: root values holding a separator of their
+    // own, including the one the list writes a path with, and the path itself. Paths split on `|`.
     const AMBIGUOUS_OPTIONS: GridOptions = {
         columnDefs: [
             { field: 'athlete' },
@@ -876,18 +1054,28 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
             { athlete: 'spaced', country: 'Hello > World' },
             { athlete: 'tight', country: 'Hello>World' },
             { athlete: 'slashed', country: 'Hello/World' },
+            { athlete: 'guillemet', country: 'Hello › World' },
             { athlete: 'child', country: 'Hello|World' },
             { athlete: 'other', country: 'Hello|Other' },
         ],
         enableAdvancedFilter: true,
     };
 
-    test('all four sit side by side in the list, the group after the values', async () => {
+    test('all of them sit side by side in the list, the path spelled out in full', async () => {
         const api = await gridsManager.createGridAndWait('grid1', AMBIGUOUS_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Hello > World', 'Hello/World', 'Hello>World', 'Hello [2]']);
+        // The root value and the path are offered under the same text, which is why quoting one of them
+        // has to pick a side: the last two entries are the group's children.
+        expect(af.autocompleteEntries()).toEqual([
+            'Hello > World',
+            'Hello › World',
+            'Hello/World',
+            'Hello>World',
+            'Hello › Other',
+            'Hello › World',
+        ]);
     });
 
     test('quoted, each of them names exactly one row', async () => {
@@ -899,6 +1087,8 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
             'a root value holding a tight separator': '[Country] is any of ["Hello>World"]',
             'a root value holding a slash': '[Country] is any of ["Hello/World"]',
             'the path through the group': '[Country] is any of ["Hello" > "World"]',
+            // The path's own written spelling, which here is also a root value's text: the value wins.
+            'the path written whole, as the list writes it': '[Country] is any of ["Hello › World"]',
         };
         const outcomes: Record<string, unknown> = {};
         for (const name of Object.keys(EXPRESSIONS)) {
@@ -911,6 +1101,7 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
             'a root value holding a tight separator': ['tight'],
             'a root value holding a slash': ['slashed'],
             'the path through the group': ['child'],
+            'the path written whole, as the list writes it': ['guillemet'],
         });
     });
 
@@ -921,6 +1112,7 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
         const EXPRESSIONS: Record<string, string> = {
             spaced: '[Country] is any of [Hello > World]',
             tight: '[Country] is any of [Hello>World]',
+            // A slash divides nothing, so this stays the one root value whose text it is.
             slashed: '[Country] is any of [Hello/World]',
         };
         const outcomes: Record<string, unknown> = {};
@@ -929,11 +1121,12 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
             outcomes[name] = af.input.validationMessage || displayedAthletes(api);
         }
 
-        // Both readings name a row here, and the path is the one that wins; the root values need quotes.
-        expect(outcomes).toEqual({ spaced: ['child'], tight: ['child'], slashed: ['child'] });
+        // Both readings name a row for the two that do separate, and the path is the one that wins;
+        // naming those root values takes quotes.
+        expect(outcomes).toEqual({ spaced: ['child'], tight: ['child'], slashed: ['slashed'] });
     });
 
-    test('a slash reads as a path where one exists, and a date-like value reads whole where none does', async () => {
+    test('a slash is ordinary text, so a date-like value needs nothing to spell itself', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...AMBIGUOUS_OPTIONS,
             rowData: [
@@ -944,20 +1137,51 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
         });
         const af = AdvancedFilterHarness.get(api);
 
+        // Even with a `Hello` group beside it, the slash names the value it is part of and nothing else.
         await af.applyExpression('[Country] is any of [Hello/World]');
         expect(af.input.validationMessage).toBe('');
-        expect(displayedAthletes(api)).toEqual(['child']);
+        expect(displayedAthletes(api)).toEqual(['slashed']);
 
-        // Nothing is grouped under `2024`, so the path names nothing and the text is taken whole. This is
-        // what keeps a date spelling itself now that `/` is read as a separator.
         await af.applyExpression('[Country] is any of [2024/01]');
         expect(af.input.validationMessage).toBe('');
         expect(displayedAthletes(api)).toEqual(['dated']);
 
-        // The root value the path reading shadows is still named by quoting it.
-        await af.applyExpression('[Country] is any of ["Hello/World"]');
+        // The path through the group takes a separator that is one.
+        await af.applyExpression('[Country] is any of [Hello > World]');
         expect(af.input.validationMessage).toBe('');
-        expect(displayedAthletes(api)).toEqual(['slashed']);
+        expect(displayedAthletes(api)).toEqual(['child']);
+    });
+
+    test('a search reads a separator as a level, the same precedence the parser applies', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', AMBIGUOUS_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        // Both characters name a level while typing, so both spellings search for the same path and offer
+        // the two rows drawn that way: the root value spelled with the guillemet, and the path itself.
+        // Each is still chosen by picking its own row, which is what the entry carrying its path is for.
+        await af.type('[Country] is any of ["Hello > Wor');
+        expect(af.autocompleteEntries()).toEqual(['Hello › World', 'Hello › World']);
+
+        await af.type('[Country] is any of ["Hello › Wor');
+        expect(af.autocompleteEntries()).toEqual(['Hello › World', 'Hello › World']);
+    });
+
+    test('two rows written the same way are still two rows, and each is chosen by picking its own', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', AMBIGUOUS_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        const outcomes = await chooseEveryOffered(af, '[Country] is any of [');
+
+        // Row 2 is the root value and row 6 the path through the group; both display `Hello › World`, and
+        // choosing one must not apply the other.
+        expect(outcomes).toEqual([
+            ['Hello > World', ['Hello > World']],
+            ['Hello › World', ['Hello › World']],
+            ['Hello/World', ['Hello/World']],
+            ['Hello>World', ['Hello>World']],
+            ['Hello › Other', ['Hello|Other']],
+            ['Hello › World', ['Hello|World']],
+        ]);
     });
 
     test('a bare root value holding a separator is read whole once no path matches it', async () => {
@@ -982,7 +1206,8 @@ describe('Advanced Filter - Set Filter tree list where a separator is ambiguous'
         const api = await gridsManager.createGridAndWait('grid1', AMBIGUOUS_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        for (const key of ['Hello > World', 'Hello>World', 'Hello/World', 'Hello|World']) {
+        // `Hello|World` is written segment by segment here: the joined spelling is another value's text.
+        for (const key of ['Hello > World', 'Hello>World', 'Hello/World', 'Hello › World', 'Hello|World']) {
             api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: [key] });
             await asyncSetTimeout(0);
             expect(af.input.validationMessage).toBe('');

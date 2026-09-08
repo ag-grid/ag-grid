@@ -281,7 +281,8 @@ describe('Advanced Filter - Set Filter value list', () => {
         await af.type('[Country] is any');
         await af.selectAutocomplete();
 
-        expect(af.value).toBe('[Country] is any of ["');
+        // No opening quote: searching does not need one, so the caret is left where typing filters.
+        expect(af.value).toBe('[Country] is any of [');
         expect(af.autocompleteEntries()).toContain('Jamaica');
     });
 
@@ -340,10 +341,6 @@ describe('Advanced Filter - Set Filter value list', () => {
 
         await af.type('[Country] is any of ["Jamaica"] ');
         expect(af.autocompleteEntries()).toEqual(['AND', 'OR']);
-
-        // An unbracketed list holds one value, so it too is over once a space follows it.
-        await af.type('[Country] is any of "Jamaica" ');
-        expect(af.autocompleteEntries()).toEqual(['AND', 'OR']);
     });
 
     test('a caret in the gap between two written values offers the ones still missing', async () => {
@@ -380,6 +377,21 @@ describe('Advanced Filter - Set Filter value list', () => {
         await af.selectAutocomplete();
 
         expect(af.value).toBe('[Country] is none of ["Jamaica"]');
+    });
+
+    test('retargeting the option leaves the caret inside the list, so the next value lands in it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        const written = '[Country] is any of ["Poland"]';
+        await af.type(written, written.indexOf(' of'));
+        await af.selectAutocomplete();
+        expect(af.value).toBe(written);
+
+        // The list the caret now sits in is the one already written, so its values are the ones on offer.
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'United Kingdom', 'United States']);
+        await af.selectAutocomplete();
+        expect(af.value).toBe('[Country] is any of ["(Blanks)", "Poland"]');
     });
 
     test('a caret before the end bracket of a closed list can still start another value', async () => {

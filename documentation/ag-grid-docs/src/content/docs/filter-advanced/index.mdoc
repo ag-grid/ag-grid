@@ -116,7 +116,7 @@ const gridOptions = {
 }
 ```
 
-For all [Cell Data Types](./cell-data-types/), the available filter options can be set via `filterOptions`.
+For all [Cell Data Types](./cell-data-types/), the available filter options can be set via `filterOptions`. `enableSetOperators` decides whether the column offers the Advanced Filter's [`is any of` and `is none of`](#offering-the-options-on-any-column) options.
 
 The available options are as follows:
 
@@ -139,8 +139,8 @@ The available options are as follows:
 | is between       | `inRange`            | `number`, `bigint`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
 | is true          | `true`               | `boolean`                                                                                           |
 | is false         | `false`              | `boolean`                                                                                           |
-| is any of        | `isAnyOf`            | any, on a [Set Filter](./filter-set/) column — see [Set Filters](#set-filters)                      |
-| is none of       | `isNoneOf`           | any, on a [Set Filter](./filter-set/) column — see [Set Filters](#set-filters)                      |
+| is any of        | `isAnyOf`            | any, where `enableSetOperators` allows it — see [Set Filters](#set-filters)                         |
+| is none of       | `isNoneOf`           | any, where `enableSetOperators` allows it — see [Set Filters](#set-filters)                         |
 
 `is between` takes two values, written as a comma-separated pair: `[Age] is between (21, 38)`. The range is exclusive of both ends unless `inRangeInclusive = true` is set, exactly as it is in the [Number Filter](./filter-number/) and the [Date Filter](./filter-date/).
 
@@ -260,7 +260,7 @@ The following example demonstrates the built-in range and relative date options:
 
 ### Set Filters
 
-A column configured with a [Set Filter](./filter-set/) gains the `is any of` and `is none of` options, in addition to everything its Cell Data Type already offers. Both take a list of values:
+A column with a [Set Filter](./filter-set/) gains the `is any of` and `is none of` options, in addition to everything its Cell Data Type already offers. Under AG Grid Enterprise that includes a column left as `filter: true`, unless [`suppressSetFilterByDefault`](./filter-set/#suppress-set-filter-by-default) is set. Both take a list of values:
 
 ```text
 [Country] is any of ["Australia", "Italy"]
@@ -269,13 +269,34 @@ A column configured with a [Set Filter](./filter-set/) gains the `is any of` and
 
 Typing inside the list suggests the column's Set Filter values, with no opening quote required. Selecting one writes it quoted and ready for the next; values already in the list are not suggested again, and deleting one returns it to the list. In the [Advanced Filter Builder](#advanced-filter-builder) the value pill opens the column's own Set Filter.
 
-Quotes are only needed where a value would otherwise be read as something else. A value written without them may contain spaces, and is trimmed:
+The square brackets are part of the grammar: a list written without them cannot be applied. Quotes, on the other hand, are only needed where a value would otherwise be read as something else. A value containing `,` or `]`, or beginning with a quote, is one such: typed bare, those characters end the value, close the list, or open a quoted one. Choose such a value from the suggestions, which writes it quoted, or open a quote before typing it, after which they are all ordinary and the suggestions still narrow as you type. A value written without quotes may contain spaces, and is trimmed:
 
 ```text
 [Country] is any of [New Zealand, Italy]
 ```
 
-Blank values are offered as `(Blanks)`, the name the Set Filter gives them, and are written quoted: bare, the value's own parentheses can be read as the brackets of a list holding `Blanks`, which names nothing. The model stores `null` for it.
+Blank values are offered as `(Blanks)`, the name the Set Filter gives them. The model stores `null` for it.
+
+### Offering the Options on Any Column
+
+`filterParams.enableSetOperators` decides whether a column offers the two options, whatever filter it has. It defaults to `true` where the column's own filter is a Set Filter and to `false` otherwise, so it only needs setting to depart from that:
+
+```js
+const gridOptions = {
+    columnDefs: [
+        // Keeps its Number Filter, and offers the two options as well.
+        { field: 'age', filter: 'agNumberColumnFilter', filterParams: { enableSetOperators: true } },
+        // A Set Filter column that offers only the options of its Cell Data Type.
+        { field: 'country', filter: 'agSetColumnFilter', filterParams: { enableSetOperators: false } },
+    ],
+    // Every column offers them, the Set Filter module being what supplies the values.
+    defaultColDef: { filterParams: { enableSetOperators: true } },
+};
+```
+
+It resolves in order: the column's `filterParams`, then `defaultColDef.filterParams`, then what the column's own filter implies. A [`filterOptions`](#custom-filter-options) list naming `isAnyOf` or `isNoneOf` offers them whatever any of those say, being the more specific statement of what a column offers.
+
+The values are resolved through the column's Set Filter configuration either way, exactly as described above, and the column's own filter is unchanged. The `SetFilterModule` must be registered, since it is what reads the column's values.
 
 ```text
 [Country] is any of ["(Blanks)", Italy]
@@ -289,13 +310,15 @@ Values are displayed the way the Set Filter displays them. Where only `colDef.va
 
 An expression names a value by its text, so each value needs text of its own. Where a `valueFormatter` maps two keys to the same text, the first keeps that text and the rest are written as their key instead. Where a key is itself another value's formatted text there is no text left to tell the two apart, so they share one entry and a condition naming it filters on both.
 
-With `treeList` enabled, a value is written as a path, and `›` drills into a group. Typing `>` or `/` drills in too, since neither is on the same key as `›`:
+With `treeList` enabled, a value is the whole path to a leaf, its segments separated by `>`. The `›` the suggestions are drawn with is read as a separator too:
 
 ```text
-[Location] is any of ["Europe" › "Italy"]
+[Location] is any of ["Europe > Italy"]
 ```
 
-Typing searches the whole hierarchy rather than the level on show, so a value deep in the tree is suggested without drilling to it first; choosing one writes the whole path. A value that itself contains one of those characters is read as a path first and as the text it is second, so `[Date] is any of [2024/01]` still names the value it looks like wherever no path is spelled that way. Quoting says which you meant: `["a › b"]` is one value holding the character, `["a" › "b"]` is a path of two segments.
+The suggestions are every path in the column as one flat list, parent segments de-emphasised: typing searches every path, and choosing one writes it in full.
+
+A path can also be written a segment at a time, `["Europe" > "Italy"]`, which is what a segment containing a separator of its own needs. Both spellings name the same path, and the suggestions write whichever one reads back.
 
 Advanced Filter expressions are the source of truth, so changes to the row data never rewrite them. An expression naming a value the data no longer holds is reported against that value and cannot be applied, while an expression already applied keeps its model and keeps filtering.
 
@@ -358,7 +381,7 @@ A `displayKey` is resolved against the column being filtered, so different colum
 
 A column's list decides what the Advanced Filter suggests for it, not what it can read. An expression naming an option the list leaves out — one saved before the list was narrowed, for example — still applies, so changing `filterOptions` does not discard filters that have already been stored. Where a list names no option the Advanced Filter has, the column keeps the standard options for its Cell Data Type — which for a date column means the standard options rather than the relative date ones, since those are never standard.
 
-On a Set Filter column, `is any of` and `is none of` come from the column's filter rather than from its Cell Data Type, so they join the standard options for that Cell Data Type. A `filterOptions` list replaces those options in full, so it must name `isAnyOf` and `isNoneOf` for the column to keep offering them.
+On a Set Filter column, `is any of` and `is none of` come from the column's filter rather than from its Cell Data Type, so they join the standard options for that Cell Data Type. A `filterOptions` list replaces those options in full, so it must name `isAnyOf` and `isNoneOf` for the column to keep offering them. Naming them is also what offers them on a column with any other filter, which then resolves its values as [Set Filters](#set-filters) describes while its own filter is unchanged.
 
 The following example demonstrates custom filter options taking different numbers of values:
 

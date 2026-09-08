@@ -34,6 +34,12 @@ export interface IProvidedFilterParams {
      */
     debounceMs?: number;
     /**
+     * Whether the column offers the Advanced Filter's `is any of` and `is none of` options, whatever filter it has.
+     * Defaults to `true` where the column's own filter is a Set Filter, and to `false` otherwise.
+     * @agModule `AdvancedFilterModule`
+     */
+    enableSetOperators?: boolean;
+    /**
      * If set to `true`, disables controls in the filter to mutate its state. Normally this would
      * be used in conjunction with the Filter API.
      *

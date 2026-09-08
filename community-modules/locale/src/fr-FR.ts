@@ -185,8 +185,10 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationJoinOperatorMismatch:
         "Les opérateurs de jonction au sein d'une condition doivent être identiques",
     advancedFilterValidationInvalidJoinOperator: 'Opérateur de jonction non trouvé',
-    advancedFilterValidationMissingEndBracket: 'Guillemet de fin manquante',
-    advancedFilterValidationExtraEndBracket: 'Trop de crochets de fin',
+    advancedFilterValidationMissingListStartBracket: 'Crochet ouvrant manquant',
+    advancedFilterValidationMissingListEndBracket: 'Crochet fermant manquant',
+    advancedFilterValidationMissingEndBracket: 'Parenthèse fermante manquante',
+    advancedFilterValidationExtraEndBracket: 'Trop de parenthèses fermantes',
     advancedFilterValidationMessage: "L'expression contient une erreur. ${variable} - ${variable}.",
     advancedFilterValidationMessageAtEnd: "L'expression contient une erreur. ${variable} à la fin de l'expression.",
     advancedFilterValidationMessageOnly: "L'expression contient une erreur. ${variable}.",

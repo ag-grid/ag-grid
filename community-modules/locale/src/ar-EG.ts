@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterValidationMissingCondition: 'الشرط مفقود',
     advancedFilterValidationJoinOperatorMismatch: 'يجب أن تكون عوامل الربط داخل الشرط نفسها',
     advancedFilterValidationInvalidJoinOperator: 'عامل الربط غير موجود',
+    advancedFilterValidationMissingListStartBracket: 'قوس مربع افتتاحي مفقود',
+    advancedFilterValidationMissingListEndBracket: 'قوس مربع ختامي مفقود',
     advancedFilterValidationMissingEndBracket: 'القوس الختامي مفقود',
     advancedFilterValidationExtraEndBracket: 'أقواس ختامية كثيرة جداً',
     advancedFilterValidationMessage: 'التعبير يحتوي على خطأ. ${variable} - ${variable}.',

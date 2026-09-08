@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_KR = {
     advancedFilterValidationMissingCondition: '조건이 누락되었습니다',
     advancedFilterValidationJoinOperatorMismatch: '조건 내의 연결 연산자는 동일해야 합니다',
     advancedFilterValidationInvalidJoinOperator: '연결 연산자를 찾을 수 없습니다',
+    advancedFilterValidationMissingListStartBracket: '여는 대괄호가 누락되었습니다',
+    advancedFilterValidationMissingListEndBracket: '닫는 대괄호가 누락되었습니다',
     advancedFilterValidationMissingEndBracket: '끝 괄호가 누락되었습니다',
     advancedFilterValidationExtraEndBracket: '종결 괄호가 너무 많습니다',
     advancedFilterValidationMessage: '식에 오류가 있습니다. ${variable} - ${variable}.',

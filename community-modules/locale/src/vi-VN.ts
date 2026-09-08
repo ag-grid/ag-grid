@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_VN = {
     advancedFilterValidationMissingCondition: 'Thiếu điều kiện',
     advancedFilterValidationJoinOperatorMismatch: 'Các toán tử kết nối trong một điều kiện phải giống nhau',
     advancedFilterValidationInvalidJoinOperator: 'Không tìm thấy toán tử kết nối',
+    advancedFilterValidationMissingListStartBracket: 'Thiếu dấu ngoặc vuông mở',
+    advancedFilterValidationMissingListEndBracket: 'Thiếu dấu ngoặc vuông đóng',
     advancedFilterValidationMissingEndBracket: 'Thiếu dấu ngoặc kết thúc',
     advancedFilterValidationExtraEndBracket: 'Quá nhiều dấu ngoặc kết thúc',
     advancedFilterValidationMessage: 'Biểu thức có lỗi. ${variable} - ${variable}.',

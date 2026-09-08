@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterValidationMissingCondition: 'חסר תנאי',
     advancedFilterValidationJoinOperatorMismatch: 'המפעילים בתנאי חייבים להיות אותו דבר',
     advancedFilterValidationInvalidJoinOperator: 'אופרטור צרוף לא נמצא',
+    advancedFilterValidationMissingListStartBracket: 'חסר סוגר פתיחה מרובע',
+    advancedFilterValidationMissingListEndBracket: 'חסר סוגר סיום מרובע',
     advancedFilterValidationMissingEndBracket: 'חסר סוגר סיום',
     advancedFilterValidationExtraEndBracket: 'יותר מדי סוגרי סיום',
     advancedFilterValidationMessage: 'יש שגיאה בביטוי. ${variable} - ${variable}.',

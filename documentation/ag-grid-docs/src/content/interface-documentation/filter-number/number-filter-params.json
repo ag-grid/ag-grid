@@ -12,6 +12,12 @@
                 "url": "./filter-api/#read-only-filter-ui",
                 "name": "Read-only Filter UI"
             }
+        },
+        "enableSetOperators": {
+            "more": {
+                "name": "Advanced Filter Set Operators",
+                "url": "./filter-advanced/#offering-the-options-on-any-column"
+            }
         }
     }
 }

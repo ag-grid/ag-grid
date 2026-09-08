@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_CN = {
     advancedFilterValidationMissingCondition: '缺少条件',
     advancedFilterValidationJoinOperatorMismatch: '一个条件内的连接操作符必须相同',
     advancedFilterValidationInvalidJoinOperator: '找不到连接操作符',
+    advancedFilterValidationMissingListStartBracket: '缺少开始方括号',
+    advancedFilterValidationMissingListEndBracket: '缺少结束方括号',
     advancedFilterValidationMissingEndBracket: '缺少结束括号',
     advancedFilterValidationExtraEndBracket: '结束括号过多',
     advancedFilterValidationMessage: '表达式有错误。${variable} - ${variable}。',

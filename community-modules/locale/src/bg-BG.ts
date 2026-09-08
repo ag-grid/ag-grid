@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterValidationMissingCondition: 'Липсва условие',
     advancedFilterValidationJoinOperatorMismatch: 'Операционните съединители в едно условие трябва да са еднакви',
     advancedFilterValidationInvalidJoinOperator: 'Операционният съединител не е намерен',
+    advancedFilterValidationMissingListStartBracket: 'Липсва отваряща квадратна скоба',
+    advancedFilterValidationMissingListEndBracket: 'Липсва затваряща квадратна скоба',
     advancedFilterValidationMissingEndBracket: 'Липсва крайна скоба',
     advancedFilterValidationExtraEndBracket: 'Прекалено много крайни скоби',
     advancedFilterValidationMessage: 'Има грешка в израза. ${variable} - ${variable}.',

@@ -1,14 +1,5 @@
 import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from '@utils/grid/test-utils';
 
-/**
- * Mirrors `SET_TREE_SEPARATOR` in
- * `packages/ag-grid-enterprise/src/advancedFilter/set/setOperandsParser.ts`, which a docs spec cannot
- * import: the bare specifier resolves to the package's built `dist`, and the docs test run pre-builds
- * only `ag-grid-community`. `setOperandsParser.test.ts` pins the constant to this value, so a change to
- * it fails in the package suite rather than silently here.
- */
-const SET_TREE_SEPARATOR = '\u203A';
-
 test.agExample(import.meta, () => {
     test.eachFramework('offers the set options on a Set Filter column', async ({ page }) => {
         await ensureGridReady(page);
@@ -62,7 +53,7 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList.getByText('SWIMMING', { exact: true })).toBeVisible();
     });
 
-    test.eachFramework('offers a Tree List column as groups, and drilling in writes a path', async ({ page }) => {
+    test.eachFramework('offers a Tree List column as one flat list of whole paths', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -71,11 +62,11 @@ test.agExample(import.meta, () => {
 
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
-        // A group is offered with the number of values still beneath it, which a leaf does not carry.
-        await expect(autocompleteList.locator('.ag-autocomplete-row-group-count').first()).toBeVisible();
+        // Every row is a whole path, its parent segments drawn back from the leaf that names the value.
+        await expect(autocompleteList.locator('.ag-autocomplete-row-path-parent').first()).toBeVisible();
 
-        // Whichever year is first: choosing a group drills into it rather than ending the value.
+        // Whichever date is first: the whole path inside one pair of quotes, not a quoted segment each.
         await filterInput.press('Enter');
-        await expect(filterInput).toHaveValue(new RegExp(` ${SET_TREE_SEPARATOR} $`));
+        await expect(filterInput).toHaveValue(/\["[^"]+ > [^"]+", $/);
     });
 });

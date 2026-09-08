@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_TR = {
     advancedFilterValidationMissingCondition: 'Koşul eksik',
     advancedFilterValidationJoinOperatorMismatch: 'Bir koşul içindeki birleştirici operatörlerin aynı olması gerekir',
     advancedFilterValidationInvalidJoinOperator: 'Birleştirici operatör bulunamadı',
+    advancedFilterValidationMissingListStartBracket: 'Açılış köşeli parantezi eksik',
+    advancedFilterValidationMissingListEndBracket: 'Kapanış köşeli parantezi eksik',
     advancedFilterValidationMissingEndBracket: 'Kapanış parantezi eksik',
     advancedFilterValidationExtraEndBracket: 'Fazla kapanış parantezi',
     advancedFilterValidationMessage: 'İfade bir hata içeriyor. ${variable} - ${variable}.',
