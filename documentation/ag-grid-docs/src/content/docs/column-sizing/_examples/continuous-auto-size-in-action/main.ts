@@ -34,10 +34,12 @@ const GENERATED_GROUPS = ['Profile', 'Season', 'Coverage', 'Records'];
 const COLUMNS_PER_GENERATED_GROUP = 6;
 
 function generatedColumn(index: number): ColDef<IOlympicData> {
+    // The shape cycles fastest and the field pair advances only once the shapes have been exhausted,
+    // so the two never come back into step: all 6 x 4 combinations are used before any repeats.
     const shape = PHRASE_SHAPES[index % PHRASE_SHAPES.length];
-    // rotating the field pair alongside the shape keeps every column's text distinct
-    const first = PHRASE_FIELDS[index % PHRASE_FIELDS.length];
-    const second = PHRASE_FIELDS[(index + 1) % PHRASE_FIELDS.length];
+    const fieldIndex = Math.floor(index / PHRASE_SHAPES.length) % PHRASE_FIELDS.length;
+    const first = PHRASE_FIELDS[fieldIndex];
+    const second = PHRASE_FIELDS[(fieldIndex + 1) % PHRASE_FIELDS.length];
 
     return {
         colId: `text${index + 1}`,

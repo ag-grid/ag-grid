@@ -723,7 +723,10 @@ export interface Props<TData> {
          * @initial
          */
     filterHandlers?: FilterHandlers<TData>,
-    /** Set to `true` to Enable Charts.
+    /** Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
+         * `chartRange` and `pivotChart` context menu items shown by default. Menu items requested by
+         * name via `getContextMenuItems` or `colDef.contextMenuItems` are shown regardless, and charts
+         * created programmatically through the Grid API do not require this option.
          * @default false
          * @agModule `IntegratedChartsModule`
          */
