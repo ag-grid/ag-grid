@@ -919,7 +919,7 @@ export type {
     IsServerSideGroup,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    LoadingOptions,
+    LoadingRowsOptions,
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,

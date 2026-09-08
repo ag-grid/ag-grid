@@ -220,7 +220,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
             this.resetRowHeights();
         });
-        this.addManagedPropertyListener('loading', () => this.onLoadingRowsChanged());
+        this.addManagedPropertyListeners(['loading', 'loadingRows'], () => this.onLoadingRowsChanged());
     }
 
     public start(): void {
