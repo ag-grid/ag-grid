@@ -1,4 +1,4 @@
-import type { PolicyName } from '@ag-website-shared/components/policies/policyContent';
+import type { PolicyContent, PolicyName } from '@ag-website-shared/components/policies/policyContent';
 import { POLICY_CONTENT, policyHeading } from '@ag-website-shared/components/policies/policyContent';
 import { htmlInlineToMarkdown } from '@ag-website-shared/markdoc/htmlInlineToMarkdown';
 import type { MarkdocConfigLike, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
@@ -9,10 +9,7 @@ import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from '../markdow
 /** Policies whose page renders a `.mdoc` body. `cookies` renders the Enzuzo embed instead. */
 export type MdocPolicyName = Exclude<PolicyName, 'cookies'>;
 
-export interface BuildPolicyMarkdownOptions {
-    policy: MdocPolicyName;
-    /** Product name substituted into the heading, e.g. `AG Grid`. */
-    name: string;
+interface PolicyBodyOptions {
     /** Raw `.mdoc` source for the policy body. Import it with Vite's `?raw` suffix. */
     body: string;
     /** The product's Markdoc config, so tags and functions resolve exactly as on the page. */
@@ -21,6 +18,21 @@ export interface BuildPolicyMarkdownOptions {
     siteRoot?: string;
     /** Site-wide frontmatter fields (product, related links, llms.txt) from the rendering site. */
     siteFrontmatter?: SiteFrontmatterFields;
+}
+
+export interface BuildPolicyMarkdownOptions extends PolicyBodyOptions {
+    policy: MdocPolicyName;
+    /** Product name substituted into the heading, e.g. `AG Grid`. */
+    name: string;
+}
+
+export interface BuildPolicyPageMarkdownOptions extends PolicyBodyOptions {
+    /** Heading, meta and intro copy shared with the page, with any `{name}` already resolved. */
+    content: PolicyContent;
+    /** Product name for the frontmatter title, e.g. `AG Grid`. */
+    name: string;
+    /** URL slug of the page, e.g. `terms-of-use`. */
+    pageName: string;
 }
 
 /**
@@ -32,24 +44,32 @@ export interface BuildPolicyMarkdownOptions {
  * Product-agnostic: AG Grid, AG Charts and AG Studio share this module and differ only in the
  * `name` they render and the Markdoc config they pass.
  */
-export async function buildPolicyMarkdown({
-    policy,
+export async function buildPolicyMarkdown({ policy, name, ...options }: BuildPolicyMarkdownOptions): Promise<string> {
+    const content = { ...POLICY_CONTENT[policy], heading: policyHeading(policy, name) };
+
+    return buildPolicyPageMarkdown({ content, name, pageName: policy, ...options });
+}
+
+/**
+ * The same twin for a policy page whose copy is not in `POLICY_CONTENT` — one a single site
+ * publishes on its own, with its content defined alongside its page.
+ */
+export async function buildPolicyPageMarkdown({
+    content,
     name,
+    pageName,
     body,
     markdocConfig,
     resolvers,
     siteRoot,
     siteFrontmatter,
-}: BuildPolicyMarkdownOptions): Promise<string> {
-    const content = POLICY_CONTENT[policy];
-    const heading = policyHeading(policy, name);
-
+}: BuildPolicyPageMarkdownOptions): Promise<string> {
     // The policy body carries its own numbered `###` headings, so render it without a frontmatter
     // title and prepend the shared preamble here — otherwise the twin would have two H1s.
     const renderedBody = await renderMarkdocToMarkdown({
         body,
         framework: 'javascript',
-        pageName: policy,
+        pageName,
         markdocConfig,
         resolvers,
     });
@@ -57,8 +77,8 @@ export async function buildPolicyMarkdown({
     const policyBody = renderedBody.replace(/^---\n[\s\S]*?\n---\n+/, '').trim();
 
     const document = [
-        frontmatter(policy, name, siteFrontmatter),
-        `# ${heading}`,
+        frontmatter(content, name, siteFrontmatter),
+        `# ${content.heading}`,
         ...content.meta.map((line) => htmlInlineToMarkdown(line, siteRoot)),
         ...content.intro.map((line) => htmlInlineToMarkdown(line, siteRoot)),
         policyBody,
@@ -86,7 +106,7 @@ export function buildCookiesMarkdown({
     const url = `${(siteRoot ?? '/').replace(/\/$/, '')}/cookies/`;
 
     const document = [
-        frontmatter(policy, name, siteFrontmatter),
+        frontmatter(POLICY_CONTENT[policy], name, siteFrontmatter),
         `# ${policyHeading(policy, name)}`,
         `${POLICY_CONTENT[policy].description} It is generated from our consent-management platform, which scans the site for the cookies actually in use, and is published in full at [${url}](${url}).`,
     ];
@@ -95,9 +115,7 @@ export function buildCookiesMarkdown({
 }
 
 /** The frontmatter block every policy twin opens with, from the copy shared with its page. */
-function frontmatter(policy: PolicyName, name: string, siteFrontmatter?: SiteFrontmatterFields): string {
-    const content = POLICY_CONTENT[policy];
-
+function frontmatter(content: PolicyContent, name: string, siteFrontmatter?: SiteFrontmatterFields): string {
     return buildMarkdownFrontmatter({
         ...siteFrontmatter,
         title: `${name}: ${content.metaTitle}`,
