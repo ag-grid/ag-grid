@@ -5,6 +5,8 @@ description: "Display skeleton rows while Client-Side Row Model data is loading.
 
 The Client-Side Row Model can display skeleton rows instead of the loading overlay while row data is loading.
 
+For loading rows managed by a server-side datasource, see [Server-Side Row Model Loading Rows](./server-side-model-loading-rows/).
+
 ## Enabling Loading Rows
 
 Set `loadingRows=true` to use skeleton rows when `loading=true`.
@@ -32,8 +34,10 @@ Both options can be updated at runtime. Update `loadingRows` to change the row c
 
 ## Custom Loading Cells
 
-Loading rows use the [Loading Cell Component](./component-loading-cell-renderer/). Set `loadingCellRenderer` and `loadingCellRendererParams` on a column definition to customise that column, or set them as grid options to customise every loading cell.
+Set `loadingCellRenderer` and `loadingCellRendererParams` on a column definition to customise that column, or on `defaultColDef` to customise every loading cell.
 
 The following example uses a custom loading component for the Athlete column while the other columns retain the default skeleton effect.
 
 {% gridExampleRunner title="Custom Loading Cells" name="custom-loading-cells" /%}
+
+See [Loading Cell Component](./component-loading-cell-renderer/) for component interfaces, parameters and dynamic component selection.
