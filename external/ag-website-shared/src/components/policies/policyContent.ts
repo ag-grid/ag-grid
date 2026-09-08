@@ -61,14 +61,6 @@ export const POLICY_CONTENT = {
         ],
         intro: [],
     },
-    'terms-of-use': {
-        heading: '{name} Terms of Use',
-        metaTitle: 'Terms of Use',
-        description:
-            'The terms and conditions that govern your use of the AG Grid website, including the software, services and materials made available through it.',
-        meta: ['Last Updated: 8 September 2026'],
-        intro: ['Welcome to the Terms of Use for our website.'],
-    },
 } as const satisfies Record<string, PolicyContent>;
 
 export type PolicyName = keyof typeof POLICY_CONTENT;

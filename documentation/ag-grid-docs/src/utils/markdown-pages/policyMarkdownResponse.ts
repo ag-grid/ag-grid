@@ -3,7 +3,6 @@ import type { PolicyName } from '@ag-website-shared/components/policies/policyCo
 // components; `?raw` gives the twins the source to re-render as markdown.
 import modernSlaveryBody from '@ag-website-shared/content/policies/modern-slavery.mdoc?raw';
 import privacyBody from '@ag-website-shared/content/policies/privacy.mdoc?raw';
-import termsOfUseBody from '@ag-website-shared/content/policies/terms-of-use.mdoc?raw';
 import type { MdocPolicyName } from '@ag-website-shared/markdown-pages/policies/buildPolicyMarkdown';
 import {
     buildCookiesMarkdown,
@@ -19,7 +18,6 @@ import { GRID_PRODUCT_NAME, gridSiteFrontmatter } from './gridFrontmatter';
 const POLICY_BODIES: Record<MdocPolicyName, string> = {
     privacy: privacyBody,
     'modern-slavery': modernSlaveryBody,
-    'terms-of-use': termsOfUseBody,
 };
 
 /**
