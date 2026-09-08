@@ -319,13 +319,13 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             this.gos.updateGridOptions({ options: { findSearchValue: searchValue } });
         }
         if (activeMatch != null) {
-            // The saved row group expansion is restored before this and stays authoritative, so a match
-            // inside a collapsed group is highlighted where it is rather than being revealed.
-            this.preserveExpansion = true;
+            // The match is highlighted where it is: the saved expansion, scroll and page win over
+            // revealing it, and the state service restores those sections itself.
+            this.restoring = true;
             try {
                 this.goTo(activeMatch);
             } finally {
-                this.preserveExpansion = false;
+                this.restoring = false;
             }
         } else if (this.activeMatch) {
             // A state that omits the active match must clear the current one. An unchanged search value
@@ -854,13 +854,15 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     /**
-     * Set while restoring a saved state, so a match in a collapsed group keeps the group collapsed.
-     * The whole restore runs synchronously through `goTo`, so this is only ever read by that call.
+     * Set while restoring a saved state. The state's own `rowGroupExpansion`, `scroll` and
+     * `pagination` sections are authoritative, so activating the saved match must not expand its
+     * ancestors, nor page or scroll to it. The whole restore runs synchronously through `goTo`, so
+     * this is only ever read by that call.
      */
-    private preserveExpansion = false;
+    private restoring = false;
 
     private setActive(activeMatch?: FindMatch): void {
-        if (activeMatch && activeMatch.node.rowIndex == null && !this.preserveExpansion) {
+        if (activeMatch && activeMatch.node.rowIndex == null && !this.restoring) {
             // child in unexpanded group. Expand all unexpanded ancestors
             const node = activeMatch.node;
             let parent = node.footer ? node.sibling : node.parent;
@@ -918,7 +920,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             this.refreshRows(nodes, skipColumns ? undefined : columns);
         }
 
-        if (activeMatch) {
+        if (activeMatch && !this.restoring) {
             this.scrollToActive(activeMatch);
         }
     }

@@ -178,8 +178,8 @@ describe('StateService - Find State', () => {
             });
         });
 
-        test('should keep the saved page when going to the active match pages away from it', async () => {
-            // Pagination is restored before Find, and going to a match on another page moves off it.
+        test('should keep the saved page when the active match lives on another page', async () => {
+            // Restoring the match only highlights it, so the saved page is never navigated away from.
             const api = gridsManager.createGrid('set-state-find-pagination', {
                 columnDefs,
                 rowData,
@@ -212,7 +212,7 @@ describe('StateService - Find State', () => {
         });
 
         test('should keep the saved page as the rendered one, not just the reported one', async () => {
-            // The initialisation path only assigns the page number, so a restore has to navigate.
+            // The initialisation path only assigns the page number, so nothing may move off it after.
             const api = gridsManager.createGrid('initial-state-find-pagination', {
                 columnDefs,
                 rowData,
@@ -227,8 +227,8 @@ describe('StateService - Find State', () => {
             });
             await waitForEvent('firstDataRendered', api);
 
-            // The reported page and the displayed rows must agree: match 1 lives on page 0, and the
-            // initialisation path would leave the bounds there while reporting page 1.
+            // The reported page and the displayed rows must agree: match 1 lives on page 0, so a
+            // restore that paged to the match would leave the bounds there while reporting page 1.
             await waitFor(() => {
                 expect(api.paginationGetCurrentPage()).toBe(1);
                 expect(api.getFirstDisplayedRowIndex()).toBe(2);
@@ -267,6 +267,24 @@ describe('StateService - Find State', () => {
 
             await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
             expect(api.getGridOption('findSearchValue')).toBe('c');
+        });
+
+        test('should keep the saved scroll position when the active match is off screen', async () => {
+            // The origin is captured as no `scroll` section at all, so scrolling to the match would
+            // leave nothing to restore it by.
+            const scrollRowData = Array.from({ length: 100 }, (_, i) => ({ value: i === 99 ? 'cat' : `${i}` }));
+            const api = gridsManager.createGrid('initial-state-find-scroll', {
+                columnDefs,
+                rowData: scrollRowData,
+                toolbar,
+                initialState: { find: { searchValue: 'cat', activeMatch: 1 } },
+            });
+            await waitForEvent('firstDataRendered', api);
+
+            await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
+            // The match is the last row, so any navigation to it would show up here.
+            expect(api.getVerticalPixelRange().top).toBe(0);
+            expect(api.getFirstDisplayedRowIndex()).toBe(0);
         });
 
         test('should keep a collapsed group collapsed when the active match is inside it', async () => {

@@ -372,7 +372,6 @@ export class StateService extends BeanStub implements NamedBean {
             find: findState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-            pagination: paginationState,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -393,17 +392,10 @@ export class StateService extends BeanStub implements NamedBean {
 
         // Runs after the pivot columns and the deferred filter state: the active match is an ordinal
         // over the visible columns and the filtered rows, so those have to be in place to resolve it
-        // against the same match list it was captured from. Runs before the scroll and pagination
-        // restores: going to the active match scrolls and pages to it, and the captured position is
-        // the one the user was actually left on.
+        // against the same match list it was captured from. Restoring the match only highlights it,
+        // leaving the viewport to the saved `scroll` and `pagination` sections.
         if (shouldSetState('find', findState)) {
             this.setFindState(findState, source);
-            const savedPage = paginationState?.page;
-            if (findState?.activeMatch != null && savedPage != null && !ignoreSet?.has('pagination')) {
-                // The grid is live by now, so this navigates rather than taking the initialisation
-                // path, which only assigns the page number without recalculating the rows shown.
-                this.beans.pagination?.goToPage(savedPage);
-            }
         }
         if (shouldSetState('scroll', scrollState)) {
             this.setScrollState(scrollState);
