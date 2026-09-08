@@ -51,10 +51,6 @@ The grid state is designed to be serialisable, so any functions will be stripped
 
 {% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" /%}
 
-The `quickFilter` section only takes part in grid state when the [Quick Access Toolbar](./toolbar/) is configured with `agQuickFilterToolbarItem`. Without that item the [Quick Filter](./filter-quick/) is driven by the `quickFilterText` grid option alone, and is neither captured nor restored.
-
-When the section does apply, restoring it writes the text back into the `quickFilterText` grid option, so the restored state takes precedence over a value set in the grid options. If the provided state has no `quickFilter` section, the grid option is used as provided. A restore through `api.setState()` reports `api` as the source on the resulting [Filter Changed](./filtering-overview/) event, where a user's own edit in the toolbar input reports `quickFilter`.
-
 {% note %}
 When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
 additional configuration is required:
@@ -88,7 +84,7 @@ The best way to restore grid state is via initial state as described above. Howe
 
 It is possible to maintain the existing state for individual state contents by passing a second argument to `setState` that contains the top-level properties to ignore. E.g. `api.setState(state, ['filter'])` will maintain the existing filter state in the grid.
 
-Anything the provided state omits is reset rather than left as it is. For example, a state without a `quickFilter` section clears the [Quick Filter](./filter-quick/) — unless the toolbar has no `agQuickFilterToolbarItem`, in which case the `quickFilterText` grid option is left untouched.
+Anything the provided state omits is reset rather than left as is. For example, a state without a `quickFilter` section clears the quick filter value in the toolbar.
 
 {% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
 

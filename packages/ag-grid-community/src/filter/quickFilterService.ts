@@ -10,7 +10,7 @@ import type { FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { QuickFilterState } from '../interfaces/gridState';
 
-type QuickFilterServiceEvent = 'quickFilterChanged' | 'quickFilterStateApplied';
+type QuickFilterServiceEvent = 'quickFilterChanged';
 
 export interface QuickFilterChangedEvent extends AgEvent<QuickFilterServiceEvent> {
     /** Source to report on the resulting `filterChanged` event, when the change did not come from the user. */
@@ -124,9 +124,6 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         } finally {
             this.stateSource = undefined;
         }
-        // Always announced, even when the option did not change: a restore has to win over an edit
-        // that is still sitting in the toolbar input's debounce, and an unchanged option is silent.
-        this.dispatchLocalEvent({ type: 'quickFilterStateApplied' });
     }
 
     private setFilterParts(): void {
