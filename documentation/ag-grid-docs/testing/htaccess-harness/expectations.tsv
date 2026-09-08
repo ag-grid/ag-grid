@@ -209,6 +209,48 @@ blog	/tag/server-side-row-model/	410
 # A surviving tag must still take the catch-all, not the 410 list
 blog	/tag/themes-styles/	301	https://www.ag-grid.com/blog/tag/themes-styles/
 
+# SE-86 residual fix: retired posts previously reached their final destination in TWO hops
+# (catch-all -> /blog/<old-slug> -> Ghost's redirects.json -> final target). Each row here
+# must show the FINAL destination on the single response, proving the second hop is gone.
+blog	/a-plain-english-introduction-to-json-web-tokens-jwt-what-it-is-and-what-it-isnt/	301	https://www.ag-grid.com/blog/
+blog	/ag-grid-on-the-angular-plus-show-podcast/	301	https://www.ag-grid.com/blog/
+blog	/ag-grid-vuex-creating-a-modern-user-widget/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
+blog	/angular-grid-reports-formatted-values-and-links/	301	https://www.ag-grid.com/angular-data-grid/value-formatters/
+blog	/build-email-client-with-ag-grid-like-gmail/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/building-crud-in-ag-grid-with-angular-and-ngxs/	301	https://www.ag-grid.com/blog/building-crud-in-ag-grid-with-angular-ngrx/
+blog	/building-crud-in-ag-grid-with-angular-and-redux/	301	https://www.ag-grid.com/blog/building-crud-in-ag-grid-with-angular-ngrx/
+blog	/building-crud-operations-with-sequelize-angular-ag-grid/	301	https://www.ag-grid.com/blog/building-crud-in-ag-grid-with-angular-ngrx/
+blog	/creating-a-react-tile-slider-puzzle/	301	https://www.ag-grid.com/blog/
+blog	/custom-angular-directives/	301	https://www.ag-grid.com/blog/
+blog	/customising-react-data-grid-with-hooks-and-functions/	301	https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/
+blog	/cypress-plugin-for-ag-grid/	301	https://www.ag-grid.com/blog/end-to-end-testing-for-ag-grid-in-react-with-cypress/
+blog	/football-stats-direct/	301	https://www.ag-grid.com/blog/
+blog	/football-stats-direct-interview/	301	https://www.ag-grid.com/blog/
+blog	/free-online-training-for-ag-grid-in-react-and-angular/	301	https://www.ag-grid.com/react-data-grid/getting-started/
+blog	/game-of-charts/	301	https://www.ag-grid.com/charts/gallery/
+blog	/how-to-write-a-podcast-app-using-react/	301	https://www.ag-grid.com/blog/
+blog	/implementing-infinite-loading-in-an-angular-store-application/	301	https://www.ag-grid.com/angular-data-grid/infinite-scrolling/
+blog	/proof-trading-case-study/	301	https://www.ag-grid.com/blog/
+blog	/proof-trading-webrush-podcast-using-ag-grid/	301	https://www.ag-grid.com/blog/
+blog	/react-data-grid-example-projects/	301	https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/
+blog	/react-data-grid-use-hooks-to-build-a-pomodoro-app/	301	https://www.ag-grid.com/blog/
+blog	/react-redux-trading-platform/	301	https://www.ag-grid.com/blog/persisting-ag-grid-state-with-react-redux/
+blog	/react-ui-animation-getting-started-with-react-spring/	301	https://www.ag-grid.com/blog/
+blog	/subscribing-live-data-stream-ag-grid-rxjs-observables/	301	https://www.ag-grid.com/react-data-grid/data-update-high-frequency/
+blog	/take-full-control-of-editing-in-ag-grid/	301	https://www.ag-grid.com/blog/next-level-cell-editing-in-ag-grid-with-crud-and-react-hooks/
+blog	/testing-ag-grid-react-jest-enzyme/	301	https://www.ag-grid.com/react-data-grid/testing/
+blog	/testing-ag-grid-with-taiko-automation-tool/	301	https://www.ag-grid.com/react-data-grid/testing/
+blog	/type-checking-and-auto-completion-in-plunker/	301	https://www.ag-grid.com/blog/
+blog	/upcoming-changes-to-ag-grid-angular-in-v28/	301	https://www.ag-grid.com/angular-data-grid/upgrading-to-ag-grid-28/
+blog	/upgrading-to-ag-grid-v25-server-side-row-model/	301	https://www.ag-grid.com/react-data-grid/server-side-model/
+blog	/using-ag-grid-inside-a-vuejs-application/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
+blog	/using-ag-grid-react-ui-with-remix-run/	301	https://www.ag-grid.com/react-data-grid/getting-started/
+blog	/using-react-testing-library-with-ag-grid/	301	https://www.ag-grid.com/blog/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/
+blog	/webpack-tutorial-understanding-ngtools-webpack/	301	https://www.ag-grid.com/blog/webpack-tutorial-understanding-how-it-works/
+# The /amp/ form must reach the final destination too, not the generic /amp/ strip rule
+blog	/testing-ag-grid-react-jest-enzyme/amp/	301	https://www.ag-grid.com/react-data-grid/testing/
+blog	/ag-grid-vuex-creating-a-modern-user-widget/amp/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
+
 # SE-93 adversarial variant-suffix audit. A 410 must reject every shape under the slug:
 # matching only an enumerated suffix set let /feed/, stacked suffixes and case variants
 # 301 out to www, where the blog's own case-normalising redirect delivered the LIVE page
