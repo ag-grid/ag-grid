@@ -58,7 +58,6 @@ export function refreshFirstAndLastStyles(
     comp.toggleCss(CSS_LAST_COLUMN, presentedColsService.isColAtEdge(column, 'last'));
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _refreshCssClasses<TComp extends IAbstractHeaderCellComp | ICellComp>(
     comp: TComp,
     oldClasses: Set<string> | undefined,

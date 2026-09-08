@@ -44,6 +44,27 @@ export interface AggregatedCspViolation {
     sourceFiles: string[];
     pages: string[];
     tests: string[];
+    /**
+     * Set when the violation matches an `AcceptedCspViolation`: the reason the policy is left
+     * as it is. The violation stays in the report so a change in what the script does is still
+     * visible; CI just stops raising it as something to fix.
+     */
+    accepted?: string;
+}
+
+/**
+ * A violation the policy knowingly produces and will not be changed to fix. Kept as a rule
+ * rather than a filter so the decision travels with the report, and matched narrowly: a
+ * blocked eval from a given third-party script is accepted; anything else that script is
+ * blocked from doing is not, and nor is the same eval from a script this does not name.
+ */
+export interface AcceptedCspViolation {
+    directive: string;
+    blockedUri: string;
+    /** Every source file of the aggregated violation must start with this. */
+    sourceFilePrefix: string;
+    /** Why the policy stays as it is. Surfaces in the report as `accepted`. */
+    reason: string;
 }
 
 export interface CspViolationReport {
@@ -104,9 +125,31 @@ function hashesFor(record: CspViolationRecord, hints: CspHashHint[]): string[] {
     );
 }
 
+/**
+ * A rule accepts an aggregated violation only when every source file matches. A group is keyed
+ * without its source, so an unrelated script hitting the same directive and URI lands in the
+ * same group; that must resurface the group rather than be waved through with the known one.
+ * A violation with no source file at all cannot be attributed and so is never accepted.
+ */
+function acceptanceReason(
+    violation: Pick<AggregatedCspViolation, 'directive' | 'blockedUri' | 'sourceFiles'>,
+    accepted: AcceptedCspViolation[]
+): string | undefined {
+    if (violation.sourceFiles.length === 0) {
+        return undefined;
+    }
+    return accepted.find(
+        (rule) =>
+            rule.directive === violation.directive &&
+            rule.blockedUri === violation.blockedUri &&
+            violation.sourceFiles.every((file) => file.startsWith(rule.sourceFilePrefix))
+    )?.reason;
+}
+
 export function aggregateCspViolations(
     records: { record: CspViolationRecord; testTitle: string }[],
-    hints: CspHashHint[]
+    hints: CspHashHint[],
+    accepted: AcceptedCspViolation[] = []
 ): AggregatedCspViolation[] {
     const groups = new Map<string, { violation: AggregatedCspViolation; pagePaths: Set<string> }>();
 
@@ -140,12 +183,16 @@ export function aggregateCspViolations(
         }
     }
 
-    const violations = [...groups.values()].map(({ violation, pagePaths }) => ({
-        ...violation,
-        sourceFiles: sorted(violation.sourceFiles),
-        pages: sorted(pagePaths),
-        tests: sorted(violation.tests),
-    }));
+    const violations = [...groups.values()].map(({ violation, pagePaths }) => {
+        const aggregated: AggregatedCspViolation = {
+            ...violation,
+            sourceFiles: sorted(violation.sourceFiles),
+            pages: sorted(pagePaths),
+            tests: sorted(violation.tests),
+        };
+        const reason = acceptanceReason(aggregated, accepted);
+        return reason === undefined ? aggregated : { ...aggregated, accepted: reason };
+    });
 
     return violations.sort(
         (a, b) =>

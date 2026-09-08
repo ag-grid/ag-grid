@@ -30,8 +30,8 @@ const benchRoot = benchPackages ? path.resolve(benchPackages, '..') : repoRoot;
 // re-optimizes on every side switch); a key per checkout keeps the two caches separate.
 const benchCacheKey = benchPackages ? path.basename(benchRoot) : 'self';
 
-// Flips the grid's FAST_TEST_TIMINGS flag to true for this suite: hard-coded UX delays (the 200ms tooltip
-// floor, drag hold intervals) are wall-clock a headless test would otherwise sit through. Matched on the
+// Flips the grid's FAST_TEST_TIMINGS flag to true for this suite: hard-coded UX delays (menu activation,
+// drag intervals, announcements) are wall-clock a headless test would otherwise sit through. Matched on the
 // relative specifier every importer of the flag writes, so nothing else named the same can be caught.
 const fastTestTimingsAlias: Alias = {
     find: /^(\.\.?\/)+fastTestTimings$/,

@@ -1,5 +1,3 @@
-import { FRAMEWORK_REDIRECT_PATH } from '@constants';
-
 import { urlWithBaseUrl } from './urlWithBaseUrl';
 
 function addTrailingSlash(path: string) {
@@ -12,8 +10,10 @@ export async function getSitemapIgnorePaths() {
         urlWithBaseUrl('/examples'),
         urlWithBaseUrl('/archive'),
         urlWithBaseUrl('/campaigns'),
-        // Redirects
-        urlWithBaseUrl(`/${FRAMEWORK_REDIRECT_PATH}`),
+
+        // NOTE: /data-grid/ framework redirect pages are deliberately NOT disallowed: they are
+        // crawlable so their static links to the framework pages can be followed for SEO. They
+        // are still excluded from the sitemap (see sitemap.ts `isRedirectPage`).
 
         // Test pages
         urlWithBaseUrl('/*-data-grid/*-test'),
@@ -26,7 +26,7 @@ export async function getSitemapIgnorePaths() {
     ];
     const folderPaths = ignorePaths.map(addTrailingSlash);
 
-    return folderPaths.concat(urlWithBaseUrl('/404'));
+    return folderPaths.concat(urlWithBaseUrl('/404'), urlWithBaseUrl('/*searchQuery='));
 }
 
 export async function getSitemapAllowPaths() {

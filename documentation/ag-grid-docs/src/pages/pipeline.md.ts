@@ -1,4 +1,5 @@
-import { DISABLE_MARKDOWN_DOCS } from '@constants';
+import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
+import { GRID_PRODUCT_NAME } from '@utils/markdown-pages/gridFrontmatter';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -18,7 +19,7 @@ export async function GET() {
     const dataPath = path.join(process.cwd(), 'public/pipeline/pipeline.json');
     const entries = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-    return new Response(pipelineToMarkdown(entries), {
+    return new Response(pipelineToMarkdown(entries, GRID_PRODUCT_NAME, SITE_URL), {
         status: 200,
         headers: {
             'Content-Type': 'text/markdown; charset=utf-8',

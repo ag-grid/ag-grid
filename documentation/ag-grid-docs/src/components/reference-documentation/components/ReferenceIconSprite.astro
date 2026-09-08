@@ -1,0 +1,34 @@
+---
+import chevronDown from '@ag-website-shared/images/inline-svgs/bold-chevron-down.svg?raw';
+import enterprise from '@ag-website-shared/images/inline-svgs/enterprise.svg?raw';
+import moduleIcon from '@ag-website-shared/images/inline-svgs/module.svg?raw';
+import newTab from '@ag-website-shared/images/inline-svgs/new-tab.svg?raw';
+
+import { REFERENCE_ICON_SPRITE_ID_PREFIX, REFERENCE_ICON_NAMES, type ReferenceIconName } from './ReferenceIcon';
+
+const SOURCES: Record<ReferenceIconName, string> = {
+    chevronDown,
+    enterprise,
+    module: moduleIcon,
+    newTab,
+};
+
+function toSymbol(name: ReferenceIconName) {
+    const svg = SOURCES[name];
+    const openTag = svg.match(/<svg\b[^>]*>/)?.[0] ?? '';
+    const contents = svg.replace(/^[\s\S]*?<svg\b[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+    const viewBox = openTag.match(/viewBox="([^"]*)"/)?.[1];
+    // fill-rule and friends are declared on the source root and inherit into its paths,
+    // so they have to travel with the symbol.
+    const style = openTag.match(/style="([^"]*)"/)?.[1];
+
+    return `<symbol id="${REFERENCE_ICON_SPRITE_ID_PREFIX}${name}"${viewBox ? ` viewBox="${viewBox}"` : ''}${
+        style ? ` style="${style}"` : ''
+    }>${contents}</symbol>`;
+}
+
+const symbols = REFERENCE_ICON_NAMES.map(toSymbol).join('');
+---
+
+{/* Emit once per page: <ReferenceIcon> resolves against these ids. */}
+<svg aria-hidden="true" style="display: none" set:html={symbols} />

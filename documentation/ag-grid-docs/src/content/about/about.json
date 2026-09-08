@@ -10,7 +10,7 @@
             "heading": "In memory of our amazing founder Niall Crosby",
             "paragraph": "AG Grid's success has a lot to do with Niall's ingenuity, craft and commitment to building",
             "linkText": "Read Niall's story",
-            "linkUrl": "/niall"
+            "linkUrl": "/niall/"
         },
         "history": {
             "heading": "Our history",
@@ -43,7 +43,7 @@
                     "icon": "conference",
                     "title": "Community",
                     "description": "View our upcoming and past events",
-                    "url": "/community"
+                    "url": "/community/"
                 }
             ]
         },
@@ -104,7 +104,7 @@
             "year": "2020",
             "icon": "chart",
             "title": "AG Charts",
-            "description": "<a href=\"https://ag-grid.com/charts/\">AG Charts Community</a> is released as a standalone library"
+            "description": "<a href=\"https://www.ag-grid.com/charts/\">AG Charts Community</a> is released as a standalone library"
         },
         {
             "year": "2021",

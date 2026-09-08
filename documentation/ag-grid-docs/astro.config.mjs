@@ -19,6 +19,7 @@ import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemap
 import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
+import agDemoTitleChecker from './plugins/agDemoTitleChecker';
 import agDevCsp from './plugins/agDevCsp';
 import agDevExampleAssetCors from './plugins/agDevExampleAssetCors';
 import agDevMarkdownNegotiation from './plugins/agDevMarkdownNegotiation';
@@ -357,6 +358,7 @@ export default defineConfig({
                   },
               ]),
         agHtaccessGen({ htaccessEnv: HTACCESS }),
+        agDemoTitleChecker(),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),

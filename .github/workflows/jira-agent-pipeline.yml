@@ -114,7 +114,13 @@ jobs:
             (github.event_name == 'workflow_dispatch'   && inputs.stage == 'resume') ||
             (github.event_name == 'workflow_run'        && github.event.workflow_run.conclusion == 'failure')
         runs-on: ubuntu-latest
-        timeout-minutes: 5
+        # GitHub Packages' npm registry resolves @ag-grid/dev-prompts@latest with
+        # highly variable latency (observed 4s-7m across ag-grid/ag-charts/ag-studio
+        # on 2026-09-04, not tied to any change here) — 5m left no slack and this
+        # job was intermittently timing out mid-install. 10m covers the worst
+        # observed case with headroom; the job itself finishes in seconds once the
+        # install completes.
+        timeout-minutes: 10
         permissions:
             contents: read
             pull-requests: read

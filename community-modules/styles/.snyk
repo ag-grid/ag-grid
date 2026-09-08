@@ -1,36 +1,6 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
-  SNYK-JS-SHELLQUOTE-17457810:
-    - npm-run-all@4.1.5 > shell-quote@1.8.3:
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-25T13:22:44.314Z
-  SNYK-JS-XMLDOMXMLDOM-16134552:
-    - '@vusion/webfonts-generator@0.8.0 > svg2ttf@6.0.3 > @xmldom/xmldom@0.7.13':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-24T11:38:40.091Z
-  SNYK-JS-XMLDOMXMLDOM-16134549:
-    - '@vusion/webfonts-generator@0.8.0 > svg2ttf@6.0.3 > @xmldom/xmldom@0.7.13':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-24T11:38:14.623Z
-  SNYK-JS-XMLDOMXMLDOM-16134530:
-    - '@vusion/webfonts-generator@0.8.0 > svg2ttf@6.0.3 > @xmldom/xmldom@0.7.13':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-24T11:37:55.501Z
-  SNYK-JS-XMLDOMXMLDOM-16133132:
-    - '@vusion/webfonts-generator@0.8.0 > svg2ttf@6.0.3 > @xmldom/xmldom@0.7.13':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-24T11:32:36.517Z
-  SNYK-JS-XMLDOMXMLDOM-15869636:
-    - '@vusion/webfonts-generator@0.8.0 > svg2ttf@6.0.3 > @xmldom/xmldom@0.7.13':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-04-02T15:52:48.124Z
   SNYK-JS-HANDLEBARS-15807042:
     - '@vusion/webfonts-generator@0.8.0 > handlebars@4.7.8':
         reason: Used in build & dev - not included in final production build
@@ -56,23 +26,6 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-31T13:30:25.082Z
-  SNYK-JS-BRACEEXPANSION-15789759:
-    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > glob@8.1.0 > minimatch@5.1.6 > brace-expansion@2.0.2':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:48:29.516Z
-    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > @npmcli/move-file@2.0.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:48:29.509Z
-    - '@vusion/webfonts-generator@0.8.0 > svgicons2svgfont@10.0.6 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:48:29.508Z
-    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-03-27T11:48:29.502Z
   SNYK-JS-PICOMATCH-15765511:
     - chokidar-cli@3.0.0 > chokidar@3.6.0 > readdirp@3.6.0 > picomatch@2.3.1:
         reason: Used in build & dev - not included in final production build
@@ -175,59 +128,6 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-  SNYK-JS-FASTURI-16642394:
-    - stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Linting dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-FASTURI-16642399:
-    - stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Linting dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-SHELLQUOTE-16799355:
-    - npm-run-all@4.1.5 > shell-quote@1.8.3:
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-BRACEEXPANSION-17706650:
-    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@vusion/webfonts-generator@0.8.0 > svgicons2svgfont@10.0.6 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > glob@8.1.0 > minimatch@5.1.6 > brace-expansion@2.0.2':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-FASTURI-17675102:
-    - stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-FASTURI-18021349:
-    - stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-IMMUTABLE-17900558:
-    - sass@1.99.0 > immutable@5.1.5:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-IMMUTABLE-17900573:
-    - sass@1.99.0 > immutable@5.1.5:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-JSYAML-17900054:
-    - stylelint@17.9.0 > cosmiconfig@9.0.1 > js-yaml@4.1.1:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
   SNYK-JS-TAR-17909068:
     - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > tar@6.2.1':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)

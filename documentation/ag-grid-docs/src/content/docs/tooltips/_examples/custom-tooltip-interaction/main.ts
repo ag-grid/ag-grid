@@ -21,10 +21,10 @@ const columnDefs: ColDef[] = [
     {
         field: 'athlete',
         minWidth: 150,
-        tooltipField: 'athlete',
+        tooltip: true,
         tooltipComponentParams: { type: 'success' },
     },
-    { field: 'age', minWidth: 130, tooltipField: 'age' },
+    { field: 'age', minWidth: 130, tooltip: true },
     { field: 'year' },
     { field: 'sport' },
 ];

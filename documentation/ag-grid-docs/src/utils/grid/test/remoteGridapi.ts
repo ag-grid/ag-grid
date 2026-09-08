@@ -21,14 +21,17 @@ export const ensureGridReady = async (page: Page, gridId: string = '1') => {
 
 export async function waitForGridContent(page: Page) {
     await page.locator('.ag-overlay-loading-center').first().waitFor({ state: 'hidden' });
+    // Each member is `:visible`-filtered because `.or(...).first()` resolves to the first match in
+    // DOM order across the whole union — so an unfiltered union lets a leftover hidden `.ag-cell`
+    // that precedes the visible content own the wait forever (AG-18416).
     // Normal cells
-    const cellLocator = page.locator('.ag-cell');
+    const cellLocator = page.locator('.ag-cell:visible');
     // Grouped cells
-    const cellWrapperLocator = page.locator('.ag-cell-wrapper');
+    const cellWrapperLocator = page.locator('.ag-cell-wrapper:visible');
     // Full width only cells
-    const fullWidthRow = page.locator('.ag-full-width-row');
+    const fullWidthRow = page.locator('.ag-full-width-row:visible');
     // No rows to show
-    const noRowsToShowLocator = page.locator('.ag-overlay-no-rows-center');
+    const noRowsToShowLocator = page.locator('.ag-overlay-no-rows-center:visible');
     await cellLocator
         .or(cellWrapperLocator)
         .or(noRowsToShowLocator)

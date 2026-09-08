@@ -20,6 +20,103 @@ function createList<TValue>(params?: Partial<RichSelectParams<TValue>>) {
     return { list, wrapper };
 }
 
+const GROW_CLASS = 'ag-virtual-list-grow-to-content';
+
+/**
+ * A list whose rendered rows report `rowWidths`, and whose own box is `boxWidth` wide with a 2px border, so the
+ * width the callback receives is `max(rowWidths) + 2`. `draw()` runs one `drawVirtualRows` pass over them.
+ */
+function createMeasurableList(rowWidths: number[], boxWidth = 500) {
+    const { list } = createList<string>();
+    const gui = list.getGui() as HTMLElement;
+
+    Object.defineProperty(gui, 'getBoundingClientRect', { value: () => ({ width: boxWidth }), configurable: true });
+    Object.defineProperty(gui, 'clientWidth', { value: boxWidth - 2, configurable: true });
+    // The ref is wired by postConstruct, which this bare component never runs.
+    const eContainer = ((list as any).eContainer = gui.querySelector('.ag-virtual-list-container')!);
+    Object.defineProperty(eContainer, 'getBoundingClientRect', {
+        value: () => ({ width: boxWidth - 2 }),
+        configurable: true,
+    });
+
+    (list as any).forEachRenderedRow = (callback: (cmp: any, idx: number) => void) => {
+        rowWidths.forEach((width, idx) =>
+            callback(
+                {
+                    getCompId: () => `${idx}`,
+                    getValue: () => 'value',
+                    toggleHighlighted: vi.fn(),
+                    updateSelected: vi.fn(),
+                    getGui: () => ({ getBoundingClientRect: () => ({ width }) }),
+                },
+                idx
+            )
+        );
+    };
+    (list as any).refresh = vi.fn();
+    (list as any).ensureIndexVisible = vi.fn();
+    list.setCurrentList(rowWidths.map((_, idx) => `row-${idx}`));
+
+    const virtualListPrototype = Object.getPrototypeOf(Object.getPrototypeOf(list));
+    const drawSpy = vi.spyOn(virtualListPrototype, 'drawVirtualRows').mockImplementation(() => {});
+
+    return {
+        list,
+        gui,
+        draw: () => (list as any).drawVirtualRows(true),
+        restore: () => drawSpy.mockRestore(),
+    };
+}
+
+/**
+ * A list whose own width is whatever the callback last asked for, with `inset` of it taken by a scrollbar or
+ * a sub-pixel border, so growing it feeds straight back into the next measurement. `clientWidth` rounds, as
+ * the real one does. A row is `min-width: 100%`, so it never measures narrower than the container.
+ */
+function createGrowingList(rowContentWidth: number, getListWidth: () => number, inset: number) {
+    const { list } = createList<string>();
+    const gui = list.getGui() as HTMLElement;
+    const getContainerWidth = () => getListWidth() - inset;
+
+    Object.defineProperty(gui, 'getBoundingClientRect', {
+        value: () => ({ width: getListWidth() }),
+        configurable: true,
+    });
+    Object.defineProperty(gui, 'clientWidth', {
+        get: () => Math.round(getContainerWidth()),
+        configurable: true,
+    });
+    // The ref is wired by postConstruct, which this bare component never runs.
+    const eContainer = ((list as any).eContainer = gui.querySelector('.ag-virtual-list-container')!);
+    Object.defineProperty(eContainer, 'getBoundingClientRect', {
+        value: () => ({ width: getContainerWidth() }),
+        configurable: true,
+    });
+
+    // `min-width: 100%` on a row, which is what makes the list's own width part of what it reports.
+    (list as any).forEachRenderedRow = (callback: (cmp: any, idx: number) => void) =>
+        callback(
+            {
+                getCompId: () => '0',
+                getValue: () => 'value',
+                toggleHighlighted: vi.fn(),
+                updateSelected: vi.fn(),
+                getGui: () => ({
+                    getBoundingClientRect: () => ({ width: Math.max(rowContentWidth, getContainerWidth()) }),
+                }),
+            },
+            0
+        );
+    (list as any).refresh = vi.fn();
+    (list as any).ensureIndexVisible = vi.fn();
+    list.setCurrentList(['row-0']);
+
+    const virtualListPrototype = Object.getPrototypeOf(Object.getPrototypeOf(list));
+    const drawSpy = vi.spyOn(virtualListPrototype, 'drawVirtualRows').mockImplementation(() => {});
+
+    return { list, draw: () => (list as any).drawVirtualRows(true), restore: () => drawSpy.mockRestore() };
+}
+
 describe('AgRichSelectList', () => {
     it('clears active option attributes when highlight is removed', () => {
         const { list, wrapper } = createList<string>();
@@ -215,6 +312,115 @@ describe('AgRichSelectList', () => {
         (list as any).onGuiScroll();
 
         expect(callback).toHaveBeenCalled();
+    });
+
+    it('reports the widest overflowing row plus the width its own border takes', () => {
+        const { list, draw, restore } = createMeasurableList([120, 560.4, 90]);
+        const reportContentWidth = vi.fn().mockReturnValue(true);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).toHaveBeenCalledTimes(1);
+        expect(reportContentWidth).toHaveBeenCalledWith(563);
+    });
+
+    it('reports nothing while every row fits the width the list already has', () => {
+        const { list, draw, restore } = createMeasurableList([120, 180.4, 90]);
+        const reportContentWidth = vi.fn().mockReturnValue(true);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).not.toHaveBeenCalled();
+    });
+
+    /** Drives `grow` passes of the measure-grow-remeasure loop and returns every width asked for. */
+    function runGrowthLoop(rowContentWidth: number, inset: number): number[] {
+        let listWidth = 200;
+        const { list, draw, restore } = createGrowingList(rowContentWidth, () => listWidth, inset);
+        const asked: number[] = [];
+
+        try {
+            list.setContentWidthCallback((width) => {
+                asked.push(width);
+                listWidth = width;
+                return true;
+            });
+            for (let i = 0; i < 5; ++i) {
+                draw();
+            }
+        } finally {
+            restore();
+        }
+        return asked;
+    }
+
+    it('asks for the room an overflowing row needs once, and stops once it has it', () => {
+        // A scrollbar takes 15 of the list's width, so a 260 wide row needs 275 to be seen in full. Growing
+        // to it widens the rows too, and that width must not be asked for a second time.
+        expect(runGrowthLoop(260, 15)).toEqual([275]);
+    });
+
+    it('asks for nothing when only a sub-pixel border separates a row from the width it has', () => {
+        // `clientWidth` rounds where the row and the container do not, so comparing against it reads the
+        // difference as an overflow and grows by a pixel on every redraw, for ever.
+        expect(runGrowthLoop(100, 1.6)).toEqual([]);
+    });
+
+    it('lays rows out at their content width only while armed', () => {
+        const { list, gui, draw, restore } = createMeasurableList([620]);
+
+        try {
+            expect(gui.classList.contains(GROW_CLASS)).toBe(false);
+
+            list.setContentWidthCallback(vi.fn().mockReturnValue(true));
+            expect(gui.classList.contains(GROW_CLASS)).toBe(true);
+
+            draw();
+            expect(gui.classList.contains(GROW_CLASS)).toBe(true);
+        } finally {
+            restore();
+        }
+    });
+
+    it('stops measuring and restores elision once the callback reports no room left', () => {
+        const { list, gui, draw, restore } = createMeasurableList([620]);
+        const reportContentWidth = vi.fn().mockReturnValue(false);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).toHaveBeenCalledTimes(1);
+        expect(gui.classList.contains(GROW_CLASS)).toBe(false);
+    });
+
+    it('stays armed when a draw renders no rows, so a later draw can still measure', () => {
+        const { list, gui, draw, restore } = createMeasurableList([]);
+        const reportContentWidth = vi.fn().mockReturnValue(false);
+
+        try {
+            list.setContentWidthCallback(reportContentWidth);
+            draw();
+        } finally {
+            restore();
+        }
+
+        expect(reportContentWidth).not.toHaveBeenCalled();
+        expect(gui.classList.contains(GROW_CLASS)).toBe(true);
     });
 
     it('announces loading and no-matches state transitions', () => {

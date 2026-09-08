@@ -36,6 +36,12 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
 
     protected readonly eEditor: GridSelect<TValue> = RefPlaceholder;
     private startedByEnter: boolean = false;
+    /** Read off the widget, which falls back to `values[0]` when the stored value is not an option,
+     * so an untouched commit would write that option over it. */
+    private seededValue: TValue | null | undefined | this = this;
+    /** Picking the fallback option leaves the widget on its seed, so equality alone cannot tell a
+     * deliberate choice from an untouched editor. */
+    private picked: boolean = false;
 
     constructor() {
         super(SelectCellElement, [AgSelectSelector]);
@@ -70,6 +76,7 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
         } else if (params.values.length) {
             eEditor.setValue(params.values[0], true);
         }
+        this.seededValue = eEditor.getValue();
 
         const { valueListGap, valueListMaxWidth, valueListMaxHeight } = params;
 
@@ -85,14 +92,16 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
             eEditor.setPickerMaxWidth(valueListMaxWidth);
         }
 
-        // we don't want to add this if full row editing, otherwise selecting will stop the
-        // full row editing.
-        if (gos.get('editType') !== 'fullRow') {
-            this.addManagedListeners(this.eEditor, {
-                selectedItem: (e: AgSelectSelectedItemEvent) =>
-                    params.stopEditing(e.keyboardEvent == null, e.keyboardEvent),
-            });
-        }
+        // selecting must not stop a full row edit, but it still counts as a deliberate pick.
+        const stopsOnSelect = gos.get('editType') !== 'fullRow';
+        this.addManagedListeners(this.eEditor, {
+            selectedItem: (e: AgSelectSelectedItemEvent) => {
+                this.picked = true;
+                if (stopsOnSelect) {
+                    params.stopEditing(e.keyboardEvent == null, e.keyboardEvent);
+                }
+            },
+        });
     }
 
     public afterGuiAttached() {
@@ -116,10 +125,13 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
     public agSetEditValue(value: TValue | null | undefined): void {
         this.params.value = value;
         this.eEditor.setValue(value ?? undefined, true);
+        this.seededValue = this.eEditor.getValue();
+        this.picked = false;
     }
 
     public getValue(): TValue | null | undefined {
-        return this.eEditor.getValue();
+        const value = this.eEditor.getValue();
+        return !this.picked && value === this.seededValue ? this.params.value : value;
     }
 
     public override isPopup() {

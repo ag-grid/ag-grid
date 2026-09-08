@@ -18,7 +18,7 @@
             "showVersionBadge": true,
             "secondaryCta": {
                 "text": "View All Demos",
-                "url": "./example"
+                "url": "./example/"
             },
             "demo": {
                 "enableRowGroup": true,

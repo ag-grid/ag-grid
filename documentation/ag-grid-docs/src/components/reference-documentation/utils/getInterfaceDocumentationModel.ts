@@ -6,11 +6,11 @@ import type {
     CodeEntry,
     Config,
     DocCode,
-    DocEntryMap,
     DocProperties,
     InterfaceDocumentationModel,
     InterfaceEntry,
     Overrides,
+    PropertyViewModelMap,
 } from '../types';
 import {
     escapeGenericCode,
@@ -21,6 +21,7 @@ import {
 } from './documentation-helpers';
 import { getDefinitionType } from './getDefinitionType';
 import { getDetailsCode } from './getDetailsCode';
+import { getPropertyViewModel } from './getPropertyViewModel';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
 import { getInterfacesToWrite } from './interface-helpers';
 
@@ -154,15 +155,19 @@ export function getProperties({
               })
             : undefined;
 
-        orderedProps[name] = {
+        orderedProps[name] = getPropertyViewModel({
+            name,
+            framework,
             definition,
-            detailsCode,
             gridOpProp,
+            type,
             propertyType,
-        };
+            config,
+            detailsCode,
+        });
     });
 
-    const properties: DocEntryMap = {
+    const properties: Record<string, PropertyViewModelMap> = {
         [interfaceName]: {
             ...orderedProps,
         },

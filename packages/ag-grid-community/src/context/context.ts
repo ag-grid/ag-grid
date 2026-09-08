@@ -145,8 +145,10 @@ import type { CellStyleService } from '../styling/cellStyleService';
 import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
+import type { TooltipTouchCoordinator } from '../tooltip/tooltipTouchCoordinator';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
 import type { ErrorOverlayService } from '../validation/errorOverlay/errorOverlayService';
+import type { IssueEventService } from '../validation/issueEventService';
 import type { LogService } from '../validation/logService';
 import type { ValidationService } from '../validation/validationService';
 import type { ChangeDetectionService } from '../valueService/changeDetectionService';
@@ -343,6 +345,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     stateSvc?: StateService;
     overlays?: OverlayService;
     errorOverlay?: ErrorOverlayService;
+    issueEvents?: IssueEventService;
     pinnedRowModel?: IPinnedRowModel;
     menuSvc?: MenuService;
     apiEventSvc?: ApiEventService;
@@ -401,6 +404,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
+    tooltipTouchSvc?: TooltipTouchCoordinator;
     colGroupSvc: ColumnGroupService;
     userColumnSvc?: UserColumnService;
     rowAutoHeight?: RowAutoHeightService;
@@ -448,6 +452,7 @@ export type BeanName = keyof BeanCollection;
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
 type UntypedBeanNames =
     | 'advFilterExpSvc'
+    | 'advFilterSetSvc'
     | 'advSettingsMenuFactory'
     | 'autoGenColsSvc'
     | 'agChartsExports'

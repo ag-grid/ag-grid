@@ -1,12 +1,11 @@
 /* eslint-disable no-restricted-syntax -- each remaining sleep is the observation window for "the tooltip
    has not appeared yet", which `waitFor` cannot express; a new one still needs that justification.
-   `tooltipShowDelay: 0` means 0 here (FAST_TEST_TIMINGS lifts the grid's 200ms floor for this suite, which
-   `fastTestTimings.test.ts` is the guard for), and the delays themselves are asserted in
-   `tooltip-delays.test.ts`. */
+   Delay behaviour itself is asserted in `tooltip-delays.test.ts`. */
 import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -18,11 +17,13 @@ import {
 } from 'ag-test-utils';
 
 import {
+    InfiniteRowModelModule,
     LocaleModule,
     RenderApiModule,
     TextEditorModule,
     TooltipModule,
     agTestIdFor,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -37,11 +38,14 @@ import type {
 } from 'ag-grid-community';
 import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
 
+import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
+
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
         modules: [
             TooltipModule,
+            InfiniteRowModelModule,
             FormulaModule,
             LocaleModule,
             RenderApiModule,
@@ -51,7 +55,11 @@ describe('Tooltips', () => {
     });
 
     beforeAll(() => setupAgTestIds());
-    afterEach(() => gridMgr.reset());
+    beforeEach(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
+    afterEach(() => {
+        gridMgr.reset();
+        resetLegacyTooltipProperties();
+    });
 
     /** Texts of tooltips that are on screen and not fading out. */
     const visibleTooltipTexts = () => getTooltips().map((tooltip) => tooltip.textContent ?? '');
@@ -59,7 +67,7 @@ describe('Tooltips', () => {
 
     test('shows tooltip when configured', async () => {
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipValueGetter: () => 'Base tooltip' }],
+            columnDefs: [{ field: 'A', tooltip: 'Base tooltip' }],
             rowData: [{ A: 'value' }],
             tooltipShowDelay: 0,
             tooltipSwitchShowDelay: 0,
@@ -87,6 +95,7 @@ describe('Tooltips', () => {
     });
 
     test('AG-17120 tooltipField cell tooltip reflects the pending value during a batch edit', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'A', editable: true, tooltipField: 'A' }],
             rowData: [{ A: 'value' }],
@@ -139,6 +148,7 @@ describe('Tooltips', () => {
     });
 
     test('AG-17120 tooltipField pointing at another column reflects that column pending batch value', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', tooltipField: 'B' },
@@ -193,6 +203,7 @@ describe('Tooltips', () => {
     });
 
     test('AG-17120 tooltipField reads the data field, not a matching column value getter', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', tooltipField: 'B' },
@@ -215,6 +226,7 @@ describe('Tooltips', () => {
     });
 
     test('AG-17120 tooltipField reads the pending data value, not a matching column value getter', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', tooltipField: 'B' },
@@ -256,7 +268,69 @@ describe('Tooltips', () => {
         expect(hasTooltipText('computed')).toBe(false);
     });
 
+    test('legacy tooltipField preserves its fallback precedence', async () => {
+        allowLegacyTooltipProperties();
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-field-precedence', {
+            columnDefs: [
+                {
+                    field: 'A',
+                    tooltipField: '',
+                    tooltipValueGetter: () => 'Empty field falls through',
+                },
+                {
+                    field: 'B',
+                    tooltipField: 'missing',
+                    tooltipValueGetter: () => 'Getter must not win',
+                },
+            ],
+            rowData: [{ A: 'a-value', B: 'b-value' }],
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const emptyFieldCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+        const missingFieldCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'B')));
+
+        await userEvent.hover(emptyFieldCell);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Empty field falls through');
+
+        await userEvent.unhover(emptyFieldCell);
+        await waitForTooltips(0);
+        await userEvent.hover(missingFieldCell);
+        await asyncSetTimeout(0);
+        expect(getTooltips()).toHaveLength(0);
+    });
+
+    test('legacy tooltipField falls through to tooltipValueGetter while row data is loading', async () => {
+        allowLegacyTooltipProperties();
+        const api = gridMgr.createGrid('myGrid-tooltip-field-loading', {
+            columnDefs: [
+                {
+                    field: 'A',
+                    tooltipField: 'note',
+                    tooltipValueGetter: () => 'Loading tooltip',
+                },
+            ],
+            rowModelType: 'infinite',
+            datasource: { getRows: () => {} },
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const loadingCell = await waitFor(() => {
+            const cell = gridDiv.querySelector<HTMLElement>('.ag-row[row-index="0"] .ag-cell[col-id="A"]');
+            expect(cell).not.toBeNull();
+            return cell!;
+        });
+
+        await userEvent.hover(loadingCell);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Loading tooltip');
+    });
+
     test('AG-17120 tooltipValueGetter cell tooltip reflects the pending value during a batch edit', async () => {
+        allowLegacyTooltipProperties();
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'A', editable: true, tooltipValueGetter: (params) => `Tooltip: ${params.value}` }],
             rowData: [{ A: 'value' }],
@@ -356,7 +430,7 @@ describe('Tooltips', () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', editable: true },
-                { field: 'result', tooltipValueGetter: () => 'My cell tooltip' },
+                { field: 'result', tooltip: 'My cell tooltip' },
             ],
             defaultColDef: {
                 editable: true,
@@ -432,11 +506,24 @@ describe('Tooltips', () => {
         `);
     });
 
-    test('keeps the formula error tooltip after a colDef change on a column with no tooltip config', async () => {
+    test('keeps the formula error tooltip and custom component when tooltip is false', async () => {
         // formula and validation error tooltips are not gated by the column's own tooltip config, so a
         // colDef change must leave every cell with a tooltip feature, not just tooltip-enabled columns.
+        class FormulaErrorTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            public init(params: ITooltipParams): void {
+                this.eGui.classList.add('formula-error-tooltip');
+                this.eGui.textContent = String(params.value);
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A' }, { field: 'result' }],
+            columnDefs: [{ field: 'A' }, { field: 'result', tooltip: false, tooltipComponent: FormulaErrorTooltip }],
             defaultColDef: {
                 editable: true,
                 allowFormula: true,
@@ -472,12 +559,20 @@ describe('Tooltips', () => {
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result'))));
         await waitForTooltips(1);
-        expect(getTooltips()[0].classList.contains('ag-cell-formula-tooltip')).toBe(true);
+        expect(getTooltips()[0]).toHaveClass('formula-error-tooltip');
 
         await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result'))));
         await waitForTooltips(0);
 
-        api.setGridOption('columnDefs', [{ field: 'A' }, { field: 'result', headerName: 'Renamed' }]);
+        api.setGridOption('columnDefs', [
+            { field: 'A' },
+            {
+                field: 'result',
+                headerName: 'Renamed',
+                tooltip: false,
+                tooltipComponent: FormulaErrorTooltip,
+            },
+        ]);
         await asyncSetTimeout(50);
         await new GridColumns(api, `formula error tooltip after colDef change renamed`).checkColumns(`
             LEFT
@@ -494,16 +589,29 @@ describe('Tooltips', () => {
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result'))));
         await waitForTooltips(1);
-        expect(getTooltips()[0].classList.contains('ag-cell-formula-tooltip')).toBe(true);
+        expect(getTooltips()[0]).toHaveClass('formula-error-tooltip');
     });
 
-    test('keeps the row validation error tooltip after a colDef change on a column with no tooltip config', async () => {
+    test('keeps the row validation error tooltip and custom component when tooltip is false', async () => {
         // row validation errors surface on every cell of the row, including one that is not editing and
         // has no tooltip config of its own — the second source that ignores column.isTooltipEnabled().
+        class ValidationErrorTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            public init(params: ITooltipParams): void {
+                this.eGui.classList.add('validation-error-tooltip');
+                this.eGui.textContent = String(params.value);
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', editable: true },
-                { field: 'B', editable: false },
+                { field: 'B', editable: false, tooltip: false, tooltipComponent: ValidationErrorTooltip },
             ],
             rowData: [{ id: 'r1', A: 'a1', B: 'b1' }],
             getRowId: (params) => String(params.data.id),
@@ -525,20 +633,28 @@ describe('Tooltips', () => {
         // B is not editable, so it is not editing and resolves the row's validation error
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
         await waitForTooltips(1);
-        expect(hasTooltipText('Row is not allowed')).toBe(true);
+        expect(getTooltips()[0]).toHaveClass('validation-error-tooltip');
+        expect(getTooltips()[0]).toHaveTextContent('Row is not allowed');
 
         await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
         await waitForTooltips(0);
 
         api.setGridOption('columnDefs', [
             { field: 'A', editable: true },
-            { field: 'B', editable: false, headerName: 'Renamed' },
+            {
+                field: 'B',
+                editable: false,
+                headerName: 'Renamed',
+                tooltip: false,
+                tooltipComponent: ValidationErrorTooltip,
+            },
         ]);
         await asyncSetTimeout(50);
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
         await waitForTooltips(1);
-        expect(hasTooltipText('Row is not allowed')).toBe(true);
+        expect(getTooltips()[0]).toHaveClass('validation-error-tooltip');
+        expect(getTooltips()[0]).toHaveTextContent('Row is not allowed');
     });
 
     test('uses a non-terminal locale separator between row validation tooltip errors', async () => {
@@ -576,7 +692,7 @@ describe('Tooltips', () => {
         // a showing tooltip renders the value it was created with, so a cell repaint that changes the
         // value has to take the tooltip down rather than leave the old text on screen.
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipValueGetter: (params) => `Tip ${params.value}` }],
+            columnDefs: [{ field: 'A', tooltip: (params) => `Tip ${params.value}` }],
             rowData: [{ id: 'r1', A: 'a1' }],
             getRowId: (params) => String(params.data.id),
             tooltipShowDelay: 0,
@@ -615,7 +731,7 @@ describe('Tooltips', () => {
         }
 
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipComponent: DataTooltip, tooltipValueGetter: () => 'constant' }],
+            columnDefs: [{ field: 'A', tooltipComponent: DataTooltip, tooltip: 'constant' }],
             rowData: [{ id: 'r1', A: 'a1' }],
             getRowId: (params) => String(params.data.id),
             tooltipShowDelay: 0,
@@ -779,7 +895,7 @@ describe('Tooltips', () => {
         }
 
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipComponent: TooltipA, tooltipValueGetter: () => 'same' }],
+            columnDefs: [{ field: 'A', tooltipComponent: TooltipA, tooltip: 'same' }],
             rowData: [{ id: 'r1', A: 'a1' }],
             getRowId: (params) => String(params.data.id),
             tooltipShowDelay: 0,
@@ -794,7 +910,7 @@ describe('Tooltips', () => {
         expect(visibleTooltipTexts()).toEqual(['A: same']);
 
         // the component changes while the tooltip is open, the text it resolves does not
-        api.setGridOption('columnDefs', [{ field: 'A', tooltipComponent: TooltipB, tooltipValueGetter: () => 'same' }]);
+        api.setGridOption('columnDefs', [{ field: 'A', tooltipComponent: TooltipB, tooltip: 'same' }]);
 
         await waitFor(() => expect(visibleTooltipTexts()).not.toContain('A: same'));
     });
@@ -820,7 +936,7 @@ describe('Tooltips', () => {
             columnDefs: [
                 {
                     field: 'A',
-                    tooltipValueGetter: () => 'Same tooltip',
+                    tooltip: 'Same tooltip',
                     cellRendererSelector: (params) =>
                         params.data?.showDetail ? { component: TooltipRenderer } : undefined,
                 },
@@ -872,7 +988,7 @@ describe('Tooltips', () => {
         }
 
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'A', tooltipComponent: TooltipA, tooltipValueGetter: () => 'first' }],
+            columnDefs: [{ field: 'A', tooltipComponent: TooltipA, tooltip: 'first' }],
             rowData: [{ id: 'r1', A: 'a1' }],
             getRowId: (params) => String(params.data.id),
             tooltipShowDelay: 0,
@@ -889,9 +1005,7 @@ describe('Tooltips', () => {
         await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
         await waitForTooltips(0);
 
-        api.setGridOption('columnDefs', [
-            { field: 'A', tooltipComponent: TooltipB, tooltipValueGetter: () => 'second' },
-        ]);
+        api.setGridOption('columnDefs', [{ field: 'A', tooltipComponent: TooltipB, tooltip: 'second' }]);
         await asyncSetTimeout(50);
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
@@ -920,7 +1034,7 @@ describe('Tooltips', () => {
                 {
                     field: 'A',
                     valueGetter: (params) => (params.data?.showDetail ? 'detail' : 'plain'),
-                    tooltipValueGetter: () => 'ColDef tooltip',
+                    tooltip: 'ColDef tooltip',
                     cellRendererSelector: (params) =>
                         params.data?.showDetail ? { component: TooltipRenderer } : undefined,
                 },
@@ -972,8 +1086,8 @@ describe('Tooltips', () => {
 
         const gridOptions: GridOptions = {
             columnDefs: [
-                { field: 'A', cellRenderer: PlainRenderer, tooltipValueGetter: (params) => `Tip ${params.value}` },
-                { field: 'B', tooltipValueGetter: (params) => `Tip ${params.value}` },
+                { field: 'A', cellRenderer: PlainRenderer, tooltip: (params) => `Tip ${params.value}` },
+                { field: 'B', tooltip: (params) => `Tip ${params.value}` },
             ],
             rowData: [{ id: 'r1', A: 'a1', B: 'b1' }],
             getRowId: (params) => String(params.data.id),
@@ -1014,6 +1128,58 @@ describe('Tooltips', () => {
         expect(hasTooltipText('Tip b2')).toBe(true);
     });
 
+    test('clears a renderer tooltip when the same renderer class is recreated without registering one', async () => {
+        class ConditionalTooltipRenderer implements ICellRendererComp {
+            private eGui!: HTMLElement;
+
+            public init(params: ICellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = String(params.value);
+                if (params.data.showTooltip) {
+                    params.setTooltip('Renderer tooltip', () => true);
+                }
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+
+            public refresh(): boolean {
+                return false;
+            }
+        }
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-same-renderer-recreated', {
+            columnDefs: [
+                {
+                    field: 'A',
+                    tooltip: 'Column tooltip',
+                    cellRenderer: ConditionalTooltipRenderer,
+                },
+            ],
+            rowData: [{ id: 'r1', A: 'a1', showTooltip: true }],
+            getRowId: ({ data }) => data.id,
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+        await userEvent.hover(cell);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Renderer tooltip');
+
+        await userEvent.unhover(cell);
+        await waitForTooltips(0);
+        api.setGridOption('rowData', [{ id: 'r1', A: 'a2', showTooltip: false }]);
+        await waitFor(() => expect(cell).toHaveTextContent('a2'));
+
+        await userEvent.hover(cell);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Column tooltip');
+        expect(hasTooltipText('Renderer tooltip')).toBe(false);
+    });
+
     test('AG-17663 destroys cell renderer tooltip when cellRendererSelector swaps the renderer', async () => {
         class TooltipRenderer implements ICellRendererComp {
             private eGui!: HTMLElement;
@@ -1049,7 +1215,7 @@ describe('Tooltips', () => {
                 {
                     field: 'A',
                     valueGetter: (params) => (params.data?.showDetail ? 'detail' : 'plain'),
-                    tooltipValueGetter: () => 'ColDef tooltip',
+                    tooltip: 'ColDef tooltip',
                     cellRendererSelector: (params) =>
                         params.data?.showDetail ? { component: TooltipRenderer } : { component: PlainRenderer },
                 },
@@ -1087,6 +1253,101 @@ describe('Tooltips', () => {
         expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
     });
 
+    test('full-width renderer kept on refresh can still set tooltips through its initial params', async () => {
+        class FullWidthTooltipRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('div');
+            private params!: ICellRendererParams;
+
+            public init(params: ICellRendererParams): void {
+                this.params = params;
+                this.render(params);
+                params.setTooltip(`Renderer: ${params.data?.value}`);
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+
+            public refresh(params: ICellRendererParams): boolean {
+                this.render(params);
+                // deliberately keeps its init-time params: setTooltip must still work for a kept instance
+                this.params.setTooltip(`Renderer: ${params.data?.value}`);
+                return true;
+            }
+
+            private render(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.data?.value);
+            }
+        }
+
+        const api = await gridMgr.createGridAndWait('myGrid-full-width-tooltip-kept', {
+            columnDefs: [{ field: 'value' }],
+            rowData: [{ id: 'r1', value: 'before' }],
+            getRowId: ({ data }) => data.id,
+            isFullWidthRow: () => true,
+            fullWidthCellRenderer: FullWidthTooltipRenderer,
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const row = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('r1')));
+
+        api.setGridOption('rowData', [{ id: 'r1', value: 'after' }]);
+        await waitFor(() => expect(row).toHaveTextContent('after'));
+
+        await userEvent.hover(row);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Renderer: after');
+    });
+
+    test('full-width renderer replaced by a redraw cannot set tooltips through its old params', async () => {
+        let staleParams: ICellRendererParams | undefined;
+
+        class FullWidthTooltipRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('div');
+
+            public init(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.data?.value);
+                params.setTooltip(`Renderer: ${params.data?.value}`);
+                staleParams ??= params;
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+
+            public refresh(): boolean {
+                return false; // force the row (and this renderer) to be replaced
+            }
+        }
+
+        const api = await gridMgr.createGridAndWait('myGrid-full-width-tooltip-replaced', {
+            columnDefs: [{ field: 'value' }],
+            rowData: [{ id: 'r1', value: 'before' }],
+            getRowId: ({ data }) => data.id,
+            isFullWidthRow: () => true,
+            fullWidthCellRenderer: FullWidthTooltipRenderer,
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('r1')));
+
+        api.setGridOption('rowData', [{ id: 'r1', value: 'after' }]);
+        const row = await waitFor(() => {
+            const current = getByTestId(gridDiv, agTestIdFor.rowNode('r1'));
+            expect(current).toHaveTextContent('after');
+            return current;
+        });
+
+        staleParams!.setTooltip('Stale renderer tooltip');
+
+        await userEvent.hover(row);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Renderer: after');
+        expect(hasTooltipText('Stale renderer tooltip')).toBe(false);
+    });
+
     test('AG-17872 tooltipComponentSelector receives ITooltipParams and selects a component', async () => {
         // reading params.location — a field that exists only on ITooltipParams — is the compile-time
         // guard that the selector param is typed as ITooltipParams rather than cell params.
@@ -1108,7 +1369,7 @@ describe('Tooltips', () => {
             columnDefs: [
                 {
                     field: 'A',
-                    tooltipValueGetter: () => 'value tooltip',
+                    tooltip: 'value tooltip',
                     tooltipComponentSelector: (params) => {
                         seenLocations.push(params.location);
                         return { component: CustomTooltip };
@@ -1144,7 +1405,7 @@ describe('Tooltips', () => {
                     {
                         field: 'A',
                         width: 200,
-                        tooltipValueGetter: () => 'Should not show',
+                        tooltip: 'Should not show',
                         cellRendererSelector: () => undefined,
                     },
                 ],
@@ -1183,7 +1444,7 @@ describe('Tooltips', () => {
                     {
                         field: 'A',
                         width: 200,
-                        tooltipValueGetter: () => 'Renderer tooltip',
+                        tooltip: 'Renderer tooltip',
                         cellRenderer: PlainRenderer,
                     },
                 ],
@@ -1255,7 +1516,7 @@ describe('Tooltips', () => {
                     {
                         field: 'A',
                         width: 200,
-                        tooltipValueGetter: () => 'Selector tooltip',
+                        tooltip: 'Selector tooltip',
                         cellRendererSelector: (params): CellRendererSelectorResult | undefined =>
                             params.data.A === 'AGE' ? { component: PlainRenderer } : undefined,
                     },

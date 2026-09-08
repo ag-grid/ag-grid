@@ -66,8 +66,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     private updateSize(newWidth: number, newHeight: number, batch = true) {
-        // account for cell padding
-        newWidth -= 2 * (this.env.getDefaultCellHorizontalPadding() - 1);
+        // Reserve space for the maximum number of widgets that can appear in this column, not the actual number that
+        // appear in this cell e.g. if rowDrag is a callback and returns false, so that every sparkline in a column is
+        // the same size and they line up vertically.
+        const colDef = this.params?.colDef;
+        const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.checkboxSelection ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
+        const env = this.env;
+
+        // account for the cell's border and padding, and any widgets sharing the cell
+        newWidth -=
+            2 * env.getDefaultCellHorizontalPadding() +
+            widgets * (env.getDefaultIconSize() + env.getDefaultCellWidgetSpacing());
 
         if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
             this.cachedWidth = newWidth;

@@ -11,8 +11,7 @@ const isPlainProto = (value: object): boolean => {
     return proto === Object.prototype || proto === null;
 };
 
-/** True for plain non-null objects; full guard for `unknown` input (callers with a known object use {@link isPlainProto}).
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/** True for plain non-null objects; full guard for `unknown` input (callers with a known object use {@link isPlainProto}). */
 export const _isPlainObject = (value: unknown): value is Record<string, unknown> =>
     value !== null && typeof value === 'object' && isPlainProto(value);
 
@@ -57,8 +56,7 @@ export const _mergeDeep = (dest: any, source: any, copyUndefined = true, makeCop
 };
 
 /** Deep-clones plain objects and arrays recursively; functions/class instances (non-plain protos) and
- *  primitives are returned as-is. Guards prototype pollution.
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+ *  primitives are returned as-is. Guards prototype pollution. */
 export const _cloneDeep = <T>(value: T): T => {
     if (value === null || typeof value !== 'object') {
         return value;

@@ -2,18 +2,17 @@ import type { Framework } from '@ag-grid-types';
 import type { MarkdownFramework, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { getPageImages, getPagePath } from '@components/docs/utils/filesData';
-import { getExampleUrl } from '@components/docs/utils/urlPaths';
+import { getExampleLinkUrl } from '@components/docs/utils/urlPaths';
 import { getGeneratedContents } from '@components/example-generator';
 import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
 import * as snippetTransformer from '@components/snippet/snippetTransformer';
-import { agGridVersion } from '@constants';
 import { getInternalFramework } from '@utils/framework';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { renderApiReferenceTable } from './renderApiReferenceTable';
 import { renderMarkdocTag } from './renderMarkdocTag';
+import { resolveMarkdownLinkHref } from './resolveMarkdownLinkHref';
 
 // Shiki-style language per framework, matching Snippet.astro's `frameworkLanguages`.
 const FRAMEWORK_LANGUAGES: Record<MarkdownFramework, string> = {
@@ -76,7 +75,7 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
                 stripOutExampleGeneratorCode(files);
                 const cleanCode = files[fileName].trim();
                 const liveUrl = toAbsoluteUrl(
-                    getExampleUrl({ internalFramework, pageName, exampleName: name }),
+                    getExampleLinkUrl({ internalFramework, pageName, exampleName: name }),
                     siteRoot
                 );
                 return {
@@ -115,15 +114,8 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
             }
         },
 
-        resolveLinkHref: ({ href, framework }) => {
-            try {
-                const withPrefix = urlWithPrefix({ url: href, framework: framework as Framework });
-                const resolved = withPrefix.replace('{% $agGridVersion %}', agGridVersion);
-                return toAbsoluteUrl(resolved, siteRoot);
-            } catch {
-                return href;
-            }
-        },
+        resolveLinkHref: ({ href, framework, pageName }) =>
+            resolveMarkdownLinkHref({ href, framework: framework as Framework, pageName, siteRoot }),
 
         resolveImageSrc: async ({ imagePath, pageName }) => {
             try {

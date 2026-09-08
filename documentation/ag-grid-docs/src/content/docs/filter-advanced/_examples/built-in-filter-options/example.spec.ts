@@ -3,6 +3,9 @@ import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from
 
 const filterInput = (page: Page) => page.locator('.ag-advanced-filter input[type=text]');
 
+/** The built-in options a number column with no `filterOptions` of its own documents, in order. */
+const BUILT_IN_NUMBER_OPTIONS = ['=', '!=', '>', '>=', '<', '<=', 'is between', 'is blank', 'is not blank'];
+
 /** Types `expression`, closes the suggestion popup covering the buttons, then applies it. */
 async function applyExpression(page: Page, expression: string): Promise<void> {
     await filterInput(page).fill(expression);
@@ -36,17 +39,15 @@ test.agExample(import.meta, () => {
 
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
-        await expect(autocompleteList.locator('.ag-autocomplete-row')).toHaveText([
-            '=',
-            '!=',
-            '>',
-            '>=',
-            '<',
-            '<=',
-            'is between',
-            'is blank',
-            'is not blank',
-        ]);
+
+        // Asserted whole: the example withholds the set options, so what the Set Filter module adds
+        // wherever it is registered cannot vary the list between the frameworks and the UMD build.
+        const operatorRows = autocompleteList.locator('.ag-autocomplete-row');
+        await expect(operatorRows.first()).toBeVisible();
+        await expect(async () => {
+            const labels = (await operatorRows.allInnerTexts()).map((label) => label.trim());
+            expect(labels).toEqual(BUILT_IN_NUMBER_OPTIONS);
+        }).toPass();
     });
 
     // Asserted as a whole list, so the narrowing the page describes is covered as well as the options.
@@ -94,5 +95,33 @@ test.agExample(import.meta, () => {
 
         await applyExpression(page, `[Date] is between ("${daysAgo(30)}", "${daysAgo(1)}")`);
         await expectDates(page, (date) => date <= daysAgo(30) || date >= daysAgo(1));
+    });
+
+    // Needs a real browser: the picker is sized from the pill, so only layout says whether the options still fit.
+    test.eachFramework('should size the builder operator dropdown to its longest option', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await applyExpression(page, '[Date] is in last 7 days');
+        await page.getByRole('button', { name: 'Builder' }).click();
+        await page.getByRole('combobox', { name: 'Option' }).click();
+
+        const picker = page.locator('.ag-rich-select-list');
+        await expect(picker).toBeVisible();
+        await expect(page.locator('.ag-rich-select-row')).not.toHaveCount(0);
+
+        const { pickerWidth, overflowing } = await picker.evaluate((ePicker) => ({
+            pickerWidth: ePicker.clientWidth,
+            // Row width against the picker's content box, so no border or scroll offset has to be accounted for.
+            overflowing: [...ePicker.querySelectorAll('.ag-rich-select-row')]
+                .filter((row) => row.getBoundingClientRect().width > ePicker.clientWidth)
+                .map((row) => row.textContent),
+        }));
+
+        // Two assertions because each catches a different half. Sizing the picker from the pill leaves it at
+        // `pillSelectMinWidth`, so only the width discriminates there; laying the rows out at their content
+        // width without resizing the popup keeps every row untruncated, so only their right edges do.
+        expect(pickerWidth).toBeGreaterThan(140);
+        expect(overflowing).toEqual([]);
     });
 });

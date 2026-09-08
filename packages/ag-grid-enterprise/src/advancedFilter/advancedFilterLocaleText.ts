@@ -52,6 +52,9 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterLast24Months: 'is in last 24 months',
     advancedFilterTrue: 'is true',
     advancedFilterFalse: 'is false',
+    advancedFilterIsAnyOf: 'is any of',
+    advancedFilterIsNoneOf: 'is none of',
+    advancedFilterSetMore: (variableValues: string[]) => `+${variableValues[0]} more`,
     advancedFilterAnd: 'AND',
     advancedFilterOr: 'OR',
     advancedFilterApply: 'Apply',
@@ -64,19 +67,31 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationMissingValue: 'Value is missing',
     advancedFilterValidationInvalidColumn: 'Column not found',
     advancedFilterValidationInvalidOption: 'Option not found',
+    advancedFilterValidationInvalidValue: 'Value not found',
     advancedFilterValidationMissingQuote: 'Value is missing an end quote',
     advancedFilterValidationNotANumber: 'Value is not a number',
-    advancedFilterValidationNotABigInt: 'Value is not a big integer',
+    advancedFilterValidationNotABigInt: 'Value is not a BigInt',
     advancedFilterValidationInvalidDate: 'Value is not a valid date',
     advancedFilterValidationMissingCondition: 'Condition is missing',
     advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
+    advancedFilterValidationMissingListStartBracket: 'Missing opening square bracket',
+    advancedFilterValidationMissingListEndBracket: 'Missing closing square bracket',
     advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
     advancedFilterValidationMessage: (variableValues: string[]) =>
         `Expression has an error. ${variableValues[0]} - ${variableValues[1]}.`,
     advancedFilterValidationMessageAtEnd: (variableValues: string[]) =>
         `Expression has an error. ${variableValues[0]} at end of expression.`,
+    advancedFilterValidationMessageOnly: (variableValues: string[]) => `Expression has an error. ${variableValues[0]}.`,
+    advancedFilterValidationMustBeGreaterThan: (variableValues: string[]) =>
+        `${variableValues[0]} must be greater than ${variableValues[1]}`,
+    advancedFilterValidationMustBeGreaterThanOrEqualTo: (variableValues: string[]) =>
+        `${variableValues[0]} must be greater than or equal to ${variableValues[1]}`,
+    advancedFilterValidationMustBeAfter: (variableValues: string[]) =>
+        `${variableValues[0]} must be after ${variableValues[1]}`,
+    advancedFilterValidationMustBeOnOrAfter: (variableValues: string[]) =>
+        `${variableValues[0]} must be on or after ${variableValues[1]}`,
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
     advancedFilterBuilderCancel: 'Cancel',

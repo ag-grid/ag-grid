@@ -18,7 +18,7 @@ describe('buildDocumentationArchiveMarkdown', () => {
 
     it('links each release to its archived docs and changelog', () => {
         // Docs link for >= 27.3.0 gets the /documentation suffix; changelog carries the fixVersion.
-        expect(output).toContain('[33.0.0 Documentation](https://www.ag-grid.com/archive/33.0.0/documentation)');
+        expect(output).toContain('[33.0.0 Documentation](https://www.ag-grid.com/archive/33.0.0/documentation/)');
         expect(output).toContain('[Changelog](https://www.ag-grid.com/changelog/?fixVersion=33.0.0)');
     });
 

@@ -1,4 +1,5 @@
 import type { Library } from '@ag-grid-types';
+import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlash';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { versionIsGreaterOrEqual } from '@ag-website-shared/utils/versionIsGreaterOrEqual';
 import { LEGACY_CHARTS_SITE_URL, PRODUCTION_CHARTS_SITE_URL, PRODUCTION_STUDIO_SITE_URL } from '@constants';
@@ -24,7 +25,8 @@ export const getArchiveUrl = ({ version, site }: { version: string; site: Librar
         baseUrl = PRODUCTION_STUDIO_SITE_URL;
     }
 
-    return pathJoin(baseUrl, archiveBaseUrl, version);
+    // Archive pages are directory indexes, so the slash-less form only reaches them via a redirect.
+    return addTrailingSlashToPath(pathJoin(baseUrl, archiveBaseUrl, version));
 };
 
 export const getDocumentationArchiveUrl = ({
@@ -46,7 +48,8 @@ export const getDocumentationArchiveUrl = ({
         documentationArchiveLink = pathJoin(versionArchiveLink, '/documentation');
     }
 
-    return documentationArchiveLink;
+    // `pathJoin` drops the trailing slash, so it has to be put back here.
+    return addTrailingSlashToPath(documentationArchiveLink);
 };
 
 /**

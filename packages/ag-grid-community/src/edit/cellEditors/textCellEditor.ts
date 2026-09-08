@@ -48,10 +48,10 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<
         }
     }
 
-    public getValidationErrors(): string[] | null {
+    public getValidationErrors(untouched: boolean): string[] | null {
         const { params } = this;
         const { maxLength, getValidationErrors } = params;
-        const value = this.getValue();
+        const value = untouched ? params.value : this.getValue();
 
         const translate = this.getLocaleTextFunc();
 
@@ -91,8 +91,7 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<
 
     public getStartValue(): string | null | undefined {
         const params = this.params;
-        const formatValue = params.useFormatter || params.column.getColDef().refData;
-        return formatValue ? params.formatValue(params.value) : (params.value as any);
+        return params.useFormatter ? params.formatValue(params.value) : (params.value as any);
     }
 
     public setCaret(): void {

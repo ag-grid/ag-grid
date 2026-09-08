@@ -1,9 +1,90 @@
+import { demoContent, demoNames } from '@components/demos/demoContent';
 import { expect, test } from '@playwright/test';
 import { blockConsentAndAnalytics, setupConsoleExpectations } from '@utils/grid/test-utils';
 
 // These could be extended to actually interact with the examples more
 // but for now just a basic load test to ensure no errors / warnings in console
 // and the grid loads without issues
+
+// The demo pages' title, meta description and H1 come from the frontmatter contract in
+// content/demos/demos.json (SE-125). Asserting them here guards the copy against a page that
+// stops reading the contract — the failure that left every demo on a "Demo - {name}" title.
+test.describe('Demo page SEO copy', () => {
+    for (const demo of demoNames) {
+        test(`${demo} serves its title, meta description and H1`, async ({ page }) => {
+            const content = demoContent(demo);
+            await page.goto(content.href.replace(/^\//, ''));
+
+            await expect(page).toHaveTitle(content.seoTitle);
+            await expect(page.locator('head meta[name="description"]')).toHaveAttribute(
+                'content',
+                content.seoDescription
+            );
+            await expect(page.locator('head meta[property="og:title"]')).toHaveAttribute('content', content.seoTitle);
+            await expect(page.getByRole('heading', { level: 1 })).toHaveText(content.seoH1);
+            const intro = page.locator('[class*="topHeader"] p');
+            await expect(intro).toHaveText(content.intro);
+
+            const renderedLinks = await intro
+                .getByRole('link')
+                .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+            expect(renderedLinks).toEqual(content.introSegments.filter(({ href }) => href).map(({ href }) => href));
+        });
+    }
+});
+
+// The copy column reserves a measured height (pages-styles/example.module.scss) so that a longer
+// intro on one demo cannot shift the links or the page; copy that outgrows the reserve would
+// regress that silently.
+//
+// Two things legitimately differ per demo and per engine, so neither is compared here:
+//   - the H1's own height, because the longest demo heading wraps to a second line inside the
+//     fixed copy column while the others do not;
+//   - the whole header's height, because the demo tab strip beside the copy measures differently
+//     across rendering engines.
+// Everything below the heading is therefore measured relative to the heading's bottom edge, and
+// against the copy column rather than the header. That leaves exactly what the reserve owns.
+test.describe('Demo page header layout', () => {
+    const viewports = [
+        { width: 1920, height: 1080 },
+        { width: 1280, height: 900 },
+        { width: 430, height: 900 },
+    ];
+
+    for (const viewport of viewports) {
+        test(`every demo places its header copy the same way at ${viewport.width}x${viewport.height}`, async ({
+            page,
+        }) => {
+            const layouts: Record<string, unknown> = {};
+
+            for (const demo of demoNames) {
+                await page.setViewportSize(viewport);
+                await page.goto(demoContent(demo).href.replace(/^\//, ''));
+
+                const copy = page.locator('[class*="headerCopy"]');
+                const heading = copy.getByRole('heading', { level: 1 });
+                await expect(heading).toBeVisible();
+
+                const copyBox = await copy.boundingBox();
+                const headingBox = await heading.boundingBox();
+                const linksBox = await copy.getByRole('link', { name: 'See On GitHub' }).boundingBox();
+
+                const headingBottom = (headingBox?.y ?? 0) + (headingBox?.height ?? 0);
+                layouts[demo] = {
+                    // The links and the reserved intro below them, with the heading's own height
+                    // taken out — this is the height the reserve is responsible for.
+                    copyHeightBelowHeading: Math.round((copyBox?.y ?? 0) + (copyBox?.height ?? 0) - headingBottom),
+                    // Relative to the copy column, not to the page scroll position.
+                    linksX: Math.round((linksBox?.x ?? 0) - (copyBox?.x ?? 0)),
+                    linksYBelowHeading: Math.round((linksBox?.y ?? 0) - headingBottom),
+                };
+            }
+
+            const distinctLayouts = new Set(Object.values(layouts).map((layout) => JSON.stringify(layout)));
+            expect(distinctLayouts.size, `demo header layouts: ${JSON.stringify(layouts, null, 2)}`).toBe(1);
+        });
+    }
+});
 
 test.describe(`Demo Examples`, async () => {
     let errors: string[];

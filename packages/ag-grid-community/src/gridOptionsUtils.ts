@@ -52,24 +52,20 @@ export function _isClientSideRowModel(
     return isRowModelType(gos, 'clientSide');
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isClientSideLoadingRows(gos: GridOptionsService): boolean {
-    const loading = gos.get('loading');
-    return _isClientSideRowModel(gos) && typeof loading === 'object' && loading.type === 'rows';
+    return _isClientSideRowModel(gos) && gos.get('loading') === true && !!gos.get('loadingRows');
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isClientSideLoadingRow(gos: GridOptionsService, rowNode: IRowNode): boolean {
     return !!rowNode.stub && _isClientSideRowModel(gos);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getClientSideLoadingRowCount(gos: GridOptionsService): number {
-    const loading = gos.get('loading');
-    if (typeof loading !== 'object' || loading.rowCount == null) {
+    const loadingRows = gos.get('loadingRows');
+    if (!loadingRows || typeof loadingRows !== 'object' || loadingRows.rowCount == null) {
         return 10;
     }
-    return Number.isInteger(loading.rowCount) && loading.rowCount > 0 ? loading.rowCount : 10;
+    return Number.isInteger(loadingRows.rowCount) && loadingRows.rowCount > 0 ? loadingRows.rowCount : 10;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

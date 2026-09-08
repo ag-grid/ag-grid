@@ -1,5 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { getExampleContentsUrl, getExampleUrl } from '@components/docs/utils/urlPaths';
+import { getExampleContentsUrl, getExampleLinkUrl } from '@components/docs/utils/urlPaths';
 import { getFrameworkFromInternalFramework } from '@utils/framework';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
@@ -21,7 +21,7 @@ export function LinkCellRenderer({ colDef, data }) {
             <a
                 href={urlWithPrefix({
                     framework: getFrameworkFromInternalFramework(internalFramework),
-                    url: `./${pageName}#example-${exampleName}`,
+                    url: `./${pageName}/#example-${exampleName}`,
                 })}
                 target="_blank"
                 title={`${titlePrefix} example on page`}
@@ -30,7 +30,7 @@ export function LinkCellRenderer({ colDef, data }) {
             </a>
             <div>
                 <a
-                    href={getExampleUrl({
+                    href={getExampleLinkUrl({
                         internalFramework,
                         pageName,
                         exampleName,

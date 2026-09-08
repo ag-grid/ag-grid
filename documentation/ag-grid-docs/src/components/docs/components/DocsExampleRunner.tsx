@@ -1,21 +1,22 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { getLoadingIFrameId } from '@ag-website-shared/components/loading-logo/getElementId';
 import type { GeneratedContents } from '@components/example-generator/types';
-import { ExampleRunner } from '@components/example-runner/components/ExampleRunner';
+import { DEFAULT_HEIGHT, ExampleRunner } from '@components/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@components/example-runner/components/ExternalLinks';
 import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
 import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { useHasMounted } from '@utils/hooks/useHasMounted';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
     type UrlParams,
     getExampleCodeSandboxUrl,
     getExampleContentsUrl,
+    getExampleLinkUrl,
     getExamplePlunkrUrl,
     getExampleRunnerExampleUrl,
-    getExampleUrl,
 } from '../utils/urlPaths';
 
 interface Props {
@@ -136,7 +137,7 @@ const DocsExampleRunnerInner = ({
     });
     const urls = {
         exampleRunnerExampleUrl: getExampleRunnerExampleUrl(urlConfig),
-        exampleUrl: getExampleUrl(urlConfig),
+        exampleUrl: getExampleLinkUrl(urlConfig),
         plunkrHtmlUrl: getExamplePlunkrUrl(urlConfig),
         codeSandboxHtmlUrl: getExampleCodeSandboxUrl(urlConfig),
     };
@@ -196,6 +197,16 @@ const DocsExampleRunnerInner = ({
 
 export const DocsExampleRunner = (props: Props) => {
     const queryClient = useStore($queryClient);
+    // The island hydrates when scrolled into view, so it is also rendered on the server. The
+    // runner's framework and dark mode live in localStorage and its contents come from a client
+    // query, so until mounted render a placeholder rather than a default that hydration would
+    // replace. It has the example's height because Astro's visibility observer watches the
+    // island's children: an empty island would never hydrate.
+    const hasMounted = useHasMounted();
+
+    if (!hasMounted) {
+        return <div style={{ height: props.exampleHeight || DEFAULT_HEIGHT }} />;
+    }
 
     return (
         <QueryClientProvider client={queryClient}>

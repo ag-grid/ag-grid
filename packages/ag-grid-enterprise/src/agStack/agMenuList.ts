@@ -59,6 +59,7 @@ export class AgMenuList<
         TMenuActionParams
     > | null;
     private itemsReady: AgPromise<void> | undefined;
+    private suppressFocusTooltip = false;
     constructor(
         private readonly level = 0,
         private readonly menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
@@ -215,6 +216,7 @@ export class AgMenuList<
             .init({
                 menuItemDef,
                 isAnotherSubMenuOpen: () => this.menuItems.some((m) => m.isSubMenuOpen()),
+                shouldDisplayTooltipOnFocus: () => !this.suppressFocusTooltip,
                 level: this.level,
                 contextParams: this.menuActionParams,
             })
@@ -251,11 +253,11 @@ export class AgMenuList<
             });
     }
 
-    public focusInto(): boolean {
+    public focusInto(suppressTooltip = false): boolean {
         // Chrome reports a programmatic focus taken while the document has no focused element as
         // :focus-visible, which would draw a keyboard focus ring on a mouse-opened menu.
         this.getGui().classList.toggle(NO_FOCUS_RING_CLASS, _isNothingFocused(this.beans));
-        const focused = _focusInto(this.getGui());
+        const focused = this.withFocusTooltipSuppressed(suppressTooltip, () => _focusInto(this.getGui()));
         // Framework menu items render asynchronously and may be absent now; retry once they land,
         // unless focus has since moved to an item or away from the menu entirely.
         this.itemsReady?.then(() => {
@@ -264,10 +266,22 @@ export class AgMenuList<
             }
             const activeElement = _getActiveDomElement(this.beans);
             if (_isNothingFocused(this.beans) || this.getGui().contains(activeElement)) {
-                this.activateFirstItem();
+                this.withFocusTooltipSuppressed(suppressTooltip, () => this.activateFirstItem());
             }
         });
         return focused;
+    }
+
+    private withFocusTooltipSuppressed<T>(suppressTooltip: boolean, focus: () => T): T {
+        const previousSuppression = this.suppressFocusTooltip;
+        // focus events fire synchronously, so apply this setting only during the focus call.
+        this.suppressFocusTooltip = suppressTooltip;
+        try {
+            return focus();
+        } finally {
+            // restore the outer setting, including after nested focus calls or errors.
+            this.suppressFocusTooltip = previousSuppression;
+        }
     }
 
     public activateFirstItem(): void {

@@ -109,6 +109,7 @@ export interface AgMenuItemActivatedEvent<
 interface AgMenuItemComponentParams<TMenuActionParams extends TCommon, TCommon> {
     menuItemDef: AgMenuItemDef<TMenuActionParams, TCommon>;
     isAnotherSubMenuOpen: () => boolean;
+    shouldDisplayTooltipOnFocus?: () => boolean;
     level: number;
     childComponent?: IComponent<any>;
     contextParams: WithoutCommon<TCommon, TMenuActionParams>;
@@ -182,6 +183,8 @@ export class AgMenuItemComponent<
     private contextParams: WithoutCommon<TCommon, TMenuActionParams>;
     private menuItemComp: IComponent<AgMenuItemParams<TMenuActionParams, TCommon>> & IMenuItem;
     private isActive = false;
+    private isMouseActivation = false;
+    private shouldDisplayTooltipOnFocus?: () => boolean;
     private hideSubMenu: (() => void) | null;
     private subMenuIsOpen = false;
     private subMenuIsOpening = false;
@@ -205,6 +208,7 @@ export class AgMenuItemComponent<
         this.params = params.menuItemDef;
         this.level = level;
         this.isAnotherSubMenuOpen = isAnotherSubMenuOpen;
+        this.shouldDisplayTooltipOnFocus = params.shouldDisplayTooltipOnFocus;
         this.childComponent = childComponent;
         this.contextParams = contextParams;
         this.cssClassPrefix = this.params.menuItemParams?.cssClassPrefix ?? 'ag-menu-option';
@@ -423,6 +427,8 @@ export class AgMenuItemComponent<
         if (!this.suppressRootStyles) {
             this.eGui.classList.add(`${this.cssClassPrefix}-active`);
         }
+        // The parent must know the active item before focusin runs its focus restoration.
+        this.onItemActivated();
         this.menuItemComp.setActive?.(true);
         if (!this.suppressFocus) {
             this.callbacks.preserveRangesWhile(this.beans, () => this.eGui.focus({ preventScroll: !fromKeyNav }));
@@ -435,8 +441,6 @@ export class AgMenuItemComponent<
                 }
             }, SUB_MENU_OPEN_DELAY);
         }
-
-        this.onItemActivated();
     }
 
     public deactivate() {
@@ -541,10 +545,20 @@ export class AgMenuItemComponent<
 
         if (this.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
-            this.activateTimeoutId = window.setTimeout(() => this.activate(true), ACTIVATION_DELAY);
+            this.activateTimeoutId = window.setTimeout(() => this.activateOnMouseEnter(), ACTIVATION_DELAY);
         } else {
             // activate immediately
+            this.activateOnMouseEnter();
+        }
+    }
+
+    private activateOnMouseEnter(): void {
+        // Preserve menu navigation focus without treating hover as a tooltip focus trigger.
+        this.isMouseActivation = true;
+        try {
             this.activate(true);
+        } finally {
+            this.isMouseActivation = false;
         }
     }
 
@@ -657,9 +671,12 @@ export class AgMenuItemComponent<
             false,
             {
                 getGui: () => this.getGui(),
+                getTooltipComponentDefinition: () => undefined,
                 getTooltipValue: () => this.tooltip,
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,
+                shouldDisplayTooltipOnFocus: () =>
+                    !this.isMouseActivation && this.shouldDisplayTooltipOnFocus?.() !== false,
             } as TooltipCtrl<string, any>
         );
 

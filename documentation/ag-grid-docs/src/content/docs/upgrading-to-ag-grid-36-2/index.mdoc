@@ -1,0 +1,46 @@
+---
+title: "Upgrading to AG Grid 36.2"
+description: "See what's new in AG Grid and migrate your $framework Data Grid to version v36.2."
+migrationVersion: "36.2.0"
+---
+
+## What's New
+
+AG Grid {% migrationVersion() %} introduces a unified tooltip configuration for cells and headers, together with long-press support on iOS and Android.
+
+<!--
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+There are no breaking changes in AG Grid version {% migrationVersion() %}.
+
+## Behaviour Changes
+
+- `tooltipShowDelay: 0` now shows a tooltip without an additional minimum delay.
+- Tooltip popup parameters now include `column`, `rowNode`, and `tooltipLocation` when available.
+- List, select, filter, and calculated-column tooltips now report a specific `location` instead of `UNKNOWN`.
+- On touch devices, a long press shows a tooltip and tapping elsewhere dismisses it. Grid gestures that already use the long press, such as the context menu and column menu, take precedence over the tooltip.
+- Double tapping a column header's resize area now autosizes the column only when the two taps are within half a second of each other.
+
+## Removal of Deprecated APIs
+
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+The existing properties remain supported, but the following replacements are recommended:
+
+| Deprecated                           | Replacement                            |
+| ------------------------------------ | -------------------------------------- |
+| `tooltipField: 'country'`            | `tooltip: ({ data }) => data?.country` |
+| `tooltipValueGetter: callback`       | `tooltip: callback`                    |
+| `headerTooltipValueGetter: callback` | `headerTooltip: callback`              |
+
+Use `tooltip: true` when the tooltip should show the formatted value displayed in the cell.
+
+{% changelogSection version=$migrationVersion /%}

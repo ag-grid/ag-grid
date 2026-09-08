@@ -24,7 +24,7 @@ describe('buildOrganization', () => {
 
         expect(result).toEqual({
             '@type': 'Organization',
-            '@id': `${CANONICAL_URL_BASE}/#organization`,
+            '@id': `https://www.ag-grid.com/#organization`,
             name: 'AG Grid',
             url: `${CANONICAL_URL_BASE}/`,
             logo: `${CANONICAL_URL_BASE}/images/logo.png`,
@@ -184,7 +184,7 @@ describe('buildWebSite', () => {
 
         expect(result['@type']).toBe('WebSite');
         expect(result['@id']).toBe(`${CANONICAL_URL_BASE}/#website`);
-        expect(result.publisher).toEqual({ '@id': `${CANONICAL_URL_BASE}/#organization` });
+        expect(result.publisher).toEqual({ '@id': `https://www.ag-grid.com/#organization` });
         expect(result.inLanguage).toBe('en');
     });
 });
@@ -205,7 +205,7 @@ describe('canonicalUrlBase normalisation', () => {
         });
 
         expect(withSlash).toEqual(withoutSlash);
-        expect(withSlash['@id']).toBe(`${CANONICAL_URL_BASE}/#organization`);
+        expect(withSlash['@id']).toBe('https://www.ag-grid.com/#organization');
         expect(withSlash.url).toBe(`${CANONICAL_URL_BASE}/`);
     });
 
@@ -219,7 +219,7 @@ describe('canonicalUrlBase normalisation', () => {
             sameAs: [],
         });
 
-        expect(org['@id']).toBe('https://www.ag-grid.com/charts/#organization');
+        expect(org['@id']).toBe('https://www.ag-grid.com/#organization');
         expect(org.url).toBe('https://www.ag-grid.com/charts/');
     });
 });
@@ -236,7 +236,7 @@ describe('buildSoftwareApplication', () => {
         expect(result.applicationCategory).toBe('DeveloperApplication');
         expect(result.operatingSystem).toBe('Web Browser');
         expect(result.softwareVersion).toBe('34.0.0');
-        expect(result.publisher).toEqual({ '@id': `${CANONICAL_URL_BASE}/#organization` });
+        expect(result.publisher).toEqual({ '@id': `https://www.ag-grid.com/#organization` });
         expect(result.offers).toBeUndefined();
         expect(result.sameAs).toBeUndefined();
     });
@@ -292,7 +292,7 @@ describe('buildTechArticle', () => {
         expect(result.url).toBe(pageUrl);
         expect(result.mainEntityOfPage).toEqual({ '@type': 'WebPage', '@id': pageUrl });
         expect(result.isPartOf).toEqual({ '@id': `${CANONICAL_URL_BASE}/#website` });
-        expect(result.publisher).toEqual({ '@id': `${CANONICAL_URL_BASE}/#organization` });
+        expect(result.publisher).toEqual({ '@id': `https://www.ag-grid.com/#organization` });
         expect(result.about).toBeUndefined();
     });
 
@@ -372,7 +372,7 @@ describe('buildContactPage', () => {
             url: pageUrl,
             name: 'Contact AG Grid',
             isPartOf: { '@id': `${CANONICAL_URL_BASE}/#website` },
-            mainEntity: { '@id': `${CANONICAL_URL_BASE}/#organization` },
+            mainEntity: { '@id': `https://www.ag-grid.com/#organization` },
         });
     });
 });

@@ -569,30 +569,23 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
-        loading: {
-            validate({ loading, rowModelType }) {
-                if (loading == null || typeof loading === 'boolean') {
+        loadingRows: {
+            validate({ loadingRows, rowModelType }) {
+                if (loadingRows == null || loadingRows === false) {
                     return null;
                 }
-                if (typeof loading !== 'object' || Array.isArray(loading)) {
+                if (loadingRows !== true && (typeof loadingRows !== 'object' || Array.isArray(loadingRows))) {
                     return _createValidationWarning(321, {
-                        property: 'loading',
+                        property: 'loadingRows',
                         expected: 'a boolean or an object',
                     });
                 }
-                if (loading.type !== 'overlay' && loading.type !== 'rows') {
-                    return _createValidationWarning(320, {
-                        property: 'loading.type',
-                        allowed: ['overlay', 'rows'],
-                        value: loading.type,
-                    });
+                if (rowModelType != null && rowModelType !== 'clientSide') {
+                    return '`loadingRows` is only supported with the Client-Side Row Model.';
                 }
-                if (loading.type === 'rows' && rowModelType != null && rowModelType !== 'clientSide') {
-                    return '`loading.type="rows"` is only supported with the Client-Side Row Model.';
-                }
-                const rowCount = loading.rowCount;
+                const rowCount = typeof loadingRows === 'object' ? loadingRows.rowCount : undefined;
                 if (rowCount != null && (!Number.isInteger(rowCount) || rowCount < 1)) {
-                    return 'loading.rowCount: value should be an integer greater than or equal to 1';
+                    return 'loadingRows.rowCount: value should be an integer greater than or equal to 1';
                 }
                 return null;
             },

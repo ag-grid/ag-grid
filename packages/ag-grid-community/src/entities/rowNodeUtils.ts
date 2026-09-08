@@ -100,7 +100,6 @@ export const _prevOrNextDisplayedRow = (
  * The nearest ancestor of `initial` that is currently displayed, or `initial` itself when it already is.
  * Footer, detail and root nodes are never returned: they carry a `rowIndex` but are skipped by the
  * client-side row model's depth-first walk, so a range bounded by one would omit its own endpoint.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const _nearestDisplayedRow = (initial: RowNode | null | undefined): RowNode | null => {
     let node: RowNode | null | undefined = initial;

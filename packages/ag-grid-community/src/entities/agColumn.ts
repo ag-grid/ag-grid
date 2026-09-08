@@ -993,8 +993,7 @@ export const _isSortDefValid = (maybeSortDef: unknown): maybeSortDef is SortDef 
 };
 
 /** Resolves a colDef's pivot sort. Unset (`undefined`) is left as-is so it resolves to ascending;
- *  an explicit `null` ("no sort") is preserved.
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+ *  an explicit `null` ("no sort") is preserved. */
 export const _resolvePivotSortFromColDef = (colDef: ColDef): SortDirection | undefined => {
     const pivotSortLike = colDef.pivotSort !== undefined ? colDef.pivotSort : colDef.initialPivotSort;
     return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);

@@ -1,5 +1,5 @@
 import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
-import { _classifyFilterOptions } from 'ag-grid-community';
+import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
 import { getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
@@ -114,7 +114,13 @@ function buildColumnFilterSchema(
         // The filter's own definition of a usable entry, so the schema cannot offer a `type` it drops.
         // Read-only, so an entry it drops is not warned about again here.
         const filterOptions = filterParams?.filterOptions
-            ? [..._classifyFilterOptions(filterParams.filterOptions, () => {}).offered.keys()]
+            ? [
+                  ..._classifyFilterOptions(
+                      filterParams.filterOptions,
+                      () => {},
+                      _ADVANCED_FILTER_ONLY_OPTIONS
+                  ).offered.keys(),
+              ]
             : undefined;
         const useIsoSeparator = filterParams?.useIsoSeparator || false;
 

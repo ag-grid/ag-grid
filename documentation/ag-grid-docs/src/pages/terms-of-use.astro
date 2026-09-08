@@ -1,0 +1,96 @@
+---
+import Layout from '@layouts/Layout.astro';
+import styles from '@ag-website-shared/components/policies/policyPage.module.scss';
+import { Content as TermsOfUse } from '../content/policies/terms-of-use.mdoc';
+import { TERMS_OF_USE_CONTENT as content } from '@utils/markdown-pages/termsOfUseContent';
+
+// Heading, last-updated date and intro copy are shared with the /terms-of-use.md twin so the two
+// cannot drift; the numbered body below comes from the same .mdoc the twin renders.
+---
+
+<Layout
+    title={`AG Grid: ${content.metaTitle}`}
+    description={content.description}
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class:list={styles.policyPage}>
+        <div class="layout-max-width-small">
+            <h1>{content.heading}</h1>
+            <hr />
+
+            <header>
+                <div id="introduction" class={styles.introduction}>
+                    {content.meta.map((line) => <h4 set:html={line} />)}
+                    {content.intro.map((line) => <p set:html={line} />)}
+                </div>
+
+                <nav>
+                    <ul class="list-style-none">
+                        <li>
+                            <a href="#acceptance-of-terms">Acceptance of Terms</a>
+                        </li>
+                        <li>
+                            <a href="#description-of-services">Description of Services</a>
+                        </li>
+                        <li>
+                            <a href="#intellectual-property">Intellectual Property</a>
+                        </li>
+                        <li>
+                            <a href="#use-of-software">Use of Software</a>
+                        </li>
+                        <li>
+                            <a href="#use-of-materials">Use of Materials</a>
+                        </li>
+                        <li>
+                            <a href="#limitation-of-use">Limitation of Use</a>
+                        </li>
+                        <li>
+                            <a href="#general-restrictions">General Restrictions</a>
+                        </li>
+                        <li>
+                            <a href="#updates-changes">Updates and/or Changes to the Site</a>
+                        </li>
+                        <li>
+                            <a href="#confidentiality">Confidentiality</a>
+                        </li>
+                        <li>
+                            <a href="#privacy-policy">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="#user-information">User Information</a>
+                        </li>
+                        <li>
+                            <a href="#security-network-violations">No Security or Network Violations</a>
+                        </li>
+                        <li>
+                            <a href="#third-party-links">Links To Third-Party Websites\Content</a>
+                        </li>
+                        <li>
+                            <a href="#disclaimers-warranty">Disclaimers\Warranty</a>
+                        </li>
+                        <li>
+                            <a href="#limitation-of-liability">Limitation of Liability</a>
+                        </li>
+                        <li>
+                            <a href="#jurisdiction-venue">Jurisdiction and Venue</a>
+                        </li>
+                        <li>
+                            <a href="#waiver">Waiver</a>
+                        </li>
+                        <li>
+                            <a href="#trademarks">Trademarks</a>
+                        </li>
+                        <li>
+                            <a href="#general">General</a>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
+
+            <div class={styles.policyList}>
+                <TermsOfUse />
+            </div>
+        </div>
+    </div>
+</Layout>

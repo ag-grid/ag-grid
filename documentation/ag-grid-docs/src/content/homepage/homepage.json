@@ -19,7 +19,7 @@
             "heading": "The Fastest Data Grid In The World",
             "subHeading": "Handle millions of rows, and thousands of updates per second out of the box, without compromising on performance",
             "ctaTitle": "Explore the Docs",
-            "ctaUrl": "./getting-started",
+            "ctaUrl": "./getting-started/",
             "ctaId": "get-started-for-free",
             "secondaryCta": {
                 "title": "Try Enterprise Free",

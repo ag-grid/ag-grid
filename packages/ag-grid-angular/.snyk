@@ -15,26 +15,6 @@ ignore:
         reason: Downstream dependency of angular - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-07-15T09:42:07.983Z
-  SNYK-JS-ANGULARCORE-17353317:
-    - '@angular/core@20.3.21':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T12:00:05.768Z
-  SNYK-JS-ANGULARCOMPILER-17356585:
-    - '@angular/compiler@20.3.21':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:59:27.883Z
-  SNYK-JS-ANGULARCOMMON-17356486:
-    - '@angular/common@20.3.21':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:46:17.470Z
-  SNYK-JS-ANGULARCOMMON-17353316:
-    - '@angular/common@20.3.21':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:45:51.978Z
   SNYK-JS-WS-17344547:
     - karma@6.4.4 > socket.io@4.8.1 > socket.io-adapter@2.5.5 > ws@8.17.1:
         reason: Used in build & dev - not included in final production build
@@ -44,46 +24,11 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:36:02.259Z
-  SNYK-JS-VITE-17353904:
-    - '@angular/build@20.3.26 > vite@7.3.2':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:33:35.227Z
-  SNYK-JS-UNDICI-17372758:
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > undici@*':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:05:22.686Z
-  SNYK-JS-UNDICI-17372754:
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > undici@*':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T11:04:57.287Z
   SNYK-JS-TMP-17315641:
     - karma@6.4.4 > tmp@0.2.5:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:04:22.594Z
-  SNYK-JS-HONO-17356430:
-    - '@angular/cli@* > @modelcontextprotocol/sdk@* > hono@*':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T10:56:31.484Z
-  SNYK-JS-HONO-17356405:
-    - '@angular/cli@* > @modelcontextprotocol/sdk@* > hono@*':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T10:55:46.784Z
-  SNYK-JS-ANGULARCOMMON-17356555:
-    - '@angular/common@20.3.21':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T10:53:37.126Z
-  SNYK-JS-UNDICI-17372658:
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > undici@*':
-        reason: Used in build & dev - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-06-24T09:07:25.543Z
   SNYK-JS-AJV-15274295:
     - 'ng-packagr@* > ajv@*':
         reason: Angular build dependency - not included in final production build
@@ -101,96 +46,8 @@ ignore:
         reason: Angular build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-BRACEEXPANSION-15789759:
-    - karma-coverage@2.2.1 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - karma@6.4.4 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-BRACEEXPANSION-16755174:
-    - replace-in-file@8.4.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5:
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - rimraf@6.1.3 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5:
-        reason: Dev dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/package-json@7.0.5 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-EXPRESSRATELIMIT-15440710:
     - '@angular/cli@* > @modelcontextprotocol/sdk@* > express-rate-limit@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-FASTURI-16642394:
-    - ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-FASTURI-16642399:
-    - ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
@@ -202,16 +59,6 @@ ignore:
   SNYK-JS-FOLLOWREDIRECTS-16032162:
     - karma@6.4.4 > http-proxy@1.18.1 > follow-redirects@1.15.11:
         reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-HONO-16438966:
-    - '@angular/cli@* > @modelcontextprotocol/sdk@* > hono@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-IMMUTABLE-15423650:
-    - '@angular/build@* > sass@* > immutable@*':
-        reason: Angular build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-ISAACSBRACEEXPANSION-15208653:
@@ -256,11 +103,6 @@ ignore:
         created: 2026-05-28T00:00:00.000Z
     - 'karma@* > glob@* > minimatch@*':
         reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-PACOTE-8225084:
-    - '@angular/cli@20.3.26 > pacote@21.0.4':
-        reason: Angular build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-PATHTOREGEXP-15789763:
@@ -318,11 +160,6 @@ ignore:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-QS-14724253:
-    - karma@6.4.4 > body-parser@1.20.3 > qs@6.13.0:
-        reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-15268416:
     - 'karma@* > body-parser@* > qs@*':
         reason: Testing dependency - not included in final production build
@@ -336,158 +173,9 @@ ignore:
         reason: Angular build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-SOCKETIOPARSER-15680278:
-    - karma@6.4.4 > socket.io@4.8.1 > socket.io-parser@4.2.4:
-        reason: Testing dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15307072:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15416075:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-TAR-15456201:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Angular build dependency - not included in final production build
-        expires: 2027-03-02T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-TMP-16881240:
     - karma@6.4.4 > tmp@0.2.5:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-  SNYK-JS-BRACEEXPANSION-17706650:
-    - karma-coverage@2.2.1 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - karma@6.4.4 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - replace-in-file@8.4.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - rimraf@6.1.3 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/package-json@7.0.5 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-ENGINEIO-17900543:
-    - karma@6.4.4 > socket.io@4.8.1 > engine.io@6.6.4:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-ENGINEIO-17900560:
-    - karma@6.4.4 > socket.io@4.8.1 > engine.io@6.6.4:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-FASTURI-17675102:
-    - ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-FASTURI-18021349:
-    - ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0:
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-HONONODESERVER-18170326:
-    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > @hono/node-server@1.19.9':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-IMMUTABLE-17900558:
-    - '@angular/build@* > sass@* > immutable@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - 'ng-packagr@* > sass@* > immutable@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-IMMUTABLE-17900573:
-    - '@angular/build@* > sass@* > immutable@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - 'ng-packagr@* > sass@* > immutable@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-SIGSTORE-17817054:
-    - '@angular/cli@* > pacote@* > sigstore@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-SIGSTOREVERIFY-17817052:
-    - '@angular/cli@* > pacote@* > sigstore@* > @sigstore/verify@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-SIGSTOREVERIFY-17817056:
-    - '@angular/cli@* > pacote@* > sigstore@* > @sigstore/verify@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-TAR-17909068:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-  SNYK-JS-TAR-17909152:
-    - '@angular/cli@* > pacote@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
-    - '@angular/cli@* > pacote@* > @npmcli/run-script@* > node-gyp@* > tar@*':
-        reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
-        expires: '2027-03-02T00:00:00.000Z'
-        created: '2026-07-23T00:00:00.000Z'
 patch: {}
