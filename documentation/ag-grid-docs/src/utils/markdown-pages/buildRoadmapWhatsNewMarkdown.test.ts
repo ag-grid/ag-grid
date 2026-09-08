@@ -26,7 +26,7 @@ describe('buildRoadmapMarkdown', () => {
     });
 
     it('formats the last-updated date the way the page does', () => {
-        expect(output).toContain('Last updated: August 5, 2026');
+        expect(output).toContain('Last updated: September 16, 2026');
     });
 
     it('groups every item under its quarter heading, carrying status, description and rationale', () => {

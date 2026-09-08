@@ -1,5 +1,5 @@
 {
-    "lastUpdated": "2026-08-05",
+    "lastUpdated": "2026-09-16",
     "introTitle": "Q3 2026 focus",
     "introText": "Our Q3 2026 focus expands AG Grid across export, filtering, and developer tooling. PDF export joins CSV and Excel, Set Filter conditions work inside Advanced Filter expressions, and column widths stay accurate as data updates. Documentation now ships in Markdown alongside an installable AI coding skill. Planned items reflect current intent — timing may shift as priorities evolve.",
     "items": [
@@ -142,10 +142,10 @@
             "id": "AG-8950",
             "title": "Set Filter Support in Advanced Filtering",
             "q": 3,
-            "status": "in-progress",
+            "status": "shipped",
             "why": "Simplifies building complex filters that would otherwise need many chained OR conditions.",
             "desc": "Reference Set Filter-style multi-value lists as a single condition inside Advanced Filter expressions.",
-            "link": null
+            "link": "./filter-advanced/#set-filters"
         },
         {
             "id": "AG-17948",
@@ -160,19 +160,19 @@
             "id": "AG-902",
             "title": "PDF Export",
             "q": 3,
-            "status": "in-progress",
+            "status": "shipped",
             "why": "Supports sharing and printing grid data in a fixed, presentation-ready format.",
             "desc": "Export grid data directly to PDF, alongside the existing CSV and Excel export options.",
-            "link": null
+            "link": "./pdf-export/"
         },
         {
             "id": "AG-4093",
             "title": "Continuous Column Auto-sizing",
             "q": 3,
-            "status": "in-progress",
+            "status": "shipped",
             "why": "Keeps column widths accurate in grids with changing or incrementally loaded data.",
             "desc": "Keep columns auto-sized as data updates and new rows scroll into view, rather than sizing once.",
-            "link": null
+            "link": "./column-sizing/#continuous-auto-sizing"
         },
         {
             "id": "AG-6770",
