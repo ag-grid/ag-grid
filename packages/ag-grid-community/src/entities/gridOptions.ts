@@ -79,6 +79,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderFocusedEvent,
+    IssueRaisedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -2947,6 +2948,16 @@ export interface GridOptions<TData = any> {
      * Grid state has been updated.
      */
     onStateUpdated?(event: StateUpdatedEvent<TData>): void;
+
+    /**
+     * A development-time diagnostic - an error, warning or deprecation - was raised. Fires for every
+     * diagnostic, whether or not it is also shown in the validation overlay or thrown by `throwOn`,
+     * so tooling can react to it programmatically. Diagnostics raised before the grid is created
+     * (e.g. a missing row model module) are reported to the console only, as no grid exists to
+     * receive them.
+     * @agModule `ValidationModule`
+     */
+    onIssueRaised?(event: IssueRaisedEvent<TData>): void;
 
     // *** Pagination *** //
     /**
