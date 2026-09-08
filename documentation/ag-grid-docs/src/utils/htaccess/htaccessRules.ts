@@ -50,6 +50,13 @@ const studioArchiveNoCacheRules = `
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 `;
 
+const rootStaticFileCacheRules = `
+# Root static files (robots.txt, favicon.ico): unhashed but low-churn, so a moderate
+# max-age is enough to cut repeat crawler fetches (SE-189 measured /robots.txt refetched
+# ~25x/day with no header at all) without risking a stale copy for long after a real change.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(robots\\.txt|favicon\\.ico)$#"
+`;
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -464,6 +471,7 @@ function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${studioArchiveNoCacheRules}
+${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
@@ -487,6 +495,7 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
 ${studioArchiveNoCacheRules}
+${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
