@@ -77,7 +77,7 @@ test.agExample(import.meta, () => {
         const firstActionBox = await firstAction.boundingBox();
         expect(pillBox).not.toBeNull();
         expect(firstActionBox).not.toBeNull();
-        expect(pillBox!.width).toBeGreaterThan(140);
+        expect(pillBox!.width).toBeGreaterThan(152);
         expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
 
         const viewport = page.locator('.ag-advanced-filter-builder-virtual-list-viewport');
@@ -107,7 +107,7 @@ test.agExample(import.meta, () => {
         const firstActionBox = await firstAction.boundingBox();
         expect(pillBox).not.toBeNull();
         expect(firstActionBox).not.toBeNull();
-        expect(pillBox!.width).toBe(140);
+        expect(pillBox!.width).toBe(152);
         expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
 
         const viewport = page.locator('.ag-advanced-filter-builder-virtual-list-viewport');
