@@ -435,25 +435,25 @@
         "getAdvancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#filter-model--api"
+                "url": "./filter-advanced-api/"
             }
         },
         "setAdvancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#filter-model--api"
+                "url": "./filter-advanced-api/"
             }
         },
         "showAdvancedFilterBuilder": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced-input-builder/#advanced-filter-builder"
             }
         },
         "hideAdvancedFilterBuilder": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced-input-builder/#advanced-filter-builder"
             }
         }
     },

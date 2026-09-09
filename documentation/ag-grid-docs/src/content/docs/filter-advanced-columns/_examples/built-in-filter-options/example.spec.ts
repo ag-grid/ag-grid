@@ -118,9 +118,7 @@ test.agExample(import.meta, () => {
                 .map((row) => row.textContent),
         }));
 
-        // Two assertions because each catches a different half. Sizing the picker from the pill leaves it at
-        // `pillSelectMinWidth`, so only the width discriminates there; laying the rows out at their content
-        // width without resizing the popup keeps every row untruncated, so only their right edges do.
+        // Width catches a picker left at `pillSelectMinWidth`; overflow catches rows laid out wider than the popup.
         expect(pickerWidth).toBeGreaterThan(140);
         expect(overflowing).toEqual([]);
     });

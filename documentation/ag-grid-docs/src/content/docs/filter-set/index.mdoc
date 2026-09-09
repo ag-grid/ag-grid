@@ -43,15 +43,15 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 ## Set Filters in the Advanced Filter
 
-Where the [Advanced Filter](./filter-advanced/#set-filters) is enabled, a column that enables a Set Filter also offers `is any of` and `is none of` there, reusing the column's own Set Filter configuration and matching the same rows a selection in the Filter List would.
+Where the [Advanced Filter](./filter-advanced-columns/#set-filters) is enabled, a column that enables a Set Filter also offers `is any of` and `is none of` there, reusing the column's own Set Filter configuration and matching the same rows a selection in the Filter List would.
 
-`filterParams.filterOptions` decides for any column: a list naming `isAnyOf` or `isNoneOf` offers them on a column with a different filter, and a list leaving them out withholds them here. See [Offering the Options on Any Column](./filter-advanced/#offering-the-options-on-any-column).
+`filterParams.filterOptions` decides for any column: a list naming `isAnyOf` or `isNoneOf` offers them on a column with a different filter, and a list leaving them out withholds them here. See [Enabling and Disabling the Set Options](./filter-advanced-columns/#enabling-and-disabling-the-set-options).
 
 ## Suppress Set Filter by Default
 
 When `filter = true`, the Set Filter is used for AG Grid Enterprise by default. To use the [Text Filter](./filter-text/), [Number Filter](./filter-number/) or [Date Filter](./filter-date/) instead based on the [Cell Data Type](./cell-data-types/) (as in AG Grid Community), set the grid option `suppressSetFilterByDefault = true`.
 
-Since the column is then no longer a Set Filter, it also stops offering `is any of` and `is none of` in the [Advanced Filter](./filter-advanced/#set-filters) unless its [`filterOptions`](./filter-advanced/#offering-the-options-on-any-column) name them.
+Since the column is then no longer a Set Filter, it also stops offering `is any of` and `is none of` in the [Advanced Filter](./filter-advanced-columns/#set-filters) unless its [`filterOptions`](./filter-advanced-columns/#enabling-and-disabling-the-set-options) name them.
 
 ## Set Filter Parameters
 

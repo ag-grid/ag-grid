@@ -41,16 +41,28 @@ test.agExample(import.meta, () => {
         }).toPass();
     });
 
+    test.eachFramework('renders the suggested values with the Set Filter cellRenderer', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill('[Country] is any of [United St');
+
+        const autocompleteList = page.locator('.ag-autocomplete-list-popup');
+        await expect(autocompleteList).toBeVisible();
+        await expect(autocompleteList.locator('img.flag').first()).toBeVisible();
+    });
+
     test.eachFramework('shows the formatted values a Set Filter valueFormatter produces', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
-        await filterInput.fill('[Sport] is any of [SWIM');
+        await filterInput.fill('[Athlete] is any of [MICHAEL PH');
 
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
-        await expect(autocompleteList.getByText('SWIMMING', { exact: true })).toBeVisible();
+        await expect(autocompleteList.getByText('MICHAEL PHELPS', { exact: true })).toBeVisible();
     });
 
     test.eachFramework('offers a Tree List column as one flat list of whole paths', async ({ page }) => {
