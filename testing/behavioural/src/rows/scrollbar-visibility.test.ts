@@ -12,6 +12,13 @@ const rowData = Array.from({ length: initialRowCount + 1 }, (_, index) => ({
     sport: `Sport ${index}`,
 }));
 
+// enough rows that the vertical scrollbar is displayed whatever the scrollbar width resolves to
+const overflowingRowData = Array.from({ length: initialRowCount * 4 }, (_, index) => ({
+    athlete: `Athlete ${index}`,
+    country: `Country ${index}`,
+    sport: `Sport ${index}`,
+}));
+
 const query = <T extends Element>(selector: string): T => {
     const element = document.querySelector<T>(selector);
     expect(element, `Expected ${selector} to be rendered`).not.toBeNull();
@@ -107,12 +114,16 @@ describe('Scrollbar visibility', () => {
             },
             headerHeight: mockGridLayout.headerHeight,
             rowHeight: mockGridLayout.rowHeight,
-            rowData,
+            rowData: overflowingRowData,
             scrollbarWidth: 0,
+            alwaysShowVerticalScroll: true,
         });
 
         const viewport = query<HTMLElement>('.ag-grid-viewport');
         await waitFor(() => expect(document.querySelectorAll('.ag-row').length).toBeGreaterThan(0));
+        // the vertical scrollbar is displayed (alwaysShowVerticalScroll), so the code path that
+        // reserves the overlay lane is reached - and must still resolve to the user's zero width
+        expect(query<HTMLElement>('.ag-body-vertical-scroll').classList.contains('ag-hidden')).toBe(false);
         await expectScrollbarSizes('0px', '0px', 'scrollbarWidth: 0');
 
         // happy-dom fires no ResizeObserver, so re-set the columns to force the flex pass to run again
