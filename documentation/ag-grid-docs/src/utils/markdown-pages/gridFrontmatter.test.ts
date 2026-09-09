@@ -29,15 +29,11 @@ describe('getFooterRelatedLinks', () => {
     });
 
     test('makes internal links absolute and leaves external ones whole', () => {
-        const links = getFooterRelatedLinks({ pageUrl: '/data-grid/security/', siteRoot: SITE_ROOT });
+        const links = getFooterRelatedLinks({ pageUrl: '/license-pricing/', siteRoot: SITE_ROOT });
         const bySource = Object.fromEntries(links.map(({ title, url }) => [title, url]));
 
+        expect(bySource['Security']).toBe('https://www.ag-grid.com/data-grid/security/');
         expect(bySource['Stack Overflow']).toBe('https://stackoverflow.com/questions/tagged/ag-grid');
-
-        const roadmapLinks = getFooterRelatedLinks({ pageUrl: '/roadmap/', siteRoot: SITE_ROOT });
-        const roadmapBySource = Object.fromEntries(roadmapLinks.map(({ title, url }) => [title, url]));
-
-        expect(roadmapBySource['Changelog']).toBe('https://www.ag-grid.com/changelog/');
     });
 
     test('matches a footer entry written as a full production URL', () => {

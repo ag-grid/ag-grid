@@ -1,22 +1,5 @@
 [
     {
-        "title": "Products",
-        "links": [
-            {
-                "name": "AG Charts",
-                "url": "https://www.ag-grid.com/charts/"
-            },
-            {
-                "name": "AG Studio",
-                "url": "https://www.ag-grid.com/studio/"
-            },
-            {
-                "name": "License & Pricing",
-                "url": "/license-pricing/"
-            }
-        ]
-    },
-    {
         "title": "Documentation",
         "links": [
             {
@@ -45,13 +28,17 @@
         "title": "Support & Community",
         "links": [
             {
-                "name": "Support via Zendesk",
-                "url": "https://ag-grid.zendesk.com/",
+                "name": "Stack Overflow",
+                "url": "https://stackoverflow.com/questions/tagged/ag-grid",
                 "newTab": true
             },
             {
-                "name": "Stack Overflow",
-                "url": "https://stackoverflow.com/questions/tagged/ag-grid",
+                "name": "License & Pricing",
+                "url": "/license-pricing/"
+            },
+            {
+                "name": "Support via Zendesk",
+                "url": "https://ag-grid.zendesk.com/",
                 "newTab": true
             },
             {
@@ -64,53 +51,29 @@
         "title": "The Company",
         "links": [
             {
+                "name": "AG Charts",
+                "url": "https://www.ag-grid.com/charts/"
+            },
+            {
+                "name": "AG Studio",
+                "url": "https://www.ag-grid.com/studio/"
+            },
+            {
                 "name": "About",
                 "url": "/about/"
             },
             {
-                "name": "Blog",
-                "url": "https://www.ag-grid.com/blog/"
-            },
-            {
                 "name": "Contact Us",
                 "url": "/contact/"
-            }
-        ]
-    },
-    {
-        "title": "Legal",
-        "placement": "legal",
-        "links": [
-            {
-                "name": "Privacy Policy",
-                "url": "/privacy/"
             },
             {
-                "name": "Cookies Policy",
-                "url": "/cookies/"
-            },
-            {
-                "name": "Manage Cookies",
-                "url": "#manage_cookies",
-                "showCookiesPrefs": true
-            },
-            {
-                "name": "Terms of Use",
-                "url": "/terms-of-use/"
-            },
-            {
-                "name": "Modern Slavery",
-                "url": "/modern-slavery/"
-            },
-            {
-                "name": "Sitemap",
-                "url": "https://www.ag-grid.com/sitemap/"
+                "name": "Blog",
+                "url": "https://www.ag-grid.com/blog/"
             }
         ]
     },
     {
         "title": "Follow",
-        "placement": "social",
         "links": [
             {
                 "name": "GitHub",
@@ -131,6 +94,37 @@
                 "name": "LinkedIn",
                 "url": "https://www.linkedin.com/company/ag-grid",
                 "iconName": "linkedin"
+            }
+        ]
+    },
+    {
+        "title": "Legal",
+        "placement": "legal",
+        "links": [
+            {
+                "name": "Terms of Use",
+                "url": "/terms-of-use/"
+            },
+            {
+                "name": "Privacy Policy",
+                "url": "/privacy/"
+            },
+            {
+                "name": "Cookies Policy",
+                "url": "/cookies/"
+            },
+            {
+                "name": "Manage Cookies",
+                "url": "#manage_cookies",
+                "showCookiesPrefs": true
+            },
+            {
+                "name": "Modern Slavery",
+                "url": "/modern-slavery/"
+            },
+            {
+                "name": "Sitemap",
+                "url": "https://www.ag-grid.com/sitemap/"
             }
         ]
     }

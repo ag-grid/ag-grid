@@ -30,8 +30,8 @@ export interface MenuItem {
 
 export interface FooterItem {
     title: string;
-    /** Where the group renders: the legal strip, the social icons, or (default) a navigation column. */
-    placement?: 'legal' | 'social';
+    /** Where the group renders: the legal strip under the columns, or (default) a menu column. */
+    placement?: 'legal';
     links: {
         name: string;
         url: string;

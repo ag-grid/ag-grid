@@ -1,30 +1,26 @@
 import type { FooterItem } from '@ag-grid-types';
 import { DevToolsToggle } from '@ag-website-shared/components/dev-tools/DevTools';
-import { Icon, type IconName } from '@ag-website-shared/components/icon/Icon';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import GithubSlugger from 'github-slugger';
-import type { MouseEvent } from 'react';
 
 import styles from './Footer.module.scss';
 
 /**
- * A footer group renders as a navigation column unless its `placement` moves it into the legal
- * strip or the social icon row. Declared here so a site whose footer type predates `placement`
- * still renders every group as a column.
+ * A footer group renders as a menu column unless its `placement` moves it into the legal strip
+ * under the columns. Declared here so a site whose footer type predates `placement` still renders
+ * every group as a column.
  */
-type FooterGroup = FooterItem & { placement?: 'legal' | 'social' };
-type FooterLink = FooterGroup['links'][number];
+type FooterGroup = FooterItem & { placement?: 'legal' };
 
 interface FooterProps {
     showMicrosoftMessage?: boolean;
     footerItems: FooterGroup[];
-    /** Short product line shown under the logo. Omit to leave the brand column as logo and socials only. */
-    tagline?: string;
 }
 
-const toggleCookiesPrefs = (event: MouseEvent<HTMLAnchorElement>) => {
+const toggleCookiesPrefs = (event) => {
     event.preventDefault();
 
     if (!window.__enzuzoApi) return;
@@ -32,16 +28,10 @@ const toggleCookiesPrefs = (event: MouseEvent<HTMLAnchorElement>) => {
     window.__enzuzoApi.prefCenter.show();
 };
 
-const linkAttributes = ({ url, newTab, showCookiesPrefs }: FooterLink) => ({
-    href: urlWithBaseUrl(url),
-    onClick: showCookiesPrefs ? toggleCookiesPrefs : undefined,
-    ...(newTab ? { target: '_blank', rel: 'noreferrer' } : {}),
-});
-
-const MenuColumns = ({ columns }: { columns: FooterGroup[] }) => {
+const MenuColumns = ({ footerItems }: { footerItems: FooterGroup[] }) => {
     const slugger = new GithubSlugger();
 
-    return columns.map(({ title, links }) => {
+    return footerItems.map(({ title, links }) => {
         // Associate each link list with its (non-heading) title so assistive tech still announces the
         // group label. SE-45 deliberately drops the <h2> to keep these out of the page heading outline.
         const titleId = `footer-${new GithubSlugger().slug(title)}`;
@@ -51,11 +41,17 @@ const MenuColumns = ({ columns }: { columns: FooterGroup[] }) => {
                     {title}
                 </span>
                 <ul className="list-style-none" aria-labelledby={titleId}>
-                    {links.map((link) => (
-                        <li key={`${title}_${link.name}`}>
-                            <a id={`${slugger.slug(link.name)}-nav`} tabIndex={0} {...linkAttributes(link)}>
-                                {link.iconName && <Icon name={link.iconName as IconName} />}
-                                {link.name}
+                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: any) => (
+                        <li key={`${title}_${name}`}>
+                            <a
+                                id={`${slugger.slug(name)}-nav`}
+                                tabIndex={0}
+                                href={urlWithBaseUrl(url)}
+                                onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
+                                {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                            >
+                                {iconName && <Icon name={iconName} />}
+                                {name}
                             </a>
                         </li>
                     ))}
@@ -65,38 +61,22 @@ const MenuColumns = ({ columns }: { columns: FooterGroup[] }) => {
     });
 };
 
-const SocialLinks = ({ group }: { group: FooterGroup }) => {
-    const slugger = new GithubSlugger();
-
-    return (
-        <ul className={classNames('list-style-none', styles.socialLinks)} aria-label={group.title}>
-            {group.links.map((link) => (
-                <li key={link.name}>
-                    <a
-                        id={`${slugger.slug(link.name)}-nav`}
-                        tabIndex={0}
-                        aria-label={link.name}
-                        title={link.name}
-                        {...linkAttributes(link)}
-                    >
-                        {link.iconName ? <Icon name={link.iconName as IconName} /> : link.name}
-                    </a>
-                </li>
-            ))}
-        </ul>
-    );
-};
-
 // Separators between the links are drawn in CSS so they stay out of the accessibility tree.
 const LegalLinks = ({ group }: { group: FooterGroup }) => {
     const slugger = new GithubSlugger();
 
     return (
-        <ul className={classNames('list-style-none', styles.legalLinks)} aria-label={group.title}>
-            {group.links.map((link) => (
-                <li key={link.name}>
-                    <a id={`${slugger.slug(link.name)}-nav`} tabIndex={0} {...linkAttributes(link)}>
-                        {link.name}
+        <ul className={classNames('list-style-none', 'text-sm', styles.legalLinks)} aria-label={group.title}>
+            {group.links.map(({ name, url, newTab, showCookiesPrefs }) => (
+                <li key={name}>
+                    <a
+                        id={`${slugger.slug(name)}-nav`}
+                        tabIndex={0}
+                        href={urlWithBaseUrl(url)}
+                        onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
+                        {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                    >
+                        {name}
                     </a>
                 </li>
             ))}
@@ -104,46 +84,55 @@ const LegalLinks = ({ group }: { group: FooterGroup }) => {
     );
 };
 
-export const Footer = ({ showMicrosoftMessage, footerItems, tagline }: FooterProps) => {
+export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
     const columns = footerItems.filter((item) => !item.placement);
-    const socialGroup = footerItems.find((item) => item.placement === 'social');
     const legalGroup = footerItems.find((item) => item.placement === 'legal');
 
     return (
         <footer className={styles.footer}>
-            <div className={styles.footerInner}>
-                <div className={styles.footerColumns}>
-                    <div className={styles.brandColumn}>
-                        <div className={styles.logoContainer}>
-                            <SiteLogo />
-                        </div>
-                        {tagline && <p className={classNames('text-sm', styles.tagline)}>{tagline}</p>}
-                        {socialGroup && <SocialLinks group={socialGroup} />}
+            <div className={classNames(styles.footerColumns, 'layout-grid')}>
+                <div className={styles.menuColumn}>
+                    <div className={styles.logoContainer}>
+                        <SiteLogo />
                     </div>
-                    <MenuColumns columns={columns} />
-                </div>
+                    <div className={styles.footerInfo}>
+                        <p className="text-sm">&copy; AG Grid Ltd 2015-{new Date().getFullYear()}</p>
 
-                <div className={styles.legalBar}>
-                    <div className={classNames('text-sm', styles.legalInfo)}>
-                        <p>
-                            &copy; AG Grid Ltd 2015&ndash;{new Date().getFullYear()}
-                            <span className={styles.legalInfoSeparator}> &middot; </span>
-                            Company&nbsp;No.&nbsp;07318192
-                            <span className={styles.legalInfoSeparator}> &middot; </span>
+                        <p className="text-sm">
+                            <DevToolsToggle>AG Grid Ltd registered</DevToolsToggle> in England&nbsp;&amp;&nbsp;Wales.
+                            <br />
+                            Company&nbsp;No.&nbsp;07318192.
+                            <br />
                             VAT&nbsp;no.&nbsp;GB998360167
                         </p>
-                        <p>
-                            <DevToolsToggle>AG Grid Ltd registered</DevToolsToggle> in England&nbsp;&amp;&nbsp;Wales
-                            <span className={styles.legalInfoSeparator}> &middot; </span>
-                            70&nbsp;Wilson&nbsp;Street, London&nbsp;EC2A&nbsp;2DB
+
+                        <p className="text-sm">
+                            Registered address
+                            <br />
+                            AG Grid Ltd
+                            <br />
+                            70 Wilson Street
+                            <br />
+                            London
+                            <br />
+                            EC2A 2DB
+                            <br />
                         </p>
+
                         {showMicrosoftMessage && (
-                            <p>The Microsoft logo is a trademark of the Microsoft group of companies.</p>
+                            <p className="text-sm">
+                                The Microsoft logo is a trademark of the Microsoft group of companies.
+                            </p>
                         )}
                     </div>
-                    {legalGroup && <LegalLinks group={legalGroup} />}
                 </div>
+                <MenuColumns footerItems={columns} />
             </div>
+            {legalGroup && (
+                <div className={classNames(styles.legalBar, 'layout-grid')}>
+                    <LegalLinks group={legalGroup} />
+                </div>
+            )}
         </footer>
     );
 };
