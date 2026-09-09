@@ -170,12 +170,16 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         if (!column || !this.gos.isModuleRegistered('SetFilter')) {
             return false;
         }
-        // An option list naming them is the most specific statement there is, so it outranks the flag.
+        // An option list naming them offers them whatever filter the column has.
         if (namesSetOperator(column)) {
             return true;
         }
-        // What the column asks for, then what its own filter implies.
-        return column.colDef.filterParams?.enableSetOperators ?? this.isSetFilterDef(column);
+        // Otherwise it is the column's filter that decides: a Set Filter, or a Multi Filter holding one.
+        const colDef = column.colDef;
+        return (
+            this.isSetFilterDef(column) ||
+            (colDef.filter === 'agMultiColumnFilter' && !!getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter'))
+        );
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */

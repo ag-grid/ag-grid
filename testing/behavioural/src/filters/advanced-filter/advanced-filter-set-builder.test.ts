@@ -174,11 +174,15 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         expect(picker!.querySelector('.ag-mini-filter')).not.toBeNull();
     });
 
-    test('a column opted into the set options by its params opens the Set Filter, not its own', async () => {
+    test('a column naming the set options in `filterOptions` opens the Set Filter, not its own', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
-                { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { enableSetOperators: true } },
+                {
+                    field: 'athlete',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { filterOptions: ['contains', 'isAnyOf'] },
+                },
                 { field: 'country', filter: 'agSetColumnFilter' },
                 { field: 'age', filter: 'agNumberColumnFilter' },
             ],
