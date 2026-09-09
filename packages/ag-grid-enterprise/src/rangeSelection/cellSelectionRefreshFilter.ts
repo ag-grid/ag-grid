@@ -1,26 +1,8 @@
 import { _makeNull } from 'ag-stack';
 
-import type { AgColumn, CellPosition, CellRange, Column, RowPinnedType, RowPosition } from 'ag-grid-community';
-import { CellRangeType } from 'ag-grid-community';
+import type { AgColumn, CellPosition, CellSelectionRange, CellSelectionSnapshot, Column } from 'ag-grid-community';
 
-/**
- * Everything about a single cell range that the selection styling of a cell depends on, captured as
- * of the last time the rendered cells were refreshed. Rows are held as plain indexes so that the
- * per-cell filter can compare them without going through the row position helpers.
- */
-export interface RangeSnapshot {
-    /** Normalised (topmost) row of the range. */
-    firstRow: number;
-    /** Normalised (bottommost) row of the range. */
-    lastRow: number;
-    firstRowPinned: RowPinnedType;
-    lastRowPinned: RowPinnedType;
-    columns: Set<Column>;
-    /** The rightmost column, which with `lastRow` owns the selection handle. */
-    lastColumn: Column | undefined;
-    type: CellRangeType | undefined;
-    colorClass: string | null | undefined;
-}
+import { areAllChartRanges, isCellInSelectionRange, isMoreThanOneCell } from './cellSelectionState';
 
 /** Matches the rendered cells whose selection state can have changed. */
 export type CellSelectionRefreshFilter = (cell: CellPosition) => boolean;
@@ -31,59 +13,35 @@ interface ColumnNeighbours {
     getColAfter(col: AgColumn): AgColumn | null;
 }
 
-export function snapshotCellRange(range: CellRange, firstRow: RowPosition, lastRow: RowPosition): RangeSnapshot {
-    return {
-        firstRow: firstRow.rowIndex,
-        lastRow: lastRow.rowIndex,
-        firstRowPinned: _makeNull(firstRow.rowPinned),
-        lastRowPinned: _makeNull(lastRow.rowPinned),
-        // ranges are mutated in place while dragging, so the columns are copied rather than shared
-        columns: new Set(range.columns),
-        lastColumn: findLastColumn(range.columns),
-        type: range.type,
-        colorClass: range.colorClass,
-    };
-}
-
-/** Mirrors the rightmost column that `IRangeService.isBottomRightCell()` compares against. */
-function findLastColumn(columns: Column[]): Column | undefined {
-    let last: AgColumn | undefined;
-    for (let i = 0, len = columns.length; i < len; i++) {
-        const column = columns[i] as AgColumn;
-        if (!last || column.allColsIndex > last.allColsIndex) {
-            last = column;
-        }
-    }
-    return last;
-}
-
 /**
  * Works out which rendered cells need their selection state refreshed, given the ranges as they were
  * last painted and as they are now. Returns `null` when every cell has to be refreshed.
  */
 export function createCellSelectionRefreshFilter(
-    painted: RangeSnapshot[],
-    current: RangeSnapshot[],
+    painted: CellSelectionRange[],
+    current: CellSelectionSnapshot,
     columns: ColumnNeighbours
 ): CellSelectionRefreshFilter | null {
+    const currentRanges = current.ranges;
+
     // adding or removing a range changes the range count and which range owns the selection handle,
     // neither of which is a per-cell property, so there is nothing to narrow down
-    if (painted.length !== current.length) {
+    if (painted.length !== currentRanges.length) {
         return null;
     }
     // both are read globally by every cell, so a flip invalidates the whole viewport
-    if (isMoreThanOneCell(painted) !== isMoreThanOneCell(current)) {
+    if (isMoreThanOneCell(painted) !== current.moreThanOneCell) {
         return null;
     }
-    if (isChartRangeSet(painted) !== isChartRangeSet(current)) {
+    if (areAllChartRanges(painted) !== current.allChartRanges) {
         return null;
     }
 
     const changes: RangeChange[] = [];
 
-    for (let i = 0; i < current.length; i++) {
+    for (let i = 0; i < currentRanges.length; i++) {
         const before = painted[i];
-        const after = current[i];
+        const after = currentRanges[i];
 
         if (isUnchanged(before, after)) {
             continue;
@@ -115,12 +73,17 @@ interface CandidateRegion {
     columns: Set<Column>;
 }
 
+interface CandidateCell {
+    rowIndex: number;
+    column: Column;
+}
+
 interface RangeChange {
-    before: RangeSnapshot;
-    after: RangeSnapshot;
+    before: CellSelectionRange;
+    after: CellSelectionRange;
     /** The colour and chart category classes apply to every cell of the range, not just its edge. */
     wholeRange: boolean;
-    rowPinned: RowPinnedType;
+    rowPinned: string | null;
     regions: CandidateRegion[];
     /**
      * The cells owning the selection handle before and after the change. The handle caches the range
@@ -131,16 +94,20 @@ interface RangeChange {
     columns: ColumnNeighbours;
 }
 
-interface CandidateCell {
-    rowIndex: number;
-    column: Column;
-}
-
-function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns: ColumnNeighbours): RangeChange | null {
-    const rowPinned = before.firstRowPinned;
-    if (before.lastRowPinned !== rowPinned || after.firstRowPinned !== rowPinned || after.lastRowPinned !== rowPinned) {
+function createRangeChange(
+    before: CellSelectionRange,
+    after: CellSelectionRange,
+    columns: ColumnNeighbours
+): RangeChange | null {
+    const rowPinned = before.firstRow.rowPinned ?? null;
+    if (!before.withinOneSection || !after.withinOneSection || (after.firstRow.rowPinned ?? null) !== rowPinned) {
         return null;
     }
+
+    const beforeFirst = before.firstRow.rowIndex;
+    const beforeLast = before.lastRow.rowIndex;
+    const afterFirst = after.firstRow.rowIndex;
+    const afterLast = after.lastRow.rowIndex;
 
     const wholeRange = before.type !== after.type || before.colorClass !== after.colorClass;
     const change: RangeChange = {
@@ -153,8 +120,8 @@ function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns:
         columns,
     };
 
-    const spannedFirstRow = Math.min(before.firstRow, after.firstRow);
-    const spannedLastRow = Math.max(before.lastRow, after.lastRow);
+    const spannedFirstRow = Math.min(beforeFirst, afterFirst);
+    const spannedLastRow = Math.max(beforeLast, afterLast);
 
     if (wholeRange) {
         change.regions.push({
@@ -166,27 +133,27 @@ function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns:
         return change;
     }
 
-    // borders, the single-cell class and the selection handle all depend on whether the neighbouring
-    // cells share the range, so each region is widened by one cell in every direction
+    // borders and the single-cell class depend on whether the neighbouring cells share the range, so
+    // each region is widened by one cell in every direction
     const changedColumns = widenColumns(symmetricDifferenceOfColumns(before.columns, after.columns), columns);
     if (changedColumns.size) {
         change.regions.push({ firstRow: spannedFirstRow - 1, lastRow: spannedLastRow + 1, columns: changedColumns });
     }
 
-    if (before.firstRow !== after.firstRow || before.lastRow !== after.lastRow) {
+    if (beforeFirst !== afterFirst || beforeLast !== afterLast) {
         const spannedColumns = widenColumns(unionColumns(before.columns, after.columns), columns);
 
-        if (before.firstRow !== after.firstRow) {
+        if (beforeFirst !== afterFirst) {
             change.regions.push({
-                firstRow: Math.min(before.firstRow, after.firstRow) - 1,
-                lastRow: Math.max(before.firstRow, after.firstRow) + 1,
+                firstRow: Math.min(beforeFirst, afterFirst) - 1,
+                lastRow: Math.max(beforeFirst, afterFirst) + 1,
                 columns: spannedColumns,
             });
         }
-        if (before.lastRow !== after.lastRow) {
+        if (beforeLast !== afterLast) {
             change.regions.push({
-                firstRow: Math.min(before.lastRow, after.lastRow) - 1,
-                lastRow: Math.max(before.lastRow, after.lastRow) + 1,
+                firstRow: Math.min(beforeLast, afterLast) - 1,
+                lastRow: Math.max(beforeLast, afterLast) + 1,
                 columns: spannedColumns,
             });
         }
@@ -195,11 +162,12 @@ function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns:
     return change;
 }
 
-function collectHandleCells(before: RangeSnapshot, after: RangeSnapshot): CandidateCell[] {
+function collectHandleCells(before: CellSelectionRange, after: CellSelectionRange): CandidateCell[] {
     const cells: CandidateCell[] = [];
     for (const { lastRow, lastColumn } of [before, after]) {
-        if (lastColumn && !cells.some((cell) => cell.rowIndex === lastRow && cell.column === lastColumn)) {
-            cells.push({ rowIndex: lastRow, column: lastColumn });
+        const rowIndex = lastRow.rowIndex;
+        if (lastColumn && !cells.some((cell) => cell.rowIndex === rowIndex && cell.column === lastColumn)) {
+            cells.push({ rowIndex, column: lastColumn });
         }
     }
     return cells;
@@ -256,8 +224,12 @@ function hasMembershipChanged({ before, after }: RangeChange, column: Column, ro
     return isCellIn(before, column, rowIndex) !== isCellIn(after, column, rowIndex);
 }
 
-function isCellIn({ columns, firstRow, lastRow }: RangeSnapshot, column: Column, rowIndex: number): boolean {
-    return rowIndex >= firstRow && rowIndex <= lastRow && columns.has(column);
+function isCellIn(selectionRange: CellSelectionRange, column: Column, rowIndex: number): boolean {
+    return isCellInSelectionRange(selectionRange, {
+        rowIndex,
+        rowPinned: selectionRange.firstRow.rowPinned,
+        column,
+    });
 }
 
 function unionColumns(before: Set<Column>, after: Set<Column>): Set<Column> {
@@ -303,14 +275,14 @@ function widenColumns(selected: Set<Column>, columns: ColumnNeighbours): Set<Col
     return widened;
 }
 
-function isUnchanged(before: RangeSnapshot, after: RangeSnapshot): boolean {
+function isUnchanged(before: CellSelectionRange, after: CellSelectionRange): boolean {
     return (
         before.type === after.type &&
         before.colorClass === after.colorClass &&
-        before.firstRow === after.firstRow &&
-        before.lastRow === after.lastRow &&
-        before.firstRowPinned === after.firstRowPinned &&
-        before.lastRowPinned === after.lastRowPinned &&
+        before.firstRow.rowIndex === after.firstRow.rowIndex &&
+        before.lastRow.rowIndex === after.lastRow.rowIndex &&
+        before.firstRow.rowPinned === after.firstRow.rowPinned &&
+        before.lastRow.rowPinned === after.lastRow.rowPinned &&
         haveSameColumns(before.columns, after.columns)
     );
 }
@@ -325,26 +297,4 @@ function haveSameColumns(before: Set<Column>, after: Set<Column>): boolean {
         }
     }
     return true;
-}
-
-/** Mirrors `IRangeService.isMoreThanOneCell()`, which every cell reads for the single-cell class. */
-function isMoreThanOneCell(snapshots: RangeSnapshot[]): boolean {
-    if (snapshots.length === 0) {
-        return false;
-    }
-    if (snapshots.length > 1) {
-        return true;
-    }
-
-    const { firstRow, lastRow, firstRowPinned, lastRowPinned, columns } = snapshots[0];
-
-    return firstRow !== lastRow || firstRowPinned !== lastRowPinned || columns.size !== 1;
-}
-
-/** Mirrors the all-ranges test behind the `ag-cell-range-chart` class. */
-function isChartRangeSet(snapshots: RangeSnapshot[]): boolean {
-    return (
-        snapshots.length > 0 &&
-        snapshots.every(({ type }) => type === CellRangeType.DIMENSION || type === CellRangeType.VALUE)
-    );
 }

@@ -29,6 +29,7 @@ import {
     _setDomData,
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
+import type { CellSelectionSnapshot } from '../../interfaces/IRangeService';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
@@ -824,18 +825,18 @@ export class CellCtrl extends BeanStub {
         };
     }
 
-    public updateRangeBordersIfRangeCount(): void {
+    public updateRangeBordersIfRangeCount(state?: CellSelectionSnapshot): void {
         if (!this.comp) {
             return;
         }
-        this.rangeFeature?.updateRangeBordersIfRangeCount();
+        this.rangeFeature?.updateRangeBordersIfRangeCount(state);
     }
 
-    public onCellSelectionChanged(): void {
+    public onCellSelectionChanged(state?: CellSelectionSnapshot): void {
         if (!this.comp) {
             return;
         }
-        this.rangeFeature?.onCellSelectionChanged();
+        this.rangeFeature?.onCellSelectionChanged(state);
     }
 
     public isRangeSelectionEnabled(): boolean {
