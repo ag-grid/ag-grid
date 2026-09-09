@@ -26,6 +26,16 @@ const gridOptions: GridOptions<LanguageSample> = {
         { text: 'このグリッドでは一つのフォントを使用します。' },
     ],
     loading: true,
+    onGridReady: (params) => {
+        preparePdfExport = loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
+            params.api.setGridOption('defaultPdfExportParams', {
+                fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
+                defaultCellStyle: { fontFamily },
+                language: 'ja',
+            });
+            params.api.setGridOption('loading', false);
+        });
+    },
 };
 
 function onBtExport() {
@@ -46,12 +56,4 @@ async function loadFont(fileName: string): Promise<ArrayBuffer> {
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-    preparePdfExport = loadFont('IBMPlexSansJP-Regular.ttf').then((data) => {
-        gridApi.setGridOption('defaultPdfExportParams', {
-            fonts: [{ family: fontFamily, faces: [{ data, weight: 400 }] }],
-            defaultCellStyle: { fontFamily },
-            language: 'ja',
-        });
-        gridApi.setGridOption('loading', false);
-    });
 });

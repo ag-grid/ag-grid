@@ -65,10 +65,9 @@ function getPdfExportParams(): PdfExportParams {
 }
 
 function onBtExport() {
-    gridApi.exportDataAsPdf();
+    gridApi.exportDataAsPdf(getPdfExportParams());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-    gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
 });
