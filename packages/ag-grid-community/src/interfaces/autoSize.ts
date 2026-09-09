@@ -71,8 +71,7 @@ export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
      * respond to new data, a page change and a scrollbar appearing or disappearing. Grid resizes are
      * debounced, so the columns settle once the gesture stops.
      *
-     * Scrolling is excluded by default. `fitCellContents` re-sizes on a `'viewportChanged'` reason only
-     * when `shouldAutoSizeColumns` is provided to allow it.
+     * Scrolling is excluded by default, unless `shouldAutoSizeColumns` allows the `'viewportChanged'` reason.
      *
      * Columns the user has sized themselves are left alone and treated as fixed width — a header drag, a
      * keyboard resize, a double-click auto-size, or an explicit width through `applyColumnState`.
@@ -85,8 +84,7 @@ export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
      * Called before each continuous re-size, with the columns eligible to be re-sized and the reason the
      * grid wants to re-size them. Return `false` to skip this one. Requires `continuous`.
      *
-     * Providing this callback also opts `fitCellContents` into scroll-driven re-sizing: without it the
-     * `'viewportChanged'` reason is never raised, so return `true` for it to enable that.
+     * Return `true` for `'viewportChanged'` to opt `fitCellContents` into scroll-driven re-sizing.
      */
     shouldAutoSizeColumns?: (params: AutoSizeColumnsTriggerParams<TData, TContext>) => boolean;
 }

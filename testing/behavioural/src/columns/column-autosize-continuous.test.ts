@@ -50,11 +50,7 @@ describe('Continuous Column Autosize', () => {
     // eslint-disable-next-line no-restricted-syntax -- samples inside the continuous-resize debounce window, which is the behaviour under test
     const insideDebounceWindow = (): Promise<void> => asyncSetTimeout(40);
 
-    /**
-     * Past the 150ms debounce and the frame that follows it, so a re-size the grid had decided to run has
-     * landed by now. Every assertion using this is negative — that no re-size was scheduled at all.
-     */
-    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize debounce window; every assertion that follows it is negative
+    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize debounce window
     const pastDebounceWindow = (): Promise<void> => asyncSetTimeout(300);
 
     /** Stands in for an internal trigger the grid would dispatch itself, payload and all. */
@@ -357,7 +353,6 @@ describe('Continuous Column Autosize', () => {
             await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
         });
 
-        /** Scrolling is opt-in: without a callback to allow it, the grid never re-sizes on a viewport change. */
         test('a viewport trigger is ignored when no callback opts into it', async () => {
             const api = createGrid();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);

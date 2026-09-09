@@ -689,9 +689,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     /**
      * Registers the triggers for continuous sizing. Every strategy responds to data, column and grid-size
-     * changes. Only `fitCellContents` can respond to scrolling, since that changes what can be measured
-     * but not the arithmetic of the width-distribution strategies — and only when `shouldAutoSizeColumns`
-     * is there to allow it.
+     * changes; only `fitCellContents` also responds to the viewport, since scrolling changes what can be
+     * measured but not the arithmetic of the width-distribution strategies.
      */
     private initContinuousAutoSize(strategy: AutoSizeStrategy): void {
         const measuresContent = strategy.type === 'fitCellContents';
@@ -729,10 +728,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             rowNodeDataChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
         });
 
-        // what is scrolled into view cannot change the width-distribution arithmetic. For
-        // `fitCellContents` it can, but the re-size is opt-in: without a callback to allow it, the grid
-        // never raises `viewportChanged`
         if (!measuresContent || !strategy.shouldAutoSizeColumns) {
+            // the width-distribution strategies are arithmetic over the current column set, so what is
+            // scrolled into view cannot change their result
             return;
         }
 
