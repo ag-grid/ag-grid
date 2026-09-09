@@ -68,16 +68,21 @@
     padding-bottom: $spacing-size-10;
 }
 
+// Below desktop the brand column spans the full width and is centred, as the old footer was.
 .brandColumn {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: $spacing-size-4;
     flex: 1 1 100%;
+    text-align: center;
 
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
         flex: 1.15 1 0;
         min-width: 200px;
         max-width: 320px;
+        align-items: flex-start;
+        text-align: left;
     }
 }
 
@@ -104,7 +109,12 @@
 .socialLinks {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: $spacing-size-2;
+
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        justify-content: flex-start;
+    }
 
     a {
         display: flex;
@@ -130,19 +140,29 @@
     }
 }
 
+// Single column: centred text. Two columns: the left column is right-aligned and the right column
+// left-aligned so the pair reads as one centred block. Desktop: everything left-aligned.
 .menuColumn {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-3;
     flex: 1 1 100%;
+    text-align: center;
 
-    @media screen and (min-width: $breakpoint-site-footer-two-column) {
+    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: ($breakpoint-site-footer-five-column - 1px)) {
         flex: 1 1 calc(50% - #{$spacing-size-8});
+        text-align: left;
+
+        // The brand column is the first child, so the left column of each pair is an even child.
+        &:nth-child(even) {
+            text-align: right;
+        }
     }
 
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
         flex: 1 1 0;
         min-width: 120px;
+        text-align: left;
     }
 
     ul {
@@ -187,13 +207,19 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: $spacing-size-4 $spacing-size-8;
     padding-top: $spacing-size-5;
     border-top: 1px solid var(--color-border-secondary);
+    text-align: center;
 
     #{$selector-darkmode} & {
         border-top-color: var(--color-border-primary);
+    }
+
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        justify-content: space-between;
+        text-align: left;
     }
 }
 
@@ -213,10 +239,15 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: $spacing-size-2 $legal-links-gap;
     margin: 0;
     // Clips the separator of whichever link starts a wrapped row, since it sits left of the list edge.
     overflow: hidden;
+
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        justify-content: flex-start;
+    }
 
     li {
         position: relative;
@@ -225,13 +256,16 @@
     }
 
     // Pipe separators between links, centred in the gap before each link and drawn in CSS with an
-    // empty alternative text so they are never announced.
-    li::before {
-        content: '|' #{'/'} '';
-        position: absolute;
-        left: calc(#{$legal-links-gap} / -2);
-        transform: translateX(-50%);
-        color: var(--color-text-secondary);
-        opacity: 0.4;
+    // empty alternative text so they are never announced. Desktop only: the clipping above needs
+    // the list left-aligned, and the centred mobile list separates links by the gap alone.
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        li::before {
+            content: '|' #{'/'} '';
+            position: absolute;
+            left: calc(#{$legal-links-gap} / -2);
+            transform: translateX(-50%);
+            color: var(--color-text-secondary);
+            opacity: 0.4;
+        }
     }
 }
