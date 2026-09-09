@@ -328,22 +328,22 @@
             }
         },
         "loadingCellRenderer": {
-            "description": "Provide your own cell loading Renderer component for this column's cells when using SSRM or when a cell renderer is deferred.",
+            "description": "Provide a custom loading cell renderer for this column's cells when displaying Client-Side or Server-Side Row Model loading rows, or when a cell renderer is deferred.",
             "more": {
-                "name": "SSRM Cell Loading",
-                "url": "./component-loading-cell-renderer/#skeleton-loading"
+                "name": "Loading Cell Component",
+                "url": "./component-loading-cell-renderer/#registering-a-loading-cell-component"
             }
         },
         "loadingCellRendererParams": {
             "more": {
-                "name": "SSRM Cell Loading",
-                "url": "./component-loading-cell-renderer/#skeleton-loading"
+                "name": "Loading Cell Component",
+                "url": "./component-loading-cell-renderer/#registering-a-loading-cell-component"
             }
         },
         "loadingCellRendererSelector": {
             "more": {
-                "name": "SSRM Cell Loading",
-                "url": "./component-loading-cell-renderer/#skeleton-loading"
+                "name": "Loading Cell Renderer Selector",
+                "url": "./component-loading-cell-renderer/#dynamic-loading-row-selection"
             }
         },
         "autoHeight": {

@@ -60,15 +60,14 @@ const dateFilterParams: IDateFilterParams = {
 
 const gridOptions: GridOptions<IRow> = {
     columnDefs: [
-        { field: 'athlete' },
-        { field: 'age', minWidth: 120 },
-        { field: 'sport' },
+        { field: 'athlete', filter: 'agTextColumnFilter' },
+        { field: 'age', minWidth: 120, filter: 'agNumberColumnFilter' },
+        { field: 'sport', filter: 'agTextColumnFilter' },
         { field: 'date', filter: 'agDateColumnFilter', filterParams: dateFilterParams },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 150,
-        filter: true,
     },
     rowData,
     enableAdvancedFilter: true,

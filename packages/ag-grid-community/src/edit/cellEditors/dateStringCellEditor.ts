@@ -6,6 +6,10 @@ import type { DataTypeService } from '../../columns/dataTypeService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
+import {
+    _addDateInputValidationStyleListeners,
+    _refreshDateInputValidationStyle,
+} from '../styles/inputValidationStyle';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateStringCellEditorParams } from './iDateStringCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -162,5 +166,15 @@ export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCe
                 () => this.getLocaleTextFunc()
             )
         );
+    }
+
+    public override initialiseEditor(params: IDateStringCellEditorParams): void {
+        super.initialiseEditor(params);
+        _addDateInputValidationStyleListeners(this.eEditor, params.eGridCell);
+    }
+
+    public override agSetEditValue(value: string | null | undefined): void {
+        super.agSetEditValue(value);
+        _refreshDateInputValidationStyle(this.params.eGridCell, this.eEditor.getInputElement());
     }
 }

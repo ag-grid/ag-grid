@@ -174,6 +174,38 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         expect(picker!.querySelector('.ag-mini-filter')).not.toBeNull();
     });
 
+    test('a column naming the set options in `filterOptions` opens the Set Filter, not its own', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                {
+                    field: 'athlete',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { filterOptions: ['contains', 'isAnyOf'] },
+                },
+                { field: 'country', filter: 'agSetColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+        });
+
+        api.setAdvancedFilterModel({
+            filterType: 'set',
+            colId: 'athlete',
+            type: 'isAnyOf',
+            values: ['Usain Bolt'],
+        });
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [item] = await builder.conditionItems();
+
+        await firePointerLikeClick(builder.valuePills(item)[0]);
+        await asyncSetTimeout(0);
+
+        const picker = document.querySelector('.ag-advanced-filter-builder-set-picker');
+        expect(picker).not.toBeNull();
+        expect(picker!.querySelector('.ag-set-filter-list')).not.toBeNull();
+        expect(picker!.querySelector('.ag-mini-filter')).not.toBeNull();
+    });
+
     test('the pill toggles the Set Filter it opened', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 

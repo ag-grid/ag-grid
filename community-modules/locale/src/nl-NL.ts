@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_NL = {
     advancedFilterValidationMissingCondition: 'Voorwaarde ontbreekt',
     advancedFilterValidationJoinOperatorMismatch: 'Logische operatoren binnen een voorwaarde moeten gelijk zijn',
     advancedFilterValidationInvalidJoinOperator: 'Logische operator niet gevonden',
+    advancedFilterValidationMissingListStartBracket: 'Ontbrekende open blokhaak',
+    advancedFilterValidationMissingListEndBracket: 'Ontbrekende sluit blokhaak',
     advancedFilterValidationMissingEndBracket: 'Ontbrekende eindhaak',
     advancedFilterValidationExtraEndBracket: 'Te veel eindhaken',
     advancedFilterValidationMessage: 'Uitdrukking bevat een fout. ${variable} - ${variable}.',

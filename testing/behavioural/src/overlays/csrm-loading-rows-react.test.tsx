@@ -1,7 +1,7 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi, LoadingRowsOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, RenderApiModule, RowStyleModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -17,6 +17,37 @@ describe('CSRM loading rows (React)', () => {
 
     afterEach(() => {
         cleanup();
+    });
+
+    test('reacts to loadingRows prop changes independently of loading', async () => {
+        const columnDefs: ColDef<RowData>[] = [{ field: 'price' }];
+        const rowData = [{ price: 7, quantity: 2 }];
+        const grid = (loading: boolean, loadingRows: boolean | LoadingRowsOptions) => (
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact<RowData>
+                    columnDefs={columnDefs}
+                    rowData={rowData}
+                    loading={loading}
+                    loadingRows={loadingRows}
+                />
+            </div>
+        );
+        const rendered = render(grid(false, true));
+        await waitFor(() => expect(rendered.container.querySelector('.ag-cell')?.textContent).toBe('7'));
+
+        rendered.rerender(grid(true, { rowCount: 3 }));
+        await waitFor(() => expect(rendered.container.querySelectorAll('.ag-row-loading')).toHaveLength(3));
+        rendered.rerender(grid(true, { rowCount: 5 }));
+        await waitFor(() => expect(rendered.container.querySelectorAll('.ag-row-loading')).toHaveLength(5));
+        rendered.rerender(grid(true, false));
+        await waitFor(() => expect(rendered.container.querySelectorAll('.ag-row-loading')).toHaveLength(0));
+        expect(rendered.container.querySelector('.ag-cell')?.textContent).toBe('7');
+        rendered.rerender(grid(true, true));
+        await waitFor(() => expect(rendered.container.querySelectorAll('.ag-row-loading')).toHaveLength(10));
+        rendered.rerender(grid(false, { rowCount: 2 }));
+        await waitFor(() => expect(rendered.container.querySelector('.ag-cell')?.textContent).toBe('7'));
+        rendered.rerender(grid(true, { rowCount: 2 }));
+        await waitFor(() => expect(rendered.container.querySelectorAll('.ag-row-loading')).toHaveLength(2));
     });
 
     test('renders custom loading cells without data callbacks and replaces them with real rows', async () => {
@@ -50,7 +81,8 @@ describe('CSRM loading rows (React)', () => {
             <div style={{ height: 400, width: 600 }}>
                 <AgGridReact<RowData>
                     columnDefs={columnDefs}
-                    loading={{ type: 'rows', rowCount: 3 }}
+                    loading={true}
+                    loadingRows={{ rowCount: 3 }}
                     getRowStyle={getRowStyle}
                     onFirstDataRendered={() => firstDataRenderedCount++}
                     onGridReady={(event) => (api = event.api)}
@@ -93,7 +125,8 @@ describe('CSRM loading rows (React)', () => {
             <div style={{ height: 400, width: 600 }}>
                 <AgGridReact<RowData>
                     columnDefs={[{ field: 'price' }, { field: 'quantity' }]}
-                    loading={{ type: 'rows', rowCount: 3 }}
+                    loading={true}
+                    loadingRows={{ rowCount: 3 }}
                 />
             </div>
         );

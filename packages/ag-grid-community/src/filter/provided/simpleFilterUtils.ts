@@ -1,5 +1,8 @@
+import { _getOwn } from 'ag-stack';
+
 import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
+import type { AdvancedFilterOnlyOptionKey } from '../../interfaces/advancedFilterModel';
 import type { Column } from '../../interfaces/iColumn';
 import type { FilterCallbackSource, FilterInputCallbackParams } from '../../interfaces/iFilter';
 import type { LogService } from '../../validation/logService';
@@ -108,12 +111,26 @@ const zeroInputTypes: ReadonlySet<string> = new Set<ISimpleFilterModelType>([
 const REQUIRED_OPTION_PROPERTIES: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
 
 /**
+ * What a column filter withholds from a `filterOptions` list, having no operator for any of it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _ADVANCED_FILTER_ONLY_OPTIONS: Record<AdvancedFilterOnlyOptionKey, true> = {
+    isAnyOf: true,
+    isNoneOf: true,
+    true: true,
+    false: true,
+};
+
+/**
  * One definition of what a `filterOptions` list offers, so the column filter and the Advanced Filter cannot disagree.
+ * `excludedKeys` withholds the ones the caller has no operator for; a definition under such a key is its own
+ * statement of what it means, so only a bare key is dropped.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _classifyFilterOptions(
     configuredOptions: (IFilterOptionDef | string)[],
-    warnMissing: (keys: string[]) => void
+    warnMissing: (keys: string[]) => void,
+    excludedKeys: Record<string, true> | null
 ): { offered: Map<string, IFilterOptionDef | string>; customOptions: Map<string, IFilterOptionDef> } {
     // A `Map` holds a key at the position it was first set in, so it dedupes without reordering the dropdown.
     const offered = new Map<string, IFilterOptionDef | string>();
@@ -123,6 +140,9 @@ export function _classifyFilterOptions(
         if (option == null) {
             continue; // `typeof null` is `'object'`, so a hole would read as an option with no properties
         } else if (typeof option === 'string') {
+            if (excludedKeys && _getOwn(excludedKeys, option)) {
+                continue;
+            }
             offered.set(option, offered.get(option) ?? option); // a definition already stored outranks a bare key
         } else {
             const missing = REQUIRED_OPTION_PROPERTIES.filter((name) => option[name] == null);

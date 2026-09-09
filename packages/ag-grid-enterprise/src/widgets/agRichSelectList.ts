@@ -229,10 +229,17 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             return;
         }
 
+        // A row is laid out at least as wide as the container, so only one wider than it wants anything;
+        // a rounded width would read the sub-pixel difference as an overflow on every redraw.
+        const contentWidth = this.eContainer.getBoundingClientRect().width;
+        if (widest <= contentWidth) {
+            return;
+        }
+
         const eGui = this.getGui();
-        // clientWidth drops the border and any vertical scrollbar, which the picker still has to fit. Taken off
-        // the fractional rect rather than offsetWidth, so a sub-pixel border cannot round the allowance away.
-        if (!callback(Math.ceil(widest + eGui.getBoundingClientRect().width - eGui.clientWidth))) {
+        // The picker still has to fit the border and any vertical scrollbar, which is what the row's own
+        // space is short of. Both read fractionally, so a sub-pixel border cannot round the allowance away.
+        if (!callback(Math.ceil(widest + eGui.getBoundingClientRect().width - contentWidth))) {
             this.contentWidthCallback = undefined;
             eGui.classList.remove('ag-virtual-list-grow-to-content');
         }

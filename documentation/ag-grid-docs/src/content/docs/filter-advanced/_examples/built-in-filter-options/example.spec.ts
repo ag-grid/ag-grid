@@ -3,6 +3,9 @@ import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from
 
 const filterInput = (page: Page) => page.locator('.ag-advanced-filter input[type=text]');
 
+/** The built-in options a number column with no `filterOptions` of its own documents, in order. */
+const BUILT_IN_NUMBER_OPTIONS = ['=', '!=', '>', '>=', '<', '<=', 'is between', 'is blank', 'is not blank'];
+
 /** Types `expression`, closes the suggestion popup covering the buttons, then applies it. */
 async function applyExpression(page: Page, expression: string): Promise<void> {
     await filterInput(page).fill(expression);
@@ -36,17 +39,15 @@ test.agExample(import.meta, () => {
 
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
-        await expect(autocompleteList.locator('.ag-autocomplete-row')).toHaveText([
-            '=',
-            '!=',
-            '>',
-            '>=',
-            '<',
-            '<=',
-            'is between',
-            'is blank',
-            'is not blank',
-        ]);
+
+        // Asserted whole: every column names its filter, so none becomes a Set Filter under the UMD build
+        // and the list cannot vary between the frameworks and the UMD build.
+        const operatorRows = autocompleteList.locator('.ag-autocomplete-row');
+        await expect(operatorRows.first()).toBeVisible();
+        await expect(async () => {
+            const labels = (await operatorRows.allInnerTexts()).map((label) => label.trim());
+            expect(labels).toEqual(BUILT_IN_NUMBER_OPTIONS);
+        }).toPass();
     });
 
     // Asserted as a whole list, so the narrowing the page describes is covered as well as the options.

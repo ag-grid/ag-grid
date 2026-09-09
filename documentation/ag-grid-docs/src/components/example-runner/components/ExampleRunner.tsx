@@ -34,7 +34,7 @@ interface Props {
     consoleBufferSize?: number;
 }
 
-const DEFAULT_HEIGHT = 500;
+export const DEFAULT_HEIGHT = 500;
 
 export const ExampleRunner: FunctionComponent<Props> = ({
     id,

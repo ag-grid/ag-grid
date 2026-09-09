@@ -1,6 +1,12 @@
 import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    // This example path does not exist in pre-34 archives.
+    if (process.env.PRE_34_VERSION) {
+        test.skip();
+        return;
+    }
+
     test.eachFramework('Custom loading component displays before the request fails', async ({ page }) => {
         await ensureGridReady(page);
 

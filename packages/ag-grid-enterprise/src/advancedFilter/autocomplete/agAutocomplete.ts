@@ -140,6 +140,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
+            case KeyCode.PAGE_DOWN:
+            case KeyCode.PAGE_UP:
                 this.onUpDownKeyDown(event, key);
                 break;
             case KeyCode.LEFT:
@@ -268,6 +270,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 onConfirmed: () => this.confirmSelection(),
                 forceLastSelection: this.forceLastSelection,
                 rowComponentCreator: this.autocompleteListParams.rowComponentCreator,
+                suggestFirstMatch: this.autocompleteListParams.suggestFirstMatch,
             })
         );
         const ePopupGui = this.autocompleteList.getGui();

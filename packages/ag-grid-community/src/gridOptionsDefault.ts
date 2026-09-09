@@ -52,6 +52,7 @@ export const GRID_OPTION_DEFAULTS = {
     undoRedoCellEditingLimit: 10,
     suppressCsvExport: false,
     suppressExcelExport: false,
+    loadingRows: false,
     suppressPdfExport: false,
     cacheQuickFilter: false,
     includeHiddenColumnsInQuickFilter: false,

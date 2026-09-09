@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterValidationMissingCondition: 'شرط گمشده است',
     advancedFilterValidationJoinOperatorMismatch: 'اپراتورهای پیوسته در یک شرط باید یکسان باشند',
     advancedFilterValidationInvalidJoinOperator: 'اپراتور پیوست یافت نشد',
+    advancedFilterValidationMissingListStartBracket: 'براکت مربعی باز گمشده است',
+    advancedFilterValidationMissingListEndBracket: 'براکت مربعی بسته گمشده است',
     advancedFilterValidationMissingEndBracket: 'براکت انتهایی گمشده است',
     advancedFilterValidationExtraEndBracket: 'براکت انتهایی زیادی وجود دارد',
     advancedFilterValidationMessage: 'عبارت حاوی یک خطاست. ${variable} - ${variable}.',

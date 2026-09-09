@@ -53,7 +53,7 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList.getByText('SWIMMING', { exact: true })).toBeVisible();
     });
 
-    test.eachFramework('offers a Tree List column as groups, and drilling in writes a path', async ({ page }) => {
+    test.eachFramework('offers a Tree List column as one flat list of whole paths', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -62,11 +62,11 @@ test.agExample(import.meta, () => {
 
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
-        // A group is offered with the number of values still beneath it, which a leaf does not carry.
-        await expect(autocompleteList.locator('.ag-autocomplete-row-group-count').first()).toBeVisible();
+        // Every row is a whole path, its parent segments drawn back from the leaf that names the value.
+        await expect(autocompleteList.locator('.ag-autocomplete-row-path-parent').first()).toBeVisible();
 
-        // Whichever year is first: choosing a group drills into it rather than ending the value.
+        // Whichever date is first: the whole path inside one pair of quotes, not a quoted segment each.
         await filterInput.press('Enter');
-        await expect(filterInput).toHaveValue(/ > $/);
+        await expect(filterInput).toHaveValue(/\["[^"]+ > [^"]+", $/);
     });
 });

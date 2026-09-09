@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_TW = {
     advancedFilterValidationMissingCondition: '缺少條件',
     advancedFilterValidationJoinOperatorMismatch: '條件內的連接操作符必須一致',
     advancedFilterValidationInvalidJoinOperator: '找不到連接操作符',
+    advancedFilterValidationMissingListStartBracket: '缺少開頭方括號',
+    advancedFilterValidationMissingListEndBracket: '缺少結尾方括號',
     advancedFilterValidationMissingEndBracket: '缺少結尾括號',
     advancedFilterValidationExtraEndBracket: '結尾括號過多',
     advancedFilterValidationMessage: '表達式有錯誤。${variable} - ${variable}。',

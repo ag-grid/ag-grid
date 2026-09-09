@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_PT = {
     advancedFilterValidationMissingCondition: 'Condição ausente',
     advancedFilterValidationJoinOperatorMismatch: 'Operadores de junção dentro de uma condição devem ser iguais',
     advancedFilterValidationInvalidJoinOperator: 'Operador de junção não encontrado',
+    advancedFilterValidationMissingListStartBracket: 'Falta colchete de abertura',
+    advancedFilterValidationMissingListEndBracket: 'Falta colchete de fechamento',
     advancedFilterValidationMissingEndBracket: 'Falta parêntese de fechamento',
     advancedFilterValidationExtraEndBracket: 'Parênteses de fechamento a mais',
     advancedFilterValidationMessage: 'Expressão contém um erro. ${variable} - ${variable}.',

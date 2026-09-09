@@ -719,11 +719,6 @@
                         },
                         {
                             "type": "item",
-                            "title": "Loading Rows",
-                            "path": "loading-rows"
-                        },
-                        {
-                            "type": "item",
                             "title": "Row Spanning",
                             "path": "row-spanning"
                         },
@@ -1197,6 +1192,32 @@
                 },
                 {
                     "type": "group",
+                    "title": "Overlays & Loading",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "Overview",
+                            "path": "overlays-overview"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Provided Overlays",
+                            "path": "overlays-provided"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Active Overlay",
+                            "path": "overlays-active"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Loading Rows",
+                            "path": "loading-rows"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
                     "title": "Interactivity",
                     "children": [
                         {
@@ -1622,23 +1643,6 @@
                             "title": "Status Bar",
                             "path": "status-bar",
                             "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Overlays",
-                            "path": "overlays-overview",
-                            "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Provided Overlays",
-                                    "path": "overlays-provided"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Active Overlay",
-                                    "path": "overlays-active"
-                                }
-                            ]
                         }
                     ]
                 },
@@ -1713,8 +1717,9 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Loading Component",
-                                    "path": "component-loading-cell-renderer"
+                                    "title": "Loading Rows",
+                                    "path": "server-side-model-loading-rows",
+                                    "isEnterprise": true
                                 },
                                 {
                                     "type": "item",

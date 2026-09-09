@@ -88,6 +88,9 @@ www	/vue-data-grid/whats-new/	301	/whats-new/
 www	/angular-data-grid/whats-new/	301	/whats-new/
 www	/javascript-data-grid/whats-new/	301	/whats-new/
 
+# --- SE-166: /archive/ must reach /documentation-archive/ in ONE hop, not two ---
+www	/archive/	301	/documentation-archive/
+
 # --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200

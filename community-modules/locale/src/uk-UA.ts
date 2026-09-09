@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterValidationMissingCondition: 'Відсутня умова',
     advancedFilterValidationJoinOperatorMismatch: "Оператори об'єднання в межах умови мають бути однаковими",
     advancedFilterValidationInvalidJoinOperator: "Оператор об'єднання не знайдено",
+    advancedFilterValidationMissingListStartBracket: 'Відсутня відкриваюча квадратна дужка',
+    advancedFilterValidationMissingListEndBracket: 'Відсутня закриваюча квадратна дужка',
     advancedFilterValidationMissingEndBracket: 'Відсутня кінцева дужка',
     advancedFilterValidationExtraEndBracket: 'Забагато кінцевих дужок',
     advancedFilterValidationMessage: 'У виразі є помилка. ${variable} - ${variable}.',

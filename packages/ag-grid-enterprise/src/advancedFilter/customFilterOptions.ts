@@ -7,7 +7,7 @@ import {
     _isGridSuppliedFilterOptions,
 } from 'ag-grid-community';
 
-import { getChildFilter } from '../multiFilter/multiFilterUtil';
+import { getChildFilter, getMultiFilterDefs } from '../multiFilter/multiFilterUtil';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionOperator,
@@ -23,9 +23,10 @@ function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef
 
 /** The child a Multi Filter wraps for `filterName`, where that filter's own parameters live. */
 export function getMultiFilterChild(filterParams: any, filterName: string): IMultiFilterDef | undefined {
-    const filters: IMultiFilterDef[] | undefined = filterParams?.filters;
-    for (let i = 0, len = filters?.length ?? 0; i < len; ++i) {
-        const child = filters![i];
+    // The effective children, so a Multi Filter naming none is read as the Text and Set Filters it shows.
+    const filters = getMultiFilterDefs(filterParams);
+    for (let i = 0, len = filters.length; i < len; ++i) {
+        const child = filters[i];
         if (child && getChildFilter(child) === filterName) {
             return child;
         }

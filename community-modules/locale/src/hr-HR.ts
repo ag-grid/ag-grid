@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterValidationMissingCondition: 'Nedostaje uvjet',
     advancedFilterValidationJoinOperatorMismatch: 'Spojni operatori unutar uvjeta moraju biti isti',
     advancedFilterValidationInvalidJoinOperator: 'Spojni operator nije pronađen',
+    advancedFilterValidationMissingListStartBracket: 'Nedostaje otvorena uglata zagrada',
+    advancedFilterValidationMissingListEndBracket: 'Nedostaje zatvorena uglata zagrada',
     advancedFilterValidationMissingEndBracket: 'Nedostaje završna zagrada',
     advancedFilterValidationExtraEndBracket: 'Previše završnih zagrada',
     advancedFilterValidationMessage: 'Izraz ima grešku. ${variable} - ${variable}.',

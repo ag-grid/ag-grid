@@ -1,12 +1,15 @@
 ---
 title: "Upgrading to AG Grid 36.2"
-description: "See what's new in AG Grid and migrate your $framework Data Grid to version v36.2."
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v36.2."
 migrationVersion: "36.2.0"
 ---
 
+PDF Export, Set Filter Support for Advanced Filter, Custom Filter Option Support in Advanced Filter, Continuous Column Auto-sizing, Custom Renderers for Column Items in Columns Tool Panel
+
 ## What's New
 
-AG Grid {% migrationVersion() %} introduces a unified tooltip configuration for cells and headers, together with long-press support on iOS and Android.
+AG Grid {% migrationVersion() %} adds important new features - [PDF Export](./pdf-export/), [Set Filter Support for Advanced Filter](./filter-advanced/#set-filters), [Custom Filter Option Support in Advanced Filter](./filter-advanced/#custom-filter-options), [Continuous Column Auto-sizing](./column-sizing/#continuous-auto-sizing), [Custom Renderers for Column Items in Columns Tool Panel](./tool-panel-columns/#custom-column-labels).
+These improvements involve no breaking changes as listed below.
 
 <!--
 Documentation to the highest patch release of the major/minor
@@ -21,11 +24,7 @@ There are no breaking changes in AG Grid version {% migrationVersion() %}.
 
 ## Behaviour Changes
 
-- `tooltipShowDelay: 0` now shows a tooltip without an additional minimum delay.
-- Tooltip popup parameters now include `column`, `rowNode`, and `tooltipLocation` when available.
-- List, select, filter, and calculated-column tooltips now report a specific `location` instead of `UNKNOWN`.
-- On touch devices, a long press shows a tooltip and tapping elsewhere dismisses it. Grid gestures that already use the long press, such as the context menu and column menu, take precedence over the tooltip.
-- Double tapping a column header's resize area now autosizes the column only when the two taps are within half a second of each other.
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
 
 ## Removal of Deprecated APIs
 
@@ -33,7 +32,7 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 ## Deprecations
 
-The existing properties remain supported, but the following replacements are recommended:
+The following column definition (`ColDef`) properties remain supported, but the replacements below are recommended:
 
 | Deprecated                           | Replacement                            |
 | ------------------------------------ | -------------------------------------- |

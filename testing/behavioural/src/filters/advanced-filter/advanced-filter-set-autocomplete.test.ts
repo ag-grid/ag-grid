@@ -120,6 +120,19 @@ describe('Advanced Filter - Set Filter autocomplete rendering', () => {
         expect(highlighted).toEqual(['nit', 'nit']);
     });
 
+    test('the first value matching is the one suggested, and every match is marked up', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        // Both values begin with it, and the later one is the shorter: the order the column offers
+        // them in is what decides, not their length.
+        await af.type('[Country] is any of ["United');
+
+        expect(af.autocompleteEntries()).toEqual(['United Kingdom', 'United States']);
+        expect(af.selectedAutocompleteEntry()).toBe('United Kingdom');
+        expect(af.autocompleteMatches()).toEqual(['United', 'United']);
+    });
+
     test('a cell renderer owns the row, so the match is not marked up inside it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
@@ -281,7 +294,8 @@ describe('Advanced Filter - Set Filter value list', () => {
         await af.type('[Country] is any');
         await af.selectAutocomplete();
 
-        expect(af.value).toBe('[Country] is any of ["');
+        // No opening quote: searching does not need one, so the caret is left where typing filters.
+        expect(af.value).toBe('[Country] is any of [');
         expect(af.autocompleteEntries()).toContain('Jamaica');
     });
 
@@ -340,10 +354,6 @@ describe('Advanced Filter - Set Filter value list', () => {
 
         await af.type('[Country] is any of ["Jamaica"] ');
         expect(af.autocompleteEntries()).toEqual(['AND', 'OR']);
-
-        // An unbracketed list holds one value, so it too is over once a space follows it.
-        await af.type('[Country] is any of "Jamaica" ');
-        expect(af.autocompleteEntries()).toEqual(['AND', 'OR']);
     });
 
     test('a caret in the gap between two written values offers the ones still missing', async () => {
@@ -380,6 +390,45 @@ describe('Advanced Filter - Set Filter value list', () => {
         await af.selectAutocomplete();
 
         expect(af.value).toBe('[Country] is none of ["Jamaica"]');
+    });
+
+    test('retargeting the option leaves the caret inside the list, so the next value lands in it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        const written = '[Country] is any of ["Poland"]';
+        await af.type(written, written.indexOf(' of'));
+        await af.selectAutocomplete();
+        expect(af.value).toBe(written);
+
+        // The list the caret now sits in is the one already written, so its values are the ones on offer.
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'United Kingdom', 'United States']);
+        await af.selectAutocomplete();
+        expect(af.value).toBe('[Country] is any of ["(Blanks)", "Poland"]');
+    });
+
+    test('a list option opens its own bracket over a range, whose bracket spells a different operand', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter' },
+                {
+                    field: 'age',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: ['inRange', 'isAnyOf'] },
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        // A range's `(` is not a list already open, so the list option opens one rather than writing its
+        // values outside the brackets it needs.
+        const written = '[Age] is any (20, 26)';
+        await af.type(written, written.indexOf(' (20'));
+        await af.selectAutocomplete();
+
+        expect(af.value).toBe('[Age] is any of [(20, 26)');
     });
 
     test('a caret before the end bracket of a closed list can still start another value', async () => {

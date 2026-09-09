@@ -13,6 +13,7 @@ import type {
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
+    Toolbar,
 } from 'ag-grid-community';
 import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -50,6 +51,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     [defaultColGroupDef]="defaultColGroupDef"
                     [autoGroupColumnDef]="autoGroupColumnDef"
                     [sideBar]="true"
+                    [toolbar]="toolbar"
                     [pagination]="true"
                     [rowSelection]="rowSelection"
                     [cellSelection]="true"
@@ -102,6 +104,7 @@ export class AppComponent {
     public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };
+    public toolbar: Toolbar = { items: ['agQuickFilterToolbarItem'] };
     public rowData?: IOlympicData[];
     public gridVisible = signal(true);
     public gridOptions: GridOptions = {

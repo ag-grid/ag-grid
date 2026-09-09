@@ -1,3 +1,4 @@
+import type { AdvancedFilterOnlyOptionKey } from '../../interfaces/advancedFilterModel';
 import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
 import type { FilterInputCallbackParams, IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
@@ -49,7 +50,7 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
  */
 export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoCompleteComponentParams {
     /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
+    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType | AdvancedFilterOnlyOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ISimpleFilterModelType | CustomFilterOptionKey;
     /**

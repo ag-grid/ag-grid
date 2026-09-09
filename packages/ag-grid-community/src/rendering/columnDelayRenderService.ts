@@ -6,6 +6,8 @@ import { VERSION } from '../version';
 import columnDelayRenderCSS from './column-delay-render.css';
 
 const HideClass = 'ag-delay-render';
+// A hide still outstanding after this is a missed reveal; a flicker beats a permanently blank grid.
+const REVEAL_FAIL_SAFE_MS = 1000;
 type ColumnDelayRenderKey = 'colFlex' | 'columnState' | AutoSizeStrategy['type'];
 
 export class ColumnDelayRenderService extends BeanStub implements NamedBean {
@@ -14,6 +16,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     private hideRequested = false;
     private alreadyRevealed = false;
     private timesRetried = 0;
+    private failSafeTimer: ReturnType<typeof setTimeout> | undefined;
 
     private readonly requesters = new Set<ColumnDelayRenderKey>();
 
@@ -32,7 +35,23 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
                 p.gridBodyCtrl.eGridBody.classList.add(HideClass);
             });
             this.hideRequested = true;
+            this.failSafeTimer = setTimeout(() => this.forceReveal(), REVEAL_FAIL_SAFE_MS);
         }
+    }
+
+    private forceReveal(): void {
+        this.failSafeTimer = undefined;
+        if (this.alreadyRevealed || !this.isAlive()) {
+            return;
+        }
+        this.warn(334, { requesters: [...this.requesters] });
+        this.requesters.clear();
+        this.revealWhenRendered();
+    }
+
+    public override destroy(): void {
+        clearTimeout(this.failSafeTimer);
+        super.destroy();
     }
 
     public revealColumns(key: ColumnDelayRenderKey): void {
@@ -67,6 +86,8 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
 
         ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove(HideClass);
         this.alreadyRevealed = true;
+        clearTimeout(this.failSafeTimer);
+        this.failSafeTimer = undefined;
     }
 }
 

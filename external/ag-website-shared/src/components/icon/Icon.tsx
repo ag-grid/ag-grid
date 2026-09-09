@@ -169,7 +169,16 @@ type Props = { id?: string; name: IconName; svgClasses?: string; onClick?: () =>
 export const Icon = ({ id, name, svgClasses, onClick }: Props) => {
     const IconSvg = ICON_MAP[name];
 
+    // Icons never carry an accessible name of their own, so they are always decorative. The
+    // surrounding element (button, link, text) provides the name
     return IconSvg ? (
-        <IconSvg id={id} size="32" className={classNames(styles.icon, 'icon', svgClasses)} onClick={onClick} />
+        <IconSvg
+            id={id}
+            size="32"
+            className={classNames(styles.icon, 'icon', svgClasses)}
+            onClick={onClick}
+            aria-hidden="true"
+            focusable="false"
+        />
     ) : null;
 };

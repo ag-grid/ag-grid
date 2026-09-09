@@ -812,6 +812,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
     /**
      * The renderer to be used while either
+     *  - using Client-Side Row Model with `loading=true` and `loadingRows` enabled.
      *  - using Server Side Row Model and the row is in an unloaded state and if `suppressServerSideFullWidthLoadingRow` or `groupHideOpenParents` is enabled.
      *  - a cell renderer is marked for deferred loading with `cellRendererParams.deferRender:true`.
      */
