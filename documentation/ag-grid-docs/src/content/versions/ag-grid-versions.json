@@ -2,26 +2,26 @@
     {
         "version": "36.2.0",
         "date": "16th September 2026",
-        "landingPageHighlight": "PDF Export, Set filter support for Advanced Filter, Custom filter option support in Advanced filter, Continuous column auto-sizing, Custom renderers for column items in columns tool panel",
+        "landingPageHighlight": "PDF Export, Set Filter Support for Advanced Filter, Custom Filter Option Support in Advanced Filter, Continuous Column Auto-sizing, Custom Renderers for Column Items in Columns Tool Panel",
         "highlights": [
             {
                 "text": "PDF Export",
                 "path": "./pdf-export/"
             },
             {
-                "text": "Set filter support for Advanced Filter",
+                "text": "Set Filter Support for Advanced Filter",
                 "path": "./filter-advanced/#set-filters"
             },
             {
-                "text": "Custom filter option support in Advanced filter",
+                "text": "Custom Filter Option Support in Advanced Filter",
                 "path": "./filter-advanced/#custom-filter-options"
             },
             {
-                "text": "Continuous column auto-sizing",
+                "text": "Continuous Column Auto-sizing",
                 "path": "./column-sizing/#continuous-auto-sizing"
             },
             {
-                "text": "Custom renderers for column items in columns tool panel",
+                "text": "Custom Renderers for Column Items in Columns Tool Panel",
                 "path": "./tool-panel-columns/#custom-column-labels"
             }
         ],
