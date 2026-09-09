@@ -8,6 +8,7 @@ let isMacOs: boolean;
 let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let realCssEngine: boolean;
+let realCssEngineFinal = false;
 let browserScrollbarWidth: number;
 let maxDivHeight: number;
 
@@ -75,19 +76,26 @@ const CSS_ENGINE_PROBE_WIDTH = 137;
  * happy-dom) that parses styles but lays nothing out and so reports every measurement as 0.
  *
  * Probed by resolving a custom property through to a width and measuring it: a real engine reports
- * the declared width back, a headless DOM reports 0. Returns `null` while there is no document body
- * to probe - the answer is unknown rather than negative. A definite answer is cached, so the
- * measurement is only ever taken once.
+ * the declared width back, a headless DOM reports 0. Returns `null` while there is no document to
+ * probe - the answer is unknown rather than negative.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isRealCssEngine(): boolean | null {
-    if (realCssEngine !== undefined) {
+    if (realCssEngineFinal) {
         return realCssEngine;
     }
-    const body = typeof document === 'undefined' ? null : document.body;
-    if (!body) {
+    // The document element, not the body: an app that hides itself while it boots suppresses layout
+    // for everything under `body`, and a real engine then measures the probe as 0.
+    const root = typeof document === 'undefined' ? null : document.documentElement;
+    if (!root) {
         return null;
+    }
+    // A negative is only ever provisional while the root itself has no layout, which reads the same
+    // in a real engine as in a headless DOM. Re-probe once it does rather than cache that 0 for the
+    // life of the page.
+    if (realCssEngine === false && root.clientWidth === 0) {
+        return false;
     }
     const variable = '--ag-css-engine-probe';
     const parent = document.createElement('div');
@@ -97,8 +105,9 @@ export function _isRealCssEngine(): boolean | null {
     child.className = CSS_ENGINE_PROBE_CLASS;
     child.style.width = `var(${variable})`;
     parent.appendChild(child);
-    body.appendChild(parent);
+    root.appendChild(parent);
     realCssEngine = child.clientWidth === CSS_ENGINE_PROBE_WIDTH;
+    realCssEngineFinal = realCssEngine || root.clientWidth > 0;
     parent.remove();
     return realCssEngine;
 }
