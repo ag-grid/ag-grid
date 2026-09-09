@@ -173,7 +173,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             this.goToInContainer(topMatches, match, 0);
             return;
         }
-        if (match <= topNumMatches + centerNumMatches) {
+        if (match <= centerNumMatches) {
             this.goToInContainer(centerMatches, match, topNumMatches);
             return;
         }
