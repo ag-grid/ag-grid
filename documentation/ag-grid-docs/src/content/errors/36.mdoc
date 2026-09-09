@@ -8,6 +8,10 @@ A column asked for the type {% errorParam name="type" fallback="currency" /%} an
 
 Column types are declared once in the `columnTypes` grid option and referenced by name from a column:
 
+```js
+const currencyFormatter = (params) => (params.value == null ? '' : `£${params.value.toLocaleString()}`);
+```
+
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnTypes: {

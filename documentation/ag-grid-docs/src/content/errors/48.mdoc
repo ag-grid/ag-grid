@@ -23,13 +23,12 @@ Without `(inferred)`, `cellDataType: 'object'` was set explicitly on the column,
 const gridOptions = {
     columnDefs: [
         {
-            field: 'name',
+            // values are objects of the shape `{ code: 'GBR' }`
+            field: 'countryObject',
             editable: true,
-            valueFormatter: (params) => params.value == null ? '' : `${params.value.first} ${params.value.last}`,
-            valueParser: (params) => {
-                const [first, ...rest] = (params.newValue ?? '').split(' ');
-                return { first, last: rest.join(' ') };
-            },
+            valueFormatter: (params) => (params.value == null ? '' : params.value.code),
+            valueParser: (params) =>
+                params.newValue == null || params.newValue === '' ? null : { code: params.newValue },
         },
     ],
 }

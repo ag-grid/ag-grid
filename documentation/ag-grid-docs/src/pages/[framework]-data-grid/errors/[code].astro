@@ -136,13 +136,13 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
                 {
                     isUnknownCode ? (
-                        <Note>
+                        <Warning>
                             Error #{code} is not recognised in AG Grid {VERSION} — it either applies to an older
                             version, or is not an error AG Grid raises. Following the link from your browser's developer
                             console will bring you to the documentation for the version you are running; if you reached
                             this page another way, find your version in the{' '}
                             <a href={archiveUrl}>documentation archive</a>.
-                        </Note>
+                        </Warning>
                     ) : (
                         <>
                             <pre id="errorCodeText">{defaultErrorText}</pre>
