@@ -1,0 +1,34 @@
+---
+description: A CSS variable the grid measures had no value, usually because the grid was created before its styles applied.
+---
+
+## Grid Styles Not Applied When Measured
+
+Some sizes come from CSS rather than from grid options — row height, header height, border widths. The grid reads them by measuring a hidden element styled with the CSS variable named in the message. This warning means that variable had no value when the measurement was taken, so the grid fell back to the default shown.
+
+{% note %}
+The grid keeps watching that element, so the real value replaces the default as soon as the styles apply. If the grid looks right, it has already corrected itself and the warning needs no action. Expect one warning per variable measured, so several at once is normal.
+{% /note %}
+
+The grid stays silent when it cannot be measured at all — a grid inside a `display: none` container reads as detached rather than unstyled. So this is a message about CSS not being in effect, not about the grid being hidden.
+
+### Check the grid's CSS reaches the page
+
+What has to be loaded depends on how the grid is themed:
+
+- With the [Theming API](./theming/), the default since v33, the grid injects its own CSS as it initialises and the variables come with it. If they are missing, something is stopping that stylesheet from applying.
+- With [legacy themes](./theming-migration/#continue-with-legacy-themes) (`theme: 'legacy'`), you load the CSS yourself: `ag-grid.css` plus a theme file such as `ag-theme-quartz.css`. Both files scope their variables to an element whose class begins `ag-theme-`, so the class matters as much as the files: without it on the grid or an ancestor, the variables are undefined even though the CSS loaded.
+
+### Check when the grid is created
+
+With the CSS present, the remaining cause is the grid initialising before the browser has applied it. The usual shapes are:
+
+- A stylesheet that loads asynchronously, so the first measurement happens before it arrives.
+- A build that injects the CSS after the application's own JavaScript has run.
+- A grid created during server-side rendering or hydration, ahead of the page's styles.
+
+The measurement corrects itself in each case, so this is only worth chasing if the first render is visibly wrong — a row briefly at the default height, say. The fix is to have the grid's CSS applied before the code that creates the grid runs.
+
+{% note %}
+If you also see [error #239](./errors/239) or [error #106](./errors/106), a Theming API theme and the legacy CSS files are in use together. Those pages cover removing one or the other.
+{% /note %}

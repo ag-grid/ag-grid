@@ -467,13 +467,13 @@
         "description": "How the grid matches a data item against a row it holds."
     },
     {
-        "errorIds": [106, 239, 240],
+        "errorIds": [9, 106, 239, 240],
         "text": "Theming API",
         "url": "./theming/",
         "description": "The theme objects passed to the `theme` grid option."
     },
     {
-        "errorIds": [106, 239, 240],
+        "errorIds": [9, 106, 239, 240],
         "text": "Migrating to the Theming API",
         "url": "./theming-migration/",
         "description": "Moving from the v32 CSS themes to the Theming API."

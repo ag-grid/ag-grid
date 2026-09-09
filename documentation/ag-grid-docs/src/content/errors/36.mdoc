@@ -1,0 +1,49 @@
+---
+description: A column asked for a column type that gridOptions.columnTypes does not define.
+---
+
+## Column Type Not Defined
+
+A column asked for the type {% errorParam name="type" fallback="currency" /%} and the grid found no definition under that name, so it was skipped. The column keeps its other properties, and any other types on it still apply.
+
+Column types are declared once in the `columnTypes` grid option and referenced by name from a column:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnTypes: {
+        currency: {
+            width: 150,
+            valueFormatter: currencyFormatter,
+        },
+    },
+    columnDefs: [{ field: 'boughtPrice', type: 'currency' }],
+}
+```
+
+See [Column Types](./column-definitions/#column-types).
+
+### Check the name
+
+Each name is looked up on its own, so one wrong name does not stop the rest working — which is why the grid can name a type when the definition looks present:
+
+- `type` accepts one name, several as a comma-separated string, or an array. `type: 'currency, shaded'` and `type: ['currency', 'shaded']` are equivalent, and each is resolved separately.
+- Only `numericColumn` and `rightAligned` are [provided by the grid](./column-definitions/#provided-column-types). Every other name has to be in `columnTypes`.
+- Cell data types are a different mechanism. `'number'`, `'date'`, `'text'` and the rest belong to `cellDataType`, not `type`. See [Cell Data Types](./cell-data-types/).
+
+### Check where the type came from
+
+The type need not be written on the column the message names. The grid takes the first of these it finds:
+
+1. `type` on the column definition.
+2. The `columnTypes` of a [cell data type definition](./cell-data-types/#providing-custom-cell-data-types), applied to every column using that data type.
+3. `type` on the [`defaultColDef`](./column-definitions/#default-column-definitions), applied to every column.
+
+So a type named on `defaultColDef` or a custom data type reports against columns you never set a type on, once for each of them.
+
+### Check `columnTypes` is a grid option
+
+`columnTypes` sits alongside `columnDefs` at the grid level, not inside a column definition. Declaring it on a column, or on `defaultColDef`, leaves the grid with no definitions to resolve against.
+
+{% note %}
+A column type cannot set `type` itself ([error #35](./errors/35)), and cannot reuse a provided name such as `numericColumn` ([error #34](./errors/34)).
+{% /note %}
