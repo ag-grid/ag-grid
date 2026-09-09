@@ -829,10 +829,7 @@ describe('Advanced Filter - Set Filter configuration', () => {
     test('a column with another filter and no opt-in neither offers nor evaluates the set options', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
-            columnDefs: [
-                { field: 'athlete' },
-                { field: 'country', filter: 'agTextColumnFilter' },
-            ],
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: 'agTextColumnFilter' }],
         });
         const af = AdvancedFilterHarness.get(api);
 
