@@ -1004,6 +1004,7 @@ const MISSING_MODULE_REASONS = {
     1: 'Charting Aggregation',
     2: '`pivotResultFields`',
     3: '`setTooltip`',
+    4: 'the `isAnyOf` / `isNoneOf` filter options in the Advanced Filter',
 } as const;
 
 export type MissingModuleErrors = typeof MISSING_MODULE_REASONS;

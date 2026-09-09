@@ -166,13 +166,17 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     /** Whether the column offers `is any of` / `is none of`; cheap enough to ask on every parse. */
     public offersSetOperators(column: AgColumn | null | undefined): boolean {
-        // Without the module there is no handler to filter with, so the options are not offered either.
-        if (!column || !this.gos.isModuleRegistered('SetFilter')) {
+        if (!column) {
             return false;
         }
-        // An option list naming them offers them whatever filter the column has.
+        // An option list naming them offers them whatever filter the column has, and asked for them by name,
+        // so a missing module is reported rather than the list falling back silently to the default options.
         if (namesSetOperator(column)) {
-            return true;
+            return this.gos.assertModuleRegistered('SetFilter', 4);
+        }
+        // Without the module there is no handler to filter with, so the options are not offered either.
+        if (!this.gos.isModuleRegistered('SetFilter')) {
+            return false;
         }
         // Otherwise it is the column's filter that decides: a Set Filter, or a Multi Filter holding one.
         const colDef = column.colDef;
