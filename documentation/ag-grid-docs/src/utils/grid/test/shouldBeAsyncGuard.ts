@@ -31,9 +31,16 @@ const ASYNC_ASSERTION_METHODS = new Set([
 ]);
 /**
  * Simple wrapper that protects async assertion methods from being used without await.
+ *
+ * The returned value MUST be a `Proxy` over `playwrightExpect` rather than a plain function: every
+ * static that hangs off Playwright's `expect` (`poll`, `soft`, `configure`, `extend`,
+ * `objectContaining`, `not`, ...) is reached through the target, and only an `apply` trap leaves them
+ * intact. Returning a bare function drops them all, which is what made `expect.poll` `undefined` in
+ * every docs spec (AG-18466). `Object.assign` is not a substitute — Playwright's `expect` is itself
+ * proxy-backed, so those statics are not own enumerable properties and never get copied.
  */
 export function shouldBeAsyncGuard<T>(playwrightExpect: T): T {
-    return function protectedExpect(...actual: any[]) {
+    function protectedExpect(...actual: any[]) {
         const expectResult = (playwrightExpect as any)(...actual);
 
         return new Proxy(expectResult, {
@@ -121,5 +128,11 @@ export function shouldBeAsyncGuard<T>(playwrightExpect: T): T {
                 return value;
             },
         });
-    } as T;
+    }
+
+    // Property access (the statics) falls through to `playwrightExpect`; only the call itself is
+    // intercepted. The `as T` cast is unavoidable because a `Proxy` is untyped.
+    return new Proxy(playwrightExpect as any, {
+        apply: (_target, _thisArg, actual: any[]) => protectedExpect(...actual),
+    }) as T;
 }
