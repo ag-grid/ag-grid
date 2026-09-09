@@ -204,10 +204,8 @@ const gridOptions = {
     autoSizeStrategy: {
         type: 'fitCellContents',
         continuous: true,
-        shouldAutoSizeColumns: (params) => {
-            // opt into re-sizing as the user scrolls, but only on the first page
-            return params.reason !== 'viewportChanged' || params.api.paginationGetCurrentPage() === 0;
-        }
+        // re-size as the user scrolls, as well as on data and column changes
+        shouldAutoSizeColumns: () => true,
     }
 }
 ```
@@ -217,7 +215,7 @@ When `continuous` is enabled, column sizing is automatically reapplied when chan
 - `fitCellContents` updates as row data or displayed columns change.
 - `fitGridWidth` and `fitProvidedWidth` update when the available grid width or displayed columns change, including changes caused by pagination or scrollbars.
 
-Scrolling does not resize columns by default. When using `fitCellContents`, you can opt into resizing as new rows are scrolled into view by providing `shouldAutoSizeColumns` and allowing the `'viewportChanged'` reason.
+Scrolling does not resize columns by default, in either direction. When using `fitCellContents`, provide `shouldAutoSizeColumns` and allow the `'viewportChanged'` reason to opt into resizing as vertical scrolling brings new rows into view, and as horizontal scrolling brings new columns into view.
 
 `fitGridWidth` and `fitProvidedWidth` are not affected by scrolling.
 
