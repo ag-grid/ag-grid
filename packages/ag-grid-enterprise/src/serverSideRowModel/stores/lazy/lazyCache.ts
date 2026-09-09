@@ -952,6 +952,12 @@ export class LazyCache extends BeanStub {
             this.clientSideSortRows();
         }
 
+        // Must precede the redraw: destroyRowNode clears rowTop, which is what makes RowCtrl fade
+        // a removed row out rather than reposition it.
+        if (this.nodesToRefresh.size === 0) {
+            this.destroyRemovedNodeCache();
+        }
+
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.
@@ -961,6 +967,15 @@ export class LazyCache extends BeanStub {
         }
     }
 
+    // Nodes parked here can be re-adopted at another index later in the same refresh, so they may
+    // only be destroyed once nothing is left to refresh.
+    private destroyRemovedNodeCache(): void {
+        this.removedNodeCache.forEach((node) => {
+            this.blockUtils.destroyRowNode(node);
+        });
+        this.removedNodeCache = new Map();
+    }
+
     public fireRefreshFinishedEvent() {
         const finishedRefreshing = this.nodesToRefresh.size === 0;
         // if anything refreshing currently, skip.
@@ -968,12 +983,7 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        // any nodes left in the map need to be cleaned up, this prevents us preserving nodes
-        // indefinitely
-        this.removedNodeCache.forEach((node) => {
-            this.blockUtils.destroyRowNode(node);
-        });
-        this.removedNodeCache = new Map();
+        this.destroyRemovedNodeCache();
 
         this.store.fireRefreshFinishedEvent();
     }
