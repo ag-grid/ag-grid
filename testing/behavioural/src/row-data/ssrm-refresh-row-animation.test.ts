@@ -19,6 +19,10 @@ describe('SSRM soft refresh row animation', () => {
         return [...new Set(ids)].sort();
     }
 
+    function displayedRowIds(api: GridApi): (string | undefined)[] {
+        return Array.from({ length: api.getDisplayedRowCount() }, (_, i) => api.getDisplayedRowAtIndex(i)?.id);
+    }
+
     function createOptions(getRows: () => (typeof allRows)[number][], cacheBlockSize: number): GridOptions {
         return {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
@@ -74,9 +78,7 @@ describe('SSRM soft refresh row animation', () => {
         expect(api.getDisplayedRowCount()).toBe(20);
         expect(api.getRowNode('r00')).toBeDefined();
         expect(api.getRowNode('r19')).toBeDefined();
-        expect(api.getRenderedNodes().map((node) => node.id)).toEqual(
-            rows.slice(0, api.getRenderedNodes().length).map((r) => r.id)
-        );
+        expect(displayedRowIds(api)).toEqual(rows.map((r) => r.id));
     });
 
     test('a multi-block soft refresh that reorders across the block boundary fades nothing', async () => {
@@ -96,5 +98,6 @@ describe('SSRM soft refresh row animation', () => {
         expect(fadedRowIds(api)).toEqual([]);
         expect(api.getDisplayedRowCount()).toBe(20);
         expect(api.getRowNode('r00')).toBeDefined();
+        expect(displayedRowIds(api)).toEqual(rows.map((r) => r.id));
     });
 });
