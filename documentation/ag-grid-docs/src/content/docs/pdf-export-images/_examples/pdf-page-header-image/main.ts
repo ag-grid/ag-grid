@@ -26,6 +26,11 @@ const gridOptions: GridOptions = {
         product: ['Analytics', 'Data Grid', 'Reporting'][index % 3],
         revenue: `$${(125000 + index * 7350).toLocaleString('en-US')}`,
     })),
+    onGridReady: (params) => {
+        // the logo variant depends on the rendered grid theme, so configure the header once the grid
+        // exists. Setting the grid option keeps the header on context menu exports as well as the button.
+        params.api.setGridOption('defaultPdfExportParams', getPdfExportParams());
+    },
 };
 
 function getHeaderLogo() {
@@ -65,7 +70,7 @@ function getPdfExportParams(): PdfExportParams {
 }
 
 function onBtExport() {
-    gridApi.exportDataAsPdf(getPdfExportParams());
+    gridApi.exportDataAsPdf();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
