@@ -783,66 +783,32 @@ describe('Advanced Filter - Set Filter configuration', () => {
         expect(af.autocompleteEntries()).toEqual(['contains']);
     });
 
-    test('enableSetOperators offers the options on a column that keeps another filter', async () => {
+    test('filterOptions omitting the set options withholds them from a Set Filter column', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
                 { field: 'athlete' },
-                { field: 'country', filter: 'agTextColumnFilter', filterParams: { enableSetOperators: true } },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { filterOptions: ['contains'] } },
             ],
         });
         const af = AdvancedFilterHarness.get(api);
 
         await af.type('[Country] ');
-        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+        expect(af.autocompleteEntries()).toEqual(['contains']);
 
-        // The column's own values, so the option is backed by a list rather than only named in the dropdown.
-        await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
-
+        // Withheld from the suggestions, not from what an expression may name: a stored filter outlives a
+        // narrowed list, as it does for every other option the list leaves out.
         await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(api.getAdvancedFilterModel()).toEqual({
+            filterType: 'set',
+            colId: 'country',
+            type: 'isAnyOf',
+            values: ['Jamaica'],
+        });
         expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
     });
 
-    test('enableSetOperators false withholds them from a Set Filter column', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', {
-            ...DEFAULT_OPTIONS,
-            columnDefs: [
-                { field: 'athlete' },
-                { field: 'country', filter: 'agSetColumnFilter', filterParams: { enableSetOperators: false } },
-            ],
-        });
-        const af = AdvancedFilterHarness.get(api);
-
-        await af.type('[Country] ');
-        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
-
-        // Withheld from the suggestions, and not evaluated either.
-        await af.applyExpression('[Country] is any of ["Jamaica"]');
-        expect(af.input.validationMessage).toContain('Option not found');
-        expect(api.getAdvancedFilterModel()).toBeNull();
-    });
-
-    test('enableSetOperators is inherited from defaultColDef', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', {
-            ...DEFAULT_OPTIONS,
-            columnDefs: [
-                { field: 'athlete', filter: 'agTextColumnFilter' },
-                { field: 'country', filter: 'agSetColumnFilter', filterParams: { enableSetOperators: false } },
-            ],
-            defaultColDef: { filterParams: { enableSetOperators: true } },
-        });
-        const af = AdvancedFilterHarness.get(api);
-
-        await af.type('[Athlete] ');
-        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
-
-        // The column's own value outranks the inherited one, as any other column property does.
-        await af.type('[Country] ');
-        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
-    });
-
-    test('filterOptions naming a set option outranks enableSetOperators false', async () => {
+    test('filterOptions narrows a Set Filter column to the options it names', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -850,7 +816,7 @@ describe('Advanced Filter - Set Filter configuration', () => {
                 {
                     field: 'country',
                     filter: 'agSetColumnFilter',
-                    filterParams: { enableSetOperators: false, filterOptions: ['contains', 'isAnyOf'] },
+                    filterParams: { filterOptions: ['contains', 'isAnyOf'] },
                 },
             ],
         });
@@ -858,6 +824,24 @@ describe('Advanced Filter - Set Filter configuration', () => {
 
         await af.type('[Country] ');
         expect(af.autocompleteEntries()).toEqual(['contains', 'is any of']);
+    });
+
+    test('a column with another filter and no opt-in neither offers nor evaluates the set options', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: 'agTextColumnFilter' }],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+
+        // Not an option the column has at all, so an expression naming it is rejected rather than sent on
+        // to a row model whose column has no Set Filter to evaluate it.
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.input.validationMessage).toContain('Option not found');
+        expect(api.getAdvancedFilterModel()).toBeNull();
+        expect(displayedAthletes(api)).toHaveLength(ROW_DATA.length);
     });
 
     test('filterOptions naming a set option offers it on a column with another filter', async () => {
@@ -1143,7 +1127,7 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
                     field: 'country',
                     filter: 'agDateColumnFilter',
                     filterParams: {
-                        enableSetOperators: true,
+                        filterOptions: ['equals', 'isAnyOf'],
                         // A Date Filter's `comparator` takes a filter date and a cell value, so the value
                         // list calling it with two cell values would throw on the first `getTime`.
                         comparator: (filterDate: Date, cellValue: unknown) => {
@@ -1171,7 +1155,6 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
                     field: 'country',
                     filter: 'agMultiColumnFilter',
                     filterParams: {
-                        enableSetOperators: true,
                         filters: [
                             { filter: 'agTextColumnFilter' },
                             {
@@ -1202,5 +1185,49 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
         await af.applyExpression('[Country] is any of ["Jamaica!"]');
         expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+    });
+
+    test.each([
+        ['no filterParams', undefined],
+        ['an empty filters list', { filters: [] }],
+    ])(
+        'a Multi Filter with %s offers the set options through its default Set Filter child',
+        async (_, filterParams) => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [{ field: 'athlete' }, { field: 'country', filter: 'agMultiColumnFilter', filterParams }],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            // The children a Multi Filter shows when none are named are a Text Filter and a Set Filter.
+            await af.type('[Country] ');
+            expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+            await af.type('[Country] is any of [');
+            expect(af.autocompleteEntries()).toEqual([
+                '(Blanks)',
+                'Jamaica',
+                'Poland',
+                'United Kingdom',
+                'United States',
+            ]);
+
+            await af.applyExpression('[Country] is any of ["Jamaica"]');
+            expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+        }
+    );
+
+    test('a Multi Filter child of `filter: true` is a Text Filter, so the set options come only from a named Set Filter', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agMultiColumnFilter', filterParams: { filters: [{ filter: true }] } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
     });
 });

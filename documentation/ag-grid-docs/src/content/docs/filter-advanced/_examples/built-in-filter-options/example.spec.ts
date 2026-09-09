@@ -40,8 +40,8 @@ test.agExample(import.meta, () => {
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
         await expect(autocompleteList).toBeVisible();
 
-        // Asserted whole: the example withholds the set options, so what the Set Filter module adds
-        // wherever it is registered cannot vary the list between the frameworks and the UMD build.
+        // Asserted whole: every column names its filter, so none becomes a Set Filter under the UMD build
+        // and the list cannot vary between the frameworks and the UMD build.
         const operatorRows = autocompleteList.locator('.ag-autocomplete-row');
         await expect(operatorRows.first()).toBeVisible();
         await expect(async () => {
