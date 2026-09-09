@@ -239,7 +239,8 @@
 }
 
 .ag-advanced-filter-builder-set-values-pill-wrapper {
-    flex: 0 1 auto;
+    flex: 1 1 140px;
+    width: 140px;
     min-width: 140px;
     max-width: 100%;
 }
@@ -301,14 +302,13 @@
 }
 
 .ag-advanced-filter-builder-set-value-list {
-    min-width: 100%;
-
     :where(.ag-advanced-filter-builder-item) {
         flex: 1 1 auto;
         min-width: 0;
     }
 
     :where(.ag-advanced-filter-builder-item-condition) {
+        flex: 1 1 auto;
         min-width: 0;
     }
 
