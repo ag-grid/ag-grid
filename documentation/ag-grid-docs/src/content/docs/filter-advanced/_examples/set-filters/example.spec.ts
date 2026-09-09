@@ -68,6 +68,7 @@ test.agExample(import.meta, () => {
         const pill = row.locator('.ag-advanced-filter-builder-set-values-pill');
         const firstAction = row.locator('.ag-advanced-filter-builder-item-buttons > :visible').first();
         await expect(pill).toBeVisible();
+        await expect(pill).toHaveCSS('cursor', 'pointer');
         await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(
             '(4) ALPINE SKIING, ARCHERY, ATHLETICS, +1 more'
         );
