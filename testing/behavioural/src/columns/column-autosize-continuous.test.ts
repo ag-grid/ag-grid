@@ -16,7 +16,7 @@ import { waitFor } from '@testing-library/dom';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
+import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule, PaginationModule } from 'ag-grid-community';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
 const MEASURED_WIDTH = 120;
@@ -24,7 +24,7 @@ const START_WIDTH = 300;
 
 describe('Continuous Column Autosize', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule],
+        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule, PaginationModule],
     });
 
     afterEach(() => {
@@ -348,6 +348,43 @@ describe('Continuous Column Autosize', () => {
             expect(reasons).toEqual([]);
 
             await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
+        });
+
+        /**
+         * A page change swaps every rendered cell for a different one, so the content strategy has to
+         * re-measure. The page is turned through the real api rather than by synthesising an event: what is
+         * under test is that a page change *reaches* continuous auto-sizing at all, which synthesising the
+         * trigger would assume rather than prove.
+         */
+        test('a pagination page change re-sizes eligible columns', async () => {
+            const reasons: string[] = [];
+            const api = createGrid({
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+                pagination: true,
+                paginationPageSize: 1,
+                // the page-size selector warns when the page size is not one of its options; this test is
+                // about the page change, not the selector
+                paginationPageSizeSelector: false,
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    continuous: true,
+                    skipHeader: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            api.paginationGoToNextPage();
+
+            await waitFor(() => expect(reasons).toContain('dataChanged'));
         });
 
         /** A data change must still be sized within the frame, rather than held back by the debounce. */

@@ -8,7 +8,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent } from '../events';
+import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent, PaginationChangedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -688,6 +688,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // width-distribution strategies only care about genuinely new rows.
             modelUpdated: (event: ModelUpdatedEvent) => {
                 if (measuresContent || event.newData || event.newPage || event.newPageSize) {
+                    this.scheduleContinuousAutoSize('dataChanged');
+                }
+            },
+            // a page change swaps every rendered cell for a different one, but it reaches no listener above:
+            // pagination dispatches `paginationChanged`, never `modelUpdated`, and the rendered row range
+            // is not guaranteed to move either, so `viewportChanged` cannot be relied on to stand in for it
+            paginationChanged: (event: PaginationChangedEvent) => {
+                if (event.newPage || event.newPageSize) {
                     this.scheduleContinuousAutoSize('dataChanged');
                 }
             },
