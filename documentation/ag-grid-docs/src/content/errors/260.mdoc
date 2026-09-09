@@ -4,6 +4,6 @@ description: A component was configured on a grid whose module has not been regi
 
 ## Module Not Registered
 
-The component named in the message above needs the missing module in order to run, and that module was never registered. Register {% errorParam name="moduleName" fallback="RowGrouping" suffix="Module" /%} to enable it.
+The component named in the message above needs a module in order to run, and that module was never registered. The message names the module to register, and shows the import and `registerModules` call for it.
 
 {% partial file="./_modules-not-registered.mdoc" /%}

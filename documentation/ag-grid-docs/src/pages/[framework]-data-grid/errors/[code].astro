@@ -201,7 +201,7 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
 </Layout>
 
 <script>
-    import { getErrorTextDetails, cleanErrorParamValue } from '@utils/getErrorText';
+    import { getErrorTextDetails, formatErrorParamValue } from '@utils/getErrorText';
     import {
         AG_GRID_ERRORS,
         type ErrorId,
@@ -252,7 +252,7 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
             const name = el.dataset.errorParam;
             const value = name === undefined ? undefined : params[name];
             if (value !== undefined) {
-                el.textContent = `${cleanErrorParamValue(value)}${el.dataset.errorParamSuffix ?? ''}`;
+                el.textContent = `${formatErrorParamValue(value)}${el.dataset.errorParamSuffix ?? ''}`;
             }
         }
     }

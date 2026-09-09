@@ -4,6 +4,6 @@ description: A grid feature was used without its module being registered first.
 
 ## Module Not Registered
 
-The grid was asked for a feature that the missing module provides, but that module was never registered, so the feature is unavailable. Register {% errorParam name="moduleName" fallback="RowGrouping" suffix="Module" /%} to enable it.
+The grid was asked for a feature that a module provides, but that module was never registered, so the feature is unavailable. The message names the module to register, and shows the import and `registerModules` call for it.
 
 {% partial file="./_modules-not-registered.mdoc" /%}

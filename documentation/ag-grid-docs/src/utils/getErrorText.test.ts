@@ -1,5 +1,11 @@
 import { BASE_URL } from '../../../../packages/ag-grid-community/src/baseUrl';
-import { getErrorParamNames, getErrorText, getErrorTextDetails, getMissingErrorParams } from './getErrorText';
+import {
+    formatErrorParamValue,
+    getErrorParamNames,
+    getErrorText,
+    getErrorTextDetails,
+    getMissingErrorParams,
+} from './getErrorText';
 
 // `BASE_URL` is rewritten at release time — localhost while developing, the archive URL on a
 // `b<major>.<minor>.<patch>` branch — so normalise it out before snapshotting. The docs path is
@@ -241,5 +247,34 @@ describe('message parts that are values rather than text', () => {
 
         expect(hasPlaceholders).toBe(false);
         expect(text).toContain('Consider using `getRowId`');
+    });
+});
+
+describe('params a template treats as an array', () => {
+    it('substitutes a placeholder #101 can measure and slice', () => {
+        const { text } = getErrorTextDetails({ errorCode: 101 });
+
+        // A bare string placeholder passes the `suggestions?.length` check and is then sliced, so the
+        // message recommended `[<su]`.
+        expect(text).toContain('Did you mean: `[<suggestions>]`?');
+    });
+
+    it('shows a placeholder that is a whole message part as itself', () => {
+        // #190 builds its text as an array, so the `data` placeholder arrives as a part rather than
+        // interpolated into one.
+        const { text } = getErrorTextDetails({ errorCode: 190 });
+
+        expect(text).toContain('<data>');
+        expect(text).not.toContain('["<data>"]');
+    });
+});
+
+describe('formatErrorParamValue', () => {
+    it('serialises an object rather than coercing it to [object Object]', () => {
+        expect(formatErrorParamValue('{"cssName":"--ag-row-height"}')).toBe('{"cssName":"--ag-row-height"}');
+    });
+
+    it('passes a plain string through for interpolation into a page', () => {
+        expect(formatErrorParamValue('RowGrouping')).toBe('RowGrouping');
     });
 });

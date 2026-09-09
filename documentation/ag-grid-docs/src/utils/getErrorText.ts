@@ -15,7 +15,7 @@ type Params = Record<string, string>;
 const DESTRUCTURED_PARAMS_PATTERN = /^\s*\(\s*\{([^}]*)\}/;
 
 /** Reverses the serialisation a param went through to reach the URL (see the grid's `stringifyValue`). */
-export function cleanErrorParamValue(value: string): unknown {
+function cleanErrorParamValue(value: string): unknown {
     if (value.startsWith('[') || value.startsWith('{')) {
         // Reconstruct arrays/objects that were serialised as JSON
         try {
@@ -35,13 +35,24 @@ export function cleanErrorParamValue(value: string): unknown {
     return value;
 }
 
+/** One param rendered for display, for the page's `errorParam` swap. */
+export function formatErrorParamValue(value: string): string {
+    return formatTextPart(cleanErrorParamValue(value));
+}
+
 function cleanParams(params: Params) {
     return Object.fromEntries(Object.entries(params).map(([key, value]) => [key, cleanErrorParamValue(value)]));
 }
 
-function placeholderFor(name: string): string {
-    return `<${name}>`;
+/**
+ * Stands in for a parameter the URL did not carry, wrapped so a template that reads `.length` or slices
+ * it (#101's `suggestions`) gets array behaviour, while interpolation still yields the bare `<name>`.
+ */
+function placeholderFor(name: string): unknown {
+    return [`<${name}>`];
 }
+
+const PLACEHOLDER_PATTERN = /^<[^>]*>$/;
 
 /** Stands in for a missing detail that cannot be traced back to a named parameter. */
 const UNKNOWN_PLACEHOLDER = '<unknown>';
@@ -53,6 +64,10 @@ const UNKNOWN_PLACEHOLDER = '<unknown>';
 function formatTextPart(part: unknown): string {
     if (typeof part === 'string') {
         return part;
+    }
+    // A part that *is* a placeholder shows as itself, not as the array it travels in.
+    if (Array.isArray(part) && part.length === 1 && typeof part[0] === 'string' && PLACEHOLDER_PATTERN.test(part[0])) {
+        return part[0];
     }
     try {
         return JSON.stringify(part) ?? String(part);
