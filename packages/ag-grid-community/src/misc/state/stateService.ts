@@ -400,9 +400,6 @@ export class StateService extends BeanStub implements NamedBean {
             this.setFilterState(deferredFilterState, source);
         }
 
-        // after the pivot columns and the deferred filter state, as the active match is an ordinal over
-        // the visible columns and filtered rows. Only highlights the match, leaving the viewport to the
-        // saved `scroll` and `pagination` sections.
         if (shouldSetState('find', findState)) {
             this.setFindState(findState, source);
         }
@@ -763,9 +760,8 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getQuickFilterState(): QuickFilterState | undefined {
-        return this.isToolbarStateManaged('agQuickFilterToolbarItem')
-            ? this.beans.quickFilter?.getState()
-            : undefined;
+        // Without the module the option is inert, and writing it on restore reports a missing-module error.
+        return this.isToolbarStateManaged('agQuickFilterToolbarItem') ? this.beans.quickFilter?.getState() : undefined;
     }
 
     private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
@@ -858,8 +854,6 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { searchValue, activeMatch } = findState ?? {};
-        // An `api` restore resets what it omits, so a state without a search value clears Find. At
-        // initialisation an absent value instead leaves the `findSearchValue` grid option as provided.
         this.beans.findSvc?.setState({
             searchValue: source === 'api' ? (searchValue ?? '') : searchValue,
             activeMatch,

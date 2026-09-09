@@ -121,8 +121,6 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             findChanged: (event: FindChangedEvent) => this.onFindChanged(event),
         });
 
-        // An external write highlights the matches, so the input must follow and any edit still waiting
-        // in the debounce is stale. A write from this input is a no-op: `setValue` bails on the same value.
         this.addManagedPropertyListener('findSearchValue', ({ currentValue }) => {
             clearTimeout(findSearchValueTimeout);
             this.eInputField.setValue(currentValue ?? '', true);

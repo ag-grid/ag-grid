@@ -94,7 +94,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     private centerNumMatches: number = 0;
     private readonly bottomMatches: Matches = new Map();
     private bottomNodes: IRowNode[] = [];
-    /** set while restoring saved state, so the active match is highlighted where it is */
     private restoring = false;
 
     /** switches based on grid options */
@@ -298,23 +297,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
     }
 
-    // updates all the matches
     public getState(): FindState | undefined {
         if (!_isClientSideRowModel(this.gos)) {
             return undefined;
         }
-        // the option is the round-trippable value, as this service holds a trimmed, case-converted form
         const searchValue = this.gos.get('findSearchValue') || undefined;
         return searchValue ? { searchValue, activeMatch: this.activeMatch?.numOverall } : undefined;
     }
 
-    /** An absent `searchValue` leaves the `findSearchValue` grid option as it is. */
     public setState({ searchValue, activeMatch }: FindState): void {
         if (!_isClientSideRowModel(this.gos)) {
             return;
         }
         if (searchValue !== undefined) {
-            // recalculates the matches synchronously, so the active match can be resolved straight after
             this.gos.updateGridOptions({ options: { findSearchValue: searchValue } });
         }
         if (activeMatch != null) {
@@ -325,11 +320,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 this.restoring = false;
             }
         } else if (this.activeMatch) {
-            // an unchanged search value dispatches no property change, so clear the active match here
             this.setActive(undefined);
         }
     }
 
+    // updates all the matches
     public refresh(maintainActive: boolean): void {
         const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
         this.topNodes = [];

@@ -11,7 +11,6 @@ describe('StateService - Find State', () => {
 
     const rowData = [{ value: 'cat' }, { value: 'dog' }, { value: 'car' }, { value: 'cup' }];
     const columnDefs = [{ field: 'value' }];
-    // Find only takes part in grid state when the Quick Access Toolbar owns an input for it.
     const toolbar: Toolbar = { items: ['agFindToolbarItem'] };
 
     beforeEach(() => {
@@ -106,7 +105,6 @@ describe('StateService - Find State', () => {
             });
 
             await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(3));
-            // 'cup' is the third match
             expect(api.findGetActiveMatch()?.node.rowIndex).toBe(3);
             await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c', activeMatch: 3 }));
         });
@@ -122,7 +120,6 @@ describe('StateService - Find State', () => {
             });
 
             await waitFor(() => expect(api.findGetTotalMatches()).toBe(5));
-            // match 1 is the pinned top 'cog', so match 2 is the first centre match, 'cat'
             await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(2));
             expect(api.findGetActiveMatch()?.node.data.value).toBe('cat');
         });
@@ -179,7 +176,6 @@ describe('StateService - Find State', () => {
         });
 
         test('should keep the saved page when the active match lives on another page', async () => {
-            // Restoring the match only highlights it, so the saved page is never navigated away from.
             const api = gridsManager.createGrid('set-state-find-pagination', {
                 columnDefs,
                 rowData,
@@ -188,14 +184,12 @@ describe('StateService - Find State', () => {
                 paginationPageSize: 2,
                 paginationPageSizeSelector: false,
             });
-            // The state service starts caching Find at firstDataRendered, so let the grid get there.
             await waitForEvent('firstDataRendered', api);
 
             api.setGridOption('findSearchValue', 'c');
             api.findNext();
             await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
 
-            // The user leaves the match's page before saving.
             api.paginationGoToPage(1);
             const state = await waitFor(() => {
                 expect(api.getState().pagination?.page).toBe(1);
@@ -212,7 +206,6 @@ describe('StateService - Find State', () => {
         });
 
         test('should keep the saved page as the rendered one, not just the reported one', async () => {
-            // The initialisation path only assigns the page number, so nothing may move off it after.
             const api = gridsManager.createGrid('initial-state-find-pagination', {
                 columnDefs,
                 rowData,
@@ -227,8 +220,6 @@ describe('StateService - Find State', () => {
             });
             await waitForEvent('firstDataRendered', api);
 
-            // The reported page and the displayed rows must agree: match 1 lives on page 0, so a
-            // restore that paged to the match would leave the bounds there while reporting page 1.
             await waitFor(() => {
                 expect(api.paginationGetCurrentPage()).toBe(1);
                 expect(api.getFirstDisplayedRowIndex()).toBe(2);
@@ -248,7 +239,6 @@ describe('StateService - Find State', () => {
             api.findNext();
             await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
 
-            // The search value is unchanged, so the option write is a no-op and cannot clear it.
             api.setState(state);
 
             await waitFor(() => {
@@ -270,8 +260,6 @@ describe('StateService - Find State', () => {
         });
 
         test('should keep the saved scroll position when the active match is off screen', async () => {
-            // The origin is captured as no `scroll` section at all, so scrolling to the match would
-            // leave nothing to restore it by.
             const scrollRowData = Array.from({ length: 100 }, (_, i) => ({ value: i === 99 ? 'cat' : `${i}` }));
             const api = gridsManager.createGrid('initial-state-find-scroll', {
                 columnDefs,
@@ -282,14 +270,11 @@ describe('StateService - Find State', () => {
             await waitForEvent('firstDataRendered', api);
 
             await waitFor(() => expect(api.findGetActiveMatch()?.numOverall).toBe(1));
-            // The match is the last row, so any navigation to it would show up here.
             expect(api.getVerticalPixelRange().top).toBe(0);
             expect(api.getFirstDisplayedRowIndex()).toBe(0);
         });
 
         test('should keep a collapsed group collapsed when the active match is inside it', async () => {
-            // The saved expansion wins over revealing the match: going to a match normally expands
-            // every ancestor of a hidden row, which would undo the restored collapse.
             const groupColumnDefs = [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }];
             const groupRowData = [
                 { country: 'Ireland', value: 'cat' },
@@ -307,17 +292,13 @@ describe('StateService - Find State', () => {
             source.findNext();
             await waitFor(() => expect(source.findGetActiveMatch()?.numOverall).toBe(1));
 
-            // The user collapses the match's group before saving; the match stays active while hidden.
             source.setRowNodeExpanded(source.getRowNode('row-group-country-Ireland')!, false);
             const state = await waitFor(() => {
-                // Ireland is absent from the expanded set: that is the collapse the restore must keep.
                 expect(source.getState().rowGroupExpansion?.expandedRowGroupIds).toEqual(['row-group-country-Spain']);
                 expect(source.getState().find).toEqual({ searchValue: 'cat', activeMatch: 1 });
                 return source.getState();
             });
 
-            // A fresh grid is the scenario that exercises the expansion path: restoring onto the
-            // source grid asks for the match that is already active, which `goTo` skips.
             const api = gridsManager.createGrid('find-collapsed-group-restore', {
                 columnDefs: groupColumnDefs,
                 rowData: groupRowData,
@@ -356,7 +337,6 @@ describe('StateService - Find State', () => {
                 initialState: { find: { searchValue: 'c' } },
             });
 
-            // The state section is ignored in both directions, so the grid option stands.
             await waitFor(() => {
                 expect(api.findGetTotalMatches()).toBe(1);
                 expect(api.getState().find).toBeUndefined();
