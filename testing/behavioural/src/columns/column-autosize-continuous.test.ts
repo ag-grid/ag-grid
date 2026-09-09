@@ -356,7 +356,7 @@ describe('Continuous Column Autosize', () => {
          * under test is that a page change *reaches* continuous auto-sizing at all, which synthesising the
          * trigger would assume rather than prove.
          */
-        test('a pagination page change re-sizes eligible columns', async () => {
+        test('a pagination page change triggers a content re-fit', async () => {
             const reasons: string[] = [];
             const api = createGrid({
                 rowData: [
