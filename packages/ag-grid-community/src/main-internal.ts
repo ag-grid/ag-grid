@@ -198,6 +198,7 @@ export type { IGridComp } from './gridComp/gridCtrl';
 export {
     _addGridCommonParams,
     _addRowHeightChangedListener,
+    _canScrollVertically,
     _canSkipShowingRowGroup,
     _combineAttributesAndGridOptions,
     _getCallbackForEvent,

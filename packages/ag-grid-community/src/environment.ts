@@ -18,6 +18,7 @@ const cssVariable = <K extends keyof CssChangeKeys>(
     defaultValue: number
 ): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue });
 
+const AUTO_HEIGHT_MAX_BODY_HEIGHT = cssVariable('autoHeightMaxBodyHeight', 'length', Infinity);
 const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
 const CELL_WIDGET_SPACING = cssVariable('cellWidgetSpacing', 'length', 12);
 const ICON_SIZE = cssVariable('iconSize', 'length', 16);
@@ -77,6 +78,12 @@ export class Environment
 
     public getDefaultHeaderHeight(): number {
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
+    }
+
+    /** Null if there is no maximum. */
+    public getAutoHeightMaxBodyHeight(): number | null {
+        const maxHeight = this.getCSSVariablePixelValue(AUTO_HEIGHT_MAX_BODY_HEIGHT);
+        return maxHeight < Infinity ? maxHeight : null;
     }
 
     public getDefaultCellHorizontalPadding(): number {
@@ -189,6 +196,7 @@ export class Environment
 }
 
 interface CssChangeKeys extends BaseCssChangeKeys {
+    autoHeightMaxBodyHeight: true;
     cellWidgetSpacing: true;
     iconSize: true;
     headerHeight: true;

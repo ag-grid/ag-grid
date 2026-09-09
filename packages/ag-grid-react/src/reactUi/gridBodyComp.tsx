@@ -212,11 +212,18 @@ const GridBodyComp = () => {
         [preventRowAnimationClass, rowAnimationClass]
     );
 
+    const gridViewportStyle: React.CSSProperties = useMemo(
+        () =>
+            ({
+                '--ag-internal-top-rows-height': `${topSection.height}px`,
+                '--ag-internal-bottom-rows-height': `${bottomSection.height}px`,
+            }) as React.CSSProperties,
+        [topSection.height, bottomSection.height]
+    );
+
     const topStyle: React.CSSProperties = useMemo(() => {
-        const topRowsHeight = `${topSection.height}px`;
-        const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${topRowsHeight})`;
+        const topSectionHeight = `calc(var(--ag-internal-header-rows-height, 0px) + ${topSection.height}px)`;
         return {
-            '--ag-top-rows-height': topRowsHeight,
             minHeight: topSectionHeight,
             height: topSectionHeight,
         } as React.CSSProperties;
@@ -225,7 +232,6 @@ const GridBodyComp = () => {
     const bottomStyle: React.CSSProperties = useMemo(
         () =>
             ({
-                '--ag-bottom-rows-height': `${bottomSection.height}px`,
                 height: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
                 minHeight: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
                 width: stickyBottomWidth,
@@ -245,12 +251,10 @@ const GridBodyComp = () => {
 
     return (
         <div ref={setRootRef} className={rootClasses} role="presentation">
-            <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation">
+            <div ref={setGridViewportRef} className={gridViewportClasses} role="presentation" style={gridViewportStyle}>
                 <div ref={eGridScrollableArea} className={scrollableClasses} role="rowgroup">
                     <div ref={setTopRef} className={topClasses} role="presentation" style={topStyle}>
-                        {topElement && gridViewportElement && (
-                            <GridHeaderComp eTopSection={topElement} eGridViewport={gridViewportElement} />
-                        )}
+                        {topElement && gridViewportElement && <GridHeaderComp eGridViewport={gridViewportElement} />}
                         <div ref={eTopExtraRows} className="ag-extra-rows-container" role="presentation" />
                         <RowContainerComp
                             name="pinnedTop"

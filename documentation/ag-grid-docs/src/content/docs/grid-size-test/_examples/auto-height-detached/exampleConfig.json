@@ -1,0 +1,4 @@
+{
+    "supportedFrameworks": ["typescript", "vanilla"],
+    "noStyle": true
+}
