@@ -202,10 +202,6 @@
     #{$selector-darkmode} & {
         border-top-color: var(--color-border-primary);
     }
-
-    @media screen and (min-width: $breakpoint-site-footer-five-column) {
-        justify-content: flex-start;
-    }
 }
 
 .legalLinks {
@@ -224,11 +220,8 @@
     }
 
     a {
-        text-decoration: underline;
-        text-decoration-color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 80%);
-        text-underline-offset: 4px;
         color: var(--color-text-secondary);
-        transition: color $transition-default-timing;
+        font-weight: var(--text-regular);
 
         &:hover {
             color: var(--color-text-primary);
