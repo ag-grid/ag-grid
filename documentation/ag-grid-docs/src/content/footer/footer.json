@@ -1,5 +1,22 @@
 [
     {
+        "title": "Products",
+        "links": [
+            {
+                "name": "AG Charts",
+                "url": "https://www.ag-grid.com/charts/"
+            },
+            {
+                "name": "AG Studio",
+                "url": "https://www.ag-grid.com/studio/"
+            },
+            {
+                "name": "License & Pricing",
+                "url": "/license-pricing/"
+            }
+        ]
+    },
+    {
         "title": "Documentation",
         "links": [
             {
@@ -28,17 +45,13 @@
         "title": "Support & Community",
         "links": [
             {
-                "name": "Stack Overflow",
-                "url": "https://stackoverflow.com/questions/tagged/ag-grid",
+                "name": "Support via Zendesk",
+                "url": "https://ag-grid.zendesk.com/",
                 "newTab": true
             },
             {
-                "name": "License & Pricing",
-                "url": "/license-pricing/"
-            },
-            {
-                "name": "Support via Zendesk",
-                "url": "https://ag-grid.zendesk.com/",
+                "name": "Stack Overflow",
+                "url": "https://stackoverflow.com/questions/tagged/ag-grid",
                 "newTab": true
             },
             {
@@ -51,29 +64,23 @@
         "title": "The Company",
         "links": [
             {
-                "name": "AG Charts",
-                "url": "https://www.ag-grid.com/charts/"
-            },
-            {
-                "name": "AG Studio",
-                "url": "https://www.ag-grid.com/studio/"
-            },
-            {
                 "name": "About",
                 "url": "/about/"
-            },
-            {
-                "name": "Contact Us",
-                "url": "/contact/"
             },
             {
                 "name": "Blog",
                 "url": "https://www.ag-grid.com/blog/"
             },
             {
-                "name": "Terms of Use",
-                "url": "/terms-of-use/"
-            },
+                "name": "Contact Us",
+                "url": "/contact/"
+            }
+        ]
+    },
+    {
+        "title": "Legal",
+        "placement": "legal",
+        "links": [
             {
                 "name": "Privacy Policy",
                 "url": "/privacy/"
@@ -88,6 +95,10 @@
                 "showCookiesPrefs": true
             },
             {
+                "name": "Terms of Use",
+                "url": "/terms-of-use/"
+            },
+            {
                 "name": "Modern Slavery",
                 "url": "/modern-slavery/"
             },
@@ -99,6 +110,7 @@
     },
     {
         "title": "Follow",
+        "placement": "social",
         "links": [
             {
                 "name": "GitHub",

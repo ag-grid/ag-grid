@@ -4,126 +4,27 @@
     width: 100%;
     border-top: 1px solid var(--color-border-secondary);
     padding-top: $spacing-size-10;
-    padding-bottom: calc($spacing-size-10 * 2);
+    padding-bottom: $spacing-size-10;
     background-color: var(--color-bg-primary);
-    color: var(--color-white);
+    color: var(--color-text-secondary);
 
     #{$selector-darkmode} & {
         color: var(--color-fg-primary);
-        background-color: var(--color-bg-primary);
         border-top: 1px solid var(--color-border-primary);
     }
 
     p {
+        margin-bottom: 0;
         color: var(--color-text-secondary);
         opacity: 0.666;
     }
 
-    h4 {
-        color: var(--color-fg-primary);
-        font-weight: var(--text-semibold);
-        opacity: 1;
-        #{$selector-darkmode} & {
-            color: var(--color-fg-white);
-        }
-    }
-
-    svg {
-        fill: var(--color-white);
-    }
-}
-
-.footerColumns {
-    max-width: calc(var(--layout-max-width-small) + var(--layout-horizontal-margins) * 2);
-    margin-right: auto;
-    margin-left: auto;
-    padding: $spacing-size-2;
-
-    @media screen and (min-width: $breakpoint-site-footer-five-column) {
-        justify-content: space-between;
-    }
-}
-
-.footerColumns .menuColumn:last-child a::after {
-    content: ' ↗';
-    opacity: 0.85;
-}
-
-.footerInfo {
-    margin-top: -4%;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-4;
-}
-
-.menuColumn {
-    margin-bottom: $spacing-size-10;
-    width: var(--layout-width-4-4);
-    display: flex;
-    gap: $spacing-size-3;
-    flex-direction: column;
-
-    p {
-        margin-bottom: 0;
-    }
-
-    .menuColumnTitle {
-        display: block;
-        font-size: var(--text-fs-base);
-        line-height: var(--text-lh-base);
-        font-weight: var(--text-semibold);
-        color: var(--color-text-primary);
-    }
-
-    &:first-child {
-        width: 100%;
-        text-align: center;
-    }
-
-    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-five-column) {
-        width: var(--layout-width-2-4);
-
-        &:nth-child(even) {
-            text-align: right;
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-site-footer-five-column) {
-        width: auto;
-
-        &:first-child {
-            max-width: 18%;
-            min-width: 230px;
-            margin-right: -4%;
-            text-align: left;
-        }
-
-        &:last-child {
-            text-align: right;
-        }
-    }
-
-    ul {
-        display: block;
-    }
-
-    li {
-        overflow: hidden;
-    }
-
-    li a {
+    a {
         text-decoration: underline;
-        display: inline-block;
-        min-width: $spacing-size-12;
-        margin-top: -12px;
-        margin-bottom: -12px;
-        padding-top: 12px;
-        padding-bottom: 20px;
         text-decoration-color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 80%);
         text-underline-offset: 4px;
         color: var(--color-text-secondary);
         transition: color $transition-default-timing;
-        opacity: 1;
         font-weight: var(--text-regular);
 
         &:hover {
@@ -137,12 +38,6 @@
     }
 
     :global(.icon) {
-        display: inline;
-        position: relative;
-        width: 22px;
-        height: 22px;
-        top: -1px;
-        margin-right: $spacing-size-1;
         opacity: 0.6666;
         transition: opacity $transition-default-timing;
         fill: var(--color-text-tertiary);
@@ -153,13 +48,46 @@
     }
 }
 
-.logoContainer a {
-    display: inline-block;
+.footerInner {
+    max-width: var(--layout-max-width-small);
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: var(--layout-horizontal-margins);
+    padding-left: var(--layout-horizontal-margins);
+}
+
+// Brand column plus one column per navigation group. Columns wrap: one per row on phones, two per
+// row on small screens, and everything on a single row from the five-column breakpoint up.
+.footerColumns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-8 $spacing-size-10;
+    padding-bottom: $spacing-size-10;
+}
+
+.brandColumn {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+    flex: 1 1 100%;
 
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
-        margin-top: -18px;
-        margin-left: -12px;
+        flex: 1.15 1 0;
+        min-width: 230px;
+        max-width: 320px;
     }
+}
+
+.tagline {
+    max-width: 260px;
+    text-wrap: pretty;
+}
+
+.logoContainer a {
+    display: inline-flex;
+    min-height: unset;
+    margin-top: -$spacing-size-2;
+    margin-left: -10px;
 
     :global(.logotype) * {
         fill: var(--color-logo-text);
@@ -170,19 +98,137 @@
     }
 }
 
-.listStyleNone {
+.socialLinks {
     display: flex;
-    flex-direction: row;
-    list-style: none;
-    padding-left: 0;
-    opacity: 0.7;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
 
-    #{$selector-darkmode} & {
-        opacity: 1;
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--color-border-primary);
+        border-radius: var(--radius-xs);
+        text-decoration: none;
+        transition:
+            color $transition-default-timing,
+            border-color $transition-default-timing;
+
+        &:hover {
+            border-color: var(--color-text-primary);
+        }
+    }
+
+    :global(.icon) {
+        width: 20px;
+        height: 20px;
     }
 }
 
-.headerTitle {
-    padding-top: $spacing-size-4;
-    color: var(--color-text-secondary);
+.menuColumn {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+    flex: 1 1 100%;
+
+    @media screen and (min-width: $breakpoint-site-footer-two-column) {
+        flex: 1 1 calc(50% - #{$spacing-size-10});
+    }
+
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        flex: 1 1 0;
+        min-width: 140px;
+    }
+
+    ul {
+        display: block;
+        margin: 0;
+    }
+
+    li {
+        overflow: hidden;
+    }
+
+    li a {
+        display: inline-block;
+        min-width: $spacing-size-12;
+        margin-top: -12px;
+        margin-bottom: -12px;
+        padding-top: 12px;
+        padding-bottom: 20px;
+    }
+
+    :global(.icon) {
+        display: inline;
+        position: relative;
+        width: 22px;
+        height: 22px;
+        top: -1px;
+        margin-right: $spacing-size-1;
+    }
+}
+
+.menuColumnTitle {
+    display: block;
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    font-weight: var(--text-semibold);
+    color: var(--color-text-primary);
+}
+
+// Copyright and registration on the left, policy links on the right. Wraps to two stacked rows
+// when the two do not fit side by side.
+.legalBar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-size-4 $spacing-size-8;
+    padding-top: $spacing-size-5;
+    border-top: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        border-top-color: var(--color-border-primary);
+    }
+}
+
+.legalInfo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+}
+
+.legalInfoSeparator {
+    opacity: 0.6;
+}
+
+.legalLinks {
+    $legal-links-gap: $spacing-size-4;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-2 $legal-links-gap;
+    margin: 0;
+    // Clips the separator of whichever link starts a wrapped row, since it sits left of the list edge.
+    overflow: hidden;
+
+    li {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    // Pipe separators between links, centred in the gap before each link and drawn in CSS with an
+    // empty alternative text so they are never announced.
+    li::before {
+        content: '|' #{'/'} '';
+        position: absolute;
+        left: calc(#{$legal-links-gap} / -2);
+        transform: translateX(-50%);
+        color: var(--color-text-secondary);
+        opacity: 0.4;
+    }
 }

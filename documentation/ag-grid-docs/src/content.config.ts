@@ -189,6 +189,8 @@ const footer = defineCollection({
     schema: z.array(
         z.object({
             title: z.string(),
+            /** Where the group renders: the legal strip, the social icons, or (default) a navigation column. */
+            placement: z.enum(['legal', 'social']).optional(),
             links: z.array(
                 z.object({
                     name: z.string(),
