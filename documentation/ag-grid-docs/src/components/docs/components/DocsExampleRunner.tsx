@@ -3,6 +3,8 @@ import { getLoadingIFrameId } from '@ag-website-shared/components/loading-logo/g
 import type { GeneratedContents } from '@components/example-generator/types';
 import { DEFAULT_HEIGHT, ExampleRunner } from '@components/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@components/example-runner/components/ExternalLinks';
+import { pruneExampleFiles } from '@components/example-runner/utils/exampleViewerFiles';
+import { resolveInternalFramework } from '@components/example-runner/utils/resolveInternalFramework';
 import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
 import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
@@ -32,34 +34,6 @@ interface Props {
     supportedFrameworks?: InternalFramework[];
 }
 
-const getInternalFramework = (
-    docsInternalFramework: InternalFramework,
-    supportedFrameworks: InternalFramework[] | undefined
-): { internalFramework: InternalFramework; isUsingAlternativeInternalFramework: boolean } => {
-    let internalFramework = docsInternalFramework;
-    let isUsingAlternativeInternalFramework = false;
-    if (supportedFrameworks && supportedFrameworks.length > 0) {
-        if (!supportedFrameworks.includes(docsInternalFramework)) {
-            const bestAlternative: Record<InternalFramework, InternalFramework[]> = {
-                vanilla: ['typescript'],
-                typescript: ['vanilla'],
-                reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
-                reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
-                angular: ['typescript', 'vanilla'],
-                vue3: ['typescript', 'vanilla'],
-            };
-            const alternatives = bestAlternative[docsInternalFramework];
-            const alternative = alternatives.find((alternative) => supportedFrameworks.includes(alternative));
-            if (alternative) {
-                internalFramework = alternative;
-                isUsingAlternativeInternalFramework = true;
-            }
-        }
-    }
-
-    return { internalFramework, isUsingAlternativeInternalFramework };
-};
-
 const DocsExampleRunnerInner = ({
     name,
     title,
@@ -82,11 +56,15 @@ const DocsExampleRunnerInner = ({
 
     const storeInternalFramework = useStore($internalFramework);
     const internalFrameworkState = useStore($internalFrameworkState);
-    const { internalFramework: computedInternalFramework, isUsingAlternativeInternalFramework } = useMemo(
-        () => getInternalFramework(storeInternalFramework, supportedFrameworks),
-        [storeInternalFramework, supportedFrameworks]
+    const { internalFramework, isUsingAlternativeInternalFramework } = useMemo(
+        () =>
+            resolveInternalFramework({
+                docsInternalFramework: storeInternalFramework,
+                supportedFrameworks,
+                typescriptOnly,
+            }),
+        [storeInternalFramework, supportedFrameworks, typescriptOnly]
     );
-    const internalFramework = typescriptOnly ? 'typescript' : computedInternalFramework;
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName }),
         [internalFramework, pageName, exampleName]
@@ -110,25 +88,7 @@ const DocsExampleRunnerInner = ({
                             return {};
                         }
 
-                        const isTs =
-                            internalFramework === 'reactFunctionalTs' ||
-                            internalFramework === 'typescript' ||
-                            internalFramework === 'angular';
-                        if (!isTs) {
-                            delete json.files['interfaces.ts'];
-                        }
-                        if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
-                            delete json.files['index.html'];
-                        }
-
-                        // Don't include the example spec files in the example runner for now
-                        Object.keys(json.files)
-                            .filter((file) => file?.includes('.spec.') || file?.includes('.test.'))
-                            .forEach((specFile) => {
-                                delete json.files[specFile];
-                            });
-
-                        return json;
+                        return { ...json, files: pruneExampleFiles(json.files, internalFramework) };
                     }),
             ]) as Promise<[GeneratedContents]>;
         },
@@ -141,6 +101,12 @@ const DocsExampleRunnerInner = ({
         plunkrHtmlUrl: getExamplePlunkrUrl(urlConfig),
         codeSandboxHtmlUrl: getExampleCodeSandboxUrl(urlConfig),
     };
+
+    useEffect(() => {
+        // The build embeds a hidden copy of the source for crawlers; this island now owns the code
+        // viewer, so drop it rather than carry the source twice.
+        document.getElementById(id)?.querySelector('[data-example-source-code]')?.remove();
+    }, [id]);
 
     useEffect(() => {
         if (isError) {

@@ -1,9 +1,13 @@
 ---
-import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
+import { getFrameworkFromPath, getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import ExampleRunnerContainer from '@components/example-runner/components/ExampleRunnerContainer.astro';
+import ExampleRunnerSourceCode from '@components/example-runner/components/ExampleRunnerSourceCode.astro';
+import { getExampleViewerFiles, type ExampleViewerFiles } from '@components/example-runner/utils/exampleViewerFiles';
+import { resolveInternalFramework } from '@components/example-runner/utils/resolveInternalFramework';
 import { getIsDev } from '@utils/env';
+import { getInternalFramework } from '@utils/framework';
 import { DocsExampleRunner } from './DocsExampleRunner';
-import { DISABLE_EXAMPLE_RUNNER } from '@constants';
+import { DISABLE_EXAMPLE_RUNNER, DISABLE_EXAMPLE_SOURCE_EMBED } from '@constants';
 import { getGeneratedContents, type GeneratedExampleParams } from '@components/example-generator';
 import { getSupportedFrameworks } from '@components/docs/utils/filesData';
 
@@ -19,27 +23,40 @@ interface Props {
 const { title, name, exampleHeight, typescriptOnly, suppressDarkMode, consoleBufferSize } = Astro.props as Props;
 
 const pageName = getPageNameFromPath(Astro.url.pathname);
+const framework = getFrameworkFromPath(Astro.url.pathname);
 const isDev = getIsDev();
 
 const supportedFrameworks = await getSupportedFrameworks({ pageName, exampleName: name });
+const supportedFrameworksList = Array.from(supportedFrameworks || []);
+
+// The TypeScript variant, as the markdown twin page embeds, so crawlers get the same source from
+// both. A visitor's own language choice is still fetched by the island as before.
+const { internalFramework } = resolveInternalFramework({
+    docsInternalFramework: getInternalFramework({ framework, useTypescript: true }),
+    supportedFrameworks: supportedFrameworksList,
+    typescriptOnly,
+});
 const generatedExampleParams: GeneratedExampleParams = {
     type: 'docs',
-    // If there are supported frameworks, take the first one, otherwise the contents should be the same as vanilla
-    framework: supportedFrameworks?.values().next().value || 'vanilla',
+    framework: internalFramework,
     pageName,
     exampleName: name,
 };
 
 let hasExampleConsoleLog = false;
+let sourceCode: ExampleViewerFiles | undefined;
 try {
-    // NOTE: Even though we have the contents at build time, we are not passing
-    // it into the component, so that we can load the contents at runtime.
-    // This avoids the page being bigger than it needs to be, if the user does
-    // not scroll to the example.
     const contents = await getGeneratedContents(generatedExampleParams);
     // Get whether example has console log component at build time, so that we
     // can show it on page load.
     hasExampleConsoleLog = Boolean(contents?.hasExampleConsoleLog);
+
+    // NOTE: The island still fetches the contents at runtime rather than taking them as props,
+    // so the page only carries the source once: in the crawlable panel below, which the island
+    // removes once it has mounted.
+    if (contents && !DISABLE_EXAMPLE_SOURCE_EMBED) {
+        sourceCode = getExampleViewerFiles(contents, internalFramework);
+    }
 } catch (error) {
     console.error('Error generating contents for:', generatedExampleParams);
 }
@@ -64,8 +81,15 @@ try {
                 isDev={isDev}
                 hasExampleConsoleLog={hasExampleConsoleLog}
                 consoleBufferSize={consoleBufferSize}
-                supportedFrameworks={Array.from(supportedFrameworks || [])}
+                supportedFrameworks={supportedFrameworksList}
             />
+            {sourceCode && (
+                <ExampleRunnerSourceCode
+                    internalFramework={internalFramework}
+                    files={sourceCode.files}
+                    mainFileName={sourceCode.mainFileName}
+                />
+            )}
         </ExampleRunnerContainer>
     )
 }
