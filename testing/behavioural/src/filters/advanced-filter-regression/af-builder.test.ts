@@ -1,3 +1,13 @@
+import {
+    AdvancedFilterBuilderHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type { AdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -8,21 +18,11 @@ import {
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-import {
-    AdvancedFilterBuilderHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
-
 /**
  * Regression baseline for the Advanced Filter Builder: the DOM tree (nested conditions, 0-operand
  * operators, `+ add`, validity marks) and editing through the dialog (value/operator pills, group join,
  * condition removal). Needs the layout mock for the builder VirtualList + pill rich-select popups in
- * jsdom. Pinned so AG-8950 (set multi-select pill) and AG-11352 (custom filter component) surface as diffs.
+ * layout. Pinned so AG-8950 (set multi-select pill) and AG-11352 (custom filter component) surface as diffs.
  */
 const DEFAULT_OPTIONS: GridOptions = {
     columnDefs: [
@@ -249,6 +249,39 @@ describe('Advanced Filter — builder editing', () => {
         await new GridRows(api, 'after value edit').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:2 athlete:"Ng" age:28
+        `);
+    });
+
+    test('closing the builder without applying discards the edit, and reopening shows the applied model', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+        api.setAdvancedFilterModel({ filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bo' });
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        await builder.setValue(condition, 'Ng');
+        await builder.close();
+
+        const reopened = await AdvancedFilterBuilderHarness.open(api);
+        await new FilterDom(api, 'builder reopened after cancel', { mode: 'builder', skipValidation: true })
+            .checkFilterDom(`
+                BUILDER
+                AND
+                  Athlete contains "Bo"
+                  + add
+                buttons: Apply | Cancel
+                model:
+                  filterType: "text"
+                  colId: "athlete"
+                  type: "contains"
+                  filter: "Bo"
+            `);
+        const [reopenedCondition] = await reopened.conditionItems();
+        expect(reopened.valuePillText(reopenedCondition)).toBe('"Bo"');
+        await new GridRows(api, 'rows unchanged after cancel').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Bolt" age:25
+            └── LEAF id:1 athlete:"Bond" age:40
         `);
     });
 

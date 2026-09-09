@@ -7,10 +7,10 @@ import type {
     BeanCollection,
     ColGroupDef,
     ColumnEventType,
-    ColumnMenuItemsSource,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
+    ColumnSelectionPanelSource,
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
@@ -61,7 +61,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private expandGroupsByDefault: boolean;
     private params: ToolPanelColumnCompParams;
     private eventType: ColumnEventType;
-    private source: ColumnMenuItemsSource;
+    private source: ColumnSelectionPanelSource;
 
     private groupsExist: boolean;
 
@@ -96,7 +96,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         params: ToolPanelColumnCompParams,
         allowDragging: boolean,
         eventType: ColumnEventType,
-        source: ColumnMenuItemsSource
+        source: ColumnSelectionPanelSource
     ): void {
         this.params = params;
         const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
@@ -245,15 +245,15 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         item: ColumnModelItem,
         listItemElement: HTMLElement
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
-        const allowDragging = this.allowDragging;
+        const { allowDragging, eventType, params, source, groupsExist } = this;
         if (item.group) {
             const renderedGroup = new ToolPanelColumnGroupComp(
                 item,
                 allowDragging,
-                this.eventType,
+                eventType,
                 listItemElement,
-                this.params,
-                this.source
+                params,
+                source
             );
             this.createBean(renderedGroup);
 
@@ -263,11 +263,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const columnComp = new ToolPanelColumnComp(
             item,
             allowDragging,
-            this.groupsExist,
+            groupsExist,
             listItemElement,
-            this.params,
-            this.eventType,
-            this.source
+            params,
+            eventType,
+            source
         );
         this.createBean(columnComp);
 
@@ -413,7 +413,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const removeFunc = item.removeEventListener.bind(item, 'expandedChanged', columnExpandedListener);
             this.destroyColumnItemFuncs.push(removeFunc);
         };
-        const colNames = this.beans.colNames;
+        const beans = this.beans;
 
         const recursivelyBuild = (
             tree: (AgColumn | AgProvidedColumnGroup)[],
@@ -445,9 +445,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             const item: ColumnModelItem = new ColumnModelItem(
-                displayName,
+                beans,
                 columnGroup,
                 depth,
                 true,
@@ -467,9 +466,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
-
-            parentList.push(new ColumnModelItem(displayName, column, depth));
+            parentList.push(new ColumnModelItem(beans, column, depth));
         };
 
         this.destroyColumnTree();

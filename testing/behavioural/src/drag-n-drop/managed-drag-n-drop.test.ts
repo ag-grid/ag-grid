@@ -1,7 +1,4 @@
-import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-
-import type { DragInteractionType } from '../test-utils';
+import type { DragInteractionType } from 'ag-test-utils';
 import {
     DRAG_INTERACTION_TYPES,
     DRAG_NO_MOVE_INTERACTION_CASES,
@@ -10,7 +7,10 @@ import {
     RowDragDispatcher,
     TestGridsManager,
     cachedJSONObjects,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (noMove, eventType) => {
     const gridsManager = new TestGridsManager({

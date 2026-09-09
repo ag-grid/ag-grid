@@ -1,4 +1,14 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    FloatingFilterHarness,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { GetLocaleTextParams, GridApi, IFilterPlaceholderFunctionParams } from 'ag-grid-community';
 import {
@@ -11,17 +21,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    FloatingFilterHarness,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../test-utils';
 
 /**
  * Cases the provided filters get wrong when an option's arity or the applied model diverges from the
@@ -203,5 +202,167 @@ describe('Filter option switching and floating filter sync', () => {
         await harness.selectOperator('Dentro De');
 
         expect(seen).toContainEqual({ filterOptionKey: 'withinOf', filterOption: 'Dentro De' });
+    });
+
+    test('an out-of-order range does not block the narrower option chosen after it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'gold', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 10 }],
+        });
+        await asyncSetTimeout(0);
+
+        const harness = await ColumnFilterHarness.open(api, 'gold');
+        await harness.selectOperator('Between');
+        // Length first, so a pair that lost an input fails as that rather than as a crash.
+        expect(harness.inputs('number', 0)).toHaveLength(2);
+        const [from, to] = harness.inputs('number', 0);
+        fireEvent.input(from, { target: { value: '10' } });
+        fireEvent.input(to, { target: { value: '5' } });
+        await waitFor(() => expect(to.validity.valid).toBe(false));
+
+        await harness.selectOperator('Equals');
+        // A different value from the one the range left behind, so applying the retained 10 would not pass.
+        fireEvent.input(harness.inputs('number', 0)[0], { target: { value: '8' } });
+
+        // The `to` input is not part of the condition, so the error it reported cannot hold it back.
+        await waitFor(() =>
+            expect(api.getColumnFilterModel('gold')).toEqual({ filterType: 'number', type: 'equals', filter: 8 })
+        );
+        await new FilterDom(api, 'the abandoned range leaves no message', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "8"
+            AND
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "number"
+              type: "equals"
+              filter: 8
+        `);
+        await new GridRows(api, 'equals applies after an abandoned range').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 gold:8
+        `);
+    });
+
+    test('a floating filter applies over a range message the popup left behind', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            // `suppressFloatingFilterButton` keeps the popup on the header button, so both can be driven.
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                    suppressFloatingFilterButton: true,
+                    filterParams: { debounceMs: 0 },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 10 }],
+        });
+        await asyncSetTimeout(0);
+
+        const harness = await ColumnFilterHarness.open(api, 'gold');
+        await harness.selectOperator('Between');
+        // Length first, so a pair that lost an input fails as that rather than as a crash.
+        expect(harness.inputs('number', 0)).toHaveLength(2);
+        const [from, to] = harness.inputs('number', 0);
+        fireEvent.input(from, { target: { value: '10' } });
+        fireEvent.input(to, { target: { value: '5' } });
+        await waitFor(() => expect(to.validity.valid).toBe(false));
+
+        api.hidePopupMenu();
+        await asyncSetTimeout(0);
+
+        // The floating filter writes a one-input option, so the abandoned range is no longer the condition
+        // being applied and the message it left cannot hold the new value back.
+        await FloatingFilterHarness.get(api, 'gold').setValue('8');
+        await waitFor(() =>
+            expect(api.getColumnFilterModel('gold')).toEqual({ filterType: 'number', type: 'equals', filter: 8 })
+        );
+        await new GridRows(api, 'the floating filter applies over an abandoned range').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 gold:8
+        `);
+    });
+
+    // The sibling above leaves the message on `to`, which the floating filter clears along with that input.
+    // `from` is the end it writes to, so a message there is the one that would otherwise survive.
+    test('a floating filter applies over a range message left on the from input', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'gold',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                    suppressFloatingFilterButton: true,
+                    filterParams: { debounceMs: 0 },
+                },
+            ],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 10 }],
+        });
+        await asyncSetTimeout(0);
+
+        const harness = await ColumnFilterHarness.open(api, 'gold');
+        await harness.selectOperator('Between');
+        const [from, to] = harness.inputs('number', 0);
+        // `from` last, so it is the end the out-of-order message lands on.
+        fireEvent.input(to, { target: { value: '5' } });
+        fireEvent.input(from, { target: { value: '10' } });
+        await waitFor(() => expect(from.validity.valid).toBe(false));
+
+        api.hidePopupMenu();
+        await asyncSetTimeout(0);
+
+        await FloatingFilterHarness.get(api, 'gold').setValue('8');
+        await waitFor(() =>
+            expect(api.getColumnFilterModel('gold')).toEqual({ filterType: 'number', type: 'equals', filter: 8 })
+        );
+        await new GridRows(api, 'the floating filter applies over a message left on from').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 gold:8
+        `);
+    });
+
+    test('a model with fewer conditions drops the extra ones even while another holds an error', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'gold', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+            rowData: [{ gold: 2 }, { gold: 8 }, { gold: 10 }],
+        });
+        await asyncSetTimeout(0);
+
+        const harness = await ColumnFilterHarness.open(api, 'gold');
+        await harness.selectOperator('Equals');
+        fireEvent.input(harness.inputs('number', 0)[0], { target: { value: '8' } });
+        await harness.selectOperator('Between', 1);
+        // Length first, so a pair that lost an input fails as that rather than as a crash.
+        expect(harness.inputs('number', 1)).toHaveLength(2);
+        const [from, to] = harness.inputs('number', 1);
+        fireEvent.input(from, { target: { value: '10' } });
+        fireEvent.input(to, { target: { value: '5' } });
+        await waitFor(() => expect(to.validity.valid).toBe(false));
+
+        await api.setColumnFilterModel('gold', { filterType: 'number', type: 'equals', filter: 10 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The error belongs to a condition the model replaced, so it is not the user's half-finished edit.
+        await new FilterDom(api, 'one condition from the model', { colId: 'gold' }).checkFilterDom(`
+            COLUMN FILTER
+            operator: "Equals"
+            input: "10"
+            AND
+            operator: "Equals"
+            input: "" ⟨Filter...⟩
+            model:
+              filterType: "number"
+              type: "equals"
+              filter: 10
+        `);
+        // Named rather than counted: the `equals 8` the test started from also leaves one row.
+        await new GridRows(api, 'the model from the API replaced the edited conditions').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 gold:10
+        `);
     });
 });

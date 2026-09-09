@@ -1,3 +1,4 @@
+import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -11,7 +12,6 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
 import { GROUP_ROW_DATA } from './group-data';
 import { GridActions } from './utils';
 
@@ -110,22 +110,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test('Clicking two rows selects only the last clicked row', async () => {
                 const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Clicking two rows selects only the last clicked row setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Clicking two rows selects only the last clicked row setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.clickRowByIndex(2);
                 actions.clickRowByIndex(5);
@@ -145,24 +129,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test("SHIFT-click doesn't select multiple rows in single row selection mode", async () => {
                 const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(
-                    api,
-                    `SHIFT-click doesn't select multiple rows in single row selection mode setup`
-                ).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `SHIFT-click doesn't select multiple rows in single row selection mode setup`)
-                    .check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                 actions.clickRowByIndex(2);
                 actions.clickRowByIndex(5, { shiftKey: true });
@@ -185,22 +151,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test("CTRL-click doesn't select multiple rows in single row selection mode", async () => {
                 const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `CTRL-click doesn't select multiple rows in single row selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `CTRL-click doesn't select multiple rows in single row selection mode setup`)
-                    .check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                 actions.clickRowByIndex(2);
                 actions.clickRowByIndex(5, { metaKey: true });
@@ -228,24 +178,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'single',
                     suppressRowClickSelection: true,
                 });
-                await new GridColumns(
-                    api,
-                    `suppressRowClickSelection prevents row from being selected when clicked setup`
-                ).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `suppressRowClickSelection prevents row from being selected when clicked setup`)
-                    .check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                 actions.clickRowByIndex(2);
 
@@ -272,10 +204,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'single',
                     isRowSelectable: (node) => node.data?.sport !== 'football',
                 });
-                await new GridColumns(api, `un-selectable row cannot be selected setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF 🚫 id:0 sport:"football"
@@ -310,20 +238,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     isRowSelectable: (node) => node.data?.sport !== 'football',
                 });
-                await new GridColumns(api, `un-selectable row cannot be selected setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF 🚫 id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.clickRowByIndex(0);
                 assertSelectedRowsByIndex([], api);
@@ -355,24 +269,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     suppressRowClickSelection: true,
                 });
-                await new GridColumns(
-                    api,
-                    `suppressRowClickSelection prevents clicks from clearing selection state setup`
-                ).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `suppressRowClickSelection prevents clicks from clearing selection state setup`)
-                    .check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                 // Select two rows by toggling checkboxes
                 actions.selectRowsByIndex([2, 3], false);
@@ -402,20 +298,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowData,
                     rowSelection: 'multiple',
                 });
-                await new GridColumns(api, `row-click interaction with multiple selected rows setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `row-click interaction with multiple selected rows setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 // Select two rows by toggling checkboxes
                 actions.selectRowsByIndex([2, 3], false);
@@ -439,20 +321,6 @@ describe('Row Selection Legacy Grid Options', () => {
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click selects multiple rows', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `CTRL-click and CMD-click selects multiple rows setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `CTRL-click and CMD-click selects multiple rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.clickRowByIndex(2);
                     actions.clickRowByIndex(5, { metaKey: true });
@@ -473,22 +341,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('Single click after multiple selection clears previous selection', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `Single click after multiple selection clears previous selection setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `Single click after multiple selection clears previous selection setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.selectRowsByIndex([1, 3, 5], true);
 
@@ -512,20 +364,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('SHIFT-click selects range of rows', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `SHIFT-click selects range of rows setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `SHIFT-click selects range of rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.clickRowByIndex(2);
                     actions.clickRowByIndex(5, { shiftKey: true });
@@ -545,22 +383,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('SHIFT-click extends range downwards from from last selected row', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `SHIFT-click extends range downwards from from last selected row setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `SHIFT-click extends range downwards from from last selected row setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.selectRowsByIndex([1, 3], true);
 
@@ -584,22 +406,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('SHIFT-click extends range upwards from from last selected row', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `SHIFT-click extends range upwards from from last selected row setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `SHIFT-click extends range upwards from from last selected row setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.selectRowsByIndex([2, 4], true);
 
@@ -621,23 +427,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('SHIFT-click on un-selected table selects only clicked row', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `SHIFT-click on un-selected table selects only clicked row setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `SHIFT-click on un-selected table selects only clicked row setup`).check(
-                        `
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `
-                    );
 
                     actions.clickRowByIndex(4, { shiftKey: true });
                     assertSelectedRowsByIndex([4], api);
@@ -659,21 +448,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('Range selection is preserved on CTRL-click and CMD-click', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `Range selection is preserved on CTRL-click and CMD-click setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `Range selection is preserved on CTRL-click and CMD-click setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.clickRowByIndex(1);
                     actions.clickRowByIndex(3, { shiftKey: true });
@@ -696,22 +470,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('Range members can be un-selected with CTRL-click or CMD-click', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `Range members can be un-selected with CTRL-click or CMD-click setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `Range members can be un-selected with CTRL-click or CMD-click setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.clickRowByIndex(1);
                     actions.clickRowByIndex(4, { shiftKey: true });
@@ -737,22 +495,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('Range is extended downwards from selection root', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `Range is extended downwards from selection root setup`).checkColumns(
-                        `
-                            CENTER
-                            └── sport "Sport" width:200
-                        `
-                    );
-                    await new GridRows(api, `Range is extended downwards from selection root setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.clickRowByIndex(2);
                     actions.clickRowByIndex(4, { shiftKey: true });
@@ -774,20 +516,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('Range is extended upwards from selection root', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `Range is extended upwards from selection root setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Range is extended upwards from selection root setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.clickRowByIndex(6);
                     actions.clickRowByIndex(4, { shiftKey: true });
@@ -809,20 +537,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 test('Range can be inverted', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                    await new GridColumns(api, `Range can be inverted setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Range can be inverted setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.clickRowByIndex(4);
                     actions.clickRowByIndex(6, { shiftKey: true });
@@ -852,20 +566,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     rowMultiSelectWithClick: true,
                 });
-                await new GridColumns(api, `Select multiple rows without modifier keys setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Select multiple rows without modifier keys setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.clickRowByIndex(2);
                 actions.clickRowByIndex(5);
@@ -891,20 +591,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     rowMultiSelectWithClick: true,
                 });
-                await new GridColumns(api, `De-select row with click setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `De-select row with click setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.selectRowsByIndex([1, 2, 3], true);
 
@@ -931,20 +617,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowData,
                     rowSelection: 'multiple',
                 });
-                await new GridColumns(api, `Checkbox can be toggled on and off setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Checkbox can be toggled on and off setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.toggleCheckboxByIndex(1);
                 assertSelectedRowsByIndex([1], api);
@@ -969,26 +641,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowData,
                     rowSelection: 'multiple',
                 });
-                await new GridColumns(
-                    api,
-                    `Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick setup`
-                ).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(
-                    api,
-                    `Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick setup`
-                ).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.toggleCheckboxByIndex(1);
                 assertSelectedRowsByIndex([1], api);
@@ -1020,26 +672,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowData,
                     rowSelection: 'multiple',
                 });
-                await new GridColumns(
-                    api,
-                    `Clicking a row still selects it when _suppressRowClickSelection_ is false setup`
-                ).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(
-                    api,
-                    `Clicking a row still selects it when _suppressRowClickSelection_ is false setup`
-                ).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 // click, not toggle
                 actions.clickRowByIndex(1);
@@ -1074,22 +706,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     suppressRowClickSelection: true,
                 });
-                await new GridColumns(api, `Clicking a row does nothing when _suppressRowClickSelection_ is true setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Clicking a row does nothing when _suppressRowClickSelection_ is true setup`)
-                    .check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                 // click, not toggle
                 actions.clickRowByIndex(1);
@@ -1120,10 +736,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     isRowSelectable: (node) => node.data?.sport !== 'golf',
                 });
-                await new GridColumns(api, `Un-selectable checkboxes cannot be toggled setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
                 await new GridRows(api, `Un-selectable checkboxes cannot be toggled setup`).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF id:0 sport:"football"
@@ -1160,26 +772,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(
-                        api,
-                        `CTRL-click and CMD-click does not affect ability to select multiple rows setup`
-                    ).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(
-                        api,
-                        `CTRL-click and CMD-click does not affect ability to select multiple rows setup`
-                    ).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(2);
                     actions.toggleCheckboxByIndex(5, { metaKey: true });
@@ -1207,20 +799,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `SHIFT-click selects range of rows setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `SHIFT-click selects range of rows setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(2);
                     actions.toggleCheckboxByIndex(5, { shiftKey: true });
@@ -1244,22 +822,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `SHIFT-click extends range downwards from from last selected row setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `SHIFT-click extends range downwards from from last selected row setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.selectRowsByIndex([1, 3], true);
 
@@ -1287,22 +849,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `SHIFT-click extends range upwards from from last selected row setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `SHIFT-click extends range upwards from from last selected row setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.selectRowsByIndex([2, 4], true);
 
@@ -1328,23 +874,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `SHIFT-click on un-selected table selects only clicked row setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `SHIFT-click on un-selected table selects only clicked row setup`).check(
-                        `
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `
-                    );
 
                     actions.toggleCheckboxByIndex(4, { shiftKey: true });
                     assertSelectedRowsByIndex([4], api);
@@ -1370,21 +899,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range selection is preserved on CTRL-click and CMD-click setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `Range selection is preserved on CTRL-click and CMD-click setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(1);
                     actions.toggleCheckboxByIndex(3, { shiftKey: true });
@@ -1411,22 +925,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range selection is preserved on checkbox toggle setup`).checkColumns(
-                        `
-                            CENTER
-                            └── sport "Sport" width:200
-                        `
-                    );
-                    await new GridRows(api, `Range selection is preserved on checkbox toggle setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(1);
                     actions.toggleCheckboxByIndex(3, { shiftKey: true });
@@ -1452,22 +950,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range members can be un-selected with CTRL-click or CMD-click setup`)
-                        .checkColumns(`
-                            CENTER
-                            └── sport "Sport" width:200
-                        `);
-                    await new GridRows(api, `Range members can be un-selected with CTRL-click or CMD-click setup`)
-                        .check(`
-                            ROOT id:ROOT_NODE_ID
-                            ├── LEAF id:0 sport:"football"
-                            ├── LEAF id:1 sport:"rugby"
-                            ├── LEAF id:2 sport:"tennis"
-                            ├── LEAF id:3 sport:"cricket"
-                            ├── LEAF id:4 sport:"golf"
-                            ├── LEAF id:5 sport:"swimming"
-                            └── LEAF id:6 sport:"rowing"
-                        `);
 
                     actions.toggleCheckboxByIndex(1);
                     actions.toggleCheckboxByIndex(4, { shiftKey: true });
@@ -1497,20 +979,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range members can be un-selected with toggle setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Range members can be un-selected with toggle setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(1);
                     actions.toggleCheckboxByIndex(4, { shiftKey: true });
@@ -1536,22 +1004,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range is extended downwards from selection root setup`).checkColumns(
-                        `
-                            CENTER
-                            └── sport "Sport" width:200
-                        `
-                    );
-                    await new GridRows(api, `Range is extended downwards from selection root setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(2);
                     actions.toggleCheckboxByIndex(4, { shiftKey: true });
@@ -1577,20 +1029,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range is extended upwards from selection root setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Range is extended upwards from selection root setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(6);
                     actions.toggleCheckboxByIndex(4, { shiftKey: true });
@@ -1616,20 +1054,6 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowData,
                         rowSelection: 'multiple',
                     });
-                    await new GridColumns(api, `Range can be inverted setup`).checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                    await new GridRows(api, `Range can be inverted setup`).check(`
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `);
 
                     actions.toggleCheckboxByIndex(4);
                     actions.toggleCheckboxByIndex(6, { shiftKey: true });
@@ -1658,20 +1082,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowData,
                     rowSelection: 'multiple',
                 });
-                await new GridColumns(api, `can be used to select and deselect all rows setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `can be used to select and deselect all rows setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.toggleHeaderCheckboxByIndex(0);
                 assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
@@ -1698,20 +1108,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     pagination: true,
                     paginationPageSize: 5,
                 });
-                await new GridColumns(api, `can select multiple pages of data setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `can select multiple pages of data setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.toggleHeaderCheckboxByIndex(0);
                 assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
@@ -1742,20 +1138,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     pagination: true,
                     paginationPageSize: 5,
                 });
-                await new GridColumns(api, `can select only current page of data setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `can select only current page of data setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.toggleHeaderCheckboxByIndex(0);
                 assertSelectedRowsByIndex([0, 1, 2, 3, 4], api);
@@ -1786,20 +1168,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     pagination: true,
                     paginationPageSize: 5,
                 });
-                await new GridColumns(api, `can select only filtered data setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `can select only filtered data setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.setGridOption('quickFilterText', 'ing');
                 await new GridColumns(api, `can select only filtered data after setGridOption quickFilterText`)
@@ -1847,21 +1215,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowData,
                     rowSelection: 'multiple',
                 });
-                await new GridColumns(api, `indeterminate selection state transitions to select all setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `indeterminate selection state transitions to select all setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.selectRowsByIndex([3], true);
 
@@ -1891,20 +1244,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                     isRowSelectable: (node) => node.data?.sport !== 'football',
                 });
-                await new GridColumns(api, `un-selectable rows are not part of the selection setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `un-selectable rows are not part of the selection setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF 🚫 id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 actions.toggleHeaderCheckboxByIndex(0);
                 assertSelectedRowsByIndex([1, 2, 3, 4, 5, 6], api);
@@ -2260,16 +1599,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     CENTER
                     └── sport "Sport" width:200
                 `);
-                await new GridRows(api, `Select single row in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[3]];
@@ -2293,20 +1622,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test('Select single row in multiple selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                await new GridColumns(api, `Select single row in multiple selection mode setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Select single row in multiple selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[3]];
@@ -2329,22 +1644,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test('Cannot select multiple rows in single selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Cannot select multiple rows in single selection mode setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Cannot select multiple rows in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[0], nodes[3], nodes[1]];
@@ -2368,22 +1667,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test('Can select multiple rows in multiple selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                await new GridColumns(api, `Can select multiple rows in multiple selection mode setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Can select multiple rows in multiple selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[5], nodes[4], nodes[2]];
@@ -2407,20 +1690,6 @@ describe('Row Selection Legacy Grid Options', () => {
         describe('selectAll', () => {
             test('Can select all rows in single selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Can select all rows in single selection mode setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Can select all rows in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAll();
 
@@ -2443,20 +1712,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test('Can select all rows in multiple selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
-                await new GridColumns(api, `Can select all rows in multiple selection mode setup`).checkColumns(`
-                    CENTER
-                    └── sport "Sport" width:200
-                `);
-                await new GridRows(api, `Can select all rows in multiple selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAll();
 
@@ -2486,21 +1741,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     pagination: true,
                     paginationPageSize: 5,
                 });
-                await new GridColumns(api, `Can select all rows on current page in single selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Can select all rows on current page in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAllOnCurrentPage();
 
@@ -2527,23 +1767,6 @@ describe('Row Selection Legacy Grid Options', () => {
                     pagination: true,
                     paginationPageSize: 5,
                 });
-                await new GridColumns(api, `Can deselect only rows on current page in single selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Can deselect only rows on current page in single selection mode setup`).check(
-                    `
-                        ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
-                    `
-                );
 
                 api.selectAll();
                 api.deselectAllOnCurrentPage();
@@ -2566,22 +1789,6 @@ describe('Row Selection Legacy Grid Options', () => {
         describe('selectAllFiltered', () => {
             test('Can select all filtered rows in single selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Can select all filtered rows in single selection mode setup`).checkColumns(
-                    `
-                        CENTER
-                        └── sport "Sport" width:200
-                    `
-                );
-                await new GridRows(api, `Can select all filtered rows in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.setGridOption('quickFilterText', 'ing');
                 await new GridColumns(
@@ -2608,21 +1815,6 @@ describe('Row Selection Legacy Grid Options', () => {
 
             test('Can deselect filtered rows only in single selection mode', async () => {
                 const [api] = createGrid({ columnDefs, rowData, rowSelection: 'single' });
-                await new GridColumns(api, `Can deselect filtered rows only in single selection mode setup`)
-                    .checkColumns(`
-                        CENTER
-                        └── sport "Sport" width:200
-                    `);
-                await new GridRows(api, `Can deselect filtered rows only in single selection mode setup`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
 
                 api.selectAll();
 

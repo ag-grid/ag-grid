@@ -11,8 +11,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
-
 /**
  * AG-17868 React coverage: the fix lives in the shared SpannedCellCtrl, so it must also hold under
  * React's async mount/reconciliation, not just the vanilla view layer. Asserted on the rendered
@@ -46,7 +44,6 @@ function hasRegularGroupCell(value: string): boolean {
 describe('row spanning - rowData replacement (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, CellSpanModule, RowApiModule, ValidationModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(() => {

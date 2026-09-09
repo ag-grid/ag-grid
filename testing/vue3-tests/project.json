@@ -7,9 +7,8 @@
     "setup": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium"],
-        "parallel": false,
-        "cwd": "testing/vue3-tests"
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium"],
+        "parallel": false
       }
     },
     "dev": {

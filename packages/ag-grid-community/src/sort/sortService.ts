@@ -37,7 +37,8 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
-        this.setSortForColumn(column, this.getNextSortDirection(column), multiSort, source);
+        const { sortDef, index } = this.getNextSortDefAndIndex(column, column.getSortDef(), column.sortCycleIndex);
+        this.setSortForColumn(column, sortDef, multiSort, source, index);
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
@@ -46,7 +47,13 @@ export class SortService extends BeanStub implements NamedBean {
         this.progressSort(column, multiSort, 'uiColumnSorted');
     }
 
-    public setSortForColumn(column: AgColumn, sortDef: SortDef, multiSort: boolean, source: ColumnEventType): void {
+    public setSortForColumn(
+        column: AgColumn,
+        sortDef: SortDef,
+        multiSort: boolean,
+        source: ColumnEventType,
+        cycleIndex?: number
+    ): void {
         const { gos, showRowGroupCols } = this.beans;
         const coupled = _isColumnsSortingCoupledToGroup(gos);
 
@@ -61,8 +68,9 @@ export class SortService extends BeanStub implements NamedBean {
             }
         }
 
+        // Only the clicked column (always first) carries the cycle position; coupled sources share the def.
         for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
-            this.setColSort(columnsToUpdate[i], sortDef, source);
+            this.setColSort(columnsToUpdate[i], sortDef, source, i === 0 ? cycleIndex : undefined);
         }
 
         const displayCol = coupled ? column.showRowGroupCol : null;
@@ -162,20 +170,35 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public getNextSortDirection(column: AgColumn, currentSort?: SortDef | SortDirection | null): SortDef {
+        const useCycle = currentSort === undefined;
+        const currentSortDef = useCycle ? column.getSortDef() : getSortDefFromInput(currentSort);
+        // Without an explicit current sort this must agree with `progressSort`, so honour the cycle position.
+        return this.getNextSortDefAndIndex(column, currentSortDef, useCycle ? column.sortCycleIndex : 0).sortDef;
+    }
+
+    /** Next `sortingOrder` entry and its index. The scan starts at `cachedIndex` when that is a valid
+     *  position, so a repeated entry resolves to the one the last click landed on rather than always to
+     *  its first occurrence. */
+    private getNextSortDefAndIndex(
+        column: AgColumn,
+        currentSortDef: SortDef | null,
+        cachedIndex = 0
+    ): { sortDef: SortDef; index: number } {
         const sortingOrder = getSortingOrder(this.gos, column);
         const len = sortingOrder.length;
         if (len === 0) {
-            return getSortDefFromInput();
+            return { sortDef: getSortDefFromInput(), index: 0 };
         }
-        const currentSortDef = currentSort === undefined ? column.getSortDef() : getSortDefFromInput(currentSort);
-        let next = 0;
-        for (let i = 0; i < len; ++i) {
+        let current = -1;
+        for (let i = cachedIndex < len ? cachedIndex : 0; i < len; ++i) {
             if (areSortDefsEqual(sortingOrder[i], currentSortDef)) {
-                next = i + 1 >= len ? 0 : i + 1;
+                current = i;
                 break;
             }
         }
-        return getSortDefFromInput(sortingOrder[next]);
+        // No match, or the last entry -> restart at the first entry.
+        const index = current === -1 || current + 1 >= len ? 0 : current + 1;
+        return { sortDef: getSortDefFromInput(sortingOrder[index]), index };
     }
 
     private getSortedCols(): AgColumn[] {
@@ -344,8 +367,10 @@ export class SortService extends BeanStub implements NamedBean {
         }
     }
 
-    private setColSort(column: AgColumn, sortDef: SortDef, source: ColumnEventType): void {
+    private setColSort(column: AgColumn, sortDef: SortDef, source: ColumnEventType, cycleIndex?: number): void {
         const prevSortDef = column.getSortDef();
+        // Stamped before the events below, so a re-entrant sort write during dispatch clears it and wins.
+        column.sortCycleIndex = cycleIndex;
         if (!areSortDefsEqual(prevSortDef, sortDef)) {
             // Presence flip changes membership (drop all); direction/type-only keeps order (drop opts).
             if (!!prevSortDef?.direction !== !!sortDef.direction) {

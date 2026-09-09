@@ -4,35 +4,28 @@
   "sourceRoot": "testing/accessibility",
   "projectType": "application",
   "targets": {
-    "setup": {
+    "setup:playwright": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "npx playwright install --with-deps chromium",
-          "npm run download-examples",
-          "mkdir -p e2e",
-          "npm run generate-tests"
-        ],
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium"],
+        "parallel": false
+      }
+    },
+    "setup": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["setup:playwright"],
+      "options": {
+        "commands": ["npm run download-examples", "mkdir -p e2e", "npm run generate-tests"],
         "parallel": false,
         "cwd": "testing/accessibility"
       },
       "configurations": {
         "production": {
-          "commands": [
-            "npx playwright install --with-deps chromium",
-            "npm run download-examples-prod",
-            "mkdir -p e2e",
-            "npm run generate-tests"
-          ]
+          "commands": ["npm run download-examples-prod", "mkdir -p e2e", "npm run generate-tests"]
         },
         "staging": {},
         "dev": {
-          "commands": [
-            "npx playwright install --with-deps chromium",
-            "npm run download-examples-local",
-            "mkdir -p e2e",
-            "npm run generate-tests"
-          ]
+          "commands": ["npm run download-examples-local", "mkdir -p e2e", "npm run generate-tests"]
         }
       }
     },

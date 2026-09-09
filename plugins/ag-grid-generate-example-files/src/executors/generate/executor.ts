@@ -3,7 +3,7 @@ import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { getGridOptionsType } from '../../../gridOptionsTypes/buildGridOptionsType';
+import { readGridOptionsType } from '../../../gridOptionsTypes/gridOptionsTypesFile';
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
@@ -51,7 +51,7 @@ export type ExecutorOptions = {
 export default async function (
     options: ExecutorOptions,
     _ctx: ExecutorContext,
-    gridOptionsTypes = getGridOptionsType()
+    gridOptionsTypes = readGridOptionsType()
 ) {
     try {
         await generateFiles(options, gridOptionsTypes);
@@ -177,7 +177,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             throw new Error(`No entry file config generator for '${internalFramework}'`);
         }
 
-        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
         const scriptNonce = getScriptNonce(htmlFiles)!;
@@ -231,6 +231,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     entryFile,
                     indexHtml,
                     isEnterprise,
+                    isDev,
                     bindings,
                     typedBindings,
                     componentScriptFiles,
@@ -238,7 +239,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     styleFiles,
                     ignoreDarkMode: false,
                     transformEntryFile,
-                    isDev,
                     exampleConfig: frameworkExampleConfig,
                 });
                 files = result.files;
@@ -256,10 +256,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 provideFrameworkFiles,
                 mergedStyleFiles,
                 transformEntryFile,
-                isDev,
                 isIntegratedCharts,
                 mainFileName,
-                folderPath
+                folderPath,
+                isDev
             );
         }
 
@@ -353,10 +353,10 @@ async function processProvidedFiles(
     provideFrameworkFiles: any,
     mergedStyleFiles: { [x: string]: string },
     transformEntryFile: TransformEntryFile,
-    isDev: boolean,
     isIntegratedCharts: boolean,
     mainFileName: string,
-    folderPath: string
+    folderPath: string,
+    isDev: boolean
 ) {
     if (internalFramework === 'vanilla') {
         // NOTE: Vanilla provided examples, we need to include the entryfile
@@ -394,10 +394,11 @@ async function processProvidedFiles(
             delete provideFrameworkFiles[fileName];
         }
 
-        if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0 && !writeToFileName.endsWith('.css')) {
+        if (provideFrameworkFiles[writeToFileName]?.length > 0 && !writeToFileName.endsWith('.css')) {
             provideFrameworkFiles[writeToFileName] = await formatFile(
                 internalFramework,
-                provideFrameworkFiles[writeToFileName]
+                provideFrameworkFiles[writeToFileName],
+                isDev
             );
         }
 

@@ -1,6 +1,14 @@
 import { getByTestId } from '@testing-library/dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    initPointerEventPolyfill,
+    waitForInput,
+} from 'ag-test-utils';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -14,15 +22,6 @@ import {
 } from 'ag-grid-community';
 import type { GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    initPointerEventPolyfill,
-    waitForInput,
-} from '../test-utils';
 
 const ROW_COUNT = 200;
 const COL_COUNT = 50;
@@ -82,12 +81,12 @@ describe('Cell Editing: full-row virtualization', () => {
             onRowEditingStopped,
             onCellValueChanged,
             // Must explicitly enable virtualisation — TestGridsManager disables it by default
-            // because jsdom has no layout engine. The bug only manifests when row/column
+            // because happy-dom has no layout engine. The bug only manifests when row/column
             // recycling is active.
             suppressRowVirtualisation: false,
             suppressColumnVirtualisation: false,
             // Make scroll-triggered row redraws synchronous so virtualisation fires
-            // immediately when scrollTop/scrollLeft change in jsdom.
+            // immediately when scrollTop/scrollLeft change without layout.
             suppressAnimationFrame: true,
         });
         await new GridColumns(api, `onRowEditingStopped fires exactly once after scrolling during full-row edit setup`)
@@ -622,7 +621,7 @@ describe('Cell Editing: full-row virtualization', () => {
             ├── LEAF id:198 field1:"r199-c1" field2:"r199-c2" field3:"r199-c3" field4:"r199-c4" field5:"r199-c5" field6:"r199-c6" field7:"r199-c7" field8:"r199-c8" field9:"r199-c9" field10:"r199-c10" field11:"r199-c11" field12:"r199-c12" field13:"r199-c13" field14:"r199-c14" field15:"r199-c15" field16:"r199-c16" field17:"r199-c17" field18:"r199-c18" field19:"r199-c19" field20:"r199-c20" field21:"r199-c21" field22:"r199-c22" field23:"r199-c23" field24:"r199-c24" field25:"r199-c25" field26:"r199-c26" field27:"r199-c27" field28:"r199-c28" field29:"r199-c29" field30:"r199-c30" field31:"r199-c31" field32:"r199-c32" field33:"r199-c33" field34:"r199-c34" field35:"r199-c35" field36:"r199-c36" field37:"r199-c37" field38:"r199-c38" field39:"r199-c39" field40:"r199-c40" field41:"r199-c41" field42:"r199-c42" field43:"r199-c43" field44:"r199-c44" field45:"r199-c45" field46:"r199-c46" field47:"r199-c47" field48:"r199-c48" field49:"r199-c49" field50:"r199-c50"
             └── LEAF id:199 field1:"r200-c1" field2:"r200-c2" field3:"r200-c3" field4:"r200-c4" field5:"r200-c5" field6:"r200-c6" field7:"r200-c7" field8:"r200-c8" field9:"r200-c9" field10:"r200-c10" field11:"r200-c11" field12:"r200-c12" field13:"r200-c13" field14:"r200-c14" field15:"r200-c15" field16:"r200-c16" field17:"r200-c17" field18:"r200-c18" field19:"r200-c19" field20:"r200-c20" field21:"r200-c21" field22:"r200-c22" field23:"r200-c23" field24:"r200-c24" field25:"r200-c25" field26:"r200-c26" field27:"r200-c27" field28:"r200-c28" field29:"r200-c29" field30:"r200-c30" field31:"r200-c31" field32:"r200-c32" field33:"r200-c33" field34:"r200-c34" field35:"r200-c35" field36:"r200-c36" field37:"r200-c37" field38:"r200-c38" field39:"r200-c39" field40:"r200-c40" field41:"r200-c41" field42:"r200-c42" field43:"r200-c43" field44:"r200-c44" field45:"r200-c45" field46:"r200-c46" field47:"r200-c47" field48:"r200-c48" field49:"r200-c49" field50:"r200-c50"
         `);
-    }, 15_000);
+    });
 });
 
 describe('Cell Editing: full-row virtualization (React)', () => {
@@ -725,5 +724,5 @@ describe('Cell Editing: full-row virtualization (React)', () => {
 
         expect(onRowEditingStopped).toHaveBeenCalledTimes(1);
         expect(onRowEditingStopped.mock.calls[0][0].rowIndex).toBe(0);
-    }, 15_000);
+    });
 });

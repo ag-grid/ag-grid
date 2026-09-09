@@ -75,6 +75,8 @@ The following example demonstrates searching when there are accented characters.
 - The Athlete column's Set filter is supplied a text formatter via `filterParams.textFormatter` to ignore accents.
 - Searching using `'bjorn'` will return all values containing `'björn'`.
 
+The formatter is also passed the grid `api` and `context` as a second argument, along with the `column` and `colDef` it is working on. One callback set on `defaultColDef.filterParams` can therefore serve every column it applies to.
+
 {% gridExampleRunner title="Mini Filter Text Formatter" name="mini-filter-text-formatter"  exampleHeight=565 /%}
 
 ## Enabling Case-Sensitive Searches
@@ -117,6 +119,8 @@ The example below shows this text being customised:
 - `noMatches` is set so that when no matches are found for the Mini Filter search, the message displays `'No matches could be found.'` instead of `'No matches.'`
 
 {% gridExampleRunner title="Text Customisation" name="text-customisation" /%}
+
+The Mini Filter input shares the grid-wide input behaviour (clear button, browser autocomplete) described in [Input Fields](./input-fields/).
 
 ## Hiding the Mini Filter
 

@@ -1,7 +1,3 @@
-import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
-import type { GridOptions, RowNode } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -9,7 +5,11 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     getRowHtmlElement,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
+import type { GridOptions, RowNode } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 const gridsManager = new TestGridsManager({
     modules: [ClientSideRowModelModule, RowDragModule, RowGroupingModule],

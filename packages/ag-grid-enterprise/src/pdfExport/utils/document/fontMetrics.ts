@@ -1,3 +1,5 @@
+import { _hasOwn } from 'ag-stack';
+
 import type { PdfBuiltInFontFamily, PdfFontFamily } from 'ag-grid-community';
 
 const FIRST_PRINTABLE_ASCII = 32;
@@ -158,9 +160,7 @@ function getFontWidths(fontFamily: PdfBuiltInFontFamily): number[] {
 }
 
 function resolveBase14FontFamily(fontFamily: PdfFontFamily): PdfBuiltInFontFamily {
-    return Object.prototype.hasOwnProperty.call(FONT_VERTICAL_METRICS, fontFamily)
-        ? (fontFamily as PdfBuiltInFontFamily)
-        : 'Helvetica';
+    return _hasOwn(FONT_VERTICAL_METRICS, fontFamily) ? (fontFamily as PdfBuiltInFontFamily) : 'Helvetica';
 }
 
 function resolveBaseCharacter(char: string): string {

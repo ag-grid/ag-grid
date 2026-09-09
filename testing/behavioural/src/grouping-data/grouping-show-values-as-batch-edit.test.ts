@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
+import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, NumberEditorModule } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 describe('showValuesAs with batch editing', () => {
     const gridsManager = new TestGridsManager({

@@ -1,10 +1,11 @@
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
+
 import type { GridApi, GridOptions, IViewportDatasource, IViewportDatasourceParams } from 'ag-grid-community';
 import { RowSelectionModule, ScrollApiModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../selection/utils';
-import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 const PAGE = 10;
 const BUFFER = 5;
@@ -18,7 +19,7 @@ describe('viewport row model', () => {
 
     beforeAll(() => {
         // The viewport model only requests/keeps the rendered window, so tests must run against a
-        // real, virtualised layout. jsdom reports 0-sized elements by default, which would render
+        // real, virtualised layout. happy-dom reports 0-sized elements by default, which would render
         // every row; opt into the mocked dimensions so scrolling produces genuine viewport changes.
         mockGridLayout.useRealOffsetDimensions = true;
     });

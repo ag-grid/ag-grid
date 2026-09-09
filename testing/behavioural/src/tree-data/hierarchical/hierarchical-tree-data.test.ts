@@ -1,9 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -11,7 +6,11 @@ import {
     asyncSetTimeout,
     cachedJSONObjects,
     setRowDataChecked,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid hierarchical tree data', () => {
     const gridsManager = new TestGridsManager({

@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 // Characterizes sort behaviour when sorting BY A PIVOT RESULT COLUMN in pivot mode.
 // UX contract: the visible group rows reorder by that pivot column's aggregate.

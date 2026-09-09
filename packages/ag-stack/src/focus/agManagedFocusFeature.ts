@@ -4,7 +4,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _findNextFocusableElement } from '../utils/focus';
+import { FOCUS_MANAGED_CLASS, _findNextFocusableElement } from '../utils/focus';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ManagedFocusCallbacks {
@@ -14,9 +14,6 @@ export interface ManagedFocusCallbacks {
     onFocusIn?: (e: FocusEvent) => void;
     onFocusOut?: (e: FocusEvent) => void;
 }
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface StopPropagationCallbacks {
@@ -48,7 +45,11 @@ export class AgManagedFocusFeature<
                     return;
                 }
 
-                const nextRoot = _findNextFocusableElement(this.beans, this.eFocusable, false, e.shiftKey);
+                const nextRoot = _findNextFocusableElement({
+                    beans: this.beans,
+                    rootNode: this.eFocusable,
+                    backwards: e.shiftKey,
+                });
 
                 if (!nextRoot) {
                     return;

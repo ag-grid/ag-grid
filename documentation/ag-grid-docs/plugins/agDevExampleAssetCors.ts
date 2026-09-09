@@ -10,7 +10,7 @@ const FILES_PREFIX = `${FILES_BASE_PATH}/`;
  * `security.allowedDomains`. That is the right policy for pages, but it breaks
  * examples opened on an external host (Plunker, CodeSandbox):
  *
- *  - SystemJS fetches the library JS over XHR (a CORS request) so it sends
+ *  - The library JS is fetched as a module script (a CORS request) so it sends
  *    `Origin: https://run.plnkr.co`, matches the allow-list, and loads fine.
  *  - `import '…/styles/ag-grid.css'` is loaded with a `<link rel="stylesheet">`
  *    — a *no-cors* request that sends NO `Origin` header, so it can never match

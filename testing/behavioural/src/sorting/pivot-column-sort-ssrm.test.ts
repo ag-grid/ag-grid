@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { ColDef, GridApi, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -6,7 +7,6 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';
 import { getColumnOrder } from '../columns/column-test-utils';
-import { TestGridsManager, waitForNoLoadingRows } from '../test-utils';
 
 // AG-9664: interactive pivot column sorting must also work under the Server-Side Row Model.
 describe('SSRM: interactive pivot column sorting (pivotSort)', () => {

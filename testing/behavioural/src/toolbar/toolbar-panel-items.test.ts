@@ -1,3 +1,5 @@
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -12,8 +14,6 @@ import {
     RowGroupingPanelModule,
     ToolbarModule,
 } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
     const gridMgr = new TestGridsManager({

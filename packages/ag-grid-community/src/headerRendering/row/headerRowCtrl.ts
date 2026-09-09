@@ -121,6 +121,7 @@ export class HeaderRowCtrl extends BeanStub {
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
             gridSizeChanged: this.setWidth.bind(this),
+            gridViewportWidthChanged: this.setWidth.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
@@ -171,8 +172,7 @@ export class HeaderRowCtrl extends BeanStub {
         const { visibleCols } = this.beans;
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
         const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? visibleCols.totalWidth;
-        const eGridViewport = gridBodyCtrl?.eGridViewport;
-        const viewportWidth = eGridViewport ? eGridViewport.getBoundingClientRect().width : 0;
+        const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? 0;
 
         return Math.max(contentWidth, viewportWidth);
     }

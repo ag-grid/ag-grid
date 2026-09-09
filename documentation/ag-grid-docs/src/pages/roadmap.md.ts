@@ -1,5 +1,6 @@
 import { buildRoadmapMarkdown } from '@ag-website-shared/markdown-pages/buildRoadmapMarkdown';
 import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
+import { GRID_PRODUCT_NAME, gridSiteFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import roadmapData from '../../public/roadmap/roadmap.json';
@@ -14,8 +15,9 @@ export function GET() {
 
     const output = buildRoadmapMarkdown({
         roadmapData,
-        productName: 'AG Grid',
+        productName: GRID_PRODUCT_NAME,
         siteRoot: SITE_URL,
+        siteFrontmatter: gridSiteFrontmatter({ pageUrl: '/roadmap/', siteRoot: SITE_URL }),
         // The page is framework-agnostic; resolve its framework-prefixed links against a single
         // framework, matching the other markdown twins (homepage, license-pricing).
         resolveUrl: (url) => urlWithPrefix({ framework: 'javascript', url }),

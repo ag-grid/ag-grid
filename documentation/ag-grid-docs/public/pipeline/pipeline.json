@@ -17004,7 +17004,7 @@
         "status": "Backlog",
         "resolution": null,
         "features": ["Cell_Rendering"],
-        "moreInformation": "You can implement this using the guidance here:\nhttps://stackoverflow.com/questions/62364899/ag-grid-show-buttons-on-row-hover-like-in-gmail \nhttps://blog.ag-grid.com/build-email-client-with-ag-grid-like-gmail/",
+        "moreInformation": "You can implement this using the guidance here:\nhttps://stackoverflow.com/questions/62364899/ag-grid-show-buttons-on-row-hover-like-in-gmail \nhttps://www.ag-grid.com/blog/build-email-client-with-ag-grid-like-gmail/",
         "deprecationNotes": null,
         "breakingChangesNotes": null,
         "documentationUrl": null
@@ -20014,7 +20014,7 @@
         "status": "Backlog",
         "resolution": null,
         "features": ["PDF_Export"],
-        "moreInformation": "Until this is implemented please export AG Grid to PDF using a third-party library as demonstrated here (samples in all frameworks):\nhttps://blog.ag-grid.com/exporting-ag-grid-to-pdf/",
+        "moreInformation": "Until this is implemented please export AG Grid to PDF using a third-party library as demonstrated here (samples in all frameworks):\nhttps://www.ag-grid.com/blog/exporting-ag-grid-to-pdf/",
         "deprecationNotes": null,
         "breakingChangesNotes": null,
         "documentationUrl": null

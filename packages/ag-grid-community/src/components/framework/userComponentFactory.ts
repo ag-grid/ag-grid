@@ -117,7 +117,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         params: AgGridCommon<any, any>,
         mandatory = false
     ): UserCompDetails<TComp> | undefined {
-        const { name, cellRenderer } = type;
+        const { name, supportsJsFunction } = type;
 
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } =
             _getUserCompKeys(this.beans.frameworkOverrides, defObject, type, params);
@@ -147,7 +147,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         }
 
         // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
-        if (jsComp && cellRenderer && !doesImplementIComponent(jsComp)) {
+        if (jsComp && supportsJsFunction && !doesImplementIComponent(jsComp)) {
             jsComp = this.agCompUtils?.adaptFunction(type, jsComp);
         }
 

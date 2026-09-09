@@ -1,4 +1,5 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
@@ -10,8 +11,6 @@ import {
     RowApiModule,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError } from '../test-utils';
 
 const ROW_SELECTOR = '[row-id]';
 
@@ -29,7 +28,6 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
             RowApiModule,
             ColumnApiModule,
         ]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(async () => {

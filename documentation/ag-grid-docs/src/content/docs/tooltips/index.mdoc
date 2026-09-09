@@ -2,13 +2,36 @@
 title: "Tooltips"
 ---
 
-Tooltips can be set for Cells and Column Headers.
+Tooltips can be set for cells and column headers.
 
 {% gridExampleRunner title="Tooltips" name="tooltips" /%}
 
-The following [Column Definition](./column-definitions/) properties set Tooltips:
+The following [Column Definition](./column-definitions/) properties configure tooltips:
 
-{% apiDocumentation source="column-properties/properties.json" section="tooltips" names=["tooltipField", "tooltipValueGetter", "headerTooltip"] /%}
+{% apiDocumentation source="column-properties/properties.json" section="tooltips" names=["tooltip", "headerTooltip"] /%}
+
+Use `tooltip: true` for the common case where the tooltip should match the displayed cell value. This uses `valueFormatted` when present, otherwise `value`, regardless of whether the value came from `field` or `valueGetter`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'price', valueFormatter: priceFormatter, tooltip: true },
+        { field: 'status', tooltip: 'Current status' },
+        { field: 'athlete', tooltip: (params) => `Country: ${params.data?.country}` },
+        { field: 'internalId', tooltip: false },
+    ],
+};
+```
+
+`tooltip: false` disables cell tooltip content supplied by `tooltip`, `tooltipField`, or `tooltipValueGetter`. Tooltips supplied at runtime by a Cell Renderer using `setTooltip`, and grid-owned validation or formula error tooltips, remain available. These independent tooltip sources continue to use the column's `tooltipComponent` and `tooltipComponentParams` when configured.
+
+The same value forms are accepted by `headerTooltip`. With `headerTooltip: true`, the displayed header name is used. Setting `headerTooltip: false` does not disable a tooltip supplied at runtime by a custom Header Component using `setTooltip`.
+
+### Tooltip Callback
+
+Cell and header tooltip callbacks receive the same parameters. `value` is the underlying cell value or displayed header name, and `valueFormatted` contains the formatted value when available.
+
+{% interfaceDocumentation interfaceName="TooltipCallbackParams" /%}
 
 ## Tooltips for Truncated Text
 
@@ -42,26 +65,26 @@ Setting delays will have no effect if using Browser Tooltips as Browser Tooltips
 
 ## Blank Values
 
-Tooltips are not shown for the missing values `undefined`, `null` and `""` (empty String). To display tooltips for missing values, provide a `tooltipValueGetter` to return something that is not empty.
+Tooltips are not shown for the missing values `undefined`, `null` and `""` (empty string). To display a tooltip for a missing value, use a callback that returns non-empty content.
 
 In the example below:
 
 - The data has missing values `undefined`, `null` and `''` (empty String) as the first three rows.
-- Column A uses `tooltipField`, no tooltip is shown.
-- Column B uses `tooltipValueGetter` to return an object, tooltip is shown.
+- Column A uses `tooltip: true`, so no tooltip is shown for a missing displayed value.
+- Column B uses a `tooltip` callback to return fallback content, so a tooltip is shown.
 
 {% gridExampleRunner title="Blank Values" name="blank-values" /%}
 
 ## Row Groups
 
-When a column is grouped, the generated group column inherits the tooltip properties from the underlying column's [Column Definition](./column-definitions/): `tooltipField`, `tooltipValueGetter`, `tooltipComponent`, and `tooltipComponentParams`. This is consistent with how `valueFormatter` is inherited. With `groupDisplayType: 'multipleColumns'`, the group column header also inherits `headerTooltip`.
+When a column is grouped, the generated group column inherits `tooltip`, `tooltipComponent`, and `tooltipComponentParams` from the underlying column's [Column Definition](./column-definitions/). This is consistent with how `valueFormatter` is inherited. With `groupDisplayType: 'multipleColumns'`, the group column header also inherits `headerTooltip`.
 
-Cell tooltip properties set on `autoGroupColumnDef` (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only. `headerTooltip` still applies to the group column header.
+Cell tooltip properties set on `autoGroupColumnDef` (`tooltip` and `tooltipComponent`) apply to leaf rows only. `headerTooltip` still applies to the group column header.
 
 In the example below:
 
-- The Country and Year columns each define a `tooltipValueGetter`. Hover a group key to see the tooltip inherited from the underlying column.
-- `autoGroupColumnDef` defines a `tooltipValueGetter`. Hover a leaf row in the group column to see it.
+- The Country and Year columns each define a `tooltip` callback. Hover a group key to see the tooltip inherited from the underlying column.
+- `autoGroupColumnDef` defines a `tooltip` callback. Hover a leaf row in the group column to see it.
 
 {% gridExampleRunner title="Row Group Tooltip" name="rowgroups-tooltip" /%}
 
@@ -85,6 +108,10 @@ With `groupDisplayType: 'groupRows'`, full-width group rows inherit their toolti
 
 When a group row displays an aggregated value in a data column, hovering that cell shows a tooltip for the aggregated value, not the underlying row data.
 
+## Touch Devices
+
+On iOS and Android, press and hold a tooltip-enabled grid element to show its rich HTML tooltip. The tooltip opens as soon as the long press is recognised, without applying `tooltipShowDelay` a second time. Moving the touch before the long press completes cancels the gesture. Tap elsewhere to dismiss the tooltip. Grid gestures that already use the long press, such as the context menu and column menu, take precedence over the tooltip. Setting `suppressTouch=true` disables this gesture. Browser Tooltips remain controlled by the browser.
+
 ## Mouse Tracking
 
 The example below enables mouse tracking to demonstrate a scenario where tooltips need to follow the cursor. To enable this feature, set the `tooltipMouseTrack` to true in the gridOptions.
@@ -99,7 +126,7 @@ Set the grid property `enableBrowserTooltips=true` to stop using rich HTML Compo
 
 ## Interactive Tooltips
 
-By default, it is impossible to click on tooltips and hovering them has no effect. If `tooltipInteraction=true` is set in the gridOptions, the tooltips will not disappear while being hovered and you will be able to click and select the text within the tooltip.
+By default, tooltips cannot be interacted with and hovering them has no effect. If `tooltipInteraction=true` is set in the grid options, tooltips remain visible while being hovered and their content can be selected or activated.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -111,6 +138,7 @@ The example below enables Tooltip Interaction to demonstrate a scenario where to
 
 - Tooltips will not disappear while being hovered.
 - Tooltips content can be selected and copied.
+- `Tab` moves focus into focusable tooltip content and `Escape` closes the tooltip.
 
 {% gridExampleRunner title="Tooltip Interaction" name="tooltip-interaction" /%}
 

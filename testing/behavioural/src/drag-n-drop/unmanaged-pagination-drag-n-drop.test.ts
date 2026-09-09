@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions, RowDragMoveEvent } from 'ag-grid-community';
 import { PaginationModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager } from '../test-utils';
 
 describe('ag-grid unmanaged drag and drop with pagination', () => {
     const gridsManager = new TestGridsManager({

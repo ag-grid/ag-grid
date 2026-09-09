@@ -1,9 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('Column Flex', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });

@@ -1,10 +1,9 @@
+import { TestGridsManager } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { AdvancedFilterModel, ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowApiModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 // Enterprise features that key internal lookup Records by user-supplied colId / groupId. With a
 // plain `{}` these collide with Object.prototype members; the grid uses `Object.create(null)`.

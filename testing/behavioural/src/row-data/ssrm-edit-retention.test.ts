@@ -1,9 +1,9 @@
+import { TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule, TextEditorModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, waitForEvent } from '../test-utils';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * A row that is being edited must survive SSRM block-cache eviction: scrolling far enough to evict

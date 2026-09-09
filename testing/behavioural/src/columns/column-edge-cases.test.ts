@@ -9,11 +9,11 @@
  * - Selection column edge cases
  * - RTL column interactions
  */
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ColDef, Column, ColumnGroup } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column Edge Cases', () => {
     const gridsManager = new TestGridsManager({

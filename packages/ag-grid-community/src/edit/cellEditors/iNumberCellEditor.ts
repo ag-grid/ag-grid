@@ -1,10 +1,8 @@
+import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 
-export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<
-    TData,
-    number,
-    TContext
-> {
+export interface INumberCellEditorParams<TData = any, TContext = any>
+    extends ICellEditorParams<TData, number, TContext>, IAutoCompleteComponentParams {
     /** Min allowed value. */
     min?: number;
     /** Max allowed value. */

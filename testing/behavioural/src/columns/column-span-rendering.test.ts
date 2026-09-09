@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 interface RowData {
     a: string;

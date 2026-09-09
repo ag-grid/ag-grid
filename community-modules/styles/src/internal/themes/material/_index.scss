@@ -173,6 +173,14 @@
         }
     }
 
+    // `ag.text-input` above raises Material's input text off the baseline with a `padding-bottom`
+    // and a 2px bottom border, but the search glyph is absolutely positioned and so centres on the
+    // input's full height — leaving it ~4px below the text. Pin it to the band the text occupies.
+    .ag-input-field-search-icon {
+        top: 1px; // the input's own padding-top
+        bottom: calc(var(--ag-grid-size) + 2px); // its padding-bottom plus the 2px bottom border
+    }
+
     // Toolbar: button hover animation matching header cells
     .ag-toolbar-button-wrapper {
         transition: background-color 0.5s;

@@ -1,6 +1,7 @@
 import { buildFrameworkRedirectMarkdown } from '@ag-website-shared/markdown-pages/buildFrameworkRedirectMarkdown';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
 import { DISABLE_MARKDOWN_DOCS, FRAMEWORKS, FRAMEWORK_DISPLAY_TEXT, SITE_URL } from '@constants';
+import { gridSiteFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
 import { STATIC_PAGE_CONTENT } from '@utils/markdown-pages/staticPageContent';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
@@ -23,6 +24,7 @@ export function GET() {
             url: urlWithBaseUrl(`/${getFrameworkPath(framework)}/${content.redirectPageName}/`),
         })),
         siteRoot: SITE_URL,
+        siteFrontmatter: gridSiteFrontmatter({ pageUrl: '/reference/', siteRoot: SITE_URL }),
     });
 
     return new Response(output, {

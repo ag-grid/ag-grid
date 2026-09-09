@@ -1,7 +1,3 @@
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -9,7 +5,11 @@ import {
     TestGridsManager,
     applyTransactionChecked,
     asyncSetTimeout,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('pivot with groupHierarchy (date-time)', () => {
     // Tests ported from e2e: documentation/ag-grid-docs/src/content/docs/pivoting-column-groups/_examples/pivoting-date-time/example.spec.ts

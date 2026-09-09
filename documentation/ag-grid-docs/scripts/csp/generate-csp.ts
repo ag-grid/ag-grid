@@ -3,7 +3,13 @@
 import { writeFileSync } from 'fs';
 
 import type { CspEnv, CspMode, CspScope } from '../../src/utils/htaccess/cspRules';
-import { getCspHeaderName, getCspValue, getScopedCspHtaccessBlock } from '../../src/utils/htaccess/cspRules';
+import {
+    getBlogCspExprOverride,
+    getCspHeaderName,
+    getCspValue,
+    getScopedCspHtaccessBlock,
+} from '../../src/utils/htaccess/cspRules';
+import { getBlogVhostHeaderFragment } from '../../src/utils/htaccess/htaccessRules';
 
 /**
  * Generate the Content-Security-Policy for a given environment
@@ -12,8 +18,12 @@ import { getCspHeaderName, getCspValue, getScopedCspHtaccessBlock } from '../../
  *   tsx documentation/ag-grid-docs/scripts/csp/generate-csp.ts
  *       [--env=staging|production|dev]
  *       [--mode=report-only|enforce]
- *       [--format=htaccess|header|value]
- *       [--scope=site|examples|campaigns|ecommerce]  (header/value formats only; htaccess emits all)
+ *       [--format=htaccess|header|value|vhost]
+ *       [--scope=site|examples|campaigns|ecommerce|blog]
+ *           header/value: any scope. htaccess: omit for the docroot block (site + <If>
+ *           overrides); --scope=blog emits the vhost expr= lines for the proxied blog.
+ *           vhost: requires --scope=blog. Emits the COMPLETE /blog/ header block for the
+ *           Ghost box's vhost — X-Robots-Tag, Referrer-Policy, Permissions-Policy and CSP.
  *       [--out=<file>]
  *
  * Run via Nx:
@@ -28,12 +38,12 @@ import { getCspHeaderName, getCspValue, getScopedCspHtaccessBlock } from '../../
  * truth, shared with the .htaccess generator).
  */
 
-type Format = 'htaccess' | 'header' | 'value';
+type Format = 'htaccess' | 'header' | 'value' | 'vhost';
 
 const ENVS: CspEnv[] = ['dev', 'staging', 'production'];
 const MODES: CspMode[] = ['report-only', 'enforce'];
-const FORMATS: Format[] = ['htaccess', 'header', 'value'];
-const SCOPES: CspScope[] = ['site', 'examples', 'campaigns', 'ecommerce'];
+const FORMATS: Format[] = ['htaccess', 'header', 'value', 'vhost'];
+const SCOPES: CspScope[] = ['site', 'examples', 'campaigns', 'ecommerce', 'blog'];
 
 function assertOneOf<T extends string>(value: string | undefined, allowed: T[], flag: string): T {
     if (value === undefined || !allowed.includes(value as T)) {
@@ -72,11 +82,23 @@ function parseArgs(argv: string[]): { env: CspEnv; mode: CspMode; format: Format
 }
 
 function render(format: Format, env: CspEnv, mode: CspMode, scope: CspScope): string {
+    if (format === 'vhost') {
+        if (scope !== 'blog') {
+            throw new Error('--format=vhost requires --scope=blog (no other scope is served from a vhost)');
+        }
+        return getBlogVhostHeaderFragment({ env }, mode);
+    }
     if (format === 'value') {
         return getCspValue({ env, scope });
     }
     if (format === 'header') {
         return `${getCspHeaderName(mode)}: ${getCspValue({ env, scope })}`;
+    }
+    // The blog is the one scope the generated .htaccess deliberately excludes: /blog/ is
+    // reverse-proxied, so a request there never reads that file and <If> never fires on the
+    // response. Emit its vhost lines — the expr= form — instead of the docroot block.
+    if (scope === 'blog') {
+        return getBlogCspExprOverride({ env }, mode);
     }
     // The htaccess format emits the full path-scoped block (site policy plus the
     // <If> override for example/archive paths) — what ships in the generated file.

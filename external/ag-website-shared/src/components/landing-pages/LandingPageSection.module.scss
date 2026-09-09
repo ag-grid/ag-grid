@@ -85,6 +85,15 @@
     gap: $spacing-size-2;
 }
 
+// Lays out the section's CTAs in a row. A section with a single CTA is unaffected; sections that
+// add a secondary CTA wrap onto a second line rather than overflowing on narrow viewports.
+.ctaGroup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: $spacing-size-3;
+}
+
 .ctaButton {
     display: inline-flex;
     align-items: center;

@@ -17,7 +17,6 @@ import type {
     GridInputTextArea,
     GridInputTextField,
     GridSelect,
-    ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -198,7 +197,6 @@ export class CalculatedColumnForm extends Component {
         this.eTitle
             .setLabel(translate('calculatedColumnTitle', 'Title'))
             .setLabelAlignment('top')
-            .setAutoComplete(false)
             .setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
@@ -394,12 +392,13 @@ export class CalculatedColumnForm extends Component {
         getMessage: () => string | null
     ): TooltipFeature | undefined {
         return this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            this.beans.tooltipSvc?.createTooltip({
                 getGui,
+                getTooltipComponentDefinition: () => undefined,
                 getTooltipValue: getMessage,
                 getLocation: () => 'calculatedColumnExpression',
                 shouldDisplayTooltip: () => !!getMessage(),
-            } as ITooltipCtrl)
+            })
         );
     }
 

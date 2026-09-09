@@ -54,6 +54,8 @@ The following example demonstrates configuring different Text Filter parameters:
 
 {% gridExampleRunner title="Text Filter Parameters" name="text-filter-parameters" /%}
 
+Filter input fields share the grid-wide input behaviour (clear button, browser autocomplete) described in [Input Fields](./input-fields/).
+
 ## Text Formatter
 
 By default, the grid compares the Text Filter with the values in a case-insensitive way, by converting both the filter text and the values to lower case and comparing them; for example, `'o'` will match `'Olivia'` and `'Salmon'`. If you instead want to have case-sensitive matches, you can set `caseSensitive = true` in the `filterParams`, so that no lowercasing is performed. In this case, `'o'` would no longer match `'Olivia'`.
@@ -97,6 +99,8 @@ The example below demonstrates a `textFormatter` on the **Athlete** column:
 In most cases, you can customise the Text Filter matching logic by providing your own [Text Formatter](#text-formatter), e.g. to remove or replace characters in the filter text and values. The Text Formatter is applied to both the filter text and values before the filter comparison is performed.
 
 For more advanced use cases, you can provide your own `textMatcher` to decide when to include a row in the filtered results. For example, you might want to apply different logic for the filter option `equals` than for `contains`.
+
+The [Advanced Filter](./filter-advanced/) compares text with the same `textFormatter`, `textMatcher` and `trimInput` the column is configured with, so a condition written there matches the rows this filter matches. `params.source` tells a `textFormatter` or `textMatcher` which of the two is asking.
 
 {% interfaceDocumentation interfaceName="ITextFilterParams" names=["textMatcher"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 

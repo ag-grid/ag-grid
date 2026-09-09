@@ -13,6 +13,7 @@
 // teardown of the previous fill is part of the replace samples by design — it cannot be excluded.
 // NB: numbers here are NOT directly comparable to the vanilla suite (React adds a reconciliation +
 // commit layer); keep the two reports separate.
+import { ignoreConsoleLicenseKeyError } from 'ag-test-utils/ignoreKnownNoise';
 import React from 'react';
 import { flushSync } from 'react-dom';
 import type { Root } from 'react-dom/client';
@@ -24,7 +25,6 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils/ignoreConsoleLicenseKeyError';
 import { benchCooldown, benchDefaults } from './bench-utils';
 
 const modules: Module[] = [AllEnterpriseModule];

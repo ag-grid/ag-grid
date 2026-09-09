@@ -1,10 +1,4 @@
-import {
-    _findNextFocusableElement,
-    _getActiveDomElement,
-    _getValueUsingDotField,
-    _isBrowserSafari,
-    _isFocusableFormField,
-} from 'ag-stack';
+import { _findNextFocusableElement, _getActiveDomElement, _isBrowserSafari, _isFocusableFormField } from 'ag-stack';
 
 import {
     _getFullWidthCellRendererDetails,
@@ -14,7 +8,6 @@ import {
 } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
@@ -23,7 +16,7 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { INotesFeature } from '../../interfaces/notes';
-import type { ITooltipCtrlParams, TooltipFeature } from '../../tooltip/tooltipFeature';
+import type { FullWidthRowTooltips } from '../../tooltip/fullWidthRowTooltips';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -32,7 +25,7 @@ import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import type { RowCtrl } from './rowCtrl';
 
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
-    private tooltipFeature: TooltipFeature | undefined;
+    private tooltips: FullWidthRowTooltips | undefined;
     private notesFeature: INotesFeature | undefined;
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
@@ -47,18 +40,20 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
+        this.tooltips?.pruneStaleElements();
+
         if (this.shouldCreateCellSections() && rowComp.showEmbeddedFullWidth) {
             this.rowCtrl.isEmbeddedFullWidth = true;
             this.rowCtrl.embeddedSectionHasContent = { left: true, center: true, right: true };
             rowComp.showEmbeddedFullWidth({
-                left: this.createFullWidthCompDetails(rowComp.getPinnedLeftRowElement() ?? eRow, 'left'),
-                center: this.createFullWidthCompDetails(rowComp.getScrollingRowElement() ?? eRow, null),
-                right: this.createFullWidthCompDetails(rowComp.getPinnedRightRowElement() ?? eRow, 'right'),
+                left: this.createFullWidthCompDetails(rowComp.getPinnedLeftRowElement() ?? eRow, 'left', true),
+                center: this.createFullWidthCompDetails(rowComp.getScrollingRowElement() ?? eRow, null, true),
+                right: this.createFullWidthCompDetails(rowComp.getPinnedRightRowElement() ?? eRow, 'right', true),
             });
             this.rowCtrl.refreshPinnedCellGroupWidths();
         } else {
             this.rowCtrl.isEmbeddedFullWidth = false;
-            const compDetails = this.createFullWidthCompDetails(eRow, null);
+            const compDetails = this.createFullWidthCompDetails(eRow, null, true);
             rowComp.showFullWidth(compDetails);
             this.rowCtrl.refreshPinnedCellGroupWidths();
         }
@@ -82,6 +77,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         if (!rowComp || !eRow) {
             return true;
         }
+
+        this.tooltips?.pruneStaleElements();
 
         if (this.shouldCreateCellSections() && rowComp.refreshEmbeddedFullWidth) {
             return rowComp.refreshEmbeddedFullWidth((pinned) => {
@@ -130,10 +127,12 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public onSpannedCellsUpdated(_pinned: ColumnPinnedType): void {}
 
-    public createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
+    public createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType, adopt = false): UserCompDetails {
         const { rowCtrl } = this;
         const { gos } = this;
         const { rowNode } = rowCtrl;
+        const tooltips = this.getTooltips();
+        const rendererClaim = tooltips?.claimRenderer(eRow, adopt);
         const params = _addGridCommonParams<ICellRendererParams>(gos, {
             fullWidth: true,
             data: rowNode.data,
@@ -149,7 +148,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, rowDragEntireRow),
             setTooltip: (value, shouldDisplayTooltip) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.setupFullWidthRowTooltip(() => value, shouldDisplayTooltip);
+                if (rendererClaim) {
+                    tooltips!.setRendererTooltip(eRow, rowNode, value, shouldDisplayTooltip, rendererClaim);
+                }
             },
         } as WithoutGridCommon<ICellRendererParams>);
 
@@ -165,7 +166,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 });
                 params.value = value;
                 params.valueFormatted = valueFormatted;
-                this.setupGroupRowsTooltip(rowNode);
+                tooltips?.setupGroupRowsTooltip(rowNode, eRow);
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             }
             case 'FullWidthLoading':
@@ -182,102 +183,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         this.beans.masterDetailSvc?.setupDetailRowAutoHeight(this.rowCtrl, eDetailGui);
     }
 
-    private setupFullWidthRowTooltip(
-        getTooltipValue: () => any,
-        shouldDisplayTooltip?: () => boolean,
-        getAdditionalParams?: () => ITooltipCtrlParams
-    ) {
-        if (!this.rowCtrl.getCurrentRowElement()) {
-            return;
-        }
-
-        this.tooltipFeature = this.beans.tooltipSvc?.setupFullWidthRowTooltip(
-            this.tooltipFeature,
-            this.rowCtrl,
-            getTooltipValue,
-            shouldDisplayTooltip,
-            getAdditionalParams
-        );
-    }
-
-    /**
-     * Wires up the tooltip for a full-width group row (`groupDisplayType: 'groupRows'`), inheriting the
-     * tooltip configuration from the owning group column rather than from an individual cell.
-     *
-     * The tooltip source colDef is the row-group column's colDef for regular grouping, or the
-     * `autoGroupColumnDef` for tree data (where there is no `rowGroupColumn`). If that colDef declares no
-     * `tooltipValueGetter`, `tooltipField`, or `tooltipComponent`, no tooltip is set up.
-     *
-     * Resolution order, mirroring the standard cell tooltip path, with values lazily computed on hover:
-     * - `tooltipValueGetter` — invoked with the group's display value/formatted value and full row context.
-     * - `tooltipField` — read directly from `node.data`, honouring `suppressFieldDotNotation` for dotted fields.
-     * - otherwise — falls back to the group display value, also passed to any inherited `tooltipComponent`.
-     */
-    private setupGroupRowsTooltip(rowNode: RowNode): void {
-        const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
-        const { gos } = this;
-
-        // Regular row grouping: read tooltip config from the row-group column's colDef.
-        // Tree data (no rowGroupColumn): fall back to the auto-group column def.
-        const colDef = groupCol?.colDef ?? gos.get('autoGroupColumnDef');
-        if (!colDef) {
-            return;
-        }
-
-        const { tooltipValueGetter, tooltipField, tooltipComponent } = colDef;
-        if (!tooltipValueGetter && !tooltipField && !tooltipComponent) {
-            return;
-        }
-
-        const { valueSvc } = this.beans;
-        gos.assertModuleRegistered('Tooltip', 3);
-
-        const getDisplay = () =>
-            valueSvc.getValueForDisplay({ node: rowNode, includeValueFormatted: true, from: 'edit' });
-
-        this.setupFullWidthRowTooltip(
-            () => {
-                const { value, valueFormatted } = getDisplay();
-                if (tooltipValueGetter) {
-                    return tooltipValueGetter(
-                        _addGridCommonParams(gos, {
-                            location: 'fullWidthRow',
-                            colDef,
-                            column: groupCol,
-                            rowIndex: rowNode.rowIndex ?? 0,
-                            node: rowNode,
-                            data: rowNode.data,
-                            value,
-                            valueFormatted: valueFormatted ?? undefined,
-                        })
-                    );
-                }
-                if (tooltipField) {
-                    const data = rowNode.data;
-                    if (!data) {
-                        // Regular row-grouping group nodes carry no `data`; fall back to the group
-                        // display value, matching the auto group column's `tooltipField` behaviour.
-                        return value;
-                    }
-                    const containsDots = groupCol
-                        ? groupCol.tooltipFieldContainsDots
-                        : !gos.get('suppressFieldDotNotation') && tooltipField.includes('.');
-                    return containsDots
-                        ? _getValueUsingDotField(data, tooltipField)
-                        : (data as Record<string, unknown>)[tooltipField];
-                }
-                return value;
-            },
-            undefined,
-            () => ({
-                colDef,
-                column: groupCol,
-                rowIndex: rowNode.rowIndex ?? 0,
-                node: rowNode,
-                data: rowNode.data,
-                valueFormatted: getDisplay().valueFormatted ?? undefined,
-            })
-        );
+    /** Lazily created so a grid without the Tooltip module never instantiates tooltip state. */
+    private getTooltips(): FullWidthRowTooltips | undefined {
+        return (this.tooltips ??= this.beans.tooltipSvc?.createFullWidthRowTooltips(this.rowCtrl));
     }
 
     private addFullWidthRowDragging(
@@ -405,7 +313,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         if (keyboardEvent.defaultPrevented || _isStopPropagationForAgGrid(keyboardEvent)) {
             return;
         }
-        const { rowCtrl } = this;
+        const { rowCtrl, beans } = this;
         const element = rowCtrl.getCurrentRowElement();
         const currentFullWidthContainer = element?.contains(keyboardEvent.target as HTMLElement) ? element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
@@ -420,7 +328,11 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         let nextEl: HTMLElement | null = null;
 
         if (!isFullWidthContainerFocused && !isDetailGridCellFocused) {
-            nextEl = _findNextFocusableElement(this.beans, currentFullWidthContainer!, false, keyboardEvent.shiftKey);
+            nextEl = _findNextFocusableElement({
+                beans,
+                rootNode: currentFullWidthContainer!,
+                backwards: keyboardEvent.shiftKey,
+            });
         }
 
         if (isFullWidthContainerFocused || !nextEl) {
@@ -604,8 +516,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public override destroy(): void {
-        const { context } = this.beans;
-        this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
+        this.tooltips = this.destroyBean(this.tooltips, this.beans.context);
         this.notesFeature?.destroy();
         this.notesFeature = undefined;
         super.destroy();

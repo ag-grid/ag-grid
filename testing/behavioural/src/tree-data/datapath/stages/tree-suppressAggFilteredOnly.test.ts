@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, NumberFilterModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree data suppressAggFilteredOnly', () => {
     const gridsManager = new TestGridsManager({

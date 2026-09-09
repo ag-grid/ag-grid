@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { countLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, IServerSideGetRowsParams, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { countLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * Characterization (golden-master) tests pinning how `gridOptions.serverSideInitialRowCount`

@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { DragEventDispatcher, TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
-
-import { DragEventDispatcher, TestGridsManager } from '../test-utils';
 
 type SuppressValue = GridOptions['suppressGroupChangesColumnVisibility'];
 
@@ -48,9 +47,9 @@ describe('suppressGroupChangesColumnVisibility', () => {
 
     /**
      * Drags an element from `source` to `target` using AG Grid's pointer-based drag system.
-     * Mocks `elementsFromPoint` (jsdom returns nothing useful) and bounding rects on both ends
+     * Mocks `elementsFromPoint` (happy-dom does not implement it) and bounding rects on both ends
      * so the DragService correctly resolves the drop target. Mirrors the pattern used by
-     * `dragRenderedPrimaryColumnToRowGroups` in deferred-pivot-mode.test.ts.
+     * `dragRenderedPrimaryColumnToRowGroups` in deferredPivotModeHarness.ts.
      */
     async function dragSourceToTarget(source: HTMLElement, target: HTMLElement): Promise<void> {
         const dispatcher = new DragEventDispatcher('mouse', null, false);
@@ -133,7 +132,7 @@ describe('suppressGroupChangesColumnVisibility', () => {
 
         // Drag-out via pill is not directly exercised here — DragService's pointer-based
         // drag-leave gesture doesn't transition the panel's `rearrangeItems` state when
-        // dispatched through synthesised events in jsdom (the move from the source to outside
+        // dispatched through synthesised events (the move from the source to outside
         // the zone collapses into a single dragStart-then-leave pair before the panel sees the
         // enter). The combined suppress logic is covered by:
         //   - "grid API: add then remove row group column" (API entry point)

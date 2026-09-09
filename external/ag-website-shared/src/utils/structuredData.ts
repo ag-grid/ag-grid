@@ -1,3 +1,5 @@
+import { PRODUCTION_GRID_SITE_URL } from '@constants';
+
 /**
  * Builders for schema.org JSON-LD structured data emitted in the page <head>.
  *
@@ -22,6 +24,8 @@ export interface ContactPoint {
     telephone?: string;
     email?: string;
     availableLanguage?: string | string[];
+    /** Geographic area the contact point serves, e.g. `Worldwide`. */
+    areaServed?: string | string[];
 }
 
 export interface OrganizationFounder {
@@ -43,6 +47,16 @@ export interface OrganizationAddress {
     addressRegion?: string;
 }
 
+/**
+ * A registry identifier for the organisation, emitted as a schema.org
+ * `PropertyValue`. `propertyID` names the register (e.g. `Companies House`,
+ * `VAT`) so each value is attributable to the source that issued it.
+ */
+export interface OrganizationIdentifier {
+    propertyID: string;
+    value: string;
+}
+
 interface OrgInput {
     canonicalUrlBase: string;
     name: string;
@@ -56,6 +70,11 @@ interface OrgInput {
     foundingDate?: string;
     /** Optional registered address, emitted as a nested schema.org `PostalAddress`. */
     address?: OrganizationAddress;
+    /**
+     * Optional registry identifiers (company number, VAT number, etc.), emitted
+     * as an `identifier` array of schema.org `PropertyValue` nodes.
+     */
+    identifiers?: OrganizationIdentifier[];
     /** Optional founder, emitted as a nested schema.org `Person`. */
     founder?: OrganizationFounder;
     /**
@@ -79,6 +98,12 @@ interface SoftwareApplicationInput {
     applicationCategory?: string;
     operatingSystem?: string;
     offers?: JsonLdObject[];
+    /**
+     * Authoritative entries for the application itself, e.g. its npm package
+     * page. These identify the software, not the company that publishes it —
+     * company-level profiles belong on the Organization's `sameAs`.
+     */
+    sameAs?: string[];
 }
 
 interface TechArticleInput {
@@ -144,7 +169,7 @@ export function siteRootUrl(canonicalUrlBase: string): string {
     return canonicalUrlBase.endsWith('/') ? canonicalUrlBase : `${canonicalUrlBase}/`;
 }
 
-export const getOrganizationId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#organization`;
+export const getOrganizationId = (): string => `${PRODUCTION_GRID_SITE_URL}/#organization`;
 export const getWebSiteId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#website`;
 export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
     `${siteRootUrl(canonicalUrlBase)}#software-application`;
@@ -165,12 +190,13 @@ export function buildOrganization({
     legalName,
     foundingDate,
     address,
+    identifiers,
     founder,
     contactPoints,
 }: OrgInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'Organization',
-        '@id': getOrganizationId(canonicalUrlBase),
+        '@id': getOrganizationId(),
         name,
         url: siteRootUrl(canonicalUrlBase),
         logo: logoUrl,
@@ -187,6 +213,9 @@ export function buildOrganization({
     }
     if (address) {
         result.address = { '@type': 'PostalAddress', ...address };
+    }
+    if (identifiers && identifiers.length > 0) {
+        result.identifier = identifiers.map((identifier) => ({ '@type': 'PropertyValue', ...identifier }));
     }
     if (founder) {
         const founderNode: JsonLdObject = { '@type': 'Person', name: founder.name };
@@ -212,7 +241,7 @@ export function buildWebSite({ canonicalUrlBase, name, description }: WebSiteInp
         name,
         description,
         inLanguage: 'en',
-        publisher: { '@id': getOrganizationId(canonicalUrlBase) },
+        publisher: { '@id': getOrganizationId() },
     };
 }
 
@@ -223,6 +252,7 @@ export function buildSoftwareApplication({
     applicationCategory = 'DeveloperApplication',
     operatingSystem = 'Web Browser',
     offers,
+    sameAs,
 }: SoftwareApplicationInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'SoftwareApplication',
@@ -232,10 +262,13 @@ export function buildSoftwareApplication({
         operatingSystem,
         softwareVersion: version,
         url: siteRootUrl(canonicalUrlBase),
-        publisher: { '@id': getOrganizationId(canonicalUrlBase) },
+        publisher: { '@id': getOrganizationId() },
     };
     if (offers && offers.length > 0) {
         result.offers = offers;
+    }
+    if (sameAs && sameAs.length > 0) {
+        result.sameAs = sameAs;
     }
     return result;
 }
@@ -256,7 +289,7 @@ export function buildTechArticle({
         url: pageUrl,
         mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
         isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
-        publisher: { '@id': getOrganizationId(canonicalUrlBase) },
+        publisher: { '@id': getOrganizationId() },
     };
     if (aboutEntityId) {
         result.about = { '@id': aboutEntityId };
@@ -325,7 +358,7 @@ export function buildContactPage({ canonicalUrlBase, pageUrl, name }: ContactPag
         url: pageUrl,
         name,
         isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
-        mainEntity: { '@id': getOrganizationId(canonicalUrlBase) },
+        mainEntity: { '@id': getOrganizationId() },
     };
 }
 

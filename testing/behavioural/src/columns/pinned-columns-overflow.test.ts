@@ -1,10 +1,9 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 const overflowingColumnDefs = [
     { field: 'a', pinned: 'left' as const, width: 300 },

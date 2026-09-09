@@ -1,10 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { DragEventDispatcher, GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { DragEventDispatcher, GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import {
     GROUP_AUTO_COLUMN_ID,
     getAutoGroupColumnIds,

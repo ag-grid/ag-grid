@@ -2,7 +2,6 @@ import {
     AgPopupComponent,
     RefPlaceholder,
     _exists,
-    _fuzzySuggestions,
     _isVisible,
     _setAriaActiveDescendant,
     _setAriaSelected,
@@ -13,7 +12,6 @@ import type {
     AgEventTypeParams,
     AgGridCommon,
     BeanCollection,
-    Component,
     ElementParams,
     GridOptionsService,
     GridOptionsWithDefaults,
@@ -23,12 +21,11 @@ import { KeyCode, _clamp } from 'ag-grid-community';
 import { VirtualList } from '../../widgets/virtualList';
 import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteRow } from './agAutocompleteRow';
-import type { AutocompleteEntry } from './autocompleteParams';
-
-type AutocompleteRowComponent = Component & {
-    updateSelected(selected: boolean): void;
-    setSearchString(searchString: string): void;
-};
+import type {
+    AutocompleteEntry,
+    AutocompleteRowComponent,
+    AutocompleteRowComponentCreator,
+} from './autocompleteParams';
 
 const AgAutocompleteListElement: ElementParams = {
     tag: 'div',
@@ -57,6 +54,8 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     // as the user moves the mouse, the selectedValue changes
     private selectedValue: AutocompleteEntry;
+    /** Where `selectedValue` sits, so a list is not searched on every mousemove. */
+    private selectedIndex = -1;
 
     private searchString = '';
     private lastAutoListHeight: number | null = null;
@@ -65,12 +64,12 @@ export class AgAutocompleteList extends AgPopupComponent<
         private readonly params: {
             autocompleteEntries: AutocompleteEntry[];
             onConfirmed: () => void;
-            useFuzzySearch?: boolean;
             useStartsWithSearch?: boolean;
+            suggestFirstMatch?: boolean;
             autoSizeList?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
-            rowComponentCreator?: (value: AutocompleteEntry, selected: boolean) => AutocompleteRowComponent;
+            rowComponentCreator?: AutocompleteRowComponentCreator;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
             onActiveOptionChanged?: (optionId: string | null) => void;
         }
@@ -104,10 +103,10 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     public getActiveOptionId(): string | null {
-        const selectedValue = this.selectedValue;
-        const index = selectedValue ? this.autocompleteEntries.indexOf(selectedValue) : -1;
+        const index = this.selectedIndex;
 
-        return index >= 0 ? this.getOptionId(index) : null;
+        // The cached position is only good while it still holds the selection, the entries having changed.
+        return index >= 0 && this.autocompleteEntries[index] === this.selectedValue ? this.getOptionId(index) : null;
     }
 
     public getListId(): string {
@@ -121,14 +120,24 @@ export class AgAutocompleteList extends AgPopupComponent<
             return;
         }
 
-        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
+        const cachedIndex = this.selectedIndex;
+        const oldIndex = this.autocompleteEntries[cachedIndex] === this.selectedValue ? cachedIndex : -1;
         let nextIndex = 0;
         if (oldIndex >= 0) {
-            nextIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+            const isPage = key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN;
+            const step = isPage ? this.getPageSize() : 1;
+            nextIndex = key === KeyCode.UP || key === KeyCode.PAGE_UP ? oldIndex - step : oldIndex + step;
         }
         const lastIndex = this.autocompleteEntries.length - 1;
 
         this.setSelectedValue(_clamp(nextIndex, 0, lastIndex));
+    }
+
+    private getPageSize(): number {
+        const virtualList = this.virtualList;
+        const rowHeight = virtualList.getRowHeight();
+        const height = virtualList.getGui().getBoundingClientRect().height;
+        return rowHeight > 0 ? Math.max(1, Math.floor(height / rowHeight)) : 1;
     }
 
     public setSearch(searchString: string): void {
@@ -142,97 +151,82 @@ export class AgAutocompleteList extends AgPopupComponent<
             this.checkSetSelectedValue(0);
             this.updateListHeight();
         }
-        this.updateSearchInList();
     }
 
+    /**
+     * Entries holding the search string, and the index of the one to suggest: the shortest starting with
+     * it, otherwise the shortest holding it, the first offered winning a tie. `-1` where nothing matched.
+     */
     private runContainsSearch(
         searchString: string,
-        searchStrings: string[]
-    ): { topMatch: string | undefined; allMatches: string[] } {
-        let topMatch: string | undefined;
-        let topMatchStartsWithSearchString = false;
+        entries: AutocompleteEntry[]
+    ): { matches: AutocompleteEntry[]; topIndex: number } {
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
-        const allMatches = searchStrings.filter((string) => {
-            const lowerCaseString = string.toLocaleLowerCase();
-            const index = lowerCaseString.indexOf(lowerCaseSearchString);
-            const startsWithSearchString = index === 0;
-            const isMatch = index >= 0;
-            // top match is shortest value that starts with the search string, otherwise shortest value that includes the search string
-            if (
-                isMatch &&
-                (!topMatch ||
-                    (!topMatchStartsWithSearchString && startsWithSearchString) ||
-                    (topMatchStartsWithSearchString === startsWithSearchString && string.length < topMatch.length))
-            ) {
-                topMatch = string;
-                topMatchStartsWithSearchString = startsWithSearchString;
+        const matches: AutocompleteEntry[] = [];
+        let topIndex = -1;
+        let topLength = 0;
+        let topStartsWith = false;
+        for (let i = 0, len = entries.length; i < len; ++i) {
+            const entry = entries[i];
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
+            const index = text.toLocaleLowerCase().indexOf(lowerCaseSearchString);
+            if (index < 0) {
+                continue;
             }
-            return isMatch;
-        });
-        if (!topMatch && allMatches.length) {
-            topMatch = allMatches[0];
+            const startsWith = index === 0;
+            if (
+                topIndex < 0 ||
+                (!topStartsWith && startsWith) ||
+                (topStartsWith === startsWith && text.length < topLength)
+            ) {
+                topIndex = matches.length;
+                topLength = text.length;
+                topStartsWith = startsWith;
+            }
+            matches.push(entry);
         }
-        return { topMatch, allMatches };
+        return { matches, topIndex };
     }
 
-    private runStartsWithSearch(
-        searchString: string,
-        searchStrings: string[]
-    ): { topMatch: string | undefined; allMatches: string[] } {
+    private runStartsWithSearch(searchString: string, entries: AutocompleteEntry[]): AutocompleteEntry[] {
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
-        const allMatches = searchStrings.filter((string) =>
-            string.toLocaleLowerCase().startsWith(lowerCaseSearchString)
-        );
-        const topMatch = allMatches[0];
-        return { topMatch, allMatches };
+        const matches: AutocompleteEntry[] = [];
+        for (let i = 0, len = entries.length; i < len; ++i) {
+            const entry = entries[i];
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
+            if (text.toLocaleLowerCase().startsWith(lowerCaseSearchString)) {
+                matches.push(entry);
+            }
+        }
+        return matches;
     }
 
-    private runSearch() {
-        const { autocompleteEntries, useFuzzySearch, useStartsWithSearch, forceLastSelection } = this.params;
-        const searchStrings = autocompleteEntries.map((v) => v.displayValue ?? v.key);
+    /** One pass, producing the list to show and the row to suggest together, per keystroke. */
+    private runSearch(): void {
+        const { autocompleteEntries, useStartsWithSearch, suggestFirstMatch, forceLastSelection } = this.params;
+        const searchString = this.searchString;
 
-        let matchingStrings: string[];
-        let topSuggestion: string | undefined;
-        if (useFuzzySearch) {
-            matchingStrings = _fuzzySuggestions({
-                inputValue: this.searchString,
-                allSuggestions: searchStrings,
-                hideIrrelevant: true,
-            }).values;
-            topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
+        let matches: AutocompleteEntry[];
+        let topIndex = 0;
+        if (useStartsWithSearch) {
+            matches = this.runStartsWithSearch(searchString, autocompleteEntries);
         } else {
-            const matches = useStartsWithSearch
-                ? this.runStartsWithSearch(this.searchString, searchStrings)
-                : this.runContainsSearch(this.searchString, searchStrings);
-            matchingStrings = matches.allMatches;
-            topSuggestion = matches.topMatch;
+            ({ matches, topIndex } = this.runContainsSearch(searchString, autocompleteEntries));
+            if (suggestFirstMatch) {
+                topIndex = 0;
+            }
         }
 
-        let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) =>
-            matchingStrings.includes(displayValue ?? key)
-        );
-        if (
-            !filteredEntries.length &&
-            this.selectedValue &&
-            forceLastSelection?.(this.selectedValue, this.searchString)
-        ) {
-            filteredEntries = [this.selectedValue];
+        const selectedValue = this.selectedValue;
+        if (!matches.length && selectedValue && forceLastSelection?.(selectedValue, searchString)) {
+            matches = [selectedValue];
+            topIndex = 0;
         }
-        this.autocompleteEntries = filteredEntries;
+
+        this.autocompleteEntries = matches;
         this.refreshVirtualList();
         this.updateListHeight();
-
-        if (!topSuggestion) {
-            return;
-        }
-
-        const topSuggestionIndex = matchingStrings.indexOf(topSuggestion);
-
-        this.checkSetSelectedValue(topSuggestionIndex);
-    }
-
-    private updateSearchInList(): void {
-        this.virtualList.forEachRenderedRow((row) => row.setSearchString(this.searchString));
+        this.checkSetSelectedValue(topIndex);
     }
 
     private updateListHeight(): void {
@@ -278,6 +272,8 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     private setSelectedValue(index: number): void {
         const value = this.autocompleteEntries[index];
+        // An empty list has no row to point at, so the position stays unset rather than naming row 0.
+        this.selectedIndex = value === undefined ? -1 : index;
 
         if (this.selectedValue === value) {
             this.refreshRenderedRowsAria();
@@ -325,19 +321,24 @@ export class AgAutocompleteList extends AgPopupComponent<
         return `${this.getListId()}-option-${index}`;
     }
 
-    private createRowComponent(value: AutocompleteEntry, listItemElement: HTMLElement): AutocompleteRowComponent {
-        const customRow = this.params.rowComponentCreator?.(value, value === this.selectedValue);
-        if (customRow) {
-            this.createBean(customRow);
-            this.updateRowAriaProperties(customRow, listItemElement, this.autocompleteEntries.indexOf(value));
-            return customRow;
+    private createRowComponent(
+        value: AutocompleteEntry,
+        listItemElement: HTMLElement,
+        rowIndex: number
+    ): AutocompleteRowComponent {
+        const selected = value === this.selectedValue;
+        let row = this.params.rowComponentCreator?.(value, selected);
+        if (row) {
+            this.createBean(row);
+        } else {
+            const defaultRow = new AgAutocompleteRow();
+            this.createBean(defaultRow);
+            defaultRow.setState(value.displayValue ?? value.key, selected);
+            row = defaultRow;
         }
-
-        const row = new AgAutocompleteRow();
-
-        this.createBean(row);
-        row.setState(value.displayValue ?? value.key, value === this.selectedValue);
-        this.updateRowAriaProperties(row, listItemElement, this.autocompleteEntries.indexOf(value));
+        // A row drawn after the search ran, scrolling to it say, has to mark up its own match.
+        row.setSearchString(this.searchString);
+        this.updateRowAriaProperties(row, listItemElement, rowIndex);
 
         return row;
     }

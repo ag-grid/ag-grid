@@ -117,7 +117,7 @@ export class AgPillContainer<TValue> extends Component {
                 activePill.focus();
             }
 
-            const nextFocusableEl = _findNextFocusableElement(beans, eGui, false, isPrevious);
+            const nextFocusableEl = _findNextFocusableElement({ beans, rootNode: eGui, backwards: isPrevious });
 
             if (nextFocusableEl) {
                 nextFocusableEl.focus();

@@ -16,18 +16,24 @@ interface Props {
      * Whether to add a script to post an `init` message to the parent
      */
     addInitMessageScript?: boolean;
-    /**
-     * Whether to not include system js code
-     */
-    ignoreSystemJs?: boolean;
+    ignoreModuleLoader?: boolean;
     /**
      * Extra styles to add to HTML
      */
     extraStyles?: string;
+    transpileInBrowser?: boolean;
 }
 
-const { internalFramework, pageName, exampleName, relativePath, addInitMessageScript, ignoreSystemJs, extraStyles } =
-    Astro.props as Props;
+const {
+    internalFramework,
+    pageName,
+    exampleName,
+    relativePath,
+    addInitMessageScript,
+    ignoreModuleLoader,
+    extraStyles,
+    transpileInBrowser,
+} = Astro.props as Props;
 
 const contentParams = {
     framework: internalFramework,
@@ -63,8 +69,9 @@ const exampleUrl = getExampleUrl({
             generatedContents={generatedContents!}
             relativePath={relativePath}
             addInitMessageScript={addInitMessageScript}
-            ignoreSystemJs={ignoreSystemJs}
+            ignoreModuleLoader={ignoreModuleLoader}
             extraStyles={extraStyles}
+            transpileInBrowser={transpileInBrowser}
             nonce={generatedContents?.scriptNonce}
         />
     )

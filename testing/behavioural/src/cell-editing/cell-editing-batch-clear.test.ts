@@ -1,9 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-
-import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
-
 import {
     DragEventDispatcher,
     GridColumns,
@@ -13,7 +10,10 @@ import {
     initPointerEventPolyfill,
     waitForEvent,
     waitForInput,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: batch clear bugs', () => {
     const gridMgr = new TestGridsManager({

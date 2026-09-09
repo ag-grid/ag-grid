@@ -1,8 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { Column, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { AggregationModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Event coverage for every public entry point of the cols services (rowGroup / pivot / value).

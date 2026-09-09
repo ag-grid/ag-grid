@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 
 describe('tree dats sorting behaviour', () => {
     const gridsManager = new TestGridsManager({

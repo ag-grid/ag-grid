@@ -27,32 +27,41 @@ const CYCLE_MS = 2500;
 const LONGEST_WORD = WORDS.reduce((longest, w) => (w.text.length > longest.length ? w.text : longest), '');
 
 export const FrameworkTextAnimation: FunctionComponent<Props> = ({ prefix, suffix }) => {
-    const [wordIndex, setWordIndex] = useState(0);
+    // A monotonic count, not an index: the outgoing word stays derivable and `key` changes each swap.
+    const [cycle, setCycle] = useState(0);
 
     const prefixText = prefix ? `${prefix} ` : '';
     const suffixText = suffix ? ` ${suffix}` : '';
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            setWordIndex((index) => (index + 1) % WORDS.length);
+            setCycle((current) => current + 1);
         }, CYCLE_MS);
 
         return () => clearTimeout(timeout);
-    }, [wordIndex]);
+    }, [cycle]);
 
-    const word = WORDS[wordIndex];
+    const word = WORDS[cycle % WORDS.length];
+    // Nothing to animate away on first paint, so the server-rendered word settles without moving.
+    const outgoingWord = cycle > 0 ? WORDS[(cycle - 1) % WORDS.length] : undefined;
 
-    // One visible word at a time so the H1 reads as a single clean heading for crawlers
-    // and screen readers. The sizer is an aria-hidden copy of the widest word that stays
-    // in the DOM purely to reserve width — the two are stacked in the same grid cell, so
-    // the container width is fixed to the widest word and never shifts as words cycle.
-    // `key` retriggers the entry animation on swap.
+    // Only the current word is announced or server-rendered, so the H1 stays a single clean
+    // heading for crawlers and screen readers; the outgoing copy and the sizer are aria-hidden.
     return (
         <span className={styles.animatedWordsOuter}>
             <span aria-hidden="true" className={styles.sizer}>
                 {`${prefixText}${LONGEST_WORD}${suffixText}`}
             </span>
-            <span key={wordIndex} className={classnames(styles.animatedWord, word.className)}>
+            {outgoingWord && (
+                <span
+                    key={`outgoing-${cycle}`}
+                    aria-hidden="true"
+                    className={classnames(styles.animatedWord, styles.wordOut, outgoingWord.className)}
+                >
+                    {`${prefixText}${outgoingWord.text}${suffixText}`}
+                </span>
+            )}
+            <span key={cycle} className={classnames(styles.animatedWord, cycle > 0 && styles.wordIn, word.className)}>
                 {`${prefixText}${word.text}${suffixText}`}
             </span>
         </span>

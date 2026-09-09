@@ -13,6 +13,11 @@
     --button-border: #d0d5dd;
     --button-hover-bg: rgba(0, 0, 0, 0.1);
 
+    --button-active-fg: #101828;
+    --button-active-bg: #eaecf0;
+    --button-active-border: #d0d5dd;
+    --button-active-hover-bg: #dfe2e8;
+
     --input-accent: #0e4491;
     --input-focus-border: #3d7acd;
     --range-track-bg: #efefef;
@@ -34,6 +39,11 @@
     --button-bg: transparent;
     --button-border: rgba(255, 255, 255, 0.2);
     --button-hover-bg: #2a343e;
+
+    --button-active-fg: #f2f4f7;
+    --button-active-bg: #344054;
+    --button-active-border: #475467;
+    --button-active-hover-bg: #3d4a5f;
 
     --input-accent: #a9c5ec;
     --input-focus-border: #3d7acd;
@@ -80,7 +90,16 @@ body > #highlighter {
     color: var(--main-fg);
 }
 
-.example-controls :where(button, textarea, select, input[type='submit'], input[type='text'], input[type='number']) {
+.example-controls
+    :where(
+        button,
+        textarea,
+        select,
+        input[type='submit'],
+        input[type='text'],
+        input[type='number'],
+        .button-group > label
+    ) {
     appearance: none;
     display: inline-block;
     height: 36px;
@@ -98,7 +117,7 @@ body > #highlighter {
     align-self: flex-start;
 }
 
-.example-controls :where(button, select, input[type='submit']) {
+.example-controls :where(button, select, input[type='submit'], .button-group > label) {
     cursor: pointer;
 }
 
@@ -212,6 +231,94 @@ body > #highlighter {
     outline: none;
 }
 
+/* Toggle buttons: a pressed button reflects that its single on/off option is applied */
+.example-controls :is(button, input[type='submit'])[aria-pressed='true'] {
+    background-color: var(--button-active-bg);
+    border-color: var(--button-active-border);
+}
+
+/* The descendant selector is needed because `.example-controls *` colours a nested <code> */
+.example-controls :is(button, input[type='submit'])[aria-pressed='true'],
+.example-controls :is(button, input[type='submit'])[aria-pressed='true'] * {
+    color: var(--button-active-fg);
+}
+
+.example-controls :is(button, input[type='submit'])[aria-pressed='true']:hover {
+    background-color: var(--button-active-hover-bg);
+}
+
+/* Button groups: radio inputs styled as a joined row of buttons. Each radio must be immediately
+   followed by its own label — the sibling selectors below depend on that order. */
+.example-controls .button-group {
+    display: inline-flex;
+    align-self: flex-start;
+    /* A group cannot wrap, so let one too wide for the row scroll rather than clip */
+    min-width: 0;
+    overflow-x: auto;
+}
+
+/* Visually hidden, but still focusable and keyboard navigable — the label is the visible control */
+.example-controls .button-group input[type='radio'],
+.example-controls .button-group input[type='radio']:checked {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* A button centres its own content, a label does not, so the segments centre theirs explicitly */
+.example-controls .button-group label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+}
+
+.example-controls .button-group label:not(:first-of-type) {
+    margin-left: -1px;
+}
+
+.example-controls .button-group label:first-of-type {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.example-controls .button-group label:last-of-type {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.example-controls .button-group input[type='radio']:not(:checked, :disabled) + label:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.example-controls .button-group input[type='radio']:checked + label {
+    position: relative;
+    z-index: 1;
+    background-color: var(--button-active-bg);
+    border-color: var(--button-active-border);
+}
+
+.example-controls .button-group input[type='radio']:checked + label,
+.example-controls .button-group input[type='radio']:checked + label * {
+    color: var(--button-active-fg);
+}
+
+.example-controls .button-group input[type='radio']:focus-visible + label {
+    position: relative;
+    z-index: 2;
+    border-color: var(--input-focus-border);
+    box-shadow:
+        inset 0 0 0 1px var(--input-focus-border),
+        inset 0 0 0 2px var(--main-bg);
+}
+
 /* Groups controls (e.g. a label, input and value) so they can be enabled/disabled together
    without affecting the row layout. */
 .example-controls fieldset.control-group {
@@ -226,6 +333,7 @@ body > #highlighter {
 .example-controls select:disabled,
 .example-controls textarea:disabled,
 .example-controls input:disabled,
+.example-controls .button-group input[type='radio']:disabled + label,
 .example-controls fieldset:disabled :is(label, span) {
     cursor: not-allowed;
     opacity: 0.5;
@@ -237,6 +345,10 @@ body > #highlighter {
     flex-wrap: wrap;
     gap: var(--row-gap);
     font-variant: tabular-nums;
+    /* .example-controls is a wrapping column flex container, so its cross size is content-based
+       and a row would otherwise grow past the example's width */
+    max-width: 100%;
+    min-width: 0;
 }
 
 .controls-row + .controls-row {

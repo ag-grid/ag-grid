@@ -1,8 +1,7 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
 
 import { ColumnMenuModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, polyfillOffsetParent } from '../test-utils';
 
 describe('styled root legacy theme classes on popups', () => {
     const gridMgr = new TestGridsManager({ modules: [ColumnMenuModule] });

@@ -68,7 +68,11 @@
             },
             {
                 "name": "Blog",
-                "url": "https://blog.ag-grid.com/"
+                "url": "https://www.ag-grid.com/blog/"
+            },
+            {
+                "name": "Terms of Use",
+                "url": "/terms-of-use/"
             },
             {
                 "name": "Privacy Policy",
@@ -80,7 +84,8 @@
             },
             {
                 "name": "Manage Cookies",
-                "url": "#manage_cookies"
+                "url": "#manage_cookies",
+                "showCookiesPrefs": true
             },
             {
                 "name": "Modern Slavery",
@@ -102,7 +107,7 @@
             },
             {
                 "name": "X",
-                "url": "https://twitter.com/ag_grid",
+                "url": "https://x.com/ag_grid",
                 "iconName": "xLogo"
             },
             {

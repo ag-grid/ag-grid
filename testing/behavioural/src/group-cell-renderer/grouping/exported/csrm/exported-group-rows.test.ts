@@ -1,8 +1,9 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import type { GridApi } from 'ag-grid-community';
 import { CellStyleModule, CsvExportModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../../../test-utils';
 import { getTestGenerator } from '../../../util';
 import { rowModelGridOptions } from '../../grid-config';
 import { getExportedTestConcerns } from '../exported-test-utils';
@@ -23,7 +24,7 @@ describe('ag-grid exported group values', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        vi.useFakeTimers();
+        vi.useRealTimers();
     });
 
     // special case, include extra empty column to export the group row

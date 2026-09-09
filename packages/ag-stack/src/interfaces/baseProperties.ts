@@ -23,4 +23,6 @@ export interface BaseProperties {
     tooltipInteraction?: boolean;
     getDocument?: () => Document;
     suppressTouch?: boolean;
+    suppressInputClearButton?: boolean;
+    enableInputAutoComplete?: boolean;
 }

@@ -73,6 +73,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
             value: '',
             valueList: Array.from(this.options.keys()),
             searchType: 'matchAny',
+            searchIcon: true,
             allowTyping: true,
             filterList: true,
             highlightMatch: true,

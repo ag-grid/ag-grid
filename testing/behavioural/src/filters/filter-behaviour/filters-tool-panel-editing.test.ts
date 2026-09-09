@@ -1,3 +1,13 @@
+import {
+    ALL_SEVERITIES,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type { IFiltersToolPanel } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -8,15 +18,6 @@ import {
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import {
-    ALL_SEVERITIES,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 /**

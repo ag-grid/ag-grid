@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows } from 'ag-test-utils';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -16,8 +17,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { GridRows, ignoreConsoleLicenseKeyError } from '../test-utils';
 
 interface PersonRow {
     athlete: string;
@@ -51,7 +50,6 @@ describe('Cell editing validation modes (React)', () => {
         ]);
         setupAgTestIds();
     });
-    beforeEach(() => ignoreConsoleLicenseKeyError());
     afterEach(() => cleanup());
 
     const renderGrid = (

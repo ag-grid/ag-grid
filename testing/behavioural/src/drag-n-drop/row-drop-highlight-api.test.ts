@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid row highlight', () => {
     const gridsManager = new TestGridsManager({

@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GetDetailRowDataParams, GridOptions, IsMasterOpenByDefaultParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid master detail open by default (AG-11476)', () => {
     const gridsManager = new TestGridsManager({

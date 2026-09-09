@@ -156,7 +156,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             return;
         }
 
-        const nextFocusableEl = _findNextFocusableElement(beans, this.eGui, null, e.shiftKey);
+        const nextFocusableEl = _findNextFocusableElement({ beans, rootNode: this.eGui, backwards: e.shiftKey });
 
         if (nextFocusableEl) {
             beans.headerNavigation?.scrollToColumn(this.column);

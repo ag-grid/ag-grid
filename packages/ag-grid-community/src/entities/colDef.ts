@@ -1,6 +1,7 @@
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
+import type { IColumnSelectionPanelParams } from '../interfaces/iColumnSelectionPanel';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -9,7 +10,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import type { ITooltipParams } from '../tooltip/tooltipComponent';
+import type { ITooltipParams, TooltipDefinition } from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
 import type {
     BaseColDefOptionalDataParams,
@@ -41,14 +42,23 @@ export interface AbstractColDef<TData = any, TValue = any> {
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
-     * Tooltip for the column header, `headerTooltipValueGetter` takes precedence if set.
+     * Tooltip for the column header.
+     * - `true` shows the displayed header name.
+     * - `false` disables the configured header tooltip.
+     * - A string shows static content.
+     * - A callback resolves the content from the supplied params.
+     *
      * When the column is grouped with `groupDisplayType: 'multipleColumns'`, the generated group column header inherits this value.
      * @agModule `TooltipModule`
      */
-    headerTooltip?: string;
+    headerTooltip?: TooltipDefinition<TData, TValue>;
 
     /**
-     * Callback that should return the string to use for a tooltip.
+     * Callback that should return the value to use for a tooltip.
+     * When both properties are supplied, this callback takes precedence over a string `headerTooltip`,
+     * which is used as a fallback if the callback returns `null` or `undefined`. The `true`, `false`, and
+     * callback forms of `headerTooltip` take precedence over this property.
+     * @deprecated v36.2 Use `headerTooltip` with a callback instead.
      * @agModule `TooltipModule`
      */
     headerTooltipValueGetter?: HeaderTooltipValueGetterFunc<TData, TValue>;
@@ -370,15 +380,29 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     equals?: EqualsFunc<TValue>;
     /**
+     * Tooltip for the cell.
+     * - `true` shows the displayed cell value (`valueFormatted` when present, otherwise `value`).
+     * - `false` disables tooltip content configured on the Column Definition.
+     * - A string shows static content.
+     * - A callback resolves the content from the supplied params.
+     *
+     * When the column is grouped, group rows in the generated group column inherit this value.
+     * @agModule `TooltipModule`
+     */
+    tooltip?: TooltipDefinition<TData, TValue>;
+    /**
      * The field of the tooltip to apply to the cell.
      * When the column is grouped, group rows in the generated group column inherit this value.
+     * @deprecated v36.2 Use `tooltip` with a callback instead.
      * @agModule `TooltipModule`
      */
     tooltipField?: ColDefField<TData>;
     /**
-     * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
+     * Callback that should return the value to use for a tooltip. `tooltip` takes precedence when supplied. Otherwise,
+     * a non-empty `tooltipField` takes precedence when row data is available and this callback is the fallback.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
      * When the column is grouped, group rows in the generated group column inherit this callback.
+     * @deprecated v36.2 Use `tooltip` with a callback instead.
      * @agModule `TooltipModule`
      */
     tooltipValueGetter?: TooltipValueGetterFunc<TData, TValue>;
@@ -788,6 +812,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
     /**
      * The renderer to be used while either
+     *  - using Client-Side Row Model with `loading=true` and `loadingRows` enabled.
      *  - using Server Side Row Model and the row is in an unloaded state and if `suppressServerSideFullWidthLoadingRow` or `groupHideOpenParents` is enabled.
      *  - a cell renderer is marked for deferred loading with `cellRendererParams.deferRender:true`.
      */
@@ -1248,18 +1273,7 @@ export type GetFindTextFunc<TData = any, TValue = any, TContext = any> = (
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
-export interface ColumnChooserParams {
-    /** To suppress updating the layout of columns as they are rearranged in the grid */
-    suppressSyncLayoutWithGrid?: boolean;
-    /** To suppress Column Filter section*/
-    suppressColumnFilter?: boolean;
-    /** To suppress Select / Un-select all widget*/
-    suppressColumnSelectAll?: boolean;
-    /** To suppress Expand / Collapse all widget*/
-    suppressColumnExpandAll?: boolean;
-    /** By default, column groups start expanded.
-     * Pass true to default to contracted groups*/
-    contractColumnSelection?: boolean;
+export interface ColumnChooserParams extends IColumnSelectionPanelParams {
     /** Custom Columns Panel layout */
     columnLayout?: (ColDef | ColGroupDef)[];
 }
@@ -1321,10 +1335,12 @@ export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = a
 export type HeaderValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: HeaderValueGetterParams<TData, TValue, TContext>
 ) => string;
+/** @deprecated v36.2 Use `TooltipCallbackFunc` instead. */
 export type HeaderTooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;
 
+/** @deprecated v36.2 Use `TooltipCallbackFunc` instead. */
 export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;

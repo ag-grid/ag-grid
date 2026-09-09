@@ -1,11 +1,11 @@
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
+
 import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({

@@ -38,4 +38,17 @@ test.agExample(import.meta, () => {
         // The unchanged BMI still reflects the original value.
         await expect(agIdFor.cell('0', '0')).toContainText('24.98');
     });
+
+    test.eachFramework('block mode keeps the row open when the BMI cannot be calculated', async ({ agIdFor }) => {
+        await agIdFor.cell('0', 'height').dblclick();
+
+        const heightInput = agIdFor.cell('0', 'height').locator('input');
+        await expect(heightInput).toBeVisible();
+        // Zero is within the editor's configured range, but it cannot produce a finite BMI.
+        await heightInput.fill('0');
+        await heightInput.press('Enter');
+
+        await expect(heightInput).toBeVisible();
+        await expect(agIdFor.cell('0', '0')).toContainText('24.98');
+    });
 });

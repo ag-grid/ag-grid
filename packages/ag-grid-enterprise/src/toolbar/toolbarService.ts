@@ -1,4 +1,4 @@
-import type { IToolbarComp, IToolbarItem, IToolbarService, NamedBean } from 'ag-grid-community';
+import type { IToolbarComp, IToolbarItem, IToolbarService, NamedBean, ToolbarItemShorthand } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 export class ToolbarService extends BeanStub implements NamedBean, IToolbarService {
@@ -20,5 +20,12 @@ export class ToolbarService extends BeanStub implements NamedBean, IToolbarServi
 
     public getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined {
         return this.comp?.getToolbarItemInstance<T>(key);
+    }
+
+    public hasItem(itemName: ToolbarItemShorthand): boolean {
+        // Read from the option rather than the comp: the answer is needed before the toolbar renders.
+        return !!this.gos
+            .get('toolbar')
+            ?.items?.some((item) => item === itemName || (typeof item === 'object' && item.toolbarItem === itemName));
     }
 }

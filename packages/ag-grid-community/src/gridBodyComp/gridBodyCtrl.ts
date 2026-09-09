@@ -153,6 +153,7 @@ export class GridBodyCtrl extends BeanStub {
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
             gridSizeChanged: onGridSizeChanged,
+            gridViewportWidthChanged: onGridSizeChanged,
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
@@ -172,6 +173,9 @@ export class GridBodyCtrl extends BeanStub {
         const columns = this.beans.colModel.colsList;
         this.comp.setColumnCount(columns.length);
         this.updateScrollableAreaWidth();
+        // Row-group / pivot columns declared in the initial column defs are only populated by the time the
+        // grid columns are refreshed, which is after this ctrl is constructed.
+        this.setGridRole();
     }
 
     private onScrollVisibilityChanged(): void {
@@ -240,7 +244,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getHorizontalViewportWidth(): number {
-        return this.eGridViewport.getBoundingClientRect().width;
+        // Not `getBoundingClientRect`: that reports the post-transform box, so a grid inside a
+        // `transform: scale()` measures wider than its layout and suppresses the horizontal scrollbar.
+        return _getInnerWidth(this.eGridViewport);
     }
 
     public getViewportWidthWithoutScrollbar(

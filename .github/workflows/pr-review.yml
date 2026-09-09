@@ -25,10 +25,10 @@ on:
                 type: string
                 required: true
             driver:
-                description: 'Review engine. claude (default) = Claude Code orchestrates a chunked Codex review — same standard pass, split across per-turn-safe chunks (survives large PRs that exceed Codex per-turn input limits). codex = legacy single-turn Codex review (can fail on large PRs that exceed the per-turn input limit).'
+                description: 'Review engine. explore is the default; claude and codex are deprecated. See ag-dev-prompts docs/installation.md.'
                 type: choice
-                options: [claude, codex]
-                default: claude
+                options: [explore, claude, codex]
+                default: explore
                 required: false
             quiet:
                 description: 'Quiet/soak mode: post nothing to the PR; upload the review as an artifact (pr-review-<driver>-<pr#>) instead. Use to compare drivers without touching the PR.'
@@ -67,12 +67,12 @@ jobs:
             packages: read
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 1
 
             - name: Setup Node (GitHub Packages for @ag-grid scope)
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: package.json
                   registry-url: https://npm.pkg.github.com
@@ -119,10 +119,6 @@ jobs:
                   pr-author: ${{ steps.pr-meta.outputs.pr-author }}
                   github-token: ${{ github.token }}
                   inline-comments: 'true'
-                  # claude is the default driver. pull_request / plain /pr-review supply
-                  # no driver input, so they fall through to the `|| 'claude'` default.
-                  # To force codex on a one-off, dispatch with driver=codex. quiet stays
-                  # false → claude reviews post to the PR as normal.
-                  driver: ${{ inputs.driver || 'claude' }}
+                  # See ag-dev-prompts docs/installation.md.
+                  driver: ${{ inputs.driver || 'explore' }}
                   quiet: ${{ inputs.quiet || 'false' }}
-                  anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}

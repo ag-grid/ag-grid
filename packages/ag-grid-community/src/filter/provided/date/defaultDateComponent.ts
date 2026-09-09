@@ -34,6 +34,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public init(params: IDateParams): void {
         this.params = params;
+        this.eDateInput
+            .setClearButtonEnabled(true)
+            .setSearchIcon(true)
+            .onValueClear(() => this.params.onDateCleared?.());
         this.setParams(params);
 
         const inputElement = this.eDateInput.getInputElement();
@@ -41,7 +45,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.addManagedListeners(inputElement, {
             // ensures that the input element is focussed when a clear button is clicked,
             // unless using safari as there is no clear button and focus does not work properly
-            mouseDown: () => {
+            mousedown: () => {
                 if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
                     return;
                 }
@@ -87,27 +91,26 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     private setParams(params: IDateParams): void {
+        // re-applied on refresh so params updates re-pin (or clear) the override
+        this.eDateInput.setAutoComplete(params.filterParams?.browserAutoComplete);
         const inputElement = this.eDateInput.getInputElement();
 
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons, includeTime, colDef } =
-            params.filterParams || {};
+        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
-        const dataTypeSvc = this.beans.dataTypeSvc;
-        const shouldUseDateTimeLocal =
-            includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType) ?? false;
+        const shouldUseDateTimeLocal = this.includesTime(params);
 
         if (shouldUseBrowserDatePicker) {
             if (shouldUseDateTimeLocal) {
-                inputElement.type = 'datetime-local';
+                this.eDateInput.setInputType('datetime-local');
                 inputElement.step = '1'; // enforce seconds part to show up by default
             } else {
-                inputElement.type = 'date';
+                this.eDateInput.setInputType('date');
             }
         } else {
-            inputElement.type = 'text';
+            this.eDateInput.setInputType('text');
         }
         const parsedMinValidDate = parseOrConstructDate(this.beans.log, minValidDate, minValidYear, true);
         const parsedMaxValidDate = parseOrConstructDate(this.beans.log, maxValidDate, maxValidYear, false);
@@ -135,9 +138,13 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public setDate(date: Date): void {
-        const colType = this.params.filterParams.colDef.cellDataType;
-        const includeTime = this.beans.dataTypeSvc?.getDateIncludesTimeFlag(colType) ?? false;
-        this.eDateInput.setValue(_serialiseDate(date, includeTime));
+        // Must match the input type `setParams` chose: a picker blanks a value it cannot read.
+        this.eDateInput.setValue(_serialiseDate(date, this.includesTime(this.params)));
+    }
+
+    private includesTime(params: IDateParams): boolean {
+        const { includeTime, colDef } = params.filterParams || {};
+        return includeTime ?? this.beans.dataTypeSvc?.getDateIncludesTimeFlag?.(colDef?.cellDataType) ?? false;
     }
 
     public setInputPlaceholder(placeholder: string): void {

@@ -1,8 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
 import type { RowPinnedType } from 'ag-grid-community';
 import { PdfExportModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 describe('PDF export', () => {
     const gridsManager = new TestGridsManager({

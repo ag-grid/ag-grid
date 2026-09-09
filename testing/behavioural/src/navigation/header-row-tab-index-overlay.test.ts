@@ -1,7 +1,7 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-
-import { TestGridsManager } from '../test-utils';
 
 const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'age' }];
 

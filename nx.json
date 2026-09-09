@@ -62,7 +62,7 @@
         "externalDependencies": ["npm:typescript", "npm:esbuild"]
       }
     ],
-    "sharedGlobals": ["{workspaceRoot}/esbuild.config*.cjs", "{workspaceRoot}/tsconfig.*.json"],
+    "sharedGlobals": ["{workspaceRoot}/esbuild*.cjs", "{workspaceRoot}/tsconfig.*.json"],
     "charts": ["chartsPackages", "chartsTypes"],
     "chartsPackages": [
       {

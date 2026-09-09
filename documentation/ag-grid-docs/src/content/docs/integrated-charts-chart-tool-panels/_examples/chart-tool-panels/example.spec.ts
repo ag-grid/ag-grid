@@ -31,4 +31,42 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-tab', { hasText: 'Chart' }).click();
         await expect(page.locator('.ag-chart-settings-mini-charts-container')).toBeVisible();
     });
+
+    test.describe('chart themes follow the colour scheme the example was loaded with', () => {
+        test.describe('dark', () => {
+            test.use({ loadPageOptions: { agThemeMode: 'dark-blue' } });
+
+            test.eachFramework('chart themes are dark, matching the grid', async ({ page, remoteGrid }) => {
+                await ensureGridReady(page);
+                await waitForGridContent(page);
+                await expect(page.locator('.ag-chart-tabbed-menu')).toBeVisible();
+
+                expect(await page.evaluate(() => document.documentElement.dataset.agThemeMode)).toBe('dark-blue');
+                expect(await page.evaluate(() => document.documentElement.dataset.colorScheme)).toBe('dark');
+
+                const themes = await remoteGrid(page).getGridOption('chartThemes');
+
+                expect(themes).toBeTruthy();
+                expect(themes).not.toHaveLength(0);
+                expect(themes!.filter((theme) => !theme.endsWith('-dark'))).toEqual([]);
+            });
+        });
+
+        test.describe('light', () => {
+            test.use({ loadPageOptions: { agThemeMode: 'light' } });
+
+            test.eachFramework('chart themes stay light', async ({ page, remoteGrid }) => {
+                await ensureGridReady(page);
+                await waitForGridContent(page);
+                await expect(page.locator('.ag-chart-tabbed-menu')).toBeVisible();
+
+                expect(await page.evaluate(() => document.documentElement.dataset.agThemeMode)).toBe('light');
+
+                const themes = await remoteGrid(page).getGridOption('chartThemes');
+
+                expect(themes).toBeTruthy();
+                expect(themes!.filter((theme) => theme.endsWith('-dark'))).toEqual([]);
+            });
+        });
+    });
 });

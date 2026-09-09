@@ -77,7 +77,7 @@ describe('buildLicenseSetupMarkdown', () => {
                 '> **Note**',
                 '>',
                 '> If you are using an AG Grid version before 33.0.0, please see the documentation for your' +
-                    ' [version](https://www.ag-grid.com/documentation-archive) for help on installing your license key.',
+                    ' [version](https://www.ag-grid.com/documentation-archive/) for help on installing your license key.',
             ].join('\n')
         );
     });

@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
 import type {
     FilterDisplayParams,
+    FilterOptionKey,
     FilterWrapperParams,
     IAfterGuiAttachedParams,
-    ISimpleFilterModelType,
     NumberFilterModel,
 } from 'ag-grid-community';
 
@@ -59,7 +59,7 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, NumberFil
     // e.g. if filter is on multiple columns and open simultaneously in filter tool panel
     name = `year${id++}`;
     params!: FilterDisplayParams<any, any, NumberFilterModel> & FilterWrapperParams;
-    year: ISimpleFilterModelType | 'All' = 'All';
+    year: FilterOptionKey | 'All' = 'All';
 
     agInit(params: FilterDisplayParams<any, any, NumberFilterModel> & FilterWrapperParams): void {
         this.refresh(params);

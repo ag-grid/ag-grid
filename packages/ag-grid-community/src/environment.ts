@@ -15,14 +15,12 @@ import { themeQuartz } from './theming/parts/theme/themes';
 const cssVariable = <K extends keyof CssChangeKeys>(
     changeKey: K,
     type: ParamType,
-    defaultValue: number,
-    noWarn?: boolean,
-    cacheDefault?: boolean
-): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue, noWarn, cacheDefault });
+    defaultValue: number
+): CssVariable<CssChangeKeys> => ({ changeKey, type, defaultValue });
 
 const CELL_HORIZONTAL_PADDING = cssVariable('cellHorizontalPadding', 'length', 16);
-const INDENTATION_LEVEL = cssVariable('indentationLevel', 'length', 0, true, true);
-const ROW_GROUP_INDENT_SIZE = cssVariable('rowGroupIndentSize', 'length', 0);
+const CELL_WIDGET_SPACING = cssVariable('cellWidgetSpacing', 'length', 12);
+const ICON_SIZE = cssVariable('iconSize', 'length', 16);
 const ROW_HEIGHT = cssVariable('rowHeight', 'length', 42);
 const HEADER_HEIGHT = cssVariable('headerHeight', 'length', 48);
 const ROW_BORDER_WIDTH = cssVariable('rowBorderWidth', 'border', 1);
@@ -85,17 +83,12 @@ export class Environment
         return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
     }
 
-    private getCellPaddingLeft(): number {
-        // calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size)*var(--ag-indentation-level))
-        const cellHorizontalPadding = this.getDefaultCellHorizontalPadding();
-        const indentationLevel = this.getCSSVariablePixelValue(INDENTATION_LEVEL);
-        const rowGroupIndentSize = this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
-        return cellHorizontalPadding - 1 + rowGroupIndentSize * indentationLevel;
+    public getDefaultCellWidgetSpacing(): number {
+        return this.getCSSVariablePixelValue(CELL_WIDGET_SPACING);
     }
 
-    public getCellPadding(): number {
-        const cellPaddingRight = this.getDefaultCellHorizontalPadding() - 1;
-        return this.getCellPaddingLeft() + cellPaddingRight;
+    public getDefaultIconSize(): number {
+        return this.getCSSVariablePixelValue(ICON_SIZE);
     }
 
     public getDefaultColumnMinWidth(): number {
@@ -133,6 +126,11 @@ export class Environment
         if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
+        // catches variables a class swap introduces after grid creation; 'theme' is covered by
+        // postProcessThemeChange, which runs after the new theme is in place
+        if (change !== 'theme') {
+            this.checkLegacyThemeVariables();
+        }
         super.fireStylesChangedEvent(change);
     }
 
@@ -156,7 +154,14 @@ export class Environment
             } else {
                 this.beans.log.error(239);
             }
+        } else if (newGridTheme) {
+            this.checkLegacyThemeVariables();
         }
+    }
+
+    /** The reporting lives in the ValidationModule; without it registered, nothing is checked. */
+    private checkLegacyThemeVariables(): void {
+        this.beans.validation?.checkLegacyThemeVariables(this.eRootDiv);
     }
 
     protected override getAdditionalCss(): Map<string, string[]> {
@@ -184,12 +189,12 @@ export class Environment
 }
 
 interface CssChangeKeys extends BaseCssChangeKeys {
+    cellWidgetSpacing: true;
+    iconSize: true;
     headerHeight: true;
     headerRowBorderWidth: true;
     rowHeight: true;
     rowBorderWidth: true;
     pinnedRowBorderWidth: true;
     cellHorizontalPadding: true;
-    indentationLevel: true;
-    rowGroupIndentSize: true;
 }

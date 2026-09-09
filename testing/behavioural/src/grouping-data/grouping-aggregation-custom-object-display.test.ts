@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridApi, IAggFuncParams, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /** Custom aggFunc that returns an object with .value for display, as shown in the docs example.
  * Also validates that aggregatedChildren is correctly populated. */

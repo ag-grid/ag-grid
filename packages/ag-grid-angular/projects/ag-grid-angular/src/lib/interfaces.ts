@@ -8,6 +8,8 @@ import type {
     ICellEditorRendererParams,
     ICellRenderer,
     ICellRendererParams,
+    IColumnSelectionLabelRenderer,
+    IColumnSelectionLabelRendererParams,
     IDate,
     IDateParams,
     IDragAndDropImage,
@@ -76,6 +78,9 @@ export interface IFilterDisplayAngularComp<TData = any, TContext = any, TModel =
         FilterDisplay<TData, TContext, TModel, TState> {}
 
 export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {}
+
+export interface IColumnSelectionLabelRendererAngularComp
+    extends AgFrameworkComponent<IColumnSelectionLabelRendererParams>, IColumnSelectionLabelRenderer {}
 
 export interface ICellEditorRendererAngularComp extends AgFrameworkComponent<ICellEditorRendererParams> {}
 

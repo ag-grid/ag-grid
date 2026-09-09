@@ -1,3 +1,6 @@
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type {
     GridOptions,
     IServerSideGetRowsParams,
@@ -6,9 +9,6 @@ import type {
 } from 'ag-grid-community';
 import { NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * Characterization tests (golden-master) pinning the CURRENT behaviour of SERVER-DELEGATED

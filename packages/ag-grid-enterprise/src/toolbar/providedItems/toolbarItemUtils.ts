@@ -1,7 +1,17 @@
-import { _addOrRemoveAttribute, _clearElement, _setAriaLabel, _setDisabled, _setDisplayed } from 'ag-stack';
+import {
+    FAST_TEST_TIMINGS,
+    _addOrRemoveAttribute,
+    _clearElement,
+    _setAriaLabel,
+    _setDisabled,
+    _setDisplayed,
+} from 'ag-stack';
 
-import type { BeanCollection, IconName } from 'ag-grid-community';
+import type { BeanCollection, GridInputTextField, IconName } from 'ag-grid-community';
 import { _createElement, _createIconNoSpan } from 'ag-grid-community';
+
+/** Debounce before a toolbar text input writes its value back to the grid option. */
+export const INPUT_DEBOUNCE_MS = FAST_TEST_TIMINGS ? 0 : 300;
 
 interface CreateToolbarInputParams {
     label: string;
@@ -11,6 +21,7 @@ interface CreateToolbarInputParams {
 
 export function createToolbarInput(
     beans: BeanCollection,
+    eInputField: GridInputTextField,
     { label, iconName, initialValue }: CreateToolbarInputParams
 ): { eIconWrapper: HTMLElement | undefined; eInput: HTMLInputElement } {
     const eIcon = _createIconNoSpan(iconName, beans);
@@ -24,19 +35,10 @@ export function createToolbarInput(
         eIconWrapper.appendChild(eIcon);
     }
 
-    const eInput = _createElement<HTMLInputElement>({
-        tag: 'input',
-        cls: 'ag-toolbar-input-field',
-        attrs: {
-            type: 'text',
-            placeholder: `${label}...`,
-            'aria-label': label,
-        },
-    });
-
-    if (initialValue) {
-        eInput.value = initialValue;
-    }
+    eInputField.setInputPlaceholder(`${label}...`).setInputAriaLabel(label).setValue(initialValue, true);
+    eInputField.addCss('ag-toolbar-input-widget');
+    const eInput = eInputField.getInputElement();
+    eInput.classList.add('ag-toolbar-input-field');
 
     return { eIconWrapper, eInput };
 }

@@ -35,7 +35,26 @@ import {
  *
  * Usage (run after a build; defaults to the enforced production policy):
  *   nx run ag-grid-docs:preview:csp
+ *   nx run ag-grid-docs:preview:csp:staging              (staging policy, enforced)
+ *   nx run ag-grid-docs:preview:csp:report-only          (production policy, report-only)
+ *   nx run ag-grid-docs:preview:csp:staging-report-only
  *   tsx documentation/ag-grid-docs/scripts/csp/preview-csp.ts [--env=...] [--mode=...] [--port=...] [--no-https]
+ *
+ * These configurations select the POLICY only (which CspEnv getCspValue is built for —
+ * staging and production differ in the payment/auth/form origins). They deliberately do
+ * NOT change which build is served: `dependsOn` builds the default (localhost) config, so
+ * PUBLIC_SITE_URL stays https://localhost:4611 and the example runner keeps working.
+ *
+ * A staging/production BUILD is a separate axis and cannot be served faithfully from
+ * localhost — those configurations bake their remote origin into the output (see
+ * .env.build.staging / .env.preview.production), so absolute-URL fetches go to the remote
+ * host and the examples-scope connect-src 'self' blocks them. If you specifically need a
+ * remote-origin build — e.g. to load the *staging* GTM environment, which only happens when
+ * getIsStaging() is true (see GoogleTagManager.astro) — build it explicitly and then invoke
+ * this script directly rather than through the target, so `dependsOn` does not rebuild the
+ * localhost variant over it:
+ *   nx build ag-grid-docs --configuration=staging
+ *   cd documentation/ag-grid-docs && tsx scripts/csp/preview-csp.ts --env staging
  *
  * Port: defaults to 4611 to match PUBLIC_SITE_URL baked into a local build
  * (.env.build → https://localhost:4611). The example runner fetches its modules

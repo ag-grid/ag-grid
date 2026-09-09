@@ -72,7 +72,7 @@
 
 p.name {
     font-size: 46px;
-    line-height: var(--text-lh-ultra-tight);
+    line-height: var(--text-lh-ratio-ultra-tight);
     margin-top: $spacing-size-1;
     margin-bottom: $spacing-size-2;
 
@@ -136,7 +136,7 @@ p.name {
     height: 52px;
     padding-bottom: $spacing-size-3;
     font-size: 30px;
-    line-height: var(--text-lh-ultra-tight);
+    line-height: var(--text-lh-ratio-ultra-tight);
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
 
@@ -164,7 +164,7 @@ p.name {
     margin-bottom: $spacing-size-4;
 
     p {
-        line-height: var(--text-lh-tight);
+        line-height: var(--text-lh-ratio-tight);
     }
 }
 

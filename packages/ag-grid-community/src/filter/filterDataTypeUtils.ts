@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _exists, _getDateParts, _parseBigIntOrNull } from 'ag-stack';
+import { _getDateParts, _parseBigIntOrNull } from 'ag-stack';
 
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -14,8 +14,9 @@ import type {
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
-import type { ISimpleFilterParams } from './provided/iSimpleFilter';
+import type { IFilterOptionDef, ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';
+import { _isBlank } from './provided/simpleFilterUtils';
 import type { ITextFilterParams } from './provided/text/iTextFilter';
 
 const MONTH_LOCALE_TEXT = {
@@ -79,6 +80,25 @@ function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
 
+// Merged onto `colDef.filterParams` by `setColDefPropsForDataType`, so nothing else tells one from the author's.
+const gridSuppliedFilterParams = new WeakSet<object>();
+
+function gridSupplied<T extends (...args: any[]) => any>(fn: T): T {
+    gridSuppliedFilterParams.add(fn);
+    return fn;
+}
+
+// One identity for every `date` column; the `dateString` pair closes over its definition, so it registers per call.
+const gridSuppliedIsValidDate = gridSupplied(isValidDate);
+
+/**
+ * Whether a `filterParams` function is the grid's own for the cell data type, rather than the column author's.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isGridSuppliedFilterParam(value: unknown): boolean {
+    return typeof value === 'function' && gridSuppliedFilterParams.has(value);
+}
+
 type FilterParamsDefArgs = {
     formatValue: DataTypeFormatValueFunc;
     t: LocaleTextFunc;
@@ -101,6 +121,39 @@ type FilterParamsDefMap = CheckDataTypes<{
     object: FilterParamCallback<ITextFilterParams, any>;
 }>;
 
+const BOOLEAN_FILTER_OPTIONS: readonly (string | IFilterOptionDef)[] = [
+    'empty',
+    {
+        displayKey: 'true',
+        displayName: 'True',
+        predicate: (_filterValues: any[], cellValue: any) => cellValue,
+        numberOfInputs: 0,
+    },
+    {
+        displayKey: 'false',
+        displayName: 'False',
+        predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
+        numberOfInputs: 0,
+    },
+];
+
+/**
+ * Whether the list is still exactly what the grid supplied for the cell data type. Content rather than
+ * identity, so a list edited after the fact reads as the column's and both filters go on offering the same.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isGridSuppliedFilterOptions(filterOptions: unknown): boolean {
+    if (!Array.isArray(filterOptions) || filterOptions.length !== BOOLEAN_FILTER_OPTIONS.length) {
+        return false;
+    }
+    for (let i = 0, len = BOOLEAN_FILTER_OPTIONS.length; i < len; ++i) {
+        if (filterOptions[i] !== BOOLEAN_FILTER_OPTIONS[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
     number: () => undefined,
@@ -108,25 +161,12 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
-        filterOptions: [
-            'empty',
-            {
-                displayKey: 'true',
-                displayName: 'True',
-                predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                numberOfInputs: 0,
-            },
-            {
-                displayKey: 'false',
-                displayName: 'False',
-                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                numberOfInputs: 0,
-            },
-        ],
+        // A copy per column, so editing the list one colDef carries cannot reach the others.
+        filterOptions: [...BOOLEAN_FILTER_OPTIONS],
     }),
-    date: () => ({ isValidDate }),
+    date: () => ({ isValidDate: gridSuppliedIsValidDate }),
     dateString: ({ dataTypeDefinition }) => ({
-        comparator: (filterDate: Date, cellValue: string | undefined) => {
+        comparator: gridSupplied((filterDate: Date, cellValue: string | undefined) => {
             const cellAsDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(cellValue)!;
             if (cellValue == null || cellAsDate < filterDate) {
                 return -1;
@@ -135,10 +175,12 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
                 return 1;
             }
             return 0;
-        },
-        isValidDate: (value: any) =>
-            typeof value === 'string' &&
-            isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
+        }),
+        isValidDate: gridSupplied(
+            (value: any) =>
+                typeof value === 'string' &&
+                isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value))
+        ),
     }),
     dateTime: (args) => filterParamsForEachDataType.date(args),
     dateTimeString: (args) => filterParamsForEachDataType.dateString(args),
@@ -146,19 +188,26 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     text: () => undefined,
 };
 
+/** The path getter is handed the raw cell value, so anything but a `Date` has no parts. */
+function dateParts(value: unknown, includeTime?: boolean): string[] | null {
+    return value instanceof Date ? _getDateParts(value, includeTime) : null;
+}
+
 // using an object here to enforce dev to not forget to implement new types as they are added
 const setFilterParamsForEachDataType: FilterParamsDefMap = {
     number: () => ({ comparator: setFilterNumberComparator }),
     bigint: () => ({ comparator: setFilterBigIntComparator }),
     boolean: ({ t }) => ({
-        valueFormatter: (params: ValueFormatterParams<any, boolean>) =>
-            _exists(params.value) ? t(String(params.value), params.value ? 'True' : 'False') : t('blanks', '(Blanks)'),
+        valueFormatter: (params: ValueFormatterParams<any, boolean>) => {
+            const value = params.value;
+            if (_isBlank(value)) {
+                return t('blanks', '(Blanks)');
+            }
+            return t(String(value), value ? 'True' : 'False');
+        },
     }),
     date: ({ formatValue, t }) => ({
-        valueFormatter: (params: ValueFormatterParams) => {
-            const valueFormatted = formatValue(params);
-            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
-        },
+        valueFormatter: (params: ValueFormatterParams) => formatValue(params) || t('blanks', '(Blanks)'),
         treeList: true,
         treeListFormatter: (pathKey: string | null, level: number) => {
             if (pathKey === 'NaN') {
@@ -170,13 +219,10 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
             }
             return pathKey ?? t('blanks', '(Blanks)');
         },
-        treeListPathGetter: (date: Date | null) => _getDateParts(date, false),
+        treeListPathGetter: (date: Date | null) => dateParts(date, false),
     }),
     dateString: ({ formatValue, dataTypeDefinition, t }) => ({
-        valueFormatter: (params: ValueFormatterParams) => {
-            const valueFormatted = formatValue(params);
-            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
-        },
+        valueFormatter: (params: ValueFormatterParams) => formatValue(params) || t('blanks', '(Blanks)'),
         treeList: true,
         treeListPathGetter: (value: string | null) =>
             _getDateParts((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value ?? undefined), false),
@@ -190,7 +236,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     }),
     dateTime: (args) => {
         const params = setFilterParamsForEachDataType.date(args) as ISetFilterParams<any, Date>;
-        params.treeListPathGetter = _getDateParts;
+        params.treeListPathGetter = (date: Date | null) => dateParts(date);
         return params;
     },
     dateTimeString(args) {
@@ -200,10 +246,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
         return params;
     },
     object: ({ formatValue, t }) => ({
-        valueFormatter: (params: ValueFormatterParams) => {
-            const valueFormatted = formatValue(params);
-            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
-        },
+        valueFormatter: (params: ValueFormatterParams) => formatValue(params) || t('blanks', '(Blanks)'),
     }),
     text: () => undefined,
 };

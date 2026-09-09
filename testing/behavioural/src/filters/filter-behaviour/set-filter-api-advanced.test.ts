@@ -1,10 +1,22 @@
-import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    getVisibleTooltips,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+    waitForTooltips,
+} from 'ag-test-utils';
 
 import type {
     GridApi,
     ISetFilterCellRendererParams,
     ISetFilterParams,
+    ITooltipComp,
+    ITooltipParams,
     KeyCreatorParams,
     SetFilterHandler,
     SetFilterValuesFuncParams,
@@ -12,16 +24,6 @@ import type {
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, TooltipModule, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 /** Set-filter handler (non-deprecated public path). Warns nothing, unlike the ISetFilter instance methods. */
 function handler(api: GridApi, colId: string): SetFilterHandler {
@@ -34,7 +36,7 @@ function handler(api: GridApi, colId: string): SetFilterHandler {
 
 describe('Set Filter — handler value manipulation API', () => {
     const gridsManager = new TestGridsManager({
-        modules: [SetFilterModule, ClientSideRowModelModule],
+        modules: [SetFilterModule, ClientSideRowModelModule, TooltipModule],
     });
 
     beforeAll(() => {
@@ -569,15 +571,34 @@ describe('Set Filter — list rendering', () => {
     });
 
     test('showTooltips shows the value in a tooltip on hover', async () => {
+        class SetFilterTooltip implements ITooltipComp {
+            private readonly eGui = document.createElement('div');
+
+            public init(params: ITooltipParams): void {
+                this.eGui.classList.add('set-filter-tooltip');
+                this.eGui.textContent = `Set Filter: ${params.value}`;
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
                     field: 'country',
                     filter: 'agSetColumnFilter',
+                    tooltip: false,
+                    tooltipComponent: SetFilterTooltip,
                     filterParams: { showTooltips: true } as ISetFilterParams,
                 },
             ],
             rowData: [{ country: 'Australia' }, { country: 'Italy' }],
+            // The default 2000ms show delay is not what this test is about, and polling for it left the
+            // wait sitting exactly on its own timeout.
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
         });
 
         await ColumnFilterHarness.open(api, 'country');
@@ -591,12 +612,9 @@ describe('Set Filter — list rendering', () => {
         expect(label).toBeTruthy();
 
         await userEvent.hover(label);
-        // The waitFor below polls up to 2s for the tooltip, so no fixed pre-delay is needed.
-        await waitFor(
-            () => expect(document.querySelectorAll('.ag-tooltip, .ag-tooltip-custom').length).toBeGreaterThan(0),
-            { timeout: 2000 }
-        );
-        const tooltip = document.querySelector<HTMLElement>('.ag-tooltip, .ag-tooltip-custom');
-        expect(tooltip?.textContent).toContain('Italy');
+        await waitForTooltips(1);
+        const tooltip = getVisibleTooltips()[0];
+        expect(tooltip.classList.contains('set-filter-tooltip')).toBe(true);
+        expect(tooltip.textContent).toBe('Set Filter: Italy');
     });
 });

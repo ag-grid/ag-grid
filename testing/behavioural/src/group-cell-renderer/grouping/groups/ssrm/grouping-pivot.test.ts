@@ -1,7 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { CellStyleModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../../../test-utils';
 import { getTestGenerator } from '../../../util';
 import { rowModelGridOptions } from '../../grid-config';
 import { getGridOptions_pivot, getTestConcerns_pivot, groupCellSnapshotter } from '../../grouping-test-utils';

@@ -1,10 +1,10 @@
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { asyncSetTimeout } from 'ag-test-utils/node-utils';
+import { countLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { asyncSetTimeout } from '../test-utils/node-utils';
-import { countLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * Characterization tests pinning the current SSRM failure/retry mechanics.

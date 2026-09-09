@@ -1,7 +1,8 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import { CellStyleModule } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../../test-utils';
 import { getTestGenerator } from '../../util';
 import { rowModelGridOptions } from '../grid-config';
 import { getGridOptions_checkboxes, getTestConcerns_checkboxes, treeDataSnapshotter } from '../tree-data-test-utils';

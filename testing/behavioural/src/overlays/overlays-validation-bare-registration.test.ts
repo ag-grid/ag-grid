@@ -1,9 +1,8 @@
+import { TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
-
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 // Registering the ValidationModule directly (no enableDevValidations / ValidationModule.with) is the
 // low-level opt-in. Its onRegister hook enables diagnostic capture, so the overlay still appears using

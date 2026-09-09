@@ -1,8 +1,8 @@
+import { AdvancedFilterBuilderHarness, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 // The builder dialog's VirtualList sizes its viewport from getBoundingClientRect — give it a
 // stable height so item count is deterministic. Other popup/dialog needs (offsetParent,
@@ -476,7 +476,7 @@ describe('Advanced Filter - Builder UI', () => {
     });
 
     // NOTE: Pill picker dropdown interaction (clicking pill → selecting from rich select list)
-    // requires a nested VirtualList popup that doesn't reliably render in jsdom. These
+    // requires a nested VirtualList popup that doesn't reliably render without layout. These
     // interactions should be covered by Playwright E2E tests instead.
 
     describe('Applying filter from builder', () => {
@@ -558,6 +558,42 @@ describe('Advanced Filter - Builder UI', () => {
                 ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
                 └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
             `);
+        });
+    });
+
+    describe('Changing a condition column', () => {
+        test('the operator pill offers the new column options, not the ones it was opened with', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            await builder.addCondition();
+            const [item] = await builder.conditionItems();
+
+            await builder.selectColumn(item, 'Age');
+            expect(await builder.operatorOptions(item)).toEqual([
+                '=',
+                '!=',
+                '>',
+                '>=',
+                '<',
+                '<=',
+                'is between',
+                'is blank',
+                'is not blank',
+            ]);
+
+            // No operator has been chosen, so nothing the pill displays changes with the column.
+            await builder.selectColumn(item, 'Athlete');
+            expect(await builder.operatorOptions(item)).toEqual([
+                'contains',
+                'does not contain',
+                'equals',
+                'does not equal',
+                'begins with',
+                'ends with',
+                'is blank',
+                'is not blank',
+            ]);
         });
     });
 });

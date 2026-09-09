@@ -4,6 +4,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const postcss = require('postcss');
 const postcssPlugins = require('./postcss-plugins.cjs');
+const { superclassAliasPlugin } = require('./esbuild-plugin-superclass-alias.cjs');
 
 /** @type {import('esbuild').Plugin} */
 const cssPlugin = {
@@ -137,8 +138,10 @@ if (typeof require === 'undefined') {
 };
 
 const plugins = [cssPlugin];
+const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
+const isWatch = process.env.NX_TASK_TARGET_CONFIGURATION === 'watch';
 let outExtension;
-if (/:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '')) {
+if (isUmd) {
     plugins.push(umdWrapperAdaptorPlugin);
     outExtension = {
         '.cjs': '.js',
@@ -150,7 +153,14 @@ if (/:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '')) {
     };
 }
 
-if (process.env.NX_TASK_TARGET_CONFIGURATION !== 'watch') {
+// Only the published ESM needs this, and only when it is the artefact consumers get: UMD has no
+// tree shaking to preserve, and a watch build is never published. It parses the whole bundle, so
+// keeping it out of watch also keeps rebuilds quick. Must precede the minification plugin.
+if (!isUmd && !isWatch) {
+    plugins.push(superclassAliasPlugin);
+}
+
+if (!isWatch) {
     plugins.push(postBuildMinificationPlugin);
 }
 

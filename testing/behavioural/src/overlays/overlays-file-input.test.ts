@@ -1,15 +1,14 @@
-import type { MockInstance } from 'vitest';
-
-import type { ProcessFileInputParams } from 'ag-grid-community';
-import { AutoGenerateColumnsModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
-
 import {
     ALL_SEVERITIES,
     GridRows,
     TestGridsManager,
     initPointerEventPolyfill,
     isAgHtmlElementVisible,
-} from '../test-utils';
+} from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+
+import type { ProcessFileInputParams } from 'ag-grid-community';
+import { AutoGenerateColumnsModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 
 describe('ag-grid file input overlay', () => {
     const gridsManager = new TestGridsManager({
@@ -81,14 +80,10 @@ describe('ag-grid file input overlay', () => {
 
     function createFileDragEvent(type: string, files?: File[]): DragEvent {
         const dt = new DataTransfer();
-        // DataTransfer.types/files are readonly in the DOM types but mutable arrays in jsdom, so we cast away readonly to push
-        (dt.types as string[]).push('Files');
-        if (files) {
-            for (const file of files) {
-                dt.items.add(file);
-                (dt.files as unknown as File[]).push(file);
-            }
-        }
+        // A file drag reports the literal type 'Files', not each file's MIME type. Stated outright because
+        // happy-dom does not derive it — it lists the MIME types instead.
+        Object.defineProperty(dt, 'types', { value: ['Files'], configurable: true });
+        Object.defineProperty(dt, 'files', { value: files ?? [], configurable: true });
         return new DragEvent(type, { dataTransfer: dt, bubbles: true, cancelable: true });
     }
 

@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { GridOptions, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { PaginationModule, ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 /**
  * Characterization tests for SSRM block loading and cache eviction.

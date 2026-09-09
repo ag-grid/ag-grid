@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Find must match what the user sees. For a column with an active Show Values As mode the cell shows the

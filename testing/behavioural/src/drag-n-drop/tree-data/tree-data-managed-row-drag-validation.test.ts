@@ -1,9 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridOptions, IRowNode } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridRows,
     RowDragDispatcher,
@@ -11,7 +6,11 @@ import {
     assertDropIndicatorVisible,
     asyncSetTimeout,
     getRowHtmlElement,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
+import type { GridOptions, IRowNode } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe.each([false, true])('tree row dragging validation (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({

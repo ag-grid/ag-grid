@@ -1,4 +1,5 @@
-import { GridColumns, GridRows } from '../../test-utils';
+import { GridColumns, GridRows } from 'ag-test-utils';
+
 import {
     EDIT_MODES,
     asyncSetTimeout,

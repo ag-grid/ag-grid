@@ -55,15 +55,13 @@ describe('BigIntFilterHandler', () => {
         expect(handler.doesFilterPass({ node: { value: null }, model: params.model } as any)).toBe(true);
     });
 
-    it('should handle invalid cell values (mixed data)', () => {
+    it('compares a cell holding a number or a string as the bigint it reads as', () => {
         const params = createParams({}, { filterType: 'bigint', type: 'equals', filter: '10' });
         handler.init(params);
 
-        // Equals should still return false for mixed types because of === in comparator
-        expect(handler.doesFilterPass({ node: { value: 10 }, model: params.model } as any)).toBe(false);
-        expect(handler.doesFilterPass({ node: { value: '10' }, model: params.model } as any)).toBe(false);
+        expect(handler.doesFilterPass({ node: { value: 10 }, model: params.model } as any)).toBe(true);
+        expect(handler.doesFilterPass({ node: { value: '10' }, model: params.model } as any)).toBe(true);
 
-        // But lessThan should work if we updated isValid to be more robust
         const lessThanParams = createParams({}, { filterType: 'bigint', type: 'lessThan', filter: '20' });
         handler.init(lessThanParams);
         expect(handler.doesFilterPass({ node: { value: 10 }, model: lessThanParams.model } as any)).toBe(true);

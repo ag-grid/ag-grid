@@ -1,9 +1,9 @@
+import { TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideGetRowsParams, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { GridStateModule, TextFilterModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, waitForEvent } from '../test-utils';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * Regression tests for SSRM + `enableFilterHandlers` filter wiring.

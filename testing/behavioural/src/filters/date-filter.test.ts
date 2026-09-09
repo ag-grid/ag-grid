@@ -1,5 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { DateFilterModel } from 'ag-grid-community';
 import {
@@ -9,8 +10,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Date Filter - Equals', () => {
     const gridsManager = new TestGridsManager({
@@ -200,5 +199,50 @@ describe('Date Filter - Equals', () => {
             ├── LEAF id:0 date:"2024-01-15T10:30:00"
             └── LEAF id:2 date:"2024-01-15T10:30:00"
         `);
+    });
+
+    // A preset range is looked up once per row, so a comparator that normalises the date it is handed must
+    // not leave the next row judged against what it wrote.
+    test('a comparator that mutates the date it is given cannot corrupt a preset range', async () => {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const hoursFromToday = (hours: number) => new Date(startOfToday.getTime() + hours * 3_600_000);
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['today'],
+                        comparator: (filterDate: Date, cellValue: unknown) => {
+                            const filterTime = filterDate.getTime();
+                            filterDate.setTime(0); // free to normalise what it is handed
+                            const cellTime = (cellValue as Date).getTime();
+                            if (cellTime < filterTime) {
+                                return -1;
+                            }
+                            return cellTime > filterTime ? 1 : 0;
+                        },
+                    },
+                },
+            ],
+            // Three rows inside the range: the second and third are the ones a corrupted range would drop.
+            rowData: [
+                { date: hoursFromToday(-12) },
+                { date: hoursFromToday(1) },
+                { date: hoursFromToday(9) },
+                { date: hoursFromToday(17) },
+                { date: hoursFromToday(30) },
+            ],
+        });
+
+        await api.setColumnFilterModel('date', { filterType: 'date', type: 'today' });
+        api.onFilterChanged();
+
+        // Asserted by id, not as a GridRows snapshot: the rows are built relative to the clock, so a
+        // snapshot of their dates would pass only on the day it was generated.
+        const displayed = Array.from({ length: api.getDisplayedRowCount() }, (_, i) => api.getDisplayedRowAtIndex(i));
+        expect(displayed.map((row) => row?.id)).toStrictEqual(['1', '2', '3']);
     });
 });

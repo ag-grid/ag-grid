@@ -1,8 +1,18 @@
 ---
-title: "Overlays"
+title: "Overlays & Loading"
+description: "Display loading, empty and other grid states using overlays or loading rows."
 ---
 
-Overlays are used for displaying messages over the top of the grid.
+Use overlays to display messages over the grid, or loading rows to show placeholders while row data is loading.
+
+## Loading
+
+Set `loading=true` to display the loading overlay. With the Client-Side Row Model, also set `loadingRows=true` to display skeleton rows instead. See [Loading Rows](./loading-rows/) for configuration and custom loading cells.
+
+The Server-Side Row Model manages its loading rows as it requests data from the datasource. See [Server-Side Row Model Loading Rows](./server-side-model-loading-rows/) for its full-width and skeleton loading options.
+
+## Overlays
+
 The grid automatically displays one of the provided overlays based on the current state of the grid. Custom overlays can be shown on demand by the application.
 
 The following example shows the grid provided loading overlay when `loading=true`.

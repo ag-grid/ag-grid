@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { ColumnState } from 'ag-grid-community';
 import { convertColumnState } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 describe('Value Column Order (valueIndex)', () => {
     const gridsManager = new TestGridsManager({

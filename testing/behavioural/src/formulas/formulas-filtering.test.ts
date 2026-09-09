@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
 import {
@@ -11,8 +12,6 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
 
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({

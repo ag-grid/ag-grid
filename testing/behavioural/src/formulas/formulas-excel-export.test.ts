@@ -1,11 +1,10 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, objectUrls } from 'ag-test-utils';
 import type { WorkSheet } from 'xlsx';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule, FormulaModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, objectUrls } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 

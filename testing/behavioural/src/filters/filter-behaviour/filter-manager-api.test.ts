@@ -1,3 +1,13 @@
+import {
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+
 import type { FilterChangedEvent, GridApi, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -7,16 +17,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
-
-import {
-    ColumnFilterHarness,
-    FilterDom,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    installFilterLayoutMock,
-    uninstallFilterLayoutMock,
-} from '../../test-utils';
 
 interface Person {
     athlete: string;

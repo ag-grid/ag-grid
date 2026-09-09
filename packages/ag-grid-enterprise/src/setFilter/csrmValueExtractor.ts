@@ -1,9 +1,7 @@
-import { _makeNull } from 'ag-stack';
-
 import type { AgColumn, IClientSideRowModel, RowNode } from 'ag-grid-community';
 import { AgPromise, BeanStub } from 'ag-grid-community';
 
-import { processDataPath } from './setFilterUtils';
+import { processDataPath, setFilterNullIfBlank } from './setFilterUtils';
 
 /** @param V type of value in the Set Filter */
 export class CsrmValuesExtractor<V> extends BeanStub {
@@ -52,7 +50,7 @@ export class CsrmValuesExtractor<V> extends BeanStub {
             if (!formattedKeys.has(formattedKey)) {
                 formattedKeys.add(formattedKey);
                 let keyToAdd = unformattedKey;
-                let valueToAdd = _makeNull(value);
+                let valueToAdd = setFilterNullIfBlank(value);
                 // when case insensitive, we pick the first value to use. if this is later filtered out,
                 // we still want to use the original value and not one with a different case
                 const existingUnformattedKey = existingFormattedKeys?.get(formattedKey);

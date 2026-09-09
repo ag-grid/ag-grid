@@ -3,13 +3,13 @@ import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } fro
 import type {
     AgColumn,
     ColumnEventType,
-    ColumnMenuItemsSource,
+    ColumnSelectionPanelSource,
     DragItem,
     ElementParams,
     GridCheckbox,
     GridDragSource,
-    ITooltipCtrl,
     LongTapEvent,
+    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -18,12 +18,19 @@ import {
     DragSourceType,
     KeyCode,
     TouchListener,
+    _addGridCommonParams,
     _createIconNoSpan,
+    _getHeaderTooltipComponentDefinition,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
+    _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import {
+    ColumnSelectionLabelRendererFeature,
+    isColumnSelectionLabelRendererEnabled,
+} from './columnSelectionLabelRendererFeature';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
@@ -44,9 +51,9 @@ export class ToolPanelColumnComp extends Component {
     public readonly column: AgColumn;
     public readonly columnDepth: number;
     private eDragHandle: Element;
-    private displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
         public modelItem: ColumnModelItem,
@@ -55,28 +62,21 @@ export class ToolPanelColumnComp extends Component {
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
         private readonly eventType: ColumnEventType,
-        private readonly source: ColumnMenuItemsSource
+        private readonly source: ColumnSelectionPanelSource
     ) {
         super();
-        const { column, depth, displayName } = modelItem;
+        const { column, depth } = modelItem;
         this.column = column;
         this.columnDepth = depth;
-        this.displayName = displayName;
+    }
+
+    private get displayName(): string | null {
+        return this.modelItem.displayName;
     }
 
     public postConstruct(): void {
         this.setTemplate(ToolPanelColumnElement, [AgCheckboxSelector]);
-        const {
-            beans,
-            cbSelect,
-            displayName,
-            eLabel,
-            columnDepth: indent,
-            groupsExist,
-            column,
-            gos,
-            focusWrapper,
-        } = this;
+        const { beans, cbSelect, eLabel, columnDepth: indent, groupsExist, column, gos, focusWrapper } = this;
         const eDragHandle = _createIconNoSpan('columnDrag', beans)!;
         this.eDragHandle = eDragHandle;
         eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
@@ -87,7 +87,20 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        eLabel.textContent = displayName;
+        if (isColumnSelectionLabelRendererEnabled(this.params)) {
+            this.labelRendererFeature = this.createManagedBean(
+                new ColumnSelectionLabelRendererFeature(
+                    eLabel,
+                    this.params,
+                    this.source,
+                    this.column,
+                    null,
+                    () => this.displayName
+                )
+            );
+        } else {
+            eLabel.textContent = this.displayName;
+        }
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {
@@ -97,14 +110,30 @@ export class ToolPanelColumnComp extends Component {
         this.getGui().style.setProperty('--ag-indentation-level', String(indent));
 
         this.tooltipFeature = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+            beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
+                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(column.colDef),
                 getLocation: () => 'columnToolPanelColumn',
+                getTooltipValue: () => {
+                    const displayName = this.displayName;
+                    return _resolveHeaderTooltipValue(
+                        column.colDef,
+                        _addGridCommonParams<TooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumn',
+                            colDef: column.colDef,
+                            column,
+                            value: displayName,
+                            valueFormatted: displayName,
+                        })
+                    );
+                },
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
                 getAdditionalParams: () => ({
                     colDef: column.colDef,
+                    column,
+                    valueFormatted: this.displayName,
                 }),
-            } as ITooltipCtrl)
+            })
         );
 
         this.setupDragging();
@@ -152,7 +181,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.column.colDef.headerTooltip);
+        const refresh = () => this.tooltipFeature?.refreshTooltip();
         refresh();
 
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
@@ -209,9 +238,11 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onColDefChanged(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
-        this.displayName = displayName;
-        this.eLabel.textContent = displayName;
+        if (this.labelRendererFeature) {
+            this.labelRendererFeature.refresh();
+        } else {
+            this.eLabel.textContent = this.displayName;
+        }
         this.refreshAriaLabel();
     }
 

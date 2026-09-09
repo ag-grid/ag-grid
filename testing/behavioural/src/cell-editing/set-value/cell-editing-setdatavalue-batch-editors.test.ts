@@ -1,5 +1,7 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 import {
@@ -16,8 +18,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 /**
  * Tests for setDataValue('edit') behaviour — verifying that pushing a value via the 'edit'

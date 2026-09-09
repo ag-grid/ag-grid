@@ -1,11 +1,11 @@
 import { waitFor } from '@testing-library/dom';
+import type { GridRowsOptions } from 'ag-test-utils';
+import { EditEventTracker, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
-import { EditEventTracker, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import type {
     GroupRowEditableCallback,
     GroupRowValueSetterCallback,

@@ -28,7 +28,7 @@ runs:
     using: 'composite'
     steps:
         - name: Create output directory if required
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           env:
               OUTPUT_DIR: ${{ inputs.output_dir }}
           with:

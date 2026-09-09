@@ -288,10 +288,15 @@ export abstract class ProvidedFilter<
 
         apply ??= applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
+            this.debouncePending = false;
             this.doApplyModel({ afterFloatingFilter, afterDataChange: false });
         } else if (apply === 'debounce') {
             this.applyDebounced();
         }
+    }
+
+    protected onUiCleared(): void {
+        this.onUiChanged(this.applyActive ? 'prevent' : 'immediately');
     }
 
     protected getState(): any {

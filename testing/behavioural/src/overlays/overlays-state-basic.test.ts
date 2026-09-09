@@ -1,8 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-import type { MockInstance } from 'vitest';
-
-import { ClientSideRowModelModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
-
 import {
     GridColumns,
     GridRows,
@@ -10,7 +6,10 @@ import {
     applyTransactionChecked,
     isAgHtmlElementVisible,
     setRowDataChecked,
-} from '../test-utils';
+} from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({

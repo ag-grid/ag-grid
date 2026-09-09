@@ -1,5 +1,7 @@
 import Markdoc, { type Node } from '@markdoc/markdoc';
 
+import { type RelatedLink, buildMarkdownFrontmatter } from '../markdown-pages/markdownFrontmatter';
+
 /**
  * Serialises a Markdoc document (`.mdoc` source) into clean GitHub-flavoured
  * Markdown for a single framework, resolving `{% if %}` conditionals and
@@ -71,8 +73,12 @@ export interface MarkdownResolvers {
         code: string;
         language: string;
     };
-    /** Resolve a link href (framework prefix, version substitution, absolute URL). */
-    resolveLinkHref?: (params: { href: string; framework: MarkdownFramework }) => string;
+    /**
+     * Resolve a link href (framework prefix, version substitution, absolute URL). `pageName`
+     * is the page the link was written on, so a same-page anchor can be anchored to it —
+     * a bare `#section` has nothing to resolve against once the `.md` is read detached.
+     */
+    resolveLinkHref?: (params: { href: string; framework: MarkdownFramework; pageName: string }) => string;
     /**
      * Resolve an image path to a servable URL. May be async — the resolution can go
      * through the product's asset pipeline. Image tags are pre-resolved before
@@ -88,6 +94,15 @@ export interface RenderMarkdocToMarkdownOptions {
     pageName: string;
     /** Pulled from `page.data`; `page.body` does not include frontmatter. */
     frontmatter?: { title?: string; description?: string; enterprise?: boolean };
+    /**
+     * Product the page documents, e.g. `AG Grid`. Emitted in the frontmatter so a twin
+     * read out of context names its own product rather than leaving it to be inferred.
+     */
+    product?: string;
+    /** Nearby pages, emitted in the frontmatter so an agent can navigate on from the twin. */
+    related?: RelatedLink[];
+    /** Absolute URL of the site's `llms.txt`, emitted in the frontmatter. */
+    llmsTxt?: string;
     /** Current product version, emitted in the frontmatter so it is machine-readable. */
     version?: string;
     /**
@@ -112,7 +127,19 @@ interface RenderContext {
 }
 
 export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptions): Promise<string> {
-    const { body, framework, pageName, frontmatter = {}, version, variables, markdocConfig, resolvers = {} } = opts;
+    const {
+        body,
+        framework,
+        pageName,
+        frontmatter = {},
+        product,
+        related,
+        llmsTxt,
+        version,
+        variables,
+        markdocConfig,
+        resolvers = {},
+    } = opts;
 
     const ctx: RenderContext = {
         framework,
@@ -127,45 +154,22 @@ export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptio
     await prefetchImageSrcs(ast.children, ctx);
     const bodyMarkdown = await renderBlocks(ast.children, ctx);
 
-    const frontmatterBlock = buildFrontmatter({
+    const frontmatterBlock = buildMarkdownFrontmatter({
+        product,
         title: frontmatter.title,
+        description: frontmatter.description,
         enterprise: frontmatter.enterprise,
         framework,
         version,
+        related,
+        llmsTxt,
     });
-    // Just the H1 — the description is intentionally omitted; the page body is the content.
+    // Just the H1 — the description belongs to the frontmatter; the page body is the content.
     const opener = frontmatter.title ? `# ${frontmatter.title}` : '';
 
     const document = [frontmatterBlock, opener, bodyMarkdown].filter((part) => part && part.length).join('\n\n');
 
     return normalise(document);
-}
-
-function buildFrontmatter({
-    title,
-    enterprise,
-    framework,
-    version,
-}: {
-    title?: string;
-    enterprise?: boolean;
-    framework: MarkdownFramework;
-    version?: string;
-}): string {
-    const lines = ['---'];
-    if (title) {
-        lines.push(`title: ${JSON.stringify(title)}`);
-    }
-    // Only emitted when the page is Enterprise-only, matching the source frontmatter.
-    if (enterprise) {
-        lines.push('enterprise: true');
-    }
-    lines.push(`framework: ${framework}`);
-    if (version) {
-        lines.push(`version: ${JSON.stringify(version)}`);
-    }
-    lines.push('---');
-    return lines.join('\n');
 }
 
 function normalise(text: string): string {
@@ -427,7 +431,7 @@ function renderLink(node: Node, ctx: RenderContext): string {
     const text = renderInlineChildren(node, ctx);
     const rawHref = String(node.attributes.href ?? '');
     const href = ctx.resolvers.resolveLinkHref
-        ? ctx.resolvers.resolveLinkHref({ href: rawHref, framework: ctx.framework })
+        ? ctx.resolvers.resolveLinkHref({ href: rawHref, framework: ctx.framework, pageName: ctx.pageName })
         : rawHref;
     return `[${text}](${href})`;
 }

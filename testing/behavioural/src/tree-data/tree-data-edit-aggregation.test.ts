@@ -1,9 +1,4 @@
 import { userEvent } from '@testing-library/user-event';
-
-import type { GridOptions, IAggFuncParams, ValueSetterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
-import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -11,7 +6,11 @@ import {
     asyncSetTimeout,
     cachedJSONObjects,
     waitForInput,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridOptions, IAggFuncParams, ValueSetterParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
+import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 interface VehicleRow {
     id: string;

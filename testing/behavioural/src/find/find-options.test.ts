@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import { PaginationModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Tests for find options: case sensitivity, pagination, etc.

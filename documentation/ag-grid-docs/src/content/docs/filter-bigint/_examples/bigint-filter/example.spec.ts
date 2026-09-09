@@ -33,7 +33,11 @@ test.agExample(import.meta, () => {
         const filterInput = agIdFor.textFilterInstanceInput({ source: 'column-filter' });
         await filterInput.fill('45000000000000000');
 
-        await agIdFor.cell('4', 'account').click();
+        // Close the filter popup and confirm the filter is applied. Press Escape rather than
+        // clicking a data cell: `balance` is a middle column, so its popup overlays `account` and on
+        // firefox/webkit the popup intercepts the click, which then retries until the test times out.
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.headerCell('balance')).toHaveClass(/ag-header-cell-filtered/);
 
         // Echo (1e17) and Foxtrot (1.1e17) exceed the threshold; Delta (equal to it) is excluded.
         await expect(agIdFor.cell('4', 'account')).toHaveText('Echo');

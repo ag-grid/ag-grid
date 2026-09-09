@@ -6,8 +6,8 @@ export async function getOSSFScorecardResults({ project, threshold }) {
         process.exit(1);
     }
 
-    const scorecardJsonUrl = `https://api.securityscorecards.dev/projects/github.com/ag-grid/ag-${project}`;
-    const response = await fetch(scorecardJsonUrl);
+    const scorecardJsonUrl = `https://api.scorecard.dev/projects/github.com/ag-grid/ag-${project}`;
+    const response = await fetch(`${scorecardJsonUrl}?cachebust=${Date.now()}`);
     const results = await response.json();
 
     const score = results.score;
@@ -37,7 +37,7 @@ export async function getOSSFScorecardResults({ project, threshold }) {
             tests: [
                 {
                     name: `OpenSSF Score >= ${threshold}`,
-                    message: `Score = ${score}, from ${scorecardJsonUrl}. See ${resultsUrl} for full details.`,
+                    message: `Score = ${score}, scanned ${results.date}, from ${scorecardJsonUrl}. See ${resultsUrl} for full details.`,
                     status,
                     duration: 0,
                 },

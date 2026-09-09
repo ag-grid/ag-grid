@@ -1,9 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -11,7 +6,11 @@ import {
     applyTransactionChecked,
     asyncSetTimeout,
     cachedJSONObjects,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({

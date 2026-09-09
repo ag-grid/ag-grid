@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
-
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 // Exercises the header-drag reorder path: getBestColumnMoveIndexFromXPosition -> getLowestFragMove
 // (the `displayedIndex >= 0` displayed-subset filter) -> calculateValidMoves / notDisplayedInSection
@@ -68,6 +67,10 @@ describe('column header drag reorder', () => {
     // cannot scroll further, so the hold-to-pin interval keeps failing to move. It fires every 100ms and
     // needs to fail ~9 times before it crosses the threshold that decides the drag-ghost icon. Returns
     // whether the pin indicator is showing on the drag ghost the user actually sees.
+    //
+    // The ghost shows the scroll arrow while those attempts are running and swaps it for the pin (or back
+    // to the plain move icon, when nothing can pin) at the threshold — so both outcomes are reached by
+    // waiting for the arrow to go, rather than by out-waiting the interval.
     async function holdAtLeftEdgeShowsPinIcon(api: GridApi, sourceSelector: string): Promise<boolean> {
         const source = el(api, sourceSelector);
         const viewport = el(api, '.ag-grid-viewport');
@@ -80,12 +83,14 @@ describe('column header drag reorder', () => {
             await dispatcher.startDrag(source, 200, y);
             await dispatcher.movePointer(viewport, 200, y);
             await dispatcher.movePointer(viewport, 5, y);
-            // eslint-disable-next-line no-restricted-syntax -- holds the drag still through the hold-to-pin interval: it fires every 100ms and must fail ~9 times before the ghost icon is decided
-            await asyncSetTimeout(1200);
 
-            const ghostIcon = ownerDocument.querySelector('.ag-dnd-ghost-icon');
-            expect(ghostIcon).not.toBeNull();
-            return ghostIcon!.querySelector('.ag-icon-pin') != null;
+            const ghostIcon = () => ownerDocument.querySelector('.ag-dnd-ghost-icon');
+            // The scroll arrow first: it proves the hold-to-pin interval actually started, which out-waiting
+            // it never did.
+            await waitFor(() => expect(ghostIcon()?.querySelector('.ag-icon-left')).toBeTruthy());
+            await waitFor(() => expect(ghostIcon()!.querySelector('.ag-icon-left')).toBeFalsy(), { timeout: 3000 });
+
+            return ghostIcon()!.querySelector('.ag-icon-pin') != null;
         } finally {
             await dispatcher.finishDrag(viewport);
             ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;

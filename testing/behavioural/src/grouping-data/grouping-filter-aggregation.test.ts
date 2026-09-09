@@ -1,4 +1,14 @@
 import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+    unindentText,
+} from 'ag-test-utils';
+
+import {
     ClientSideRowModelModule,
     CsvExportModule,
     ExternalFilterModule,
@@ -8,16 +18,6 @@ import {
     TextFilterModule,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    applyTransactionChecked,
-    cachedJSONObjects,
-    setRowDataChecked,
-    unindentText,
-} from '../test-utils';
 
 describe('ag-grid grouping filter aggregation', () => {
     const gridsManager = new TestGridsManager({

@@ -114,6 +114,7 @@ AG Grid is available in two versions: Community & Enterprise.
 | [Row Grouping and Aggregation](https://www.ag-grid.com/javascript-data-grid/grouping/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)     | ❌                | ✅                 |
 | [Pivoting](https://www.ag-grid.com/javascript-data-grid/pivoting/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                         | ❌                | ✅                 |
 | [Excel Export](https://www.ag-grid.com/javascript-data-grid/excel-export/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ❌                | ✅                 |
+| [PDF Export](https://www.ag-grid.com/javascript-data-grid/pdf-export/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                     | ❌                | ✅                 |
 | [Clipboard Operations](https://www.ag-grid.com/javascript-data-grid/clipboard/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)            | ❌                | ✅                 |
 | [Master/Detail](https://www.ag-grid.com/javascript-data-grid/master-detail/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)               | ❌                | ✅                 |
 | [Tree Data](https://www.ag-grid.com/javascript-data-grid/tree-data/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                       | ❌                | ✅                 |
@@ -507,6 +508,6 @@ Initially built to power [Integrated Charts](https://www.ag-grid.com/javascript-
 <a href="https://x.com/ag_grid"><img src="https://img.shields.io/badge/-X%20(Twitter)-black?style=for-the-badge&logo=x" alt="Twitter Badge" height="36"></a>
 <a href="https://www.linkedin.com/company/ag-grid/"><img src="https://img.shields.io/badge/-LinkedIn-blue?style=for-the-badge&logo=linkedin" alt="LinkedIn Badge" height="36"></a>
 <a href="https://www.youtube.com/c/ag-grid"><img src="https://img.shields.io/badge/-YouTube-red?style=for-the-badge&logo=youtube" alt="YouTube Badge" height="36"></a>
-<a href="https://blog.ag-grid.com"><img src="https://img.shields.io/badge/-Blog-grey?style=for-the-badge&logo=rss" alt="Blog Badge" height="36"></a>
+<a href="https://www.ag-grid.com/blog/"><img src="https://img.shields.io/badge/-Blog-grey?style=for-the-badge&logo=rss" alt="Blog Badge" height="36"></a>
 
 </div>

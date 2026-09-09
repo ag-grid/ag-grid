@@ -1,10 +1,9 @@
 import { render } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { asyncSetTimeout } from '../test-utils';
 
 export async function renderNavGrid(opts: { rowData: any[]; columnDefs: ColDef[] }): Promise<GridApi> {
     let resolveReady!: (api: GridApi) => void;

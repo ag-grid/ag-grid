@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import type { GridApi } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('CSRM stage dispatch', () => {
     const gridsManager = new TestGridsManager({

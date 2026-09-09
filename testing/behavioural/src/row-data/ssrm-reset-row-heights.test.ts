@@ -1,9 +1,9 @@
+import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { RowAutoHeightModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from '../test-utils';
-import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 /**
  * `api.resetRowHeights()` is a shared row-model API usable under the Server-Side Row Model.

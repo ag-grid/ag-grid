@@ -1,5 +1,13 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import {
+    EditEventTracker,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+    waitForPopup,
+} from 'ag-test-utils';
 
 import type {
     BatchEditingStoppedEvent,
@@ -23,15 +31,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    waitForInput,
-    waitForPopup,
-} from '../test-utils';
 
 interface PersonRow {
     athlete: string;

@@ -334,7 +334,10 @@ export interface CoreParams extends SharedThemeParams {
     modalOverlayBackgroundColor: ColorValue;
 
     /**
-     * Background color applied to grid rows. Should be a solid color, semi-transparent colors will cause issues.
+     * Background color applied to grid rows, and also behind the header so a transparent header will blend with this
+     * colour. Must be opaque - setting a semi-transparent colour will cause scrolling columns to be visible under
+     * pinned left/right columns as you scroll horizontally, and rows to be visible under the header as you scroll
+     * vertically.
      */
     dataBackgroundColor: ColorValue;
 

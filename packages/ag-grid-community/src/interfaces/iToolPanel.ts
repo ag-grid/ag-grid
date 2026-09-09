@@ -1,5 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
+import type { IAutoCompleteComponentParams } from './iAutoComplete';
+import type { IColumnSelectionPanelParams } from './iColumnSelectionPanel';
 import type { AgGridCommon } from './iCommon';
 import type { FilterAction } from './iFilter';
 
@@ -36,32 +38,22 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>
     extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> {}
 
-export interface IToolPanelColumnCompParams {
+export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams, IAutoCompleteComponentParams {
     /** Suppress Column Move */
-    suppressColumnMove: boolean;
+    suppressColumnMove?: boolean;
     /** Suppress Row Groups section */
-    suppressRowGroups: boolean;
+    suppressRowGroups?: boolean;
     /** Suppress Values section */
-    suppressValues: boolean;
+    suppressValues?: boolean;
     /** Suppress Column Labels (Pivot) section */
-    suppressPivots: boolean;
+    suppressPivots?: boolean;
     /** Suppress Pivot Mode selection */
-    suppressPivotMode: boolean;
-    /** Suppress Column Filter section */
-    suppressColumnFilter: boolean;
-    /** Suppress Select / Un-select all widget */
-    suppressColumnSelectAll: boolean;
-    /** Suppress Expand / Collapse all widget */
-    suppressColumnExpandAll: boolean;
-    /** By default, column groups start expanded. Pass `true` to default to contracted groups */
-    contractColumnSelection: boolean;
-    /** Suppress updating the layout of columns as they are rearranged in the grid */
-    suppressSyncLayoutWithGrid: boolean;
+    suppressPivotMode?: boolean;
     /** Buttons to display at the bottom of the Columns Tool Panel. When 'apply' is included, changes are deferred until the apply button is clicked. */
     buttons?: ColumnToolPanelAction[];
 }
 
-export interface IToolPanelFiltersCompParams {
+export interface IToolPanelFiltersCompParams extends IAutoCompleteComponentParams {
     /** To suppress Expand / Collapse All */
     suppressExpandAll: boolean;
     /** To suppress the Filter Search */

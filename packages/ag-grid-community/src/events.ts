@@ -19,6 +19,8 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { CellValueChange } from './interfaces/iUndoRedo';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
+import type { ErrorId } from './validation/errorMessages/errorText';
+import type { Severity } from './validation/logging';
 
 export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     AgPublicEventType | AgInternalEventType,
@@ -130,6 +132,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         findChanged: FindChangedEvent<TData, TContext>;
         rowResizeStarted: RowResizeStartedEvent<TData, TContext>;
         rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
+        issueRaised: IssueRaisedEvent<TData, TContext>;
         // Internal events
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
         keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
@@ -145,6 +148,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnPanelItemDragStart: ColumnPanelItemDragStartEvent<TData, TContext>;
         columnPanelItemDragEnd: ColumnPanelItemDragEndEvent<TData, TContext>;
         bodyHeightChanged: BodyHeightChangedEvent<TData, TContext>;
+        gridViewportWidthChanged: GridViewportWidthChangedEvent<TData, TContext>;
         columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
         displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
         scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
@@ -493,6 +497,21 @@ export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGl
     state: GridState;
 }
 
+export interface IssueRaisedEvent<TData = any, TContext = any> extends AgGlobalEvent<'issueRaised', TData, TContext> {
+    /** Id of the diagnostic, matching the `#id` in the console message and the `errors/<id>` documentation page. */
+    id: ErrorId;
+    /** Whether the diagnostic is an error, a warning or a deprecation. */
+    severity: Severity;
+    /** The diagnostic text, as written to the console at this severity. */
+    message: string;
+    /**
+     * Whether this grid raised the diagnostic. `false` when it could not be attributed to any grid
+     * (e.g. a theme created outside a grid, or an API call on a destroyed grid), in which case every
+     * live grid receives it and it may have originated elsewhere on the page.
+     */
+    attributedToThisGrid: boolean;
+}
+
 export interface ColumnContainerWidthChanged<TData = any, TContext = any> extends AgGlobalEvent<
     'columnContainerWidthChanged',
     TData,
@@ -510,6 +529,11 @@ export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends Ag
 > {} // not documented
 export interface BodyHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'bodyHeightChanged',
+    TData,
+    TContext
+> {} // not documented
+export interface GridViewportWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
+    'gridViewportWidthChanged',
     TData,
     TContext
 > {} // not documented

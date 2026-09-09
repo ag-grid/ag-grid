@@ -8,6 +8,6 @@ inputs:
         default: 'pr'
 
 runs:
-    using: 'node20'
+    using: 'node24'
     main: 'main.mjs'
     post: 'post.mjs'

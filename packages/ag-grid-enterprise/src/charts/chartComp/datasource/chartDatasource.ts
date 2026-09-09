@@ -1,4 +1,4 @@
-import { _last } from 'ag-stack';
+import { _hasOwn, _last } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -260,7 +260,7 @@ export class ChartDatasource extends BeanStub {
                     }
 
                     // aggregated value
-                    if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {
+                    if (value && _hasOwn(value, 'toString')) {
                         value = parseFloat(value.toString());
                     }
 

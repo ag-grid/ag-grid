@@ -30,7 +30,12 @@ let errorFound = false;
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);
 packageNames
-    .filter((packageName) => packageName != 'update-algolia-indices' && packageName !== 'ag-behavioural-testing')
+    .filter(
+        (packageName) =>
+            packageName != 'update-algolia-indices' &&
+            packageName !== 'ag-behavioural-testing' &&
+            packageName !== 'ag-test-utils'
+    )
     .forEach((packageName) => {
         const agPackage = allPackages[packageName];
         const {

@@ -1,20 +1,26 @@
 import { _doOnce } from 'ag-stack';
+import { ignoreConsoleLicenseKeyError } from 'ag-test-utils/ignoreKnownNoise';
+import { innerTextPolyfill } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { BenchOptions } from 'vitest';
 import { bench } from 'vitest';
 
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
 import { RenderApiModule, createGrid } from 'ag-grid-community';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils/ignoreConsoleLicenseKeyError';
-
 // Benchmarks use standard vitest `bench`/`suite` and import grid helpers from here (never the
-// `../test-utils` barrel, which pulls in node-only helpers and jsdom-coupled machinery that break
-// the real-browser runner). There is no jsdom layout faker — benchmarks measure real layout or none.
+// `ag-test-utils` barrel, which pulls in node-only helpers and DOM-mock machinery that break the
+// real-browser runner). There is no layout faker — benchmarks measure real layout or none.
 export type { BenchOptions };
-export { SimplePRNG } from '../test-utils/prng';
+export { SimplePRNG } from 'ag-test-utils/prng';
 
-/** True under the jsdom bench environment, false in a real browser (the default `./benches.sh` run; `--node`/`--jsdom` opt out). */
-export const IS_JSDOM = typeof navigator !== 'undefined' && navigator.userAgent.includes('jsdom');
+/** True under the happy-dom bench environment, false in a real browser (the default `./benches.sh` run; `--node` opts out). */
+export const IS_HAPPY_DOM = typeof navigator !== 'undefined' && navigator.userAgent.includes('HappyDOM');
+
+// happy-dom's innerText setter throws on the null the grid legitimately assigns (the spec coerces it to
+// ''), so a `--node` bench dies rendering a group cell. A real browser needs none of this.
+if (IS_HAPPY_DOM) {
+    innerTextPolyfill();
+}
 
 /** Pause (ms) run in each bench's setup so a previous bench's heat/garbage doesn't bleed into the next. */
 const BENCH_COOLDOWN_MS = 50;
@@ -77,7 +83,7 @@ interface LiveGrid {
     element: HTMLElement;
 }
 
-/** Lean grids manager for benchmarks: creates a viewport-filling, themed container; runs in jsdom or a real browser. */
+/** Lean grids manager for benchmarks: creates a viewport-filling, themed container; runs in happy-dom or a real browser. */
 export class BenchGridsManager {
     private readonly modules: Module[];
     private readonly grids: LiveGrid[] = [];
@@ -111,7 +117,7 @@ export class BenchGridsManager {
 
     public createGrid<TData = any>(id: string, gridOptions: GridOptions, params?: Params): GridApi<TData> {
         // Always own a fresh container, sized to fill the (fixed) browser viewport so the grid
-        // renders a representative number of rows and, headed, is visible. jsdom has no layout, so
+        // renders a representative number of rows and, headed, is visible. happy-dom has no layout, so
         // this is inert there.
         const element = document.createElement('div');
         element.id = id;

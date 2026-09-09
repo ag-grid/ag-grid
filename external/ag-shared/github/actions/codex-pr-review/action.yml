@@ -102,7 +102,7 @@ runs:
         - name: React Started
           if: steps.check-auth.outputs.skipped != 'true'
           id: react-started
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           continue-on-error: true
           env:
               PR_NUMBER: ${{ inputs.pr-number }}
@@ -123,7 +123,7 @@ runs:
           # so this could theoretically remove reactions from other workflows. Accepted trade-off:
           # GitHub limits each user to one reaction per type per issue, so blast radius is minimal.
           if: steps.check-auth.outputs.skipped != 'true'
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           continue-on-error: true
           env:
               PR_NUMBER: ${{ inputs.pr-number }}
@@ -229,7 +229,7 @@ runs:
           # references $NODE_AUTH_TOKEN literally (not interpolated), so the
           # token is never persisted to disk. See AG-17085 review.
           if: steps.check-auth.outputs.skipped != 'true'
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v7
           with:
               node-version-file: package.json
               registry-url: https://npm.pkg.github.com
@@ -491,7 +491,7 @@ runs:
         - name: Post Review Comment
           id: post-comment
           if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && inputs.post-comment == 'true'
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           env:
               OUTPUT_FILE: ${{ steps.codex.outputs.output_file }}
               PR_NUMBER: ${{ inputs.pr-number }}
@@ -748,7 +748,7 @@ runs:
 
         - name: Remove Eyes Reaction
           if: always() && steps.check-auth.outputs.skipped != 'true' && steps.react-started.outputs.reaction_id != ''
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           continue-on-error: true
           env:
               PR_NUMBER: ${{ inputs.pr-number }}
@@ -765,7 +765,7 @@ runs:
 
         - name: React Success
           if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && steps.post-comment.outputs.has_findings == 'false'
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           continue-on-error: true
           env:
               PR_NUMBER: ${{ inputs.pr-number }}
@@ -781,7 +781,7 @@ runs:
 
         - name: React Has Findings
           if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && steps.post-comment.outputs.has_findings == 'true'
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           continue-on-error: true
           env:
               PR_NUMBER: ${{ inputs.pr-number }}

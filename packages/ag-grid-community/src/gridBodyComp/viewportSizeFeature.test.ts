@@ -1,16 +1,13 @@
-import { _observeResize, _requestAnimationFrame } from 'ag-stack';
-import type { Mock } from 'vitest';
+import * as agStack from 'ag-stack';
+import type { Mock, MockInstance } from 'vitest';
 
 import { ViewportSizeFeature } from './viewportSizeFeature';
 
-vi.mock('ag-stack', async () => {
-    const actual = await vi.importActual('ag-stack');
-    return {
-        ...actual,
-        _observeResize: vi.fn(),
-        _requestAnimationFrame: vi.fn((_beans: unknown, callback: () => void) => callback()),
-    };
-});
+// Spies, not `vi.mock`: a module mock only lands when this file owns its module graph, which is not
+// guaranteed — another file in the same worker may already have imported `ag-stack` unmocked. Spying
+// replaces the live binding the subject reads through, so it holds either way.
+let _observeResize: MockInstance;
+let _requestAnimationFrame: MockInstance;
 
 function createFakeFeature(params: {
     centerContainer: HTMLDivElement;
@@ -41,7 +38,14 @@ function createFakeFeature(params: {
 
 describe('ViewportSizeFeature', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        _observeResize = vi.spyOn(agStack, '_observeResize').mockImplementation(() => () => undefined);
+        _requestAnimationFrame = vi
+            .spyOn(agStack, '_requestAnimationFrame')
+            .mockImplementation((_beans: any, callback: () => void) => callback());
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     test('listens to center container resize and refreshes scroll visibility', () => {

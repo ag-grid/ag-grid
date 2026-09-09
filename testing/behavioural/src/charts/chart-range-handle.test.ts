@@ -1,10 +1,9 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { TestGridsManager, asyncSetTimeout, canvasPolyfill } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout, canvasPolyfill } from '../test-utils';
 
 describe('chart range handle', () => {
     const gridsManager = new TestGridsManager({

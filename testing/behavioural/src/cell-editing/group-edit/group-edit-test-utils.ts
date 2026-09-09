@@ -1,10 +1,9 @@
 import { userEvent } from '@testing-library/user-event';
+import { TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import type { CellEditingStoppedEvent, ColDef, GridApi, IRowNode } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import { RowGroupingEditModule, RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 export const gridsManager = new TestGridsManager({
     modules: [
@@ -113,7 +112,7 @@ export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, n
 
 /**
  * Performs an edit on a cell via either UI or setDataValue.
- * Handles jsdom cell DOM replacement that occurs during `startEditingCell`.
+ * Handles cell DOM replacement that occurs during `startEditingCell`.
  */
 export async function performEdit(
     editMode: string,

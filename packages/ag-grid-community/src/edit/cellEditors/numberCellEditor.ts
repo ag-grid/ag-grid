@@ -33,7 +33,10 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     public init(eEditor: GridInputNumberField, params: INumberCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
-        const { max, min, precision, step } = params;
+
+        const { browserAutoComplete, max, min, precision, step } = params;
+
+        eEditor.setAutoComplete(browserAutoComplete);
         if (max != null) {
             eEditor.setMax(max);
         }
@@ -55,7 +58,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         }
     }
 
-    public getValidationErrors(): string[] | null {
+    public getValidationErrors(untouched: boolean): string[] | null {
         const { params } = this;
         const { min, max, getValidationErrors } = params;
 
@@ -85,7 +88,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         if (getValidationErrors) {
             return getValidationErrors({
-                value,
+                value: untouched ? params.value : this.parseRaw(this.eEditor.getValue(true)),
                 cellEditorParams: params,
                 internalErrors,
             });
@@ -101,8 +104,11 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     }
 
     public getValue(): number | null | undefined {
-        const { eEditor, params } = this;
-        const value = eEditor.getValue();
+        return this.parseRaw(this.eEditor.getValue(true));
+    }
+
+    private parseRaw(value: string | null | undefined): number | null | undefined {
+        const { params } = this;
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }

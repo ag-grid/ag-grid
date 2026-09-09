@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager, asyncSetTimeout, setRowDataChecked } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid parentId tree expanded state', () => {
     const gridsManager = new TestGridsManager({
@@ -69,6 +69,10 @@ describe('ag-grid parentId tree expanded state', () => {
         api.getRowNode('0')!.setExpanded(true, undefined, true);
         api.getRowNode('1')!.setExpanded(true, undefined, true);
 
+        // `onRowGroupOpened` reloads rowData, and that reload lands a turn later; the tree below is the
+        // post-reload state, so wait for it rather than let the check's retry hide the gap.
+        await asyncSetTimeout(0);
+
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
             └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
@@ -89,6 +93,10 @@ describe('ag-grid parentId tree expanded state', () => {
 
         api.getRowNode('7')!.setExpanded(true, undefined, true);
         api.getRowNode('2')!.setExpanded(true, undefined, true);
+
+        // `onRowGroupOpened` reloads rowData, and that reload lands a turn later; the tree below is the
+        // post-reload state, so wait for it rather than let the check's retry hide the gap.
+        await asyncSetTimeout(0);
 
         await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"

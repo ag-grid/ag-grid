@@ -1,3 +1,6 @@
+import { GridRows, TestGridsManager } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { GRAND_TOTAL_ROW_ID } from 'ag-grid-community';
 import {
@@ -6,9 +9,6 @@ import {
     ServerSideRowModelModule,
     TreeDataModule,
 } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION tests (golden-master) pinning the CURRENT behaviour of the

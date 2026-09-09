@@ -29,6 +29,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
+    const fullWidthAnchorRole = rowCtrl.getFullWidthAnchorRole();
 
     // Flag used to avoid problematic initialState setter funcs being called on a dead / non displayed row.
     // Due to async rendering its possible for the row to be destroyed before React has had a chance to render it.
@@ -495,11 +496,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     )}
                 </>
             ) : showFullWidthFramework ? (
-                <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor}>
+                <div className="ag-full-width-anchor" role={fullWidthAnchorRole} ref={eFullWidthAnchor}>
                     {showFullWidthFrameworkJsx()}
                 </div>
             ) : isFullWidth ? (
-                <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor} />
+                <div className="ag-full-width-anchor" role={fullWidthAnchorRole} ref={eFullWidthAnchor} />
             ) : null}
         </div>
     );

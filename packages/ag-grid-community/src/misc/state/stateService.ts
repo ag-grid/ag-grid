@@ -1,4 +1,4 @@
-import { _debounce, _jsonEquals } from 'ag-stack';
+import { _debounce, _hasOwn, _jsonEquals } from 'ag-stack';
 
 import { _getColGroupState, _setColGroupState } from '../../columns/columnGroups/columnGroupState';
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
@@ -24,6 +24,7 @@ import type {
     GridStateKey,
     PaginationState,
     PivotState,
+    QuickFilterState,
     RowGroupState,
     RowPinningState,
     ScrollState,
@@ -278,6 +279,7 @@ export class StateService extends BeanStub implements NamedBean {
     ): void {
         const {
             filter: filterState,
+            quickFilter: quickFilterState,
             rowGroupExpansion: rowGroupExpansionState,
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
@@ -289,6 +291,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (shouldSetState('filter', filterState)) {
             this.setFilterStateDeferringPivot(filterState, source);
+        }
+        if (shouldSetState('quickFilter', quickFilterState)) {
+            this.setQuickFilterState(quickFilterState, source);
         }
         if (
             shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
@@ -308,6 +313,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const updateCachedState = this.updateCachedState.bind(this);
         updateCachedState('filter', this.getFilterState());
+        updateCachedState('quickFilter', this.getQuickFilterState());
         this.updateGroupExpansionState();
 
         updateCachedState('rowSelection', this.getRowSelectionState());
@@ -323,6 +329,10 @@ export class StateService extends BeanStub implements NamedBean {
             this.updateGroupExpansionState();
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
+        // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
+        this.addManagedPropertyListener('quickFilterText', () =>
+            updateCachedState('quickFilter', this.getQuickFilterState())
+        );
 
         const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
@@ -661,10 +671,7 @@ export class StateService extends BeanStub implements NamedBean {
         source: 'gridInitializing' | 'api',
         ignoreSet?: Set<GridStateKey>
     ): void {
-        if (
-            ignoreSet?.has('columnGroup') ||
-            (source !== 'api' && !Object.prototype.hasOwnProperty.call(state, 'columnGroup'))
-        ) {
+        if (ignoreSet?.has('columnGroup') || (source !== 'api' && !_hasOwn(state, 'columnGroup'))) {
             return;
         }
 
@@ -734,6 +741,32 @@ export class StateService extends BeanStub implements NamedBean {
             const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
         }
+    }
+
+    /**
+     * The Quick Filter text is only state-managed when the Quick Access Toolbar owns an input for it;
+     * otherwise the `quickFilterText` grid option is the only source and state leaves it alone.
+     */
+    private isQuickFilterStateManaged(): boolean {
+        return !!this.beans.toolbar?.hasItem('agQuickFilterToolbarItem');
+    }
+
+    private getQuickFilterState(): QuickFilterState | undefined {
+        // Without the module the option is inert, and writing it on restore reports a missing-module error.
+        return this.isQuickFilterStateManaged() ? this.beans.quickFilter?.getState() : undefined;
+    }
+
+    private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.isQuickFilterStateManaged()) {
+            return;
+        }
+        const { text } = quickFilterState ?? {};
+        // An `api` restore resets what it omits, so a state without the text clears the Quick Filter. At
+        // initialisation an absent value instead leaves the `quickFilterText` grid option as provided.
+        this.beans.quickFilter?.setState(
+            { text: source === 'api' ? (text ?? '') : text },
+            source === 'api' ? 'api' : undefined
+        );
     }
 
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */

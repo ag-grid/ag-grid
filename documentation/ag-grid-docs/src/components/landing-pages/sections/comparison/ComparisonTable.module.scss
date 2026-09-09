@@ -55,7 +55,7 @@
 .headerTitle {
     font-size: var(--text-fs-lg);
     font-weight: var(--text-bold);
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
     color: var(--color-fg-primary);
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {

@@ -1,6 +1,7 @@
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 import rootESLint from '../../eslint.config.mjs';
+import { noRawHistoryWrites } from '../../external/ag-website-shared/eslint.history-rules.mjs';
 
 export default [
     ...rootESLint,
@@ -17,8 +18,6 @@ export default [
             '**/_examples/',
             'scripts/showcase-github/tmp/',
             '**/.angular',
-            '**/systemjs.config.js',
-            '**/systemjs.config.dev.js',
             '.playwright-network-cache/',
             '**/*.ics',
             'public/**/*.css',
@@ -50,20 +49,6 @@ export default [
             },
         },
     },
-    // Example runner boilerplate files
-    {
-        files: ['public/example-runner/**/*[.js|.ts]'],
-        languageOptions: {
-            globals: {
-                System: 'readonly',
-                systemJsPaths: 'readonly',
-                boilerplatePath: 'readonly',
-                startFile: 'readonly',
-                appLocation: 'readonly',
-                systemJsMap: 'readonly',
-            },
-        },
-    },
     // Public files
     {
         files: ['public/**/*[.js|.ts]'],
@@ -85,6 +70,11 @@ export default [
         rules: {
             'no-console': 'off',
             '@typescript-eslint/no-var-requires': 'off',
+        },
+    },
+    {
+        rules: {
+            'no-restricted-syntax': ['error', ...noRawHistoryWrites],
         },
     },
 ];

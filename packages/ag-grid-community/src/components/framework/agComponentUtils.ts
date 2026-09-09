@@ -10,7 +10,7 @@ export class AgComponentUtils extends BeanStub implements NamedBean {
     beanName = 'agCompUtils' as const;
 
     public adaptFunction(type: ComponentType, jsCompFunc: any): any {
-        if (!type.cellRenderer) {
+        if (!type.supportsJsFunction) {
             return null;
         }
 

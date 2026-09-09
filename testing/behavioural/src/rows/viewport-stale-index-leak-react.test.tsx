@@ -1,4 +1,6 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 
 import type { GridApi, IViewportDatasourceParams } from 'ag-grid-community';
@@ -6,16 +8,12 @@ import { ModuleRegistry, RowApiModule } from 'ag-grid-community';
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
-
 const ROW_SELECTOR = '[row-id]';
 
 describe('viewport stale index + orphaned row ctrl leak (React)', () => {
     beforeAll(() => {
         mockGridLayout.init();
         ModuleRegistry.registerModules([ViewportRowModelModule, RowApiModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(async () => {

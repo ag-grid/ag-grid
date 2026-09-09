@@ -1,9 +1,8 @@
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { ColDef, GridApi } from 'ag-grid-community';
-
-import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 describe('Column identity & id allocation', () => {
     const gridsManager = new TestGridsManager({

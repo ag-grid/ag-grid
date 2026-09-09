@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, TestGridsManager } from '../../test-utils';
-import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION (golden-master) tests pinning CURRENT SSRM selection-STATE-API behaviour on a
@@ -204,5 +203,28 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
         const state = api.getServerSideSelectionState() as any;
         expect(state.selectAll).toBe(false);
         expect([...state.toggledNodes].sort()).toEqual(['b', 'e']);
+    });
+
+    // a purge destroys the row nodes while the rows themselves still exist, and selection is keyed by id,
+    // so a handle captured before it still names a real row
+    test('selecting through a node handle destroyed by a purge still selects the live row', async () => {
+        const api = await createAndLoad('ssrmSelStateStaleHandle');
+
+        const staleHandle = api.getRowNode('b')!;
+
+        const loadsBeforeRefresh = loadCount;
+        api.refreshServerSide({ purge: true });
+        await waitFor(() => expect(loadCount).toBeGreaterThan(loadsBeforeRefresh));
+        await waitForNoLoadingRows(api);
+
+        const liveNode = api.getRowNode('b')!;
+        expect(staleHandle.destroyed).toBe(true);
+        expect(liveNode).not.toBe(staleHandle);
+
+        api.setNodesSelected({ nodes: [staleHandle], newValue: true, source: 'api' });
+
+        expect(selectedIds(api)).toEqual(['b']);
+        expect(liveNode.isSelected()).toBe(true);
+        expect([...(api.getServerSideSelectionState() as any).toggledNodes]).toEqual(['b']);
     });
 });

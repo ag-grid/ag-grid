@@ -2,32 +2,151 @@
 title: "External Filter"
 ---
 
-External filtering allows you to mix your own filtering logic with the grid's inbuilt filtering, without creating column-based filter components.
+External filtering allows custom filtering logic to be mixed with the grid's inbuilt filtering.
 
 {% warning %}
 This form of filtering is only compatible with the Client-Side Row Model, see [Row Models](./row-models/) for more details.
 {% /warning %}
 
+{% gridExampleRunner title="External Filter" name="external-filter"  /%}
+
 ## Implementing External Filtering
 
-The example below shows external filters in action. There are two methods on `gridOptions` you need to implement: `isExternalFilterPresent` and `doesExternalFilterPass`.
+The example above shows external filters in action. Two methods on `gridOptions` are required to be implemented: `isExternalFilterPresent` and `doesExternalFilterPass`.
 
 {% apiDocumentation source="grid-options/properties.json" section="filter" names=["isExternalFilterPresent", "doesExternalFilterPass"] /%}
 
-### isExternalFilterPresent
+## Re-running the External Filter
 
-`isExternalFilterPresent` is called exactly once every time the grid senses a filter change. It should return `true` if external filtering is active or `false` otherwise. If you return `true`, `doesExternalFilterPass` will be called while filtering, otherwise `doesExternalFilterPass` will not be called.
+The filter state is held outside the grid, so the grid has to be told when that state has changed. Pick one of the following approaches:
 
-### doesExternalFilterPass
+- [Calling onFilterChanged](#calling-onfilterchanged) - the callback references are kept stable and the filter is re-run only when the API is called.
+- [Supplying New Callbacks](#supplying-new-callbacks) - a new callback reference is handed to the grid and the filter is re-run automatically.
 
-`doesExternalFilterPass` is called once for each row node in the grid. If you return `false`, the node will be excluded from the final set.
+### Calling onFilterChanged
 
-{% note %}
-If the external filter changes, you need to call `api.onFilterChanged()` to tell the grid.
-{% /note %}
+After the filter state has changed call `api.onFilterChanged()` to ask the grid to run filtering again.
 
-## Example
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["onFilterChanged"] /%}
 
-The example below shows an external filter in action.
+```js
+// Filter state updated now re-run filtering
+api.onFilterChanged();
+```
 
-{% gridExampleRunner title="External Filter" name="external-filter"  exampleHeight=565 /%}
+Ensure the callbacks have stable references to avoid triggering filtering excessively.
+
+{% if isFramework("angular") %}
+{% warning %}
+A template binding is re-evaluated on every change-detection run, and `.bind(this)` returns a new function each time it is evaluated so the grid re-filters on every cycle:
+
+```html
+<ag-grid-angular [isExternalFilterPresent]="isExternalFilterPresent.bind(this)" />
+```
+
+Prefer an arrow function defined on the component instead as the reference is stable for the lifetime of the component.
+
+{% /warning %}
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+{% warning %}
+Avoid passing an inline lambda as it will provide a new function on every render, so the grid re-filters every time the component renders:
+
+```jsx
+// re-filters on every render
+<AgGridReact doesExternalFilterPass={(node) => node.data.age > minAge} />
+```
+
+{% /warning %}
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+Framework bindings make it easy to hand over a new reference by accident, which re-runs the filter outside of the application's control. A callback defined in `setup` and returned unchanged keeps its reference; one recreated on every render does not.
+
+{% /if %}
+
+### Supplying New Callbacks
+
+`isExternalFilterPresent` and `doesExternalFilterPass` are reactive grid properties, so replacing either one with a new function re-runs filtering automatically.
+
+{% if isFramework("javascript") %}
+
+```js
+api.setGridOption('doesExternalFilterPass', (node) => node.data.age > 50);
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+Where the filter state is held in a signal, each callback is exposed as a `computed` that returns the filter function, and the invoked signal is bound in the template. A change to the state signal recomputes the callback, so the grid is given a new reference and re-runs filtering:
+
+```ts
+@Component({
+    template: `<ag-grid-angular [doesExternalFilterPass]="doesExternalFilterPass()" />`,
+})
+export class AppComponent {
+    public minAge = signal(0);
+
+    public doesExternalFilterPass = computed(() => {
+        const minAge = this.minAge();
+        return (node: IRowNode<IOlympicData>) => node.data!.age > minAge;
+    });
+}
+```
+
+The state signal is read outside the returned function so that it is a dependency of the `computed`. Reading it inside the returned function instead leaves the `computed` with no dependencies, and the reference never changes.
+
+Reassigning a plain class field hands the grid a new reference in the same way:
+
+```ts
+// reassigning the field hands the grid a new reference, and filtering re-runs
+this.doesExternalFilterPass = (node: IRowNode<IOlympicData>) => node.data!.age > this.minAge;
+```
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+Where the filter value is held in state ensure this is included in the callback dependency array so that the grid receives a new reference each time it changes to trigger filtering.
+
+```jsx
+const [ageType, setAgeType] = useState('everyone');
+
+const isExternalFilterPresent = useCallback(() => ageType !== 'everyone', [ageType]);
+const doesExternalFilterPass = useCallback((node) => ageType === 'everyone' || node.data.age > 50, [ageType]);
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```js
+// reassigning the ref hands the grid a new reference, and filtering re-runs
+doesExternalFilterPass.value = (node) => node.data.age > minAge.value;
+```
+
+{% /if %}
+
+{% if isFramework("javascript", "vue") %}
+
+The example on this page takes the first path: the callbacks are stable, and each change to the filter state calls `api.onFilterChanged()`.
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+The example on this page takes the second path: `ageType` is a signal, and both callbacks are `computed` values that read it.
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+The example on this page takes the second path: `ageType` is component state, and both callbacks list it as a dependency.
+
+{% /if %}

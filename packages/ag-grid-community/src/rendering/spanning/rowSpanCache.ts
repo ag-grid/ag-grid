@@ -2,7 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
-import { _addGridCommonParams } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideLoadingRow } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
 
@@ -120,6 +120,10 @@ export class RowSpanCache {
 
         // check each node, if the currently open cell span should span, add this node to span, otherwise close the span.
         const checkNodeForCache = (node: RowNode) => {
+            if (_isClientSideLoadingRow(gos, node)) {
+                setNewHead(null, null);
+                return;
+            }
             const doesNodeSupportSpanning =
                 !node.isExpandable() &&
                 !node.group &&

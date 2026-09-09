@@ -7,9 +7,6 @@ interface Props {
     isEnterprise: boolean;
     isLocale: boolean;
     isIntegratedCharts: boolean;
-    /**
-     * All script file names
-     */
     scriptFiles?: string[];
     styleFiles?: string[];
     indexFragment: string;
@@ -18,6 +15,7 @@ interface Props {
     extraStyles?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    transpileInBrowser?: boolean;
     nonce?: string;
 }
 
@@ -36,6 +34,7 @@ const {
     extraStyles,
     extras,
     usesMathRandom,
+    transpileInBrowser,
     nonce,
 } = Astro.props as Props;
 
@@ -53,6 +52,10 @@ import {
     getChartsEnterpriseScriptPath,
     getGridLocaleScriptPath,
 } from '@utils/gridLibraryPaths';
+import {
+    ExampleRunnerCall,
+    ExampleRunnerClient,
+} from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
 import { SeedRandom } from './lib/SeedRandom';
 
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
@@ -90,6 +93,8 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         >
             window.__basePath = appLocation;
         </script>
+        <ExampleRunnerClient isExported={transpileInBrowser} nonce={nonce} />
+        <ExampleRunnerCall fn="setUpPage" nonce={nonce} />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
         {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} crossorigin="anonymous" />}
         <script nonce={nonce} src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath} crossorigin="anonymous"

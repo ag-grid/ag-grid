@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } from '../test-utils';
 
 describe('ag-grid validation warnings', () => {
     const gridsManager = new TestGridsManager({
@@ -22,6 +21,26 @@ describe('ag-grid validation warnings', () => {
     afterEach(() => {
         gridsManager.reset();
         consoleWarnSpy.mockRestore();
+    });
+
+    test('validates loadingRows rowCount and accepts runtime configuration updates', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }],
+            loading: true,
+            loadingRows: { rowCount: 0 },
+        });
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.stringContaining('loadingRows.rowCount: value should be an integer greater than or equal to 1'),
+            expect.any(String)
+        );
+        expect(api.getDisplayedRowCount()).toBe(10);
+
+        consoleWarnSpy.mockClear();
+        api.setGridOption('loadingRows', { rowCount: 3 });
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
 
     describe('invalid property names', () => {

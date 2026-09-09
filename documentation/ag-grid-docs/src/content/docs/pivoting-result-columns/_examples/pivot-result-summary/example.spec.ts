@@ -73,7 +73,9 @@ test.agExample(import.meta, () => {
         test.vanilla(
             `Keyboard-started Edit on cell with [${editFinishKey}] when enableGroupEdits=true`,
             async ({ page, agIdFor, remoteGrid, request }) => {
-                const response = await request.get('/example-assets/small-olympic-winners.json', {
+                // Relative, so it resolves against the whole base URL: a branch build is served under a
+                // path prefix, where a leading slash would resolve against the origin alone and 404.
+                const response = await request.get('example-assets/small-olympic-winners.json', {
                     ignoreHTTPSErrors: true,
                 });
                 const data = await response.json();
@@ -201,7 +203,7 @@ test.agExample(import.meta, () => {
         test.vanilla(
             `DblClick-started Edit on cell with [${editFinishKey}] when enableGroupEdits=true`,
             async ({ page, agIdFor, remoteGrid, request }) => {
-                const response = await request.get('/example-assets/small-olympic-winners.json', {
+                const response = await request.get('example-assets/small-olympic-winners.json', {
                     ignoreHTTPSErrors: true,
                 });
                 const data = await response.json();

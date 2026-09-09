@@ -1,35 +1,18 @@
 ---
-import styles from '@pages-styles/example.module.scss';
 import DemosLayout from '@components/demos/DemosLayout.astro';
-import DemoTabs from '@components/demos/DemosTabs.astro';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
+import DemosPageHeader from '@components/demos/DemosPageHeader.astro';
 import { Inventory } from '@components/demos/examples/inventory';
 import LogoMark from '@components/logo/LogoMark';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { demoContent } from '@utils/markdown-pages/buildDemoMarkdown';
+import styles from '@pages-styles/example.module.scss';
+import { demoContent } from '@components/demos/demoContent';
 
 // Copy is shared with the /example-inventory.md twin so the two cannot drift.
 const content = demoContent('inventory');
 ---
 
-<DemosLayout title={content.metaTitle} description={content.metaDescription}>
-    <div class={styles.topHeader}>
-        <div>
-            <div class={styles.headerTitle}>
-                <h1 class={styles.headerHeading}>{content.heading}</h1>
-                <a class="button-secondary" target="_blank" rel="noopener noreferrer" href={content.githubUrl}>
-                    <Icon name="github" svgClasses={styles.githubIcon} />
-                    <span>See On GitHub</span>
-                </a>
-                <a class="button-secondary" href={urlWithBaseUrl('/contact/')}>
-                    <span>Contact Us</span>
-                </a>
-            </div>
-            <p>{content.bodyText}</p>
-        </div>
+<DemosLayout title={content.seoTitle} description={content.seoDescription}>
+    <DemosPageHeader content={content} />
 
-        <DemoTabs activeTab={content.activeTab} />
-    </div>
     <div class={styles.layout}>
         <div class={styles.layoutWrapper}>
             <div class={styles.loadingLogoContainer}>

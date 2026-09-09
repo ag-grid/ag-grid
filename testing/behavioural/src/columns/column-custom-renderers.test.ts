@@ -2,13 +2,12 @@
  * Tests for custom header components and renderers to verify
  * they integrate correctly with the column model and DOM validation.
  */
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 import { vitest } from 'vitest';
 
 import type { ColDef, IHeaderComp, IHeaderGroupComp, IHeaderGroupParams, IHeaderParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('Column Custom Renderers', () => {
     const gridsManager = new TestGridsManager({
@@ -422,6 +421,21 @@ describe('Column Custom Renderers', () => {
                 ├── b width:200
                 └── c width:200
             `);
+        });
+    });
+
+    describe('custom cell renderer', () => {
+        test('a registered string cellRenderer may reshape the cell text', async () => {
+            const api = gridsManager.createGrid('string-renderer', {
+                components: { units: (p: { value: unknown }) => `${p.value} kg` },
+                columnDefs: [{ field: 'weight', cellRenderer: 'units' }],
+                rowData: [{ weight: 5 }],
+            });
+            await new GridRows(api, 'string renderer').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 weight:5
+            `);
+            expect(getGridElement(api)!.querySelector('.ag-row [col-id="weight"]')?.textContent).toBe('5 kg');
         });
     });
 });

@@ -4,6 +4,7 @@
  */
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import {
     ClientSideRowModelModule,
@@ -14,8 +15,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { ColumnMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column Interactions', () => {
     beforeAll(() => setupAgTestIds());

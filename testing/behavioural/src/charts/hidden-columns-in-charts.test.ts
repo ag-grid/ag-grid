@@ -1,10 +1,9 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
 import type { CreateRangeChartParams, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, canvasPolyfill } from '../test-utils';
 
 describe('includeHiddenColumnsInCharts', () => {
     const gridsManager = new TestGridsManager({

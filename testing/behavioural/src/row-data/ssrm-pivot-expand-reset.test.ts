@@ -1,3 +1,5 @@
+import { TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     PivotModule,
@@ -7,7 +9,6 @@ import {
 } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';
-import { TestGridsManager, waitForNoLoadingRows } from '../test-utils';
 
 /**
  * Regression coverage for SSRM expand-all state under row-shape changes.

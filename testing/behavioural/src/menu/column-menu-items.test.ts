@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 
 import type { ColumnEventType, ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
 
 let restoreOffsetParent: (() => void) | undefined;
 
@@ -160,7 +159,7 @@ describe('getColumnMenuItems on the Column Chooser', () => {
             return el!;
         });
 
-        // jsdom has no layout engine, so force the virtual list to render its items.
+        // happy-dom has no layout engine, so force the virtual list to render its items.
         Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
         viewport.dispatchEvent(new Event('scroll'));
 
@@ -197,7 +196,7 @@ describe('getColumnMenuItems on the Column Chooser', () => {
             return el!;
         });
 
-        // jsdom has no layout engine, so force the virtual list to render its items.
+        // happy-dom has no layout engine, so force the virtual list to render its items.
         Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
         viewport.dispatchEvent(new Event('scroll'));
 

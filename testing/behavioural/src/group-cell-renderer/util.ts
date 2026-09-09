@@ -1,6 +1,6 @@
-import type { ColDef, GridApi, GridOptions, RowSelectionOptions } from 'ag-grid-community';
+import type { TestGridsManager } from 'ag-test-utils';
 
-import type { TestGridsManager } from '../test-utils';
+import type { ColDef, GridApi, GridOptions, RowSelectionOptions } from 'ag-grid-community';
 
 interface GridOptionTestPermutation<T extends keyof GridOptions> {
     condition?: (gridOptions: GridOptions) => boolean;
@@ -31,6 +31,19 @@ export type TestPermutation =
     | DistributeGridOptionArrayOverUnions<keyof GridOptions>
     | DistributeColDefArrayOverUnions<keyof ColDef>
     | DistributeRowSelectionOptionsArrayOverUnions<keyof RowSelectionOptions>;
+
+/** Restricts one permutation to a subset of its values, so sibling files can each own a slice of a large
+ *  matrix. The narrowed property still generates its own `describe`, so test names - and therefore snapshot
+ *  keys - are exactly those of the unsplit suite. */
+export function withValues(concerns: TestPermutation[], property: string, values: unknown[]): TestPermutation[] {
+    const narrowed = concerns.map((concern) =>
+        concern.property === property ? ({ ...concern, values } as TestPermutation) : concern
+    );
+    if (narrowed.every((concern) => concern.property !== property)) {
+        throw new Error(`withValues: no permutation for '${property}'`);
+    }
+    return narrowed;
+}
 
 export const getTestGenerator =
     (gridManager: TestGridsManager, getSnapshot: (container: HTMLDivElement, api: GridApi) => any) =>

@@ -5,8 +5,9 @@ import type { FilterUiChangedEvent } from '../events';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
+import type { IAutoCompleteComponentParams } from './iAutoComplete';
 import type { AgGridCommon } from './iCommon';
-import type { IFilterParams } from './iFilter';
+import type { FilterInputCallbackParams, IFilterParams } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -134,7 +135,7 @@ export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V
  * @param TData type of data row
  * @param V type of value in the Set Filter
  */
-export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilterParams {
+export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilterParams, IAutoCompleteComponentParams {
     /**
      * The values to display in the Filter List. If this is not set, the filter will take its
      * values from what is loaded in the table.
@@ -191,7 +192,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If specified, this formats the text before applying the Mini Filter compare logic, useful for
      * instance to substitute accented characters.
      */
-    textFormatter?: (from: string) => string;
+    textFormatter?: (from: string, params: FilterInputCallbackParams) => string;
     /**
      * If specified, this formats the value before it is displayed in the Filter List.
      * If a Key Creator is provided (see `keyCreator`), this must also be provided.

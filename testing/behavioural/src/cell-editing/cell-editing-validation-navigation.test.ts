@@ -1,4 +1,5 @@
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -9,8 +10,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 interface PersonRow {
     athlete: string;
@@ -337,6 +336,42 @@ describe('Cell editing validation interacting with navigation', () => {
             ├── LEAF id:1 athlete:"Bob" age:40
             └── LEAF id:2 athlete:"Carol" age:31
         `);
+    });
+
+    test('singleCell block: Tab from an invalid cell does not navigate when no other cell is editable', async () => {
+        const rowData: PersonRow[] = [{ athlete: 'Alice', age: 23 }];
+        const api = await gridsManager.createGridAndWait('nav-singleCell-block-only-editable', {
+            columnDefs: [
+                { field: 'athlete', editable: false },
+                {
+                    field: 'age',
+                    cellEditor: 'agNumberCellEditor',
+                    cellEditorParams: { min: 0, max: 100 },
+                    editable: true,
+                },
+            ],
+            rowData,
+            editType: 'singleCell',
+            invalidEditValueMode: 'block',
+        } satisfies GridOptions<PersonRow>);
+        const gridElement = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup();
+
+        const ageCell = cell(api, 0, 'age');
+        await user.dblClick(ageCell);
+        const ageInput = await waitForInput(gridElement, ageCell);
+        await user.clear(ageInput);
+        await user.type(ageInput, '999');
+
+        await user.keyboard('{Tab}');
+
+        // the block must hold even though no other editable cell exists: the editor stays
+        // open with no commit, and focus must not fall back to plain cell navigation
+        expect(editorCount(api)).toBeGreaterThan(0);
+        expect(cell(api, 0, 'age').querySelector('input')).toBeTruthy();
+        expect(cell(api, 0, 'athlete')).not.toBe(document.activeElement);
+        expect(cell(api, 0, 'athlete').querySelector('input')).toBeFalsy();
+        expect(rowData[0].age).toBe(23);
     });
 
     // --- Arrow keys don't navigate (or commit) while an editor is open ---

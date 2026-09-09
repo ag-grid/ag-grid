@@ -41,6 +41,7 @@ import {
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
+import { ColumnSelectionLabelRendererComponentWrapper } from '../shared/customComp/columnSelectionLabelRendererComponentWrapper';
 import { CustomOverlayComponentWrapper } from '../shared/customComp/customOverlayComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
@@ -343,6 +344,8 @@ class ReactFrameworkComponentWrapper
                         return MenuItemComponentWrapper;
                     case 'cellRenderer':
                         return CellRendererComponentWrapper;
+                    case 'columnLabelRenderer':
+                        return ColumnSelectionLabelRendererComponentWrapper;
                     case 'innerHeaderComponent':
                         return InnerHeaderComponentWrapper;
                 }
@@ -364,13 +367,14 @@ class ReactFrameworkComponentWrapper
                 case 'toolPanel':
                 case 'menuItem':
                 case 'cellRenderer':
+                case 'columnLabelRenderer':
                     // Grid ID is always set at this point
                     warnReactiveCustomComponents(this.gridId!);
                     break;
             }
         }
-        // only cell renderers and tool panel should use fallback methods
-        const suppressFallbackMethods = !componentType.cellRenderer && componentType.name !== 'toolPanel';
+        // only renderers supporting JavaScript functions and tool panels should use fallback methods
+        const suppressFallbackMethods = !componentType.supportsJsFunction && componentType.name !== 'toolPanel';
         return new ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     }
 }

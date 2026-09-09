@@ -28,6 +28,7 @@ type ConfigGenerator = ({
     entryFile,
     indexHtml,
     isEnterprise,
+    isDev,
     bindings,
     typedBindings,
     componentScriptFiles,
@@ -35,12 +36,12 @@ type ConfigGenerator = ({
     styleFiles,
     ignoreDarkMode,
     transformEntryFile,
-    isDev,
     exampleConfig,
 }: {
     entryFile: string;
     indexHtml: string;
     isEnterprise: boolean;
+    isDev: boolean;
     bindings: ParsedBindings;
     typedBindings: ParsedBindings;
     componentScriptFiles: FileContents;
@@ -48,7 +49,6 @@ type ConfigGenerator = ({
     styleFiles: FileContents;
     ignoreDarkMode?: boolean;
     transformEntryFile?: TransformEntryFile;
-    isDev: boolean;
     exampleConfig: ExampleConfig;
 }) => Promise<FrameworkFiles>;
 
@@ -58,13 +58,13 @@ const AG_GRID_EXPORTED_FUNCS_USED_IN_EXAMPLES_COMPS = ['isCombinedFilterModel'];
 
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
     vanilla: async ({
+        isDev,
         bindings,
         entryFile,
         indexHtml,
         componentScriptFiles,
         otherScriptFiles,
         transformEntryFile,
-        isDev,
     }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
@@ -106,9 +106,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
-        if (!isDev) {
-            mainJs = await formatFile(internalFramework, mainJs);
-        }
+        mainJs = await formatFile(internalFramework, mainJs, isDev);
 
         return {
             files: {
@@ -120,13 +118,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     typescript: async ({
+        isDev,
         entryFile,
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
         typedBindings,
         transformEntryFile,
-        isDev,
     }) => {
         const internalFramework: InternalFramework = 'typescript';
         const entryFileName = getEntryFileName(internalFramework)!;
@@ -138,9 +136,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainTs = transformEntryFile({ entryFile: mainTs });
         }
 
-        if (!isDev) {
-            mainTs = await formatFile(internalFramework, mainTs);
-        }
+        mainTs = await formatFile(internalFramework, mainTs, isDev);
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
 
@@ -154,13 +150,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     reactFunctional: async ({
+        isDev,
         typedBindings,
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctional';
@@ -179,9 +175,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexJsx = transformEntryFile({ entryFile: indexJsx });
         }
 
-        if (!isDev) {
-            indexJsx = await formatFile(internalFramework, indexJsx);
-        }
+        indexJsx = await formatFile(internalFramework, indexJsx, isDev);
 
         return {
             files: {
@@ -194,13 +188,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     reactFunctionalTs: async ({
+        isDev,
         typedBindings,
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
@@ -217,9 +211,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexTsx = transformEntryFile({ entryFile: indexTsx });
         }
 
-        if (!isDev) {
-            indexTsx = await formatFile(internalFramework, indexTsx);
-        }
+        indexTsx = await formatFile(internalFramework, indexTsx, isDev);
 
         return {
             files: {
@@ -232,17 +224,17 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     angular: async ({
+        isDev,
         typedBindings,
         otherScriptFiles,
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'angular';
         const entryFileName = getEntryFileName(internalFramework)!;
-        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
 
         const componentNames = getComponentName(componentScriptFiles);
         let appComponent = vanillaToAngular(
@@ -256,9 +248,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             appComponent = transformEntryFile({ entryFile: appComponent });
         }
 
-        if (!isDev) {
-            appComponent = await formatFile(internalFramework, appComponent);
-        }
+        appComponent = await formatFile(internalFramework, appComponent, isDev);
 
         return {
             files: {
@@ -274,13 +264,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     vue3: async ({
+        isDev,
         indexHtml,
         typedBindings,
         otherScriptFiles,
         componentScriptFiles,
         styleFiles,
         transformEntryFile,
-        isDev,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'vue3';
@@ -296,9 +286,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainJs = transformEntryFile({ entryFile: mainJs });
         }
 
-        if (!isDev) {
-            mainJs = await formatFile(internalFramework, mainJs);
-        }
+        mainJs = await formatFile(internalFramework, mainJs, isDev);
 
         const entryFileName = getEntryFileName(internalFramework)!;
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };

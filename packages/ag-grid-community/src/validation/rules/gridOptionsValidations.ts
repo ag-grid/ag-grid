@@ -569,6 +569,27 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        loadingRows: {
+            validate({ loadingRows, rowModelType }) {
+                if (loadingRows == null || loadingRows === false) {
+                    return null;
+                }
+                if (loadingRows !== true && (typeof loadingRows !== 'object' || Array.isArray(loadingRows))) {
+                    return _createValidationWarning(321, {
+                        property: 'loadingRows',
+                        expected: 'a boolean or an object',
+                    });
+                }
+                if (rowModelType != null && rowModelType !== 'clientSide') {
+                    return '`loadingRows` is only supported with the Client-Side Row Model.';
+                }
+                const rowCount = typeof loadingRows === 'object' ? loadingRows.rowCount : undefined;
+                if (rowCount != null && (!Number.isInteger(rowCount) || rowCount < 1)) {
+                    return 'loadingRows.rowCount: value should be an integer greater than or equal to 1';
+                }
+                return null;
+            },
+        },
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
@@ -774,6 +795,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                if (autoSizeStrategy.shouldAutoSizeColumns !== undefined && !autoSizeStrategy.continuous) {
+                    return `The \`shouldAutoSizeColumns\` auto-size option only applies when \`continuous\` is true.`;
                 }
                 return null;
             },

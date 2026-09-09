@@ -23,7 +23,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1
 
@@ -57,7 +57,7 @@ runs:
 
     - name: Restore Playwright browsers
       id: pw-cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
@@ -67,11 +67,16 @@ runs:
       working-directory: documentation/ag-grid-docs
       env:
         PW_BROWSERS: ${{ inputs.browsers == 'all' && 'chromium firefox webkit' || 'chromium' }}
+      # Bounded + retried via the shared wrapper (AG-18231): `install-deps` shells out to
+      # `apt-get update`, which has no timeout, so a stalled mirror used to hang the job until
+      # the 6-hour limit cancelled it. ${GITHUB_WORKSPACE} is needed because this step's
+      # working-directory is documentation/ag-grid-docs.
       run: |
+        PW_INSTALL="${GITHUB_WORKSPACE}/scripts/ci/install-playwright.sh"
         if [ "${{ steps.pw-cache.outputs.cache-hit }}" = "true" ]; then
-          npx playwright install-deps ${PW_BROWSERS}
+          bash "${PW_INSTALL}" deps ${PW_BROWSERS}
         else
-          npx playwright install --with-deps ${PW_BROWSERS}
+          bash "${PW_INSTALL}" full ${PW_BROWSERS}
         fi
 
     # Run Playwright directly via ./docs-e2e.sh (bypasses Nx) so we avoid the Nx target's
@@ -85,7 +90,7 @@ runs:
     
     - name: Upload Test Report
       id: upload-recipes-report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ !cancelled() }}
       with:
         name: playwright-${{ inputs.framework }}-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}

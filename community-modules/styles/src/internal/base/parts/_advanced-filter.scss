@@ -242,6 +242,28 @@
         }
     }
 
+    .ag-advanced-filter-builder-set-values-pill-wrapper {
+        flex: 1 1 152px;
+        width: 152px;
+        min-width: 152px;
+        max-width: 100%;
+    }
+
+    .ag-advanced-filter-builder-set-values-pill {
+        width: max-content;
+        min-width: 152px;
+        max-width: 100%;
+        cursor: pointer;
+
+        .ag-advanced-filter-builder-pill-display {
+            min-width: 0;
+        }
+    }
+
+    .ag-advanced-filter-builder-set-values-pill-empty {
+        width: 152px;
+    }
+
     .ag-advanced-filter-builder-item-buttons > * {
         margin: 0 calc(var(--ag-grid-size) * 0.5);
     }
@@ -258,14 +280,20 @@
         cursor: default;
     }
 
+    .ag-advanced-filter-builder-virtual-list-viewport {
+        scrollbar-width: thin;
+    }
+
     .ag-advanced-filter-builder-virtual-list-container {
         top: var(--ag-grid-size);
+        overflow: visible;
     }
 
     .ag-advanced-filter-builder-virtual-list-item {
         display: flex;
         cursor: default;
         height: var(--ag-list-item-height);
+        min-width: max-content;
 
         &:hover {
             background-color: var(--ag-row-hover-color);
@@ -273,6 +301,28 @@
             .ag-advanced-filter-builder-item-button {
                 opacity: 100%;
             }
+        }
+    }
+
+    .ag-advanced-filter-builder-set-value-list {
+        .ag-advanced-filter-builder-item {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ag-advanced-filter-builder-item-condition {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ag-advanced-filter-builder-item-wrapper {
+            // The pill wrapper's trailing margin and the actions' leading margin already provide 1.5 grid-size
+            // units. Together these make the exact 24px reserve where the value pill stops growing.
+            column-gap: max(0px, calc(24px - var(--ag-grid-size) * 1.5));
+        }
+
+        .ag-advanced-filter-builder-invalid.ag-invisible {
+            display: none;
         }
     }
 
@@ -285,5 +335,17 @@
         margin: 0 var(--ag-grid-size);
         color: var(--ag-invalid-color);
         cursor: default;
+    }
+
+    .ag-advanced-filter-builder-set-picker {
+        // The popup service positions popups with inline top/left, which only apply once the child is taken
+        // out of flow: unpositioned, this lands at the foot of the popup parent at its full width.
+        position: absolute;
+
+        // A popup has no size of its own, and the Set Filter list inside it would otherwise take the viewport.
+        width: 240px;
+        background-color: var(--ag-menu-background-color);
+        border: var(--ag-borders) var(--ag-menu-border-color);
+        border-radius: var(--ag-card-radius);
     }
 }

@@ -2,7 +2,7 @@
  * `autoSizeStrategy.applyToUiActions` — the Column Menu and Context Menu auto-size actions reusing
  * the configured strategy's options.
  *
- * Cell content is measured in a container jsdom sizes at 0 px, so a content fit lands each column
+ * Cell content is measured in a container happy-dom sizes at 0 px, so a content fit lands each column
  * on its effective minimum: `defaultMinWidth` and `columnLimits` are what separates an opted-in
  * action from the default one, which sizes to the column's own `minWidth`.
  *
@@ -12,11 +12,10 @@
  */
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { TestGridsManager, mockGridLayout, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, mockGridLayout, openMenuOption, polyfillOffsetParent } from '../test-utils';
 
 describe('autoSizeStrategy applyToUiActions', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });

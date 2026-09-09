@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridRows, TestGridsManager } from '../test-utils';
 
 describe('new filters tool panel requires enableFilterHandlers', () => {
     const gridsManager = new TestGridsManager({

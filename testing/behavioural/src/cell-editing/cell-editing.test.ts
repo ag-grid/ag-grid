@@ -1,20 +1,6 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-
-import type { CellValueChangedEvent, ColDef, NewValueParams } from 'ag-grid-community';
-import {
-    CheckboxEditorModule,
-    DateEditorModule,
-    LargeTextEditorModule,
-    NumberEditorModule,
-    RenderApiModule,
-    TextEditorModule,
-    ValueCacheModule,
-    agTestIdFor,
-    getGridElement,
-    setupAgTestIds,
-} from 'ag-grid-community';
-
 import {
     EditEventTracker,
     GridColumns,
@@ -22,10 +8,31 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     waitForInput,
-} from '../test-utils';
+} from 'ag-test-utils';
+import type { EditorFormControl } from 'ag-test-utils';
+
+import type { CellValueChangedEvent, ColDef, GridApi, NewValueParams } from 'ag-grid-community';
+import {
+    CheckboxEditorModule,
+    DateEditorModule,
+    LargeTextEditorModule,
+    NumberEditorModule,
+    RenderApiModule,
+    SelectEditorModule,
+    TextEditorModule,
+    ValueCacheModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 
 /** Asserts the value of a form control, handling number/date/checkbox inputs correctly. */
-function expectInputValue(input: HTMLInputElement, expected: unknown): void {
+function expectInputValue(input: EditorFormControl, expected: unknown): void {
+    // `agLargeTextCellEditor` is a textarea, which has plain text and none of the typed value accessors.
+    if (input instanceof HTMLTextAreaElement) {
+        expect(input.value).toBe(expected == null ? '' : String(expected));
+        return;
+    }
     const type = input.type;
     if (type === 'number' || type === 'range') {
         if (expected == null || (typeof expected === 'number' && isNaN(expected))) {
@@ -59,6 +66,7 @@ describe('Cell Editing Start', () => {
             DateEditorModule,
             LargeTextEditorModule,
             CheckboxEditorModule,
+            SelectEditorModule,
         ],
     });
 
@@ -219,6 +227,37 @@ describe('Cell Editing Start', () => {
         });
     });
 
+    describe('Escape key', () => {
+        test('leaves the browser default intact when nothing is editing, prevents it while editing', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: {
+                    editable: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'string1')));
+            await userEvent.click(cell);
+
+            // A host dialog wrapping the grid closes on Escape only if the grid leaves the key unhandled.
+            const idleEscape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            cell.dispatchEvent(idleEscape);
+            expect(idleEscape.defaultPrevented).toBe(false);
+            expect(api.getCellEditorInstances()).toHaveLength(0);
+
+            await userEvent.dblClick(cell);
+            const input = await waitForInput(gridDiv, cell);
+
+            const editingEscape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            input.dispatchEvent(editingEscape);
+            expect(editingEscape.defaultPrevented).toBe(true);
+
+            await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(0));
+        });
+    });
+
     describe('Backspace key', () => {
         // Backspace starts editing with an empty value
         // For non-popup editors, this also removes the renderer and hence clears the cell text.
@@ -291,6 +330,584 @@ describe('Cell Editing Start', () => {
             await waitFor(() => expect(cell).toHaveTextContent(expectedText as any));
 
             expect(api.getCellEditorInstances()).toHaveLength(0);
+        });
+    });
+
+    describe('refData start value', () => {
+        const refData = { cb: 'Cadet Blue', bw: 'Burlywood', fg: 'Forest Green' };
+
+        const openEditor = async (api: GridApi, field: string, rowId: string) => {
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(rowId, field)));
+            await userEvent.dblClick(cell);
+            return waitForInput(gridDiv, cell);
+        };
+
+        test('the text editor opens on the stored code, not the mapped label', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'colour', refData }],
+                rowData: [{ colour: 'bw' }, { colour: 'cb' }],
+                defaultColDef: { editable: true },
+            });
+
+            expectInputValue(await openEditor(api, 'colour', '0'), 'bw');
+            await userEvent.keyboard('{Escape}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expectInputValue(await openEditor(api, 'colour', '1'), 'cb');
+        });
+
+        test('committing an untouched editor leaves the stored code alone', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'colour', refData }],
+                rowData: [{ colour: 'bw' }, { colour: 'cb' }],
+                defaultColDef: { editable: true },
+            });
+
+            const eventTracker = new EditEventTracker(api);
+
+            await openEditor(api, 'colour', '0');
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            await openEditor(api, 'colour', '1');
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+            await new GridRows(api, 'codes survive an untouched edit', { useFormatter: false }).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 colour:"bw"
+                └── LEAF id:1 colour:"cb"
+            `);
+        });
+
+        test('typing a code still commits it, and the cell renders the mapped label', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'colour', refData }],
+                rowData: [{ colour: 'bw' }],
+                defaultColDef: { editable: true },
+            });
+
+            const input = await openEditor(api, 'colour', '0');
+            await userEvent.clear(input);
+            await userEvent.keyboard('fg');
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            await new GridRows(api, 'typed code committed', { useFormatter: false }).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 colour:"fg"
+            `);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await waitFor(() =>
+                expect(getByTestId(gridDiv, agTestIdFor.cell('0', 'colour'))).toHaveTextContent('Forest Green')
+            );
+        });
+
+        // The counterpart to the untouched case: an emptied input differs from the seed, so it
+        // must still commit, or the guard would swallow a deliberate clear.
+        test('clearing the input still writes a blank', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'colour', refData }],
+                rowData: [{ colour: 'bw' }],
+                defaultColDef: { editable: true },
+            });
+
+            const input = await openEditor(api, 'colour', '0');
+            await userEvent.clear(input);
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            await new GridRows(api, 'cleared refData cell', { useFormatter: false }).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 colour:""
+            `);
+        });
+
+        test('useFormatter still opens on the mapped label', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'colour',
+                        refData,
+                        cellEditor: 'agTextCellEditor',
+                        cellEditorParams: { useFormatter: true },
+                    },
+                ],
+                rowData: [{ colour: 'bw' }],
+                defaultColDef: { editable: true },
+            });
+
+            expectInputValue(await openEditor(api, 'colour', '0'), 'Burlywood');
+        });
+    });
+
+    // Opening an editor and committing without touching it must never report a change.
+    describe('untouched edit writes nothing', () => {
+        test.each([
+            { field: 'number', popup: false },
+            { field: 'string1', popup: false },
+            { field: 'string2', popup: true },
+            { field: 'date', popup: false },
+            { field: 'dateStr', popup: false },
+            { field: 'boolean', popup: false },
+        ])('$field', async ({ field, popup }) => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', field)));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell, { popup });
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        // Characterisation: the inferred number data type supplies the parser that restores the type,
+        // so a text editor over a numeric column was never at risk here.
+        test('text editor on a numeric column keeps the number', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'n', cellEditor: 'agTextCellEditor' }],
+                rowData: [{ n: 5 }],
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'n')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+            expect(api.getDisplayedRowAtIndex(0)!.data.n).toBe(5);
+        });
+
+        // The widget normalises what it is given, so the seed has to be read back off it rather than
+        // assumed: precision truncates 5.6789 to 5.67 and nothing would report the change.
+        test('number editor with precision keeps the full stored value', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'n', cellEditor: 'agNumberCellEditor', cellEditorParams: { precision: 2 } }],
+                rowData: [{ n: 5.6789 }],
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'n')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.n).toBe(5.6789);
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        test('full row editing commits nothing for untouched cells', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                // No popup editor: warning #98 forbids agLargeTextCellEditor under fullRow.
+                columnDefs: columnDefs.filter((c) => c.field !== 'string2'),
+                rowData,
+                defaultColDef: { editable: true },
+                editType: 'fullRow',
+            });
+            const eventTracker = new EditEventTracker(api);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'string1')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        // The parser is what makes this discriminating: `setDataValue(..., 'edit')` hands the editor a
+        // model value, so committing it must not run the column parser over it a second time.
+        test('re-seeding an open editor still commits nothing', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        cellEditor: 'agTextCellEditor',
+                        valueParser: (p) => String(p.newValue).toUpperCase(),
+                    },
+                ],
+                rowData: [{ a: 'one' }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+
+            const node = api.getDisplayedRowAtIndex(0)!;
+            node.setDataValue('a', 'two', 'edit');
+            await waitFor(() => expect(api.getCellEditorInstances()[0]?.getValue()).toBe('two'));
+
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+            expect(node.data.a).toBe('two');
+        });
+
+        test('validation grades the value that will be committed', async () => {
+            const seen: unknown[] = [];
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        cellEditor: 'agTextCellEditor',
+                        valueParser: (p) => String(p.newValue).toUpperCase(),
+                        cellEditorParams: {
+                            getValidationErrors: ({ value }: { value: unknown }) => {
+                                seen.push(value);
+                                return null;
+                            },
+                        },
+                    },
+                ],
+                rowData: [{ a: 'abc' }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('abc');
+            expect(seen).not.toHaveLength(0);
+            expect(seen.every((v) => v === 'abc')).toBe(true);
+        });
+
+        // The number widget withholds its value while the input breaks a native bound, so two
+        // different out-of-range entries both read as empty and an edit between them looks untouched.
+        // A custom callback may accept those values, which is what makes the state reachable.
+        test('an edit between two values outside min is committed', async () => {
+            const seen: unknown[] = [];
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'n',
+                        cellEditor: 'agNumberCellEditor',
+                        cellEditorParams: {
+                            min: 0,
+                            getValidationErrors: ({ value }: { value: unknown }) => {
+                                seen.push(value);
+                                return null;
+                            },
+                        },
+                    },
+                ],
+                rowData: [{ n: -1 }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'n')));
+            await userEvent.dblClick(cell);
+            const input = (await waitForInput(gridDiv, cell)) as HTMLInputElement;
+            await userEvent.clear(input);
+            await userEvent.type(input, '-2');
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.n).toBe(-2);
+            expect(seen.at(-1)).toBe(-2);
+        });
+
+        test('number validation grades the preserved value, not the truncated one', async () => {
+            const seen: unknown[] = [];
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'n',
+                        cellEditor: 'agNumberCellEditor',
+                        cellEditorParams: {
+                            precision: 2,
+                            getValidationErrors: ({ value }: { value: unknown }) => {
+                                seen.push(value);
+                                return null;
+                            },
+                        },
+                    },
+                ],
+                rowData: [{ n: 5.6789 }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'n')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.n).toBe(5.6789);
+            expect(seen).not.toHaveLength(0);
+            expect(seen.every((v) => v === 5.6789)).toBe(true);
+        });
+
+        test('date string validation grades the preserved value, not the reparsed one', async () => {
+            const seen: unknown[] = [];
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'd',
+                        cellEditor: 'agDateStringCellEditor',
+                        valueParser: (p) => `parsed:${p.newValue}`,
+                        cellEditorParams: {
+                            getValidationErrors: ({ value }: { value: unknown }) => {
+                                seen.push(value);
+                                return null;
+                            },
+                        },
+                    },
+                ],
+                rowData: [{ d: '2025-01-01' }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'd')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.d).toBe('2025-01-01');
+            expect(seen).not.toHaveLength(0);
+            expect(seen.every((v) => v === '2025-01-01')).toBe(true);
+        });
+
+        // `valueAsDate` is null for the `datetime-local` input `includeTime` switches to, which left
+        // both options unenforced and handed the callback null instead of the entered date.
+        test('date min and max are enforced when includeTime is set', async () => {
+            const seen: { value: unknown; internalErrors: string[] | null }[] = [];
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'd',
+                        cellEditor: 'agDateCellEditor',
+                        cellEditorParams: {
+                            includeTime: true,
+                            min: new Date(2025, 1, 1),
+                            getValidationErrors: (p: { value: unknown; internalErrors: string[] | null }) => {
+                                seen.push({ value: p.value, internalErrors: p.internalErrors });
+                                return null;
+                            },
+                        },
+                    },
+                ],
+                rowData: [{ d: new Date(2025, 1, 10, 9, 0) }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'd')));
+            await userEvent.dblClick(cell);
+            const input = (await waitForInput(gridDiv, cell)) as HTMLInputElement;
+            expect(input.type).toBe('datetime-local');
+            input.value = '2025-01-15T08:15';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            const last = seen.at(-1)!;
+            expect(last.internalErrors).toEqual([expect.stringContaining('Date must be after')]);
+            expect(last.value).toEqual(new Date(2025, 0, 15, 8, 15));
+        });
+
+        // The plain `date` control for the case above: it always worked, so it proves the
+        // includeTime test is discriminating rather than asserting a shared no-op.
+        test('date min and max are enforced without includeTime', async () => {
+            const seen: (string[] | null)[] = [];
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'd',
+                        cellEditor: 'agDateCellEditor',
+                        cellEditorParams: {
+                            min: new Date(2025, 1, 1),
+                            getValidationErrors: (p: { internalErrors: string[] | null }) => {
+                                seen.push(p.internalErrors);
+                                return null;
+                            },
+                        },
+                    },
+                ],
+                rowData: [{ d: new Date(2025, 1, 10) }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'd')));
+            await userEvent.dblClick(cell);
+            const input = (await waitForInput(gridDiv, cell)) as HTMLInputElement;
+            expect(input.type).toBe('date');
+            input.value = '2025-01-15';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(seen.at(-1)).toEqual([expect.stringContaining('Date must be after')]);
+        });
+
+        // A normalising parser is the discriminating input: without one, every editor round-trips
+        // the value unchanged and an untouched commit looks correct whether or not it is guarded.
+        test.each([
+            { name: 'text', cellEditor: 'agTextCellEditor', popup: false },
+            { name: 'largeText', cellEditor: 'agLargeTextCellEditor', popup: true },
+        ])('$name editor does not run a normalising parser on an untouched commit', async ({ cellEditor, popup }) => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        cellEditor,
+                        cellEditorPopup: popup,
+                        valueParser: (p) => String(p.newValue).toUpperCase(),
+                    },
+                ],
+                rowData: [{ a: 'abc' }],
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell, { popup });
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('abc');
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        test('largeText editor still commits a typed value through the parser', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        cellEditor: 'agLargeTextCellEditor',
+                        cellEditorPopup: true,
+                        valueParser: (p) => String(p.newValue).toUpperCase(),
+                    },
+                ],
+                rowData: [{ a: 'abc' }],
+                defaultColDef: { editable: true },
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
+            await userEvent.dblClick(cell);
+            const input = await waitForInput(gridDiv, cell, { popup: true });
+            await userEvent.clear(input as HTMLElement);
+            await userEvent.type(input as HTMLElement, 'xyz');
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('XYZ');
+        });
+
+        // The widget cannot hold null, so reading the value back off it narrowed the stored null.
+        test('checkbox editor keeps a null value on an untouched commit', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'a', cellEditor: 'agCheckboxCellEditor' }],
+                rowData: [{ a: null }],
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBeNull();
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        // The dropdown falls back to values[0] when the stored value is not an option, which is a
+        // display concern; committing it without touching the picker wrote that option over the data.
+        test('select editor keeps a value that is not in the list on an untouched commit', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'a', cellEditor: 'agSelectCellEditor', cellEditorParams: { values: ['x', 'y'] } },
+                ],
+                rowData: [{ a: 'zzz' }],
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('zzz');
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+        });
+
+        test('select editor still commits a value chosen from the list', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'a', cellEditor: 'agSelectCellEditor', cellEditorParams: { values: ['x', 'y'] } },
+                ],
+                rowData: [{ a: 'zzz' }],
+                defaultColDef: { editable: true },
+            });
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+            const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+            editor?.agSetEditValue?.('y');
+            api.stopEditing();
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('y');
+        });
+
+        test('useFormatter without a valueParser', async () => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'colour',
+                        valueFormatter: (p) => ({ bw: 'Burlywood' })[p.value as string] ?? '',
+                        cellEditor: 'agTextCellEditor',
+                        cellEditorParams: { useFormatter: true },
+                    },
+                ],
+                rowData: [{ colour: 'bw' }],
+                defaultColDef: { editable: true },
+            });
+            const eventTracker = new EditEventTracker(api);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'colour')));
+            await userEvent.dblClick(cell);
+            await waitForInput(gridDiv, cell);
+            await userEvent.keyboard('{Enter}');
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            expect(eventTracker.counts.cellValueChanged).toBe(0);
+            await new GridRows(api, 'useFormatter untouched edit', { useFormatter: false }).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 colour:"bw"
+            `);
         });
     });
 

@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { asyncSetTimeout } from 'ag-test-utils/node-utils';
 
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-import { asyncSetTimeout } from '../test-utils/node-utils';
 
 /**
  * Characterization (golden-master) tests pinning the CURRENT behaviour of the
@@ -129,7 +128,10 @@ describe('SSRM cache config', () => {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
             cacheBlockSize: 100,
-            blockLoadDebounceMillis: 200,
+            // The debounce is what this test measures, so it asks for a small one rather than out-waiting the
+            // 200ms a real app would use: an un-debounced load is issued ~5ms after the hop, so 60ms separates
+            // the two outcomes just as well.
+            blockLoadDebounceMillis: 60,
             rowBuffer: 0,
             suppressRowVirtualisation: false,
             getRowId: (params) => String(params.data.id),
@@ -152,13 +154,17 @@ describe('SSRM cache config', () => {
         api.ensureIndexVisible(500);
         api.ensureIndexVisible(1000);
         api.ensureIndexVisible(1500);
+        // The block to load is derived from the rendered viewport, which the scroll updates synchronously, so
+        // pin that the hops arrived: a failure here says the viewport never moved, not that a load was lost.
+        expect(api.getRenderedNodes().map((node) => node.rowIndex)).toContain(1500);
 
         // Sample the request count while still inside the debounce window: the
         // intermediate blocks have NOT been fetched yet. This is a negative assertion —
         // waitFor cannot express "no request has been issued", so the delay IS the
-        // observation window and must stay.
-        // eslint-disable-next-line no-restricted-syntax -- observation window inside the 200ms blockLoadDebounceMillis
-        await asyncSetTimeout(50);
+        // observation window and must stay. It sits between the two outcomes, so a
+        // timer that never fires early cannot make it flaky, only less strict.
+        // eslint-disable-next-line no-restricted-syntax -- observation window inside blockLoadDebounceMillis
+        await asyncSetTimeout(20);
         const requestsDuringWindow = requests.length - requestsAfterInitial;
         expect(requestsDuringWindow).toBe(0);
 
@@ -166,12 +172,17 @@ describe('SSRM cache config', () => {
         // recorded request stream directly rather than a fixed sleep or a modelUpdated
         // event — the event can race with viewport rendering on a congested CI box,
         // whereas a new request is exactly the observable this test asserts on.
-        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsAfterInitial), { timeout: 2000 });
-        const requestsAfterWindow = requests.length - requestsAfterInitial;
-        expect(requestsAfterWindow).toBeGreaterThan(0);
+        // The cap bounds the failure only, so it is sized for a shared CI core.
+        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsAfterInitial), { timeout: 8000 });
+        const blocksAfterWindow = requests.slice(requestsAfterInitial);
+        expect(blocksAfterWindow.length).toBeGreaterThan(0);
         // The debounce coalesced the three rapid hops into far fewer than three
         // fetches — pin that it did not fetch every intermediate block.
-        expect(requestsAfterWindow).toBeLessThan(3);
+        expect(blocksAfterWindow.length).toBeLessThan(3);
+        // Name the blocks the hops passed through: only the final viewport is fetched.
+        const startRows = blocksAfterWindow.map(([startRow]) => startRow);
+        expect(startRows).not.toContain(500);
+        expect(startRows).not.toContain(1000);
     });
 
     test('maxConcurrentDatasourceRequests caps how many getRows calls are in-flight at once', async () => {
@@ -217,8 +228,9 @@ describe('SSRM cache config', () => {
         await waitFor(() => expect(pending.length).toBe(1));
         // Negative assertion: no SECOND request may appear. waitFor cannot express that, so
         // this delay is the observation window in which an over-cap request would surface.
+        // The cap being off puts the next request ~2ms behind the first, so 15ms is window enough.
         // eslint-disable-next-line no-restricted-syntax -- observation window for an over-cap concurrent getRows
-        await asyncSetTimeout(30);
+        await asyncSetTimeout(15);
         expect(pending.length).toBe(1);
 
         drain();
@@ -229,7 +241,7 @@ describe('SSRM cache config', () => {
         makeGrid(2);
         await waitFor(() => expect(pending.length).toBe(2));
         // eslint-disable-next-line no-restricted-syntax -- observation window for an over-cap concurrent getRows
-        await asyncSetTimeout(30);
+        await asyncSetTimeout(15);
         expect(pending.length).toBe(2);
 
         drain();

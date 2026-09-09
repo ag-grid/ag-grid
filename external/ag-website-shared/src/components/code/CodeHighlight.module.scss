@@ -19,9 +19,7 @@
 .lineNumbers .shikiCode {
     // Stretch the code element to fill a height-constrained container (e.g. the example
     // runner code viewer) so its horizontal scrollbar sits at the container's bottom edge
-    // rather than directly under the last line of code. This restores the behaviour the
-    // Prism-era global `.line-numbers > code { height: 100%; overflow: auto }` rule used to
-    // provide, which no longer matches now that Shiki emits a hashed CSS-module class.
+    // rather than directly under the last line of code.
     height: 100%;
     overflow: auto;
     padding-left: 3.8em;
@@ -41,11 +39,12 @@
             margin-left: -3.5em;
             margin-right: 1em;
             text-align: right;
-            color: var(--color-util-brand-500);
-            opacity: 0.33;
+            // Overridable by blocks that paint their own palette.
+            color: var(--color-code-line-number, var(--color-util-brand-500));
+            opacity: var(--color-code-line-number-opacity, 0.33);
 
             #{$selector-darkmode} & {
-                color: var(--color-fg-primary);
+                color: var(--color-code-line-number, var(--color-fg-primary));
             }
         }
     }

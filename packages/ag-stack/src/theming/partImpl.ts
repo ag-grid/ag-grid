@@ -53,8 +53,9 @@ type CreatePartArgs<T> = {
  */
 
 export const createPart = <T = unknown>(args: CreatePartArgs<T>): Part<ExpandTypeKeys<WithParamTypes<T>>> => {
-    /*#__PURE__*/
-    return new PartImpl(args) as any;
+    // The annotation has to sit on the `new`, not on its own line, or it marks nothing and an unused
+    // part is never dropped.
+    return /*#__PURE__*/ new PartImpl(args) as any;
 };
 
 export const defaultModeName = '$default';

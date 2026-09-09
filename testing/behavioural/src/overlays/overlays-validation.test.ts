@@ -1,9 +1,8 @@
+import { ALL_SEVERITIES, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
-
-import { ALL_SEVERITIES, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('dev validation overlay', () => {
     const gridsManager = new TestGridsManager({
@@ -107,17 +106,9 @@ describe('dev validation overlay', () => {
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
-        // The CSV download needs URL.createObjectURL (absent in jsdom, so assigned rather than spied) and
-        // a MouseEvent jsdom won't reject over its `view` member; unstubAllGlobals in afterEach restores it.
-        const originalCreateObjectURL = URL.createObjectURL;
-        const originalRevokeObjectURL = URL.revokeObjectURL;
-        const createObjectURL = vitest.fn(() => 'blob:mock-url');
-        URL.createObjectURL = createObjectURL;
-        URL.revokeObjectURL = vitest.fn(() => {});
-        vitest.stubGlobal(
-            'MouseEvent',
-            vitest.fn((type: string, init?: EventInit) => new Event(type, init))
-        );
+        // Stubbed so the export's blob URL is observable and nothing real is allocated for it.
+        const createObjectURL = vitest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
+        const revokeObjectURL = vitest.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
         try {
             api.exportDataAsCsv();
 
@@ -129,8 +120,8 @@ describe('dev validation overlay', () => {
             // Let the download's deferred revokeObjectURL (setTimeout 0) fire
             await new Promise<void>((resolve) => setTimeout(resolve, 0));
         } finally {
-            URL.createObjectURL = originalCreateObjectURL;
-            URL.revokeObjectURL = originalRevokeObjectURL;
+            createObjectURL.mockRestore();
+            revokeObjectURL.mockRestore();
         }
     });
 

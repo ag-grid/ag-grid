@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridApi, IAggFuncParams, IAggFuncResult, IRowNode, ValueGetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Mirrors the `multi-level-ratio` documentation example. The aggFunc + value getter pair

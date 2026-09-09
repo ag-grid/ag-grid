@@ -175,9 +175,10 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
                 // we do the update in a timeout, to make sure we are not calling from inside the grid
                 // doing another update
                 const updateRowHeightFunc = () => {
-                    const { rowModel } = this.beans;
+                    const { rowModel, environment } = this.beans;
                     const { rowNode } = rowCtrl;
-                    rowNode.setRowHeight(clientHeight);
+                    // the row uses border-box sizing, so the border width must be added
+                    rowNode.setRowHeight(clientHeight + environment.getRowBorderWidth());
                     if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(gos, rowModel)) {
                         rowModel.onRowHeightChanged();
                     }

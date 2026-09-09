@@ -1,12 +1,11 @@
 import { waitFor } from '@testing-library/dom';
 import { _doOnce } from 'ag-stack';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 // Calculated-column behaviour in PIVOT mode. A calculated column stays active under pivot, evaluating
 // against the primary columns on leaf rows, and works in every pivot role: as a non-value primary column

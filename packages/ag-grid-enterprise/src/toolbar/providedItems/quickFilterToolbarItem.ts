@@ -1,20 +1,24 @@
 import { _debounce } from 'ag-stack';
 
-import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import type {
+    GridInputTextField,
+    IInputToolbarItemParams,
+    IToolbarItemComp,
+    IToolbarItemParams,
+} from 'ag-grid-community';
+import { AgInputTextField, Component } from 'ag-grid-community';
 
-import { createToolbarInput } from './toolbarItemUtils';
-
-const INPUT_DEBOUNCE_MS = 300;
+import { INPUT_DEBOUNCE_MS, createToolbarInput } from './toolbarItemUtils';
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
+    private eInputField!: GridInputTextField;
     private eInput!: HTMLInputElement;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-input' });
     }
 
-    public init(_params: IToolbarItemParams): void {
+    public init(params: IToolbarItemParams<any, any, IInputToolbarItemParams>): void {
         if (!this.gos.isModuleRegistered('QuickFilter')) {
             this.beans.log.error(302, {
                 itemName: 'agQuickFilterToolbarItem',
@@ -28,8 +32,21 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
+        let quickFilterTextTimeout: number | undefined;
+        const setQuickFilterText = (quickFilterText: string) =>
+            this.gos.updateGridOptions({ options: { quickFilterText } });
 
-        const { eIconWrapper, eInput } = createToolbarInput(this.beans, {
+        this.eInputField = this.createManagedBean<GridInputTextField>(
+            new AgInputTextField({
+                clearButton: true,
+                autoComplete: params.toolbarItemParams?.browserAutoComplete,
+                onValueClear: () => {
+                    clearTimeout(quickFilterTextTimeout);
+                    setQuickFilterText('');
+                },
+            })
+        );
+        const { eIconWrapper, eInput } = createToolbarInput(this.beans, this.eInputField, {
             label,
             iconName: 'filter',
             initialValue: this.gos.get('quickFilterText'),
@@ -38,24 +55,29 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
             eGui.appendChild(eIconWrapper);
         }
         this.eInput = eInput;
-        eGui.appendChild(this.eInput);
+        eGui.appendChild(this.eInputField.getGui());
 
-        const updateQuickFilterText = _debounce(
-            this,
-            () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
-            INPUT_DEBOUNCE_MS
-        );
+        const updateQuickFilterText = _debounce(this, () => setQuickFilterText(this.eInput.value), INPUT_DEBOUNCE_MS);
 
         this.addManagedElementListeners(this.eInput, {
-            input: () => updateQuickFilterText(),
+            input: () => (quickFilterTextTimeout = updateQuickFilterText()),
         });
+
+        // An external write filters the rows, so the input must follow and any edit still waiting in
+        // the debounce is stale. A write from this input is a no-op: `setValue` bails on the same value.
+        const syncInput = (value?: string) => {
+            clearTimeout(quickFilterTextTimeout);
+            this.eInputField.setValue(value ?? '', true);
+        };
+        this.addManagedPropertyListener('quickFilterText', ({ currentValue }) => syncInput(currentValue));
     }
 
-    public refresh(_params: IToolbarItemParams): boolean {
+    public refresh(params: IToolbarItemParams<any, any, IInputToolbarItemParams>): boolean {
         if (!this.eInput) {
             return false;
         }
-        this.eInput.value = this.gos.get('quickFilterText') ?? '';
+        this.eInputField.setAutoComplete(params.toolbarItemParams?.browserAutoComplete);
+        this.eInputField.setValue(this.gos.get('quickFilterText'), true);
         return true;
     }
 }

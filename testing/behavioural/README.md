@@ -8,8 +8,8 @@ Mocking is to be avoided as much as possible here, and the use of fakes is prefe
 
 ## Running tests
 
-`./behave.sh` runs the **merged unit suite** from the repo root via the Vitest workspace
-(`vitest.workspace.ts`): this behavioural project **and** the package (London-school) unit tests
+`./behave.sh` runs the **merged unit suite** from the repo root as one multi-project Vitest run
+(the project list in `vitest.workspace.ts`): this behavioural project **and** the package (London-school) unit tests
 in `packages/*`, together in one command.
 
 ```sh

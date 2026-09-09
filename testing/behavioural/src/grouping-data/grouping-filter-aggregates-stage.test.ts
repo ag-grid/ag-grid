@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, NumberFilterModule, QuickFilterModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid filterAggregatesStage', () => {
     const gridsManager = new TestGridsManager({

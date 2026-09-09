@@ -1,7 +1,7 @@
 .ag-sparkline-wrapper {
     position: absolute;
-    height: 100%;
-    width: 100%;
     top: 0;
+    height: 100%;
     line-height: initial;
+    inset-inline-start: var(--ag-internal-sparkline-inset, 0);
 }

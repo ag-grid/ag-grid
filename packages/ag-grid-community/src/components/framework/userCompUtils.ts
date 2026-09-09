@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
 import type { IDragAndDropImageComponent, IDragAndDropImageParams } from '../../dragAndDrop/dragAndDropImageComponent';
-import type { ColDef } from '../../entities/colDef';
+import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../../filter/floating/floatingFilter';
 import type { ISimpleFilter } from '../../filter/provided/iSimpleFilter';
 import type {
@@ -50,23 +50,23 @@ const HeaderGroupComponent: ComponentType = { name: 'headerGroupComponent' };
 
 const InnerCellRendererComponent: ComponentType = {
     name: 'innerRenderer',
-    cellRenderer: true,
+    supportsJsFunction: true,
     optionalMethods: ['afterGuiAttached'],
 };
 
 const CellRendererComponent: ComponentType = {
     name: 'cellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
 const EditorRendererComponent: ComponentType = {
     name: 'cellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
-const LoadingCellRendererComponent: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };
+const LoadingCellRendererComponent: ComponentType = { name: 'loadingCellRenderer', supportsJsFunction: true };
 
 const CellEditorComponent: ComponentType<ICellEditorComp> = {
     name: 'cellEditor',
@@ -80,6 +80,8 @@ const CellEditorComponent: ComponentType<ICellEditorComp> = {
         'focusOut',
         'afterGuiAttached',
         'refresh',
+        'getValidationErrors',
+        'getValidationElement',
     ],
 };
 
@@ -108,18 +110,22 @@ const FloatingFilterComponent: ComponentType<IFloatingFilterComp> = {
 const FullWidth: ComponentType = {
     name: 'fullWidthCellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
-const FullWidthLoading: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };
+const FullWidthLoading: ComponentType = { name: 'loadingCellRenderer', supportsJsFunction: true };
 
 const FullWidthGroup: ComponentType = {
     name: 'groupRowRenderer',
     optionalMethods: ['afterGuiAttached'],
-    cellRenderer: true,
+    supportsJsFunction: true,
 };
 
-const FullWidthDetail: ComponentType = { name: 'detailCellRenderer', optionalMethods: ['refresh'], cellRenderer: true };
+const FullWidthDetail: ComponentType = {
+    name: 'detailCellRenderer',
+    optionalMethods: ['refresh'],
+    supportsJsFunction: true,
+};
 
 export function _getDragAndDropImageCompDetails(
     userCompFactory: UserComponentFactory,
@@ -274,9 +280,10 @@ export function _getDateCompDetails(
 
 export function _getTooltipCompDetails(
     userCompFactory: UserComponentFactory,
-    params: ITooltipParams
+    params: ITooltipParams,
+    def?: ColDef | ColGroupDef
 ): UserCompDetails<ITooltipComp> | undefined {
-    return userCompFactory.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true);
+    return userCompFactory.getCompDetails(def ?? {}, TooltipComponent, 'agTooltipComponent', params, true);
 }
 
 /**
@@ -296,6 +303,7 @@ export function _getFilterCompKeys(frameworkOverrides: IFrameworkOverrides, def:
     return _getUserCompKeys(frameworkOverrides, def, FilterComponent);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _mergeFilterParamsWithApplicationProvidedParams(
     userCompFactory: UserComponentFactory,
     defObject: IFilterDef,

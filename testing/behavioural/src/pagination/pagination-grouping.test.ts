@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'country', rowGroup: true, hide: true }, { field: 'name' }];
 

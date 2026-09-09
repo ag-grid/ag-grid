@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import type { PdfDocumentHeadingStyle, PdfExportParams } from 'ag-grid-community';
 
 import { PdfCreator } from './pdfCreator';
+import { PdfFontFamilyNotRegisteredError } from './utils/fontRegistry';
 import {
     getThemePdfColors,
     mergeDocumentHeadingStyle,
@@ -94,6 +95,29 @@ describe('PdfCreator', () => {
         } finally {
             warnSpy.mockRestore();
         }
+    });
+
+    it('does not return PDF data when a requested font family is not registered', () => {
+        const creator = new PdfCreator() as unknown as {
+            getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;
+            gos: { get: (key: string) => unknown };
+            beans: { eRootDiv: HTMLElement; log: { error: ReturnType<typeof vi.fn> } };
+            getData: (params: PdfExportParams) => string;
+        };
+        const error = new PdfFontFamilyNotRegisteredError('Noto Sans Arabik', ['Noto Sans Arabic', 'Helvetica']);
+        const errorLogger = vi.fn();
+
+        creator.gos = { get: () => undefined };
+        creator.beans = { eRootDiv: document.createElement('div'), log: { error: errorLogger } };
+        creator.getData = () => {
+            throw error;
+        };
+
+        expect(creator.getDataAsPdf()).toBeUndefined();
+        expect(errorLogger).toHaveBeenCalledWith(330, {
+            fontFamily: 'Noto Sans Arabik',
+            registeredFamilies: ['Noto Sans Arabic', 'Helvetica'],
+        });
     });
 
     it('merges default and override document title styles', () => {

@@ -3,28 +3,28 @@
         "title": "Optimising Large Data Set Visualisations with the M4 Algorithm",
         "description": "Using the M4 algorithm to create line charts that support 1m+ data points at 60fps.",
         "image": "/community/events/news/charts.png",
-        "link": "https://blog.ag-grid.com/optimizing-large-data-set-visualisations-with-the-m4-algorithm/",
+        "link": "https://www.ag-grid.com/blog/optimizing-large-data-set-visualisations-with-the-m4-algorithm/",
         "linkText": "Read article"
     },
     {
         "title": "What's New in AG Grid 34",
         "description": "New filters tool panel, cell editor validation, batch & bulk cell editing, and tree data drag and drop.",
         "image": "/community/events/news/grid-table.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-34/",
+        "link": "https://www.ag-grid.com/blog/whats-new-in-ag-grid-34/",
         "linkText": "Read article"
     },
     {
         "title": "What's New in AG Charts 12",
         "description": "Major theming updates, including axis band highlighting, label wrapping, global formatting, and more.",
         "image": "/community/events/news/integrated.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-12/",
+        "link": "https://www.ag-grid.com/blog/whats-new-in-ag-charts-12/",
         "linkText": "Read article"
     },
     {
         "title": "AG Grid Showcase: Sample Apps, Demos, Examples & Extensions",
         "description": "Examples of the features and functionality that you can add to your application with AG Grid, along with live demos and sample code.",
         "image": "/community/events/news/grid-2.png",
-        "link": "https://blog.ag-grid.com/ag-grid-showcase-examples-demos-samples-and-extensions/",
+        "link": "https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/",
         "linkText": "Read article"
     }
 ]

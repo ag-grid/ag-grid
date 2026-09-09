@@ -1,3 +1,5 @@
+import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager } from 'ag-test-utils';
+
 import {
     CellApiModule,
     ClientSideRowModelApiModule,
@@ -11,8 +13,6 @@ import {
 } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager } from '../../test-utils';
 
 describe('managed row drag without edit modules', () => {
     const gridsManager = new TestGridsManager({

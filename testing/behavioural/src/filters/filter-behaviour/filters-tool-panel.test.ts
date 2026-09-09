@@ -1,6 +1,3 @@
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
-
 import {
     FilterDom,
     GridRows,
@@ -8,7 +5,11 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
+
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 /**
@@ -149,6 +150,48 @@ describe('Filters Tool Panel', () => {
 
         // Second click expands again (back to the initial state, hence no duplicate snapshot).
         await panel.clickExpandAll();
+        expect(panel.isGroupExpandedByTitle('Person')).toBe(true);
+    });
+
+    test('group title bars are disclosure buttons wired to the container they expand', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    headerName: 'Person',
+                    children: [
+                        { field: 'name', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
+                        { field: 'age', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } },
+                    ],
+                },
+            ],
+            rowData: [{ name: 'Alice', age: 30 }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+
+        // The list container carries the panel's label, which only names it under a role that
+        // permits naming (a bare div's aria-label is ignored).
+        const listPanel = document.querySelector('.ag-filter-list-panel');
+        expect(listPanel?.getAttribute('role')).toBe('group');
+        expect(listPanel?.getAttribute('aria-label')).toMatch(/^Filter List \d+ Filters$/);
+
+        // An expandable group's title bar is a disclosure button: focusable, announcing its state,
+        // and wired via aria-controls to the container it shows/hides.
+        const titleBar = document.querySelector('.ag-filter-toolpanel-group-wrapper .ag-group-title-bar');
+        expect(titleBar?.getAttribute('role')).toBe('button');
+        expect(titleBar?.getAttribute('tabindex')).toBe('0');
+        expect(titleBar?.getAttribute('aria-expanded')).toBe('true');
+
+        const container = document.getElementById(titleBar?.getAttribute('aria-controls') ?? '');
+        expect(container?.classList.contains('ag-group-container')).toBe(true);
+        expect(container?.querySelector('.ag-filter-toolpanel-instance')).not.toBeNull();
+
+        await panel.collapseGroup('Person');
+        expect(titleBar?.getAttribute('aria-expanded')).toBe('false');
+
+        // Space re-expands it, as button semantics promise.
+        titleBar?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+        expect(titleBar?.getAttribute('aria-expanded')).toBe('true');
         expect(panel.isGroupExpandedByTitle('Person')).toBe(true);
     });
 

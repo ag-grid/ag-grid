@@ -1,4 +1,4 @@
-import type { RowSnapshot } from '../../test-utils';
+import type { RowSnapshot } from 'ag-test-utils';
 
 export function simpleHierarchyRowsSnapshot(): RowSnapshot[] {
     return [

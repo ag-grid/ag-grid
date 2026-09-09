@@ -2,6 +2,7 @@ import {
     AgPromise,
     _addOrRemoveAttribute,
     _areEqual,
+    _isBrowserFirefox,
     _isComponent,
     _removeFromParent,
     _setDisabled,
@@ -9,6 +10,7 @@ import {
 } from 'ag-stack';
 
 import { AgAbstractInputField } from '../../agWidgets/agAbstractInputField';
+import { AgInputTextField } from '../../agWidgets/agInputTextField';
 import type { ListOption } from '../../agWidgets/agList';
 import { AgRadioButton } from '../../agWidgets/agRadioButton';
 import { AgSelect } from '../../agWidgets/agSelect';
@@ -19,12 +21,13 @@ import { _createElement } from '../../utils/element';
 import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { isFilterLocaleTextKey } from '../filterLocaleText';
 import type {
+    FilterOptionKey,
     ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterModelType,
     ISimpleFilterParams,
     JoinOperator,
     MapValuesFromSimpleFilterModel,
@@ -33,16 +36,17 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
-import { getPlaceholderText } from './providedFilterUtils';
+import { getPlaceholderText, translateFilterOption } from './providedFilterUtils';
 import {
     getDefaultJoinOperator,
     getNumberOfInputs,
+    isBelowConditionFloor,
     removeItems,
     validateAndUpdateConditions,
 } from './simpleFilterUtils';
 
 /** temporary type until `SimpleFilterParams` is updated as breaking change */
-type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
+export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
@@ -71,6 +75,11 @@ export abstract class SimpleFilter<
     protected readonly eJoinOrs: GridRadioButton[] = [];
     protected readonly eConditionBodies: HTMLElement[] = [];
     private readonly listener = () => this.onUiChanged();
+    /** The chosen option decides which inputs the condition uses, so their messages go stale with it. */
+    private readonly typeListener = () => {
+        this.refreshInputValidation();
+        this.onUiChanged();
+    };
 
     private maxNumConditions: number;
     private numAlwaysVisibleConditions: number;
@@ -94,19 +103,32 @@ export abstract class SimpleFilter<
 
     protected abstract removeEValues(startPosition: number, deleteCount?: number): void;
 
-    // filter uses this to know if new model is different from previous model, ie if filter has changed
+    /** Decides whether the model has changed, and so whether the filter has. */
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
 
-    // getModel() calls this to create the two conditions. if only one condition,
-    // the result is returned by getModel(), otherwise is called twice and both results
-    // returned in a CombinedFilter object.
+    /** Called once per condition; a lone one is the model, more are joined into a combined one. */
     protected abstract createCondition(position: number): M;
 
-    // allow iteration of all condition inputs managed by sub-classes.
+    /** The condition's inputs, held by the subclass that mounts them. */
     protected abstract getInputs(position: number): Tuple<E>;
 
-    // allow retrieval of all condition input values.
+    /** What those inputs currently hold, read through the subclass's own parsing. */
     protected abstract getValues(position: number): Tuple<V>;
+
+    /** Re-validates every mounted condition: a message stands for the condition as it is now. */
+    protected refreshInputValidation(reattached?: boolean): void {
+        for (let position = 0, len = this.getNumConditions(); position < len; ++position) {
+            this.refreshPositionValidation(position, false, reattached);
+        }
+    }
+
+    protected refreshPositionValidation(_position: number, _isFrom?: boolean, _reattached?: boolean): void {
+        // Only the filters whose inputs can reject what they hold override this; `isFrom` names the edited input.
+    }
+
+    protected conditionNumberOfInputs(position: number): number {
+        return getNumberOfInputs(this.getConditionType(position), this.optionsFactory);
+    }
 
     protected override setParams(params: P): void {
         super.setParams(params);
@@ -127,10 +149,19 @@ export abstract class SimpleFilter<
         super.updateParams(newParams, oldParams);
 
         this.commonUpdateSimpleParams(newParams);
+        // A replacement input carries no validity, and an option keeping its key can still change arity.
+        this.refreshInputValidation();
+        this.updateUiVisibility(); // an invalid condition is not a complete one
     }
 
     protected commonUpdateSimpleParams(params: P): void {
         this.setNumConditions(params);
+
+        this.forEachInput((element) => {
+            if (element instanceof AgAbstractInputField) {
+                element.setAutoComplete(params.browserAutoComplete);
+            }
+        });
 
         this.defaultJoinOperator = getDefaultJoinOperator(params.defaultJoinOperator);
         this.filterPlaceholder = params.filterPlaceholder;
@@ -146,6 +177,8 @@ export abstract class SimpleFilter<
     public onFloatingFilterChanged(type: string | null | undefined, value: V | null): void {
         this.setTypeFromFloatingFilter(type);
         this.setValueFromFloatingFilter(value);
+        // The conditions are the floating filter's now, so a message an earlier edit left is about nothing shown.
+        this.refreshInputValidation();
         this.onUiChanged('immediately', true);
     }
 
@@ -173,12 +206,8 @@ export abstract class SimpleFilter<
         return conditions[0];
     }
 
-    protected getConditionTypes(): (ISimpleFilterModelType | null)[] {
-        return this.eTypes.map((eType) => eType.getValue() as ISimpleFilterModelType);
-    }
-
-    protected getConditionType(position: number): ISimpleFilterModelType | null {
-        return this.eTypes[position].getValue() as ISimpleFilterModelType;
+    protected getConditionType(position: number): FilterOptionKey | null {
+        return (this.eTypes[position]?.getValue() ?? null) as FilterOptionKey | null;
     }
 
     protected getJoinOperator(): JoinOperator {
@@ -247,12 +276,9 @@ export abstract class SimpleFilter<
             const numConditions = validateAndUpdateConditions<M>(this.beans.log, conditions, this.maxNumConditions);
             const numPrevConditions = this.getNumConditions();
             if (numConditions < numPrevConditions) {
-                this.removeConditionsAndOperators(numConditions);
+                this.removeConditionsForModel(numConditions);
             } else if (numConditions > numPrevConditions) {
-                for (let i = numPrevConditions; i < numConditions; i++) {
-                    this.createJoinOperatorPanel();
-                    this.createOption();
-                }
+                this.createConditionsUpTo(numConditions);
             }
 
             const orChecked = combinedModel.operator === 'OR';
@@ -267,8 +293,10 @@ export abstract class SimpleFilter<
             const simpleModel = model as M;
 
             if (this.getNumConditions() > 1) {
-                this.removeConditionsAndOperators(1);
+                this.removeConditionsForModel(1);
             }
+            // A read-only filter a conditionless model emptied has no widget left to hold this one.
+            this.createConditionsUpTo(1);
 
             this.eTypes[0].setValue(simpleModel.type, true);
             this.setConditionIntoUi(simpleModel, 0);
@@ -277,6 +305,9 @@ export abstract class SimpleFilter<
         this.lastUiCompletePosition = this.getNumConditions() - 1;
 
         this.createMissingConditionsAndOperators();
+
+        // Every input holds the new model, so a message the old one left is about nothing shown.
+        this.refreshInputValidation();
 
         this.updateUiVisibility();
         if (!isInitialLoad) {
@@ -287,15 +318,16 @@ export abstract class SimpleFilter<
     }
 
     private setNumConditions(params: P): void {
-        let maxNumConditions = params.maxNumConditions ?? 2;
-        if (maxNumConditions < 1) {
+        // Whole counts, so that what the display will build matches the limit a model is held to.
+        let maxNumConditions = Math.floor(params.maxNumConditions ?? 2);
+        if (isBelowConditionFloor(maxNumConditions)) {
             this.beans.log.warn(79);
             maxNumConditions = 1;
         }
         this.maxNumConditions = maxNumConditions;
 
-        let numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? 1;
-        if (numAlwaysVisibleConditions < 1) {
+        let numAlwaysVisibleConditions = Math.floor(params.numAlwaysVisibleConditions ?? 1);
+        if (isBelowConditionFloor(numAlwaysVisibleConditions)) {
             this.beans.log.warn(80);
             numAlwaysVisibleConditions = 1;
         }
@@ -375,19 +407,15 @@ export abstract class SimpleFilter<
         eType.setDisabled(filterListOptions.length <= 1);
     }
 
+    /** `translate` is overridden per filter, so a key the grid defines goes through it; any other is its own label. */
     private createBoilerplateListOption(option: string): ListOption {
-        return { value: option, text: this.translate(option as FilterLocaleTextKey) };
+        const text = isFilterLocaleTextKey(option) ? this.translate(option) : this.getLocaleTextFunc()(option, option);
+        return { value: option, text };
     }
 
     private createCustomListOption(option: IFilterOptionDef): ListOption {
-        const { displayKey } = option;
-        const customOption = this.optionsFactory.getCustomOption(option.displayKey);
-        return {
-            value: displayKey,
-            text: customOption
-                ? this.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
-                : this.translate(displayKey as FilterLocaleTextKey),
-        };
+        const displayKey = option.displayKey;
+        return { value: displayKey, text: translateFilterOption(this, this.optionsFactory, displayKey) };
     }
 
     protected createBodyTemplate(): ElementParams | null {
@@ -419,19 +447,22 @@ export abstract class SimpleFilter<
             }
         }
         if (this.shouldAddNewConditionAtEnd(areAllConditionsUiComplete)) {
-            this.createJoinOperatorPanel();
-            this.createOption();
+            this.createConditionsUpTo(this.getNumConditions() + 1);
         } else {
             const activePosition = this.lastUiCompletePosition ?? this.getNumConditions() - 2;
             if (lastUiCompletePosition < activePosition) {
                 // remove any incomplete conditions at the end, excluding the active position
-                this.removeConditionsAndOperators(activePosition + 1);
+                const removed = this.removeConditionsAndOperators(activePosition + 1);
                 const removeStartPosition = lastUiCompletePosition + 1;
                 const numConditionsToRemove = activePosition - removeStartPosition;
                 if (numConditionsToRemove > 0) {
                     this.removeConditionsAndOperators(removeStartPosition, numConditionsToRemove);
                 }
                 this.createMissingConditionsAndOperators();
+                // Still on show, so still editable: disabling it would leave no way to correct it.
+                if (!removed) {
+                    lastUiCompletePosition = activePosition;
+                }
             }
         }
         this.lastUiCompletePosition = lastUiCompletePosition;
@@ -473,7 +504,17 @@ export abstract class SimpleFilter<
         return areAllConditionsUiComplete && this.getNumConditions() < this.maxNumConditions && !this.isReadOnly();
     }
 
-    protected removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
+    /** A condition the user is still fixing must not vanish under them; false when it was kept for that reason. */
+    protected removeConditionsAndOperators(startPosition: number, deleteCount?: number): boolean {
+        if (this.hasInvalidInputs()) {
+            return false;
+        }
+        this.removeConditionsForModel(startPosition, deleteCount);
+        return true;
+    }
+
+    /** A model overrules an input the user is mid-way through, since the conditions are no longer theirs. */
+    private removeConditionsForModel(startPosition: number, deleteCount?: number): void {
         if (startPosition >= this.getNumConditions()) {
             return;
         }
@@ -532,10 +573,18 @@ export abstract class SimpleFilter<
             // something needs focus otherwise keyboard navigation breaks, so focus the filter body if missing
             (elementToFocus ?? this.getGui()).focus({ preventScroll: true });
         }
+
+        this.onGuiAttached(params);
+        this.refreshInputValidation(true);
     }
 
+    protected onGuiAttached(_params?: IAfterGuiAttachedParams): void {
+        // Overridden by a subclass whose inputs need readying before their validity is judged and reported.
+    }
+
+    /** Keeps the unfinished edit, as Chrome and Safari keep an incomplete date; Firefox clears those, so it does. */
     protected shouldKeepInvalidInputState(): boolean {
-        return false;
+        return !_isBrowserFirefox() && this.hasInvalidInputs();
     }
 
     public override afterGuiDetached(): void {
@@ -569,9 +618,10 @@ export abstract class SimpleFilter<
                     position >= this.numAlwaysVisibleConditions && !this.isConditionUiComplete(position - 1);
                 const positionBeforeLastUiCompletePosition = position < lastUiCompletePosition;
                 if (shouldRemovePositionAtEnd || positionBeforeLastUiCompletePosition) {
-                    this.removeConditionsAndOperators(position, 1);
-                    conditionsRemoved = true;
-                    if (positionBeforeLastUiCompletePosition) {
+                    // A refused removal leaves the condition mounted, so nothing after it counts as shifted.
+                    const removed = this.removeConditionsAndOperators(position, 1);
+                    conditionsRemoved ||= removed;
+                    if (removed && positionBeforeLastUiCompletePosition) {
                         updatedLastUiCompletePosition--;
                     }
                 }
@@ -620,8 +670,14 @@ export abstract class SimpleFilter<
                       ? globalTranslate('ariaFilterValue', 'Filter Value')
                       : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            const filterOptionKey = eTypes[position].getValue() as ISimpleFilterModelType;
-            const placeholderText = getPlaceholderText(this, filterPlaceholder, placeholderKey, filterOptionKey);
+            const filterOptionKey = eTypes[position].getValue() as FilterOptionKey;
+            const placeholderText = getPlaceholderText(
+                this,
+                filterPlaceholder,
+                placeholderKey,
+                filterOptionKey,
+                this.optionsFactory
+            );
 
             element.setInputPlaceholder(placeholderText);
             element.setInputAriaLabel(ariaLabel);
@@ -629,7 +685,7 @@ export abstract class SimpleFilter<
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected setElementValue(element: E, value: V | null, fromFloatingFilter?: boolean): void {
+    protected setElementValue(element: E, value: V | string | null, fromFloatingFilter?: boolean): void {
         if (element instanceof AgAbstractInputField) {
             element.setValue(value != null ? String(value) : null, true);
         }
@@ -651,12 +707,15 @@ export abstract class SimpleFilter<
         if (element instanceof AgAbstractInputField) {
             element.onValueChange(listener);
         }
+        if (element instanceof AgInputTextField) {
+            element.onValueClear(() => this.onUiCleared());
+        }
     }
 
     protected forEachInput(cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
-        this.getConditionTypes().forEach((type, position) => {
-            this.forEachPositionTypeInput(position, type, cb);
-        });
+        for (let position = 0, len = this.getNumConditions(); position < len; ++position) {
+            this.forEachPositionTypeInput(position, this.getConditionType(position), cb);
+        }
     }
 
     protected forEachPositionInput(
@@ -669,7 +728,7 @@ export abstract class SimpleFilter<
 
     private forEachPositionTypeInput(
         position: number,
-        type: ISimpleFilterModelType | null,
+        type: FilterOptionKey | null,
         cb: (element: E, index: number, position: number, numberOfInputs: number) => void
     ): void {
         const numberOfInputs = getNumberOfInputs(type, this.optionsFactory);
@@ -696,9 +755,7 @@ export abstract class SimpleFilter<
 
     private isConditionBodyVisible(position: number): boolean {
         // Check that the condition needs inputs.
-        const type = this.getConditionType(position);
-        const numberOfInputs = getNumberOfInputs(type, this.optionsFactory);
-        return numberOfInputs > 0;
+        return this.conditionNumberOfInputs(position) > 0;
     }
 
     // returns true if the UI represents a working filter, eg all parts are filled out.
@@ -710,7 +767,7 @@ export abstract class SimpleFilter<
 
         const type = this.getConditionType(position);
 
-        if (type === 'empty') {
+        if (!type || type === 'empty') {
             return false;
         }
 
@@ -743,14 +800,21 @@ export abstract class SimpleFilter<
         if (this.isReadOnly()) {
             return;
         } // don't show incomplete conditions when read only
-        for (let i = this.getNumConditions(); i < this.numAlwaysVisibleConditions; i++) {
-            this.createJoinOperatorPanel();
+        this.createConditionsUpTo(this.numAlwaysVisibleConditions);
+    }
+
+    /** A join operator joins a condition to the one before it, so the first is not preceded by one. */
+    private createConditionsUpTo(count: number): void {
+        for (let i = this.getNumConditions(); i < count; i++) {
+            if (i > 0) {
+                this.createJoinOperatorPanel();
+            }
             this.createOption();
         }
     }
 
     private resetUiToDefaults(silent?: boolean): void {
-        this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
+        this.removeConditionsForModel(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
 
         this.eTypes.forEach((eType) => this.resetType(eType));
 
@@ -769,6 +833,8 @@ export abstract class SimpleFilter<
         this.createMissingConditionsAndOperators();
 
         this.lastUiCompletePosition = null;
+
+        this.refreshInputValidation();
 
         this.updateUiVisibility();
         if (!silent) {
@@ -862,19 +928,58 @@ export abstract class SimpleFilter<
             return;
         }
 
-        eType.onValueChange(this.listener);
+        eType.onValueChange(this.typeListener);
+
+        this.attachInputsOnChange(position);
+    }
+
+    /** Re-attachable on its own: a replaced input carries none of the original's listeners. */
+    protected attachInputsOnChange(position: number): void {
+        if (this.isReadOnly()) {
+            return;
+        }
 
         this.forEachPositionInput(position, (element) => {
             this.attachElementOnChange(element, this.listener);
         });
     }
 
-    protected hasInvalidInputs(): boolean {
+    protected isInputInvalid(_element: E): boolean {
         return false;
     }
 
-    protected positionHasInvalidInputs(_position: number): boolean {
+    /** Whether the element holds a whole value, i.e. one its filter has had the chance to reject. */
+    protected isInputValueSettled(_element: E): boolean {
+        return true;
+    }
+
+    /** Reached per keystroke through `canApply`, so it stops at the first invalid condition. */
+    protected hasInvalidInputs(): boolean {
+        for (let position = 0, len = this.getNumConditions(); position < len; ++position) {
+            if (this.positionHasInvalidInputs(position, true)) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    /**
+     * Past `numberOfInputs` an element is mounted but not part of the condition, so its message is not either.
+     * Unsettled inputs count unless `settledOnly`: whether a condition may be applied is not whether it is stable.
+     */
+    protected positionHasInvalidInputs(position: number, settledOnly?: boolean): boolean {
+        let invalidInputs = false;
+        this.forEachPositionInput(position, (element, index, _p, numberOfInputs) => {
+            invalidInputs ||=
+                index < numberOfInputs &&
+                (!settledOnly || this.isInputValueSettled(element)) &&
+                this.isInputInvalid(element);
+        });
+        return invalidInputs;
+    }
+
+    protected override canApply(_model: FilterModelOrCombined<M>): boolean {
+        return !this.hasInvalidInputs();
     }
 
     private isReadOnly(): boolean {

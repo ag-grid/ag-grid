@@ -1,5 +1,16 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    fireGridPointerDown,
+    waitForEvent,
+    waitForInput,
+} from 'ag-test-utils';
 
 import {
     HighlightChangesModule,
@@ -11,16 +22,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    clipboardUtils,
-    waitForEvent,
-    waitForInput,
-} from '../test-utils';
 
 const FLASH_CSS_CLASS = 'ag-cell-data-changed';
 
@@ -40,6 +41,8 @@ describe('Cell change flashing after edit', () => {
     test('cell flashes after committing an edit', async () => {
         const api = await gridMgr.createGridAndWait('flashAfterEdit', {
             undoRedoCellEditing: true,
+            cellFlashDuration: 100,
+            cellFadeDuration: 100,
             defaultColDef: {
                 editable: true,
                 enableCellChangeFlash: true,
@@ -102,6 +105,8 @@ describe('Cell change flashing after undo and redo', () => {
     test('cell flashes after undo', async () => {
         const api = await gridMgr.createGridAndWait('flashAfterUndo', {
             undoRedoCellEditing: true,
+            cellFlashDuration: 100,
+            cellFadeDuration: 100,
             defaultColDef: {
                 editable: true,
                 enableCellChangeFlash: true,
@@ -160,6 +165,8 @@ describe('Cell change flashing after undo and redo', () => {
     test('cell flashes after redo', async () => {
         const api = await gridMgr.createGridAndWait('flashAfterRedo', {
             undoRedoCellEditing: true,
+            cellFlashDuration: 100,
+            cellFadeDuration: 100,
             defaultColDef: {
                 editable: true,
                 enableCellChangeFlash: true,
@@ -237,6 +244,8 @@ describe('Cell change flashing suppressed when value not committed', () => {
         let callCount = 0;
         const api = await gridMgr.createGridAndWait('flashRejectedUndoValueSetter', {
             undoRedoCellEditing: true,
+            cellFlashDuration: 100,
+            cellFadeDuration: 100,
             defaultColDef: {
                 editable: true,
                 enableCellChangeFlash: true,
@@ -318,6 +327,8 @@ describe('Cell change flashing after delete', () => {
 
     test('cell flashes after pressing Delete', async () => {
         const api = await gridMgr.createGridAndWait('flashAfterDelete', {
+            cellFlashDuration: 100,
+            cellFadeDuration: 100,
             defaultColDef: {
                 editable: true,
                 enableCellChangeFlash: true,
@@ -381,6 +392,8 @@ describe('Cell change flashing after fill handle', () => {
 
     test('target cell flashes after fill handle', async () => {
         const api = await gridMgr.createGridAndWait('flashAfterFillHandle', {
+            cellFlashDuration: 100,
+            cellFadeDuration: 100,
             cellSelection: {
                 handle: {
                     mode: 'fill',
@@ -417,7 +430,7 @@ describe('Cell change flashing after fill handle', () => {
         // Select ROW_0 make cell to set up the fill source
         const sourceCell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'make'));
         const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
-        sourceCell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        fireGridPointerDown(sourceCell);
         await cellSelectionChanged;
 
         // Double-click fill handle to fill down
@@ -491,11 +504,14 @@ describe('Cell change flashing after bulk edit (Ctrl+Enter)', () => {
 
         const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'make'));
         await user.click(cell);
-        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['make'] });
         api.startEditingCell({ rowIndex: 0, colKey: 'make' });
         const input = await waitForInput(gridDiv, cell);
         await user.clear(input);
         await user.type(input, 'BulkValue');
+        // Range last: the click selects the cell it lands on and `addCellRange` appends, and the presses
+        // `user.clear`/`user.type` send into the editor collapse the selection back to the edited cell.
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['make'] });
         await user.keyboard('{Control>}{Enter}{/Control}');
         await asyncSetTimeout(0);
 

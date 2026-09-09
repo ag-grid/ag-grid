@@ -1,7 +1,7 @@
 // Shared, browser-safe row-data builders for the benchmark suites. Only depends on SimplePRNG, so it
-// stays loadable under the real-browser runner (no node/jsdom helpers). Builders are deterministic
+// stays loadable under the real-browser runner (no node/happy-dom helpers). Builders are deterministic
 // (fixed seeds) so base and test sides measure identical data.
-import { SimplePRNG } from '../test-utils/prng';
+import { SimplePRNG } from 'ag-test-utils/prng';
 
 // ── Flat data (id / name / value) — shared by the flat-pipelines benches. ────────────────────────
 

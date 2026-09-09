@@ -99,7 +99,7 @@ runs:
               startsWith(github.event.comment.body, inputs.command) &&
               steps.check.outputs.allowed == 'false' &&
               inputs.post_denial_message == 'true'
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           with:
               script: |
                   const template = `${{ inputs.denial_message_template }}`;

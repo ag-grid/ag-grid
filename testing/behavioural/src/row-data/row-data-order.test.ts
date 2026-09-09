@@ -1,9 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-import type { MockInstance } from 'vitest';
-
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
-import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
-
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -15,7 +10,12 @@ import {
     executeTransactionsAsync,
     expectRowNodesDestroyed,
     setRowDataChecked,
-} from '../test-utils';
+} from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
+
 import { VERSION } from '../version';
 
 describe('ag-grid rows-ordering', () => {
@@ -778,7 +778,7 @@ describe('ag-grid rows-ordering', () => {
             });
 
             expect(consoleWarnSpy).toHaveBeenCalled();
-            consoleWarnSpy.mockReset();
+            consoleWarnSpy.mockClear();
 
             // checkDom: false — this test intentionally uses duplicate row IDs (id:3 appears three times),
             // which causes DOM order validation to fail as the grid cannot distinguish the DOM rows.
@@ -809,7 +809,7 @@ describe('ag-grid rows-ordering', () => {
             );
 
             expect(consoleWarnSpy).toHaveBeenCalled();
-            consoleWarnSpy.mockReset();
+            consoleWarnSpy.mockClear();
 
             // checkDom: false — this test intentionally uses duplicate row IDs (id:13 appears four times),
             // which causes DOM order validation to fail as the grid cannot distinguish the DOM rows.

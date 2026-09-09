@@ -1,7 +1,7 @@
+import { GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule, RowApiModule } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 /**
  * AG-17868 regression repro: after a full `rowData` replacement via

@@ -1,13 +1,12 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-
-import { asyncSetTimeout } from '../../test-utils';
-import { mockGridLayout } from '../../test-utils/polyfills/mockGridLayout';
 
 const COL_COUNT = 20;
 
@@ -76,7 +75,7 @@ async function scrollFocusedColumnOutOfView({ ensureDomOrder, pinned }: ScrollOp
     });
 
     // Scroll horizontally until the focused column leaves the viewport. The first scroll also
-    // measures the viewport (jsdom fires no initial resize), so virtualisation engages here.
+    // measures the viewport (happy-dom fires no initial resize), so virtualisation engages here.
     const lastCenterCol = pinned ? `c${COL_COUNT - 2}` : `c${COL_COUNT - 1}`;
     await act(async () => {
         apiRef.current!.ensureColumnVisible(lastCenterCol);

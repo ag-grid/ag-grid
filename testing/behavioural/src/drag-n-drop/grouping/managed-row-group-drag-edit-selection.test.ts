@@ -1,15 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import {
-    ClientSideRowModelModule,
-    RowDragModule,
-    RowSelectionModule,
-    TextEditorModule,
-    UndoRedoEditModule,
-} from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
     GridColumns,
@@ -21,7 +10,17 @@ import {
     clickRowSelectionCheckbox,
     getRowHtmlElement,
     getRowSelectionCheckboxState,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import {
+    ClientSideRowModelModule,
+    RowDragModule,
+    RowSelectionModule,
+    TextEditorModule,
+    UndoRedoEditModule,
+} from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMove=%s evt=%s', (noMove, eventType) => {
     const gridsManager = new TestGridsManager({

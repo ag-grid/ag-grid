@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 // --- Shared test data ---
 
@@ -1162,6 +1162,39 @@ describe('Advanced Filter', () => {
                 ├── LEAF id:4 athlete:"Li Wei" age:28 date:null hasGold:null country:null
                 └── LEAF id:5 athlete:"" age:null date:"2024-01-01" hasGold:true country:""
             `);
+        });
+
+        test('the returned model is the caller’s own, so mutating it does not reach the applied filter', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+
+            applyModel(api, {
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'number', colId: 'age', type: 'equals', filter: 23 },
+                    { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Phelps' },
+                ],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            const model = api.getAdvancedFilterModel() as AdvancedFilterModel & { conditions: any[] };
+            expect(model).not.toBe(api.getAdvancedFilterModel());
+
+            model.type = 'OR';
+            model.conditions[0].filter = 99;
+            model.conditions.push({ filterType: 'text', colId: 'country', type: 'contains', filter: 'zz' });
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'number', colId: 'age', type: 'equals', filter: 23 },
+                    { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Phelps' },
+                ],
+            });
+            expect(api.getDisplayedRowCount()).toBe(1);
         });
 
         test('compound model round-trip preserves structure', async () => {

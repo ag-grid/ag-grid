@@ -23,5 +23,5 @@ Several helpers substitute a plausible value for a missing read, which turns a b
 
 ## Testing the format panel
 
-- Widget values are **not queryable through `document`** in the jsdom behavioural environment. Assert them by instrumenting the `ChartMenuParamsFactory` factory methods and reading `params.value` once the panel has built — panels amend the params object after the factory returns, so the recorded object holds the final value.
-- `format-panel-options.test.ts` walks every binding on every chart type and is the gate for this class of drift.
+- Widget values are **not queryable through `document`** in the headless behavioural environment. Assert them by instrumenting the `ChartMenuParamsFactory` factory methods and reading `params.value` once the panel has built — panels amend the params object after the factory returns, so the recorded object holds the final value.
+- The `format-panel-options-*.test.ts` suites walk every binding on every chart type and are the gate for this class of drift. They share `formatPanelOptions.ts`, and take a chart family each so the 37 chart builds run in parallel.

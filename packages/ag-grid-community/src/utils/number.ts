@@ -19,14 +19,7 @@ export function _clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(value, max));
 }
 
-/**
- * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
- * puts in decimal places in IE, so we use this method instead
- * from: http://blog.tompawlak.org/number-currency-formatting-javascript
- * @param {number} value
- * @returns {string}
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _formatNumberCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
@@ -36,8 +29,10 @@ export function _formatNumberCommas(value: number | null, getLocaleTextFunc: () 
     const thousandSeparator = localeTextFunc('thousandSeparator', ',');
     const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
-    return value
-        .toString()
-        .replace('.', decimalSeparator)
-        .replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`);
+    // Split before substituting the decimal separator: grouping first would let a `.` thousand
+    // separator (de-DE) be mistaken for the decimal point when rejoining.
+    const [integerPart, fractionPart] = value.toString().split('.');
+    const groupedInteger = integerPart.replace(/(\d)(?=(\d{3})+(?!\d))/g, (digit) => digit + thousandSeparator);
+
+    return fractionPart === undefined ? groupedInteger : `${groupedInteger}${decimalSeparator}${fractionPart}`;
 }

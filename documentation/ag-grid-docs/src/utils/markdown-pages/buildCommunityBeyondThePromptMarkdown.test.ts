@@ -32,8 +32,7 @@ describe('buildCommunityBeyondThePromptMarkdown', () => {
     });
 
     it('links to the signup section rather than reproducing the form', () => {
-        expect(output).toContain('## Get notified');
-        expect(output).toContain('New York · October 2026');
+        expect(output).toContain('## Get notified\n\nNew York');
         expect(output).toContain('[Sign up for updates](https://www.ag-grid.com/community/beyond-the-prompt/#notify)');
     });
 

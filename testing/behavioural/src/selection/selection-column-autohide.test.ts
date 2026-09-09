@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowNumbersModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager } from '../test-utils';
 
 const SELECTION_COL = 'ag-Grid-SelectionColumn';
 const ROW_NUMBERS_COL = 'ag-Grid-RowNumbersColumn';

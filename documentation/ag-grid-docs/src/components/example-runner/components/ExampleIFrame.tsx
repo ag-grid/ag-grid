@@ -1,11 +1,13 @@
 import { EXAMPLE_RELOADING_MESSAGE_TYPE } from '@ag-website-shared/components/loading-logo/messages';
 import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
+import { getDarkmode } from '@stores/darkmodeStore';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './ExampleIFrame.module.scss';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
+import { shouldNavigateExample, withThemeMode } from './exampleThemeMode';
 
 interface Props {
     title: string;
@@ -26,6 +28,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
     const [isScrolling, setIsScrolling] = useState(false);
+    const pendingSrcRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
         const scrollListener = () => {
@@ -56,8 +59,21 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     });
 
     useEffect(() => {
-        const currentSrc = iFrameRef.current?.src && new URL(iFrameRef.current.src);
-        if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url || isScrolling) {
+        const iframe = iFrameRef.current;
+        const currentSrc = iframe?.src && new URL(iframe.src);
+        if (!isIntersecting || !url || !iframe || isScrolling) {
+            return;
+        }
+
+        const nextSrc = withThemeMode(url, darkMode ?? getDarkmode(), suppressDarkMode);
+
+        const navigate = shouldNavigateExample({
+            currentPathname: (currentSrc as URL)?.pathname,
+            url,
+            nextSrc,
+            pendingSrc: pendingSrcRef.current,
+        });
+        if (!navigate) {
             return;
         }
 
@@ -67,8 +83,9 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
             window.postMessage({ type: EXAMPLE_RELOADING_MESSAGE_TYPE, loadingIFrameId });
         }
 
-        iFrameRef.current.src = url;
-    }, [isIntersecting, url, isScrolling, loadingIFrameId]);
+        pendingSrcRef.current = nextSrc;
+        iframe.src = nextSrc;
+    }, [isIntersecting, url, isScrolling, loadingIFrameId, darkMode, suppressDarkMode]);
 
     // when dark mode is changed, applies it to the iframe.
     useEffect(() => {
@@ -79,6 +96,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     }, [darkMode, suppressDarkMode]);
 
     const handleOnLoad = useCallback(() => {
+        pendingSrcRef.current = undefined;
         if (!iFrameRef.current) {
             return;
         }

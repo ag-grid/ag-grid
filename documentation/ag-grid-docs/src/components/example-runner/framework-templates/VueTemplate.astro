@@ -4,27 +4,25 @@ import { MetaData } from './lib/MetaData';
 import { Scripts } from './lib/Scripts';
 import Styles from './lib/Styles.astro';
 import Extras from './lib/Extras.astro';
-import { SystemJs } from './lib/SystemJs';
-import { pathJoin } from '@utils/pathJoin';
+import { ExampleModules } from './lib/ExampleModules';
 
 interface Props {
     isDev: boolean;
     title: string;
     isEnterprise: boolean;
+    isIntegratedCharts?: boolean;
 
     modifiedTimeMs: number;
     entryFileName: string;
-    /**
-     * Extra script file names (not including entry file)
-     */
+    fileNames: string[];
     scriptFiles?: string[];
     styleFiles?: string[];
     appLocation: string;
-    boilerplatePath: string;
     extraStyles?: string;
     extras?: string[];
     headFragment?: string;
     usesMathRandom?: boolean;
+    transpileInBrowser?: boolean;
     nonce?: string;
 }
 
@@ -32,20 +30,20 @@ const {
     isDev,
     title,
     isEnterprise,
+    isIntegratedCharts,
     modifiedTimeMs,
-    boilerplatePath,
     appLocation,
     entryFileName,
+    fileNames,
     scriptFiles = [],
     styleFiles = [],
     extraStyles,
     extras,
     headFragment,
     usesMathRandom,
+    transpileInBrowser,
     nonce,
 } = Astro.props as Props;
-
-const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -70,14 +68,15 @@ const startFile = pathJoin(appLocation, entryFileName);
         </script>
 
         <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />
-        <SystemJs
-            isDev={isDev}
-            boilerplatePath={boilerplatePath}
+        <ExampleModules
             appLocation={appLocation}
-            startFile={startFile}
+            entryFileName={entryFileName}
+            fileNames={fileNames}
             internalFramework={'vue3'}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={isIntegratedCharts}
             usesMathRandom={usesMathRandom}
+            transpileInBrowser={transpileInBrowser}
             nonce={nonce}
         />
         <slot />

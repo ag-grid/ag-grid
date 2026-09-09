@@ -1,7 +1,7 @@
+import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 /**
  * A spanned cell must carry the same valid 1-based `aria-rowindex` as its

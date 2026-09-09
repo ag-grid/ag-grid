@@ -16,7 +16,7 @@ runs:
     using: composite
     steps:
         - name: Get Failed Step Info
-          uses: actions/github-script@v7
+          uses: actions/github-script@v9
           env:
               JOB_ID: ${{ inputs.JOB_ID }}
               REPO_NAME: ${{ inputs.REPO_NAME }}

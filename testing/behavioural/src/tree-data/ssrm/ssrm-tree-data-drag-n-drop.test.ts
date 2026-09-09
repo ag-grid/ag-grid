@@ -1,3 +1,12 @@
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    ssrmExpandAndLoadAll,
+    waitForNoLoadingRows,
+} from 'ag-test-utils';
+
 import type {
     GridOptions,
     RowDragCancelEvent,
@@ -8,14 +17,6 @@ import type {
 import { RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import {
-    GridColumns,
-    GridRows,
-    RowDragDispatcher,
-    TestGridsManager,
-    ssrmExpandAndLoadAll,
-    waitForNoLoadingRows,
-} from '../../test-utils';
 import { createFakeServer, createServerSideDatasource, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
 describe('ag-grid SSRM treeData managed drag and drop', () => {

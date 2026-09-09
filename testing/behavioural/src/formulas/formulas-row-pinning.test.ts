@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+
 import type { GridApi, GridOptions, Module, RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid formulas row pinning', () => {
     const rowNumberRefreshBufferMs = 25;

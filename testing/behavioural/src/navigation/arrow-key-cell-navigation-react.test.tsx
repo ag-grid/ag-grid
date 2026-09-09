@@ -3,7 +3,6 @@ import { cleanup } from '@testing-library/react';
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
 import { renderNavGrid } from './navigation-react-test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
@@ -29,7 +28,6 @@ const rowData: RowData[] = [
 describe('Arrow Key Cell Navigation (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule]);
-        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(() => {

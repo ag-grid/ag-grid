@@ -1,8 +1,9 @@
+import { TestGridsManager } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
+
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {
@@ -33,7 +34,7 @@ describe('Page Key Navigation', () => {
     let originalGridHeight: number;
 
     beforeAll(() => {
-        // Page-nav reads viewport offset dimensions from the grid; jsdom returns 0 by default
+        // Page-nav reads viewport offset dimensions from the grid; happy-dom returns 0 by default
         // so the math degenerates. Opt into real mocked dimensions for this file only.
         mockGridLayout.useRealOffsetDimensions = true;
         // Shrink the viewport so the body holds ~2 rows. The mock's 'viewport' case returns

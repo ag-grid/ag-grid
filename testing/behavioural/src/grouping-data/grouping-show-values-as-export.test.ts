@@ -1,10 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, objectUrls } from 'ag-test-utils';
 import type { WorkSheet } from 'xlsx';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 
 import { CellStyleModule, ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, objectUrls } from '../test-utils';
 
 async function getExcelSheet(blob: Blob): Promise<WorkSheet> {
     const workbook = XLSX.read(new Uint8Array(await blob.arrayBuffer()), { type: 'array' });

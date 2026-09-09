@@ -1,9 +1,9 @@
+import { escapeQuotes } from 'ag-test-utils';
+import { assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils/test-utils-assertions';
+import { waitForEvent } from 'ag-test-utils/test-utils-events';
+
 import type { GridApi } from 'ag-grid-community';
 import { KeyCode } from 'ag-grid-community';
-
-import { escapeQuotes } from '../test-utils';
-import { assertSelectedRowElementsById, assertSelectedRowsByIndex } from '../test-utils/test-utils-assertions';
-import { waitForEvent } from '../test-utils/test-utils-events';
 
 export class GridActions {
     private parent: HTMLElement;
@@ -66,7 +66,7 @@ export class GridActions {
                 this.toggleCheckboxById(i);
             }
         }
-        assertSelectedRowElementsById(ids, this.api);
+        assertSelectedRowsById(ids, this.api);
     }
 
     clickRowByIndex(index: number, opts?: MouseEventInit): void {

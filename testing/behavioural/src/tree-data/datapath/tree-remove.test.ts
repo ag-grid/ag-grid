@@ -1,8 +1,8 @@
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from 'ag-test-utils';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { RowDataTransaction } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({

@@ -1,11 +1,11 @@
 import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, GridRows, TestGridsManager } from 'ag-test-utils';
+import { countLoadingRows, waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridRows, TestGridsManager } from '../../test-utils';
-import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 import { createFakeServer, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
 /**

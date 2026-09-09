@@ -1,11 +1,10 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('cell editing with refreshAfterGroupEdit', () => {
     const gridsManager = new TestGridsManager({

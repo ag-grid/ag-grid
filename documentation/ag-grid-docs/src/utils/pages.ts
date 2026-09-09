@@ -1,4 +1,4 @@
-import type { InternalFramework, Library } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import type { ImageMetadata } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import fs from 'fs/promises';
@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
+import { USE_PUBLISHED_PACKAGES } from '../constants';
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
 import { pathJoin } from './pathJoin';
 import { urlWithBaseUrl } from './urlWithBaseUrl';
@@ -59,26 +59,25 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     'reference/theming-api.AUTO.json': 'dist/documentation/reference/theming-api.AUTO.json',
 
     // Community modules
-    '@ag-grid-community/locale/dist/**': 'community-modules/locale/dist/**/*.{cjs,js,map}',
+    '@ag-grid-community/locale/dist/**': 'community-modules/locale/dist/**/*.{cjs,mjs,js,map}',
 
     // packages
-    'ag-stack/dist/**': 'packages/ag-stack/dist/**/*.{cjs,js,map}',
+    'ag-stack/dist/**': 'packages/ag-stack/dist/**/*.{cjs,mjs,js,map}',
     'ag-grid-community/styles/**': 'packages/ag-grid-community/styles/**/*.css',
-    'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
+    'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,mjs,js,map}',
     'ag-grid-enterprise/styles/**': 'packages/ag-grid-enterprise/styles/**/*.css',
-    'ag-grid-enterprise/dist/**': 'packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}',
+    'ag-grid-enterprise/dist/**': 'packages/ag-grid-enterprise/dist/**/*.{cjs,mjs,js,map}',
 
     // Charts modules
-    'ag-charts-types/dist/**': 'node_modules/ag-charts-types/dist/**/*.{cjs,js,map}',
-    'ag-charts-core/dist/**': 'node_modules/ag-charts-core/dist/**/*.{cjs,js,map}',
-    'ag-charts-community/dist/**': 'node_modules/ag-charts-community/dist/**/*.{cjs,js,map}',
-    'ag-charts-enterprise/dist/**': 'node_modules/ag-charts-enterprise/dist/**/*.{cjs,js,map}',
+    'ag-charts-types/dist/**': 'node_modules/ag-charts-types/dist/**/*.{cjs,mjs,js,map}',
+    'ag-charts-core/dist/**': 'node_modules/ag-charts-core/dist/**/*.{cjs,mjs,js,map}',
+    'ag-charts-community/dist/**': 'node_modules/ag-charts-community/dist/**/*.{cjs,mjs,js,map}',
+    'ag-charts-enterprise/dist/**': 'node_modules/ag-charts-enterprise/dist/**/*.{cjs,mjs,js,map}',
 
     // Framework libraries
     'ag-grid-react/dist/**': 'packages/ag-grid-react/dist/**/*.{cjs,mjs,js,map}',
     'ag-grid-react/src/**': 'packages/ag-grid-react/src/**/*.{tsx,ts}',
-    'ag-grid-angular/fesm2022/ag-grid-angular.mjs':
-        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs',
+    'ag-grid-angular/fesm2022/**': 'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/**/*.{mjs,map}',
     'ag-grid-vue3/dist/**': 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}',
 };
 
@@ -212,38 +211,6 @@ export function getExtraFiles(): ExtraFileRoute[] {
 
     return result;
 }
-
-/**
- * Get url of example boiler plate files
- */
-export const getBoilerPlateUrl = ({
-    library,
-    internalFramework,
-}: {
-    library: Library;
-    internalFramework: InternalFramework;
-}) => {
-    let boilerPlateFramework;
-    switch (internalFramework) {
-        case 'reactFunctional':
-            boilerPlateFramework = 'react';
-            break;
-        case 'reactFunctionalTs':
-            boilerPlateFramework = 'react-ts';
-            break;
-        default:
-            boilerPlateFramework = internalFramework;
-            break;
-    }
-
-    const boilerplatePath = pathJoin(
-        SITE_BASE_URL,
-        '/example-runner',
-        `${library}-${boilerPlateFramework}-boilerplate`
-    );
-
-    return boilerplatePath;
-};
 
 export function getDocsGifs() {
     const gifsGlob = import.meta.glob<{ default: ImageMetadata }>('../content/docs/**/*.gif');

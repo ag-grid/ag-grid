@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
 
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 
 describe('ag-grid modern overlays state', () => {
     const gridsManager = new TestGridsManager({

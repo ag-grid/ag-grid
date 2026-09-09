@@ -1,6 +1,7 @@
 import { $copyFrameworkAgnosticLinks } from '@ag-website-shared/components/dev-tools/stores/devToolsStore';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { getFrameworkRedirectUrl } from '@ag-website-shared/utils/getFrameworkRedirectUrl';
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import classnames from 'classnames';
 import { type AllHTMLAttributes, useEffect, useRef, useState } from 'react';
@@ -27,7 +28,7 @@ export function LinkIcon({
 
         navigator.clipboard.writeText(redirectUrl ?? href);
 
-        history.replaceState({}, '', hash);
+        replaceHistoryUrl(hash);
 
         setLinkCopied(true);
         setlinkActive(true);

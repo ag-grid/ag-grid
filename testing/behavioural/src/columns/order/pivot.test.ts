@@ -1,8 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../../test-utils';
 import { getAutoGroupColumnIds, getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('pivotMode=true', () => {

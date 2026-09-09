@@ -1,9 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridOptions, IGetRowsParams } from 'ag-grid-community';
 import { InfiniteRowModelModule, RowSelectionModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 // The "daemon" mechanism (selectionService.createDaemonNode/syncInRowNode) only fires when a live
 // RowNode object has its id changed while selected. That happens in the infinite row model, where a

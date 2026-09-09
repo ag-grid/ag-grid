@@ -1,9 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 function indicator(colId: string): HTMLElement {
     const el = document.querySelector<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-show-values-as-icon`);

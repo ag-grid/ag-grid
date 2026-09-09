@@ -1,4 +1,5 @@
 import { findByTestId, waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -10,8 +11,6 @@ import {
 } from 'ag-grid-community';
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 interface Row {
     name: string;
@@ -70,7 +69,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
     /**
      * Keys that will be rendered in the open Set Filter list — read from the display value model
      * the Set Filter populates in `setParams`. Same pattern as set-filter-complex-objects.test.ts.
-     * Needed because jsdom does not lay out the VirtualList, so the rendered DOM is empty.
+     * Needed because happy-dom does not lay out the VirtualList, so the rendered DOM is empty.
      */
     async function openPopupAndGetDisplayedSetFilterKeys(api: GridApi<Row>): Promise<string[]> {
         api.showColumnFilter('name');

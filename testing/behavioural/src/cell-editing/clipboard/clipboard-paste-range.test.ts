@@ -1,16 +1,8 @@
 import { waitFor } from '@testing-library/dom';
+import { EditEventTracker, GridColumns, GridRows, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
 
 import { TextEditorModule, UndoRedoEditModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
-
-import {
-    EditEventTracker,
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    clipboardUtils,
-    waitForEvent,
-} from '../../test-utils';
 
 describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
     const gridMgr = new TestGridsManager({

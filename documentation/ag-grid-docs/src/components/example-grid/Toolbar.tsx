@@ -1,4 +1,5 @@
 import { Select } from '@ag-website-shared/components/select/Select';
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import { trackDemoToolbar } from '@utils/analytics';
 import { useMemo } from 'react';
 import type { RefObject } from 'react';
@@ -16,7 +17,7 @@ function updateUrlParam(key: string, value: string) {
     }
     const url = new URL(window.location.href);
     url.searchParams.set(key, value);
-    history.replaceState({}, '', url);
+    replaceHistoryUrl(url);
 }
 
 interface SelectOption {

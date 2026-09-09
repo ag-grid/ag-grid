@@ -10,8 +10,8 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import {
     _addGridCommonParams,
-    _canSkipShowingRowGroup,
     _isClientSideRowModel,
+    _isHiddenSingleChildGroup,
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { ExportParams, ShouldRowBeSkippedParams } from '../interfaces/exportParams';
@@ -72,10 +72,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.colModel.pivotMode ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
-        const shouldSkipCurrentGroup =
-            node.allChildrenCount === 1 &&
-            node.childrenAfterGroup?.length === 1 &&
-            _canSkipShowingRowGroup(this.gos, node);
+        const shouldSkipCurrentGroup = _isHiddenSingleChildGroup(this.gos, node);
 
         if (
             (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
@@ -263,9 +260,11 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 // other pages.
                 // onlySelectedNonStandardModel: if user wants selected in non standard row model
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
-                const selectedNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
+                // the root carries no values, and must resolve before sorting to land at its displayed position
+                const selectedNodes = (this.beans.selectionSvc?.getSelectedNodes() ?? []).map((node) =>
+                    node.level === -1 && node.sibling?.footer ? node.sibling : node
+                );
                 this.replicateSortedOrder(selectedNodes);
-                // serialize each node
                 selectedNodes.forEach(processBodyRow);
             }
             // here is everything else - including standard row model and selected. we don't use
@@ -389,7 +388,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private withCollapsibleGroupRanges(cell: GridHeaderCell, columnsToExport: AgColumn[]): GridHeaderCell {
-        if (cell.type !== 'group' && cell.type !== 'padding') {
+        // only real group cells contribute ranges: padding cells wrapping an expandable chain
+        // would re-emit the same range once per padded row, inflating the outline nesting
+        if (cell.type !== 'group') {
             return cell;
         }
         if (!cell.column?.isExpandable()) {

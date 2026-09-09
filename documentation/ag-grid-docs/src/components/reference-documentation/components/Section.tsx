@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import type { FunctionComponent, ReactElement } from 'react';
 import React, { Fragment } from 'react';
 
-import type { Config, ObjectCode, Properties, SectionProps } from '../types';
+import type { Config, ObjectCode, PropertyViewModelMap, SectionProps } from '../types';
 import { convertMarkdown, escapeGenericCode, getLinkedType } from '../utils/documentation-helpers';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
 import legacyStyles from './LegacyApiReference.module.scss';
@@ -30,7 +30,7 @@ const Breadcrumbs = ({ breadcrumbs }: { breadcrumbs: Record<string, string> }) =
         if (index < breadcrumbsLength - 1) {
             links.push(
                 <Fragment key={key}>
-                    <a href={`#${href}`} title={text}>
+                    <a tabIndex={0} href={`#${href}`} title={text}>
                         {key}
                     </a>{' '}
                     &gt;{' '}
@@ -64,7 +64,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
         indentationLevel++;
     });
 
-    Object.entries(properties).forEach(([key, definition]) => {
+    Object.entries(properties).forEach(([key, { definition = {} }]) => {
         let line = getIndent(indentationLevel) + key;
 
         // process property object
@@ -90,7 +90,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
             isObject = true;
         }
 
-        line += `: ${isObject ? `<a href='#reference-${id}.${key}'>${type}</a>` : getLinkedType(type, framework)};`;
+        line += `: ${isObject ? `<a tabindex='0' href='#reference-${id}.${key}'>${type}</a>` : getLinkedType(type, framework)};`;
 
         if (definition.default != null) {
             line += ` // default: ${formatJson(definition.default)}`;
@@ -126,7 +126,7 @@ const SectionHeader = ({
     headerLevel?: number;
     hideHeader?: boolean;
     showSnippets?: boolean;
-    properties: Properties;
+    properties: PropertyViewModelMap;
 }) => {
     const breadcrumbKeys = Object.keys(breadcrumbs);
     const id = breadcrumbKeys.join('.');
@@ -139,7 +139,7 @@ const SectionHeader = ({
             {!hideHeader && (
                 <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
                     {displayName}
-                    <a href={`#reference-${id}`} className="docs-header-icon">
+                    <a tabIndex={0} href={`#reference-${id}`} className="docs-header-icon">
                         <Icon name="link" />
                     </a>
                 </HeaderTag>
@@ -148,7 +148,11 @@ const SectionHeader = ({
             {descriptionDisplay && <p dangerouslySetInnerHTML={{ __html: descriptionDisplay }}></p>}
             {page && (
                 <p>
-                    See <a href={urlWithPrefix({ url: page.url, framework })}>{page.name}</a> for more information.
+                    See{' '}
+                    <a tabIndex={0} href={urlWithPrefix({ url: page.url, framework })}>
+                        {page.name}
+                    </a>{' '}
+                    for more information.
                 </p>
             )}
 
@@ -207,17 +211,14 @@ export const Section: FunctionComponent<SectionProps> = ({
                     <col></col>
                 </colgroup>
                 <tbody>
-                    {Object.entries(properties).map(([name, { definition, gridOpProp, detailsCode, propertyType }]) => {
+                    {Object.entries(properties).map(([name, property]) => {
                         return (
                             <Property
                                 key={name}
                                 id={id}
                                 name={name}
                                 framework={framework}
-                                definition={definition}
-                                gridOpProp={gridOpProp}
-                                detailsCode={detailsCode}
-                                propertyType={propertyType}
+                                property={property}
                                 config={config}
                             />
                         );

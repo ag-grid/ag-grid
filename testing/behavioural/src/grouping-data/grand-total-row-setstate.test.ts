@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, asyncSetTimeout, cachedJSONObjects } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, GridState, RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, PinnedRowModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 interface RowData {
     category: string;

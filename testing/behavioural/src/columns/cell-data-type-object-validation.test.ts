@@ -1,8 +1,7 @@
+import { TestGridsManager } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import { ClientSideRowModelModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
-
-import { TestGridsManager } from '../test-utils';
 
 interface RowData {
     id: string;

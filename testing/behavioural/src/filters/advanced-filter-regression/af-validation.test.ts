@@ -1,13 +1,3 @@
-import type { GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    TextFilterModule,
-    getGridElement,
-    setupAgTestIds,
-} from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterHarness,
     ColumnFilterHarness,
@@ -17,7 +7,17 @@ import {
     asyncSetTimeout,
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, GridOptions, IFilterOptionDef } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Regression baseline for Advanced Filter validation and for the custom `filterParams.filterOptions`

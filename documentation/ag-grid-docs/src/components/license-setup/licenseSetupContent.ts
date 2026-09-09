@@ -28,7 +28,7 @@ export const LICENSE_SETUP_COPY = {
     },
     olderVersionNote: {
         before: 'If you are using an AG Grid version before 33.0.0, please see the documentation for your',
-        link: { text: 'version', url: '/documentation-archive' },
+        link: { text: 'version', url: '/documentation-archive/' },
         after: 'for help on installing your license key.',
     },
     seedReposLead: 'Here are some seed code repositories to get you started:',

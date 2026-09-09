@@ -73,42 +73,35 @@ const getMergedCellsAndAddColumnGroups = (
         });
     });
 
-    cellsWithCollapsibleGroups.sort((a, b) => {
-        if (a[0] !== b[0]) {
-            return a[0] - b[0];
-        }
-        return b[1] - a[1];
-    });
-
-    const rangeMap = new Map<string, boolean>();
-    const outlineLevel = new Map<number, number>();
-
-    cellsWithCollapsibleGroups
-        .filter((currentRange) => {
-            const rangeString = currentRange.toString();
-            const inMap = rangeMap.get(rangeString);
-
-            if (inMap) {
-                return false;
-            }
-            rangeMap.set(rangeString, true);
-
-            return true;
-        })
-        .forEach((range) => {
-            const refCol = cols.find((col) => col.min == range[0] && col.max == range[1]);
-            const currentOutlineLevel = outlineLevel.get(range[0]);
-            cols.push({
-                min: range[0],
-                max: range[1],
-                outlineLevel: suppressColumnOutline ? undefined : currentOutlineLevel || 1,
-                width: (refCol || { width: 100 }).width,
-            });
-
-            outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
-        });
+    if (!suppressColumnOutline) {
+        applyColumnOutlineLevels(cols, cellsWithCollapsibleGroups);
+    }
 
     return mergedCells;
+};
+
+// stamps `outlineLevel` on the per-column entries rather than emitting extra <col> records:
+// overlapping <col> definitions are invalid OOXML and consumers resolve them inconsistently.
+const applyColumnOutlineLevels = (cols: ExcelColumn[], collapsibleRanges: number[][]): void => {
+    const outlineLevelByColumn = new Map<number, number>();
+
+    // each header row contributes one range per collapsible group, so a column covered by
+    // both an outer and an inner group naturally accumulates a deeper nesting level
+    for (let i = 0, len = collapsibleRanges.length; i < len; ++i) {
+        const [rangeStart, rangeEnd] = collapsibleRanges[i];
+        for (let column = rangeStart; column <= rangeEnd; ++column) {
+            outlineLevelByColumn.set(column, (outlineLevelByColumn.get(column) ?? 0) + 1);
+        }
+    }
+
+    outlineLevelByColumn.forEach((level, column) => {
+        if (!cols[column - 1]) {
+            cols[column - 1] = { min: column, max: column };
+        }
+
+        // Excel only supports up to 7 levels of outline
+        cols[column - 1].outlineLevel = Math.min(level, 7);
+    });
 };
 
 const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' | 'landscape' => {
@@ -617,11 +610,18 @@ const addSheetPr = () => {
     };
 };
 
-const addSheetFormatPr = (rows: ExcelRow[]) => {
+const addSheetFormatPr = (rows: ExcelRow[], columns: ExcelColumn[]) => {
     return (params: ComposedWorksheetParams) => {
-        const maxOutline = rows.reduce((prev: number, row: ExcelRow) => {
+        const maxRowOutline = rows.reduce((prev: number, row: ExcelRow) => {
             if (row.outlineLevel && row.outlineLevel > prev) {
                 return row.outlineLevel;
+            }
+            return prev;
+        }, 0);
+
+        const maxColOutline = columns.reduce((prev: number, column: ExcelColumn) => {
+            if (column.outlineLevel && column.outlineLevel > prev) {
+                return column.outlineLevel;
             }
             return prev;
         }, 0);
@@ -632,7 +632,8 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
                 rawMap: {
                     baseColWidth: 10,
                     defaultRowHeight: 16,
-                    outlineLevelRow: maxOutline ? maxOutline : undefined,
+                    outlineLevelRow: maxRowOutline ? maxRowOutline : undefined,
+                    outlineLevelCol: maxColOutline ? maxColOutline : undefined,
                 },
             },
         });
@@ -671,7 +672,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { children } = [
             addSheetPr(),
             addSheetViews(rightToLeft, frozenColumnCount, frozenRowCount),
-            addSheetFormatPr(rows),
+            addSheetFormatPr(rows, columns ?? []),
             addColumns(columns),
             addSheetData(rows, currentSheet + 1),
             addSheetProtection(protectSheet),

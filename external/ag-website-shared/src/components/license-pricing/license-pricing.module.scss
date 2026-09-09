@@ -76,7 +76,7 @@
     gap: $spacing-size-2 $spacing-size-4;
     margin: 0 auto;
     margin-top: $spacing-size-12;
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
     max-width: 600px;
     padding: $spacing-size-3;
     border: 1px solid var(--color-border-primary);
@@ -182,7 +182,7 @@
     }
 
     p {
-        line-height: var(--text-lh-tight);
+        line-height: var(--text-lh-ratio-tight);
     }
 }
 
@@ -242,7 +242,7 @@
 
     p {
         font-weight: var(--text-bold);
-        line-height: var(--text-lh-ultra-tight);
+        line-height: var(--text-lh-ratio-ultra-tight);
     }
 
     p:first-child {
@@ -266,7 +266,7 @@
 
 .price {
     font-size: 46px !important; // !important for font-size weirdness
-    line-height: var(--text-lh-tight);
+    line-height: 55px;
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
 }
@@ -308,7 +308,7 @@
     }
 
     ul {
-        line-height: var(--text-lh-tight);
+        line-height: var(--text-lh-ratio-tight);
     }
 
     li:not(:last-child) {
@@ -465,7 +465,7 @@
 }
 
 .trialLicenceHeader {
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-ratio-tight);
 }
 
 .trialLicenceCopyItem {

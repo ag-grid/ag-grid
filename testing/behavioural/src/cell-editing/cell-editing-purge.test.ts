@@ -1,5 +1,6 @@
 import { findByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 
 import type { CellEditingStoppedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -13,8 +14,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { BatchEditModule, PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForInput } from '../test-utils';
 
 /**
  * A row or column leaving the grid ends its own edits rather than a sweep noticing later. These cover the

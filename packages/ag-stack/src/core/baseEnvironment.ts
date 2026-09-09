@@ -176,9 +176,6 @@ export abstract class BaseEnvironment<
         }
         const measurement = this.measureSizeEl(variable);
         if (measurement === 'detached' || measurement === 'no-styles') {
-            if (variable.cacheDefault) {
-                this.lastKnownValues.set(variable, variable.defaultValue);
-            }
             return variable.defaultValue;
         }
         this.lastKnownValues.set(variable, measurement);
@@ -350,7 +347,6 @@ export type CssVariable<TChangeKeys extends BaseCssChangeKeys> = {
     type: ParamType;
     defaultValue: number;
     noWarn?: boolean;
-    cacheDefault?: boolean;
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

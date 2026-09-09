@@ -146,10 +146,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private checkForBaseIncompatibleServices(): boolean {
-        if (this.gos.get('masterDetail')) {
-            this.warn(295, { blockedService: 'Master Detail' });
-            return false;
-        }
         if (this.gos.get('enableCellExpressions')) {
             this.warn(295, { blockedService: 'Cell Expressions' });
             return false;
@@ -158,6 +154,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private checkForEditableFormulaIncompatibleServices(columns: AgColumn[]): boolean {
+        if (this.gos.get('masterDetail')) {
+            this.warn(295, { blockedService: 'Master Detail' });
+            return false;
+        }
         if (!this.checkForBaseIncompatibleServices()) {
             return false;
         }

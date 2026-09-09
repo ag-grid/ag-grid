@@ -1,6 +1,3 @@
-import { ClientSideRowModelModule, NumberFilterModule, RowSelectionModule } from 'ag-grid-community';
-import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -8,7 +5,10 @@ import {
     applyTransactionChecked,
     cachedJSONObjects,
     setRowDataChecked,
-} from '../../../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, NumberFilterModule, RowSelectionModule } from 'ag-grid-community';
+import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid tree aggregation and filter', () => {
     const gridsManager = new TestGridsManager({

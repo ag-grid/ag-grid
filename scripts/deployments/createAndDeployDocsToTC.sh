@@ -28,8 +28,10 @@ fi
 cd ../../../
 
 echo "Cleaning current grid staging"
-rm -rf /var/www/html/*
+# the * glob skips dot-prefixed entries (.htaccess, .well-known), so remove those explicitly too -
+# otherwise unzip below prompts to replace them and exits non-zero when there's no tty to answer
+rm -rf /var/www/html/* /var/www/html/.[!.]* /var/www/html/..?*
 mv $FILENAME /var/www/html/
 
 echo "Unzipping new grid staging"
-unzip -q /var/www/html/$FILENAME -d /var/www/html/
+unzip -qo /var/www/html/$FILENAME -d /var/www/html/

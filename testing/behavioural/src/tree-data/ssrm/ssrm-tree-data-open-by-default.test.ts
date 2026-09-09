@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { GridOptions, IsServerSideGroupOpenByDefaultParams } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../../test-utils';
 import { createFakeServer, createServerSideDatasource, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
 describe('ag-grid SSRM treeData open-by-default loads children', () => {

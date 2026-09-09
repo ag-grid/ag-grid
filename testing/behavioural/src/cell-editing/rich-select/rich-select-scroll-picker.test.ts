@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, fakeElementAttribute } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ScrollApiModule, getGridElement } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, fakeElementAttribute } from '../../test-utils';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 
@@ -35,7 +34,7 @@ describe('Rich Select cell editor — picker opens for a scrolled-into-view edit
     });
 
     beforeEach(() => {
-        // VirtualList skips rendering rows when the viewport height is 0 (no layout in jsdom).
+        // VirtualList skips rendering rows when the viewport height is 0 (no layout in happy-dom).
         fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
     });
 

@@ -1,8 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import type { GridApi, SideBarDef } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
-
 import {
     asyncSetTimeout,
     clickSelectOption,
@@ -10,7 +6,10 @@ import {
     nudgeVirtualList,
     openPicker,
     setNativeInputValue,
-} from '../../test-utils';
+} from 'ag-test-utils';
+
+import type { GridApi, SideBarDef } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 
 /**
  * Shared harness/helpers for the enterprise Filters Tool Panel behavioural tests. Local (not the shared

@@ -1,7 +1,7 @@
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid grouping sticky collapse', () => {
     const gridsManager = new TestGridsManager({

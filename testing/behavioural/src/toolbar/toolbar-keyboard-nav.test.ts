@@ -1,9 +1,9 @@
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
-
-// jsdom's `offsetParent` is null for all elements because it does not compute layout. The
+// happy-dom's `offsetParent` is null for all elements because it does not compute layout. The
 // toolbar's arrow-key navigation uses `_findFocusableElements`, which filters by `_isVisible` —
 // which in turn checks `offsetParent` via `_isInDOM`. Polyfill `offsetParent` so the navigation
 // logic sees the rendered toolbar buttons. Matches what a real browser reports for a visible
@@ -146,7 +146,7 @@ describe('Toolbar keyboard navigation', () => {
         // an item that is off-screen to the right must scroll the toolbar to reveal it.
         const { toolbar, buttons } = await renderThreeButtonToolbar('kbd-focusin-scroll');
 
-        // jsdom computes no layout, so make the toolbar a horizontal scroll container and give
+        // happy-dom computes no layout, so make the toolbar a horizontal scroll container and give
         // it and the target button rects that place the button beyond the toolbar's right edge.
         toolbar.style.overflowX = 'auto';
         const rect = (left: number, right: number) => ({ left, right, width: right - left }) as DOMRect;

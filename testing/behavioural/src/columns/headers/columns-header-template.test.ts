@@ -1,7 +1,7 @@
+import { GridColumns, TestGridsManager } from 'ag-test-utils';
+
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, createGrid } from 'ag-grid-community';
-
-import { GridColumns, TestGridsManager } from '../../test-utils';
 
 const data = [{ a: 1, b: 10, c: 100 }];
 const columns: ColDef[] = [

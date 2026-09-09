@@ -1,0 +1,132 @@
+@use '../core' as *;
+
+// Prism token theme — load only from `blog-output.scss`, never `design-system.scss`.
+// The docs site highlights with Shiki, which colours tokens through an inline `style`
+// attribute and emits no `.token` classes. The Ghost blog highlights with Prism
+// client-side, so these rules are its token palette.
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: var(--color-code-comment);
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: 0.7;
+}
+
+.token.string {
+    color: var(--color-code-string);
+}
+
+.token.punctuation,
+.token.operator {
+    color: var(--color-code-punctuation);
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: var(--color-code-symbol);
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*='language-css'] {
+    color: var(--color-code-keyword);
+}
+
+.token.function {
+    color: var(--color-code-function);
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: var(--color-code-deleted);
+}
+
+.token.important {
+    color: var(--color-code-important);
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.token.builtin,
+.language-json .token.property {
+    color: var(--color-code-class-name);
+}
+
+.token.tag {
+    color: var(--color-code-tag);
+}
+
+.token.selector {
+    color: var(--color-code-selector);
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: var(--color-code-property);
+}
+
+.language-css .token.property {
+    color: var(--color-code-tag);
+}
+
+.language-bash {
+    .token.function {
+        color: var(--color-fg-primary);
+        font-weight: 600;
+    }
+}
+
+.token.atrule,
+.token.attr-name,
+.token.attr-value,
+.token.boolean,
+.token.builtin,
+.token.cdata,
+.token.class-name,
+.token.comment,
+.token.constant,
+.token.deleted,
+.token.doctype,
+.token.entity,
+.token.inserted,
+.token.keyword,
+.token.namespace,
+.token.number,
+.token.operator,
+.token.prolog,
+.token.property,
+.token.regex,
+.token.selector,
+.token.string,
+.token.symbol,
+.token.tag,
+.token.url,
+.token.variable {
+    #{$selector-darkmode} & {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
+}

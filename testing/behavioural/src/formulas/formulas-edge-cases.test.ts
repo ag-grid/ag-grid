@@ -1,9 +1,3 @@
-import { vi } from 'vitest';
-
-import type { FormulaDataSource, FormulaFunctionParams, GridOptions, Module, RowNode } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
-import { FormulaModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -11,7 +5,12 @@ import {
     applyTransactionChecked,
     asyncSetTimeout,
     waitForEvent,
-} from '../test-utils';
+} from 'ag-test-utils';
+import { vi } from 'vitest';
+
+import type { FormulaDataSource, FormulaFunctionParams, GridOptions, Module, RowNode } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
+import { FormulaModule } from 'ag-grid-enterprise';
 
 describe('ag-grid formulas edge cases', () => {
     const rowNumberRefreshBufferMs = 25;

@@ -61,6 +61,7 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { BaseComponentWrapper } from './components/framework/frameworkComponentWrapper';
 export type { FrameworkComponentWrapper, WrappableInterface } from './components/framework/frameworkComponentWrapper';
+export { ComponentInstanceGuard, type ComponentInstanceClaim } from './components/framework/componentInstanceGuard';
 export type { Registry } from './components/framework/registry';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 export type { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -70,6 +71,7 @@ export {
     _getFilterDetails,
     _getFloatingFilterCompDetails,
     _getInnerCellRendererDetails,
+    _mergeFilterParamsWithApplicationProvidedParams,
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
@@ -136,13 +138,39 @@ export {
 export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
 export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
 export { FilterComp } from './filter/filterComp';
-export { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
+export {
+    _getDefaultSimpleFilter,
+    _getFilterParamsForDataType,
+    _isGridSuppliedFilterOptions,
+    _isGridSuppliedFilterParam,
+} from './filter/filterDataTypeUtils';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
+export {
+    PRESET_DATE_FILTER_TYPES as _PRESET_DATE_FILTER_TYPES,
+    RelativeDateRangeCache as _RelativeDateRangeCache,
+    presetDateFilterTypeRelativeFromToMap as _PRESET_DATE_FILTER_RANGES,
+} from './filter/provided/date/relativeDateRanges';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
+export {
+    _ADVANCED_FILTER_ONLY_OPTIONS,
+    _bindFilterCallback,
+    _classifyFilterOptions,
+    filterCallbackParams as _filterCallbackParams,
+    _getCustomOptionDisplayName,
+    _getCustomOptionNumberOfInputs,
+    _hasValue,
+    _isBlank,
+    _isRangeOutOfOrder,
+} from './filter/provided/simpleFilterUtils';
+export {
+    defaultLowercaseFormatter as _defaultLowercaseFormatter,
+    TEXT_COMPARISONS as _TEXT_COMPARISONS,
+    trimInputForFilter as _trimInputForFilter,
+} from './filter/provided/text/textFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
 export { GridCoreCreator } from './grid';
@@ -169,6 +197,7 @@ export { GridCtrl } from './gridComp/gridCtrl';
 export type { IGridComp } from './gridComp/gridCtrl';
 export {
     _addGridCommonParams,
+    _addRowHeightChangedListener,
     _canSkipShowingRowGroup,
     _combineAttributesAndGridOptions,
     _getCallbackForEvent,
@@ -204,6 +233,7 @@ export {
     _isGroupMultiAutoColumn,
     _isGroupRowsSticky,
     _isGroupUseEntireRow,
+    _isHiddenSingleChildGroup,
     _isLegacyMenuEnabled,
     _isMultiRowSelection,
     _isRowNumbers,
@@ -312,6 +342,7 @@ export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
 export { _resolveSortOptions } from './sort/sortOptionUtils';
+export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
 export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
@@ -360,8 +391,23 @@ export {
     themeMaterialParams as _themeMaterialParams,
     themeQuartzParams as _themeQuartzParams,
 } from './theming/parts/theme/themes';
-export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
-export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
+export {
+    _getCellTooltipComponentDefinition,
+    _getHeaderTooltipComponentDefinition,
+    _getShouldDisplayTooltip,
+    _isShowTooltipWhenTruncated,
+    type TooltipFeature,
+    type TooltipSource,
+    type TooltipSourceParams,
+} from './tooltip/tooltipFeature';
+export {
+    _getLegacyTooltipFieldValue,
+    _isCellTooltipConfigured,
+    _resolveCellTooltipValue,
+    _resolveGroupTooltipValue,
+    _resolveHeaderTooltipValue,
+    type LegacyTooltipFieldResolution,
+} from './tooltip/tooltipValueUtils';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
 export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
 

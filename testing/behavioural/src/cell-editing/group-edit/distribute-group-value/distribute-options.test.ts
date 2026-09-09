@@ -1,4 +1,5 @@
-import { GridColumns } from '../../../test-utils';
+import { GridColumns } from 'ag-test-utils';
+
 import { GridRows, asyncSetTimeout, createRowData, distributeGroupValue, gridsManager } from './distribute-test-utils';
 
 afterEach(() => {

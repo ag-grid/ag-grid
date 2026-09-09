@@ -1,14 +1,14 @@
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
     executeTransactionsAsync,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping with transactions', () => {
     const gridsManager = new TestGridsManager({

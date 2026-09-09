@@ -1,9 +1,10 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import {
     EDIT_MODES,
     asyncSetTimeout,

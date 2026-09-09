@@ -1,10 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-import type { MockInstance } from 'vitest';
-
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -13,8 +7,14 @@ import {
     asyncSetTimeout,
     getRowsSnapshot,
     setRowDataChecked,
-} from '../../test-utils';
-import type { RowSnapshot } from '../../test-utils';
+} from 'ag-test-utils';
+import type { RowSnapshot } from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
+
 import { simpleHierarchyRowsSnapshot } from './simpleHierarchyRowsSnapshot';
 
 const getDataPath = (data: any) => data.orgHierarchy;

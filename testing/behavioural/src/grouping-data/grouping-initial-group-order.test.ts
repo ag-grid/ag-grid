@@ -1,7 +1,3 @@
-import type { InitialGroupOrderComparatorParams } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
 import {
     GridColumns,
     GridRows,
@@ -9,7 +5,11 @@ import {
     applyTransactionChecked,
     cachedJSONObjects,
     setRowDataChecked,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import type { InitialGroupOrderComparatorParams } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid initialGroupOrderComparator', () => {
     const gridsManager = new TestGridsManager({

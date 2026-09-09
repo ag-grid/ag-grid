@@ -1,3 +1,7 @@
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { asyncSetTimeout } from 'ag-test-utils/node-utils';
+import { countLoadingRows, waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
+
 import type { GetRowIdParams, IServerSideGetRowsParams } from 'ag-grid-community';
 import {
     RowGroupingModule,
@@ -5,10 +9,6 @@ import {
     ServerSideRowModelModule,
     TreeDataModule,
 } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, waitForEvent } from '../../test-utils';
-import { asyncSetTimeout } from '../../test-utils/node-utils';
-import { countLoadingRows, waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 /**
  * CHARACTERIZATION tests (golden-master) pinning the CURRENT behaviour of the AG Grid
@@ -114,7 +114,7 @@ describe('SSRM datasource failure on GROUP routes (characterization)', () => {
         expect(!!api.getRowNode('UK-Alice')).toBe(false);
         expect(!!api.getRowNode('UK-Bob')).toBe(false);
 
-        // Retry — re-requests the failed block. No awaitable storeRefreshed in jsdom, so
+        // Retry — re-requests the failed block. No awaitable storeRefreshed here, so
         // flush a few synchronous ticks.
         api.retryServerSideLoads();
         await asyncSetTimeout(0);

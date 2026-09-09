@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { GridOptions, ValueParserParams } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import type {
     EditableCallback,
     GroupRowEditableCallback,

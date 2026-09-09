@@ -57,7 +57,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         const { beans, eOverlayWrapper } = this;
 
-        const nextEl = eOverlayWrapper && _findNextFocusableElement(beans, eOverlayWrapper, false, e.shiftKey);
+        const nextEl =
+            eOverlayWrapper && _findNextFocusableElement({ beans, rootNode: eOverlayWrapper, backwards: e.shiftKey });
         if (nextEl) {
             return;
         }

@@ -145,8 +145,6 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
 
                         <ul class={styles.heroMeta}>
                             <li>
-                                <Icon name="alarm" />
-                                <span>October 2026</span>
                                 <Icon name="mapPin" />
                                 <span>New York City</span>
                                 <span class={styles.heroMetaNewBadge}>New!</span>
@@ -476,15 +474,17 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                             <div class={styles.notifyGdpr}>
                                 <label class={styles.notifyCheckbox} for="gdpr_47554">
                                     <input type="checkbox" id="gdpr_47554" name="gdpr[47554]" value="Y" />
-                                    <span>I am happy to receive emails from AG Grid</span>
+                                    <span>
+                                        Opt in to receive product updates, news, and marketing communications from AG
+                                        Grid and Bryntum. Unsubscribe at any time.
+                                    </span>
                                 </label>
                                 <p class={styles.notifyGdprText}>
-                                    You can unsubscribe at any time using the links available in our emails. By
-                                    submitting this form you acknowledge that AG Grid will process your data in
-                                    accordance with our
+                                    By submitting this form, your information will be processed in accordance with our
                                     <a href="https://www.ag-grid.com/privacy/" target="_blank" rel="noopener noreferrer"
-                                        >privacy policy</a
-                                    >.
+                                        >Privacy Policy</a
+                                    >. We will use it to respond to your enquiry and, where applicable, to manage our
+                                    commercial relationship with you.
                                 </p>
                             </div>
 

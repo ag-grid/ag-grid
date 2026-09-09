@@ -3,30 +3,55 @@ import { _getActiveDomElement } from 'ag-stack';
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
+import type { Column } from '../../../interfaces/iColumn';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
-import type { INumberFloatingFilterParams, NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import { installAllowedCharPattern } from '../allowedCharPattern';
+import type { OptionsFactory } from '../optionsFactory';
+import type {
+    INumberFilterParams,
+    INumberFloatingFilterParams,
+    NumberFilterModel,
+    NumberFilterParams,
+} from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
-import { getAllowedCharPattern } from './numberFilterUtils';
+import { getAllowedCharPattern, processNumberFilterValue, stringToFloat, usesTextInput } from './numberFilterUtils';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eTextInput: GridInputTextField;
     private eNumberInput: GridInputNumberField;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
+    private onValueCleared: () => void = () => {};
 
     private numberInputActive = true;
 
+    /** Matches the text service: a hook, so the guard is imported by the filters that offer it. */
+    constructor(private readonly onInputCreated?: (field: GridInputNumberField) => void) {
+        super();
+    }
+
     public setupGui(parentElement: HTMLElement): void {
-        this.eNumberInput = this.createManagedBean(new AgInputNumberField());
-        this.eTextInput = this.createManagedBean(new AgInputTextField());
+        const numberField = this.createManagedBean<GridInputNumberField>(
+            new AgInputNumberField({
+                clearButton: true,
+                onValueClear: () => this.onValueCleared(),
+            })
+        );
+        this.eNumberInput = numberField;
+        this.onInputCreated?.(numberField);
 
-        this.eTextInput.setDisabled(true);
+        const textField = this.createManagedBean<GridInputTextField>(
+            new AgInputTextField({ clearButton: true, onValueClear: () => this.onValueCleared() })
+        );
+        this.eTextInput = textField;
+        // Never typed into: it stands in for the number input while the filter is not editable.
+        textField.setDisabled(true);
 
-        const eNumberInput = this.eNumberInput.getGui();
-        const eTextInput = this.eTextInput.getGui();
+        const eNumberInput = numberField.getGui();
+        const eTextInput = textField.getGui();
 
         parentElement.appendChild(eNumberInput);
         parentElement.appendChild(eTextInput);
@@ -41,7 +66,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.eTextInput.setDisplayed(!this.numberInputActive);
     }
 
-    public setAutoComplete(autoComplete: boolean | string): void {
+    public setAutoComplete(autoComplete?: boolean | string): void {
         this.eNumberInput.setAutoComplete(autoComplete);
         this.eTextInput.setAutoComplete(autoComplete);
     }
@@ -62,8 +87,16 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         return this.numberInputActive ? this.eNumberInput : this.eTextInput;
     }
 
+    public getInputText(): string {
+        return this.getActiveInputElement().getInputElement().value;
+    }
+
     public setValueChangedListener(listener: (e: KeyboardEvent) => void): void {
         this.onValueChanged = listener;
+    }
+
+    public setValueClearedListener(listener: () => void): void {
+        this.onValueCleared = listener;
     }
 
     private setupListeners(element: HTMLElement, listener: (e: KeyboardEvent) => void): void {
@@ -84,16 +117,14 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }): void {
         this.setAriaLabel(ariaLabel);
 
-        if (autoComplete !== undefined) {
-            this.setAutoComplete(autoComplete);
-        }
+        this.setAutoComplete(autoComplete);
 
         this.setPlaceholder(this.eNumberInput, placeholder);
         this.setPlaceholder(this.eTextInput, placeholder);
     }
 
     private setPlaceholder(input: GridInputTextField | GridInputNumberField, placeholder?: string): void {
-        input.toggleCss('ag-floating-filter-search-icon', !!placeholder);
+        input.setSearchIcon(!!placeholder);
         input.setInputPlaceholder(placeholder);
     }
 
@@ -104,33 +135,45 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 }
 
 export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatingFilterParams, NumberFilterModel> {
-    protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
     private allowedCharPattern: string | null;
+    private isTextInput: boolean;
     protected readonly filterType = 'number';
     protected readonly defaultOptions = DEFAULT_NUMBER_FILTER_OPTIONS;
 
+    protected createModelFormatter(
+        optionsFactory: OptionsFactory,
+        filterParams: INumberFilterParams,
+        column: Column
+    ): NumberFilterModelFormatter {
+        return new NumberFilterModelFormatter(optionsFactory, filterParams, column);
+    }
+
     protected override updateParams(params: INumberFloatingFilterParams): void {
-        const allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
-        if (allowedCharPattern !== this.allowedCharPattern) {
+        const filterParams = params.filterParams as NumberFilterParams;
+        const allowedCharPattern = getAllowedCharPattern(filterParams);
+        if (allowedCharPattern !== this.allowedCharPattern || usesTextInput(filterParams) !== this.isTextInput) {
             this.recreateFloatingFilterInputService(params);
         }
         super.updateParams(params);
     }
 
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService {
-        this.allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
-        if (this.allowedCharPattern) {
-            // need to use text input
-            return this.createManagedBean(
-                new FloatingFilterTextInputService({
-                    config: { allowedCharPattern: this.allowedCharPattern },
-                })
-            );
-        }
-        return this.createManagedBean(new FloatingFilterNumberInputService());
+        const filterParams = params.filterParams as NumberFilterParams;
+        const allowedCharPattern = getAllowedCharPattern(filterParams);
+        this.allowedCharPattern = allowedCharPattern;
+        const isTextInput = usesTextInput(filterParams);
+        this.isTextInput = isTextInput;
+        const install = (el: GridInputTextField | GridInputNumberField) =>
+            installAllowedCharPattern(el, allowedCharPattern, this.beans);
+        return this.createManagedBean(
+            isTextInput ? new FloatingFilterTextInputService(install) : new FloatingFilterNumberInputService(install)
+        );
     }
 
+    /** Read back through `numberParser`, which is the only thing that can read what a `numberFormatter` wrote. */
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
-        return value ? (Number(value) as TValue) : null;
+        const { gos, params } = this;
+        const numberParser = (params.filterParams as NumberFilterParams | undefined)?.numberParser;
+        return processNumberFilterValue(stringToFloat(numberParser, value, gos, params.column)) as TValue | null;
     }
 }

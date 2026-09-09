@@ -207,7 +207,7 @@ export class AgTabbedLayout<
         }
 
         if (!nextEl && eBody.contains(activeElement)) {
-            nextEl = _findNextFocusableElement(beans, eBody, false, backwards);
+            nextEl = _findNextFocusableElement({ beans, rootNode: eBody, backwards });
 
             if (!nextEl) {
                 if (suppressTrapFocus && !backwards) {

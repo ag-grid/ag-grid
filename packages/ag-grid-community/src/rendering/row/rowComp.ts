@@ -156,7 +156,11 @@ export class RowComp extends Component {
 
     private showFullWidth(compDetails: UserCompDetails): void {
         const eRow = this.getGui();
-        const eAnchor = _createElement({ tag: 'div', cls: 'ag-full-width-anchor', role: 'presentation' });
+        const eAnchor = _createElement({
+            tag: 'div',
+            cls: 'ag-full-width-anchor',
+            role: this.rowCtrl.getFullWidthAnchorRole(),
+        });
         eRow.appendChild(eAnchor);
 
         const callback = (cellRenderer: ICellRendererComp) => {

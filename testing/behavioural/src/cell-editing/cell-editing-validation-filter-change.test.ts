@@ -1,4 +1,5 @@
 import { userEvent } from '@testing-library/user-event';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput, waitForPopup } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 import {
@@ -10,8 +11,6 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput, waitForPopup } from '../test-utils';
 
 interface PersonRow {
     athlete: string;

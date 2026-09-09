@@ -96,7 +96,7 @@ export class PageSummaryComp extends Component {
                         this.commitPageInput();
                         break;
                     case KeyCode.ESCAPE:
-                        lbCurrentInput.setValue(String(current + 1), true); // needs to happen before blur below
+                        lbCurrentInput.setValue(String(this.getDisplayPageNumber()), true); // needs to happen before blur below
                         eInput.blur();
                         break;
                     case KeyCode.UP:
@@ -145,10 +145,9 @@ export class PageSummaryComp extends Component {
 
     private commitPageInput(): void {
         const { pagination, lbCurrentInput } = this;
-        const currentPage = pagination.getCurrentPage() + 1;
         const rawValue = lbCurrentInput.getValue(true);
         if (!rawValue?.trim()) {
-            lbCurrentInput.setValue(String(currentPage), true);
+            lbCurrentInput.setValue(String(this.getDisplayPageNumber()), true);
             return;
         }
         const rawValueNum = Number(rawValue);
@@ -156,10 +155,23 @@ export class PageSummaryComp extends Component {
         const isValid =
             Number.isFinite(rawValueNum) && Number.isInteger(rawValueNum) && rawValueNum >= 1 && rawValueNum <= total;
         if (!isValid) {
-            lbCurrentInput.setValue(String(currentPage), true);
+            lbCurrentInput.setValue(String(this.getDisplayPageNumber()), true);
             return;
         }
         pagination.goToPage(rawValueNum - 1);
+    }
+
+    /**
+     * The 1-based page number shown to the user. With no pages at all this is 0, so an empty grid reads
+     * `Page 0 of 0` alongside its `0 to 0 of 0` row summary. While the last row index is still unknown
+     * (data loading, or infinite scroll) it stays at 1, as page 1 is yet to arrive.
+     */
+    private getDisplayPageNumber(): number {
+        const { rowModel, pagination } = this;
+        if (pagination.getTotalPages() > 0) {
+            return pagination.getCurrentPage() + 1;
+        }
+        return rowModel.isLastRowIndexKnown() ? 0 : 1;
     }
 
     public refresh(): void {
@@ -195,7 +207,6 @@ export class PageSummaryComp extends Component {
         const { rowModel, pagination, lbCurrentInput, lbCurrentStatic, lbTotal } = this;
         const lastPageFound = rowModel.isLastRowIndexKnown();
         const totalPages = pagination.getTotalPages();
-        const currentPage = pagination.getCurrentPage();
         const localeTextFunc = this.getLocaleTextFunc();
 
         let lbTotalStr: string;
@@ -206,19 +217,18 @@ export class PageSummaryComp extends Component {
         }
         lbTotal.textContent = lbTotalStr;
 
-        const pagesExist = totalPages > 0;
-        const lbCurrentValue = pagesExist ? currentPage + 1 : 1;
+        const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
-            // Before data loads totalPages is 0; clamp to 1 to avoid an invalid input while data loads
-            const pageCount = Math.max(1, totalPages);
-            lbCurrentInput.setMin(1);
-            lbCurrentInput.setMax(pageCount);
+            // With no pages the only page number the input can hold is 0; while data loads it is 1
+            const maxPage = Math.max(lbCurrentValue, totalPages);
+            lbCurrentInput.setMin(Math.min(1, lbCurrentValue));
+            lbCurrentInput.setMax(maxPage);
             // log10 returns number of digits (as an integer part + fraction) - 1,
             // bump that to 1 + 1x2 each side pad + 0.5 for borders and css oddities
-            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(pageCount)) + 3.5}ch`;
+            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(Math.max(1, maxPage))) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
             _setAriaLabel(
@@ -226,8 +236,8 @@ export class PageSummaryComp extends Component {
                 `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
             );
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
-            eInput.setAttribute('aria-valuemin', '1');
-            eInput.setAttribute('aria-valuemax', String(pageCount));
+            eInput.setAttribute('aria-valuemin', String(Math.min(1, lbCurrentValue)));
+            eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
         const strPage = localeTextFunc('page', 'Page');

@@ -177,12 +177,11 @@ export class AdvancedFilterHeaderComp extends Component {
                 if (this.hasFocus()) {
                     this.navigateLeftRight(event);
                 } else {
-                    const nextFocusableEl = _findNextFocusableElement(
-                        this.beans,
-                        this.getFocusableElement(),
-                        null,
-                        event.shiftKey
-                    );
+                    const nextFocusableEl = _findNextFocusableElement({
+                        beans: this.beans,
+                        rootNode: this.getFocusableElement(),
+                        backwards: event.shiftKey,
+                    });
                     if (nextFocusableEl) {
                         event.preventDefault();
                         nextFocusableEl.focus();

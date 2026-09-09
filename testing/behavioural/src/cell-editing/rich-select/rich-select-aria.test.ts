@@ -1,10 +1,9 @@
 import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, fakeElementAttribute, firePointerLikeClick, waitForPopup } from 'ag-test-utils';
 
 import { getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
-
-import { TestGridsManager, fakeElementAttribute, firePointerLikeClick, waitForPopup } from '../../test-utils';
 
 /**
  * The Rich Select combobox must not carry a dangling `aria-controls` idref (WCAG 4.1.2). The list is
@@ -19,7 +18,7 @@ describe('Rich Select combobox aria-controls (WCAG 4.1.2)', () => {
     });
 
     beforeEach(() => {
-        // VirtualList skips rendering rows when the viewport height is 0 (no layout in jsdom).
+        // VirtualList skips rendering rows when the viewport height is 0 (no layout in happy-dom).
         fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
     });
 

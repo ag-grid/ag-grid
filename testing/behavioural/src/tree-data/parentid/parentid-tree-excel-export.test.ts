@@ -1,9 +1,8 @@
-import XLSX from 'xlsx';
+import { GridColumns, GridRows, TestGridsManager, objectUrls } from 'ag-test-utils';
+import * as XLSX from 'xlsx';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule, TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager, objectUrls } from '../../test-utils';
 
 describe('ag-grid parentId tree excel export', () => {
     const gridsManager = new TestGridsManager({

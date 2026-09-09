@@ -1,4 +1,5 @@
 import { findByTestId, waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -11,8 +12,6 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Row {
     name?: string;

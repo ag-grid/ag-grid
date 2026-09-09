@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridApi, ValueGetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValueCacheModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 interface Person {
     firstName: string;

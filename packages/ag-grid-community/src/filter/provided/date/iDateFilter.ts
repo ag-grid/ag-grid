@@ -1,11 +1,20 @@
+import type { AdvancedFilterOnlyOptionKey } from '../../../interfaces/advancedFilterModel';
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ISimpleFilterModel, ISimpleFilterModelPresetType } from '../iSimpleFilter';
+import type {
+    CustomFilterOptionKey,
+    DateFilterOptionKey,
+    IFilterOptionDef,
+    ISimpleFilterModel,
+    ISimpleFilterModelPresetType,
+} from '../iSimpleFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
 
 export interface DateFilterModel extends ISimpleFilterModel {
+    /** One of the Date Filter's options, or a Custom Filter Option's `displayKey`. */
+    type?: DateFilterOptionKey | CustomFilterOptionKey | null;
     /** Filter type is always `'date'` */
     filterType?: 'date';
     /**
@@ -52,9 +61,14 @@ export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TD
  */
 
 export interface IDateFilterParams extends IScalarFilterParams {
+    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
+    filterOptions?: (IFilterOptionDef | DateFilterOptionKey | AdvancedFilterOnlyOptionKey)[];
+    /** The default filter option to be selected. Must be one of the offered options. */
+    defaultOption?: DateFilterOptionKey | CustomFilterOptionKey;
     /**
      * Required if the data for the column are not native JS `Date` objects.
      * If cell values can contain invalid dates, should also implement `isValidDate`.
+     * Also decides the column's comparisons in the Advanced Filter, under the Client-Side Row Model.
      */
     comparator?: IDateComparatorFunc;
     /**
@@ -95,6 +109,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
      * If providing a `comparator` and cell values can contain invalid dates,
      * this can be implemented to allow invalid date values to be filtered out
      * (as the comparator only allows for greater than, less than and equals).
+     * Also gates the column's comparisons in the Advanced Filter, under the Client-Side Row Model.
      */
     isValidDate?: (value: any) => boolean;
     /**

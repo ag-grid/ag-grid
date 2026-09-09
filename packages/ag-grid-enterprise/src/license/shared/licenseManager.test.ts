@@ -1,4 +1,5 @@
 /* eslint no-console: 0 */
+import { _doOnce } from 'ag-stack';
 import type { Mock } from 'vitest';
 
 import { LicenseManager } from './licenseManager';
@@ -30,6 +31,14 @@ describe('LicenseManager', () => {
             }
             errorLog.apply(console, args);
         };
+        // Two pieces of process-wide state decide what these tests see, so each must start from a clean
+        // one: the key itself is a static (a leftover makes the next `setLicenseKey` warn), and warning
+        // 291 goes through `_warnOnce`, which prints it for the first test to trigger it and no other.
+        // Assigned rather than set through the API, since resetting via `setLicenseKey` warns in its own right.
+        // Clearing the whole set is local despite being process-wide state: isolation is on for unit projects,
+        // so each test file owns its own module registry and no other suite's entries are in here.
+        (LicenseManager as unknown as { licenseKey?: string }).licenseKey = undefined;
+        _doOnce._set.clear();
     });
     afterAll(() => {
         console.warn = warnLog;

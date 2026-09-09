@@ -1,0 +1,45 @@
+---
+title: "Upgrading to AG Grid 36.2"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v36.2."
+migrationVersion: "36.2.0"
+---
+
+PDF Export, Set Filter Support for Advanced Filter, Custom Filter Option Support in Advanced Filter, Continuous Column Auto-sizing, Custom Renderers for Column Items in Columns Tool Panel
+
+## What's New
+
+AG Grid {% migrationVersion() %} adds important new features - [PDF Export](./pdf-export/), [Set Filter Support for Advanced Filter](./filter-advanced/#set-filters), [Custom Filter Option Support in Advanced Filter](./filter-advanced/#custom-filter-options), [Continuous Column Auto-sizing](./column-sizing/#continuous-auto-sizing), [Custom Renderers for Column Items in Columns Tool Panel](./tool-panel-columns/#custom-column-labels).
+These improvements involve no breaking changes as listed below.
+
+<!--
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+There are no breaking changes in AG Grid version {% migrationVersion() %}.
+
+## Behaviour Changes
+
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+
+## Removal of Deprecated APIs
+
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+The following column definition (`ColDef`) properties remain supported, but the replacements below are recommended:
+
+| Deprecated                           | Replacement                            |
+| ------------------------------------ | -------------------------------------- |
+| `tooltipField: 'country'`            | `tooltip: ({ data }) => data?.country` |
+| `tooltipValueGetter: callback`       | `tooltip: callback`                    |
+| `headerTooltipValueGetter: callback` | `headerTooltip: callback`              |
+
+Use `tooltip: true` when the tooltip should show the formatted value displayed in the cell.
+
+{% changelogSection version=$migrationVersion /%}

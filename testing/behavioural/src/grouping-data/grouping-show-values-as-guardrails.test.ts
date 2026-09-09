@@ -1,8 +1,8 @@
+import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+
 import type { GridApi, IAggFunc, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 function leaf(api: GridApi, id: string): IRowNode {
     const node = api.getRowNode(id);

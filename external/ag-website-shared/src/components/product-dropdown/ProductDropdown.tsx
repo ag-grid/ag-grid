@@ -136,7 +136,11 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
 
     return (
         <div ref={dropdownRef} className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}>
-            <button className={`${styles.customTrigger} ${isOpen ? styles.open : ''}`} onClick={handleMenuToggle}>
+            <button
+                className={`${styles.customTrigger} ${isOpen ? styles.open : ''}`}
+                onClick={handleMenuToggle}
+                tabIndex={0}
+            >
                 Products
                 <span className={styles.arrow}></span>
             </button>
@@ -162,7 +166,7 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
                                             {item.inlineHeading}
                                         </div>
                                     )}
-                                    <a href={item.url} className={styles.itemsWrapper}>
+                                    <a tabIndex={0} href={item.url} className={styles.itemsWrapper}>
                                         <div className={placeholderClass}>{getIconComponent(item)}</div>
                                         <div className={styles.productsWrapper}>
                                             <div className={styles.productTitle}>{item.title}</div>

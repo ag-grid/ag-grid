@@ -31,6 +31,7 @@ import {
     _addGridCommonParams,
     _getRowHeightForNode,
     _isAnimateRows,
+    _isClientSideLoadingRow,
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
@@ -184,6 +185,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.prepareInitialCellCtrls?.();
     }
 
+    private isClientSideLoadingRow(): boolean {
+        return _isClientSideLoadingRow(this.gos, this.rowNode);
+    }
+
     private createRowModeFeature(): IRowModeFeature {
         const { context } = this.beans;
         const feature = this.isFullWidth() ? new FullWidthRowFeature(this) : new NormalRowFeature(this);
@@ -199,7 +204,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private updateRowBusinessKey(): void {
-        if (typeof this.businessKeyForNodeFunc !== 'function') {
+        if (this.isClientSideLoadingRow() || typeof this.businessKeyForNodeFunc !== 'function') {
             return;
         }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
@@ -221,10 +226,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.initialiseRowComp();
 
         const rowNode = this.rowNode;
-        const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
+        const isLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
         const isIrmLoadingRow = !rowNode.data && this.beans.rowModel.getType() === 'infinite';
         // pinned rows render before the main grid body in the SSRM, only fire the event after the main body has rendered.
-        if (!isSsrmLoadingRow && !isIrmLoadingRow && !rowNode.rowPinned) {
+        if (!isLoadingRow && !isIrmLoadingRow && !rowNode.rowPinned) {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
@@ -282,7 +287,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.editSvc?.applyRowEditStyles(this);
         this.executeSlideAndFadeAnimations();
 
-        if (this.rowNode.group) {
+        if (this.rowNode.isExpandable()) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
         }
 
@@ -390,7 +395,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private executeProcessRowPostCreateFunc(): void {
         const func = this.gos.getCallback('processRowPostCreate');
         const rowGui = this.rowGui;
-        if (!func || rowGui?.containerType !== 'center') {
+        if (this.isClientSideLoadingRow() || !func || rowGui?.containerType !== 'center') {
             return;
         }
 
@@ -411,6 +416,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private isNodeFullWidthCell(): boolean {
+        if (this.isClientSideLoadingRow()) {
+            return false;
+        }
         if (this.rowNode.detail) {
             return true;
         }
@@ -428,7 +436,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         } = this;
         const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow');
         const groupHideOpenParents = gos.get('groupHideOpenParents');
-        const isStub = rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
+        const isServerSide = this.beans.rowModel.getType() === 'serverSide';
+        const isStub = isServerSide && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
         const isFullWidthCell = this.isNodeFullWidthCell();
         const isDetailCell = gos.get('masterDetail') && rowNode.detail;
         const pivotMode = colModel.pivotMode;
@@ -575,6 +584,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowType;
     }
 
+    /**
+     * A loading row holds a placeholder rather than real cell content, so the anchor stands in as the
+     * cell child that `role="row"` requires — the renderer is replaceable and cannot be relied on for it.
+     */
+    public getFullWidthAnchorRole(): 'gridcell' | 'presentation' {
+        return this.rowType === 'FullWidthLoading' ? 'gridcell' : 'presentation';
+    }
+
     public getContainerType(): RowContainerType | undefined {
         return this.rowGui?.containerType;
     }
@@ -696,6 +713,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessCss(): void {
+        if (this.isClientSideLoadingRow()) {
+            return;
+        }
         this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
@@ -949,6 +969,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessClassesFromGridOptions(): void {
+        if (this.isClientSideLoadingRow()) {
+            return;
+        }
         const cssClasses: string[] = [];
         this.beans.rowStyleSvc?.processClassesFromGridOptions(cssClasses, this.rowNode);
         if (!cssClasses.length) {
@@ -961,6 +984,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessRowClassRules(): void {
+        if (this.isClientSideLoadingRow()) {
+            return;
+        }
         this.beans.rowStyleSvc?.processRowClassRules(
             this.rowNode,
             (className: string) => this.rowGui?.rowComp.toggleCss(className, true),
@@ -1024,7 +1050,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const { rowStyleSvc } = beans;
-        if (rowStyleSvc) {
+        if (rowStyleSvc && !this.isClientSideLoadingRow()) {
             rowStyleSvc.processClassesFromGridOptions(classes, rowNode);
             rowStyleSvc.preProcessRowClassRules(classes, rowNode);
         }
@@ -1045,7 +1071,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
-        return this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
+        return this.isClientSideLoadingRow()
+            ? this.emptyStyle
+            : (this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle);
     }
 
     private onRowSelected(): void {
@@ -1161,7 +1189,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const rowHeight = this.rowNode.rowHeight;
 
         const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
-        const isHeightFromFunc = _isGetRowHeightFunction(this.gos);
+        const isHeightFromFunc = _isGetRowHeightFunction(this.gos) && !this.isClientSideLoadingRow();
         const heightFromFunc = isHeightFromFunc ? _getRowHeightForNode(this.beans, this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 

@@ -1,0 +1,41 @@
+---
+title: "Loading Rows"
+description: "Display skeleton rows while Client-Side Row Model data is loading."
+---
+
+The Client-Side Row Model can display skeleton rows instead of the loading overlay while row data is loading.
+
+{% gridExampleRunner title="Loading Rows" name="client-side-loading-rows" /%}
+
+{% note %}
+For loading rows managed by a server-side datasource, see [Server-Side Row Model Loading Rows](./server-side-model-loading-rows/).
+{% /note %}
+
+## Enabling Loading Rows
+
+Set `loadingRows=true` to use skeleton rows when `loading=true`.
+Ten rows are displayed by default. Alternatively, provide `LoadingRowsOptions` with `rowCount` to configure the number displayed.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    loading: true,
+    loadingRows: {
+        rowCount: 10,
+    },
+};
+```
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading", "loadingRows"] /%}
+
+Loading rows are visual placeholders and are not included in Client-Side Row Model operations such as sorting, filtering, grouping or selection.
+When loading finishes, set `loading=false` to display the row data.
+
+Both options can be updated at runtime. Update `loadingRows` to change the row count while loading, or set it to `false` to switch back to the overlay without ending the loading state.
+
+## Custom Loading Cells
+
+Set `loadingCellRenderer` and `loadingCellRendererParams` on a column definition to customise that column, or on `defaultColDef` to customise every loading cell. See [Loading Cell Component](./component-loading-cell-renderer/) for component interfaces, parameters and dynamic component selection.
+
+The following example uses a custom loading component for the Athlete column while the other columns retain the default skeleton effect.
+
+{% gridExampleRunner title="Custom Loading Cells" name="custom-loading-cells" /%}

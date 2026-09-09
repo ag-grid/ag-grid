@@ -14,6 +14,7 @@ import type {
     FloatingFilterDisplayParams,
     ICellEditorParams,
     ICellRendererParams,
+    IColumnSelectionLabelRendererParams,
     IDetailCellRendererParams,
     IDragAndDropImageParams,
     IExportingOverlayParams,
@@ -182,6 +183,12 @@ export interface CustomCellRendererProps<TData = any, TValue = any, TContext = a
     TValue,
     TContext
 > {}
+
+/** Props provided to custom column selection label renderer components. */
+export interface CustomColumnSelectionLabelProps<
+    TData = any,
+    TContext = any,
+> extends IColumnSelectionLabelRendererParams<TData, TContext> {}
 
 /** Props provided to custom detail cell renderer components */
 export interface CustomDetailCellRendererProps<TData = any, TDetail = any> extends IDetailCellRendererParams<

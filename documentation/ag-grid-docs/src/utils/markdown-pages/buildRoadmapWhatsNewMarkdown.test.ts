@@ -26,7 +26,7 @@ describe('buildRoadmapMarkdown', () => {
     });
 
     it('formats the last-updated date the way the page does', () => {
-        expect(output).toContain('Last updated: August 5, 2026');
+        expect(output).toContain('Last updated: September 16, 2026');
     });
 
     it('groups every item under its quarter heading, carrying status, description and rationale', () => {
@@ -41,9 +41,11 @@ describe('buildRoadmapMarkdown', () => {
     });
 
     it('marks each item with its status, so an agent can tell shipped from planned', () => {
-        expect(output).toContain('(shipped)');
-        expect(output).toContain('(in progress)');
-        expect(output).toContain('(planned)');
+        // Derived from the data rather than hard-coded: which statuses are present changes
+        // every release (a release can ship the last in-progress item, as 36.2.0 does).
+        for (const status of new Set(roadmapData.items.map((item) => item.status))) {
+            expect(output).toContain(`(${status.replace(/-/g, ' ')})`);
+        }
     });
 
     it('resolves item links into the framework docs', () => {
@@ -73,7 +75,7 @@ describe('buildWhatsNewMarkdown', () => {
 
     it('links highlights into the docs and derives the release blog URL as the page does', () => {
         expect(output).toContain('https://www.ag-grid.com/javascript-data-grid/column-headers/#editable-header-name');
-        expect(output).toContain('https://blog.ag-grid.com/whats-new-in-ag-grid-36-1/');
+        expect(output).toContain('https://www.ag-grid.com/blog/whats-new-in-ag-grid-36-1/');
     });
 
     it('labels the release-notes link by release kind, as the page does', () => {

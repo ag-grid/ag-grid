@@ -1,8 +1,4 @@
 import { waitFor } from '@testing-library/dom';
-
-import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
-
 import {
     AdvancedFilterHarness,
     FilterDom,
@@ -10,7 +6,10 @@ import {
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
-} from '../test-utils';
+} from 'ag-test-utils';
+
+import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 describe('Advanced Filter Header DOM', () => {
     const gridsManager = new TestGridsManager({

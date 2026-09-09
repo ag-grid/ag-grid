@@ -14,7 +14,8 @@ export interface UserCompDetails<TComp extends IComponent<any> = any> {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ComponentType<TComp = any> {
     name: string;
-    cellRenderer?: boolean;
+    /** Whether a plain JavaScript function can be adapted into this component type. */
+    supportsJsFunction?: boolean;
     mandatoryMethods?: (keyof TComp & string)[];
     optionalMethods?: (keyof TComp & string)[];
     /**
