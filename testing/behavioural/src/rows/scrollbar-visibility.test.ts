@@ -93,4 +93,33 @@ describe('Scrollbar visibility', () => {
         api.setGridOption('rowData', rowData.slice(0, initialRowCount));
         await expectScrollbarSizes('0px', '0px', 'restored row data');
     });
+
+    // AG-18346: `scrollbarWidth: 0` is a documented grid option by which a user asserts their
+    // platform's scrollbars take no space. Reserving the overlay scrollbar lane must be gated on the
+    // platform actually drawing invisible scrollbars, never on the configured width being zero, or
+    // this explicit override would silently lose 16px of content width.
+    test('honours scrollbarWidth: 0 on a platform with real scrollbars', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }],
+            defaultColDef: {
+                minWidth: 100,
+                flex: 1,
+            },
+            headerHeight: mockGridLayout.headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            rowData,
+            scrollbarWidth: 0,
+        });
+
+        const viewport = query<HTMLElement>('.ag-grid-viewport');
+        await waitFor(() => expect(document.querySelectorAll('.ag-row').length).toBeGreaterThan(0));
+        await expectScrollbarSizes('0px', '0px', 'scrollbarWidth: 0');
+
+        // happy-dom fires no ResizeObserver, so re-set the columns to force the flex pass to run again
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }]);
+        await waitFor(() => expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(3));
+
+        const contentWidth = api.getColumnState().reduce((total, { width }) => total + (width ?? 0), 0);
+        expect(contentWidth).toBe(viewport.clientWidth);
+    });
 });
