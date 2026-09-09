@@ -1,5 +1,34 @@
 [
     {
+        "version": "36.2.0",
+        "date": "16th September 2026",
+        "landingPageHighlight": "PDF Export, Set filter support for Advanced Filter, Custom filter option support in Advanced filter, Continuous column auto-sizing, Custom renderers for column items in columns tool panel",
+        "highlights": [
+            {
+                "text": "PDF Export",
+                "path": "./pdf-export/"
+            },
+            {
+                "text": "Set filter support for Advanced Filter",
+                "path": "./filter-advanced/#set-filters"
+            },
+            {
+                "text": "Custom filter option support in Advanced filter",
+                "path": "./filter-advanced/#custom-filter-options"
+            },
+            {
+                "text": "Continuous column auto-sizing",
+                "path": "./column-sizing/#continuous-auto-sizing"
+            },
+            {
+                "text": "Custom renderers for column items in columns tool panel",
+                "path": "./tool-panel-columns/#custom-column-labels"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-36-2",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "36.1.0",
         "date": "5th August 2026",
         "landingPageHighlight": "Column Header Edit, Custom Context Menu Items in Columns Tool Panel, AI Coding Skill, Documentation in markdown format, Quality Improvements",
