@@ -96,6 +96,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 // render columns at default width, only to immediately resize them when rows are rendered.
                 const rowData = gos.get('rowData');
                 shouldHideColumns = rowData != null && rowData.length > 0 && _isClientSideRowModel(gos);
+                if (shouldHideColumns) {
+                    this.revealOnEmptyModel();
+                }
             }
             if (autoSizeStrategy.continuous) {
                 this.initContinuousAutoSize(autoSizeStrategy);
@@ -644,6 +647,23 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
             }
             colDelayRenderSvc?.revealColumns(type);
+        });
+    }
+
+    /**
+     * `firstDataRendered` only fires once a row renders, so a model that settles with nothing to
+     * display would otherwise leave the columns hidden forever. Reveal without auto-sizing: there is
+     * nothing to measure, and `onFirstDataRendered` still sizes the columns if rows appear later.
+     */
+    private revealOnEmptyModel(): void {
+        const [removeListener] = this.addManagedEventListeners({
+            modelUpdated: () => {
+                if (this.beans.rowModel.getRowCount() > 0) {
+                    return;
+                }
+                removeListener?.();
+                this.beans.colDelayRenderSvc?.revealColumns('fitCellContents');
+            },
         });
     }
 
