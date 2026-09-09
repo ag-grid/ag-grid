@@ -345,6 +345,11 @@ jobs:
                   # preflight-related to override or block a manual dispatch,
                   # regardless of preflight's own behaviour.
                   stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'triage') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  # `manual-<stage>` marks a run a human started from an AITGH
+                  # "Manual trigger" button; empty on the auto-chain. Lets the action
+                  # record on the ticket when a pressed stage mechanically no-ops.
+                  # See ag-dev-prompts docs/github-triage-pipeline.md.
+                  trigger: ${{ (github.event.action == 'gh-triage-manual-resume' && 'manual-resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'manual-browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'manual-repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'manual-triage') || '' }}
                   product: grid
                   # NOTE: `allowed_non_write_users` is deliberately NOT passed, and must
                   # stay unset — setting it re-breaks the auto-triage path. The actor is a
