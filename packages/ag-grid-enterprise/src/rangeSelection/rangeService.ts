@@ -58,6 +58,8 @@ import {
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
+import type { CellSelectionRefreshFilter, RangeSnapshot } from './cellSelectionRefreshFilter';
+import { createCellSelectionRefreshFilter, snapshotCellRange } from './cellSelectionRefreshFilter';
 import { DragListenerFeature } from './dragListenerFeature';
 import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
 import { RangeHeaderHighlightFeature } from './rangeHeaderHighlightFeature';
@@ -116,6 +118,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     public autoScrollService: AutoScrollService;
 
     private readonly columnRangeSelectionCtx: ColumnRangeSelectionContext = {};
+
+    /** The ranges as of the last time the rendered cells had their selection state refreshed. */
+    private paintedRanges: RangeSnapshot[] = [];
 
     public postConstruct(): void {
         const onColumnsChanged = this.onColumnsChanged.bind(this);
@@ -1101,6 +1106,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         if (!silent) {
             this.dispatchChangedEvent(false, true);
         }
+    }
+
+    public takeSelectionRefreshFilter(): CellSelectionRefreshFilter | null {
+        const current = this.cellRanges.map((range) =>
+            snapshotCellRange(range, this.getRangeStartRow(range), this.getRangeEndRow(range))
+        );
+        const filter = createCellSelectionRefreshFilter(this.paintedRanges, current, this.visibleCols);
+        // the caller refreshes every matching cell, so the ranges are painted as of now
+        this.paintedRanges = current;
+
+        return filter;
     }
 
     public isCellInAnyRange(cell: CellPosition): boolean {

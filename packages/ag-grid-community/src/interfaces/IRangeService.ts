@@ -18,6 +18,12 @@ export interface IRangeService {
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
     getRangeRowCount(cellRange: CellRange): number;
+    /**
+     * Returns a predicate matching the rendered cells whose selection state can have changed since
+     * the last refresh, or `null` when every cell has to be refreshed. Calling this records the
+     * current ranges as painted, so the caller must then refresh every matching cell.
+     */
+    takeSelectionRefreshFilter(): ((cell: CellPosition) => boolean) | null;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
     isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean;

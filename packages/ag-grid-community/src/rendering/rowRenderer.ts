@@ -355,7 +355,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private readonly setupRangeSelectionListeners = () => {
         const onCellSelectionChanged = () => {
+            // one drag frame typically moves a single edge of the selection, so refreshing every
+            // rendered cell would cost the whole viewport instead of just the cells that changed
+            const isCellStale = this.beans.rangeSvc?.takeSelectionRefreshFilter();
             for (const cellCtrl of this.getAllCellCtrls()) {
+                if (isCellStale && !isCellStale(cellCtrl.cellPosition)) {
+                    continue;
+                }
                 cellCtrl.onCellSelectionChanged();
             }
         };
