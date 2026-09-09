@@ -16,6 +16,8 @@ export interface RangeSnapshot {
     firstRowPinned: RowPinnedType;
     lastRowPinned: RowPinnedType;
     columns: Set<Column>;
+    /** The rightmost column, which with `lastRow` owns the selection handle. */
+    lastColumn: Column | undefined;
     type: CellRangeType | undefined;
     colorClass: string | null | undefined;
 }
@@ -37,9 +39,22 @@ export function snapshotCellRange(range: CellRange, firstRow: RowPosition, lastR
         lastRowPinned: _makeNull(lastRow.rowPinned),
         // ranges are mutated in place while dragging, so the columns are copied rather than shared
         columns: new Set(range.columns),
+        lastColumn: findLastColumn(range.columns),
         type: range.type,
         colorClass: range.colorClass,
     };
+}
+
+/** Mirrors the rightmost column that `IRangeService.isBottomRightCell()` compares against. */
+function findLastColumn(columns: Column[]): Column | undefined {
+    let last: AgColumn | undefined;
+    for (let i = 0, len = columns.length; i < len; i++) {
+        const column = columns[i] as AgColumn;
+        if (!last || column.allColsIndex > last.allColsIndex) {
+            last = column;
+        }
+    }
+    return last;
 }
 
 /**
@@ -107,7 +122,18 @@ interface RangeChange {
     wholeRange: boolean;
     rowPinned: RowPinnedType;
     regions: CandidateRegion[];
+    /**
+     * The cells owning the selection handle before and after the change. The handle caches the range
+     * row boundaries and its availability depends on contiguity across every selected column, so it
+     * goes stale on changes that leave its own cell's membership and borders untouched.
+     */
+    handleCells: CandidateCell[];
     columns: ColumnNeighbours;
+}
+
+interface CandidateCell {
+    rowIndex: number;
+    column: Column;
 }
 
 function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns: ColumnNeighbours): RangeChange | null {
@@ -117,7 +143,15 @@ function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns:
     }
 
     const wholeRange = before.type !== after.type || before.colorClass !== after.colorClass;
-    const change: RangeChange = { before, after, wholeRange, rowPinned, regions: [], columns };
+    const change: RangeChange = {
+        before,
+        after,
+        wholeRange,
+        rowPinned,
+        regions: [],
+        handleCells: collectHandleCells(before, after),
+        columns,
+    };
 
     const spannedFirstRow = Math.min(before.firstRow, after.firstRow);
     const spannedLastRow = Math.max(before.lastRow, after.lastRow);
@@ -161,12 +195,29 @@ function createRangeChange(before: RangeSnapshot, after: RangeSnapshot, columns:
     return change;
 }
 
+function collectHandleCells(before: RangeSnapshot, after: RangeSnapshot): CandidateCell[] {
+    const cells: CandidateCell[] = [];
+    for (const { lastRow, lastColumn } of [before, after]) {
+        if (lastColumn && !cells.some((cell) => cell.rowIndex === lastRow && cell.column === lastColumn)) {
+            cells.push({ rowIndex: lastRow, column: lastColumn });
+        }
+    }
+    return cells;
+}
+
 function isCellAffected(change: RangeChange, cell: CellPosition): boolean {
-    const { regions, rowPinned } = change;
+    const { regions, rowPinned, handleCells } = change;
     const { column, rowIndex } = cell;
 
     if (_makeNull(cell.rowPinned) !== rowPinned) {
         return false;
+    }
+
+    for (let i = 0, len = handleCells.length; i < len; i++) {
+        const handleCell = handleCells[i];
+        if (handleCell.rowIndex === rowIndex && handleCell.column === column) {
+            return true;
+        }
     }
 
     let isCandidate = false;

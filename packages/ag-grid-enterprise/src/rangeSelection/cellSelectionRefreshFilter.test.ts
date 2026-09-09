@@ -30,6 +30,7 @@ function snapshot(
         firstRowPinned: null,
         lastRowPinned: null,
         columns: new Set(colIds.map(columnById)),
+        lastColumn: columnById(colIds[colIds.length - 1]),
         type: undefined,
         colorClass: undefined,
         ...extra,
@@ -96,6 +97,29 @@ describe('createCellSelectionRefreshFilter', () => {
         expect(filter(cell(6, 'a'))).toBe(true);
         expect(filter(cell(2, 'd'))).toBe(true);
         expect(filter(cell(2, 'a'))).toBe(false);
+    });
+
+    test('the handle owner is stale when the opposite row edge moves', () => {
+        const filter = createCellSelectionRefreshFilter(
+            [snapshot(3, 10, ALL_COLUMNS)],
+            [snapshot(2, 10, ALL_COLUMNS)],
+            columnNeighbours
+        )!;
+
+        expect(filter(cell(10, 'e'))).toBe(true);
+        expect(filter(cell(10, 'c'))).toBe(false);
+        expect(filter(cell(7, 'c'))).toBe(false);
+    });
+
+    test('the handle owner is stale when an interior column changes the contiguity', () => {
+        const filter = createCellSelectionRefreshFilter(
+            [snapshot(0, 10, ['a', 'b', 'c', 'd', 'e'])],
+            [snapshot(0, 10, ['a', 'c', 'd', 'e'])],
+            columnNeighbours
+        )!;
+
+        expect(filter(cell(10, 'e'))).toBe(true);
+        expect(filter(cell(5, 'e'))).toBe(false);
     });
 
     test('a colour change stales every cell of the range', () => {
