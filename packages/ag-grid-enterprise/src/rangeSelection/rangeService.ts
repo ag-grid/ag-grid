@@ -122,23 +122,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     private readonly columnRangeSelectionCtx: ColumnRangeSelectionContext = {};
 
-    /** The ranges as of the last time the rendered cells had their selection state refreshed. */
     private paintedRanges: CellSelectionRange[] = [];
-    // OPTIMIZATION: cells rendered while scrolling each ask for the state, so it is built once per
-    // change rather than once per cell. Every mutation of `cellRanges` clears it.
     private selectionState: CellSelectionSnapshot | null = null;
 
     public postConstruct(): void {
         const onColumnsChanged = this.onColumnsChanged.bind(this);
         const removeAllCellRanges = () => this.removeAllCellRanges();
-        // a column order change moves `allColsIndex`, which the cached state's contiguity and
-        // rightmost column are derived from
         const refreshLastRangeStart = () => {
             this.selectionState = null;
             this.refreshLastRangeStart();
         };
         this.addManagedEventListeners({
-            // an open-ended range takes its last row from the row count
             modelUpdated: () => {
                 this.selectionState = null;
             },
@@ -1155,7 +1149,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const current = this.getSelectionState();
 
         const filter = createCellSelectionRefreshFilter(this.paintedRanges, current, this.visibleCols);
-        // the caller refreshes every matching cell, so the ranges are painted as of now
         this.paintedRanges = current.ranges;
 
         return filter;

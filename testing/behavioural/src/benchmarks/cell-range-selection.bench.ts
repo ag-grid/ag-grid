@@ -1,11 +1,3 @@
-// Cell-range-selection benchmark: the cost of one range change over a full viewport of cells.
-//
-// A range change dispatches `cellSelectionChanged` and every rendered cell refreshes its own range
-// classes and borders, so one measured iteration is the work behind one frame of a mouse drag — the
-// number to read against the ~16ms frame budget.
-//
-// Column virtualisation is suppressed and rowHeight is small, so the fixed 100vh viewport holds as
-// many cells as possible: the wide drag users notice.
 import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
@@ -52,7 +44,6 @@ const gridOptions: GridOptions = {
 
 const data = buildData();
 
-/** Replace the selection with a single range spanning `colSpan` columns down to `rowEnd`. */
 const selectRange = (api: GridApi, colSpan: number, rowEnd: number): void => {
     api.clearCellSelection();
     api.addCellRange({
@@ -63,7 +54,6 @@ const selectRange = (api: GridApi, colSpan: number, rowEnd: number): void => {
     });
 };
 
-/** Replace the selection with `count` adjacent single-column ranges, each `rowEnd` rows tall. */
 const selectManyRanges = (api: GridApi, count: number, rowEnd: number): void => {
     api.clearCellSelection();
     for (let i = 0; i < count; ++i) {
@@ -76,9 +66,6 @@ const selectManyRanges = (api: GridApi, count: number, rowEnd: number): void => 
     }
 };
 
-// One range, wide: the common drag. Alternating between a 40-column and a 39-column span is the
-// shape of a drag frame that crosses a column boundary — the selection changes by one column and
-// every rendered cell is re-tested.
 suite('cell range selection: extend wide range', () => {
     const gridsManager = new BenchGridsManager({ modules });
     benchAlternating(
@@ -92,8 +79,6 @@ suite('cell range selection: extend wide range', () => {
     );
 });
 
-// One range, narrow: isolates the fixed per-cell overhead (border/chart-range/CSS work) from the
-// column-list scan, so a membership-cost change shows up as a gap between this and the wide suite.
 suite('cell range selection: extend narrow range', () => {
     const gridsManager = new BenchGridsManager({ modules });
     benchAlternating(
@@ -107,8 +92,6 @@ suite('cell range selection: extend narrow range', () => {
     );
 });
 
-// Rebuilding a multi-range selection: clearing and re-adding 20 ranges is 21 dispatches, so this
-// case measures the cost of restoring a saved multi-range selection, NOT a single drag frame.
 suite('cell range selection: rebuild many ranges', () => {
     const gridsManager = new BenchGridsManager({ modules });
     benchAlternating(

@@ -40,7 +40,6 @@ function range(
     };
 }
 
-/** Wraps the ranges the way `RangeService.getSelectionState()` does, so the globals match. */
 function state(...ranges: CellSelectionRange[]): CellSelectionSnapshot {
     return {
         ranges,
@@ -62,11 +61,8 @@ describe('createCellSelectionRefreshFilter', () => {
     });
 
     test('no cell is stale when the ranges are unchanged', () => {
-        const filter = createCellSelectionRefreshFilter(
-            [range(0, 5, ALL_COLUMNS)],
-            state(range(0, 5, ALL_COLUMNS)),
-            columnNeighbours
-        )!;
+        const unchanged = range(0, 5, ALL_COLUMNS);
+        const filter = createCellSelectionRefreshFilter([unchanged], state(unchanged), columnNeighbours)!;
 
         expect(filter(cell(0, 'a'))).toBe(false);
         expect(filter(cell(3, 'c'))).toBe(false);
@@ -132,6 +128,19 @@ describe('createCellSelectionRefreshFilter', () => {
 
         expect(filter(cell(10, 'e'))).toBe(true);
         expect(filter(cell(5, 'e'))).toBe(false);
+    });
+
+    test('replacing a range with an equivalent object stales only the handle owner', () => {
+        const filter = createCellSelectionRefreshFilter(
+            [range(0, 10, ALL_COLUMNS)],
+            state(range(0, 10, ALL_COLUMNS)),
+            columnNeighbours
+        )!;
+
+        expect(filter(cell(10, 'e'))).toBe(true);
+        expect(filter(cell(10, 'a'))).toBe(false);
+        expect(filter(cell(0, 'a'))).toBe(false);
+        expect(filter(cell(5, 'c'))).toBe(false);
     });
 
     test('a colour change stales every cell of the range', () => {

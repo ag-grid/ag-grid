@@ -18,11 +18,6 @@ export interface IRangeService {
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
     getRangeRowCount(cellRange: CellRange): number;
-    /**
-     * Returns a predicate matching the rendered cells whose selection state can have changed since
-     * the last refresh, or `null` when every cell has to be refreshed. Calling this records the
-     * current ranges as painted, so the caller must then refresh every matching cell.
-     */
     takeSelectionRefreshFilter(): ((cell: CellPosition) => boolean) | null;
     getSelectionState(): CellSelectionSnapshot;
     isCellInAnyRange(cell: CellPosition): boolean;
@@ -70,38 +65,23 @@ export interface IRangeService {
     handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
 }
 
-/**
- * One range with everything a cell's selection styling needs precomputed, so that refreshing a
- * viewport of cells does not repeat per cell what is common to all of them.
- *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface CellSelectionRange {
     range: CellRange;
-    /** Normalised (topmost) row of the range. */
     firstRow: RowPosition;
-    /** Normalised (bottommost) row of the range. */
     lastRow: RowPosition;
-    /** `true` when both rows sit in the same pinned section, so row indexes alone order them. */
     withinOneSection: boolean;
     columns: Set<Column>;
-    /** The rightmost column, which with `lastRow` owns the selection handle. */
     lastColumn: Column | undefined;
     contiguous: boolean;
     type: CellRangeType | undefined;
     colorClass: string | null | undefined;
 }
 
-/**
- * The selection as of one refresh of the rendered cells.
- *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface CellSelectionSnapshot {
     ranges: CellSelectionRange[];
-    /** Mirrors `isMoreThanOneCell()`, which every cell reads for the single-cell class. */
     moreThanOneCell: boolean;
-    /** `true` when every range is a chart range, the all-ranges test behind the chart class. */
     allChartRanges: boolean;
 }
 

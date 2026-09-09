@@ -28,7 +28,6 @@ const CSS_CELL_RANGE_TOP = 'ag-cell-range-top';
 const CSS_CELL_RANGE_RIGHT = 'ag-cell-range-right';
 const CSS_CELL_RANGE_BOTTOM = 'ag-cell-range-bottom';
 const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
-// OPTIMIZATION: every rendered cell toggles all four, so the names are built once, not per cell
 const CSS_CELL_RANGE_SELECTED_COUNT = [
     `${CSS_CELL_RANGE_SELECTED}-1`,
     `${CSS_CELL_RANGE_SELECTED}-2`,

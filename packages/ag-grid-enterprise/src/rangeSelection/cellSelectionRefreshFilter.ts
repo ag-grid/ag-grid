@@ -1,22 +1,23 @@
 import { _makeNull } from 'ag-stack';
 
-import type { AgColumn, CellPosition, CellSelectionRange, CellSelectionSnapshot, Column } from 'ag-grid-community';
+import type {
+    AgColumn,
+    CellPosition,
+    CellSelectionRange,
+    CellSelectionSnapshot,
+    Column,
+    RowPinnedType,
+} from 'ag-grid-community';
 
 import { areAllChartRanges, isCellInSelectionRange, isMoreThanOneCell } from './cellSelectionState';
 
-/** Matches the rendered cells whose selection state can have changed. */
 export type CellSelectionRefreshFilter = (cell: CellPosition) => boolean;
 
-/** The columns adjacent to a column, in visible order. Modelled on `VisibleColsService`. */
 interface ColumnNeighbours {
     getColBefore(col: AgColumn): AgColumn | null;
     getColAfter(col: AgColumn): AgColumn | null;
 }
 
-/**
- * Works out which rendered cells need their selection state refreshed, given the ranges as they were
- * last painted and as they are now. Returns `null` when every cell has to be refreshed.
- */
 export function createCellSelectionRefreshFilter(
     painted: CellSelectionRange[],
     current: CellSelectionSnapshot,
@@ -24,12 +25,9 @@ export function createCellSelectionRefreshFilter(
 ): CellSelectionRefreshFilter | null {
     const currentRanges = current.ranges;
 
-    // adding or removing a range changes the range count and which range owns the selection handle,
-    // neither of which is a per-cell property, so there is nothing to narrow down
     if (painted.length !== currentRanges.length) {
         return null;
     }
-    // both are read globally by every cell, so a flip invalidates the whole viewport
     if (isMoreThanOneCell(painted) !== current.moreThanOneCell) {
         return null;
     }
@@ -44,11 +42,13 @@ export function createCellSelectionRefreshFilter(
         const after = currentRanges[i];
 
         if (isUnchanged(before, after)) {
+            if (before.range !== after.range) {
+                changes.push(createHandleOnlyChange(before, after, columns));
+            }
             continue;
         }
 
         const change = createRangeChange(before, after, columns);
-        // a range spanning more than one pinned section cannot be compared by row index alone
         if (!change) {
             return null;
         }
@@ -66,7 +66,6 @@ export function createCellSelectionRefreshFilter(
     };
 }
 
-/** A band of rows crossed with a set of columns, holding every cell a change could have staled. */
 interface CandidateRegion {
     firstRow: number;
     lastRow: number;
@@ -75,21 +74,16 @@ interface CandidateRegion {
 
 interface CandidateCell {
     rowIndex: number;
+    rowPinned: RowPinnedType;
     column: Column;
 }
 
 interface RangeChange {
     before: CellSelectionRange;
     after: CellSelectionRange;
-    /** The colour and chart category classes apply to every cell of the range, not just its edge. */
     wholeRange: boolean;
-    rowPinned: string | null;
+    rowPinned: RowPinnedType;
     regions: CandidateRegion[];
-    /**
-     * The cells owning the selection handle before and after the change. The handle caches the range
-     * row boundaries and its availability depends on contiguity across every selected column, so it
-     * goes stale on changes that leave its own cell's membership and borders untouched.
-     */
     handleCells: CandidateCell[];
     columns: ColumnNeighbours;
 }
@@ -133,8 +127,6 @@ function createRangeChange(
         return change;
     }
 
-    // borders and the single-cell class depend on whether the neighbouring cells share the range, so
-    // each region is widened by one cell in every direction
     const changedColumns = widenColumns(symmetricDifferenceOfColumns(before.columns, after.columns), columns);
     if (changedColumns.size) {
         change.regions.push({ firstRow: spannedFirstRow - 1, lastRow: spannedLastRow + 1, columns: changedColumns });
@@ -165,27 +157,47 @@ function createRangeChange(
 function collectHandleCells(before: CellSelectionRange, after: CellSelectionRange): CandidateCell[] {
     const cells: CandidateCell[] = [];
     for (const { lastRow, lastColumn } of [before, after]) {
-        const rowIndex = lastRow.rowIndex;
-        if (lastColumn && !cells.some((cell) => cell.rowIndex === rowIndex && cell.column === lastColumn)) {
-            cells.push({ rowIndex, column: lastColumn });
+        const { rowIndex, rowPinned } = lastRow;
+        const seen = cells.some(
+            (cell) => cell.rowIndex === rowIndex && cell.rowPinned === rowPinned && cell.column === lastColumn
+        );
+        if (lastColumn && !seen) {
+            cells.push({ rowIndex, rowPinned, column: lastColumn });
         }
     }
     return cells;
 }
 
+function createHandleOnlyChange(
+    before: CellSelectionRange,
+    after: CellSelectionRange,
+    columns: ColumnNeighbours
+): RangeChange {
+    return {
+        before,
+        after,
+        wholeRange: false,
+        rowPinned: before.firstRow.rowPinned ?? null,
+        regions: [],
+        handleCells: collectHandleCells(before, after),
+        columns,
+    };
+}
+
 function isCellAffected(change: RangeChange, cell: CellPosition): boolean {
     const { regions, rowPinned, handleCells } = change;
     const { column, rowIndex } = cell;
-
-    if (_makeNull(cell.rowPinned) !== rowPinned) {
-        return false;
-    }
+    const cellPinned = _makeNull(cell.rowPinned);
 
     for (let i = 0, len = handleCells.length; i < len; i++) {
         const handleCell = handleCells[i];
-        if (handleCell.rowIndex === rowIndex && handleCell.column === column) {
+        if (handleCell.rowIndex === rowIndex && handleCell.rowPinned === cellPinned && handleCell.column === column) {
             return true;
         }
+    }
+
+    if (cellPinned !== rowPinned) {
+        return false;
     }
 
     let isCandidate = false;
