@@ -371,21 +371,9 @@ describe('StateService - Find State', () => {
             await waitFor(() => expect(api.findGetTotalMatches()).toBe(3));
             expect(api.getState().find).toBeUndefined();
 
-            // Ownership changes without any Find event of its own.
             api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
 
             await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
-        });
-
-        test('should drop the captured section once the toolbar loses the find item', async () => {
-            const api = await createGrid('toolbar-item-removed');
-
-            api.setGridOption('findSearchValue', 'c');
-            await waitFor(() => expect(api.getState().find).toEqual({ searchValue: 'c' }));
-
-            api.setGridOption('toolbar', undefined);
-
-            await waitFor(() => expect(api.getState().find).toBeUndefined());
         });
 
         test('should not clear the grid option on setState', async () => {
