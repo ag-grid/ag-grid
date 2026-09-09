@@ -53,6 +53,68 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList.getByText('SWIMMING', { exact: true })).toBeVisible();
     });
 
+    test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
+        await page.setViewportSize({ width: 570, height: 900 });
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill('[Sport] is any of ["Alpine Skiing", "Archery", "Athletics", "Badminton"]');
+        await filterInput.press('Escape');
+        await filterInput.press('Enter');
+        await page.getByRole('button', { name: 'Builder' }).click();
+
+        const row = page.locator('.ag-advanced-filter-builder-set-value-list');
+        const pill = row.locator('.ag-advanced-filter-builder-set-values-pill');
+        const firstAction = row.locator('.ag-advanced-filter-builder-item-buttons > :visible').first();
+        await expect(pill).toBeVisible();
+        await expect(pill).toHaveCSS('cursor', 'pointer');
+        await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(
+            '(4) ALPINE SKIING, ARCHERY, ATHLETICS, +1 more'
+        );
+
+        const pillBox = await pill.boundingBox();
+        const firstActionBox = await firstAction.boundingBox();
+        expect(pillBox).not.toBeNull();
+        expect(firstActionBox).not.toBeNull();
+        expect(pillBox!.width).toBeGreaterThan(152);
+        expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
+
+        const viewport = page.locator('.ag-advanced-filter-builder-virtual-list-viewport');
+        const widths = await viewport.evaluate(({ clientWidth, scrollWidth }) => ({ clientWidth, scrollWidth }));
+        expect(widths.scrollWidth).toBe(widths.clientWidth);
+    });
+
+    test.eachFramework('keeps an indented Set value list clear of its row actions', async ({ page }) => {
+        await page.setViewportSize({ width: 570, height: 900 });
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill(
+            '[Gold] > 0 AND ([Athlete] contains "A" AND ([Country] contains "A" AND [Sport] is any of ["Alpine Skiing", "Archery", "Athletics", "Badminton"]))'
+        );
+        await filterInput.press('Escape');
+        await filterInput.press('Enter');
+        await page.getByRole('button', { name: 'Builder' }).click();
+
+        const row = page.locator('.ag-advanced-filter-builder-set-value-list');
+        const pill = row.locator('.ag-advanced-filter-builder-set-values-pill');
+        const firstAction = row.locator('.ag-advanced-filter-builder-item-buttons > :visible').first();
+        await expect(pill).toBeVisible();
+
+        const pillBox = await pill.boundingBox();
+        const firstActionBox = await firstAction.boundingBox();
+        expect(pillBox).not.toBeNull();
+        expect(firstActionBox).not.toBeNull();
+        expect(pillBox!.width).toBe(152);
+        expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
+
+        const viewport = page.locator('.ag-advanced-filter-builder-virtual-list-viewport');
+        const widths = await viewport.evaluate(({ clientWidth, scrollWidth }) => ({ clientWidth, scrollWidth }));
+        expect(widths.scrollWidth).toBeGreaterThan(widths.clientWidth);
+    });
+
     test.eachFramework('offers a Tree List column as one flat list of whole paths', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);

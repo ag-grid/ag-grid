@@ -242,6 +242,28 @@
         }
     }
 
+    .ag-advanced-filter-builder-set-values-pill-wrapper {
+        flex: 1 1 152px;
+        width: 152px;
+        min-width: 152px;
+        max-width: 100%;
+    }
+
+    .ag-advanced-filter-builder-set-values-pill {
+        width: max-content;
+        min-width: 152px;
+        max-width: 100%;
+        cursor: pointer;
+
+        .ag-advanced-filter-builder-pill-display {
+            min-width: 0;
+        }
+    }
+
+    .ag-advanced-filter-builder-set-values-pill-empty {
+        width: 152px;
+    }
+
     .ag-advanced-filter-builder-item-buttons > * {
         margin: 0 calc(var(--ag-grid-size) * 0.5);
     }
@@ -279,6 +301,28 @@
             .ag-advanced-filter-builder-item-button {
                 opacity: 100%;
             }
+        }
+    }
+
+    .ag-advanced-filter-builder-set-value-list {
+        .ag-advanced-filter-builder-item {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ag-advanced-filter-builder-item-condition {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ag-advanced-filter-builder-item-wrapper {
+            // The pill wrapper's trailing margin and the actions' leading margin already provide 1.5 grid-size
+            // units. Together these make the exact 24px reserve where the value pill stops growing.
+            column-gap: max(0px, calc(24px - var(--ag-grid-size) * 1.5));
+        }
+
+        .ag-advanced-filter-builder-invalid.ag-invisible {
+            display: none;
         }
     }
 
