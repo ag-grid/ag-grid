@@ -102,9 +102,13 @@ describe('Scrollbar visibility', () => {
     });
 
     // AG-18346: `scrollbarWidth: 0` is a documented grid option by which a user asserts their
-    // platform's scrollbars take no space. Reserving the overlay scrollbar lane must be gated on the
-    // platform actually drawing invisible scrollbars, never on the configured width being zero, or
-    // this explicit override would silently lose 16px of content width.
+    // platform's scrollbars take no space. Reserving the overlay scrollbar lane is therefore gated on
+    // the platform actually drawing invisible scrollbars, not on the configured width being zero.
+    // Scope: `getScrollbarWidth()` memoises the option and the measured width into the same field, so
+    // the two are indistinguishable at the call site. This test pins the case where the platform
+    // disagrees with the option - real scrollbars, so `_isInvisibleScrollbar()` is false (as under
+    // happy-dom) - and the user's zero must survive. On a platform that really does draw invisible
+    // scrollbars the option resolves to 16px, matching `getHorizontalScrollbarHeight()`.
     test('honours scrollbarWidth: 0 on a platform with real scrollbars', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }],
