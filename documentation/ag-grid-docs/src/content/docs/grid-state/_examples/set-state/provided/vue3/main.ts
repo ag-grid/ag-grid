@@ -9,6 +9,7 @@ import type {
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
+    Toolbar,
 } from 'ag-grid-community';
 import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -45,6 +46,7 @@ const VueExample = defineComponent({
                     :defaultColGroupDef="defaultColGroupDef"
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :sideBar="true"
+                    :toolbar="toolbar"
                     :pagination="true"
                     :rowSelection="rowSelection"
                     :cellSelection="true"
@@ -97,6 +99,7 @@ const VueExample = defineComponent({
         const rowSelection = ref<RowSelectionOptions>({
             mode: 'multiRow',
         });
+        const toolbar = ref<Toolbar>({ items: ['agQuickFilterToolbarItem'] });
         const rowData = ref<any[] | undefined>(undefined);
         const gridVisible = ref(true);
         const savedState = ref<GridState>();
@@ -145,6 +148,7 @@ const VueExample = defineComponent({
             defaultColGroupDef,
             autoGroupColumnDef,
             rowSelection,
+            toolbar,
             rowData,
             gridVisible,
             onGridReady,
