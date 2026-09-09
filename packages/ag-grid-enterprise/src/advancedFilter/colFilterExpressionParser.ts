@@ -1,6 +1,6 @@
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
+import { _trimInputForFilter } from 'ag-grid-community';
 
-import { quoteSetValue } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { OperandsKind } from './filterExpressionOperators';
@@ -22,9 +22,10 @@ import {
     getNumberParser,
     getRangeOrderMessage,
     getSearchString,
+    getTextFilterParams,
     updateExpression,
 } from './filterExpressionUtils';
-import { SET_LIST_OPEN_CHAR, SET_TREE_SEPARATOR, SetOperandsParser } from './set/setOperandsParser';
+import { SET_LIST_OPEN_CHAR, SetOperandsParser, joinSetPath, splitSetPath } from './set/setOperandsParser';
 
 interface Parser {
     parse(char: string, position: number): boolean | undefined;
@@ -372,8 +373,11 @@ class OperandParser implements Parser {
     }
 
     private parseOperand(fromComplete: boolean, position: number): void {
-        const { advFilterExpSvc } = this.params;
+        const { advFilterExpSvc, advFilterSetSvc } = this.params;
         this.endPosition = position;
+        if (getTextFilterParams(this.column, this.baseCellDataType, advFilterSetSvc)?.trimInput) {
+            this.operand = _trimInputForFilter(this.operand) ?? this.operand;
+        }
         this.modelValue = this.operand;
         if (fromComplete && this.quotes) {
             // missing end quote
@@ -776,13 +780,14 @@ export class ColFilterExpressionParser {
         const setOperandsParser = this.setOperandsParser;
         // The type names the open popup's list; the parser is this parse's. A stale pairing writes nothing.
         if (setOperandsParser && this.params.advFilterSetSvc.isSetValueType(type)) {
-            return this.updateSetExpression(setOperandsParser, position, updateEntry, type);
+            return this.updateSetExpression(setOperandsParser, position, updateEntry);
         }
         if (!this.isOperatorPosition(position)) {
             return null;
         }
 
-        const baseCellDataType = this.getBaseCellDataTypeFromOperatorAutocompleteType(type);
+        // The parse's own, not the open popup's: the column it is paired with comes from here too.
+        const baseCellDataType = columnParser!.baseCellDataType;
         const operands = this.getOperandsKindFor(baseCellDataType, updateEntry.key);
         const isList = operands === 'list';
         const hasOperand = operands !== 'none';
@@ -801,23 +806,37 @@ export class ColFilterExpressionParser {
             }
             startPosition = findStartPosition(expression, columnParser!.endPosition! + 1, endPosition);
         }
-        let openBracket: string | undefined;
+        let bracket: string | undefined;
         if (isList) {
-            openBracket = SET_LIST_OPEN_CHAR;
+            bracket = SET_LIST_OPEN_CHAR;
         } else if (operands === 'range') {
-            openBracket = '(';
+            bracket = '(';
         }
+        // An operand already written after the option is left as it stands: opening a second list or
+        // quote there would leave the text holding both. An option taking a bracket still opens its own
+        // over a different one, since the two spell different operands; a bare one never opens anything.
+        const openChar = operandOpener(expression, endPosition + (empty ? 0 : 1));
+        const alreadyOpen = hasOperand && (bracket ? openChar === bracket : !!openChar);
+        const opening = hasOperand && !alreadyOpen;
         const update = updateExpression(
             expression,
             startPosition,
             endPosition,
             updateEntry.displayValue ?? updateEntry.key,
             hasOperand,
-            hasOperand && (isList || this.doesOperandNeedQuotes(baseCellDataType)),
+            opening && !isList && this.doesOperandNeedQuotes(baseCellDataType),
             empty,
-            openBracket
+            opening ? bracket : undefined
         );
-        return { ...update, hideAutocomplete: !hasOperand };
+        const updatedValue = update.updatedValue;
+        return {
+            ...update,
+            // A caret left at the opening character is outside the operand the option takes.
+            updatedPosition: alreadyOpen
+                ? findStartPosition(updatedValue, update.updatedPosition, updatedValue.length) + 1
+                : update.updatedPosition,
+            hideAutocomplete: !hasOperand,
+        };
     }
 
     public getModel(forBuilder?: boolean): AdvancedFilterModel {
@@ -926,15 +945,16 @@ export class ColFilterExpressionParser {
                   );
         return this.params.advFilterExpSvc.generateAutocompleteListParams(
             this.params.advFilterExpSvc.getOperatorAutocompleteEntries(column, baseCellDataType),
-            `operator-${baseCellDataType}`,
+            // The column too: two of one data type can offer different options, and an unchanged token
+            // re-searches the open list rather than rebuilding it from the entries.
+            `operator-${baseCellDataType}-${column?.getColId()}`,
             searchString
         );
     }
 
     /**
-     * The Set Filter values still worth offering at the caret. The list is keyed by the path being written
-     * and by how many values are already in it, so drilling into a group and choosing a value both rebuild
-     * it, while typing within one value only narrows what is already shown.
+     * The Set Filter values still worth offering at the caret. The list is keyed by the values already in
+     * it, so choosing one rebuilds it while typing within one value only narrows what is already shown.
      */
     private getSetValueAutocompleteListParams(position: number): AutocompleteListParams {
         const column = this.columnParser?.column;
@@ -946,52 +966,56 @@ export class ColFilterExpressionParser {
         if (!at && !setOperandsParser.isInList(position)) {
             return { enabled: false };
         }
-        const segments = at?.value.segments ?? [];
-        const path = segments.slice(0, at?.segmentIndex ?? 0).map(({ text }) => text);
-        const segment = at ? segments[at.segmentIndex] : undefined;
-        const searchString = segment ? getSearchString(segment.text, position, segment.endPosition + 1) : '';
         const usedKeys = setOperandsParser.getUsedKeys(at?.value);
         const { advFilterSetSvc, advFilterExpSvc } = this.params;
-        const list = advFilterSetSvc.getAutocompleteList(column, path, usedKeys, !!searchString);
+        const list = advFilterSetSvc.getAutocompleteList(column, usedKeys);
+        let searchString = '';
+        if (at) {
+            const segments = at.value.segments;
+            const segmentIndex = at.segmentIndex;
+            const segment = segments[segmentIndex];
+            const typed = segment ? getSearchString(segment.text, position, segment.endPosition + 1) : '';
+            // A path is offered and written whole, so a path being written by hand is searched for whole
+            // too. Split as well: a quoted segment keeps the separators the parser left inside it.
+            const path: string[] = [];
+            for (let i = 0; i <= segmentIndex; ++i) {
+                const text = i === segmentIndex ? typed : segments[i].text;
+                if (list.isTree) {
+                    path.push(...splitSetPath(text));
+                } else {
+                    path.push(text);
+                }
+            }
+            searchString = joinSetPath(path);
+        }
         const params = advFilterExpSvc.generateAutocompleteListParams(list.entries, list.type, searchString);
         params.rowComponentCreator = list.rowComponentCreator;
+        // The values are in the column's own Set Filter order, which is what the reader is scanning.
+        params.suggestFirstMatch = true;
         return params;
     }
 
-    /** Writes the chosen value: a leaf ready for the next one to follow it, a group drilled into. */
+    /** Writes the chosen value over the whole value at the caret, ready for the next one to follow it. */
     private updateSetExpression(
         setOperandsParser: SetOperandsParser,
         position: number,
-        updateEntry: AutocompleteEntry,
-        type: string
+        updateEntry: AutocompleteEntry
     ): AutocompleteUpdate {
         const expression = this.params.expression;
         const at = setOperandsParser.getValueAt(position);
-        const segment = at ? at.value.segments[at.segmentIndex] : undefined;
-        const isGroup = updateEntry.childCount != null;
-        const startPosition = segment?.startPosition ?? position;
-        // Drilling in replaces the rest of the path too: what followed the group no longer names anything.
-        const endPosition = (isGroup ? at?.value.endPosition : segment?.endPosition) ?? position - 1;
+        // The whole value, not the segment at the caret: a path half written by hand is replaced entire.
+        const startPosition = at?.value.startPosition ?? position;
+        const endPosition = at?.value.endPosition ?? position - 1;
+        // Written by the service, so a chosen value is spelled exactly as a stored model of it would be.
+        const written = this.params.advFilterSetSvc.writeEntry(this.columnParser!.column!, updateEntry);
         // A value already followed by a separator does not need another.
-        let suffix = ', ';
-        if (isGroup) {
-            suffix = ` ${SET_TREE_SEPARATOR} `;
-        } else if (at?.value.terminated) {
-            suffix = '';
-        }
-        // A match found by searching the whole hierarchy stands for a path, so it is written as one.
-        const written = this.params.advFilterSetSvc.getWrittenValue(type, updateEntry);
-        const updatedValuePart = (written ?? quoteSetValue(updateEntry.key)) + suffix;
+        const updatedValuePart = written + (at?.value.terminated ? '' : ', ');
         const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(endPosition + 1);
         return { updatedValue, updatedPosition: startPosition + updatedValuePart.length };
     }
 
-    private getBaseCellDataTypeFromOperatorAutocompleteType(type?: string): BaseCellDataType | undefined {
-        return type?.replace('operator-', '') as BaseCellDataType;
-    }
-
-    private getOperandsKindFor(baseCellDataType: BaseCellDataType | undefined, operator: string): OperandsKind {
-        if (!baseCellDataType || !operator) {
+    private getOperandsKindFor(baseCellDataType: BaseCellDataType, operator: string): OperandsKind {
+        if (!operator) {
             return 'one';
         }
         const column = this.columnParser?.column;
@@ -1010,4 +1034,10 @@ export class ColFilterExpressionParser {
 
 function addToListAndGetIndex<T>(list: T[], value: T): number {
     return list.push(value) - 1;
+}
+
+/** The character opening an operand region at `position` — a list, a range or a quoted value — if any does. */
+function operandOpener(expression: string, position: number): string | undefined {
+    const char = expression[findStartPosition(expression, position, expression.length)];
+    return char === SET_LIST_OPEN_CHAR || char === '(' || char === '"' || char === `'` ? char : undefined;
 }

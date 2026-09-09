@@ -21,7 +21,7 @@ export function getMultiFilterDefs(params: IMultiFilterParams | undefined): IMul
 
 /** `true` means "use the default", which for a Multi Filter child is always the text filter. `undefined` is
  *  deliberately not folded in: the handler path gives it no filter at all rather than the default. */
-function getChildFilter(def: IMultiFilterDef): IMultiFilterDef['filter'] {
+export function getChildFilter(def: IMultiFilterDef): IMultiFilterDef['filter'] {
     const filter = def.filter;
     return filter === true ? 'agTextColumnFilter' : filter;
 }

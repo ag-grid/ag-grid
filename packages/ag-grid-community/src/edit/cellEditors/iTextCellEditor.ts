@@ -5,7 +5,8 @@ export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any
     extends ICellEditorParams<TData, TValue, TContext>, IAutoCompleteComponentParams {
     /** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
      * Used when the cell value needs formatting prior to editing, such as when using reference data and you
-     * want to display text rather than code. */
+     * want to display text rather than code. Nothing reverses the mapping on commit, so this needs a
+     * `colDef.valueParser` that turns the formatted text back into the stored value. */
     useFormatter: boolean;
 
     /**

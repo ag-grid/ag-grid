@@ -109,6 +109,7 @@ export interface AgMenuItemActivatedEvent<
 interface AgMenuItemComponentParams<TMenuActionParams extends TCommon, TCommon> {
     menuItemDef: AgMenuItemDef<TMenuActionParams, TCommon>;
     isAnotherSubMenuOpen: () => boolean;
+    shouldDisplayTooltipOnFocus?: () => boolean;
     level: number;
     childComponent?: IComponent<any>;
     contextParams: WithoutCommon<TCommon, TMenuActionParams>;
@@ -183,6 +184,7 @@ export class AgMenuItemComponent<
     private menuItemComp: IComponent<AgMenuItemParams<TMenuActionParams, TCommon>> & IMenuItem;
     private isActive = false;
     private isMouseActivation = false;
+    private shouldDisplayTooltipOnFocus?: () => boolean;
     private hideSubMenu: (() => void) | null;
     private subMenuIsOpen = false;
     private subMenuIsOpening = false;
@@ -206,6 +208,7 @@ export class AgMenuItemComponent<
         this.params = params.menuItemDef;
         this.level = level;
         this.isAnotherSubMenuOpen = isAnotherSubMenuOpen;
+        this.shouldDisplayTooltipOnFocus = params.shouldDisplayTooltipOnFocus;
         this.childComponent = childComponent;
         this.contextParams = contextParams;
         this.cssClassPrefix = this.params.menuItemParams?.cssClassPrefix ?? 'ag-menu-option';
@@ -424,6 +427,8 @@ export class AgMenuItemComponent<
         if (!this.suppressRootStyles) {
             this.eGui.classList.add(`${this.cssClassPrefix}-active`);
         }
+        // The parent must know the active item before focusin runs its focus restoration.
+        this.onItemActivated();
         this.menuItemComp.setActive?.(true);
         if (!this.suppressFocus) {
             this.callbacks.preserveRangesWhile(this.beans, () => this.eGui.focus({ preventScroll: !fromKeyNav }));
@@ -436,8 +441,6 @@ export class AgMenuItemComponent<
                 }
             }, SUB_MENU_OPEN_DELAY);
         }
-
-        this.onItemActivated();
     }
 
     public deactivate() {
@@ -672,7 +675,8 @@ export class AgMenuItemComponent<
                 getTooltipValue: () => this.tooltip,
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,
-                shouldDisplayTooltipOnFocus: () => !this.isMouseActivation,
+                shouldDisplayTooltipOnFocus: () =>
+                    !this.isMouseActivation && this.shouldDisplayTooltipOnFocus?.() !== false,
             } as TooltipCtrl<string, any>
         );
 

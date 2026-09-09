@@ -115,6 +115,13 @@ const {
     DISABLE_EXAMPLE_RUNNER,
 
     /*
+     * Disable embedding each example's source in the docs page HTML for crawlers
+     *
+     * The example runner keeps fetching the source at runtime either way
+     */
+    DISABLE_EXAMPLE_SOURCE_EMBED,
+
+    /*
      * Disable markdown doc generation
      */
     DISABLE_MARKDOWN_DOCS,
@@ -177,6 +184,7 @@ console.log(
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
+            DISABLE_EXAMPLE_SOURCE_EMBED,
             DISABLE_MARKDOWN_DOCS,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,

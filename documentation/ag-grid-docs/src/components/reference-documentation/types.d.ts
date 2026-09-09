@@ -63,7 +63,7 @@ export interface ObjectCode {
     framework: Framework;
     id: string;
     breadcrumbs?: Record<string, string>;
-    properties: Properties;
+    properties: PropertyViewModelMap;
 }
 interface CodeEntry {
     description?: string;
@@ -182,14 +182,43 @@ export interface Config {
 
     /** Only show this module if it is one of a number of options for the given property. */
     restrictModule?: string;
+
+    /** Where <Property> fetches expandable type detail from, when it is not inlined. */
+    detailsUrl?: string;
 }
+
+/**
+ * Everything a property row renders, resolved at build time so the island is not handed the
+ * generated TypeScript metadata it was derived from (SE-115).
+ */
+export interface PropertyViewModel {
+    displayNameSplit: string;
+    description?: string;
+    isObject: boolean;
+    typeUrl?: string;
+    propertyType: string;
+    interfaceName?: string;
+    defaultValue?: string;
+    isInitial: boolean;
+    modules: { name: string; isEnterprise?: boolean }[];
+    more?: { name: string; url: string };
+    options?: string[];
+    /** Key into the reference-details file named by `Config.detailsUrl`. */
+    detailsKey?: string;
+    /** Sent with the page instead, where the detail cannot be keyed by source alone. */
+    detailsCode?: string;
+    /** Only populated for `Config.showSnippets`, which ObjectCodeSample needs the raw entry for. */
+    definition?: Properties;
+}
+
+export type PropertyViewModelMap = Record<string, PropertyViewModel>;
 
 export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
 export type SectionProps = {
     title: string;
     framework: Framework;
     names?: string[];
-    properties: Properties;
+    properties: PropertyViewModelMap;
     config: Config;
     breadcrumbs?: Record<string, string>;
     meta?: MetaTag;
@@ -211,7 +240,7 @@ export type FunctionCode = {
 
 export interface DocProperties {
     type: 'properties';
-    properties: Properties;
+    properties: Record<string, PropertyViewModelMap>;
     meta: MetaTag;
 }
 export interface DocCode {
@@ -224,7 +253,7 @@ export type InterfaceDocumentationModel = DocProperties | DocCode;
 export interface SingleApiModel {
     type: 'single';
     title: string;
-    properties: Properties;
+    properties: PropertyViewModelMap;
     config: Config;
     meta: MetaTag;
 }
@@ -234,7 +263,7 @@ export interface MultipleApiModel {
     entries: [
         string,
         {
-            properties: ChildDocEntry | DocEntry;
+            properties: PropertyViewModelMap;
             meta: MetaTag;
         },
     ][];

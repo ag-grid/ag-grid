@@ -2999,7 +2999,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // /charts sub-directory one, hijacks them to the grid's own documentation-archive. Keep it
     // scoped to the grid root only. No bare `^/archive$` rule is needed: the parent trailing-slash
     // rewrite ([L]) always turns `/archive` into `/archive/` first, which this rule then matches.
-    { fromPattern: '^/archive/$', to: '/documentation-archive' },
+    { fromPattern: '^/archive/$', to: '/documentation-archive/' },
 
     { from: '/javascript-data-grid/component-types/', to: '/javascript-data-grid/components/' },
     { from: '/angular-data-grid/component-types/', to: '/angular-data-grid/components/' },

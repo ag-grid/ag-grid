@@ -1,4 +1,4 @@
-import { FAST_TEST_TIMINGS, _debounce, _setDisabled } from 'ag-stack';
+import { _debounce, _setDisabled } from 'ag-stack';
 
 import type {
     FindChangedEvent,
@@ -9,9 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { AgInputTextField, Component, _createElement } from 'ag-grid-community';
 
-import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
-
-const INPUT_DEBOUNCE_MS = FAST_TEST_TIMINGS ? 0 : 300;
+import { INPUT_DEBOUNCE_MS, createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
 let findInputIdCounter = 0;
 
@@ -123,9 +121,8 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             findChanged: (event: FindChangedEvent) => this.onFindChanged(event),
         });
 
-        // An external write (`setGridOption`, a state restore) highlights the matches, so the input must
-        // follow. A write from this input is a no-op here: the field already holds that value, so
-        // `setValue` bails out.
+        // An external write highlights the matches, so the input must follow and any edit still waiting
+        // in the debounce is stale. A write from this input is a no-op: `setValue` bails on the same value.
         this.addManagedPropertyListener('findSearchValue', ({ currentValue }) => {
             clearTimeout(findSearchValueTimeout);
             this.eInputField.setValue(currentValue ?? '', true);

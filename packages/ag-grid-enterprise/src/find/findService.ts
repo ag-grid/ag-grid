@@ -94,6 +94,8 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     private centerNumMatches: number = 0;
     private readonly bottomMatches: Matches = new Map();
     private bottomNodes: IRowNode[] = [];
+    /** set while restoring saved state, so the active match is highlighted where it is */
+    private restoring = false;
 
     /** switches based on grid options */
     private caseFormat: (value?: string | null) => string | undefined = defaultCaseFormat;
@@ -299,12 +301,10 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     // updates all the matches
     public getState(): FindState | undefined {
         if (!_isClientSideRowModel(this.gos)) {
-            // Find only searches the Client-Side Row Model, so there is nothing to restore elsewhere.
             return undefined;
         }
-        // This service holds a trimmed, case-converted form, so the option is the round-trippable value.
+        // the option is the round-trippable value, as this service holds a trimmed, case-converted form
         const searchValue = this.gos.get('findSearchValue') || undefined;
-        // The active match is meaningless without a search value, and is wiped whenever the value changes.
         return searchValue ? { searchValue, activeMatch: this.activeMatch?.numOverall } : undefined;
     }
 
@@ -314,13 +314,10 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             return;
         }
         if (searchValue !== undefined) {
-            // This service's own property listener is the apply path, and it recalculates the matches
-            // synchronously, so the active match below can be resolved straight after.
+            // recalculates the matches synchronously, so the active match can be resolved straight after
             this.gos.updateGridOptions({ options: { findSearchValue: searchValue } });
         }
         if (activeMatch != null) {
-            // The match is highlighted where it is: the saved expansion, scroll and page win over
-            // revealing it, and the state service restores those sections itself.
             this.restoring = true;
             try {
                 this.goTo(activeMatch);
@@ -328,8 +325,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 this.restoring = false;
             }
         } else if (this.activeMatch) {
-            // A state that omits the active match must clear the current one. An unchanged search value
-            // is skipped by the options service, so the property listener that would wipe it never runs.
+            // an unchanged search value dispatches no property change, so clear the active match here
             this.setActive(undefined);
         }
     }
@@ -852,14 +848,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             findSearchValue,
         });
     }
-
-    /**
-     * Set while restoring a saved state. The state's own `rowGroupExpansion`, `scroll` and
-     * `pagination` sections are authoritative, so activating the saved match must not expand its
-     * ancestors, nor page or scroll to it. The whole restore runs synchronously through `goTo`, so
-     * this is only ever read by that call.
-     */
-    private restoring = false;
 
     private setActive(activeMatch?: FindMatch): void {
         if (activeMatch && activeMatch.node.rowIndex == null && !this.restoring) {

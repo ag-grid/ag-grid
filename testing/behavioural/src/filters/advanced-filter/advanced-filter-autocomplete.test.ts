@@ -1,5 +1,12 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -474,6 +481,40 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
                 `
             );
         });
+
+        test('retargeting the operator leaves the operand already written alone', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            const partial = '[Athlete] eq "Bolt"';
+            typeInto(input, partial, partial.indexOf(' "Bolt"'));
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+
+            expect(input.value).toBe('[Athlete] equals "Bolt"');
+            applyFilter(input);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual([]);
+        });
+
+        test('a range operator does not reopen a bracket the expression already has', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            const partial = '[Age] betw (20, 26)';
+            typeInto(input, partial, partial.indexOf(' (20'));
+            await asyncSetTimeout(0);
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+
+            expect(input.value).toBe('[Age] is between (20, 26)');
+            applyFilter(input);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual(['Michael Phelps', 'Usain Bolt']);
+        });
     });
 
     describe('Full autocomplete flow → filter applied', () => {
@@ -853,6 +894,39 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
             selectAutocomplete(input);
             await asyncSetTimeout(0);
             expect(input.value).toContain('[Athlete]');
+        });
+    });
+
+    describe('Page navigation', () => {
+        // A page is however many rows fit, so the list needs a height for one to mean anything.
+        beforeAll(() => installFilterLayoutMock());
+        afterAll(() => uninstallFilterLayoutMock());
+
+        test('the page keys move through the list rather than scrolling the grid behind it', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await asyncSetTimeout(0);
+            const input = getInput(getGridElement(api)! as HTMLElement);
+
+            typeInto(input, '[');
+            await asyncSetTimeout(0);
+            expectActiveOption(0);
+
+            pressKey(input, 'ArrowDown');
+            await asyncSetTimeout(0);
+            expectActiveOption(1);
+
+            // A page is taller than these five columns, so it lands on the last of them.
+            pressKey(input, 'PageDown');
+            await asyncSetTimeout(0);
+            expectActiveOption(4);
+
+            pressKey(input, 'PageUp');
+            await asyncSetTimeout(0);
+            expectActiveOption(0);
+
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            expect(input.value).toContain('[Age]');
         });
     });
 

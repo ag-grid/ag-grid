@@ -27,17 +27,16 @@ export interface FilterState {
     selectableFilters?: SelectableFilterState;
 }
 
-/**
- * Find state. Works for Client-Side Row Model only, and only when the Quick Access Toolbar is
- * configured with the `agFindToolbarItem` item; otherwise the `findSearchValue` grid option is the
- * only source. Restoring this state writes the search value back into the `findSearchValue` grid
- * option, so it takes precedence over a value set in the grid options.
- */
 export interface FindState {
     /** Current search value */
     searchValue?: string;
     /** The number of the active match within all the matches in the grid (starting from `1`) */
     activeMatch?: number;
+}
+
+export interface QuickFilterState {
+    /** Search text, mirroring the `quickFilterText` grid option. Absent when the text is empty. */
+    text?: string;
 }
 
 export interface CellSelectionCellState {
@@ -253,10 +252,16 @@ export interface GridState {
     /** Column Filters and Advanced Filter */
     filter?: FilterState;
     /**
-     * Find search value and active match. Works for Client-Side Row Model only, and only
-     * when the Quick Access Toolbar is configured with the `agFindToolbarItem` item
+     * Find search value and active match. Works for Client-Side Row Model only, and only when the
+     * Quick Access Toolbar is configured with `agFindToolbarItem`; otherwise the `findSearchValue`
+     * grid option is the only source
      */
     find?: FindState;
+    /**
+     * Quick Filter search text. Only captured and restored when the Quick Access Toolbar is configured with
+     * `agQuickFilterToolbarItem`; otherwise the `quickFilterText` grid option is the only source
+     */
+    quickFilter?: QuickFilterState;
     /** Currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;
     /** Current page */

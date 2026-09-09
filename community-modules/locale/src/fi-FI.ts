@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_FI = {
     advancedFilterValidationMissingCondition: 'Ehto puuttuu',
     advancedFilterValidationJoinOperatorMismatch: 'Yhdisteoperaattoreiden täytyy olla samat ehdon sisällä',
     advancedFilterValidationInvalidJoinOperator: 'Yhdisteoperaattori ei löydy',
+    advancedFilterValidationMissingListStartBracket: 'Aloittava hakasulje puuttuu',
+    advancedFilterValidationMissingListEndBracket: 'Päättävä hakasulje puuttuu',
     advancedFilterValidationMissingEndBracket: 'Päättävä sulje puuttuu',
     advancedFilterValidationExtraEndBracket: 'Liian monta päättävää suljetta',
     advancedFilterValidationMessage: 'Lausekkeessa on virhe. ${variable} - ${variable}.',

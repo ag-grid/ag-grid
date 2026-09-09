@@ -53,7 +53,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: true,
     toolbar: {
-        items: ['agFindToolbarItem'],
+        items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'],
     },
     pagination: true,
     rowSelection: { mode: 'multiRow' },

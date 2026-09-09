@@ -11,6 +11,7 @@ import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-w
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
 import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
+import ReferenceIconSprite from '@components/reference-documentation/components/ReferenceIconSprite.astro';
 
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
@@ -118,6 +119,14 @@ const headings = await getHeadings({
                 version={version}
                 markdownHref={markdownUrl}
             />
+
+            {
+                /*
+              Unconditional: a reference table can arrive through a markdoc partial, so the page
+              body alone does not say whether one is coming.
+            */
+            }
+            <ReferenceIconSprite />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
             <div class={styles.pageSections}>

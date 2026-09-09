@@ -185,6 +185,8 @@ export const AG_GRID_LOCALE_ES = {
     advancedFilterValidationJoinOperatorMismatch:
         'Los operadores de unión dentro de una condición deben ser los mismos',
     advancedFilterValidationInvalidJoinOperator: 'Operador de unión no encontrado',
+    advancedFilterValidationMissingListStartBracket: 'Falta corchete de apertura',
+    advancedFilterValidationMissingListEndBracket: 'Falta corchete de cierre',
     advancedFilterValidationMissingEndBracket: 'Falta paréntesis de cierre',
     advancedFilterValidationExtraEndBracket: 'Demasiados paréntesis de cierre',
     advancedFilterValidationMessage: 'La expresión contiene un error. ${variable} - ${variable}.',

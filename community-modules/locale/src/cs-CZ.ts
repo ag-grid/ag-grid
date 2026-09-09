@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterValidationMissingCondition: 'Chybí podmínka',
     advancedFilterValidationJoinOperatorMismatch: 'Operátory spojení v rámci podmínky musí být stejné',
     advancedFilterValidationInvalidJoinOperator: 'Operátor spojení nenalezen',
+    advancedFilterValidationMissingListStartBracket: 'Chybí otevírací hranatá závorka',
+    advancedFilterValidationMissingListEndBracket: 'Chybí uzavírací hranatá závorka',
     advancedFilterValidationMissingEndBracket: 'Chybí koncová závorka',
     advancedFilterValidationExtraEndBracket: 'Příliš mnoho koncových závorek',
     advancedFilterValidationMessage: 'Výraz obsahuje chybu. ${variable} - ${variable}.',

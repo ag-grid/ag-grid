@@ -4,7 +4,13 @@ import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnAutoSizeModule, GridStateModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnAutoSizeModule,
+    GridStateModule,
+    NumberFilterModule,
+    QuickFilterModule,
+} from 'ag-grid-community';
 
 import type { HideClassRecorder } from './column-delay-render-utils';
 import { isHidden, recordHideClassMutations } from './column-delay-render-utils';
@@ -184,6 +190,107 @@ describe('Column delay render', () => {
             await asyncSetTimeout(0);
 
             expect(recorder.events).toEqual(['add', 'remove']);
+            expect(isHidden()).toBe(false);
+        });
+    });
+
+    describe('zero displayed rows (AG-18472)', () => {
+        // Own manager: the filter modules must not join the file-level module set, which the
+        // hide/reveal ordering of the tests above depends on.
+        const filterGridsManager = new TestGridsManager({
+            modules: [
+                ClientSideRowModelModule,
+                ColumnAutoSizeModule,
+                GridStateModule,
+                NumberFilterModule,
+                QuickFilterModule,
+            ],
+        });
+
+        afterEach(() => {
+            filterGridsManager.reset();
+        });
+
+        const filterAllRowsOut: GridOptions = {
+            columnDefs: [{ colId: 'value', field: 'value', filter: 'agNumberColumnFilter' }],
+            rowData: [{ value: 1 }, { value: 2 }, { value: 3 }],
+            initialState: {
+                filter: { filterModel: { value: { filterType: 'number', type: 'equals', filter: 99 } } },
+            },
+        };
+
+        test('fitCellContents reveals when an initial filter matches no rows', async () => {
+            const api = filterGridsManager.createGrid('myGrid', {
+                ...filterAllRowsOut,
+                autoSizeStrategy: { type: 'fitCellContents' },
+            });
+
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late reveal would arrive
+            await asyncSetTimeout(50);
+
+            expect(recorder.events).toEqual(['add', 'remove']);
+            expect(isHidden()).toBe(false);
+            expect(document.querySelectorAll('.ag-header-cell').length).toBeGreaterThan(0);
+        });
+
+        test('fitGridWidth reveals when an initial filter matches no rows', async () => {
+            const api = filterGridsManager.createGrid('myGrid', {
+                ...filterAllRowsOut,
+                autoSizeStrategy: { type: 'fitGridWidth' },
+            });
+
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late reveal would arrive
+            await asyncSetTimeout(50);
+
+            expect(recorder.events).toEqual(['add', 'remove']);
+            expect(isHidden()).toBe(false);
+            expect(document.querySelectorAll('.ag-header-cell').length).toBeGreaterThan(0);
+        });
+
+        test('fitProvidedWidth reveals when an initial filter matches no rows', async () => {
+            const api = filterGridsManager.createGrid('myGrid', {
+                ...filterAllRowsOut,
+                autoSizeStrategy: { type: 'fitProvidedWidth', width: 400 },
+            });
+
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late reveal would arrive
+            await asyncSetTimeout(50);
+
+            expect(recorder.events).toEqual(['add', 'remove']);
+            expect(isHidden()).toBe(false);
+            expect(document.querySelectorAll('.ag-header-cell').length).toBeGreaterThan(0);
+        });
+
+        test('fitCellContents reveals when an initial quick filter matches no rows', async () => {
+            const api = filterGridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'value', field: 'value' }],
+                rowData: [{ value: 1 }, { value: 2 }, { value: 3 }],
+                quickFilterText: 'no-such-value',
+                autoSizeStrategy: { type: 'fitCellContents' },
+            });
+
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
+            // eslint-disable-next-line no-restricted-syntax -- window in which a late reveal would arrive
+            await asyncSetTimeout(50);
+
+            expect(recorder.events).toEqual(['add', 'remove']);
+            expect(isHidden()).toBe(false);
+            expect(document.querySelectorAll('.ag-header-cell').length).toBeGreaterThan(0);
+        });
+
+        test('fitCellContents stays revealed and renders rows once the filter is cleared', async () => {
+            const api = filterGridsManager.createGrid('myGrid', {
+                ...filterAllRowsOut,
+                autoSizeStrategy: { type: 'fitCellContents' },
+            });
+
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
+            api.setFilterModel(null);
+
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
             expect(isHidden()).toBe(false);
         });
     });

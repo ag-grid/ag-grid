@@ -58,6 +58,12 @@
                 "name": "Find"
             }
         },
+        "quickFilter": {
+            "more": {
+                "url": "./filter-quick/",
+                "name": "Quick Filter"
+            }
+        },
         "focusedCell": {
             "more": {
                 "url": "./keyboard-navigation/",

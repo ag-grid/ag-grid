@@ -12,11 +12,15 @@ import type {
     JoinAdvancedFilterModel,
     NamedBean,
     SetAdvancedFilterModel,
+    TextMatcherParams,
     ValueService,
 } from 'ag-grid-community';
 import {
     BeanStub,
+    _addGridCommonParams,
+    _bindFilterCallback,
     _classifyFilterOptions,
+    _filterCallbackParams,
     _getDefaultSimpleFilter,
     _isGridSuppliedFilterParam,
     _toFiniteNumber,
@@ -44,11 +48,12 @@ import {
     getBigIntParser,
     getNumberFormatter,
     getNumberParser,
+    getTextFilterParams,
     hasCustomNumberOperands,
 } from './filterExpressionUtils';
 import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
 import { addSetOperators, withSetOperators } from './set/setFilterExpressionOperators';
-import { SET_LIST_CLOSE_CHAR, SET_LIST_OPEN_CHAR, joinSetPath } from './set/setOperandsParser';
+import { SET_LIST_CLOSE_CHAR, SET_LIST_OPEN_CHAR, writeSetPath } from './set/setOperandsParser';
 
 /** What an unquoted operand cannot carry: a space or `)` ends it, a quote opens one, a `,` ends it in a pair. */
 function needsQuotes(operand: string, inPair?: boolean): boolean {
@@ -76,9 +81,6 @@ export function quoteSetValue(value: string): string {
     return quote ? `${quote}${value}${quote}` : `"${value.replaceAll('"', '""')}"`;
 }
 
-/** The same path as an expression writes it: every segment quoted. */
-export const quoteSetPath = (path: readonly string[]): string => joinSetPath(path.map(quoteSetValue));
-
 /** The `filterParams` an Advanced Filter evaluator honours; the rest are column-filter UI concerns. */
 const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
     'caseSensitive',
@@ -89,6 +91,9 @@ const COPIED_FILTER_PARAMS: (keyof FilterExpressionEvaluatorParams<any>)[] = [
     'includeBlanksInRange',
     'inRangeInclusive',
 ];
+
+/** The same path as an expression writes it: every segment quoted. */
+export const quoteSetPath = (path: readonly string[]): string => writeSetPath(path.map(quoteSetValue));
 
 const DATE_FILTER = 'agDateColumnFilter';
 
@@ -330,8 +335,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     /**
-     * The value list a set option writes: `["a", "b" › "c"]`, a value being a path where the column's Set
-     * Filter is a tree list. A key the current values no longer hold is written as it is stored, so a
+     * The value list a set option writes: `["a", "b > c"]`, a value being a whole path where the column's
+     * Set Filter is a tree list. A key resolving to no current value is written as it is stored, so a
      * model the data cannot explain still round-trips.
      */
     private getSetOperandDisplayValue(model: SetAdvancedFilterModel): string {
@@ -346,14 +351,15 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const written = new Set<string>();
         for (let i = 0, len = values.length; i < len; ++i) {
             const key = values[i];
-            let path = column && this.advFilterSetSvc.getPath(column, key);
-            if (!path) {
-                // Recorded so a caller can tell text written from loaded values from text that fell back.
-                this.wroteUnresolvedSetValue = true;
-                // A blank's own label, since the empty string is a value of its own and would not read back.
-                path = [key ?? (column ? this.advFilterSetSvc.getBlankLabel(column) : undefined) ?? ''];
+            const path = column ? this.advFilterSetSvc.getPath(column, key) : undefined;
+            if (column && path) {
+                written.add(this.advFilterSetSvc.writePath(column, path));
+                continue;
             }
-            written.add(quoteSetPath(path));
+            // Recorded so a caller can tell text written from loaded values from text that fell back.
+            this.wroteUnresolvedSetValue = true;
+            // A blank's own label, since the empty string is a value of its own and would not read back.
+            written.add(quoteSetValue(key ?? (column ? this.advFilterSetSvc.getBlankLabel(column) : undefined) ?? ''));
         }
         return ` ${SET_LIST_OPEN_CHAR}${Array.from(written).join(', ')}${SET_LIST_CLOSE_CHAR}`;
     }
@@ -526,7 +532,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         dataTypeOperators: DataTypeFilterExpressionOperators<any>,
         column: AgColumn
     ): ColumnOperators {
-        const isSetColumn = this.advFilterSetSvc.isSetFilterColumn(column);
+        const isSetColumn = this.advFilterSetSvc.offersSetOperators(column);
         let operators = isSetColumn
             ? addSetOperators(dataTypeOperators, (key) => this.translate(key))
             : dataTypeOperators;
@@ -540,9 +546,16 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const filterOptions = getColumnFilterOptions(column);
         if (filterOptions) {
             // Reported here too: a column filtered only through the Advanced Filter never builds an `OptionsFactory`.
-            const { offered, customOptions } = _classifyFilterOptions(filterOptions, (keys) => this.warn(72, { keys }));
+            const { offered, customOptions } = _classifyFilterOptions(
+                filterOptions,
+                (keys) => this.warn(72, { keys }),
+                null // the Advanced Filter is the reader the excluded keys exist for
+            );
             if (customOptions.size) {
-                operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc());
+                const gos = this.gos;
+                operators = createCustomOptionOperators(operators, customOptions, this.getLocaleTextFunc(), () =>
+                    _filterCallbackParams(gos, column, 'advancedFilter')
+                );
             }
             const operatorsByKey = operators.operators;
             const offeredOperators: string[] = [];
@@ -560,27 +573,25 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     /**
-     * The params of the Date Filter a column filters through, if it filters through one at all: `comparator`
-     * is also a Set Filter's list sort and a custom filter component's own parameter, neither of them a date
-     * comparison. A Multi Filter carries the Date Filter as one of its children.
+     * The params a date column's comparisons read; a custom filter component's are its own. A Set Filter's are
+     * included so an author-written `isValidDate` still gates, the grid supplying none there.
      */
     private getDateFilterParams(
         column: AgColumn,
         baseCellDataType: BaseCellDataType | undefined
     ): IDateFilterParams | undefined {
         // The four date types are exactly those the Date Filter is the default for, so the table owns the list.
-        if (
-            _getDefaultSimpleFilter(baseCellDataType) !== DATE_FILTER ||
-            this.advFilterSetSvc.isSetFilterColumn(column)
-        ) {
+        if (_getDefaultSimpleFilter(baseCellDataType) !== DATE_FILTER) {
             return undefined;
         }
         const { filter, filterParams } = column.colDef;
         if (filter === 'agMultiColumnFilter') {
             return getMultiFilterChild(filterParams, DATE_FILTER)?.filterParams;
         }
-        // `filter: true` is the data type's default, which the guards above have established is the Date Filter.
-        return filter === true || filter === DATE_FILTER ? filterParams : undefined;
+        // `filter: true` is the data type's default, which under enterprise resolves to the Set Filter instead.
+        return filter === true || filter === DATE_FILTER || this.advFilterSetSvc.hasSetFilter(column)
+            ? filterParams
+            : undefined;
     }
 
     public getExpressionJoinOperators(): { AND: string; OR: string } {
@@ -672,12 +683,17 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 }
             }
         }
+        this.addTextFilterParams(params, column, baseCellDataType);
         const dateFilterParams = this.getDateFilterParams(column, baseCellDataType);
         if (dateFilterParams) {
             // What the grid supplies restates the parse `valueConverter` does, and a comparator skips that
             // conversion, so only where none is in play is the grid's own gate already covered.
             const { comparator, isValidDate } = dateFilterParams;
-            const ownComparator = comparator && !_isGridSuppliedFilterParam(comparator) ? comparator : undefined;
+            // A Set Filter's `comparator` orders its list over two cell values, which is not a date comparison.
+            const ownComparator =
+                comparator && !_isGridSuppliedFilterParam(comparator) && !this.advFilterSetSvc.hasSetFilter(column)
+                    ? comparator
+                    : undefined;
             const coveredByConversion = converterParses && !ownComparator;
             params.comparator = ownComparator;
             params.isValid = coveredByConversion && _isGridSuppliedFilterParam(isValidDate) ? undefined : isValidDate;
@@ -685,6 +701,39 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         this.expressionEvaluatorParams[colId] = params;
 
         return params;
+    }
+
+    private addTextFilterParams(
+        params: FilterExpressionEvaluatorParams<any, any>,
+        column: AgColumn,
+        baseCellDataType: BaseCellDataType | undefined
+    ): void {
+        const textParams = getTextFilterParams(column, baseCellDataType, this.advFilterSetSvc);
+        if (!textParams) {
+            return;
+        }
+        const { textFormatter, textMatcher } = textParams;
+        const gos = this.gos;
+        const boundFormatter = _bindFilterCallback(textFormatter, gos, column, 'advancedFilter');
+        params.textFormatter = boundFormatter;
+        if (!textMatcher) {
+            return;
+        }
+        // Built per row rather than captured: `context` is a grid option, so a held copy would go stale.
+        params.textMatcher = (filterOption, value, filterText, node) =>
+            textMatcher(
+                _addGridCommonParams<TextMatcherParams>(gos, {
+                    colDef: column.colDef,
+                    column,
+                    node,
+                    data: node.data,
+                    filterOption,
+                    value,
+                    filterText,
+                    textFormatter: boundFormatter,
+                    source: 'advancedFilter',
+                })
+            );
     }
 
     public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {

@@ -65,6 +65,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             autocompleteEntries: AutocompleteEntry[];
             onConfirmed: () => void;
             useStartsWithSearch?: boolean;
+            suggestFirstMatch?: boolean;
             autoSizeList?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
@@ -123,11 +124,20 @@ export class AgAutocompleteList extends AgPopupComponent<
         const oldIndex = this.autocompleteEntries[cachedIndex] === this.selectedValue ? cachedIndex : -1;
         let nextIndex = 0;
         if (oldIndex >= 0) {
-            nextIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+            const isPage = key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN;
+            const step = isPage ? this.getPageSize() : 1;
+            nextIndex = key === KeyCode.UP || key === KeyCode.PAGE_UP ? oldIndex - step : oldIndex + step;
         }
         const lastIndex = this.autocompleteEntries.length - 1;
 
         this.setSelectedValue(_clamp(nextIndex, 0, lastIndex));
+    }
+
+    private getPageSize(): number {
+        const virtualList = this.virtualList;
+        const rowHeight = virtualList.getRowHeight();
+        const height = virtualList.getGui().getBoundingClientRect().height;
+        return rowHeight > 0 ? Math.max(1, Math.floor(height / rowHeight)) : 1;
     }
 
     public setSearch(searchString: string): void {
@@ -141,7 +151,6 @@ export class AgAutocompleteList extends AgPopupComponent<
             this.checkSetSelectedValue(0);
             this.updateListHeight();
         }
-        this.updateSearchInList();
     }
 
     /**
@@ -159,7 +168,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         let topStartsWith = false;
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const text = entry.displayValue ?? entry.key;
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
             const index = text.toLocaleLowerCase().indexOf(lowerCaseSearchString);
             if (index < 0) {
                 continue;
@@ -184,7 +193,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         const matches: AutocompleteEntry[] = [];
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const text = entry.displayValue ?? entry.key;
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
             if (text.toLocaleLowerCase().startsWith(lowerCaseSearchString)) {
                 matches.push(entry);
             }
@@ -194,7 +203,7 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     /** One pass, producing the list to show and the row to suggest together, per keystroke. */
     private runSearch(): void {
-        const { autocompleteEntries, useStartsWithSearch, forceLastSelection } = this.params;
+        const { autocompleteEntries, useStartsWithSearch, suggestFirstMatch, forceLastSelection } = this.params;
         const searchString = this.searchString;
 
         let matches: AutocompleteEntry[];
@@ -203,6 +212,9 @@ export class AgAutocompleteList extends AgPopupComponent<
             matches = this.runStartsWithSearch(searchString, autocompleteEntries);
         } else {
             ({ matches, topIndex } = this.runContainsSearch(searchString, autocompleteEntries));
+            if (suggestFirstMatch) {
+                topIndex = 0;
+            }
         }
 
         const selectedValue = this.selectedValue;
@@ -215,10 +227,6 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.refreshVirtualList();
         this.updateListHeight();
         this.checkSetSelectedValue(topIndex);
-    }
-
-    private updateSearchInList(): void {
-        this.virtualList.forEachRenderedRow((row) => row.setSearchString(this.searchString));
     }
 
     private updateListHeight(): void {
@@ -318,17 +326,18 @@ export class AgAutocompleteList extends AgPopupComponent<
         listItemElement: HTMLElement,
         rowIndex: number
     ): AutocompleteRowComponent {
-        const customRow = this.params.rowComponentCreator?.(value, value === this.selectedValue);
-        if (customRow) {
-            this.createBean(customRow);
-            this.updateRowAriaProperties(customRow, listItemElement, rowIndex);
-            return customRow;
+        const selected = value === this.selectedValue;
+        let row = this.params.rowComponentCreator?.(value, selected);
+        if (row) {
+            this.createBean(row);
+        } else {
+            const defaultRow = new AgAutocompleteRow();
+            this.createBean(defaultRow);
+            defaultRow.setState(value.displayValue ?? value.key, selected);
+            row = defaultRow;
         }
-
-        const row = new AgAutocompleteRow();
-
-        this.createBean(row);
-        row.setState(value.displayValue ?? value.key, value === this.selectedValue);
+        // A row drawn after the search ran, scrolling to it say, has to mark up its own match.
+        row.setSearchString(this.searchString);
         this.updateRowAriaProperties(row, listItemElement, rowIndex);
 
         return row;

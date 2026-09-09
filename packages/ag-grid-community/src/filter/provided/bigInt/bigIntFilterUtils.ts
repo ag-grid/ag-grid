@@ -22,7 +22,9 @@ export function stringToBigInt(
         return null;
     }
     // Built here, not by the caller: the default configuration has no parser to hand them to.
-    return bigintParser ? bigintParser(value, filterCallbackParams(gos, column)) : _parseBigIntOrNull(value);
+    return bigintParser
+        ? bigintParser(value, filterCallbackParams(gos, column, 'columnFilter'))
+        : _parseBigIntOrNull(value);
 }
 
 export function mapValuesFromBigIntFilterModel(

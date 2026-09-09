@@ -261,7 +261,9 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         if (!keepOperator) {
             delete (this.filterModel as PartialColumnFilterModel).type;
         }
+        // A pill reads its option list once, so a change of column rebuilds it even where the text stands.
         if (
+            previousColumn !== column ||
             this.filterModel.type !== previousOperatorKey ||
             this.advFilterExpSvc.getOperatorDisplayValue(this.filterModel) !== previousOperatorDisplayValue
         ) {

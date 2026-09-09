@@ -10,6 +10,7 @@ import type {
     GridOptionsService,
     IBigIntFilterParams,
     IRowNode,
+    ITextFilterParams,
     NumberFilterParams,
     SetAdvancedFilterModel,
     SetFilterModelValue,
@@ -18,6 +19,7 @@ import type {
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import { getMultiFilterChild } from './customFilterOptions';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 import { OPERAND_COUNT } from './filterExpressionOperators';
 import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
@@ -156,6 +158,11 @@ export interface FilterExpressionParserParams {
     valueSvc: ValueService;
     advFilterExpSvc: AdvancedFilterExpressionService;
     advFilterSetSvc: AdvancedFilterSetService;
+    /**
+     * Where a written list ends with a separator that names no value. Collected as the list is read and
+     * removed once it is, since deleting characters mid-parse would shift every position read after them.
+     */
+    redundantSeparators?: { startPosition: number; endPosition: number }[];
 }
 
 export interface AutocompleteUpdate {
@@ -248,10 +255,10 @@ export const getBigIntParser = (
     column: AgColumn | null | undefined,
     gos: GridOptionsService
 ): FilterOperandParser<bigint> =>
-    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column) ?? _parseBigIntOrNull;
+    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column, 'advancedFilter') ?? _parseBigIntOrNull;
 
 export const getBigIntFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
-    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column);
+    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column, 'advancedFilter');
 
 /**
  * The `filterParams` of a number column whose operands are written in its own syntax rather than as plain
@@ -271,13 +278,38 @@ export const getNumberParser = (
     column: AgColumn | null | undefined,
     gos: GridOptionsService
 ): FilterOperandParser<number> =>
-    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column) ?? parseNumberOrNull;
+    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column, 'advancedFilter') ??
+    parseNumberOrNull;
 
 export const getNumberFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
-    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column);
+    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column, 'advancedFilter');
 
 export function hasCustomNumberOperands(column: AgColumn | null | undefined): boolean {
     return customNumberOperandParams(column) != null;
+}
+
+/**
+ * The params the column's Text Filter compares with — for a Multi Filter, its Text Filter child's alone, as
+ * the child is created with (`MultiFilterHandler` merges the column's own params in only on a later refresh).
+ */
+export function getTextFilterParams(
+    column: AgColumn | null | undefined,
+    baseCellDataType: BaseCellDataType | undefined,
+    advFilterSetSvc: AdvancedFilterSetService
+): ITextFilterParams | undefined {
+    // An unresolved data type reads as text, as its converter does.
+    if (baseCellDataType != null && baseCellDataType !== 'text' && baseCellDataType !== 'object') {
+        return undefined;
+    }
+    const colDef = column?.colDef;
+    const filter = colDef?.filter;
+    if (filter === 'agMultiColumnFilter') {
+        return getMultiFilterChild(colDef?.filterParams, 'agTextColumnFilter')?.filterParams;
+    }
+    // Named as readily as supplied, so any other component's params are its own; a Set Filter's `textFormatter`
+    // formats its list rather than a comparison, and `filter: true` resolves to one under enterprise.
+    const isTextFilter = filter == null || filter === true || filter === 'agTextColumnFilter';
+    return isTextFilter && !advFilterSetSvc.hasSetFilter(column) ? colDef?.filterParams : undefined;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

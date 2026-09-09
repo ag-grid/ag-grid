@@ -68,13 +68,13 @@ const GridExample = () => {
     const autoGroupColumnDef = useMemo<AutoGroupColumnDef>(() => {
         return { minWidth: 200 };
     }, []);
+    const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] }), []);
     const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
         }),
         []
     );
-    const toolbar = useMemo<Toolbar>(() => ({ items: ['agFindToolbarItem'] }), []);
     const [currentState, setCurrentState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);
     const [savedState, setSavedState] = useState<GridState>();

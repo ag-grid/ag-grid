@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterValidationMissingCondition: 'Brak warunku',
     advancedFilterValidationJoinOperatorMismatch: 'Operatory łączenia w ramach warunku muszą być takie same',
     advancedFilterValidationInvalidJoinOperator: 'Operator łączenia nie istnieje',
+    advancedFilterValidationMissingListStartBracket: 'Brak otwierającego nawiasu kwadratowego',
+    advancedFilterValidationMissingListEndBracket: 'Brak zamykającego nawiasu kwadratowego',
     advancedFilterValidationMissingEndBracket: 'Brak końcowego nawiasu',
     advancedFilterValidationExtraEndBracket: 'Za dużo końcowych nawiasów',
     advancedFilterValidationMessage: 'Wyrażenie zawiera błąd. ${variable} - ${variable}.',

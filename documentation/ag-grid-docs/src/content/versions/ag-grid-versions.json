@@ -1,5 +1,34 @@
 [
     {
+        "version": "36.2.0",
+        "date": "16th September 2026",
+        "landingPageHighlight": "PDF Export, Set Filter Support for Advanced Filter, Custom Filter Option Support in Advanced Filter, Continuous Column Auto-sizing, Custom Renderers for Column Items in Columns Tool Panel",
+        "highlights": [
+            {
+                "text": "PDF Export",
+                "path": "./pdf-export/"
+            },
+            {
+                "text": "Set Filter Support for Advanced Filter",
+                "path": "./filter-advanced/#set-filters"
+            },
+            {
+                "text": "Custom Filter Option Support in Advanced Filter",
+                "path": "./filter-advanced/#custom-filter-options"
+            },
+            {
+                "text": "Continuous Column Auto-sizing",
+                "path": "./column-sizing/#continuous-auto-sizing"
+            },
+            {
+                "text": "Custom Renderers for Column Items in Columns Tool Panel",
+                "path": "./tool-panel-columns/#custom-column-labels"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-36-2",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "36.1.0",
         "date": "5th August 2026",
         "landingPageHighlight": "Column Header Edit, Custom Context Menu Items in Columns Tool Panel, AI Coding Skill, Documentation in markdown format, Quality Improvements",
@@ -637,7 +666,7 @@
             },
             {
                 "text": "Skeleton Content Displayed in Loading Grid Cells",
-                "path": "./component-loading-cell-renderer/#skeleton-loading"
+                "path": "./server-side-model-loading-rows/#skeleton-loading"
             },
             {
                 "text": "Global Grid Options to Apply to All AG Grid Instances",

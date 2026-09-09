@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterValidationMissingCondition: 'شرط غائب ہے',
     advancedFilterValidationJoinOperatorMismatch: 'ایک شرط میں جوائن آپریٹرز ایک جیسے ہونے چاہیے',
     advancedFilterValidationInvalidJoinOperator: 'جوائن آپریٹر نہیں ملا',
+    advancedFilterValidationMissingListStartBracket: 'ابتدائی مربع بریکٹ غائب ہے',
+    advancedFilterValidationMissingListEndBracket: 'اختتامی مربع بریکٹ غائب ہے',
     advancedFilterValidationMissingEndBracket: 'اختتامی بریکٹ غائب ہے',
     advancedFilterValidationExtraEndBracket: 'زیادہ اختتامی بریکٹس',
     advancedFilterValidationMessage: 'اظہار میں ایک نقص ہے. ${variable} - ${variable}.',

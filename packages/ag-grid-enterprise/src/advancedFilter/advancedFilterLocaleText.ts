@@ -75,6 +75,8 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationMissingCondition: 'Condition is missing',
     advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
+    advancedFilterValidationMissingListStartBracket: 'Missing opening square bracket',
+    advancedFilterValidationMissingListEndBracket: 'Missing closing square bracket',
     advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
     advancedFilterValidationMessage: (variableValues: string[]) =>

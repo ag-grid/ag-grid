@@ -1,12 +1,15 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { getLoadingIFrameId } from '@ag-website-shared/components/loading-logo/getElementId';
 import type { GeneratedContents } from '@components/example-generator/types';
-import { ExampleRunner } from '@components/example-runner/components/ExampleRunner';
+import { DEFAULT_HEIGHT, ExampleRunner } from '@components/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@components/example-runner/components/ExternalLinks';
+import { pruneExampleFiles } from '@components/example-runner/utils/exampleViewerFiles';
+import { resolveInternalFramework } from '@components/example-runner/utils/resolveInternalFramework';
 import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
 import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { useHasMounted } from '@utils/hooks/useHasMounted';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -31,34 +34,6 @@ interface Props {
     supportedFrameworks?: InternalFramework[];
 }
 
-const getInternalFramework = (
-    docsInternalFramework: InternalFramework,
-    supportedFrameworks: InternalFramework[] | undefined
-): { internalFramework: InternalFramework; isUsingAlternativeInternalFramework: boolean } => {
-    let internalFramework = docsInternalFramework;
-    let isUsingAlternativeInternalFramework = false;
-    if (supportedFrameworks && supportedFrameworks.length > 0) {
-        if (!supportedFrameworks.includes(docsInternalFramework)) {
-            const bestAlternative: Record<InternalFramework, InternalFramework[]> = {
-                vanilla: ['typescript'],
-                typescript: ['vanilla'],
-                reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
-                reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
-                angular: ['typescript', 'vanilla'],
-                vue3: ['typescript', 'vanilla'],
-            };
-            const alternatives = bestAlternative[docsInternalFramework];
-            const alternative = alternatives.find((alternative) => supportedFrameworks.includes(alternative));
-            if (alternative) {
-                internalFramework = alternative;
-                isUsingAlternativeInternalFramework = true;
-            }
-        }
-    }
-
-    return { internalFramework, isUsingAlternativeInternalFramework };
-};
-
 const DocsExampleRunnerInner = ({
     name,
     title,
@@ -81,11 +56,15 @@ const DocsExampleRunnerInner = ({
 
     const storeInternalFramework = useStore($internalFramework);
     const internalFrameworkState = useStore($internalFrameworkState);
-    const { internalFramework: computedInternalFramework, isUsingAlternativeInternalFramework } = useMemo(
-        () => getInternalFramework(storeInternalFramework, supportedFrameworks),
-        [storeInternalFramework, supportedFrameworks]
+    const { internalFramework, isUsingAlternativeInternalFramework } = useMemo(
+        () =>
+            resolveInternalFramework({
+                docsInternalFramework: storeInternalFramework,
+                supportedFrameworks,
+                typescriptOnly,
+            }),
+        [storeInternalFramework, supportedFrameworks, typescriptOnly]
     );
-    const internalFramework = typescriptOnly ? 'typescript' : computedInternalFramework;
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName }),
         [internalFramework, pageName, exampleName]
@@ -109,25 +88,7 @@ const DocsExampleRunnerInner = ({
                             return {};
                         }
 
-                        const isTs =
-                            internalFramework === 'reactFunctionalTs' ||
-                            internalFramework === 'typescript' ||
-                            internalFramework === 'angular';
-                        if (!isTs) {
-                            delete json.files['interfaces.ts'];
-                        }
-                        if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
-                            delete json.files['index.html'];
-                        }
-
-                        // Don't include the example spec files in the example runner for now
-                        Object.keys(json.files)
-                            .filter((file) => file?.includes('.spec.') || file?.includes('.test.'))
-                            .forEach((specFile) => {
-                                delete json.files[specFile];
-                            });
-
-                        return json;
+                        return { ...json, files: pruneExampleFiles(json.files, internalFramework) };
                     }),
             ]) as Promise<[GeneratedContents]>;
         },
@@ -140,6 +101,12 @@ const DocsExampleRunnerInner = ({
         plunkrHtmlUrl: getExamplePlunkrUrl(urlConfig),
         codeSandboxHtmlUrl: getExampleCodeSandboxUrl(urlConfig),
     };
+
+    useEffect(() => {
+        // The build embeds a hidden copy of the source for crawlers; this island now owns the code
+        // viewer, so drop it rather than carry the source twice.
+        document.getElementById(id)?.querySelector('[data-example-source-code]')?.remove();
+    }, [id]);
 
     useEffect(() => {
         if (isError) {
@@ -196,6 +163,16 @@ const DocsExampleRunnerInner = ({
 
 export const DocsExampleRunner = (props: Props) => {
     const queryClient = useStore($queryClient);
+    // The island hydrates when scrolled into view, so it is also rendered on the server. The
+    // runner's framework and dark mode live in localStorage and its contents come from a client
+    // query, so until mounted render a placeholder rather than a default that hydration would
+    // replace. It has the example's height because Astro's visibility observer watches the
+    // island's children: an empty island would never hydrate.
+    const hasMounted = useHasMounted();
+
+    if (!hasMounted) {
+        return <div style={{ height: props.exampleHeight || DEFAULT_HEIGHT }} />;
+    }
 
     return (
         <QueryClientProvider client={queryClient}>

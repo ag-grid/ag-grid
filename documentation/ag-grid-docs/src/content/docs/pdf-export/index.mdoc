@@ -23,7 +23,7 @@ Set `suppressPdfExport=true` to disable both `exportDataAsPdf()` and `getDataAsP
 
 The export uses the current column order and visibility, together with the filtered, sorted, and grouped row data. Exported values are produced independently of the rendered grid cells, using Value Getters and, by default, [Value Formatters](./value-formatters/#formatting-for-export).
 
-By default, regular columns use their current grid widths and the Row Numbers column is sized from its exported content. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
+By default, regular columns use their current column widths in the grid and the Row Numbers column is sized from its exported content. Columns are proportionally reduced when their combined width exceeds the printable page width. Cells remain on one line unless wrapping is enabled, and table headers repeat when a table continues onto another page.
 
 PDF Export uses the built-in PDF Base 14 fonts with WinAnsi encoding by default. Register static TrueType font families to export Unicode text or use right-to-left text layout.
 
@@ -41,7 +41,8 @@ The table below summarises what is supported and what is not:
 
 - **[Styles](./pdf-export-styles/)**: Reuse supported grid styles and apply PDF-specific overrides.
 - **[Languages](./pdf-export-languages/)**: Register TrueType font families and export Unicode or right-to-left text.
-- **[Extra Content](./pdf-export-extra-content/)**: Customise exported values, titles, and additional content.
+- **[Extra Content](./pdf-export-extra-content/)**: Add titles, page furniture, cover pages, and additional content.
+- **[Customising Content](./pdf-export-customising-content/)**: Customise exported cell, row-group, header, and group-header values.
 - **[Images](./pdf-export-images/)**: Embed JPEG and PNG images in grid cells, page headers, and page footers.
 - **[Watermarks](./pdf-export-watermarks/)**: Add translucent status text across selected pages.
 - **[Rows](./pdf-export-rows/)**: Select rows and configure filtered, sorted, and pinned-row export.

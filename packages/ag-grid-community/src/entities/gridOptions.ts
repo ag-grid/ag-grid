@@ -79,6 +79,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderFocusedEvent,
+    IssueRaisedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -814,7 +815,10 @@ export interface GridOptions<TData = any> {
 
     // *** Integrated Charts *** //
     /**
-     * Set to `true` to Enable Charts.
+     * Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
+     * `chartRange` and `pivotChart` context menu items shown by default. Menu items requested by
+     * name via `getContextMenuItems` or `colDef.contextMenuItems` are shown regardless, and charts
+     * created programmatically through the Grid API do not require this option.
      * @default false
      * @agModule `IntegratedChartsModule`
      */
@@ -1028,13 +1032,20 @@ export interface GridOptions<TData = any> {
     // *** Overlays *** //
     /**
      * Show or hide the loading UI.
-     * - `true`: the loading overlay is shown.
-     * - `false`: the loading overlay is hidden.
-     * - `LoadingOptions`: configure the loading UI.
+     * - `true`: the loading overlay is shown, or skeleton rows if `loadingRows` is enabled (Client-Side Row Model only).
+     * - `false`: the loading UI is hidden.
      * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
-    loading?: boolean | LoadingOptions;
+    loading?: boolean;
+
+    /**
+     * Display skeleton rows instead of the loading overlay when `loading=true` (Client-Side Row Model only).
+     * Set to `true` to display ten rows, or provide options to configure the row count.
+     * This option does not start loading; set `loading=true` to show the skeleton rows.
+     * @default false
+     */
+    loadingRows?: boolean | LoadingRowsOptions;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
@@ -2941,6 +2952,16 @@ export interface GridOptions<TData = any> {
      */
     onStateUpdated?(event: StateUpdatedEvent<TData>): void;
 
+    /**
+     * A development-time diagnostic - an error, warning or deprecation - was raised. Fires for every
+     * diagnostic, whether or not it is also shown in the validation overlay or thrown by `throwOn`,
+     * so tooling can react to it programmatically. Diagnostics raised before the grid is created
+     * (e.g. a missing row model module) are reported to the console only, as no grid exists to
+     * receive them.
+     * @agModule `ValidationModule`
+     */
+    onIssueRaised?(event: IssueRaisedEvent<TData>): void;
+
     // *** Pagination *** //
     /**
      * Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
@@ -3260,12 +3281,7 @@ export interface LoadingCellRendererSelectorResult {
     params?: any;
 }
 
-export interface LoadingOptions {
-    /**
-     * Loading UI to display. Loading rows are only supported by the Client-Side Row Model.
-     * @default 'overlay'
-     */
-    type: 'overlay' | 'rows';
+export interface LoadingRowsOptions {
     /**
      * Number of skeleton rows displayed while loading.
      * @default 10

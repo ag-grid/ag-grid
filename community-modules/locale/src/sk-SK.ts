@@ -184,6 +184,8 @@ export const AG_GRID_LOCALE_SK = {
     advancedFilterValidationMissingCondition: 'Chýba podmienka',
     advancedFilterValidationJoinOperatorMismatch: 'Spojovacie operátory v rámci podmienky musia byť rovnaké',
     advancedFilterValidationInvalidJoinOperator: 'Spojovací operátor sa nenašiel',
+    advancedFilterValidationMissingListStartBracket: 'Chýba otváracia hranatá zátvorka',
+    advancedFilterValidationMissingListEndBracket: 'Chýba uzatváracia hranatá zátvorka',
     advancedFilterValidationMissingEndBracket: 'Chýba koncová zátvorka',
     advancedFilterValidationExtraEndBracket: 'Príliš veľa koncových zátvoriek',
     advancedFilterValidationMessage: 'Výraz obsahuje chybu. ${variable} - ${variable}.',

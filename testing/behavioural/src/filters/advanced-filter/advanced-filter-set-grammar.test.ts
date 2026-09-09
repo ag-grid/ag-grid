@@ -10,7 +10,7 @@ import {
 
 import type { GridApi, GridOptions, SetAdvancedFilterModel } from 'ag-grid-community';
 
-import { DEFAULT_OPTIONS, SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
+import { DEFAULT_OPTIONS, SET_MODULES, chooseEveryOffered, displayedAthletes } from './advancedFilterSetFixture';
 
 /** Values chosen so every character the value-list grammar reacts to appears inside one. */
 const GRAMMAR_ROWS = [
@@ -57,15 +57,12 @@ describe('Advanced Filter - Set Filter grammar - brackets', () => {
 
     const BRACKET_FORMS: Record<string, string> = {
         'square brackets, the written form': '[Country] is any of ["Plain"]',
-        parentheses: '[Country] is any of ("Plain")',
-        'no brackets at all': '[Country] is any of "Plain"',
-        'no brackets and no quotes': '[Country] is any of Plain',
         'an unquoted value inside brackets': '[Country] is any of [Plain]',
         'spacing inside the brackets': '[Country] is any of [  "Plain"  ]',
         'spacing before the brackets': '[Country] is any of   ["Plain"]',
     };
 
-    test('reads a list however it is bracketed', async () => {
+    test('reads a bracketed list however it is spaced and quoted', async () => {
         const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
         const outcomes: Record<string, string> = {};
@@ -78,30 +75,32 @@ describe('Advanced Filter - Set Filter grammar - brackets', () => {
         expect(outcomes).toEqual(sameOutcome(BRACKET_FORMS, 'D'));
     });
 
-    test('parentheses hold several values, as square brackets do', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+    const UNENCLOSED_FORMS: Record<string, string> = {
+        'no brackets at all': '[Country] is any of "Plain"',
+        'no brackets and no quotes': '[Country] is any of Plain',
+        'several values with no brackets': '[Country] is any of "Plain", "O\'Brien"',
+        // Parentheses are the range option's brackets, and a list is not a range.
+        parentheses: '[Country] is any of ("Plain")',
+        'an unbracketed list before a join': '[Country] is any of "Plain" AND [Athlete] contains "D"',
+        'an unbracketed list inside a group': '([Country] is any of "Plain" OR [Country] is any of "D")',
+    };
+
+    test('a list that is not enclosed in square brackets is rejected, and nothing is applied', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
+        const outcomes: Record<string, { message: string; model: unknown }> = {};
 
-        await af.applyExpression('[Country] is any of ("Jamaica", "Poland")');
+        for (const [name, expression] of Object.entries(UNENCLOSED_FORMS)) {
+            await af.applyExpression(expression);
+            outcomes[name] = { message: af.input.validationMessage, model: api.getAdvancedFilterModel() };
+        }
 
-        await new GridRows(api, 'parenthesised list').check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:2 athlete:"Usain Bolt" country:"Jamaica" age:25
-            └── LEAF id:3 athlete:"Anna Kowalski" country:"Poland" age:19
-        `);
-    });
-
-    test('an unbracketed list ends at the space after its one value', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
-        const af = AdvancedFilterHarness.get(api);
-
-        await af.applyExpression('[Country] is any of "Jamaica" AND [Age] > 20');
-
-        expect(af.input.validationMessage).toBe('');
-        await new GridRows(api, 'unbracketed then joined').check(`
-            ROOT id:ROOT_NODE_ID
-            └── LEAF id:2 athlete:"Usain Bolt" country:"Jamaica" age:25
-        `);
+        expect(outcomes).toEqual(
+            sameOutcome(UNENCLOSED_FORMS, {
+                message: expect.stringContaining('Missing opening square bracket'),
+                model: null,
+            })
+        );
     });
 
     test('a set condition inside a bracketed group is read', async () => {
@@ -113,29 +112,18 @@ describe('Advanced Filter - Set Filter grammar - brackets', () => {
         expect(displayedAthletes(api)).toEqual(['A', 'D']);
     });
 
-    test('a bare value wrapped in its own parentheses is read as a list, so (Blanks) needs quoting', async () => {
+    test('the blank label is an ordinary value, needing only the list brackets around it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
         const af = AdvancedFilterHarness.get(api);
 
-        // `(Blanks)` is how the list shows the blank value, and typing it bare opens a parenthesised list
-        // holding `Blanks`, which names nothing. Quoting it is what says the parentheses are the value's.
-        await af.applyExpression('[Country] is any of (Blanks)');
-        expect(af.input.validationMessage).toContain('Value not found');
+        await af.applyExpression('[Country] is any of [(Blanks)]');
+        expect(af.input.validationMessage).toBe('');
+        expect(displayedAthletes(api)).toEqual(['Li Wei']);
 
         await af.applyExpression('[Country] is any of ["(Blanks)"]');
         expect(af.input.validationMessage).toBe('');
         expect(displayedAthletes(api)).toEqual(['Li Wei']);
         expect((api.getAdvancedFilterModel() as SetAdvancedFilterModel).values).toEqual([null]);
-    });
-
-    test('an unbracketed list inside a group ends at the group bracket', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
-        const af = AdvancedFilterHarness.get(api);
-
-        await af.applyExpression('([Country] is any of "Plain" OR [Country] is any of "O\'Brien")');
-
-        expect(af.input.validationMessage).toBe('');
-        expect(displayedAthletes(api)).toEqual(['A', 'D']);
     });
 });
 
@@ -271,12 +259,18 @@ describe('Advanced Filter - Set Filter grammar - validation', () => {
         'a list holding only spaces': ['[Country] is any of [   ]', 'Value is missing'],
         'a separator with no value before it': ['[Country] is any of [, "Jamaica"]', 'Value is missing'],
         'a tree separator with no value before it': ['[Country] is any of [> "Jamaica"]', 'Value is missing'],
-        'a list left open': ['[Country] is any of ["Jamaica"', 'Missing end bracket'],
+        'a list left open': ['[Country] is any of ["Jamaica"', 'Missing closing square bracket'],
         'a value left open': ['[Country] is any of ["Jamaic', 'Value is missing an end quote'],
-        'two quoted values with no separator': ['[Country] is any of ["Jamaica" "Poland"]', 'Missing end bracket'],
+        'two quoted values with no separator': [
+            '[Country] is any of ["Jamaica" "Poland"]',
+            'Missing closing square bracket',
+        ],
         'a bare run of words naming nothing': ['[Country] is any of [Jamaica Poland]', 'Value not found'],
-        'brackets that do not match': ['[Country] is any of ["Jamaica")', 'Missing end bracket'],
+        'brackets that do not match': ['[Country] is any of ["Jamaica")', 'Missing closing square bracket'],
         'a value the column does not hold': ['[Country] is any of ["Atlantis"]', 'Value not found'],
+        // The list is what the fault belongs to, so the group's own `)` is taken with it rather than
+        // closing anything: the caret is where the missing bracket goes.
+        'a group closing before the list opens': ['([Country] is any of )', 'Missing opening square bracket'],
     };
 
     test('reports the fault in a list it cannot read, and applies nothing', async () => {
@@ -450,6 +444,93 @@ describe('Advanced Filter - Set Filter grammar - round trips', () => {
             'a value that is a date path': setModel(['2024/01']),
             'every separator at once': setModel(['Arrow > Land', 'Slash / Land', 'Guillemet › Land']),
         });
+    });
+
+    test('every value the list offers can be chosen and applied, whatever characters it holds', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        const outcomes = await chooseEveryOffered(af, '[Country] is any of [');
+
+        // Every row's value is offered under its own text, and choosing it filters on that value: the keys
+        // come from the row data rather than from the list, so a value missing or misspelled fails here.
+        expect(Object.fromEntries(outcomes)).toEqual(
+            Object.fromEntries(GRAMMAR_ROWS.map(({ country }) => [country, [country]]))
+        );
+    });
+
+    const offersOf = async (af: AdvancedFilterHarness, expression: string) => {
+        await af.type(expression);
+        return af.autocompleteEntries();
+    };
+
+    test('a character the list grammar owns ends the value, so such a value is entered from the list', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+        // Up to the separator the value narrows the list to itself, and it is still the only match.
+        expect(await offersOf(af, '[Country] is any of [Comma')).toEqual(['Comma, Land']);
+
+        // Typing its comma ends the value rather than continuing it: `Comma` names nothing, so it holds
+        // no value back, and the caret is at the next one with the whole list to choose from.
+        expect(await offersOf(af, '[Country] is any of [Comma,')).toContain('Comma, Land');
+        expect(af.input.validationMessage).toContain('Value not found');
+
+        // The end bracket is the stronger case: it closes the list, so there is nothing left to offer.
+        expect(await offersOf(af, '[Country] is any of [Bracket')).toEqual(['Bracket ] Land']);
+        expect(await offersOf(af, '[Country] is any of [Bracket ]')).toEqual([]);
+        expect(af.isAutocompleteOpen()).toBe(false);
+
+        // A quote is not one of them: it only opens a value, so inside one it is an ordinary character.
+        expect(await offersOf(af, '[Country] is any of [Say "hi')).toEqual(['Say "hi"', `Say "hi" to O'Brien`]);
+
+        // Choosing from the list is what writes such a value, quoted, so it reads back as itself.
+        await af.selectAutocomplete();
+        await af.append(']');
+        await af.apply();
+        expect(af.input.validationMessage).toBe('');
+        expect((af.getModel() as SetAdvancedFilterModel).values).toEqual(['Say "hi"']);
+    });
+
+    test('opening a quote makes the list characters ordinary, and the list still narrows', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+        // The quote is what says the characters the list grammar owns belong to the value, so typing one
+        // is how a value holding them is reached by hand rather than by choosing it.
+        expect(await offersOf(af, '[Country] is any of ["Bracket ]')).toEqual(['Bracket ] Land']);
+        expect(await offersOf(af, '[Country] is any of ["Bracket ] La')).toEqual(['Bracket ] Land']);
+        expect(await offersOf(af, '[Country] is any of ["Comma,')).toEqual(['Comma, Land']);
+        expect(await offersOf(af, '[Country] is any of ["Comma, La')).toEqual(['Comma, Land']);
+
+        await af.append('nd"]');
+        await af.apply();
+        expect(af.input.validationMessage).toBe('');
+        expect((af.getModel() as SetAdvancedFilterModel).values).toEqual(['Comma, Land']);
+    });
+
+    test('a chosen value is quoted whether or not the author opened a quote', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', GRAMMAR_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+        const outcomes: Record<string, string> = {};
+
+        // The quotes belong to the value, not to what the author started typing, so a value needing them
+        // gets them either way. `Comma, Land` would otherwise end the list at its own comma.
+        await af.type('[Country] is any of [Comma');
+        await af.selectAutocomplete();
+        outcomes['typed bare'] = af.value;
+
+        await af.type('[Country] is any of ["Comma');
+        await af.selectAutocomplete();
+        outcomes['typed with an opening quote'] = af.value;
+
+        expect(outcomes).toEqual({
+            'typed bare': '[Country] is any of ["Comma, Land", ',
+            'typed with an opening quote': '[Country] is any of ["Comma, Land", ',
+        });
+
+        await af.append(']');
+        await af.apply();
+        expect(af.input.validationMessage).toBe('');
+        expect((af.getModel() as SetAdvancedFilterModel).values).toEqual(['Comma, Land']);
     });
 
     test('a value holding both quote characters is written with the wrapping quote doubled', async () => {

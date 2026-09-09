@@ -25,6 +25,7 @@ import type {
     GridStateKey,
     PaginationState,
     PivotState,
+    QuickFilterState,
     RowGroupState,
     RowPinningState,
     ScrollState,
@@ -279,6 +280,7 @@ export class StateService extends BeanStub implements NamedBean {
     ): void {
         const {
             filter: filterState,
+            quickFilter: quickFilterState,
             rowGroupExpansion: rowGroupExpansionState,
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
@@ -290,6 +292,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (shouldSetState('filter', filterState)) {
             this.setFilterStateDeferringPivot(filterState, source);
+        }
+        if (shouldSetState('quickFilter', quickFilterState)) {
+            this.setQuickFilterState(quickFilterState, source);
         }
         if (
             shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
@@ -309,6 +314,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const updateCachedState = this.updateCachedState.bind(this);
         updateCachedState('filter', this.getFilterState());
+        updateCachedState('quickFilter', this.getQuickFilterState());
         this.updateGroupExpansionState();
 
         updateCachedState('rowSelection', this.getRowSelectionState());
@@ -324,6 +330,10 @@ export class StateService extends BeanStub implements NamedBean {
             this.updateGroupExpansionState();
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
+        // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
+        this.addManagedPropertyListener('quickFilterText', () =>
+            updateCachedState('quickFilter', this.getQuickFilterState())
+        );
 
         const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
@@ -390,10 +400,9 @@ export class StateService extends BeanStub implements NamedBean {
             this.setFilterState(deferredFilterState, source);
         }
 
-        // Runs after the pivot columns and the deferred filter state: the active match is an ordinal
-        // over the visible columns and the filtered rows, so those have to be in place to resolve it
-        // against the same match list it was captured from. Restoring the match only highlights it,
-        // leaving the viewport to the saved `scroll` and `pagination` sections.
+        // after the pivot columns and the deferred filter state, as the active match is an ordinal over
+        // the visible columns and filtered rows. Only highlights the match, leaving the viewport to the
+        // saved `scroll` and `pagination` sections.
         if (shouldSetState('find', findState)) {
             this.setFindState(findState, source);
         }
@@ -430,8 +439,6 @@ export class StateService extends BeanStub implements NamedBean {
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
             findChanged: () => updateCachedState('find', this.getFindState()),
         });
-        // Capture is gated on the toolbar's find item, so ownership can change without a Find event.
-        this.addManagedPropertyListener('toolbar', () => updateCachedState('find', this.getFindState()));
     }
 
     private getColumnGridState(): {
@@ -747,6 +754,33 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
+    /**
+     * Find and the Quick Filter are only state-managed when the Quick Access Toolbar owns an input
+     * for them; otherwise their grid option is the only source and state leaves it alone.
+     */
+    private isToolbarStateManaged(item: 'agFindToolbarItem' | 'agQuickFilterToolbarItem'): boolean {
+        return !!this.beans.toolbar?.hasItem(item);
+    }
+
+    private getQuickFilterState(): QuickFilterState | undefined {
+        return this.isToolbarStateManaged('agQuickFilterToolbarItem')
+            ? this.beans.quickFilter?.getState()
+            : undefined;
+    }
+
+    private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.isToolbarStateManaged('agQuickFilterToolbarItem')) {
+            return;
+        }
+        const { text } = quickFilterState ?? {};
+        // An `api` restore resets what it omits, so a state without the text clears the Quick Filter. At
+        // initialisation an absent value instead leaves the `quickFilterText` grid option as provided.
+        this.beans.quickFilter?.setState(
+            { text: source === 'api' ? (text ?? '') : text },
+            source === 'api' ? 'api' : undefined
+        );
+    }
+
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */
     private setFilterStateDeferringPivot(state: FilterState | undefined, source: 'gridInitializing' | 'api'): void {
         const { colModel, pivotResultCols } = this.beans;
@@ -815,20 +849,12 @@ export class StateService extends BeanStub implements NamedBean {
         rangeSvc.setCellRanges(cellRanges);
     }
 
-    /**
-     * Find is only state-managed when the Quick Access Toolbar owns an input for it; otherwise the
-     * `findSearchValue` grid option is the only source and state leaves it alone.
-     */
-    private isFindStateManaged(): boolean {
-        return !!this.beans.toolbar?.hasItem('agFindToolbarItem');
-    }
-
     private getFindState(): FindState | undefined {
-        return this.isFindStateManaged() ? this.beans.findSvc?.getState() : undefined;
+        return this.isToolbarStateManaged('agFindToolbarItem') ? this.beans.findSvc?.getState() : undefined;
     }
 
     private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
-        if (!this.isFindStateManaged()) {
+        if (!this.isToolbarStateManaged('agFindToolbarItem')) {
             return;
         }
         const { searchValue, activeMatch } = findState ?? {};
