@@ -956,13 +956,11 @@
     }
 
     .ag-sparkline-wrapper {
+        position: absolute;
+        top: 0;
         height: 100%;
-        width: 100%;
         line-height: initial;
-
-        // Right align so sparklines line up vertically
-        display: flex;
-        justify-content: flex-end;
+        inset-inline-start: var(--ag-internal-sparkline-inset, 0);
     }
 
     .ag-full-width-row .ag-cell-wrapper.ag-row-group {
