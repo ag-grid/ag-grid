@@ -1186,4 +1186,48 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
         await af.applyExpression('[Country] is any of ["Jamaica!"]');
         expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
     });
+
+    test.each([
+        ['no filterParams', undefined],
+        ['an empty filters list', { filters: [] }],
+    ])(
+        'a Multi Filter with %s offers the set options through its default Set Filter child',
+        async (_, filterParams) => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [{ field: 'athlete' }, { field: 'country', filter: 'agMultiColumnFilter', filterParams }],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            // The children a Multi Filter shows when none are named are a Text Filter and a Set Filter.
+            await af.type('[Country] ');
+            expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+            await af.type('[Country] is any of [');
+            expect(af.autocompleteEntries()).toEqual([
+                '(Blanks)',
+                'Jamaica',
+                'Poland',
+                'United Kingdom',
+                'United States',
+            ]);
+
+            await af.applyExpression('[Country] is any of ["Jamaica"]');
+            expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+        }
+    );
+
+    test('a Multi Filter child of `filter: true` is a Text Filter, so the set options come only from a named Set Filter', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agMultiColumnFilter', filterParams: { filters: [{ filter: true }] } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+    });
 });
