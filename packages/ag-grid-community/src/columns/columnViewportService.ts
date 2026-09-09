@@ -1,4 +1,4 @@
-import { _exists } from 'ag-stack';
+import { _exists, _isRealCssEngine } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -125,9 +125,12 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private isColumnVirtualisationSuppressed() {
-        // Without a layout engine (headless tests) the viewportRight is always 0, so return true to
-        // allow tests to validate all the columns.
-        return this.suppressColumnVirtualisation || this.viewportRight === 0;
+        // A zero viewport width is only a real zero width where there is a layout engine to measure it -
+        // a container the browser has not laid out yet, which virtualises like any other narrow viewport.
+        // Without one (headless tests) every measurement reads 0 whatever the styling, so build every
+        // column; likewise while the probe has nothing to measure against, which leaves the behaviour as
+        // it was for a grid created before the document body exists.
+        return this.suppressColumnVirtualisation || (this.viewportRight === 0 && _isRealCssEngine() !== true);
     }
 
     public clear(): void {

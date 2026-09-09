@@ -1,9 +1,8 @@
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
-
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 
 const COLUMN_COUNT = 400;
 const COLUMN_WIDTH = 100;
@@ -16,14 +15,14 @@ describe('Column virtualisation in a container the browser has not laid out', ()
 
     beforeAll(() => {
         originalGridWidth = mockGridLayout.gridWidth;
-        // A real layout engine reporting a real zero width, as opposed to jsdom reporting nothing.
+        // A real layout engine reporting a real zero width, as opposed to a headless DOM measuring nothing.
         mockGridLayout.gridWidth = 0;
-        mockGridLayout.simulateRealLayoutEngine = true;
+        mockGridLayout.simulateRealCssEngine = true;
     });
 
     afterAll(() => {
         mockGridLayout.gridWidth = originalGridWidth;
-        mockGridLayout.simulateRealLayoutEngine = false;
+        mockGridLayout.simulateRealCssEngine = false;
     });
 
     afterEach(() => {
@@ -43,8 +42,7 @@ describe('Column virtualisation in a container the browser has not laid out', ()
         expect(api.getColumns()!.length).toBe(COLUMN_COUNT);
 
         // 100px columns against a zero-wide viewport and the 200px buffer: only c0, c1 and c2 intersect.
-        const headerCells = document.querySelectorAll('.ag-header-cell').length;
-        expect(headerCells).toBe(3);
+        expect(document.querySelectorAll('.ag-header-cell').length).toBe(3);
         expect(api.getAllDisplayedVirtualColumns().length).toBe(3);
     });
 
@@ -59,7 +57,7 @@ describe('Column virtualisation in a container the browser has not laid out', ()
         expect(api.getAllDisplayedVirtualColumns().length).toBe(3);
 
         // The wrapper reaches its real width; ensureColumnVisible re-reads the viewport synchronously,
-        // standing in for the resize observer jsdom never fires.
+        // standing in for the resize observer a headless DOM never fires.
         mockGridLayout.gridWidth = 1000;
         api.ensureColumnVisible('c0');
 
