@@ -1,7 +1,10 @@
 import type { InternalFramework } from '@ag-grid-types';
+import {
+    isTransformableModule,
+    toModuleFileName,
+} from '@ag-website-shared/components/example-runner/utils/transformExampleModule';
 import { getGeneratedContents } from '@components/example-generator';
 import { FRAMEWORKS, QUICK_BUILD_PAGES, SHOW_DEBUG_LOGS } from '@constants';
-import { isTransformableModule, toModuleFileName } from '@utils/exampleModules/transformExampleModule';
 import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 

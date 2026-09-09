@@ -2,21 +2,33 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { asyncSetTimeout, getVisibleTooltips as getTooltips, mockGridLayout } from 'ag-test-utils';
+import { ALL_SEVERITIES, asyncSetTimeout, getVisibleTooltips as getTooltips, mockGridLayout } from 'ag-test-utils';
 import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
 
-import { AllCommunityModule, ModuleRegistry, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    ModuleRegistry,
+    agTestIdFor,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import type { CellRendererSelectorResult, ColDef, GridApi } from 'ag-grid-community';
 import { FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
+
+import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
 
 describe('Tooltips (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule, FormulaModule]);
         setupAgTestIds();
     });
-    afterEach(() => cleanup());
+    beforeEach(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
+    afterEach(() => {
+        cleanup();
+        resetLegacyTooltipProperties();
+    });
 
     const hasTooltipText = (text: string) => getTooltips().some((tooltip) => tooltip.textContent?.includes(text));
 
@@ -34,7 +46,7 @@ describe('Tooltips (React)', () => {
             {
                 field: 'A',
                 valueGetter: (params) => (params.data?.showDetail ? 'detail' : 'plain'),
-                tooltipValueGetter: () => 'ColDef tooltip',
+                tooltip: 'ColDef tooltip',
                 cellRendererSelector: (params): CellRendererSelectorResult =>
                     params.data?.showDetail ? { component: TooltipRenderer } : { component: PlainRenderer },
             },
@@ -84,7 +96,7 @@ describe('Tooltips (React)', () => {
             {
                 field: 'A',
                 valueGetter: (params) => (params.data?.showDetail ? 'detail' : 'plain'),
-                tooltipValueGetter: () => 'ColDef tooltip',
+                tooltip: 'ColDef tooltip',
                 cellRendererSelector: (params): CellRendererSelectorResult | undefined =>
                     params.data?.showDetail ? { component: TooltipRenderer } : undefined,
             },
@@ -177,6 +189,49 @@ describe('Tooltips (React)', () => {
         expect(getTooltips()).toHaveLength(1);
     });
 
+    test('clears a renderer tooltip when the same React renderer remounts without registering one', async () => {
+        const ConditionalTooltipRenderer = forwardRef<{ refresh: () => boolean }, CustomCellRendererProps>(
+            (props, ref) => {
+                useImperativeHandle(ref, () => ({ refresh: () => false }));
+                useEffect(() => {
+                    if (props.data.showTooltip) {
+                        props.setTooltip('Renderer tooltip', () => true);
+                    }
+                }, []);
+                return <span>{String(props.value)}</span>;
+            }
+        );
+        let api: GridApi | undefined;
+
+        const rendered = render(
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact
+                    columnDefs={[{ field: 'A', tooltip: 'Column tooltip', cellRenderer: ConditionalTooltipRenderer }]}
+                    rowData={[{ id: 'r1', A: 'a1', showTooltip: true }]}
+                    getRowId={({ data }) => data.id}
+                    tooltipShowDelay={0}
+                    tooltipSwitchShowDelay={0}
+                    onGridReady={({ api: gridApi }) => {
+                        api = gridApi;
+                    }}
+                />
+            </div>
+        );
+        const cell = await waitFor(() => getByTestId(rendered.container, agTestIdFor.cell('r1', 'A')));
+
+        await userEvent.hover(cell);
+        await waitFor(() => expect(hasTooltipText('Renderer tooltip')).toBe(true));
+
+        await userEvent.unhover(cell);
+        await waitFor(() => expect(getTooltips()).toHaveLength(0));
+        act(() => api!.setGridOption('rowData', [{ id: 'r1', A: 'a2', showTooltip: false }]));
+        await waitFor(() => expect(cell).toHaveTextContent('a2'));
+
+        await userEvent.hover(cell);
+        await waitFor(() => expect(hasTooltipText('Column tooltip')).toBe(true));
+        expect(hasTooltipText('Renderer tooltip')).toBe(false);
+    });
+
     test('keeps the formula error tooltip after a colDef change on a column with no tooltip config (React)', async () => {
         // formula and validation error tooltips are not gated by the column's own tooltip config, so a
         // colDef change must leave every cell with a tooltip feature, not just tooltip-enabled columns.
@@ -236,7 +291,8 @@ describe('Tooltips (React)', () => {
         await waitFor(() => expect(getTooltips()[0]?.classList.contains('ag-cell-formula-tooltip')).toBe(true));
     });
 
-    test('AG-5004 aggregated group-row cell tooltips the aggregated value (React)', async () => {
+    test('AG-5004 legacy tooltipField uses the aggregated group-row value (React)', async () => {
+        allowLegacyTooltipProperties();
         let api: GridApi | undefined;
         const columnDefs: ColDef[] = [
             { field: 'country', rowGroup: true, hide: true },
@@ -292,7 +348,7 @@ describe('Tooltips (React)', () => {
                 {
                     field: 'A',
                     width: 200,
-                    tooltipValueGetter: () => 'Should not show',
+                    tooltip: 'Should not show',
                     cellRendererSelector: (): CellRendererSelectorResult | undefined => undefined,
                 },
             ];
@@ -314,7 +370,7 @@ describe('Tooltips (React)', () => {
             const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
 
             await userEvent.hover(cell);
-            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 200ms tooltipShowDelay window to prove no whenTruncated tooltip appears
+            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples after the zero-delay timer turn to prove no whenTruncated tooltip appears
             await asyncSetTimeout(50);
             expect(getTooltips()).toHaveLength(0);
         });
@@ -324,7 +380,7 @@ describe('Tooltips (React)', () => {
                 {
                     field: 'A',
                     width: 200,
-                    tooltipValueGetter: () => 'Renderer tooltip',
+                    tooltip: 'Renderer tooltip',
                     cellRenderer: PlainRenderer,
                 },
             ];

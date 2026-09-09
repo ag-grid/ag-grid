@@ -10,6 +10,7 @@ type LookupFilter = (glyph: Glyph) => boolean;
 const ARABIC_FEATURES = ['isol', 'fina', 'medi', 'init'] as const;
 const COMMON_SUBSTITUTION_FEATURES = ['ccmp', 'locl', 'rlig', 'calt', 'liga'] as const;
 const POSITIONING_FEATURES = ['kern', 'curs', 'mark', 'mkmk'] as const;
+const ARABIC_SCRIPT_LANGUAGES = new Set(['ar', 'fa', 'ps', 'sd', 'ug', 'ur']);
 
 /**
  * Shape logical Unicode text with the OpenType tables in a registered TrueType font.
@@ -22,6 +23,7 @@ export function shapeTrueTypeText(
 ): PdfGlyphRun {
     const shapingText = text.normalize('NFC');
     const logicalCharacters = createLogicalCharacters(shapingText);
+    const script = detectOpenTypeScript(logicalCharacters, language);
     const bidi = resolveBidiCharacters(shapingText, direction);
     const visualCharacterBySourceIndex = new Map<number, (typeof bidi.characters)[number]>();
     for (const character of bidi.characters) {
@@ -46,7 +48,6 @@ export function shapeTrueTypeText(
         });
     }
 
-    const script = detectOpenTypeScript(logicalCharacters, language);
     const gsub = font.getTable('GSUB');
     if (gsub) {
         for (const feature of COMMON_SUBSTITUTION_FEATURES.slice(0, 2)) {
@@ -758,6 +759,7 @@ function detectOpenTypeScript(characters: Array<{ codePoint: number }>, language
     if (primaryLanguage === 'zh') {
         return 'hani';
     }
+    let hasLatinCharacters = false;
     for (const character of characters) {
         const codePoint = character.codePoint;
         if (codePoint >= 0x0600 && codePoint <= 0x08ff) {
@@ -778,6 +780,16 @@ function detectOpenTypeScript(characters: Array<{ codePoint: number }>, language
         if (codePoint >= 0x3400 && codePoint <= 0x9fff) {
             return 'hani';
         }
+        if (
+            (codePoint >= 0x0041 && codePoint <= 0x005a) ||
+            (codePoint >= 0x0061 && codePoint <= 0x007a) ||
+            (codePoint >= 0x00c0 && codePoint <= 0x02af)
+        ) {
+            hasLatinCharacters = true;
+        }
+    }
+    if (!hasLatinCharacters && primaryLanguage && ARABIC_SCRIPT_LANGUAGES.has(primaryLanguage)) {
+        return 'arab';
     }
     return 'latn';
 }

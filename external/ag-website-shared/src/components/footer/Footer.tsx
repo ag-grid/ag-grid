@@ -38,6 +38,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
                         <li key={`${title}_${name}`}>
                             <a
                                 id={`${slugger.slug(name)}-nav`}
+                                tabIndex={0}
                                 href={urlWithBaseUrl(url)}
                                 onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
                                 {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}

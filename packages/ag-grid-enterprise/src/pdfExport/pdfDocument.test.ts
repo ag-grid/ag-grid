@@ -847,7 +847,7 @@ describe('createPdfDocument', () => {
         expect(pdf).not.toMatch(/Tm \(Line 9\) Tj/);
     });
 
-    it('falls back to built-in fonts for unsupported runtime font values', () => {
+    it('rejects unsupported runtime font values', () => {
         const rows = [
             {
                 type: 'BODY',
@@ -863,15 +863,9 @@ describe('createPdfDocument', () => {
             documentTitleStyle: { fontFamily: 'Wingdings' },
         } as unknown as PdfExportParams;
 
-        const pdf = createPdfDocument(rows, columns, params);
-
-        expect(pdf).toContain('/BaseFont /Helvetica');
-        expect(pdf).toContain('/BaseFont /Helvetica-Bold');
-        expect(pdf).toContain('(Report) Tj');
-        expect(pdf).toContain('(Value) Tj');
-        expect(pdf).not.toContain('Comic Sans MS');
-        expect(pdf).not.toContain('Papyrus');
-        expect(pdf).not.toContain('Wingdings');
+        expect(() => createPdfDocument(rows, columns, params)).toThrow(
+            'PDF font family "Comic Sans MS" is not registered.'
+        );
     });
 
     it('applies default cell styles to body cells and inherits them for headers', () => {

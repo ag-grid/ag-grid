@@ -51,7 +51,8 @@ interface Props {
     ctaTitle?: string;
     ctaUrl?: string;
     ctaId?: string;
-    secondaryCta?: SecondaryCta;
+    /** One extra CTA, or several, rendered after the main CTA in the order given. */
+    secondaryCta?: SecondaryCta | SecondaryCta[];
     sectionClass?: string;
     showBackgroundGradient?: boolean;
     children: ReactNode;
@@ -206,7 +207,8 @@ export const LandingPageSection: FunctionComponent<Props> = ({
     // strip pass no tag/heading/subHeading and must not render empty <h2>/<h3>/<h4> tags.
     const hasHeading = Boolean(heading || headingHtml);
     const hasSubHeading = Boolean(subHeading || subHeadingHtml);
-    const hasHeader = Boolean(tag) || hasHeading || hasSubHeading || Boolean(ctaUrl) || Boolean(secondaryCta);
+    const secondaryCtas = secondaryCta ? [secondaryCta].flat() : [];
+    const hasHeader = Boolean(tag) || hasHeading || hasSubHeading || Boolean(ctaUrl) || secondaryCtas.length > 0;
 
     return (
         <div
@@ -236,7 +238,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
                             <h4 className={styles.subHeading}>{subHeading}</h4>
                         ))}
 
-                    {(ctaUrl || secondaryCta) && (
+                    {(ctaUrl || secondaryCtas.length > 0) && (
                         <div className={styles.ctaGroup}>
                             {ctaUrl && isFramework && (
                                 <CTAWithFrameworks ctaId={ctaId} ctaTitle={ctaTitle} ctaUrl={ctaUrl} />
@@ -252,7 +254,9 @@ export const LandingPageSection: FunctionComponent<Props> = ({
                                 </a>
                             )}
 
-                            {secondaryCta && <SecondaryCtaLink cta={secondaryCta} />}
+                            {secondaryCtas.map((cta) => (
+                                <SecondaryCtaLink key={cta.id ?? cta.title} cta={cta} />
+                            ))}
                         </div>
                     )}
                 </header>

@@ -22,7 +22,7 @@ const getColDefs = (library: Library) => [
     IssueColDef,
     {
         field: 'summary',
-        tooltipField: 'summary',
+        tooltip: true,
         width: 300,
         minWidth: 200,
         flex: 1,
@@ -39,11 +39,11 @@ const getColDefs = (library: Library) => [
             if (hasFixVersion) {
                 const latestFixVersion = fixVersionsArr.length - 1;
                 const fixVersion = fixVersionsArr[latestFixVersion];
-                if (fixVersion.toUpperCase() === 'NEXT') {
+                if (!fixVersion || fixVersion.toUpperCase() === 'NEXT') {
                     return 'Scheduled';
                 } else {
                     const version = library in transformVersion ? transformVersion[library](fixVersion) : fixVersion;
-                    return `Scheduled for ${version}`;
+                    return version ? `Scheduled for ${version}` : 'Scheduled';
                 }
             }
             return 'Backlog';
@@ -124,7 +124,7 @@ export const Pipeline: FunctionComponent<Props> = ({ library }) => {
                         The AG {libraryTitleCase} pipeline lists the feature requests and active bugs in our product
                         backlog. Use it to see the items scheduled for our next release or to look up the status of a
                         specific item. If you can't find the item you're looking for, check the{' '}
-                        <a href={urlWithBaseUrl('/changelog')}>Changelog</a> containing the list of completed items.
+                        <a href={urlWithBaseUrl('/changelog/')}>Changelog</a> containing the list of completed items.
                     </p>
                 </Alert>
             </section>

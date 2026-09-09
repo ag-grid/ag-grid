@@ -13,8 +13,8 @@ test.agExample(import.meta, () => {
         await expect(tooltip).toContainText("The athlete's name");
     });
 
-    test.eachFramework('headerTooltipValueGetter builds the tooltip dynamically', async ({ agIdFor, page }) => {
-        // gold/silver/bronze use headerTooltipValueGetter -> `How many ${field} medals`
+    test.eachFramework('headerTooltip callback builds the tooltip dynamically', async ({ agIdFor, page }) => {
+        // gold/silver/bronze use a headerTooltip callback -> `How many ${header name} medals`
         await agIdFor.headerCell('gold').hover();
         const tooltip = page.locator('.ag-tooltip');
         await expect(tooltip).toBeVisible();

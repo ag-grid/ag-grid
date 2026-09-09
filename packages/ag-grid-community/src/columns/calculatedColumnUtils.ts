@@ -1,7 +1,6 @@
 import type { ColDef } from '../entities/colDef';
 import type { CalculatedColumnsGridOption } from '../interfaces/iCalculatedColumns';
 
-/** @internal AG_GRID_INTERNAL */
 export function _hasCalculatedExpression(colDef: ColDef | null | undefined): boolean {
     return colDef?.calculatedExpression !== undefined;
 }

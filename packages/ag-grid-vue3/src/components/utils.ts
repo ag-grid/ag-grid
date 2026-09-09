@@ -74,7 +74,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
-    LoadingOptions,
+    LoadingRowsOptions,
     LocaleText,
     MenuItemDef,
     NavigateToNextCell,
@@ -198,6 +198,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderFocusedEvent,
+    IssueRaisedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -519,7 +520,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `ColumnAutoSizeModule`
          */
-    autoSizeStrategy?: AutoSizeStrategy,
+    autoSizeStrategy?: AutoSizeStrategy<TData>,
     /** Set to `true` to animate changes to column width when auto-sizing the columns.
          * @default false
          */
@@ -535,7 +536,8 @@ export interface Props<TData> {
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
          */
     suppressStartEditOnTab?: boolean,
-    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+    /** Validates the Full Row Edit. Return non-empty, user-facing error messages, or `null` when the row is valid.
+         * Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     getFullRowEditValidationErrors?: GetFullRowEditValidationErrors,
@@ -721,7 +723,10 @@ export interface Props<TData> {
          * @initial
          */
     filterHandlers?: FilterHandlers<TData>,
-    /** Set to `true` to Enable Charts.
+    /** Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
+         * `chartRange` and `pivotChart` context menu items shown by default. Menu items requested by
+         * name via `getContextMenuItems` or `colDef.contextMenuItems` are shown regardless, and charts
+         * created programmatically through the Grid API do not require this option.
          * @default false
          * @agModule `IntegratedChartsModule`
          */
@@ -887,13 +892,18 @@ export interface Props<TData> {
          */
     debug?: boolean,
     /** Show or hide the loading UI.
-         * - `true`: the loading overlay is shown.
-         * - `false`: the loading overlay is hidden.
-         * - `LoadingOptions`: configure the loading UI.
+         * - `true`: the loading overlay is shown, or skeleton rows if `loadingRows` is enabled (Client-Side Row Model only).
+         * - `false`: the loading UI is hidden.
          * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
          * @default undefined
          */
-    loading?: boolean | LoadingOptions,
+    loading?: boolean,
+    /** Display skeleton rows instead of the loading overlay when `loading=true` (Client-Side Row Model only).
+         * Set to `true` to display ten rows, or provide options to configure the row count.
+         * This option does not start loading; set `loading=true` to show the skeleton rows.
+         * @default false
+         */
+    loadingRows?: boolean | LoadingRowsOptions,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -1269,7 +1279,7 @@ export interface Props<TData> {
          */
     masterDefaultExpanded?: number,
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-         * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
+         * Cell tooltip properties set here (`tooltip`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>,
@@ -1885,10 +1895,18 @@ export interface Props<TData> {
          */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>,
     /** Grid calls this method to know if an external filter is present.
+         * Called exactly once every time the grid senses a filter change.
+         * Should return `true` if external filtering is active, otherwise `false`.
+         * If `true`, `doesExternalFilterPass` is called while filtering, otherwise it is not called.
+         * Supplying a new function reference re-runs external filtering.
          * @agModule `ExternalFilterModule`
          */
     isExternalFilterPresent?: IsExternalFilterPresent<TData>,
-    /** Should return `true` if external filter passes, otherwise `false`.
+    /** Called once for each row node in the grid.
+         * Should return `true` if external filter passes, otherwise `false`.
+         * If `false`, the node is excluded from the final set.
+         * Only runs if `isExternalFilterPresent` returns `true`.
+         * Supplying a new function reference re-runs external filtering.
          * @agModule `ExternalFilterModule`
          */
     doesExternalFilterPass?: DoesExternalFilterPass<TData>,
@@ -2148,6 +2166,7 @@ export interface Props<TData> {
    'onDrag-stopped'?: DragStoppedEvent<TData>,
    'onDrag-cancelled'?: DragCancelledEvent<TData>,
    'onState-updated'?: StateUpdatedEvent<TData>,
+   'onIssue-raised'?: IssueRaisedEvent<TData>,
    'onPagination-changed'?: PaginationChangedEvent<TData>,
    'onRow-drag-enter'?: RowDragEnterEvent<TData>,
    'onRow-drag-move'?: RowDragMoveEvent<TData>,
@@ -2323,6 +2342,7 @@ export function getProps() {
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
+        loadingRows: undefined,
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,
@@ -2670,7 +2690,8 @@ export function getProps() {
         'onBulk-editing-started': undefined,
         'onBulk-editing-stopped': undefined,
         'onBatch-editing-started': undefined,
-        'onBatch-editing-stopped': undefined
+        'onBatch-editing-stopped': undefined,
+        'onIssue-raised': undefined
 // @END_EVENT_PROPS@
 
      };

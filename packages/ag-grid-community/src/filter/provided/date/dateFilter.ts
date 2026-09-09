@@ -8,7 +8,7 @@ import { _createElement } from '../../../utils/element';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { removeItems } from '../simpleFilterUtils';
+import { getValidityMessageKey, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
@@ -99,7 +99,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         // An option taking one value has no order an input can be reported as out of.
         const isRange = this.conditionNumberOfInputs(position) >= 2;
         const localeKey = isRange
-            ? getRangeValidityMessageKey(fromDate, toDate, isFrom, this.params.inRangeInclusive)
+            ? getValidityMessageKey(fromDate, toDate, isFrom, this.params.inRangeInclusive)
             : null;
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
 
@@ -343,21 +343,4 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
         return super.translate(normalisedKey, variableValues);
     }
-}
-
-function getRangeValidityMessageKey(
-    fromDate: Date | null,
-    toDate: Date | null,
-    isFrom: boolean,
-    inclusive?: boolean
-): FilterLocaleTextKey | null {
-    // An inclusive range of one date is an exact match, so only a strict one has nothing left to match.
-    const isInvalid = fromDate != null && toDate != null && (inclusive ? fromDate > toDate : fromDate >= toDate);
-    if (!isInvalid) {
-        return null;
-    }
-    if (inclusive) {
-        return isFrom ? 'maxDateInclusiveValidation' : 'minDateInclusiveValidation';
-    }
-    return isFrom ? 'maxDateValidation' : 'minDateValidation';
 }

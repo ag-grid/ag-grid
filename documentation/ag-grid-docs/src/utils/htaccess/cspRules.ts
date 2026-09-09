@@ -13,6 +13,7 @@
  */
 import { createHash } from 'node:crypto';
 
+import type { AcceptedCspViolation } from '../csp/cspViolationReport';
 import {
     DARK_MODE_INIT_SCRIPT,
     KBD_PLATFORM_INIT_SCRIPT,
@@ -152,6 +153,19 @@ const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.
 const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
 const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
 
+// An updated version of the GTM UTM-webhook tag above: the submit listener adds a third
+// `true` argument to addEventListener, switching it to the capturing phase — otherwise
+// byte-identical to GTM_UTM_WEBHOOK_HASH. Kept alongside it until the rollout is complete
+// and the old hash is confirmed unused. AG-3390.
+const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='";
+
+// Inline script used by the contact form.
+const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m8PkxY='";
+
+// GTM tag for internal promo tracking: fires a GA4 event. Authored in the shared GTM
+// container (not this repo); hash captured from the browser's CSP violation report.
+const GTM_PROMO_TRACKING_HASH = "'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='";
+
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
@@ -162,6 +176,9 @@ const SITE_SCRIPT_HASHES = [
     hashInlineScript(ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT),
     GTM_UTM_CAPTURE_HASH,
     GTM_UTM_WEBHOOK_HASH,
+    GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH,
+    CONTACT_FORM_SCRIPT_HASH,
+    GTM_PROMO_TRACKING_HASH,
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
@@ -188,6 +205,14 @@ const SITE_SCRIPT_HASHES = [
 // third throws uncaught. We are not granting 'unsafe-eval' site-wide for a consent
 // banner, so keep the Enzuzo console configuration free of template placeholders and
 // string-bodied event handlers.
+//
+// Independently of those three, the bundle calls eval() unconditionally on load, in a
+// guarded fallback that redefines functions it has already defined, so the call achieves
+// nothing when it succeeds and costs nothing when it is blocked. It is blocked on every
+// page, and that is accepted below so the post-deploy CSP report does not carry it as
+// something to fix. The acceptance is deliberately narrow — only eval, only from the
+// cookiebar bundle — so a stale hash for the consent bridge, a blocked connect, or an
+// eval from any other script still surfaces.
 
 // Packages whose npm build a browser cannot resolve natively come through esm.sh: React and
 // React DOM ship CJS only, and rxjs' ESM build imports its own internals without file
@@ -198,6 +223,53 @@ const ESM_SH_HOST = 'https://esm.sh';
 
 const ENZUZO_APP_HOST = 'https://app.enzuzo.com';
 const ENZUZO_GVL_HOST = 'https://gvl.enzuzo.com';
+
+// Google Ads (GTM "Google tag" destination AW-873243008, added to the shared GTM container
+// alongside the existing GA4 tag). Nothing here references these origins directly — as with
+// Enzuzo and LinkedIn, the CSP is the only place the site declares them.
+//
+// MOST OF THIS ONLY FIRES ONCE MARKETING CONSENT IS GRANTED. Under the default
+// consent-denied state gtag.js sends a single non-personalised beacon (npa=1) and nothing
+// else, so testing without accepting cookies in the Enzuzo banner shows almost none of these
+// violations. Accept all cookies first, or the policy will look complete when it is not.
+//
+//  - googleads.g.doubleclick.net serves the view-through conversion / remarketing tag
+//    (/pagead/viewthroughconversion/<id>), injected as an external <script>, so it is
+//    script-src. Its own hn= parameter names googleadservices.com, which is a hint carried in
+//    the URL rather than a second request.
+//  - ad.doubleclick.net takes the /ccm/s/collect conversion hit, sent with the Fetch API and
+//    so governed by connect-src. Distinct from stats.g.doubleclick.net, already allowed above.
+//  - googleadservices.com and pagead2.googlesyndication.com take the /pagead/conversion and
+//    /ccm/conversion beacons, tried with fetch() before an <img> fallback; without them the
+//    beacon silently degrades to the less reliable pixel. www.google.com (already allowed for
+//    reCAPTCHA) is the third host the same beacon tries.
+//
+// Deliberately NOT allowed until a violation actually shows up, matching the LinkedIn note
+// below: adservice.google.com/pagead/regclk and ade.googlesyndication.com/ddm/activity, which
+// appear as dead fallbacks in every gtag.js payload, and the ad.doubleclick.net image pixels
+// the permissive img-src already covers.
+const GOOGLE_ADS_SDK_HOST = 'https://googleads.g.doubleclick.net';
+const GOOGLE_ADS_CONVERSION_HOSTS = [
+    'https://www.googleadservices.com',
+    'https://pagead2.googlesyndication.com',
+    'https://ad.doubleclick.net',
+];
+
+/**
+ * Violations the site policy knowingly produces and will not be changed to fix. Read by the
+ * page-verification suite's CSP reporter (scripts/csp/cspViolationReporter.ts) so the
+ * post-deploy report marks them accepted rather than raising them. Each entry's reasoning
+ * belongs in the comment above the host it concerns, not here.
+ */
+export const ACCEPTED_CSP_VIOLATIONS: AcceptedCspViolation[] = [
+    {
+        directive: 'script-src',
+        blockedUri: 'eval',
+        // The bundle path carries the account id; match the path, not the whole URL.
+        sourceFilePrefix: `${ENZUZO_APP_HOST}/scripts/cookiebar/`,
+        reason: "Enzuzo's banner bundle calls eval() in a redundant fallback on load; 'unsafe-eval' is not granted site-wide for a consent banner (see ENZUZO_APP_HOST in cspRules.ts).",
+    },
+];
 
 // The LinkedIn Insight Tag (LinkedIn Ads conversion tracking and website demographics).
 // Like ZoomInfo and Enzuzo, it is a tag in the shared Google Tag Manager container rather
@@ -313,6 +385,10 @@ const BLOG_SCRIPT_HOSTS = [
     'https://platform.twitter.com', // embedded tweets (widgets.js)
     'https://widget.spreaker.com', // podcast embeds
     'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
+    // The newsletter signup form submits via mc-validate's jQuery JSONP: the subscribe
+    // call is loaded as a <script src> pointing at /subscribe/post-json on this origin,
+    // so it needs script-src on top of the form-action entry in the base policy.
+    'https://ag-grid.us11.list-manage.com',
 ];
 
 const BLOG_STYLE_HOSTS = ['https://cdn-images.mailchimp.com']; // Mailchimp embed stylesheet
@@ -397,6 +473,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
             'https://*.zoominfo.com', // ZoomInfo FormComplete
             LINKEDIN_SDK_HOST, // LinkedIn Insight Tag SDK (injected via GTM)
+            GOOGLE_ADS_SDK_HOST, // Google Ads view-through conversion / remarketing tag
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
             'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
@@ -449,6 +526,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://*.zoominfo.com', // ZoomInfo
             LINKEDIN_BEACON_HOST, // LinkedIn Insight Tag: website-actions beacon and attribution-trigger fetch
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
+            ...GOOGLE_ADS_CONVERSION_HOSTS, // Google Ads (AW-873243008) conversion/remarketing beacon
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
             MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)

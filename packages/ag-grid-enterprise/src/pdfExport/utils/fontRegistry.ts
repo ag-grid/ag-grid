@@ -43,7 +43,20 @@ export interface EncodedPdfText {
     readonly direction: 'ltr' | 'rtl';
     readonly logicalText: string;
     readonly glyphRun?: PdfGlyphRun;
-    readonly cids?: number[];
+    readonly positionedGlyphs?: EncodedPdfGlyph[];
+}
+
+interface EncodedPdfGlyph {
+    readonly fontKey: string;
+    readonly operatorValue: string;
+    /** Horizontal advance as a proportion of the font size. */
+    readonly xAdvance: number;
+    /** Vertical advance as a proportion of the font size. */
+    readonly yAdvance: number;
+    /** Horizontal offset as a proportion of the font size. */
+    readonly xOffset: number;
+    /** Vertical offset as a proportion of the font size. */
+    readonly yOffset: number;
 }
 
 type RegisteredFace = {
@@ -51,6 +64,16 @@ type RegisteredFace = {
     style: PdfFontStyle;
     font: TrueTypeFont;
 };
+
+export class PdfFontFamilyNotRegisteredError extends Error {
+    public constructor(
+        public readonly family: string,
+        public readonly registeredFamilies: string[]
+    ) {
+        super(`PDF font family "${family}" is not registered.`);
+        this.name = 'PdfFontFamilyNotRegisteredError';
+    }
+}
 
 /**
  * Per-export registry responsible for resolving, measuring and encoding font faces.
@@ -90,8 +113,11 @@ export class PdfFontRegistry {
             const face = selectFace(customFamily.faces, requestedWeight, requestedStyle);
             return this.getOrCreateCustomFont(customFamily.family, face);
         }
+        if (!BUILT_IN_FONT_FAMILIES.has(requestedFamily as PdfBuiltInFontFamily)) {
+            throw new PdfFontFamilyNotRegisteredError(requestedFamily, this.getRegisteredFamilyNames());
+        }
 
-        const builtInFamily = resolveBuiltInFamily(requestedFamily, requestedWeight, fallbackFamily);
+        const builtInFamily = resolveBuiltInFamily(requestedFamily as PdfBuiltInFontFamily, requestedWeight);
         return this.getOrCreateBuiltInFont(builtInFamily);
     }
 
@@ -115,9 +141,14 @@ export class PdfFontRegistry {
         if (font.trueType) {
             const run = this.getShapedRun(text, font, direction, language);
             for (const glyph of run.glyphs) {
-                width += glyph.xAdvance;
+                const fallbackFont = this.getAsciiFallbackFont(glyph.glyphId, glyph.unicode, font);
+                if (fallbackFont) {
+                    width += (getBase14GlyphWidth(glyph.unicode, fallbackFont.family) / 1000) * fontSize;
+                } else {
+                    width += (glyph.xAdvance / font.trueType.unitsPerEm) * fontSize;
+                }
             }
-            return (width / font.trueType.unitsPerEm) * fontSize;
+            return width;
         }
 
         const visualText = resolveVisualText(text, direction).text;
@@ -152,9 +183,22 @@ export class PdfFontRegistry {
         }
 
         const glyphRun = this.getShapedRun(text, font, direction, language);
-        const cids: number[] = [];
+        const positionedGlyphs: EncodedPdfGlyph[] = [];
         let encoded = '';
         for (const glyph of glyphRun.glyphs) {
+            const fallbackFont = this.getAsciiFallbackFont(glyph.glyphId, glyph.unicode, font);
+            if (fallbackFont) {
+                positionedGlyphs.push({
+                    fontKey: fallbackFont.key,
+                    operatorValue: `(${escapePdfString(glyph.unicode)})`,
+                    xAdvance: getBase14GlyphWidth(glyph.unicode, fallbackFont.family) / 1000,
+                    yAdvance: 0,
+                    xOffset: 0,
+                    yOffset: 0,
+                });
+                continue;
+            }
+
             const mappingKey = getGlyphMappingKey(glyph.glyphId, glyph.unicode);
             let cid = font.cidByMapping.get(mappingKey);
             if (cid == null) {
@@ -165,8 +209,15 @@ export class PdfFontRegistry {
                 font.cidByMapping.set(mappingKey, cid);
                 font.mappingByCid.set(cid, { glyphId: glyph.glyphId, unicode: glyph.unicode });
             }
-            cids.push(cid);
             encoded += cid.toString(16).padStart(4, '0');
+            positionedGlyphs.push({
+                fontKey: font.key,
+                operatorValue: `<${cid.toString(16).padStart(4, '0')}>`,
+                xAdvance: glyph.xAdvance / font.trueType.unitsPerEm,
+                yAdvance: glyph.yAdvance / font.trueType.unitsPerEm,
+                xOffset: glyph.xOffset / font.trueType.unitsPerEm,
+                yOffset: glyph.yOffset / font.trueType.unitsPerEm,
+            });
         }
         return {
             operatorValue: `<${encoded}>`,
@@ -174,7 +225,7 @@ export class PdfFontRegistry {
             direction: glyphRun.direction,
             logicalText: text,
             glyphRun,
-            cids,
+            positionedGlyphs,
         };
     }
 
@@ -228,6 +279,29 @@ export class PdfFontRegistry {
             this.shapedRuns.set(key, run);
         }
         return run;
+    }
+
+    private getAsciiFallbackFont(
+        glyphId: number,
+        unicode: string,
+        sourceFont: ResolvedPdfFont
+    ): ResolvedPdfFont | undefined {
+        if (glyphId || unicode.length !== 1) {
+            return undefined;
+        }
+        const codePoint = unicode.codePointAt(0) ?? 0;
+        if (codePoint < 0x20 || codePoint > 0x7e) {
+            return undefined;
+        }
+
+        return this.resolve('Helvetica', sourceFont.weight, 'normal');
+    }
+
+    private getRegisteredFamilyNames(): string[] {
+        return [
+            ...Array.from(this.customFamilies.values(), (definition) => definition.family),
+            ...BUILT_IN_FONT_FAMILIES,
+        ];
     }
 
     private registerFamily(definition: PdfFontFamilyDefinition): void {
@@ -325,22 +399,13 @@ function selectFace(faces: RegisteredFace[], weight: number, style: PdfFontStyle
     return selected;
 }
 
-function resolveBuiltInFamily(
-    family: PdfFontFamily,
-    weight: number,
-    fallbackFamily: PdfFontFamily
-): PdfBuiltInFontFamily {
-    const candidate = BUILT_IN_FONT_FAMILIES.has(family as PdfBuiltInFontFamily)
-        ? (family as PdfBuiltInFontFamily)
-        : BUILT_IN_FONT_FAMILIES.has(fallbackFamily as PdfBuiltInFontFamily)
-          ? (fallbackFamily as PdfBuiltInFontFamily)
-          : 'Helvetica';
+function resolveBuiltInFamily(family: PdfBuiltInFontFamily, weight: number): PdfBuiltInFontFamily {
     const bold = weight >= 600;
 
-    if (candidate === 'Times-Roman' || candidate === 'Times-Bold') {
+    if (family === 'Times-Roman' || family === 'Times-Bold') {
         return bold ? 'Times-Bold' : 'Times-Roman';
     }
-    if (candidate === 'Courier' || candidate === 'Courier-Bold') {
+    if (family === 'Courier' || family === 'Courier-Bold') {
         return bold ? 'Courier-Bold' : 'Courier';
     }
     return bold ? 'Helvetica-Bold' : 'Helvetica';

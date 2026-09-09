@@ -20,6 +20,7 @@ const OPTION_PILL = '.ag-advanced-filter-builder-option-pill';
 const VALUE_PILL = '.ag-advanced-filter-builder-value-pill';
 const PILL_DISPLAY = '.ag-advanced-filter-builder-pill-display';
 const JOIN_PILL = '.ag-advanced-filter-builder-join-pill';
+const ADD_DROPDOWN = '.ag-advanced-filter-builder-item-button';
 
 /** Column-pill captions in rendered order — the observable signature of the builder's item list. */
 function columnPillOrder(): string {
@@ -148,17 +149,24 @@ export class AdvancedFilterBuilderHarness {
         });
     }
 
-    /** Adds a new condition via the builder add-item button. */
+    /** Adds an empty condition through the add row's dropdown, which is the only row offering one. */
     public async addCondition(): Promise<this> {
-        const addButton = document.querySelector<HTMLElement>(
-            '.ag-advanced-filter-builder-item-button.ag-advanced-filter-builder-add-item-button, .ag-advanced-filter-builder-item-add .ag-advanced-filter-builder-item-button'
+        const addRow = (await this.items()).find(
+            (item) => !item.querySelector(COLUMN_PILL) && !item.querySelector(JOIN_PILL)
         );
-        if (!addButton) {
-            throw new Error('Advanced filter builder add-condition button not found');
+        const eDropdown = addRow?.querySelector<HTMLElement>(ADD_DROPDOWN);
+        if (!eDropdown) {
+            throw new Error('Advanced filter builder add dropdown not found');
         }
-        await firePointerLikeClick(addButton);
-        await asyncSetTimeout(0);
+        await openPicker(eDropdown);
+        await selectRichSelectRow('Add Filter');
+        await this.ensureItemsRendered();
         return this;
+    }
+
+    /** Each rendered row's accessible name, which is where an invalid condition's own message is spoken. */
+    public itemLabels(): (string | null)[] {
+        return Array.from(document.querySelectorAll(VIRTUAL_LIST_ITEM)).map((item) => item.getAttribute('aria-label'));
     }
 
     /** The value pills on `item` — a two-input filter option renders one per operand. */
@@ -169,6 +177,11 @@ export class AdvancedFilterBuilderHarness {
     /** Display text of value pill `index` on `item`. */
     public valuePillText(item: HTMLElement, index = 0): string {
         return this.valuePills(item)[index]?.querySelector(PILL_DISPLAY)?.textContent?.trim() ?? '';
+    }
+
+    /** Display text of the operator pill on `item`. */
+    public operatorPillText(item: HTMLElement): string {
+        return this.liveItem(item).querySelector(`${OPTION_PILL} ${PILL_DISPLAY}`)?.textContent?.trim() ?? '';
     }
 
     /** Clicks value pill `index` on `item` and returns the editor input it opens. */
@@ -248,6 +261,25 @@ export class AdvancedFilterBuilderHarness {
 
     /** Clicks the builder Apply button, committing the staged edits to the grid (and closing the dialog). */
     public async apply(): Promise<this> {
+        await firePointerLikeClick(this.applyButton());
+        await asyncSetTimeout(0);
+        return this;
+    }
+
+    /** Whether Apply is shut — the whole list's verdict, including rows the virtual list has not mounted. */
+    public applyDisabled(): boolean {
+        return this.applyButton().disabled;
+    }
+
+    /**
+     * Why Apply is shut, as the user reads it. Needs `enableBrowserTooltips: true`, which is what puts the
+     * message in the DOM rather than in a grid tooltip that has to be hovered into existence.
+     */
+    public applyValidationMessage(): string | null {
+        return this.applyButton().getAttribute('title');
+    }
+
+    private applyButton(): HTMLButtonElement {
         const panel = document.querySelector(`${BUILDER} .ag-filter-apply-panel`);
         const button = Array.from(panel?.querySelectorAll<HTMLButtonElement>('button') ?? []).find(
             (b) => b.textContent?.trim() === 'Apply'
@@ -255,9 +287,7 @@ export class AdvancedFilterBuilderHarness {
         if (!button) {
             throw new Error('Builder Apply button not found');
         }
-        await firePointerLikeClick(button);
-        await asyncSetTimeout(0);
-        return this;
+        return button;
     }
 
     /**

@@ -74,7 +74,7 @@ The `numberParser` should take the user-entered text and return either a number 
 
 The `numberFormatter` should take a number (e.g. from the Filter Model) and convert it into the formatted text to be displayed, or `null` if no value.
 
-`numberParser` and `numberFormatter` are also passed the grid `api` and `context` as a second argument, along with the `column` and `colDef` they are working on. One callback set on `defaultColDef.filterParams` can therefore serve every column it applies to.
+`numberParser` and `numberFormatter` are also passed the grid `api` and `context` as a second argument, along with the `column` and `colDef` they are working on. One callback set on `defaultColDef.filterParams` can therefore serve every column it applies to. The [Advanced Filter](./filter-advanced/) runs the same callbacks to read and write its operands; `params.source` is `'advancedFilter'` there and `'columnFilter'` here.
 
 An `allowedCharPattern` of `\\d\\-\\.` will give similar behaviour to the default `number` input.
 
@@ -205,7 +205,7 @@ Applying the Number Filter is described in more detail in the following sections
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
+If the row data contains blanks (i.e. `null`, `undefined`, or an empty or whitespace-only string), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {

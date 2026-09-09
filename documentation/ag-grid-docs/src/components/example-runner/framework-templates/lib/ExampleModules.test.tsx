@@ -1,12 +1,11 @@
 import type { InternalFramework } from '@ag-grid-types';
+import { EXAMPLE_RUNNER_SCRIPT_FILE_NAME } from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
 import { NPM_CDN } from '@constants';
 import { FRAMEWORK_VERSION_PLACEHOLDER } from '@utils/exampleModules/getImportMap';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-
-import { EXAMPLE_RUNNER_SCRIPT_FILE_NAME } from './ExampleRunnerClient';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 

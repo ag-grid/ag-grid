@@ -1,7 +1,7 @@
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
 import type { FilterOptionKey, ISimpleFilterModel, Tuple } from './iSimpleFilter';
 import { SimpleFilterHandler } from './simpleFilterHandler';
-import { isBlank } from './simpleFilterUtils';
+import { _isBlank } from './simpleFilterUtils';
 
 export abstract class ScalarFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -11,6 +11,11 @@ export abstract class ScalarFilterHandler<
     protected abstract comparator(): Comparator<TValue>;
 
     protected abstract isValid(value: TValue): boolean;
+
+    /** A scalar has no use for a string that is empty or only whitespace, so it counts as absent. */
+    protected override isNullValue(cellValue: unknown): boolean {
+        return _isBlank(cellValue);
+    }
 
     protected evaluateNullValue(filterType?: FilterOptionKey | null) {
         const {
@@ -64,6 +69,14 @@ export abstract class ScalarFilterHandler<
             return type === 'notEqual' || type === 'notBlank';
         }
 
+        // `isNullValue` consumed every blank before this ran, so these two need no comparator and no value.
+        if (type === 'blank') {
+            return false;
+        }
+        if (type === 'notBlank') {
+            return true;
+        }
+
         const comparator = this.comparator();
 
         const compareResult = values[0] != null ? comparator(values[0], cellValue) : 0;
@@ -93,12 +106,6 @@ export abstract class ScalarFilterHandler<
                     ? compareResult >= 0 && compareToResult <= 0
                     : compareResult > 0 && compareToResult < 0;
             }
-
-            case 'blank':
-                return isBlank(cellValue);
-
-            case 'notBlank':
-                return !isBlank(cellValue);
 
             default:
                 this.warnUnexpectedFilterType(type);

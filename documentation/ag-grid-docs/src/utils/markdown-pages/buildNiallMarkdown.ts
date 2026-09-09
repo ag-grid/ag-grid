@@ -2,6 +2,7 @@ import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import niallData from '../../content/about/niall.json';
+import { buildGridFrontmatter } from './gridFrontmatter';
 
 /**
  * Build the markdown twin of the /niall memorial page. Reads the same niall.json the page renders,
@@ -12,9 +13,7 @@ export function buildNiallMarkdown({ siteRoot }: { siteRoot?: string } = {}): st
     const { meta, eyebrow, heading, intro, photos, sections } = niallData;
 
     const document: string[] = [
-        ['---', `title: ${JSON.stringify(meta.title)}`, `description: ${JSON.stringify(meta.description)}`, '---'].join(
-            '\n'
-        ),
+        buildGridFrontmatter({ pageUrl: '/niall/', siteRoot, title: meta.title, description: meta.description }),
         `# ${heading}`,
         `*${eyebrow}*`,
         intro,

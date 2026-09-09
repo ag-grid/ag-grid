@@ -214,6 +214,13 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
         // the state that applies it.
         &:has([data-cutoff='true']) {
             margin-right: calc(-1 * var(--demo-gutter));
+
+            // The bleed lands this edge on the screen edge, where it reads as where the
+            // demo was cut off rather than as a side of the card. Square it and drop the
+            // rule so it cuts cleanly instead of curving away from the viewport.
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right-width: 0;
         }
     }
 

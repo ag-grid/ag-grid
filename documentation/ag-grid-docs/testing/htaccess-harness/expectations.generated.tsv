@@ -6048,18 +6048,18 @@ www	/react-data-grid/component-cell-editor-imperative-react/child	301	/react-dat
 www	/react-data-grid/component-cell-editor-imperative-react/child/	301	/react-data-grid/cell-editors/child/
 www	/cookies.php	301	/cookies/
 www	/privacy.php	301	/privacy/
-www	/about.php	301	/about
+www	/about.php	301	/about/
 www	/license-pricing.php	301	/license-pricing/
 www	/example.php	301	/example/
 www	/ag-grid-jobs-board.php	301	/ag-grid-jobs-board
-www	/react-data-grid/whats-new	301	/react-data-grid/whats-new/
-www	/react-data-grid/whats-new/	301	/whats-new
-www	/vue-data-grid/whats-new	301	/vue-data-grid/whats-new/
-www	/vue-data-grid/whats-new/	301	/whats-new
-www	/angular-data-grid/whats-new	301	/angular-data-grid/whats-new/
-www	/angular-data-grid/whats-new/	301	/whats-new
-www	/javascript-data-grid/whats-new	301	/javascript-data-grid/whats-new/
-www	/javascript-data-grid/whats-new/	301	/whats-new
+www	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/react-data-grid/whats-new/	301	/whats-new/
+www	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/vue-data-grid/whats-new/	301	/whats-new/
+www	/angular-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/angular-data-grid/whats-new/	301	/whats-new/
+www	/javascript-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+www	/javascript-data-grid/whats-new/	301	/whats-new/
 www	/vue-data-grid/framework-data-flow	301	/vue-data-grid/framework-data-flow/
 www	/vue-data-grid/framework-data-flow/	301	/vue-data-grid/getting-started/
 www	/react-data-grid/licensing/	301	/react-data-grid/community-vs-enterprise/
@@ -6705,7 +6705,7 @@ www	/documentation/react/chartssample/	301	/react-data-grid/chartssample/
 www	/documentation/react/chartssample	301	/documentation/react/chartssample/
 www	/documentation/vue/chartssample/	301	/vue-data-grid/chartssample/
 www	/documentation/vue/chartssample	301	/documentation/vue/chartssample/
-www	/archive/	301	/documentation-archive
+www	/archive/	301	/documentation-archive/
 www	/javascript-grid-virtual-paging/sample/	301	/javascript-data-grid/infinite-scrolling/
 www	/javascript-grid-virtual-paging/sample	301	/javascript-grid-virtual-paging/sample/
 www	/javascript-grid-enterprise-model/sample/	301	/javascript-data-grid/server-side-model/
@@ -6883,6 +6883,10 @@ www	/charts/vue-charts/license-pricing/	200
 www	/charts/vue-charts/license-pricing	301	/charts/vue-charts/license-pricing/
 
 # converted shadowed /{fw}-grid/<subpage>/ rules — apex single-hop coverage
+apex	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/angular-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
+apex	/javascript-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 apex	/javascript-grid/cell-rendering/	301	https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/
 apex	/javascript-grid/client-side-model/	301	https://www.ag-grid.com/javascript-data-grid/row-models/
 apex	/javascript-grid/component-cell-editor/	301	https://www.ag-grid.com/javascript-data-grid/cell-editors/

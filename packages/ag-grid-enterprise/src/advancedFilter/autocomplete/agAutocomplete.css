@@ -8,6 +8,10 @@
     }
 }
 
+.ag-autocomplete-row-path-parent {
+    opacity: 0.5;
+}
+
 .ag-autocomplete-list-popup {
     position: absolute;
     user-select: none;

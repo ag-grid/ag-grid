@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions, ITooltipParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, TooltipCallbackParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -14,19 +14,19 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
 
-const toolTipValueGetter = (params: ITooltipParams) =>
+const getTooltip = (params: TooltipCallbackParams) =>
     params.value == null || params.value === '' ? '- Missing -' : params.value;
 
 const columnDefs: ColDef[] = [
     {
         headerName: 'A - Missing Value, NO Tooltip',
         field: 'athlete',
-        tooltipField: 'athlete',
+        tooltip: true,
     },
     {
         headerName: 'B - Missing Value, WITH Tooltip',
         field: 'athlete',
-        tooltipValueGetter: toolTipValueGetter,
+        tooltip: getTooltip,
     },
 ];
 

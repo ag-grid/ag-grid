@@ -82,14 +82,14 @@ export class AgVirtualList<
 
     protected model: VirtualListModel;
     private readonly renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
-    private componentCreator: (value: V, listItemElement: HTMLElement) => C;
+    private componentCreator: (value: V, listItemElement: HTMLElement, rowIndex: number) => C;
     private componentUpdater: (value: V, component: C) => void;
     private rowHeight = 20;
     private pageSize = -1;
     private isScrolling = false;
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
-    private readonly eContainer: HTMLElement = RefPlaceholder;
+    protected readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
 
@@ -358,7 +358,9 @@ export class AgVirtualList<
         return false;
     }
 
-    public setComponentCreator(componentCreator: (value: V, listItemElement: HTMLElement) => C): void {
+    public setComponentCreator(
+        componentCreator: (value: V, listItemElement: HTMLElement, rowIndex: number) => C
+    ): void {
         this.componentCreator = componentCreator;
     }
 
@@ -513,7 +515,7 @@ export class AgVirtualList<
         eDiv.style.height = `${rowHeight}px`;
         eDiv.style.top = `${rowHeight * rowIndex}px`;
 
-        const rowComponent = this.componentCreator(value, eDiv);
+        const rowComponent = this.componentCreator(value, eDiv, rowIndex);
 
         rowComponent.addGuiEventListener('focusin', () => (this.lastFocusedRowIndex = rowIndex));
 

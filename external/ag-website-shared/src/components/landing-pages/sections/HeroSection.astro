@@ -29,7 +29,7 @@ const { section, pageContent, latestVersion, urlWithBaseUrl, styles } = Astro.pr
 // Resolve URLs with defaults
 const secondaryCtaUrl = section.secondaryCta?.url
     ? urlWithBaseUrl(section.secondaryCta.url)
-    : urlWithBaseUrl('./example');
+    : urlWithBaseUrl('./example/');
 
 // Analytics event names
 const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
@@ -54,7 +54,7 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                 {
                     section.showVersionBadge && latestVersion && (
                         <a
-                            href={urlWithBaseUrl('./whats-new')}
+                            href={urlWithBaseUrl('./whats-new/')}
                             class:list={[
                                 styles.heroSectionVersionTagContainer,
                                 `plausible-event-name=${pageContent.analyticsPrefix}-whats-new`,

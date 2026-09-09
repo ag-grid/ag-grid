@@ -7,6 +7,7 @@ import type {
     CellRange,
     ElementParams,
     FillOperationParams,
+    FillOperationResult,
     RowNode,
     RowPosition,
 } from 'ag-grid-community';
@@ -38,6 +39,59 @@ interface ValueContext {
     value: any;
     column: AgColumn;
     rowNode: RowNode;
+}
+
+/**
+ * Row offset to apply to a formula being filled into `rowNode`.
+ *
+ * Formula refs are shifted in formula-row space (`RowNode.formulaRowIndex`) while the fill walks
+ * displayed rows, and a filter makes those two spaces diverge, so measure the gap between the
+ * target rows rather than counting one step per filled cell. A row outside formula-row space (a
+ * pinned clone) has no index, and there a single step is the best available guess.
+ */
+function getFormulaRowDelta(
+    direction: 'up' | 'down' | 'left' | 'right',
+    rowNode: RowNode,
+    previousRowNode?: RowNode
+): number {
+    const singleStep = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
+    if (singleStep === 0) {
+        return 0;
+    }
+
+    const from = previousRowNode?.formulaRowIndex;
+    const to = rowNode.formulaRowIndex;
+    if (from == null || to == null) {
+        return singleStep;
+    }
+
+    return to - from;
+}
+
+const fillOperationResultType = Symbol('fillOperationResultType');
+type FillOperationDecision =
+    | { readonly [fillOperationResultType]: 'value'; readonly value: any }
+    | { readonly [fillOperationResultType]: 'skip' | 'default' };
+
+const skipCellResult: FillOperationDecision = { [fillOperationResultType]: 'skip' };
+const useDefaultResult: FillOperationDecision = { [fillOperationResultType]: 'default' };
+
+function useFillValue(value: any): FillOperationResult {
+    return { [fillOperationResultType]: 'value', value } as unknown as FillOperationResult;
+}
+
+function skipFillCell(): FillOperationResult {
+    return skipCellResult as unknown as FillOperationResult;
+}
+
+function useDefaultFill(): FillOperationResult {
+    return useDefaultResult as unknown as FillOperationResult;
+}
+
+function getFillOperationDecision(value: any): FillOperationDecision | undefined {
+    return value != null && typeof value === 'object' && fillOperationResultType in value
+        ? (value as FillOperationDecision)
+        : undefined;
 }
 
 type FillDirection = 'x' | 'y';
@@ -290,6 +344,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         let withinInitialRange = true;
         let idx = 0;
+        // The row of the last value pushed to `values` - formula row offsets are measured between
+        // target rows, not counted per filled cell.
+        let previousRowNode: RowNode | undefined;
 
         const resetValues = () => {
             values.length = 0;
@@ -297,6 +354,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             initialNonAggregatedValues.length = 0;
             initialFormattedValues.length = 0;
             idx = 0;
+            previousRowNode = undefined;
         };
 
         const iterateAcrossCells = (column?: AgColumn, columns?: AgColumn[]) => {
@@ -362,22 +420,25 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 );
                 withinInitialRange = updateInitialSet();
             } else {
-                const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
-                    event: e,
-                    values: currentValues,
-                    initialValues,
-                    initialNonAggregatedValues,
-                    initialFormattedValues,
-                    col,
-                    rowNode,
-                    idx: idx++,
-                });
+                const { value, fromUserFunction, sourceCol, sourceRowNode, includeUnchangedValue, skipCell } =
+                    this.processValues({
+                        event: e,
+                        values: currentValues,
+                        initialValues,
+                        initialNonAggregatedValues,
+                        initialFormattedValues,
+                        col,
+                        rowNode,
+                        previousRowNode,
+                        idx: idx++,
+                    });
 
                 valueSourceCol = sourceCol ?? col;
                 valueSourceRowNode = sourceRowNode ?? rowNode;
 
                 currentValue = value;
-                if (col.isCellEditable(rowNode)) {
+                skipValue = skipCell ?? false;
+                if (!skipValue && col.isCellEditable(rowNode)) {
                     const cellValue = valueSvc.getValue(col, rowNode, 'edit');
 
                     if (!fromUserFunction) {
@@ -406,15 +467,19 @@ export class AgFillHandle extends AbstractSelectionHandle {
                             );
                         }
                     }
-                    if (!fromUserFunction || cellValue !== currentValue) {
-                        rowNode.setDataValue(col, currentValue, 'rangeSvc');
+                    const isUnchangedUserValue = fromUserFunction && cellValue === currentValue;
+                    if (isUnchangedUserValue) {
+                        skipValue = !includeUnchangedValue;
                     } else {
-                        skipValue = true;
+                        rowNode.setDataValue(col, currentValue, 'rangeSvc');
                     }
                 }
             }
 
             if (!skipValue) {
+                // Tracks the row of the value the next formula shift is measured from, so the base
+                // formula and the row gap stay in the same frame when a cell is skipped.
+                previousRowNode = rowNode;
                 currentValues.push({
                     value: currentValue,
                     column: valueSourceCol,
@@ -462,11 +527,28 @@ export class AgFillHandle extends AbstractSelectionHandle {
         initialFormattedValues: any[];
         col: AgColumn;
         rowNode: RowNode;
+        previousRowNode?: RowNode;
         idx: number;
-    }): { value: any; fromUserFunction: boolean; sourceCol?: AgColumn; sourceRowNode?: RowNode } {
+    }): {
+        value: any;
+        fromUserFunction: boolean;
+        sourceCol?: AgColumn;
+        sourceRowNode?: RowNode;
+        includeUnchangedValue?: boolean;
+        skipCell?: boolean;
+    } {
         const { formula, valueSvc } = this.beans;
-        const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
-            params;
+        const {
+            event,
+            values,
+            initialValues,
+            initialNonAggregatedValues,
+            initialFormattedValues,
+            col,
+            rowNode,
+            previousRowNode,
+            idx,
+        } = params;
 
         const userFillOperation = _getFillHandle(this.gos)?.setFillValue;
         const isVertical = this.dragAxis === 'y';
@@ -479,20 +561,35 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params = _addGridCommonParams<FillOperationParams>(this.gos, {
+            const currentCellValue = valueSvc.getValue(col, rowNode, 'edit');
+            const callbackParams = _addGridCommonParams<FillOperationParams>(this.gos, {
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,
                 initialNonAggregatedValues,
                 initialFormattedValues,
                 currentIndex: idx,
-                currentCellValue: valueSvc.getValue(col, rowNode, 'edit'),
+                currentCellValue,
                 direction,
                 column: col,
                 rowNode: rowNode,
+                useValue: useFillValue,
+                skipCell: skipFillCell,
+                useDefault: useDefaultFill,
             });
-            const userResult = userFillOperation(params);
-            if (userResult !== false) {
+            const userResult = userFillOperation(callbackParams);
+            const decision = getFillOperationDecision(userResult);
+
+            if (decision) {
+                const decisionType = decision[fillOperationResultType];
+                if (decisionType === 'value') {
+                    return { value: decision.value, fromUserFunction: true, includeUnchangedValue: true };
+                }
+
+                if (decisionType === 'skip') {
+                    return { value: currentCellValue, fromUserFunction: true, skipCell: true };
+                }
+            } else if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };
             }
         }
@@ -527,7 +624,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             if (fromFormula) {
                 // Compute the row and column delta based on drag direction
-                const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
+                const rowDelta = getFormulaRowDelta(direction, rowNode, previousRowNode);
                 const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
                 processedValue = formula!.updateFormulaByOffset({ value: valueForFunctions, rowDelta, columnDelta });
             } else {

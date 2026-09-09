@@ -1,208 +1,47 @@
 import type { Framework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
-import { useScrollToAnchor } from '@ag-website-shared/utils/navigation';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
-import { AG_MODULE_TAG_NAME } from '../constants';
-import type { ChildDocEntry, Config, ICallSignature, InterfaceEntry } from '../types';
-import {
-    convertMarkdown,
-    extractJSDocTags,
-    formatJsDocString,
-    getTypeUrl,
-    inferType,
-    removeDefaultValue,
-} from '../utils/documentation-helpers';
-import { formatJson, getInterfaceName } from '../utils/interface-helpers';
+import type { Config, PropertyViewModel } from '../types';
+import { useReferenceDetails } from '../utils/useReferenceDetails';
 import legacyStyles from './LegacyApiReference.module.scss';
 import { PropertyModules } from './PropertyModules';
-
-function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
-    let displayName = name;
-    if (definition.isRequired) {
-        displayName += `&nbsp;<span class="${styles.required}">required</span>`;
-    }
-
-    if (definition.strikeThrough) {
-        displayName = `<span style='text-decoration: line-through'>${displayName}</span>`;
-    }
-
-    // Split display name on capital letter, add <wbr> to improve text splitting across lines
-    let displayNameSplit: string;
-
-    const { isRequired, strikeThrough } = definition;
-    // displayName is hardCoded for isRequired and strikeThrough
-    if (isRequired || strikeThrough) {
-        displayNameSplit = displayName;
-    } else {
-        displayNameSplit = displayName
-            .split(/(?=[A-Z])/)
-            .reverse()
-            .reduce((acc, cv) => {
-                return `${cv}<wbr />` + acc;
-            });
-    }
-
-    return displayNameSplit;
-}
-
-function getDescription({
-    definition,
-    gridOpProp,
-    framework,
-}: {
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    framework: Framework;
-}) {
-    let description: string | undefined = '';
-    let isObject: boolean = false;
-    let propDescription: string | undefined =
-        definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.comment) || undefined;
-
-    if (propDescription) {
-        propDescription = formatJsDocString(propDescription);
-        if (!definition.description && gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all) {
-            const { params, returns } = extractJSDocTags(
-                definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all)
-            );
-            const paramsStr = params?.map((p) => `<span class="param">\`${p.name}\`: ${p.value}</span>`).join('');
-            const returnsStr = returns ? `<strong>Returns:</strong> ${returns}` : '';
-
-            propDescription = [propDescription, paramsStr, returnsStr].filter(Boolean).join('\n');
-        }
-
-        // process property object
-        description = convertMarkdown(propDescription, framework);
-    } else {
-        // this must be the parent of a child object
-        if (definition.meta != null && definition.meta.description != null) {
-            description = convertMarkdown(definition.meta.description, framework);
-        }
-
-        isObject = true;
-    }
-
-    return {
-        isObject,
-        description,
-    };
-}
-
-// Use the type definition if manually specified in config
-function getDefinitionTypeUrl({
-    id,
-    name,
-    framework,
-    definition,
-    propertyType,
-    gridOpProp,
-    isObject,
-    config,
-}: {
-    id: string;
-    name: string;
-    framework: Framework;
-    definition: ChildDocEntry;
-    propertyType: string;
-    gridOpProp: InterfaceEntry;
-    isObject: boolean;
-    config: Config;
-}) {
-    let type: any = definition.type;
-    if (!type) {
-        // No type specified in the doc config file so check the GridOptions property
-        if (gridOpProp && gridOpProp.type) {
-            type = gridOpProp.type;
-
-            const isDeprecated = gridOpProp.meta?.tags?.some((t) => t.name === 'deprecated');
-            if (isDeprecated) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`
-                );
-                // eslint-disable-next-line no-console
-                console.warn('<api-documentation>: ' + gridOpProp.meta?.all);
-            }
-        } else {
-            if (type == null && config.codeSrcProvided?.length > 0) {
-                throw new Error(
-                    `We could not find a type for "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`
-                );
-            }
-
-            // If a codeSrc is not provided as a last resort try and infer the type
-            type = inferType(definition.default);
-        }
-    }
-
-    const typeUrl = isObject
-        ? `#reference-${id}.${name}`
-        : propertyType !== 'Function'
-          ? getTypeUrl(type, framework)
-          : null;
-
-    return typeUrl;
-}
-
-function getTagsData({
-    definition,
-    gridOpProp,
-    config,
-}: {
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    config: Config;
-}) {
-    // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    const tags = gridOpProp?.meta?.tags ?? definition?.tags ?? [];
-    const jsdocDefault = tags.find((t) => t.name === 'default');
-    const defaultValue = definition?.default ?? jsdocDefault?.comment;
-    const formattedDefaultValue = Array.isArray(defaultValue)
-        ? '[' +
-          defaultValue.map((v, i) => {
-              return i === 0 ? `"${v}"` : ` "${v}"`;
-          }) +
-          ']'
-        : defaultValue;
-    const isInitial = tags.some((t) => t.name === 'initial') ?? false;
-    let modules = tags.find((t) => t.name === AG_MODULE_TAG_NAME)?.modules ?? [];
-
-    const restrictedModule: string | undefined = definition?.restrictModule ?? config.restrictModule;
-    if (modules.length > 1 && restrictedModule) {
-        // If the property contains the restricted module and others then only show the restricted module
-        const restrictedModuleTag = modules.find((mod) => restrictedModule == mod.name);
-        if (restrictedModuleTag) {
-            modules = [restrictedModuleTag];
-        }
-    }
-
-    return {
-        formattedDefaultValue,
-        isInitial,
-        modules,
-    };
-}
+import { ReferenceIcon } from './ReferenceIcon';
 
 function getDetailsId(id: string) {
     return `${id}-details`;
 }
 
-function CollapsibleButton({ name, isExpanded, onClick }: { name: string; isExpanded?: boolean; onClick: () => void }) {
+function CollapsibleButton({
+    name,
+    isExpanded,
+    detailsId,
+    onClick,
+}: {
+    name: string;
+    isExpanded?: boolean;
+    detailsId: string;
+    onClick: () => void;
+}) {
     return (
         <button
+            type="button"
+            // Safari omits buttons from the tab order without an explicit tabindex.
+            tabIndex={0}
             className={classnames(styles.seeMore, 'button-tertiary', {
                 [styles.isExpanded]: isExpanded,
             })}
             onClick={onClick}
-            aria-label={`See more details about ${name}`}
+            aria-expanded={Boolean(isExpanded)}
+            // Only reference the panel while it exists — it is unmounted when collapsed.
+            aria-controls={isExpanded ? detailsId : undefined}
+            aria-label={`${isExpanded ? 'Hide' : 'See more'} details about ${name}`}
         >
-            <Icon className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`} name="chevronDown" />
+            <ReferenceIcon name="chevronDown" />
         </button>
     );
 }
@@ -211,36 +50,37 @@ export const Property: FunctionComponent<{
     id: string;
     name: string;
     framework: Framework;
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    detailsCode: string;
-    propertyType: string;
+    property: PropertyViewModel;
     config: Config;
-}> = ({ id, name, framework, definition, gridOpProp, detailsCode, propertyType, config }) => {
+}> = ({ id, name, framework, property, config }) => {
     const idName = `reference-${id}-${name}`;
-    const displayNameSplit = getDisplayNameSplit({ name, definition });
-    const { isObject, description } = getDescription({ definition, gridOpProp, framework });
-    const typeUrl = getDefinitionTypeUrl({
-        id,
-        name,
-        framework,
-        definition,
-        propertyType,
-        gridOpProp,
+    const {
+        displayNameSplit,
+        description,
         isObject,
-        config,
-    });
-    const { formattedDefaultValue, isInitial, modules } = getTagsData({
-        definition,
-        gridOpProp,
-        config,
-    });
-
-    const { more } = definition;
+        propertyType,
+        interfaceName,
+        defaultValue,
+        isInitial,
+        modules,
+        more,
+        options,
+        detailsCode,
+        detailsKey,
+    } = property;
 
     const propertyRef = useRef<HTMLTableRowElement>(null);
     const [isExpanded, setExpanded] = useState(config.defaultExpand);
-    const scrollToAnchor = useScrollToAnchor();
+
+    const hasDetails = Boolean(detailsCode ?? detailsKey);
+    const fetchedDetails = useReferenceDetails({
+        url: config.detailsUrl,
+        enabled: Boolean(isExpanded && detailsKey),
+    });
+    const expandedCode = detailsCode ?? (detailsKey ? fetchedDetails?.[detailsKey] : undefined);
+
+    // An object property links to its own section, whose id only the rendering table knows.
+    const typeUrl = isObject ? `#reference-${id}.${name}` : property.typeUrl;
 
     useEffect(() => {
         const hashId = location.hash.slice(1); // Remove the '#' symbol
@@ -271,7 +111,6 @@ export const Property: FunctionComponent<{
                             <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                             <LinkIcon
                                 href={`#${idName}`}
-                                onClick={scrollToAnchor}
                                 className={styles.linkIcon}
                                 aria-label={`Link to ${name} property`}
                             />
@@ -279,27 +118,29 @@ export const Property: FunctionComponent<{
 
                         <div className={styles.metaItem}>
                             <div className={styles.metaRow}>
-                                {detailsCode && (
+                                {hasDetails && (
                                     <CollapsibleButton
                                         name={more?.name ?? name}
                                         isExpanded={isExpanded}
+                                        detailsId={getDetailsId(idName)}
                                         onClick={onCollapseClick}
                                     />
                                 )}
                                 {typeUrl ? (
                                     <a
+                                        tabIndex={0}
                                         className={styles.metaValue}
                                         href={typeUrl}
                                         target={typeUrl.startsWith('http') ? '_blank' : '_self'}
                                         rel="noreferrer"
                                     >
-                                        {isObject ? getInterfaceName(name) : propertyType}
+                                        {isObject ? interfaceName : propertyType}
                                     </a>
                                 ) : (
                                     <span
                                         onClick={onCollapseClick}
                                         className={classnames(styles.metaValue, {
-                                            [styles.isExpandable]: detailsCode,
+                                            [styles.isClickable]: hasDetails,
                                         })}
                                     >
                                         {propertyType}
@@ -307,11 +148,11 @@ export const Property: FunctionComponent<{
                                 )}
                             </div>
 
-                            {formattedDefaultValue != null && (
+                            {defaultValue != null && (
                                 <div className={styles.metaItem}>
                                     <span className={classnames(styles.metaValue, styles.defaultValue)}>
                                         <span className={styles.defaultLabel}>default: </span>
-                                        {formattedDefaultValue}
+                                        {defaultValue}
                                     </span>
                                 </div>
                             )}
@@ -319,6 +160,7 @@ export const Property: FunctionComponent<{
                             {isInitial && (
                                 <div className={classnames(styles.metaItem, styles.initialItem)}>
                                     <a
+                                        tabIndex={0}
                                         className={classnames(styles.metaValue)}
                                         href={urlWithPrefix({
                                             url: config?.initialLink ?? './grid-interface/#initial-grid-options',
@@ -337,23 +179,27 @@ export const Property: FunctionComponent<{
                             role="presentation"
                             className={styles.description}
                             data-api-property-description
-                            dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
+                            dangerouslySetInnerHTML={{ __html: description ?? '' }}
                         ></div>
 
                         <div className={styles.actions}>
                             {isObject && (
                                 <div>
-                                    See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
+                                    See{' '}
+                                    <a tabIndex={0} href={`#reference-${id}.${name}`}>
+                                        {name}
+                                    </a>{' '}
+                                    for more details.
                                 </div>
                             )}
 
-                            {definition.options != null && (
+                            {options != null && (
                                 <div>
                                     Options:{' '}
-                                    {definition.options.map((o, i) => (
-                                        <Fragment key={o}>
+                                    {options.map((option, i) => (
+                                        <Fragment key={option}>
                                             {i > 0 ? ', ' : ''}
-                                            <code>{formatJson(o)}</code>
+                                            <code>{option}</code>
                                         </Fragment>
                                     ))}
                                 </div>
@@ -361,6 +207,7 @@ export const Property: FunctionComponent<{
 
                             {more != null && more.url && !config.hideMore && (
                                 <a
+                                    tabIndex={0}
                                     className={styles.docLink}
                                     href={urlWithPrefix({
                                         url: more.url,
@@ -368,7 +215,7 @@ export const Property: FunctionComponent<{
                                     })}
                                 >
                                     {more.name}
-                                    <Icon name="newTab" />
+                                    <ReferenceIcon name="newTab" />
                                 </a>
                             )}
 
@@ -376,9 +223,13 @@ export const Property: FunctionComponent<{
                         </div>
                     </div>
 
-                    {detailsCode && isExpanded && (
+                    {hasDetails && isExpanded && (
                         <div id={getDetailsId(idName)} className={styles.expandedContent}>
-                            {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
+                            {expandedCode ? (
+                                <Code code={expandedCode} keepMarkup={true} />
+                            ) : (
+                                <p className="text-secondary">Loading type details&hellip;</p>
+                            )}
                         </div>
                     )}
                 </div>

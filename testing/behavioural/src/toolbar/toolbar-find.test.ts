@@ -1,4 +1,5 @@
 import { fireEvent } from '@testing-library/dom';
+import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { ToolbarBuiltInItemDef } from 'ag-grid-community';
@@ -107,7 +108,13 @@ describe('Toolbar find item', () => {
         expect(findButtons).toHaveLength(2);
         expect(clearButton.compareDocumentPosition(findButtons[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
+        const user = userEvent.setup();
         input.focus();
+        await user.tab();
+        expect(document.activeElement).toBe(clearButton);
+        await user.tab({ shift: true });
+        expect(document.activeElement).toBe(input);
+
         fireEvent.mouseDown(clearButton);
         fireEvent.click(clearButton);
 

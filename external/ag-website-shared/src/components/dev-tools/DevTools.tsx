@@ -77,8 +77,9 @@ export const DevTools: FunctionComponent = () => {
             <h2>Dev Tools</h2>
             <div className={styles.options}>
                 <div>
-                    <label>Example Dev Toolbar:</label>
+                    <label htmlFor={`${DEV_TOOLS_ID}-exampleDevToolbar`}>Example Dev Toolbar:</label>
                     <input
+                        id={`${DEV_TOOLS_ID}-exampleDevToolbar`}
                         type="checkbox"
                         defaultChecked={exampleDevToolbar}
                         onClick={() => {
@@ -87,8 +88,9 @@ export const DevTools: FunctionComponent = () => {
                     />
                 </div>
                 <div>
-                    <label>Open Links In New Tab:</label>
+                    <label htmlFor={`${DEV_TOOLS_ID}-openLinksInNewTab`}>Open Links In New Tab:</label>
                     <input
+                        id={`${DEV_TOOLS_ID}-openLinksInNewTab`}
                         type="checkbox"
                         defaultChecked={openLinksInNewTab}
                         onClick={() => {
@@ -97,8 +99,9 @@ export const DevTools: FunctionComponent = () => {
                     />
                 </div>
                 <div>
-                    <label>Copy Framework Agnostic Links:</label>
+                    <label htmlFor={`${DEV_TOOLS_ID}-copyFrameworkAgnosticLinks`}>Copy Framework Agnostic Links:</label>
                     <input
+                        id={`${DEV_TOOLS_ID}-copyFrameworkAgnosticLinks`}
                         type="checkbox"
                         defaultChecked={copyFrameworkAgnosticLinks}
                         onClick={() => {
@@ -107,8 +110,9 @@ export const DevTools: FunctionComponent = () => {
                     />
                 </div>
                 <div>
-                    <label>FPS Monitor:</label>
+                    <label htmlFor={`${DEV_TOOLS_ID}-fpsMonitor`}>FPS Monitor:</label>
                     <input
+                        id={`${DEV_TOOLS_ID}-fpsMonitor`}
                         type="checkbox"
                         defaultChecked={fpsMonitor}
                         onClick={() => {

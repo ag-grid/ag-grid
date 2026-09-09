@@ -33,6 +33,12 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 // no query string, so Apache preserves any inbound query). Destinations were derived by
 // replaying the current redirect rules to their fixpoint.
 export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
+    // The slash-less framework whats-new paths, which would otherwise pick up the
+    // add-trailing-slash 301 first and reach /whats-new/ in two hops.
+    { from: '/react-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/vue-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/angular-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
+    { from: '/javascript-data-grid/whats-new', to: 'https://www.ag-grid.com/whats-new/' },
     // Shadowed /{framework}-grid/<subpage>/ rules converted to single hop. The broad /{fw}-grid/
     // prefix rule (mod_alias, first-match) otherwise shadows these specifics: 128 took 2 hops and 14
     // landed on the wrong (404) page. As mod_rewrite, these run before mod_alias so each resolves in
@@ -396,6 +402,10 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
 ];
 
 export const SITE_301_REDIRECTS: Redirect[] = [
+    // SE-186: Bing still probes the conventional /sitemap.xml location; the real sitemap lives at
+    // /sitemap-index.xml, already registered via the Sitemap: line in robots.txt.
+    { from: '/sitemap.xml', to: 'https://www.ag-grid.com/sitemap-index.xml' },
+
     // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
     // announcement actually lives, preserving the content for external links / historical index entries.
     // SE-91: retargeted from blog.ag-grid.com to the self-hosted /blog/ path. Left pointing at the old
@@ -2989,7 +2999,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // /charts sub-directory one, hijacks them to the grid's own documentation-archive. Keep it
     // scoped to the grid root only. No bare `^/archive$` rule is needed: the parent trailing-slash
     // rewrite ([L]) always turns `/archive` into `/archive/` first, which this rule then matches.
-    { fromPattern: '^/archive/$', to: '/documentation-archive' },
+    { fromPattern: '^/archive/$', to: '/documentation-archive/' },
 
     { from: '/javascript-data-grid/component-types/', to: '/javascript-data-grid/components/' },
     { from: '/angular-data-grid/component-types/', to: '/angular-data-grid/components/' },
@@ -3118,11 +3128,14 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // SE-64: target the final (trailing-slashed) page directly to remove the extra hop
     { from: '/cookies.php', to: '/cookies/' },
     { from: '/privacy.php', to: '/privacy/' },
-    { from: '/about.php', to: '/about' },
+    { from: '/about.php', to: '/about/' },
     { from: '/license-pricing.php', to: '/license-pricing/' },
     { from: '/example.php', to: '/example/' },
     { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
 
+    // Targets are deliberately slash-less: `Redirect` prefix-matches and appends the remainder,
+    // so the slashed request lands on /whats-new/ exactly, while a slashed target yields
+    // /whats-new//. The slash-less request is handled by SITE_SINGLE_HOP_REWRITES above.
     { from: '/react-data-grid/whats-new', to: '/whats-new' },
     { from: '/vue-data-grid/whats-new', to: '/whats-new' },
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
@@ -3321,6 +3334,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/community-forums/$', to: '/community/' },
     { fromPattern: '^/forum/.+', gone: true },
     { from: '/testimonials.php', gone: true },
+    // The trailing slash is required: Apache's `Redirect` prefix-matches, so without it this
+    // would also swallow the live /blog/whats-new-in-ag-grid-v24-part-2/.
+    { from: '/blog/whats-new-in-ag-grid-v24/', gone: true },
     { from: '/start-trial.php', to: '/license-pricing/' },
     { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },
     { from: '/options/series/area/', to: 'https://www.ag-grid.com/charts/options/series/area/' },

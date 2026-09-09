@@ -85,6 +85,9 @@ const gridOptions: GridOptions<ProjectData> = {
         gridApi.getRowNode('p1')?.setSelected(true);
         gridApi.getRowNode('p3')?.setSelected(true);
     },
+    defaultPdfExportParams: {
+        columnWidth: 'auto',
+    },
 };
 
 function isChecked(id: string): boolean {
@@ -101,8 +104,11 @@ function getPdfExportParams(): PdfExportParams {
     };
 }
 
-function onBtExport() {
+function onPdfExportOptionsChanged() {
     gridApi.setGridOption('defaultPdfExportParams', getPdfExportParams());
+}
+
+function onBtExport() {
     gridApi.exportDataAsPdf();
 }
 

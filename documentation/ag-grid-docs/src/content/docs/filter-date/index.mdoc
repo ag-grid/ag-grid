@@ -67,6 +67,8 @@ If using `Date` objects, the default date comparator assumes that the `Date`s do
 
 If you are not using Cell Data Types (and the cell value is not a `Date` object, which will also work automatically), then a `comparator` needs to be configured to allow the Date Filter to perform the date comparisons.
 
+A `comparator` set here also decides the column's comparisons in the [Advanced Filter](./filter-advanced/#filter-parameters), under the Client-Side Row Model.
+
 {% interfaceDocumentation interfaceName="IDateFilterParams" names=["comparator"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The `comparator` function takes two parameters. The first parameter is a JavaScript `Date` object for the selected date in the filter (with the time set to midnight). The second parameter is the current value of the cell in the row being evaluated. The function must return:
@@ -320,7 +322,7 @@ Applying the Date Filter is described in more detail in the following sections:
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
+If the row data contains blanks (i.e. `null`, `undefined`, or an empty or whitespace-only string), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {

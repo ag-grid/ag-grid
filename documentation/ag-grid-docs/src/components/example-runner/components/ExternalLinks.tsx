@@ -1,11 +1,11 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCodeSandbox } from '@ag-website-shared/components/codeSandbox/components/OpenInCodeSandbox';
-import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/OpenInPlunkr';
-import type { FileContents } from '@components/example-generator/types';
 import {
     EXAMPLE_RUNNER_SCRIPT_FILE_NAME,
     exampleRunnerScriptSrc,
-} from '@components/example-runner/framework-templates/lib/ExampleRunnerClient';
+} from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
+import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/OpenInPlunkr';
+import type { FileContents } from '@components/example-generator/types';
 import { isReactInternalFramework } from '@utils/framework';
 
 export function ExternalLinks({

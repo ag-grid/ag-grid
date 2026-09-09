@@ -12,15 +12,15 @@ export type ScalarFilterParams<TData = any> = IScalarFilterParams & IFilterParam
 export interface IScalarFilterParams extends ISimpleFilterParams {
     /** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */
     inRangeInclusive?: boolean;
-    /** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */
+    /** If `true`, blank (`null`, `undefined`, or an empty or whitespace-only string) values will pass the `'equals'` filter option. */
     includeBlanksInEquals?: boolean;
-    /** If `true`, blank (`null` or `undefined`) values will pass the `'notEqual'` filter option. */
+    /** If `true`, blank (`null`, `undefined`, or an empty or whitespace-only string) values will pass the `'notEqual'` filter option. */
     includeBlanksInNotEqual?: boolean;
-    /** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */
+    /** If `true`, blank (`null`, `undefined`, or an empty or whitespace-only string) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */
     includeBlanksInLessThan?: boolean;
-    /** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */
+    /** If `true`, blank (`null`, `undefined`, or an empty or whitespace-only string) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */
     includeBlanksInGreaterThan?: boolean;
-    /** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */
+    /** If `true`, blank (`null`, `undefined`, or an empty or whitespace-only string) values will pass the `'inRange'` filter option. */
     includeBlanksInRange?: boolean;
 }
 

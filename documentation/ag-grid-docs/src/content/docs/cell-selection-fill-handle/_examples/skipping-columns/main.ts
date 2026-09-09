@@ -39,10 +39,10 @@ const gridOptions: GridOptions<IOlympicData> = {
             suppressClearOnFillReduction: true,
             setFillValue(params) {
                 if (params.column.getColId() === 'country') {
-                    return params.currentCellValue;
+                    return params.skipCell();
                 }
 
-                return params.values[params.values.length - 1];
+                return params.useDefault();
             },
         },
     },

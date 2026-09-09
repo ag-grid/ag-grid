@@ -59,13 +59,13 @@ describe('Editable header name — tooltips', () => {
     }
 
     test('the header tooltip reflects the edited name after a rename', async () => {
-        // headerTooltipValueGetter reads valueFormatted, which the tooltip service resolves from the
+        // The header tooltip callback reads valueFormatted, which the tooltip service resolves from the
         // display name on each read, so a rename underneath the header must surface in the tooltip.
         const { api } = await createGrid([
             {
                 field: 'athlete',
                 headerNameEditable: true,
-                headerTooltipValueGetter: (params) => params.valueFormatted ?? '',
+                headerTooltip: (params) => params.valueFormatted ?? '',
             },
         ]);
 

@@ -11,7 +11,6 @@ import type {
     IDoesFilterPassParams,
     IFilter,
     IFilterComp,
-    IFilterParams,
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
@@ -33,7 +32,12 @@ import {
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
-import { getFilterModelForIndex, getMultiFilterDefs, updateGetValue } from './multiFilterUtil';
+import {
+    getFilterModelForIndex,
+    getMultiFilterDefs,
+    multiFilterChildrenChanged,
+    updateGetValue,
+} from './multiFilterUtil';
 
 interface MultiFilterWrapper {
     filter: IFilterComp;
@@ -91,10 +95,12 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         });
     }
 
-    public refresh(params: IFilterParams): boolean {
-        // multi filter has never been reactive. Implementing this would require extracting
-        // even more logic from ColumnFilterService to determine if the filter has changed.
-        // Just update the params for the latest model.
+    public refresh(params: MultiFilterParams): boolean {
+        if (multiFilterChildrenChanged(this.filterDefs, getMultiFilterDefs(params))) {
+            return false;
+        }
+        // `filterDefs` is deliberately not updated: the gui is built from it once, so fresh defs beside a
+        // stale gui would misreport each child's `display` to `afterGuiAttached`.
         this.params = params;
         return true;
     }

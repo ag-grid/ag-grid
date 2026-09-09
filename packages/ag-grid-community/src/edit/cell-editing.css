@@ -19,7 +19,8 @@
         line-height: normal;
     }
 
-    &.ag-cell-editing-error {
+    &.ag-cell-editing-error,
+    &.ag-cell-editor-input-invalid {
         border-color: var(--ag-invalid-color) !important;
     }
 }

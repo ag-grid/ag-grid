@@ -51,7 +51,7 @@ export const GRID_MARKDOWN_PAGE_GROUPS: MarkdownPageGroup[] = [
         // /privacy/your-choice is deliberately absent: it is a post-submission confirmation page,
         // disallowed in robots.txt and excluded from the sitemap, like the /contact result pages.
         describes: 'Legal and policy pages.',
-        pattern: 'cookies|modern-slavery|privacy',
+        pattern: 'cookies|modern-slavery|privacy|terms-of-use',
     },
     {
         describes: 'Standalone demo applications.',

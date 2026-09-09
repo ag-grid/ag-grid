@@ -1,4 +1,4 @@
-import { _defaultComparator, _makeNull } from 'ag-stack';
+import { _defaultComparator } from 'ag-stack';
 
 import type {
     FilterHandlerParams,
@@ -13,7 +13,7 @@ import type {
 import { AgPromise, BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
-import { createTreeDataOrGroupingComparator } from './setFilterUtils';
+import { createTreeDataOrGroupingComparator, setFilterNullIfBlank } from './setFilterUtils';
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
 
@@ -27,6 +27,8 @@ export default SetFilterModelValuesType;
 interface SetValueModelParams<TValue> {
     handlerParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     usingComplexObjects?: boolean;
+    /** Only a user's key creator claims the values are complex objects; the data type's own says nothing. */
+    userKeyCreator?: boolean;
 }
 
 export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
@@ -295,7 +297,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         const formattedKeys: Set<string | null> = new Set();
         const { caseFormat, createKey } = this;
         for (const value of values ?? []) {
-            const valueToUse = _makeNull(value);
+            const valueToUse = setFilterNullIfBlank(value);
             const unformattedKey = createKey(valueToUse);
             const formattedKey = caseFormat(unformattedKey);
             if (!formattedKeys.has(formattedKey)) {
@@ -308,7 +310,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     private validateProvidedValues(values: (TValue | null)[]): (TValue | null)[] {
-        if (this.params.usingComplexObjects && values?.length) {
+        if (this.params.userKeyCreator && values?.length) {
             const firstValue = values[0];
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
                 const firstKey = this.createKey(firstValue);

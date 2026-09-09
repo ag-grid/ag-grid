@@ -11,7 +11,9 @@ export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 
 export type {
+    AutoSizeColumnsTriggerParams,
     AutoSizeStrategy,
+    ContinuousAutoSizeOptions,
     IColumnLimit,
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
@@ -276,10 +278,12 @@ export type { TextFilter } from './filter/provided/text/textFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export type {
     AdvancedFilterModel,
+    AdvancedFilterOnlyOptionKey,
     BooleanAdvancedFilterModel,
     BooleanAdvancedFilterModelType,
     ColumnAdvancedFilterModel,
     DateAdvancedFilterModel,
+    DateAdvancedFilterModelType,
     DateStringAdvancedFilterModel,
     DateTimeAdvancedFilterModel,
     DateTimeStringAdvancedFilterModel,
@@ -287,6 +291,8 @@ export type {
     NumberAdvancedFilterModel,
     ObjectAdvancedFilterModel,
     ScalarAdvancedFilterModelType,
+    SetAdvancedFilterModel,
+    SetAdvancedFilterModelType,
     TextAdvancedFilterModel,
     TextAdvancedFilterModelType,
 } from './interfaces/advancedFilterModel';
@@ -314,6 +320,7 @@ export type {
     DoesFilterPassParams,
     FilterAction,
     FilterActionParams,
+    FilterCallbackSource,
     FilterDisplay,
     FilterDisplayComp,
     FilterDisplayParams,
@@ -617,7 +624,13 @@ export type { IViewportDatasource, IViewportDatasourceParams } from './interface
 // widgets
 export type { PopupPositionParams } from './interfaces/iPopupPositionParams';
 export { TouchListener } from './widgets/touchListener';
-export type { DoubleTapEvent, LongTapEvent, TapEvent, TouchListenerEvent } from './widgets/touchListener';
+export type {
+    DoubleTapEvent,
+    LongTapEvent,
+    TapEvent,
+    TouchListenerEvent,
+    TouchListenerOptions,
+} from './widgets/touchListener';
 
 // SideBar
 export type { SideBarDef, ToolPanelDef } from './interfaces/iSideBar';
@@ -704,6 +717,7 @@ export type {
     PaginationState,
     PivotSortModelItem,
     PivotState,
+    QuickFilterState,
     RangeSelectionCellState,
     RangeSelectionState,
     RowGroupState,
@@ -907,7 +921,7 @@ export type {
     IsServerSideGroup,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    LoadingOptions,
+    LoadingRowsOptions,
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
@@ -945,6 +959,7 @@ export type {
     DoesExternalFilterPass,
     FillOperation,
     FillOperationParams,
+    FillOperationResult,
     FocusGridInnerElement,
     FocusGridInnerElementParams,
     FullRowEditValidationParams,
@@ -1023,7 +1038,14 @@ export type {
 export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from './interfaces/iHeader';
 
 // Tooltips
-export type { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltipComponent';
+export type {
+    ITooltipComp,
+    ITooltipParams,
+    TooltipCallbackFunc,
+    TooltipCallbackParams,
+    TooltipDefinition,
+    TooltipLocation,
+} from './tooltip/tooltipComponent';
 
 // Menus
 export type {
@@ -1156,6 +1178,7 @@ export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
 export { enableDevValidations, ValidationModule } from './validation/validationModule';
 export type { DevValidationOptions } from './validation/validationConfig';
+export type { ErrorId } from './validation/errorMessages/errorText';
 export type { Severity } from './validation/logging';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 

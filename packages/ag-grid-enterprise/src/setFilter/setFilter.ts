@@ -17,13 +17,19 @@ import type {
     SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, KeyCode, ProvidedFilter, _createIconNoSpan } from 'ag-grid-community';
+import {
+    AgInputTextFieldSelector,
+    KeyCode,
+    ProvidedFilter,
+    _bindFilterCallback,
+    _createIconNoSpan,
+} from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
+import { NO_SET_FILTER_KEYS, SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
 import type { SetFilterHandler } from './setFilterHandler';
 import type {
     SetFilterListItemExpandedChangedEvent,
@@ -31,7 +37,7 @@ import type {
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
-import { translateForSetFilter } from './setFilterUtils';
+import { setFilterNullIfBlank, translateForSetFilter, unformattedSetFilterText } from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
@@ -78,7 +84,8 @@ export class SetFilter<V = string>
 
         const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = params;
 
-        this.formatter = textFormatter ?? ((value) => value ?? null);
+        this.formatter =
+            _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
@@ -136,9 +143,10 @@ export class SetFilter<V = string>
             this.createVirtualListModel(newParams);
         }
 
-        const { textFormatter, treeListPathGetter, treeListFormatter } = newParams;
+        const { column, textFormatter, treeListPathGetter, treeListFormatter } = newParams;
 
-        this.formatter = textFormatter ?? ((value) => value ?? null);
+        this.formatter =
+            _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
         if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
             this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
@@ -451,10 +459,11 @@ export class SetFilter<V = string>
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
-        const groupsExist = this.displayValueModel.hasGroups();
+        const displayValueModel = this.displayValueModel;
+        const groupsExist = displayValueModel.hasGroups();
 
         // Select all option
-        if (item.key === SET_FILTER_SELECT_ALL) {
+        if (item === displayValueModel.getSelectAllItem()) {
             return {
                 value: () => this.getSelectAllLabel(),
                 isGroup: groupsExist,
@@ -467,7 +476,7 @@ export class SetFilter<V = string>
         }
 
         // Add selection to filter option
-        if (item.key === SET_FILTER_ADD_SELECTION_TO_FILTER) {
+        if (item === displayValueModel.getAddSelectionToFilterItem()) {
             return {
                 value: () => this.getAddSelectionToFilterLabel(),
                 depth: item.depth,
@@ -480,25 +489,18 @@ export class SetFilter<V = string>
             };
         }
 
-        // Group
-        if (item.children) {
-            return {
-                value: this.params.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
-                depth: item.depth,
-                isGroup: true,
-                selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
-                    this.onGroupItemSelected(e.item, e.isSelected),
-                expandedListener: (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) =>
-                    this.onExpandedChanged(e.item, e.isExpanded),
-            };
-        }
-
-        // Leaf
+        // A group additionally expands; both act for every key their row stands for.
+        const children = item.children;
         return {
             value: this.params.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
             depth: item.depth,
+            isGroup: !!children,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
-                this.onItemSelected(e.item.key!, e.isSelected),
+                this.onTreeItemSelected(e.item, e.isSelected),
+            expandedListener: children
+                ? (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) =>
+                      this.onExpandedChanged(e.item, e.isExpanded)
+                : undefined,
         };
     }
 
@@ -557,15 +559,14 @@ export class SetFilter<V = string>
         let isSelected: boolean | undefined;
         let isExpanded: boolean | undefined;
         if (this.isSetFilterModelTreeItem(item)) {
+            const displayValueModel = this.displayValueModel;
             isExpanded = item.expanded;
-            if (item.key === SET_FILTER_SELECT_ALL) {
+            if (item === displayValueModel.getSelectAllItem()) {
                 isSelected = this.isSelectAllSelected();
-            } else if (item.key === SET_FILTER_ADD_SELECTION_TO_FILTER) {
+            } else if (item === displayValueModel.getAddSelectionToFilterItem()) {
                 isSelected = this.isAddCurrentSelectionToFilterChecked();
-            } else if (item.children) {
-                isSelected = this.areAllChildrenSelected(item);
             } else {
-                isSelected = this.selectedKeys.has(item.key!);
+                isSelected = this.isTreeItemSelected(item);
             }
         } else if (item === SET_FILTER_SELECT_ALL) {
             isSelected = this.isSelectAllSelected();
@@ -781,22 +782,25 @@ export class SetFilter<V = string>
         this.refreshAfterSelection();
     }
 
-    private onGroupItemSelected(item: SetFilterModelTreeItem, isSelected: boolean): void {
-        const recursiveGroupSelection = (i: SetFilterModelTreeItem) => {
+    /** A row acts for every key it stands for: its own, and its descendants' where it is a group. */
+    private onTreeItemSelected(item: SetFilterModelTreeItem, isSelected: boolean): void {
+        const recursiveSelection = (i: SetFilterModelTreeItem) => {
             if (!i.filterPasses) {
                 return;
+            }
+            const keys = i.keys ?? NO_SET_FILTER_KEYS;
+            for (let k = 0, len = keys.length; k < len; ++k) {
+                this.setKeySelected(keys[k], isSelected);
             }
             const children = i.children;
             if (children) {
                 for (const childItem of children.values()) {
-                    recursiveGroupSelection(childItem);
+                    recursiveSelection(childItem);
                 }
-            } else {
-                this.setKeySelected(i.key!, isSelected);
             }
         };
 
-        recursiveGroupSelection(item);
+        recursiveSelection(item);
 
         this.refreshAfterSelection();
     }
@@ -941,18 +945,27 @@ export class SetFilter<V = string>
         return undefined;
     }
 
-    private areAllChildrenSelected(item: SetFilterModelTreeItem): boolean | undefined {
-        const recursiveChildSelectionCheck = (i: SetFilterModelTreeItem): boolean | undefined => {
-            if (i.children) {
-                let someTrue = false;
-                let someFalse = false;
-                for (const child of i.children.values()) {
+    /** `undefined` where the keys a row stands for disagree, which a model naming only some of them can do. */
+    private isTreeItemSelected(item: SetFilterModelTreeItem): boolean | undefined {
+        const recursiveSelectionCheck = (i: SetFilterModelTreeItem): boolean | undefined => {
+            let someTrue = false;
+            let someFalse = false;
+            const keys = i.keys ?? NO_SET_FILTER_KEYS;
+            for (let k = 0, len = keys.length; k < len; ++k) {
+                if (this.selectedKeys.has(keys[k])) {
+                    someTrue = true;
+                } else {
+                    someFalse = true;
+                }
+            }
+            const children = i.children;
+            if (children) {
+                for (const child of children.values()) {
                     if (!child.filterPasses || !child.available) {
                         continue;
                     }
-                    const childSelected = recursiveChildSelectionCheck(child);
+                    const childSelected = recursiveSelectionCheck(child);
                     if (childSelected === undefined) {
-                        // child indeterminate so indeterminate
                         return undefined;
                     }
                     if (childSelected) {
@@ -960,23 +973,17 @@ export class SetFilter<V = string>
                     } else {
                         someFalse = true;
                     }
-                    if (someTrue && someFalse) {
-                        // indeterminate
-                        return undefined;
-                    }
                 }
-                return someTrue;
-            } else {
-                return this.selectedKeys.has(i.key!);
             }
+            return someTrue && someFalse ? undefined : someTrue;
         };
 
         if (!this.params.defaultToNothingSelected) {
             // everything selected by default
-            return recursiveChildSelectionCheck(item);
+            return recursiveSelectionCheck(item);
         } else {
             // nothing selected by default
-            return this.hasSelections() && recursiveChildSelectionCheck(item);
+            return this.hasSelections() && recursiveSelectionCheck(item);
         }
     }
 
@@ -1160,7 +1167,7 @@ export class SetFilter<V = string>
                 });
 
                 model.forEach((unformattedKey) => {
-                    const formattedKey = handler.caseFormat(_makeNull(unformattedKey));
+                    const formattedKey = handler.caseFormat(setFilterNullIfBlank(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectedKeys.add(existingUnformattedKey);

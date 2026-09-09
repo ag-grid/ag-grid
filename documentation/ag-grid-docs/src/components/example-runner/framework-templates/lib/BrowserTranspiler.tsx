@@ -1,14 +1,13 @@
 import type { InternalFramework } from '@ag-grid-types';
+import { ExampleRunnerCall } from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
 import {
     ASSET_REGEX,
     CSS_IMPORT_REGEX,
     SPECIFIER_REGEX,
     STYLESHEET_LOADER_NAME,
-    getCompilerOptionNames,
-} from '@utils/exampleModules/transformExampleModule';
+} from '@ag-website-shared/components/example-runner/utils/transformExampleModule';
+import { getCompilerOptionNames } from '@utils/exampleModules/exampleCompilerOptions';
 import ts from 'typescript';
-
-import { ExampleRunnerCall } from './ExampleRunnerClient';
 
 interface Props {
     entryFileName: string;

@@ -260,4 +260,31 @@ describe('grouping providing custom cell data types', () => {
             └── total "Total" width:200 aggFunc:sum
         `);
     });
+
+    // `dateString` formats an unreadable value to '', which is the key a missing one already has.
+    test('an unreadable dateString groups with the missing ones', async () => {
+        const api = await gridsManager.createGridAndWait('unreadableDateString', {
+            columnDefs: [
+                { field: 'when', cellDataType: 'dateString', rowGroup: true, hide: true },
+                { field: 'athlete' },
+            ],
+            rowData: [
+                { when: '2024-01-10', athlete: 'Ada' },
+                { when: 'not a date', athlete: 'Bob' },
+                { when: null, athlete: 'Cy' },
+                { when: '', athlete: 'Dee' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+
+        await new GridRows(api, 'dateString group keys').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-when-2024-01-10 ag-Grid-AutoColumn:"2024-01-10"
+            │ └── LEAF id:0 when:"2024-01-10" athlete:"Ada"
+            └─┬ LEAF_GROUP id:row-group-when- ag-Grid-AutoColumn:"(Blanks)"
+            · ├── LEAF id:1 when:"" athlete:"Bob"
+            · ├── LEAF id:2 when:null athlete:"Cy"
+            · └── LEAF id:3 when:"" athlete:"Dee"
+        `);
+    });
 });

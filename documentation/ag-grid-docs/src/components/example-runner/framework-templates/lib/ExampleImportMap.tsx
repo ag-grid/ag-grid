@@ -1,4 +1,5 @@
 import type { InternalFramework } from '@ag-grid-types';
+import { ExampleRunnerCall } from '@ag-website-shared/components/example-runner/components/ExampleRunnerClient';
 import { getIsDev } from '@utils/env';
 import {
     DEVELOPMENT_FLAGS,
@@ -8,8 +9,6 @@ import {
     getDefaultFrameworkVersion,
     getImportMap,
 } from '@utils/exampleModules/getImportMap';
-
-import { ExampleRunnerCall } from './ExampleRunnerClient';
 
 interface Props {
     internalFramework: InternalFramework;
@@ -51,7 +50,8 @@ export const ExampleImportMap = ({ internalFramework, isEnterprise, isIntegrated
     return (
         <ExampleRunnerCall
             fn="injectImportMap"
-            args={[{ imports, defaultVersion, defaultProd: !getIsDev(), nonce }]}
+            // The runner is handed JSON, which has no `undefined`; it reads both of these as "absent"
+            args={[{ imports, defaultVersion: defaultVersion ?? null, defaultProd: !getIsDev(), nonce: nonce ?? null }]}
             nonce={nonce}
         />
     );

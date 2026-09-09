@@ -1,4 +1,5 @@
 import { fireEvent } from '@testing-library/dom';
+import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations } from 'ag-grid-community';
@@ -119,7 +120,13 @@ describe('Toolbar quickFilter item', () => {
         const clearButton = gridDiv.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
 
+        const user = userEvent.setup();
         input.focus();
+        await user.tab();
+        expect(document.activeElement).toBe(clearButton);
+        await user.tab({ shift: true });
+        expect(document.activeElement).toBe(input);
+
         fireEvent.mouseDown(clearButton);
         fireEvent.click(clearButton);
 

@@ -10,7 +10,9 @@ import {
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, FiltersToolPanelModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+
+import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 interface Row {
     name?: string | null;
@@ -24,15 +26,18 @@ const ROWS: Row[] = [
     { name: 'alice', age: 35 },
 ];
 
-/** The `.ag-multi-floating-filter` cell's currently displayed child (the non-hidden sub-floating-filter). */
-function visibleFloatingChild(): HTMLElement {
+/** Every sub-floating-filter in the `.ag-multi-floating-filter` cell, hidden ones included. */
+function floatingChildren(): HTMLElement[] {
     const container = document.querySelector<HTMLElement>('.ag-multi-floating-filter');
     if (!container) {
         throw new Error('Multi floating filter container not present');
     }
-    const shown = Array.from(container.children).filter(
-        (c): c is HTMLElement => c instanceof HTMLElement && !c.classList.contains('ag-hidden')
-    );
+    return Array.from(container.children).filter((c): c is HTMLElement => c instanceof HTMLElement);
+}
+
+/** The `.ag-multi-floating-filter` cell's currently displayed child (the non-hidden sub-floating-filter). */
+function visibleFloatingChild(): HTMLElement {
+    const shown = floatingChildren().filter((c) => !c.classList.contains('ag-hidden'));
     if (shown.length !== 1) {
         throw new Error(`Expected exactly one visible multi floating child, found ${shown.length}`);
     }
@@ -67,6 +72,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             MultiFilterModule,
             SetFilterModule,
             ColumnMenuModule,
+            FiltersToolPanelModule,
         ],
     });
 
@@ -437,6 +443,334 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             ├── LEAF id:0 name:"michael"
             └── LEAF id:1 name:"michelle"
         `);
+    });
+
+    // The documented custom-child form (filter-multi/custom-filter): a fresh wrapper object each time the
+    // colDefs are rebuilt, around a stable component and doesFilterPass.
+    test('an object-form child rebuilt inline is not treated as a different child', async () => {
+        const doesFilterPass = () => true;
+        const objectFormChild = () => ({ filter: { component: 'agTextColumnFilter', doesFilterPass } });
+        const colDefs = () => [
+            {
+                field: 'name',
+                filter: 'agMultiColumnFilter',
+                filterParams: { filters: [objectFormChild(), { filter: 'agSetColumnFilter' }] },
+            },
+        ];
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: colDefs(),
+            rowData: ROWS,
+        });
+
+        await api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [null, { filterType: 'set', values: ['bob'] }],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'object-form child, set model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 name:"bob"
+        `);
+
+        api.setGridOption('columnDefs', colDefs());
+        await asyncSetTimeout(0);
+
+        expect(api.getColumnFilterModel('name')).toEqual({
+            filterType: 'multi',
+            filterModels: [null, { filterType: 'set', values: ['bob'] }],
+        });
+        await new GridRows(api, 'object-form child survives a colDef rebuild').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 name:"bob"
+        `);
+    });
+
+    describe.each([false, true])('filterParams.filters changed (enableFilterHandlers: %s)', (enableFilterHandlers) => {
+        const TEXT_CHILD = { filter: 'agTextColumnFilter', filterParams: { debounceMs: 0, maxNumConditions: 1 } };
+
+        const colDefsWith = (filters: object[], extra?: object) => [
+            { field: 'name', filter: 'agMultiColumnFilter', filterParams: { filters }, ...extra },
+        ];
+
+        const numChildFilters = async (api: GridApi) =>
+            ((await api.getColumnFilterInstance('name')) as { getNumChildFilters(): number }).getNumChildFilters();
+
+        const setFilterList = () => document.querySelector('.ag-filter-menu')!.querySelector('.ag-set-filter-list');
+
+        test('a removed child leaves the popup and stops filtering', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+            });
+
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'set', values: ['bob'] }],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            await new GridRows(api, 'set child filtering to bob').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 name:"bob"
+            `);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD]));
+            await asyncSetTimeout(0);
+
+            expect(await numChildFilters(api)).toBe(1);
+            await new GridRows(api, 'removed set child no longer filters').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
+
+            await ColumnFilterHarness.open(api, 'name');
+            expect(setFilterList()).toBeNull();
+        });
+
+        test('an unrelated colDef change leaves the child set and the model alone', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+            });
+
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }, null],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            // Same children, different headerName: nothing about the filter may be rebuilt or reset.
+            api.setGridOption(
+                'columnDefs',
+                colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }], { headerName: 'Renamed' })
+            );
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toEqual({
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }, null],
+            });
+            await new GridRows(api, 'unrelated colDef change keeps filtering').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                └── LEAF id:1 name:"michelle"
+            `);
+        });
+
+        test('removing the first child does not hand its model to the survivor', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+            });
+
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }, null],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            // Drop the text child. The set child moves to index 0, where the text model used to sit.
+            api.setGridOption('columnDefs', colDefsWith([{ filter: 'agSetColumnFilter' }]));
+            await asyncSetTimeout(0);
+
+            expect(await numChildFilters(api)).toBe(1);
+            const model = api.getColumnFilterModel('name') as { filterModels?: unknown[] } | null;
+            expect(model?.filterModels?.[0]).not.toEqual({ filterType: 'text', type: 'contains', filter: 'mich' });
+            await new GridRows(api, 'first child removed leaves no stale filtering').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
+        });
+
+        test('the reopened popup agrees with the rows after a surviving child loses its model', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+            });
+
+            // Open first, so the filter ui really exists before the col def changes.
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            await filter.selectOperator('Contains', 0);
+            await filter.setText('mich', 0);
+            await asyncSetTimeout(0);
+            api.hideColumnFilter();
+            await new GridRows(api, 'text child filtering before the change').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                └── LEAF id:1 name:"michelle"
+            `);
+
+            // Swap the second child's type. The text child survives, but the model is reset.
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, { filter: 'agNumberColumnFilter' }]));
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'model reset leaves every row visible').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
+
+            // The popup must not claim a filter the grid is no longer applying.
+            await ColumnFilterHarness.open(api, 'name');
+            const textInput = document
+                .querySelector('.ag-filter-menu')!
+                .querySelector<HTMLInputElement>('.ag-filter-body input[type="text"]:not([disabled])');
+            expect(textInput?.value ?? '').toBe('');
+        });
+
+        test('filter: true and the default filter name are the same child', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([{ filter: true }, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+            });
+
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'set', values: ['bob'] }],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            // `true` means the default, which for a child is the text filter: naming it explicitly is
+            // the same child, so nothing may be rebuilt and the model must survive.
+            api.setGridOption(
+                'columnDefs',
+                colDefsWith([{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }])
+            );
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toEqual({
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'set', values: ['bob'] }],
+            });
+            await new GridRows(api, 'filter:true child survives being named').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 name:"bob"
+            `);
+        });
+
+        test('an empty filters array falls back to the default children and still refreshes', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([]),
+                rowData: ROWS,
+            });
+
+            // Defaults are text + set, so the popup has both and nothing throws on refresh.
+            expect(await numChildFilters(api)).toBe(2);
+            api.setGridOption('columnDefs', colDefsWith([], { headerName: 'Renamed' }));
+            await asyncSetTimeout(0);
+            expect(await numChildFilters(api)).toBe(2);
+
+            await ColumnFilterHarness.open(api, 'name');
+            expect(setFilterList()).not.toBeNull();
+        });
+
+        test('the filters tool panel follows a removed child', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+                sideBar: FILTERS_SIDEBAR,
+            });
+
+            const panel = await openFiltersPanel(api);
+            await panel.expandGroup('Name');
+            expect(panel.isSetListShown('Name')).toBe(true);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD]));
+            await asyncSetTimeout(0);
+
+            await panel.expandGroup('Name');
+            expect(panel.isSetListShown('Name')).toBe(false);
+        });
+
+        test('the floating filter follows a removed child', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }], { floatingFilter: true }),
+                rowData: ROWS,
+            });
+
+            expect(floatingChildren()).toHaveLength(2);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD], { floatingFilter: true }));
+            await asyncSetTimeout(0);
+
+            expect(floatingChildren()).toHaveLength(1);
+        });
+
+        test('the child set keeps tracking columnDefs across repeated changes', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]),
+                rowData: ROWS,
+            });
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD]));
+            await asyncSetTimeout(0);
+            expect(await numChildFilters(api)).toBe(1);
+
+            // The first change destroys the column filter, taking its colDefChanged listener with it;
+            // a second change is what proves the listener came back.
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]));
+            await asyncSetTimeout(0);
+            expect(await numChildFilters(api)).toBe(2);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, { filter: 'agNumberColumnFilter' }]));
+            await asyncSetTimeout(0);
+            expect(await numChildFilters(api)).toBe(2);
+
+            await ColumnFilterHarness.open(api, 'name');
+            expect(setFilterList()).toBeNull();
+        });
+
+        test('an added child appears in the popup and filters', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD]),
+                rowData: ROWS,
+            });
+
+            await ColumnFilterHarness.open(api, 'name');
+            expect(setFilterList()).toBeNull();
+            api.hideColumnFilter();
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter' }]));
+            await asyncSetTimeout(0);
+
+            expect(await numChildFilters(api)).toBe(2);
+
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(setFilterList()).not.toBeNull();
+
+            await filter.toggleSetItem('michelle');
+            await filter.toggleSetItem('alice');
+            await filter.toggleSetItem('bob');
+            await asyncSetTimeout(0);
+            await new GridRows(api, 'added set child filters').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"michael"
+            `);
+        });
     });
 });
 

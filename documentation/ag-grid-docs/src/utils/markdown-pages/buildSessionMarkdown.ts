@@ -1,7 +1,9 @@
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import type { Session } from '@utils/beyondThePromptSessions';
-import { sessionDurationMins } from '@utils/beyondThePromptSessions';
+import { sessionDurationMins, sessionSlug } from '@utils/beyondThePromptSessions';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import { buildGridFrontmatter } from './gridFrontmatter';
 
 /** The page's description fallback, shared so the twin's frontmatter matches the page's meta. */
 export function sessionDescription(session: Session): string {
@@ -20,12 +22,12 @@ export function buildSessionMarkdown({ session, siteRoot }: { session: Session; 
     const durationMins = sessionDurationMins(session);
 
     const document: string[] = [
-        [
-            '---',
-            `title: ${JSON.stringify(`${session.title} | Beyond the Prompt`)}`,
-            `description: ${JSON.stringify(description)}`,
-            '---',
-        ].join('\n'),
+        buildGridFrontmatter({
+            pageUrl: `/session/${sessionSlug(session.title)}/`,
+            siteRoot,
+            title: `${session.title} | Beyond the Prompt`,
+            description,
+        }),
         `# ${session.title}`,
     ];
 

@@ -33,7 +33,7 @@ export const ReleasesSection: React.FC<ReleasesSectionProps> = ({
     subtitle = "Here's what you've missed since you've been gone",
     showViewAllButton = true,
     viewAllButtonText = 'View recent releases',
-    viewAllButtonUrl = '/whats-new',
+    viewAllButtonUrl = '/whats-new/',
 }) => {
     // Filter versions that have highlights and are not hidden
     const filteredVersions = versionsData

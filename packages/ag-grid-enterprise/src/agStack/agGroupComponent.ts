@@ -338,6 +338,10 @@ export class AgGroupComponent<
         this.eTitleBar?.addCss(cssClass);
     }
 
+    public getTitleBarGui(): HTMLElement {
+        return this.eTitleBar?.getGui() ?? this.eToggle?.getGui() ?? this.getGui();
+    }
+
     private dispatchEnableChangeEvent(enabled: boolean): void {
         const event: EnableChangeEvent = {
             type: 'enableChange',

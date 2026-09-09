@@ -110,6 +110,11 @@ export interface GeneratedContents extends ExampleConfig {
     packageJson: Record<string, any>;
 }
 
+// Make sure to update the Astro copy of this interface when making changes.
+export interface ExampleSubstitutions {
+    '${baseWWWUrl}': string;
+}
+
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 export const FRAMEWORKS: InternalFramework[] = [

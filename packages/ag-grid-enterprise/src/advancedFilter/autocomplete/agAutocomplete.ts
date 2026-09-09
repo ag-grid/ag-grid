@@ -66,7 +66,6 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private autocompleteListParams: AutocompleteListParams;
     private lastPosition: number = 0;
     private valid: boolean = true;
-    private validationMessage: string | null;
     private listAriaLabel: string;
     private listGenerator?: (value: string | null, position: number) => AutocompleteListParams;
     private validator?: (value: string | null) => string | null;
@@ -141,6 +140,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
+            case KeyCode.PAGE_DOWN:
+            case KeyCode.PAGE_UP:
                 this.onUpDownKeyDown(event, key);
                 break;
             case KeyCode.LEFT:
@@ -230,6 +231,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         }
         const eInput = this.eAutocompleteInput.getInputElement();
         eInput.setSelectionRange(position, position);
+        // Read back rather than taken as given: the caret has moved, and the input clamps where to.
+        this.updateLastPosition();
         if (position === eInput.value.length) {
             // ensure the caret is visible
             eInput.scrollLeft = eInput.scrollWidth;
@@ -248,7 +251,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         if (!this.validator) {
             return;
         }
-        const validationMessage = (this.validationMessage = this.validator(value));
+        const validationMessage = this.validator(value);
         this.eAutocompleteInput.getInputElement().setCustomValidity(validationMessage ?? '');
         this.valid = !validationMessage;
         this.dispatchLocalEvent<AutocompleteValidChangedEvent>({
@@ -266,6 +269,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 autocompleteEntries: this.autocompleteListParams.entries!,
                 onConfirmed: () => this.confirmSelection(),
                 forceLastSelection: this.forceLastSelection,
+                rowComponentCreator: this.autocompleteListParams.rowComponentCreator,
+                suggestFirstMatch: this.autocompleteListParams.suggestFirstMatch,
             })
         );
         const ePopupGui = this.autocompleteList.getGui();
@@ -310,6 +315,11 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
     public getValue(): string | null {
         return _makeNull(this.eAutocompleteInput.getValue());
+    }
+
+    /** Where the caret was when the value last changed, which is what says where the author is working. */
+    public getCaretPosition(): number {
+        return this.lastPosition;
     }
 
     public setInputPlaceholder(placeholder: string): this {

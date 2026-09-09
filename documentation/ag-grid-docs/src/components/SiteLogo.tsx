@@ -13,6 +13,7 @@ export const SiteLogo: FunctionComponent = () => {
         <a
             href={SITE_BASE_URL}
             aria-label="Home"
+            tabIndex={0}
             className={siteHeaderStyles.headerLogo}
             onMouseEnter={() => {
                 setIsLogoHover(true);

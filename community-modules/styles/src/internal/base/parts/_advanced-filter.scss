@@ -258,14 +258,20 @@
         cursor: default;
     }
 
+    .ag-advanced-filter-builder-virtual-list-viewport {
+        scrollbar-width: thin;
+    }
+
     .ag-advanced-filter-builder-virtual-list-container {
         top: var(--ag-grid-size);
+        overflow: visible;
     }
 
     .ag-advanced-filter-builder-virtual-list-item {
         display: flex;
         cursor: default;
         height: var(--ag-list-item-height);
+        min-width: max-content;
 
         &:hover {
             background-color: var(--ag-row-hover-color);
@@ -285,5 +291,17 @@
         margin: 0 var(--ag-grid-size);
         color: var(--ag-invalid-color);
         cursor: default;
+    }
+
+    .ag-advanced-filter-builder-set-picker {
+        // The popup service positions popups with inline top/left, which only apply once the child is taken
+        // out of flow: unpositioned, this lands at the foot of the popup parent at its full width.
+        position: absolute;
+
+        // A popup has no size of its own, and the Set Filter list inside it would otherwise take the viewport.
+        width: 240px;
+        background-color: var(--ag-menu-background-color);
+        border: var(--ag-borders) var(--ag-menu-border-color);
+        border-radius: var(--ag-card-radius);
     }
 }

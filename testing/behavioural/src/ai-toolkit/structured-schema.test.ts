@@ -703,14 +703,23 @@ describe('getStructuredSchema - filter feature', () => {
             );
         });
 
-        test('extracts displayKey from object-style filterOptions', async () => {
+        // The filter decides what is usable, so the schema cannot offer a `type` it drops.
+        test('extracts displayKey from object-style filterOptions, and drops an entry the filter would', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
                         field: 'name',
                         filter: 'agTextColumnFilter',
                         filterParams: {
-                            filterOptions: ['contains', { displayKey: 'customEquals' }],
+                            filterOptions: [
+                                'contains',
+                                { displayKey: 'customEquals' },
+                                {
+                                    displayKey: 'startsA',
+                                    displayName: 'Starts With A',
+                                    predicate: (_v: any[], cellValue: any) => cellValue?.startsWith('A'),
+                                },
+                            ],
                         },
                     },
                 ],
@@ -728,7 +737,7 @@ describe('getStructuredSchema - filter feature', () => {
             const schema = toJSON(api.getStructuredSchema());
             const nameFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.name);
             const conditionType = nameFilter.properties.conditions.items.properties.type;
-            expect(conditionType.enum).toEqual(['contains', 'customEquals']);
+            expect(conditionType.enum).toEqual(['contains', 'startsA']);
             await new GridRows(api, `extracts displayKey from object-style filterOptions final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice"
@@ -1235,6 +1244,69 @@ describe('getStructuredSchema - enterprise features', () => {
     });
 });
 
+describe('getStructuredSchema - advanced filter on a Set Filter column', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, AiToolkitModule, AdvancedFilterModule, SetFilterModule],
+    });
+    afterEach(() => gridsManager.reset());
+
+    test('a Set Filter column contributes a set model with values, not a data-type model', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'name', cellDataType: 'text' },
+                { field: 'country', cellDataType: 'text', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [{ name: 'Alice', country: 'Italy' }],
+            enableAdvancedFilter: true,
+        });
+        await new GridColumns(api, `set filter column contributes a set model setup`).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── country "Country" width:200
+        `);
+
+        const defs = toJSON(api.getStructuredSchema()).$defs;
+        const set = defs.setAdvancedFilterModel;
+        expect(set.properties.filterType.enum).toEqual(['set']);
+        expect(set.properties.colId.enum).toEqual(['country']);
+        expect(set.properties.type.enum).toEqual(['isAnyOf', 'isNoneOf']);
+        expect(set.properties.values.type).toBe('array');
+        // An empty list is a fault the parser rejects, discarding the whole model, so it must not be emittable.
+        expect(set.properties.values.minItems).toBe(1);
+        expect(set.properties.filter).toBeUndefined();
+
+        // No data-type model may advertise the set options: their model has no `filter` to fill.
+        const offeringSetOptions = Object.keys(defs).filter((name) =>
+            defs[name].properties?.type?.enum?.includes('isAnyOf')
+        );
+        expect(offeringSetOptions).toEqual(['setAdvancedFilterModel']);
+    });
+
+    test('Set Filter columns of different data types share one set model, listed as its columns', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', cellDataType: 'text', filter: 'agSetColumnFilter' },
+                { field: 'age', cellDataType: 'number', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [{ country: 'Italy', age: 30 }],
+            enableAdvancedFilter: true,
+        });
+        await new GridColumns(api, `set filter columns of different data types setup`).checkColumns(`
+            CENTER
+            ├── country "Country" width:200
+            └── age "Age" width:200
+        `);
+
+        const defs = toJSON(api.getStructuredSchema()).$defs;
+        // A list option writes `filterType: 'set'` whatever the column's data type, so one shape serves both.
+        expect(defs.setAdvancedFilterModel.properties.colId.enum).toEqual(['country', 'age']);
+        expect(defs.setAdvancedFilterModel2).toBeUndefined();
+
+        expect(defs.textAdvancedFilterModel.properties.colId.enum).toEqual(['country']);
+        expect(defs.numberAdvancedFilterModel.properties.colId.enum).toEqual(['age']);
+    });
+});
+
 describe('getStructuredSchema - advanced filter', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, AiToolkitModule, AdvancedFilterModule],
@@ -1348,6 +1420,23 @@ describe('getStructuredSchema - advanced filter', () => {
         expect(schema.$defs.joinAdvancedFilterModel).toBeDefined();
         expect(schema.$defs.advancedFilterModel).toBeDefined();
         expect(schema.$defs.advancedFilterModel.anyOf).toBeDefined();
+
+        // `inRange` is the only built-in taking two values, so it is the one def that must carry a
+        // `filterTo` slot; a def offering it beside the one-value options would ask for the wrong shape.
+        const numberDefs = Object.keys(schema.$defs).filter((key) => key.startsWith('numberAdvancedFilterModel'));
+        const rangeDef = numberDefs
+            .map((key) => schema.$defs[key])
+            .find((def) => def.properties.type.enum.includes('inRange'));
+        expect(rangeDef).toBeDefined();
+        expect(rangeDef.properties.type.enum).toEqual(['inRange']);
+        expect(Object.keys(rangeDef.properties)).toContain('filterTo');
+        for (const key of numberDefs) {
+            const def = schema.$defs[key];
+            if (def !== rangeDef) {
+                expect(def.properties.type.enum).not.toContain('inRange');
+                expect(Object.keys(def.properties)).not.toContain('filterTo');
+            }
+        }
         await new GridRows(
             api,
             `advanced filter _defs include data-type models, join model, and advancedFilterMo final state`
@@ -1383,6 +1472,82 @@ describe('getStructuredSchema - advanced filter', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    // From the expression service, so an option is offered under the key an expression would accept.
+    test('a column custom option reaches the schema, and a sibling of the same type keeps the built-ins', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    cellDataType: 'number',
+                    filterParams: {
+                        filterOptions: [
+                            'equals',
+                            {
+                                displayKey: 'betweenExclusive',
+                                displayName: 'Between (Exclusive)',
+                                numberOfInputs: 2,
+                                predicate: ([from, to]: any[], cellValue: any) =>
+                                    cellValue != null && cellValue > from && cellValue < to,
+                            },
+                        ],
+                    },
+                },
+                { field: 'score', cellDataType: 'number' },
+            ],
+            rowData: [{ age: 25, score: 10 }],
+            enableAdvancedFilter: true,
+        });
+
+        const schema = toJSON(api.getStructuredSchema());
+
+        // A def per column AND arity: operators taking different counts cannot share one schema.
+        const defsFor = (colId: string) =>
+            (Object.values(schema.$defs) as any[]).filter((def: any) => def?.properties?.colId?.enum?.includes(colId));
+        const defFor = (colId: string, ...operatorKeys: string[]) =>
+            defsFor(colId).find((def: any) => def.properties.type.enum.join() === operatorKeys.join());
+
+        const ageOneValue = defFor('age', 'equals');
+        expect(ageOneValue.properties.filterTo).toBeUndefined();
+        expect(ageOneValue.required).toEqual(['filterType', 'colId', 'type', 'filter']);
+
+        const ageTwoValue = defFor('age', 'betweenExclusive');
+        expect(ageTwoValue.properties.filterTo).toBeDefined();
+        expect(ageTwoValue.required).toEqual(['filterType', 'colId', 'type', 'filter', 'filterTo']);
+
+        // The built-in sibling splits the same way: its blanks take no value, the rest take one.
+        const scoreNoValue = defFor('score', 'blank', 'notBlank');
+        expect(scoreNoValue.properties.filter).toBeUndefined();
+        expect(scoreNoValue.required).toEqual(['filterType', 'colId', 'type']);
+
+        const scoreOneValue = defFor(
+            'score',
+            'equals',
+            'notEqual',
+            'greaterThan',
+            'greaterThanOrEqual',
+            'lessThan',
+            'lessThanOrEqual'
+        );
+        expect(scoreOneValue.properties.colId.enum).toEqual(['score']);
+        expect(scoreOneValue.required).toEqual(['filterType', 'colId', 'type', 'filter']);
+        expect(scoreOneValue.properties.filterTo).toBeUndefined();
+    });
+
+    test('a boolean column carries no value slot, since none of its operators takes one', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'active', cellDataType: 'boolean' }],
+            rowData: [{ active: true }],
+            enableAdvancedFilter: true,
+        });
+
+        const schema = toJSON(api.getStructuredSchema());
+
+        const model = schema.$defs.booleanAdvancedFilterModel;
+        expect(model.properties.type.enum).toEqual(['true', 'false', 'blank', 'notBlank']);
+        expect(model.properties.filter).toBeUndefined();
+        expect(model.properties.filterTo).toBeUndefined();
     });
 });
 
