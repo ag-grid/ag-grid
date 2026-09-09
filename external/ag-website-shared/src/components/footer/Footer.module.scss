@@ -58,10 +58,13 @@
 
 // Brand column plus one column per navigation group. Columns wrap: one per row on phones, two per
 // row on small screens, and everything on a single row from the five-column breakpoint up.
+//
+// The desktop minimums must fit at the breakpoint itself, or the last column wraps just above it:
+// 920px viewport - 2 x 20px margins = 880px, against 200px + 4 x 120px + 4 x 32px gaps = 808px.
 .footerColumns {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-size-8 $spacing-size-10;
+    gap: $spacing-size-8;
     padding-bottom: $spacing-size-10;
 }
 
@@ -73,7 +76,7 @@
 
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
         flex: 1.15 1 0;
-        min-width: 230px;
+        min-width: 200px;
         max-width: 320px;
     }
 }
@@ -134,12 +137,12 @@
     flex: 1 1 100%;
 
     @media screen and (min-width: $breakpoint-site-footer-two-column) {
-        flex: 1 1 calc(50% - #{$spacing-size-10});
+        flex: 1 1 calc(50% - #{$spacing-size-8});
     }
 
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
         flex: 1 1 0;
-        min-width: 140px;
+        min-width: 120px;
     }
 
     ul {
