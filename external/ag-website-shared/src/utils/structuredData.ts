@@ -106,6 +106,15 @@ interface SoftwareApplicationInput {
     sameAs?: string[];
 }
 
+interface SoftwareSourceCodeInput {
+    pageUrl: string;
+    /** Unique among the examples on the page, used to key the node's `@id`. */
+    exampleName: string;
+    programmingLanguage: string;
+    /** `@id` of the `TechArticle` this example illustrates, so the two nodes stay linked. */
+    aboutEntityId?: string;
+}
+
 interface TechArticleInput {
     canonicalUrlBase: string;
     pageUrl: string;
@@ -176,7 +185,10 @@ export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
 export const getSiteNavigationElementId = (canonicalUrlBase: string): string =>
     `${siteRootUrl(canonicalUrlBase)}#site-navigation`;
 
+export const getTechArticleId = (pageUrl: string): string => `${pageUrl}${ARTICLE_ID_FRAGMENT}`;
+
 const ARTICLE_ID_FRAGMENT = '#article';
+const SOURCE_CODE_ID_FRAGMENT = '#source-code';
 const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
 const FAQ_ID_FRAGMENT = '#faq';
 const CONTACT_PAGE_ID_FRAGMENT = '#contact-page';
@@ -282,7 +294,7 @@ export function buildTechArticle({
 }: TechArticleInput): JsonLdObject {
     const result: JsonLdObject = {
         '@type': 'TechArticle',
-        '@id': `${pageUrl}${ARTICLE_ID_FRAGMENT}`,
+        '@id': getTechArticleId(pageUrl),
         headline: title,
         description,
         inLanguage: 'en',
@@ -290,6 +302,34 @@ export function buildTechArticle({
         mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
         isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
         publisher: { '@id': getOrganizationId() },
+    };
+    if (aboutEntityId) {
+        result.about = { '@id': aboutEntityId };
+    }
+    return result;
+}
+
+/**
+ * Build a `SoftwareSourceCode` node for one runnable example embedded on a docs page.
+ *
+ * Deliberately omits `text`: the example's files are already crawlable as visible markup
+ * (see `ExampleRunnerSourceCode.astro`), so repeating them here would only double the page
+ * weight for no indexing benefit. The node exists to type and name that visible block, and
+ * to link it back to the `TechArticle` it illustrates via `about`.
+ */
+export function buildSoftwareSourceCode({
+    pageUrl,
+    exampleName,
+    programmingLanguage,
+    aboutEntityId,
+}: SoftwareSourceCodeInput): JsonLdObject {
+    const result: JsonLdObject = {
+        '@type': 'SoftwareSourceCode',
+        '@id': `${pageUrl}${SOURCE_CODE_ID_FRAGMENT}-${exampleName}`,
+        name: exampleName,
+        programmingLanguage,
+        codeSampleType: 'full',
+        url: pageUrl,
     };
     if (aboutEntityId) {
         result.about = { '@id': aboutEntityId };
