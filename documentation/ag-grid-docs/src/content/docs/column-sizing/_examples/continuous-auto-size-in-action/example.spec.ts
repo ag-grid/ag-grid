@@ -1,11 +1,30 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
-const COLUMNS = ['athlete', 'age', 'country', 'sport', 'year', 'date', 'gold', 'silver', 'bronze', 'total'];
+// The example has 34 columns, so only the leftmost ones are rendered at any time - column
+// virtualisation removes the rest from the DOM. These are measured because they are the columns on
+// screen when the example loads; the generated text columns further right are reached by scrolling,
+// which this example's behaviour does not need.
+const COLUMNS = ['athlete', 'age', 'country', 'sport', 'year', 'date'];
 
 /** The page's first-row number in the paging summary, which changes as soon as the new page lands. */
 function firstRowOnPage(page: Page) {
     return page.locator('.ag-paging-row-summary-panel-number').first();
+}
+
+/**
+ * Re-samples until the value satisfies `predicate` or the timeout expires, then returns the last
+ * sample for the caller to assert on. `expect` re-exported from the docs test utils is a bare
+ * wrapper function, so Playwright's `expect.poll` is not available here.
+ */
+async function pollFor<T>(sample: () => Promise<T>, predicate: (value: T) => boolean, timeoutMs: number) {
+    const deadline = Date.now() + timeoutMs;
+    let value = await sample();
+    while (!predicate(value) && Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        value = await sample();
+    }
+    return value;
 }
 
 async function columnWidths(page: Page): Promise<number[]> {
@@ -21,12 +40,21 @@ test.agExample(import.meta, () => {
     test.eachFramework('renders every grouped column sized to its contents', async ({ page }) => {
         await waitForGridContent(page);
 
-        await expect(page.locator('.ag-header-group-cell-label')).toHaveText(['Competitor', 'Event', 'Medals']);
+        // only the leftmost groups are rendered, so the visible prefix is asserted rather than the
+        // full set of seven groups
+        const groupLabels = page.locator('.ag-header-group-cell-label');
+        await expect(groupLabels.nth(0)).toHaveText('Competitor');
+        await expect(groupLabels.nth(1)).toHaveText('Event');
 
         // Auto-size runs asynchronously after the rows render, so the narrow columns are polled to their
         // fitted state rather than sampled once: the narrow numeric columns must not be left padded out
         // to the default width.
-        await expect.poll(async () => Math.min(...(await columnWidths(page)))).toBeLessThan(150);
+        const narrowest = await pollFor(
+            async () => Math.min(...(await columnWidths(page))),
+            (width) => width < 150,
+            5000
+        );
+        expect(narrowest).toBeLessThan(150);
 
         const widths = await columnWidths(page);
         expect(widths.every((width) => width > 0)).toBe(true);
@@ -58,12 +86,12 @@ test.agExample(import.meta, () => {
          * observed state, never on elapsed time.
          */
         const autoSizePassLanded = async (passesBeforePage: number): Promise<boolean> => {
-            try {
-                await expect.poll(autoSizePasses, { timeout: 2000 }).toBeGreaterThan(passesBeforePage);
-                return true;
-            } catch {
-                return false;
-            }
+            const passes = await pollFor(
+                async () => autoSizePasses(),
+                (count) => count > passesBeforePage,
+                2000
+            );
+            return passes > passesBeforePage;
         };
 
         const initialWidths = await columnWidths(page);
