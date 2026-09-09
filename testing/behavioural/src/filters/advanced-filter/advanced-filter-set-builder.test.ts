@@ -21,6 +21,49 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
+    test('only value pills that open a picker show the select icon', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+
+        api.setAdvancedFilterModel({
+            filterType: 'join',
+            type: 'AND',
+            conditions: [
+                {
+                    filterType: 'set',
+                    colId: 'country',
+                    type: 'isAnyOf',
+                    values: ['Jamaica'],
+                },
+                {
+                    filterType: 'number',
+                    colId: 'age',
+                    type: 'greaterThanOrEqual',
+                    filter: 25,
+                },
+            ],
+        });
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [setItem, inputItem] = await builder.conditionItems();
+        const setPill = builder.valuePills(setItem)[0];
+
+        expect(setPill.querySelector('.ag-icon-small-down')).not.toBeNull();
+        expect(builder.valuePills(inputItem)[0].querySelector('.ag-icon-small-down')).toBeNull();
+        expect(setPill.classList.contains('ag-advanced-filter-builder-set-values-pill')).toBe(true);
+        expect(setPill.parentElement?.classList.contains('ag-advanced-filter-builder-set-values-pill-wrapper')).toBe(
+            true
+        );
+        expect(
+            setItem
+                .closest('.ag-advanced-filter-builder-virtual-list-item')
+                ?.classList.contains('ag-advanced-filter-builder-set-value-list')
+        ).toBe(true);
+        expect(
+            inputItem
+                .closest('.ag-advanced-filter-builder-virtual-list-item')
+                ?.classList.contains('ag-advanced-filter-builder-set-value-list')
+        ).toBe(false);
+    });
+
     test('the value pill shows the chosen values', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 
@@ -36,7 +79,7 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         await new FilterDom(api, 'builder set pill').checkFilterDom(`
             BUILDER
             AND
-              Country is any of [Jamaica, Poland]
+              Country is any of (2) Jamaica, Poland
               + add
             buttons: Apply | Cancel
             model:
@@ -64,7 +107,7 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         await new FilterDom(api, 'builder long list').checkFilterDom(`
             BUILDER
             AND
-              Country is any of [Jamaica, Poland, United Kingdom, +1 more]
+              Country is any of (4) Jamaica, Poland, United Kingdom, +1 more
               + add
             buttons: Apply | Cancel
             model:
@@ -94,7 +137,7 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         await new FilterDom(api, 'builder is none of pill').checkFilterDom(`
             BUILDER
             AND
-              Country is none of [Jamaica]
+              Country is none of (1) Jamaica
               + add
             buttons: Apply | Cancel
             model:
@@ -132,7 +175,7 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [item] = await builder.conditionItems();
 
-        expect(builder.valuePillText(item)).toBe('[Europe › Poland]');
+        expect(builder.valuePillText(item)).toBe('(1) Europe › Poland');
     });
 
     test('a value the column does not hold still shows on the pill as it is stored', async () => {
@@ -149,7 +192,7 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
 
         // No path resolves for a key the values no longer hold, so the pill falls back to the key itself;
         // a blank does resolve, and reads as the Set Filter's own label for it.
-        expect(builder.valuePillText(item)).toBe('[Atlantis, (Blanks)]');
+        expect(builder.valuePillText(item)).toBe('(2) Atlantis, (Blanks)');
     });
 
     test('the pill opens the column Set Filter itself', async () => {
@@ -322,13 +365,13 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
             values: ['United States', 'United Kingdom', 'Jamaica', 'Poland'],
         });
         const { builder, item } = await openPicker(api);
-        expect(builder.valuePillText(item)).toBe('[United States, United Kingdom, Jamaica, +1 more]');
+        expect(builder.valuePillText(item)).toBe('(4) United States, United Kingdom, Jamaica, +1 more');
 
         // To the Set Filter an all-ticked list is "no selection to apply"; to a condition it is every value.
         await togglePickerItem('(Blanks)');
 
         // Every value, spelled out in the order the column's own list offers them.
-        expect(builder.valuePillText(item)).toBe('[(Blanks), Jamaica, Poland, +2 more]');
+        expect(builder.valuePillText(item)).toBe('(5) (Blanks), Jamaica, Poland, +2 more');
         expect(builder.applyDisabled()).toBe(false);
         await builder.apply();
         expect((api.getAdvancedFilterModel() as SetAdvancedFilterModel).values).toEqual([
@@ -370,7 +413,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         await togglePickerItem('Poland');
 
         // The pill follows the picker straight away; the model waits for the Builder's own Apply.
-        expect(builder.valuePillText(item)).toBe('[Jamaica, Poland]');
+        expect(builder.valuePillText(item)).toBe('(2) Jamaica, Poland');
         expect(api.getAdvancedFilterModel()).toEqual({
             filterType: 'set',
             colId: 'country',
@@ -413,6 +456,11 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         const [item] = await builder.conditionItems();
 
         await builder.selectOperator(item, 'contains');
+        expect(
+            item
+                .closest('.ag-advanced-filter-builder-virtual-list-item')
+                ?.classList.contains('ag-advanced-filter-builder-set-value-list')
+        ).toBe(false);
         await builder.setValue(item, 'Pol');
         await builder.apply();
 
@@ -462,7 +510,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         });
         const builder = await AdvancedFilterBuilderHarness.open(api);
         const [item] = await builder.conditionItems();
-        expect(builder.valuePillText(item)).toBe('[Jamaica]');
+        expect(builder.valuePillText(item)).toBe('(1) Jamaica');
 
         await builder.selectOperator(item, 'contains');
         await builder.selectOperator(item, 'is any of');
@@ -470,6 +518,9 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         // The values left with the option, so coming back to it is a fresh choice rather than the old one.
         // Only reachable this way: an applied model is re-parsed from the text, which never carries them.
         expect(builder.valuePillText(item)).toBe('Enter a value...');
+        expect(builder.valuePills(item)[0].classList.contains('ag-advanced-filter-builder-set-values-pill-empty')).toBe(
+            true
+        );
         expect(builder.applyDisabled()).toBe(true);
     });
 

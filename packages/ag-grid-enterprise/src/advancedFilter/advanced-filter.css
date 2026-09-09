@@ -238,6 +238,26 @@
     }
 }
 
+.ag-advanced-filter-builder-set-values-pill-wrapper {
+    flex: 0 1 auto;
+    min-width: 140px;
+    max-width: 100%;
+}
+
+.ag-advanced-filter-builder-set-values-pill {
+    width: max-content;
+    min-width: 140px;
+    max-width: 100%;
+
+    :where(.ag-advanced-filter-builder-pill-display) {
+        min-width: 0;
+    }
+}
+
+.ag-advanced-filter-builder-set-values-pill-empty {
+    width: 140px;
+}
+
 .ag-advanced-filter-builder-item-buttons {
     display: flex;
     gap: var(--ag-spacing);
@@ -277,6 +297,29 @@
     cursor: default;
     height: var(--ag-list-item-height);
     min-width: max-content;
+}
+
+.ag-advanced-filter-builder-set-value-list {
+    min-width: 100%;
+
+    :where(.ag-advanced-filter-builder-item) {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    :where(.ag-advanced-filter-builder-item-condition) {
+        min-width: 0;
+    }
+
+    :where(.ag-advanced-filter-builder-item-wrapper) {
+        /* The pill wrapper's trailing margin and the actions' leading padding already provide 1.5 spacing
+           units. Together these make the exact 24px reserve where the value pill stops growing. */
+        column-gap: max(0px, calc(24px - var(--ag-spacing) * 1.5));
+    }
+
+    :where(.ag-advanced-filter-builder-invalid.ag-invisible) {
+        display: none;
+    }
 }
 
 .ag-advanced-filter-builder-virtual-list-item:hover {
