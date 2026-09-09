@@ -1,0 +1,36 @@
+---
+/**
+ * Build-time copy of the example source the Code button reveals, so crawlers can index it.
+ *
+ * The example runner itself is a client-only island and fetches this same source at runtime, so
+ * the panel is hidden and the island removes it once it mounts. It must show exactly the files
+ * the code viewer shows: content that only a crawler could ever see would count as cloaking.
+ */
+import type { InternalFramework } from '@ag-grid-types';
+import type { FileContents } from '@components/example-generator/types';
+
+interface Props {
+    internalFramework: InternalFramework;
+    files: FileContents;
+    mainFileName: string;
+}
+
+const { internalFramework, files, mainFileName } = Astro.props;
+
+// Main file first, so the most useful content leads
+const fileNames = [mainFileName, ...Object.keys(files).filter((fileName) => fileName !== mainFileName)].filter(
+    (fileName) => files[fileName] !== undefined
+);
+---
+
+<div class="example-runner-source-code" data-example-source-code data-internal-framework={internalFramework} hidden>
+    {
+        fileNames.map((fileName) => (
+            <figure>
+                <figcaption>{fileName}</figcaption>
+                {/* prettier-ignore */}
+                <pre><code data-file-name={fileName} set:text={files[fileName]} /></pre>
+            </figure>
+        ))
+    }
+</div>

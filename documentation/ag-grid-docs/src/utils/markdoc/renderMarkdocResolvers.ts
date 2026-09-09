@@ -4,7 +4,7 @@ import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { getPageImages, getPagePath } from '@components/docs/utils/filesData';
 import { getExampleLinkUrl } from '@components/docs/utils/urlPaths';
 import { getGeneratedContents } from '@components/example-generator';
-import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
+import { getExampleViewerFiles } from '@components/example-runner/utils/exampleViewerFiles';
 import * as snippetTransformer from '@components/snippet/snippetTransformer';
 import { agGridVersion } from '@constants';
 import { getInternalFramework } from '@utils/framework';
@@ -65,15 +65,12 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
                 if (!contents) {
                     return null;
                 }
-                const fileName = contents.mainFileName ?? contents.entryFileName;
-                if (!fileName || !contents.files?.[fileName]) {
+                // The same cleaned files the on-page code viewer shows, so the reader/LLM
+                // sees identical source.
+                const { files, mainFileName: fileName } = getExampleViewerFiles(contents, internalFramework);
+                if (!fileName || !files[fileName]) {
                     return null;
                 }
-                // Strip the harness the example generator injects (test-id setup,
-                // console logging, teardown, theme switcher, redacted AI tokens) so the
-                // reader/LLM sees the same clean source as the on-page code viewer.
-                const files = { ...contents.files };
-                stripOutExampleGeneratorCode(files);
                 const cleanCode = files[fileName].trim();
                 const liveUrl = toAbsoluteUrl(
                     getExampleLinkUrl({ internalFramework, pageName, exampleName: name }),
