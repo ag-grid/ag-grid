@@ -69,7 +69,7 @@ const gridOptions: GridOptions<IRow> = {
         flex: 1,
         minWidth: 150,
         filter: true,
-        filterParams: { enableSetOperators: false },
+        filterParams: { filterOptions: { isAnyOf: false, isNoneOf: false } },
     },
     rowData,
     enableAdvancedFilter: true,

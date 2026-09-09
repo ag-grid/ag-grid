@@ -209,39 +209,46 @@ Week-based ranges (such as `thisWeek` and `lastWeek`) use the first day of the w
 
 ### Enabling Built-in Date Ranges
 
-To enable the built-in date ranges, add them to the `filterOptions` array in your date filter configuration. The options are not included by default.
+The ranges are not offered by default. Name the ones you want in [`filterOptions`](./filter-conditions/#choosing-which-options-a-column-offers), which takes either form:
+
+```ts
+// Adds these to the options the column already offers.
+const columnDefs: ColDef[] = [
+  {
+    filter: 'agDateColumnFilter',
+    filterParams: {
+      filterOptions: { today: true, yesterday: true, last7Days: true },
+    },
+  },
+];
+```
+
+A list instead replaces the column's options outright, so every option to keep has to be named.
 
 #### Example: Enable Built-in Date Ranges
 
 {% gridExampleRunner title="Built-in Date Ranges" name="built-in-date-ranges" exampleHeight=640 /%}
 
-Example above uses following configuration:
+The example above adds every range to what the Date Filter already offers, so `equals`, `inRange` and the rest stay available beside them:
 
 ```ts
-// Enable built-in date ranges
 const columnDefs: ColDef[] = [
   {
     filter: 'agDateColumnFilter',
     filterParams: {
-      // Enable built-in named & relative date ranges
-      filterOptions: [
-        'empty', // optional: show 'Choose one' option first
-        'yesterday',
-        'today',
-        'tomorrow',
-        'last7Days',
-        'lastWeek',
-        'thisWeek',
-        'nextWeek',
-        'last30Days',
-        'lastMonth',
-        // ... All other preset ranges
-      ],
-      // Other filter settings...
+      filterOptions: {
+        yesterday: true,
+        today: true,
+        tomorrow: true,
+        last7Days: true,
+        // ... all other preset ranges
+      },
     },
   },
 ];
 ```
+
+Use a list instead where the column should offer the ranges and nothing else, naming `empty` first so it starts inactive.
 
 ### Available Built-in Date Filter Options
 

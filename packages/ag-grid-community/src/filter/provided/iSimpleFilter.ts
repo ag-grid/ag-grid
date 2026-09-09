@@ -49,8 +49,8 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
  * Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.
  */
 export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoCompleteComponentParams {
-    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType | AdvancedFilterOnlyOptionKey)[];
+    /** The options the column offers, to the column filter and the Advanced Filter alike: the whole list in order, or an object naming one option at a time. */
+    filterOptions?: FilterOptionsConfig<ISimpleFilterModelType | AdvancedFilterOnlyOptionKey>;
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ISimpleFilterModelType | CustomFilterOptionKey;
     /**
@@ -116,6 +116,23 @@ export type CustomFilterOptionKey = string & Record<never, never>;
 
 /** A built-in filter option key, or the `displayKey` of a Custom Filter Option. */
 export type FilterOptionKey = ISimpleFilterModelType | CustomFilterOptionKey;
+
+/**
+ * Options named one at a time, over the ones the filter offers by default: `true` adds, `false` withholds,
+ * and a definition supplies a Custom Filter Option. Unlike a list, this merges through `defaultColDef`
+ * per key, so a column can change one option without respelling the rest.
+ */
+export type FilterOptions<TKey extends string = FilterOptionKey> = {
+    [key in TKey]?: boolean | IFilterOptionDef;
+};
+
+/**
+ * The options a column offers: the whole list in order, or the changes to make to the default one. A list
+ * carries a Custom Filter Option as its definition, so only the record needs a key it cannot name in advance.
+ */
+export type FilterOptionsConfig<TKey extends string = FilterOptionKey> =
+    | (IFilterOptionDef | TKey)[]
+    | FilterOptions<TKey | CustomFilterOptionKey>;
 
 /** Valid on every simple filter: `'empty'` selects no condition, `'blank'`/`'notBlank'` test presence, not a value. */
 export type CommonFilterOptionKey = 'empty' | 'blank' | 'notBlank';

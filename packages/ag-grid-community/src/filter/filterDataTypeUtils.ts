@@ -158,12 +158,12 @@ export function _isGridSuppliedFilterOptions(filterOptions: unknown): boolean {
 const filterParamsForEachDataType: FilterParamsDefMap = {
     number: () => undefined,
     bigint: () => undefined,
-    boolean: () => ({
-        maxNumConditions: 1,
-        debounceMs: 0,
-        // A copy per column, so editing the list one colDef carries cannot reach the others.
-        filterOptions: [...BOOLEAN_FILTER_OPTIONS],
-    }),
+    boolean: () => {
+        // A copy per column, so editing the list one colDef carries cannot reach the others. Named twice:
+        // as what the column offers, and as the base a `filterOptions` record adjusts instead of replacing.
+        const options = [...BOOLEAN_FILTER_OPTIONS];
+        return { maxNumConditions: 1, debounceMs: 0, filterOptions: options, dataTypeFilterOptions: options };
+    },
     date: () => ({ isValidDate: gridSuppliedIsValidDate }),
     dateString: ({ dataTypeDefinition }) => ({
         comparator: gridSupplied((filterDate: Date, cellValue: string | undefined) => {

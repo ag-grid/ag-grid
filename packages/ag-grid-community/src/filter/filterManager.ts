@@ -15,11 +15,57 @@ import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHos
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/mergeDeep';
 import type { ColumnFilterService } from './columnFilterService';
+import type { FilterOptions, FilterOptionsConfig, IFilterOptionDef } from './provided/iSimpleFilter';
+import { _applyFilterOptionChanges } from './provided/simpleFilterUtils';
 import type { QuickFilterService } from './quickFilterService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
+
+    /**
+     * Every level's `filterOptions` read as one. The nearest list states the whole of what the column offers,
+     * so it is the base; a record only adjusts, so each applies in turn with the nearest having the last word.
+     * Resolved together rather than in pairs, or a record is lost the moment a nearer level states a list.
+     * Records only stay a record, so a later level supplying a list still has something to adjust it.
+     */
+    public resolveFilterOptions(configs: FilterOptionsConfig[]): FilterOptionsConfig | undefined {
+        let base: (IFilterOptionDef | string)[] | undefined;
+        for (let i = configs.length - 1; i >= 0; --i) {
+            const config = configs[i];
+            if (Array.isArray(config)) {
+                base = config;
+                break;
+            }
+        }
+        if (!base) {
+            return undefined; // The merge has already combined them key by key, which is what records mean.
+        }
+        // Merged before they are applied: in turn, a record withholding an option drops its definition
+        // before a nearer one can put it back, leaving a bare key with no predicate to evaluate.
+        // No prototype, so a key named `__proto__` is stored as one instead of silently setting it.
+        const changes: FilterOptions = Object.create(null);
+        const definitions: { [key: string]: IFilterOptionDef } = Object.create(null);
+        for (let i = 0, len = configs.length; i < len; ++i) {
+            const config = configs[i];
+            if (Array.isArray(config)) {
+                continue;
+            }
+            for (const key of Object.keys(config)) {
+                const value = config[key];
+                if (value == null) {
+                    continue; // A key naming nothing is no opinion, so it does not overrule one.
+                }
+                if (value !== true && value !== false) {
+                    definitions[key] = value;
+                }
+                // Enabling an option a further level defined means that definition, not a bare key: only the
+                // level that supplied it says what it evaluates.
+                changes[key] = value === true ? (definitions[key] ?? true) : value;
+            }
+        }
+        return _applyFilterOptionChanges(base, changes);
+    }
 
     private quickFilter?: QuickFilterService;
     private advancedFilter: IAdvancedFilterService;

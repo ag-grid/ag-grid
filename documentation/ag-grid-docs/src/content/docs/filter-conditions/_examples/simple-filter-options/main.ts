@@ -47,10 +47,17 @@ const filterParams: IDateFilterParams = {
 };
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete' },
+    {
+        field: 'athlete',
+        filterParams: {
+            // Everything a Text Filter offers, without 'contains'.
+            filterOptions: { contains: false },
+        } as ITextFilterParams,
+    },
     {
         field: 'country',
         filterParams: {
+            // Only these three, in this order.
             filterOptions: ['contains', 'startsWith', 'endsWith'],
             defaultOption: 'startsWith',
         } as ITextFilterParams,

@@ -178,7 +178,11 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
-                { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { enableSetOperators: true } },
+                {
+                    field: 'athlete',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { filterOptions: { isAnyOf: true, isNoneOf: true } },
+                },
                 { field: 'country', filter: 'agSetColumnFilter' },
                 { field: 'age', filter: 'agNumberColumnFilter' },
             ],

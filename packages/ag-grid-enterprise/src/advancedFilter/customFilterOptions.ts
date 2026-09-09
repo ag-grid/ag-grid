@@ -1,6 +1,12 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
-import type { AgColumn, FilterInputCallbackParams, IFilterOptionDef, IMultiFilterDef } from 'ag-grid-community';
+import type {
+    AgColumn,
+    FilterInputCallbackParams,
+    FilterOptionsConfig,
+    IFilterOptionDef,
+    IMultiFilterDef,
+} from 'ag-grid-community';
 import {
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
@@ -15,10 +21,14 @@ import type {
 } from './filterExpressionOperators';
 import { freshOperand, getEntries } from './filterExpressionOperators';
 
-/** A list the column author wrote, as opposed to the one its data type supplies; an empty list narrows nothing. */
-function getAuthoredFilterOptions(filterParams: any): (string | IFilterOptionDef)[] | undefined {
+/** What the column author wrote, as opposed to what its data type supplies; naming nothing narrows nothing. */
+function getAuthoredFilterOptions(filterParams: any): FilterOptionsConfig | undefined {
     const filterOptions = filterParams?.filterOptions;
-    return !filterOptions?.length || _isGridSuppliedFilterOptions(filterOptions) ? undefined : filterOptions;
+    if (!filterOptions || _isGridSuppliedFilterOptions(filterOptions)) {
+        return undefined;
+    }
+    const named = Array.isArray(filterOptions) ? filterOptions.length : Object.keys(filterOptions).length;
+    return named ? filterOptions : undefined;
 }
 
 /** The child a Multi Filter wraps for `filterName`, where that filter's own parameters live. */
@@ -33,18 +43,26 @@ export function getMultiFilterChild(filterParams: any, filterName: string): IMul
     return undefined;
 }
 
-/** The options a column narrows itself to, or `undefined` where it narrows nothing of its own. */
-export function getColumnFilterOptions(column: AgColumn): (string | IFilterOptionDef)[] | undefined {
+/**
+ * What the column narrows itself to, innermost first: a Multi Filter writes on the child that owns each
+ * filter, and its own level speaks for the column. Each is applied over what the ones before it left, so
+ * a record adjusts them and a list states the whole of what that level offers.
+ */
+export function getColumnFilterOptions(column: AgColumn): FilterOptionsConfig[] {
     const filterParams = column.colDef.filterParams;
-    // A Multi Filter writes `filterOptions` on a child, so its own level is read only after them.
+    const configs: FilterOptionsConfig[] = [];
     const filters: IMultiFilterDef[] | undefined = filterParams?.filters;
     for (let i = 0, len = filters?.length ?? 0; i < len; ++i) {
         const childOptions = getAuthoredFilterOptions(filters![i]?.filterParams);
         if (childOptions) {
-            return childOptions;
+            configs.push(childOptions);
         }
     }
-    return getAuthoredFilterOptions(filterParams);
+    const ownOptions = getAuthoredFilterOptions(filterParams);
+    if (ownOptions) {
+        configs.push(ownOptions);
+    }
+    return configs;
 }
 
 /** Overlays a column's Custom Filter Options on its data type's operators, replacing a built-in of the same key. */

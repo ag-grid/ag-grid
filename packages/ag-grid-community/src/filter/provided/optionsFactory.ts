@@ -1,47 +1,62 @@
 import type { LogService } from '../../validation/logService';
-import type { IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
+import type { FilterOptionsConfig, IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
 import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from './simpleFilterUtils';
+
+/** How a cell data type states the options for its columns, which no filter class can know. */
+interface DataTypeFilterOptions {
+    dataTypeFilterOptions?: (IFilterOptionDef | string)[];
+}
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
     private customFilterOptions: Map<string, IFilterOptionDef>;
     /** As configured, so a refresh compares what it was given rather than what it kept. */
-    private configuredOptions: (IFilterOptionDef | string)[];
+    private configuredOptions: FilterOptionsConfig;
     /** What the dropdown offers: the configured list minus its malformed entries, or the built-ins if none survive. */
     public filterOptions: (IFilterOptionDef | string)[];
     private offeredOptions: Map<string, IFilterOptionDef | string>;
     public defaultOption?: string;
 
     public init(log: LogService, params: ISimpleFilterParams, defaultOptions: string[]): void {
-        this.configuredOptions = params.filterOptions ?? defaultOptions;
-        this.buildOptions(log, defaultOptions);
+        // What the column offers before the author says anything: its cell data type's own where it defines
+        // them, since a filter class cannot know them, else the ones the filter itself offers.
+        const base = (params as DataTypeFilterOptions).dataTypeFilterOptions ?? defaultOptions;
+        this.configuredOptions = params.filterOptions ?? base;
+        this.buildOptions(log, base);
         this.defaultOption = this.getDefaultItem(log, params.defaultOption);
     }
 
     public refresh(log: LogService, params: ISimpleFilterParams, defaultOptions: string[]): void {
-        const filterOptions = params.filterOptions ?? defaultOptions;
+        const base = (params as DataTypeFilterOptions).dataTypeFilterOptions ?? defaultOptions;
+        const filterOptions = params.filterOptions ?? base;
         if (this.configuredOptions !== filterOptions) {
             this.configuredOptions = filterOptions;
-            this.buildOptions(log, defaultOptions);
+            this.buildOptions(log, base);
         }
         this.defaultOption = this.getDefaultItem(log, params.defaultOption);
     }
 
     /** Rebuilt wholesale, so a `predicate` the previous list carried cannot survive into this one. */
-    private buildOptions(log: LogService, defaultOptions: string[]): void {
-        this.collectUsableOptions(log, this.configuredOptions);
+    private buildOptions(log: LogService, defaultOptions: (IFilterOptionDef | string)[]): void {
+        this.collectUsableOptions(log, this.configuredOptions, defaultOptions);
         // A column with nothing to offer cannot open its filter at all, so a list that keeps none falls back.
         if (!this.filterOptions.length) {
             log.warn(74);
-            this.collectUsableOptions(log, defaultOptions);
+            this.collectUsableOptions(log, defaultOptions, defaultOptions);
         }
     }
 
-    private collectUsableOptions(log: LogService, configuredOptions: (IFilterOptionDef | string)[]): void {
-        // A column offers the Advanced Filter's own options through the same list, and cannot evaluate one itself.
+    private collectUsableOptions(
+        log: LogService,
+        configuredOptions: FilterOptionsConfig,
+        defaultOptions: (IFilterOptionDef | string)[]
+    ): void {
+        // The Advanced Filter's own options are excluded rather than warned about: naming one is how a
+        // column asks that filter for it, so it is correct here and simply not this filter's to offer.
         const { offered, customOptions } = _classifyFilterOptions(
             configuredOptions,
             (keys) => log.warn(72, { keys }),
+            defaultOptions,
             _ADVANCED_FILTER_ONLY_OPTIONS
         );
         this.offeredOptions = offered;

@@ -5,7 +5,7 @@ import type { FilterCallbackSource, FilterInputCallbackParams, IFilterParams } f
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
 import type {
     CustomFilterOptionKey,
-    IFilterOptionDef,
+    FilterOptionsConfig,
     ISimpleFilterModel,
     ISimpleFilterParams,
     TextFilterOptionKey,
@@ -71,8 +71,8 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
  */
 
 export interface ITextFilterParams extends ISimpleFilterParams {
-    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | TextFilterOptionKey | AdvancedFilterOnlyOptionKey)[];
+    /** The options the column offers, to the column filter and the Advanced Filter alike: the whole list in order, or an object naming one option at a time. */
+    filterOptions?: FilterOptionsConfig<TextFilterOptionKey | AdvancedFilterOnlyOptionKey>;
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: TextFilterOptionKey | CustomFilterOptionKey;
     /**

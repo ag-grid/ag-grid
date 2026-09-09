@@ -413,7 +413,11 @@ describe('Advanced Filter - Set Filter value list', () => {
             columnDefs: [
                 { field: 'athlete' },
                 { field: 'country', filter: 'agSetColumnFilter' },
-                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { enableSetOperators: true } },
+                {
+                    field: 'age',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: { filterOptions: { isAnyOf: true, isNoneOf: true } },
+                },
             ],
         });
         const af = AdvancedFilterHarness.get(api);

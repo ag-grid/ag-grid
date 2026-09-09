@@ -3,7 +3,7 @@ import type { FilterInputCallbackParams, IFilterParams } from '../../../interfac
 import type { IScalarFilterParams } from '../iScalarFilter';
 import type {
     CustomFilterOptionKey,
-    IFilterOptionDef,
+    FilterOptionsConfig,
     ISimpleFilterModel,
     ScalarFilterOptionKey,
 } from '../iSimpleFilter';
@@ -37,8 +37,8 @@ export type NumberFilterParams<TData = any, TContext = any> = INumberFilterParam
  */
 
 export interface INumberFilterParams<TData = any, TContext = any> extends IScalarFilterParams {
-    /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | ScalarFilterOptionKey | AdvancedFilterOnlyOptionKey)[];
+    /** The options the column offers, to the column filter and the Advanced Filter alike: the whole list in order, or an object naming one option at a time. */
+    filterOptions?: FilterOptionsConfig<ScalarFilterOptionKey | AdvancedFilterOnlyOptionKey>;
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ScalarFilterOptionKey | CustomFilterOptionKey;
     /**

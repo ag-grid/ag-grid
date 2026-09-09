@@ -113,11 +113,17 @@ function buildColumnFilterSchema(
         const maxConditions = filterParams?.maxNumConditions;
         // The filter's own definition of a usable entry, so the schema cannot offer a `type` it drops.
         // Read-only, so an entry it drops is not warned about again here.
+        // A record adjusts what the filter already offers, so the schema's own default list is its base.
+        // The column's own base first, as `OptionsFactory` reads it: a cell data type stating options of its
+        // own is what a record adjusts, so the schema cannot publish the filter class's instead.
+        const defaultOptions =
+            filterParams?.dataTypeFilterOptions ?? DEFAULT_OPTIONS_BY_FILTER[filterKey] ?? TEXT_FILTER_OPTIONS;
         const filterOptions = filterParams?.filterOptions
             ? [
                   ..._classifyFilterOptions(
                       filterParams.filterOptions,
                       () => {},
+                      defaultOptions,
                       _ADVANCED_FILTER_ONLY_OPTIONS
                   ).offered.keys(),
               ]
@@ -139,6 +145,36 @@ type SimpleFilterSchemaParams = {
     maxConditions?: number;
     useIsoSeparator: boolean;
 };
+
+/** What each simple filter offers unconfigured, and the base a `filterOptions` record adjusts. */
+const TEXT_FILTER_OPTIONS = [
+    'contains',
+    'notContains',
+    'equals',
+    'notEqual',
+    'startsWith',
+    'endsWith',
+    'blank',
+    'notBlank',
+];
+const NUMBER_FILTER_OPTIONS = [
+    'equals',
+    'notEqual',
+    'greaterThan',
+    'greaterThanOrEqual',
+    'lessThan',
+    'lessThanOrEqual',
+    'inRange',
+    'blank',
+    'notBlank',
+];
+const DATE_FILTER_OPTIONS = ['equals', 'notEqual', 'lessThan', 'greaterThan', 'inRange', 'blank', 'notBlank'];
+
+/** Text is the fallback, as it is for the schema builders themselves. */
+const DEFAULT_OPTIONS_BY_FILTER: { [key: string]: string[] } = Object.assign(Object.create(null), {
+    [DateFilterKey]: DATE_FILTER_OPTIONS,
+    [NumberFilterKey]: NUMBER_FILTER_OPTIONS,
+});
 
 const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaParams) => {
     if (filterKey === DateFilterKey) {
@@ -166,16 +202,7 @@ const buildJoinSchema = (schema: SchemaBuilder, filterType: string, maxCondition
 };
 
 const buildTextFilterSchema = (params: SimpleFilterSchemaParams) => {
-    const options = params.filterOptions ?? [
-        'contains',
-        'notContains',
-        'equals',
-        'notEqual',
-        'startsWith',
-        'endsWith',
-        'blank',
-        'notBlank',
-    ];
+    const options = params.filterOptions ?? TEXT_FILTER_OPTIONS;
 
     const schema = s.object({
         filterType: s.literal('text', 'Filter type identifier for text filters'),
@@ -188,17 +215,7 @@ const buildTextFilterSchema = (params: SimpleFilterSchemaParams) => {
 };
 
 const buildNumberFilterSchema = (params: SimpleFilterSchemaParams) => {
-    const options = params.filterOptions ?? [
-        'equals',
-        'notEqual',
-        'greaterThan',
-        'greaterThanOrEqual',
-        'lessThan',
-        'lessThanOrEqual',
-        'inRange',
-        'blank',
-        'notBlank',
-    ];
+    const options = params.filterOptions ?? NUMBER_FILTER_OPTIONS;
 
     const schema = s.object({
         filterType: s.literal('number', 'Filter type identifier for number filters'),
@@ -211,15 +228,7 @@ const buildNumberFilterSchema = (params: SimpleFilterSchemaParams) => {
 };
 
 const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
-    const options = params.filterOptions ?? [
-        'equals',
-        'notEqual',
-        'lessThan',
-        'greaterThan',
-        'inRange',
-        'blank',
-        'notBlank',
-    ];
+    const options = params.filterOptions ?? DATE_FILTER_OPTIONS;
 
     const pattern = params.useIsoSeparator
         ? '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$'
