@@ -412,6 +412,23 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
         } as GridOptions);
     }
 
+    test('a Set Filter column with no declared values offers neither set option', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: 'agSetColumnFilter' }],
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params: IServerSideGetRowsParams) =>
+                    params.success({ rowData: SERVER_ROWS, rowCount: SERVER_ROWS.length }),
+            },
+            enableAdvancedFilter: true,
+        } as GridOptions);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+
+        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+    });
+
     test('the declared values are what the list offers', async () => {
         const api = await createServerSideGrid([]);
         const af = AdvancedFilterHarness.get(api);

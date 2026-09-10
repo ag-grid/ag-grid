@@ -24,6 +24,7 @@ import {
     _addGridCommonParams,
     _getCellRendererDetails,
     _getFilterDetails,
+    _isClientSideRowModel,
     _isSetFilterByDefault,
     _mergeFilterParamsWithApplicationProvidedParams,
 } from 'ag-grid-community';
@@ -180,9 +181,20 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         }
         // Otherwise it is the column's filter that decides: a Set Filter, or a Multi Filter holding one.
         const colDef = column.colDef;
-        return (
+        const hasSetFilter =
             this.isSetFilterDef(column) ||
-            (colDef.filter === 'agMultiColumnFilter' && !!getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter'))
+            (colDef.filter === 'agMultiColumnFilter' &&
+                !!getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter'));
+        // Both options are matched against the column's values, so a column with none to offer would take
+        // a written value it can never resolve. Only the Client-Side Row Model can derive them from its rows.
+        return hasSetFilter && this.hasSetFilterValues(column);
+    }
+
+    /** Whether the column has a value list to match against: provided values, or rows the grid itself holds. */
+    private hasSetFilterValues(column: AgColumn): boolean {
+        return (
+            _isClientSideRowModel(this.gos) ||
+            !!(this.getSetColDef(column).filterParams as ISetFilterParams | undefined)?.values
         );
     }
 
