@@ -12,7 +12,7 @@ import type { AgColumnGroupHeader } from '../headerRendering/cells/columnGroup/a
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _onCellDoubleClicked } from '../rendering/cell/cellMouseListenerFeature';
-import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
+import type { LongTapEvent, TapEvent, TouchListenerOptions } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
 const _shouldOpenHeaderMenuOnLongTap = (
@@ -28,14 +28,18 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: GridBodyCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener, () => this.isBodyContextMenuEnabled());
+        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener, {
+            shouldHandleLongTap: () => this.isBodyContextMenuEnabled(),
+        });
     }
 
     public mockHeaderContextMenu(
         ctrl: GridHeaderCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGui, listener, () => !!this.beans.menuSvc?.isHeaderContextMenuEnabled());
+        this.mockContextMenu(ctrl, ctrl.eGui, listener, {
+            shouldHandleLongTap: () => !!this.beans.menuSvc?.isHeaderContextMenuEnabled(),
+        });
     }
 
     public mockRowContextMenu(ctrl: RowContainerEventsFeature): void {
@@ -46,12 +50,20 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const listener = (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
             const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touchEvent?.target ?? null);
-            if (cellCtrl?.column) {
-                cellCtrl.dispatchCellContextMenuEvent(touchEvent ?? null);
-            }
             this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
         };
-        this.mockContextMenu(ctrl, ctrl.element, listener, () => this.isBodyContextMenuEnabled());
+        this.mockContextMenu(ctrl, ctrl.element, listener, {
+            shouldHandleLongTap: () => this.isBodyContextMenuEnabled(),
+            onLongTapDetected: ({ touchEvent }) => {
+                if (!_isEventFromThisInstance(this.beans, touchEvent)) {
+                    return;
+                }
+                const { cellCtrl } = ctrl.getControlsForEventTarget(touchEvent.target);
+                if (cellCtrl?.column) {
+                    cellCtrl.dispatchCellContextMenuEvent(touchEvent);
+                }
+            },
+        });
     }
 
     public handleCellDoubleClick(ctrl: CellCtrl, mouseEvent: MouseEvent): boolean {
@@ -149,14 +161,14 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: BeanStub,
         element: HTMLElement,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void,
-        shouldHandleLongTap: () => boolean
+        options: TouchListenerOptions
     ): void {
         // we do NOT want this when not in iPad
         if (!_isIOSUserAgent()) {
             return;
         }
 
-        const touchListener = new TouchListener(element, { shouldHandleLongTap });
+        const touchListener = new TouchListener(element, options);
         const longTapListener = (event: LongTapEvent) => {
             if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
                 return;

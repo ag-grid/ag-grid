@@ -213,9 +213,8 @@ describe('Tooltip interaction on iOS', () => {
         vi.mocked(_isIOSUserAgent).mockReset();
     });
 
-    async function longPressCell(cell: HTMLElement): Promise<void> {
+    function startCellTouch(cell: HTMLElement): Touch {
         const touch = new Touch({ identifier: 1, target: cell, clientX: 5, clientY: 5 });
-        vi.useFakeTimers();
         cell.dispatchEvent(
             new TouchEvent('touchstart', {
                 bubbles: true,
@@ -225,44 +224,102 @@ describe('Tooltip interaction on iOS', () => {
                 changedTouches: [touch],
             })
         );
-        await vi.advanceTimersByTimeAsync(600);
-        cell.dispatchEvent(new TouchEvent('touchend', { bubbles: true, changedTouches: [touch] }));
+        return touch;
     }
 
-    test.each([
-        { enterprise: false, suppressContextMenu: false },
-        { enterprise: false, suppressContextMenu: true },
-        { enterprise: true, suppressContextMenu: true },
-        { enterprise: true, suppressContextMenu: false },
-    ])(
-        'respects context menu availability (enterprise: $enterprise, suppressed: $suppressContextMenu)',
-        async ({ enterprise, suppressContextMenu }) => {
-            const api = await gridMgr.createGridAndWait(
-                'cell-tooltip',
-                {
-                    columnDefs: [{ field: 'athlete', tooltip: true }],
-                    rowData: [{ athlete: 'Athlete' }],
-                    suppressContextMenu,
-                    tooltipShowDelay: 2000,
-                    ...(enterprise ? { getContextMenuItems: () => [{ name: 'Cell action' }] } : {}),
-                },
-                { modules: enterprise ? [ContextMenuModule] : [] }
-            );
+    async function longPressCell(cell: HTMLElement): Promise<TouchEvent> {
+        const touch = startCellTouch(cell);
+        await vi.advanceTimersByTimeAsync(600);
+        const touchEnd = new TouchEvent('touchend', { bubbles: true, cancelable: true, changedTouches: [touch] });
+        cell.dispatchEvent(touchEnd);
+        return touchEnd;
+    }
 
+    test.each(['touchend', 'touchmove', 'touchcancel'] as const)(
+        'does not deliver a long-press callback after an early %s',
+        async (type) => {
+            const onCellContextMenu = vi.fn();
+            const api = await gridMgr.createGridAndWait('cancelled-cell-long-press', {
+                columnDefs: [{ field: 'athlete', tooltip: true }],
+                rowData: [{ athlete: 'Athlete' }],
+                suppressContextMenu: true,
+                onCellContextMenu,
+            });
             const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
-            await longPressCell(cell);
+            vi.useFakeTimers();
+            startCellTouch(cell);
+            const touch = new Touch({ identifier: 1, target: cell, clientX: 20, clientY: 20 });
+            cell.dispatchEvent(
+                new TouchEvent(type, {
+                    bubbles: true,
+                    touches: type === 'touchmove' ? [touch] : [],
+                    changedTouches: [touch],
+                })
+            );
+            await vi.advanceTimersByTimeAsync(600);
 
-            if (enterprise && !suppressContextMenu) {
-                expect(document.querySelector('.ag-menu')).toHaveTextContent('Cell action');
-                expect(getVisibleTooltips()).toHaveLength(0);
-
-                api.hidePopupMenu();
-                api.setGridOption('suppressContextMenu', true);
-                await longPressCell(cell);
-            }
-
-            expect(document.querySelector('.ag-menu')).toBeNull();
-            expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual(['Athlete']);
+            expect(onCellContextMenu).not.toHaveBeenCalled();
+            expect(getVisibleTooltips()).toHaveLength(0);
         }
     );
+
+    describe.each([false, true])('cell tooltips: %s', (tooltip) => {
+        test.each([
+            { enterprise: false, suppressContextMenu: false },
+            { enterprise: false, suppressContextMenu: true },
+            { enterprise: true, suppressContextMenu: true },
+            { enterprise: true, suppressContextMenu: false },
+        ])(
+            'respects context menu availability (enterprise: $enterprise, suppressed: $suppressContextMenu)',
+            async ({ enterprise, suppressContextMenu }) => {
+                const onCellContextMenu = vi.fn().mockName('grid callback');
+                const onColumnCellContextMenu = vi.fn().mockName('column callback');
+                const contextMenuListener = vi.fn().mockName('API listener');
+                const api = await gridMgr.createGridAndWait(
+                    'cell-tooltip',
+                    {
+                        columnDefs: [{ field: 'athlete', tooltip, onCellContextMenu: onColumnCellContextMenu }],
+                        rowData: [{ athlete: 'Athlete' }],
+                        suppressContextMenu,
+                        onCellContextMenu,
+                        tooltipShowDelay: 2000,
+                        ...(enterprise ? { getContextMenuItems: () => [{ name: 'Cell action' }] } : {}),
+                    },
+                    { modules: enterprise ? [ContextMenuModule] : [] }
+                );
+
+                api.addEventListener('cellContextMenu', contextMenuListener);
+                const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+                vi.useFakeTimers();
+                const touchEnd = await longPressCell(cell);
+                expect(touchEnd.defaultPrevented).toBe(true);
+
+                for (const listener of [onCellContextMenu, onColumnCellContextMenu, contextMenuListener]) {
+                    expect(listener).toHaveBeenCalledTimes(1);
+                    expect(listener).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            type: 'cellContextMenu',
+                            value: 'Athlete',
+                            event: expect.any(TouchEvent),
+                        })
+                    );
+                }
+
+                if (enterprise && !suppressContextMenu) {
+                    expect(document.querySelector('.ag-menu')).toHaveTextContent('Cell action');
+                    expect(getVisibleTooltips()).toHaveLength(0);
+
+                    api.hidePopupMenu();
+                    api.setGridOption('suppressContextMenu', true);
+                    await longPressCell(cell);
+                    for (const listener of [onCellContextMenu, onColumnCellContextMenu, contextMenuListener]) {
+                        expect(listener).toHaveBeenCalledTimes(2);
+                    }
+                }
+
+                expect(document.querySelector('.ag-menu')).toBeNull();
+                expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual(tooltip ? ['Athlete'] : []);
+            }
+        );
+    });
 });
