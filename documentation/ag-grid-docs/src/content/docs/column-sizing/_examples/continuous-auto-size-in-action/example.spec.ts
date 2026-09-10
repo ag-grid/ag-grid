@@ -117,4 +117,22 @@ test.agExample(import.meta, () => {
                 `\n  initial: ${initialWidths.join(', ')}\n     last: ${widths.join(', ')}`
         ).toBe(true);
     });
+
+    test.eachFramework('scrolling right fits the columns as they arrive', async ({ page }) => {
+        await waitForGridContent(page);
+
+        const scrollbar = page.locator('.ag-body-horizontal-scroll-viewport').first();
+        await scrollbar.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+
+        const goldHeader = page.locator('.ag-header-cell[col-id="gold"]').first();
+        await expect(goldHeader).toBeVisible();
+
+        const fitted = await pollFor(
+            async () => (await goldHeader.boundingBox())?.width ?? 0,
+            (width) => width > 0 && width < 150,
+            5000
+        );
+        expect(fitted, 'the "Gold" column was not fitted after scrolling it into view').toBeLessThan(150);
+        expect(fitted).toBeGreaterThan(0);
+    });
 });
