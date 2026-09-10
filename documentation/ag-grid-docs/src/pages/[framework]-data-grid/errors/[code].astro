@@ -214,46 +214,53 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive');
     const ERROR_CODE_TEXT_ID = 'errorCodeText';
     const ERROR_PARAM_SELECTOR = '[data-error-param]';
 
-    // Get errorCode from url, so it doesn't need to be passed
-    // in from Astro and we can import in this script
-    const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10);
-    const searchParams = new URLSearchParams(window.location.search);
-    const { _version_, ...params } = Object.fromEntries(searchParams.entries());
+    const applyErrorDetails = () => {
+        // Get errorCode from url, so it doesn't need to be passed
+        // in from Astro and we can import in this script
+        const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10);
+        const searchParams = new URLSearchParams(window.location.search);
+        const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
-    // Redirect first, so the hop to the archive never sits downstream of a failing text lookup.
-    const errorRedirectBaseUrl = _version_
-        ? getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION })
-        : undefined;
+        // Redirect first, so the hop to the archive never sits downstream of a failing text lookup.
+        const errorRedirectBaseUrl = _version_
+            ? getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION })
+            : undefined;
 
-    if (errorRedirectBaseUrl) {
-        // `replace` does not halt this script, so everything below has to be an explicit `else`.
-        const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
-        window.location.replace(redirectUrl);
-    } else if (errorCode in AG_GRID_ERRORS) {
-        const typedErrorCode = errorCode as ErrorId;
+        if (errorRedirectBaseUrl) {
+            // `replace` does not halt this script, so everything below has to be an explicit `else`.
+            const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
+            window.location.replace(redirectUrl);
+        } else if (errorCode in AG_GRID_ERRORS) {
+            const typedErrorCode = errorCode as ErrorId;
 
-        const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: typedErrorCode, params });
+            const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: typedErrorCode, params });
 
-        const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
-        if (errorCodeTextEl) {
-            errorCodeTextEl.textContent = text;
-        }
+            const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
+            if (errorCodeTextEl) {
+                errorCodeTextEl.textContent = text;
+            }
 
-        // Hidden until now, so a complete message never flashes the warning.
-        const missingParamsEl = document.getElementById(MISSING_PARAMS_ID);
-        if (hasPlaceholders) {
-            missingParamsEl?.removeAttribute('hidden');
-        } else {
-            missingParamsEl?.remove();
-        }
+            // Hidden until now, so a complete message never flashes the warning.
+            const missingParamsEl = document.getElementById(MISSING_PARAMS_ID);
+            if (hasPlaceholders) {
+                missingParamsEl?.removeAttribute('hidden');
+            } else {
+                missingParamsEl?.remove();
+            }
 
-        // Swap each `errorParam` fallback for this reader's own value.
-        for (const el of document.querySelectorAll<HTMLElement>(ERROR_PARAM_SELECTOR)) {
-            const name = el.dataset.errorParam;
-            const value = name === undefined ? undefined : params[name];
-            if (value !== undefined) {
-                el.textContent = `${formatErrorParamValue(value)}${el.dataset.errorParamSuffix ?? ''}`;
+            // Swap each `errorParam` fallback for this reader's own value.
+            for (const el of document.querySelectorAll<HTMLElement>(ERROR_PARAM_SELECTOR)) {
+                const name = el.dataset.errorParam;
+                const value = name === undefined ? undefined : params[name];
+                if (value !== undefined) {
+                    el.textContent = `${formatErrorParamValue(value)}${el.dataset.errorParamSuffix ?? ''}`;
+                }
             }
         }
-    }
+    };
+
+    applyErrorDetails();
+    // A module does not re-run after a `<ClientRouter />` swap, so switching framework would otherwise
+    // leave the freshly served page's message unrendered and its warning still hidden.
+    document.addEventListener('astro:page-load', applyErrorDetails);
 </script>
