@@ -100,7 +100,7 @@ const VueExample = defineComponent({
         const rowSelection = ref<RowSelectionOptions>({
             mode: 'multiRow',
         });
-        const toolbar = ref<Toolbar>({ items: ['agQuickFilterToolbarItem'] });
+        const toolbar = ref<Toolbar>({ items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] });
         const rowData = ref<any[] | undefined>(undefined);
         const gridVisible = ref(true);
         const initialState = ref<GridState | undefined>(undefined);

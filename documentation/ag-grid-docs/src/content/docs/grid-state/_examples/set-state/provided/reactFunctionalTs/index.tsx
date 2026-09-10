@@ -68,7 +68,7 @@ const GridExample = () => {
     const autoGroupColumnDef = useMemo<AutoGroupColumnDef>(() => {
         return { minWidth: 200 };
     }, []);
-    const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem'] }), []);
+    const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] }), []);
     const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
