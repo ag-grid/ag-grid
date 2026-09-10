@@ -78,6 +78,8 @@ export interface TouchListenerOptions {
     capture?: boolean;
     /** Whether this listener may claim the current long-press gesture. */
     shouldHandleLongTap?: () => boolean;
+    /** Observe a completed long press without claiming it, suppressing the compatibility click on release. */
+    onLongTapDetected?: (event: LongTapEvent) => void;
     /** Cede the long press to any competing listener, owning it only when no other candidate can. */
     yieldsLongTap?: boolean;
     /** Whether this listener should observe this touch gesture. */
@@ -105,6 +107,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     private readonly capture: boolean;
     private readonly yieldsLongTap: boolean;
     private readonly shouldHandleLongTap?: () => boolean;
+    private readonly onLongTapDetected?: (event: LongTapEvent) => void;
     private readonly shouldTrackTouch?: (event: TouchEvent) => boolean;
     private readonly getLongTapTarget?: (event: TouchEvent, touchStart: Touch) => Element | undefined;
 
@@ -117,6 +120,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         this.capture = resolvedOptions?.capture ?? false;
         this.yieldsLongTap = resolvedOptions?.yieldsLongTap ?? false;
         this.shouldHandleLongTap = resolvedOptions?.shouldHandleLongTap;
+        this.onLongTapDetected = resolvedOptions?.onLongTapDetected;
         this.shouldTrackTouch = resolvedOptions?.shouldTrackTouch;
         this.getLongTapTarget = resolvedOptions?.getLongTapTarget;
     }
@@ -181,11 +185,14 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         this.longPressTimer = window.setTimeout(() => {
             this.longPressTimer = 0;
             if (this.touchStart === touchStart && !this.moved) {
-                const ownsLongTap = this.isLongTapOwner(touchEvent, touchStart);
+                const ownsLongTap =
+                    this.isLongTapOwner(touchEvent, touchStart) && addHandledTouchEvent(touchEvent, 'longTap');
                 this.moved = true;
-                this.longTapFired = ownsLongTap && addHandledTouchEvent(touchEvent, 'longTap');
-                if (this.longTapFired) {
-                    this.eventSvc?.dispatchEvent<LongTapEvent>({ type: 'longTap', touchStart, touchEvent });
+                this.longTapFired = ownsLongTap || !!this.onLongTapDetected;
+                const event: LongTapEvent = { type: 'longTap', touchStart, touchEvent };
+                this.onLongTapDetected?.(event);
+                if (ownsLongTap) {
+                    this.eventSvc?.dispatchEvent(event);
                 }
             }
         }, LONG_PRESS_MILLISECONDS);
