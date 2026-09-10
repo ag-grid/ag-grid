@@ -90,8 +90,9 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     private setContainerWidth(): void {
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        // The end spacer already reserves the vertical scrollbar width in the viewport.
         const width = gridBodyCtrl
-            ? gridBodyCtrl.getHorizontalContentWidth()
+            ? gridBodyCtrl.getHorizontalContentWidth() - gridBodyCtrl.getVerticalScrollbarWidth()
             : this.visibleCols.bodyWidth +
               this.visibleCols.getLeftStickyColumnContainerWidth() +
               this.visibleCols.getRightStickyColumnContainerWidth();
