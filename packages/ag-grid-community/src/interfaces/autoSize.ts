@@ -53,7 +53,7 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
 
 /** Params for the `shouldAutoSizeColumns` callback of a continuous auto-size strategy. */
 export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** What changed in the grid to make it want to re-size columns. */
+    /** The grid change that triggered this re-size. */
     reason: 'dataChanged' | 'columnsChanged' | 'viewportChanged' | 'gridSizeChanged';
     /**
      * All eligible columns — those the user has not resized, and not otherwise excluded.
