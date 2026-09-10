@@ -59,6 +59,7 @@ const gridOptions: GridOptions<IRow> = {
         type: 'fitGridWidth',
         continuous: true,
     },
+    animateColumnResizing: true,
 };
 
 function setColumnCount(count: number) {
