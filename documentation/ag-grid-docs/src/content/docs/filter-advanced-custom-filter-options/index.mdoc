@@ -1,0 +1,81 @@
+---
+title: "Advanced Filter - Custom Filter Options"
+enterprise: true
+---
+
+Custom Filter Options defined for a column are also offered in the Advanced Filter, so an expression can use the same options as the column filter.
+
+## Configuring Custom Filter Options
+
+The Advanced Filter accepts [Custom Filter Options](./filter-conditions/#custom-filter-options) the same way as Column Filters. Each Custom Filter Option is an `IFilterOptionDef` with the following properties.
+
+{% interfaceDocumentation interfaceName="IFilterOptionDef" config={description: ""} /%}
+
+Options taking two values are validated like `is between`: the first value must be less than the second, or equal to it where `inRangeInclusive = true`.
+
+The `predicate` only runs with the Client-Side Row Model. With the Server-Side Row Model the option is sent to the server as its `displayKey` in the filter model, as for the [Set Filter options](./filter-advanced-columns/#set-filters).
+
+The following example demonstrates custom filter options taking different numbers of values:
+
+- The **Athlete** column has `Starts With A` (no values) and `Does Not Start With` (one value).
+- The **Age** column has `Even Numbers` (no values) and `Between (Exclusive)` (two values).
+- The **Date** column has `Leap Year` (no values) and `Between (Exclusive)` (two dates).
+
+{% gridExampleRunner title="Custom Filter Options" name="custom-filter-options" /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filterParams: {
+                filterOptions: [
+                    'equals',
+                    {
+                        displayKey: 'evenNumbers',
+                        displayName: 'Even Numbers',
+                        numberOfInputs: 0,
+                        predicate: (_values, cellValue) => cellValue != null && cellValue % 2 === 0,
+                    },
+                    {
+                        displayKey: 'betweenExclusive',
+                        displayName: 'Between (Exclusive)',
+                        numberOfInputs: 2,
+                        predicate: ([from, to], cellValue) => cellValue != null && cellValue > from && cellValue < to,
+                    },
+                ],
+            },
+        },
+    ],
+}
+```
+
+## Using Custom Filter Options in the Advanced Filter Input
+
+Custom Filter Options are typed into the Advanced Filter input using their `displayName`, followed by its values. Using the options from the example above these are some example inputs:
+
+```text
+[Athlete] Starts With A
+[Athlete] Does Not Start With "Michael"
+[Age] Even Numbers
+[Age] Between (Exclusive) (30, 40)
+[Date] Between (Exclusive) ("2008-08-20", "2008-08-25")
+```
+
+Values are quoted according to the column's Cell Data Type, as for the built-in options: numbers are unquoted, everything else is quoted. Two values are separated by a comma; the surrounding brackets are optional. Where the `displayKey` has a [localised](./localisation/) entry, that text is used as the option name instead.
+
+A `displayKey` is resolved against the column being filtered, so different columns can reuse the same key. Reusing an Option Key from the [table of standard options](./filter-advanced-columns/#filter-parameters), for example `contains`, replaces that built-in option for the column, the same as it does in the column filter.
+
+## Filter Model
+
+A condition using a Custom Filter Option stores the `displayKey` in `type`, and the values in `filter` and `filterTo`. See [Filter Model / API](./filter-advanced-api/) for saving and restoring the Advanced Filter state.
+
+```js
+const advancedFilterModel = {
+    filterType: 'number',
+    colId: 'age',
+    type: 'betweenExclusive',
+    filter: 30,
+    filterTo: 40,
+};
+```

@@ -10,11 +10,11 @@
             },
             {
                 "text": "Set Filter Support for Advanced Filter",
-                "path": "./filter-advanced/#set-filters"
+                "path": "./filter-advanced-columns/#set-filters"
             },
             {
                 "text": "Custom Filter Option Support in Advanced Filter",
-                "path": "./filter-advanced/#custom-filter-options"
+                "path": "./filter-advanced-custom-filter-options/"
             },
             {
                 "text": "Continuous Column Auto-sizing",

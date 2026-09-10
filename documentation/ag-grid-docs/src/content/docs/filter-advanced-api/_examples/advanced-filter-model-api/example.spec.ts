@@ -29,9 +29,7 @@ test.agExample(import.meta, () => {
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
         await expect(filterInput).toHaveValue(/Gold/);
 
-        // Every remaining row won gold. Both conditions are checked inside one retry so they
-        // describe the same render: separately, the zero-count check passes during a transitional
-        // empty grid and the non-empty check then passes for rows nothing vetted.
+        // Both checks in one retry: a transitional empty grid would otherwise pass the zero-count check alone.
         const goldCells = page.locator('.ag-row [col-id="gold"]');
         await expect(async () => {
             await expect(goldCells).not.toHaveCount(0);

@@ -31,9 +31,7 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
         await page.locator('.ag-advanced-filter-buttons').getByText('Apply').click();
 
-        // Phelps rows remain and every other athlete goes. Both conditions are checked inside one
-        // retry so they describe the same render: separately, the emptiness check passes during a
-        // transitional empty grid and the non-empty check then passes for rows nothing vetted.
+        // Both checks in one retry: a transitional empty grid would otherwise pass the emptiness check alone.
         await expect(async () => {
             await expect(athleteCells).not.toHaveCount(0);
             await expect(athleteCells.filter({ hasNotText: /phelps/i })).toHaveCount(0);

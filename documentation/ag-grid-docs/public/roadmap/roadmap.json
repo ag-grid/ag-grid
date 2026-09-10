@@ -145,7 +145,7 @@
             "status": "shipped",
             "why": "Simplifies building complex filters that would otherwise need many chained OR conditions.",
             "desc": "Reference Set Filter-style multi-value lists as a single condition inside Advanced Filter expressions.",
-            "link": "./filter-advanced/#set-filters"
+            "link": "./filter-advanced-columns/#set-filters"
         },
         {
             "id": "AG-17948",

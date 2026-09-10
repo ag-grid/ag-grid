@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { GridApi, GridOptions, ISetFilterParams, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -8,6 +8,8 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { AdvancedFilterModule, ColumnMenuModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
+
+import { CountryCellRenderer } from './countryCellRenderer_typescript';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -32,10 +34,16 @@ let gridApi: GridApi<IOlympicDataTypes>;
 
 const gridOptions: GridOptions<IOlympicDataTypes> = {
     columnDefs: [
-        { field: 'athlete', filter: 'agTextColumnFilter' },
-        { field: 'country', filter: 'agSetColumnFilter' },
         {
-            field: 'sport',
+            field: 'country',
+            cellRenderer: CountryCellRenderer,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                cellRenderer: CountryCellRenderer,
+            } as ISetFilterParams,
+        },
+        {
+            field: 'athlete',
             filter: 'agSetColumnFilter',
             filterParams: {
                 valueFormatter: ({ value }: ValueFormatterParams<IOlympicDataTypes, string>) =>
@@ -50,6 +58,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
                 treeList: true,
             },
         },
+        { field: 'sport', filter: 'agTextColumnFilter' },
         { field: 'gold', filter: 'agNumberColumnFilter' },
     ],
     defaultColDef: {

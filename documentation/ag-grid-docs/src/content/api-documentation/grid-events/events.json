@@ -344,7 +344,7 @@
         "advancedFilterBuilderVisibleChanged": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced-input-builder/#advanced-filter-builder"
             }
         }
     },

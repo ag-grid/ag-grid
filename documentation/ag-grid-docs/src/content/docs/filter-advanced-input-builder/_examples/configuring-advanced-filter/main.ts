@@ -1,10 +1,4 @@
-import type {
-    AdvancedFilterModel,
-    GridApi,
-    GridOptions,
-    GridReadyEvent,
-    IAdvancedFilterParams,
-} from 'ag-grid-community';
+import type { AdvancedFilterModel, GridApi, GridOptions, IAdvancedFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     GridStateModule,
@@ -85,19 +79,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     enableAdvancedFilter: true,
-    popupParent: document.getElementById('wrapper'),
     initialState: {
         filter: {
             advancedFilterModel: initialAdvancedFilterModel,
         },
     },
     advancedFilterParams: advancedFilterParams,
-    onGridReady: (params: GridReadyEvent) => {
-        // Could also be provided via grid option `advancedFilterParent`.
-        // Setting the parent removes the Advanced Filter input from the grid,
-        // allowing the Advanced Filter to be edited only via the Builder, launched via the API.
-        params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
-    },
 };
 
 // setup the grid after the page has finished loading

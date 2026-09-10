@@ -96,9 +96,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     advancedFilterBuilderParams: advancedFilterBuilderParams,
     onAdvancedFilterBuilderVisibleChanged: onAdvancedFilterBuilderVisibleChanged,
     onGridReady: (params: GridReadyEvent) => {
-        // Could also be provided via grid option `advancedFilterParent`.
-        // Setting the parent removes the Advanced Filter input from the grid,
-        // allowing the Advanced Filter to be edited only via the Builder, launched via the API.
+        // An external parent hides the input in the grid, so the filter is edited only via the Builder.
         params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
     },
     onFilterChanged: onFilterChanged,

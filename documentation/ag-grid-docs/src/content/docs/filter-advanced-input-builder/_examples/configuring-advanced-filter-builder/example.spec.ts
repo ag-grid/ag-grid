@@ -48,10 +48,7 @@ test.agExample(import.meta, () => {
         const builderDialog = page.locator('.ag-advanced-filter-builder');
         await expect(builderDialog).toBeVisible();
 
-        // Move buttons should be visible (showMoveButtons: true).
-        // They have the icon classes ag-icon-up and ag-icon-down inside the button items.
-        // The dialog becomes visible before its rows render, so this has to retry rather than
-        // take a single count of what is there the moment the dialog appears.
+        // The dialog is visible before its rows render, so the move-button count must retry.
         await expect(builderDialog.locator('.ag-icon-up, .ag-icon-down')).not.toHaveCount(0);
     });
 });

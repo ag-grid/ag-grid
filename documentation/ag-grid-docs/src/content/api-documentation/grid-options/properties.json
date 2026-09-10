@@ -623,25 +623,25 @@
         "includeHiddenColumnsInAdvancedFilter": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#including-hidden-columns"
+                "url": "./filter-advanced-columns/#including-hidden-columns"
             }
         },
         "advancedFilterParent": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#advanced-filter-parent"
+                "url": "./filter-advanced-input-builder/#filter-parent"
             }
         },
         "advancedFilterBuilderParams": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced-input-builder/#advanced-filter-builder"
             }
         },
         "advancedFilterParams": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter"
+                "url": "./filter-advanced-input-builder/#buttons"
             }
         },
         "alwaysPassFilter": {},

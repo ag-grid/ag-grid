@@ -986,7 +986,33 @@
                             "type": "item",
                             "title": "Advanced Filter",
                             "path": "filter-advanced",
-                            "isEnterprise": true
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Columns & Filter Options",
+                                    "path": "filter-advanced-columns",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Input & Builder",
+                                    "path": "filter-advanced-input-builder",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Filter Options",
+                                    "path": "filter-advanced-custom-filter-options",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Filter Model / API",
+                                    "path": "filter-advanced-api",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",

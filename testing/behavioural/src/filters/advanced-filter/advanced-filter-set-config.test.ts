@@ -1054,6 +1054,27 @@ describe('Advanced Filter - Set Filter column without the Set Filter module', ()
         // The missing module is reported rather than passing silently; id 200 is batched behind a debounce.
         await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     });
+
+    test('a filterOptions list naming isAnyOf reports the missing module instead of falling back silently', async () => {
+        // Deliberate: the named option is what error #200 reports here.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200] });
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agTextColumnFilter', filterParams: { filterOptions: ['isAnyOf'] } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+
+        await waitFor(() => expect(errorSpy).toHaveBeenCalled());
+        expect(errorSpy.mock.calls.flat().join(' ')).toContain('isAnyOf');
+    });
 });
 
 describe('Advanced Filter - Set Filter and grid state', () => {
