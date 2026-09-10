@@ -23,6 +23,13 @@
     text-align: center;
 }
 
+/* `safe` keeps the message below the header when the body collapses to zero height: centring an
+   overflowing item would paint it over the header. Must follow .ag-overlay-wrapper (equal specificity). */
+.ag-overlay-no-rows-wrapper,
+.ag-overlay-no-matching-rows-wrapper {
+    align-items: safe center;
+}
+
 .ag-overlay-loading-wrapper,
 .ag-overlay-exporting-wrapper,
 .ag-overlay-modal-wrapper,
