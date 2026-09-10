@@ -7,8 +7,7 @@ let isFirefox: boolean;
 let isMacOs: boolean;
 let isIOS: boolean;
 let invisibleScrollbar: boolean;
-let realCssEngine: boolean;
-let realCssEngineFinal = false;
+let realCssEngine: boolean | undefined;
 let browserScrollbarWidth: number;
 let maxDivHeight: number;
 
@@ -65,49 +64,32 @@ export function _getTabIndex(el: HTMLElement | null): string | null {
     return numberTabIndex.toString();
 }
 
-/** Class on the probe element {@link _isRealCssEngine} measures. Only ever in the DOM for the
- * duration of that measurement. */
-const CSS_ENGINE_PROBE_CLASS = 'ag-css-engine-probe';
-/** Arbitrary, but distinctive enough that a coincidental match is not plausible. */
-const CSS_ENGINE_PROBE_WIDTH = 137;
+const CSS_ENGINE_PROBE_PROPERTY = '--ag-css-engine-probe';
+const CSS_ENGINE_PROBE_VALUE = '137px';
 
 /**
- * Whether there is a real CSS layout engine behind the DOM, as opposed to a headless DOM (jsdom,
- * happy-dom) that parses styles but lays nothing out and so reports every measurement as 0.
- *
- * Probed by resolving a custom property through to a width and measuring it: a real engine reports
- * the declared width back, a headless DOM reports 0. Returns `null` while there is no document to
- * probe - the answer is unknown rather than negative.
+ * Whether a real CSS engine backs the DOM, as opposed to a headless one (jsdom, happy-dom) that
+ * parses styles without computing them. `null` while there is no body to probe against.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isRealCssEngine(): boolean | null {
-    if (realCssEngineFinal) {
+    if (realCssEngine !== undefined) {
         return realCssEngine;
     }
-    // The document element, not the body: an app that hides itself while it boots suppresses layout
-    // for everything under `body`, and a real engine then measures the probe as 0.
-    const root = typeof document === 'undefined' ? null : document.documentElement;
-    if (!root) {
+    const body = typeof document === 'undefined' ? null : document.body;
+    if (!body) {
         return null;
     }
-    // A negative is only ever provisional while the root itself has no layout, which reads the same
-    // in a real engine as in a headless DOM. Re-probe once it does rather than cache that 0 for the
-    // life of the page.
-    if (realCssEngine === false && root.clientWidth === 0) {
-        return false;
-    }
-    const variable = '--ag-css-engine-probe';
     const parent = document.createElement('div');
-    // Out of flow and invisible, but still laid out - `display: none` would measure 0 in a real engine.
-    parent.style.cssText = `position:absolute;top:0;left:0;visibility:hidden;pointer-events:none;${variable}:${CSS_ENGINE_PROBE_WIDTH}px`;
+    parent.style.setProperty(CSS_ENGINE_PROBE_PROPERTY, CSS_ENGINE_PROBE_VALUE);
     const child = document.createElement('div');
-    child.className = CSS_ENGINE_PROBE_CLASS;
-    child.style.width = `var(${variable})`;
     parent.appendChild(child);
-    root.appendChild(parent);
-    realCssEngine = child.clientWidth === CSS_ENGINE_PROBE_WIDTH;
-    realCssEngineFinal = realCssEngine || root.clientWidth > 0;
+    body.appendChild(parent);
+    // A real engine inherits the custom property down to the child, a headless DOM does not. Reading a
+    // computed value rather than a measured one so a hidden body still gives a usable answer.
+    realCssEngine =
+        getComputedStyle(child).getPropertyValue(CSS_ENGINE_PROBE_PROPERTY).trim() === CSS_ENGINE_PROBE_VALUE;
     parent.remove();
     return realCssEngine;
 }

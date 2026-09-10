@@ -125,12 +125,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private isColumnVirtualisationSuppressed() {
-        // A zero viewport width is only a real zero width where there is a layout engine to measure it -
-        // a container the browser has not laid out yet, which virtualises like any other narrow viewport.
-        // Without one (headless tests) every measurement reads 0 whatever the styling, so build every
-        // column; likewise while the probe has nothing to measure against, which leaves the behaviour as
-        // it was for a grid created before the document body exists.
-        return this.suppressColumnVirtualisation || (this.viewportRight === 0 && _isRealCssEngine() !== true);
+        // Disable virtualisation in unit tests
+        return this.suppressColumnVirtualisation || !_isRealCssEngine();
     }
 
     public clear(): void {

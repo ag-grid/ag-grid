@@ -38,11 +38,6 @@ export const mockGridLayout = {
      * implementation's 0; opt in for viewport-aware code such as page-key navigation. */
     useRealOffsetDimensions: false,
 
-    /** Report a real CSS layout engine to the grid's `_isRealCssEngine` probe, so a mocked width of 0
-     * reads as "genuinely zero wide" rather than "nothing here measures". Off by default: the suite's
-     * baseline is a headless DOM, where a zero-width viewport must keep building every column. */
-    simulateRealCssEngine: false,
-
     /** Per-element measured height, for cases like wrapped text driving an autoHeight wrapper taller;
      * undefined falls back to the standard mock. Needs `useRealOffsetDimensions` to reach `offsetHeight`. */
     elementHeightOverride: undefined as ((el: HTMLElement) => number | undefined) | undefined,
@@ -79,11 +74,6 @@ function inVirtualList(el: HTMLElement): boolean {
  * The grid's scrollbar probe. Answered with 0 it reads as "the DOM isn't ready", so nothing is cached and
  * a fresh div is built and measured on every call, which is what makes startup slow.
  */
-/** The element `_isRealCssEngine` measures: a child sized from a custom property set on its parent. */
-function isCssEngineProbe(el: HTMLElement): boolean {
-    return el.classList.contains('ag-css-engine-probe');
-}
-
 function isScrollbarProbe(el: HTMLElement): boolean {
     // `msOverflowStyle` first: happy-dom doesn't know the property, so the grid's assignment leaves a
     // plain own property and this is a bare lookup, undefined for everything else.
@@ -394,16 +384,6 @@ function init(): boolean {
             get(this: HTMLElement) {
                 // Ahead of the mode checks: every suite measures the probe, not only those opting into
                 // real dimensions, and a rect of 0 would leave it inconclusive for both.
-                // Resolving the `var()` the probe's width is declared with, which a headless DOM leaves
-                // unresolved - so with the knob off it measures 0 and the probe correctly reports no engine.
-                if (prop === 'clientWidth' && isCssEngineProbe(this)) {
-                    if (!mockGridLayout.simulateRealCssEngine) {
-                        return 0;
-                    }
-                    const variable = /^var\((--[\w-]+)\)$/.exec(this.style.width)?.[1];
-                    const declared = variable && this.parentElement?.style.getPropertyValue(variable);
-                    return declared ? Number.parseFloat(declared) : 0;
-                }
                 if (isScrollbarProbe(this)) {
                     const size = Number.parseFloat(this.style[axis]) || 0;
                     return prop === 'clientWidth' ? Math.max(0, size - mockGridLayout.nativeScrollbarWidth) : size;
