@@ -26,8 +26,10 @@ export type CspMode = 'report-only' | 'enforce';
 
 /**
  * - 'site': the default policy for ordinary pages.
- * - 'examples': additionally allows 'unsafe-eval'; applies only to the standalone
- *   example-runner documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ * - 'examples': additionally allows 'unsafe-eval', plus the third-party hosts the
+ *   archived doc versions load their legacy example runner and sample data from
+ *   (ARCHIVE_SCRIPT_HOSTS / ARCHIVE_CONNECT_HOSTS); applies only to the standalone
+ *   example-runner documents and archived doc versions — see EXAMPLES_PATH_CONDITION.
  * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
  *   connect) for the partnership campaign pages' embedded Gantt demo — without
  *   'unsafe-eval'. See CAMPAIGNS_PATH_CONDITION.
@@ -311,6 +313,17 @@ const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 // be exercised, re-allowing it is a separate, conscious decision.
 const BRYNTUM_HOST = 'https://bryntum.com';
 
+// Hosts the archived doc versions (/archive/<version>/, matched by EXAMPLES_PATH_CONDITION)
+// depend on but the current site does not. The snapshots are immutable, so the CSP is the
+// only place these can be allowed (AG-18490):
+//  - unpkg.com: v25 to v28.1 framework examples load SystemJS, zone.js and core-js from it
+//    as <script src>, and their systemjs.config.js maps every package to it, which SystemJS
+//    then fetches over XHR. So script-src and connect-src.
+//  - ajax.googleapis.com: the pre-v25 page chrome loads the Web Font Loader from it.
+//  - raw.githubusercontent.com: pre-v25 examples fetch their sample data from it.
+const ARCHIVE_SCRIPT_HOSTS = ['https://unpkg.com', 'https://ajax.googleapis.com'];
+const ARCHIVE_CONNECT_HOSTS = ['https://unpkg.com', 'https://raw.githubusercontent.com'];
+
 // Apache <If> expression matching the URL paths that get the 'examples' scope:
 // the standalone example-runner documents and archived doc versions (uploaded
 // separately but served from this vhost, so they inherit the root .htaccess).
@@ -560,7 +573,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
 
     // script-src inline handling, by scope (and environment for 'site').
     if (scope === 'examples') {
-        directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE);
+        directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE, ...ARCHIVE_SCRIPT_HOSTS);
+        directives['connect-src'].push(...ARCHIVE_CONNECT_HOSTS);
     } else if (scope === 'campaigns') {
         directives['script-src'].push(BRYNTUM_HOST, UNSAFE_INLINE);
         directives['style-src'].push(BRYNTUM_HOST);
@@ -678,7 +692,8 @@ export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mod
         [
             "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
             '# (the Angular JIT and Vue runtime template compilers compile in the browser;',
-            '# archived versions additionally eval-load modules with SystemJS).',
+            '# archived versions additionally eval-load modules with SystemJS), and the archived',
+            '# versions need the third-party hosts their legacy example runner loads from.',
         ],
         { ...options, scope: 'examples' },
         mode
