@@ -316,8 +316,6 @@ describe('Continuous Column Autosize', () => {
         test('a displayed-column change is reported as a column change', async () => {
             const { api, reasons } = createGridRecordingReasons();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            // the startup pass is still settling here, and a trigger arriving inside that window is taken
-            // for the pass's own output; let it close, or the change under test is discarded as an echo
             await flushScheduledResize();
             reasons.length = 0;
 
@@ -422,11 +420,6 @@ describe('Continuous Column Autosize', () => {
             await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
         });
 
-        /**
-         * A page change replaces every rendered row, so the content strategy has to re-measure. No row
-         * model reports it through `modelUpdated` — `newPage`/`newPageSize` are always false there — so
-         * `paginationChanged` is the only signal for it.
-         */
         test('a page change re-sizes eligible columns', async () => {
             const api = createGrid({
                 pagination: true,
@@ -445,7 +438,6 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
 
-        /** Pagination is not a scroll, so it re-sizes whether or not the viewport reason is opted into. */
         test('a page-size change re-sizes eligible columns', async () => {
             const api = createGrid({
                 pagination: true,
@@ -490,8 +482,6 @@ describe('Continuous Column Autosize', () => {
 
             api.paginationGoToNextPage();
 
-            // the page change also streams viewport triggers, so the debounce window has to be waited
-            // out before the count means anything
             await pastDebounceWindow();
             expect(reasons).toEqual(['dataChanged']);
         });

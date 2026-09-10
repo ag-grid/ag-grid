@@ -703,13 +703,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.continuousStrategy = strategy;
 
         this.addManagedEventListeners({
-            // covers sorting, filtering and expansion too: they change what a cell renders
             modelUpdated: (event: ModelUpdatedEvent) => {
                 if (measuresContent || event.newData) {
                     this.scheduleContinuousAutoSize('dataChanged');
                 }
             },
-            // every row model reports `modelUpdated` with `newPage`/`newPageSize` false
             paginationChanged: (event: PaginationChangedEvent) => {
                 if (event.newPage || event.newPageSize) {
                     this.scheduleContinuousAutoSize('dataChanged');
@@ -717,8 +715,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             },
             // neither an edit nor `rowNode.setData` need refresh the model, so they are not covered above
             cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
-            // writing widths re-computes the displayed columns, so this fires for the run's own output as
-            // well as for a genuine change to the column set
             displayedColumnsChanged: () => {
                 if (!this.isContinuousEcho()) {
                     this.scheduleContinuousAutoSize('columnsChanged');
@@ -731,8 +727,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
             // the width-distribution strategies this is the only signal that one happened
             scrollVisibilityChanged: () => {
-                // a re-size wide enough to overflow adds the horizontal scrollbar itself, so this one has
-                // to be filtered against the run that caused it
                 if (!this.isContinuousEcho()) {
                     this.scheduleContinuousAutoSize('gridSizeChanged');
                 }
@@ -775,16 +769,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.runDebouncedContinuousAutoSize();
     }
 
-    /**
-     * Whether we are inside the window in which a re-size's own width writes report back. Applying widths
-     * re-renders rows, re-evaluates column virtualisation and can add or remove a scrollbar, each of which
-     * dispatches a trigger indistinguishable from the one the run was scheduled from — so without this a
-     * single page change or scroll settles into two passes, the second measuring what the first just fitted.
-     *
-     * Only the callers whose events a width write can produce consult this. The ones that report new
-     * content or a new column set cannot be echoes, and are never dropped. A gesture streams triggers for
-     * far longer than the frame this covers, so a real scroll still re-arms as soon as the window closes.
-     */
     private isContinuousEcho(): boolean {
         return this.continuousRunning || this.continuousEchoing;
     }
@@ -917,8 +901,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private onContinuousAutoSizeComplete(): void {
         this.continuousRunning = false;
-        // the run's own triggers land in the frame its width writes are applied in, so the echo window
-        // stays open across that frame rather than closing with the promise
         this.continuousEchoing = true;
         _requestAnimationFrame(this.beans, () => {
             this.continuousEchoing = false;

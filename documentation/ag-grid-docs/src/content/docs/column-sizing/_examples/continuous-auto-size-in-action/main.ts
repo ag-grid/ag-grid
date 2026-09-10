@@ -55,7 +55,6 @@ const generatedGroups: ColGroupDef<IOlympicData>[] = GENERATED_GROUPS.map((heade
     ),
 }));
 
-// The generated text columns come first so the widths that move the most are on screen without scrolling.
 const columnDefs: ColGroupDef<IOlympicData>[] = [
     {
         headerName: 'Competitor',

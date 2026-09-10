@@ -1,10 +1,6 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
-// The example has 34 columns, so only the leftmost ones are rendered at any time - column
-// virtualisation removes the rest from the DOM. These are measured because they are the columns on
-// screen when the example loads: the three fixed competitor columns and the first of the generated
-// text columns, which are the ones whose width moves as the page changes.
 const COLUMNS = ['athlete', 'age', 'country', 'text1', 'text2', 'text3'];
 
 /** The page's first-row number in the paging summary, which changes as soon as the new page lands. */
@@ -65,11 +61,6 @@ test.agExample(import.meta, () => {
         const remoteApi = remoteGrid(page, '1');
         await waitForGridContent(page);
 
-        // A page change re-fits asynchronously, so nothing in the DOM says so yet. `columnResized` with
-        // `finished: true` and `source: 'autosizeColumns'` is dispatched once every new width has been
-        // written, which is the observable end state to gate on - not an elapsed window, and not
-        // `.ag-animate-autosize`, which is only ever applied when `animateColumnResizing` is set (this
-        // example does not set it, so waiting on it waited for nothing).
         await remoteApi.logEvent('columnResized', ['finished', 'source']);
         const autoSizePasses = () =>
             remoteGrid.eventLog.filter(
