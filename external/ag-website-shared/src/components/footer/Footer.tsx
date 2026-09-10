@@ -1,4 +1,4 @@
-import type { FooterItem } from '@ag-grid-types';
+import type { FooterItem, FooterLink } from '@ag-grid-types';
 import { DevToolsToggle } from '@ag-website-shared/components/dev-tools/DevTools';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
@@ -8,16 +8,9 @@ import GithubSlugger from 'github-slugger';
 
 import styles from './Footer.module.scss';
 
-/**
- * A footer group renders as a menu column unless its `placement` moves it into the legal strip
- * under the columns. Declared here so a site whose footer type predates `placement` still renders
- * every group as a column.
- */
-type FooterGroup = FooterItem & { placement?: 'legal' };
-
 interface FooterProps {
     showMicrosoftMessage?: boolean;
-    footerItems: FooterGroup[];
+    footerItems: FooterItem[];
 }
 
 const toggleCookiesPrefs = (event) => {
@@ -28,7 +21,7 @@ const toggleCookiesPrefs = (event) => {
     window.__enzuzoApi.prefCenter.show();
 };
 
-const MenuColumns = ({ footerItems }: { footerItems: FooterGroup[] }) => {
+const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const slugger = new GithubSlugger();
 
     return footerItems.map(({ title, links }) => {
@@ -41,7 +34,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterGroup[] }) => {
                     {title}
                 </span>
                 <ul className="list-style-none" aria-labelledby={titleId}>
-                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: any) => (
+                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: FooterLink) => (
                         <li key={`${title}_${name}`}>
                             <a
                                 id={`${slugger.slug(name)}-nav`}
@@ -62,12 +55,12 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterGroup[] }) => {
 };
 
 // Separators between the links are drawn in CSS so they stay out of the accessibility tree.
-const LegalLinks = ({ group }: { group: FooterGroup }) => {
+const LegalLinks = ({ group }: { group: FooterItem }) => {
     const slugger = new GithubSlugger();
 
     return (
         <ul className={classNames('list-style-none', 'text-sm', styles.legalLinks)} aria-label={group.title}>
-            {group.links.map(({ name, url, newTab, showCookiesPrefs }) => (
+            {group.links.map(({ name, url, newTab, showCookiesPrefs }: FooterLink) => (
                 <li key={name}>
                     <a
                         id={`${slugger.slug(name)}-nav`}
