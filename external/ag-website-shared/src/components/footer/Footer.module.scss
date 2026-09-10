@@ -197,11 +197,6 @@
     margin-right: auto;
     margin-left: auto;
     padding: $spacing-size-6 $spacing-size-2 0;
-    border-top: 1px solid var(--color-border-secondary);
-
-    #{$selector-darkmode} & {
-        border-top-color: var(--color-border-primary);
-    }
 }
 
 .legalLinks {
