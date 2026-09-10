@@ -84,10 +84,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private continuousRetries = 0;
     private continuousRetryScheduled = false;
     private continuousEchoing = false;
+    private gridSizeSettling = false;
 
     private readonly runDebouncedContinuousAutoSize = _debounce(
         this,
-        () => this.scheduleContinuousAutoSize(),
+        () => {
+            this.gridSizeSettling = false;
+            this.scheduleContinuousAutoSize();
+        },
         CONTINUOUS_STREAMING_DEBOUNCE
     );
 
@@ -736,7 +740,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
             // the width-distribution strategies this is the only signal that one happened
             scrollVisibilityChanged: () => {
-                if (!this.isContinuousEcho()) {
+                if (this.isContinuousEcho()) {
+                    return;
+                }
+                // mid-gesture the scrollbar transition is part of the resize, so it settles with it
+                if (this.gridSizeSettling) {
+                    this.scheduleDebouncedContinuousAutoSize('gridSizeChanged');
+                } else {
                     this.scheduleContinuousAutoSize('gridSizeChanged');
                 }
             },
@@ -773,6 +783,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private scheduleDebouncedContinuousAutoSize(reason: AutoSizeReason): void {
         if (this.isContinuousEcho()) {
             return;
+        }
+        if (reason === 'gridSizeChanged') {
+            this.gridSizeSettling = true;
         }
         (this.pendingReasons ??= new Set()).add(reason);
         this.runDebouncedContinuousAutoSize();

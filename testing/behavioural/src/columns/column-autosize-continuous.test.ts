@@ -103,6 +103,26 @@ describe('Continuous Column Autosize', () => {
         return { api, reasons };
     };
 
+    /** A `fitGridWidth` grid over two plain columns, recording every reason its callback is invoked with. */
+    const createGridFittingGridWidth = (): { api: GridApi; reasons: string[] } => {
+        const reasons: string[] = [];
+        const api = createGrid({
+            columnDefs: [
+                { colId: 'a', field: 'a' },
+                { colId: 'b', field: 'b' },
+            ],
+            autoSizeStrategy: {
+                type: 'fitGridWidth',
+                continuous: true,
+                shouldAutoSizeColumns: ({ reason }) => {
+                    reasons.push(reason);
+                    return true;
+                },
+            },
+        });
+        return { api, reasons };
+    };
+
     const LONGER_DATA = [{ pinned: 'a much longer value', eligible: 'b much longer value' }];
 
     describe('ownership', () => {
@@ -483,6 +503,45 @@ describe('Continuous Column Autosize', () => {
 
             await pastDebounceWindow();
             expect(reasons).toEqual(['dataChanged']);
+        });
+
+        /**
+         * Shrinking the grid makes the columns momentarily wider than the viewport, so a horizontal
+         * scrollbar appears alongside each `gridSizeChanged`. Routed straight through, that drains the
+         * pending reason the debounce was holding, and the drag re-sizes once per frame instead of once.
+         */
+        test('a shrink gesture re-sizes once, like a widen gesture', async () => {
+            const { api, reasons } = createGridFittingGridWidth();
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            for (let i = 0; i < 5; i++) {
+                dispatchGridEvent(api, { type: 'gridSizeChanged', clientWidth: 400 - i * 20, clientHeight: 300 });
+                dispatchGridEvent(api, { type: 'scrollVisibilityChanged' });
+                await insideDebounceWindow();
+            }
+
+            await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+            await flushScheduledResize();
+            expect(reasons).toEqual(['gridSizeChanged']);
+        });
+
+        /**
+         * Outside a resize gesture, a scrollbar appearing is the only signal a row transaction gave the
+         * width-distribution strategies, so it must not wait out the debounce.
+         */
+        test('a scrollbar change outside a gesture is not held back by the debounce', async () => {
+            const { api, reasons } = createGridFittingGridWidth();
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            dispatchGridEvent(api, { type: 'scrollVisibilityChanged' });
+            // sampled well inside the debounce window, so a re-size caught by it would be missed here
+            await flushScheduledResize();
+
+            expect(reasons).toEqual(['gridSizeChanged']);
         });
 
         test('the strategy stays one-shot when `continuous` is omitted', async () => {
