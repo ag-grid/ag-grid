@@ -8,7 +8,13 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent, PaginationChangedEvent } from '../events';
+import type {
+    BodyScrollEvent,
+    ColumnEventType,
+    DisplayedColumnsChangedEvent,
+    ModelUpdatedEvent,
+    PaginationChangedEvent,
+} from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -35,6 +41,9 @@ interface AutoSizeColumnParams {
     scaleUpToFitGridWidth?: boolean;
     source?: ColumnEventType;
 }
+
+/** The sources a re-size writes its widths under: a displayed-column change carrying one is width-only. */
+const WIDTH_WRITE_SOURCES: ReadonlySet<ColumnEventType> = new Set(['autosizeColumns', 'sizeColumnsToFit']);
 
 /** Sources used by the built-in Column Menu and Context Menu auto-size actions. */
 const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'contextMenu']);
@@ -715,8 +724,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             },
             // neither an edit nor `rowNode.setData` need refresh the model, so they are not covered above
             cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
-            displayedColumnsChanged: () => {
-                if (!this.isContinuousEcho()) {
+            displayedColumnsChanged: (event: DisplayedColumnsChangedEvent) => {
+                if (!WIDTH_WRITE_SOURCES.has(event.source)) {
                     this.scheduleContinuousAutoSize('columnsChanged');
                 }
             },

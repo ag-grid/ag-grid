@@ -316,7 +316,6 @@ describe('Continuous Column Autosize', () => {
         test('a displayed-column change is reported as a column change', async () => {
             const { api, reasons } = createGridRecordingReasons();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            await flushScheduledResize();
             reasons.length = 0;
 
             api.setColumnsVisible(['pinned'], false);
