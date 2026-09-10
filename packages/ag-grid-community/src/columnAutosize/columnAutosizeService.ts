@@ -8,7 +8,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent } from '../events';
+import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent, PaginationChangedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -74,6 +74,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private pendingReasons: Set<AutoSizeReason> | null = null;
     private continuousRetries = 0;
     private continuousRetryScheduled = false;
+    private continuousEchoing = false;
 
     private readonly runDebouncedContinuousAutoSize = _debounce(
         this,
@@ -702,25 +703,40 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.continuousStrategy = strategy;
 
         this.addManagedEventListeners({
-            // the one content-changed signal every row model dispatches: CSRM replacements and transactions,
-            // SSRM and infinite store loads, and pagination. It also covers sorting, filtering and expansion,
-            // which change what a cell renders — so the content strategy wants all of them, while the
-            // width-distribution strategies only care about genuinely new rows.
+            // covers sorting, filtering and expansion too: they change what a cell renders
             modelUpdated: (event: ModelUpdatedEvent) => {
-                if (measuresContent || event.newData || event.newPage || event.newPageSize) {
+                if (measuresContent || event.newData) {
+                    this.scheduleContinuousAutoSize('dataChanged');
+                }
+            },
+            // every row model reports `modelUpdated` with `newPage`/`newPageSize` false
+            paginationChanged: (event: PaginationChangedEvent) => {
+                if (event.newPage || event.newPageSize) {
                     this.scheduleContinuousAutoSize('dataChanged');
                 }
             },
             // neither an edit nor `rowNode.setData` need refresh the model, so they are not covered above
             cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
-            displayedColumnsChanged: () => this.scheduleContinuousAutoSize('columnsChanged'),
+            // writing widths re-computes the displayed columns, so this fires for the run's own output as
+            // well as for a genuine change to the column set
+            displayedColumnsChanged: () => {
+                if (!this.isContinuousEcho()) {
+                    this.scheduleContinuousAutoSize('columnsChanged');
+                }
+            },
             newColumnsLoaded: () => this.scheduleContinuousAutoSize('columnsChanged'),
             // a resize drag streams one event per frame, so it settles like a scroll does
             gridSizeChanged: () => this.scheduleDebouncedContinuousAutoSize('gridSizeChanged'),
             // a scrollbar appearing or disappearing changes the width there is to work with. A row count
             // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
             // the width-distribution strategies this is the only signal that one happened
-            scrollVisibilityChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+            scrollVisibilityChanged: () => {
+                // a re-size wide enough to overflow adds the horizontal scrollbar itself, so this one has
+                // to be filtered against the run that caused it
+                if (!this.isContinuousEcho()) {
+                    this.scheduleContinuousAutoSize('gridSizeChanged');
+                }
+            },
         });
 
         // `rowNode.setData`/`updateData` and pinned-row replacements report per row, not through the model
@@ -752,8 +768,25 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
      * the most significant of them once the run lands.
      */
     private scheduleDebouncedContinuousAutoSize(reason: AutoSizeReason): void {
+        if (this.isContinuousEcho()) {
+            return;
+        }
         (this.pendingReasons ??= new Set()).add(reason);
         this.runDebouncedContinuousAutoSize();
+    }
+
+    /**
+     * Whether we are inside the window in which a re-size's own width writes report back. Applying widths
+     * re-renders rows, re-evaluates column virtualisation and can add or remove a scrollbar, each of which
+     * dispatches a trigger indistinguishable from the one the run was scheduled from — so without this a
+     * single page change or scroll settles into two passes, the second measuring what the first just fitted.
+     *
+     * Only the callers whose events a width write can produce consult this. The ones that report new
+     * content or a new column set cannot be echoes, and are never dropped. A gesture streams triggers for
+     * far longer than the frame this covers, so a real scroll still re-arms as soon as the window closes.
+     */
+    private isContinuousEcho(): boolean {
+        return this.continuousRunning || this.continuousEchoing;
     }
 
     /** Coalesces every trigger in the current frame into at most one evaluation. */
@@ -884,6 +917,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private onContinuousAutoSizeComplete(): void {
         this.continuousRunning = false;
+        // the run's own triggers land in the frame its width writes are applied in, so the echo window
+        // stays open across that frame rather than closing with the promise
+        this.continuousEchoing = true;
+        _requestAnimationFrame(this.beans, () => {
+            this.continuousEchoing = false;
+        });
+
         if (this.pendingReasons?.size && this.isAlive()) {
             // re-enter through the scheduler rather than recursing, so the follow-up still gets its own frame
             const reasons = this.pendingReasons;

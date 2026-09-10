@@ -16,7 +16,12 @@ import { waitFor } from '@testing-library/dom';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
+import {
+    AlignedGridsModule,
+    ClientSideRowModelModule,
+    ColumnAutoSizeModule,
+    PaginationModule,
+} from 'ag-grid-community';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
 const MEASURED_WIDTH = 120;
@@ -24,7 +29,7 @@ const START_WIDTH = 300;
 
 describe('Continuous Column Autosize', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule],
+        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule, PaginationModule],
     });
 
     afterEach(() => {
@@ -311,6 +316,9 @@ describe('Continuous Column Autosize', () => {
         test('a displayed-column change is reported as a column change', async () => {
             const { api, reasons } = createGridRecordingReasons();
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            // the startup pass is still settling here, and a trigger arriving inside that window is taken
+            // for the pass's own output; let it close, or the change under test is discarded as an echo
+            await flushScheduledResize();
             reasons.length = 0;
 
             api.setColumnsVisible(['pinned'], false);
@@ -412,6 +420,80 @@ describe('Continuous Column Autosize', () => {
             expect(reasons).toEqual([]);
 
             await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+        });
+
+        /**
+         * A page change replaces every rendered row, so the content strategy has to re-measure. No row
+         * model reports it through `modelUpdated` — `newPage`/`newPageSize` are always false there — so
+         * `paginationChanged` is the only signal for it.
+         */
+        test('a page change re-sizes eligible columns', async () => {
+            const api = createGrid({
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: [1, 2],
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.paginationGoToNextPage();
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        /** Pagination is not a scroll, so it re-sizes whether or not the viewport reason is opted into. */
+        test('a page-size change re-sizes eligible columns', async () => {
+            const api = createGrid({
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: [1, 2],
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.setGridOption('paginationPageSize', 2);
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a page change re-sizes once, as a data change', async () => {
+            const reasons: string[] = [];
+            const api = createGrid({
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: [1, 2],
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    continuous: true,
+                    skipHeader: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await pastDebounceWindow();
+            reasons.length = 0;
+
+            api.paginationGoToNextPage();
+
+            // the page change also streams viewport triggers, so the debounce window has to be waited
+            // out before the count means anything
+            await pastDebounceWindow();
+            expect(reasons).toEqual(['dataChanged']);
         });
 
         test('the strategy stays one-shot when `continuous` is omitted', async () => {
