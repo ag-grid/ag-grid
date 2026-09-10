@@ -967,8 +967,6 @@ export class LazyCache extends BeanStub {
         }
     }
 
-    // Nodes parked here can be re-adopted at another index later in the same refresh, so they may
-    // only be destroyed once nothing is left to refresh.
     private destroyRemovedNodeCache(): void {
         this.removedNodeCache.forEach((node) => {
             this.blockUtils.destroyRowNode(node);
