@@ -468,6 +468,10 @@ describe('Column delay render', () => {
                 ],
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents' },
+                // The manager suppresses virtualisation by default, which renders the whole page
+                // regardless of viewport height; this route is only exercised when the rendered
+                // range is calculated from the (zero) viewport height and the row buffer.
+                suppressRowVirtualisation: false,
             });
 
             // Well inside the delay-render service's 1000ms fail-safe, so this is a real reveal.
