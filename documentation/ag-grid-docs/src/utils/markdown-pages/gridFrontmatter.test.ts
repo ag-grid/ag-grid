@@ -12,7 +12,11 @@ describe('getFooterRelatedLinks', () => {
         expect(titlesFor('/roadmap/')).toContain('Changelog');
         expect(titlesFor('/roadmap/')).toContain('Documentation Archive');
         expect(titlesFor('/about/')).toContain('Contact Us');
-        expect(titlesFor('/about/')).toContain('Privacy Policy');
+        expect(titlesFor('/privacy/')).toContain('Terms of Use');
+    });
+
+    test('keeps legal pages out of the company group now that the footer lists them separately', () => {
+        expect(titlesFor('/about/')).not.toContain('Privacy Policy');
     });
 
     test('excludes the page itself', () => {
@@ -21,7 +25,7 @@ describe('getFooterRelatedLinks', () => {
     });
 
     test('excludes the cookie-preferences control, which opens a dialog rather than a page', () => {
-        expect(titlesFor('/about/')).not.toContain('Manage Cookies');
+        expect(titlesFor('/privacy/')).not.toContain('Manage Cookies');
     });
 
     test('makes internal links absolute and leaves external ones whole', () => {
@@ -34,7 +38,7 @@ describe('getFooterRelatedLinks', () => {
 
     test('matches a footer entry written as a full production URL', () => {
         // The footer lists /sitemap/ with its origin, so the comparison has to ignore origins.
-        expect(titlesFor('/sitemap/')).toContain('About');
+        expect(titlesFor('/sitemap/')).toContain('Privacy Policy');
     });
 
     test('returns nothing for a page the footer does not list, or when no page is given', () => {

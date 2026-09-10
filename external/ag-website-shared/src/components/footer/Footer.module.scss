@@ -186,3 +186,56 @@
     padding-top: $spacing-size-4;
     color: var(--color-text-secondary);
 }
+
+// Legal and policy links in their own strip under the menu columns, so they no longer compete with
+// navigation. Left-aligned with pipe separators on desktop; centred and separated by the gap alone
+// below that, since clipping the leading separator of a wrapped row relies on left alignment.
+.legalBar {
+    display: flex;
+    justify-content: center;
+    max-width: calc(var(--layout-max-width-small) + var(--layout-horizontal-margins) * 2);
+    margin-right: auto;
+    margin-left: auto;
+    padding: $spacing-size-6 $spacing-size-2 0;
+}
+
+.legalLinks {
+    $legal-links-gap: $spacing-size-4;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-2 $legal-links-gap;
+    margin: 0;
+    // Clips the separator of whichever link starts a wrapped row, since it sits left of the list edge.
+    overflow: hidden;
+
+    li {
+        position: relative;
+    }
+
+    a {
+        color: var(--color-text-secondary);
+        font-weight: var(--text-regular);
+
+        &:hover {
+            color: var(--color-text-primary);
+            opacity: 0.6;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        justify-content: flex-start;
+
+        // Pipe separators, centred in the gap before each link and drawn in CSS with an empty
+        // alternative text so they are never announced.
+        li::before {
+            content: '|' #{'/'} '';
+            position: absolute;
+            left: calc(#{$legal-links-gap} / -2);
+            transform: translateX(-50%);
+            color: var(--color-text-secondary);
+            opacity: 0.4;
+        }
+    }
+}
