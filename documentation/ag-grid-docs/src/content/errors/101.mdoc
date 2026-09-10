@@ -4,33 +4,48 @@ description: A component was referenced by name, but that name is not in the gri
 
 ## Component Name Not Registered
 
-A column or grid option asked for a component by name, setting {% errorParam name="propertyName" fallback="cellRenderer" /%} to the string {% errorParam name="componentName" fallback="StatusRenderer" /%}, and the grid could not find that name when it came to render. The cell falls back to the grid's default component.
+A column or grid option asked for a component by name, setting {% errorParam name="propertyName" fallback="cellRenderer" /%} to the string {% errorParam name="componentName" fallback="MyCellRenderer" /%}, and the grid could not find that name when it came to render. The cell falls back to the grid's default component.
 
 The grid tells two cases apart here. Naming a built-in component whose module is not registered raises [error #200](./errors/200) with the module to register, so arriving at #101 means the grid believes this is your own component. That leaves two causes, and the message's `Did you mean` suggestions usually settle which:
 
-- A typo, or a mismatch in case. Names are matched exactly, so `statusRenderer` and `StatusRenderer` are different components.
+- A typo, or a mismatch in case. Names are matched exactly, so `myCellRenderer` and `MyCellRenderer` are different components.
 - The component was never registered, or was registered on a different grid than the one rendering this column.
 
 ### Register it by name
 
+{% if isFramework("javascript", "react", "angular") %}
 Names are resolved from the `components` grid option. The name in the map must match the string on the column exactly.
 
 ```js
-import { StatusRenderer } from './StatusRenderer';
+import { MyCellRenderer } from './MyCellRenderer';
 ```
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     components: {
-        StatusRenderer: StatusRenderer,
+        MyCellRenderer: MyCellRenderer,
     },
     columnDefs: [
-        { field: 'status', cellRenderer: 'StatusRenderer' },
+        { field: 'status', cellRenderer: 'MyCellRenderer' },
     ],
 }
 ```
 
-See [Registering Custom Components](./components/#registering-custom-components) for the framework-specific forms.
+{% /if %}
+
+{% if isFramework("vue") %}
+Vue resolves the name through Vue's own registries rather than the grid's `components` option. Register the component globally with `app.component`, locally through the enclosing component's `components` option, or expose it with `defineExpose` when using `script setup`:
+
+```js
+import MyCellRenderer from './MyCellRenderer.vue';
+
+app.component('MyCellRenderer', MyCellRenderer);
+```
+
+The grid's `components` option still has an effect in Vue, but it maps one name to another rather than a name to a component, so whatever it points at has to be registered with Vue as well.
+{% /if %}
+
+See [Registering Custom Components](./components/#registering-custom-components) for the full set of forms.
 
 ### Or skip the name
 
@@ -39,7 +54,7 @@ Referencing the component directly avoids this class of error, because a wrong n
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
-        { field: 'status', cellRenderer: StatusRenderer },
+        { field: 'status', cellRenderer: MyCellRenderer },
     ],
 }
 ```
