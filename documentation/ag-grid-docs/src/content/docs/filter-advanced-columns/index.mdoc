@@ -59,8 +59,6 @@ All of the [Cell Data Types](./cell-data-types) are supported in the Advanced Fi
 - **Date String** and **Date Time String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string). This is compared against the cell values, which are also converted using the Date Parser.
 - **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
 
-The `is any of` and `is none of` options, wherever a column [offers them](#enabling-and-disabling-the-set-options), are matched differently from all of the above, whatever the cell data type: the written values are resolved to Set Filter keys and the row is tested by a Set Filter over the column's values. See [Set Filters](#set-filters).
-
 ## Filter Parameters
 
 Certain properties can be set by using `colDef.filterParams`.
@@ -227,7 +225,7 @@ The following example demonstrates the built-in range and relative date options:
 
 A column with a [Set Filter](./filter-set/) gains the `is any of` and `is none of` options, in addition to everything its Cell Data Type already offers. Both take a list of values:
 
-```text
+```shell
 [Country] is any of ["Australia", "Italy"]
 [Country] is none of ["Australia", "Italy"]
 ```
@@ -242,13 +240,13 @@ Typing inside the list suggests the column's Set Filter values, with no opening 
 
 The square brackets are part of the grammar: a list written without them cannot be applied. Quotes, on the other hand, are only needed where a value would otherwise be read as something else. A value containing `,` or `]`, or beginning with a quote, is one such: typed bare, those characters end the value, close the list, or open a quoted one. Choose such a value from the suggestions, which writes it quoted, or open a quote before typing it, after which they are all ordinary and the suggestions still narrow as you type. A value written without quotes may contain spaces, and is trimmed:
 
-```text
+```shell
 [Country] is any of [New Zealand, Italy]
 ```
 
 Blank values are offered as `(Blanks)`, the name the Set Filter gives them. The model stores `null` for it.
 
-```text
+```shell
 [Country] is any of ["(Blanks)", Italy]
 ```
 
@@ -266,7 +264,7 @@ A `filterParams.values` callback may be called more than once for the same colum
 
 With `treeList` enabled, a value is the whole path to a leaf, its segments separated by `>`. The `›` the suggestions are drawn with is read as a separator too:
 
-```text
+```shell
 [Location] is any of ["Europe > Italy"]
 ```
 
