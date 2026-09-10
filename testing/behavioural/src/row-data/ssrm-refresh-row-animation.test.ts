@@ -183,8 +183,10 @@ describe('SSRM soft refresh row animation', () => {
         expect(api.getRowNode('r00')).toBeDefined();
         expect(displayedRowIds(api)).toEqual(rows.map((r) => r.id));
         // The rows themselves still slide from where they were rather than fading back in:
-        // oldRowTop is the pre-refresh position the move animates from.
-        expect(api.getRowNode('r00')!.oldRowTop).toBe(0);
-        expect(api.getRowNode('r00')!.rowTop).toBe(11 * 24);
+        // oldRowTop is the pre-refresh position the move animates from. It is internal, hence the
+        // cast — the public IRowNode exposes rowTop only.
+        const movedNode = api.getRowNode('r00') as unknown as { rowTop: number; oldRowTop: number };
+        expect(movedNode.oldRowTop).toBe(0);
+        expect(movedNode.rowTop).toBe(11 * 24);
     });
 });
