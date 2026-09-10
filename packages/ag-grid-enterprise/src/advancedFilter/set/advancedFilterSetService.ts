@@ -101,6 +101,8 @@ interface SetValueList {
     readonly entries: AutocompleteEntry[];
     /** Whether the values are paths, so a separator written inside one segment still names a level. */
     readonly isTree: boolean;
+    /** Whether the column's values have yet to arrive, the list standing empty until they do. */
+    readonly loading: boolean;
     /** How the list draws a row, where the column asks for more than the plain one. */
     readonly rowComponentCreator?: (entry: AutocompleteEntry) => AgSetValueAutocompleteRow;
 }
@@ -281,6 +283,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             usedKeys,
             entries,
             isTree: !!setColumn?.handler.params.filterParams.treeList,
+            loading: !!setColumn && !values,
             rowComponentCreator: values ? this.createRowCreator(column, setColumn.handler) : undefined,
         };
         // Values load asynchronously; an empty list built before they arrive must not stand in for them.
@@ -376,9 +379,15 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         if (setColumn.keysPromise !== allKeys) {
             setColumn.keysPromise = allKeys;
             setColumn.keys = undefined;
+            let awaited = false;
             allKeys.then((keys) => {
                 setColumn.keys = keys ?? [];
+                // Anything already showing the empty list this call is about to return has to be told.
+                if (awaited) {
+                    this.invalidateList();
+                }
             });
+            awaited = true;
         }
         const keys = setColumn.keys;
         if (!keys) {

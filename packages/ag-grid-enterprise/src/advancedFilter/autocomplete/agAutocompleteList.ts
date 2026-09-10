@@ -5,6 +5,7 @@ import {
     _isVisible,
     _setAriaActiveDescendant,
     _setAriaSelected,
+    _setDisplayed,
 } from 'ag-stack';
 
 import type {
@@ -16,7 +17,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { KeyCode, _clamp } from 'ag-grid-community';
+import { KeyCode, _clamp, _createIconNoSpan } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import agAutocompleteCSS from './agAutocomplete.css';
@@ -33,6 +34,15 @@ const AgAutocompleteListElement: ElementParams = {
     children: [
         {
             tag: 'div',
+            ref: 'eLoading',
+            cls: 'ag-loading ag-autocomplete-loading',
+            children: [
+                { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
+                { tag: 'span', ref: 'eLoadingLabel', cls: 'ag-loading-text' },
+            ],
+        },
+        {
+            tag: 'div',
             ref: 'eList',
             cls: 'ag-autocomplete-list',
         },
@@ -47,6 +57,9 @@ export class AgAutocompleteList extends AgPopupComponent<
     AgComponentSelectorType
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
+    private readonly eLoading: HTMLElement = RefPlaceholder;
+    private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
+    private readonly eLoadingLabel: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<AutocompleteRowComponent, AutocompleteEntry>;
 
@@ -72,6 +85,8 @@ export class AgAutocompleteList extends AgPopupComponent<
             rowComponentCreator?: AutocompleteRowComponentCreator;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
             onActiveOptionChanged?: (optionId: string | null) => void;
+            /** Whether the entries are still being fetched, so the list stands in for them until they land. */
+            loading?: boolean;
         }
     ) {
         super(AgAutocompleteListElement);
@@ -79,6 +94,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     public postConstruct(): void {
+        this.setupLoading();
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
         this.virtualList.getAriaElement().id = this.getListId();
@@ -100,6 +116,21 @@ export class AgAutocompleteList extends AgPopupComponent<
 
         this.setSelectedValue(0);
         this.updateListHeight();
+    }
+
+    /** The list stands empty while values load, so it says so rather than reading as an empty result. */
+    private setupLoading(): void {
+        const loading = !!this.params.loading;
+        _setDisplayed(this.eLoading, loading);
+        _setDisplayed(this.eList, !loading);
+        if (!loading) {
+            return;
+        }
+        this.eLoadingLabel.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
+        const eIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+        if (eIcon) {
+            this.eLoadingIcon.appendChild(eIcon);
+        }
     }
 
     public getActiveOptionId(): string | null {

@@ -271,6 +271,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
                 forceLastSelection: this.forceLastSelection,
                 rowComponentCreator: this.autocompleteListParams.rowComponentCreator,
                 suggestFirstMatch: this.autocompleteListParams.suggestFirstMatch,
+                loading: this.autocompleteListParams.loading,
             })
         );
         const ePopupGui = this.autocompleteList.getGui();
@@ -366,6 +367,13 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         }
         if (!updateListOnlyIfOpen || this.isListOpen) {
             this.updateAutocompleteList(value);
+        }
+    }
+
+    /** Re-reads the list at the caret, for values that arrived after the open list was generated. */
+    public refreshList(): void {
+        if (this.isListOpen) {
+            this.updateAutocompleteList(this.getValue());
         }
     }
 

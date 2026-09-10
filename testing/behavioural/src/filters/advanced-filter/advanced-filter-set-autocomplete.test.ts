@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     AdvancedFilterHarness,
     GridRows,
@@ -40,7 +41,8 @@ describe('Advanced Filter - Set Filter value sources', () => {
         `);
     });
 
-    test('values from an async callback reach the list on the keystroke after they arrive', async () => {
+    test('values from an async callback reach the open list as they arrive', async () => {
+        let respond = () => {};
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -49,8 +51,9 @@ describe('Advanced Filter - Set Filter value sources', () => {
                     field: 'country',
                     filter: 'agSetColumnFilter',
                     filterParams: {
+                        // Held, so the list is opened while the values are still outstanding.
                         values: (params: { success: (values: string[]) => void }) => {
-                            setTimeout(() => params.success(['Jamaica', 'Poland']), 0);
+                            respond = () => params.success(['Jamaica', 'Poland']);
                         },
                     },
                 },
@@ -58,16 +61,14 @@ describe('Advanced Filter - Set Filter value sources', () => {
         });
         const af = AdvancedFilterHarness.get(api);
 
-        // The callback has not answered yet, so there is nothing to offer rather than a wait.
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual([]);
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
 
-        await asyncSetTimeout(0);
-        // The same keystroke again, so the arrival is the only thing that changed: asking is what picks
-        // the values up, since the open list is not refreshed from underneath.
-        await af.type('');
-        await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+        respond();
+
+        // No further keystroke: the values reach the list that is already open.
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']));
+        expect(af.autocompleteLoadingText()).toBeNull();
     });
 
     test('suppressSorting leaves the values in the order the rows give them', async () => {

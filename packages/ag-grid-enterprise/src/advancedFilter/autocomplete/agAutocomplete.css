@@ -62,3 +62,14 @@
 .ag-autocomplete-row-selected {
     background-color: var(--ag-selected-row-background-color);
 }
+
+.ag-autocomplete-loading {
+    min-width: 200px;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+
+    :where(.ag-loading-text) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

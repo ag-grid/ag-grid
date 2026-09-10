@@ -990,6 +990,7 @@ export class ColFilterExpressionParser {
         }
         const params = advFilterExpSvc.generateAutocompleteListParams(list.entries, list.type, searchString);
         params.rowComponentCreator = list.rowComponentCreator;
+        params.loading = list.loading;
         // The values are in the column's own Set Filter order, which is what the reader is scanning.
         params.suggestFirstMatch = true;
         return params;
