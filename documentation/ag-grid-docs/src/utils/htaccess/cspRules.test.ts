@@ -47,21 +47,43 @@ describe('cspRules', () => {
             );
         });
 
-        it('site and examples scopes differ only in script-src and connect-src', () => {
+        it('examples scope only ever adds to the site scope, never drops a source', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
             const examples = getCspDirectives({ env: 'production', scope: 'examples' });
 
             expect(Object.keys(examples)).toEqual(Object.keys(site));
-            const otherNames = Object.keys(site).filter((name) => name !== 'script-src' && name !== 'connect-src');
-            for (let i = 0, len = otherNames.length; i < len; ++i) {
-                expect(examples[otherNames[i]]).toEqual(site[otherNames[i]]);
+            const names = Object.keys(site);
+            for (let i = 0, len = names.length; i < len; ++i) {
+                const siteSources = site[names[i]].filter((source) => !source.startsWith("'sha256-"));
+                expect(examples[names[i]]).toEqual(expect.arrayContaining(siteSources));
+            }
+        });
+
+        it("style-src keeps 'unsafe-inline' in every scope", () => {
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                expect(getCspDirectives({ env: 'production', scope: scopes[i] })['style-src']).toContain(
+                    "'unsafe-inline'"
+                );
             }
         });
     });
 
-    describe('archived doc versions (AG-18490: legacy example runner hosts)', () => {
+    describe('archived doc versions (AG-18490: legacy example runner and page chrome hosts)', () => {
         const site = getCspDirectives({ env: 'production', scope: 'site' });
         const examples = getCspDirectives({ env: 'production', scope: 'examples' });
+        const archiveOnlyHosts = [
+            'https://unpkg.com',
+            'https://ajax.googleapis.com',
+            'https://raw.githubusercontent.com',
+            'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
+            // (list-manage.com is not archive-only: the site scope carries it in form-action.)
+            'https://cdn-images.mailchimp.com',
+            'https://platform.twitter.com',
+            'https://buttons.github.io',
+            'https://ghbtns.com',
+            'https://maxcdn.bootstrapcdn.com',
+        ];
 
         it('allows the SystemJS example runner of v25 to v28.1 to load and fetch from unpkg.com', () => {
             expect(examples['script-src']).toContain('https://unpkg.com');
@@ -73,20 +95,33 @@ describe('cspRules', () => {
             expect(examples['connect-src']).toContain('https://raw.githubusercontent.com');
         });
 
-        it('keeps the archive-only hosts out of the site scope', () => {
-            const hosts = ['https://unpkg.com', 'https://ajax.googleapis.com', 'https://raw.githubusercontent.com'];
-            for (let i = 0, len = hosts.length; i < len; ++i) {
-                expect(site['script-src']).not.toContain(hosts[i]);
-                expect(site['connect-src']).not.toContain(hosts[i]);
-            }
+        it('allows the pre-v25 Mailchimp newsletter embed, whose bundle supplies the jQuery the page expects', () => {
+            expect(examples['script-src']).toContain(
+                'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'
+            );
+            expect(examples['script-src']).toContain('https://ag-grid.us11.list-manage.com');
+            expect(examples['style-src']).toContain('https://cdn-images.mailchimp.com');
         });
 
-        it("style-src keeps 'unsafe-inline' in every scope", () => {
-            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
-            for (let i = 0, len = scopes.length; i < len; ++i) {
-                expect(getCspDirectives({ env: 'production', scope: scopes[i] })['style-src']).toContain(
-                    "'unsafe-inline'"
-                );
+        it('allows the pre-v25 embedded tweets and GitHub buttons, which render into iframes on their own origins', () => {
+            expect(examples['script-src']).toContain('https://platform.twitter.com');
+            expect(examples['frame-src']).toContain('https://platform.twitter.com');
+            expect(examples['script-src']).toContain('https://buttons.github.io');
+            expect(examples['frame-src']).toContain('https://buttons.github.io');
+            expect(examples['frame-src']).toContain('https://ghbtns.com');
+        });
+
+        it('allows the pre-v25 Font Awesome 4 stylesheet and webfonts from the Bootstrap CDN', () => {
+            expect(examples['style-src']).toContain('https://maxcdn.bootstrapcdn.com');
+            expect(examples['font-src']).toContain('https://maxcdn.bootstrapcdn.com');
+        });
+
+        it('keeps the archive-only hosts out of every directive of the site scope', () => {
+            const names = Object.keys(site);
+            for (let i = 0, len = names.length; i < len; ++i) {
+                for (let j = 0, jLen = archiveOnlyHosts.length; j < jLen; ++j) {
+                    expect(site[names[i]]).not.toContain(archiveOnlyHosts[j]);
+                }
             }
         });
     });
