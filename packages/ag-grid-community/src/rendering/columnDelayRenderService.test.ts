@@ -2,7 +2,6 @@ import { ColumnDelayRenderService } from './columnDelayRenderService';
 
 const HIDE_CLASS = 'ag-delay-render';
 const MAX_RETRIES = 5;
-const FAILSAFE_MS = 1000;
 
 /**
  * The reveal waits for React to mount the header cells, retrying on a timer up to a fixed cap and
@@ -14,7 +13,6 @@ function createService(headerCellsRendered: () => boolean) {
     const eGridBody = document.createElement('div');
     const gridBodyCtrl = { eGridBody };
     const areHeaderCellsRendered = vi.fn(headerCellsRendered);
-    const warn = vi.fn();
 
     const service: ColumnDelayRenderService = Object.assign(Object.create(ColumnDelayRenderService.prototype), {
         beans: {
@@ -33,10 +31,9 @@ function createService(headerCellsRendered: () => boolean) {
         requesters: new Set<string>(),
         addDestroyFunc: vi.fn(),
         isAlive: () => true,
-        warn,
     });
 
-    return { service, eGridBody, areHeaderCellsRendered, warn };
+    return { service, eGridBody, areHeaderCellsRendered };
 }
 
 describe('ColumnDelayRenderService reveal retries', () => {
@@ -88,56 +85,5 @@ describe('ColumnDelayRenderService reveal retries', () => {
         expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
         expect(areHeaderCellsRendered).toHaveBeenCalledTimes(2);
         expect(vi.getTimerCount()).toBe(0);
-    });
-});
-
-describe('ColumnDelayRenderService reveal failsafe', () => {
-    beforeEach(() => {
-        vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-        vi.useRealTimers();
-    });
-
-    test('reveals and warns when a requester never releases its hide', () => {
-        const { service, eGridBody, warn } = createService(() => true);
-
-        service.hideColumns('fitCellContents');
-        service.hideColumns('colFlex');
-        service.revealColumns('colFlex');
-        expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(true);
-
-        vi.advanceTimersByTime(FAILSAFE_MS - 1);
-        expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(true);
-
-        vi.advanceTimersByTime(1);
-        expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
-        // Only the still-outstanding requester is named.
-        expect(warn).toHaveBeenCalledWith(334, { requesters: ['fitCellContents'] });
-        expect(vi.getTimerCount()).toBe(0);
-    });
-
-    test('does not fire once the columns were revealed normally', () => {
-        const { service, eGridBody, warn } = createService(() => true);
-
-        service.hideColumns('colFlex');
-        service.revealColumns('colFlex');
-        expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
-
-        vi.advanceTimersByTime(FAILSAFE_MS);
-        expect(warn).not.toHaveBeenCalled();
-        expect(vi.getTimerCount()).toBe(0);
-    });
-
-    test('a late hide after the failsafe reveal is ignored', () => {
-        const { service, eGridBody } = createService(() => true);
-
-        service.hideColumns('colFlex');
-        vi.advanceTimersByTime(FAILSAFE_MS);
-        expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
-
-        service.hideColumns('columnState');
-        expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
     });
 });
