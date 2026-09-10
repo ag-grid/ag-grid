@@ -59,6 +59,15 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
         refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
+    protected override removeItemsFromModel(columns: AgColumn[]): void {
+        this.beans.columnStateUpdateStrategy.removeRowGroupColumns(
+            isDeferredMode(this.updateParams),
+            columns,
+            'toolPanelUi'
+        );
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
+    }
+
     protected getIconName(): DragAndDropIcon {
         return this.isPotentialDndItems() ? 'group' : 'notAllowed';
     }

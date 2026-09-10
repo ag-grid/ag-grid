@@ -90,6 +90,15 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
         refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
+    protected override removeItemsFromModel(columns: AgColumn[]): void {
+        this.beans.columnStateUpdateStrategy.removePivotColumns(
+            isDeferredMode(this.updateParams),
+            columns,
+            'toolPanelUi'
+        );
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
+    }
+
     protected getIconName(): DragAndDropIcon {
         return this.isPotentialDndItems() ? 'pivot' : 'notAllowed';
     }

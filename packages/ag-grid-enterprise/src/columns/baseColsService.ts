@@ -209,16 +209,19 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         colModel.flushColChanges(source, change); // animated refresh; defers when batched
     }
 
-    /** Seat a col into `res`; base adds just the col, `OrderedColsService` seats its virtuals first. */
-    protected seatActiveCol(res: Set<AgColumn>, col: AgColumn): void {
+    /** Seat a col into `res`; base adds just the col, `OrderedColsService` seats its virtuals first.
+     *  `provided`, when given, is the caller's own resolved list — `OrderedColsService` reads it to tell an
+     *  explicit level selection apart from a bare source col. */
+    protected seatActiveCol(res: Set<AgColumn>, col: AgColumn, _provided?: Set<AgColumn>): void {
         res.add(col);
     }
 
     /** Expand to active order via {@link seatActiveCol}; dedupes into a fresh Set (insertion order = active order). */
     private expandActiveCols(cols: AgColumn[]): Set<AgColumn> {
         const res = new Set<AgColumn>();
+        const provided = new Set(cols);
         for (let i = 0, len = cols.length; i < len; ++i) {
-            this.seatActiveCol(res, cols[i]);
+            this.seatActiveCol(res, cols[i], provided);
         }
         return res;
     }
