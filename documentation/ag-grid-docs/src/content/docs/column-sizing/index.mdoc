@@ -209,10 +209,9 @@ const gridOptions = {
 
 - `fitCellContents` re-sizes when the row data or the displayed columns change.
 - `fitGridWidth` and `fitProvidedWidth` re-size when the available grid width or the displayed columns change, including changes caused by pagination or scrollbars.
+- Re-sizes are debounced while the grid is being resized.
 
-Re-sizes are debounced while the grid is being resized.
-
-The example below sizes a grouped, paginated grid of 34 columns and over 8,000 rows with `fitCellContents`. Move between pages or change the page size and the columns re-fit to the rows now on screen: the medal columns stay narrow while the text columns grow around the longest values on each page. It also opts into the scroll-driven re-sizes described in [Scrolling](#scrolling) below, so scrolling horizontally through the generated text columns fits each one as it arrives.
+The example below sizes a grouped, paginated grid of 34 columns and over 8,000 rows with `fitCellContents`. The text columns hold sentences of differing lengths, so moving between pages or changing the page size visibly re-fits them to the rows now on screen, each one settling on the longest value that page holds. It also opts into the scroll-driven re-sizes described in [Scrolling](#scrolling) below, so scrolling right fits the remaining columns as they arrive — the medal columns at the far end are narrow, and stay narrow.
 
 {% gridExampleRunner title="Continuous Auto-Sizing in Action" name="continuous-auto-size-in-action" /%}
 
@@ -230,6 +229,8 @@ const gridOptions = {
     }
 }
 ```
+
+{% interfaceDocumentation interfaceName="AutoSizeColumnsTriggerParams" config={"description":"The callback is passed the following params:"} /%}
 
 ### Scrolling
 
