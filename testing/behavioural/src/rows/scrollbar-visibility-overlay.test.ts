@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, mockGridLayout } from 'ag-test-utils';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
+import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
 const scrollbarWidth = 15;
@@ -31,6 +32,9 @@ const overflowingRowData = Array.from({ length: rowCount * 4 }, (_, index) => ({
     country: `Country ${index}`,
     sport: `Sport ${index}`,
 }));
+
+const totalColumnWidth = (api: GridApi): number =>
+    api.getColumnState().reduce((total, { width }) => total + (width ?? 0), 0);
 
 const query = <T extends Element>(selector: string): T => {
     const element = document.querySelector<T>(selector);
@@ -130,18 +134,11 @@ describe('Overlay scrollbar visibility', () => {
             expect(verticalScrollbar.style.width).toBe(`${INVISIBLE_SCROLLBAR_LANE}px`);
         });
 
-        // happy-dom fires no ResizeObserver, so the initial flex pass ran before the vertical
-        // scrollbar was detected - re-set the columns to force it to run again now that it is showing
-        api.setGridOption('columnDefs', overlayColumnDefs());
-        await waitFor(() => {
-            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(overlayColumnDefs().length);
-        });
-
         // the lane the fake scrollbar paints over, and which content must therefore stay clear of
         const scrollbarLaneWidth = verticalScrollbar.offsetWidth;
         expect(scrollbarLaneWidth).toBe(INVISIBLE_SCROLLBAR_LANE);
 
-        const contentRightEdge = api.getColumnState().reduce((total, { width }) => total + (width ?? 0), 0);
+        const contentRightEdge = totalColumnWidth(api);
         expect(contentRightEdge).toBe(viewport.clientWidth - scrollbarLaneWidth);
 
         // the header lane must line up with the body lane - header text is clipped the same way
@@ -150,5 +147,32 @@ describe('Overlay scrollbar visibility', () => {
             0
         );
         expect(headerRightEdge).toBe(contentRightEdge);
+    });
+
+    test('re-flexes the columns when the vertical overlay scrollbar first appears', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: overlayColumnDefs(),
+            defaultColDef: { minWidth: 100, flex: 1 },
+            headerHeight: mockGridLayout.headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            rowData,
+        });
+
+        const viewport = query<HTMLElement>('.ag-grid-viewport');
+        const verticalScrollbar = query<HTMLElement>('.ag-body-vertical-scroll');
+        const horizontalScrollbar = query<HTMLElement>('.ag-body-horizontal-scroll');
+
+        await waitFor(() => {
+            expect(verticalScrollbar.classList.contains('ag-hidden')).toBe(true);
+        });
+        expect(totalColumnWidth(api)).toBe(viewport.clientWidth);
+
+        api.setGridOption('rowData', overflowingRowData);
+
+        await waitFor(() => {
+            expect(verticalScrollbar.classList.contains('ag-hidden')).toBe(false);
+            expect(totalColumnWidth(api)).toBe(viewport.clientWidth - INVISIBLE_SCROLLBAR_LANE);
+        });
+        expect(horizontalScrollbar.classList.contains('ag-invisible')).toBe(true);
     });
 });
