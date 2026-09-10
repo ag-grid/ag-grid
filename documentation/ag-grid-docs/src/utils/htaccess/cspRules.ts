@@ -21,8 +21,8 @@ export type CspMode = 'report-only' | 'enforce';
 /**
  * - 'site': the default policy for ordinary pages.
  * - 'examples': additionally allows 'unsafe-eval', plus the third-party hosts the
- *   archived doc versions load their legacy example runner and sample data from
- *   (ARCHIVE_SCRIPT_HOSTS / ARCHIVE_CONNECT_HOSTS); applies only to the standalone
+ *   archived doc versions load their legacy example runner, sample data and page
+ *   chrome from (the ARCHIVE_*_HOSTS lists); applies only to the standalone
  *   example-runner documents and archived doc versions — see EXAMPLES_PATH_CONDITION.
  * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
  *   connect) for the partnership campaign pages' embedded Gantt demo — without
@@ -283,16 +283,46 @@ const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 // be exercised, re-allowing it is a separate, conscious decision.
 const BRYNTUM_HOST = 'https://bryntum.com';
 
+// The Mailchimp newsletter-signup embed in the archived doc versions' page chrome: the validation bundle (which also carries the jQuery the embed's
+// inline snippet expects — 'jQuery is not defined' without it), the JSONP subscribe endpoint
+// the bundle loads as a <script src>, and the embed stylesheet.
+const MAILCHIMP_VALIDATE_SCRIPT = 'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js';
+const MAILCHIMP_JSONP_HOST = 'https://ag-grid.us11.list-manage.com';
+const MAILCHIMP_STYLE_HOST = 'https://cdn-images.mailchimp.com';
+// Embedded tweets: widgets.js (script-src) renders each tweet into an iframe on the same origin.
+const TWITTER_PLATFORM_HOST = 'https://platform.twitter.com';
+// GitHub star/fork buttons: buttons.js (script-src) renders into an iframe on the same origin.
+const GITHUB_BUTTONS_HOST = 'https://buttons.github.io';
+
 // Hosts the archived doc versions (/archive/<version>/, matched by EXAMPLES_PATH_CONDITION)
 // depend on but the current site does not. The snapshots are immutable, so the CSP is the
-// only place these can be allowed (AG-18490):
+// only place these can be allowed (AG-18490).
+//
+// Example runner:
 //  - unpkg.com: v25 to v28.1 framework examples load SystemJS, zone.js and core-js from it
 //    as <script src>, and their systemjs.config.js maps every package to it, which SystemJS
 //    then fetches over XHR. So script-src and connect-src.
-//  - ajax.googleapis.com: the pre-v25 page chrome loads the Web Font Loader from it.
 //  - raw.githubusercontent.com: pre-v25 examples fetch their sample data from it.
-const ARCHIVE_SCRIPT_HOSTS = ['https://unpkg.com', 'https://ajax.googleapis.com'];
+//
+// Page chrome (the docs pages themselves, not the examples):
+//  - ajax.googleapis.com: the Web Font Loader (v16 to v24) and AngularJS (v14/v15).
+//  - Mailchimp newsletter signup: every version up to v28 carries the embed stylesheet;
+//    v16 to v24 also load mc-validate.js and its list-manage JSONP subscribe call.
+//  - Embedded tweets and GitHub buttons (v14 to v24); v14/v15 embed the GitHub button
+//    iframe from ghbtns.com directly instead of via buttons.js.
+//  - maxcdn.bootstrapcdn.com: Font Awesome 4 stylesheet and webfonts (v14 to v24).
+const ARCHIVE_SCRIPT_HOSTS = [
+    'https://unpkg.com',
+    'https://ajax.googleapis.com',
+    MAILCHIMP_VALIDATE_SCRIPT,
+    MAILCHIMP_JSONP_HOST,
+    TWITTER_PLATFORM_HOST,
+    GITHUB_BUTTONS_HOST,
+];
 const ARCHIVE_CONNECT_HOSTS = ['https://unpkg.com', 'https://raw.githubusercontent.com'];
+const ARCHIVE_STYLE_HOSTS = [MAILCHIMP_STYLE_HOST, 'https://maxcdn.bootstrapcdn.com'];
+const ARCHIVE_FONT_HOSTS = ['https://maxcdn.bootstrapcdn.com'];
+const ARCHIVE_FRAME_HOSTS = [TWITTER_PLATFORM_HOST, GITHUB_BUTTONS_HOST, 'https://ghbtns.com'];
 
 // Apache <If> expression matching the URL paths that get the 'examples' scope:
 // the standalone example-runner documents and archived doc versions (uploaded
@@ -504,7 +534,10 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
     // script-src inline handling, by scope (and environment for 'site').
     if (scope === 'examples') {
         directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE, ...ARCHIVE_SCRIPT_HOSTS);
+        directives['style-src'].push(...ARCHIVE_STYLE_HOSTS);
+        directives['font-src'].push(...ARCHIVE_FONT_HOSTS);
         directives['connect-src'].push(...ARCHIVE_CONNECT_HOSTS);
+        directives['frame-src'].push(...ARCHIVE_FRAME_HOSTS);
     } else if (scope === 'campaigns') {
         directives['script-src'].push(BRYNTUM_HOST, UNSAFE_INLINE);
         directives['style-src'].push(BRYNTUM_HOST);
@@ -611,7 +644,7 @@ export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mod
             "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
             '# (the Angular JIT and Vue runtime template compilers compile in the browser;',
             '# archived versions additionally eval-load modules with SystemJS), and the archived',
-            '# versions need the third-party hosts their legacy example runner loads from.',
+            '# versions need the third-party hosts their legacy example runner and page chrome load from.',
         ],
         { ...options, scope: 'examples' },
         mode
