@@ -9,8 +9,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await setControls(page, { rows: 50, minBodyHeight: 100, maxBodyHeight: 200 });
 
-        await expectBodyOverflows(page);
         await expectGridBodyHeight(page, 200);
+        await expectViewportOverflows(page);
 
         // a few visible rows plus the row buffer, rather than all 50
         expect(await page.locator('.ag-grid-scrolling-container .ag-row').count()).toBeLessThan(25);
@@ -21,8 +21,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await setControls(page, { rows: 3, minBodyHeight: 100, maxBodyHeight: 200 });
 
-        await expectBodyDoesNotOverflow(page);
         await expectGridBodyHeight(page, 3 * ROW_HEIGHT);
+        await expectViewportDoesNotOverflow(page);
     });
 
     test.eachFramework('falls back to the minimum when there are no rows', async ({ page }) => {
@@ -30,8 +30,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await setControls(page, { rows: 0, minBodyHeight: 120, maxBodyHeight: 200 });
 
-        await expectBodyDoesNotOverflow(page);
         await expectGridBodyHeight(page, 120);
+        await expectViewportDoesNotOverflow(page);
     });
 
     test.eachFramework('renders every row when no maximum is set', async ({ page }) => {
@@ -39,8 +39,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await setControls(page, { rows: 50, minBodyHeight: 100, maxBodyHeight: 'none' });
 
-        await expectBodyDoesNotOverflow(page);
         await expectGridBodyHeight(page, 50 * ROW_HEIGHT);
+        await expectViewportDoesNotOverflow(page);
         await expect(page.locator('.ag-grid-scrolling-container .ag-row')).toHaveCount(50);
     });
 
@@ -49,8 +49,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await setControls(page, { rows: 50, minBodyHeight: 0, maxBodyHeight: 0 });
 
-        await expectBodyOverflows(page);
         await expectGridBodyHeight(page, 0);
+        await expectViewportOverflows(page);
         expect(await page.locator('.ag-grid-scrolling-container .ag-row').count()).toBeLessThan(25);
     });
 });
@@ -74,15 +74,15 @@ async function expectGridBodyHeight(page: Page, expected: number) {
     }).toPass();
 }
 
-/** Scrollbar chrome is permanently `visibility: hidden` on overlay-scrollbar platforms, so assert the overflow it stands for. */
-async function expectBodyOverflows(page: Page) {
+/** Scrollbar chrome is hidden at rest on overlay-scrollbar platforms, so assert the overflow it stands for. */
+async function expectViewportOverflows(page: Page) {
     await expect(async () => {
         const { scrollHeight, clientHeight } = await measureViewport(page);
         expect(scrollHeight).toBeGreaterThan(clientHeight);
     }).toPass();
 }
 
-async function expectBodyDoesNotOverflow(page: Page) {
+async function expectViewportDoesNotOverflow(page: Page) {
     await expect(async () => {
         const { scrollHeight, clientHeight } = await measureViewport(page);
         // both are integer-rounded, so a sub-pixel border must not read as overflow

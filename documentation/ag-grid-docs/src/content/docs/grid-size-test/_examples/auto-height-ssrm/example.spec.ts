@@ -11,7 +11,7 @@ test.agExample(import.meta, () => {
 
         // the maximum bounds the rows alone, so the header sits above it
         await expectGridViewportHeight(page, HEADER_HEIGHT + MAX_BODY_HEIGHT);
-        await expectBodyOverflows(page);
+        await expectViewportOverflows(page);
 
         // the dataset is 500 rows, but the capped viewport shows only the first block
         expect(await page.locator('.ag-grid-scrolling-container .ag-row').count()).toBeLessThan(50);
@@ -61,8 +61,8 @@ async function expectGridViewportHeight(page: Page, expected: number) {
     }).toPass();
 }
 
-/** Scrollbar chrome is permanently `visibility: hidden` on overlay-scrollbar platforms, so assert the overflow it stands for. */
-async function expectBodyOverflows(page: Page) {
+/** Scrollbar chrome is hidden at rest on overlay-scrollbar platforms, so assert the overflow it stands for. */
+async function expectViewportOverflows(page: Page) {
     await expect(async () => {
         const { scrollHeight, clientHeight } = await page
             .locator('.ag-grid-viewport')
