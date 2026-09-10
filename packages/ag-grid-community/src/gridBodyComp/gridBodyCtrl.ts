@@ -639,9 +639,7 @@ export class GridBodyCtrl extends BeanStub {
         const configuredScrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
 
         if (configuredScrollbarWidth === 0) {
-            // The platform draws overlay (zero-width) scrollbars, but the grid still draws its own
-            // fake scrollbar over the content lane - so reserve the width it will occupy.
-            return _isInvisibleScrollbar() ? INVISIBLE_SCROLLBAR_SIZE : 0;
+            return 0;
         }
 
         return configuredScrollbarWidth;

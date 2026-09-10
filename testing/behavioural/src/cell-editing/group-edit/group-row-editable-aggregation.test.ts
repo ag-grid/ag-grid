@@ -477,13 +477,13 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
             `Total column using getValue() should not update while typing to start editing setup`
         ).checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "Group" width:141 flex:1
-            ├── group "Group" width:140 flex:1 rowGroup editable
-            ├── a "A" width:141 flex:1 aggFunc:sum editable
-            ├── b "B" width:140 flex:1 aggFunc:sum editable
-            ├── c "C" width:141 flex:1 aggFunc:sum editable
-            ├── d "D" width:140 flex:1 aggFunc:sum editable
-            └── total "Total" width:141 flex:1 aggFunc:sum
+            ├── ag-Grid-AutoColumn "Group" width:143 flex:1
+            ├── group "Group" width:143 flex:1 rowGroup editable
+            ├── a "A" width:143 flex:1 aggFunc:sum editable
+            ├── b "B" width:142 flex:1 aggFunc:sum editable
+            ├── c "C" width:143 flex:1 aggFunc:sum editable
+            ├── d "D" width:143 flex:1 aggFunc:sum editable
+            └── total "Total" width:143 flex:1 aggFunc:sum
         `);
         await new GridRows(api, `Total column using getValue() should not update while typing to start editing setup`)
             .check(`
@@ -572,11 +572,11 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         await new GridColumns(api, `Total column should not update while double-click editing, only after commit setup`)
             .checkColumns(`
                 CENTER
-                ├── ag-Grid-AutoColumn "Group" width:197 flex:1
-                ├── group "Group" width:197 flex:1 rowGroup editable
-                ├── a "A" width:196 flex:1 aggFunc:sum editable
-                ├── b "B" width:197 flex:1 aggFunc:sum editable
-                └── total "Total" width:197 flex:1 aggFunc:sum
+                ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+                ├── group "Group" width:200 flex:1 rowGroup editable
+                ├── a "A" width:200 flex:1 aggFunc:sum editable
+                ├── b "B" width:200 flex:1 aggFunc:sum editable
+                └── total "Total" width:200 flex:1 aggFunc:sum
             `);
         await new GridRows(api, `Total column should not update while double-click editing, only after commit setup`)
             .check(`
@@ -660,11 +660,11 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         await new GridColumns(api, `Total column should not update during edit and should revert when cancelled setup`)
             .checkColumns(`
                 CENTER
-                ├── ag-Grid-AutoColumn "Group" width:197 flex:1
-                ├── group "Group" width:197 flex:1 rowGroup editable
-                ├── a "A" width:196 flex:1 aggFunc:sum editable
-                ├── b "B" width:197 flex:1 aggFunc:sum editable
-                └── total "Total" width:197 flex:1 aggFunc:sum
+                ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+                ├── group "Group" width:200 flex:1 rowGroup editable
+                ├── a "A" width:200 flex:1 aggFunc:sum editable
+                ├── b "B" width:200 flex:1 aggFunc:sum editable
+                └── total "Total" width:200 flex:1 aggFunc:sum
             `);
         await new GridRows(api, `Total column should not update during edit and should revert when cancelled setup`)
             .check(`
@@ -743,11 +743,11 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         await new GridColumns(api, `Re-editing and committing different values updates Total correctly setup`)
             .checkColumns(`
                 CENTER
-                ├── ag-Grid-AutoColumn "Group" width:197 flex:1
-                ├── group "Group" width:197 flex:1 rowGroup editable
-                ├── a "A" width:196 flex:1 aggFunc:sum editable
-                ├── b "B" width:197 flex:1 aggFunc:sum editable
-                └── total "Total" width:197 flex:1 aggFunc:sum
+                ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+                ├── group "Group" width:200 flex:1 rowGroup editable
+                ├── a "A" width:200 flex:1 aggFunc:sum editable
+                ├── b "B" width:200 flex:1 aggFunc:sum editable
+                └── total "Total" width:200 flex:1 aggFunc:sum
             `);
         await new GridRows(api, `Re-editing and committing different values updates Total correctly setup`).check(`
             ROOT id:ROOT_NODE_ID total:null
@@ -854,11 +854,11 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         });
         await new GridColumns(api, `Editing multiple cells in sequence updates Total correctly setup`).checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "Group" width:197 flex:1
-            ├── group "Group" width:197 flex:1 rowGroup editable
-            ├── a "A" width:196 flex:1 aggFunc:sum editable
-            ├── b "B" width:197 flex:1 aggFunc:sum editable
-            └── total "Total" width:197 flex:1 aggFunc:sum
+            ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+            ├── group "Group" width:200 flex:1 rowGroup editable
+            ├── a "A" width:200 flex:1 aggFunc:sum editable
+            ├── b "B" width:200 flex:1 aggFunc:sum editable
+            └── total "Total" width:200 flex:1 aggFunc:sum
         `);
         await new GridRows(api, `Editing multiple cells in sequence updates Total correctly setup`).check(`
             ROOT id:ROOT_NODE_ID total:null

@@ -12,13 +12,6 @@ const rowData = Array.from({ length: initialRowCount + 1 }, (_, index) => ({
     sport: `Sport ${index}`,
 }));
 
-// enough rows that the vertical scrollbar is displayed whatever the scrollbar width resolves to
-const overflowingRowData = Array.from({ length: initialRowCount * 4 }, (_, index) => ({
-    athlete: `Athlete ${index}`,
-    country: `Country ${index}`,
-    sport: `Sport ${index}`,
-}));
-
 const query = <T extends Element>(selector: string): T => {
     const element = document.querySelector<T>(selector);
     expect(element, `Expected ${selector} to be rendered`).not.toBeNull();
@@ -99,42 +92,5 @@ describe('Scrollbar visibility', () => {
 
         api.setGridOption('rowData', rowData.slice(0, initialRowCount));
         await expectScrollbarSizes('0px', '0px', 'restored row data');
-    });
-
-    // AG-18346: `scrollbarWidth: 0` is a documented grid option by which a user asserts their
-    // platform's scrollbars take no space. Reserving the overlay scrollbar lane is therefore gated on
-    // the platform actually drawing invisible scrollbars, not on the configured width being zero.
-    // Scope: `getScrollbarWidth()` memoises the option and the measured width into the same field, so
-    // the two are indistinguishable at the call site. This test pins the case where the platform
-    // disagrees with the option - real scrollbars, so `_isInvisibleScrollbar()` is false (as under
-    // happy-dom) - and the user's zero must survive. On a platform that really does draw invisible
-    // scrollbars the option resolves to 16px, matching `getHorizontalScrollbarHeight()`.
-    test('honours scrollbarWidth: 0 on a platform with real scrollbars', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }],
-            defaultColDef: {
-                minWidth: 100,
-                flex: 1,
-            },
-            headerHeight: mockGridLayout.headerHeight,
-            rowHeight: mockGridLayout.rowHeight,
-            rowData: overflowingRowData,
-            scrollbarWidth: 0,
-            alwaysShowVerticalScroll: true,
-        });
-
-        const viewport = query<HTMLElement>('.ag-grid-viewport');
-        await waitFor(() => expect(document.querySelectorAll('.ag-row').length).toBeGreaterThan(0));
-        // the vertical scrollbar is displayed (alwaysShowVerticalScroll), so the code path that
-        // reserves the overlay lane is reached - and must still resolve to the user's zero width
-        expect(query<HTMLElement>('.ag-body-vertical-scroll').classList.contains('ag-hidden')).toBe(false);
-        await expectScrollbarSizes('0px', '0px', 'scrollbarWidth: 0');
-
-        // happy-dom fires no ResizeObserver, so re-set the columns to force the flex pass to run again
-        api.setGridOption('columnDefs', [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }]);
-        await waitFor(() => expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(3));
-
-        const contentWidth = api.getColumnState().reduce((total, { width }) => total + (width ?? 0), 0);
-        expect(contentWidth).toBe(viewport.clientWidth);
     });
 });

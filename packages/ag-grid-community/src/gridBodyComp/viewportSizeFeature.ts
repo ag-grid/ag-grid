@@ -123,8 +123,20 @@ export class ViewportSizeFeature extends BeanStub {
         }
 
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
-            this.beans.pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
+            const { pinnedCols, colFlex } = this.beans;
+            pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
+
+            const newWidth = this.gridBodyCtrl.getCenterWidth();
+
+            if (newWidth !== this.centerWidth) {
+                this.centerWidth = newWidth;
+                colFlex?.refreshFlexedColumns({
+                    viewportWidth: this.centerWidth,
+                    updateBodyWidths: true,
+                    fireResizedEvent: true,
+                });
+            }
         } else {
             this.bodyHeight = 0;
         }
@@ -149,24 +161,6 @@ export class ViewportSizeFeature extends BeanStub {
         this.onHorizontalViewportChanged();
 
         gridBodyCtrl.scrollFeature.checkScrollLeft();
-
-        this.checkCenterWidth(gridBodyCtrl);
-    }
-
-    // Overlay scrollbars are absolutely positioned, so their appearance changes the width available
-    // to the columns without resizing anything the ResizeObserver watches.
-    private checkCenterWidth(gridBodyCtrl: GridBodyCtrl): void {
-        const newWidth = gridBodyCtrl.getCenterWidth();
-        if (newWidth === this.centerWidth) {
-            return;
-        }
-
-        this.centerWidth = newWidth;
-        this.beans.colFlex?.refreshFlexedColumns({
-            viewportWidth: newWidth,
-            updateBodyWidths: true,
-            fireResizedEvent: true,
-        });
     }
 
     public getBodyHeight(): number {
