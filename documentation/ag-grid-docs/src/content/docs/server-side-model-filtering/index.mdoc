@@ -162,9 +162,7 @@ In addition to Column Filters, the [Advanced Filter](./filter-advanced/) can als
 
 {% gridExampleRunner title="Advanced Filter" name="advanced-filter" /%}
 
-Note that [Cell Data Types](./cell-data-types/) must be supplied in order for the Advanced Filter to display the correct filter options, otherwise only `'text'` options will be displayed.
-
-The `is any of` and `is none of` options of a [Set Filter](./filter-set/) column need that column's values to validate what is written against, so they are only usable where the Set Filter has values to offer: supply them with [`filterParams.values`](./filter-set-filter-list/#supplying-filter-values) on a Set Filter column whose values the grid cannot derive from the rows it holds.
+Note that [Cell Data Types](./cell-data-types/) must be supplied in order for the Advanced Filter to display the correct filter options, otherwise only `'text'` options will be displayed. A column with a [Set Filter](#set-filtering) also gains the `is any of` and `is none of` options.
 
 ## No Matching Rows Overlay
 
