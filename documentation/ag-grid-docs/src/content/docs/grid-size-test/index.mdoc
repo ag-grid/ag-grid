@@ -1,0 +1,17 @@
+---
+title: "Grid Layout Test"
+---
+
+This is an internal page holding examples that exercise edge cases of [Grid Layout](./grid-size/) - in particular the auto height body height limits - which are useful for manual QA but not instructive enough to belong on the documentation page itself. It is intentionally left out of the site navigation.
+
+## Auto Height with Max Height and Server-Side Row Model
+
+Rows should be loaded in blocks of 100 as you scroll, rather than loaded up front.
+
+{% gridExampleRunner title="Auto Height with SSRM" name="auto-height-ssrm" /%}
+
+## Auto Height in a Detached Container
+
+1. Open [/examples/grid-size-test/auto-height-detached/vanilla](/examples/grid-size-test/auto-height-detached/vanilla)
+2. Click "Measure detached"
+3. Less than 100 rows should be rendered or have getRowHeight called for them (the data set has 200 rows)

@@ -5,7 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { _isDomLayout } from '../gridOptionsUtils';
+import { _canScrollVertically } from '../gridOptionsUtils';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 
 interface ScrollVisibilityState {
@@ -129,7 +129,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (!_isDomLayout(this.gos, 'normal')) {
+        if (!_canScrollVertically(this.beans)) {
             return false;
         }
 
@@ -141,7 +141,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             viewportHeightWithoutHorizontalScroll - this.getHorizontalScrollbarLayoutHeight(horizontalScrollShowing);
         const bodyViewportHeight = gridBodyCtrl.getBodyViewportHeight(viewportHeight);
         const rowContainerHeight = this.beans.rowContainerHeight.uiContainerHeight ?? 0;
-        return rowContainerHeight > bodyViewportHeight;
+        // When zooming the browser there can be an error caused by rounding of fractional measurements, so tolerate a
+        // small error in checking if the content exceeds the viewport
+        return rowContainerHeight - bodyViewportHeight > 0.5;
     }
 
     private getHorizontalScrollbarLayoutHeight(horizontalScrollShowing: boolean): number {

@@ -27,6 +27,13 @@ export interface FilterState {
     selectableFilters?: SelectableFilterState;
 }
 
+export interface FindState {
+    /** Current search value */
+    searchValue?: string;
+    /** The number of the active match within all the matches in the grid (starting from `1`) */
+    activeMatch?: number;
+}
+
 export interface QuickFilterState {
     /** Search text, mirroring the `quickFilterText` grid option. Absent when the text is empty. */
     text?: string;
@@ -244,6 +251,12 @@ export interface GridState {
     columnHeaderName?: ColumnHeaderNameState;
     /** Column Filters and Advanced Filter */
     filter?: FilterState;
+    /**
+     * Find search value and active match. Works for Client-Side Row Model only, and only when the
+     * Quick Access Toolbar is configured with `agFindToolbarItem`; otherwise the `findSearchValue`
+     * grid option is the only source
+     */
+    find?: FindState;
     /**
      * Quick Filter search text. Only captured and restored when the Quick Access Toolbar is configured with
      * `agQuickFilterToolbarItem`; otherwise the `quickFilterText` grid option is the only source

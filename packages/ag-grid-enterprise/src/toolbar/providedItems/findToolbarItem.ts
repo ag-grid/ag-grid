@@ -9,9 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { AgInputTextField, Component, _createElement } from 'ag-grid-community';
 
-import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
-
-const INPUT_DEBOUNCE_MS = 300;
+import { INPUT_DEBOUNCE_MS, createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
 let findInputIdCounter = 0;
 
@@ -121,6 +119,11 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
 
         this.addManagedEventListeners({
             findChanged: (event: FindChangedEvent) => this.onFindChanged(event),
+        });
+
+        this.addManagedPropertyListener('findSearchValue', ({ currentValue }) => {
+            clearTimeout(findSearchValueTimeout);
+            this.eInputField.setValue(currentValue ?? '', true);
         });
 
         this.syncMatchState();

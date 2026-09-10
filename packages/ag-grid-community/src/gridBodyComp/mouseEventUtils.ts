@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _isDomLayout } from '../gridOptionsUtils';
+import { _canScrollVertically } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _getCellCtrlForEventTarget } from '../rendering/renderUtils';
 
@@ -17,7 +17,7 @@ export function _getNormalisedMousePosition(
     beans: BeanCollection,
     event: MouseEvent | { x: number; y: number }
 ): { x: number; y: number } {
-    const gridPanelHasScrolls = _isDomLayout(beans.gos, 'normal');
+    const gridPanelHasScrolls = _canScrollVertically(beans);
     const e = event as MouseEvent;
     let x: number;
     let y: number;

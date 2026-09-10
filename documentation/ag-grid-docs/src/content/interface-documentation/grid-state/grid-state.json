@@ -52,6 +52,12 @@
                 "include": []
             }
         },
+        "find": {
+            "more": {
+                "url": "./find/",
+                "name": "Find"
+            }
+        },
         "quickFilter": {
             "more": {
                 "url": "./filter-quick/",

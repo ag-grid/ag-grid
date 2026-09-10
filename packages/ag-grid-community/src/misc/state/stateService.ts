@@ -19,6 +19,7 @@ import type {
     ColumnSizingState,
     ColumnVisibilityState,
     FilterState,
+    FindState,
     FocusedCellState,
     GridState,
     GridStateKey,
@@ -378,6 +379,7 @@ export class StateService extends BeanStub implements NamedBean {
         const {
             scroll: scrollState,
             cellSelection: cellSelectionState,
+            find: findState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
         } = state;
@@ -390,15 +392,19 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetState('cellSelection', cellSelectionState)) {
             this.setCellSelectionState(cellSelectionState);
         }
-        if (shouldSetState('scroll', scrollState)) {
-            this.setScrollState(scrollState);
-        }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
         const deferredFilterState = this.deferredFilterState;
         if (deferredFilterState) {
             this.deferredFilterState = undefined;
             this.setFilterState(deferredFilterState, source);
+        }
+
+        if (shouldSetState('find', findState)) {
+            this.setFindState(findState, source);
+        }
+        if (shouldSetState('scroll', scrollState)) {
+            this.setScrollState(scrollState);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -409,6 +415,7 @@ export class StateService extends BeanStub implements NamedBean {
         updateCachedState('rangeSelection', cellSelection);
         updateCachedState('cellSelection', cellSelection);
         updateCachedState('scroll', this.getScrollState());
+        updateCachedState('find', this.getFindState());
     }
 
     private setupStateOnFirstDataRendered(initialState: GridState): void {
@@ -427,6 +434,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
+            findChanged: () => updateCachedState('find', this.getFindState()),
         });
     }
 
@@ -744,20 +752,20 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     /**
-     * The Quick Filter text is only state-managed when the Quick Access Toolbar owns an input for it;
-     * otherwise the `quickFilterText` grid option is the only source and state leaves it alone.
+     * Find and the Quick Filter are only state-managed when the Quick Access Toolbar owns an input
+     * for them; otherwise their grid option is the only source and state leaves it alone.
      */
-    private isQuickFilterStateManaged(): boolean {
-        return !!this.beans.toolbar?.hasItem('agQuickFilterToolbarItem');
+    private isToolbarStateManaged(item: 'agFindToolbarItem' | 'agQuickFilterToolbarItem'): boolean {
+        return !!this.beans.toolbar?.hasItem(item);
     }
 
     private getQuickFilterState(): QuickFilterState | undefined {
         // Without the module the option is inert, and writing it on restore reports a missing-module error.
-        return this.isQuickFilterStateManaged() ? this.beans.quickFilter?.getState() : undefined;
+        return this.isToolbarStateManaged('agQuickFilterToolbarItem') ? this.beans.quickFilter?.getState() : undefined;
     }
 
     private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
-        if (!this.isQuickFilterStateManaged()) {
+        if (!this.isToolbarStateManaged('agQuickFilterToolbarItem')) {
             return;
         }
         const { text } = quickFilterState ?? {};
@@ -835,6 +843,21 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         rangeSvc.setCellRanges(cellRanges);
+    }
+
+    private getFindState(): FindState | undefined {
+        return this.isToolbarStateManaged('agFindToolbarItem') ? this.beans.findSvc?.getState() : undefined;
+    }
+
+    private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.isToolbarStateManaged('agFindToolbarItem')) {
+            return;
+        }
+        const { searchValue, activeMatch } = findState ?? {};
+        this.beans.findSvc?.setState({
+            searchValue: source === 'api' ? (searchValue ?? '') : searchValue,
+            activeMatch,
+        });
     }
 
     private getScrollState(): ScrollState | undefined {

@@ -8,13 +8,13 @@ import { _nearestDisplayedRow } from '../entities/rowNodeUtils';
 import type { FilterChangedEvent } from '../events';
 import {
     _addRowHeightChangedListener,
+    _canScrollVertically,
     _getClientSideLoadingRowCount,
     _getGroupSelectsDescendants,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _isAnimateRows,
     _isClientSideLoadingRows,
-    _isDomLayout,
 } from '../gridOptionsUtils';
 import type {
     ClientSideRowModelStage,
@@ -452,9 +452,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const defaultRowHeight = beans.environment.getDefaultRowHeight();
         let nextRowTop = 0;
 
-        // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
-        // with these two layouts.
-        const allowEstimate = _isDomLayout(this.gos, 'normal');
+        // we don't estimate if rendering all rows. A grid whose sizes are not measurable yet may turn out to
+        // be scrollable once it is, so estimate until we know - estimates are corrected on the next render.
+        const allowEstimate = _canScrollVertically(beans) || !beans.environment.sizesMeasured;
 
         for (let i = 0, len = rowsToRender.length; i < len; ++i) {
             const rowNode = rowsToRender[i];

@@ -104,7 +104,7 @@ export class AppComponent {
     public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };
-    public toolbar: Toolbar = { items: ['agQuickFilterToolbarItem'] };
+    public toolbar: Toolbar = { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] };
     public rowData?: IOlympicData[];
     public gridVisible = signal(true);
     public gridOptions: GridOptions = {

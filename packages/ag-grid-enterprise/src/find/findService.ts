@@ -8,6 +8,7 @@ import type {
     FindGroupRowRendererParams,
     FindMatch,
     FindPart,
+    FindState,
     GridApi,
     IClientSideRowModel,
     IFindService,
@@ -93,6 +94,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     private centerNumMatches: number = 0;
     private readonly bottomMatches: Matches = new Map();
     private bottomNodes: IRowNode[] = [];
+    private restoring = false;
 
     /** switches based on grid options */
     private caseFormat: (value?: string | null) => string | undefined = defaultCaseFormat;
@@ -292,6 +294,33 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
         if (isSearchDetail()) {
             api.setGridOption('findSearchValue', gos.get('findSearchValue'));
+        }
+    }
+
+    public getState(): FindState | undefined {
+        if (!_isClientSideRowModel(this.gos)) {
+            return undefined;
+        }
+        const searchValue = this.gos.get('findSearchValue') || undefined;
+        return searchValue ? { searchValue, activeMatch: this.activeMatch?.numOverall } : undefined;
+    }
+
+    public setState({ searchValue, activeMatch }: FindState): void {
+        if (!_isClientSideRowModel(this.gos)) {
+            return;
+        }
+        if (searchValue !== undefined) {
+            this.gos.updateGridOptions({ options: { findSearchValue: searchValue } });
+        }
+        if (activeMatch != null) {
+            this.restoring = true;
+            try {
+                this.goTo(activeMatch);
+            } finally {
+                this.restoring = false;
+            }
+        } else if (this.activeMatch) {
+            this.setActive(undefined);
         }
     }
 
@@ -816,7 +845,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     private setActive(activeMatch?: FindMatch): void {
-        if (activeMatch && activeMatch.node.rowIndex == null) {
+        if (activeMatch && activeMatch.node.rowIndex == null && !this.restoring) {
             // child in unexpanded group. Expand all unexpanded ancestors
             const node = activeMatch.node;
             let parent = node.footer ? node.sibling : node.parent;
@@ -874,7 +903,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             this.refreshRows(nodes, skipColumns ? undefined : columns);
         }
 
-        if (activeMatch) {
+        if (activeMatch && !this.restoring) {
             this.scrollToActive(activeMatch);
         }
     }

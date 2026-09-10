@@ -73,7 +73,7 @@ const GridExample = () => {
         }),
         []
     );
-    const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem'] }), []);
+    const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] }), []);
     const [initialState, setInitialState] = useState<GridState>();
     const [currentState, setCurrentState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);

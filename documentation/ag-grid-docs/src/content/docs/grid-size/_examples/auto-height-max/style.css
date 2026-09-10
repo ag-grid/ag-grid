@@ -1,0 +1,33 @@
+/* Manually set dark mode to get a dark scroll bar on the body */
+html[data-color-scheme='dark'] body {
+    color-scheme: dark;
+}
+
+.test-header {
+    display: flex;
+    gap: 16px;
+    padding: 5px;
+    font-size: 13px;
+
+    margin-bottom: 1rem;
+}
+
+.test-header label {
+    margin-right: 4px;
+}
+
+.test-header input {
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 5rem;
+}
+
+.under-grid {
+    border: 10px solid #eee;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.under-grid p {
+    text-align: center;
+}
