@@ -1155,9 +1155,9 @@ describe('Cell Editing Regression', () => {
         await new GridColumns(api, `Delete key on cell with valueGetter passes correct oldValue to valueSetter setup`)
             .checkColumns(`
                 CENTER
-                ├── name "Name" width:333 flex:1 editable
-                ├── totalMedals "Total Medals" width:334 flex:1 editable
-                └── score "Score" width:333 flex:1 editable
+                ├── name "Name" width:328 flex:1 editable
+                ├── totalMedals "Total Medals" width:328 flex:1 editable
+                └── score "Score" width:328 flex:1 editable
             `);
         await new GridRows(api, `Delete key on cell with valueGetter passes correct oldValue to valueSetter setup`)
             .check(`
