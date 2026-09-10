@@ -511,6 +511,9 @@ export class LazyCache extends BeanStub {
             const deletedNode = id && this.removedNodeCache?.get(id);
             if (deletedNode) {
                 this.removedNodeCache?.delete(id);
+                // Restore the position destroyRowAtIndex cleared, so the move to the new index
+                // still animates from where the row was rather than fading in.
+                deletedNode.rowTop = deletedNode.oldRowTop;
                 this.blockUtils.updateDataIntoRowNode(deletedNode, data);
                 this.nodeMap.set({
                     id: deletedNode.id!,
@@ -645,6 +648,11 @@ export class LazyCache extends BeanStub {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id!, lazyNode.node);
+            // A redraw can happen before the refresh completes (each block response fires one), and
+            // RowCtrl repositions a row it destroys while rowTop is set. Clearing it makes that
+            // redraw fade the row out instead; setRowTop keeps the old value in oldRowTop, which
+            // createRowAtIndex restores if a later response re-adopts the node.
+            lazyNode.node.setRowTop(null);
         } else {
             this.blockUtils.destroyRowNode(lazyNode.node);
         }

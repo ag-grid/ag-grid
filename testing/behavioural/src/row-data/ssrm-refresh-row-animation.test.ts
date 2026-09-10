@@ -89,6 +89,40 @@ describe('SSRM soft refresh row animation', () => {
         expect(displayedRowIds(api)).toEqual(rows.map((row) => row.id));
     });
 
+    test('a row deleted from an earlier block fades out while a later block is still refreshing', async () => {
+        let rows = allRows;
+        const requests: [number, number][] = [];
+        const api = gridsManager.createGrid(
+            'myGrid',
+            createOptions(() => rows, 10, requests)
+        );
+        await waitForEvent('firstDataRendered', api);
+
+        // Pull the second block in, so the refresh below spans two responses and the deleted node is
+        // parked while the second block's response is still outstanding.
+        displayedRowIds(api);
+        await waitForNoLoadingRows(api);
+        expect(api.getDisplayedRowCount()).toBe(20);
+
+        requests.length = 0;
+        rows = allRows.filter((row) => row.id !== 'r03');
+        const refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+        await waitForNoLoadingRows(api);
+
+        expect(requests).toEqual([
+            [0, 10],
+            [10, 20],
+        ]);
+        expect(api.getDisplayedRowCount()).toBe(19);
+        // r03 is the deleted row. r19 shifted out of the second block into the first, so the redraw
+        // between the two responses discarded its old row controller — see the boundary-cross case
+        // below for why that discarded duplicate fades too.
+        expect(fadedRowIds(api)).toEqual(['r03', 'r19']);
+        expect(displayedRowIds(api)).toEqual(rows.map((row) => row.id));
+    });
+
     test('a soft refresh that reorders rows animates the move and fades nothing', async () => {
         let rows = allRows;
         const api = gridsManager.createGrid(
@@ -109,7 +143,7 @@ describe('SSRM soft refresh row animation', () => {
         expect(displayedRowIds(api)).toEqual(rows.map((r) => r.id));
     });
 
-    test('a multi-block soft refresh that reorders across the block boundary fades nothing', async () => {
+    test('a multi-block soft refresh that reorders across the block boundary still animates the move', async () => {
         let rows = allRows;
         const requests: [number, number][] = [];
         const api = gridsManager.createGrid(
@@ -141,9 +175,16 @@ describe('SSRM soft refresh row animation', () => {
             [0, 10],
             [10, 20],
         ]);
-        expect(fadedRowIds(api)).toEqual([]);
+        // The nine rows crossing the boundary are parked while the second block's response is
+        // outstanding, so the redraw in between discards their old row controllers. Those discarded
+        // duplicates fade out rather than standing at full opacity until they vanish.
+        expect(fadedRowIds(api)).toEqual(allRows.slice(0, 9).map((r) => r.id));
         expect(api.getDisplayedRowCount()).toBe(20);
         expect(api.getRowNode('r00')).toBeDefined();
         expect(displayedRowIds(api)).toEqual(rows.map((r) => r.id));
+        // The rows themselves still slide from where they were rather than fading back in:
+        // oldRowTop is the pre-refresh position the move animates from.
+        expect(api.getRowNode('r00')!.oldRowTop).toBe(0);
+        expect(api.getRowNode('r00')!.rowTop).toBe(11 * 24);
     });
 });
