@@ -11,7 +11,7 @@ test.agExample(import.meta, () => {
 
         // the maximum bounds the rows alone, so the header sits above it
         await expectGridViewportHeight(page, HEADER_HEIGHT + MAX_BODY_HEIGHT);
-        await expect(page.locator('.ag-body-vertical-scroll')).toBeVisible();
+        await expectViewportOverflows(page);
 
         // the dataset is 500 rows, but the capped viewport shows only the first block
         expect(await page.locator('.ag-grid-scrolling-container .ag-row').count()).toBeLessThan(50);
@@ -19,9 +19,12 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('requests only the blocks the capped viewport shows', async ({ page }) => {
+        // the first block is requested during the fixture's navigation, before a listener can
+        // attach, so tear that page down before collecting rather than reloading over it
+        const url = page.url();
+        await page.goto('about:blank');
         const blockRequests = collectBlockRequests(page);
-        // the first block is requested during the fixture's navigation, before a listener can attach
-        await page.reload();
+        await page.goto(url);
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -55,6 +58,16 @@ async function expectGridViewportHeight(page: Page, expected: number) {
     await expect(async () => {
         const box = await page.locator('.ag-grid-viewport').boundingBox();
         expect(box!.height).toBeCloseTo(expected, -1);
+    }).toPass();
+}
+
+/** Scrollbar chrome is hidden at rest on overlay-scrollbar platforms, so assert the overflow it stands for. */
+async function expectViewportOverflows(page: Page) {
+    await expect(async () => {
+        const { scrollHeight, clientHeight } = await page
+            .locator('.ag-grid-viewport')
+            .evaluate((element) => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
+        expect(scrollHeight).toBeGreaterThan(clientHeight);
     }).toPass();
 }
 
