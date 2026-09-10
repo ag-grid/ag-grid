@@ -323,7 +323,7 @@ export type { IPinnedSectionCompHost } from './interfaces/iPinnedSectionCompHost
 export type { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export type { IPivotColDefService } from './interfaces/iPivotColDefService';
 export type { IPivotResultColsService } from './interfaces/iPivotResultColsService';
-export type { IRangeService } from './interfaces/IRangeService';
+export type { CellSelectionRange, CellSelectionSnapshot, IRangeService } from './interfaces/IRangeService';
 export type { IRowChildrenService } from './interfaces/iRowChildrenService';
 
 export type {

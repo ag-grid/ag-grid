@@ -19,6 +19,8 @@ import type {
     CellRange,
     CellRangeBoundaryParams,
     CellRangeParams,
+    CellSelectionRange,
+    CellSelectionSnapshot,
     ClearCellRangeParams,
     ColumnModel,
     CtrlsService,
@@ -58,6 +60,9 @@ import {
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
+import type { CellSelectionRefreshFilter } from './cellSelectionRefreshFilter';
+import { createCellSelectionRefreshFilter } from './cellSelectionRefreshFilter';
+import { areAllChartRanges, buildCellSelectionRange, isMoreThanOneCell } from './cellSelectionState';
 import { DragListenerFeature } from './dragListenerFeature';
 import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
 import { RangeHeaderHighlightFeature } from './rangeHeaderHighlightFeature';
@@ -117,11 +122,20 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     private readonly columnRangeSelectionCtx: ColumnRangeSelectionContext = {};
 
+    private paintedRanges: CellSelectionRange[] = [];
+    private selectionState: CellSelectionSnapshot | null = null;
+
     public postConstruct(): void {
         const onColumnsChanged = this.onColumnsChanged.bind(this);
         const removeAllCellRanges = () => this.removeAllCellRanges();
-        const refreshLastRangeStart = this.refreshLastRangeStart.bind(this);
+        const refreshLastRangeStart = () => {
+            this.selectionState = null;
+            this.refreshLastRangeStart();
+        };
         this.addManagedEventListeners({
+            modelUpdated: () => {
+                this.selectionState = null;
+            },
             newColumnsLoaded: onColumnsChanged,
             columnVisible: onColumnsChanged,
             columnValueChanged: onColumnsChanged,
@@ -322,6 +336,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     // Called for both columns loaded and column visibility events
     public onColumnsChanged(): void {
+        this.selectionState = null;
+
         // first move start column in last cell range (i.e. series chart range)
         this.refreshLastRangeStart();
 
@@ -1097,10 +1113,45 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         this.onDragStop();
         this.cellRanges.length = 0;
+        this.selectionState = null;
 
         if (!silent) {
             this.dispatchChangedEvent(false, true);
         }
+    }
+
+    public getSelectionState(): CellSelectionSnapshot {
+        const cached = this.selectionState;
+        if (cached) {
+            return cached;
+        }
+
+        const ranges = this.cellRanges.map((range) =>
+            buildCellSelectionRange(
+                range,
+                this.getRangeStartRow(range),
+                this.getRangeEndRow(range),
+                this.isContiguousRange(range)
+            )
+        );
+
+        const state: CellSelectionSnapshot = {
+            ranges,
+            moreThanOneCell: isMoreThanOneCell(ranges),
+            allChartRanges: areAllChartRanges(ranges),
+        };
+        this.selectionState = state;
+
+        return state;
+    }
+
+    public takeSelectionRefreshFilter(): CellSelectionRefreshFilter | null {
+        const current = this.getSelectionState();
+
+        const filter = createCellSelectionRefreshFilter(this.paintedRanges, current, this.visibleCols);
+        this.paintedRanges = current.ranges;
+
+        return filter;
     }
 
     public isCellInAnyRange(cell: CellPosition): boolean {
@@ -1431,6 +1482,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
+        this.selectionState = null;
         this.eventSvc.dispatchEvent({
             type: 'cellSelectionChanged',
             started,
