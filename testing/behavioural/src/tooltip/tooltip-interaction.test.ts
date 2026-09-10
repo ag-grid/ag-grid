@@ -1,10 +1,24 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { _isIOSUserAgent } from 'ag-stack';
+import { TestGridsManager, asyncSetTimeout, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
 
-import { RenderApiModule, TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    RenderApiModule,
+    TooltipModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import type { GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
+import { ContextMenuModule } from 'ag-grid-enterprise';
+
+vi.mock(import('ag-stack'), async (importOriginal) => {
+    const original = await importOriginal();
+    return { ...original, _isIOSUserAgent: vi.fn(original._isIOSUserAgent) };
+});
 
 // Kept in its own file because the interactive tooltip lock and timing transitions are shared by
 // tooltip instances within a grid.
@@ -180,4 +194,75 @@ describe('Tooltip interaction', () => {
         expect(ageCell.getAttribute('aria-describedby') ?? '').not.toContain(tooltipId);
         expect(ageCell).toHaveFocus();
     });
+});
+
+describe('Tooltip interaction on iOS', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllCommunityModule] });
+    let restoreOffsetParent: (() => void) | undefined;
+
+    beforeEach(() => {
+        vi.mocked(_isIOSUserAgent).mockReturnValue(true);
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+        vi.mocked(_isIOSUserAgent).mockReset();
+    });
+
+    async function longPressCell(cell: HTMLElement): Promise<void> {
+        const touch = new Touch({ identifier: 1, target: cell, clientX: 5, clientY: 5 });
+        vi.useFakeTimers();
+        cell.dispatchEvent(
+            new TouchEvent('touchstart', {
+                bubbles: true,
+                cancelable: true,
+                touches: [touch],
+                targetTouches: [touch],
+                changedTouches: [touch],
+            })
+        );
+        await vi.advanceTimersByTimeAsync(600);
+        cell.dispatchEvent(new TouchEvent('touchend', { bubbles: true, changedTouches: [touch] }));
+    }
+
+    test.each([
+        { enterprise: false, suppressContextMenu: false },
+        { enterprise: false, suppressContextMenu: true },
+        { enterprise: true, suppressContextMenu: true },
+        { enterprise: true, suppressContextMenu: false },
+    ])(
+        'respects context menu availability (enterprise: $enterprise, suppressed: $suppressContextMenu)',
+        async ({ enterprise, suppressContextMenu }) => {
+            const api = await gridMgr.createGridAndWait(
+                'cell-tooltip',
+                {
+                    columnDefs: [{ field: 'athlete', tooltip: true }],
+                    rowData: [{ athlete: 'Athlete' }],
+                    suppressContextMenu,
+                    tooltipShowDelay: 2000,
+                    ...(enterprise ? { getContextMenuItems: () => [{ name: 'Cell action' }] } : {}),
+                },
+                { modules: enterprise ? [ContextMenuModule] : [] }
+            );
+
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+            await longPressCell(cell);
+
+            if (enterprise && !suppressContextMenu) {
+                expect(document.querySelector('.ag-menu')).toHaveTextContent('Cell action');
+                expect(getVisibleTooltips()).toHaveLength(0);
+
+                api.hidePopupMenu();
+                api.setGridOption('suppressContextMenu', true);
+                await longPressCell(cell);
+            }
+
+            expect(document.querySelector('.ag-menu')).toBeNull();
+            expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual(['Athlete']);
+        }
+    );
 });

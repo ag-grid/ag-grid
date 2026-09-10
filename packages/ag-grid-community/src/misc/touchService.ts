@@ -28,14 +28,14 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: GridBodyCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener);
+        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener, () => this.isBodyContextMenuEnabled());
     }
 
     public mockHeaderContextMenu(
         ctrl: GridHeaderCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGui, listener);
+        this.mockContextMenu(ctrl, ctrl.eGui, listener, () => !!this.beans.menuSvc?.isHeaderContextMenuEnabled());
     }
 
     public mockRowContextMenu(ctrl: RowContainerEventsFeature): void {
@@ -51,7 +51,7 @@ export class TouchService extends BeanStub implements NamedBean {
             }
             this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
         };
-        this.mockContextMenu(ctrl, ctrl.element, listener);
+        this.mockContextMenu(ctrl, ctrl.element, listener, () => this.isBodyContextMenuEnabled());
     }
 
     public handleCellDoubleClick(ctrl: CellCtrl, mouseEvent: MouseEvent): boolean {
@@ -141,17 +141,22 @@ export class TouchService extends BeanStub implements NamedBean {
         comp.addDestroyFunc(() => touchListener.destroy());
     }
 
+    private isBodyContextMenuEnabled(): boolean {
+        return !!this.beans.contextMenuSvc && !this.gos.get('suppressContextMenu');
+    }
+
     private mockContextMenu(
         ctrl: BeanStub,
         element: HTMLElement,
-        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void,
+        shouldHandleLongTap: () => boolean
     ): void {
         // we do NOT want this when not in iPad
         if (!_isIOSUserAgent()) {
             return;
         }
 
-        const touchListener = new TouchListener(element);
+        const touchListener = new TouchListener(element, { shouldHandleLongTap });
         const longTapListener = (event: LongTapEvent) => {
             if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
                 return;
