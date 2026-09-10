@@ -38,6 +38,14 @@
     min-width: 0;
     overflow: hidden;
     flex: 1 1 auto;
+}
+
+/* An always-present scrollbar occupies a lane of its own and the rows scroll underneath it, so the
+   lane is painted opaque to stop the content showing through the scrollbar. Overlay scrollbars have
+   no lane - they appear on demand above the rows - so there an opaque background would hide the cell
+   content beneath it, and the lane must stay transparent. */
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-viewport,
+:where(.ag-body-vertical-scroll:not(.ag-scrollbar-invisible)) > .ag-body-vertical-scroll-viewport {
     background-color: var(--ag-data-background-color);
 }
 
