@@ -15,7 +15,8 @@ import type {
     IServerSideGetRowsRequest,
     ISetFilterParams,
 } from 'ag-grid-community';
-import { MultiFilterModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import { AdvancedFilterModule, MultiFilterModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
     DEFAULT_OPTIONS,
@@ -450,6 +451,21 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
         expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
     });
 
+    test('`filter: true` resolves to a Set Filter, so its declared values are what the list offers', async () => {
+        const api = await createServerSideGrid([], {
+            field: 'country',
+            filter: true,
+            filterParams: { values: ['Jamaica', 'Poland'] },
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+    });
+
     test('the declared values are what the list offers', async () => {
         const api = await createServerSideGrid([]);
         const af = AdvancedFilterHarness.get(api);
@@ -457,6 +473,34 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
         await af.type('[Country] is any of [');
 
         expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+    });
+
+    describe('without the Set Filter module', () => {
+        const noSetFilter = new TestGridsManager({
+            modules: [TextFilterModule, NumberFilterModule, AdvancedFilterModule, ServerSideRowModelModule],
+        });
+
+        afterEach(() => noSetFilter.reset());
+
+        test('`filter: true` is a Text Filter, so declared values offer no set option', async () => {
+            const api = await noSetFilter.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'country', filter: true, filterParams: { values: ['Jamaica', 'Poland'] } },
+                ],
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params: IServerSideGetRowsParams) =>
+                        params.success({ rowData: SERVER_ROWS, rowCount: SERVER_ROWS.length }),
+                },
+                enableAdvancedFilter: true,
+            } as GridOptions);
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.type('[Country] ');
+
+            expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+        });
     });
 
     test('the set model reaches the datasource request, which is what does the filtering', async () => {
