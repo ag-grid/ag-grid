@@ -125,8 +125,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private isColumnVirtualisationSuppressed() {
-        // Disable virtualisation in unit tests
-        return this.suppressColumnVirtualisation || !_isRealCssEngine();
+        // A zero viewport width is a real zero width in a browser, but in unit tests it only means
+        // nothing measures, so keep building every column there.
+        return this.suppressColumnVirtualisation || (this.viewportRight === 0 && !_isRealCssEngine());
     }
 
     public clear(): void {
