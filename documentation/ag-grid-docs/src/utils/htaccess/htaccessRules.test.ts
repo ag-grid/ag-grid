@@ -120,8 +120,11 @@ describe('htaccessRules', () => {
         });
 
         it('should NOT long-cache on staging, so testers never see a stale asset', () => {
-            // Staging carries the no-cache document rule but no max-age of any kind.
-            expect(stagingContent).not.toContain('max-age');
+            // Staging carries the no-cache document rule and no year-long asset cache. The
+            // SE-189 root-static rule (max-age=86400 for /robots.txt and /favicon.ico only) is
+            // a deliberate, bounded exception - see that describe block - so this checks for
+            // the hashed-asset value specifically rather than any max-age.
+            expect(stagingContent).not.toContain('max-age=604800');
         });
 
         it('should NOT use immutable, which would make a mistake unfixable for a year', () => {
@@ -400,6 +403,46 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('SE-189: /robots.txt and /favicon.ico get a sensible cache lifetime', () => {
+        // Pulls the expr= regex out of the GENERATED output rather than re-declaring it: a
+        // copy would let the rule and its test drift apart.
+        const getRootStaticCacheRule = (content: string) => {
+            const line = content.split('\n').find((l) => l.includes('robots\\.txt|favicon\\.ico'));
+            expect(line).toBeDefined();
+            return line!;
+        };
+
+        it('should set a moderate Cache-Control on /robots.txt and /favicon.ico, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                const rule = getRootStaticCacheRule(content);
+                expect(rule).toContain('Cache-Control "public, max-age=86400"');
+            });
+        });
+
+        it('should NOT use the year-long immutable lifetime given to hashed assets', () => {
+            // Neither /robots.txt nor /favicon.ico is content-addressed, so a real change
+            // must be able to land same-day rather than waiting out a year-long cache.
+            const rule = getRootStaticCacheRule(productionContent);
+            expect(rule).not.toContain('604800');
+            expect(rule).not.toContain('31536000');
+            expect(rule).not.toContain('immutable');
+        });
+
+        it('should NOT use no-cache, which would defeat the point of caching them at all', () => {
+            expect(getRootStaticCacheRule(productionContent)).not.toContain('no-cache');
+        });
+
+        it('should match /robots.txt and /favicon.ico only, not any other root file', () => {
+            const rule = getRootStaticCacheRule(productionContent);
+            const pattern = new RegExp(rule.match(/m#([^#]+)#/)![1]);
+            expect(pattern.test('/robots.txt')).toBe(true);
+            expect(pattern.test('/favicon.ico')).toBe(true);
+            expect(pattern.test('/sitemap-index.xml')).toBe(false);
+            expect(pattern.test('/llms.txt')).toBe(false);
+            expect(pattern.test('/some/robots.txt')).toBe(false);
+        });
+    });
+
     describe('SE-81: agent-useful Link header', () => {
         it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
             expect(productionContent).toContain('Header set Link');
@@ -536,9 +579,10 @@ describe('htaccessRules', () => {
 
         it('should include the asset cache header in production only', () => {
             // Replaces an assertion that the (inert, now removed) mod_expires block was
-            // present. Staging gets no max-age so testers never hit a stale asset.
+            // present. Staging gets no long-lived asset cache so testers never hit a stale
+            // asset (the SE-189 root-static exception aside - see that describe block).
             expect(productionContent).toContain('max-age=604800');
-            expect(stagingContent).not.toContain('max-age');
+            expect(stagingContent).not.toContain('max-age=604800');
         });
 
         it('should include CORS headers in production only', () => {
