@@ -43,6 +43,8 @@ const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
+    /** The params object state was last applied from, to tell a refresh apart from a restore. */
+    private appliedParams: ToolPanelColumnCompParams | undefined;
     private params: ToolPanelColumnCompParams;
 
     private readonly childDestroyFuncs: (() => void)[] = [];
@@ -93,6 +95,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
+        this.appliedParams = params;
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
@@ -458,8 +461,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public refresh(params: ToolPanelColumnCompParams): boolean {
+        // A restore hands over fresh params; `api.refreshToolPanel()` re-presents the applied ones, so
+        // the live expansion must survive it. The state object can be the same on repeat restores.
+        const isRestoringState = !!params.initialState && params !== this.appliedParams;
+        const stateToApply = isRestoringState ? params.initialState : this.getState();
+
         this.destroyChildren();
-        this.init(params);
+        this.init({ ...params, initialState: stateToApply });
+        this.appliedParams = params;
         return true;
     }
 

@@ -145,7 +145,13 @@ export class ToolPanelWrapper extends Component {
     }
 
     public refresh(): void {
-        this.toolPanelCompInstance?.refresh(this.params);
+        this.toolPanelCompInstance?.refresh?.(this.params);
+    }
+
+    /** Caches the new params, so a later `api.refreshToolPanel()` presents the current ones. */
+    public refreshWithParams(params: IToolPanelParams): boolean | void {
+        this.params = params;
+        return this.toolPanelCompInstance?.refresh?.(params);
     }
 
     public animateDisplayed(displayed: boolean): void {

@@ -35,6 +35,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
+    /** The params object state was last applied from. Only this level still holds the side bar's object. */
+    private appliedParams: ToolPanelFiltersCompParams | undefined;
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
@@ -64,9 +66,14 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         };
         this.params = newParams;
 
+        // A restore hands over fresh params; `api.refreshToolPanel()` re-presents the applied ones, so
+        // the live expansion must survive it. The state object can be the same on repeat restores.
+        const isStateRestore = !!params.initialState && params !== this.appliedParams;
+        this.appliedParams = params;
+
         const { filtersToolPanelHeaderPanel, filtersToolPanelListPanel } = this;
         filtersToolPanelHeaderPanel.init(newParams);
-        filtersToolPanelListPanel.init(newParams);
+        filtersToolPanelListPanel.init(newParams, isStateRestore);
 
         const { suppressExpandAll: hideExpand, suppressFilterSearch: hideSearch } = newParams;
 
