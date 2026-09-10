@@ -326,7 +326,7 @@ describe('Column delay render', () => {
         };
         const fitCellContents = { type: 'fitCellContents' } as const;
 
-        /** A reveal seen inside this window is a real reveal, not the service's 1000ms fail-safe. */
+        /** A reveal that has not arrived within this window leaves the grid permanently hidden. */
         const REVEAL_WINDOW_MS = 100;
 
         async function expectFastReveal(api: { getDisplayedRowCount: () => number }, expectedRows = 0) {
@@ -474,7 +474,6 @@ describe('Column delay render', () => {
                 suppressRowVirtualisation: false,
             });
 
-            // Well inside the delay-render service's 1000ms fail-safe, so this is a real reveal.
             // eslint-disable-next-line no-restricted-syntax -- window in which a real reveal would arrive
             await asyncSetTimeout(100);
 
