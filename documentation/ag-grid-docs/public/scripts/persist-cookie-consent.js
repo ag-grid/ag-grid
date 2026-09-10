@@ -19,7 +19,11 @@
  */
 (function () {
     var BODY_ROOTS = ':scope > .ez-consent, :scope > [id^="ez-cookie"], :scope > [id^="enzuzo-"]';
-    var HEAD_STYLES = 'style[id^="enzuzo_cb"], style[ez-style], [data-astro-transition-persist]';
+    // Only re-persist the elements this script tagged on an earlier navigation. A bare
+    // [data-astro-transition-persist] would also match the AG stylesheets that
+    // persist-injected-styles.js has already given a placeholder, and a second placeholder for
+    // the same id is left behind as an empty <style> that accumulates on every navigation.
+    var HEAD_STYLES = 'style[id^="enzuzo_cb"], style[ez-style], [data-astro-transition-persist^="enzuzo-"]';
     // Enzuzo's base and modal stylesheets carry no id or attribute, so they are matched on the
     // class names they style instead.
     var UNTAGGED_HEAD_STYLES = 'style:not([data-astro-transition-persist])';
