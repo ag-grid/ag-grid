@@ -14,11 +14,8 @@ import { ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule } from 
 import { FILTERS_SIDEBAR, openFiltersPanel } from '../filters/filter-behaviour/toolPanelHarness';
 
 /**
- * Side Bar / Tool Panel grid state: `initialState.sideBar`, `api.setState` restores, and the
- * documented `IToolPanelComp` contract (`refresh(params)` / `getState()`) that the built-in and
- * custom tool panels share. `api.refreshToolPanel()` is exercised alongside each restore because
- * both arrive at the panel as a `refresh(params)` call, and only the state carried in the params
- * tells them apart.
+ * Side Bar / Tool Panel grid state. `api.refreshToolPanel()` is exercised alongside each restore
+ * because both reach the panel as a `refresh(params)` call, and only the params tell them apart.
  */
 describe('Tool Panel state', () => {
     const gridsManager = new TestGridsManager({
@@ -46,7 +43,7 @@ describe('Tool Panel state', () => {
     ];
     const rowData = [{ name: 'Alice', age: 30 }];
 
-    /** A side bar state naming the filters/groups to leave expanded, as `api.getState()` returns it. */
+    /** A side bar state naming the filters/groups to leave expanded. */
     function filtersState(expandedColIds: string[], expandedGroupIds: string[] = []): SideBarState {
         return {
             visible: true,
@@ -56,7 +53,7 @@ describe('Tool Panel state', () => {
         };
     }
 
-    /** Restores side bar state; callers then poll for the outcome, since the rebuild is async. */
+    /** Restores side bar state; callers then poll for the outcome, as the rebuild is async. */
     function restoreSideBar(api: GridApi, sideBar: SideBarState): void {
         api.setState({ sideBar });
     }
@@ -66,7 +63,7 @@ describe('Tool Panel state', () => {
         await waitFor(async () => expect((await openFiltersPanel(api)).isGroupExpandedByTitle(title)).toBe(expanded));
     }
 
-    /** Polls until the side bar state matches, so a restore/refresh does not need a guessed delay. */
+    /** Polls until the side bar state matches, to avoid a guessed delay. */
     async function waitForSideBarState(api: GridApi, expected: unknown): Promise<void> {
         await waitFor(() => expect(api.getState().sideBar).toEqual(expected));
     }
@@ -94,7 +91,7 @@ describe('Tool Panel state', () => {
                 sideBar: FILTERS_SIDEBAR,
             });
             const panel = await openFiltersPanel(api);
-            // Real column groups render expanded by default, so collapse first to have something to restore.
+            // Column groups render expanded by default, so collapse first
             await panel.collapseGroup('Group');
             expect(api.getState().sideBar?.toolPanels?.filters).toEqual({
                 expandedColIds: [],
@@ -155,8 +152,7 @@ describe('Tool Panel state', () => {
             });
             const panel = await openFiltersPanel(api);
             await panel.expandGroup('Age');
-            // The same object the app saved, restored twice with a user change in between: the state
-            // object's identity cannot be the restore signal.
+            // The same saved object twice, with a user change in between
             const saved = api.getState();
 
             restoreSideBar(api, saved.sideBar!);
@@ -178,13 +174,13 @@ describe('Tool Panel state', () => {
                 initialState: { sideBar: filtersState(['name']) },
             });
             const panel = await openFiltersPanel(api);
-            // The construction-time state is applied once...
+            // The construction-time state is applied once
             expect(panel.isGroupExpandedByTitle('Name')).toBe(true);
 
             await panel.collapseGroup('Name');
             await panel.expandGroup('Age');
 
-            // ...and neither a re-render nor a refresh re-presents it over what the user has since done.
+            // and neither a re-render nor a refresh re-presents it over the user's change
             api.moveColumns(['age'], 0);
             await waitForSideBarState(api, filtersState(['age']));
             api.refreshToolPanel();
@@ -227,7 +223,7 @@ describe('Tool Panel state', () => {
             };
         }
 
-        /** Creates the grid and waits for the panel to have rendered its (default-expanded) groups. */
+        /** Creates the grid and waits for the panel to render its groups. */
         async function createColumnsGrid(): Promise<GridApi> {
             const api = await gridsManager.createGridAndWait('grid1', {
                 columnDefs: groupedColumnDefs,
@@ -243,7 +239,7 @@ describe('Tool Panel state', () => {
         }
 
         test('setState restores expanded groups', async () => {
-            // Groups are expanded by default, so the restore has to collapse one.
+            // Groups are expanded by default, so the restore has to collapse one
             const api = await createColumnsGrid();
 
             api.setState({ sideBar: columnsState(['gA']) });
@@ -257,7 +253,7 @@ describe('Tool Panel state', () => {
             await waitForColumnsState(api, ['gA']);
             const saved = api.getState();
 
-            // A user change, then the very same saved object again.
+            // A user change, then the very same saved object again
             api.setState({ sideBar: columnsState(['gA', 'gB']) });
             await waitForColumnsState(api, ['gA', 'gB']);
             api.setState(saved);
@@ -277,7 +273,7 @@ describe('Tool Panel state', () => {
     });
 
     describe('Custom tool panel', () => {
-        /** Records the state the grid asks it to present, and reports state back as the docs prescribe. */
+        /** Records the state the grid asks it to present, and reports its own state back. */
         class RecordingToolPanel implements IToolPanelComp {
             public static presented: (unknown | undefined)[] = [];
             private readonly eGui = document.createElement('div');
@@ -333,8 +329,7 @@ describe('Tool Panel state', () => {
         });
 
         test('a panel that implements neither refresh nor getState survives a refresh and a restore', async () => {
-            // `refresh` and `getState` are documented as optional, and a plain JS tool panel is the
-            // user's own class, so the grid must cope with them being absent.
+            // `refresh` and `getState` are optional, so the grid must cope without them
             class MinimalToolPanel {
                 private readonly eGui = document.createElement('div');
                 public init(): void {
@@ -374,7 +369,7 @@ describe('Tool Panel state', () => {
             });
 
             await waitFor(() => expect(api.getState().sideBar?.openToolPanel).toBe('minimal'));
-            // No `getState` on the panel, so it contributes no state of its own.
+            // No `getState` on the panel, so it contributes no state of its own
             expect(api.getState().sideBar?.toolPanels?.minimal).toBeUndefined();
         });
 
@@ -394,8 +389,7 @@ describe('Tool Panel state', () => {
 
             api.refreshToolPanel();
 
-            // `refreshToolPanel` is documented as presenting the current params: after a restore that
-            // is the restored state, not the state the panel was constructed with.
+            // `refreshToolPanel` presents the current params: after a restore, the restored state
             expect(RecordingToolPanel.presented).toEqual([
                 { value: 'construction' },
                 { value: 'restored' },

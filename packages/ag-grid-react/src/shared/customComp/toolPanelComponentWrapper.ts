@@ -24,11 +24,9 @@ export class ToolPanelComponentWrapper
     }
 
     /**
-     * `state` is documented as initially the same value as `initialState`, which the grid provides at
-     * construction and again on every `api.setState` restore. Each restore comes with a newly built
-     * params object, whereas `api.refreshToolPanel()` re-presents the params already applied and must
-     * not overwrite the state the component has since reported. The state object cannot be compared
-     * instead: restoring one saved snapshot twice passes the very same object.
+     * A restore hands over fresh params; `api.refreshToolPanel()` re-presents the applied ones, so the
+     * state the component has since reported must survive it. The state object can be the same on
+     * repeat restores.
      */
     private applyInitialState(params: IToolPanelParams): void {
         if (params.initialState !== undefined && params !== this.appliedParams) {

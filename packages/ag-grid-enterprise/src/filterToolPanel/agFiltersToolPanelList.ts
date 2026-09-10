@@ -27,11 +27,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private initialised = false;
-    /**
-     * Set when the panel is (re-)initialised for a state restore, and consumed by the next rebuild:
-     * `initialState` is an apply-now signal, so it must not be re-applied over the expansion the user
-     * has since changed when a column event rebuilds the list.
-     */
+    /** Consumed by the next rebuild only, so a later column event does not re-apply stale state. */
     private pendingStateRestore = false;
     private isRestoringState = false;
 
@@ -318,7 +314,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
-            // First init, so any provided state is still the state to apply.
+            // First init, so any provided state is still to apply
             this.init(this.params, true);
         }
     }

@@ -9,9 +9,8 @@ export type ColumnToolPanelAction = 'apply' | 'cancel';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /**
-     * The tool-panel-specific state to apply, if applicable. Provided from `initialState` in the grid
-     * options when the tool panel is created, and again (as a new object) with each `api.setState`
-     * restore that includes side bar state.
+     * The tool panel state to apply, if applicable. Provided from `initialState` in the grid options,
+     * and again with each `api.setState` restore that includes side bar state.
      */
     initialState?: TState;
 }
@@ -29,7 +28,7 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
     /**
      * Called when `api.refreshToolPanel()` is called (with the current params).
      * Also called when the `sideBar` grid option is updated, and when `api.setState` restores side bar
-     * state (with the updated params, `initialState` carrying the state to restore).
+     * state (with the updated params).
      * When `sideBar` is updated or state is restored, if this method returns `true`,
      * then the grid will take no further action.
      * Otherwise, the tool panel will be destroyed and recreated.
