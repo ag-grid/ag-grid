@@ -1,11 +1,7 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
-// The example has 34 columns, so only the leftmost ones are rendered at any time - column
-// virtualisation removes the rest from the DOM. These are measured because they are the columns on
-// screen when the example loads; the generated text columns further right are reached by scrolling,
-// which this example's behaviour does not need.
-const COLUMNS = ['athlete', 'age', 'country', 'sport', 'year', 'date'];
+const COLUMNS = ['athlete', 'age', 'country', 'text1', 'text2', 'text3'];
 
 /** The page's first-row number in the paging summary, which changes as soon as the new page lands. */
 function firstRowOnPage(page: Page) {
@@ -44,7 +40,7 @@ test.agExample(import.meta, () => {
         // full set of seven groups
         const groupLabels = page.locator('.ag-header-group-cell-label');
         await expect(groupLabels.nth(0)).toHaveText('Competitor');
-        await expect(groupLabels.nth(1)).toHaveText('Event');
+        await expect(groupLabels.nth(1)).toHaveText('Profile');
 
         // Auto-size runs asynchronously after the rows render, so the narrow columns are polled to their
         // fitted state rather than sampled once: the narrow numeric columns must not be left padded out
@@ -65,12 +61,6 @@ test.agExample(import.meta, () => {
         const remoteApi = remoteGrid(page, '1');
         await waitForGridContent(page);
 
-        // A page change reaches continuous auto-size only through the 150ms-debounced `viewportChanged`
-        // path, so nothing in the DOM says the re-fit has happened yet. `columnResized` with
-        // `finished: true` and `source: 'autosizeColumns'` is dispatched once every new width has been
-        // written, which is the observable end state to gate on - not an elapsed window, and not
-        // `.ag-animate-autosize`, which is only ever applied when `animateColumnResizing` is set (this
-        // example does not set it, so waiting on it waited for nothing).
         await remoteApi.logEvent('columnResized', ['finished', 'source']);
         const autoSizePasses = () =>
             remoteGrid.eventLog.filter(

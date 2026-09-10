@@ -188,42 +188,66 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 
 {% note %}
 
-- The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the vertical scroll plus a small buffer (default buffer size is 20).
-- Only rendered cells on the screen are considered, and the grid works out the width based on what it sees. It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to auto-size a column that is not visible on the screen.
-- Column Virtualisation is the technique the grid uses to render large amounts of columns without degrading performance by only rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns with only 10 rendered if the horizontal scroll is only showing 10 columns. To get around this, you can turn off column virtualisation by setting grid property `suppressColumnVirtualisation=true`. The choice is yours to decide whether you want column virtualisation working OR auto-size working using off-screen columns.
+- The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the vertical scroll plus a small buffer (default buffer size is 20). With [Continuous Auto-Sizing](#continuous-auto-sizing) opted into [scroll-driven re-sizes](#scrolling), the width is worked out again from the rows rendered at each new scroll position.
+- The same applies across columns. Column Virtualisation renders only the columns the horizontal scroll position makes visible, so a grid of 1,000 columns may have only 10 rendered, and the grid can measure only what it renders. A one-off auto-size therefore leaves off-screen columns untouched. To size them, either set `suppressColumnVirtualisation=true` so every column is rendered and measured in one go, or keep virtualisation and use [Continuous Auto-Sizing](#continuous-auto-sizing) with [scroll-driven re-sizes](#scrolling), which fits each column as the scroll brings it into view.
 - Note that [Pinned Columns](./column-pinning), the [Selection Column](./row-selection-multi-row/#customising-the-checkbox-column) and the [Row Numbers](./row-numbers) column will not be scaled up to fill any empty space when using `scaleUpToFitGridWidth`.
 
 {% /note %}
 
 ## Continuous Auto-Sizing
 
-By default `autoSizeStrategy` is applied once, when the grid first renders. Set `continuous` to have the grid re-apply the configured strategy whenever the grid changes in a way that affects column widths.
+By default `autoSizeStrategy` is applied once, when the grid first renders. Set `continuous` to re-apply it whenever the grid changes in a way that affects column widths.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoSizeStrategy: {
         type: 'fitCellContents',
         continuous: true,
-        shouldAutoSizeColumns: (params) => {
-            // skip re-sizing while the user is scrolling through the data
-            return params.reason !== 'viewportChanged';
-        }
     }
 }
 ```
 
-Every strategy re-runs when the displayed columns change and when the grid is resized. Beyond that the two kinds of strategy react to different things:
+- `fitCellContents` re-sizes when the row data or the displayed columns change.
+- `fitGridWidth` and `fitProvidedWidth` re-size when the available grid width or the displayed columns change, including changes caused by pagination or scrollbars.
+- Re-sizes are debounced while the grid is being resized.
 
-- `fitCellContents` re-runs on any change to the row data, and on viewport changes, because both change what there is to measure — scrolling is what brings new cell content into view.
-- The width-distribution strategies, `fitGridWidth` and `fitProvidedWidth`, are arithmetic over the current column set, so scrolling cannot change their result. They re-run on new data, a page change, and a scrollbar appearing or disappearing — the changes to the width there is to share out.
-
-Triggers arriving in the same frame are coalesced into a single re-size. Viewport and grid-size changes are debounced on top of that, so scrolling and resizing the grid re-size once the gesture settles rather than on every frame.
-
-The example below uses `fitCellContents` continuously over a grouped, paginated grid of 34 columns and over 8,000 rows. Move between pages, change the page size, or scroll horizontally through the generated text columns, and the columns re-fit to the content of the rows now on screen — the medal columns stay narrow while the text columns grow and shrink around the longest values on each page.
+The example below sizes a grouped, paginated grid of 34 columns and over 8,000 rows with `fitCellContents`. The text columns hold sentences of differing lengths, so moving between pages or changing the page size visibly re-fits them to the rows now on screen, each one settling on the longest value that page holds. It also opts into the scroll-driven re-sizes described in [Scrolling](#scrolling) below, so scrolling right fits the remaining columns as they arrive — the medal columns at the far end are narrow, and stay narrow.
 
 {% gridExampleRunner title="Continuous Auto-Sizing in Action" name="continuous-auto-size-in-action" /%}
 
-Provide `shouldAutoSizeColumns` to take control of each re-size. It is called first, with the eligible `columns` and a `reason` of `'dataChanged'`, `'columnsChanged'`, `'viewportChanged'` or `'gridSizeChanged'`. Return `false` to skip that re-size, leaving the widths untouched. The callback has no effect unless `continuous` is `true`.
+### Controlling Each Re-Size
+
+`shouldAutoSizeColumns` is called before each re-size, with the eligible `columns` and a `reason` of `'dataChanged'`, `'columnsChanged'`, `'viewportChanged'` or `'gridSizeChanged'`. Return `false` to skip that re-size. It has no effect unless `continuous` is `true`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        continuous: true,
+        // re-size on new data only, so the widths hold still as the grid is resized
+        shouldAutoSizeColumns: ({ reason }) => reason === 'dataChanged',
+    }
+}
+```
+
+{% interfaceDocumentation interfaceName="AutoSizeColumnsTriggerParams" config={"description":"The callback is passed the following params:"} /%}
+
+### Scrolling
+
+Scrolling never re-sizes columns by default, in either direction. `fitCellContents` can opt in: vertical scrolling brings new rows into view and horizontal scrolling brings new columns into view, and both change what there is to measure. Provide `shouldAutoSizeColumns` and allow the `'viewportChanged'` reason.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        continuous: true,
+        // re-size as rows and columns scroll into view, as well as on data and column changes
+        shouldAutoSizeColumns: () => true,
+    }
+}
+```
+
+Scroll-driven re-sizes are debounced, so the columns settle once the gesture stops. `fitGridWidth` and `fitProvidedWidth` are not affected by scrolling.
 
 ### Column Width Ownership
 
@@ -240,7 +264,7 @@ In the example below the "Athlete" column sets `suppressAutoSize`, so it is left
 {% gridExampleRunner title="Continuous Auto-Sizing" name="continuous-auto-size" /%}
 
 {% note %}
-For `fitCellContents`, only the cells that are currently rendered can be measured, so with row or column virtualisation the columns may be sized progressively as you scroll and more content is rendered.
+Continuous `fitCellContents` is subject to the same [virtualisation limits](#auto-size-columns-to-fit-cell-contents) as a one-off auto-size: only the rendered cells can be measured, so columns are sized progressively as scrolling renders more content.
 
 Continuous `fitCellContents` is not supported by the [Viewport Row Model](./viewport/). The grid logs a warning and ignores the option there.
 {% /note %}

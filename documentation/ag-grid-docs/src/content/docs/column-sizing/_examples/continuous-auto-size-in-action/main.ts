@@ -60,6 +60,7 @@ const columnDefs: ColGroupDef<IOlympicData>[] = [
         headerName: 'Competitor',
         children: [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }],
     },
+    ...generatedGroups,
     {
         headerName: 'Event',
         children: [{ field: 'sport' }, { field: 'year' }, { field: 'date' }],
@@ -68,7 +69,6 @@ const columnDefs: ColGroupDef<IOlympicData>[] = [
         headerName: 'Medals',
         children: [{ field: 'gold' }, { field: 'silver' }, { field: 'bronze' }, { field: 'total' }],
     },
-    ...generatedGroups,
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -81,6 +81,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoSizeStrategy: {
         type: 'fitCellContents',
         continuous: true,
+        shouldAutoSizeColumns: () => true,
     },
 };
 

@@ -8,7 +8,13 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
-import type { BodyScrollEvent, ColumnEventType, ModelUpdatedEvent } from '../events';
+import type {
+    BodyScrollEvent,
+    ColumnEventType,
+    DisplayedColumnsChangedEvent,
+    ModelUpdatedEvent,
+    PaginationChangedEvent,
+} from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -35,6 +41,9 @@ interface AutoSizeColumnParams {
     scaleUpToFitGridWidth?: boolean;
     source?: ColumnEventType;
 }
+
+/** The sources a re-size writes its widths under: a displayed-column change carrying one is width-only. */
+const WIDTH_WRITE_SOURCES: ReadonlySet<ColumnEventType> = new Set(['autosizeColumns', 'sizeColumnsToFit']);
 
 /** Sources used by the built-in Column Menu and Context Menu auto-size actions. */
 const UI_MENU_SOURCES: ReadonlySet<ColumnEventType> = new Set(['columnMenu', 'contextMenu']);
@@ -74,10 +83,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private pendingReasons: Set<AutoSizeReason> | null = null;
     private continuousRetries = 0;
     private continuousRetryScheduled = false;
+    private continuousEchoing = false;
+    private gridSizeSettling = false;
 
     private readonly runDebouncedContinuousAutoSize = _debounce(
         this,
-        () => this.scheduleContinuousAutoSize(),
+        () => {
+            this.gridSizeSettling = false;
+            this.scheduleContinuousAutoSize();
+        },
         CONTINUOUS_STREAMING_DEBOUNCE
     );
 
@@ -702,25 +716,40 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.continuousStrategy = strategy;
 
         this.addManagedEventListeners({
-            // the one content-changed signal every row model dispatches: CSRM replacements and transactions,
-            // SSRM and infinite store loads, and pagination. It also covers sorting, filtering and expansion,
-            // which change what a cell renders — so the content strategy wants all of them, while the
-            // width-distribution strategies only care about genuinely new rows.
             modelUpdated: (event: ModelUpdatedEvent) => {
-                if (measuresContent || event.newData || event.newPage || event.newPageSize) {
+                if (measuresContent || event.newData) {
+                    this.scheduleContinuousAutoSize('dataChanged');
+                }
+            },
+            paginationChanged: (event: PaginationChangedEvent) => {
+                if (event.newPage || event.newPageSize) {
                     this.scheduleContinuousAutoSize('dataChanged');
                 }
             },
             // neither an edit nor `rowNode.setData` need refresh the model, so they are not covered above
             cellValueChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
-            displayedColumnsChanged: () => this.scheduleContinuousAutoSize('columnsChanged'),
+            displayedColumnsChanged: (event: DisplayedColumnsChangedEvent) => {
+                if (!WIDTH_WRITE_SOURCES.has(event.source)) {
+                    this.scheduleContinuousAutoSize('columnsChanged');
+                }
+            },
             newColumnsLoaded: () => this.scheduleContinuousAutoSize('columnsChanged'),
             // a resize drag streams one event per frame, so it settles like a scroll does
             gridSizeChanged: () => this.scheduleDebouncedContinuousAutoSize('gridSizeChanged'),
             // a scrollbar appearing or disappearing changes the width there is to work with. A row count
             // change is the usual cause, and a transaction reports neither `newData` nor `newPage`, so for
             // the width-distribution strategies this is the only signal that one happened
-            scrollVisibilityChanged: () => this.scheduleContinuousAutoSize('gridSizeChanged'),
+            scrollVisibilityChanged: () => {
+                if (this.isContinuousEcho()) {
+                    return;
+                }
+                // mid-gesture the scrollbar transition is part of the resize, so it settles with it
+                if (this.gridSizeSettling) {
+                    this.scheduleDebouncedContinuousAutoSize('gridSizeChanged');
+                } else {
+                    this.scheduleContinuousAutoSize('gridSizeChanged');
+                }
+            },
         });
 
         // `rowNode.setData`/`updateData` and pinned-row replacements report per row, not through the model
@@ -728,7 +757,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             rowNodeDataChanged: () => this.scheduleContinuousAutoSize('dataChanged'),
         });
 
-        if (!measuresContent) {
+        if (!measuresContent || !strategy.shouldAutoSizeColumns) {
             // the width-distribution strategies are arithmetic over the current column set, so what is
             // scrolled into view cannot change their result
             return;
@@ -752,8 +781,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
      * the most significant of them once the run lands.
      */
     private scheduleDebouncedContinuousAutoSize(reason: AutoSizeReason): void {
+        if (this.isContinuousEcho()) {
+            return;
+        }
+        if (reason === 'gridSizeChanged') {
+            this.gridSizeSettling = true;
+        }
         (this.pendingReasons ??= new Set()).add(reason);
         this.runDebouncedContinuousAutoSize();
+    }
+
+    private isContinuousEcho(): boolean {
+        return this.continuousRunning || this.continuousEchoing;
     }
 
     /** Coalesces every trigger in the current frame into at most one evaluation. */
@@ -884,6 +923,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private onContinuousAutoSizeComplete(): void {
         this.continuousRunning = false;
+        this.continuousEchoing = true;
+        _requestAnimationFrame(this.beans, () => {
+            this.continuousEchoing = false;
+        });
+
         if (this.pendingReasons?.size && this.isAlive()) {
             // re-enter through the scheduler rather than recursing, so the follow-up still gets its own frame
             const reasons = this.pendingReasons;
