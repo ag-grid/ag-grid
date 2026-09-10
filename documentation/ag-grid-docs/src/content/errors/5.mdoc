@@ -1,0 +1,32 @@
+---
+description: A transaction passed a data object the grid could not match to a row, because no getRowId is configured.
+---
+
+## Row Data Object Not Found
+
+A transaction asked the grid to update or remove a row, and the grid could not find it. No `getRowId` is configured, so rows are matched by object reference. The object you passed is not the same object the grid is holding, even if its contents are identical.
+
+The usual cause is data that has been through a copy since the grid received it:
+
+- An immutable update that replaced the object rather than mutating it, which is the normal pattern in Redux, NgRx, Pinia and similar stores.
+- A round trip through `JSON.parse(JSON.stringify(...))`, a spread, or a mapping function.
+- A fresh response from an API, where the objects are new even though the records are the same.
+- Data re-fetched or re-derived between handing it to the grid and building the transaction.
+
+### Configure getRowId
+
+Matching on an ID rather than a reference fixes the whole class of problem, and is faster:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    getRowId: (params) => params.data.employeeId,
+}
+```
+
+With an ID configured, `remove` items need only carry the key, and a failed lookup reports the ID it could not find ([error #4](./errors/4)) rather than dumping the object.
+
+### Or pass the original object
+
+If you cannot provide an ID, the transaction must carry the exact object the grid was given. Keep a reference to it, or read it back from the grid through the row node, rather than reconstructing an equivalent object.
+
+{% partial file="./_row-identity.mdoc" /%}

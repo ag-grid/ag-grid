@@ -1,0 +1,35 @@
+---
+description: The getRowId callback returned the same ID for more than one row.
+---
+
+## Duplicate Row ID
+
+Two rows were given the same ID by your `getRowId` callback. The grid keys rows by ID, so the second row overwrites the first in its lookup map. Selection, editing, transactions and row state then act on the wrong row, or appear to act on nothing.
+
+This is only ever raised when `getRowId` is configured. Without it the grid numbers rows itself and they cannot collide.
+
+### Find the duplicate
+
+The ID in the message is the one that collided. To find which rows produced it, run your callback over the data you passed in:
+
+```js
+const seen = new Map();
+rowData.forEach((data) => {
+    const id = getRowId({ data });
+    seen.set(id, (seen.get(id) ?? 0) + 1);
+});
+console.log([...seen].filter(([, count]) => count > 1));
+```
+
+### Common causes
+
+- A business key that is not as unique as expected, such as a name, an email or a SKU reused across records.
+- An ID derived from the row's index, which changes as rows are added, removed or sorted.
+- A key that is only unique within its parent, so the same value recurs under different groups. Build a composite ID from `parentKeys` and `level` in that case.
+- A default or placeholder value, such as `0` or an empty string, standing in for a missing key.
+
+{% partial file="./_row-identity.mdoc" /%}
+
+{% note %}
+Two further restrictions apply to the value returned. It must not start with the prefix the grid reserves for row grouping ([error #14](./errors/14)), and it must not be the reserved root node ID ([error #331](./errors/331)).
+{% /note %}

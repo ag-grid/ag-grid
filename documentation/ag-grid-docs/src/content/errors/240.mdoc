@@ -1,0 +1,42 @@
+---
+description: The theme grid option was given something other than a Theming API theme object or the string 'legacy'.
+---
+
+## Invalid Theme Grid Option
+
+The `theme` grid option accepts a Theming API theme object, or the string `legacy`. It was given {% errorParam name="theme" fallback="ag-theme-alpine" /%}, which is neither, so the grid cannot apply it.
+
+Where the value looks like a CSS class name, such as `ag-theme-alpine` or `ag-theme-quartz`, the cause is almost always a legacy theme name being passed to the option. In v32 and earlier a theme was chosen by putting that class on the grid's container element. The `theme` option introduced in v33 is a different mechanism and does not take those names.
+
+### Use the matching theme object
+
+Theme objects are imported from `ag-grid-community` and passed directly. `themeQuartz`, `themeAlpine`, `themeBalham` and `themeMaterial` correspond to the legacy themes of the same name:
+
+```js
+import { themeAlpine } from 'ag-grid-community';
+```
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    theme: themeAlpine,
+}
+```
+
+The object can be customised before use, for example `themeAlpine.withParams({ accentColor: 'red' })`. See [Theming API](./theming/).
+
+### Or keep the legacy themes
+
+To stay on the v32 approach, pass the string `legacy` and keep applying the theme class to the container element as before. See [Continue with Legacy Themes](./theming-migration/#continue-with-legacy-themes).
+
+Where you have several grids, a [Global Grid Option](./grid-interface/#global-grid-options) sets this once for all of them:
+
+```ts
+import { provideGlobalGridOptions } from 'ag-grid-community';
+
+// Mark all grids as using legacy themes
+provideGlobalGridOptions({ theme: 'legacy' });
+```
+
+{% note %}
+If you also see [error #239](./errors/239) or [error #106](./errors/106), the legacy CSS files are still loaded alongside a Theming API theme. Those pages cover removing them.
+{% /note %}

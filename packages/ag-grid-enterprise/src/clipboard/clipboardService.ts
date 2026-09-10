@@ -166,7 +166,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    this.warn(40, { e, method: 'readText' });
+                    this.warn(40, { error: e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -1192,7 +1192,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                this.warn(40, { e, method: 'writeText' });
+                this.warn(40, { error: e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;

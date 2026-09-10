@@ -1,0 +1,39 @@
+---
+description: A grid API that redraws rows was called from code already running inside a redraw.
+---
+
+## Grid API Called During a Redraw
+
+The grid was part-way through drawing its rows when something asked it to draw them again. It cannot service the second request while the first is unfinished, so it throws rather than continue from an inconsistent state.
+
+The cause is always a grid API that rebuilds rows, called from code that itself runs as part of a redraw. The frames between the grid's own render call and your API call, in the stack trace, are the code responsible.
+
+Anything that makes the grid rebuild its rows counts: `redrawRows()`, changing `rowData`, applying a transaction, changing pinned row data, changing `domLayout`, and moving to another page.
+
+### Where the call is coming from
+
+The code that runs during a redraw is the code the grid calls in order to draw, so look first at:
+
+- The constructor, `init`, `refresh` or `destroy` of a [Cell Renderer](./component-cell-renderer/), including a framework component's mount or effect hooks.
+- The same lifecycle points on a [Cell Editor](./cell-editors/).
+- Grid event handlers that fire while rows are being drawn, where the handler goes on to change grid state.
+
+A renderer that dispatches to a store, with a store subscription that pushes new `rowData` straight back into the grid, is the most common version of this.
+
+### Resolving
+
+Deferring the call to the next tick breaks the re-entry, because the first redraw completes before the second begins:
+
+```js
+setTimeout(() => api.redrawRows(), 0);
+```
+
+That stops the error, but it leaves your rendering driving your data, so the grid does two passes of work where one would do. The fix is to move the state change out of rendering:
+
+- If you are reacting to data arriving, do the work before handing the data to the grid rather than from a renderer.
+- To run something once the grid has drawn, use the [lifecycle events](./grid-lifecycle/): `firstDataRendered` for one-off setup after the first draw, or `modelUpdated` to react to the row model settling.
+- If a renderer genuinely needs to trigger a refresh, have it request one through your own state layer and let that flow back in through `rowData`.
+
+{% note %}
+This message is thrown rather than logged, so it reaches production whether or not the `ValidationModule` is registered. Without it the exception's message is reduced to this link, which is why an `error #252` can arrive with no other detail.
+{% /note %}
