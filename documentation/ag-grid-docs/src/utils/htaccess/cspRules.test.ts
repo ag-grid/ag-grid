@@ -45,14 +45,37 @@ describe('cspRules', () => {
             );
         });
 
-        it('site and examples scopes differ only in script-src', () => {
+        it('site and examples scopes differ only in script-src and connect-src', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
             const examples = getCspDirectives({ env: 'production', scope: 'examples' });
 
             expect(Object.keys(examples)).toEqual(Object.keys(site));
-            const otherNames = Object.keys(site).filter((name) => name !== 'script-src');
+            const otherNames = Object.keys(site).filter((name) => name !== 'script-src' && name !== 'connect-src');
             for (let i = 0, len = otherNames.length; i < len; ++i) {
                 expect(examples[otherNames[i]]).toEqual(site[otherNames[i]]);
+            }
+        });
+    });
+
+    describe('archived doc versions (AG-18490: legacy example runner hosts)', () => {
+        const site = getCspDirectives({ env: 'production', scope: 'site' });
+        const examples = getCspDirectives({ env: 'production', scope: 'examples' });
+
+        it('allows the SystemJS example runner of v25 to v28.1 to load and fetch from unpkg.com', () => {
+            expect(examples['script-src']).toContain('https://unpkg.com');
+            expect(examples['connect-src']).toContain('https://unpkg.com');
+        });
+
+        it('allows the pre-v25 Web Font Loader script and GitHub-hosted sample data', () => {
+            expect(examples['script-src']).toContain('https://ajax.googleapis.com');
+            expect(examples['connect-src']).toContain('https://raw.githubusercontent.com');
+        });
+
+        it('keeps the archive-only hosts out of the site scope', () => {
+            const hosts = ['https://unpkg.com', 'https://ajax.googleapis.com', 'https://raw.githubusercontent.com'];
+            for (let i = 0, len = hosts.length; i < len; ++i) {
+                expect(site['script-src']).not.toContain(hosts[i]);
+                expect(site['connect-src']).not.toContain(hosts[i]);
             }
         });
 
