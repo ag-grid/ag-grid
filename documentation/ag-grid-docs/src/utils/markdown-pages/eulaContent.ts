@@ -17,8 +17,8 @@ export const EULA_CONTENT: PolicyContent = {
     intro: [
         '<strong>PLEASE READ THESE LICENCE TERMS (v40) CAREFULLY BEFORE DOWNLOADING ANY SOFTWARE:</strong>',
         'These terms and conditions and schedules (“<strong>Terms</strong>”) are entered into between AG GRID LTD (registered company number 07318192) (“<strong>Licensor</strong>”) and the entity whose details are set out on the Quote or otherwise submitted to the Licensor (“<strong>Licensee</strong>”) effective as of the date of acceptance of these Terms (“<strong>Effective Date</strong>”).',
-        '<strong>BY CLICKING ON THE “I ACCEPT” BUTTON BELOW, YOU CONFIRM THAT YOU ACCEPT AND AGREE TO BE BOUND BY THESE TERMS AND ACKNOWLEDGE THAT THEY CONSTITUTE A LEGALLY BINDING CONTRACT BETWEEN US AND YOU.</strong>',
+        '<strong>BY USING OUR SOFTWARE, YOU CONFIRM THAT YOU ACCEPT AND AGREE TO BE BOUND BY THESE TERMS AND ACKNOWLEDGE THAT THEY CONSTITUTE A LEGALLY BINDING CONTRACT BETWEEN US AND YOU.</strong>',
         '<strong>IF YOU ARE ACTING ON BEHALF OF ANY ORGANISATION, YOU CONFIRM THAT YOU HAVE THE REQUISITE AUTHORITY, POWER AND RIGHT TO FULLY BIND THAT ORGANISATION.</strong>',
-        '<strong>IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, DO NOT CLICK ON THE "I ACCEPT" BUTTON BELOW.</strong>',
+        '<strong>IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, DO NOT USE THE SOFTWARE.</strong>',
     ],
 };
