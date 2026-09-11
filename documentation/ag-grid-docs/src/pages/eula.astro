@@ -1,0 +1,50 @@
+---
+import Layout from '@layouts/Layout.astro';
+import styles from '@ag-website-shared/components/policies/policyPage.module.scss';
+import { Content as Eula } from '../content/policies/eula.mdoc';
+import eulaSource from '../content/policies/eula.mdoc?raw';
+import { EULA_CONTENT as content } from '@utils/markdown-pages/eulaContent';
+import { getPolicySections } from '@utils/policySections';
+
+// Heading, version, last-updated date and intro copy are shared with the /eula.md twin so the two
+// cannot drift; the clauses and schedules below come from the same .mdoc the twin renders, and the
+// table of contents is read from that source's headings.
+const sections = getPolicySections(eulaSource);
+---
+
+<Layout
+    title={`AG Grid: ${content.metaTitle}`}
+    description={content.description}
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class:list={styles.policyPage}>
+        <div class="layout-max-width-small">
+            <h1>{content.heading}</h1>
+            <hr />
+
+            <header>
+                <div id="introduction" class={styles.introduction}>
+                    {content.meta.map((line) => <h4 set:html={line} />)}
+                    {content.intro.map((line) => <p set:html={line} />)}
+                </div>
+
+                <nav>
+                    <ul class="list-style-none">
+                        {
+                            sections.map(({ id, title }) => (
+                                <li>
+                                    <a href={`#${id}`}>{title}</a>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </nav>
+            </header>
+
+            <div class={styles.policyList}>
+                <Eula />
+            </div>
+        </div>
+    </div>
+</Layout>
