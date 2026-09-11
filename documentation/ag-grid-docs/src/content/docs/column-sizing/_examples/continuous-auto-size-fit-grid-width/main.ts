@@ -62,30 +62,32 @@ const gridOptions: GridOptions<IRow> = {
     animateColumnResizing: true,
 };
 
-function setColumnCount(count: number) {
-    columnCount = Math.min(MAX_COLUMNS, Math.max(MIN_COLUMNS, count));
-    gridApi!.setGridOption('columnDefs', buildColumnDefs(columnCount));
+function clampColumns(count: number): number {
+    return Math.min(MAX_COLUMNS, Math.max(MIN_COLUMNS, count));
+}
+
+function clampRows(count: number): number {
+    return Math.min(MAX_ROWS, Math.max(MIN_ROWS, count));
 }
 
 function addColumn() {
-    setColumnCount(columnCount + 1);
+    columnCount = clampColumns(columnCount + 1);
+    gridApi!.setGridOption('columnDefs', buildColumnDefs(columnCount));
 }
 
 function removeColumn() {
-    setColumnCount(columnCount - 1);
-}
-
-function setRowCount(count: number) {
-    rowCount = Math.min(MAX_ROWS, Math.max(MIN_ROWS, count));
-    gridApi!.setGridOption('rowData', buildRows(rowCount));
+    columnCount = clampColumns(columnCount - 1);
+    gridApi!.setGridOption('columnDefs', buildColumnDefs(columnCount));
 }
 
 function addRows() {
-    setRowCount(rowCount + ROW_STEP);
+    rowCount = clampRows(rowCount + ROW_STEP);
+    gridApi!.setGridOption('rowData', buildRows(rowCount));
 }
 
 function removeRows() {
-    setRowCount(rowCount - ROW_STEP);
+    rowCount = clampRows(rowCount - ROW_STEP);
+    gridApi!.setGridOption('rowData', buildRows(rowCount));
 }
 
 const MIN_WIDTH_PERCENT = 55;

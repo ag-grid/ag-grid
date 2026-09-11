@@ -1,5 +1,22 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, withGridEvent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
+
+/** What the continuous `fitGridWidth` strategy dispatches once the new widths are on screen. */
+const RE_DISTRIBUTED = { finished: true, source: 'sizeColumnsToFit' } as const;
+
+/** The example sets `animateColumnResizing`, so a box read on the event lands mid-transition. */
+async function widthTransitionsSettled(page: Page): Promise<void> {
+    await page.waitForFunction(() =>
+        [...document.querySelectorAll('.ag-header-cell[col-id]')].every((cell) =>
+            cell.getAnimations().every((animation) => animation.playState !== 'running')
+        )
+    );
+}
+
+async function reDistributes(page: Page, action: () => Promise<unknown>): Promise<void> {
+    await withGridEvent(page, 'columnResized', RE_DISTRIBUTED, action);
+    await widthTransitionsSettled(page);
+}
 
 function scrollingContainer(page: Page) {
     return page.locator('.ag-grid-scrolling-container').first();
@@ -41,13 +58,6 @@ async function expectColumnsToFillGrid(page: Page): Promise<void> {
     expect(overflow).toBeLessThanOrEqual(1);
 }
 
-async function waitForChangeFrom(previous: number, sample: () => Promise<number>): Promise<number> {
-    await expect(async () => {
-        expect(await sample()).not.toBe(previous);
-    }).toPass();
-    return sample();
-}
-
 test.agExample(import.meta, () => {
     test.eachFramework('distributes the grid width across the columns on load', async ({ page }) => {
         await ensureGridReady(page);
@@ -68,20 +78,20 @@ test.agExample(import.meta, () => {
             let previousWidth = firstColumnWidth;
 
             for (const expectedCount of [6, 7, 8]) {
-                await page.locator('button.add-column-button').click();
+                await reDistributes(page, () => page.locator('button.add-column-button').click());
                 await expect(headerCells(page)).toHaveCount(expectedCount);
 
-                const narrowed = await waitForChangeFrom(previousWidth, () => columnWidth(page, 'column1'));
+                const narrowed = await columnWidth(page, 'column1');
                 expect(narrowed).toBeLessThan(previousWidth);
                 await expectColumnsToFillGrid(page);
                 previousWidth = narrowed;
             }
 
             for (const expectedCount of [7, 6, 5]) {
-                await page.locator('button.remove-column-button').click();
+                await reDistributes(page, () => page.locator('button.remove-column-button').click());
                 await expect(headerCells(page)).toHaveCount(expectedCount);
 
-                const widened = await waitForChangeFrom(previousWidth, () => columnWidth(page, 'column1'));
+                const widened = await columnWidth(page, 'column1');
                 expect(widened).toBeGreaterThan(previousWidth);
                 await expectColumnsToFillGrid(page);
                 previousWidth = widened;
@@ -96,24 +106,37 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await expectColumnsToFillGrid(page);
 
-        const rows = page.locator('.ag-row');
-        await expect(rows).toHaveCount(4);
+        // The rendered `.ag-row` count saturates once the grid virtualises; the extent does not.
+        const rowExtent = () => scrollingContainer(page).evaluate((element) => element.scrollHeight);
 
-        await page.locator('button.add-rows-button').click();
-        await expect(async () => {
-            expect(await rows.count()).toBeGreaterThan(4);
-        }).toPass();
+        const clickAndExpect = async (button: string, direction: 'grows' | 'shrinks') => {
+            const before = await rowExtent();
+            await page.locator(button).click();
+            await expect(async () => {
+                const after = await rowExtent();
+                if (direction === 'grows') {
+                    expect(after).toBeGreaterThan(before);
+                } else {
+                    expect(after).toBeLessThan(before);
+                }
+            }).toPass();
+        };
+
+        const initialExtent = await rowExtent();
+
+        await clickAndExpect('button.add-rows-button', 'grows');
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.add-rows-button').click();
+        await clickAndExpect('button.add-rows-button', 'grows');
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.remove-rows-button').click();
+        await clickAndExpect('button.remove-rows-button', 'shrinks');
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.remove-rows-button').click();
-        await expect(rows).toHaveCount(4);
+        await clickAndExpect('button.remove-rows-button', 'shrinks');
         await expectColumnsToFillGrid(page);
+
+        expect(await rowExtent()).toBe(initialExtent);
     });
 
     test.eachFramework('resizing the grid re-distributes the width', async ({ page }) => {
@@ -123,15 +146,13 @@ test.agExample(import.meta, () => {
 
         const wideTotal = await totalColumnWidth(page);
 
-        await page.locator('button.narrower-button').click();
-        const narrowTotal = await waitForChangeFrom(wideTotal, () => totalColumnWidth(page));
+        await reDistributes(page, () => page.locator('button.narrower-button').click());
+        const narrowTotal = await totalColumnWidth(page);
         expect(narrowTotal).toBeLessThan(wideTotal);
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.wider-button').click();
-        await expect(async () => {
-            expect(await totalColumnWidth(page)).toBeCloseTo(wideTotal, 0);
-        }).toPass();
+        await reDistributes(page, () => page.locator('button.wider-button').click());
+        expect(await totalColumnWidth(page)).toBeCloseTo(wideTotal, 0);
         await expectColumnsToFillGrid(page);
     });
 });
