@@ -3387,4 +3387,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/react/expressions(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/react/overview(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/(react|angular|vue|javascript)/(.*)', to: 'https://www.ag-grid.com/charts/$1/$2' },
+    // SE-169: the static Word-export EULA files were replaced by the /eula/ page.
+    { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/' },
+    { from: '/eula/license-en.html', to: '/eula/' },
 ];
