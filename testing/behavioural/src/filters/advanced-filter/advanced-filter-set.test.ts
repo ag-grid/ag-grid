@@ -430,6 +430,7 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
 
     test.each([
         ['a Set Filter column', { field: 'country', filter: 'agSetColumnFilter' }],
+        ['a `filter: true` column, which the module resolves to a Set Filter', { field: 'country', filter: true }],
         ['a Multi Filter holding one', MULTI_FILTER_CHILDREN()],
     ])('%s with no declared values offers neither set option', async (_, country) => {
         const api = await createServerSideGrid([], country as ColDef);
