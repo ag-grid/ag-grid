@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import type { GridApi, GridOptions, IServerSideDatasource, SetFilterValuesFuncParams } from 'ag-grid-community';
 import {
     ModuleRegistry,
     NumberFilterModule,
@@ -11,6 +11,7 @@ import {
     ColumnMenuModule,
     ContextMenuModule,
     ServerSideRowModelModule,
+    SetFilterModule,
 } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
@@ -23,11 +24,23 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
+    SetFilterModule,
     AdvancedFilterModule,
     ColumnMenuModule,
     ContextMenuModule,
     ServerSideRowModelModule,
 ]);
+
+let fakeServer: any;
+
+// The grid holds no rows to derive the list from, so the values are fetched from the server.
+function getAthleteValuesAsync(params: SetFilterValuesFuncParams) {
+    // simulating real server call with a 500ms delay
+    setTimeout(() => {
+        const athletes = fakeServer.getValues('athlete');
+        params.success(athletes);
+    }, 500);
+}
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
@@ -36,6 +49,10 @@ const gridOptions: GridOptions<IOlympicData> = {
             field: 'athlete',
             cellDataType: 'text',
             minWidth: 220,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: getAthleteValuesAsync,
+            },
         },
         {
             field: 'year',
@@ -97,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(data);
+            fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

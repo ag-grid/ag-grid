@@ -24,6 +24,7 @@ import {
     _addGridCommonParams,
     _getCellRendererDetails,
     _getFilterDetails,
+    _isClientSideRowModel,
     _isSetFilterByDefault,
     _mergeFilterParamsWithApplicationProvidedParams,
 } from 'ag-grid-community';
@@ -100,6 +101,8 @@ interface SetValueList {
     readonly entries: AutocompleteEntry[];
     /** Whether the values are paths, so a separator written inside one segment still names a level. */
     readonly isTree: boolean;
+    /** Whether the column's values have yet to arrive, the list standing empty until they do. */
+    readonly loading: boolean;
     /** How the list draws a row, where the column asks for more than the plain one. */
     readonly rowComponentCreator?: (entry: AutocompleteEntry) => AgSetValueAutocompleteRow;
 }
@@ -180,10 +183,25 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         }
         // Otherwise it is the column's filter that decides: a Set Filter, or a Multi Filter holding one.
         const colDef = column.colDef;
-        return (
+        const hasSetFilter =
             this.isSetFilterDef(column) ||
-            (colDef.filter === 'agMultiColumnFilter' && !!getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter'))
-        );
+            (colDef.filter === 'agMultiColumnFilter' &&
+                !!getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter'));
+        // Both options are matched against the column's values, so a column with none to offer would take
+        // a written value it can never resolve. Only the Client-Side Row Model can derive them from its rows.
+        return hasSetFilter && this.hasSetFilterValues(column);
+    }
+
+    /** Whether the column has a value list to match against: provided values, or rows the grid itself holds. */
+    private hasSetFilterValues(column: AgColumn): boolean {
+        if (_isClientSideRowModel(this.gos)) {
+            return true;
+        }
+        const filterParams = this.getSetColDef(column).filterParams;
+        // `filterParams` may be a function of the grid params, so it is resolved the way the handler's own are.
+        const resolved: ISetFilterParams | undefined =
+            typeof filterParams === 'function' ? this.createHandlerParams(column, 'init').filterParams : filterParams;
+        return !!resolved?.values;
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */
@@ -230,6 +248,20 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     /**
+     * The Set Filter reloads its values as its popup opens where `refreshValuesOnOpen` asks. The expression
+     * input taking focus is that moment here, once per edit, so the values hold still for the whole of it.
+     */
+    public refreshValuesOnFocus(): void {
+        for (const [colId, setColumn] of this.columns) {
+            if (setColumn?.handler.params.filterParams.refreshValuesOnOpen) {
+                setColumn.handler.refreshFilterValues();
+                // Dropped now rather than on arrival, so the list says it is loading, as the Set Filter's does.
+                this.invalidateValues(colId);
+            }
+        }
+    }
+
+    /**
      * How the column names a blank. A blank has no text of its own, so this is also the only spelling that
      * reads back as the blank key, which is what lets a model naming one survive being written and re-parsed.
      */
@@ -269,6 +301,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             usedKeys,
             entries,
             isTree: !!setColumn?.handler.params.filterParams.treeList,
+            loading: !!setColumn && !values,
             rowComponentCreator: values ? this.createRowCreator(column, setColumn.handler) : undefined,
         };
         // Values load asynchronously; an empty list built before they arrive must not stand in for them.
@@ -364,9 +397,15 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         if (setColumn.keysPromise !== allKeys) {
             setColumn.keysPromise = allKeys;
             setColumn.keys = undefined;
+            let awaited = false;
             allKeys.then((keys) => {
                 setColumn.keys = keys ?? [];
+                // Anything already showing the empty list this call is about to return has to be told.
+                if (awaited) {
+                    this.invalidateList();
+                }
             });
+            awaited = true;
         }
         const keys = setColumn.keys;
         if (!keys) {

@@ -14,6 +14,8 @@ export interface AutocompleteListParams {
     rowComponentCreator?: AutocompleteRowComponentCreator;
     /** Suggest the first match rather than the closest one, the list being in an order of its own. */
     suggestFirstMatch?: boolean;
+    /** Whether the entries are still being fetched, so the list says so rather than reading as empty. */
+    loading?: boolean;
 }
 
 export interface AutocompleteEntry {

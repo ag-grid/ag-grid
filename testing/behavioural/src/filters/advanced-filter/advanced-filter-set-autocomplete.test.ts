@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     AdvancedFilterHarness,
     GridRows,
@@ -40,7 +41,39 @@ describe('Advanced Filter - Set Filter value sources', () => {
         `);
     });
 
-    test('values from an async callback reach the list on the keystroke after they arrive', async () => {
+    test('values from an async callback reach the open list as they arrive', async () => {
+        let respond = () => {};
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        // Held, so the list is opened while the values are still outstanding.
+                        values: (params: { success: (values: string[]) => void }) => {
+                            respond = () => params.success(['Jamaica', 'Poland']);
+                        },
+                    },
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+
+        respond();
+
+        // No further keystroke: the values reach the list that is already open.
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']));
+        expect(af.autocompleteLoadingText()).toBeNull();
+    });
+
+    /** A Set Filter column whose values callback is held until `respond` is called. */
+    async function createHeldValuesGrid() {
+        let respond = () => {};
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -50,24 +83,192 @@ describe('Advanced Filter - Set Filter value sources', () => {
                     filter: 'agSetColumnFilter',
                     filterParams: {
                         values: (params: { success: (values: string[]) => void }) => {
-                            setTimeout(() => params.success(['Jamaica', 'Poland']), 0);
+                            respond = () => params.success(['Jamaica', 'Poland']);
                         },
                     },
                 },
             ],
         });
+        return { api, af: AdvancedFilterHarness.get(api), respond: () => respond() };
+    }
+
+    test('a list whose values are already there never says it is loading', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { values: ['Atlantis'] } },
+            ],
+        });
         const af = AdvancedFilterHarness.get(api);
 
-        // The callback has not answered yet, so there is nothing to offer rather than a wait.
         await af.type('[Country] is any of [');
+        expect(af.autocompleteLoadingText()).toBeNull();
+        expect(af.autocompleteEntries()).toEqual(['Atlantis']);
+    });
+
+    test('a callback that never answers leaves the list loading, and a value written meanwhile unresolved', async () => {
+        const { af } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Jam');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
         expect(af.autocompleteEntries()).toEqual([]);
 
-        await asyncSetTimeout(0);
-        // The same keystroke again, so the arrival is the only thing that changed: asking is what picks
-        // the values up, since the open list is not refreshed from underneath.
-        await af.type('');
+        // There is no failure channel from the callback, so nothing arrives and the value cannot be checked.
+        await af.type('[Country] is any of ["Jamaica"]');
+        expect(af.input.validationMessage).toContain('Value not found');
+    });
+
+    test('a callback that returns its values instead of passing them to success leaves the list loading', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                // The return value is ignored, as it is by the Set Filter: values reach the grid only through `success`.
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { values: () => ['Cyprus'] } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
         await af.type('[Country] is any of [');
-        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        expect(af.autocompleteEntries()).toEqual([]);
+
+        await af.type('[Country] is any of ["Cyprus"]');
+        expect(af.input.validationMessage).toContain('Value not found');
+    });
+
+    const ANSWERS = [['Jamaica'], ['Jamaica', 'Poland']];
+
+    /** A values callback answering differently each time it is asked, and only when `respond` is called. */
+    async function createRefreshingValuesGrid(refreshValuesOnOpen: boolean) {
+        let calls = 0;
+        let respond = () => {};
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        refreshValuesOnOpen,
+                        values: (params: { success: (values: string[]) => void }) => {
+                            calls++;
+                            respond = () => params.success(ANSWERS[Math.min(calls, ANSWERS.length) - 1]);
+                        },
+                    },
+                },
+            ],
+        });
+        return { af: AdvancedFilterHarness.get(api), calls: () => calls, respond: () => respond() };
+    }
+
+    test('refreshValuesOnOpen asks the callback again as the input takes focus, values holding still meanwhile', async () => {
+        const { af, calls, respond } = await createRefreshingValuesGrid(true);
+
+        af.input.focus();
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica']));
+        expect(calls()).toBe(1);
+
+        // One edit is one set of values: neither narrowing the list nor reopening it asks again.
+        await af.type('[Country] is any of [Ja');
+        await af.pressKey('Escape');
+        await af.type('[Country] is any of [');
+        await asyncSetTimeout(0);
+        expect(af.autocompleteEntries()).toEqual(['Jamaica']);
+        expect(calls()).toBe(1);
+
+        // Leaving closes the list; the next edit starts by loading fresh values.
+        af.input.blur();
+        af.input.focus();
+        await af.type('[Country] is any of [P');
+        await waitFor(() => expect(calls()).toBe(2));
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Poland']));
+    });
+
+    test('without refreshValuesOnOpen the values are asked for once', async () => {
+        const { af, calls, respond } = await createRefreshingValuesGrid(false);
+
+        af.input.focus();
+        await af.type('[Country] is any of [');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica']));
+        af.input.blur();
+        af.input.focus();
+        await af.type('[Country] is any of [J');
+        await asyncSetTimeout(0);
+
+        expect(af.autocompleteEntries()).toEqual(['Jamaica']);
+        expect(calls()).toBe(1);
+    });
+
+    test('values arriving keep the search the author has typed so far', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Pol');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+
+        respond();
+
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Poland']));
+    });
+
+    test('values arriving do not open a list the author has closed', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of [');
+        await af.pressKey('Escape');
+        expect(af.isAutocompleteOpen()).toBe(false);
+
+        respond();
+        await asyncSetTimeout(0);
+
+        expect(af.isAutocompleteOpen()).toBe(false);
+    });
+
+    test('values arriving do not open a list at a caret outside a set condition', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Jamaica"] ');
+        await af.pressKey('Escape');
+        expect(af.isAutocompleteOpen()).toBe(false);
+
+        respond();
+        await asyncSetTimeout(0);
+
+        expect(af.isAutocompleteOpen()).toBe(false);
+    });
+
+    test('once the values are in, keystrokes leave the open list where it is', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of [');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']));
+
+        // The resolved promise must not report the values as changed again: that would close and reopen
+        // the popup under every keystroke.
+        const popup = document.querySelector('.ag-autocomplete-list-popup');
+        await af.type('[Country] is any of ["P');
+        expect(document.querySelector('.ag-autocomplete-list-popup')).toBe(popup);
+        expect(af.autocompleteEntries()).toEqual(['Poland']);
+    });
+
+    test('a value written while loading resolves once the values arrive', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Jamaica"]');
+        expect(af.input.validationMessage).toContain('Value not found');
+
+        respond();
+
+        await waitFor(() => expect(af.input.validationMessage).toBe(''));
     });
 
     test('suppressSorting leaves the values in the order the rows give them', async () => {

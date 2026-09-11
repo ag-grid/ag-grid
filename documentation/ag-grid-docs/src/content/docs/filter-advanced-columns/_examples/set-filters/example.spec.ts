@@ -1,10 +1,5 @@
 import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from '@utils/grid/test-utils';
 
-// Athlete is this example's Set Filter column, so `is any of` is offered there and not on Sport.
-// The uppercasing comes from Athlete's `valueFormatter`.
-const SET_CONDITION = '[Athlete] is any of ["Aaron Gate", "Abby Bishop", "Abbos Atayev", "Aaron Miller"]';
-const SET_CONDITION_PILL = '(4) AARON GATE, ABBY BISHOP, ABBOS ATAYEV, +1 more';
-
 test.agExample(import.meta, () => {
     test.eachFramework('offers the set options on a Set Filter column', async ({ page }) => {
         await ensureGridReady(page);
@@ -70,14 +65,30 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList.getByText('MICHAEL PHELPS', { exact: true })).toBeVisible();
     });
 
-    test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
-        // Wider than the indented test: at 570px the row overflows and the pill sits at its floor.
-        await page.setViewportSize({ width: 1000, height: 900 });
+    test.eachFramework('names the blank athlete the way the valueFormatter spells it', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
-        await filterInput.fill(SET_CONDITION);
+        await filterInput.fill('[Athlete] is any of [(Bl');
+
+        const autocompleteList = page.locator('.ag-autocomplete-list-popup');
+        await expect(autocompleteList.getByText('(Blanks)', { exact: true })).toBeVisible();
+
+        await filterInput.fill('[Athlete] is any of ["(Blanks)"]');
+        await filterInput.press('Enter');
+        const athleteCells = page.locator('.ag-row [col-id="athlete"]');
+        await expect(athleteCells).toHaveCount(5);
+        await expect(athleteCells.filter({ hasText: /\S/ })).toHaveCount(0);
+    });
+
+    test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
+        await page.setViewportSize({ width: 640, height: 900 });
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill('[Athlete] is any of ["Michael Phelps", "Ryan Lochte", "Ian Thorpe", "Usain Bolt"]');
         await filterInput.press('Escape');
         await filterInput.press('Enter');
         await page.getByRole('button', { name: 'Builder' }).click();
@@ -87,7 +98,9 @@ test.agExample(import.meta, () => {
         const firstAction = row.locator('.ag-advanced-filter-builder-item-buttons > :visible').first();
         await expect(pill).toBeVisible();
         await expect(pill).toHaveCSS('cursor', 'pointer');
-        await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(SET_CONDITION_PILL);
+        await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(
+            '(4) MICHAEL PHELPS, RYAN LOCHTE, IAN THORPE, +1 more'
+        );
 
         const pillBox = await pill.boundingBox();
         const firstActionBox = await firstAction.boundingBox();
@@ -108,7 +121,7 @@ test.agExample(import.meta, () => {
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
         await filterInput.fill(
-            `[Gold] > 0 AND ([Athlete] contains "A" AND ([Country] contains "A" AND ${SET_CONDITION}))`
+            '[Gold] > 0 AND ([Sport] contains "S" AND ([Country] contains "A" AND [Athlete] is any of ["Michael Phelps", "Ryan Lochte", "Ian Thorpe", "Usain Bolt"]))'
         );
         await filterInput.press('Escape');
         await filterInput.press('Enter');

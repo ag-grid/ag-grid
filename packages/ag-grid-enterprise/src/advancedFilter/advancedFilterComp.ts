@@ -24,6 +24,7 @@ import { AgAutocompleteSelector } from './autocomplete/agAutocomplete';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
+import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
 
 const DEFAULT_ADVANCED_FILTER_PARAMS: { buttons: FilterAction[]; suppressBuilderButton: boolean } = {
     buttons: ['apply'],
@@ -63,11 +64,13 @@ const AdvancedFilterElement: ElementParams = {
 export class AdvancedFilterComp extends Component {
     private advancedFilter: AdvancedFilterService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
+    private advFilterSetSvc?: AdvancedFilterSetService;
     private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
         this.advancedFilter = beans.advancedFilter as AdvancedFilterService;
+        this.advFilterSetSvc = beans.advFilterSetSvc as AdvancedFilterSetService | undefined;
         this.filterManager = beans.filterManager;
     }
 
@@ -105,6 +108,18 @@ export class AdvancedFilterComp extends Component {
             .setListAriaLabel(this.advFilterExpSvc.translate('ariaLabelAdvancedFilterAutocomplete'));
 
         this.refresh();
+
+        // Values load asynchronously; an applied expression is not re-read, a dropped value still filtering by key.
+        if (this.advFilterSetSvc) {
+            const advFilterSetSvc = this.advFilterSetSvc;
+            this.addManagedListeners(advFilterSetSvc, {
+                valuesChanged: () => this.eAutocomplete.refresh(!this.advancedFilter.isCurrentExpressionApplied()),
+            });
+            this.addManagedElementListeners(this.eAutocomplete.getGui(), {
+                // Enables support for filterParams.refreshValuesOnOpen
+                focusin: () => advFilterSetSvc.refreshValuesOnFocus(),
+            });
+        }
 
         this.addManagedListeners(this.eAutocomplete, {
             eventValueChanged: ({ value }: AutocompleteValueChangedEvent) => this.onValueChanged(value),

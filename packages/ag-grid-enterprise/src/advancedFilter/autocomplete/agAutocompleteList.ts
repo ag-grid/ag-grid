@@ -16,7 +16,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { KeyCode, _clamp } from 'ag-grid-community';
+import { KeyCode, _clamp, _createIconNoSpan } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import agAutocompleteCSS from './agAutocomplete.css';
@@ -27,17 +27,29 @@ import type {
     AutocompleteRowComponentCreator,
 } from './autocompleteParams';
 
-const AgAutocompleteListElement: ElementParams = {
+/** The list stands empty while values load, so it shows a loading message rather than reading as an empty result. */
+const getAgAutocompleteListElement = (loading: boolean): ElementParams => ({
     tag: 'div',
     cls: 'ag-autocomplete-list-popup',
     children: [
+        loading
+            ? {
+                  tag: 'div',
+                  cls: 'ag-loading ag-autocomplete-loading',
+                  children: [
+                      { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
+                      { tag: 'span', ref: 'eLoadingLabel', cls: 'ag-loading-text' },
+                  ],
+              }
+            : null,
         {
             tag: 'div',
             ref: 'eList',
-            cls: 'ag-autocomplete-list',
+            cls: `ag-autocomplete-list${loading ? ' ag-hidden' : ''}`,
+            attrs: loading ? { 'aria-hidden': 'true' } : undefined,
         },
     ],
-};
+});
 export class AgAutocompleteList extends AgPopupComponent<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -47,6 +59,8 @@ export class AgAutocompleteList extends AgPopupComponent<
     AgComponentSelectorType
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
+    private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
+    private readonly eLoadingLabel: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<AutocompleteRowComponent, AutocompleteEntry>;
 
@@ -72,25 +86,28 @@ export class AgAutocompleteList extends AgPopupComponent<
             rowComponentCreator?: AutocompleteRowComponentCreator;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
             onActiveOptionChanged?: (optionId: string | null) => void;
+            /** Whether the entries are still being fetched, so the list stands in for them until they land. */
+            loading?: boolean;
         }
     ) {
-        super(AgAutocompleteListElement);
+        super(getAgAutocompleteListElement(!!params.loading));
         this.registerCSS(agAutocompleteCSS);
     }
 
     public postConstruct(): void {
+        this.setupLoading();
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
-        this.virtualList.getAriaElement().id = this.getListId();
-        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-        this.eList.appendChild(this.virtualList.getGui());
+        const virtualList = this.virtualList;
+        const virtualListGui = virtualList.getGui();
+        virtualList.getAriaElement().id = this.getListId();
+        virtualList.setComponentCreator(this.createRowComponent.bind(this));
+        this.eList.appendChild(virtualListGui);
 
-        this.virtualList.setModel({
+        virtualList.setModel({
             getRowCount: () => this.autocompleteEntries.length,
             getRow: (index: number) => this.autocompleteEntries[index],
         });
-
-        const virtualListGui = this.virtualList.getGui();
 
         this.addManagedListeners(virtualListGui, {
             click: () => this.params.onConfirmed(),
@@ -100,6 +117,17 @@ export class AgAutocompleteList extends AgPopupComponent<
 
         this.setSelectedValue(0);
         this.updateListHeight();
+    }
+
+    private setupLoading(): void {
+        if (!this.params.loading) {
+            return;
+        }
+        this.eLoadingLabel.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
+        const eIcon = _createIconNoSpan('setFilterLoading', this.beans, null);
+        if (eIcon) {
+            this.eLoadingIcon.appendChild(eIcon);
+        }
     }
 
     public getActiveOptionId(): string | null {

@@ -72,6 +72,12 @@ export class AdvancedFilterHarness {
         );
     }
 
+    /** What the list says while its values are still being fetched, `null` once they have arrived. */
+    public autocompleteLoadingText(): string | null {
+        const loading = document.querySelector<HTMLElement>('.ag-autocomplete-loading');
+        return loading && !loading.classList.contains('ag-hidden') ? (loading.textContent?.trim() ?? '') : null;
+    }
+
     /** The entry the list is suggesting, which is what Enter would confirm. */
     public selectedAutocompleteEntry(): string | null {
         const row = document.querySelector('.ag-autocomplete-list .ag-autocomplete-row-selected');
