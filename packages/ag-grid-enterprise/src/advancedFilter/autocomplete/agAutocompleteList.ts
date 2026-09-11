@@ -5,7 +5,6 @@ import {
     _isVisible,
     _setAriaActiveDescendant,
     _setAriaSelected,
-    _setDisplayed,
 } from 'ag-stack';
 
 import type {
@@ -28,26 +27,29 @@ import type {
     AutocompleteRowComponentCreator,
 } from './autocompleteParams';
 
-const AgAutocompleteListElement: ElementParams = {
+/** The list stands empty while values load, so it shows a loading message rather than reading as an empty result. */
+const getAgAutocompleteListElement = (loading: boolean): ElementParams => ({
     tag: 'div',
     cls: 'ag-autocomplete-list-popup',
     children: [
-        {
-            tag: 'div',
-            ref: 'eLoading',
-            cls: 'ag-loading ag-autocomplete-loading',
-            children: [
-                { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
-                { tag: 'span', ref: 'eLoadingLabel', cls: 'ag-loading-text' },
-            ],
-        },
+        loading
+            ? {
+                  tag: 'div',
+                  cls: 'ag-loading ag-autocomplete-loading',
+                  children: [
+                      { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
+                      { tag: 'span', ref: 'eLoadingLabel', cls: 'ag-loading-text' },
+                  ],
+              }
+            : null,
         {
             tag: 'div',
             ref: 'eList',
-            cls: 'ag-autocomplete-list',
+            cls: `ag-autocomplete-list${loading ? ' ag-hidden' : ''}`,
+            attrs: loading ? { 'aria-hidden': 'true' } : undefined,
         },
     ],
-};
+});
 export class AgAutocompleteList extends AgPopupComponent<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -57,7 +59,6 @@ export class AgAutocompleteList extends AgPopupComponent<
     AgComponentSelectorType
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
-    private readonly eLoading: HTMLElement = RefPlaceholder;
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingLabel: HTMLElement = RefPlaceholder;
 
@@ -89,7 +90,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             loading?: boolean;
         }
     ) {
-        super(AgAutocompleteListElement);
+        super(getAgAutocompleteListElement(!!params.loading));
         this.registerCSS(agAutocompleteCSS);
     }
 
@@ -118,16 +119,12 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.updateListHeight();
     }
 
-    /** The list stands empty while values load, so it says so rather than reading as an empty result. */
     private setupLoading(): void {
-        const loading = !!this.params.loading;
-        _setDisplayed(this.eLoading, loading);
-        _setDisplayed(this.eList, !loading);
-        if (!loading) {
+        if (!this.params.loading) {
             return;
         }
         this.eLoadingLabel.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
-        const eIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+        const eIcon = _createIconNoSpan('setFilterLoading', this.beans, null);
         if (eIcon) {
             this.eLoadingIcon.appendChild(eIcon);
         }
