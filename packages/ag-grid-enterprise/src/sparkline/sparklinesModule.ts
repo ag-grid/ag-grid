@@ -33,9 +33,8 @@ export const SparklinesModule: SparklineChartsModuleType = {
     },
     with: (params) => {
         params.setup();
-        _setAgChartsInfo(params.VERSION, params.isEnterprise);
 
-        return {
+        const module: _ModuleWithoutApi = {
             moduleName,
             version: VERSION,
             dependsOn: [EnterpriseCoreModule],
@@ -51,5 +50,7 @@ export const SparklinesModule: SparklineChartsModuleType = {
                 return { isValid: true };
             },
         };
+        _setAgChartsInfo(module, params.VERSION, params.isEnterprise);
+        return module;
     },
 };

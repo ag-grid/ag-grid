@@ -2,15 +2,17 @@ import type { Module } from './interfaces/iModule';
 import { _logDebug } from './utils/log';
 import { VERSION } from './version';
 
-// The AG Charts build handed to `IntegratedChartsModule.with()` / `SparklinesModule.with()`.
-// Community never imports ag-charts, so the enterprise modules push this in through a setter to
-// keep the dependency direction one-way — the same idiom as `_configureDiagnostics`
-// (validation/logging.ts) and `LicenseManager.setChartsLicenseManager`.
-let agChartsInfo: { version: string; isEnterprise: boolean } | undefined;
+// The AG Charts build handed to `IntegratedChartsModule.with()` / `SparklinesModule.with()`, keyed
+// on the module object that `with()` returns. Community never imports ag-charts, so the enterprise
+// modules push this in through a setter to keep the dependency direction one-way — the same idiom
+// as `_configureDiagnostics` (validation/logging.ts) and `LicenseManager.setChartsLicenseManager`.
+// Keying on the module rather than holding a single value means each grid reports the charts build
+// of the modules it actually registered, even when another `.with()` call used a different one.
+const agChartsInfoByModule = new WeakMap<Module, { version: string; isEnterprise: boolean }>();
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _setAgChartsInfo(version: string, isEnterprise: boolean): void {
-    agChartsInfo = { version, isEnterprise };
+export function _setAgChartsInfo(module: Module, version: string, isEnterprise: boolean): void {
+    agChartsInfoByModule.set(module, { version, isEnterprise });
 }
 
 /**
@@ -31,14 +33,16 @@ export function _logVersionIfDebug(debug: boolean | undefined, registeredModules
         versions.push(`AG Grid Enterprise=${enterpriseCore.version}`);
     }
 
-    // Presence is per-grid; the charts info above is process-global. Both must hold.
-    const usesAgCharts = registeredModules.some(
-        ({ moduleName }) => moduleName === 'IntegratedCharts' || moduleName === 'Sparklines'
-    );
-    if (agChartsInfo && usesAgCharts) {
-        const { version, isEnterprise } = agChartsInfo;
-        versions.push(`AG Charts ${isEnterprise ? 'Enterprise' : 'Community'}=${version}`);
+    // Every distinct charts build registered for this grid is listed: two modules given different
+    // AG Charts packages is exactly the mismatch this line exists to surface.
+    const chartsVersions = new Set<string>();
+    for (const module of registeredModules) {
+        const info = agChartsInfoByModule.get(module);
+        if (info) {
+            chartsVersions.add(`AG Charts ${info.isEnterprise ? 'Enterprise' : 'Community'}=${info.version}`);
+        }
     }
+    versions.push(...chartsVersions);
 
     _logDebug(`Version: ${versions.join(', ')}`);
 }

@@ -121,7 +121,6 @@ export const IntegratedChartsModule: IntegratedChartsModuleType = {
     with: (params) => {
         params.setup();
         params.setGridContext?.(true);
-        _setAgChartsInfo(params.VERSION, params.isEnterprise);
         if (params.isEnterprise && params.setLicenseKey) {
             const chartsManager: ILicenseManager = {
                 setLicenseKey: params.setLicenseKey,
@@ -129,7 +128,7 @@ export const IntegratedChartsModule: IntegratedChartsModuleType = {
             LicenseManager.setChartsLicenseManager(chartsManager);
         }
 
-        return {
+        const module: _ModuleWithApi<_GridChartsGridApi> = {
             moduleName,
             version: VERSION,
             icons,
@@ -155,5 +154,7 @@ export const IntegratedChartsModule: IntegratedChartsModuleType = {
                 AdvancedSettingsMenuFactory,
             ],
         };
+        _setAgChartsInfo(module, params.VERSION, params.isEnterprise);
+        return module;
     },
 };
