@@ -1,4 +1,4 @@
-import type { IconName } from '@ag-website-shared/icon/Icon';
+import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import type { CollectionEntry } from 'astro:content';
 
 export type Framework = 'javascript' | 'react' | 'angular' | 'vue';
@@ -28,17 +28,19 @@ export interface MenuItem {
     childPaths?: string[];
 }
 
+export interface FooterLink {
+    name: string;
+    url: string;
+    newTab?: boolean;
+    showCookiesPrefs?: boolean;
+    iconName?: IconName;
+}
+
 export interface FooterItem {
     title: string;
     /** Where the group renders: the legal strip under the columns, or (default) a menu column. */
     placement?: 'legal';
-    links: {
-        name: string;
-        url: string;
-        newTab?: boolean;
-        showCookiesPrefs?: boolean;
-        iconName?: string;
-    }[];
+    links: FooterLink[];
 }
 
 export type ModuleMappings = CollectionEntry<'moduleMappings'>;

@@ -1,3 +1,4 @@
+import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
 // NOTE: Use glob, instead of file for single object files unless the file is an
 // array of objects
@@ -198,7 +199,9 @@ const footer = defineCollection({
                     url: z.string(),
                     newTab: z.boolean().optional(),
                     showCookiesPrefs: z.boolean().optional(),
-                    iconName: z.string().optional(),
+                    // Typed as IconName without importing the icon map, which would pull the SVG and React icon
+                    // modules into content config loading. Names are not validated at load time.
+                    iconName: z.custom<IconName>((value) => typeof value === 'string').optional(),
                 })
             ),
         })
