@@ -138,6 +138,76 @@ describe('Advanced Filter - Set Filter value sources', () => {
         expect(af.input.validationMessage).toContain('Value not found');
     });
 
+    const ANSWERS = [['Jamaica'], ['Jamaica', 'Poland']];
+
+    /** A values callback answering differently each time it is asked, and only when `respond` is called. */
+    async function createRefreshingValuesGrid(refreshValuesOnOpen: boolean) {
+        let calls = 0;
+        let respond = () => {};
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        refreshValuesOnOpen,
+                        values: (params: { success: (values: string[]) => void }) => {
+                            calls++;
+                            respond = () => params.success(ANSWERS[Math.min(calls, ANSWERS.length) - 1]);
+                        },
+                    },
+                },
+            ],
+        });
+        return { af: AdvancedFilterHarness.get(api), calls: () => calls, respond: () => respond() };
+    }
+
+    test('refreshValuesOnOpen asks the callback again as the input takes focus, values holding still meanwhile', async () => {
+        const { af, calls, respond } = await createRefreshingValuesGrid(true);
+
+        af.input.focus();
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica']));
+        expect(calls()).toBe(1);
+
+        // One edit is one set of values: neither narrowing the list nor reopening it asks again.
+        await af.type('[Country] is any of [Ja');
+        await af.pressKey('Escape');
+        await af.type('[Country] is any of [');
+        await asyncSetTimeout(0);
+        expect(af.autocompleteEntries()).toEqual(['Jamaica']);
+        expect(calls()).toBe(1);
+
+        // Leaving closes the list; the next edit starts by loading fresh values.
+        af.input.blur();
+        af.input.focus();
+        await af.type('[Country] is any of [P');
+        await waitFor(() => expect(calls()).toBe(2));
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Poland']));
+    });
+
+    test('without refreshValuesOnOpen the values are asked for once', async () => {
+        const { af, calls, respond } = await createRefreshingValuesGrid(false);
+
+        af.input.focus();
+        await af.type('[Country] is any of [');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica']));
+        af.input.blur();
+        af.input.focus();
+        await af.type('[Country] is any of [J');
+        await asyncSetTimeout(0);
+
+        expect(af.autocompleteEntries()).toEqual(['Jamaica']);
+        expect(calls()).toBe(1);
+    });
+
     test('values arriving keep the search the author has typed so far', async () => {
         const { af, respond } = await createHeldValuesGrid();
 

@@ -111,8 +111,13 @@ export class AdvancedFilterComp extends Component {
 
         // Values load asynchronously; an applied expression is not re-read, a dropped value still filtering by key.
         if (this.advFilterSetSvc) {
-            this.addManagedListeners(this.advFilterSetSvc, {
+            const advFilterSetSvc = this.advFilterSetSvc;
+            this.addManagedListeners(advFilterSetSvc, {
                 valuesChanged: () => this.eAutocomplete.refresh(!this.advancedFilter.isCurrentExpressionApplied()),
+            });
+            this.addManagedElementListeners(this.eAutocomplete.getGui(), {
+                // Enables support for filterParams.refreshValuesOnOpen
+                focusin: () => advFilterSetSvc.refreshValuesOnFocus(),
             });
         }
 

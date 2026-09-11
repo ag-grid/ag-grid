@@ -248,6 +248,20 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     /**
+     * The Set Filter reloads its values as its popup opens where `refreshValuesOnOpen` asks. The expression
+     * input taking focus is that moment here, once per edit, so the values hold still for the whole of it.
+     */
+    public refreshValuesOnFocus(): void {
+        for (const [colId, setColumn] of this.columns) {
+            if (setColumn?.handler.params.filterParams.refreshValuesOnOpen) {
+                setColumn.handler.refreshFilterValues();
+                // Dropped now rather than on arrival, so the list says it is loading, as the Set Filter's does.
+                this.invalidateValues(colId);
+            }
+        }
+    }
+
+    /**
      * How the column names a blank. A blank has no text of its own, so this is also the only spelling that
      * reads back as the blank key, which is what lets a model naming one survive being written and re-parsed.
      */
