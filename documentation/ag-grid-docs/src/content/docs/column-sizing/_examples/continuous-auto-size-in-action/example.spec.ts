@@ -120,10 +120,7 @@ test.agExample(import.meta, () => {
 
         const goldHeader = page.locator('.ag-header-cell[col-id="gold"]').first();
 
-        // Columns are fitted once they render, so the wait is for the grid to report the auto-size
-        // pass the scroll provoked. Polling the width to a threshold instead made this the slowest
-        // browser's test: whenever the debounced pass landed after the poll's own budget it read the
-        // untouched default width and failed, rather than waiting for the grid to finish.
+        // The auto-size pass is debounced, so wait for the grid to report it.
         await withGridEvent(page, 'columnResized', { finished: true, source: 'autosizeColumns' }, async () => {
             await page
                 .locator('.ag-body-horizontal-scroll-viewport')

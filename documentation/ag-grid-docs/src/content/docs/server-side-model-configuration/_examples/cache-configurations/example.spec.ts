@@ -33,11 +33,8 @@ test.agExample(import.meta, () => {
         }).toPass();
 
         // A block beyond the first was fetched on demand: the deep row carries its real id and data.
-        //
-        // The row to assert on is re-read inside the retry rather than captured once. The grid
-        // re-renders its viewport when a block resolves, and the index that was deepest a moment ago
-        // can be virtualised away before the assertion runs - which surfaced as `element(s) not
-        // found` against a pinned `row-index`, not as a wrong value.
+        // The index is re-read per attempt: resolving a block re-renders the viewport, so the
+        // deepest index can be virtualised away before the assertion runs.
         await expect(async () => {
             const renderedIndex = await page.evaluate((min) => {
                 const deep = Array.from(document.querySelectorAll('.ag-row'))

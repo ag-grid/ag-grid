@@ -71,11 +71,9 @@ test.agExample(import.meta, () => {
         // End state: the debounce elapses and the block the scrolling came to rest on resolves
         // to real data, replacing its loading placeholders.
         //
-        // The resting index is re-read on each attempt rather than captured once. Resolving the
-        // block re-renders the viewport, and a row-index captured beforehand can be virtualised
-        // away before the assertion runs - which surfaced as `element(s) not found` rather than as
-        // a wrong value. Re-reading is safe here because it does not scroll: any scroll would
-        // restart the debounce and leave the resting block permanently unfetched.
+        // The index is re-read per attempt: resolving the block re-renders the viewport, so one
+        // captured beforehand can be virtualised away. Re-reading does not scroll, which matters
+        // here - a scroll would restart the debounce and leave the block unfetched.
         await expect(async () => {
             const restingIndex = await readRestingIndex();
             expect(restingIndex).toBeGreaterThanOrEqual(100);

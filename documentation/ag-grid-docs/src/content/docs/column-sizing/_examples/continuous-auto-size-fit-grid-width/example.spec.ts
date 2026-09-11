@@ -1,20 +1,10 @@
 import { ensureGridReady, expect, test, waitForGridContent, withGridEvent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
-/**
- * The continuous `fitGridWidth` strategy re-distributes the width by calling `sizeColumnsToFit`,
- * which dispatches a finished `columnResized` once the new widths are on screen. Waiting for that
- * is what makes these tests deterministic: sampling a width until it changes cannot distinguish the
- * settled width from one read part-way through the re-distribution, and reads the wrong one often
- * enough to fail.
- */
+/** What the continuous `fitGridWidth` strategy dispatches once the new widths are on screen. */
 const RE_DISTRIBUTED = { finished: true, source: 'sizeColumnsToFit' } as const;
 
-/**
- * The example sets `animateColumnResizing`, so the new widths are transitioned in and a box read on
- * the event still lands mid-transition. The Web Animations API says when the transition is over, so
- * that is what is waited on - not a sleep long enough to cover it.
- */
+/** The example sets `animateColumnResizing`, so a box read on the event lands mid-transition. */
 async function widthTransitionsSettled(page: Page): Promise<void> {
     await page.waitForFunction(() =>
         [...document.querySelectorAll('.ag-header-cell[col-id]')].every((cell) =>
@@ -116,13 +106,9 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await expectColumnsToFillGrid(page);
 
-        // Total scrollable row extent, not the rendered `.ag-row` count: the grid virtualises, so
-        // the rendered count saturates after the first addition and stops reflecting further ones.
+        // The rendered `.ag-row` count saturates once the grid virtualises; the extent does not.
         const rowExtent = () => scrollingContainer(page).evaluate((element) => element.scrollHeight);
 
-        // One click, then poll for the extent to move the way that button should move it. Asserting
-        // the direction rather than just "it changed" is what stops a Remove Rows that secretly adds
-        // rows from passing, and a single click keeps one press to one mutation.
         const clickAndExpect = async (button: string, direction: 'grows' | 'shrinks') => {
             const before = await rowExtent();
             await page.locator(button).click();
@@ -150,7 +136,6 @@ test.agExample(import.meta, () => {
         await clickAndExpect('button.remove-rows-button', 'shrinks');
         await expectColumnsToFillGrid(page);
 
-        // Back to the four rows it started with, so the removals undid exactly the additions.
         expect(await rowExtent()).toBe(initialExtent);
     });
 

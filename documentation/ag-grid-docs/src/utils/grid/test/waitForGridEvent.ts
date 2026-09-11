@@ -6,28 +6,19 @@ import type { AgPublicEventType } from 'ag-grid-community';
 export type GridEventMatch = Record<string, unknown>;
 
 export interface ArmedGridEvent {
-    /**
-     * Resolves once the grid has dispatched a matching event since {@link armGridEvent} was called,
-     * then removes the listener.
-     */
+    /** Resolves once a matching event has been dispatched since arming, then removes the listener. */
     wait(): Promise<void>;
 }
 
 let nextArmedId = 0;
 
 /**
- * Attach a grid event listener *before* the action that triggers it, so the wait can never miss an
+ * Attach a grid event listener before the action that triggers it, so the wait cannot miss an
  * event dispatched between the action and the assertion.
  *
- * This exists because sampling the DOM until it changes cannot tell "the grid has finished" from
- * "the grid is part-way through": a width read during a resize animation, or between two passes of
- * a debounced auto-size, is a real change that is not the end state. The grid says when it is done,
- * so wait for it to say so.
- *
- * The listener goes on through `updateGridOptions`, not `api.addEventListener` - the latter needs
- * `EventApiModule`, which a docs example has no reason to register. That means it occupies the
- * example's own `on<Event>` callback for the duration, so do not use it for an event the example
- * under test handles itself.
+ * Installed through `updateGridOptions`, because `api.addEventListener` requires `EventApiModule`
+ * and docs examples do not register it. It therefore occupies the example's own `on<Event>`
+ * callback while armed, so avoid it for an event the example under test handles.
  *
  * ```ts
  * const resized = await armGridEvent(page, 'columnResized', { finished: true, source: 'sizeColumnsToFit' });
@@ -81,10 +72,7 @@ export async function armGridEvent(
     };
 }
 
-/**
- * Run `action` and resolve only once the grid reports the matching event. Prefer this to arming and
- * waiting by hand: it cannot be got wrong in the one way that matters, arming too late.
- */
+/** Run `action` and resolve once the grid reports the matching event. */
 export async function withGridEvent(
     page: Page,
     eventType: AgPublicEventType,

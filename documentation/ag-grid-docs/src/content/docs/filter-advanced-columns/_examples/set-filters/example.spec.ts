@@ -1,9 +1,7 @@
 import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from '@utils/grid/test-utils';
 
-// Athlete, not Sport: this example gives Athlete the Set Filter (with an uppercasing
-// `valueFormatter`) and leaves Sport on a Text Filter, so `is any of` is only offered here. The
-// two layout tests below were still asking for `[Sport] is any of [...]`, which the Builder cannot
-// render as a value list - so their pill never appeared.
+// Athlete is this example's Set Filter column, so `is any of` is offered there and not on Sport.
+// The uppercasing comes from Athlete's `valueFormatter`.
 const SET_CONDITION = '[Athlete] is any of ["Aaron Gate", "Abby Bishop", "Abbos Atayev", "Aaron Miller"]';
 const SET_CONDITION_PILL = '(4) AARON GATE, ABBY BISHOP, ABBOS ATAYEV, +1 more';
 
@@ -73,8 +71,7 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
-        // Wide enough for the pill to grow past its 152px floor. At the indented test's 570px the row
-        // overflows and the pill is pinned to the floor, so nothing about growth is observable there.
+        // Wider than the indented test: at 570px the row overflows and the pill sits at its floor.
         await page.setViewportSize({ width: 1000, height: 900 });
         await ensureGridReady(page);
         await waitForGridContent(page);
@@ -96,7 +93,6 @@ test.agExample(import.meta, () => {
         const firstActionBox = await firstAction.boundingBox();
         expect(pillBox).not.toBeNull();
         expect(firstActionBox).not.toBeNull();
-        // Grown past the 152px floor, and still clear of the actions by the reserved 24px.
         expect(pillBox!.width).toBeGreaterThan(152);
         expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
 

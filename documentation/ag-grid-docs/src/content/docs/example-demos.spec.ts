@@ -13,9 +13,8 @@ test.describe('Demo page SEO copy', () => {
     for (const demo of demoNames) {
         test(`${demo} serves its title, meta description and H1`, async ({ page }) => {
             const content = demoContent(demo);
-            // `domcontentloaded`, not the default `load`: these assertions read the head and the
-            // rendered heading, none of which need the demo's images, fonts or grid data. Waiting
-            // for every subresource of the heaviest demo is what exceeded the test timeout.
+            // The default `load` waits for every subresource of the heaviest demo, exceeding the
+            // test timeout; nothing asserted below needs them.
             await page.goto(content.href.replace(/^\//, ''), { waitUntil: 'domcontentloaded' });
 
             await expect(page).toHaveTitle(content.seoTitle);
@@ -63,8 +62,7 @@ test.describe('Demo page header layout', () => {
             for (const demo of demoNames) {
                 await page.setViewportSize(viewport);
                 await page.goto(demoContent(demo).href.replace(/^\//, ''), { waitUntil: 'domcontentloaded' });
-                // Text metrics are what this test measures, so the fonts - and only the fonts - have
-                // to have settled before the boxes are read.
+                // Text metrics, so the fonts must have settled before the boxes are read.
                 await page.evaluate(() => document.fonts.ready);
 
                 const copy = page.locator('[class*="headerCopy"]');
