@@ -1,17 +1,24 @@
 name: Documentation Tests (Changed Pages)
 description: Run the docs example tests for the pages a deploy actually changed
 
-# The fast counterpart to doc-tests.yml. That suite runs the whole ~1000-spec estate nightly;
-# this one runs only the pages touched by the commit that was just deployed, so a broken example
-# surfaces minutes after merge instead of the next morning.
+# An early-warning signal, not a gate. doc-tests.yml runs the whole ~1000-spec estate nightly
+# and is the source of truth for example health; this runs only the pages touched by the commit
+# that was just deployed, so a broken example surfaces minutes after merge instead of the next
+# morning. Because the nightly covers everything anyway, this workflow is deliberately
+# best-effort: if it cannot work out what changed it logs why and exits green, it keeps no state
+# between runs, and a missed range costs at most a day of latency. Do not harden it into
+# something authoritative - that is what the nightly is for.
 #
-# It cannot live in CI: these tests drive a deployed site, and CI has no dev server. Staging is
-# only deployed from `latest` (see the `Deploy to Staging` step in ci.yml), so this hangs off
-# CI's completion the same way post-deploy-verification.yml does and tests what is now live.
+# These tests drive the deployed staging site, which is only deployed from `latest` (see the
+# `Deploy to Staging` step in ci.yml), so this hangs off CI's completion the same way
+# post-deploy-verification.yml does and tests what is now live.
 #
 # Scope: changed doc pages only. A grid *source* change can break any page, and the specs sitting
 # at the root of src/content/docs (example-demos, example-source-code, ...) sweep across all of
-# them — none of that is covered here. This complements the nightly; it does not replace it.
+# them - none of that is covered here.
+#
+# No concurrency group: each deploy tests its own range (previous deploy...this deploy), so
+# cancelling an in-flight run would leave that range untested. Runs are short; let them overlap.
 
 on:
   workflow_run:
@@ -21,7 +28,7 @@ on:
   workflow_dispatch:
     inputs:
       base_sha:
-        description: 'Commit to diff against (blank = the last commit this workflow tested)'
+        description: 'Commit to diff against (blank = the previous successful CI deploy of latest)'
         required: false
         default: ''
       base_url:
@@ -47,13 +54,6 @@ env:
   # is a commit on our own latest; the untrusted-checkout pattern OSSF/Scorecard flags is a
   # fork's head, which that guard excludes. A dispatch has no triggering run, so github.sha.
   DEPLOYED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
-  BASELINE_ARTIFACT: tested-sha
-
-# A second deploy landing while this runs makes the in-flight result stale, so drop it and test
-# the newer commit instead. A manual dispatch is somebody's deliberate run and is left alone.
-concurrency:
-  group: doc-tests-changed-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 permissions:
   contents: read
@@ -74,67 +74,22 @@ jobs:
        github.event.workflow_run.head_repository.full_name == github.repository)
     outputs:
       patterns: ${{ steps.resolve.outputs.patterns }}
-      pages: ${{ steps.resolve.outputs.pages }}
       count: ${{ steps.resolve.outputs.count }}
-      has_tests: ${{ steps.resolve.outputs.has_tests }}
-      resolved: ${{ steps.resolve.outputs.resolved }}
-      deployed: ${{ steps.deploy_check.outputs.deployed }}
       base_sha: ${{ steps.baseline.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.DEPLOYED_SHA }}
-          # The diff needs both ends of the range and their merge base in the checkout, and
-          # the baseline is the previously tested commit. 50 covers a normal merge cadence;
-          # beyond that the resolver reports no range rather than guessing.
+          # The diff needs both ends of the range and their merge base in the checkout. 50
+          # covers a normal merge cadence; beyond that the resolver skips rather than guessing.
           fetch-depth: 50
-
-
-      # CI success does not by itself mean the docs reached staging: the deploy lives in CI's
-      # `docs` job, and a skipped job leaves the run green. Today that cannot happen on a push
-      # (detect-changes forces run_docs_ci for non-PR events) and a failed deploy fails CI, so
-      # this asserts a chain that currently holds rather than one that is enforced. If it ever
-      # stops holding, testing would silently run against a stale site - and record-baseline
-      # would mark those pages tested - so check it explicitly and do nothing if it is false.
-      - name: Check the docs were deployed
-        id: deploy_check
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Run metadata, not run content: safe to read from the event payload.
-          CI_RUN_ID: ${{ github.event.workflow_run.id }}
-        run: |
-          # A dispatch has no triggering run and may deliberately target any URL.
-          if [ -z "${CI_RUN_ID}" ]; then
-            echo "deployed=true" >> "$GITHUB_OUTPUT"
-            echo "Manual dispatch; taking the target site as given."
-            exit 0
-          fi
-          CONCLUSION=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CI_RUN_ID}/jobs" \
-            --paginate \
-            --jq '.jobs[] | select(.name == "Docs Build & Link Checker") | .conclusion' \
-            | head -1)
-          if [ "${CONCLUSION}" = "success" ]; then
-            echo "deployed=true" >> "$GITHUB_OUTPUT"
-            echo "CI run ${CI_RUN_ID} deployed the docs."
-            exit 0
-          fi
-          echo "deployed=false" >> "$GITHUB_OUTPUT"
-          {
-            echo "### Skipped: the docs were not deployed"
-            echo
-            echo "CI run \`${CI_RUN_ID}\`'s docs job reported \`${CONCLUSION:-no such job}\`, so"
-            echo "staging does not carry this commit and testing it would describe the previous"
-            echo "deploy. No baseline is recorded, so the next run re-selects this range."
-          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Resolve baseline commit
         id: baseline
-        if: steps.deploy_check.outputs.deployed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OVERRIDE: ${{ inputs.base_sha }}
-          BASELINE_ARTIFACT: ${{ env.BASELINE_ARTIFACT }}
         run: |
           if [ -n "${OVERRIDE}" ]; then
             echo "sha=${OVERRIDE}" >> "$GITHUB_OUTPUT"
@@ -142,43 +97,30 @@ jobs:
             exit 0
           fi
 
-          # The baseline is the SHA a previous run recorded as tested, carried in an artifact
-          # rather than derived from run metadata: a run's own headSha is the default-branch head
-          # at the time, not the commit it deployed, so no arithmetic on it yields the right
-          # answer. This walks back over recent successful runs rather than trusting the newest,
-          # because a run can succeed without recording one - a dispatch, or a run that found the
-          # range unreadable. Mirrors the csp-report job in post-deploy-verification.yml.
-          RUNS=$(gh run list \
-            --workflow doc-tests-changed.yml \
-            --branch latest \
-            --status success \
-            --limit 10 \
-            --json databaseId \
-            --jq '.[].databaseId')
-
+          # CI on latest is push-triggered, so each successful CI run's headSha is exactly the
+          # commit it deployed. The previous deploy is therefore the newest successful CI run
+          # other than our own that is an ancestor of the deployed commit. The ancestor check
+          # covers a newer commit whose CI finished before ours triggered this workflow.
           SHA=""
-          for ID in ${RUNS}; do
-            if ! ARTIFACTS=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${ID}/artifacts" \
-              --jq '.artifacts[] | select(.expired == false) | .name'); then
-              echo "::warning title=Baseline::Could not list artifacts for run ${ID}; skipping it."
-              continue
-            fi
-            if grep -qx "${BASELINE_ARTIFACT}" <<<"${ARTIFACTS}"; then
-              if gh run download "${ID}" --repo "${GITHUB_REPOSITORY}" --name "${BASELINE_ARTIFACT}" --dir ./baseline; then
-                SHA=$(tr -d '[:space:]' < ./baseline/tested-sha.txt)
-                echo "Baseline recorded by run ${ID}."
-                break
-              fi
-              echo "::warning title=Baseline::Could not download the baseline from run ${ID}; skipping it."
+          for CANDIDATE in $(gh run list \
+              --workflow CI \
+              --branch latest \
+              --event push \
+              --status success \
+              --limit 10 \
+              --json headSha \
+              --jq '.[].headSha'); do
+            if [ "${CANDIDATE}" != "${DEPLOYED_SHA}" ] && git merge-base --is-ancestor "${CANDIDATE}" "${DEPLOYED_SHA}" 2>/dev/null; then
+              SHA="${CANDIDATE}"
+              break
             fi
           done
 
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
-          echo "Baseline: ${SHA:-none (no recent run recorded one)}"
+          echo "Baseline: ${SHA:-none (no earlier successful CI run reachable in this checkout)}"
 
       - name: Resolve changed doc pages
         id: resolve
-        if: steps.deploy_check.outputs.deployed == 'true'
         # Both SHAs go through the environment rather than being interpolated into the command
         # line: base_sha is a dispatch input, so an expression here would be a shell-injection
         # point.
@@ -187,31 +129,9 @@ jobs:
           HEAD_SHA: ${{ env.DEPLOYED_SHA }}
         run: node scripts/ci/resolve-changed-doc-pages.mjs "${BASE_SHA}" "${HEAD_SHA}"
 
-      - name: Summarise scope
-        if: steps.deploy_check.outputs.deployed == 'true'
-        env:
-          PAGES: ${{ steps.resolve.outputs.pages }}
-          COUNT: ${{ steps.resolve.outputs.count }}
-          BASE: ${{ steps.baseline.outputs.sha }}
-          HEAD: ${{ env.DEPLOYED_SHA }}
-        run: |
-          {
-            if [ "${COUNT}" = "0" ]; then
-              echo "### No changed doc pages with tests"
-              echo
-              echo "Nothing to run for \`${BASE:-none}...${HEAD}\`."
-            else
-              echo "### Testing ${COUNT} changed doc page(s)"
-              echo
-              tr ',' '\n' <<<"${PAGES}" | sed 's/^/- /'
-              echo
-              echo "Range: \`${BASE:-none}...${HEAD}\`"
-            fi
-          } | tee -a "$GITHUB_STEP_SUMMARY"
-
   test:
     needs: resolve
-    if: ${{ needs.resolve.outputs.has_tests == 'true' }}
+    if: ${{ needs.resolve.outputs.count != '0' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     name: Test Changed Pages
@@ -301,34 +221,3 @@ jobs:
           CURRENT_COMMIT_SHA: ${{ env.DEPLOYED_SHA }}
           PREV_COMMIT_SHA: ${{ needs.resolve.outputs.base_sha }}
           IS_SUCCESS: 'false'
-
-  # Advances the baseline only for a run whose verdict covers the normal staging range: the
-  # docs reached staging, the range was readable, and the tests either passed or had nothing to
-  # run. A failure, a cancellation or an unreadable range records nothing, so the next run
-  # re-selects the same range instead of stepping over it.
-  #
-  # Manual dispatches never record. They can point at another site or pin their own base_sha, so
-  # their verdict does not describe the staging range this baseline stands for - recording it
-  # would mark untested pages as tested.
-  record-baseline:
-    needs: [resolve, test]
-    if: >
-      always() && github.event_name == 'workflow_run' &&
-      needs.resolve.result == 'success' &&
-      needs.resolve.outputs.deployed == 'true' &&
-      needs.resolve.outputs.resolved == 'true' &&
-      (needs.test.result == 'success' || needs.test.result == 'skipped')
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    name: Record Tested Commit
-    steps:
-      - name: Write tested commit
-        run: echo "${DEPLOYED_SHA}" > ./tested-sha.txt
-      # An artifact rather than the cache: the next run has to find this by walking back over
-      # recent runs, and a 30-day artifact outlives the cache's idle eviction.
-      - name: Upload tested commit
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: ${{ env.BASELINE_ARTIFACT }}
-          path: ./tested-sha.txt
-          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
