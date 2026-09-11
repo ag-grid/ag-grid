@@ -1,6 +1,10 @@
 name: 'Run Framework Example Tests'
 description: 'Run Framework Example Tests'
 inputs:
+  ref:
+    description: "Revision to check out (default: the ref the event would pick)"
+    required: false
+    default: ''
   framework:
     description: "Framework to use, or 'all' to run every framework in one pass"
     required: true
@@ -30,9 +34,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # A caller testing a deployed site must pin this to the deployed revision: left to its
+    # default this checks out the event's ref, which on workflow_run is the default-branch
+    # head, and would silently replace a revision the caller had already checked out.
     - name: Checkout
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+        ref: ${{ inputs.ref }}
         fetch-depth: 1
 
     # These tests run Playwright against a remote deployed site (base_url), so they need

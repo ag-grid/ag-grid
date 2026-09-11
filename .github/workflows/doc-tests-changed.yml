@@ -47,7 +47,7 @@ env:
   # is a commit on our own latest; the untrusted-checkout pattern OSSF/Scorecard flags is a
   # fork's head, which that guard excludes. A dispatch has no triggering run, so github.sha.
   DEPLOYED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
-  BASELINE_CACHE_PREFIX: doc-tests-changed-tested-
+  BASELINE_ARTIFACT: tested-sha
 
 # A second deploy landing while this runs makes the in-flight result stale, so drop it and test
 # the newer commit instead. A manual dispatch is somebody's deliberate run and is left alone.
@@ -77,6 +77,7 @@ jobs:
       pages: ${{ steps.resolve.outputs.pages }}
       count: ${{ steps.resolve.outputs.count }}
       has_tests: ${{ steps.resolve.outputs.has_tests }}
+      resolved: ${{ steps.resolve.outputs.resolved }}
       deployed: ${{ steps.deploy_check.outputs.deployed }}
       base_sha: ${{ steps.baseline.outputs.sha }}
     steps:
@@ -89,15 +90,6 @@ jobs:
           # beyond that the resolver reports no range rather than guessing.
           fetch-depth: 50
 
-      # The previous baseline cannot come from `gh run list`: a run's headSha is its own head,
-      # which for workflow_run is the default-branch HEAD rather than the commit it deployed.
-      # So each run records the SHA it actually tested and the next one reads it back.
-      - name: Restore last tested commit
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ./tested-sha.txt
-          key: ${{ env.BASELINE_CACHE_PREFIX }}${{ env.DEPLOYED_SHA }}
-          restore-keys: ${{ env.BASELINE_CACHE_PREFIX }}
 
       # CI success does not by itself mean the docs reached staging: the deploy lives in CI's
       # `docs` job, and a skipped job leaves the run green. Today that cannot happen on a push
@@ -142,41 +134,47 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OVERRIDE: ${{ inputs.base_sha }}
+          BASELINE_ARTIFACT: ${{ env.BASELINE_ARTIFACT }}
         run: |
           if [ -n "${OVERRIDE}" ]; then
             echo "sha=${OVERRIDE}" >> "$GITHUB_OUTPUT"
             echo "Using the dispatched baseline ${OVERRIDE}."
             exit 0
           fi
-          # Written by record-baseline on the last run that reached a verdict.
-          if [ -f ./tested-sha.txt ]; then
-            SHA=$(tr -d '[:space:]' < ./tested-sha.txt)
-            if [ -n "${SHA}" ]; then
-              echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
-              echo "Baseline: ${SHA} (last tested commit)."
-              exit 0
-            fi
-          fi
 
-          # Cache entries are evicted eventually, so fall back to the last run that concluded
-          # `success`. Its headSha can be newer than the commit that run deployed, which would
-          # make this baseline too recent and under-select, so take its parent to err the other
-          # way: over-selecting costs a few minutes of extra tests, under-selecting silently
-          # drops a page. `--status` matches conclusions too, so cancelled and skipped runs -
-          # which tested nothing, and are the majority of `completed` - cannot be picked.
-          SHA=$(gh run list \
+          # The baseline is the SHA a previous run recorded as tested, carried in an artifact
+          # rather than derived from run metadata: a run's own headSha is the default-branch head
+          # at the time, not the commit it deployed, so no arithmetic on it yields the right
+          # answer. This walks back over recent successful runs rather than trusting the newest,
+          # because a run can succeed without recording one - a dispatch, or a run that found the
+          # range unreadable. Mirrors the csp-report job in post-deploy-verification.yml.
+          RUNS=$(gh run list \
             --workflow doc-tests-changed.yml \
             --branch latest \
             --status success \
-            --limit 1 \
-            --json headSha \
-            --jq '.[0].headSha // ""')
-          if [ -n "${SHA}" ]; then
-            PARENT=$(git rev-parse --verify --quiet "${SHA}^" || true)
-            SHA=${PARENT:-$SHA}
-          fi
+            --limit 10 \
+            --json databaseId \
+            --jq '.[].databaseId')
+
+          SHA=""
+          for ID in ${RUNS}; do
+            if ! ARTIFACTS=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${ID}/artifacts" \
+              --jq '.artifacts[] | select(.expired == false) | .name'); then
+              echo "::warning title=Baseline::Could not list artifacts for run ${ID}; skipping it."
+              continue
+            fi
+            if grep -qx "${BASELINE_ARTIFACT}" <<<"${ARTIFACTS}"; then
+              if gh run download "${ID}" --repo "${GITHUB_REPOSITORY}" --name "${BASELINE_ARTIFACT}" --dir ./baseline; then
+                SHA=$(tr -d '[:space:]' < ./baseline/tested-sha.txt)
+                echo "Baseline recorded by run ${ID}."
+                break
+              fi
+              echo "::warning title=Baseline::Could not download the baseline from run ${ID}; skipping it."
+            fi
+          done
+
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
-          echo "Baseline: ${SHA:-none (no cached commit and no successful run)}"
+          echo "Baseline: ${SHA:-none (no recent run recorded one)}"
 
       - name: Resolve changed doc pages
         id: resolve
@@ -234,6 +232,7 @@ jobs:
       # full estate size the rest is not worth the hours; that trade does not apply here.
       - uses: ./.github/actions/test-framework-examples
         with:
+          ref: ${{ env.DEPLOYED_SHA }}
           base_url: ${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}
           framework: all
           browsers: all
@@ -303,14 +302,21 @@ jobs:
           PREV_COMMIT_SHA: ${{ needs.resolve.outputs.base_sha }}
           IS_SUCCESS: 'false'
 
-  # Advances the baseline only when this run actually reached a verdict on its range - tests
-  # passed, or there was nothing to test. A failure or a cancellation deliberately records
-  # nothing, so the next run re-selects the same range instead of stepping over it.
+  # Advances the baseline only for a run whose verdict covers the normal staging range: the
+  # docs reached staging, the range was readable, and the tests either passed or had nothing to
+  # run. A failure, a cancellation or an unreadable range records nothing, so the next run
+  # re-selects the same range instead of stepping over it.
+  #
+  # Manual dispatches never record. They can point at another site or pin their own base_sha, so
+  # their verdict does not describe the staging range this baseline stands for - recording it
+  # would mark untested pages as tested.
   record-baseline:
     needs: [resolve, test]
     if: >
-      always() && needs.resolve.result == 'success' &&
+      always() && github.event_name == 'workflow_run' &&
+      needs.resolve.result == 'success' &&
       needs.resolve.outputs.deployed == 'true' &&
+      needs.resolve.outputs.resolved == 'true' &&
       (needs.test.result == 'success' || needs.test.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -318,8 +324,11 @@ jobs:
     steps:
       - name: Write tested commit
         run: echo "${DEPLOYED_SHA}" > ./tested-sha.txt
-      - name: Save tested commit
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      # An artifact rather than the cache: the next run has to find this by walking back over
+      # recent runs, and a 30-day artifact outlives the cache's idle eviction.
+      - name: Upload tested commit
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
+          name: ${{ env.BASELINE_ARTIFACT }}
           path: ./tested-sha.txt
-          key: ${{ env.BASELINE_CACHE_PREFIX }}${{ env.DEPLOYED_SHA }}
+          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}

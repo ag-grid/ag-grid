@@ -7,7 +7,11 @@
 //
 // Usage: node scripts/ci/resolve-changed-doc-pages.mjs <baseSha> <headSha>
 //
-// Outputs (GITHUB_OUTPUT, when set): patterns, pages, count, has_tests.
+// Outputs (GITHUB_OUTPUT, when set): patterns, pages, count, has_tests, resolved.
+//
+// `resolved` is the difference between "this range holds nothing to test" and "this range
+// could not be read". Both run no tests, but only the first may advance the caller's
+// baseline: advancing past a range that was never read drops it for good.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -39,18 +43,23 @@ function hasCommit(sha) {
     }
 }
 
-// A shallow or force-pushed baseline is not an error worth failing the run over — it just means
-// there is no range to diff, so there is nothing to test rather than everything to test.
-// Deliberately NOT falling back to "run the whole suite": that is the nightly's job, and a
-// silent full run here would be a 90-minute surprise.
-if (!baseSha || baseSha === headSha || !hasCommit(baseSha) || !hasCommit(headSha) || !hasMergeBase(baseSha, headSha)) {
-    const why = !baseSha
-        ? 'no previous run to diff against'
-        : baseSha === headSha
-          ? 'the deployed commit is unchanged since the last run'
-          : 'the range has no common ancestor in this (shallow) checkout';
+// No baseline at all is the bootstrap case, and an unchanged head means nothing has happened
+// since: both are genuinely empty ranges, so the caller may record this commit and move on.
+if (!baseSha || baseSha === headSha) {
+    const why = !baseSha ? 'no previous run to diff against' : 'the deployed commit is unchanged since the last run';
     console.log(`No commit range to inspect: ${why}.`);
-    writeOutputs({ patterns: '', pages: '', count: 0, has_tests: 'false' });
+    writeOutputs({ patterns: '', pages: '', count: 0, has_tests: 'false', resolved: 'true' });
+    process.exit(0);
+}
+
+// A baseline that exists but cannot be reached in this checkout is different in kind: the range
+// is unread, not empty, so `resolved` is false and the caller must leave the baseline alone for
+// the next run to pick up. Deliberately NOT falling back to running the whole suite either -
+// that is the nightly's job, and a silent full run here would be a 90-minute surprise.
+if (!hasCommit(baseSha) || !hasCommit(headSha) || !hasMergeBase(baseSha, headSha)) {
+    console.log(`Cannot read the range ${baseSha}...${headSha}: no common ancestor in this (shallow) checkout.`);
+    console.log('::warning title=Changed doc pages::Range unavailable; leaving the baseline for the next run.');
+    writeOutputs({ patterns: '', pages: '', count: 0, has_tests: 'false', resolved: 'false' });
     process.exit(0);
 }
 
@@ -127,6 +136,7 @@ writeOutputs({
     pages: withSpecs.join(','),
     count: withSpecs.length,
     has_tests: String(withSpecs.length > 0),
+    resolved: 'true',
 });
 
 function writeOutputs(outputs) {
