@@ -17,8 +17,8 @@ describe('errorParam tags name a parameter their error actually takes', () => {
             .map((match) => NAME_PATTERN.exec(match[1])?.[1])
             .filter((name): name is string => name != null);
 
-        // A name the error does not take can never be substituted, so every reader sees the fallback as
-        // though it were their own value — this is how #260 came to recommend `RowGroupingModule` to all.
+        // A name the error does not take can never be substituted, so every reader is left reading the
+        // bare `<name>` placeholder where the page promised them their own value.
         const available = getErrorParamNames(code as any);
         expect(used.filter((name) => !available.includes(name))).toEqual([]);
     });
