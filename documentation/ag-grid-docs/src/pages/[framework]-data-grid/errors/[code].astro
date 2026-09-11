@@ -57,10 +57,12 @@ export async function getStaticPaths() {
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
 const errorCode = parseInt(code, 10);
-// Covers both a code retired since an earlier release and a number never allocated — the two cannot be
-// told apart without a hand-maintained list, so the copy stays version-neutral. It must never reach
-// `getErrorText`, which throws for an unknown code under `astro dev` via `throwDevWarning`.
+// Covers both a code retired since an earlier release and a number never allocated. Having a page of its
+// own is what tells the two apart, with no list to maintain: content was only ever written against a code
+// that existed. Neither must reach `getErrorText`, which throws for an unknown code under `astro dev`
+// via `throwDevWarning`.
 const isUnknownCode = !(errorCode in AG_GRID_ERRORS);
+const isRetiredCode = isUnknownCode && errorPage !== undefined;
 const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
@@ -80,7 +82,12 @@ const { text: defaultErrorText, hasPlaceholders } = isUnknownCode
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
-const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
+// Slug stays put across all three cases; only the label follows what the section actually holds.
+const fullErrorTextHeading = {
+    slug: getTabItemSlug('full-error-text'),
+    depth: 2,
+    text: isRetiredCode ? 'Retired Error Code' : 'Full Error Text',
+};
 const relatedDocPages = { slug: getTabItemSlug('related-doc-pages'), depth: 2, text: 'Related Doc Pages' };
 // Error content lives in `content/errors/`, so partials resolve against that rather than `content/docs`.
 const errorsContentPath = pathJoin(getContentRootFileUrl().pathname, 'errors');
@@ -135,7 +142,13 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive') +
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
                 {
-                    isUnknownCode ? (
+                    isRetiredCode ? (
+                        <Warning>
+                            Error #{code} is no longer raised by AG Grid {VERSION}. If you are using an earlier version,
+                            the guidance below still applies — otherwise, find your version in the{' '}
+                            <a href={archiveUrl}>documentation archive</a>.
+                        </Warning>
+                    ) : isUnknownCode ? (
                         <Warning>
                             Error #{code} is not recognised in AG Grid {VERSION} — it either applies to an older
                             version, or is not an error AG Grid raises. Following the link from your browser's developer
