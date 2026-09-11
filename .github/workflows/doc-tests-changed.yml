@@ -77,6 +77,7 @@ jobs:
       pages: ${{ steps.resolve.outputs.pages }}
       count: ${{ steps.resolve.outputs.count }}
       has_tests: ${{ steps.resolve.outputs.has_tests }}
+      deployed: ${{ steps.deploy_check.outputs.deployed }}
       base_sha: ${{ steps.baseline.outputs.sha }}
     steps:
       - name: Checkout
@@ -98,8 +99,46 @@ jobs:
           key: ${{ env.BASELINE_CACHE_PREFIX }}${{ env.DEPLOYED_SHA }}
           restore-keys: ${{ env.BASELINE_CACHE_PREFIX }}
 
+      # CI success does not by itself mean the docs reached staging: the deploy lives in CI's
+      # `docs` job, and a skipped job leaves the run green. Today that cannot happen on a push
+      # (detect-changes forces run_docs_ci for non-PR events) and a failed deploy fails CI, so
+      # this asserts a chain that currently holds rather than one that is enforced. If it ever
+      # stops holding, testing would silently run against a stale site - and record-baseline
+      # would mark those pages tested - so check it explicitly and do nothing if it is false.
+      - name: Check the docs were deployed
+        id: deploy_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Run metadata, not run content: safe to read from the event payload.
+          CI_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          # A dispatch has no triggering run and may deliberately target any URL.
+          if [ -z "${CI_RUN_ID}" ]; then
+            echo "deployed=true" >> "$GITHUB_OUTPUT"
+            echo "Manual dispatch; taking the target site as given."
+            exit 0
+          fi
+          CONCLUSION=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CI_RUN_ID}/jobs" \
+            --paginate \
+            --jq '.jobs[] | select(.name == "Docs Build & Link Checker") | .conclusion' \
+            | head -1)
+          if [ "${CONCLUSION}" = "success" ]; then
+            echo "deployed=true" >> "$GITHUB_OUTPUT"
+            echo "CI run ${CI_RUN_ID} deployed the docs."
+            exit 0
+          fi
+          echo "deployed=false" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Skipped: the docs were not deployed"
+            echo
+            echo "CI run \`${CI_RUN_ID}\`'s docs job reported \`${CONCLUSION:-no such job}\`, so"
+            echo "staging does not carry this commit and testing it would describe the previous"
+            echo "deploy. No baseline is recorded, so the next run re-selects this range."
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Resolve baseline commit
         id: baseline
+        if: steps.deploy_check.outputs.deployed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OVERRIDE: ${{ inputs.base_sha }}
@@ -141,6 +180,7 @@ jobs:
 
       - name: Resolve changed doc pages
         id: resolve
+        if: steps.deploy_check.outputs.deployed == 'true'
         # Both SHAs go through the environment rather than being interpolated into the command
         # line: base_sha is a dispatch input, so an expression here would be a shell-injection
         # point.
@@ -150,6 +190,7 @@ jobs:
         run: node scripts/ci/resolve-changed-doc-pages.mjs "${BASE_SHA}" "${HEAD_SHA}"
 
       - name: Summarise scope
+        if: steps.deploy_check.outputs.deployed == 'true'
         env:
           PAGES: ${{ steps.resolve.outputs.pages }}
           COUNT: ${{ steps.resolve.outputs.count }}
@@ -269,6 +310,7 @@ jobs:
     needs: [resolve, test]
     if: >
       always() && needs.resolve.result == 'success' &&
+      needs.resolve.outputs.deployed == 'true' &&
       (needs.test.result == 'success' || needs.test.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 5
