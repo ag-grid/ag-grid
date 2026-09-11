@@ -1,0 +1,228 @@
+name: Documentation Tests (Changed Pages)
+description: Run the docs example tests for the pages a deploy actually changed
+
+# The fast counterpart to doc-tests.yml. That suite runs the whole ~1000-spec estate nightly;
+# this one runs only the pages touched by the commit that was just deployed, so a broken example
+# surfaces minutes after merge instead of the next morning.
+#
+# It cannot live in CI: these tests drive a deployed site, and CI has no dev server. Staging is
+# only deployed from `latest` (see the `Deploy to Staging` step in ci.yml), so this hangs off
+# CI's completion the same way post-deploy-verification.yml does and tests what is now live.
+#
+# Scope: changed doc pages only. A grid *source* change can break any page, and the specs sitting
+# at the root of src/content/docs (example-demos, example-source-code, ...) sweep across all of
+# them — none of that is covered here. This complements the nightly; it does not replace it.
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: ['latest']
+  workflow_dispatch:
+    inputs:
+      base_sha:
+        description: 'Commit to diff against (blank = the last commit this workflow tested)'
+        required: false
+        default: ''
+      base_url:
+        description: 'URL to test against'
+        required: false
+        default: 'https://grid-staging.ag-grid.com/'
+      notify:
+        description: 'Notify Slack on failure'
+        type: boolean
+        required: false
+        default: false
+
+env:
+  NX_NO_CLOUD: true
+  CI: true
+  DEFAULT_RETENTION_DAYS: 30
+  AG_LIBRARY: grid
+
+# A second deploy landing while this runs makes the in-flight result stale, so drop it and test
+# the newer commit instead. A manual dispatch is somebody's deliberate run and is left alone.
+concurrency:
+  group: doc-tests-changed-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+
+permissions:
+  contents: read
+  # read is sufficient: the only actions-scope consumer is `gh run list` for the baseline SHA.
+  actions: read
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    name: Resolve Changed Pages
+    # Mirrors post-deploy-verification.yml: for workflow_run, only same-repo pushes whose CI run
+    # succeeded, which keeps this off the untrusted-checkout path OSSF/Scorecard flags.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    outputs:
+      patterns: ${{ steps.resolve.outputs.patterns }}
+      pages: ${{ steps.resolve.outputs.pages }}
+      count: ${{ steps.resolve.outputs.count }}
+      has_tests: ${{ steps.resolve.outputs.has_tests }}
+      base_sha: ${{ steps.baseline.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The default-branch HEAD, which under the job `if:` above is the deployed commit.
+          # Deliberately not workflow_run.head_sha — that is the untrusted-input pattern.
+          ref: ${{ github.sha }}
+          # The diff needs both ends of the range in the checkout, and the baseline is the
+          # previously deployed commit. 50 covers a normal merge cadence; beyond that the
+          # resolver reports no range rather than guessing.
+          fetch-depth: 50
+
+      - name: Resolve baseline commit
+        id: baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OVERRIDE: ${{ inputs.base_sha }}
+        run: |
+          if [ -n "${OVERRIDE}" ]; then
+            echo "sha=${OVERRIDE}" >> "$GITHUB_OUTPUT"
+            echo "Using the dispatched baseline ${OVERRIDE}."
+            exit 0
+          fi
+          # This run is still in_progress, so --status completed cannot select it. The last
+          # completed run's head SHA is the commit this workflow last had a verdict on —
+          # including a failed one, so a red run's range is re-tested rather than skipped over.
+          SHA=$(gh run list \
+            --workflow doc-tests-changed.yml \
+            --branch latest \
+            --status completed \
+            --limit 1 \
+            --json headSha \
+            --jq '.[0].headSha // ""')
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "Baseline: ${SHA:-none (first run)}"
+
+      - name: Resolve changed doc pages
+        id: resolve
+        # Both SHAs go through the environment rather than being interpolated into the command
+        # line: base_sha is a dispatch input, so an expression here would be a shell-injection
+        # point.
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: node scripts/ci/resolve-changed-doc-pages.mjs "${BASE_SHA}" "${HEAD_SHA}"
+
+      - name: Summarise scope
+        env:
+          PAGES: ${{ steps.resolve.outputs.pages }}
+          COUNT: ${{ steps.resolve.outputs.count }}
+          BASE: ${{ steps.baseline.outputs.sha }}
+        run: |
+          {
+            if [ "${COUNT}" = "0" ]; then
+              echo "### No changed doc pages with tests"
+              echo
+              echo "Nothing to run for \`${BASE:-none}...${GITHUB_SHA}\`."
+            else
+              echo "### Testing ${COUNT} changed doc page(s)"
+              echo
+              tr ',' '\n' <<<"${PAGES}" | sed 's/^/- /'
+              echo
+              echo "Range: \`${BASE:-none}...${GITHUB_SHA}\`"
+            fi
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+  test:
+    needs: resolve
+    if: ${{ needs.resolve.outputs.has_tests == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    name: Test Changed Pages
+    # Scoped to this job rather than the workflow: the credential is only needed by the requests
+    # to the deployed site, and report-publishing steps have no business reading it.
+    env:
+      AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      # Same composite action the nightly uses, so the two suites cannot drift in how they set up
+      # or invoke Playwright. One job covering every framework on every browser, unsharded: a
+      # filtered run is a few hundred tests at most, and splitting it would re-pay the cache
+      # restore, community build and browser install per split for no test-time saving. The
+      # nightly runs only vanilla and reactFunctionalTs across all three browsers because at
+      # full estate size the rest is not worth the hours; that trade does not apply here.
+      - uses: ./.github/actions/test-framework-examples
+        with:
+          base_url: ${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}
+          framework: all
+          browsers: all
+          test_pattern: ${{ needs.resolve.outputs.patterns }}
+
+  report:
+    needs: [resolve, test]
+    if: always() && needs.test.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    name: Report
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Download test reports
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: combined-reports
+
+      - name: Normalise example test reports
+        run: node documentation/ag-grid-docs/scripts/normalise-ctrf-reports.mjs combined-reports
+
+      - name: Publish combined test report
+        uses: ctrf-io/github-test-reporter@e500b992f936420eb633c91644cf10d4d71df700 # v1.1.0
+        with:
+          report-path: 'combined-reports/**/*.json'
+          summary-report: true
+          flaky-report: true
+          skipped-report: false
+          group-by: filePath
+          write-ctrf-to-file: ./ctrf-report.json
+
+      # Fixed-size, unlike the reporter's folded report, whose uncapped per-failure traces can
+      # push the step summary past GitHub's 1MB limit and get the whole summary dropped.
+      - name: Summarise failed tests
+        if: always()
+        run: node documentation/ag-grid-docs/scripts/summarise-ctrf-failures.mjs ./ctrf-report.json
+
+      - name: Upload combined CTRF report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ctrf-report
+          path: ./ctrf-report.json
+          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
+
+      # Failures only, and only for latest. A pass needs no announcement — this runs on every
+      # deploy, so a "back to green" message per merge would drown the channel. No JIRA ticket
+      # either: a failure here belongs to the commit that just landed, and the nightly owns
+      # ticketing for the estate as a whole.
+      - name: Notify Slack
+        if: >
+          always() && needs.test.result == 'failure' &&
+          github.ref_name == 'latest' &&
+          (github.event_name == 'workflow_run' || inputs.notify)
+        continue-on-error: true
+        uses: ./external/ag-shared/github/actions/slack-integration
+        with:
+          AG_LIBRARY: ${{ env.AG_LIBRARY }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: '#ci-grid-gate'
+          CTRF_REPORT_FILE: ./ctrf-report.json
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+          PREV_COMMIT_SHA: ${{ needs.resolve.outputs.base_sha }}
+          IS_SUCCESS: 'false'
