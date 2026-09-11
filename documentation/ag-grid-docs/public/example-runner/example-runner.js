@@ -20,6 +20,8 @@
     const THEME_MODES = { 'dark-blue': 'dark', light: 'light' };
     const VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
     const VERSION_PATTERN = '^\\d+\\.\\d+\\.\\d+(?:-[\\w.-]+)?(?:\\+[\\w.-]+)?$';
+    // @angular/core's primitives entry points moved from `primitives/<name>.mjs` to `primitives-<name>.mjs` in v21.
+    const ANGULAR_FLAT_PRIMITIVES_MAJOR = 21;
     const BUILD_TOKENS = {
         production: { '?ag-dev-query': '', '&ag-dev-appended': '' },
         development: { '?ag-dev-query': '?dev', '&ag-dev-appended': '&dev' },
@@ -52,6 +54,12 @@
         });
     }
 
+    function angularPrimitivesSegment(version) {
+        return parseInt(version, 10) >= ANGULAR_FLAT_PRIMITIVES_MAJOR
+            ? '/fesm2022/primitives-'
+            : '/fesm2022/primitives/';
+    }
+
     function injectImportMap(options) {
         const urlParams = new URLSearchParams(window.location.search);
         const requestedVersion = urlParams.get(VERSION_PARAM);
@@ -78,6 +86,13 @@
 
         const substitutions = Object.assign({}, isProd ? BUILD_TOKENS.production : BUILD_TOKENS.development);
         substitutions[VERSION_PLACEHOLDER] = version;
+        if (options.defaultVersion) {
+            const defaultSegment = angularPrimitivesSegment(options.defaultVersion);
+            const requestedSegment = angularPrimitivesSegment(version);
+            if (defaultSegment !== requestedSegment) {
+                substitutions[defaultSegment] = requestedSegment;
+            }
+        }
 
         const rendered = options.imports || JSON.parse(options.template).imports;
         const imports = {};

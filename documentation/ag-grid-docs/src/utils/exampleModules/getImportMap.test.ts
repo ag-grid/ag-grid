@@ -1,7 +1,13 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
 
-import { DEVELOPMENT_FLAGS, FRAMEWORK_VERSION_PATTERN, getDefaultFrameworkVersion, getImportMap } from './getImportMap';
+import {
+    DEVELOPMENT_FLAGS,
+    FRAMEWORK_VERSION_PATTERN,
+    FRAMEWORK_VERSION_PLACEHOLDER,
+    getDefaultFrameworkVersion,
+    getImportMap,
+} from './getImportMap';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
@@ -139,6 +145,31 @@ describe('getImportMap', () => {
 
             expect(importMap['rxjs']).not.toContain('@1.2.3');
             expect(importMap['tslib']).not.toContain('@1.2.3');
+        });
+
+        test.each([
+            ['21.2.23', 'primitives-di.mjs'],
+            ['20.3.1', 'primitives/di.mjs'],
+        ])("@angular/core's primitives entry points follow the %s package layout", (version, entryPoint) => {
+            const importMap = getImportMap({
+                internalFramework: 'angular',
+                isEnterprise: false,
+                frameworkVersion: version,
+            });
+
+            expect(importMap['@angular/core/primitives/di']).toBe(
+                `${NPM_CDN}/@angular/core@${version}/fesm2022/${entryPoint}`
+            );
+        });
+
+        test('the version placeholder takes the pinned Angular layout', () => {
+            const importMap = getImportMap({
+                internalFramework: 'angular',
+                isEnterprise: false,
+                frameworkVersion: FRAMEWORK_VERSION_PLACEHOLDER,
+            });
+
+            expect(importMap['@angular/core/primitives/signals']).toContain('/fesm2022/primitives-signals.mjs');
         });
 
         test('the frameworkless examples have no framework version', () => {

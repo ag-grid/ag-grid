@@ -24,23 +24,102 @@ import { toTitleCase } from './string-utils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
-function getOnGridReadyCode(
-    readyCode: string,
-    data: { url: string; callback: string },
-    rowDataType: string | undefined,
-    hasApi: boolean
-): string {
+const DIRECT_ROW_DATA_ASSIGNMENT = /^[\s{(]*this\.rowData\s*=\s*data[\s)};]*$/;
+const ROW_DATA_ASSIGNMENT_PREFIX = /^[\s{(]*this\.rowData\s*=\s*/;
+
+function stripWrappingParens(expression: string): string {
+    let depth = 0;
+    for (let i = 0, len = expression.length; i < len; ++i) {
+        const char = expression[i];
+        if (char === '(') {
+            depth++;
+        } else if (char === ')') {
+            depth--;
+            if (depth === 0 && i < len - 1) {
+                return expression;
+            }
+        }
+    }
+    return expression.startsWith('(') && expression.endsWith(')') ? expression.slice(1, -1) : expression;
+}
+
+/** The `data.slice(...)`-style expression assigned to rowData, or undefined if the callback does anything else. */
+function getRowDataTransform(assignment: string): string | undefined {
+    if (!ROW_DATA_ASSIGNMENT_PREFIX.test(assignment)) {
+        return undefined;
+    }
+    const expression = stripWrappingParens(
+        assignment
+            .replace(ROW_DATA_ASSIGNMENT_PREFIX, '')
+            .replace(/[\s;})]*$/, (tail) => tail.replace(/[\s;}]/g, ''))
+            .trim()
+    );
+    return expression.startsWith('data.') && !/\bdata\b/.test(expression.slice(5)) ? expression : undefined;
+}
+
+type DataLoading = { kind: 'direct' } | { kind: 'computed'; expression: string } | { kind: 'effect'; body: string };
+
+function classifyDataLoading(callback: string, hasRowDataProperty: boolean): DataLoading {
+    const assignment = replaceGridReadyRowData(callback, 'this.rowData');
+    if (!hasRowDataProperty) {
+        if (DIRECT_ROW_DATA_ASSIGNMENT.test(assignment)) {
+            return { kind: 'direct' };
+        }
+        const expression = getRowDataTransform(assignment);
+        if (expression) {
+            return { kind: 'computed', expression };
+        }
+    }
+    return {
+        kind: 'effect',
+        body: assignment
+            .trim()
+            .replace(/^\{|\}$/g, '')
+            .trim(),
+    };
+}
+
+function getDataLoadingCode(loading: DataLoading, url: string, rowDataType: string) {
+    const resource = `httpResource<${rowDataType}[]>(() => ${url});`;
+    if (loading.kind === 'direct') {
+        return { properties: [`rowData = ${resource}`], rowDataBinding: 'rowData.value()', constructorBody: '' };
+    }
+    if (loading.kind === 'computed') {
+        return {
+            properties: [
+                `data = ${resource}`,
+                `rowData = computed(() => {
+        if (!this.data.hasValue()) {
+            return undefined;
+        }
+        const data = this.data.value();
+        return ${loading.expression};
+    });`,
+            ],
+            rowDataBinding: 'rowData()',
+            constructorBody: '',
+        };
+    }
+    return {
+        properties: [`data = ${resource}`],
+        rowDataBinding: 'rowData',
+        constructorBody: `effect(() => {
+            if (!this.data.hasValue()) {
+                return;
+            }
+            const data = this.data.value();
+            ${loading.body}
+        });`,
+    };
+}
+
+function getOnGridReadyCode(readyCode: string, rowDataType: string | undefined, hasApi: boolean): string {
     const additionalLines = [];
 
     if (readyCode) {
         additionalLines.push(readyCode.trim().replace(/^\{|\}$/g, ''));
     }
 
-    if (data) {
-        const { url, callback } = data;
-        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
-        additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
-    }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
     if (hasApi || additionalLines.length > 0) {
         // use params in gridReady event
@@ -98,12 +177,19 @@ function getImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
-    allStylesheets: string[]
+    allStylesheets: string[],
+    loading: DataLoading | undefined
 ): string[] {
-    const imports = ["import { Component } from '@angular/core';"];
+    const coreImports = ['Component'];
+    if (loading?.kind === 'computed') {
+        coreImports.push('computed');
+    } else if (loading?.kind === 'effect') {
+        coreImports.push('effect');
+    }
+    const imports = [`import { ${coreImports.sort().join(', ')} } from '@angular/core';`];
 
-    if (bindings.data) {
-        imports.push("import { HttpClient } from '@angular/common/http';");
+    if (loading) {
+        imports.push("import { httpResource } from '@angular/common/http';");
     }
 
     const localeImport = findLocaleImport(bindings.imports);
@@ -150,12 +236,6 @@ export function vanillaToAngular(
 ): () => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
-    const diParams = [];
-
-    if (data) {
-        diParams.push('private http: HttpClient');
-    }
-
     const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
 
     const eventHandlers = bindings.eventHandlers.map((event) => event.handler).map(removeFunctionKeyword);
@@ -163,7 +243,6 @@ export function vanillaToAngular(
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
     return () => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const propertyAttributes = [];
         const propertyAssignments = [];
 
@@ -186,24 +265,34 @@ export function vanillaToAngular(
                 }
             });
 
+        const hasRowDataProperty = propertyAssignments.some(
+            (item) => item.replace(/setGridOption\('rowData'/g, '').indexOf('rowData') >= 0
+        );
+        const loading = data ? classifyDataLoading(data.callback, hasRowDataProperty) : undefined;
+        const dataLoading = loading ? getDataLoadingCode(loading, data.url, rowDataType) : undefined;
+        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets, loading);
+
         if (!propertyAttributes.find((item) => item.indexOf('[rowData]') >= 0)) {
-            propertyAttributes.push('[rowData]="rowData"');
+            propertyAttributes.push(`[rowData]="${dataLoading?.rowDataBinding ?? 'rowData'}"`);
         }
 
-        if (
-            !propertyAssignments.find((item) => item.replace(/setGridOption\('rowData'/g, '').indexOf('rowData') >= 0)
-        ) {
+        if (dataLoading) {
+            propertyAssignments.push(...dataLoading.properties);
+        }
+        if (!hasRowDataProperty && (dataLoading?.rowDataBinding ?? 'rowData') === 'rowData') {
             propertyAssignments.push(`rowData!: ${rowDataType}[];`);
         }
+        const constructorBody = dataLoading?.constructorBody ?? '';
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)
             .concat(instanceMethods)
+            .concat(constructorBody)
             .map((snippet) => snippet.trim())
             .join('\n\n');
 
         const hasGridApi = componentForCheckBody.includes('gridApi');
-        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, data, rowDataType, hasGridApi);
+        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, rowDataType, hasGridApi);
         const additional = [];
         if (gridReadyCode) {
             additional.push(gridReadyCode);
@@ -233,14 +322,17 @@ export function vanillaToAngular(
 
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
-        const componentBody = eventHandlers
-            .concat(externalEventHandlers)
-            .concat(additional)
-            .concat(instanceMethods)
-            .map((snippet) => snippet.trim())
-            .join('\n\n')
+        const bindGridApi = (code: string) =>
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
-            .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
+            code.replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
+        const componentBody = bindGridApi(
+            eventHandlers
+                .concat(externalEventHandlers)
+                .concat(additional)
+                .concat(instanceMethods)
+                .map((snippet) => snippet.trim())
+                .join('\n\n')
+        );
 
         const standaloneImports = ['AgGridAngular'];
 
@@ -265,12 +357,13 @@ ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.l
 
 export class AppComponent {
 ${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
-    ${propertyAssignments.join(';\n')}
+    ${propertyAssignments.map((assignment) => assignment.replace(/;\s*$/, '') + ';').join('\n')}
 
 ${
-    diParams.length > 0
-        ? `    constructor(${diParams.join(', ')}) {
-}
+    constructorBody
+        ? `    constructor() {
+        ${bindGridApi(constructorBody)}
+    }
 
 `
         : ''

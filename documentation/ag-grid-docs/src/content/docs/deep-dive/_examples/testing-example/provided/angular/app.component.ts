@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
@@ -6,7 +6,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import type {
     CellValueChangedEvent,
     ColDef,
-    GridReadyEvent,
     ICellRendererParams,
     RowSelectionOptions,
     SelectionChangedEvent,
@@ -108,12 +107,11 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
             <!-- The AG Grid component, with various Grid Option properties -->
             <ag-grid-angular
                 style="width: 100%; height: 550px;"
-                [rowData]="rowData"
+                [rowData]="rowData.value()"
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
                 [pagination]="true"
                 [rowSelection]="rowSelection"
-                (gridReady)="onGridReady($event)"
                 (cellValueChanged)="onCellValueChanged($event)"
                 (selectionChanged)="onSelectionChanged($event)"
             />
@@ -132,7 +130,7 @@ export class AppComponent {
     }
 
     // Row Data: The data to be displayed.
-    rowData: IRow[] = [];
+    rowData = httpResource<IRow[]>(() => 'https://www.ag-grid.com/example-assets/space-mission-data.json');
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
@@ -178,14 +176,6 @@ export class AppComponent {
         filter: true, // Enable filtering on all columns
         editable: true, // Enable editing on all columns
     };
-
-    // Load data into grid when ready
-    constructor(private http: HttpClient) {}
-    onGridReady(params: GridReadyEvent) {
-        this.http
-            .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
-            .subscribe((data) => (this.rowData = data));
-    }
 
     // Handle row selection changed event
     onSelectionChanged = (event: SelectionChangedEvent) => {

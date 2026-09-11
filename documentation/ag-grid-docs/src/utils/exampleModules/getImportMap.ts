@@ -6,7 +6,7 @@ import { pathJoin } from '@utils/pathJoin';
 
 export type ImportMap = Record<string, string>;
 
-const DEFAULT_ANGULAR_VERSION = '20.0.0';
+const DEFAULT_ANGULAR_VERSION = '21.2.23';
 const DEFAULT_REACT_VERSION = '19.2.1';
 const DEFAULT_VUE_VERSION = '3.5.17';
 
@@ -45,9 +45,18 @@ const vueImports = (version: string): ImportMap => ({
     vue: `${NPM_CDN}/vue@${version}/dist/vue.esm-browser.js`,
 });
 
+// @angular/core's primitives entry points moved from `primitives/<name>.mjs` to `primitives-<name>.mjs` in v21.
+const ANGULAR_FLAT_PRIMITIVES_MAJOR = 21;
+
+export const angularCorePrimitivesEntryPoint = (name: string, version: string) =>
+    parseInt(version, 10) >= ANGULAR_FLAT_PRIMITIVES_MAJOR ? `primitives-${name}` : `primitives/${name}`;
+
 const angularImports = (version: string): ImportMap => {
     const angularPackage = (name: string, entryPoint = name) =>
         `${NPM_CDN}/@angular/${name}@${version}/fesm2022/${entryPoint}.mjs`;
+    const layoutVersion = version === FRAMEWORK_VERSION_PLACEHOLDER ? DEFAULT_ANGULAR_VERSION : version;
+    const corePrimitives = (name: string) =>
+        angularPackage('core', angularCorePrimitivesEntryPoint(name, layoutVersion));
 
     return {
         '@angular/animations': angularPackage('animations'),
@@ -56,9 +65,10 @@ const angularImports = (version: string): ImportMap => {
         '@angular/common/http': angularPackage('common', 'http'),
         '@angular/compiler': angularPackage('compiler'),
         '@angular/core': angularPackage('core'),
-        '@angular/core/primitives/di': angularPackage('core', 'primitives/di'),
-        '@angular/core/primitives/event-dispatch': angularPackage('core', 'primitives/event-dispatch'),
-        '@angular/core/primitives/signals': angularPackage('core', 'primitives/signals'),
+        '@angular/core/primitives/di': corePrimitives('di'),
+        '@angular/core/primitives/event-dispatch': corePrimitives('event-dispatch'),
+        '@angular/core/primitives/signals': corePrimitives('signals'),
+        '@angular/core/rxjs-interop': angularPackage('core', 'rxjs-interop'),
         '@angular/forms': angularPackage('forms'),
         '@angular/platform-browser': angularPackage('platform-browser'),
         '@angular/platform-browser/animations': angularPackage('platform-browser', 'animations'),

@@ -169,39 +169,16 @@ _Note: All properties that are not tagged as 'initial' are reactive. See our [AP
 
 <!-- Load New Data -->
 
-As rowData is a managed property, any updates to its value will be reflected in the grid. Let's test this by fetching some data from an external server with [Angular's HttpClient](https://angular.dev/guide/http) and updating rowData with the response.
+As rowData is a managed property, any updates to its value will be reflected in the grid. Let's test this by fetching some data from an external server with Angular's [httpResource](https://angular.dev/guide/http/http-resource) and binding rowData to the response.
 
-First we need to hook into the `gridReady` event by adding `(gridReady)="onGridReady($event)"` to the `ag-grid-angular` component:
-
-```html
-<!-- The AG Grid component, with various Grid Option properties -->
-<ag-grid-angular
-    style="width: 100%; height: 550px;"
-    [rowData]="rowData"
-    [columnDefs]="colDefs"
-    (gridReady)="onGridReady($event)"
-/>
-```
-
-_Note: [Grid Events](./deep-dive/#handle-grid-events) are covered in more detail later on_
-
-And then executing a HTTP request when the onGridReady event is fired, subscribing to the result to update our rowData asynchronously:
+First, replace the `rowData` array with an `httpResource` that loads the dataset, and update our `colDefs` to match the new dataset:
 
 ```ts
-// Load data into grid when ready
-onGridReady(params: GridReadyEvent) {
-    this.http
-        .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
-        .subscribe(data => this.rowData = data);
-}
-```
+import { httpResource } from '@angular/common/http';
 
-Finally, now that we're loading data from an external source, we can empty our `rowData` array (which will allow the grid to display a loading spinner whilst the data is being fetched) and update our `colDefs` to match the new dataset:
-
-```jsx
 export class AppComponent {
-    // Row Data: The data to be displayed.
-    rowData: IRow[] = [];
+    // Row Data: Loaded from an external source.
+    rowData = httpResource<IRow[]>(() => 'https://www.ag-grid.com/example-assets/space-mission-data.json');
     colDefs: ColDef[] = [
         { field: "mission" },
         { field: "company" },
@@ -213,6 +190,17 @@ export class AppComponent {
     ];
     // ...
 }
+```
+
+Then bind the resource's value to the grid. The value is `undefined` until the request completes, which allows the grid to display a loading spinner whilst the data is being fetched:
+
+```html
+<!-- The AG Grid component, with various Grid Option properties -->
+<ag-grid-angular
+    style="width: 100%; height: 550px;"
+    [rowData]="rowData.value()"
+    [columnDefs]="colDefs"
+/>
 ```
 
 When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:

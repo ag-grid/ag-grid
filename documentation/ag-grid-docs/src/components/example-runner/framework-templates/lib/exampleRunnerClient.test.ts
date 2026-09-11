@@ -124,6 +124,19 @@ describe('example-runner.js injectImportMap', () => {
         expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1?dev');
     });
 
+    test("moves @angular/core's primitives entry points when the requested Angular major crosses v21", () => {
+        const imports = {
+            '@angular/core/primitives/di': `https://cdn/@angular/core@${FRAMEWORK_VERSION_PLACEHOLDER}/fesm2022/primitives-di.mjs`,
+        };
+        const { head, options } = stubPage('?version=20.3.1', { imports });
+
+        loadClient().injectImportMap({ ...options, defaultVersion: '21.2.23' });
+
+        expect(registeredImports(head)['@angular/core/primitives/di']).toBe(
+            'https://cdn/@angular/core@20.3.1/fesm2022/primitives/di.mjs'
+        );
+    });
+
     test('leaves a map with no build-dependent entries alone when asked for the development build', () => {
         const imports = { vue: `https://cdn/vue@${FRAMEWORK_VERSION_PLACEHOLDER}/vue.js` };
         const { head, options } = stubPage('?prod=false', { imports });

@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -33,17 +33,16 @@ interface IRow {
             <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
             <ag-grid-angular
                 style="width: 100%; height: 550px;"
-                [rowData]="rowData"
+                [rowData]="rowData.value()"
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
-                (gridReady)="onGridReady($event)"
             />
         </div>
     `,
 })
 export class AppComponent {
     // Row Data: The data to be displayed.
-    rowData: IRow[] = [];
+    rowData = httpResource<IRow[]>(() => 'https://www.ag-grid.com/example-assets/space-mission-data.json');
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
@@ -60,12 +59,4 @@ export class AppComponent {
     defaultColDef: ColDef = {
         filter: true,
     };
-
-    // Load data into grid when ready
-    constructor(private http: HttpClient) {}
-    onGridReady(params: GridReadyEvent) {
-        this.http
-            .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
-            .subscribe((data) => (this.rowData = data));
-    }
 }
