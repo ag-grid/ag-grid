@@ -45,7 +45,7 @@ export interface BaseCellEditor {
      * @param tooltip - Whether the element is for a tooltip or direct styling.
      * @returns An HTML element for feedback, or `null`/`undefined` to use default behavior.
      */
-    getValidationElement?(tooltip: boolean): HTMLElement;
+    getValidationElement?(tooltip: boolean): HTMLElement | null | undefined;
 
     /**
      * Optional: The error messages associated with the Editor.
