@@ -13,6 +13,10 @@
     border-radius: var(--radius-sm);
     font-weight: normal;
     height: 32px;
+    // The base button padding is deliberately uneven (see elements/_button.scss) to sit a
+    // text label optically within a button it also sizes. Here the height is fixed and the
+    // contents are flex-centred, so that unevenness only pushes them ~1px above the middle.
+    padding-block: 0;
     gap: 16px;
     color: var(--color-fg-primary);
     background-color: var(--color-bg-primary);
