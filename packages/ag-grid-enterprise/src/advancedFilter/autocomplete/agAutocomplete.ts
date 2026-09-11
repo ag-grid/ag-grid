@@ -370,10 +370,16 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         }
     }
 
-    /** Re-reads the list at the caret, for values that arrived after the open list was generated. */
-    public refreshList(): void {
+    /** Re-reads the list at the caret, for values that arrived after the open list was generated.
+     * Updates the value if `revalidate` is true
+     */
+    public refresh(revalidate: boolean): void {
+        const value = this.getValue();
+        if (revalidate) {
+            this.updateValue(value);
+        }
         if (this.isListOpen) {
-            this.updateAutocompleteList(this.getValue());
+            this.updateAutocompleteList(value);
         }
     }
 

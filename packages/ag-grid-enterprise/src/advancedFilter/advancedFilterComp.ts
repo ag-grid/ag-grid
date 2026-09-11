@@ -109,10 +109,10 @@ export class AdvancedFilterComp extends Component {
 
         this.refresh();
 
-        // A column's values load asynchronously, so a list generated before they arrived is empty.
+        // Values load asynchronously; an applied expression is not re-read, a dropped value still filtering by key.
         if (this.advFilterSetSvc) {
             this.addManagedListeners(this.advFilterSetSvc, {
-                valuesChanged: () => this.eAutocomplete.refreshList(),
+                valuesChanged: () => this.eAutocomplete.refresh(!this.advancedFilter.isCurrentExpressionApplied()),
             });
         }
 

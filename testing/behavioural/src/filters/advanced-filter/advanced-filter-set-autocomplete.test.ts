@@ -71,6 +71,117 @@ describe('Advanced Filter - Set Filter value sources', () => {
         expect(af.autocompleteLoadingText()).toBeNull();
     });
 
+    /** A Set Filter column whose values callback is held until `respond` is called. */
+    async function createHeldValuesGrid() {
+        let respond = () => {};
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        values: (params: { success: (values: string[]) => void }) => {
+                            respond = () => params.success(['Jamaica', 'Poland']);
+                        },
+                    },
+                },
+            ],
+        });
+        return { api, af: AdvancedFilterHarness.get(api), respond: () => respond() };
+    }
+
+    test('a list whose values are already there never says it is loading', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { values: ['Atlantis'] } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteLoadingText()).toBeNull();
+        expect(af.autocompleteEntries()).toEqual(['Atlantis']);
+    });
+
+    test('a callback that never answers leaves the list loading, and a value written meanwhile unresolved', async () => {
+        const { af } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Jam');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        expect(af.autocompleteEntries()).toEqual([]);
+
+        // There is no failure channel from the callback, so nothing arrives and the value cannot be checked.
+        await af.type('[Country] is any of ["Jamaica"]');
+        expect(af.input.validationMessage).toContain('Value not found');
+    });
+
+    test('values arriving keep the search the author has typed so far', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Pol');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+
+        respond();
+
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Poland']));
+    });
+
+    test('values arriving do not open a list the author has closed', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of [');
+        await af.pressKey('Escape');
+        expect(af.isAutocompleteOpen()).toBe(false);
+
+        respond();
+        await asyncSetTimeout(0);
+
+        expect(af.isAutocompleteOpen()).toBe(false);
+    });
+
+    test('values arriving do not open a list at a caret outside a set condition', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Jamaica"] ');
+        await af.pressKey('Escape');
+        expect(af.isAutocompleteOpen()).toBe(false);
+
+        respond();
+        await asyncSetTimeout(0);
+
+        expect(af.isAutocompleteOpen()).toBe(false);
+    });
+
+    test('once the values are in, keystrokes leave the open list where it is', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of [');
+        respond();
+        await waitFor(() => expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']));
+
+        // The resolved promise must not report the values as changed again: that would close and reopen
+        // the popup under every keystroke.
+        const popup = document.querySelector('.ag-autocomplete-list-popup');
+        await af.type('[Country] is any of ["P');
+        expect(document.querySelector('.ag-autocomplete-list-popup')).toBe(popup);
+        expect(af.autocompleteEntries()).toEqual(['Poland']);
+    });
+
+    test('a value written while loading resolves once the values arrive', async () => {
+        const { af, respond } = await createHeldValuesGrid();
+
+        await af.type('[Country] is any of ["Jamaica"]');
+        expect(af.input.validationMessage).toContain('Value not found');
+
+        respond();
+
+        await waitFor(() => expect(af.input.validationMessage).toBe(''));
+    });
+
     test('suppressSorting leaves the values in the order the rows give them', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
