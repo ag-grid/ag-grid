@@ -248,7 +248,7 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive') +
                 missingParamsEl?.remove();
             }
 
-            // Swap each `errorParam` fallback for this reader's own value.
+            // Swap each `errorParam` placeholder for this reader's own value.
             for (const el of document.querySelectorAll<HTMLElement>(ERROR_PARAM_SELECTOR)) {
                 const name = el.dataset.errorParam;
                 const value = name === undefined ? undefined : params[name];

@@ -4,7 +4,7 @@ description: The theme grid option was given something other than a Theming API 
 
 ## Invalid Theme Grid Option
 
-The `theme` grid option accepts a Theming API theme object, or the string `legacy`. It was given {% errorParam name="theme" fallback="ag-theme-alpine" /%}, which is neither, so the grid cannot apply it.
+The `theme` grid option accepts a Theming API theme object, or the string `legacy`. It was given {% errorParam name="theme" /%}, which is neither, so the grid cannot apply it.
 
 Where the value looks like a CSS class name, such as `ag-theme-alpine` or `ag-theme-quartz`, the cause is almost always a legacy theme name being passed to the option. In v32 and earlier a theme was chosen by putting that class on the grid's container element. The `theme` option introduced in v33 is a different mechanism and does not take those names.
 
