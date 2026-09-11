@@ -35,10 +35,9 @@ let fakeServer: any;
 
 // The grid holds no rows to derive the list from, so the values are fetched from the server.
 function getAthleteValuesAsync(params: SetFilterValuesFuncParams) {
-    const athletes = fakeServer.getValues('athlete');
-
     // simulating real server call with a 500ms delay
     setTimeout(() => {
+        const athletes = fakeServer.getValues('athlete');
         params.success(athletes);
     }, 500);
 }

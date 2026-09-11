@@ -85,11 +85,12 @@ export function FakeServer(allData) {
     }
 
     // `is any of` / `is none of` send the Set Filter keys the written values resolved to, which are strings.
+    // A blank is sent as a `null` key, so blank cells and the key are both folded to '' before comparing.
     function setFilterMapper(key, item) {
-        const values = item.values.map((value) => "'" + value + "'").join(', ');
+        const values = item.values.map((value) => "'" + (value ?? '') + "'").join(', ');
         const operator = item.type === 'isNoneOf' ? ' NOT IN (' : ' IN (';
 
-        return 'CAST(' + key + ' AS STRING)' + operator + values + ')';
+        return 'COALESCE(CAST(' + key + " AS STRING), '')" + operator + values + ')';
     }
 
     function numberFilterMapper(key, item) {
