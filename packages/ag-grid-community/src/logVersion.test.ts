@@ -90,7 +90,7 @@ describe('_logVersionIfDebug', () => {
         expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('AG Charts'));
     });
 
-    test('reports this grid\'s own charts build when another module was given a different one', async () => {
+    test("reports this grid's own charts build when another module was given a different one", async () => {
         const { _logVersionIfDebug, _setAgChartsInfo } = await loadModule();
         const integratedCharts = newIntegratedCharts();
         _setAgChartsInfo(integratedCharts, '9.9.9', true);
