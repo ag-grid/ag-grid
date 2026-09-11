@@ -124,6 +124,11 @@
 }
 
 .chevronDown {
+    // Block, so the icon is centred as a box rather than sitting on the text baseline of
+    // the wrapper Radix renders around it. Inline, it landed ~2px low by a font-dependent
+    // amount that differed again per engine (worst in Firefox), which read as this chevron
+    // being out of line with the one on the button beside it.
+    display: block;
     opacity: 0.5;
     height: 16px;
     width: 16px;
