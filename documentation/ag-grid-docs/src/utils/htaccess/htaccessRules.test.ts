@@ -908,6 +908,7 @@ describe('htaccessRules', () => {
             '/modern-slavery/',
             '/privacy/',
             '/terms-of-use/',
+            '/eula/',
             '/example-finance/',
             '/example-hr/',
             '/example-inventory/',

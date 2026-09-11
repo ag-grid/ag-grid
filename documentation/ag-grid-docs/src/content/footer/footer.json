@@ -106,6 +106,10 @@
                 "url": "/terms-of-use/"
             },
             {
+                "name": "EULA",
+                "url": "/eula/"
+            },
+            {
                 "name": "Privacy Policy",
                 "url": "/privacy/"
             },
