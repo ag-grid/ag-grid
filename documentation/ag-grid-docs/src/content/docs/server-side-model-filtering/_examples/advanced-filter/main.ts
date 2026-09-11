@@ -34,12 +34,12 @@ ModuleRegistry.registerModules([
 let fakeServer: any;
 
 // The grid holds no rows to derive the list from, so the values are fetched from the server.
-function getYearValuesAsync(params: SetFilterValuesFuncParams) {
-    const years = fakeServer.getValues('year');
+function getAthleteValuesAsync(params: SetFilterValuesFuncParams) {
+    const athletes = fakeServer.getValues('athlete');
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
-        params.success(years);
+        params.success(athletes);
     }, 500);
 }
 
@@ -50,14 +50,14 @@ const gridOptions: GridOptions<IOlympicData> = {
             field: 'athlete',
             cellDataType: 'text',
             minWidth: 220,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: getAthleteValuesAsync,
+            },
         },
         {
             field: 'year',
             cellDataType: 'number',
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                values: getYearValuesAsync,
-            },
         },
         {
             field: 'gold',
