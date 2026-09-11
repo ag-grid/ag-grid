@@ -211,9 +211,15 @@ const gridOptions = {
 - `fitGridWidth` and `fitProvidedWidth` re-size when the available grid width or the displayed columns change, including changes caused by pagination or scrollbars.
 - Re-sizes are debounced while the grid is being resized.
 
-The example below sizes a grouped, paginated grid of 34 columns and over 8,000 rows with `fitCellContents`. The text columns hold sentences of differing lengths, so moving between pages or changing the page size visibly re-fits them to the rows now on screen, each one settling on the longest value that page holds. It also opts into the scroll-driven re-sizes described in [Scrolling](#scrolling) below, so scrolling right fits the remaining columns as they arrive — the medal columns at the far end are narrow, and stay narrow.
+The example below spreads the grid width across five columns with `fitGridWidth`:
 
-{% gridExampleRunner title="Continuous Auto-Sizing in Action" name="continuous-auto-size-in-action" /%}
+- Add or remove a column and the rest give up or take back space.
+- Add rows until a vertical scrollbar appears and the columns re-fit to the width it leaves behind.
+- Narrow the grid itself and the columns follow, still filling it exactly.
+
+The example sets `animateColumnResizing` so each re-size transitions instead of jumping to the new widths.
+
+{% gridExampleRunner title="Continuous Auto-Sizing to Fit Grid Width" name="continuous-auto-size-fit-grid-width" exampleHeight=400 /%}
 
 ### Controlling Each Re-Size
 
@@ -249,24 +255,37 @@ const gridOptions = {
 
 Scroll-driven re-sizes are debounced, so the columns settle once the gesture stops. `fitGridWidth` and `fitProvidedWidth` are not affected by scrolling.
 
+The example below sizes a grouped, paginated grid of 34 columns and over 8,000 rows with `fitCellContents`. Scrolling right fits the remaining columns as they arrive. The medal columns at the far end are narrow, and stay narrow. The text columns hold sentences of differing lengths, so moving between pages or changing the page size visibly re-fits them to the rows now on screen.
+
+{% gridExampleRunner title="Scroll-Driven Auto-Sizing" name="continuous-auto-size-in-action" /%}
+
 ### Column Width Ownership
 
 Continuous sizing never changes the width of a column the user has sized themselves. A column becomes theirs through a header drag resize, a keyboard resize or a double-click auto-size, and through `applyColumnState` with an explicit `width`. Their width is then treated as fixed, so the width-distribution strategies hold the column out of the distribution and share the remaining space between the rest.
 
-`width` and `initialWidth` in a column definition are both only starting widths: the grid may re-size either of them. To hold a column at a fixed width, set `suppressAutoSize` for `fitCellContents` or `suppressSizeToFit` for the width-distribution strategies — those are the explicit opt-outs, and unlike a starting width they say so.
+`width` and `initialWidth` in a column definition are both only starting widths: the grid may re-size either of them. To hold a column at a fixed width, set `suppressAutoSize` for `fitCellContents` or `suppressSizeToFit` for the width-distribution strategies.
 
 Also excluded are [flex](#column-flex) columns and the special [Selection](./row-selection-multi-row/#customising-the-checkbox-column) and [Row Numbers](./row-numbers/) columns.
 
-When `scaleUpToFitGridWidth` is also set, only the eligible columns are scaled, and the grid allows horizontal overflow — a scrollbar — when the fixed widths alone cannot fit.
+When `scaleUpToFitGridWidth` is also set, only the eligible columns are scaled, and the grid shows a horizontal scrollbar when the fixed widths alone cannot fit.
 
-In the example below the "Athlete" column sets `suppressAutoSize`, so it is left alone, while the remaining columns re-size themselves each time the data changes. Press the button to load longer values and watch the eligible columns grow.
+Ownership is released by `api.resetColumnState()`, which returns every column to its column definition and so makes the user-sized ones eligible again. Note that it also resets sort, order, visibility and pivot state.
 
-{% gridExampleRunner title="Continuous Auto-Sizing" name="continuous-auto-size" /%}
+In the example below
+
+- "Athlete" column sets `suppressAutoSize`, so it does not re-size
+- Press "Next Values" to load values of a different length.
+- Manually re-size the "Sport" column and note how it keeps the width you gave it while changing the values.
+- Click "Reset Column State" to have the "Sport" column auto size again.
+
+{% gridExampleRunner title="Column Width Ownership" name="continuous-auto-size" /%}
 
 {% note %}
-Continuous `fitCellContents` is subject to the same [virtualisation limits](#auto-size-columns-to-fit-cell-contents) as a one-off auto-size: only the rendered cells can be measured, so columns are sized progressively as scrolling renders more content.
+Two limits apply to continuous `fitCellContents`:
 
-Continuous `fitCellContents` is not supported by the [Viewport Row Model](./viewport/). The grid logs a warning and ignores the option there.
+- It is subject to the same [virtualisation limits](#auto-size-columns-to-fit-cell-contents) as a one-off auto-size: only the rendered cells can be measured, so columns are sized progressively as scrolling renders more content.
+- It is not supported by the [Viewport Row Model](./viewport/), where the grid logs a warning and ignores the option.
+
 {% /note %}
 
 ## Resize via Keyboard

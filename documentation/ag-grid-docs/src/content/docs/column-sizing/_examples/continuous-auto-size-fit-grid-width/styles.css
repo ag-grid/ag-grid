@@ -7,6 +7,7 @@
 .interaction-bar {
     margin-bottom: 1rem;
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5em;
 }
 
@@ -14,6 +15,10 @@
     margin: 0px !important;
 }
 
-.grid-wrapper {
-    flex: 1 1 auto;
+.grid-sizer {
+    width: 100%;
+}
+
+.grid {
+    height: 320px;
 }
