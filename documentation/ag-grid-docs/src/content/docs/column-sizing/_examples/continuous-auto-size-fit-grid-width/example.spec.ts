@@ -120,28 +120,38 @@ test.agExample(import.meta, () => {
         // the rendered count saturates after the first addition and stops reflecting further ones.
         const rowExtent = () => scrollingContainer(page).evaluate((element) => element.scrollHeight);
 
-        // The click is retried until the extent actually moves. In the framework variants the button
-        // can be pressed before its handler is bound, and a click that silently did nothing is
-        // indistinguishable from a grid that ignored the new rows.
-        const clickUntilRowsChange = async (button: string) => {
+        // One click, then poll for the extent to move the way that button should move it. Asserting
+        // the direction rather than just "it changed" is what stops a Remove Rows that secretly adds
+        // rows from passing, and a single click keeps one press to one mutation.
+        const clickAndExpect = async (button: string, direction: 'grows' | 'shrinks') => {
             const before = await rowExtent();
+            await page.locator(button).click();
             await expect(async () => {
-                await page.locator(button).click();
-                expect(await rowExtent()).not.toBe(before);
+                const after = await rowExtent();
+                if (direction === 'grows') {
+                    expect(after).toBeGreaterThan(before);
+                } else {
+                    expect(after).toBeLessThan(before);
+                }
             }).toPass();
         };
 
-        await clickUntilRowsChange('button.add-rows-button');
+        const initialExtent = await rowExtent();
+
+        await clickAndExpect('button.add-rows-button', 'grows');
         await expectColumnsToFillGrid(page);
 
-        await clickUntilRowsChange('button.add-rows-button');
+        await clickAndExpect('button.add-rows-button', 'grows');
         await expectColumnsToFillGrid(page);
 
-        await clickUntilRowsChange('button.remove-rows-button');
+        await clickAndExpect('button.remove-rows-button', 'shrinks');
         await expectColumnsToFillGrid(page);
 
-        await clickUntilRowsChange('button.remove-rows-button');
+        await clickAndExpect('button.remove-rows-button', 'shrinks');
         await expectColumnsToFillGrid(page);
+
+        // Back to the four rows it started with, so the removals undid exactly the additions.
+        expect(await rowExtent()).toBe(initialExtent);
     });
 
     test.eachFramework('resizing the grid re-distributes the width', async ({ page }) => {
