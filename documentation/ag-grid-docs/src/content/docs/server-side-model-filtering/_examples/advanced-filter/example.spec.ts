@@ -41,6 +41,19 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList.getByText('Michael Phelps', { exact: true })).toBeVisible();
     });
 
+    test.eachFramework('is any of an athlete with an apostrophe in the name reloads that athlete', async ({ page }) => {
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill(`[Athlete] is any of ["Cian O'Connor"]`);
+        await page.keyboard.press('Escape');
+        await page.locator('.ag-advanced-filter-buttons').getByText('Apply').click();
+
+        const athleteCells = page.locator('.ag-row [col-id="athlete"]');
+        await expect(athleteCells).toHaveCount(1);
+        await expect(athleteCells.first()).toHaveText("Cian O'Connor");
+    });
+
     test.eachFramework('is any of blanks reloads only the rows with no athlete', async ({ page }) => {
         await waitForGridContent(page);
 
