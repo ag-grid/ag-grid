@@ -1,4 +1,4 @@
-import type { IconName } from '@ag-website-shared/icon/Icon';
+import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import type { CollectionEntry } from 'astro:content';
 
 export type Framework = 'javascript' | 'react' | 'angular' | 'vue';
@@ -33,7 +33,7 @@ export interface FooterLink {
     url: string;
     newTab?: boolean;
     showCookiesPrefs?: boolean;
-    iconName?: string;
+    iconName?: IconName;
 }
 
 export interface FooterItem {
