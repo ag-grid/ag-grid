@@ -98,16 +98,16 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.setupLoading();
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
-        this.virtualList.getAriaElement().id = this.getListId();
-        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-        this.eList.appendChild(this.virtualList.getGui());
+        const virtualList = this.virtualList;
+        const virtualListGui = virtualList.getGui();
+        virtualList.getAriaElement().id = this.getListId();
+        virtualList.setComponentCreator(this.createRowComponent.bind(this));
+        this.eList.appendChild(virtualListGui);
 
-        this.virtualList.setModel({
+        virtualList.setModel({
             getRowCount: () => this.autocompleteEntries.length,
             getRow: (index: number) => this.autocompleteEntries[index],
         });
-
-        const virtualListGui = this.virtualList.getGui();
 
         this.addManagedListeners(virtualListGui, {
             click: () => this.params.onConfirmed(),
