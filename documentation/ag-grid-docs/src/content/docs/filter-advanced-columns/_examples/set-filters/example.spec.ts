@@ -66,12 +66,12 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
-        await page.setViewportSize({ width: 570, height: 900 });
+        await page.setViewportSize({ width: 640, height: 900 });
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
-        await filterInput.fill('[Sport] is any of ["Alpine Skiing", "Archery", "Athletics", "Badminton"]');
+        await filterInput.fill('[Athlete] is any of ["Michael Phelps", "Ryan Lochte", "Ian Thorpe", "Usain Bolt"]');
         await filterInput.press('Escape');
         await filterInput.press('Enter');
         await page.getByRole('button', { name: 'Builder' }).click();
@@ -82,7 +82,7 @@ test.agExample(import.meta, () => {
         await expect(pill).toBeVisible();
         await expect(pill).toHaveCSS('cursor', 'pointer');
         await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(
-            '(4) ALPINE SKIING, ARCHERY, ATHLETICS, +1 more'
+            '(4) MICHAEL PHELPS, RYAN LOCHTE, IAN THORPE, +1 more'
         );
 
         const pillBox = await pill.boundingBox();
@@ -104,7 +104,7 @@ test.agExample(import.meta, () => {
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
         await filterInput.fill(
-            '[Gold] > 0 AND ([Athlete] contains "A" AND ([Country] contains "A" AND [Sport] is any of ["Alpine Skiing", "Archery", "Athletics", "Badminton"]))'
+            '[Gold] > 0 AND ([Sport] contains "S" AND ([Country] contains "A" AND [Athlete] is any of ["Michael Phelps", "Ryan Lochte", "Ian Thorpe", "Usain Bolt"]))'
         );
         await filterInput.press('Escape');
         await filterInput.press('Enter');
