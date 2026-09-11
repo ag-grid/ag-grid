@@ -194,10 +194,14 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     /** Whether the column has a value list to match against: provided values, or rows the grid itself holds. */
     private hasSetFilterValues(column: AgColumn): boolean {
-        return (
-            _isClientSideRowModel(this.gos) ||
-            !!(this.getSetColDef(column).filterParams as ISetFilterParams | undefined)?.values
-        );
+        if (_isClientSideRowModel(this.gos)) {
+            return true;
+        }
+        const filterParams = this.getSetColDef(column).filterParams;
+        // `filterParams` may be a function of the grid params, so it is resolved the way the handler's own are.
+        const resolved: ISetFilterParams | undefined =
+            typeof filterParams === 'function' ? this.createHandlerParams(column, 'init').filterParams : filterParams;
+        return !!resolved?.values;
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */
