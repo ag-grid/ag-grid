@@ -58,6 +58,12 @@ async function expectColumnsToFillGrid(page: Page): Promise<void> {
     expect(overflow).toBeLessThanOrEqual(1);
 }
 
+async function expectGridVisible(page: Page): Promise<void> {
+    const box = await page.locator('.ag-root-wrapper').first().boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThan(100);
+    await expect(page.locator('.ag-row').first()).toBeInViewport();
+}
+
 test.agExample(import.meta, () => {
     test.eachFramework('distributes the grid width across the columns on load', async ({ page }) => {
         await ensureGridReady(page);
@@ -65,6 +71,7 @@ test.agExample(import.meta, () => {
 
         await expect(headerCells(page)).toHaveCount(5);
         await expectColumnsToFillGrid(page);
+        await expectGridVisible(page);
     });
 
     test.eachFramework(
