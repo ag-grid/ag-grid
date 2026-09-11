@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
             filter: 'agSetColumnFilter',
             filterParams: {
                 valueFormatter: ({ value }: ValueFormatterParams<IOlympicDataTypes, string>) =>
-                    (value ?? '').toUpperCase(),
+                    value == null ? '(Blanks)' : value.toUpperCase(),
             },
         },
         {

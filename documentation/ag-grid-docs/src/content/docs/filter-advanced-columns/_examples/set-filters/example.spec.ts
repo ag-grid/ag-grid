@@ -65,6 +65,23 @@ test.agExample(import.meta, () => {
         await expect(autocompleteList.getByText('MICHAEL PHELPS', { exact: true })).toBeVisible();
     });
 
+    test.eachFramework('names the blank athlete the way the valueFormatter spells it', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill('[Athlete] is any of [(Bl');
+
+        const autocompleteList = page.locator('.ag-autocomplete-list-popup');
+        await expect(autocompleteList.getByText('(Blanks)', { exact: true })).toBeVisible();
+
+        await filterInput.fill('[Athlete] is any of ["(Blanks)"]');
+        await filterInput.press('Enter');
+        const athleteCells = page.locator('.ag-row [col-id="athlete"]');
+        await expect(athleteCells).toHaveCount(5);
+        await expect(athleteCells.filter({ hasText: /\S/ })).toHaveCount(0);
+    });
+
     test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
         await page.setViewportSize({ width: 640, height: 900 });
         await ensureGridReady(page);

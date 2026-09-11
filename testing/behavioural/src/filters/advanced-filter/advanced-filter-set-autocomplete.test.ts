@@ -119,6 +119,25 @@ describe('Advanced Filter - Set Filter value sources', () => {
         expect(af.input.validationMessage).toContain('Value not found');
     });
 
+    test('a callback that returns its values instead of passing them to success leaves the list loading', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                // The return value is ignored, as it is by the Set Filter: values reach the grid only through `success`.
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { values: () => ['Cyprus'] } },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteLoadingText()).toBe('Loading...');
+        expect(af.autocompleteEntries()).toEqual([]);
+
+        await af.type('[Country] is any of ["Cyprus"]');
+        expect(af.input.validationMessage).toContain('Value not found');
+    });
+
     test('values arriving keep the search the author has typed so far', async () => {
         const { af, respond } = await createHeldValuesGrid();
 
