@@ -1,6 +1,6 @@
 import { demoContent, demoNames } from '@components/demos/demoContent';
 import { expect, test } from '@playwright/test';
-import { blockConsentAndAnalytics, setupConsoleExpectations } from '@utils/grid/test-utils';
+import { blockConsentAndAnalytics, setupConsoleExpectations, waitForGridContent } from '@utils/grid/test-utils';
 
 // These could be extended to actually interact with the examples more
 // but for now just a basic load test to ensure no errors / warnings in console
@@ -13,7 +13,10 @@ test.describe('Demo page SEO copy', () => {
     for (const demo of demoNames) {
         test(`${demo} serves its title, meta description and H1`, async ({ page }) => {
             const content = demoContent(demo);
-            await page.goto(content.href.replace(/^\//, ''));
+            // `domcontentloaded`, not the default `load`: these assertions read the head and the
+            // rendered heading, none of which need the demo's images, fonts or grid data. Waiting
+            // for every subresource of the heaviest demo is what exceeded the test timeout.
+            await page.goto(content.href.replace(/^\//, ''), { waitUntil: 'domcontentloaded' });
 
             await expect(page).toHaveTitle(content.seoTitle);
             await expect(page.locator('head meta[name="description"]')).toHaveAttribute(
@@ -59,7 +62,10 @@ test.describe('Demo page header layout', () => {
 
             for (const demo of demoNames) {
                 await page.setViewportSize(viewport);
-                await page.goto(demoContent(demo).href.replace(/^\//, ''));
+                await page.goto(demoContent(demo).href.replace(/^\//, ''), { waitUntil: 'domcontentloaded' });
+                // Text metrics are what this test measures, so the fonts - and only the fonts - have
+                // to have settled before the boxes are read.
+                await page.evaluate(() => document.fonts.ready);
 
                 const copy = page.locator('[class*="headerCopy"]');
                 const heading = copy.getByRole('heading', { level: 1 });
@@ -101,7 +107,7 @@ test.describe(`Demo Examples`, async () => {
     test('example', async ({ page }) => {
         await page.goto('example');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
-        await page.waitForTimeout(1000);
+        await waitForGridContent(page);
 
         await page.locator('button').filter({ hasText: 'Rows, 22 Cols' }).click();
         await page.getByRole('option', { name: '1,000 Rows, 22 Cols' }).click();
@@ -119,7 +125,7 @@ test.describe(`Demo Examples`, async () => {
     test('example-finance', async ({ page }) => {
         await page.goto('example-finance');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
-        await page.waitForTimeout(1000);
+        await waitForGridContent(page);
 
         await page
             .locator(
@@ -135,7 +141,7 @@ test.describe(`Demo Examples`, async () => {
     test('example-hr', async ({ page }) => {
         await page.goto('example-hr');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
-        await page.waitForTimeout(1000);
+        await waitForGridContent(page);
         await page
             .locator(
                 '.ag-cell-wrapper.ag-cell-expandable.ag-row-group.ag-row-group-indent-1 > .ag-group-expanded > .ag-icon'
@@ -149,7 +155,7 @@ test.describe(`Demo Examples`, async () => {
     test('example-inventory', async ({ page }) => {
         await page.goto('example-inventory');
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
-        await page.waitForTimeout(1000);
+        await waitForGridContent(page);
 
         // Hold Selling triggers an in-cell row update; afterEach guards that it completes without console errors.
         const firstRow = page.getByRole('row').filter({ hasText: 'Dreams of You' });

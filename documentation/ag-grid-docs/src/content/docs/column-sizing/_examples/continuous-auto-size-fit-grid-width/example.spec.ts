@@ -1,5 +1,32 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, withGridEvent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
+
+/**
+ * The continuous `fitGridWidth` strategy re-distributes the width by calling `sizeColumnsToFit`,
+ * which dispatches a finished `columnResized` once the new widths are on screen. Waiting for that
+ * is what makes these tests deterministic: sampling a width until it changes cannot distinguish the
+ * settled width from one read part-way through the re-distribution, and reads the wrong one often
+ * enough to fail.
+ */
+const RE_DISTRIBUTED = { finished: true, source: 'sizeColumnsToFit' } as const;
+
+/**
+ * The example sets `animateColumnResizing`, so the new widths are transitioned in and a box read on
+ * the event still lands mid-transition. The Web Animations API says when the transition is over, so
+ * that is what is waited on - not a sleep long enough to cover it.
+ */
+async function widthTransitionsSettled(page: Page): Promise<void> {
+    await page.waitForFunction(() =>
+        [...document.querySelectorAll('.ag-header-cell[col-id]')].every((cell) =>
+            cell.getAnimations().every((animation) => animation.playState !== 'running')
+        )
+    );
+}
+
+async function reDistributes(page: Page, action: () => Promise<unknown>): Promise<void> {
+    await withGridEvent(page, 'columnResized', RE_DISTRIBUTED, action);
+    await widthTransitionsSettled(page);
+}
 
 function scrollingContainer(page: Page) {
     return page.locator('.ag-grid-scrolling-container').first();
@@ -41,13 +68,6 @@ async function expectColumnsToFillGrid(page: Page): Promise<void> {
     expect(overflow).toBeLessThanOrEqual(1);
 }
 
-async function waitForChangeFrom(previous: number, sample: () => Promise<number>): Promise<number> {
-    await expect(async () => {
-        expect(await sample()).not.toBe(previous);
-    }).toPass();
-    return sample();
-}
-
 test.agExample(import.meta, () => {
     test.eachFramework('distributes the grid width across the columns on load', async ({ page }) => {
         await ensureGridReady(page);
@@ -68,20 +88,20 @@ test.agExample(import.meta, () => {
             let previousWidth = firstColumnWidth;
 
             for (const expectedCount of [6, 7, 8]) {
-                await page.locator('button.add-column-button').click();
+                await reDistributes(page, () => page.locator('button.add-column-button').click());
                 await expect(headerCells(page)).toHaveCount(expectedCount);
 
-                const narrowed = await waitForChangeFrom(previousWidth, () => columnWidth(page, 'column1'));
+                const narrowed = await columnWidth(page, 'column1');
                 expect(narrowed).toBeLessThan(previousWidth);
                 await expectColumnsToFillGrid(page);
                 previousWidth = narrowed;
             }
 
             for (const expectedCount of [7, 6, 5]) {
-                await page.locator('button.remove-column-button').click();
+                await reDistributes(page, () => page.locator('button.remove-column-button').click());
                 await expect(headerCells(page)).toHaveCount(expectedCount);
 
-                const widened = await waitForChangeFrom(previousWidth, () => columnWidth(page, 'column1'));
+                const widened = await columnWidth(page, 'column1');
                 expect(widened).toBeGreaterThan(previousWidth);
                 await expectColumnsToFillGrid(page);
                 previousWidth = widened;
@@ -96,23 +116,31 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await expectColumnsToFillGrid(page);
 
-        const rows = page.locator('.ag-row');
-        await expect(rows).toHaveCount(4);
+        // Total scrollable row extent, not the rendered `.ag-row` count: the grid virtualises, so
+        // the rendered count saturates after the first addition and stops reflecting further ones.
+        const rowExtent = () => scrollingContainer(page).evaluate((element) => element.scrollHeight);
 
-        await page.locator('button.add-rows-button').click();
-        await expect(async () => {
-            expect(await rows.count()).toBeGreaterThan(4);
-        }).toPass();
+        // The click is retried until the extent actually moves. In the framework variants the button
+        // can be pressed before its handler is bound, and a click that silently did nothing is
+        // indistinguishable from a grid that ignored the new rows.
+        const clickUntilRowsChange = async (button: string) => {
+            const before = await rowExtent();
+            await expect(async () => {
+                await page.locator(button).click();
+                expect(await rowExtent()).not.toBe(before);
+            }).toPass();
+        };
+
+        await clickUntilRowsChange('button.add-rows-button');
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.add-rows-button').click();
+        await clickUntilRowsChange('button.add-rows-button');
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.remove-rows-button').click();
+        await clickUntilRowsChange('button.remove-rows-button');
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.remove-rows-button').click();
-        await expect(rows).toHaveCount(4);
+        await clickUntilRowsChange('button.remove-rows-button');
         await expectColumnsToFillGrid(page);
     });
 
@@ -123,15 +151,13 @@ test.agExample(import.meta, () => {
 
         const wideTotal = await totalColumnWidth(page);
 
-        await page.locator('button.narrower-button').click();
-        const narrowTotal = await waitForChangeFrom(wideTotal, () => totalColumnWidth(page));
+        await reDistributes(page, () => page.locator('button.narrower-button').click());
+        const narrowTotal = await totalColumnWidth(page);
         expect(narrowTotal).toBeLessThan(wideTotal);
         await expectColumnsToFillGrid(page);
 
-        await page.locator('button.wider-button').click();
-        await expect(async () => {
-            expect(await totalColumnWidth(page)).toBeCloseTo(wideTotal, 0);
-        }).toPass();
+        await reDistributes(page, () => page.locator('button.wider-button').click());
+        expect(await totalColumnWidth(page)).toBeCloseTo(wideTotal, 0);
         await expectColumnsToFillGrid(page);
     });
 });

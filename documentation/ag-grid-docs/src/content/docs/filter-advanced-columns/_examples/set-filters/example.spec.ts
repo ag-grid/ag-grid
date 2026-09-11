@@ -1,5 +1,12 @@
 import { ensureGridReady, expect, orderedValues, test, waitForGridContent } from '@utils/grid/test-utils';
 
+// Athlete, not Sport: this example gives Athlete the Set Filter (with an uppercasing
+// `valueFormatter`) and leaves Sport on a Text Filter, so `is any of` is only offered here. The
+// two layout tests below were still asking for `[Sport] is any of [...]`, which the Builder cannot
+// render as a value list - so their pill never appeared.
+const SET_CONDITION = '[Athlete] is any of ["Aaron Gate", "Abby Bishop", "Abbos Atayev", "Aaron Miller"]';
+const SET_CONDITION_PILL = '(4) AARON GATE, ABBY BISHOP, ABBOS ATAYEV, +1 more';
+
 test.agExample(import.meta, () => {
     test.eachFramework('offers the set options on a Set Filter column', async ({ page }) => {
         await ensureGridReady(page);
@@ -66,12 +73,14 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('grows a Builder value list without crowding its row actions', async ({ page }) => {
-        await page.setViewportSize({ width: 570, height: 900 });
+        // Wide enough for the pill to grow past its 152px floor. At the indented test's 570px the row
+        // overflows and the pill is pinned to the floor, so nothing about growth is observable there.
+        await page.setViewportSize({ width: 1000, height: 900 });
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
-        await filterInput.fill('[Sport] is any of ["Alpine Skiing", "Archery", "Athletics", "Badminton"]');
+        await filterInput.fill(SET_CONDITION);
         await filterInput.press('Escape');
         await filterInput.press('Enter');
         await page.getByRole('button', { name: 'Builder' }).click();
@@ -81,14 +90,13 @@ test.agExample(import.meta, () => {
         const firstAction = row.locator('.ag-advanced-filter-builder-item-buttons > :visible').first();
         await expect(pill).toBeVisible();
         await expect(pill).toHaveCSS('cursor', 'pointer');
-        await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(
-            '(4) ALPINE SKIING, ARCHERY, ATHLETICS, +1 more'
-        );
+        await expect(pill.locator('.ag-advanced-filter-builder-pill-display')).toHaveText(SET_CONDITION_PILL);
 
         const pillBox = await pill.boundingBox();
         const firstActionBox = await firstAction.boundingBox();
         expect(pillBox).not.toBeNull();
         expect(firstActionBox).not.toBeNull();
+        // Grown past the 152px floor, and still clear of the actions by the reserved 24px.
         expect(pillBox!.width).toBeGreaterThan(152);
         expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
 
@@ -104,7 +112,7 @@ test.agExample(import.meta, () => {
 
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
         await filterInput.fill(
-            '[Gold] > 0 AND ([Athlete] contains "A" AND ([Country] contains "A" AND [Sport] is any of ["Alpine Skiing", "Archery", "Athletics", "Badminton"]))'
+            `[Gold] > 0 AND ([Athlete] contains "A" AND ([Country] contains "A" AND ${SET_CONDITION}))`
         );
         await filterInput.press('Escape');
         await filterInput.press('Enter');

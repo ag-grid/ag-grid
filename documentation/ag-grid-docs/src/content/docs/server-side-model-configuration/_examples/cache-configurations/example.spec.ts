@@ -32,15 +32,25 @@ test.agExample(import.meta, () => {
             expect(await deepestRenderedIndex()).toBeGreaterThanOrEqual(DEEP_INDEX);
         }).toPass();
 
-        const renderedIndex = await page.evaluate((min) => {
-            const deep = Array.from(document.querySelectorAll('.ag-row'))
-                .map((r) => Number(r.getAttribute('row-index')))
-                .filter((idx) => Number.isFinite(idx) && idx >= min)
-                .sort((a, b) => a - b);
-            return deep[0];
-        }, DEEP_INDEX);
         // A block beyond the first was fetched on demand: the deep row carries its real id and data.
-        await expect(dataRow(renderedIndex).locator('[col-id="id"]')).toContainText(String(renderedIndex));
-        await expect(dataRow(renderedIndex).locator('[col-id="athlete"]')).not.toBeEmpty();
+        //
+        // The row to assert on is re-read inside the retry rather than captured once. The grid
+        // re-renders its viewport when a block resolves, and the index that was deepest a moment ago
+        // can be virtualised away before the assertion runs - which surfaced as `element(s) not
+        // found` against a pinned `row-index`, not as a wrong value.
+        await expect(async () => {
+            const renderedIndex = await page.evaluate((min) => {
+                const deep = Array.from(document.querySelectorAll('.ag-row'))
+                    .map((r) => Number(r.getAttribute('row-index')))
+                    .filter((idx) => Number.isFinite(idx) && idx >= min)
+                    .sort((a, b) => a - b);
+                return deep[0];
+            }, DEEP_INDEX);
+            expect(renderedIndex, `no row at or past index ${DEEP_INDEX} is rendered`).toBeDefined();
+
+            const row = dataRow(renderedIndex);
+            await expect(row.locator('[col-id="id"]')).toContainText(String(renderedIndex), { timeout: 5000 });
+            await expect(row.locator('[col-id="athlete"]')).not.toBeEmpty({ timeout: 5000 });
+        }).toPass();
     });
 });

@@ -59,18 +59,31 @@ test.agExample(import.meta, () => {
 
         // Nothing scrolls from here on: each scroll restarts the debounce, so a retry loop that
         // re-scrolled would hold the resting block permanently unfetched.
-        const restingIndex = await page.evaluate(() => {
-            const indexes = Array.from(document.querySelectorAll('.ag-row'))
-                .map((r) => Number(r.getAttribute('row-index')))
-                .filter((i) => Number.isFinite(i));
-            return Math.min(...indexes);
-        });
-        expect(restingIndex).toBeGreaterThanOrEqual(100);
+        const readRestingIndex = () =>
+            page.evaluate(() => {
+                const indexes = Array.from(document.querySelectorAll('.ag-row'))
+                    .map((r) => Number(r.getAttribute('row-index')))
+                    .filter((i) => Number.isFinite(i));
+                return Math.min(...indexes);
+            });
+        expect(await readRestingIndex()).toBeGreaterThanOrEqual(100);
 
         // End state: the debounce elapses and the block the scrolling came to rest on resolves
         // to real data, replacing its loading placeholders.
-        await expect(dataRow(restingIndex).locator('[col-id="id"]')).toContainText(String(restingIndex));
-        await expect(dataRow(restingIndex).locator('[col-id="athlete"]')).not.toBeEmpty();
+        //
+        // The resting index is re-read on each attempt rather than captured once. Resolving the
+        // block re-renders the viewport, and a row-index captured beforehand can be virtualised
+        // away before the assertion runs - which surfaced as `element(s) not found` rather than as
+        // a wrong value. Re-reading is safe here because it does not scroll: any scroll would
+        // restart the debounce and leave the resting block permanently unfetched.
+        await expect(async () => {
+            const restingIndex = await readRestingIndex();
+            expect(restingIndex).toBeGreaterThanOrEqual(100);
+
+            const row = dataRow(restingIndex);
+            await expect(row.locator('[col-id="id"]')).toContainText(String(restingIndex), { timeout: 5000 });
+            await expect(row.locator('[col-id="athlete"]')).not.toBeEmpty({ timeout: 5000 });
+        }).toPass();
 
         // ...and it got there having fetched far fewer blocks than the burst crossed.
         expect(blockRequests.length - requestsBeforeBurst).toBeLessThanOrEqual(MAX_DEBOUNCED_BLOCK_REQUESTS);
