@@ -2982,6 +2982,8 @@ Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#
     RedirectMatch 301 "^/react/expressions(/.*)?" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/react/overview(/.*)?" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/(react|angular|vue|javascript)/(.*)" "https://www.ag-grid.com/charts/$1/$2"
+    Redirect 301 /eula/AG-Grid-Enterprise-License-Latest.html /eula/
+    Redirect 301 /eula/license-en.html /eula/
 
 </IfModule>
 

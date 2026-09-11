@@ -405,3 +405,6 @@ blog	/index.php/tag/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
 blog	/index.php/category/angular/	301	https://www.ag-grid.com/blog/tag/angular/
 blog	/index.php/author/maxkoretskyi/	301	https://www.ag-grid.com/blog/author/maxkoretskyi/
 
+# --- SE-169: the static EULA files redirect to the /eula/ page ---
+www	/eula/AG-Grid-Enterprise-License-Latest.html	301	/eula/
+www	/eula/license-en.html	301	/eula/

@@ -40,9 +40,10 @@ describe('getPolicySections', () => {
         const sections = getPolicySections(eulaBody);
         const ids = sections.map(({ id }) => id);
 
-        expect(sections.length).toBe((eulaBody.match(/^\s*(?:\d+\.\s+)?###/gm) ?? []).length);
+        // Only `###` headings are sections; the `####` exhibit sub-headings inside Schedule 2 are not.
+        expect(sections.length).toBe((eulaBody.match(/^\s*(?:\d+\.\s+)?### /gm) ?? []).length);
         expect(new Set(ids).size).toBe(ids.length);
         expect(sections[0]).toEqual({ id: 'definitions-and-interpretation', title: 'Definitions and interpretation' });
-        expect(sections.at(-1)).toEqual({ id: 'schedule-2-exhibit-b', title: 'Schedule 2: Exhibit B' });
+        expect(sections.at(-1)).toEqual({ id: 'schedule-2-gdpr-sscs', title: 'Schedule 2: GDPR SSCs' });
     });
 });

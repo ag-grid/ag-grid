@@ -24,7 +24,8 @@ describe('buildEulaMarkdown', () => {
         expect(output).toContain('Definitions and interpretation');
         expect(output).toContain('16.14 These Terms are governed by English law.');
         expect(output).toContain('Schedule 1: Support Services');
-        expect(output).toContain('Schedule 2: Exhibit B');
+        expect(output).toContain('Schedule 2: GDPR SSCs');
+        expect(output).toContain('#### Exhibit B');
         expect(output.endsWith('\n')).toBe(true);
         expect(output.endsWith('\n\n')).toBe(false);
     });

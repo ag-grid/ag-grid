@@ -729,11 +729,11 @@
                 },
                 "enterprise": {
                     "value": true,
-                    "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html'>EULA</a>)"
+                    "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/'>EULA</a>)"
                 },
                 "chartsGrid": {
                     "value": true,
-                    "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html'>EULA</a>)"
+                    "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/'>EULA</a>)"
                 }
             }
         ]
