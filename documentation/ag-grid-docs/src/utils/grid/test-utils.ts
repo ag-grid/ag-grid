@@ -933,5 +933,4 @@ export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';
 export { waitForChartModels } from './test/waitForChartModels';
-export { armGridEvent, withGridEvent } from './test/waitForGridEvent';
-export type { ArmedGridEvent, GridEventMatch } from './test/waitForGridEvent';
+export { withGridEvent } from './test/waitForGridEvent';

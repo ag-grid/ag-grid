@@ -62,9 +62,6 @@ const gridOptions: GridOptions<IRow> = {
     animateColumnResizing: true,
 };
 
-// Each handler must touch `gridApi` directly. Generation lifts the functions the HTML calls into
-// the component, where the api is in scope; a shared helper one level down stays at module scope
-// and its `gridApi` resolves to nothing in React, Angular and Vue.
 function clampColumns(count: number): number {
     return Math.min(MAX_COLUMNS, Math.max(MIN_COLUMNS, count));
 }
