@@ -1024,8 +1024,8 @@ export interface GridOptions<TData = any> {
     /**
      * Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
      * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
-     * When enabled, the grid logs the version of each AG package in use to the console on start-up,
-     * including the AG Charts version when integrated charts or sparklines are in use.
+     * When enabled, the grid logs the version of each AG package it is using to the console on
+     * start-up, including the AG Charts version when integrated charts or sparklines are registered.
      * @default false
      * @initial
      */

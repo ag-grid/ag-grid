@@ -127,8 +127,8 @@ export class GridCoreCreator {
 
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
-        // Before `createBeansList`, which can bail out with no beans at all - the version is most
-        // valuable in exactly that case.
+        // Logged before `createBeansList`, which can bail out with no beans at all - the versions
+        // are most valuable in exactly that case.
         _logVersionIfDebug(gridOptions.debug, registeredModules);
 
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
