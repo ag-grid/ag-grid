@@ -39,6 +39,15 @@ env:
   CI: true
   DEFAULT_RETENTION_DAYS: 30
   AG_LIBRARY: grid
+  # The commit whose CI run deployed the site under test. For workflow_run that is the
+  # triggering run's head, NOT github.sha: CI does not cancel an in-flight latest run, so a
+  # second merge can already be default-branch HEAD while the first is still deploying, and
+  # github.sha would then test the newer commit's specs against the older commit's deploy.
+  # Reading head_sha is safe here because the job guard admits only same-repo pushes, so it
+  # is a commit on our own latest; the untrusted-checkout pattern OSSF/Scorecard flags is a
+  # fork's head, which that guard excludes. A dispatch has no triggering run, so github.sha.
+  DEPLOYED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+  BASELINE_CACHE_PREFIX: doc-tests-changed-tested-
 
 # A second deploy landing while this runs makes the in-flight result stale, so drop it and test
 # the newer commit instead. A manual dispatch is somebody's deliberate run and is left alone.
@@ -73,13 +82,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # The default-branch HEAD, which under the job `if:` above is the deployed commit.
-          # Deliberately not workflow_run.head_sha — that is the untrusted-input pattern.
-          ref: ${{ github.sha }}
-          # The diff needs both ends of the range in the checkout, and the baseline is the
-          # previously deployed commit. 50 covers a normal merge cadence; beyond that the
-          # resolver reports no range rather than guessing.
+          ref: ${{ env.DEPLOYED_SHA }}
+          # The diff needs both ends of the range and their merge base in the checkout, and
+          # the baseline is the previously tested commit. 50 covers a normal merge cadence;
+          # beyond that the resolver reports no range rather than guessing.
           fetch-depth: 50
+
+      # The previous baseline cannot come from `gh run list`: a run's headSha is its own head,
+      # which for workflow_run is the default-branch HEAD rather than the commit it deployed.
+      # So each run records the SHA it actually tested and the next one reads it back.
+      - name: Restore last tested commit
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ./tested-sha.txt
+          key: ${{ env.BASELINE_CACHE_PREFIX }}${{ env.DEPLOYED_SHA }}
+          restore-keys: ${{ env.BASELINE_CACHE_PREFIX }}
 
       - name: Resolve baseline commit
         id: baseline
@@ -92,18 +109,35 @@ jobs:
             echo "Using the dispatched baseline ${OVERRIDE}."
             exit 0
           fi
-          # This run is still in_progress, so --status completed cannot select it. The last
-          # completed run's head SHA is the commit this workflow last had a verdict on —
-          # including a failed one, so a red run's range is re-tested rather than skipped over.
+          # Written by record-baseline on the last run that reached a verdict.
+          if [ -f ./tested-sha.txt ]; then
+            SHA=$(tr -d '[:space:]' < ./tested-sha.txt)
+            if [ -n "${SHA}" ]; then
+              echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+              echo "Baseline: ${SHA} (last tested commit)."
+              exit 0
+            fi
+          fi
+
+          # Cache entries are evicted eventually, so fall back to the last run that concluded
+          # `success`. Its headSha can be newer than the commit that run deployed, which would
+          # make this baseline too recent and under-select, so take its parent to err the other
+          # way: over-selecting costs a few minutes of extra tests, under-selecting silently
+          # drops a page. `--status` matches conclusions too, so cancelled and skipped runs -
+          # which tested nothing, and are the majority of `completed` - cannot be picked.
           SHA=$(gh run list \
             --workflow doc-tests-changed.yml \
             --branch latest \
-            --status completed \
+            --status success \
             --limit 1 \
             --json headSha \
             --jq '.[0].headSha // ""')
+          if [ -n "${SHA}" ]; then
+            PARENT=$(git rev-parse --verify --quiet "${SHA}^" || true)
+            SHA=${PARENT:-$SHA}
+          fi
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
-          echo "Baseline: ${SHA:-none (first run)}"
+          echo "Baseline: ${SHA:-none (no cached commit and no successful run)}"
 
       - name: Resolve changed doc pages
         id: resolve
@@ -112,7 +146,7 @@ jobs:
         # point.
         env:
           BASE_SHA: ${{ steps.baseline.outputs.sha }}
-          HEAD_SHA: ${{ github.sha }}
+          HEAD_SHA: ${{ env.DEPLOYED_SHA }}
         run: node scripts/ci/resolve-changed-doc-pages.mjs "${BASE_SHA}" "${HEAD_SHA}"
 
       - name: Summarise scope
@@ -120,18 +154,19 @@ jobs:
           PAGES: ${{ steps.resolve.outputs.pages }}
           COUNT: ${{ steps.resolve.outputs.count }}
           BASE: ${{ steps.baseline.outputs.sha }}
+          HEAD: ${{ env.DEPLOYED_SHA }}
         run: |
           {
             if [ "${COUNT}" = "0" ]; then
               echo "### No changed doc pages with tests"
               echo
-              echo "Nothing to run for \`${BASE:-none}...${GITHUB_SHA}\`."
+              echo "Nothing to run for \`${BASE:-none}...${HEAD}\`."
             else
               echo "### Testing ${COUNT} changed doc page(s)"
               echo
               tr ',' '\n' <<<"${PAGES}" | sed 's/^/- /'
               echo
-              echo "Range: \`${BASE:-none}...${GITHUB_SHA}\`"
+              echo "Range: \`${BASE:-none}...${HEAD}\`"
             fi
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
@@ -148,7 +183,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ env.DEPLOYED_SHA }}
           fetch-depth: 1
       # Same composite action the nightly uses, so the two suites cannot drift in how they set up
       # or invoke Playwright. One job covering every framework on every browser, unsharded: a
@@ -172,7 +207,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ env.DEPLOYED_SHA }}
           fetch-depth: 1
 
       - name: Download test reports
@@ -223,6 +258,26 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: '#ci-grid-gate'
           CTRF_REPORT_FILE: ./ctrf-report.json
-          CURRENT_COMMIT_SHA: ${{ github.sha }}
+          CURRENT_COMMIT_SHA: ${{ env.DEPLOYED_SHA }}
           PREV_COMMIT_SHA: ${{ needs.resolve.outputs.base_sha }}
           IS_SUCCESS: 'false'
+
+  # Advances the baseline only when this run actually reached a verdict on its range - tests
+  # passed, or there was nothing to test. A failure or a cancellation deliberately records
+  # nothing, so the next run re-selects the same range instead of stepping over it.
+  record-baseline:
+    needs: [resolve, test]
+    if: >
+      always() && needs.resolve.result == 'success' &&
+      (needs.test.result == 'success' || needs.test.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Record Tested Commit
+    steps:
+      - name: Write tested commit
+        run: echo "${DEPLOYED_SHA}" > ./tested-sha.txt
+      - name: Save tested commit
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ./tested-sha.txt
+          key: ${{ env.BASELINE_CACHE_PREFIX }}${{ env.DEPLOYED_SHA }}
