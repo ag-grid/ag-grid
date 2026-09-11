@@ -427,6 +427,7 @@ export {
     _skipFocusableContainerListenerForAgGrid,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
+export { _setAgChartsInfo } from './logVersion';
 export { _consoleError, _warnOnce } from './utils/log';
 export { _isProtoPollutionKey, _mergeDeep, _mergedEqual } from './utils/mergeDeep';
 export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';

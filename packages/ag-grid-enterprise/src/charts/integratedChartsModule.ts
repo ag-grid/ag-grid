@@ -1,7 +1,7 @@
 import type { IntegratedModule } from 'ag-charts-types';
 
 import type { Module, ModuleName, _GridChartsGridApi, _ModuleWithApi } from 'ag-grid-community';
-import { _PopupModule, _SharedDragAndDropModule, _preInitErrMsg } from 'ag-grid-community';
+import { _PopupModule, _SharedDragAndDropModule, _preInitErrMsg, _setAgChartsInfo } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import type { ILicenseManager } from '../license/shared/licenseManager';
@@ -121,6 +121,7 @@ export const IntegratedChartsModule: IntegratedChartsModuleType = {
     with: (params) => {
         params.setup();
         params.setGridContext?.(true);
+        _setAgChartsInfo(params.VERSION, params.isEnterprise);
         if (params.isEnterprise && params.setLicenseKey) {
             const chartsManager: ILicenseManager = {
                 setLicenseKey: params.setLicenseKey,
