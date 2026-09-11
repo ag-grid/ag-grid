@@ -23,6 +23,7 @@ import type {
     _ModuleWithoutApi,
 } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
+import { _logVersionIfDebug } from './logVersion';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
@@ -125,6 +126,10 @@ export class GridCoreCreator {
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
+
+        // Logged before `createBeansList`, which can bail out with no beans at all - the versions
+        // are most valuable in exactly that case.
+        _logVersionIfDebug(gridOptions.debug, registeredModules);
 
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
