@@ -7,6 +7,7 @@ import type { Framework } from '@ag-grid-types';
 import { getDocsPages } from '@components/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getPageDescription } from '@ag-website-shared/utils/getPageDescription';
+import { buildTechArticle, siteRootUrl } from '@ag-website-shared/utils/structuredData';
 import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
@@ -29,6 +30,7 @@ const pageName = Astro.params.pageName;
 const path = Astro.url.pathname;
 const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings, migrationVersion } = page.data;
 
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const version = versionsData[0]?.version;
 const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
@@ -47,6 +49,18 @@ const description = getPageDescription({
     body: page.body,
 });
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
+
+// Same pageUrl shape DocsExampleRunner.astro uses to key its SoftwareSourceCode nodes' `about`
+// reference, so the TechArticle it points at is actually emitted here with a matching @id.
+const pageUrl = `${siteRootUrl(metadata.canonicalUrlBase)}${currentFramework}-data-grid/${pageName}/`;
+const pageStructuredData = [
+    buildTechArticle({
+        canonicalUrlBase: metadata.canonicalUrlBase,
+        pageUrl,
+        title,
+        description: description || descriptionWithSeoTagline,
+    }),
+];
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
@@ -86,6 +100,7 @@ const headings = await getHeadings({
     showSearchBar={true}
     showDocsNav={true}
     markdownUrl={markdownUrl}
+    pageStructuredData={pageStructuredData}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {

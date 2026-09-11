@@ -1,4 +1,5 @@
 ---
+import { getEntry, type CollectionEntry } from 'astro:content';
 import { getFrameworkFromPath, getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import ExampleRunnerContainer from '@components/example-runner/components/ExampleRunnerContainer.astro';
 import ExampleRunnerSourceCode from '@components/example-runner/components/ExampleRunnerSourceCode.astro';
@@ -9,7 +10,10 @@ import { getInternalFramework } from '@utils/framework';
 import { DocsExampleRunner } from './DocsExampleRunner';
 import { DISABLE_EXAMPLE_RUNNER, DISABLE_EXAMPLE_SOURCE_EMBED } from '@constants';
 import { getGeneratedContents, type GeneratedExampleParams } from '@components/example-generator';
+import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '@components/example-generator/types';
 import { getSupportedFrameworks } from '@components/docs/utils/filesData';
+import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
+import { buildSoftwareSourceCode, getTechArticleId, siteRootUrl } from '@ag-website-shared/utils/structuredData';
 
 interface Props {
     title: string;
@@ -60,6 +64,18 @@ try {
 } catch (error) {
     console.error('Error generating contents for:', generatedExampleParams);
 }
+
+let sourceCodeStructuredData: ReturnType<typeof buildSoftwareSourceCode> | undefined;
+if (sourceCode) {
+    const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+    const pageUrl = `${siteRootUrl(metadata.canonicalUrlBase)}${framework}-data-grid/${pageName}/`;
+    sourceCodeStructuredData = buildSoftwareSourceCode({
+        pageUrl,
+        exampleName: name,
+        programmingLanguage: TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'TypeScript' : 'JavaScript',
+        aboutEntityId: getTechArticleId(pageUrl),
+    });
+}
 ---
 
 {
@@ -90,6 +106,7 @@ try {
                     mainFileName={sourceCode.mainFileName}
                 />
             )}
+            {sourceCodeStructuredData && <JsonLd data={sourceCodeStructuredData} />}
         </ExampleRunnerContainer>
     )
 }
