@@ -48,4 +48,23 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-checkbox-edit')).toHaveCount(0);
         await expect(cell.locator('input[type="checkbox"]')).not.toBeChecked();
     });
+
+    // Docs: "by default the Checkbox Cell Renderer is shown, and the editor is only displayed
+    // when you start editing".
+    test.eachFramework('shows the renderer and no editor before editing starts', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        await expect(agIdFor.cell('0', 'boolean').locator('input[type="checkbox"]')).toBeVisible();
+        await expect(page.locator('.ag-checkbox-edit')).toHaveCount(0);
+    });
+
+    // Docs: editing is started "e.g. double click within the cell".
+    test.eachFramework('double click starts editing and shows the checkbox editor', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        await agIdFor.cell('0', 'boolean').dblclick();
+
+        await expect(editorCheckbox(page)).toBeVisible();
+        await expect(editorCheckbox(page)).not.toBeChecked();
+    });
 });

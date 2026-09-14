@@ -31,4 +31,35 @@ test.agExample(import.meta, () => {
         const lockedCell = agIdFor.cell('0', 'athlete');
         await expect(lockedCell).not.toHaveAttribute('style', /background-color/);
     });
+
+    test.eachFramework('the Age column shares the same editable callback', async ({ agIdFor, page }) => {
+        // Both Athlete and Age use the editableColumn type, so Age follows the same rule.
+        await agIdFor.cell('2', 'age').dblclick();
+        await expect(editInput(page)).toBeVisible();
+        await editInput(page).press('Escape');
+
+        await agIdFor.cell('0', 'age').dblclick();
+        await expect(editInput(page)).toHaveCount(0);
+    });
+
+    test.eachFramework('the buttons change which year is editable', async ({ agIdFor, page }) => {
+        // Switch the editable year to 2008, which row 0 matches and row 2 does not.
+        await page.getByRole('button', { name: 'Enable Editing for 2008' }).click();
+
+        await agIdFor.cell('0', 'athlete').dblclick();
+        await expect(editInput(page)).toBeVisible();
+        await editInput(page).press('Escape');
+
+        await agIdFor.cell('2', 'athlete').dblclick();
+        await expect(editInput(page)).toHaveCount(0);
+
+        // redrawRows() re-applies cellStyle, so the highlight follows the new year too.
+        await expect(agIdFor.cell('0', 'athlete')).toHaveAttribute('style', /background-color/);
+        await expect(agIdFor.cell('2', 'athlete')).not.toHaveAttribute('style', /background-color/);
+
+        // Switching back to 2012 restores the original state.
+        await page.getByRole('button', { name: 'Enable Editing for 2012' }).click();
+        await expect(agIdFor.cell('2', 'athlete')).toHaveAttribute('style', /background-color/);
+        await expect(agIdFor.cell('0', 'athlete')).not.toHaveAttribute('style', /background-color/);
+    });
 });
