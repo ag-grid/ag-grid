@@ -42,6 +42,18 @@ test.agExample(import.meta, () => {
         await expect(activeMatchNum(page)).toHaveText(/^\s*1\/\d+\s*$/);
     });
 
+    test.eachFramework('The Go To input cannot be stepped below the first match', async ({ page }) => {
+        await ensureGridReady(page);
+
+        await findInput(page).fill('Swimming');
+        await expect(page.locator('mark.ag-find-match').first()).toBeVisible();
+
+        // Match numbers are one-based, so the spinner must stop at 1 rather than reaching 0 or below.
+        await gotoInput(page).fill('1');
+        await gotoInput(page).press('ArrowDown');
+        await expect(gotoInput(page)).toHaveValue('1');
+    });
+
     test.eachFramework('Go To jumps directly to a match number', async ({ page }) => {
         await ensureGridReady(page);
 
