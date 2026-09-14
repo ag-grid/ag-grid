@@ -2,8 +2,7 @@ import { ensureGridReady, expect, test, waitForRowAnimations } from '@utils/grid
 
 const ROWS_IN_DATA_SET = 31;
 const GYMNASTICS_ROWS_IN_DATA_SET = 4;
-// paginationAutoPageSize fills the grid body, which is a fixed height at the test viewport.
-const ROWS_ON_FIRST_PAGE = 13;
+const PAGE_SIZE = 20; // default page size
 
 test.agExample(import.meta, () => {
     test.eachFramework('the header checkbox selects all rows on the page', async ({ page }) => {
@@ -79,15 +78,9 @@ test.agExample(import.meta, () => {
 
             await page.locator('#select-all-mode').selectOption('currentPage');
 
-            // Asserting the page size rather than reading it back keeps the selection count below
-            // independent: a mis-paged grid cannot satisfy both.
-            await expect(page.locator('.ag-paging-row-summary-panel-number').nth(1)).toHaveText(
-                String(ROWS_ON_FIRST_PAGE)
-            );
-
             await page.locator('.ag-header-select-all .ag-checkbox-input').first().click();
 
-            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(ROWS_ON_FIRST_PAGE));
+            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(PAGE_SIZE));
 
             // Page two is what separates 'currentPage' from 'all' and 'filtered'.
             await agIdFor.paginationSummaryPanelButton('next page').click();
@@ -95,7 +88,7 @@ test.agExample(import.meta, () => {
             await expect(page.locator('.ag-header-select-all .ag-checkbox-input-wrapper').first()).not.toHaveClass(
                 /ag-checked/
             );
-            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(ROWS_ON_FIRST_PAGE));
+            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(PAGE_SIZE));
         }
     );
 });

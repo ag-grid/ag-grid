@@ -43,7 +43,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     pagination: true,
-    paginationAutoPageSize: true,
+    // The default page size of 100 would fit the whole data set on one page, making 'currentPage'
+    // indistinguishable from 'all'.
+    paginationPageSize: 20,
     rowSelection: {
         mode: 'multiRow',
         selectAll: 'all',
