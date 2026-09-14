@@ -68,4 +68,50 @@ test.agExample(import.meta, () => {
         // Close the editor
         await page.keyboard.press('Escape');
     });
+
+    test.eachFramework(
+        'should wrap the matched text in a highlight element when highlightMatch is set',
+        async ({ agIdFor, page }) => {
+            // highlightMatch: true wraps the matching part of each row in a highlight span
+            const cell = agIdFor.cell('0', 'color').first();
+            await cell.dblclick();
+
+            const popup = page.locator('.ag-rich-select-list').first();
+            await expect(popup).toBeVisible();
+
+            const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+            await editorInput.fill('Dark');
+
+            const firstRow = popup.locator('.ag-rich-select-row').first();
+            await expect(firstRow).toBeVisible();
+
+            // The matched prefix is wrapped, and the rest of the value is left untouched
+            const highlight = firstRow.locator('.ag-rich-select-row-text-highlight').first();
+            await expect(highlight).toHaveText('Dark');
+
+            await page.keyboard.press('Escape');
+        }
+    );
+
+    test.eachFramework('should commit the typed-and-filtered value when pressing Enter', async ({ agIdFor, page }) => {
+        const cell = agIdFor.cell('0', 'color').first();
+        await cell.dblclick();
+
+        const popup = page.locator('.ag-rich-select-list').first();
+        await expect(popup).toBeVisible();
+
+        const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+        await editorInput.fill('Dark');
+
+        // Filtering highlights the top suggestion, and Enter commits whichever row is highlighted
+        // (agRichSelect.onEnterKeyDown selects getLastItemHovered()).
+        const highlighted = popup.locator('.ag-rich-select-row-highlighted');
+        await expect(highlighted).toHaveCount(1);
+        const expectedValue = (await highlighted.innerText()).trim();
+
+        await page.keyboard.press('Enter');
+
+        await expect(popup).not.toBeVisible();
+        await expect(cell).toContainText(expectedValue);
+    });
 });

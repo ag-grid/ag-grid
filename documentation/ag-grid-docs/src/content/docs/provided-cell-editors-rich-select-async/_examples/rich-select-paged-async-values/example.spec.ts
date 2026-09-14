@@ -91,4 +91,47 @@ test.agExample(import.meta, () => {
             await expect(cell).toContainText(optionText);
         }
     );
+
+    test.eachFramework(
+        'should open the list at the page given by valuesPageInitialStartRow',
+        async ({ agIdFor, page }) => {
+            const cell = agIdFor.cell('0', 'language');
+
+            // Read the current value first, as the row data is randomised
+            const cellText = (await cell.textContent())!.trim();
+            const selectedNumber = Number(/^Language (\d+)$/.exec(cellText)![1]);
+
+            // valuesPageInitialStartRow returns max(index(value) - 50, 0) and valuesPageSize is 100
+            const startRow = Math.max(selectedNumber - 1 - 50, 0);
+            const firstLoaded = startRow + 1;
+            const lastLoaded = startRow + 100;
+
+            await cell.dblclick();
+
+            const popup = page.locator('.ag-rich-select-list').first();
+            await expect(popup).toBeVisible();
+
+            // Wait for the initial page to resolve (300ms server delay)
+            await expect(popup.locator('.ag-rich-select-row').first()).toBeVisible({ timeout: 10000 });
+
+            // Every rendered row comes from the initially requested page, and the current value is selected
+            await expect(async () => {
+                const texts = await popup.locator('.ag-rich-select-row').allInnerTexts();
+                const numbers = texts
+                    .map((text) => /^Language (\d+)$/.exec(text.trim())?.[1])
+                    .filter((match): match is string => match != null)
+                    .map(Number);
+
+                expect(numbers.length).toBeGreaterThan(0);
+                for (const number of numbers) {
+                    expect(number).toBeGreaterThanOrEqual(firstLoaded);
+                    expect(number).toBeLessThanOrEqual(lastLoaded);
+                }
+            }).toPass({ timeout: 10000 });
+
+            await expect(popup.locator('.ag-rich-select-row-selected')).toHaveText(cellText);
+
+            await page.keyboard.press('Escape');
+        }
+    );
 });

@@ -100,4 +100,61 @@ test.agExample(import.meta, () => {
         // After editor closes, the changed cell should still have the cell batch-edit class
         await expect(firstNameCell).toHaveClass(/ag-cell-batch-edit/);
     });
+    test.eachFramework('Pending cell styling uses the overridden batch-edit colours', async ({ agIdFor }) => {
+        // Documented claim: "Pending edit styles can be overridden using CSS, via the .ag-cell-batch-edit
+        // and .ag-row-batch-edit classes." styles.css of this example sets concrete colours for both.
+        const firstNameCell = agIdFor.cell('0', 'firstName');
+        await expect(firstNameCell).toBeVisible();
+        await expect(firstNameCell).toHaveClass(/ag-cell-batch-edit/);
+
+        const cellStyles = await firstNameCell.evaluate((el) => {
+            const style = getComputedStyle(el);
+            return { backgroundColor: style.backgroundColor, color: style.color };
+        });
+        expect(cellStyles.backgroundColor).toContain('59, 255, 49');
+        expect(cellStyles.color).toBe('rgb(196, 137, 101)');
+
+        // A cell with no pending value keeps the theme colours.
+        const lastNameCell = agIdFor.cell('0', 'lastName');
+        await expect(lastNameCell).not.toHaveClass(/ag-cell-batch-edit/);
+        const unchangedBackground = await lastNameCell.evaluate((el) => getComputedStyle(el).backgroundColor);
+        expect(unchangedBackground).not.toContain('59, 255, 49');
+    });
+
+    test.eachFramework('Row batch-edit styling uses the overridden row colours', async ({ agIdFor, page }) => {
+        // .ag-row-batch-edit is applied while a full row is being batch edited.
+        const firstNameCell = agIdFor.cell('0', 'firstName');
+        const row0 = agIdFor.rowNode('0');
+        await expect(firstNameCell).toBeVisible();
+
+        await firstNameCell.dblclick();
+        await expect(firstNameCell.locator('input')).toBeVisible();
+        await expect(row0).toHaveClass(/ag-row-batch-edit/);
+
+        const rowStyles = await row0.evaluate((el) => {
+            const style = getComputedStyle(el);
+            return { backgroundColor: style.backgroundColor, color: style.color };
+        });
+        expect(rowStyles.backgroundColor).toContain('245, 255, 49');
+        expect(rowStyles.color).toBe('rgb(130, 134, 0)');
+
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('Commit clears the overridden batch-edit colours', async ({ agIdFor, page }) => {
+        const firstNameCell = agIdFor.cell('0', 'firstName');
+        await expect(firstNameCell).toBeVisible();
+        await expect(firstNameCell).toHaveClass(/ag-cell-batch-edit/);
+
+        await page.locator('button', { hasText: 'Commit Batch' }).click();
+        await expect(firstNameCell).not.toHaveClass(/ag-cell-batch-edit/);
+
+        // The custom pending colours are gone once the values are committed.
+        const cellStyles = await firstNameCell.evaluate((el) => {
+            const style = getComputedStyle(el);
+            return { backgroundColor: style.backgroundColor, color: style.color };
+        });
+        expect(cellStyles.backgroundColor).not.toContain('59, 255, 49');
+        expect(cellStyles.color).not.toBe('rgb(196, 137, 101)');
+    });
 });
