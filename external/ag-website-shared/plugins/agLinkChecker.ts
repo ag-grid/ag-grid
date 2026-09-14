@@ -21,12 +21,13 @@ type Options = {
 };
 
 const IGNORED_PATHS = ['/archive'];
-const HREF_PATTERNS_TO_IGNORE = [
-    '?', // Links with queries
-    '#reference-', // API references, as they are rendered client side
-    '#example-', // Example references, as they aren't headings
-    '#contact-section', // Contact form on about page
-    '#manage_cookies', // Footer link to open cookies management
+/**
+ * Fragments that a client-side script intercepts rather than scrolling to an element, so
+ * the built HTML has no target for them. Every other fragment must resolve to an `id` or
+ * `<a name>` in the built page it points at.
+ */
+const CLIENT_HANDLED_FRAGMENTS = [
+    'manage_cookies', // Footer link that opens the cookie-consent preferences modal
 ];
 
 const isCI =
@@ -132,11 +133,14 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         const recordUsage = (href: string) => {
             recordShapeIssues(href);
 
-            // Query links and anchors injected client-side (API/example
-            // references, the about-page contact form) have no static target
-            // to resolve against.
-            if (HREF_PATTERNS_TO_IGNORE.some((pattern) => href.includes(pattern))) {
-                return;
+            // Strip any query string (?...) while keeping the path and fragment,
+            // so "/page/?ref=blog#foo" still validates the page and the #foo
+            // anchor. Only treat '?' as the query start when it precedes the
+            // fragment — a '?' after '#' is part of the fragment itself.
+            const firstHash = href.indexOf('#');
+            const queryIndex = href.indexOf('?');
+            if (queryIndex !== -1 && (firstHash === -1 || queryIndex < firstHash)) {
+                href = href.slice(0, queryIndex) + (firstHash !== -1 ? href.slice(firstHash) : '');
             }
             // An empty fragment (#) or #top both scroll to the top of the page;
             // they always resolve and have no target element to check against.
@@ -146,6 +150,9 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                 if (fragment === '' || fragment.toLowerCase() === 'top') {
                     return;
                 }
+                if (CLIENT_HANDLED_FRAGMENTS.includes(fragment)) {
+                    return;
+                }
             }
             // Same-page (#foo) links resolve against this page; absolute
             // (/page#foo) links resolve against another page. Anything else
@@ -153,10 +160,6 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             let link: string | undefined;
             if (href.startsWith('#')) {
                 link = `${thisFileUrl}${href}`;
-                // A page linking to its own anchor also marks that anchor as a
-                // valid target, covering headings rendered by client-only
-                // components (e.g. the licence-install steps).
-                anchors.add(link);
             } else if (href.startsWith('/')) {
                 link = href;
             }
