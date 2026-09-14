@@ -1,4 +1,6 @@
-import { clickGroupValue, expandGroups, expect, test } from '@utils/grid/test-utils';
+import { clickGroupValue, expandGroups, expect, orderedValues, test } from '@utils/grid/test-utils';
+
+const GROUP_COL = 'ag-Grid-AutoColumn';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page }) => {
@@ -38,9 +40,10 @@ test.agExample(import.meta, () => {
         await expandGroups(page, ['Documents', 'Work', 'ProjectBeta']);
 
         // Tree data keeps a matching leaf's whole ancestor path, though no group has a `created` of its own.
-        await expect(page.locator('.ag-row')).toHaveCount(4);
-        await expect(groupValues.filter({ hasText: 'Report.pdf' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'Budget.xlsx' })).toHaveCount(0); // ProjectBeta's other child
+        // ProjectBeta's other child, Budget.xlsx, is a sibling of the match and so is dropped.
+        await expect(async () => {
+            expect(await orderedValues(page, GROUP_COL)).toEqual(['Documents', 'Work', 'ProjectBeta', 'Report.pdf']);
+        }).toPass();
     });
 
     test.eachFramework('the number filter on size filters the tree', async ({ agIdFor, page }) => {
@@ -58,8 +61,9 @@ test.agExample(import.meta, () => {
         await expect(groupValues.filter({ hasText: 'Documents' })).toHaveCount(0);
         await expandGroups(page, ['Desktop']);
 
-        await expect(page.locator('.ag-row')).toHaveCount(2);
-        await expect(groupValues.filter({ hasText: 'MeetingNotes_August.pdf' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'ToDoList.txt' })).toHaveCount(0); // Desktop's other child
+        // Desktop's other children, ToDoList.txt among them, are dropped on size.
+        await expect(async () => {
+            expect(await orderedValues(page, GROUP_COL)).toEqual(['Desktop', 'MeetingNotes_August.pdf']);
+        }).toPass();
     });
 });
