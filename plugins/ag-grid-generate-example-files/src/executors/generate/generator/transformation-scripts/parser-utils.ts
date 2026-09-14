@@ -699,15 +699,45 @@ const chartsExamplePathSubstrings = [
     '/key-features',
 ];
 
+const isChartsExample = (exampleName: string) => !!chartsExamplePathSubstrings.find((s) => exampleName.includes(s));
+
 export function getIntegratedDarkModeCode(
     exampleName: string,
     typescript?: boolean,
     apiName = 'params.api'
 ): string | undefined {
-    if (!chartsExamplePathSubstrings.find((s) => exampleName.includes(s))) {
+    if (!isChartsExample(exampleName)) {
         return undefined;
     }
     return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
+}
+
+/**
+ * Charts created while the grid is initialising (i.e. in `onFirstDataRendered`) are rendered before the api based
+ * dark mode code above can run, so on a dark page they flash with the light theme. React and Angular have no hook
+ * that runs after the grid api exists but before the grid renders, so provide the initial `chartThemes` globally
+ * instead - that happens before any grid is created, so the very first chart render uses the correct theme.
+ *
+ * Examples that set `chartThemes` themselves still win over the global option, and are handled by the api based
+ * code above as before.
+ */
+export function getIntegratedDarkModeInitialChartThemesCode(
+    exampleName: string,
+    imports: string[]
+): string | undefined {
+    if (!isChartsExample(exampleName)) {
+        return undefined;
+    }
+    const importStatement = imports.some((i) => i.includes('provideGlobalGridOptions'))
+        ? ''
+        : "import { provideGlobalGridOptions } from 'ag-grid-community';\n";
+    return `${DARK_INTEGRATED_START}
+${importStatement}provideGlobalGridOptions({
+    chartThemes: ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'].map(
+        (theme) => theme + (document.documentElement.dataset.agThemeMode?.includes('dark') ? '-dark' : '')
+    ),
+});
+${DARK_INTEGRATED_END}`;
 }
 
 const darkModeTs = `
