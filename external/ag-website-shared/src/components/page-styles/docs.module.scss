@@ -195,13 +195,13 @@ blockquote:where(:not(:last-child)) {
     font-size: var(--text-fs-lg);
     margin-bottom: $spacing-size-8;
     color: var(--color-text-secondary);
-    // Body copy set one step up, not a heading: --text-lh-lg is the display leading for the `lg`
-    // step (1.2) and squashes a multi-line intro, so keep the body ratio at this larger size.
-    line-height: var(--text-lh-ratio-base);
+    // Body copy set one step up, not a heading, so the body track rather than the display track:
+    // --text-lh-display-lg (1.2) squashes a multi-line intro. See RTI-3465.
+    line-height: var(--text-lh-body-lg);
 
     :global(code) {
         font-size: var(--text-fs-base);
-        line-height: var(--text-lh-base);
+        line-height: var(--text-lh-body-base);
     }
 }
 
