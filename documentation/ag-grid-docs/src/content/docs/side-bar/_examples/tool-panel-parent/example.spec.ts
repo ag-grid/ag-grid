@@ -31,6 +31,15 @@ test.agExample(import.meta, () => {
         // Columns tool panel renders inside the custom popup parent (#popup .content).
         await expect(page.locator('#popup')).toHaveClass(/active/);
         await expect(page.locator('#popup .ag-column-panel')).toBeVisible();
+
+        // RTI-3463: the popup must stay centred. The grid adds `ag-tool-panel-external`
+        // (width: 100%) to the tool panel's parent, and the example used to copy that class
+        // onto #popup itself, stretching it full width and pushing it against the left edge.
+        await expect(page.locator('#popup')).not.toHaveClass(/ag-tool-panel-external/);
+        const popupBox = (await page.locator('#popup .inner').boundingBox())!;
+        const viewport = page.viewportSize()!;
+        const offCentre = Math.abs(popupBox.x + popupBox.width / 2 - viewport.width / 2);
+        expect(offCentre).toBeLessThan(20);
     });
 
     test.eachFramework(
