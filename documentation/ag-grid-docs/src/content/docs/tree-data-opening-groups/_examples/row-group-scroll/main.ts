@@ -1,7 +1,9 @@
 import type { GridApi, GridOptions, RowGroupOpenedEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    DateFilterModule,
     ModuleRegistry,
+    NumberFilterModule,
     ScrollApiModule,
     TextFilterModule,
     createGrid,
@@ -16,7 +18,14 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ScrollApiModule, ClientSideRowModelModule, TreeDataModule, TextFilterModule]);
+ModuleRegistry.registerModules([
+    ScrollApiModule,
+    ClientSideRowModelModule,
+    TreeDataModule,
+    TextFilterModule,
+    NumberFilterModule,
+    DateFilterModule,
+]);
 
 let gridApi: GridApi;
 
