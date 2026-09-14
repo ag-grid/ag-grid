@@ -50,6 +50,7 @@ test.agExample(import.meta, () => {
 
         // Match numbers are one-based, so the spinner must stop at 1 rather than reaching 0 or below.
         await gotoInput(page).fill('1');
+        await expect(gotoInput(page)).toHaveValue('1');
         await gotoInput(page).press('ArrowDown');
         await expect(gotoInput(page)).toHaveValue('1');
     });

@@ -69,7 +69,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const spec = { source: 'column-filter', colId: 'make' } as const;
+        const spec = { source: 'column-filter' } as const;
         await agIdFor.headerFilterButton('make').click();
 
         // The set filter list is built from the displayed values, so users see 'Toyota',
@@ -88,7 +88,7 @@ test.agExample(import.meta, () => {
         await makeCell.dblclick();
 
         // agSelectCellEditor shows the mapped name for the current code.
-        const picker = makeCell.locator('.ag-picker-field');
+        const picker = makeCell.locator('.ag-cell-editor.ag-select');
         await expect(picker.locator('.ag-picker-field-display')).toHaveText('Toyota');
 
         await picker.click();

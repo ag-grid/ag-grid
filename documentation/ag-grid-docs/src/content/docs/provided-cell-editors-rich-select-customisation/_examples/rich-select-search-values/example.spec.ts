@@ -81,11 +81,17 @@ test.agExample(import.meta, () => {
             // matching resolves to 'Turquoise', but prefix matching cannot reach it, since it is
             // not a substring of any colour name. This is what separates the two search modes.
             await page.keyboard.press('Escape');
-            await cell.dblclick();
+
+            // A second cell in the same column, rather than reopening the first one: re-editing a
+            // cell reinstates the editor without reopening its list, which is not what is under
+            // test here.
+            const otherCell = agIdFor.cell('1', 'color_1').first();
+            await otherCell.dblclick();
             await expect(popup).toBeVisible();
 
             await page.keyboard.type('Turqoise');
-            await expect(highlighted).not.toHaveText('Turquoise');
+            // Nothing matches, so no row is highlighted at all.
+            await expect(highlighted).toHaveCount(0);
 
             await page.keyboard.press('Escape');
         }
