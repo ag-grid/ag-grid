@@ -355,14 +355,21 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private readonly setupRangeSelectionListeners = () => {
         const onCellSelectionChanged = () => {
+            const rangeSvc = this.beans.rangeSvc;
+            const isCellStale = rangeSvc?.takeSelectionRefreshFilter();
+            const state = rangeSvc?.getSelectionState();
             for (const cellCtrl of this.getAllCellCtrls()) {
-                cellCtrl.onCellSelectionChanged();
+                if (isCellStale && !isCellStale(cellCtrl.cellPosition)) {
+                    continue;
+                }
+                cellCtrl.onCellSelectionChanged(state);
             }
         };
 
         const onColumnMovedPinnedVisible = () => {
+            const state = this.beans.rangeSvc?.getSelectionState();
             for (const cellCtrl of this.getAllCellCtrls()) {
-                cellCtrl.updateRangeBordersIfRangeCount();
+                cellCtrl.updateRangeBordersIfRangeCount(state);
             }
         };
 

@@ -18,6 +18,8 @@ export interface IRangeService {
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
     getRangeRowCount(cellRange: CellRange): number;
+    takeSelectionRefreshFilter(): ((cell: CellPosition) => boolean) | null;
+    getSelectionState(): CellSelectionSnapshot;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
     isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean;
@@ -61,6 +63,26 @@ export interface IRangeService {
     createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
     handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface CellSelectionRange {
+    range: CellRange;
+    firstRow: RowPosition;
+    lastRow: RowPosition;
+    withinOneSection: boolean;
+    columns: Set<Column>;
+    lastColumn: Column | undefined;
+    contiguous: boolean;
+    type: CellRangeType | undefined;
+    colorClass: string | null | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface CellSelectionSnapshot {
+    ranges: CellSelectionRange[];
+    moreThanOneCell: boolean;
+    allChartRanges: boolean;
 }
 
 export enum CellRangeType {
