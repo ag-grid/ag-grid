@@ -34,6 +34,37 @@ test.agExample(import.meta, () => {
         await expect(popup).not.toHaveClass(/ag-notes-popup-read-only/);
     });
 
+    test.eachFramework('Read-only notes cannot be edited or removed from the UI', async ({ agIdFor, page }) => {
+        // Row 3 country holds a read-only note: the context menu offers View Note instead of
+        // Edit Note, and Remove Note is disabled.
+        await agIdFor.cell('3', 'country').click({ button: 'right' });
+        await expect(agIdFor.menuOption('View Note')).toBeVisible();
+        await expect(agIdFor.menuOption('Edit Note')).toHaveCount(0);
+        await expect(agIdFor.menuOption('Remove Note')).toHaveClass(/ag-menu-option-disabled/);
+        await page.keyboard.press('Escape');
+
+        // Row 1 athlete holds an editable note, so both actions are offered and enabled.
+        await agIdFor.cell('1', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menuOption('Edit Note')).not.toHaveClass(/ag-menu-option-disabled/);
+        await expect(agIdFor.menuOption('Remove Note')).not.toHaveClass(/ag-menu-option-disabled/);
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('Typing into a read-only note leaves its text unchanged', async ({ agIdFor, page }) => {
+        const readOnlyText = 'This note is read-only, so the built-in UI opens it in view-only mode.';
+
+        await agIdFor.cell('3', 'country').hover();
+        const popup = page.locator('.ag-notes-popup');
+        await expect(popup).toBeVisible();
+
+        const textarea = popup.locator('.ag-text-area-input');
+        await textarea.click();
+        await page.keyboard.type('edited');
+
+        // The textarea is readonly, so the keystrokes are dropped rather than saved.
+        await expect(textarea).toHaveValue(readOnlyText);
+    });
+
     test.eachFramework('Grid renders correct data', async ({ agIdFor }) => {
         await expect(agIdFor.cell('1', 'athlete')).toContainText('Michael Phelps');
         await expect(agIdFor.cell('3', 'country')).toContainText('United States');
