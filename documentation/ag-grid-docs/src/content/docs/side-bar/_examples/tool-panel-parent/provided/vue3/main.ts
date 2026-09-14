@@ -34,11 +34,6 @@ ModuleRegistry.registerModules([
     TextFilterModule,
 ]);
 
-function addStyles(parentEl: HTMLElement) {
-    const contentClassnames = [...parentEl.querySelector('.content')!.classList].filter((e) => e !== 'content');
-    parentEl.classList.add(...contentClassnames);
-}
-
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
@@ -137,14 +132,12 @@ const VueExample = defineComponent({
             const popup = popupRef.value!;
             popup.classList.toggle('active', true);
             gridApi.value!.openToolPanel(columnsToolPanel.value.id, popupContentRef.value!);
-            addStyles(popup);
         }
         function openDrawer() {
             closePopup();
             const drawer = drawerRef.value!;
             drawer.classList.toggle('active', true);
             gridApi.value!.openToolPanel(filtersToolPanel.value.id, drawer.querySelector<HTMLElement>('.content'));
-            addStyles(drawer);
         }
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
