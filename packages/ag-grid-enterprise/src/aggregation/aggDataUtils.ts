@@ -1,4 +1,4 @@
-import type { ColumnModel, RowNode } from 'ag-grid-community';
+import type { BeanCollection, ColumnModel, RowNode } from 'ag-grid-community';
 
 /**
  * Traverses `rowNode.childrenMapped` using pivot keys to resolve the matching RowNode array.
@@ -16,15 +16,18 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
     return Array.isArray(mapPointer) ? mapPointer : [];
 };
 
-/** Sets aggData and fires cell-changed events if listeners are registered. */
-export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | null, colModel: ColumnModel): void => {
+/** Sets aggData and refreshes the rendered row if listeners are registered. */
+export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | null, beans: BeanCollection): void => {
     const oldAggData = rowNode.aggData;
     if (oldAggData === newAggData) {
         return;
     }
     rowNode.aggData = newAggData;
     if (rowNode.__localEventService) {
-        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel);
+        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, beans.colModel);
+        // A column deriving from the aggregates — a `valueGetter` reading `getValue('gold')` — has no
+        // aggData entry, so the per-column events above never reach it.
+        beans.rowRenderer.refreshRowByNode(rowNode);
     }
 };
 
@@ -32,22 +35,22 @@ export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | n
 export const setAggDataWithSiblings = (
     rowNode: RowNode,
     newAggData: Record<string, any> | null,
-    colModel: ColumnModel
+    beans: BeanCollection
 ): void => {
-    setAggData(rowNode, newAggData, colModel);
+    setAggData(rowNode, newAggData, beans);
 
     const pinnedSibling = rowNode.pinnedSibling;
     if (pinnedSibling) {
-        setAggData(pinnedSibling, newAggData, colModel);
+        setAggData(pinnedSibling, newAggData, beans);
     }
 
     const sibling = rowNode.sibling;
     if (sibling) {
-        setAggData(sibling, newAggData, colModel);
+        setAggData(sibling, newAggData, beans);
 
         const siblingPinnedSibling = sibling.pinnedSibling;
         if (siblingPinnedSibling) {
-            setAggData(siblingPinnedSibling, newAggData, colModel);
+            setAggData(siblingPinnedSibling, newAggData, beans);
         }
     }
 };

@@ -84,10 +84,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
                 this.hadAgg = false;
-                const colModel = beans.colModel;
                 const rowModel = beans.rowModel;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
-                    setAggDataWithSiblings(rowNode, null, colModel);
+                    setAggDataWithSiblings(rowNode, null, beans);
                 });
             }
             return;
@@ -141,7 +140,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const rowModel = beans.rowModel;
         const aggregateNode = (rowNode: RowNode): void => {
             if (rowNode.level === -1 && !aggregateRoot) {
-                setAggData(rowNode, null, colModel);
+                setAggData(rowNode, null, beans);
                 return;
             }
 
@@ -166,7 +165,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 );
             }
 
-            setAggDataWithSiblings(rowNode, aggResult, colModel);
+            setAggDataWithSiblings(rowNode, aggResult, beans);
         };
 
         // Root-only: groups are already aggregated, so recompute just the root total from their aggData.
