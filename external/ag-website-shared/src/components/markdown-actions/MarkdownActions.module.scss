@@ -13,6 +13,10 @@
     justify-content: space-between;
     gap: $spacing-size-4;
     height: 36px;
+    // The base button padding is deliberately uneven (see elements/_button.scss) to sit a
+    // text label optically within a button it also sizes. Here the height is fixed and the
+    // contents are flex-centred, so that unevenness only pushes them ~1px above the middle.
+    padding-block: 0;
     border: 1px solid var(--color-input-border);
     border-radius: var(--radius-sm);
     color: var(--color-fg-primary);
