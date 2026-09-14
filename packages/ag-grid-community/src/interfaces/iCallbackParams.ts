@@ -350,6 +350,8 @@ export interface FillOperationParams<TData = any, TContext = any> extends AgGrid
     /** Uses the grid's default Fill Handle behaviour for the current cell. */
     useDefault: () => FillOperationResult;
 }
+/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
+export type SetFillValueCallback<TData = any, TContext = any> = (params: FillOperationParams<TData, TContext>) => any;
 
 export type GetRowHeight<TData = any, TContext = any> = (
     params: RowHeightParams<TData, TContext>
