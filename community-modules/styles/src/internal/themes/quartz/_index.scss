@@ -649,7 +649,9 @@
     .ag-toggle-button-input,
     .ag-radio-button-input,
     input[class^='ag-'][type='range'] {
-        cursor: pointer;
+        &:where(:not(:disabled)) {
+            cursor: pointer;
+        }
     }
 
     .ag-details-row {
