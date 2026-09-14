@@ -21,14 +21,24 @@
     var BODY_ROOTS = ':scope > .ez-consent, :scope > [id^="ez-cookie"], :scope > [id^="enzuzo-"]';
     // Only re-persist the elements this script tagged on an earlier navigation. A bare
     // [data-astro-transition-persist] would also match the AG stylesheets that
-    // persist-injected-styles.js has already given a placeholder, and a second placeholder for
-    // the same id is left behind as an empty <style> that accumulates on every navigation.
+    // persist-injected-styles.js has already given a placeholder.
     var HEAD_STYLES = 'style[id^="enzuzo_cb"], style[ez-style], [data-astro-transition-persist^="enzuzo-"]';
     // Enzuzo's base and modal stylesheets carry no id or attribute, so they are matched on the
     // class names they style instead.
     var UNTAGGED_HEAD_STYLES = 'style:not([data-astro-transition-persist])';
     var STYLE_CONTENT_MARKERS = ['.ez-consent', 'enzuzo-modal-wrapper'];
+    // Kept in step with persist-injected-styles.js, which marks its placeholders the same way.
+    var PLACEHOLDER_ATTR = 'data-ag-persist-placeholder';
     var nextPersistId = 0;
+
+    // A placeholder is inert and single-use: one still live has outlived its swap and duplicates a persist id.
+    function sweepStalePlaceholders() {
+        var stale = document.querySelectorAll('[' + PLACEHOLDER_ATTR + ']');
+
+        for (var i = 0, len = stale.length; i < len; ++i) {
+            stale[i].remove();
+        }
+    }
 
     function persist(el, newDocument, target) {
         if (!el.dataset.astroTransitionPersist) {
@@ -37,6 +47,7 @@
 
         var placeholder = newDocument.createElement(el.localName);
         placeholder.dataset.astroTransitionPersist = el.dataset.astroTransitionPersist;
+        placeholder.setAttribute(PLACEHOLDER_ATTR, '');
         target.appendChild(placeholder);
     }
 
@@ -59,6 +70,9 @@
     document.addEventListener('astro:before-swap', function (event) {
         var newDocument = event.newDocument;
         var matchedStyles = [];
+
+        // Before any matching below, which would otherwise take a stale placeholder for a live one.
+        sweepStalePlaceholders();
 
         // Persist the identifiable stylesheets first: that tags them, so the content-matching
         // pass below cannot pick the same element up a second time.
