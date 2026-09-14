@@ -195,7 +195,9 @@ blockquote:where(:not(:last-child)) {
     font-size: var(--text-fs-lg);
     margin-bottom: $spacing-size-8;
     color: var(--color-text-secondary);
-    line-height: var(--text-lh-lg);
+    // Body copy set one step up, not a heading: --text-lh-lg is the display leading for the `lg`
+    // step (1.2) and squashes a multi-line intro, so keep the body ratio at this larger size.
+    line-height: var(--text-lh-ratio-base);
 
     :global(code) {
         font-size: var(--text-fs-base);
