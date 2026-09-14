@@ -1,27 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
-import type { Page } from 'playwright/test';
-
-const groupRow = (page: Page, name: string) =>
-    page
-        .locator('.ag-row')
-        .filter({ has: page.locator('.ag-group-value', { hasText: name }) })
-        .first();
-
-/** Clicks a group's text - `name` must survive the filter, so the target is valid before the debounce fires. */
-const closeFilterPopup = (page: Page, name: string) =>
-    page.locator('.ag-group-value').filter({ hasText: name }).first().click();
-
-/** Expands each group still collapsed - the examples on this page open different sets by default. */
-async function expandGroups(page: Page, names: string[]) {
-    for (const name of names) {
-        const row = groupRow(page, name);
-        await expect(row).toBeVisible();
-        const contracted = row.locator('.ag-group-contracted');
-        if (await contracted.isVisible()) {
-            await contracted.click();
-        }
-    }
-}
+import { clickGroupValue, expandGroups, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page }) => {
@@ -45,7 +22,7 @@ test.agExample(import.meta, () => {
 
         await agIdFor.headerFilterButton('modified').click();
         await expect(agIdFor.dateFilterInstanceInput({ source: 'column-filter' })).toBeVisible();
-        await closeFilterPopup(page, 'Documents');
+        await clickGroupValue(page, 'Documents'); // closes the popup - a surviving group is a stable target
 
         await agIdFor.headerFilterButton('created').click();
         const createdFilter = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
@@ -54,7 +31,7 @@ test.agExample(import.meta, () => {
         // Report.pdf, under Documents > Work > ProjectBeta, is the only file created on this date.
         await createdFilter.fill('2023-06-22');
         await createdFilter.dispatchEvent('input');
-        await closeFilterPopup(page, 'Documents');
+        await clickGroupValue(page, 'Documents');
 
         // Desktop holds no match, so its disappearance marks the filter as applied.
         await expect(groupValues.filter({ hasText: 'Desktop' })).toHaveCount(0);
@@ -76,7 +53,7 @@ test.agExample(import.meta, () => {
         // MeetingNotes_August.pdf is the only row this size, and no group's `sum` aggregation matches it.
         await sizeFilter.fill('460800');
         await sizeFilter.dispatchEvent('input');
-        await closeFilterPopup(page, 'Desktop');
+        await clickGroupValue(page, 'Desktop');
 
         await expect(groupValues.filter({ hasText: 'Documents' })).toHaveCount(0);
         await expandGroups(page, ['Desktop']);

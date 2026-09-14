@@ -928,6 +928,7 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
     return serialised;
 }
 
+export { clickGroupValue, expandGroups, groupRow } from './test/groupRows';
 export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
 export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';
