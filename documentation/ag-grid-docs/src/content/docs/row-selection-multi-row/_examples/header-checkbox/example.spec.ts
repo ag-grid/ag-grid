@@ -2,6 +2,8 @@ import { ensureGridReady, expect, test, waitForRowAnimations } from '@utils/grid
 
 const ROWS_IN_DATA_SET = 31;
 const GYMNASTICS_ROWS_IN_DATA_SET = 4;
+// paginationAutoPageSize fills the grid body, which is a fixed height at the test viewport.
+const ROWS_ON_FIRST_PAGE = 13;
 
 test.agExample(import.meta, () => {
     test.eachFramework('the header checkbox selects all rows on the page', async ({ page }) => {
@@ -18,9 +20,7 @@ test.agExample(import.meta, () => {
         await expect(headerWrapper).toHaveClass(/ag-checked/);
         await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
 
-        // Every rendered row is also visibly selected. Assert that no rendered row is left
-        // unselected rather than comparing against a snapshotted row count, which races with rows
-        // entering the DOM before their selected class is applied.
+        // A snapshotted row count races with rows entering the DOM before their selected class lands.
         await expect(page.locator('.ag-grid-scrolling-container .ag-row')).not.toHaveCount(0);
         await expect(page.locator('.ag-grid-scrolling-container .ag-row:not(.ag-row-selected)')).toHaveCount(0);
 
@@ -79,30 +79,23 @@ test.agExample(import.meta, () => {
 
             await page.locator('#select-all-mode').selectOption('currentPage');
 
-            // paginationAutoPageSize derives the page size from the viewport height, so the number of
-            // rows per page is not fixed. Read it from the paging panel — which also waits for the
-            // auto-sizing to settle, so the header click below acts on the final page boundary.
-            const lastRowOnPage = page.locator('.ag-paging-row-summary-panel-number').nth(1);
-            await expect(page.locator('.ag-paging-row-summary-panel-number').nth(2)).toHaveText(
-                String(ROWS_IN_DATA_SET)
+            // Asserting the page size rather than reading it back keeps the selection count below
+            // independent: a mis-paged grid cannot satisfy both.
+            await expect(page.locator('.ag-paging-row-summary-panel-number').nth(1)).toHaveText(
+                String(ROWS_ON_FIRST_PAGE)
             );
-            const rowsOnPage = Number(await lastRowOnPage.textContent());
-            expect(rowsOnPage).toBeGreaterThan(0);
-            expect(rowsOnPage).toBeLessThan(ROWS_IN_DATA_SET);
 
             await page.locator('.ag-header-select-all .ag-checkbox-input').first().click();
 
-            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(rowsOnPage));
+            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(ROWS_ON_FIRST_PAGE));
 
-            // Page two proves the selection was page-scoped rather than grid-wide: in 'currentPage' mode
-            // the header checkbox reflects the current page, so it reads unchecked there, and the
-            // selection count does not grow on navigation.
+            // Page two is what separates 'currentPage' from 'all' and 'filtered'.
             await agIdFor.paginationSummaryPanelButton('next page').click();
             await waitForRowAnimations(page);
             await expect(page.locator('.ag-header-select-all .ag-checkbox-input-wrapper').first()).not.toHaveClass(
                 /ag-checked/
             );
-            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(rowsOnPage));
+            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(ROWS_ON_FIRST_PAGE));
         }
     );
 });
