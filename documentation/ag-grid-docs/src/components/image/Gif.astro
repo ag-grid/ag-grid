@@ -1,7 +1,9 @@
 ---
-import { Gif } from './Gif';
 import { getPageImages } from '@components/docs/utils/filesData';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from './Gif.module.scss';
 
 interface Props {
     pageName?: string;
@@ -11,7 +13,7 @@ interface Props {
     wrapped?: boolean;
 }
 
-const { pageName: propPageName, imagePath, alt, autoPlay, wrapped, ...props } = Astro.props as Props;
+const { pageName: propPageName, imagePath, alt, autoPlay, wrapped } = Astro.props as Props;
 
 const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
 
@@ -21,14 +23,26 @@ const { imageSrc, darkModeImageSrc, gifStillImageSrc, gifDarkModeStillImageSrc }
 });
 ---
 
-<Gif
-    client:load
-    imageSrc={imageSrc}
-    darkModeImageSrc={darkModeImageSrc}
-    stillImageSrc={gifStillImageSrc}
-    darkModeStillImageSrc={gifDarkModeStillImageSrc}
-    alt={alt}
-    autoPlay={autoPlay}
-    wrapped={wrapped}
-    {...props}
-/>
+{
+    /* A player for GIFs: the still first frame loads with the page and a play button is shown over
+    it, and only a click loads and plays the (much larger) GIF itself.
+
+    The four sources are handed to gif-player.js as data-attributes, and it picks between them
+    before the first paint. The `src` here is a light one either way, so that the image still
+    resolves without JavaScript: it is already correct on a light page, and on a dark one the
+    script replaces it in the same task this markup is parsed in, before anything is painted. */
+}
+<div class={styles.gifPlayer} data-gif-player data-playing={autoPlay ? '' : undefined}>
+    <img
+        class:list={[styles.gif, { [styles.wrapped]: wrapped }]}
+        src={autoPlay ? imageSrc : gifStillImageSrc}
+        alt={alt}
+        data-light-gif={imageSrc}
+        data-dark-gif={darkModeImageSrc}
+        data-light-still={gifStillImageSrc}
+        data-dark-still={gifDarkModeStillImageSrc}
+    />
+    <div class={styles.playButton}></div>
+</div>
+
+<script is:inline src={urlWithBaseUrl('/scripts/gif-player.js')}></script>
