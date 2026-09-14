@@ -51,6 +51,8 @@ Clicking on the `Push For Total` button will log results in the developer consol
 
 {% gridExampleRunner title="Registering Components" name="register"  exampleHeight=580 /%}
 
+{% if isFramework("javascript", "angular", "react") %}
+
 ### Application-Wide Component Registration
 
 The `components` grid option registers component names for one grid. To make named components available to every subsequently created grid, provide them through [Global Grid Options](./grid-interface/#global-grid-options):
@@ -69,6 +71,7 @@ provideGlobalGridOptions(
 ```
 
 Use the `deep` merge strategy when individual grids may also define a `components` map; otherwise a local map replaces the global map. All custom component types share the same registry, so component names must be unique.
+{% /if %}
 
 ## Providing Additional Parameters
 
