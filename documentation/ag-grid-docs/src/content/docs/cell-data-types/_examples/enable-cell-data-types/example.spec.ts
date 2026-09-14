@@ -11,6 +11,9 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'dateObject')).toContainText('2008-08-24');
         // 'dateString' keeps the string in ISO form.
         await expect(agIdFor.cell('0', 'date')).toContainText('2008-08-24');
+        // 'dateTime' and 'dateTimeString' serialise the time alongside the date. The time
+        // parts are randomised per load, so only the shape and the date portion are asserted.
+        await expect(agIdFor.cell('0', 'dateTime')).toHaveText(/^2008-08-24[ T]\d{2}:\d{2}:\d{2}$/);
         // object column is off-screen initially; scroll horizontally to render it. Retry the
         // scroll+assert together: the column only virtualises into the DOM once the grid has
         // laid out wide enough to overflow, which can lag behind the initial content render.
@@ -20,6 +23,10 @@ test.agExample(import.meta, () => {
                 .evaluate((el) => (el.scrollLeft = el.scrollWidth));
             // object data type is formatted via the custom value formatter to the country name.
             await expect(agIdFor.cell('0', 'countryObject')).toContainText('United States', { timeout: 2000 });
+            // 'dateTimeString' also lives in the right-hand, initially virtualised region.
+            await expect(agIdFor.cell('0', 'dateTimeString')).toHaveText(/^2008-08-24[ T]\d{2}:\d{2}:\d{2}$/, {
+                timeout: 2000,
+            });
         }).toPass();
     });
 
