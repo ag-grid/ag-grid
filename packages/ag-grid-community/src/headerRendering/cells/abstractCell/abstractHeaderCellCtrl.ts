@@ -396,6 +396,7 @@ export abstract class AbstractHeaderCellCtrl<
         const wrapperHasFocus = this.getWrapperHasFocus();
 
         switch (e.key) {
+            case KeyCode.SPACE:
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_HOME:
