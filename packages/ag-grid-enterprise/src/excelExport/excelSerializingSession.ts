@@ -172,6 +172,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
     }
 
+    public override isSpanColumnHeader(): boolean {
+        const { exportAsExcelTable, pivotModeActive } = this.config;
+        // Excel tables require an unmerged header row. Pivot exports do not create tables.
+        return !exportAsExcelTable || !!pivotModeActive;
+    }
+
     public onNewHeaderGroupingRow(): HeaderRowAccumulator {
         return this.createHeaderRow();
     }

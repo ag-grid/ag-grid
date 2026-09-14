@@ -2,11 +2,12 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    RowSelectionModule,
+    NumberEditorModule,
+    TextEditorModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, ClipboardModule, ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -14,36 +15,36 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ModuleRegistry.registerModules([
-    RowSelectionModule,
     ClientSideRowModelModule,
-    ColumnsToolPanelModule,
+    NumberEditorModule,
+    TextEditorModule,
+    ClipboardModule,
     ColumnMenuModule,
     ContextMenuModule,
-    RowGroupingModule,
+    CellSelectionModule,
 ]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [{ field: 'year', maxWidth: 120 }, { field: 'athlete' }, { field: 'sport' }],
+    columnDefs: [
+        { field: 'athlete', minWidth: 150 },
+        { field: 'age', maxWidth: 90 },
+        { field: 'country', minWidth: 150 },
+        { field: 'year', maxWidth: 90 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
+        editable: true,
     },
-    rowSelection: {
-        mode: 'multiRow',
-        hideDisabledCheckboxes: true,
-        isRowSelectable: (node) => (node.data ? node.data.year < 2007 : false),
-    },
+    cellSelection: true,
 };
-
-function toggleHideCheckbox() {
-    gridApi.setGridOption('rowSelection', {
-        mode: 'multiRow',
-        isRowSelectable: (node) => (node.data ? node.data.year < 2007 : false),
-        hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
-    });
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -54,7 +55,3 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
-
-function getCheckboxValue(id: string): boolean {
-    return document.querySelector<HTMLInputElement>(id)?.checked ?? false;
-}

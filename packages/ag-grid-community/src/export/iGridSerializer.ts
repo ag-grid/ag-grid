@@ -70,6 +70,7 @@ export interface GridSerializingParams {
 
 export interface GridSerializingSession<T> {
     readonly useGridHeaderLayout: boolean;
+    isSpanColumnHeader(): boolean;
     prepare(columnsToExport: AgColumn[]): void;
     onNewHeaderGroupingRow(): HeaderRowAccumulator;
     onNewHeaderRow(): HeaderRowAccumulator;

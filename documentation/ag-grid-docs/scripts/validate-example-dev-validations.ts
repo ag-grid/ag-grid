@@ -15,6 +15,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const DOCS_ROOT = join(__dirname, '..', 'src', 'content', 'docs');
 const CANDIDATE_EXTENSIONS = ['.ts', '.tsx'];
+// Playwright specs sit alongside the example sources but are not themselves examples, and they
+// routinely mention ModuleRegistry.registerModules() in comments about the example under test.
+const EXCLUDED_SUFFIXES = ['.spec.ts', '.spec.tsx'];
 const REGISTER_MODULES_PATTERN = /ModuleRegistry\.registerModules\(/;
 const ENABLE_DEV_VALIDATIONS_PATTERN = /enableDevValidations/;
 
@@ -49,7 +52,10 @@ async function findCandidateFiles(basePath: string): Promise<string[]> {
 
             if (await isDirectory(fullPath)) {
                 await traverse(fullPath);
-            } else if (CANDIDATE_EXTENSIONS.some((ext) => entry.endsWith(ext))) {
+            } else if (
+                CANDIDATE_EXTENSIONS.some((ext) => entry.endsWith(ext)) &&
+                !EXCLUDED_SUFFIXES.some((suffix) => entry.endsWith(suffix))
+            ) {
                 files.push(fullPath);
             }
         }

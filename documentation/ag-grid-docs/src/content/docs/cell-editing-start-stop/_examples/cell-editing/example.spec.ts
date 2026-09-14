@@ -562,6 +562,94 @@ test.agExample(import.meta, () => {
             );
         });
     });
+
+    describe('editing API buttons', () => {
+        // Every `edit...` button calls api.startEditingCell on row 0 of the 'lastName' column,
+        // differing only in the `key` and `rowPinned` it passes.
+        const editingInput = (page: Page) => page.locator('.ag-cell-inline-editing input.ag-input-field-input');
+
+        test.eachFramework('edit (0) starts editing with the existing value', async ({ page, agIdFor }) => {
+            await page.getByRole('button', { name: 'edit (0)' }).click();
+
+            const cell = agIdFor.cell('0', 'lastName');
+            await expect(cell.locator('input')).toBeVisible();
+            // No key was passed, so the editor opens on the current value.
+            await expect(cell.locator('input')).toHaveValue('Harrison');
+        });
+
+        test.eachFramework('edit (0, Backspace) clears the contents first', async ({ page, agIdFor }) => {
+            await page.getByRole('button', { name: 'edit (0, Backspace)' }).click();
+
+            const cell = agIdFor.cell('0', 'lastName');
+            await expect(cell.locator('input')).toBeVisible();
+            await expect(cell.locator('input')).toHaveValue('');
+        });
+
+        test.eachFramework("edit (0, 'T') seeds the editor with the pressed character", async ({ page, agIdFor }) => {
+            await page.getByRole('button', { name: "edit (0, 'T')" }).click();
+
+            const cell = agIdFor.cell('0', 'lastName');
+            await expect(cell.locator('input')).toBeVisible();
+            await expect(cell.locator('input')).toHaveValue('T');
+        });
+
+        // rowPinned: 'top' / 'bottom' target row 0 of pinnedTopRowData / pinnedBottomRowData,
+        // whose lastName is '##' in both.
+        for (const { label, container } of [
+            { label: 'edit (0, Top)', container: '.ag-grid-pinned-top-rows-container' },
+            { label: 'edit (0, Bottom)', container: '.ag-grid-pinned-bottom-rows-container' },
+        ]) {
+            test.eachFramework(`${label} edits the pinned row`, async ({ page }) => {
+                await page.getByRole('button', { name: label }).click();
+
+                const input = page.locator(`${container} .ag-cell-inline-editing input.ag-input-field-input`);
+                await expect(input).toBeVisible();
+                await expect(input).toHaveValue('##');
+            });
+        }
+
+        test.eachFramework('stop () ends editing, keeping the typed value', async ({ page, agIdFor }) => {
+            await page.getByRole('button', { name: 'edit (0)' }).click();
+
+            const cell = agIdFor.cell('0', 'lastName');
+            await cell.locator('input').fill('Smith');
+
+            await page.getByRole('button', { name: 'stop ()' }).click();
+
+            await expect(editingInput(page)).toHaveCount(0);
+            await expect(cell).toHaveText('Smith');
+        });
+
+        test.eachFramework('next () and previous () move the edit between cells', async ({ page, agIdFor }) => {
+            await page.getByRole('button', { name: 'edit (0)' }).click();
+            await expect(agIdFor.cell('0', 'lastName').locator('input')).toBeVisible();
+
+            // tabToNextCell() moves editing on to the column after 'lastName'.
+            await page.getByRole('button', { name: 'next ()' }).click();
+            await expect(agIdFor.cell('0', 'gender').locator('input')).toBeVisible();
+            await expect(agIdFor.cell('0', 'lastName').locator('input')).toHaveCount(0);
+
+            // tabToPreviousCell() moves it back.
+            await page.getByRole('button', { name: 'previous ()' }).click();
+            await expect(agIdFor.cell('0', 'lastName').locator('input')).toBeVisible();
+            await expect(agIdFor.cell('0', 'gender').locator('input')).toHaveCount(0);
+        });
+
+        test.eachFramework('which () reports the editing cell to the console', async ({ page }) => {
+            const logs: string[] = [];
+            page.on('console', (message) => logs.push(message.text()));
+
+            // With nothing editing, getEditingCells() returns an empty array.
+            await page.getByRole('button', { name: 'which ()' }).click();
+            await expect.poll(() => logs).toContain('no cells are editing');
+
+            await page.getByRole('button', { name: 'edit (0)' }).click();
+            await expect(editingInput(page)).toBeVisible();
+
+            await page.getByRole('button', { name: 'which ()' }).click();
+            await expect.poll(() => logs).toContain('editing cell is: row = 0, col = lastName, floating = undefined');
+        });
+    });
 });
 
 const addCustomEditor = (page: Page) => {

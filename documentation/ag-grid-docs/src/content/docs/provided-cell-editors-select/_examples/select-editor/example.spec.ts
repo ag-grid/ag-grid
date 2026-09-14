@@ -35,4 +35,20 @@ test.agExample(import.meta, () => {
 
         await expect(cell).toContainText('French');
     });
+
+    // Docs note: "to edit there are two interactions needed 1) double click to start editing and
+    // 2) single click to open the Select" - the list does not open on the double click alone.
+    test.eachFramework('double click alone does not open the list', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        await agIdFor.cell('0', 'language').dblclick();
+
+        // Editing has started (the picker is shown) but the list is still closed.
+        await expect(editWrapper(page)).toBeVisible();
+        await expect(page.locator('.ag-select-list')).toHaveCount(0);
+
+        // Only the second interaction - a single click on the picker - opens it.
+        await editWrapper(page).click();
+        await expect(listItems(page)).toHaveCount(LANGUAGES.length);
+    });
 });
