@@ -128,17 +128,17 @@ function onBtClearSelection() {
     gridApi!.deselectAll();
 }
 
-function timeOperation(name: string, operation: any) {
+function resetCallCounts() {
     aggCallCount = 0;
     compareCallCount = 0;
     filterCallCount = 0;
-    const start = new Date().getTime();
-    operation();
-    const end = new Date().getTime();
+}
+
+function logCallCounts(name: string, elapsed: number) {
     console.log(
         name +
             ' finished in ' +
-            (end - start) +
+            elapsed +
             'ms, aggCallCount = ' +
             aggCallCount +
             ', compareCallCount = ' +
@@ -146,6 +146,31 @@ function timeOperation(name: string, operation: any) {
             ', filterCallCount = ' +
             filterCallCount
     );
+}
+
+function timeOperation(name: string, operation: any) {
+    resetCallCounts();
+    const start = new Date().getTime();
+    operation();
+    const end = new Date().getTime();
+    logCallCounts(name, end - start);
+}
+
+// Framework variants bind `rowData` declaratively, so the grid does its work after
+// the call returns — measuring around it synchronously would report zero throughout.
+let initialisationStart: number | undefined;
+
+function startInitialisation() {
+    resetCallCounts();
+    initialisationStart = new Date().getTime();
+}
+
+function endInitialisation() {
+    if (initialisationStart === undefined) {
+        return;
+    }
+    logCallCounts('Initialisation', new Date().getTime() - initialisationStart);
+    initialisationStart = undefined;
 }
 
 const columnDefs: ColDef[] = [
@@ -190,9 +215,11 @@ const gridOptions: GridOptions = {
             value: { filterType: 'number', type: 'greaterThan', filter: 50 },
         });
 
-        timeOperation('Initialisation', () => {
-            params.api.setGridOption('rowData', getData());
-        });
+        startInitialisation();
+        params.api.setGridOption('rowData', getData());
+    },
+    onModelUpdated: () => {
+        endInitialisation();
     },
     isGroupOpenByDefault: isGroupOpenByDefault,
     enableFilterHandlers: true,

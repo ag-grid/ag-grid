@@ -18,6 +18,36 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.autoGroupCell('row-group-city-Tokyo')).toContainText('Tokyo', { useInnerText: true });
     });
 
+    test.eachFramework('Initialisation reports the work done loading the data', async ({ page }) => {
+        const logs: string[] = [];
+        const handler = (msg: { type: () => string; text: () => string }) => {
+            if (msg.type() === 'log') {
+                logs.push(msg.text());
+            }
+        };
+        page.on('console', handler);
+
+        // The log is emitted during load, so reload with the listener already attached.
+        await page.reload();
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        let initialisation: string | undefined;
+        await expect(() => {
+            initialisation = logs.find((l) => l.startsWith('Initialisation finished in'));
+            expect(initialisation).toBeDefined();
+        }).toPass();
+        page.off('console', handler);
+
+        const countOf = (name: string) => Number(initialisation!.match(new RegExp(`${name} = (\\d+)`))![1]);
+
+        // 19 cities x 8 laptops, plus the 19 city groups and the root.
+        expect(countOf('aggCallCount')).toBe(171);
+        // One filter pass per row, over 10,000 rows.
+        expect(countOf('filterCallCount')).toBeGreaterThanOrEqual(10000);
+        expect(countOf('compareCallCount')).toBeGreaterThan(1000);
+    });
+
     test.eachFramework('Collapsed city groups can be expanded and collapsed again', async ({ agIdFor, page }) => {
         await page.setViewportSize({ width: 1280, height: 1600 });
         await ensureGridReady(page);
