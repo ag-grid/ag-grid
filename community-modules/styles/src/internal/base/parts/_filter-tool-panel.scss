@@ -160,7 +160,7 @@
 
     .ag-filter-card-heading {
         flex: 1;
-        overflow: hidden;
+        min-width: 0;
         padding-top: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
         padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
         @include ag.unthemed-rtl(
@@ -181,6 +181,7 @@
     .ag-filter-card-title {
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .ag-filter-card-expand-icon {

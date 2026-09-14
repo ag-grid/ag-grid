@@ -1,11 +1,14 @@
 .ag-pill-select {
     display: flex;
     flex-direction: column;
+
+    /* pills sit flush with the panel, so the clipping drop zone grows outwards into the group container's padding and the list's padding below puts the pills back */
+    margin: calc(var(--ag-spacing) * -0.5);
 }
 
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-pill-select .ag-column-drop-list {
-    padding: 0;
+    padding: calc(var(--ag-spacing) * 0.5);
 }
 
 :where(.ag-pill-select) {

@@ -49,7 +49,7 @@
 
 .ag-filter-card-heading {
     flex: 1;
-    overflow: hidden;
+    min-width: 0;
     padding-top: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
     padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
     padding-left: var(--ag-widget-horizontal-spacing);
@@ -66,6 +66,7 @@
     font-weight: var(--ag-header-font-weight);
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ag-filter-card-expand-icon {
