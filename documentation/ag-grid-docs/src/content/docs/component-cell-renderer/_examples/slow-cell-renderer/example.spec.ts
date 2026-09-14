@@ -27,7 +27,7 @@ test.agExample(import.meta, () => {
         // Let the initial viewport settle so the loaders below can only come from the scroll.
         await expect(page.locator('.ag-skeleton-container')).toHaveCount(0, { timeout: 10000 });
 
-        const viewport = page.locator('.ag-body-viewport');
+        const viewport = page.locator('.ag-grid-viewport');
         const skeleton = page.locator('[col-id="country"] .ag-skeleton-container');
         const customLoader = page.locator('[col-id="bronze"] img[src*="loading.gif"]');
         const fastCellSkeleton = page.locator('[col-id="gold"] .ag-skeleton-container');
