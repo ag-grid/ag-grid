@@ -33,4 +33,47 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-side-button').filter({ hasText: 'Custom Stats' }).click();
         await expect(visiblePanel).toContainText('Total Medals: 9529');
     });
+
+    test.eachFramework('Editing a medal cell refreshes the panel totals', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const toolPanel = page.locator('.ag-tool-panel-wrapper:not(.ag-hidden)');
+        await expect(toolPanel).toContainText('Total Gold: 3143');
+
+        // Every column is editable via defaultColDef. Michael Phelps (row 0) has 8 golds;
+        // dropping that to 1 removes 7 from the gold and overall totals. onCellValueChanged
+        // calls refreshClientSideRowModel, which fires modelUpdated and re-renders the panel.
+        const goldCell = agIdFor.cell('0', 'gold');
+        await goldCell.dblclick();
+        const cellEditor = goldCell.locator('input');
+        await expect(cellEditor).toBeVisible();
+        await cellEditor.fill('1');
+        await page.keyboard.press('Enter');
+        await expect(cellEditor).toHaveCount(0);
+        await expect(goldCell).toContainText('1');
+
+        await expect(toolPanel).toContainText('Total Gold: 3136');
+        await expect(toolPanel).toContainText('Total Medals: 9522');
+
+        // The untouched medal totals are unchanged.
+        await expect(toolPanel).toContainText('Total Silver: 3131');
+        await expect(toolPanel).toContainText('Total Bronze: 3255');
+    });
+
+    test.eachFramework('Filters side bar tab opens the filters tool panel', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const visiblePanel = page.locator('.ag-tool-panel-wrapper:not(.ag-hidden)');
+        await expect(visiblePanel).toContainText('Total Medals: 9529');
+
+        // The third registered tool panel is agFiltersToolPanel.
+        await page.locator('.ag-side-button').filter({ hasText: 'Filters' }).click();
+        await expect(visiblePanel.locator('.ag-filter-toolpanel, .ag-filter-panel').first()).toBeVisible();
+        await expect(visiblePanel).not.toContainText('Total Medals');
+
+        // The athlete column is filterable (agTextColumnFilter), so it is listed.
+        await expect(visiblePanel).toContainText('Athlete');
+    });
 });

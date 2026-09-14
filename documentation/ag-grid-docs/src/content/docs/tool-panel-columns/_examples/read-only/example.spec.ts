@@ -26,4 +26,63 @@ test.agExample(import.meta, () => {
             await expect(rowGroups.locator('.ag-column-drop-cell-button').first()).toBeVisible();
         }
     );
+
+    test.eachFramework(
+        'functionsReadOnly hides the rowGroup / value / pivot context menu items',
+        async ({ agIdFor, page }) => {
+            await waitForGridContent(page);
+            await expect(page.locator('#read-only')).toBeChecked();
+
+            // 'Athlete' allows row grouping and pivoting. While read-only the row carries
+            // 'ag-column-select-column-readonly' (pointer-events: none), so the hit target is the
+            // enclosing virtual list item rather than the column row itself.
+            const athleteRow = page.locator('.ag-column-select-column', { hasText: 'Athlete' });
+            const athleteListItem = page.locator('.ag-column-select-virtual-list-item', { hasText: 'Athlete' });
+            await expect(athleteRow).toHaveClass(/ag-column-select-column-readonly/);
+
+            // The state-changing items are dropped and (in pivot mode) 'Scroll into View' is not
+            // applicable either, so right-clicking shows no menu at all.
+            await athleteListItem.click({ button: 'right' });
+            await expect(agIdFor.menuOption('Group by Athlete')).toHaveCount(0);
+            await expect(agIdFor.menuOption('Add Athlete to labels')).toHaveCount(0);
+            await expect(agIdFor.menu()).toHaveCount(0);
+
+            // Unticking 'Functions Read Only' makes the row interactive again and brings the
+            // grouping / pivot items back.
+            await page.locator('#read-only').uncheck();
+            await expect(athleteRow).not.toHaveClass(/ag-column-select-column-readonly/);
+            await athleteRow.click({ button: 'right' });
+            await expect(agIdFor.menu()).toBeVisible();
+            await expect(agIdFor.menuOption('Group by Athlete')).toBeVisible();
+            await expect(agIdFor.menuOption('Add Athlete to labels')).toBeVisible();
+        }
+    );
+
+    test.eachFramework(
+        'functionsReadOnly makes selecting a grouped column in the Columns section a no-op',
+        async ({ agIdFor, page }) => {
+            await waitForGridContent(page);
+            await expect(page.locator('#read-only')).toBeChecked();
+
+            const rowGroups = agIdFor.columnDropArea('toolbar', 'Row Groups');
+            await expect(rowGroups.locator('.ag-column-drop-cell')).toHaveCount(2); // country, sport
+            await expect(rowGroups).toContainText('Country');
+
+            // While read-only the checkbox itself is disabled, and the whole row is marked
+            // 'ag-column-select-column-readonly' (pointer-events: none) so nothing in it is clickable.
+            const countryRow = page.locator('.ag-column-select-column', { hasText: 'Country' });
+            await expect(agIdFor.columnSelectListItemCheckbox('Country Column')).toBeDisabled();
+            await expect(countryRow).toHaveClass(/ag-column-select-column-readonly/);
+
+            // Clicking where the row is lands on the enclosing virtual list item, and dispatching a
+            // click straight at the label hits the handler's read-only guard. Either way it is a
+            // no-op, so 'Country' stays in the Row Groups section.
+            await page.locator('.ag-column-select-virtual-list-item', { hasText: 'Country' }).click();
+            await countryRow.locator('.ag-column-select-column-label').dispatchEvent('click');
+
+            await expect(rowGroups.locator('.ag-column-drop-cell')).toHaveCount(2);
+            await expect(rowGroups).toContainText('Country');
+            await expect(agIdFor.columnSelectListItemCheckbox('Country Column')).toBeChecked();
+        }
+    );
 });

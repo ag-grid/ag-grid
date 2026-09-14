@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { dragOverTo, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Columns Tool Panel layout mirrors the grid column definitions', async ({ page }) => {
@@ -29,4 +29,51 @@ test.agExample(import.meta, () => {
             'Total',
         ]);
     });
+
+    test.eachFramework(
+        'suppressColumnMove: dragging an item inside the Columns section does not reorder it',
+        async ({ agIdFor, page }) => {
+            await waitForGridContent(page);
+
+            const columnSelect = page.locator('.ag-column-select');
+            await expect(columnSelect.locator('.ag-column-select-column-label')).toHaveText([
+                'Athlete',
+                'Name',
+                'Age',
+                'Country',
+                'Competition',
+                'Year',
+                'Date',
+                'Sport',
+                'Medals',
+                'Gold',
+                'Silver',
+                'Bronze',
+                'Total',
+            ]);
+
+            // Try to drag 'Age' above 'Name' from within the Columns section. With
+            // suppressColumnMove=true the in-panel reorder feature is never created.
+            await dragOverTo(
+                agIdFor.columnSelectListItemDragHandle('Age Column'),
+                agIdFor.columnSelectListItemDragHandle('Name Column')
+            );
+
+            await expect(columnSelect.locator('.ag-column-select-column-label')).toHaveText([
+                'Athlete',
+                'Name',
+                'Age',
+                'Country',
+                'Competition',
+                'Year',
+                'Date',
+                'Sport',
+                'Medals',
+                'Gold',
+                'Silver',
+                'Bronze',
+                'Total',
+            ]);
+        }
+    );
 });
