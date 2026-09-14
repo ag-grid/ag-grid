@@ -17,4 +17,28 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });
+
+    test.eachFramework('the menu escapes the small grid and stays fully visible', async ({ agIdFor, page }) => {
+        await expect(agIdFor.cell('0', 'a')).toContainText('1');
+
+        await agIdFor.cell('0', 'a').click({ button: 'right' });
+        await expect(agIdFor.menu()).toBeVisible();
+
+        const menuBox = (await agIdFor.menu().boundingBox())!;
+        const gridBox = (await page.locator('.ag-root-wrapper').boundingBox())!;
+        const viewport = page.viewportSize()!;
+
+        // the menu is taller than the 100px grid, so it has to extend past it
+        expect(menuBox.height).toBeGreaterThan(gridBox.height);
+        expect(menuBox.y + menuBox.height).toBeGreaterThan(gridBox.y + gridBox.height);
+
+        // with popupParent=document.body nothing clips it: it is fully inside the viewport
+        expect(menuBox.y).toBeGreaterThanOrEqual(0);
+        expect(menuBox.x).toBeGreaterThanOrEqual(0);
+        expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(viewport.height);
+        expect(menuBox.x + menuBox.width).toBeLessThanOrEqual(viewport.width);
+
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.menu()).toHaveCount(0);
+    });
 });
