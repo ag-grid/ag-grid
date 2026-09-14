@@ -45,11 +45,14 @@ test.agExample(import.meta, () => {
             const popup = page.locator('.ag-rich-select-list').first();
             await expect(popup).toBeVisible();
 
-            // 'lum' only occurs in 'Plum' out of the ~145 colour names
-            await page.keyboard.type('Plum');
+            // Fuzzy search ranks by Levenshtein distance, so a misspelling still finds its colour.
+            // 'Turqoise' is not a substring of any of the ~145 names, so 'match' and 'matchAny'
+            // would find nothing for it - which is what makes this fail if the column were
+            // switched to prefix or substring matching.
+            await page.keyboard.type('Turqoise');
 
             const highlighted = popup.locator('.ag-rich-select-row-highlighted');
-            await expect(highlighted).toHaveText('Plum');
+            await expect(highlighted).toHaveText('Turquoise');
 
             // filterList is not set, so the other rows are still rendered rather than removed
             expect(await popup.locator('.ag-rich-select-row').count()).toBeGreaterThan(1);
@@ -73,6 +76,16 @@ test.agExample(import.meta, () => {
 
             const highlighted = popup.locator('.ag-rich-select-row-highlighted');
             await expect(highlighted).toHaveText('Goldenrod');
+
+            // The counterpart to the fuzzy test above: 'Turqoise' is a misspelling that fuzzy
+            // matching resolves to 'Turquoise', but prefix matching cannot reach it, since it is
+            // not a substring of any colour name. This is what separates the two search modes.
+            await page.keyboard.press('Escape');
+            await cell.dblclick();
+            await expect(popup).toBeVisible();
+
+            await page.keyboard.type('Turqoise');
+            await expect(highlighted).not.toHaveText('Turquoise');
 
             await page.keyboard.press('Escape');
         }
