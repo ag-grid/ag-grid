@@ -34,7 +34,7 @@ const VueExample = defineComponent({
             </div>
             <div class="example-controls">
                 <span>Go to match:</span>
-                <input type="number" v-model="goTo" />
+                <input type="number" min="1" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
             </div>
         </div>
