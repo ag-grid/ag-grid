@@ -1,5 +1,8 @@
 import { ensureGridReady, expect, test, waitForRowAnimations } from '@utils/grid/test-utils';
 
+const ROWS_IN_DATA_SET = 31;
+const GYMNASTICS_ROWS_IN_DATA_SET = 4;
+
 test.agExample(import.meta, () => {
     test.eachFramework('the header checkbox selects all rows on the page', async ({ page }) => {
         await ensureGridReady(page);
@@ -20,6 +23,8 @@ test.agExample(import.meta, () => {
         const total = await rows.count();
         expect(total).toBeGreaterThan(0);
         await expect(page.locator('.ag-grid-scrolling-container .ag-row.ag-row-selected')).toHaveCount(total);
+
+        await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(ROWS_IN_DATA_SET));
     });
 
     test.eachFramework('the quick filter narrows the displayed rows', async ({ page }) => {
@@ -51,6 +56,10 @@ test.agExample(import.meta, () => {
         // rows happen to be rendered under virtualisation.
         await expect(headerWrapper).toHaveClass(/ag-checked/);
         await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
+
+        await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(
+            String(GYMNASTICS_ROWS_IN_DATA_SET)
+        );
 
         // Clear the filter to reveal the previously-hidden rows and prove that ONLY the filtered
         // rows were selected: row 1 (Aleksey Nemov, Gymnastics) matched and is selected, while

@@ -8,13 +8,20 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+import { StatusBarModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([PaginationModule, RowSelectionModule, QuickFilterModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+    PaginationModule,
+    RowSelectionModule,
+    QuickFilterModule,
+    ClientSideRowModelModule,
+    StatusBarModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -40,6 +47,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowSelection: {
         mode: 'multiRow',
         selectAll: 'all',
+    },
+    statusBar: {
+        statusPanels: [{ statusPanel: 'agSelectedRowCountComponent' }],
     },
 };
 
