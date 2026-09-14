@@ -136,7 +136,9 @@ test.agExample(import.meta, () => {
         const firstActionBox = await firstAction.boundingBox();
         expect(pillBox).not.toBeNull();
         expect(firstActionBox).not.toBeNull();
-        expect(pillBox!.width).toBe(152);
+        // Firefox reports the clamped width a fraction under its computed value, so the pill's
+        // width is compared to the nearest pixel rather than exactly.
+        expect(pillBox!.width).toBeCloseTo(152, 1);
         expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
 
         const viewport = page.locator('.ag-advanced-filter-builder-virtual-list-viewport');
