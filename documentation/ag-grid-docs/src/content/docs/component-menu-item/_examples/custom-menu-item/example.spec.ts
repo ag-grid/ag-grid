@@ -100,23 +100,25 @@ test.agExample(import.meta, () => {
         await agIdFor.headerCellMenuButton('athlete').click();
         await expect(agIdFor.menu()).toBeVisible();
 
-        const activeIndex = () =>
-            page
-                .locator('.ag-menu-option')
-                .evaluateAll((els) => els.findIndex((el) => el.classList.contains('ag-menu-option-active')));
+        // getMainMenuItems appends the two custom components after all the default items, so the
+        // keyboard has to reach them to prove configureDefaults() enabled the default behaviour -
+        // arrowing through the built-in items alone would pass with the custom ones inert.
+        const options = page.locator('.ag-menu-option');
+        const count = await options.count();
+        const firstCustom = options.nth(count - 2);
+        const secondCustom = options.nth(count - 1);
+        await expect(firstCustom).toContainText('Click Alert Button and Close Menu');
+        await expect(secondCustom).toContainText('Click Alert Button and Keep Menu Open');
 
-        // the first ArrowDown activates an item, the second moves the active item further down
-        await page.keyboard.press('ArrowDown');
-        let firstActive = -1;
-        await expect(async () => {
-            firstActive = await activeIndex();
-            expect(firstActive).toBeGreaterThanOrEqual(0);
-        }).toPass();
+        // hovering activates the first custom item (also a configureDefaults behaviour)...
+        await firstCustom.hover();
+        await expect(firstCustom).toHaveClass(/ag-menu-option-active/);
+        await expect(secondCustom).not.toHaveClass(/ag-menu-option-active/);
 
+        // ...and ArrowDown moves the activation onto the second custom item.
         await page.keyboard.press('ArrowDown');
-        await expect(async () => {
-            expect(await activeIndex()).toBeGreaterThan(firstActive);
-        }).toPass();
+        await expect(secondCustom).toHaveClass(/ag-menu-option-active/);
+        await expect(firstCustom).not.toHaveClass(/ag-menu-option-active/);
     });
 
     test.eachFramework('custom items come after the defaults in the column menu', async ({ agIdFor, page }) => {

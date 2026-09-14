@@ -38,6 +38,18 @@ test.agExample(import.meta, () => {
         expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(viewport.height);
         expect(menuBox.x + menuBox.width).toBeLessThanOrEqual(viewport.width);
 
+        // boundingBox() alone would not show whether an ancestor clips the menu, so hit test the
+        // same point the popup-parent-problem spec proves is clipped there: below the grid, inside
+        // the menu. Here the menu is painted and hittable, because nothing clips it.
+        const x = menuBox.x + menuBox.width / 2;
+        const y = gridBox.y + gridBox.height + 10;
+        expect(y).toBeLessThan(menuBox.y + menuBox.height);
+
+        const menuIsHittable = await agIdFor
+            .menu()
+            .evaluate((menu, point) => menu.contains(document.elementFromPoint(point.x, point.y)), { x, y });
+        expect(menuIsHittable).toBe(true);
+
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });

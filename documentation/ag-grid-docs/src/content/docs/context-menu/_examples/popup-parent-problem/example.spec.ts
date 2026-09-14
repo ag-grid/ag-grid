@@ -30,10 +30,20 @@ test.agExample(import.meta, () => {
         // the grid is only 100px tall, so the menu cannot fit inside it
         expect(menuBox.height).toBeGreaterThan(gridBox.height);
 
-        // and because the popup lives inside the grid, it extends outside the
-        // grid's bounds - where the grid wrapper's overflow clips it
-        const overflowsGrid = menuBox.y < gridBox.y - 1 || menuBox.y + menuBox.height > gridBox.y + gridBox.height + 1;
-        expect(overflowsGrid).toBe(true);
+        // and because the popup lives inside the grid, it extends outside the grid's bounds
+        expect(menuBox.y + menuBox.height).toBeGreaterThan(gridBox.y + gridBox.height);
+
+        // boundingBox() reports the full rectangle whether or not an ancestor clips it, so prove
+        // the clipping by hit testing a point that lies inside the menu but below the grid: the
+        // grid wrapper's overflow means nothing of the menu is painted - or hittable - down there.
+        const x = menuBox.x + menuBox.width / 2;
+        const y = gridBox.y + gridBox.height + 10;
+        expect(y).toBeLessThan(menuBox.y + menuBox.height);
+
+        const menuIsHittable = await agIdFor
+            .menu()
+            .evaluate((menu, point) => menu.contains(document.elementFromPoint(point.x, point.y)), { x, y });
+        expect(menuIsHittable).toBe(false);
 
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
