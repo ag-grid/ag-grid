@@ -1,8 +1,17 @@
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    setRowDataChecked,
+    waitForEvent,
+} from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GetDetailRowDataParams, GetRowIdParams, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
@@ -10,6 +19,7 @@ describe('ag-grid master detail', () => {
         modules: [ClientSideRowModelModule, MasterDetailModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
+    let consoleWarnSpy: MockInstance | undefined;
 
     beforeEach(() => {
         gridsManager.reset();
@@ -18,6 +28,7 @@ describe('ag-grid master detail', () => {
     afterEach(() => {
         gridsManager.reset();
         consoleErrorSpy?.mockRestore();
+        consoleWarnSpy?.mockRestore();
     });
 
     test('masterDetail not expanded', async () => {
@@ -383,5 +394,61 @@ describe('ag-grid master detail', () => {
             · · └─┬ ROOT id:ROOT_NODE_ID
             · · · └── LEAF id:0 x:"a"
         `);
+    });
+
+    test('expandAll/collapseAll on the master grid does not warn about a destroyed detail grid', async () => {
+        // `expandOrCollapseAll` listeners are dispatched asynchronously, so a thrown diagnostic would land
+        // outside the test body: suppress the throw for #26 and assert on the console instead.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [26] });
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ k: '1', records: [{ x: 'a' }] }],
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: [{ field: 'x' }],
+                },
+                getDetailRowData: (params: GetDetailRowDataParams) => {
+                    params.successCallback(params.data.records);
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        const expanded = `
+            ROOT id:ROOT_NODE_ID
+            └─┬ master id:0 k:"1"
+            · └─┬ detail id:detail_0 k:"1"
+            · · └─┬ ROOT id:ROOT_NODE_ID
+            · · · └── LEAF id:0 x:"a"
+        `;
+        const collapsed = `
+            ROOT id:ROOT_NODE_ID
+            └── master collapsed id:0 k:"1"
+        `;
+
+        // the master-grid listeners are registered in the detail grid's firstDataRendered callback
+        api.expandAll();
+        await new GridRows(api, 'expanded').check(expanded);
+        await waitForEvent('firstDataRendered', api.getDetailGridInfo('detail_0')!.api!);
+
+        // destroys the detail grid
+        api.collapseAll();
+        await new GridRows(api, 'collapsed').check(collapsed);
+
+        api.expandAll();
+        await new GridRows(api, 'expanded again').check(expanded);
+
+        api.collapseAll();
+        await new GridRows(api, 'collapsed again').check(collapsed);
+
+        // a stale listener would ride on the async `expandOrCollapseAll` dispatch, so flush it before asserting
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
 });
