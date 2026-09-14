@@ -111,8 +111,13 @@ export class AgAutocompleteList extends AgPopupComponent<
 
         this.addManagedListeners(virtualListGui, {
             click: () => this.params.onConfirmed(),
-            mousemove: this.onMouseMove.bind(this),
-            mousedown: (e) => e.preventDefault(),
+            mousemove: this.selectRowUnderMouse.bind(this),
+            // Taken on mousedown too: a list rebuilt under a stationary pointer highlights its first row,
+            // and a click with no mousemove before it would confirm that row rather than the one clicked.
+            mousedown: (e) => {
+                e.preventDefault();
+                this.selectRowUnderMouse(e);
+            },
         });
 
         this.setSelectedValue(0);
@@ -371,7 +376,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         return row;
     }
 
-    private onMouseMove(mouseEvent: MouseEvent): void {
+    private selectRowUnderMouse(mouseEvent: MouseEvent): void {
         const virtualList = this.virtualList;
         const rect = virtualList.getGui().getBoundingClientRect();
         const scrollTop = virtualList.getScrollTop();
