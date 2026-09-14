@@ -18,7 +18,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _forEachChangedGroupDepthFirst, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
-import { getNodesFromMappedSet, setAggData, setAggDataWithSiblings } from './aggDataUtils';
+import { getNodesFromMappedSet, refreshAggregatedRows, setAggData, setAggDataWithSiblings } from './aggDataUtils';
 
 /** Pre-resolved value column metadata for the per-group aggregation loop. */
 interface ResolvedValueColumn {
@@ -77,6 +77,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const { gos, beans } = this;
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
+        // Flushed only once the traversal below has every total up to date — see setAggData.
+        const rowsToRefresh: RowNode[] = [];
 
         if (!valueColumns?.length && !userAggFunc) {
             if (this.hadAgg && !changedPath && !rootOnly) {
@@ -84,10 +86,12 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
                 this.hadAgg = false;
+                const colModel = beans.colModel;
                 const rowModel = beans.rowModel;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
-                    setAggDataWithSiblings(rowNode, null, beans);
+                    setAggDataWithSiblings(rowNode, null, colModel, rowsToRefresh);
                 });
+                refreshAggregatedRows(beans, rowsToRefresh);
             }
             return;
         }
@@ -140,7 +144,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const rowModel = beans.rowModel;
         const aggregateNode = (rowNode: RowNode): void => {
             if (rowNode.level === -1 && !aggregateRoot) {
-                setAggData(rowNode, null, beans);
+                setAggData(rowNode, null, colModel, rowsToRefresh);
                 return;
             }
 
@@ -165,7 +169,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 );
             }
 
-            setAggDataWithSiblings(rowNode, aggResult, beans);
+            setAggDataWithSiblings(rowNode, aggResult, colModel, rowsToRefresh);
         };
 
         // Root-only: groups are already aggregated, so recompute just the root total from their aggData.
@@ -174,9 +178,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             if (rootNode) {
                 aggregateNode(rootNode);
             }
+            refreshAggregatedRows(beans, rowsToRefresh);
             return;
         }
         _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, aggregateNode);
+        refreshAggregatedRows(beans, rowsToRefresh);
     }
 }
 

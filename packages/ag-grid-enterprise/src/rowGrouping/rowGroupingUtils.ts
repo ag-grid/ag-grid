@@ -45,7 +45,7 @@ const doSetRowNodeGroup = (rowNode: RowNode | null | undefined, beans: BeanColle
     // These must be cleared here because downstream stages (filterAggregatesStage)
     // won't visit this node via changedPath since it's no longer a group.
     if (oldGroup && !group) {
-        setAggData(rowNode, null, beans);
+        setAggData(rowNode, null, beans.colModel);
         rowNode.setAllChildrenCount(null);
     }
 

@@ -16,18 +16,27 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
     return Array.isArray(mapPointer) ? mapPointer : [];
 };
 
-/** Sets aggData and refreshes the rendered row if listeners are registered. */
-export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | null, beans: BeanCollection): void => {
+/**
+ * Sets aggData and fires cell-changed events if listeners are registered, collecting the row into
+ * `rowsToRefresh` when given. A column deriving from the aggregates — a `valueGetter` reading
+ * `getValue('gold')` — has no aggData entry, so the events never reach it and the row needs a full
+ * refresh. That refresh is deferred rather than done here: callers traverse deepest-first, so a
+ * getter reading an ancestor's total would run against a stale one, and `valueCache` would keep it.
+ */
+export const setAggData = (
+    rowNode: RowNode,
+    newAggData: Record<string, any> | null,
+    colModel: ColumnModel,
+    rowsToRefresh?: RowNode[]
+): void => {
     const oldAggData = rowNode.aggData;
     if (oldAggData === newAggData) {
         return;
     }
     rowNode.aggData = newAggData;
     if (rowNode.__localEventService) {
-        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, beans.colModel);
-        // A column deriving from the aggregates — a `valueGetter` reading `getValue('gold')` — has no
-        // aggData entry, so the per-column events above never reach it.
-        beans.rowRenderer.refreshRowByNode(rowNode);
+        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel);
+        rowsToRefresh?.push(rowNode);
     }
 };
 
@@ -35,23 +44,32 @@ export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | n
 export const setAggDataWithSiblings = (
     rowNode: RowNode,
     newAggData: Record<string, any> | null,
-    beans: BeanCollection
+    colModel: ColumnModel,
+    rowsToRefresh?: RowNode[]
 ): void => {
-    setAggData(rowNode, newAggData, beans);
+    setAggData(rowNode, newAggData, colModel, rowsToRefresh);
 
     const pinnedSibling = rowNode.pinnedSibling;
     if (pinnedSibling) {
-        setAggData(pinnedSibling, newAggData, beans);
+        setAggData(pinnedSibling, newAggData, colModel, rowsToRefresh);
     }
 
     const sibling = rowNode.sibling;
     if (sibling) {
-        setAggData(sibling, newAggData, beans);
+        setAggData(sibling, newAggData, colModel, rowsToRefresh);
 
         const siblingPinnedSibling = sibling.pinnedSibling;
         if (siblingPinnedSibling) {
-            setAggData(siblingPinnedSibling, newAggData, beans);
+            setAggData(siblingPinnedSibling, newAggData, colModel, rowsToRefresh);
         }
+    }
+};
+
+/** Refreshes rows collected during an aggregation traversal, once every total is up to date. */
+export const refreshAggregatedRows = (beans: BeanCollection, rowsToRefresh: RowNode[]): void => {
+    const rowRenderer = beans.rowRenderer;
+    for (let i = 0, len = rowsToRefresh.length; i < len; ++i) {
+        rowRenderer.refreshRowByNode(rowsToRefresh[i]);
     }
 };
 

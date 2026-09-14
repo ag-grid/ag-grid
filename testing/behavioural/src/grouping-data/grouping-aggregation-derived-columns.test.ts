@@ -2,7 +2,12 @@ import '@testing-library/jest-dom/vitest';
 import { TestGridsManager } from 'ag-test-utils';
 
 import type { CellValueChangedEvent, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelApiModule, ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ValueCacheModule,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 /** A column whose valueGetter reads aggregated values rather than being aggregated itself. */
@@ -10,7 +15,7 @@ const TOTAL_COL_ID = 'total';
 
 describe('grouping aggregation: columns derived from aggregates', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule, ValueCacheModule],
     });
 
     beforeEach(() => gridsManager.reset());
@@ -76,5 +81,42 @@ describe('grouping aggregation: columns derived from aggregates', () => {
 
         expect(groupCells(api, 'row-group-group-A')).toMatchObject({ a: '2', b: '20', [TOTAL_COL_ID]: '22' });
         expect(groupCells(api, 'row-group-group-B')).toMatchObject({ a: '5', b: '50', [TOTAL_COL_ID]: '55' });
+    });
+
+    test('a cached valueGetter reading a parent total is not poisoned mid-traversal', async () => {
+        const api = await gridsManager.createGridAndWait('cachedParentTotal', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+                {
+                    colId: 'share',
+                    valueGetter: (params) => {
+                        const total = params.node?.parent?.aggData?.gold;
+                        const value = params.node?.aggData?.gold;
+                        return total && value != null ? `${Math.round((value / total) * 100)}%` : '';
+                    },
+                },
+            ],
+            valueCache: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            suppressAggFuncInHeader: true,
+            getRowId: (params) => params.data.id,
+            rowData: [
+                { id: '1', country: 'A', sport: 'X', gold: 10 },
+                { id: '2', country: 'A', sport: 'Y', gold: 30 },
+            ],
+        });
+
+        expect(groupCells(api, 'row-group-country-A-sport-X')).toMatchObject({ gold: '10', share: '25%' });
+        expect(groupCells(api, 'row-group-country-A-sport-Y')).toMatchObject({ gold: '30', share: '75%' });
+
+        // Sport X is visited before country A, so a share computed during the traversal would read
+        // the old country total of 40 and cache 225% instead of 75%.
+        api.applyTransaction({ update: [{ id: '1', country: 'A', sport: 'X', gold: 90 }] });
+
+        expect(groupCells(api, 'row-group-country-A')).toMatchObject({ gold: '120' });
+        expect(groupCells(api, 'row-group-country-A-sport-X')).toMatchObject({ gold: '90', share: '75%' });
     });
 });
