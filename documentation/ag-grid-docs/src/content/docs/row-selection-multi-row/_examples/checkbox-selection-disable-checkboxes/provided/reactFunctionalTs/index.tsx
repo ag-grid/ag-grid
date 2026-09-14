@@ -25,7 +25,7 @@ const GridExample = () => {
     );
 
     const columnDefs = useMemo<ColDef[]>(
-        () => [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
+        () => [{ field: 'year', maxWidth: 120 }, { field: 'athlete' }, { field: 'sport' }],
         []
     );
 
