@@ -14,6 +14,7 @@ export interface IColumnStateUpdateStrategy {
     setColumnsVisible(deferMode: boolean, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
     isColumnVisibleInToolPanel(deferMode: boolean, column: AgColumn): boolean;
     setRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
+    removeRowGroupColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(deferMode: boolean): AgColumn[];
     getPrimaryColumns(deferMode: boolean): AgColumn[];
     hasDeferredColumnOrder(deferMode: boolean): boolean;
@@ -22,6 +23,7 @@ export interface IColumnStateUpdateStrategy {
     setColumnAggFunc(deferMode: boolean, column: AgColumn, aggFunc: ColAggFunc, eventType: ColumnEventType): void;
     getColumnAggFunc(deferMode: boolean, column: AgColumn): ColAggFunc;
     setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
+    removePivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getPivotColumns(deferMode: boolean): AgColumn[];
     setPivotMode(deferMode: boolean, pivotMode: boolean, eventType: ColumnEventType): void;
     getPivotMode(deferMode: boolean): boolean;
