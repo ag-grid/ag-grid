@@ -492,11 +492,6 @@ export interface CoreParams extends SharedThemeParams {
     paginationPanelHeight: LengthValue;
 
     /**
-     * Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a hover effect on one but not the other, use CSS selectors instead of this property.
-     */
-    rowHoverColor: ColorValue;
-
-    /**
      * Color of the skeleton loading effect used when loading row data with the Server-side Row Model
      */
     rowLoadingSkeletonEffectColor: ColorValue;
@@ -912,7 +907,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     calculatedColumnParentSuggestionColor: foregroundMix(0.75),
     calculatedColumnSuggestionListWidth: 200,
     rowNumbersSelectedColor: accentMix(0.5),
-    rowHoverColor: accentMix(0.08),
     columnHoverColor: accentMix(0.05),
     selectedRowBackgroundColor: accentMix(0.12),
     modalOverlayBackgroundColor: {
