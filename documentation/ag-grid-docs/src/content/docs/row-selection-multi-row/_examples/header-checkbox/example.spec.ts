@@ -1,5 +1,9 @@
 import { ensureGridReady, expect, test, waitForRowAnimations } from '@utils/grid/test-utils';
 
+const ROWS_IN_DATA_SET = 31;
+const GYMNASTICS_ROWS_IN_DATA_SET = 4;
+const PAGE_SIZE = 20; // default page size
+
 test.agExample(import.meta, () => {
     test.eachFramework('the header checkbox selects all rows on the page', async ({ page }) => {
         await ensureGridReady(page);
@@ -15,11 +19,11 @@ test.agExample(import.meta, () => {
         await expect(headerWrapper).toHaveClass(/ag-checked/);
         await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
 
-        // Every rendered row is also visibly selected.
-        const rows = page.locator('.ag-grid-scrolling-container .ag-row');
-        const total = await rows.count();
-        expect(total).toBeGreaterThan(0);
-        await expect(page.locator('.ag-grid-scrolling-container .ag-row.ag-row-selected')).toHaveCount(total);
+        // A snapshotted row count races with rows entering the DOM before their selected class lands.
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row')).not.toHaveCount(0);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row:not(.ag-row-selected)')).toHaveCount(0);
+
+        await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(ROWS_IN_DATA_SET));
     });
 
     test.eachFramework('the quick filter narrows the displayed rows', async ({ page }) => {
@@ -52,6 +56,10 @@ test.agExample(import.meta, () => {
         await expect(headerWrapper).toHaveClass(/ag-checked/);
         await expect(headerWrapper).not.toHaveClass(/ag-indeterminate/);
 
+        await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(
+            String(GYMNASTICS_ROWS_IN_DATA_SET)
+        );
+
         // Clear the filter to reveal the previously-hidden rows and prove that ONLY the filtered
         // rows were selected: row 1 (Aleksey Nemov, Gymnastics) matched and is selected, while
         // row 0 (Natalie Coughlin, Swimming) did not match and remains unselected.
@@ -62,4 +70,25 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Natalie Coughlin');
         await expect(agIdFor.rowNode('0')).not.toHaveClass(/ag-row-selected/);
     });
+
+    test.eachFramework(
+        "selectAll 'currentPage' selects only the rows on the current page",
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+
+            await page.locator('#select-all-mode').selectOption('currentPage');
+
+            await page.locator('.ag-header-select-all .ag-checkbox-input').first().click();
+
+            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(PAGE_SIZE));
+
+            // Page two is what separates 'currentPage' from 'all' and 'filtered'.
+            await agIdFor.paginationSummaryPanelButton('next page').click();
+            await waitForRowAnimations(page);
+            await expect(page.locator('.ag-header-select-all .ag-checkbox-input-wrapper').first()).not.toHaveClass(
+                /ag-checked/
+            );
+            await expect(page.locator('.ag-status-panel-selected-row-count')).toContainText(String(PAGE_SIZE));
+        }
+    );
 });

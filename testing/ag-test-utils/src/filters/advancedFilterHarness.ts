@@ -96,6 +96,35 @@ export class AdvancedFilterHarness {
         return this.pressKey('Enter');
     }
 
+    /**
+     * Picks an autocomplete entry with the mouse alone: `mousedown` then `click` over that row, with no
+     * preceding `mousemove`, which is what a pointer that never moved between two picks produces.
+     */
+    public async clickAutocompleteEntry(text: string): Promise<this> {
+        const rows = Array.from(document.querySelectorAll<HTMLElement>('.ag-autocomplete-list .ag-autocomplete-row'));
+        const row = rows.find((el) => (el.textContent?.trim() ?? '') === text);
+        if (!row) {
+            throw new Error(
+                `Autocomplete entry not found: "${text}". Offered: ${rows.map((el) => el.textContent?.trim()).join(', ')}`
+            );
+        }
+        const item = row.closest<HTMLElement>('.ag-virtual-list-item') ?? row;
+        const viewport = row.closest<HTMLElement>('.ag-virtual-list-viewport');
+        const rowHeight = parseFloat(item.style.height) || 20;
+        const top = parseFloat(item.style.top) || 0;
+        const clientY = (viewport?.getBoundingClientRect().top ?? 0) - (viewport?.scrollTop ?? 0) + top + rowHeight / 2;
+        const init = { bubbles: true, clientX: 1, clientY };
+        row.dispatchEvent(new MouseEvent('mousedown', init));
+        row.dispatchEvent(new MouseEvent('click', init));
+        await asyncSetTimeout(0);
+        if (this.isAutocompleteOpen()) {
+            nudgeVirtualList('.ag-autocomplete-list-popup .ag-virtual-list-viewport');
+            nudgeVirtualList('.ag-autocomplete-list .ag-virtual-list-viewport');
+            await asyncSetTimeout(0);
+        }
+        return this;
+    }
+
     /** Tab also confirms the highlighted autocomplete entry. */
     public async tabComplete(): Promise<this> {
         return this.pressKey('Tab');

@@ -16,15 +16,18 @@ export const disallowAllRobotsTxt = () => 'User-agent: *\nDisallow: /';
  * (may be used to train models).
  *
  * Two groups are emitted:
- * - `User-agent: *` keeps the full Disallow list, including the example paths. Search engines
- *   (Googlebot, Bingbot, …) match this group, so examples stay out of search — they are
- *   duplicate/low-value for SEO.
- * - A named AI group repeats the same rules but WITHOUT the public example Disallows, so the AI
- *   crawlers may read the examples we want them to train on. Internal `/debug/` example fixtures are
+ * - `User-agent: *` keeps the full Disallow list, including the example and archive paths. Search
+ *   engines (Googlebot, Bingbot, …) match this group, so examples and archived versions stay out of
+ *   search — they are duplicate/low-value for SEO.
+ * - A named AI group repeats the same rules but WITHOUT the public example and archive Disallows, so
+ *   the AI crawlers may read the examples we want them to train on and the archived docs for older
+ *   versions (an assistant helping with a project pinned to an old release needs that version's
+ *   docs, and its on-demand fetcher honours robots.txt). Internal `/debug/` example fixtures are
  *   kept blocked (they are dev/build artefacts, not real content). This is the one case where naming
- *   the bots is correct: they genuinely need different rules from the wildcard. robots.txt groups do
- *   not inherit, so the AI group is generated from the same allow/disallow arrays as the wildcard
- *   (minus the public examples) — there is no second, hand-maintained copy to drift out of sync.
+ *   the bots is correct: they genuinely need different rules from the wildcard.
+ *   robots.txt groups do not inherit, so the AI group is generated from the same allow/disallow
+ *   arrays as the wildcard (minus the public examples and archives) — there is no second,
+ *   hand-maintained copy to drift out of sync.
  *
  * Googlebot is never named, so it falls through to `User-agent: *` and keeps examples blocked.
  * `Google-Extended` (Gemini/Vertex training, a separate token) is in the AI group; Google states
@@ -54,6 +57,13 @@ export const AI_CRAWLERS = [
 // fixtures (e.g. /charts/debug/docs-example-files) are dev/build artefacts, not real example
 // content, so they are NOT opened — they stay blocked for AI just as they are for search.
 const isAiOpenExamplePath = (path: string) => /example/i.test(path) && !path.includes('/debug/');
+
+// Archived documentation for older versions (`/archive/`, `/studio/archive/`, …). Blocked for search
+// as duplicate content, but opened to AI so an assistant can read the docs for whichever version a
+// user's project is on.
+const isAiOpenArchivePath = (path: string) => /\/archive(\/|$)/.test(path);
+
+const isAiOpenPath = (path: string) => isAiOpenExamplePath(path) || isAiOpenArchivePath(path);
 
 /**
  * SE-89: the self-hosted Ghost blog is reverse-proxied under /blog/, so its robots rules have to
@@ -103,9 +113,10 @@ const buildGroup = (userAgents: string[], allowPaths: string[], disallowPaths: s
 
 export const productionRobotsTxt = (allowPaths: string[] = [], disallowPaths: string[] = []) => {
     const wildcardGroup = buildGroup(['*'], allowPaths, disallowPaths);
-    // AI crawlers are welcome on the public example pages, so drop those Disallows for them only —
-    // every other rule (debug, test, archive, 404, internal /debug/ example fixtures, …) still applies.
-    const aiDisallowPaths = disallowPaths.filter((path) => !isAiOpenExamplePath(path));
+    // AI crawlers are welcome on the public example pages and the version archives, so drop those
+    // Disallows for them only — every other rule (debug, test, 404, internal /debug/ example
+    // fixtures, …) still applies.
+    const aiDisallowPaths = disallowPaths.filter((path) => !isAiOpenPath(path));
     const aiGroup = buildGroup(AI_CRAWLERS, allowPaths, aiDisallowPaths);
 
     return `${wildcardGroup}
