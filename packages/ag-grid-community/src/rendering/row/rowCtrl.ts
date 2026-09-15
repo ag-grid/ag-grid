@@ -478,6 +478,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
+    /** Print layout has no pinned lanes, so every cell renders in the scrolling lane. */
+    public getCellLane(cell: CellCtrl): ColumnPinnedType {
+        return this.printLayout ? null : cell.column.getPinned();
+    }
+
     public setEmbeddedSectionHasContent(section: HorizontalSection, hasContent: boolean): void {
         this.embeddedSectionHasContent[section] = hasContent;
     }
