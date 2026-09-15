@@ -55,8 +55,11 @@ const gridOptions: GridOptions = {
     },
 };
 
+// days deliberately out of order, so filling the column visibly reorders them
+const initialDays = ['Sunday', 'Monday', 'Friday', 'Thursday', 'Tuesday', 'Saturday', 'Wednesday'];
+
 function addDayOfTheWeek(rowData: any[]) {
-    return rowData.map((row, index) => ({ ...row, dayOfTheWeek: daysList[index % daysList.length] }));
+    return rowData.map((row, index) => ({ ...row, dayOfTheWeek: initialDays[index % initialDays.length] }));
 }
 
 // setup the grid after the page has finished loading
