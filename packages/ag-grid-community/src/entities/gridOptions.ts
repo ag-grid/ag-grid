@@ -141,7 +141,6 @@ import type { CalculatedColumnsGridOption } from '../interfaces/iCalculatedColum
 import type {
     DoesExternalFilterPass,
     FillOperation,
-    FillOperationParams,
     FocusGridInnerElement,
     FullRowEditValidationParams,
     GetBusinessKeyForNode,
@@ -175,6 +174,7 @@ import type {
     ProcessRowPostCreate,
     ProcessUnpinnedColumns,
     SendToClipboard,
+    SetFillValueCallback,
     TabToNextCell,
     TabToNextGridContainer,
     TabToNextHeader,
@@ -3292,7 +3292,7 @@ export interface LoadingRowsOptions {
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
 /** Cell selection options */
-export interface CellSelectionOptions<TData = any> {
+export interface CellSelectionOptions<TData = any, TContext = any> {
     /**
      * If `true`, only a single range can be selected
      * @default false
@@ -3311,7 +3311,7 @@ export interface CellSelectionOptions<TData = any> {
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
-    handle?: RangeHandleOptions | FillHandleOptions<TData>;
+    handle?: RangeHandleOptions | FillHandleOptions<TData, TContext>;
 }
 
 /**
@@ -3324,7 +3324,7 @@ export interface RangeHandleOptions {
 /**
  * Configuration options for the fill handle
  */
-export interface FillHandleOptions<TData = any> {
+export interface FillHandleOptions<TData = any, TContext = any> {
     mode: 'fill';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
@@ -3339,7 +3339,7 @@ export interface FillHandleOptions<TData = any> {
     /**
      * Callback to fill values instead of simply copying values or increasing number values using linear progression.
      */
-    setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
+    setFillValue?: SetFillValueCallback<TData, TContext>;
 }
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =

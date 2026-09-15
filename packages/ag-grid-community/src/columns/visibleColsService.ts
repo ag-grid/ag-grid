@@ -225,8 +225,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
     }
 
-    /** Single pass over `colsList`: filter to displayable cols and bucket by pin. The selection col is held
-     *  back until a non-service col proves it isn't the only displayed col — a lone checkbox adds nothing. */
+    /** Single pass over `colsList`: filter to displayable cols and bucket by pin, hiding a lone selection col. */
     private partitionVisibleCols(): {
         leftCols: AgColumn[];
         rightCols: AgColumn[];
@@ -254,6 +253,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         const colsList = colModel.colsList;
         let pending: AgColumn | null = null;
+        let hasDataCol = false;
         for (let i = 0, len = colsList.length; i < len; ++i) {
             const col = colsList[i];
             const colKind = col.colKind;
@@ -281,9 +281,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             if (!visible) {
                 continue;
             }
-            if (colKind === 'selection' && col.visible) {
+            if (colKind === 'selection' && col.visible && !hasDataCol) {
                 pending = col;
                 continue;
+            }
+            if (colKind !== 'selection' && colKind !== 'row-number') {
+                hasDataCol = true;
             }
             if (pending !== null && colKind !== 'row-number') {
                 const selPinned = pending.pinned;

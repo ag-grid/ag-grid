@@ -478,6 +478,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
+    /** Print layout has no pinned lanes, so every cell renders in the scrolling lane. */
+    public getCellLane(cell: CellCtrl): ColumnPinnedType {
+        return this.printLayout ? null : cell.column.getPinned();
+    }
+
     public setEmbeddedSectionHasContent(section: HorizontalSection, hasContent: boolean): void {
         this.embeddedSectionHasContent[section] = hasContent;
     }
@@ -810,15 +815,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public recreateCell(cellCtrl: CellCtrl) {
         this.rowModeFeature.recreateCell(cellCtrl);
-    }
-
-    /**
-     * Which DOM lane a cell renders into, which is not what the cell is pinned to: print layout flows
-     * every column through the centre lane and detaches the pinned ones. Positional code wants
-     * `column.pinned`, which stays true under print.
-     */
-    public getCellLane(cellCtrl: CellCtrl): ColumnPinnedType {
-        return this.printLayout ? null : cellCtrl.column.pinned;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {

@@ -366,10 +366,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         const right: CellCtrl[] = [];
 
         for (const cellCtrl of cellCtrlsMerged ?? []) {
-            const lane = rowCtrl.getCellLane(cellCtrl);
-            if (lane === 'left') {
+            const pinned = rowCtrl.getCellLane(cellCtrl);
+            if (pinned === 'left') {
                 left.push(cellCtrl);
-            } else if (lane === 'right') {
+            } else if (pinned === 'right') {
                 right.push(cellCtrl);
             } else {
                 center.push(cellCtrl);

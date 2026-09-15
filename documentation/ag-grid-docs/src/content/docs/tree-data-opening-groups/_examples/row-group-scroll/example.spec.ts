@@ -1,50 +1,108 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, orderedValues, test } from '@utils/grid/test-utils';
+
+const GROUP_COL = 'ag-Grid-AutoColumn';
+
+// Fillers are keyed by path; rows of their own have no getRowId, so they fall back to their `rowData` index.
+const DESKTOP = 'row-group-0-Desktop';
+const DOCUMENTS = 'row-group-0-Documents';
+const WORK = 'row-group-0-Documents-1-Work';
+const PERSONAL = 'row-group-0-Documents-1-Personal';
+const PROJECT_BETA = 'row-group-0-Documents-1-Work-2-ProjectBeta';
+const DOWNLOADS = 'row-group-0-Downloads';
+const DESKTOP_PROJECT_ALPHA = 'row-group-0-Desktop-1-ProjectAlpha';
+const WORK_PROJECT_ALPHA = '4';
+const SOFTWARE_INSTALLER_EXE = '22';
+const RECEIPT_ONLINE_STORE_PDF = '23';
+const EBOOK_PDF = '24';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ agIdFor, page }) => {
         const viewport = page.locator('.ag-grid-viewport');
-        const groupValues = page.locator('.ag-group-value');
 
         // Shrink the viewport so that not all rows fit after expanding groups
         await page.setViewportSize({ width: 1280, height: 300 });
 
         // No groupDefaultExpanded, all groups collapsed initially
-        await expect(groupValues.filter({ hasText: 'Desktop' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'Documents' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'Downloads' }).first()).toBeVisible();
+        await expect(agIdFor.autoGroupContracted(DESKTOP)).toBeVisible();
+        await expect(agIdFor.autoGroupContracted(DOCUMENTS)).toBeVisible();
+        await expect(agIdFor.autoGroupContracted(DOWNLOADS)).toBeVisible();
 
-        // Children should not be visible (groups collapsed)
-        await expect(groupValues.filter({ hasText: 'ProjectAlpha' })).toHaveCount(0);
+        // ProjectAlpha sits under both Desktop and Documents > Work, neither of them open yet
+        await expect(agIdFor.autoGroupCell(DESKTOP_PROJECT_ALPHA)).toHaveCount(0);
+        await expect(agIdFor.autoGroupCell(WORK_PROJECT_ALPHA)).toHaveCount(0);
 
         // Expand Documents to create more rows, pushing Downloads further down
-        const findGroupRow = (name: string) =>
-            page
-                .locator('.ag-row')
-                .filter({ has: page.locator('.ag-group-value', { hasText: name }) })
-                .first();
-
-        await findGroupRow('Documents').locator('.ag-group-contracted').click();
-        await findGroupRow('Work').locator('.ag-group-contracted').click();
-        await findGroupRow('Personal').locator('.ag-group-contracted').click();
+        await agIdFor.autoGroupContracted(DOCUMENTS).click();
+        await agIdFor.autoGroupContracted(WORK).click();
+        await agIdFor.autoGroupContracted(PERSONAL).click();
 
         // Record scroll position before expanding Downloads
         const scrollBefore = await viewport.evaluate((el) => el.scrollTop);
 
         // Expand Downloads (near the bottom) - the onRowGroupOpened handler
         // calls ensureIndexVisible to scroll so all children are visible
-        await findGroupRow('Downloads').locator('.ag-group-contracted').click();
+        await agIdFor.autoGroupContracted(DOWNLOADS).click();
 
         // Verify Downloads' children are visible (scroll-to-children behaviour)
-        await expect(agIdFor.autoGroupCell('22')).toContainText('SoftwareInstaller.exe', {
+        await expect(agIdFor.autoGroupCell(SOFTWARE_INSTALLER_EXE)).toContainText('SoftwareInstaller.exe', {
             useInnerText: true,
         });
-        await expect(agIdFor.autoGroupCell('23')).toContainText('Receipt_OnlineStore.pdf', {
+        await expect(agIdFor.autoGroupCell(RECEIPT_ONLINE_STORE_PDF)).toContainText('Receipt_OnlineStore.pdf', {
             useInnerText: true,
         });
-        await expect(agIdFor.autoGroupCell('24')).toContainText('Ebook.pdf', { useInnerText: true });
+        await expect(agIdFor.autoGroupCell(EBOOK_PDF)).toContainText('Ebook.pdf', { useInnerText: true });
 
         // Verify the grid actually scrolled to reveal the children
         const scrollAfter = await viewport.evaluate((el) => el.scrollTop);
         expect(scrollAfter).toBeGreaterThan(scrollBefore);
+    });
+
+    // The date and number filters each need their own module registered; without it the popup throws on
+    // open instead of appearing. The columns name their filters, so every framework gets the same one.
+    test.eachFramework('date filters open and filter the tree', async ({ agIdFor, page }) => {
+        await agIdFor.headerFilterButton('modified').click();
+        await expect(agIdFor.dateFilterInstanceInput({ source: 'column-filter' })).toBeVisible();
+        await page.keyboard.press('Escape');
+
+        await agIdFor.headerFilterButton('created').click();
+        const createdFilter = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
+        await expect(createdFilter).toBeVisible();
+
+        // Report.pdf, under Documents > Work > ProjectBeta, is the only file created on this date.
+        await createdFilter.fill('2023-06-22');
+        await createdFilter.dispatchEvent('input');
+        await page.keyboard.press('Escape');
+
+        // Desktop holds no match, so its disappearance marks the filter as applied.
+        await expect(agIdFor.autoGroupCell(DESKTOP)).toHaveCount(0);
+
+        await agIdFor.autoGroupContracted(DOCUMENTS).click();
+        await agIdFor.autoGroupContracted(WORK).click();
+        await agIdFor.autoGroupContracted(PROJECT_BETA).click();
+
+        // Tree data keeps a matching leaf's whole ancestor path, though no group has a `created` of its own.
+        // ProjectBeta's other child, Budget.xlsx, is a sibling of the match and so is dropped.
+        await expect(async () => {
+            expect(await orderedValues(page, GROUP_COL)).toEqual(['Documents', 'Work', 'ProjectBeta', 'Report.pdf']);
+        }).toPass();
+    });
+
+    test.eachFramework('the number filter on size filters the tree', async ({ agIdFor, page }) => {
+        await agIdFor.headerFilterButton('size').click();
+        const sizeFilter = agIdFor.numberFilterInstanceInput({ source: 'column-filter' });
+        await expect(sizeFilter).toBeVisible();
+
+        // MeetingNotes_August.pdf is the only row this size, and no group's `sum` aggregation matches it.
+        await sizeFilter.fill('460800');
+        await sizeFilter.dispatchEvent('input');
+        await page.keyboard.press('Escape');
+
+        await expect(agIdFor.autoGroupCell(DOCUMENTS)).toHaveCount(0);
+        await agIdFor.autoGroupContracted(DESKTOP).click();
+
+        // Desktop's other children, ToDoList.txt among them, are dropped on size.
+        await expect(async () => {
+            expect(await orderedValues(page, GROUP_COL)).toEqual(['Desktop', 'MeetingNotes_August.pdf']);
+        }).toPass();
     });
 });

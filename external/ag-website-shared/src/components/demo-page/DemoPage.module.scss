@@ -98,7 +98,7 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 .title {
     margin: 0 0 $spacing-size-5;
     font-size: var(--text-fs-3xl);
-    line-height: var(--text-lh-3xl);
+    line-height: var(--text-lh-display-3xl);
     font-weight: var(--text-bold);
     letter-spacing: -0.02em;
     color: var(--color-fg-primary);
@@ -107,7 +107,7 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 .description {
     margin: 0 0 $spacing-size-8;
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-body-base);
     color: var(--color-fg-secondary);
 }
 
@@ -157,14 +157,14 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 .featureTitle {
     font-size: 18px;
     font-weight: var(--text-semibold);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-ratio-base);
     color: var(--color-fg-primary);
     transition: color $transition-default-timing;
 }
 
 .featureDescription {
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-body-base);
     // Undo the global `a` rule's semibold so the title carries the weight.
     font-weight: var(--text-regular);
     color: var(--color-fg-tertiary);

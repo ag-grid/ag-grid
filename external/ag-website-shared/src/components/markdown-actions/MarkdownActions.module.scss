@@ -142,7 +142,7 @@
     flex: none;
     width: 16px;
     // Spans exactly the label's line box so the icon centres on the title line.
-    height: calc(var(--text-fs-base) * var(--text-lh-base));
+    height: calc(var(--text-fs-base) * var(--text-lh-body-base));
 
     svg {
         display: block;
@@ -160,7 +160,7 @@
 // body-copy link colour/weight (see elements/_inline.scss).
 .itemLabel {
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-body-base);
     // Kept at regular explicitly so the link item doesn't inherit the global semibold link weight.
     font-weight: var(--text-regular);
     color: var(--color-fg-primary);

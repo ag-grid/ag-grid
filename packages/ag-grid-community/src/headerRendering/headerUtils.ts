@@ -119,14 +119,14 @@ export interface PinnedSectionWidths {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function getPinnedSectionWidths(visibleCols: VisibleColsService, isPrint: boolean): PinnedSectionWidths {
+    const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
+    const centerWidth = visibleCols.bodyWidth;
+    const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
     if (isPrint) {
-        return { leftWidth: 0, centerWidth: visibleCols.bodyWidth, rightWidth: 0 };
+        // print layout renders every column in the scrolling lane
+        return { leftWidth: 0, centerWidth: centerWidth + leftWidth + rightWidth, rightWidth: 0 };
     }
-    return {
-        leftWidth: visibleCols.getLeftStickyColumnContainerWidth(),
-        centerWidth: visibleCols.bodyWidth,
-        rightWidth: visibleCols.getRightStickyColumnContainerWidth(),
-    };
+    return { leftWidth, centerWidth, rightWidth };
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

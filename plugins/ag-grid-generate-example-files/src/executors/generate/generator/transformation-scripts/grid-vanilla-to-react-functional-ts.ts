@@ -11,6 +11,7 @@ import {
     findLocaleImport,
     getEnableAGTestIdLogic,
     getFunctionName,
+    getIntegratedDarkModeInitialChartThemesCode,
     getPropertyInterfaces,
     handleRowGenericInterface,
     isInstanceMethod,
@@ -235,6 +236,7 @@ export function vanillaToReactFunctionalTs(
         );
 
         const darkModeWithGridRef = addChartsDarkModeIfRequired(bindings, imports, true);
+        const darkModeInitialChartThemes = getIntegratedDarkModeInitialChartThemesCode(bindings.exampleName, imports);
 
         const components: { [componentName: string]: string } = extractComponentInformation(
             properties,
@@ -365,7 +367,7 @@ export function vanillaToReactFunctionalTs(
 
 ${imports.join('\n')}
 ${exampleConfig.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
-
+${darkModeInitialChartThemes ?? ''}
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 ${bindings.utils.map(convertFunctionToConstPropertyTs).join('\n\n')}

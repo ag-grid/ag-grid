@@ -9,7 +9,7 @@
     }
 }
 
-:global(.gif_player) {
+.gifPlayer {
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
 
@@ -28,7 +28,7 @@
         max-width: 100%;
     }
 
-    &:hover :global(.play_button) {
+    &:hover .playButton {
         background-color: var(--color-link-hover);
         transform: translate(-50%, -50%) scale(1.1);
 
@@ -37,12 +37,12 @@
         }
     }
 
-    &:global(.playing) :global(.play_button) {
+    &[data-playing] .playButton {
         transform: translate(-50%, -50%) scale(0);
     }
 }
 
-:global(.play_button) {
+.playButton {
     position: absolute;
     width: $spacing-size-16;
     height: $spacing-size-16;

@@ -11,6 +11,7 @@ import {
     findLocaleImport,
     getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
+    getIntegratedDarkModeInitialChartThemesCode,
     getPropertyInterfaces,
     handleRowGenericInterface,
     isInstanceMethod,
@@ -210,6 +211,7 @@ export function vanillaToAngular(
         }
 
         let darkModeWithGridRef = getIntegratedDarkModeCode(bindings.exampleName, true, 'grid?.api');
+        const darkModeInitialChartThemes = getIntegratedDarkModeInitialChartThemesCode(bindings.exampleName, imports);
         const angularImportIdx = imports.findIndex((i) => i.includes('Component'));
         if (darkModeWithGridRef) {
             darkModeWithGridRef = darkModeWithGridRef.replace(
@@ -253,7 +255,7 @@ export function vanillaToAngular(
 
         let generatedOutput = `
 ${imports.join('\n')}
-${exampleConfig.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${exampleConfig.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}${darkModeInitialChartThemes ? darkModeInitialChartThemes + '\n' : ''}
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 @Component({
