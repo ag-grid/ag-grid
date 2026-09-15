@@ -78,15 +78,15 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
      * A `cellRenderer` or `valueFormatter` reading aggData is outside that boundary and stays stale.
      */
     public refreshAggregateDependentCells(excludeNodes?: Set<RowNode> | null, excludePath?: ChangedPath | null): void {
-        // No pass has produced aggData, so nothing here can derive from one.
-        if (!this.hadAgg) {
-            return;
-        }
         const beans = this.beans;
+        // Invariant for the whole sweep: a `valueGetter` can only derive from an aggregate once one
+        // exists, while an active Show Values As mode is a transform in its own right.
+        const hadAgg = this.hadAgg;
         const displayed = beans.visibleCols.allCols;
         let anyDependent = false;
         for (let i = 0, len = displayed.length; i < len; ++i) {
-            if (isAggDependentCol(displayed[i])) {
+            const column = displayed[i];
+            if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
                 anyDependent = true;
                 break;
             }
@@ -105,7 +105,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             const cellCtrls = rowCtrl.getAllCellCtrls();
             for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
                 const cellCtrl = cellCtrls[c];
-                if (isAggDependentCol(cellCtrl.column)) {
+                const column = cellCtrl.column;
+                if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
                     cellCtrl.refreshOrDestroyCell(AGG_DEPENDENT_REFRESH_PARAMS);
                 }
             }
@@ -490,8 +491,5 @@ const resolvePivotColumns = (
     resolved.length = count;
     return resolved;
 };
-
-/** A column whose value can come from an aggregate instead of from its own cell's data. */
-const isAggDependentCol = (col: AgColumn): boolean => col.valueGetter != null || col.showValuesAs != null;
 
 const AGG_DEPENDENT_REFRESH_PARAMS = { force: false, newData: false };
