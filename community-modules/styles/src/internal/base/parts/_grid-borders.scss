@@ -22,6 +22,16 @@
         border-right: var(--ag-borders-critical) var(--ag-border-color);
     }
 
+    // print layout renders every column in the scrolling lane, so the pinned border
+    // moves from the lane edge onto the header cells either side of the boundary
+    .ag-layout-print .ag-header-cell-last-left-pinned {
+        border-right: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
+    .ag-layout-print .ag-header-cell-first-right-pinned {
+        border-left: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus),
     .ag-cell-range-selected.ag-cell-range-chart,

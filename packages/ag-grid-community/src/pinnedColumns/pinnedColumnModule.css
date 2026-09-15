@@ -18,6 +18,23 @@
     border-right: var(--ag-pinned-column-border);
 }
 
+/* print layout renders every column in the scrolling lane, so the pinned border
+   moves from the lane edge onto the header cells either side of the boundary */
+.ag-layout-print .ag-header-row .ag-grid-pinned-left-cells,
+.ag-layout-print .ag-header-row .ag-grid-pinned-right-cells {
+    display: none;
+}
+
+.ag-layout-print .ag-header-cell-last-left-pinned {
+    /* rtl:ignore */
+    border-right: var(--ag-pinned-column-border);
+}
+
+.ag-layout-print .ag-header-cell-first-right-pinned {
+    /* rtl:ignore */
+    border-left: var(--ag-pinned-column-border);
+}
+
 .ag-cell.ag-cell-first-right-pinned:not(
         .ag-cell-range-left,
         .ag-cell-range-single-cell,
