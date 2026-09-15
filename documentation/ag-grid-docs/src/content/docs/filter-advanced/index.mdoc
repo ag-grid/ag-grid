@@ -16,6 +16,10 @@ const gridOptions = {
 ```
 
 {% note %}
+Enabling the Advanced Filter is not enough on its own. A column only appears in the Advanced Filter if it has filtering enabled, so set `filter = true` (or a specific filter, such as `filter = 'agNumberColumnFilter'`) on each Column Definition, or on the [Default Column Definition](./column-definitions/#default-column-definitions) to enable it across all columns. See [Columns & Filter Options](./filter-advanced-columns/) for the exceptions.
+{% /note %}
+
+{% note %}
 Advanced Filter and Column Filters cannot be active at the same time. Enabling Advanced Filter will disable Column Filters.
 {% /note %}
 
