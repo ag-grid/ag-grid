@@ -267,6 +267,11 @@ export interface SharedThemeParams {
     popupShadow: ShadowValue;
 
     /**
+     * Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a hover effect on one but not the other, use CSS selectors instead of this property.
+     */
+    rowHoverColor: ColorValue;
+
+    /**
      * Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.
      */
     spacing: LengthValue;
@@ -389,6 +394,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     ...defaultLightColorSchemeParams,
     textColor: foregroundColor,
     accentColor: '#2196f3',
+    rowHoverColor: accentMix(0.08),
     invalidColor: '#e02525',
     fontFamily: defaultFontFamily(),
     subtleTextColor: {

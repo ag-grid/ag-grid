@@ -8,13 +8,20 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+import { StatusBarModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([PaginationModule, RowSelectionModule, QuickFilterModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+    PaginationModule,
+    RowSelectionModule,
+    QuickFilterModule,
+    ClientSideRowModelModule,
+    StatusBarModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -36,10 +43,15 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     pagination: true,
-    paginationAutoPageSize: true,
+    // The default page size of 100 would fit the whole data set on one page, making 'currentPage'
+    // indistinguishable from 'all'.
+    paginationPageSize: 20,
     rowSelection: {
         mode: 'multiRow',
         selectAll: 'all',
+    },
+    statusBar: {
+        statusPanels: [{ statusPanel: 'agSelectedRowCountComponent' }],
     },
 };
 
