@@ -1,13 +1,12 @@
-import { expandGroupRows, expect, orderedValues, test, treeFillerId } from '@utils/grid/test-utils';
+import { expect, orderedValues, test } from '@utils/grid/test-utils';
 
 const GROUP_COL = 'ag-Grid-AutoColumn';
 
-// Groups here are fillers keyed by path, bar Documents > Work > ProjectAlpha; rows of their own are
-// keyed by getRowId, the last segment of the path.
-const DESKTOP = treeFillerId(['Desktop']);
-const DOCUMENTS = treeFillerId(['Documents']);
-const WORK = treeFillerId(['Documents', 'Work']);
-const PROJECT_BETA = treeFillerId(['Documents', 'Work', 'ProjectBeta']);
+// Fillers are keyed by path; rows of their own are keyed by getRowId, the last segment of the path.
+const DESKTOP = 'row-group-0-Desktop';
+const DOCUMENTS = 'row-group-0-Documents';
+const WORK = 'row-group-0-Documents-1-Work';
+const PROJECT_BETA = 'row-group-0-Documents-1-Work-2-ProjectBeta';
 const PROJECT_ALPHA = 'ProjectAlpha';
 const PROPOSAL_DOCX = 'Proposal.docx';
 
@@ -45,7 +44,9 @@ test.agExample(import.meta, () => {
 
         // Desktop holds no match, so its disappearance marks the filter as applied.
         await expect(agIdFor.autoGroupCell(DESKTOP)).toHaveCount(0);
-        await expandGroupRows(agIdFor, [DOCUMENTS, WORK, PROJECT_BETA]);
+
+        await expect(agIdFor.autoGroupExpanded(WORK)).toBeVisible();
+        await agIdFor.autoGroupContracted(PROJECT_BETA).click();
 
         // Tree data keeps a matching leaf's whole ancestor path, though no group has a `created` of its own.
         // ProjectBeta's other child, Budget.xlsx, is a sibling of the match and so is dropped.
@@ -65,7 +66,7 @@ test.agExample(import.meta, () => {
         await agIdFor.cell(DESKTOP, 'size').click();
 
         await expect(agIdFor.autoGroupCell(DOCUMENTS)).toHaveCount(0);
-        await expandGroupRows(agIdFor, [DESKTOP]);
+        await agIdFor.autoGroupContracted(DESKTOP).click();
 
         // Desktop's other children, ToDoList.txt among them, are dropped on size.
         await expect(async () => {

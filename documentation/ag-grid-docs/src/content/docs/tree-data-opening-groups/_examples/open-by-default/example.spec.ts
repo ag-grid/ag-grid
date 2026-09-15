@@ -1,14 +1,13 @@
-import { expandGroupRows, expect, orderedValues, test, treeFillerId } from '@utils/grid/test-utils';
+import { expect, orderedValues, test } from '@utils/grid/test-utils';
 
 const GROUP_COL = 'ag-Grid-AutoColumn';
 
-// Groups here are all fillers, keyed by path; leaves have no getRowId, so they fall back to their
-// `rowData` index.
-const DESKTOP = treeFillerId(['Desktop']);
-const DOCUMENTS = treeFillerId(['Documents']);
-const WORK = treeFillerId(['Documents', 'Work']);
-const PROJECT_BETA = treeFillerId(['Documents', 'Work', 'ProjectBeta']);
-const DESKTOP_PROJECT_ALPHA = treeFillerId(['Desktop', 'ProjectAlpha']);
+// Fillers are keyed by path; leaves have no getRowId, so they fall back to their `rowData` index.
+const DESKTOP = 'row-group-0-Desktop';
+const DOCUMENTS = 'row-group-0-Documents';
+const WORK = 'row-group-0-Documents-1-Work';
+const PROJECT_BETA = 'row-group-0-Documents-1-Work-2-ProjectBeta';
+const DESKTOP_PROJECT_ALPHA = 'row-group-0-Desktop-1-ProjectAlpha';
 const REPORT_PDF = '7';
 const BUDGET_XLSX = '8';
 const DESKTOP_PROPOSAL_DOCX = '0';
@@ -49,7 +48,8 @@ test.agExample(import.meta, () => {
 
         // Desktop holds no match, so its disappearance marks the filter as applied.
         await expect(agIdFor.autoGroupCell(DESKTOP)).toHaveCount(0);
-        await expandGroupRows(agIdFor, [DOCUMENTS, WORK, PROJECT_BETA]);
+
+        await expect(agIdFor.autoGroupExpanded(PROJECT_BETA)).toBeVisible();
 
         // Tree data keeps a matching leaf's whole ancestor path, though no group has a `created` of its own.
         // ProjectBeta's other child, Budget.xlsx, is a sibling of the match and so is dropped.
@@ -69,7 +69,7 @@ test.agExample(import.meta, () => {
         await agIdFor.cell(DESKTOP, 'size').click();
 
         await expect(agIdFor.autoGroupCell(DOCUMENTS)).toHaveCount(0);
-        await expandGroupRows(agIdFor, [DESKTOP]);
+        await agIdFor.autoGroupContracted(DESKTOP).click();
 
         // Desktop's other children, ToDoList.txt among them, are dropped on size.
         await expect(async () => {

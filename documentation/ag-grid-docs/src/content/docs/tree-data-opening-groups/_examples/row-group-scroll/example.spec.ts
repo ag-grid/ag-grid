@@ -1,16 +1,15 @@
-import { expandGroupRows, expect, orderedValues, test, treeFillerId } from '@utils/grid/test-utils';
+import { expect, orderedValues, test } from '@utils/grid/test-utils';
 
 const GROUP_COL = 'ag-Grid-AutoColumn';
 
-// Groups here are fillers keyed by path, bar Documents > Work > ProjectAlpha; leaves have no
-// getRowId, so they fall back to their `rowData` index.
-const DESKTOP = treeFillerId(['Desktop']);
-const DOCUMENTS = treeFillerId(['Documents']);
-const WORK = treeFillerId(['Documents', 'Work']);
-const PERSONAL = treeFillerId(['Documents', 'Personal']);
-const PROJECT_BETA = treeFillerId(['Documents', 'Work', 'ProjectBeta']);
-const DOWNLOADS = treeFillerId(['Downloads']);
-const DESKTOP_PROJECT_ALPHA = treeFillerId(['Desktop', 'ProjectAlpha']);
+// Fillers are keyed by path; rows of their own have no getRowId, so they fall back to their `rowData` index.
+const DESKTOP = 'row-group-0-Desktop';
+const DOCUMENTS = 'row-group-0-Documents';
+const WORK = 'row-group-0-Documents-1-Work';
+const PERSONAL = 'row-group-0-Documents-1-Personal';
+const PROJECT_BETA = 'row-group-0-Documents-1-Work-2-ProjectBeta';
+const DOWNLOADS = 'row-group-0-Downloads';
+const DESKTOP_PROJECT_ALPHA = 'row-group-0-Desktop-1-ProjectAlpha';
 const WORK_PROJECT_ALPHA = '4';
 const SOFTWARE_INSTALLER_EXE = '22';
 const RECEIPT_ONLINE_STORE_PDF = '23';
@@ -33,7 +32,9 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.autoGroupCell(WORK_PROJECT_ALPHA)).toHaveCount(0);
 
         // Expand Documents to create more rows, pushing Downloads further down
-        await expandGroupRows(agIdFor, [DOCUMENTS, WORK, PERSONAL]);
+        await agIdFor.autoGroupContracted(DOCUMENTS).click();
+        await agIdFor.autoGroupContracted(WORK).click();
+        await agIdFor.autoGroupContracted(PERSONAL).click();
 
         // Record scroll position before expanding Downloads
         const scrollBefore = await viewport.evaluate((el) => el.scrollTop);
@@ -75,7 +76,10 @@ test.agExample(import.meta, () => {
 
         // Desktop holds no match, so its disappearance marks the filter as applied.
         await expect(agIdFor.autoGroupCell(DESKTOP)).toHaveCount(0);
-        await expandGroupRows(agIdFor, [DOCUMENTS, WORK, PROJECT_BETA]);
+
+        await agIdFor.autoGroupContracted(DOCUMENTS).click();
+        await agIdFor.autoGroupContracted(WORK).click();
+        await agIdFor.autoGroupContracted(PROJECT_BETA).click();
 
         // Tree data keeps a matching leaf's whole ancestor path, though no group has a `created` of its own.
         // ProjectBeta's other child, Budget.xlsx, is a sibling of the match and so is dropped.
@@ -95,7 +99,7 @@ test.agExample(import.meta, () => {
         await agIdFor.cell(DESKTOP, 'size').click();
 
         await expect(agIdFor.autoGroupCell(DOCUMENTS)).toHaveCount(0);
-        await expandGroupRows(agIdFor, [DESKTOP]);
+        await agIdFor.autoGroupContracted(DESKTOP).click();
 
         // Desktop's other children, ToDoList.txt among them, are dropped on size.
         await expect(async () => {
