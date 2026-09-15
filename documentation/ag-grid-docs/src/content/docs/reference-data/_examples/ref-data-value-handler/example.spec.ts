@@ -69,7 +69,7 @@ test.agExample(import.meta, () => {
 
         // exteriorColour is the set-filtered column here; filterParams.valueFormatter maps
         // each stored code to its name, so the list shows names rather than 'cb'/'bw'/'fg'.
-        const spec = { source: 'column-filter', colId: 'exteriorColour' } as const;
+        const spec = { source: 'column-filter' } as const;
         await agIdFor.headerFilterButton('exteriorColour').click();
 
         await expect(agIdFor.setFilterInstanceItem(spec, 'Cadet Blue')).toBeVisible();
@@ -86,7 +86,7 @@ test.agExample(import.meta, () => {
         await makeCell.dblclick();
 
         // agSelectCellEditor shows the mapped name for the current code.
-        const picker = makeCell.locator('.ag-picker-field');
+        const picker = makeCell.locator('.ag-cell-editor.ag-select');
         await expect(picker.locator('.ag-picker-field-display')).toHaveText('Toyota');
 
         await picker.click();
