@@ -1018,6 +1018,7 @@ export type {
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     ServerSideStoreParams,
+    SetFillValueCallback,
     TabToNextCell,
     TabToNextCellParams,
     TabToNextGridContainer,

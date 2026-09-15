@@ -88,20 +88,22 @@ When using the fill handle the grid will fire the `fillStart` event before it st
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression.
 In these scenarios, the `cellSelection.handle.setFillValue` callback should be used.
 
+{% interfaceDocumentation interfaceName="FillHandleOptions" names=["setFillValue"] config={"description":""} /%}
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    rowData: [
-        { value: 10 },
-        { value: 20 },
-        { value: null },
-    ],
-    columnDefs: [{ field: 'value', editable: true }],
     cellSelection: {
         handle: {
             mode: 'fill',
             setFillValue(params) {
+                if (params.column.getColId() !== 'dayOfTheWeek') {
+                    return params.useDefault();
+                }
+
+                const daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 const lastValue = params.values[params.values.length - 1];
-                return params.useValue(lastValue + 10);
+                const idxOfLast = daysList.indexOf(lastValue);
+                return params.useValue(daysList[(idxOfLast + 1) % daysList.length]);
             },
         },
     },
@@ -118,15 +120,15 @@ Use the callback helpers to state how each cell should be handled:
 - `params.skipCell()` leaves the cell unchanged and does not add it to `params.values`.
 - `params.useDefault()` lets the grid calculate the value using its default Fill Handle behaviour.
 
-Returning cell values directly remains supported. For backwards compatibility, a direct `false` requests default processing, while any other directly returned value equal to `params.currentCellValue` skips the cell.
-
-The example starts with `10` and `20`. Select `10` and drag the Fill Handle down. The callback adds `10` to the last processed value. Its first result, `20`, already matches the target; `params.useValue(20)` still adds it to the sequence, so the next result is `30`.
+In the example below the **Day of the Week** column cycles through the days, while every other column is left to the grid's default behaviour. Select `Sunday` in the first row and drag the Fill Handle down. The callback's first result, `Monday`, already matches the value in the target cell; `params.useValue('Monday')` still adds it to the sequence, so the next result is `Tuesday`.
 
 {% gridExampleRunner title="Custom Fill Operation" name="custom-fill-operation"  exampleHeight=560 /%}
 
 ### Skipping Columns in the Fill Operation
 
 The example below uses `params.skipCell()` to prevent values in the **Country** column from being altered by the Fill Handle.
+
+Directly returning a value equal to `params.currentCellValue` also skips the cell but prefer `params.skipCell()`, which skips the cell explicitly regardless of the value it holds.
 
 {% gridExampleRunner title="Skipping Columns" name="skipping-columns"  exampleHeight=560 /%}
 
