@@ -1,7 +1,7 @@
 /* eslint-disable no-console -- standalone CLI: reports the files it writes */
 /**
  * Generates the AG Grid Enterprise licence files shipped in the `ag-grid-enterprise` package from
- * the End User Licence Agreement published at /eula/, so the package and the website cannot drift:
+ * the End User Licence Agreement published at /eula/enterprise/, so the package and the website cannot drift:
  *
  *   packages/ag-grid-enterprise/LICENSE.md    plain markdown (no site frontmatter)
  *   packages/ag-grid-enterprise/LICENSE.html  standalone HTML

@@ -1,0 +1,34 @@
+---
+import Layout from '@layouts/Layout.astro';
+import styles from '@ag-website-shared/components/policies/policyPage.module.scss';
+import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/markdown-pages/communityLicenceContent';
+
+// Heading, licence name, copyright and intro copy are shared with the /eula/community.md twin so
+// the two cannot drift; the terms below are read from the LICENSE.txt shipped in the
+// ag-grid-community package, which is the golden source for the licence.
+---
+
+<Layout
+    title={`AG Grid: ${content.metaTitle}`}
+    description={content.description}
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class:list={styles.policyPage}>
+        <div class="layout-max-width-small">
+            <h1>{content.heading}</h1>
+            <hr />
+
+            <header>
+                <div id="introduction" class={styles.introduction}>
+                    {content.meta.map((line) => <h4 set:html={line} />)}
+                    {content.intro.map((line) => <p set:html={line} />)}
+                </div>
+            </header>
+
+            <div class={styles.policyList}>
+                {COMMUNITY_LICENCE.terms.map((term) => <p>{term}</p>)}
+            </div>
+        </div>
+    </div>
+</Layout>

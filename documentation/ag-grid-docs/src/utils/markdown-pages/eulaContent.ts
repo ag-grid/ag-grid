@@ -3,7 +3,7 @@ import type { PolicyContent } from '@ag-website-shared/components/policies/polic
 /**
  * Prose for the End User Licence Agreement page that lives outside its `.mdoc` body — the
  * heading, the version and last-updated lines and the introductory notice. Shared with the
- * `/eula.md` twin so the two cannot drift. The numbered clauses and schedules are
+ * `/eula/enterprise.md` twin so the two cannot drift. The numbered clauses and schedules are
  * `src/content/policies/eula.mdoc`.
  *
  * Grid-only, like the Terms of Use: the agreement is published from ag-grid.com.

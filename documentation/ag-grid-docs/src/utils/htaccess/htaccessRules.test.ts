@@ -908,7 +908,8 @@ describe('htaccessRules', () => {
             '/modern-slavery/',
             '/privacy/',
             '/terms-of-use/',
-            '/eula/',
+            '/eula/community/',
+            '/eula/enterprise/',
             '/example-finance/',
             '/example-hr/',
             '/example-inventory/',
@@ -929,6 +930,7 @@ describe('htaccessRules', () => {
             '/data-grid/cell-editing/', // framework-agnostic redirect stub
             '/contact/success/', // form result, sitemap-excluded
             '/privacy/your-choice/', // opt-out confirmation, robots-disallowed and sitemap-excluded
+            '/eula/', // no page: the licences live at /eula/community/ and /eula/enterprise/
             '/examples/cell-editing/component-editor/reactFunctionalTs/',
             '/debug/files/',
             '/sitemap-0.xml',
