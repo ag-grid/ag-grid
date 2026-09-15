@@ -2,8 +2,8 @@ import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, IViewportDatasourceParams } from 'ag-grid-community';
-import { InfiniteRowModelModule, ScrollApiModule } from 'ag-grid-community';
-import { ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
+import { InfiniteRowModelModule, RowApiModule, ScrollApiModule } from 'ag-grid-community';
+import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
 /**
  * `cellDataType` inference under the Server-Side, Infinite and Viewport row models. None of them has
@@ -12,7 +12,14 @@ import { ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterp
  */
 describe('cellDataType inference under non-client-side row models', () => {
     const gridsManager = new TestGridsManager({
-        modules: [InfiniteRowModelModule, ServerSideRowModelModule, ViewportRowModelModule, ScrollApiModule],
+        modules: [
+            InfiniteRowModelModule,
+            ServerSideRowModelModule,
+            ViewportRowModelModule,
+            RowGroupingModule,
+            ScrollApiModule,
+            RowApiModule,
+        ],
     });
 
     beforeEach(() => {
@@ -192,6 +199,75 @@ describe('cellDataType inference under non-client-side row models', () => {
         expect(api.getDisplayedRowAtIndex(1)!.data.year).toBe(2000);
         expect(inferredType(api, 'year')).toBe('number');
         expect(inferredType(api, 'notes')).toBe(false);
+    });
+
+    describe('server-side row grouping', () => {
+        const LEAF_ROWS = [
+            { country: 'UK', year: 2000, done: true },
+            { country: 'US', year: 2004, done: false },
+        ];
+
+        /**
+         * A grouped datasource: the root block holds group rows, which carry only the group key, and
+         * expanding a group serves the leaf rows under it.
+         */
+        const createGroupedGrid = async () => {
+            const rootBlockServed = batchServed();
+            const leafBlockServed = batchServed();
+            const api = gridsManager.createGrid('grid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }, { field: 'done' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const { groupKeys } = params.request;
+                        if (!groupKeys.length) {
+                            const rows = LEAF_ROWS.map(({ country }) => ({ country }));
+                            params.success({ rowData: rows, rowCount: rows.length });
+                            rootBlockServed.serve();
+                            return;
+                        }
+                        const rows = LEAF_ROWS.filter(({ country }) => country === groupKeys[0]);
+                        params.success({ rowData: rows, rowCount: rows.length });
+                        leafBlockServed.serve();
+                    },
+                },
+            });
+            await rootBlockServed.promise;
+            await asyncSetTimeout(0);
+            return { api, leafBlockServed };
+        };
+
+        const expandFirstGroup = (api: GridApi) => {
+            const node = api.getDisplayedRowAtIndex(0)!;
+            api.setRowNodeExpanded(node, true);
+        };
+
+        test('group rows do not resolve inference, and leaf rows type the columns when a group is expanded', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid();
+
+            // the root block is group rows, which hold no value for the leaf columns
+            expect(api.getDisplayedRowAtIndex(0)!.key).toBe('UK');
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(inferredType(api, 'done')).toBe(false);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe('number');
+            expect(inferredType(api, 'done')).toBe('boolean');
+            expect(api.getColumn('year')!.getColDef().cellEditor).toBe('agNumberCellEditor');
+        });
+
+        test('the grouped column is typed from the leaf rows too', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid();
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'country')).toBe('text');
+        });
     });
 
     test('a viewport datasource that starts with no rows stays pending, then infers from the rows it pushes', async () => {
