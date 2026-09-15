@@ -385,5 +385,17 @@ const announcementBannerProps = {
         for the mechanism. */
         }
         <script is:inline src={urlWithBaseUrl('/scripts/reload-swapped-media.js')}></script>
+        {
+            /* The dark-mode listeners that theme <ImageCaption> and <Gif> media are registered by
+        the first copy of these scripts to run, and each component renders its own copy alongside
+        its markup so that the correct source is in place before the first paint. Loading them here
+        too covers the pages that render neither: without that, arriving at a page that does render
+        them — the client-side router adopts its markup and only then works through the scripts it
+        has not run yet — leaves the media on its light source for as long as that takes, which on
+        an example-heavy page is a few hundred milliseconds of light imagery on a dark page. Both
+        scripts are idempotent, so the copy the component renders simply finds the work done. */
+        }
+        <script is:inline src={urlWithBaseUrl('/scripts/image-caption-darkmode.js')}></script>
+        <script is:inline src={urlWithBaseUrl('/scripts/gif-player.js')}></script>
     </body>
 </html>
