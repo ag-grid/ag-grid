@@ -106,8 +106,12 @@
                 "url": "/terms-of-use/"
             },
             {
-                "name": "EULA",
-                "url": "/eula/"
+                "name": "Enterprise EULA",
+                "url": "/eula/enterprise/"
+            },
+            {
+                "name": "Community Licence",
+                "url": "/eula/community/"
             },
             {
                 "name": "Privacy Policy",

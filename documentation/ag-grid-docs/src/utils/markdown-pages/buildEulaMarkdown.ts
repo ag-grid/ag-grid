@@ -9,8 +9,9 @@ import { EULA_CONTENT } from './eulaContent';
 import { GRID_PRODUCT_NAME, gridSiteFrontmatter } from './gridFrontmatter';
 
 const PAGE_NAME = 'eula';
+const PAGE_URL = '/eula/enterprise/';
 
-/** The `/eula.md` twin, from the same preamble and `.mdoc` body the page renders. */
+/** The `/eula/enterprise.md` twin, from the same preamble and `.mdoc` body the page renders. */
 export function buildEulaMarkdown({
     siteRoot,
     resolvers,
@@ -26,6 +27,6 @@ export function buildEulaMarkdown({
         markdocConfig,
         resolvers,
         siteRoot,
-        siteFrontmatter: gridSiteFrontmatter({ pageUrl: `/${PAGE_NAME}/`, siteRoot }),
+        siteFrontmatter: gridSiteFrontmatter({ pageUrl: PAGE_URL, siteRoot }),
     });
 }
