@@ -51,7 +51,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         selectAll: 'all',
     },
     statusBar: {
-        statusPanels: [{ statusPanel: 'agSelectedRowCountComponent' }],
+        statusPanels: [
+            { statusPanel: 'agSelectedRowCountComponent', align: 'right' },
+            { statusPanel: 'agFilteredRowCountComponent', align: 'right' },
+            { statusPanel: 'agTotalRowCountComponent', align: 'right' },
+        ],
     },
 };
 
@@ -61,6 +65,10 @@ function onQuickFilterChanged() {
 
 function updateSelectAllMode() {
     const selectAll = document.querySelector<HTMLSelectElement>('#select-all-mode')?.value ?? 'all';
+
+    // Clear the existing selection so the new mode's behaviour is seen from a clean state,
+    // rather than the counts still reflecting rows selected under the previous mode.
+    gridApi.deselectAll();
 
     gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
