@@ -426,26 +426,17 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
 
         for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
-            const columnStateUpdates = this.columnStateUpdatesPendingInference[colId];
-            const column = this.colModel.colsById[colId];
-            if (!column) {
+            const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
+            if (!updatedColumnState) {
                 continue;
             }
-            const oldColDef = column.colDef;
-            if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
-                continue;
+            if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
+                rowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
             }
-            const newColDef = column.colDef;
-            if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
-                const updatedColumnState = getUpdatedColumnState(this.beans, column, columnStateUpdates);
-                if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
-                    rowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
-                }
-                if (updatedColumnState.pivot && updatedColumnState.pivotIndex == null) {
-                    pivotColumnStateWithoutIndex[colId] = updatedColumnState;
-                }
-                state.push(updatedColumnState);
+            if (updatedColumnState.pivot && updatedColumnState.pivotIndex == null) {
+                pivotColumnStateWithoutIndex[colId] = updatedColumnState;
             }
+            state.push(updatedColumnState);
         }
 
         if (columnTypeOverridesExist) {
@@ -461,6 +452,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
             _applyColumnState(beans, { state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
+    }
+
+    /** Re-creates the column definition with the inferred data type, returning any column state to re-apply */
+    private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
+        const column = this.colModel.colsById[colId];
+        if (!column) {
+            return null;
+        }
+        const oldColDef = column.colDef;
+        if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
+            return null;
+        }
+        const newColDef = column.colDef;
+        if (!columnTypeOverridesExist || !newColDef.type || newColDef.type === oldColDef.type) {
+            return null;
+        }
+        return getUpdatedColumnState(this.beans, column, this.columnStateUpdatesPendingInference[colId]);
     }
 
     private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
