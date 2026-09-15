@@ -4,7 +4,6 @@ import type {
     AgColumn,
     AgShowValuesAsResolved,
     BeanCollection,
-    ChangedPath,
     ColDef,
     ColumnEventType,
     ColumnModel,
@@ -19,7 +18,6 @@ import type {
     IValueColsService,
     MenuItemDef,
     NamedBean,
-    RowNode,
     RowRenderer,
     ShowValuesAs,
     ShowValuesAsApplicability,
@@ -380,32 +378,6 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         // for each column per row, and the same primitive the menu uses (see `setColumnShowValuesAs`).
         if (aggCols.length) {
             this.rowRenderer.refreshCells({ columns: aggCols, force: false });
-        }
-    }
-
-    /** Refresh the Show Values As cells in the rendered rows the caller did NOT already refresh — for the post-edit
-     *  re-aggregation, where `nodes`/`path` identify the rows the change-detection flush refreshed (they flash their
-     *  own moved cells). Row membership is O(1) via the `Set`/`ChangedPath`; `refreshCells` can't express the
-     *  exclusion, so this walks each remaining row's cells once, refreshing those on an active column directly. */
-    public refreshRenderedCellsExcept(nodes: Set<RowNode> | null, path: ChangedPath | null): void {
-        if (!this.getDisplayedActiveCols().length) {
-            return;
-        }
-        const params = { force: false, newData: false };
-        const rowCtrls = this.rowRenderer.getAllRowCtrls();
-        for (let r = 0, rLen = rowCtrls.length; r < rLen; ++r) {
-            const rowCtrl = rowCtrls[r];
-            const node = rowCtrl.rowNode;
-            if (nodes?.has(node) || path?.hasRow(node)) {
-                continue;
-            }
-            const cellCtrls = rowCtrl.getAllCellCtrls();
-            for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
-                const cellCtrl = cellCtrls[c];
-                if (cellCtrl.column.showValuesAs != null) {
-                    cellCtrl.refreshOrDestroyCell(params);
-                }
-            }
         }
     }
 

@@ -712,8 +712,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.releaseLockOnRefresh();
 
         // Recycled rows keep their old DOM, and changed rows may have rendered before aggregation settled, so
-        // aggregate-dependent cells (e.g. Show Values As) can be stale after a model update; refresh them.
-        this.showValuesAsSvc?.refreshRenderedCells();
+        // aggregate-dependent cells can be stale after a model update; refresh them.
+        this.beans.aggStage?.refreshAggregateDependentCells();
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {

@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { TestGridsManager } from 'ag-test-utils';
 
@@ -77,10 +78,28 @@ describe('grouping aggregation: columns derived from aggregates', () => {
         expect(groupCells(api, 'row-group-group-B')).toMatchObject({ a: '4', b: '40', [TOTAL_COL_ID]: '44' });
 
         api.getRowNode('0')!.setDataValue('group', 'B');
-        await new Promise((resolve) => setTimeout(resolve, 50));
 
-        expect(groupCells(api, 'row-group-group-A')).toMatchObject({ a: '2', b: '20', [TOTAL_COL_ID]: '22' });
+        await waitFor(() =>
+            expect(groupCells(api, 'row-group-group-A')).toMatchObject({ a: '2', b: '20', [TOTAL_COL_ID]: '22' })
+        );
         expect(groupCells(api, 'row-group-group-B')).toMatchObject({ a: '5', b: '50', [TOTAL_COL_ID]: '55' });
+    });
+
+    // The edit path re-aggregates through endDeferred rather than the refresh pipeline, and refreshes
+    // the edited row's group ancestors itself — so it covers the derived column without the pipeline.
+    test('a plain cell edit refreshes the derived column on the group row', async () => {
+        const api = await createGrid([
+            { group: 'A', a: 1, b: 10 },
+            { group: 'A', a: 2, b: 20 },
+        ]);
+
+        expect(groupCells(api, 'row-group-group-A')).toMatchObject({ a: '3', b: '30', [TOTAL_COL_ID]: '33' });
+
+        api.getRowNode('0')!.setDataValue('a', 101);
+
+        await waitFor(() =>
+            expect(groupCells(api, 'row-group-group-A')).toMatchObject({ a: '103', b: '30', [TOTAL_COL_ID]: '133' })
+        );
     });
 
     test('a cached valueGetter reading a parent total is not poisoned mid-traversal', async () => {

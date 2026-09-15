@@ -18,15 +18,29 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     private leftCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private rightCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
 
+    /** Cleared whenever a container list is replaced; rebuilt on demand by getAllCellCtrls. */
+    private allCellCtrls: CellCtrl[] | null = null;
+
     private updateColumnListsPending = false;
 
     public constructor(private readonly rowCtrl: RowCtrl) {
         super();
     }
 
+    public override destroy(): void {
+        super.destroy();
+        // destroyCells only runs on the second destroy pass, so the cell ctrls would outlive the row.
+        this.allCellCtrls = null;
+    }
+
+    // Cell ctrls outlive their comps: React mounts a row a task later, and a model change in between
+    // must still reach the ctrls, or they render the value they were constructed with.
+    public postConstruct(): void {
+        this.addListenersForCellCtrls();
+    }
+
     public initialiseComp(): void {
         this.updateColumnLists(!this.rowCtrl.useAnimationFrameForCreate);
-        this.addListenersForCellComps();
     }
 
     public refreshRow(params: RefreshRowsParams): void {
@@ -55,14 +69,23 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return this.getAllCellCtrls();
     }
 
+    /** Called far more often than the lists change, so the flattened result is cached, not rebuilt. */
     public getAllCellCtrls(): CellCtrl[] {
-        if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
-            return this.centerCellCtrls.list;
+        let all = this.allCellCtrls;
+        if (all === null) {
+            const center = this.centerCellCtrls.list;
+            const left = this.leftCellCtrls.list;
+            const right = this.rightCellCtrls.list;
+            // `concat` over a manual fill: this is cached and then read by every caller until the lists
+            // change, and `new Array(n)` would leave it holey, taxing each of those reads.
+            all = left.length === 0 && right.length === 0 ? center : center.concat(left, right);
+            this.allCellCtrls = all;
         }
-        return [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
+        return all;
     }
 
     public recreateCell(cellCtrl: CellCtrl): void {
+        this.allCellCtrls = null;
         this.centerCellCtrls = this.removeCellCtrl(this.centerCellCtrls, cellCtrl);
         this.leftCellCtrls = this.removeCellCtrl(this.leftCellCtrls, cellCtrl);
         this.rightCellCtrls = this.removeCellCtrl(this.rightCellCtrls, cellCtrl);
@@ -78,6 +101,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             return { list: [], map: {} };
         };
 
+        this.allCellCtrls = null;
         this.centerCellCtrls = destroy(this.centerCellCtrls);
         this.leftCellCtrls = destroy(this.leftCellCtrls);
         this.rightCellCtrls = destroy(this.rightCellCtrls);
@@ -149,6 +173,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     private createAllCellCtrls(): void {
+        this.allCellCtrls = null;
         const { rowCtrl } = this;
         const colViewport = this.beans.colViewport;
         const presentedColsService = this.beans.visibleCols;
@@ -330,7 +355,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return cellCtrl != null && _suppressCellMouseEvent(this.gos, cellCtrl.column, this.rowCtrl.rowNode, mouseEvent);
     }
 
-    private addListenersForCellComps(): void {
+    private addListenersForCellCtrls(): void {
         const { rowCtrl } = this;
         this.addManagedListeners(rowCtrl.rowNode, {
             rowIndexChanged: () => {

@@ -18,7 +18,8 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _forEachChangedGroupDepthFirst, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
-import { getNodesFromMappedSet, refreshAggregatedRows, setAggData, setAggDataWithSiblings } from './aggDataUtils';
+import type { AggDataEventCols } from './aggDataUtils';
+import { getNodesFromMappedSet, setAggData, setAggDataWithSiblings } from './aggDataUtils';
 
 /** Pre-resolved value column metadata for the per-group aggregation loop. */
 interface ResolvedValueColumn {
@@ -61,6 +62,54 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
     private hadAgg = false;
 
+    /** The value columns the last pass keyed aggData by. Held as the service's own ref-stable array, so
+     *  identity alone answers whether the keys moved — and nothing extra is retained. */
+    private prevValueColumns: AgColumn[] | null = null;
+
+    public override destroy(): void {
+        super.destroy();
+        this.prevValueColumns = null;
+    }
+
+    /**
+     * Repaints the rendered cells whose value can depend on an aggregate: a `valueGetter` reading a
+     * total, or a Show Values As mode. Neither names an aggData key, so the cell-changed events
+     * `setAggData` fires never reach them, and which rows are affected cannot be known without running
+     * the getters — one may read any ancestor's total. Narrowing by column is the sound half.
+     * `force: false`, so only a value that actually moved repaints. Scanned rather than cached:
+     * `showValuesAs` is toggled on the column itself, leaving the displayed-column array ref untouched.
+     */
+    public refreshAggregateDependentCells(excludeNodes?: Set<RowNode> | null, excludePath?: ChangedPath | null): void {
+        const beans = this.beans;
+        const displayed = beans.visibleCols.allCols;
+        let anyDependent = false;
+        for (let i = 0, len = displayed.length; i < len && !anyDependent; ++i) {
+            const col = displayed[i];
+            anyDependent = col.valueGetter != null || col.showValuesAs != null;
+        }
+        if (!anyDependent) {
+            return;
+        }
+
+        const params = { force: false, newData: false };
+        const rowCtrls = beans.rowRenderer.getAllRowCtrls();
+        for (let r = 0, rLen = rowCtrls.length; r < rLen; ++r) {
+            const rowCtrl = rowCtrls[r];
+            const rowNode = rowCtrl.rowNode;
+            if (excludeNodes?.has(rowNode) || excludePath?.hasRow(rowNode)) {
+                continue;
+            }
+            const cellCtrls = rowCtrl.getAllCellCtrls();
+            for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
+                const cellCtrl = cellCtrls[c];
+                const column = cellCtrl.column;
+                if (column.valueGetter != null || column.showValuesAs != null) {
+                    cellCtrl.refreshOrDestroyCell(params);
+                }
+            }
+        }
+    }
+
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
         this.aggregate(changedPath, false);
@@ -77,10 +126,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const { gos, beans } = this;
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
-        // Flushed only once the traversal below has every total up to date — see setAggData.
-        const rowsToRefresh: RowNode[] = [];
 
         if (!valueColumns?.length && !userAggFunc) {
+            this.prevValueColumns = null;
             if (this.hadAgg && !changedPath && !rootOnly) {
                 // Full refresh with no value columns: clear stale aggData from all groups.
                 // Skip during transaction updates (changedPath defined) — the config-change
@@ -89,9 +137,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 const colModel = beans.colModel;
                 const rowModel = beans.rowModel;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
-                    setAggDataWithSiblings(rowNode, null, colModel, rowsToRefresh);
+                    setAggDataWithSiblings(rowNode, null, colModel);
                 });
-                refreshAggregatedRows(beans, rowsToRefresh);
             }
             return;
         }
@@ -137,6 +184,19 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // Resolve pivot columns — null when pivot is inactive or has no result columns.
         const pivotData = resolvePivotColumns(colModel, beans.pivotResultCols, aggFuncSvc!, beans);
 
+        // Pivot keys its result by pivot result columns and a user aggFunc by whatever it returns, so only
+        // the plain path knows the keys up front, and a pass that did not use them must be forgotten rather
+        // than compared against. `valueColumns` is ref-stable until the set is edited, so identity answers
+        // whether old aggData can hold a key these columns no longer name.
+        const prevValueColumns = this.prevValueColumns;
+        let eventCols: AggDataEventCols | undefined;
+        if (pivotData || userAggFunc || !valueColumns) {
+            this.prevValueColumns = null;
+        } else {
+            this.prevValueColumns = valueColumns;
+            eventCols = { cols: valueCols, checkRemoved: prevValueColumns !== valueColumns };
+        }
+
         // Pre-allocate reusable values2d outer array — reused across groups to avoid
         // per-group allocation. Inner arrays are still fresh per group (user-facing via aggFunc params).
         const values2d = colCount > 0 ? new Array<any[] | null>(colCount) : null;
@@ -144,7 +204,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const rowModel = beans.rowModel;
         const aggregateNode = (rowNode: RowNode): void => {
             if (rowNode.level === -1 && !aggregateRoot) {
-                setAggData(rowNode, null, colModel, rowsToRefresh);
+                setAggData(rowNode, null, colModel);
                 return;
             }
 
@@ -169,7 +229,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 );
             }
 
-            setAggDataWithSiblings(rowNode, aggResult, colModel, rowsToRefresh);
+            setAggDataWithSiblings(rowNode, aggResult, colModel, eventCols);
         };
 
         // Root-only: groups are already aggregated, so recompute just the root total from their aggData.
@@ -178,11 +238,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             if (rootNode) {
                 aggregateNode(rootNode);
             }
-            refreshAggregatedRows(beans, rowsToRefresh);
             return;
         }
         _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, aggregateNode);
-        refreshAggregatedRows(beans, rowsToRefresh);
     }
 }
 

@@ -1,4 +1,4 @@
-import type { BeanCollection, ColumnModel, RowNode } from 'ag-grid-community';
+import type { AgColumn, ColumnModel, RowNode } from 'ag-grid-community';
 
 /**
  * Traverses `rowNode.childrenMapped` using pivot keys to resolve the matching RowNode array.
@@ -17,17 +17,22 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
 };
 
 /**
- * Sets aggData and fires cell-changed events if listeners are registered, collecting the row into
- * `rowsToRefresh` when given. A column deriving from the aggregates — a `valueGetter` reading
- * `getValue('gold')` — has no aggData entry, so the events never reach it and the row needs a full
- * refresh. That refresh is deferred rather than done here: callers traverse deepest-first, so a
- * getter reading an ancestor's total would run against a stale one, and `valueCache` would keep it.
+ * The columns an aggData object is keyed by, resolved once per aggregation. Lets the per-row event
+ * loop skip an `Object.keys` allocation and a `colsById` lookup per column. Only the non-pivot path
+ * can supply it: pivot keys its result by pivot result columns instead.
  */
+export interface AggDataEventCols {
+    readonly cols: readonly { readonly colId: string; readonly column: AgColumn }[];
+    /** Whether the previous aggData can hold a key `cols` no longer names, so removals need detecting. */
+    readonly checkRemoved: boolean;
+}
+
+/** Sets aggData and fires cell-changed events if listeners are registered. */
 export const setAggData = (
     rowNode: RowNode,
     newAggData: Record<string, any> | null,
     colModel: ColumnModel,
-    rowsToRefresh?: RowNode[]
+    eventCols?: AggDataEventCols
 ): void => {
     const oldAggData = rowNode.aggData;
     if (oldAggData === newAggData) {
@@ -35,8 +40,7 @@ export const setAggData = (
     }
     rowNode.aggData = newAggData;
     if (rowNode.__localEventService) {
-        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel);
-        rowsToRefresh?.push(rowNode);
+        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel, eventCols);
     }
 };
 
@@ -45,31 +49,23 @@ export const setAggDataWithSiblings = (
     rowNode: RowNode,
     newAggData: Record<string, any> | null,
     colModel: ColumnModel,
-    rowsToRefresh?: RowNode[]
+    eventCols?: AggDataEventCols
 ): void => {
-    setAggData(rowNode, newAggData, colModel, rowsToRefresh);
+    setAggData(rowNode, newAggData, colModel, eventCols);
 
     const pinnedSibling = rowNode.pinnedSibling;
     if (pinnedSibling) {
-        setAggData(pinnedSibling, newAggData, colModel, rowsToRefresh);
+        setAggData(pinnedSibling, newAggData, colModel, eventCols);
     }
 
     const sibling = rowNode.sibling;
     if (sibling) {
-        setAggData(sibling, newAggData, colModel, rowsToRefresh);
+        setAggData(sibling, newAggData, colModel, eventCols);
 
         const siblingPinnedSibling = sibling.pinnedSibling;
         if (siblingPinnedSibling) {
-            setAggData(siblingPinnedSibling, newAggData, colModel, rowsToRefresh);
+            setAggData(siblingPinnedSibling, newAggData, colModel, eventCols);
         }
-    }
-};
-
-/** Refreshes rows collected during an aggregation traversal, once every total is up to date. */
-export const refreshAggregatedRows = (beans: BeanCollection, rowsToRefresh: RowNode[]): void => {
-    const rowRenderer = beans.rowRenderer;
-    for (let i = 0, len = rowsToRefresh.length; i < len; ++i) {
-        rowRenderer.refreshRowByNode(rowsToRefresh[i]);
     }
 };
 
@@ -78,7 +74,8 @@ const fireAggDataChangedEvents = (
     rowNode: RowNode,
     oldAggData: Record<string, any> | null | undefined,
     newAggData: Record<string, any> | null,
-    colModel: ColumnModel
+    colModel: ColumnModel,
+    eventCols: AggDataEventCols | undefined
 ): void => {
     if (!newAggData) {
         if (!oldAggData) {
@@ -92,6 +89,23 @@ const fireAggDataChangedEvents = (
                 rowNode.dispatchCellChangedEvent(column, undefined, oldAggData[colId]);
             }
         }
+        return;
+    }
+
+    if (eventCols) {
+        const cols = eventCols.cols;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const { colId, column } = cols[i];
+            const value = newAggData[colId];
+            const oldValue = oldAggData ? oldAggData[colId] : undefined;
+            if (value !== oldValue) {
+                rowNode.dispatchCellChangedEvent(column, value, oldValue);
+            }
+        }
+        if (!oldAggData || !eventCols.checkRemoved) {
+            return;
+        }
+        fireRemovedAggDataEvents(rowNode, oldAggData, newAggData, colModel);
         return;
     }
 
@@ -109,10 +123,19 @@ const fireAggDataChangedEvents = (
         }
     }
 
-    // Detect removed columns (old key not present in new aggData).
     if (!oldAggData) {
         return;
     }
+    fireRemovedAggDataEvents(rowNode, oldAggData, newAggData, colModel);
+};
+
+/** Colder still: an old key the new aggData no longer names, which only a column change can produce. */
+const fireRemovedAggDataEvents = (
+    rowNode: RowNode,
+    oldAggData: Record<string, any>,
+    newAggData: Record<string, any>,
+    colModel: ColumnModel
+): void => {
     const oldKeys = Object.keys(oldAggData);
     for (let i = 0, len = oldKeys.length; i < len; ++i) {
         const colId = oldKeys[i];

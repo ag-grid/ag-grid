@@ -31,6 +31,9 @@ export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TDa
     /** Re-aggregates only the root node, leaving group aggregates untouched — for when a feature needs the root
      *  total switched on without the cost of a full re-aggregation (the groups are already correct). */
     aggregateRootOnly(): void;
+    /** Repaints the rendered cells whose value can depend on an aggregate. Rows the caller already
+     *  refreshed are named by `excludeNodes`/`excludePath`. */
+    refreshAggregateDependentCells(excludeNodes?: Set<RowNode> | null, excludePath?: ChangedPath | null): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
