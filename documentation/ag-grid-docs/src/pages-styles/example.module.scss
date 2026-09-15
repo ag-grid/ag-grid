@@ -9,11 +9,11 @@ $copy-column-stacks-below: 1440px;
 // the header again, so check a lengthened intro against the other demos.
 @mixin reserve-copy-height($heading-lines, $intro-lines) {
     .headerHeading {
-        min-height: calc(#{$heading-lines} * 1em * var(--text-lh-2xl));
+        min-height: calc(#{$heading-lines} * 1em * var(--text-lh-body-2xl));
     }
 
     .intro {
-        min-height: calc(#{$intro-lines} * 1em * var(--text-lh-base));
+        min-height: calc(#{$intro-lines} * 1em * var(--text-lh-ratio-base));
     }
 }
 

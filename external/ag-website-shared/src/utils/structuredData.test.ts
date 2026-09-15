@@ -5,9 +5,11 @@ import {
     buildOrganization,
     buildSiteNavigationElement,
     buildSoftwareApplication,
+    buildSoftwareSourceCode,
     buildTechArticle,
     buildWebSite,
     getSoftwareApplicationId,
+    getTechArticleId,
     serializeJsonLd,
 } from './structuredData';
 
@@ -307,6 +309,62 @@ describe('buildTechArticle', () => {
         });
 
         expect(result.about).toEqual({ '@id': `${CANONICAL_URL_BASE}/#software-application` });
+    });
+
+    test('getTechArticleId matches the @id it produces', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/getting-started/`;
+        const result = buildTechArticle({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            pageUrl,
+            title: 'Getting Started',
+            description: 'Get started with AG Grid for React.',
+        });
+
+        expect(getTechArticleId(pageUrl)).toBe(result['@id']);
+    });
+});
+
+describe('buildSoftwareSourceCode', () => {
+    test('names the example, sets programmingLanguage and codeSampleType, and omits about when not provided', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/filtering/`;
+        const result = buildSoftwareSourceCode({
+            pageUrl,
+            exampleName: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+        });
+
+        expect(result).toEqual({
+            '@type': 'SoftwareSourceCode',
+            '@id': `${pageUrl}#source-code-simple-filter`,
+            name: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+            codeSampleType: 'full',
+            url: pageUrl,
+        });
+        expect(result.about).toBeUndefined();
+        expect(result.text).toBeUndefined();
+    });
+
+    test('links to the TechArticle it illustrates via about, and keys @id per example', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/filtering/`;
+        const articleId = getTechArticleId(pageUrl);
+
+        const first = buildSoftwareSourceCode({
+            pageUrl,
+            exampleName: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+            aboutEntityId: articleId,
+        });
+        const second = buildSoftwareSourceCode({
+            pageUrl,
+            exampleName: 'custom-filter',
+            programmingLanguage: 'TypeScript',
+            aboutEntityId: articleId,
+        });
+
+        expect(first.about).toEqual({ '@id': articleId });
+        expect(second.about).toEqual({ '@id': articleId });
+        expect(first['@id']).not.toBe(second['@id']);
     });
 });
 

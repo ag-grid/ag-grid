@@ -1,0 +1,57 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from './Video.module.scss';
+
+interface Props {
+    videoSrc?: string;
+    darkModeVideoSrc?: string;
+    autoplay?: boolean;
+    showPlayPauseButtons?: boolean;
+    centered?: boolean;
+}
+
+const { videoSrc, darkModeVideoSrc, autoplay = true, showPlayPauseButtons = true, centered } = Astro.props as Props;
+---
+
+{
+    /* The element is rendered without a `src`: video-player.js, immediately below, assigns the file
+    the current theme wants. Naming either file here instead would have the browser fetch it — the
+    parser begins the element's resource selection as soon as it is inserted and then yields while
+    it waits for the script, so the light file is already on the wire by the time the script could
+    correct it. With nothing to select, the first resource the element loads is the right one. The
+    <noscript> copy keeps the video working without JavaScript, where the page is light anyway;
+    Video.module.scss hides a source-less element, so only one of the two is ever laid out. */
+}
+<div
+    class:list={[styles.videoOuter, { [styles.centered]: centered }]}
+    data-video-player
+    data-playing={autoplay ? '' : undefined}
+>
+    <video data-light-src={videoSrc} data-dark-src={darkModeVideoSrc} autoplay={autoplay} muted loop></video>
+
+    <noscript>
+        <video src={videoSrc} autoplay={autoplay} muted loop></video>
+    </noscript>
+
+    {
+        showPlayPauseButtons && (
+            <span class={styles.buttonsOuter}>
+                <button class:list={[styles.playButton, 'button-style-none']} data-video-toggle aria-label="Play video">
+                    <Icon name="play" />
+                </button>
+
+                <button
+                    class:list={[styles.pauseButton, 'button-style-none']}
+                    data-video-toggle
+                    aria-label="Pause video"
+                >
+                    <Icon name="pause" />
+                </button>
+            </span>
+        )
+    }
+</div>
+
+<script is:inline src={urlWithBaseUrl('/scripts/video-player.js')}></script>

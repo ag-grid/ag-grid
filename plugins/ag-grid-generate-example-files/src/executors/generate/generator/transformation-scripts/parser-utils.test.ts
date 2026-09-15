@@ -1,4 +1,9 @@
-import { getIntegratedDarkModeCode } from './parser-utils';
+import {
+    DARK_INTEGRATED_END,
+    DARK_INTEGRATED_START,
+    getIntegratedDarkModeCode,
+    getIntegratedDarkModeInitialChartThemesCode,
+} from './parser-utils';
 
 describe('getIntegratedDarkModeCode', () => {
     const exampleName = '/documentation/integrated-charts-chart-tool-panels/_examples/chart-tool-panels';
@@ -45,5 +50,46 @@ describe('getIntegratedDarkModeCode', () => {
         it('does not push an unchanged theme list, which would re-render the chart', () => {
             expect(code).toContain('currentThemes.every((theme, i) => theme === modifiedThemes[i])');
         });
+    });
+});
+
+describe('getIntegratedDarkModeInitialChartThemesCode', () => {
+    const exampleName = '/documentation/integrated-charts-chart-tool-panels/_examples/chart-tool-panels';
+
+    it('returns nothing for an example that does not use charts', () => {
+        expect(
+            getIntegratedDarkModeInitialChartThemesCode('/documentation/row-sorting/_examples/basic', [])
+        ).toBeUndefined();
+    });
+
+    it('provides the themes globally, so a chart created while the grid initialises is themed on its first render', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [])!;
+
+        expect(code).toContain('provideGlobalGridOptions({');
+        expect(code).toContain("chartThemes: ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid']");
+        expect(code).toContain("document.documentElement.dataset.agThemeMode?.includes('dark') ? '-dark' : ''");
+    });
+
+    it('is wrapped in the dark mode delimiters, so it is stripped from the code the user sees', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [])!;
+
+        expect(code.startsWith(DARK_INTEGRATED_START)).toBe(true);
+        expect(code.endsWith(DARK_INTEGRATED_END)).toBe(true);
+    });
+
+    it('imports provideGlobalGridOptions inside the delimiters, so the import is stripped along with it', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [
+            "import { createGrid } from 'ag-grid-community';",
+        ])!;
+
+        expect(code).toContain("import { provideGlobalGridOptions } from 'ag-grid-community';");
+    });
+
+    it('does not add a duplicate import when the example already imports provideGlobalGridOptions', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [
+            "import { createGrid, provideGlobalGridOptions } from 'ag-grid-community';",
+        ])!;
+
+        expect(code).not.toContain('import {');
     });
 });

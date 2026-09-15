@@ -133,7 +133,7 @@
 }
 
 .description {
-    opacity: 0.8;
+    color: var(--color-brand-200);
 
     // Keep the headline on its own line on very small viewports where wrapping
     // becomes messy.

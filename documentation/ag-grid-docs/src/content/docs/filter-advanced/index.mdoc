@@ -12,6 +12,10 @@ The Advanced Filter is enabled by setting the property `enableAdvancedFilter = t
 ```{% frameworkTransform=true %}
 const gridOptions = {
     enableAdvancedFilter: true,
+    defaultColDef: {
+        // Include all columns in the Advanced Filter
+        filter: true,
+    },
 }
 ```
 

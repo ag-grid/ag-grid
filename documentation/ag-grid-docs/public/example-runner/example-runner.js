@@ -21,8 +21,8 @@
     const VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
     const VERSION_PATTERN = '^\\d+\\.\\d+\\.\\d+(?:-[\\w.-]+)?(?:\\+[\\w.-]+)?$';
     const BUILD_TOKENS = {
-        production: { '?ag-dev-query': '', '&ag-dev-appended': '' },
-        development: { '?ag-dev-query': '?dev', '&ag-dev-appended': '&dev' },
+        production: { '?ag-dev-query': '', '&ag-dev-appended': '', '.ag-dev-suffix': '.prod' },
+        development: { '?ag-dev-query': '?dev', '&ag-dev-appended': '&dev', '.ag-dev-suffix': '' },
     };
 
     const COMPILER_OPTION_ENUMS = { module: 'ModuleKind', target: 'ScriptTarget', jsx: 'JsxEmit' };

@@ -82,6 +82,55 @@ test.agExample(import.meta, () => {
         expect(Math.abs(popupDelta - inputDelta)).toBeLessThanOrEqual(24);
     });
 
+    test.eachFramework('Shift + F2 opens the note for the focused cell', async ({ agIdFor, page }) => {
+        const notedCell = agIdFor.cell('1', 'athlete');
+        await notedCell.click();
+
+        await page.keyboard.press('Shift+F2');
+
+        const popup = page.locator('.ag-notes-popup');
+        await expect(popup).toBeVisible();
+        await expect(popup.locator('.ag-text-area-input')).toHaveValue(
+            'Confirm the athlete biography before the next review.'
+        );
+    });
+
+    test.eachFramework('Shift + F2 creates a note on a cell that has none', async ({ agIdFor, page }) => {
+        const emptyCell = agIdFor.cell('2', 'athlete');
+        await emptyCell.click();
+
+        await page.keyboard.press('Shift+F2');
+
+        // A new, empty note editor opens for the focused cell.
+        const popup = page.locator('.ag-notes-popup');
+        await expect(popup).toBeVisible();
+        await expect(popup.locator('.ag-text-area-input')).toHaveValue('');
+    });
+
+    test.eachFramework('The context menu offers the note actions', async ({ agIdFor, page }) => {
+        // A cell with a note offers edit and remove.
+        await agIdFor.cell('1', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menuOption('Edit Note')).toBeVisible();
+        await expect(agIdFor.menuOption('Remove Note')).toBeVisible();
+        await page.keyboard.press('Escape');
+
+        // A cell without one offers Add Note instead.
+        await agIdFor.cell('2', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menuOption('Add Note')).toBeVisible();
+        await expect(agIdFor.menuOption('Edit Note')).toHaveCount(0);
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('Remove Note clears the note and its indicator', async ({ agIdFor, page }) => {
+        const notedCell = agIdFor.cell('1', 'athlete');
+        await expect(notedCell).toHaveClass(/ag-has-cell-notes/);
+
+        await notedCell.click({ button: 'right' });
+        await agIdFor.menuOption('Remove Note').click();
+
+        await expect(notedCell).not.toHaveClass(/ag-has-cell-notes/);
+    });
+
     test.eachFramework('Grid renders correct data', async ({ agIdFor }) => {
         await expect(agIdFor.cell('1', 'athlete')).toContainText('Michael Phelps');
         await expect(agIdFor.cell('2', 'athlete')).toContainText('Usain Bolt');

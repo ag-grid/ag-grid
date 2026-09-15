@@ -24,6 +24,28 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
     });
 
+    test.eachFramework('age shows the filter tab first', async ({ agIdFor, page }) => {
+        await agIdFor.headerCell('age').hover();
+        await agIdFor.headerCellMenuButton('age').click();
+        const menu = page.locator('.ag-tabs.ag-menu');
+        await expect(menu).toBeVisible();
+        // menuTabs is ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'] - all three, filter first
+        await expect(menu.locator('.ag-tab')).toHaveCount(3);
+        await expect(menu.locator('.ag-tab').first()).toHaveAttribute('aria-label', 'filter');
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('year shows only the general tab', async ({ agIdFor, page }) => {
+        await agIdFor.headerCell('year').hover();
+        await agIdFor.headerCellMenuButton('year').click();
+        const menu = page.locator('.ag-tabs.ag-menu');
+        await expect(menu).toBeVisible();
+        // menuTabs is ['generalMenuTab'] only
+        await expect(menu.locator('.ag-tab')).toHaveCount(1);
+        await expect(menu.locator('.ag-tab').first()).toHaveAttribute('aria-label', 'general');
+        await page.keyboard.press('Escape');
+    });
+
     test.eachFramework('sport suppresses the menu entirely', async ({ agIdFor }) => {
         await agIdFor.headerCell('sport').hover();
         await expect(agIdFor.headerCellMenuButton('sport')).toHaveCount(0);

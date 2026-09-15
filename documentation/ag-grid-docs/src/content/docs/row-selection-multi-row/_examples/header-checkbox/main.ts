@@ -8,13 +8,20 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+import { StatusBarModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([PaginationModule, RowSelectionModule, QuickFilterModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+    PaginationModule,
+    RowSelectionModule,
+    QuickFilterModule,
+    ClientSideRowModelModule,
+    StatusBarModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -36,10 +43,19 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     pagination: true,
-    paginationAutoPageSize: true,
+    // The default page size of 100 would fit the whole data set on one page, making 'currentPage'
+    // indistinguishable from 'all'.
+    paginationPageSize: 20,
     rowSelection: {
         mode: 'multiRow',
         selectAll: 'all',
+    },
+    statusBar: {
+        statusPanels: [
+            { statusPanel: 'agSelectedRowCountComponent', align: 'right' },
+            { statusPanel: 'agFilteredRowCountComponent', align: 'right' },
+            { statusPanel: 'agTotalRowCountComponent', align: 'right' },
+        ],
     },
 };
 
@@ -49,6 +65,10 @@ function onQuickFilterChanged() {
 
 function updateSelectAllMode() {
     const selectAll = document.querySelector<HTMLSelectElement>('#select-all-mode')?.value ?? 'all';
+
+    // Clear the existing selection so the new mode's behaviour is seen from a clean state,
+    // rather than the counts still reflecting rows selected under the previous mode.
+    gridApi.deselectAll();
 
     gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',

@@ -64,7 +64,9 @@
         padding-bottom: $spacing-size-2;
         border-bottom: 1px solid var(--color-border-primary);
         font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
+        // Body track on a heading, deliberately: it matches what `_typography.scss` gives h1 at this
+        // step. See the TODO on --text-lh-body-2xl in _root.scss.
+        line-height: var(--text-lh-body-2xl);
         // The design system's heading weight comes from a `:where()` rule, which carries no
         // specificity at all, so the vendor's `[ez-policy] h1 { font-weight: inherit }` wins and the
         // heading renders at body weight. Restate it.
@@ -79,7 +81,7 @@
     :global([ez-policy] p),
     :global([ez-policy] ul),
     :global([ez-policy] ol) {
-        line-height: var(--text-lh-base);
+        line-height: var(--text-lh-ratio-base);
 
         &:not(:last-child) {
             margin-bottom: $spacing-size-5;
@@ -99,13 +101,13 @@
     :global([ez-policy] h2.enzuzo-privacyPolicySubHeader) {
         margin-top: $spacing-size-10;
         font-size: var(--text-fs-xl);
-        line-height: var(--text-lh-xl);
+        line-height: var(--text-lh-display-xl);
     }
 
     :global([ez-policy] h3.enzuzo-privacyPolicySubHeader) {
         margin-top: $spacing-size-8;
         font-size: var(--text-fs-lg);
-        line-height: var(--text-lh-lg);
+        line-height: var(--text-lh-display-lg);
     }
 
     // One container per cookie category. The tables are two columns of short values, so they fit
