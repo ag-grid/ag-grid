@@ -15,11 +15,13 @@
     }
 }
 
-.isPaused .pauseButton {
+/* The player's state lives in a data-attribute rather than a class, so that video-player.js can
+set it without knowing the hashed names this module compiles its classes to. */
+.videoOuter[data-playing] .pauseButton {
     opacity: 1;
 }
 
-.isPlaying .playButton {
+.videoOuter:not([data-playing]) .playButton {
     opacity: 1;
 }
 
