@@ -92,7 +92,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     public isPendingInference: boolean = false;
     private hasObjectValueParser: boolean;
     private hasObjectValueFormatter: boolean;
-    private initialData: any | null | undefined;
+    private initialData: any[] | null | undefined;
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
     // keep track of any column state updates whilst waiting for data types to be inferred
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
@@ -340,14 +340,32 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!field) {
             return undefined;
         }
+        const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
+        const getValue = (data: any) => {
+            if (data == null) {
+                return undefined;
+            }
+            return fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
+        };
+
+        // OPTIMIZATION: scanning stops at the first value, so a densely populated column reads one row
         let value: any;
-        const initialData = this.getInitialData();
-        if (initialData) {
-            const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
-            value = fieldContainsDots ? _getValueUsingDotField(initialData, field) : initialData[field];
+        const rowData = this.getInitialRowData();
+        if (rowData) {
+            for (let i = 0, len = rowData.length; value == null && i < len; ++i) {
+                value = getValue(rowData[i]);
+            }
         } else {
-            this.initWaitForRowData(colId);
+            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
+            if (!rowNodes?.length) {
+                this.initWaitForRowData(colId);
+                return undefined;
+            }
+            for (let i = 0, len = rowNodes.length; value == null && i < len; ++i) {
+                value = getValue(rowNodes[i].data);
+            }
         }
+
         if (value == null) {
             return undefined;
         }
@@ -358,19 +376,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return matchedType ?? 'object';
     }
 
-    private getInitialData(): any {
+    /** The row data to infer from, or `null` if only the row nodes are available. */
+    private getInitialRowData(): any[] | null {
         const rowData = this.gos.get('rowData');
         if (rowData?.length) {
-            return rowData[0];
-        } else if (this.initialData) {
-            return this.initialData;
-        } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
-            if (rowNodes?.length) {
-                return rowNodes[0].data;
-            }
+            return rowData;
         }
-        return null;
+        return this.initialData?.length ? this.initialData : null;
     }
 
     private initWaitForRowData(colId: string): void {
@@ -385,14 +397,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colAutosize.shouldQueueResizeOperations = true;
         }
         const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: (event) => {
-                const { firstRowData } = event;
-                if (!firstRowData) {
+            rowDataUpdateStarted: () => {
+                const rowData = (this.beans.rowModel as IClientSideRowModel)._updatingRowData;
+                if (!rowData?.length) {
                     return;
                 }
                 destroyFunc?.();
                 this.isPendingInference = false;
-                this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
+                this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
                 this.columnStateUpdatesPendingInference = Object.create(null);
                 if (columnTypeOverridesExist) {
                     colAutosize?.processResizeOperations();
@@ -404,9 +416,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         });
     }
 
-    private processColumnsPendingInference(firstRowData: any, columnTypeOverridesExist: boolean): void {
+    private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
         const beans = this.beans;
-        this.initialData = firstRowData;
+        // the row nodes are not built yet, so the updating row data is the only source to infer from
+        this.initialData = rowData;
         const state: ColumnState[] = [];
         this.destroyColumnStateUpdateListeners();
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);

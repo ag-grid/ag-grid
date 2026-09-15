@@ -53,6 +53,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** True when grouping or tree data is active. Updated after grouping stage runs. */
     public hierarchical: boolean = false;
 
+    /** Row data of an update in progress, only set whilst `rowDataUpdateStarted` is dispatched */
+    public _updatingRowData: any[] | null = null;
+
     /** Manages the row nodes, including creation, update, and removal. */
     private nodeManager: ClientSideNodeManager<any> | undefined = undefined;
 
