@@ -368,6 +368,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             this.rowNodesByIndex[i] = row;
         }
 
+        this.beans.dataTypeSvc?.onRowsReceived(Object.values(rowData));
+
         if (!this.viewportChangedContext) {
             this.eventSvc.dispatchEvent({
                 type: 'modelUpdated',

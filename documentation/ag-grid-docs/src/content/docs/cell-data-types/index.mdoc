@@ -42,7 +42,7 @@ The following example demonstrates the pre-defined cell data types (most of whic
 
 ## Inferring Data Types
 
-By default, when using the Client-Side Row Model, the grid will infer cell data types the first time that row data is passed into the grid given the following conditions:
+By default the grid will infer cell data types the first time that row data reaches the grid, given the following conditions:
 
 **The column must:**
 
@@ -58,6 +58,19 @@ If any condition is not met, no cell data type will be inferred. You can still s
 
 The type is inferred from the first non-null value in the column, so a column whose leading rows are empty is still typed from the values further down.
 
+Inference applies to every row model, and resolves once from the first batch of rows the row model delivers:
+
+| Row Model                                | Data inferred from                                 |
+| ---------------------------------------- | -------------------------------------------------- |
+| [Client-Side](./row-models/#client-side) | The `rowData` grid option                          |
+| [Server-Side](./row-models/#server-side) | The first block of rows returned by the datasource |
+| [Infinite](./row-models/#infinite)       | The first block of rows returned by the datasource |
+| [Viewport](./row-models/#viewport)       | The first rows pushed by the datasource            |
+
+A column is never re-inferred once resolved, so later values of a different type do not change it, and a column with no value in that batch falls back to `cellDataType: false` and stays there — declare `cellDataType` explicitly on such a column.
+
+A response carrying no rows resolves nothing: the columns stay pending, behaving as `cellDataType: false`, and are typed by the first response that does contain rows. So a datasource whose first request fails or comes back empty still gets inferred types once data arrives.
+
 Where inference is possible but the values do not match any pre-defined type, it defaults to `'object'`.
 
 ### Disabling Inference
@@ -67,10 +80,6 @@ Set `cellDataType: false` on an individual column, or on the [Default Column Def
 ### Date vs DateTime
 
 Because `'dateTime'` values are `Date` objects — the same as `'date'` — the grid cannot distinguish between them during inference. To use the higher-precision `'dateTime'` type, set `cellDataType: 'dateTime'` explicitly on the column definition.
-
-{% note %}
-Inference only works with the Client-Side Row Model. For other row models, define `cellDataType` explicitly on each column.
-{% /note %}
 
 ## Pre-Defined Cell Data Types
 
