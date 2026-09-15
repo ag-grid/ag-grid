@@ -62,8 +62,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('date filters open and filter the tree', async ({ agIdFor, page }) => {
         await agIdFor.headerFilterButton('modified').click();
         await expect(agIdFor.dateFilterInstanceInput({ source: 'column-filter' })).toBeVisible();
-        // Closes the popup - a plain cell carries no expand chevron for the click to land on.
-        await agIdFor.cell(DOCUMENTS, 'size').click();
+        await page.keyboard.press('Escape');
 
         await agIdFor.headerFilterButton('created').click();
         const createdFilter = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
@@ -72,7 +71,7 @@ test.agExample(import.meta, () => {
         // Report.pdf, under Documents > Work > ProjectBeta, is the only file created on this date.
         await createdFilter.fill('2023-06-22');
         await createdFilter.dispatchEvent('input');
-        await agIdFor.cell(DOCUMENTS, 'size').click();
+        await page.keyboard.press('Escape');
 
         // Desktop holds no match, so its disappearance marks the filter as applied.
         await expect(agIdFor.autoGroupCell(DESKTOP)).toHaveCount(0);
@@ -96,7 +95,7 @@ test.agExample(import.meta, () => {
         // MeetingNotes_August.pdf is the only row this size, and no group's `sum` aggregation matches it.
         await sizeFilter.fill('460800');
         await sizeFilter.dispatchEvent('input');
-        await agIdFor.cell(DESKTOP, 'size').click();
+        await page.keyboard.press('Escape');
 
         await expect(agIdFor.autoGroupCell(DOCUMENTS)).toHaveCount(0);
         await agIdFor.autoGroupContracted(DESKTOP).click();
