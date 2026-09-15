@@ -36,8 +36,8 @@ import CustomersSection from '@ag-website-shared/components/landing-pages/sectio
 import ExamplesSection from '@ag-website-shared/components/landing-pages/sections/ExamplesSection.astro';
 import FAQSection from '@ag-website-shared/components/landing-pages/sections/FAQSection.astro';
 import ContactSection from '@ag-website-shared/components/landing-pages/sections/ContactSection.astro';
+import VideoPlayer from '@ag-website-shared/components/video/VideoPlayer.astro';
 import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
-import { Video } from '@ag-website-shared/components/video/Video';
 import { InstallText } from '@ag-website-shared/components/install-text';
 import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
 import { TrialButton } from '@ag-website-shared/components/trial-licence-modal/TrialButton';
@@ -205,9 +205,8 @@ const themeBuilderVideo = isEnterprise
                             <div class={styles.themeBuilderContainer}>
                                 {themeBuilderVideo && (
                                     <div class={styles.themeBuilderVideoWrapper}>
-                                        <Video
-                                            client:load
-                                            videoSrc={themeBuilderVideo.imageSrc!}
+                                        <VideoPlayer
+                                            videoSrc={themeBuilderVideo.imageSrc}
                                             darkModeVideoSrc={themeBuilderVideo.darkModeImageSrc}
                                             autoplay={true}
                                             showPlayPauseButtons={true}
