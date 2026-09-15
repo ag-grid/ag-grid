@@ -89,8 +89,6 @@ Often there is a need to use a custom method to fill values instead of simply co
 In these scenarios, the `cellSelection.handle.setFillValue` callback should be used.
 
 ```{% frameworkTransform=true %}
-const daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
 const gridOptions = {
     cellSelection: {
         handle: {
@@ -100,6 +98,7 @@ const gridOptions = {
                     return params.useDefault();
                 }
 
+                const daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 const lastValue = params.values[params.values.length - 1];
                 const idxOfLast = daysList.indexOf(lastValue);
                 return params.useValue(daysList[(idxOfLast + 1) % daysList.length]);
