@@ -85,9 +85,9 @@ describe('grouping aggregation: columns derived from aggregates', () => {
         expect(groupCells(api, 'row-group-group-B')).toMatchObject({ a: '5', b: '50', [TOTAL_COL_ID]: '55' });
     });
 
-    // The edit path re-aggregates through endDeferred rather than the refresh pipeline, and refreshes
-    // the edited row's group ancestors itself — so it covers the derived column without the pipeline.
-    test('a plain cell edit refreshes the derived column on the group row', async () => {
+    // Characterisation, not a guard on the sweep: endDeferred refreshes the edited row's ancestors
+    // itself, so this passes without the sweep. It pins that the exclusion did not break that path.
+    test('characterisation: a plain cell edit refreshes the derived column on the group row', async () => {
         const api = await createGrid([
             { group: 'A', a: 1, b: 10 },
             { group: 'A', a: 2, b: 20 },

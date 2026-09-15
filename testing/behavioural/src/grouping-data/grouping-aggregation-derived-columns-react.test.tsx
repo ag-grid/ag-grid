@@ -61,11 +61,11 @@ describe('React: columns derived from aggregates', () => {
         });
     });
 
-    function renderGrid(onGridReady: (event: GridReadyEvent<IRow>) => void) {
+    function renderGrid(onGridReady: (event: GridReadyEvent<IRow>) => void, rowData = ROW_DATA) {
         return render(
             <div style={{ height: 400, width: 600 }}>
                 <AgGridReact<IRow>
-                    rowData={ROW_DATA}
+                    rowData={rowData}
                     columnDefs={COLUMN_DEFS}
                     getRowId={({ data }) => `${data.country}-${data.year}`}
                     onGridReady={onGridReady}
@@ -82,7 +82,9 @@ describe('React: columns derived from aggregates', () => {
             ],
         });
 
-    test('the derived column follows the aggregate when the filter is applied in a later task', async () => {
+    // Control for the same-task cases below: by a later task React has mounted the row, so this
+    // passes with or without the fix. It is here to show the same-task failure is about timing.
+    test('control: the derived column follows the aggregate when the filter is applied in a later task', async () => {
         let gridApi: GridApi<IRow> | undefined;
         const rendered = renderGrid((event) => {
             gridApi = event.api;
@@ -112,5 +114,18 @@ describe('React: columns derived from aggregates', () => {
 
         await waitFor(() => expect(cellValues(rendered.container, 'gold')).toEqual(['40', '20']));
         expect(cellValues(rendered.container, 'double')).toEqual(['80', '40']);
+    });
+
+    // A transaction rather than a filter moves the total, so the aggregate changes without the
+    // row set changing.
+    test('the derived column follows the aggregate when row data changes in the same task', async () => {
+        const rowData = ROW_DATA.map((row) => ({ ...row }));
+        const rendered = renderGrid((event) => {
+            groupAndAggregate(event);
+            event.api.applyTransaction({ update: [{ ...rowData[0], gold: 110 }] });
+        }, rowData);
+
+        await waitFor(() => expect(cellValues(rendered.container, 'gold')).toEqual(['170', '35']));
+        expect(cellValues(rendered.container, 'double')).toEqual(['340', '70']);
     });
 });

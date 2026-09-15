@@ -58,7 +58,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             this.rowCtrl.refreshPinnedCellGroupWidths();
         }
 
-        // Create notes feature after component is attached — creation triggers initialise() → refresh()
+        // Create notes feature after component is attached — creation triggers initialise() → refresh().
+        // Runs once per container, so the previous one is released rather than left unreachable.
+        this.notesFeature?.destroy();
         this.notesFeature = this.beans.notesSvc?.createFullWidthNotesFeature(this.rowCtrl);
     }
 

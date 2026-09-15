@@ -62,8 +62,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
     private hadAgg = false;
 
-    /** The value columns the last pass keyed aggData by. Held as the service's own ref-stable array, so
-     *  identity alone answers whether the keys moved — and nothing extra is retained. */
+    /** The value columns the last full pass keyed aggData by, held as the service's own ref-stable array
+     *  so identity alone answers whether the keys moved. */
     private prevValueColumns: AgColumn[] | null = null;
 
     public override destroy(): void {
@@ -72,26 +72,29 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     }
 
     /**
-     * Repaints the rendered cells whose value can depend on an aggregate: a `valueGetter` reading a
-     * total, or a Show Values As mode. Neither names an aggData key, so the cell-changed events
-     * `setAggData` fires never reach them, and which rows are affected cannot be known without running
-     * the getters — one may read any ancestor's total. Narrowing by column is the sound half.
-     * `force: false`, so only a value that actually moved repaints. Scanned rather than cached:
-     * `showValuesAs` is toggled on the column itself, leaving the displayed-column array ref untouched.
+     * A `valueGetter` or Show Values As mode reads a total without naming an aggData key, so the
+     * cell-changed events `setAggData` fires never reach it. Which rows moved cannot be known without
+     * running the getters (one may read any ancestor's total), so this narrows by column only.
+     * A `cellRenderer` or `valueFormatter` reading aggData is outside that boundary and stays stale.
      */
     public refreshAggregateDependentCells(excludeNodes?: Set<RowNode> | null, excludePath?: ChangedPath | null): void {
+        // No pass has produced aggData, so nothing here can derive from one.
+        if (!this.hadAgg) {
+            return;
+        }
         const beans = this.beans;
         const displayed = beans.visibleCols.allCols;
         let anyDependent = false;
-        for (let i = 0, len = displayed.length; i < len && !anyDependent; ++i) {
-            const col = displayed[i];
-            anyDependent = col.valueGetter != null || col.showValuesAs != null;
+        for (let i = 0, len = displayed.length; i < len; ++i) {
+            if (isAggDependentCol(displayed[i])) {
+                anyDependent = true;
+                break;
+            }
         }
         if (!anyDependent) {
             return;
         }
 
-        const params = { force: false, newData: false };
         const rowCtrls = beans.rowRenderer.getAllRowCtrls();
         for (let r = 0, rLen = rowCtrls.length; r < rLen; ++r) {
             const rowCtrl = rowCtrls[r];
@@ -102,9 +105,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             const cellCtrls = rowCtrl.getAllCellCtrls();
             for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
                 const cellCtrl = cellCtrls[c];
-                const column = cellCtrl.column;
-                if (column.valueGetter != null || column.showValuesAs != null) {
-                    cellCtrl.refreshOrDestroyCell(params);
+                if (isAggDependentCol(cellCtrl.column)) {
+                    cellCtrl.refreshOrDestroyCell(AGG_DEPENDENT_REFRESH_PARAMS);
                 }
             }
         }
@@ -184,16 +186,18 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // Resolve pivot columns — null when pivot is inactive or has no result columns.
         const pivotData = resolvePivotColumns(colModel, beans.pivotResultCols, aggFuncSvc!, beans);
 
-        // Pivot keys its result by pivot result columns and a user aggFunc by whatever it returns, so only
-        // the plain path knows the keys up front, and a pass that did not use them must be forgotten rather
-        // than compared against. `valueColumns` is ref-stable until the set is edited, so identity answers
-        // whether old aggData can hold a key these columns no longer name.
+        // Only the plain path knows aggData's keys up front; `valueColumns` is ref-stable until the set
+        // is edited, so identity answers whether old aggData holds a key these columns no longer name.
         const prevValueColumns = this.prevValueColumns;
         let eventCols: AggDataEventCols | undefined;
         if (pivotData || userAggFunc || !valueColumns) {
             this.prevValueColumns = null;
         } else {
-            this.prevValueColumns = valueColumns;
+            // Only a pass that traverses every group may retire the check: a restricted one would
+            // retire it on behalf of groups it never rekeyed.
+            if (!rootOnly && !changedPath) {
+                this.prevValueColumns = valueColumns;
+            }
             eventCols = { cols: valueCols, checkRemoved: prevValueColumns !== valueColumns };
         }
 
@@ -486,3 +490,8 @@ const resolvePivotColumns = (
     resolved.length = count;
     return resolved;
 };
+
+/** A column whose value can come from an aggregate instead of from its own cell's data. */
+const isAggDependentCol = (col: AgColumn): boolean => col.valueGetter != null || col.showValuesAs != null;
+
+const AGG_DEPENDENT_REFRESH_PARAMS = { force: false, newData: false };

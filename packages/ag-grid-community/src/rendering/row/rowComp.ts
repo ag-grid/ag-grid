@@ -297,10 +297,10 @@ export class RowComp extends Component {
         for (const cellCtrl of cellCtrls) {
             const cellComp = this.cellComps.get(cellCtrl.instanceId);
             if (cellComp) {
-                const pinned = cellCtrl.column.getPinned();
-                if (pinned === 'left') {
+                const lane = this.rowCtrl.getCellLane(cellCtrl);
+                if (lane === 'left') {
                     leftElementsInOrder.push(cellComp.getGui());
-                } else if (pinned === 'right') {
+                } else if (lane === 'right') {
                     rightElementsInOrder.push(cellComp.getGui());
                 } else {
                     centerElementsInOrder.push(cellComp.getGui());
@@ -321,11 +321,11 @@ export class RowComp extends Component {
 
     private newCellComp(cellCtrl: CellCtrl): void {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
-        const pinned = cellCtrl.column.getPinned();
+        const lane = this.rowCtrl.getCellLane(cellCtrl);
         let parent: HTMLElement | null | undefined;
-        if (pinned === 'left') {
+        if (lane === 'left') {
             parent = this.ePinnedLeftCells;
-        } else if (pinned === 'right') {
+        } else if (lane === 'right') {
             parent = this.ePinnedRightCells;
         } else {
             parent = this.eScrollingCells;

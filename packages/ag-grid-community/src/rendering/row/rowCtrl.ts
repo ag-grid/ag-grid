@@ -812,6 +812,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.recreateCell(cellCtrl);
     }
 
+    /**
+     * Which DOM lane a cell renders into, which is not what the cell is pinned to: print layout flows
+     * every column through the centre lane and detaches the pinned ones. Positional code wants
+     * `column.pinned`, which stays true under print.
+     */
+    public getCellLane(cellCtrl: CellCtrl): ColumnPinnedType {
+        return this.printLayout ? null : cellCtrl.column.pinned;
+    }
+
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         switch (eventName) {
             case 'dblclick':

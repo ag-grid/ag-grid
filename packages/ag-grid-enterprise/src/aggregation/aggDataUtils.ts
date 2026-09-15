@@ -16,13 +16,18 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
     return Array.isArray(mapPointer) ? mapPointer : [];
 };
 
+/** An aggData key and the column it came from. Structurally a {@link ResolvedValueColumn}. */
+export interface AggDataEventCol {
+    readonly colId: string;
+    readonly column: AgColumn;
+}
+
 /**
- * The columns an aggData object is keyed by, resolved once per aggregation. Lets the per-row event
- * loop skip an `Object.keys` allocation and a `colsById` lookup per column. Only the non-pivot path
- * can supply it: pivot keys its result by pivot result columns instead.
+ * The columns an aggData object is keyed by, resolved once per aggregation, so the per-row event loop
+ * costs no `Object.keys` allocation. Only the non-pivot path can supply it.
  */
 export interface AggDataEventCols {
-    readonly cols: readonly { readonly colId: string; readonly column: AgColumn }[];
+    readonly cols: readonly AggDataEventCol[];
     /** Whether the previous aggData can hold a key `cols` no longer names, so removals need detecting. */
     readonly checkRemoved: boolean;
 }

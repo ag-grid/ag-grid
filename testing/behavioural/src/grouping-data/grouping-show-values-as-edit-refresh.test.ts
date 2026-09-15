@@ -6,8 +6,8 @@ import { ClientSideRowModelModule, NumberEditorModule } from 'ag-grid-community'
 import { RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 /**
- * A group row sits on the edited leaf's changed path, and showValuesAsSvc.refreshRenderedCellsExcept
- * skips those rows on the assumption endDeferred already refreshed them. Guards that assumption.
+ * A group row sits on the edited leaf's changed path, so the post-edit sweep skips it on the
+ * assumption endDeferred already refreshed it. Guards that assumption.
  */
 describe('showValuesAs on a group row after an edit', () => {
     const gridsManager = new TestGridsManager({

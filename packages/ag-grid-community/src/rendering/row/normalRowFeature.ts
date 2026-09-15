@@ -27,12 +27,6 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         super();
     }
 
-    public override destroy(): void {
-        super.destroy();
-        // destroyCells only runs on the second destroy pass, so the cell ctrls would outlive the row.
-        this.allCellCtrls = null;
-    }
-
     // Cell ctrls outlive their comps: React mounts a row a task later, and a model change in between
     // must still reach the ctrls, or they render the value they were constructed with.
     public postConstruct(): void {
@@ -94,17 +88,10 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public destroyCells(): void {
-        const destroy = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
-            for (const c of ctrls.list) {
-                c.destroy();
-            }
-            return { list: [], map: {} };
-        };
-
         this.allCellCtrls = null;
-        this.centerCellCtrls = destroy(this.centerCellCtrls);
-        this.leftCellCtrls = destroy(this.leftCellCtrls);
-        this.rightCellCtrls = destroy(this.rightCellCtrls);
+        this.centerCellCtrls = destroyCellCtrls(this.centerCellCtrls);
+        this.leftCellCtrls = destroyCellCtrls(this.leftCellCtrls);
+        this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -179,8 +166,9 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const presentedColsService = this.beans.visibleCols;
         if (rowCtrl.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.allCols);
-            this.leftCellCtrls = { list: [], map: {} };
-            this.rightCellCtrls = { list: [], map: {} };
+            // Print layout flows every column through the centre, so the pinned ctrls are orphaned.
+            this.leftCellCtrls = destroyCellCtrls(this.leftCellCtrls);
+            this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);
         } else {
             const centerCols = colViewport.getColsWithinViewport(rowCtrl.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
@@ -371,3 +359,11 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         });
     }
 }
+
+/** Destroys every ctrl in a lane and returns the empty replacement. */
+const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
+    for (const c of ctrls.list) {
+        c.destroy();
+    }
+    return { list: [], map: {} };
+};

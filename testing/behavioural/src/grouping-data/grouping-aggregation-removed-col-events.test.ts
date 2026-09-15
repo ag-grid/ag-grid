@@ -60,8 +60,8 @@ describe('grouping aggregation: events for a column dropped from aggregation', (
         expect(removed).toEqual([['a', 3]]);
     });
 
-    // Dropping the last value column clears aggData outright rather than rekeying it, which is a
-    // separate branch from the swap above.
+    // Takes the no-value-columns early return, which passes no event columns at all, so this guards
+    // that branch rather than the removal check the swap above drives.
     test('dropping the last value column reports every aggregate as removed', async () => {
         const api = await gridsManager.createGridAndWait('agg-cleared', {
             columnDefs: [
