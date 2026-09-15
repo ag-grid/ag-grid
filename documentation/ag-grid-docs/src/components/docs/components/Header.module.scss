@@ -47,7 +47,7 @@
     align-self: baseline;
     font-size: var(--text-fs-base);
     font-weight: var(--text-semibold);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-body-base);
     color: var(--color-text-brand-primary);
 }
 
@@ -58,7 +58,7 @@
     justify-self: start;
     font-size: var(--text-fs-sm);
     font-weight: var(--text-regular);
-    line-height: var(--text-lh-sm);
+    line-height: var(--text-lh-body-sm);
     color: var(--color-text-tertiary);
 }
 
