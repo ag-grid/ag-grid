@@ -1,33 +1,42 @@
-import { clickGroupValue, expandGroups, expect, orderedValues, test } from '@utils/grid/test-utils';
+import { expandGroupRows, expect, orderedValues, test, treeFillerId } from '@utils/grid/test-utils';
 
 const GROUP_COL = 'ag-Grid-AutoColumn';
 
-test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // isGroupOpenByDefault opens: Documents (level 0), Work (level 1), ProjectBeta (level 2)
-        const groupValues = page.locator('.ag-group-value');
+// Groups here are all fillers, keyed by path; leaves have no getRowId, so they fall back to their
+// `rowData` index.
+const DESKTOP = treeFillerId(['Desktop']);
+const DOCUMENTS = treeFillerId(['Documents']);
+const WORK = treeFillerId(['Documents', 'Work']);
+const PROJECT_BETA = treeFillerId(['Documents', 'Work', 'ProjectBeta']);
+const DESKTOP_PROJECT_ALPHA = treeFillerId(['Desktop', 'ProjectAlpha']);
+const REPORT_PDF = '7';
+const BUDGET_XLSX = '8';
+const DESKTOP_PROPOSAL_DOCX = '0';
 
-        // Documents > Work > ProjectBeta should be expanded, showing children
-        await expect(groupValues.filter({ hasText: 'Documents' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'Work' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'ProjectBeta' }).first()).toBeVisible();
+test.agExample(import.meta, () => {
+    test.eachFramework('Example', async ({ agIdFor }) => {
+        // isGroupOpenByDefault opens: Documents (level 0), Work (level 1), ProjectBeta (level 2)
+        await expect(agIdFor.autoGroupExpanded(DOCUMENTS)).toBeVisible();
+        await expect(agIdFor.autoGroupExpanded(WORK)).toBeVisible();
+        await expect(agIdFor.autoGroupExpanded(PROJECT_BETA)).toBeVisible();
 
         // ProjectBeta children should be visible
-        await expect(groupValues.filter({ hasText: 'Report.pdf' }).first()).toBeVisible();
-        await expect(groupValues.filter({ hasText: 'Budget.xlsx' }).first()).toBeVisible();
+        await expect(agIdFor.autoGroupCell(REPORT_PDF)).toContainText('Report.pdf', { useInnerText: true });
+        await expect(agIdFor.autoGroupCell(BUDGET_XLSX)).toContainText('Budget.xlsx', { useInnerText: true });
 
         // Desktop should be collapsed (not opened by default), children not visible
-        await expect(groupValues.filter({ hasText: 'Proposal.docx' })).toHaveCount(0);
+        await expect(agIdFor.autoGroupContracted(DESKTOP)).toBeVisible();
+        await expect(agIdFor.autoGroupCell(DESKTOP_PROJECT_ALPHA)).toHaveCount(0);
+        await expect(agIdFor.autoGroupCell(DESKTOP_PROPOSAL_DOCX)).toHaveCount(0);
     });
 
     // The date and number filters each need their own module registered; without it the popup throws on
     // open instead of appearing. The columns name their filters, so every framework gets the same one.
     test.eachFramework('date filters open and filter the tree', async ({ agIdFor, page }) => {
-        const groupValues = page.locator('.ag-group-value');
-
         await agIdFor.headerFilterButton('modified').click();
         await expect(agIdFor.dateFilterInstanceInput({ source: 'column-filter' })).toBeVisible();
-        await clickGroupValue(page, 'Documents'); // closes the popup - a surviving group is a stable target
+        // Closes the popup - a plain cell carries no expand chevron for the click to land on.
+        await agIdFor.cell(DOCUMENTS, 'size').click();
 
         await agIdFor.headerFilterButton('created').click();
         const createdFilter = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
@@ -36,11 +45,11 @@ test.agExample(import.meta, () => {
         // Report.pdf, under Documents > Work > ProjectBeta, is the only file created on this date.
         await createdFilter.fill('2023-06-22');
         await createdFilter.dispatchEvent('input');
-        await clickGroupValue(page, 'Documents');
+        await agIdFor.cell(DOCUMENTS, 'size').click();
 
         // Desktop holds no match, so its disappearance marks the filter as applied.
-        await expect(groupValues.filter({ hasText: 'Desktop' })).toHaveCount(0);
-        await expandGroups(page, ['Documents', 'Work', 'ProjectBeta']);
+        await expect(agIdFor.autoGroupCell(DESKTOP)).toHaveCount(0);
+        await expandGroupRows(agIdFor, [DOCUMENTS, WORK, PROJECT_BETA]);
 
         // Tree data keeps a matching leaf's whole ancestor path, though no group has a `created` of its own.
         // ProjectBeta's other child, Budget.xlsx, is a sibling of the match and so is dropped.
@@ -50,8 +59,6 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('the number filter on size filters the tree', async ({ agIdFor, page }) => {
-        const groupValues = page.locator('.ag-group-value');
-
         await agIdFor.headerFilterButton('size').click();
         const sizeFilter = agIdFor.numberFilterInstanceInput({ source: 'column-filter' });
         await expect(sizeFilter).toBeVisible();
@@ -59,10 +66,10 @@ test.agExample(import.meta, () => {
         // MeetingNotes_August.pdf is the only row this size, and no group's `sum` aggregation matches it.
         await sizeFilter.fill('460800');
         await sizeFilter.dispatchEvent('input');
-        await clickGroupValue(page, 'Desktop');
+        await agIdFor.cell(DESKTOP, 'size').click();
 
-        await expect(groupValues.filter({ hasText: 'Documents' })).toHaveCount(0);
-        await expandGroups(page, ['Desktop']);
+        await expect(agIdFor.autoGroupCell(DOCUMENTS)).toHaveCount(0);
+        await expandGroupRows(agIdFor, [DESKTOP]);
 
         // Desktop's other children, ToDoList.txt among them, are dropped on size.
         await expect(async () => {
