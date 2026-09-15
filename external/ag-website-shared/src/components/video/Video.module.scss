@@ -9,6 +9,13 @@
         max-width: 100%;
     }
 
+    /* The element carries no source of its own — video-player.js assigns the one the theme wants —
+    so it is source-less until that script runs, and stays that way when JavaScript is disabled.
+    Laying it out would give the <noscript> copy that renders instead an empty 300x150 sibling. */
+    video:not([src]) {
+        display: none;
+    }
+
     &.centered {
         display: flex;
         justify-content: center;

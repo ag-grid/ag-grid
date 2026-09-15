@@ -21,7 +21,8 @@ const { videoSrc, darkModeVideoSrc, autoplay = true, showPlayPauseButtons = true
     parser begins the element's resource selection as soon as it is inserted and then yields while
     it waits for the script, so the light file is already on the wire by the time the script could
     correct it. With nothing to select, the first resource the element loads is the right one. The
-    <noscript> copy keeps the video working without JavaScript, where the page is light anyway. */
+    <noscript> copy keeps the video working without JavaScript, where the page is light anyway;
+    Video.module.scss hides a source-less element, so only one of the two is ever laid out. */
 }
 <div
     class:list={[styles.videoOuter, { [styles.centered]: centered }]}
