@@ -60,16 +60,18 @@ The type is inferred from the first non-null value in the column, so a column wh
 
 Inference applies to every row model, and resolves once from the first batch of rows the row model delivers:
 
-| Row Model                                | Data inferred from                                 |
-| ---------------------------------------- | -------------------------------------------------- |
-| [Client-Side](./row-models/#client-side) | The `rowData` grid option                          |
-| [Server-Side](./row-models/#server-side) | The first block of rows returned by the datasource |
-| [Infinite](./row-models/#infinite)       | The first block of rows returned by the datasource |
-| [Viewport](./row-models/#viewport)       | The first rows pushed by the datasource            |
+| Row Model                                | Data inferred from                                      |
+| ---------------------------------------- | ------------------------------------------------------- |
+| [Client-Side](./row-models/#client-side) | The `rowData` grid option                               |
+| [Server-Side](./row-models/#server-side) | The first block of leaf rows returned by the datasource |
+| [Infinite](./row-models/#infinite)       | The first block of rows returned by the datasource      |
+| [Viewport](./row-models/#viewport)       | The first rows pushed by the datasource                 |
 
 A column is never re-inferred once resolved, so later values of a different type do not change it, and a column with no value in that batch falls back to `cellDataType: false` and stays there — declare `cellDataType` explicitly on such a column.
 
 A response carrying no rows resolves nothing: the columns stay pending, behaving as `cellDataType: false`, and are typed by the first response that does contain rows. So a datasource whose first request fails or comes back empty still gets inferred types once data arrives.
+
+Under the Server-Side Row Model with [Row Grouping](./server-side-model-grouping/), group rows carry only their group key and any aggregated values, so they say nothing about the columns populated on leaf rows. Inference therefore waits for a block of leaf rows, which arrives when a group is first expanded — until then the columns behave as `cellDataType: false`. [Tree Data](./server-side-model-tree-data/) rows hold the row's own data at every level, so they are inferred from directly.
 
 Where inference is possible but the values do not match any pre-defined type, it defaults to `'object'`.
 
