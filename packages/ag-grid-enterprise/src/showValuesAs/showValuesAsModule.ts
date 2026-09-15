@@ -1,6 +1,6 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
 
-import { AggregationModule } from '../aggregation/aggregationModule';
+import { AggregationStageModule } from '../aggregation/aggregationModule';
 import { VERSION } from '../version';
 import { ShowValuesAsService } from './showValuesAsService';
 
@@ -14,5 +14,6 @@ export const ShowValuesAsModule: _ModuleWithoutApi = {
     rowModels: ['clientSide'],
     beans: [ShowValuesAsService],
     icons: { showValuesAs: 'values-as' },
-    dependsOn: [AggregationModule],
+    // The transform reads aggData, which only AggregationStage writes: without it every cell is blank.
+    dependsOn: [AggregationStageModule],
 };

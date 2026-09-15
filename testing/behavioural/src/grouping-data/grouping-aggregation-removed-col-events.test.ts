@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { CellChangedEvent, IRowNode } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelApiModule, ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 /**
@@ -12,7 +12,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
  */
 describe('grouping aggregation: events for a column dropped from aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule, RowGroupingModule],
     });
 
     afterEach(() => gridsManager.reset());
@@ -95,5 +95,34 @@ describe('grouping aggregation: events for a column dropped from aggregation', (
 
         expect(groupNode!.aggData ?? {}).toEqual({});
         expect(removed).toEqual([['a', 3]]);
+    });
+
+    // Clearing the last aggregate only happens on a full refresh, which redraws the rows, so a getter
+    // reading the removed total is repainted without the post-aggregation sweep reaching it.
+    test('a getter reading a removed total blanks when the last value column goes', async () => {
+        const api = await gridsManager.createGridAndWait('agg-cleared-getter', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, hide: true },
+                { field: 'a', aggFunc: 'sum' },
+                { colId: 'derived', valueGetter: (params) => params.node?.parent?.aggData?.a ?? '' },
+            ],
+            groupDefaultExpanded: -1,
+            suppressAggFuncInHeader: true,
+            getRowId: ({ data }) => data.id,
+            rowData: [
+                { id: '1', group: 'A', a: 1 },
+                { id: '2', group: 'A', a: 2 },
+            ],
+        });
+
+        const derived = () =>
+            document.querySelector('#agg-cleared-getter [row-id="1"] [col-id="derived"]')?.textContent?.trim();
+
+        expect(derived()).toBe('3');
+
+        api.applyColumnState({ state: [{ colId: 'a', aggFunc: null }] });
+        await asyncSetTimeout(0);
+
+        expect(derived()).toBe('');
     });
 });

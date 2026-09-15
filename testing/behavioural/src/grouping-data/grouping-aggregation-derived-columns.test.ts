@@ -4,6 +4,7 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import type { CellValueChangedEvent, GridApi } from 'ag-grid-community';
 import {
+    CellSpanModule,
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ValueCacheModule,
@@ -137,5 +138,55 @@ describe('grouping aggregation: columns derived from aggregates', () => {
 
         expect(groupCells(api, 'row-group-country-A')).toMatchObject({ gold: '120' });
         expect(groupCells(api, 'row-group-country-A-sport-X')).toMatchObject({ gold: '90', share: '75%' });
+    });
+});
+
+/**
+ * A spanned cell is owned by a controller the row renderer keeps apart from the indexed one, so a node
+ * can be rendered twice. The post-edit sweep skips a node the edit flow claims to have refreshed, which
+ * leaves the spanned copy stale unless that refresh really did reach every controller.
+ */
+describe('grouping aggregation: a spanned column derived from an aggregate', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, CellSpanModule, RowGroupingModule],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    test('editing the first leaf of a span refreshes the spanned derived cell', async () => {
+        const api = await gridsManager.createGridAndWait('span-derived', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+                {
+                    colId: 'share',
+                    spanRows: true,
+                    valueGetter: (params) => {
+                        const total = params.node?.parent?.aggData?.gold;
+                        return total ? `T${total}` : '';
+                    },
+                },
+            ],
+            enableCellSpan: true,
+            groupDefaultExpanded: -1,
+            suppressAggFuncInHeader: true,
+            getRowId: ({ data }) => data.id,
+            rowData: [
+                { id: '1', country: 'A', gold: 10 },
+                { id: '2', country: 'A', gold: 30 },
+            ],
+        });
+
+        const spanned = () =>
+            [...document.querySelectorAll('#span-derived [col-id="share"]')]
+                .map((cell) => cell.textContent?.trim())
+                .filter((text) => text !== '');
+
+        expect(spanned()).toEqual(['T40']);
+
+        // The edited node is the span's owner, so it is the one the sweep is told to skip.
+        api.getRowNode('1')!.setDataValue('gold', 70);
+
+        await waitFor(() => expect(spanned()).toEqual(['T100']));
     });
 });
