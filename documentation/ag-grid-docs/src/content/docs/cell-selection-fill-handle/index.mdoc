@@ -120,8 +120,6 @@ Use the callback helpers to state how each cell should be handled:
 - `params.skipCell()` leaves the cell unchanged and does not add it to `params.values`.
 - `params.useDefault()` lets the grid calculate the value using its default Fill Handle behaviour.
 
-Returning a value directly from the callback instead of using a helper remains supported for backwards compatibility: returning `false` behaves like `params.useDefault()`, and returning any other value behaves like `params.useValue()`, except that a value equal to `params.currentCellValue` [skips the cell](#skipping-columns-in-the-fill-operation) instead.
-
 In the example below the **Day of the Week** column cycles through the days, while every other column is left to the grid's default behaviour. Select `Sunday` in the first row and drag the Fill Handle down. The callback's first result, `Monday`, already matches the value in the target cell; `params.useValue('Monday')` still adds it to the sequence, so the next result is `Tuesday`.
 
 {% gridExampleRunner title="Custom Fill Operation" name="custom-fill-operation"  exampleHeight=560 /%}
@@ -130,7 +128,7 @@ In the example below the **Day of the Week** column cycles through the days, whi
 
 The example below uses `params.skipCell()` to prevent values in the **Country** column from being altered by the Fill Handle.
 
-For backwards compatibility, directly returning a value equal to `params.currentCellValue` also skips the cell. Prefer `params.skipCell()`, which skips the cell explicitly regardless of the value it holds.
+Directly returning a value equal to `params.currentCellValue` also skips the cell but prefer `params.skipCell()`, which skips the cell explicitly regardless of the value it holds.
 
 {% gridExampleRunner title="Skipping Columns" name="skipping-columns"  exampleHeight=560 /%}
 
