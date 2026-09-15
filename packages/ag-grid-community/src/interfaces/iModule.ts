@@ -80,6 +80,7 @@ export type _ModuleWithLicenseManager = {
 
 type InternalModuleName =
     | 'Aggregation'
+    | 'AggregationStage'
     | 'AnimationFrame'
     | 'Aria'
     | 'AutoWidth'
