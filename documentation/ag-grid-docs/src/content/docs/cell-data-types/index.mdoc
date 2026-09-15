@@ -73,6 +73,10 @@ A response carrying no rows resolves nothing: the columns stay pending, behaving
 
 Under the Server-Side Row Model with [Row Grouping](./server-side-model-grouping/), group rows carry only their group key and any aggregated values, so they say nothing about the columns populated on leaf rows. Inference therefore waits for a block of leaf rows, which arrives when a group is first expanded — until then the columns behave as `cellDataType: false`. [Tree Data](./server-side-model-tree-data/) rows hold the row's own data at every level, so they are inferred from directly.
 
+The example below declares no `cellDataType` on any column, so every type is inferred. Switch the row model to see the same types inferred under each one: the number column takes the number editor and filter, the boolean column renders a checkbox, and the date columns sort and filter as dates.
+
+{% gridExampleRunner title="Inferring Data Types Under Each Row Model" name="inference-row-models" exampleHeight=600 /%}
+
 Where inference is possible but the values do not match any pre-defined type, it defaults to `'object'`.
 
 ### Disabling Inference
