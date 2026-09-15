@@ -94,6 +94,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private hasObjectValueFormatter: boolean;
     private initialData: any[] | null | undefined;
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
+    // captured when inference is first deferred, as the definitions can change before it resolves
+    private columnTypeOverridesExistPendingInference: boolean = false;
+    // set once any rows have arrived. `isPendingInference` holds back work that needs the types to be
+    // settled — filter model updates queue on it — so it covers only the wait for the grid's first
+    // rows, not a column still parked because those rows were not ones to infer from
+    private hasReceivedRows: boolean = false;
     // keep track of any column state updates whilst waiting for data types to be inferred
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
     private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
@@ -295,9 +301,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public addColumnListeners(column: AgColumn): void {
-        if (!this.isPendingInference) {
-            return;
-        }
         const columnStateUpdates = this.columnStateUpdatesPendingInference[column.colId];
         if (!columnStateUpdates) {
             return;
@@ -315,9 +318,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
         const { gos } = this;
-        if (!_isClientSideRowModel(gos)) {
-            return false;
-        }
         const propsToCheckForInference = { cellRenderer: true, valueGetter: true, valueParser: true, refData: true };
         if (doColDefPropsPreventInference(userColDef, propsToCheckForInference)) {
             return false;
@@ -356,7 +356,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 value = getValue(rowData[i]);
             }
         } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
+            const rowNodes = _isClientSideRowModel(this.gos)
+                ? (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs
+                : undefined;
             if (!rowNodes?.length) {
                 this.initWaitForRowData(colId);
                 return undefined;
@@ -378,7 +380,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     /** The row data to infer from, or `null` if only the row nodes are available. */
     private getInitialRowData(): any[] | null {
-        const rowData = this.gos.get('rowData');
+        const rowData = _isClientSideRowModel(this.gos) ? this.gos.get('rowData') : undefined;
         if (rowData?.length) {
             return rowData;
         }
@@ -387,38 +389,63 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private initWaitForRowData(colId: string): void {
         this.columnStateUpdatesPendingInference[colId] = new Set();
-        if (this.isPendingInference) {
+        if (this.isPendingInference || this.hasReceivedRows) {
             return;
         }
         this.isPendingInference = true;
-        const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
-        const { colAutosize, eventSvc } = this.beans;
-        if (columnTypeOverridesExist && colAutosize) {
+        this.columnTypeOverridesExistPendingInference = this.isColumnTypeOverrideInDataTypeDefinitions;
+        const { colAutosize } = this.beans;
+        if (this.columnTypeOverridesExistPendingInference && colAutosize) {
             colAutosize.shouldQueueResizeOperations = true;
         }
-        const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: () => {
-                const rowData = (this.beans.rowModel as IClientSideRowModel)._updatingRowData;
-                if (!rowData?.length) {
-                    return;
-                }
-                destroyFunc?.();
-                this.isPendingInference = false;
-                this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
-                this.columnStateUpdatesPendingInference = Object.create(null);
-                if (columnTypeOverridesExist) {
-                    colAutosize?.processResizeOperations();
-                }
-                eventSvc.dispatchEvent({
-                    type: 'dataTypesInferred',
-                });
-            },
-        });
+    }
+
+    /**
+     * Signalled by every row model when it receives rows, resolving the columns parked awaiting data.
+     * Inference resolves once, off the first rows it can infer from; a column those rows hold no value
+     * for falls back to `cellDataType: false` and is not re-inferred from later data.
+     *
+     * `canInferFrom` is false for rows that are not a column's own values — the Server-Side Row Model's
+     * group rows — which leave the columns parked for the leaf rows, but still count as the grid having
+     * rows, so that work waiting on inference is not held back until a group is expanded.
+     */
+    public onRowsReceived(rowData: any[], canInferFrom: boolean = true): void {
+        // a response carrying no rows changes nothing: the columns stay pending until rows arrive,
+        // rather than being written off before the grid has seen any data
+        if (!rowData.length) {
+            return;
+        }
+        const hasColumnsPending = !!Object.keys(this.columnStateUpdatesPendingInference).length;
+        const wasPendingFirstRows = this.isPendingInference;
+        if (!wasPendingFirstRows && !hasColumnsPending) {
+            return;
+        }
+        this.isPendingInference = false;
+        this.hasReceivedRows = true;
+
+        const { colAutosize, eventSvc } = this.beans;
+        const columnTypeOverridesExist = this.columnTypeOverridesExistPendingInference;
+        let hasResolved = false;
+        if (canInferFrom && hasColumnsPending) {
+            this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
+            this.columnStateUpdatesPendingInference = Object.create(null);
+            hasResolved = true;
+        }
+        // queued resize operations are released on the first rows either way, as columns awaiting leaf
+        // rows would otherwise hold them for as long as the user leaves every group collapsed
+        if (columnTypeOverridesExist && wasPendingFirstRows) {
+            colAutosize?.processResizeOperations();
+        }
+        if (wasPendingFirstRows || hasResolved) {
+            eventSvc.dispatchEvent({
+                type: 'dataTypesInferred',
+            });
+        }
     }
 
     private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
         const beans = this.beans;
-        // the row nodes are not built yet, so the updating row data is the only source to infer from
+        // the row nodes are not built yet, so the delivered row data is the only source to infer from
         this.initialData = rowData;
         const state: ColumnState[] = [];
         this.destroyColumnStateUpdateListeners();

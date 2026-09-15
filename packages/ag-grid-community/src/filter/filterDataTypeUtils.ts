@@ -274,13 +274,20 @@ export function _getFilterParamsForDataType(
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
     const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
+    // `filterParams` may be a function of the grid params, which is wrapped rather than dropped so that
+    // a declared value list survives a data type being applied to the column
     const filterParams =
-        typeof existingFilterParams === 'object'
-            ? {
+        typeof existingFilterParams === 'function'
+            ? (params: any) => ({
                   ...newFilterParams,
-                  ...existingFilterParams,
-              }
-            : newFilterParams;
+                  ...existingFilterParams(params),
+              })
+            : typeof existingFilterParams === 'object'
+              ? {
+                    ...newFilterParams,
+                    ...existingFilterParams,
+                }
+              : newFilterParams;
     return { filterParams, filterValueGetter };
 }
 

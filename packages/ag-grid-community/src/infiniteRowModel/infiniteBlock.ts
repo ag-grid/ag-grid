@@ -212,6 +212,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         });
         const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
         this.parentCache.pageLoaded(this, finalRowCount);
+        beans.dataTypeSvc?.onRowsReceived(params.rowData ?? []);
     }
 
     public override destroy(): void {
