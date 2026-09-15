@@ -17,6 +17,8 @@ The differences between row models can be found in our [row models summary page]
 
 To enable the Viewport Row Model, set the grid property `rowModelType='viewport'`.
 
+The grid infers [Cell Data Types](./cell-data-types/#inferring-data-types) from the first rows the datasource pushes, so columns get typed editors, filters and formatters without declaring `cellDataType`. Inference resolves once, and a push with no rows leaves the columns pending until one arrives.
+
 The term 'viewport' is a common term in GUIs used to describe the visible area when scrolls are used to display content that is larger than the visible area. In AG Grid, the viewport is referred to as the vertical scroll position, thus it defines the rows that are currently rendered by the grid.
 
 AG Grid uses 'DOM row virtualisation' which means it only renders the rows you currently see, so AG Grid already uses the concept of a viewport for rendering the rows. The grid extends this concept and maps the viewport information to the Viewport Row Model.
