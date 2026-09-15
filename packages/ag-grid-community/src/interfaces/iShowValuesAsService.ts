@@ -9,9 +9,7 @@ import type {
     ShowValuesAsStateValue,
     ShowValuesAsType,
 } from '../entities/colDef-showValuesAs';
-import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
-import type { ChangedPath } from '../utils/changedPath';
 import type { IRowNode } from './iRowNode';
 import type { MenuItemDef } from './menuItem';
 
@@ -27,11 +25,6 @@ export interface IShowValuesAsService {
     toColState(column: AgColumn): ShowValuesAsStateValue;
     /** Whether the column's mode is currently applying (not dormant in the current view). */
     isApplying(column: AgColumn): boolean;
-    /** Refresh the aggregate-dependent (Show Values As) cells across all rendered rows — for a general view refresh. */
-    refreshRenderedCells(): void;
-    /** Refresh the aggregate-dependent (Show Values As) cells in rendered rows the caller did not already refresh
-     *  (identified by `nodes`/`path`) — for the post-edit re-aggregation top-up. */
-    refreshRenderedCellsExcept(nodes: Set<RowNode> | null, path: ChangedPath | null): void;
     /** Transforms a column's raw value at a node into the value to display, or `null` for a blank cell. Call only when {@link isApplying} is true. */
     transform(column: AgColumn, rowNode: IRowNode, rawValue: any): ShowValuesAsResult | null;
     /** Formats a transformed value with the mode's formatter. `notApplicable` (the mode is selected but dormant in

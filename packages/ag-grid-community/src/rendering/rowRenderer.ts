@@ -28,7 +28,6 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
-import type { IShowValuesAsService } from '../interfaces/iShowValuesAsService';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _errMsg } from '../validation/logging';
@@ -59,7 +58,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
     private editSvc?: EditService;
-    private showValuesAsSvc: IShowValuesAsService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;
@@ -70,7 +68,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.editSvc = beans.editSvc;
-        this.showValuesAsSvc = beans.showValuesAsSvc;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -712,8 +709,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.releaseLockOnRefresh();
 
         // Recycled rows keep their old DOM, and changed rows may have rendered before aggregation settled, so
-        // aggregate-dependent cells (e.g. Show Values As) can be stale after a model update; refresh them.
-        this.showValuesAsSvc?.refreshRenderedCells();
+        // aggregate-dependent cells can be stale after a model update; refresh them.
+        this.beans.aggStage?.refreshAggregateDependentCells();
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
@@ -915,6 +912,16 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /** O(1) lookup of a RowCtrl by its RowNode (O(k) for sticky rows, where k is the sticky row count). */
     public getRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
+        const indexed = this.getIndexedRowCtrlByNode(node);
+        // A pinned row is never sticky, so the scan below cannot match one.
+        if (indexed || node.rowPinned) {
+            return indexed;
+        }
+        return this.getStickyRowCtrlByNode(node);
+    }
+
+    /** The ctrl at the node's own index, ignoring any sticky copy of the same node. */
+    private getIndexedRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
         const rowIndex = node.rowIndex;
         if (rowIndex == null) {
             return undefined;
@@ -929,10 +936,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return ctrl?.rowNode === node ? ctrl : undefined;
         }
         const ctrl = this.rowCtrlsByRowIndex[rowIndex];
-        if (ctrl?.rowNode === node) {
-            return ctrl;
-        }
-        return this.getStickyRowCtrlByNode(node);
+        return ctrl?.rowNode === node ? ctrl : undefined;
     }
 
     private getStickyRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
@@ -955,8 +959,23 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /** Refreshes the rendered row for the given node if it is currently in the viewport. Null-safe: no-op when node is null or undefined. */
     public refreshRowByNode(node: IRowNode | null | undefined): void {
-        if (node) {
-            this.getRowCtrlByNode(node)?.refreshRow();
+        if (!node) {
+            return;
+        }
+        // A node can be rendered more than once: sticky as well as at its own index, and again as the
+        // owner of a spanned cell. getRowCtrlByNode returns one, so callers relying on it alone leave
+        // the other copies showing the pre-refresh value.
+        const indexed = this.getIndexedRowCtrlByNode(node);
+        indexed?.refreshRow();
+        const sticky = node.rowPinned ? undefined : this.getStickyRowCtrlByNode(node);
+        if (sticky && sticky !== indexed) {
+            sticky.refreshRow();
+        }
+        const spannedRowRenderer = this.beans.spannedRowRenderer;
+        if (spannedRowRenderer) {
+            refreshSpannedForNode(spannedRowRenderer.getCtrls('top'), node, indexed, sticky);
+            refreshSpannedForNode(spannedRowRenderer.getCtrls('bottom'), node, indexed, sticky);
+            refreshSpannedForNode(spannedRowRenderer.getCtrls('center'), node, indexed, sticky);
         }
     }
 
@@ -1769,3 +1788,18 @@ export function isRowInMap(
             return rowIdsMap.normal[id] != null;
     }
 }
+
+/** Refreshes any spanned ctrl rendering `node` that the caller has not refreshed already. */
+const refreshSpannedForNode = (
+    ctrls: RowCtrl[],
+    node: IRowNode,
+    indexed: RowCtrl | undefined,
+    sticky: RowCtrl | undefined
+): void => {
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
+        const ctrl = ctrls[i];
+        if (ctrl.rowNode === node && ctrl !== indexed && ctrl !== sticky) {
+            ctrl.refreshRow();
+        }
+    }
+};
