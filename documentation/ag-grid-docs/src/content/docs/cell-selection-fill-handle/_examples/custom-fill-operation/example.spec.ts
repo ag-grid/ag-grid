@@ -1,9 +1,18 @@
 import { dragFillHandleOverTo, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('should include an unchanged value in the custom day sequence', async ({ agIdFor }) => {
+    test.eachFramework('should include an unchanged value in the custom day sequence', async ({ page, agIdFor }) => {
         await expect(agIdFor.cell('0', 'dayOfTheWeek')).toHaveText('Sunday');
         await expect(agIdFor.cell('1', 'dayOfTheWeek')).toHaveText('Monday');
+
+        // change a target cell so the fill has an observable effect on it
+        const editedCell = agIdFor.cell('3', 'dayOfTheWeek');
+        await editedCell.dblclick();
+        const cellEditor = editedCell.locator('input');
+        await expect(cellEditor).toBeVisible();
+        await page.keyboard.type('Saturday');
+        await page.keyboard.press('Enter');
+        await expect(editedCell).toHaveText('Saturday');
 
         const sourceCell = agIdFor.cell('0', 'dayOfTheWeek');
         await sourceCell.click();
@@ -13,6 +22,7 @@ test.agExample(import.meta, () => {
         await dragFillHandleOverTo(fillHandle, agIdFor.cell('3', 'dayOfTheWeek'));
 
         await expect(agIdFor.cell('0', 'dayOfTheWeek')).toHaveText('Sunday');
+        // `Monday` already matched the target cell, but `useValue` keeps the sequence advancing
         await expect(agIdFor.cell('1', 'dayOfTheWeek')).toHaveText('Monday');
         await expect(agIdFor.cell('2', 'dayOfTheWeek')).toHaveText('Tuesday');
         await expect(agIdFor.cell('3', 'dayOfTheWeek')).toHaveText('Wednesday');
