@@ -959,6 +959,8 @@ export class LazyCache extends BeanStub {
         if (wasRefreshing && finishedRefreshing) {
             this.fireRefreshFinishedEvent();
         }
+
+        this.beans.dataTypeSvc?.onRowsReceived(response.rowData);
     }
 
     public fireRefreshFinishedEvent() {

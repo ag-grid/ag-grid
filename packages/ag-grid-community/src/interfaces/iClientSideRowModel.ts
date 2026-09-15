@@ -35,9 +35,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     readonly rowCountReady: boolean;
     hierarchical: boolean;
 
-    /** Row data of an update in progress, only set whilst `rowDataUpdateStarted` is dispatched */
-    _updatingRowData: TData[] | null;
-
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
 
     refreshModel(params: RefreshModelParams): void;
