@@ -342,8 +342,9 @@
         // out of flow: unpositioned, this lands at the foot of the popup parent at its full width.
         position: absolute;
 
-        // A popup has no size of its own, and the Set Filter list inside it would otherwise take the viewport.
-        width: 240px;
+        // Give the popup a base size while allowing the Set Filter list's resize handles to grow it.
+        width: auto;
+        min-width: 240px;
         background-color: var(--ag-menu-background-color);
         border: var(--ag-borders) var(--ag-menu-border-color);
         border-radius: var(--ag-card-radius);

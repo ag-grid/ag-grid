@@ -76,6 +76,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract onNewBodyRow(node?: RowNode): RowAccumulator;
     abstract parse(): string;
 
+    public isSpanColumnHeader(): boolean {
+        return this.useGridHeaderLayout;
+    }
+
     public prepare(_columnsToExport: AgColumn[]): void {}
 
     public extractHeaderValue(column: AgColumn): string {

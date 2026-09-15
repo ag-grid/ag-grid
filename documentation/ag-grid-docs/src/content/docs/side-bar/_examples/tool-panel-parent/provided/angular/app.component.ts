@@ -130,7 +130,6 @@ export class AppComponent {
         const popup = this.popupRef.nativeElement;
         popup.classList.toggle('active', true);
         this.gridApi.openToolPanel(this.columnsToolPanel.id);
-        addStyles(popup);
     }
 
     openDrawer() {
@@ -138,7 +137,6 @@ export class AppComponent {
         const drawer = this.drawerRef.nativeElement;
         drawer.classList.toggle('active', true);
         this.gridApi.openToolPanel(this.filtersToolPanel.id, this.drawerContentRef?.nativeElement as HTMLElement);
-        addStyles(drawer);
     }
 
     onGridReady(params: GridReadyEvent<IOlympicData>) {
@@ -148,9 +146,4 @@ export class AppComponent {
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe((data) => (this.rowData = data));
     }
-}
-
-function addStyles(parentEl: HTMLElement) {
-    const contentClassnames = [...parentEl.querySelector('.content').classList].filter((e) => e !== 'content');
-    parentEl.classList.add(...contentClassnames);
 }

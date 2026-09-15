@@ -1,84 +1,86 @@
-import { expect, test } from '@utils/grid/test-utils';
-
-import { GROUP_AUTO_COLUMN_ID, GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.describe(() => {
-        test.use({
-            agModules: [
-                'RowGroupingModule',
-                'PivotModule',
-                'SideBarModule',
-                'ColumnsToolPanelModule',
-                'FiltersToolPanelModule',
-                'NumberEditorModule',
-            ],
-        });
+    // colIds: 'athlete', 'countryObject' (Country), 'sportObject' (Sport), 'date'.
+    // Row 0 = Michael Phelps, United States, Swimming, 24/08/2008 (olympic-winners.json).
+    //
+    // None of the columns set `cellDataType` explicitly, so the custom 'country', 'sport'
+    // and overridden 'dateString' definitions can only be in play if `dataTypeMatcher`
+    // inferred them from the row data. Every assertion below therefore also exercises
+    // inference.
 
-        test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
+    test.eachFramework('custom data types format the complex object columns', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
 
-            await remoteApi.setGridOption('columnDefs', [
-                { field: 'athlete' },
-                { field: 'countryObject', headerName: 'Country' },
-                { field: 'sportObject', headerName: 'Sport' },
-                {
-                    field: 'date',
-                    rowGroup: true,
-                    enableRowGroup: true,
-                    enablePivot: true,
-                    groupHierarchy: ['year', 'month'],
-                },
-                { field: 'total', aggFunc: 'sum' },
-            ]);
-            await remoteApi.setGridOption('sideBar', true);
-            await remoteApi.setGridOption('defaultColDef', {});
-
-            const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
-            const level1GroupRowId = `${level0GroupRowId}-${vcolPrefix}-date-month-8`;
-            const level2GroupRowId = `${level1GroupRowId}-date-24/08/2008`;
-
-            // Assert has grouped by date parts
-            await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (1872)', { useInnerText: true });
-
-            // Expanding year group shows month group
-            await agIdFor.groupContracted(level0GroupRowId, GROUP_AUTO_COLUMN_ID).click();
-            await expect(agIdFor.autoGroupCell(level1GroupRowId)).toHaveText('8 (1872)', {
-                useInnerText: true,
-            });
-
-            // Expanding month group shows original group
-            await agIdFor.groupContracted(level1GroupRowId, GROUP_AUTO_COLUMN_ID).click();
-            await expect(agIdFor.autoGroupCell(level2GroupRowId)).toHaveText('24/08/2008 (1872)', {
-                useInnerText: true,
-            });
-
-            await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(
-                3
-            );
-
-            // Check virtual columns
-            await agIdFor.columnSelectListItemCheckbox('Date (Year) Column').click();
-            await agIdFor.columnSelectListItemCheckbox('Date (Month) Column').click();
-            await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(
-                3
-            );
-
-            // Remove date columns from grouping one by one
-            await agIdFor.columnDropCellCancelButton('toolbar', 'Row Groups', 'Date').click();
-            await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(
-                2
-            );
-
-            await agIdFor.columnDropCellCancelButton('toolbar', 'Row Groups', 'Date (Month)').click();
-            await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(
-                1
-            );
-
-            await agIdFor.columnDropCellCancelButton('toolbar', 'Row Groups', 'Date (Year)').click();
-            await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(
-                0
-            );
-        });
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+        // 'country' valueFormatter renders value.code.
+        await expect(agIdFor.cell('0', 'countryObject')).toContainText('United States');
+        // 'sport' valueFormatter renders value.name.
+        await expect(agIdFor.cell('0', 'sportObject')).toContainText('Swimming');
     });
+
+    test.eachFramework('the date column parses the non-standard dd/MM/yyyy format', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const dateCell = agIdFor.cell('0', 'date');
+        await expect(dateCell).toContainText('24/08/2008');
+
+        // The displayed text alone would not prove anything — the source data is already
+        // '24/08/2008' and a plain text column would render it unchanged. Opening the editor
+        // does prove it: the column only gets a date editor because dataTypeMatcher inferred
+        // the custom 'dateString' type, and the editor's ISO value is what dateParser made of
+        // the dd/MM/yyyy source string.
+        await dateCell.dblclick();
+        const editor = dateCell.locator('input[type="date"]');
+        await expect(editor).toBeVisible();
+        await expect(editor).toHaveValue('2008-08-24');
+
+        // Committing a new date runs it back through dateFormatter, which re-serialises to
+        // the non-standard dd/MM/yyyy form rather than the built-in ISO one.
+        await editor.fill('2003-02-01');
+        await page.keyboard.press('Enter');
+        await expect(editor).toHaveCount(0);
+
+        await expect(dateCell).toContainText('01/02/2003');
+    });
+
+    test.eachFramework(
+        'the country valueParser stores an object built from the typed text',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            const countryCell = agIdFor.cell('0', 'countryObject');
+            await countryCell.dblclick();
+            const editor = countryCell.locator('input');
+            await expect(editor).toBeVisible();
+            await editor.fill('France');
+            await page.keyboard.press('Enter');
+            await expect(editor).toHaveCount(0);
+
+            // valueParser wraps the text as { code: 'France' }; the formatter reads .code back out.
+            await expect(countryCell).toContainText('France');
+        }
+    );
+
+    test.eachFramework(
+        'the sport valueParser stores an object built from the typed text',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            const sportCell = agIdFor.cell('0', 'sportObject');
+            await sportCell.dblclick();
+            const editor = sportCell.locator('input');
+            await expect(editor).toBeVisible();
+            await editor.fill('Rowing');
+            await page.keyboard.press('Enter');
+            await expect(editor).toHaveCount(0);
+
+            // valueParser wraps the text as { name: 'Rowing' }; the formatter reads .name back out.
+            await expect(sportCell).toContainText('Rowing');
+        }
+    );
 });

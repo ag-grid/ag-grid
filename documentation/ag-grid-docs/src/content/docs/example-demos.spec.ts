@@ -62,8 +62,10 @@ test.describe('Demo page header layout', () => {
             for (const demo of demoNames) {
                 await page.setViewportSize(viewport);
                 await page.goto(demoContent(demo).href.replace(/^\//, ''), { waitUntil: 'domcontentloaded' });
-                // Text metrics, so the fonts must have settled before the boxes are read.
-                await page.evaluate(() => document.fonts.ready);
+                // Text metrics, so the fonts must have settled before the boxes are read. The
+                // promise is resolved to `undefined` rather than returned as-is: `document.fonts`
+                // is a `FontFaceSet`, which cannot cross the evaluate boundary.
+                await page.evaluate(() => document.fonts.ready.then(() => undefined));
 
                 const copy = page.locator('[class*="headerCopy"]');
                 const heading = copy.getByRole('heading', { level: 1 });

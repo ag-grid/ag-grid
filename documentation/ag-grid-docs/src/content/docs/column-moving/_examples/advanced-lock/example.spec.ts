@@ -46,4 +46,17 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-grid-pinned-left-cells .ag-cell.locked-col')).toHaveCount(0);
         await expect(page.locator('.ag-grid-scrolling-cells .ag-cell.locked-col').first()).toBeVisible();
     });
+
+    test.eachFramework('pinning athlete right resets a locked column previously pinned left', async ({ page }) => {
+        await waitForGridContent(page);
+
+        await page.locator('button:text("Pin Athlete Left")').click();
+        await expect(page.locator('.ag-grid-pinned-left-cells .ag-cell.locked-col').first()).toBeVisible();
+
+        await page.locator('button:text("Pin Athlete Right")').click();
+
+        // The locked column must not stay pinned left from the previous action.
+        await expect(page.locator('.ag-grid-pinned-left-cells .ag-cell.locked-col')).toHaveCount(0);
+        await expect(page.locator('.ag-grid-scrolling-cells .ag-cell.locked-col').first()).toBeVisible();
+    });
 });

@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent, withGridEvent } from '@utils/grid/test-utils';
+import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 const COLUMNS = ['athlete', 'age', 'country', 'text1', 'text2', 'text3'];
@@ -119,18 +119,28 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         const goldHeader = page.locator('.ag-header-cell[col-id="gold"]').first();
+        const scrollViewport = page.locator('.ag-body-horizontal-scroll-viewport').first();
 
-        // The auto-size pass is debounced, so wait for the grid to report it.
-        await withGridEvent(page, 'columnResized', { finished: true, source: 'autosizeColumns' }, async () => {
-            await page
-                .locator('.ag-body-horizontal-scroll-viewport')
-                .first()
-                .evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
-            await expect(goldHeader).toBeVisible();
-        });
+        await scrollViewport.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+        await expect(goldHeader).toBeVisible();
 
-        const fitted = (await goldHeader.boundingBox())?.width ?? 0;
-        expect(fitted, 'the "Gold" column was not fitted after scrolling it into view').toBeLessThan(150);
+        // Continuous auto-sizing is debounced and fits each column as it arrives, so the width is
+        // polled to its fitted state rather than sampled off a single `columnResized` event: that
+        // event can land for a column passed mid-scroll while "Gold" is still at its default width.
+        // Each attempt also steps back off the far edge and returns to it, because a single jump to
+        // the end can leave the last columns unvisited by the pass - a real arrival, re-made.
+        let fitted = 0;
+        await expect(async () => {
+            fitted = (await goldHeader.boundingBox())?.width ?? 0;
+            if (fitted >= 150) {
+                await scrollViewport.evaluate((element) =>
+                    element.scrollTo({ left: Math.max(0, element.scrollLeft - 200) })
+                );
+                await scrollViewport.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+                fitted = (await goldHeader.boundingBox())?.width ?? 0;
+            }
+            expect(fitted, 'the "Gold" column was not fitted after scrolling it into view').toBeLessThan(150);
+        }).toPass();
         expect(fitted).toBeGreaterThan(0);
     });
 });

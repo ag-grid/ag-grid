@@ -1,4 +1,5 @@
 import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
+import type { Page } from 'playwright/test';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page, agIdFor }) => {
@@ -29,4 +30,47 @@ test.agExample(import.meta, () => {
         await page.getByRole('button', { name: 'Expand All' }).click();
         await expect(expandedFilters).toHaveCount(totalFilters);
     });
+
+    test.eachFramework('Expand Year & Sport expands exactly the Year and Sport filters', async ({ page }) => {
+        await ensureGridReady(page);
+
+        const filterHeader = namedFilterHeader(page);
+
+        await expect(filterHeader('Year')).toHaveAttribute('aria-expanded', 'false');
+        await expect(filterHeader('Sport')).toHaveAttribute('aria-expanded', 'false');
+
+        await page.getByRole('button', { name: 'Expand Year & Sport' }).click();
+
+        // Only the two named filters expand.
+        await expect(filterHeader('Year')).toHaveAttribute('aria-expanded', 'true');
+        await expect(filterHeader('Sport')).toHaveAttribute('aria-expanded', 'true');
+        await expect(filterHeader('Name')).toHaveAttribute('aria-expanded', 'false');
+        await expect(filterHeader('Age')).toHaveAttribute('aria-expanded', 'false');
+        await expect(filterHeader('Date')).toHaveAttribute('aria-expanded', 'false');
+        await expect(filterHeader('Country')).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test.eachFramework('Collapse Year collapses Year and leaves Sport expanded', async ({ page }) => {
+        await ensureGridReady(page);
+
+        const filterHeader = namedFilterHeader(page);
+
+        await page.getByRole('button', { name: 'Expand Year & Sport' }).click();
+        await expect(filterHeader('Year')).toHaveAttribute('aria-expanded', 'true');
+
+        await page.getByRole('button', { name: 'Collapse Year' }).click();
+
+        // Year collapses, Sport is untouched.
+        await expect(filterHeader('Year')).toHaveAttribute('aria-expanded', 'false');
+        await expect(filterHeader('Sport')).toHaveAttribute('aria-expanded', 'true');
+    });
 });
+
+/** Locates a filter's header in the tool panel by its displayed filter name. */
+function namedFilterHeader(page: Page) {
+    const panel = page.locator('.ag-filter-toolpanel');
+    return (name: string) =>
+        panel.locator('.ag-filter-toolpanel-instance-header').filter({
+            has: page.locator('.ag-header-cell-text', { hasText: new RegExp(`^${name}$`) }),
+        });
+}

@@ -114,6 +114,7 @@ AG Grid is available in two versions: Community & Enterprise.
 | [Row Grouping and Aggregation](https://www.ag-grid.com/vue-data-grid/grouping/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)     | ❌                | ✅                 |
 | [Pivoting](https://www.ag-grid.com/vue-data-grid/pivoting/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)                         | ❌                | ✅                 |
 | [Excel Export](https://www.ag-grid.com/vue-data-grid/excel-export/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)                 | ❌                | ✅                 |
+| [PDF Export](https://www.ag-grid.com/vue-data-grid/pdf-export/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)                     | ❌                | ✅                 |
 | [Clipboard Operations](https://www.ag-grid.com/vue-data-grid/clipboard/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)            | ❌                | ✅                 |
 | [Master/Detail](https://www.ag-grid.com/vue-data-grid/master-detail/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)               | ❌                | ✅                 |
 | [Tree Data](https://www.ag-grid.com/vue-data-grid/tree-data/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github)                       | ❌                | ✅                 |
