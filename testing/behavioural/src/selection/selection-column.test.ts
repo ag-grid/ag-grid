@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
@@ -43,6 +44,34 @@ describe('Row Selection Grid Options', () => {
 
         consoleErrorSpy.mockRestore();
         consoleWarnSpy.mockRestore();
+    });
+
+    test('Right-locked selection column renders working row and header checkboxes', async () => {
+        const [api, actions] = createGrid({
+            columnDefs: [{ field: 'sport' }, { field: 'year' }],
+            rowData: [
+                { sport: 'football', year: 2024 },
+                { sport: 'rugby', year: 2025 },
+            ],
+            rowSelection: { mode: 'multiRow' },
+            selectionColumnDef: { lockPosition: 'right' },
+        });
+
+        expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual([
+            'sport',
+            'year',
+            'ag-Grid-SelectionColumn',
+        ]);
+        await waitFor(() => expect(actions.getCheckboxByIndex(0)).not.toBeNull());
+        actions.toggleCheckboxByIndex(0);
+        expect(api.getSelectedRows()).toEqual([{ sport: 'football', year: 2024 }]);
+
+        actions.toggleHeaderCheckboxByIndex(0);
+        expect(api.getSelectedRows()).toHaveLength(2);
+        actions.toggleHeaderCheckboxByIndex(0);
+        expect(api.getSelectedRows()).toHaveLength(0);
+
+        await new GridColumns(api, 'right-locked selection column').checkColumns('skip-snapshot');
     });
 
     test('Multiple sorting works with selection column', async () => {

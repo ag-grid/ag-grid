@@ -210,7 +210,10 @@
     position: relative;
     padding-right: $spacing-size-2;
     font-family: var(--text-monospace-font-family);
-    line-height: var(--text-lh-xs);
+    // Literal, not a token: the font-size here is inherited, and 1.6666 is not a value on either
+    // leading track. The row height depends on it, so it is preserved verbatim rather than snapped
+    // to the nearest token. TODO(design): retune this onto the scale.
+    line-height: 1.6666;
     font-weight: 700;
     color: var(--color-fg-primary);
 

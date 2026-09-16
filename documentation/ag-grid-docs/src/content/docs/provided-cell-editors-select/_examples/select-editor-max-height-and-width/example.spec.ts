@@ -48,4 +48,56 @@ test.agExample(import.meta, () => {
 
         await expect(cell).toContainText('AliceBlue');
     });
+
+    // Docs: valueListMaxHeight constrains the popup size - with 148 colours the list scrolls
+    // rather than being clipped.
+    test.eachFramework('the constrained list scrolls through all the values', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        await agIdFor.cell('0', 'color_1').dblclick();
+        await expect(editWrapper(page)).toBeVisible();
+        await editWrapper(page).click();
+        await expect(list(page)).toBeVisible();
+
+        const { scrollHeight, clientHeight } = await list(page).evaluate((el: HTMLElement) => ({
+            scrollHeight: el.scrollHeight,
+            clientHeight: el.clientHeight,
+        }));
+        expect(clientHeight).toBeLessThanOrEqual(200);
+        expect(scrollHeight).toBeGreaterThan(clientHeight);
+
+        // Scrolling reaches the last colour, so the values are scrollable rather than clipped away.
+        await listItems(page).filter({ hasText: 'YellowGreen' }).last().scrollIntoViewIfNeeded();
+        await expect(listItems(page).filter({ hasText: 'YellowGreen' }).last()).toBeVisible();
+    });
+
+    // Docs: "the editor popups in the right column are displayed with a specified size, whereas the
+    // editor popups in the left column are displayed with the default size" - the constrained popup
+    // is the shorter of the two.
+    test.eachFramework('the constrained popup is shorter than the default popup', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        await agIdFor.cell('0', 'color').dblclick();
+        await editWrapper(page).click();
+        await expect(list(page)).toBeVisible();
+        const defaultBox = await list(page).boundingBox();
+
+        await page.keyboard.press('Escape');
+        await expect(page.locator('.ag-select-list')).toHaveCount(0);
+
+        await agIdFor.cell('0', 'color_1').dblclick();
+        await editWrapper(page).click();
+        await expect(list(page)).toBeVisible();
+        const constrainedBox = await list(page).boundingBox();
+
+        expect(constrainedBox!.height).toBeLessThan(defaultBox!.height);
+    });
+
+    // Docs refer to the two columns as left and right; only their header names identify them.
+    test.eachFramework('the two columns are the default and the constrained editors', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        await expect(agIdFor.headerCell('color')).toContainText('Select Editor Without Max Height and Max Width');
+        await expect(agIdFor.headerCell('color_1')).toContainText('Select Editor With Max Height and Max Width');
+    });
 });

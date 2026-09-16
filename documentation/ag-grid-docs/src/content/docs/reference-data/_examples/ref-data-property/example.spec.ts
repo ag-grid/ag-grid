@@ -65,4 +65,58 @@ test.agExample(import.meta, () => {
             await expect(interiorCell).toContainText('Forest Green');
         }
     );
+    test.eachFramework('Set filters list the mapped names rather than the codes', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const spec = { source: 'column-filter' } as const;
+        await agIdFor.headerFilterButton('make').click();
+
+        // The set filter list is built from the displayed values, so users see 'Toyota',
+        // never the stored 'tyt' code.
+        await expect(agIdFor.setFilterInstanceItem(spec, 'Toyota')).toBeVisible();
+        await expect(agIdFor.setFilterInstanceItem(spec, 'Porsche')).toBeVisible();
+        await expect(agIdFor.setFilterInstanceItem(spec, 'tyt')).toHaveCount(0);
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('The select editor lists names and stores the code', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const makeCell = agIdFor.cell('0', 'make');
+        await makeCell.dblclick();
+
+        // agSelectCellEditor shows the mapped name for the current code.
+        const picker = makeCell.locator('.ag-cell-editor.ag-select');
+        await expect(picker.locator('.ag-picker-field-display')).toHaveText('Toyota');
+
+        await picker.click();
+        const options = page.locator('.ag-select-list .ag-list-item');
+        await expect(options.filter({ hasText: 'Ford' })).toBeVisible();
+        await expect(options.filter({ hasText: 'Porsche' })).toBeVisible();
+        await options.filter({ hasText: 'Ford' }).click();
+        await page.keyboard.press('Enter');
+
+        // 'frd' is stored underneath; the cell shows the mapped name.
+        await expect(makeCell).toContainText('Ford');
+    });
+
+    test.eachFramework('The rich select editor lists names too', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const colourCell = agIdFor.cell('0', 'exteriorColour');
+        await colourCell.dblclick();
+
+        const list = page.locator('.ag-rich-select-list').first();
+        await expect(list).toBeVisible();
+        await expect(list.locator('.ag-rich-select-row', { hasText: 'Cadet Blue' }).first()).toBeVisible();
+        await expect(list.locator('.ag-rich-select-row', { hasText: 'Burlywood' }).first()).toBeVisible();
+        // The stored codes are never offered to the user.
+        await expect(list.locator('.ag-rich-select-row', { hasText: /^cb$/ })).toHaveCount(0);
+
+        await list.locator('.ag-rich-select-row', { hasText: 'Cadet Blue' }).first().click();
+        await expect(colourCell).toContainText('Cadet Blue');
+    });
 });

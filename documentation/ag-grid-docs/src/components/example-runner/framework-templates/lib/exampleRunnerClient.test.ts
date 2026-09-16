@@ -212,10 +212,12 @@ describe('example-runner.js injectImportMap', () => {
                 production: {
                     [DEV_FLAG_PLACEHOLDERS.query]: PRODUCTION_FLAGS.query,
                     [DEV_FLAG_PLACEHOLDERS.appended]: PRODUCTION_FLAGS.appended,
+                    [DEV_FLAG_PLACEHOLDERS.suffix]: PRODUCTION_FLAGS.suffix,
                 },
                 development: {
                     [DEV_FLAG_PLACEHOLDERS.query]: DEVELOPMENT_FLAGS.query,
                     [DEV_FLAG_PLACEHOLDERS.appended]: DEVELOPMENT_FLAGS.appended,
+                    [DEV_FLAG_PLACEHOLDERS.suffix]: DEVELOPMENT_FLAGS.suffix,
                 },
             });
         });

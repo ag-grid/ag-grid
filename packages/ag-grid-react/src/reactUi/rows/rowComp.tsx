@@ -366,7 +366,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         const right: CellCtrl[] = [];
 
         for (const cellCtrl of cellCtrlsMerged ?? []) {
-            const pinned = cellCtrl.column.getPinned();
+            const pinned = rowCtrl.getCellLane(cellCtrl);
             if (pinned === 'left') {
                 left.push(cellCtrl);
             } else if (pinned === 'right') {
@@ -381,7 +381,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             centerCellCtrls: center,
             rightCellCtrls: right,
         };
-    }, [cellCtrlsMerged]);
+    }, [cellCtrlsMerged, rowCtrl]);
 
     const { leftWidth, centerWidth, rightWidth, renderLeft, renderRight } = rowCtrl.getMappedPinnedCellGroupWidths();
 

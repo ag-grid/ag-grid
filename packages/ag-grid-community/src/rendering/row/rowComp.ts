@@ -297,7 +297,7 @@ export class RowComp extends Component {
         for (const cellCtrl of cellCtrls) {
             const cellComp = this.cellComps.get(cellCtrl.instanceId);
             if (cellComp) {
-                const pinned = cellCtrl.column.getPinned();
+                const pinned = this.rowCtrl.getCellLane(cellCtrl);
                 if (pinned === 'left') {
                     leftElementsInOrder.push(cellComp.getGui());
                 } else if (pinned === 'right') {
@@ -321,7 +321,7 @@ export class RowComp extends Component {
 
     private newCellComp(cellCtrl: CellCtrl): void {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
-        const pinned = cellCtrl.column.getPinned();
+        const pinned = this.rowCtrl.getCellLane(cellCtrl);
         let parent: HTMLElement | null | undefined;
         if (pinned === 'left') {
             parent = this.ePinnedLeftCells;

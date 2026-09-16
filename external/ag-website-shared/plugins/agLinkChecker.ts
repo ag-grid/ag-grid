@@ -21,13 +21,31 @@ type Options = {
 };
 
 const IGNORED_PATHS = ['/archive'];
+/**
+ * Hrefs a client-side script handles rather than scrolling to an element, so the built HTML
+ * has no target for them. Every other fragment must resolve to an `id` or `<a name>` in the
+ * built page it points at.
+ */
 const HREF_PATTERNS_TO_IGNORE = [
-    '?', // Links with queries
     '#reference-', // API references, as they are rendered client side
     '#example-', // Example references, as they aren't headings
     '#contact-section', // Contact form on about page
     '#manage_cookies', // Footer link to open cookies management
 ];
+
+/**
+ * Drops the whole query string (`?a=1&b=2`) while keeping the path and fragment, so
+ * `/page/?ref=blog#foo` still validates the page and its `#foo` anchor. Only a `?` before
+ * the fragment starts a query; one after `#` is part of the fragment itself.
+ */
+const stripQueryString = (href: string): string => {
+    const hashIndex = href.indexOf('#');
+    const queryIndex = href.indexOf('?');
+    if (queryIndex === -1 || (hashIndex !== -1 && hashIndex < queryIndex)) {
+        return href;
+    }
+    return href.slice(0, queryIndex) + (hashIndex === -1 ? '' : href.slice(hashIndex));
+};
 
 const isCI =
     process.env.NX_TASK_TARGET_CONFIGURATION === 'ci' || process.env.NX_TASK_TARGET_CONFIGURATION === 'staging';
@@ -90,8 +108,8 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     const linksToValidate: Record<string, { filePaths: Set<string> }> = {};
     // Links whose shape alone would cost a redirect (no trailing slash, non-canonical host, ...),
     // keyed by the offending href. Recorded for every internal link, including the absolute
-    // `https://www.ag-grid.com/...` ones and the query/fragment links the existence checks below
-    // leave alone, because the redirect happens before the target is consulted.
+    // `https://www.ag-grid.com/...` ones and the client-side-injected fragment links the existence
+    // checks below leave alone, because the redirect happens before the target is consulted.
     const shapeIssues: Record<string, { message: string; filePaths: Set<string> }> = {};
     const { prefix, frameworkRedirect } = options;
 
@@ -132,9 +150,9 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         const recordUsage = (href: string) => {
             recordShapeIssues(href);
 
-            // Query links and anchors injected client-side (API/example
-            // references, the about-page contact form) have no static target
-            // to resolve against.
+            href = stripQueryString(href);
+
+            // Client-handled anchors have no static target to resolve against.
             if (HREF_PATTERNS_TO_IGNORE.some((pattern) => href.includes(pattern))) {
                 return;
             }
@@ -153,10 +171,6 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             let link: string | undefined;
             if (href.startsWith('#')) {
                 link = `${thisFileUrl}${href}`;
-                // A page linking to its own anchor also marks that anchor as a
-                // valid target, covering headings rendered by client-only
-                // components (e.g. the licence-install steps).
-                anchors.add(link);
             } else if (href.startsWith('/')) {
                 link = href;
             }

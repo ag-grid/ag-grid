@@ -21,4 +21,43 @@ test.agExample(import.meta, () => {
         await expect(groupTitles).toHaveText(['Athlete', 'Competition', 'Medals', 'Sport']);
         await expect(agIdFor.filterToolPanelGroup('Dummy Group 1')).toHaveCount(0);
     });
+
+    test.eachFramework('Custom layouts set the column order within each group', async ({ page }) => {
+        await ensureGridReady(page);
+
+        const filterNames = page.locator('.ag-filter-toolpanel-instance-header .ag-header-cell-text');
+
+        // Initial layout follows gridOptions.columnDefs.
+        await expect(filterNames).toHaveText([
+            'Name',
+            'Age',
+            'Country',
+            'Year',
+            'Date',
+            'Sport',
+            'Gold',
+            'Silver',
+            'Bronze',
+            'Total',
+        ]);
+
+        // Custom Sort Layout orders each group's children ascending, with Sport last.
+        await page.getByRole('button', { name: 'Custom Sort Layout' }).click();
+        await expect(filterNames).toHaveText([
+            'Age',
+            'Country',
+            'Name',
+            'Date',
+            'Year',
+            'Bronze',
+            'Gold',
+            'Silver',
+            'Total',
+            'Sport',
+        ]);
+
+        // Custom Group Layout nests filters in dummy groups and omits Year and Date.
+        await page.getByRole('button', { name: 'Custom Group Layout' }).click();
+        await expect(filterNames).toHaveText(['Age', 'Name', 'Sport', 'Country', 'Total', 'Bronze', 'Silver', 'Gold']);
+    });
 });

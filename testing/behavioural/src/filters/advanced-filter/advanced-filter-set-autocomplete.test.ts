@@ -8,7 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES } from './advancedFilterSetFixture';
+import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
 
 describe('Advanced Filter - Set Filter value sources', () => {
     const gridsManager = new TestGridsManager({ modules: SET_MODULES });
@@ -648,5 +648,46 @@ describe('Advanced Filter - Set Filter value list', () => {
         await af.apply();
         expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)"]');
         expect(af.getModel().values).toEqual(['Jamaica', null]);
+    });
+});
+
+describe('Advanced Filter - Set Filter picking values with the mouse', () => {
+    const gridsManager = new TestGridsManager({ modules: SET_MODULES });
+
+    beforeAll(() => installFilterLayoutMock());
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    test('a click takes the row under the pointer, not the row the list is highlighting', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is none of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+
+        // The list opens highlighting `(Blanks)`, so a click anywhere else has to move the pick itself.
+        await af.clickAutocompleteEntry('Poland');
+        expect(af.value).toBe('[Country] is none of ["Poland", ');
+    });
+
+    test('a second value picked without moving the pointer is the one under it, not "(Blanks)"', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] is none of [');
+        await af.clickAutocompleteEntry('Jamaica');
+
+        // Picking rebuilds the list without the value taken, shifting the rest up under a pointer that has
+        // not moved, so the next click reaches the list with no `mousemove` before it.
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Poland', 'United Kingdom', 'United States']);
+        await af.clickAutocompleteEntry('Poland');
+
+        expect(af.value).toBe('[Country] is none of ["Jamaica", "Poland", ');
+        expect(af.value).not.toContain('(Blanks)');
+
+        await af.append(']');
+        await af.apply();
+        expect(af.getModel().values).toEqual(['Jamaica', 'Poland']);
+        expect(displayedAthletes(api)).toEqual(['Michael Phelps', 'Emma Thompson', 'Li Wei']);
     });
 });

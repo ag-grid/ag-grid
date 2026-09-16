@@ -136,12 +136,56 @@ test.agExample(import.meta, () => {
         const firstActionBox = await firstAction.boundingBox();
         expect(pillBox).not.toBeNull();
         expect(firstActionBox).not.toBeNull();
-        expect(pillBox!.width).toBe(152);
+        // Firefox reports the clamped width a fraction under its computed value, so the pill's
+        // width is compared to the nearest pixel rather than exactly.
+        expect(pillBox!.width).toBeCloseTo(152, 1);
         expect(firstActionBox!.x - (pillBox!.x + pillBox!.width)).toBeCloseTo(24, 1);
 
         const viewport = page.locator('.ag-advanced-filter-builder-virtual-list-viewport');
         const widths = await viewport.evaluate(({ clientWidth, scrollWidth }) => ({ clientWidth, scrollWidth }));
         expect(widths.scrollWidth).toBeGreaterThan(widths.clientWidth);
+    });
+
+    test.eachFramework('keeps a horizontally resized Set picker contained', async ({ page }) => {
+        await page.setViewportSize({ width: 1000, height: 900 });
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill('[Athlete] is any of ["Michael Phelps", "Ryan Lochte"]');
+        await filterInput.press('Escape');
+        await filterInput.press('Enter');
+        await page.getByRole('button', { name: 'Builder' }).click();
+        await page.locator('.ag-advanced-filter-builder-set-values-pill').click();
+
+        const popup = page.locator('.ag-advanced-filter-builder-set-picker');
+        const list = popup.locator('.ag-set-filter-list');
+        const viewport = popup.locator('.ag-filter-virtual-list-viewport');
+        const rightResizer = popup.locator('.ag-resizer-right');
+        await expect(popup).toBeVisible();
+
+        const popupBox = await popup.boundingBox();
+        const resizerBox = await rightResizer.boundingBox();
+        expect(popupBox).not.toBeNull();
+        expect(resizerBox).not.toBeNull();
+
+        const resizerX = resizerBox!.x + resizerBox!.width / 2;
+        const resizerY = resizerBox!.y + resizerBox!.height / 2;
+        await page.mouse.move(resizerX, resizerY);
+        await page.mouse.down();
+        await page.mouse.move(resizerX + 120, resizerY, { steps: 8 });
+        await page.mouse.up();
+
+        const resizedPopupBox = await popup.boundingBox();
+        const resizedListBox = await list.boundingBox();
+        const resizedViewportBox = await viewport.boundingBox();
+        expect(resizedPopupBox).not.toBeNull();
+        expect(resizedListBox).not.toBeNull();
+        expect(resizedViewportBox).not.toBeNull();
+        expect(resizedPopupBox!.width).toBeGreaterThan(popupBox!.width + 115);
+        const popupRight = resizedPopupBox!.x + resizedPopupBox!.width;
+        expect(popupRight - (resizedListBox!.x + resizedListBox!.width)).toBeCloseTo(1, 1);
+        expect(popupRight - (resizedViewportBox!.x + resizedViewportBox!.width)).toBeCloseTo(1, 1);
     });
 
     test.eachFramework('offers a Tree List column as one flat list of whole paths', async ({ page }) => {

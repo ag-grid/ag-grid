@@ -62,38 +62,53 @@
     --text-bold: 700;
 
     // Ratios: a length is inherited as-is, so use these wherever the font-size is inherited, fluid or
-    // unknown. --text-lh-<step> is paired, and valid only alongside its own --text-fs-<step>.
+    // unknown.
     --text-lh-ratio-base: 1.4;
     --text-lh-ratio-tight: 1.2;
     --text-lh-ratio-ultra-tight: 1;
-
-    // Deprecated: ag-charts and ag-studio still use these names. Remove once both have migrated.
-    --text-lh-tight: var(--text-lh-ratio-tight);
-    --text-lh-ultra-tight: var(--text-lh-ratio-ultra-tight);
+    // Pull-quotes and editorial copy set deliberately airy, at any size.
+    --text-lh-ratio-relaxed: 1.5;
 
     --text-fs-2xs: 10px;
-    --text-lh-2xs: 1.2;
-
     --text-fs-xs: 12px;
-    --text-lh-xs: 1.6666;
-
     --text-fs-sm: 14px;
-    --text-lh-sm: 1.4;
-
     --text-fs-base: 16px;
-    --text-lh-base: 1.4;
-
     --text-fs-lg: 20px;
-    --text-lh-lg: 1.2;
-
     --text-fs-xl: 24px;
-    --text-lh-xl: 1.2;
-
     --text-fs-2xl: 32px;
-    --text-lh-2xl: 1.5;
-
     --text-fs-3xl: 40px;
-    --text-lh-3xl: 1.1;
+
+    // Paired line-heights: valid only alongside the --text-fs-<step> of the same name.
+    //
+    // Two tracks per step, because one leading cannot serve both jobs at a given size. `display` is
+    // for headings, eyebrows and short labels, and tightens as the size grows; `body` is for
+    // running multi-line copy, and loosens as the size shrinks. A single track is what caused
+    // RTI-3465: pairing by step alone forced 20px body copy onto the 20px heading leading.
+    //
+    // Every value here is one a call site already rendered, so the split moves nothing by itself;
+    // the restores in RTI-3465 come from call sites picking the track they always meant. Both
+    // tracks are defined at every step even where nothing uses them yet, so the next call site
+    // picks a value off the scale instead of inventing one.
+    --text-lh-display-2xs: 1.2; // 12px
+    --text-lh-display-xs: 1.1666; // 14px
+    --text-lh-display-sm: 1.2; // 16.8px
+    --text-lh-display-base: 1.2; // 19.2px
+    --text-lh-display-lg: 1.2; // 24px
+    --text-lh-display-xl: 1.2; // 28.8px
+    --text-lh-display-2xl: 1.1; // 35.2px
+    --text-lh-display-3xl: 1.1; // 44px
+
+    // TODO(design): body-xs and body-2xl break the otherwise monotonic curve — they are the
+    // leadings `.text-xs` and `.text-2xl` have always shipped, preserved here rather than silently
+    // corrected. Smoothing them is now a one-line change per token.
+    --text-lh-body-2xs: 1.6; // 16px
+    --text-lh-body-xs: 1.6666; // 20px
+    --text-lh-body-sm: 1.4; // 19.6px
+    --text-lh-body-base: 1.4; // 22.4px
+    --text-lh-body-lg: 1.4; // 28px
+    --text-lh-body-xl: 1.4; // 33.6px
+    --text-lh-body-2xl: 1.5; // 48px
+    --text-lh-body-3xl: 1.25; // 50px
 
     --icon-size: #{$spacing-size-8};
 

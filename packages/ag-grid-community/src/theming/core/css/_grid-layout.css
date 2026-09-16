@@ -149,7 +149,8 @@
         background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
     }
 
-    .ag-grid-container-wrapper {
+    > .ag-grid-pinned-left-cells > .ag-grid-container-wrapper,
+    > .ag-grid-pinned-right-cells > .ag-grid-container-wrapper {
         /* re-apply the transparent row color over the opaque background */
         background-color: inherit;
     }

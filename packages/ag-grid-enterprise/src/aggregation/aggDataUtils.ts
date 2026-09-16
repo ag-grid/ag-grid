@@ -1,4 +1,4 @@
-import type { ColumnModel, RowNode } from 'ag-grid-community';
+import type { AgColumn, ColumnModel, RowNode } from 'ag-grid-community';
 
 /**
  * Traverses `rowNode.childrenMapped` using pivot keys to resolve the matching RowNode array.
@@ -16,15 +16,36 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
     return Array.isArray(mapPointer) ? mapPointer : [];
 };
 
+/** An aggData key and the column it came from. Structurally a {@link ResolvedValueColumn}. */
+export interface AggDataEventCol {
+    readonly colId: string;
+    readonly column: AgColumn;
+}
+
+/**
+ * The columns an aggData object is keyed by, resolved once per aggregation, so the per-row event loop
+ * costs no `Object.keys` allocation. Only the non-pivot path can supply it.
+ */
+export interface AggDataEventCols {
+    readonly cols: readonly AggDataEventCol[];
+    /** Whether the previous aggData can hold a key `cols` no longer names, so removals need detecting. */
+    readonly checkRemoved: boolean;
+}
+
 /** Sets aggData and fires cell-changed events if listeners are registered. */
-export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | null, colModel: ColumnModel): void => {
+export const setAggData = (
+    rowNode: RowNode,
+    newAggData: Record<string, any> | null,
+    colModel: ColumnModel,
+    eventCols?: AggDataEventCols
+): void => {
     const oldAggData = rowNode.aggData;
     if (oldAggData === newAggData) {
         return;
     }
     rowNode.aggData = newAggData;
     if (rowNode.__localEventService) {
-        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel);
+        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel, eventCols);
     }
 };
 
@@ -32,22 +53,23 @@ export const setAggData = (rowNode: RowNode, newAggData: Record<string, any> | n
 export const setAggDataWithSiblings = (
     rowNode: RowNode,
     newAggData: Record<string, any> | null,
-    colModel: ColumnModel
+    colModel: ColumnModel,
+    eventCols?: AggDataEventCols
 ): void => {
-    setAggData(rowNode, newAggData, colModel);
+    setAggData(rowNode, newAggData, colModel, eventCols);
 
     const pinnedSibling = rowNode.pinnedSibling;
     if (pinnedSibling) {
-        setAggData(pinnedSibling, newAggData, colModel);
+        setAggData(pinnedSibling, newAggData, colModel, eventCols);
     }
 
     const sibling = rowNode.sibling;
     if (sibling) {
-        setAggData(sibling, newAggData, colModel);
+        setAggData(sibling, newAggData, colModel, eventCols);
 
         const siblingPinnedSibling = sibling.pinnedSibling;
         if (siblingPinnedSibling) {
-            setAggData(siblingPinnedSibling, newAggData, colModel);
+            setAggData(siblingPinnedSibling, newAggData, colModel, eventCols);
         }
     }
 };
@@ -57,7 +79,8 @@ const fireAggDataChangedEvents = (
     rowNode: RowNode,
     oldAggData: Record<string, any> | null | undefined,
     newAggData: Record<string, any> | null,
-    colModel: ColumnModel
+    colModel: ColumnModel,
+    eventCols: AggDataEventCols | undefined
 ): void => {
     if (!newAggData) {
         if (!oldAggData) {
@@ -71,6 +94,23 @@ const fireAggDataChangedEvents = (
                 rowNode.dispatchCellChangedEvent(column, undefined, oldAggData[colId]);
             }
         }
+        return;
+    }
+
+    if (eventCols) {
+        const cols = eventCols.cols;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const { colId, column } = cols[i];
+            const value = newAggData[colId];
+            const oldValue = oldAggData ? oldAggData[colId] : undefined;
+            if (value !== oldValue) {
+                rowNode.dispatchCellChangedEvent(column, value, oldValue);
+            }
+        }
+        if (!oldAggData || !eventCols.checkRemoved) {
+            return;
+        }
+        fireRemovedAggDataEvents(rowNode, oldAggData, newAggData, colModel);
         return;
     }
 
@@ -88,10 +128,19 @@ const fireAggDataChangedEvents = (
         }
     }
 
-    // Detect removed columns (old key not present in new aggData).
     if (!oldAggData) {
         return;
     }
+    fireRemovedAggDataEvents(rowNode, oldAggData, newAggData, colModel);
+};
+
+/** Colder still: an old key the new aggData no longer names, which only a column change can produce. */
+const fireRemovedAggDataEvents = (
+    rowNode: RowNode,
+    oldAggData: Record<string, any>,
+    newAggData: Record<string, any>,
+    colModel: ColumnModel
+): void => {
     const oldKeys = Object.keys(oldAggData);
     for (let i = 0, len = oldKeys.length; i < len; ++i) {
         const colId = oldKeys[i];

@@ -46,4 +46,26 @@ test.agExample(import.meta, () => {
         // Verify the cell value has been updated to the selected colour
         await expect(cell).toContainText(optionText);
     });
+
+    test.eachFramework(
+        'should render the colour cell renderer in the grid cell and in the editor list',
+        async ({ agIdFor, page }) => {
+            // The same cellRenderer is used for the grid cell and for the editor list rows,
+            // so both render rich HTML (a colour swatch) rather than plain text
+            const cell = agIdFor.cell('0', 'color').first();
+            const cellSwatch = cell.locator('span[style*="border-left"]').first();
+            await expect(cellSwatch).toHaveAttribute('style', /border-left:\s*10px solid/);
+
+            // Open the editor and verify the list rows use the renderer too
+            await cell.dblclick();
+
+            const popup = page.locator('.ag-rich-select-list').first();
+            await expect(popup).toBeVisible();
+
+            const rowSwatch = popup.locator('.ag-rich-select-row span[style*="border-left"]').first();
+            await expect(rowSwatch).toHaveAttribute('style', /border-left:\s*10px solid/);
+
+            await page.keyboard.press('Escape');
+        }
+    );
 });

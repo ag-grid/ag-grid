@@ -19,11 +19,14 @@ const INTERNAL_EXAMPLE_DISALLOWS = [
     '/charts/debug/gallery-example-files',
     '/charts/debug/gallery-examples',
 ];
-// Non-example blocks that always apply.
-const OTHER_DISALLOWS = ['/debug/', '/*-data-grid/*-test/', '/404', '/*searchQuery='];
+// Archived documentation for older versions — blocked for search, opened to AI.
+const ARCHIVE_DISALLOWS = ['/archive/', '/studio/archive/'];
+// Non-example blocks that always apply. `/documentation-archive/` contains "archive" but is not an
+// archive path, so it guards the archive match against over-reaching.
+const OTHER_DISALLOWS = ['/debug/', '/*-data-grid/*-test/', '/404', '/*searchQuery=', '/documentation-archive/'];
 // Everything the AI group must still enforce (internal fixtures + other blocks).
 const AI_KEPT_DISALLOWS = [...INTERNAL_EXAMPLE_DISALLOWS, ...OTHER_DISALLOWS];
-const DISALLOW_PATHS = [...PUBLIC_EXAMPLE_DISALLOWS, ...AI_KEPT_DISALLOWS];
+const DISALLOW_PATHS = [...PUBLIC_EXAMPLE_DISALLOWS, ...ARCHIVE_DISALLOWS, ...AI_KEPT_DISALLOWS];
 
 // Split the robots.txt into groups on blank lines.
 const getGroups = (txt: string) => txt.split(/\n\s*\n/).map((group) => group.trim());
@@ -60,6 +63,13 @@ describe('productionRobotsTxt — AI-crawler position (SE-78)', () => {
 
     test('AI group opens the public example pages (those Disallows removed)', () => {
         for (const path of PUBLIC_EXAMPLE_DISALLOWS) {
+            expect(aiGroup).not.toContain(`Disallow: ${path}`);
+        }
+    });
+
+    test('AI group opens the version archives (those Disallows removed), search keeps them blocked', () => {
+        for (const path of ARCHIVE_DISALLOWS) {
+            expect(wildcardGroup).toContain(`Disallow: ${path}`);
             expect(aiGroup).not.toContain(`Disallow: ${path}`);
         }
     });
