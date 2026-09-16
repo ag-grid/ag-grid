@@ -576,7 +576,9 @@ export function _errMsg<
 }
 
 /**
- * Used for messages before the ValidationService has been created
+ * Used for messages before the ValidationService has been created. Captures the diagnostic as well as
+ * building the message, so the buffer replays it to the error overlay once the grid starts up — nothing
+ * else reports these, as they are raised at module registration where no grid or bean yet exists.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _preInitErrMsg<
@@ -584,6 +586,7 @@ export function _preInitErrMsg<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
+    captureDiagnostic(args[0], args[1], 'error');
     // as well as displaying an extra line break, this will remove the part of the message about adding the validation module
     return getErrMsg('\n', args);
 }
