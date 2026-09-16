@@ -23,7 +23,7 @@ import type {
     _ModuleWithoutApi,
 } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
-import { _logVersionIfDebug } from './logVersion';
+import { _getAgVersionsText, _logVersionIfDebug } from './logVersion';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
@@ -137,7 +137,7 @@ export class GridCoreCreator {
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList. The grid root is already
             // in the DOM but no beans (and so no overlay) exist, so render the dev bootstrap panel here.
-            _renderBootstrapPanel(eOutermostGridOwned);
+            _renderBootstrapPanel(eOutermostGridOwned, _getAgVersionsText(registeredModules));
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
         }

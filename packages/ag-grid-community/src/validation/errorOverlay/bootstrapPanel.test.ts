@@ -8,12 +8,14 @@ const errorDiagnostic: CapturedDiagnostic = {
     severity: 'error',
 };
 
+const VERSIONS = 'AG Grid Community=99.9.9, AG Grid Enterprise=99.9.9';
+
 describe('renderBootstrapPanel', () => {
     test('renders a panel with the diagnostic, an error link and a Copy control', () => {
         _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
 
-        renderBootstrapPanel(container, [errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic], VERSIONS);
 
         const panel = container.querySelector('.ag-overlay-error-bootstrap-panel');
         expect(panel).not.toBeNull();
@@ -26,7 +28,7 @@ describe('renderBootstrapPanel', () => {
         _applyDevValidationConfig({ showOverlayOn: [] });
         const container = document.createElement('div');
 
-        renderBootstrapPanel(container, [errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic], VERSIONS);
 
         expect(container.childElementCount).toBe(0);
     });
@@ -36,7 +38,7 @@ describe('renderBootstrapPanel', () => {
         const container = document.createElement('div');
         const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
 
-        renderBootstrapPanel(container, [errorDiagnostic, warning]);
+        renderBootstrapPanel(container, [errorDiagnostic, warning], VERSIONS);
 
         expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(1);
     });
@@ -47,7 +49,7 @@ describe('renderBootstrapPanel', () => {
         const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
         const deprecation: CapturedDiagnostic = { id: 23, params: { key: 'rowData' }, severity: 'deprecation' };
 
-        renderBootstrapPanel(container, [errorDiagnostic, warning, deprecation]);
+        renderBootstrapPanel(container, [errorDiagnostic, warning, deprecation], VERSIONS);
 
         expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(2);
     });
@@ -57,7 +59,7 @@ describe('renderBootstrapPanel', () => {
         const container = document.createElement('div');
         const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
 
-        renderBootstrapPanel(container, [errorDiagnostic, warning]);
+        renderBootstrapPanel(container, [errorDiagnostic, warning], VERSIONS);
 
         const headers = Array.from(container.querySelectorAll('.ag-overlay-error-section-header')).map(
             (h) => h.textContent
@@ -75,10 +77,22 @@ describe('renderBootstrapPanel', () => {
             severity: 'error',
         };
 
-        renderBootstrapPanel(container, [errorDiagnostic, secondError]);
+        renderBootstrapPanel(container, [errorDiagnostic, secondError], VERSIONS);
 
         expect(container.querySelectorAll('.ag-overlay-error-section-header')[0]?.textContent).toBe('Errors (2)');
         expect(container.querySelectorAll('hr')).toHaveLength(0);
+    });
+
+    test('reports the AG package versions in a footer', () => {
+        _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
+        const container = document.createElement('div');
+
+        renderBootstrapPanel(container, [errorDiagnostic], VERSIONS);
+
+        // The versions are the last thing in the panel, below the diagnostics.
+        expect(container.querySelector('.ag-overlay-error-bootstrap-panel')!.lastElementChild!.textContent).toBe(
+            VERSIONS
+        );
     });
 
     test('renders a single panel when called repeatedly on the same container', () => {
@@ -86,8 +100,8 @@ describe('renderBootstrapPanel', () => {
         const container = document.createElement('div');
 
         // A re-created grid (e.g. React StrictMode) renders into the same container more than once.
-        renderBootstrapPanel(container, [errorDiagnostic]);
-        renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic], VERSIONS);
+        renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic], VERSIONS);
 
         expect(container.querySelectorAll('.ag-overlay-error-bootstrap-panel')).toHaveLength(1);
     });
@@ -95,11 +109,11 @@ describe('renderBootstrapPanel', () => {
     test('removes a stale panel when the overlay is disabled before a re-render', () => {
         _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
-        renderBootstrapPanel(container, [errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic], VERSIONS);
 
         // Overlay config is global and last-write-wins, so it can be turned off between grid re-creations.
         _applyDevValidationConfig({ showOverlayOn: [] });
-        renderBootstrapPanel(container, [errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic], VERSIONS);
 
         expect(container.childElementCount).toBe(0);
     });
@@ -108,7 +122,7 @@ describe('renderBootstrapPanel', () => {
         _applyDevValidationConfig({ showOverlayOn: ['deprecation', 'warning', 'error'] });
         const container = document.createElement('div');
 
-        renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic], VERSIONS);
 
         expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(1);
     });

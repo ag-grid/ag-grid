@@ -349,6 +349,15 @@ export function diagnosticToMarkdown(diagnostic: CapturedDiagnostic): string {
     );
 }
 
+/**
+ * Plain-text/markdown rendering of every diagnostic on a panel for the Copy button, led by the AG
+ * package versions in use. The versions head the copied text because whoever (or whatever) reads a
+ * pasted diagnostic needs to know which build produced it before the messages mean anything.
+ */
+export function diagnosticsToMarkdown(diagnostics: readonly CapturedDiagnostic[], versionsText: string): string {
+    return [`Version: ${versionsText}`, ...diagnostics.map(diagnosticToMarkdown)].join('\n\n');
+}
+
 export const COPY_LABEL = 'Copy';
 const COPIED_LABEL = 'Copied';
 const COPY_RESET_MS = 1500;

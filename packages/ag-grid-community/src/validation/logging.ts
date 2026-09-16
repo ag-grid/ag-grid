@@ -149,7 +149,7 @@ export function _addDiagnosticListener(gridId: string | undefined, listener: Dia
     };
 }
 
-type BootstrapPanelRenderer = (container: HTMLElement, diagnostics: CapturedDiagnostic[]) => void;
+type BootstrapPanelRenderer = (container: HTMLElement, diagnostics: CapturedDiagnostic[], versionsText: string) => void;
 let bootstrapPanelRenderer: BootstrapPanelRenderer | null = null;
 
 /**
@@ -166,7 +166,7 @@ export function _provideBootstrapPanelRenderer(renderer: BootstrapPanelRenderer)
  * creation) into `container`, when the ValidationModule has provided a renderer. No-op otherwise, so core
  * stays decoupled and production pays nothing.
  */
-export function _renderBootstrapPanel(container: HTMLElement): void {
+export function _renderBootstrapPanel(container: HTMLElement, versionsText: string): void {
     if (!bootstrapPanelRenderer) {
         return;
     }
@@ -186,7 +186,7 @@ export function _renderBootstrapPanel(container: HTMLElement): void {
             bufferedDiagnostics.splice(i, 1);
         }
     }
-    bootstrapPanelRenderer(container, untied);
+    bootstrapPanelRenderer(container, untied, versionsText);
 }
 
 // Buffers the diagnostic for the overlay and notifies matching listeners. Does not throw — the throw

@@ -2,6 +2,7 @@ import type { CapturedDiagnostic } from '../logging';
 import {
     diagnosticContentToMarkdown,
     diagnosticToMarkdown,
+    diagnosticsToMarkdown,
     parseDiagnosticText,
     renderDiagnostic,
     renderDiagnosticElement,
@@ -195,6 +196,13 @@ describe('against real error definitions', () => {
         const md = diagnosticToMarkdown(diagnostic);
         expect(md).toContain('### [Warning] AG Grid #22');
         expect(md).toContain('/errors/22');
+    });
+
+    test('diagnosticsToMarkdown leads the copied text with the AG package versions', () => {
+        const md = diagnosticsToMarkdown([diagnostic, diagnostic], 'AG Grid Community=9.9.9');
+
+        expect(md.split('\n')[0]).toBe('Version: AG Grid Community=9.9.9');
+        expect(md.match(/### \[Warning\] AG Grid #22/g)).toHaveLength(2);
     });
 
     test('capitalises the first letter when the message starts with prose', () => {

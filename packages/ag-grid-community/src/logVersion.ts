@@ -16,14 +16,11 @@ export function _setAgChartsInfo(module: Module, version: string, isEnterprise: 
 }
 
 /**
- * Logs the version of each AG package in use. Called once per grid, before any bean exists, so that
- * mismatched versions across the packages are visible as the first thing `debug` mode prints.
+ * Builds the `AG Grid Community=<v>, ...` clause list for the AG packages this grid has registered,
+ * one clause per package in use. Shared by the `debug` console line and the dev validation overlay,
+ * so both surfaces report the same versions in the same format.
  */
-export function _logVersionIfDebug(debug: boolean | undefined, registeredModules: Module[]): void {
-    if (!debug) {
-        return;
-    }
-
+export function _getAgVersionsText(registeredModules: Module[]): string {
     const versions = [`AG Grid Community=${VERSION}`];
 
     // Every enterprise module depends on `EnterpriseCore`, and `registeredModules` is
@@ -44,5 +41,15 @@ export function _logVersionIfDebug(debug: boolean | undefined, registeredModules
     }
     versions.push(...chartsVersions);
 
-    _logDebug(`Version: ${versions.join(', ')}`);
+    return versions.join(', ');
+}
+
+/**
+ * Logs the version of each AG package in use. Called once per grid, before any bean exists, so that
+ * mismatched versions across the packages are visible as the first thing `debug` mode prints.
+ */
+export function _logVersionIfDebug(debug: boolean | undefined, registeredModules: Module[]): void {
+    if (debug) {
+        _logDebug(`Version: ${_getAgVersionsText(registeredModules)}`);
+    }
 }

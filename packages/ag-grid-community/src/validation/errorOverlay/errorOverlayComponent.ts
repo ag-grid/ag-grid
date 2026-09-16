@@ -1,5 +1,7 @@
 import { RefPlaceholder } from 'ag-stack';
 
+import { _getAgVersionsText } from '../../logVersion';
+import { _getRegisteredModules } from '../../modules/moduleRegistry';
 import { OverlayComponent } from '../../rendering/overlays/overlayComponent';
 import type { IOverlayComp } from '../../rendering/overlays/overlayComponent';
 import type { ElementParams } from '../../utils/element';
@@ -9,7 +11,7 @@ import {
     COPY_LABEL,
     SEVERITY_ORDER,
     copyDiagnosticsToClipboard,
-    diagnosticToMarkdown,
+    diagnosticsToMarkdown,
     flashCopied,
     renderDiagnosticSections,
 } from './errorOverlayRenderer';
@@ -39,6 +41,7 @@ const ErrorOverlayElement: ElementParams = {
             ],
         },
         { tag: 'div', ref: 'eBody', cls: 'ag-overlay-error-body' },
+        { tag: 'div', ref: 'eVersions', cls: 'ag-overlay-error-versions' },
     ],
 };
 
@@ -53,6 +56,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
     private readonly eCopy: HTMLButtonElement = RefPlaceholder;
     private readonly eDismiss: HTMLButtonElement = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
+    private readonly eVersions: HTMLElement = RefPlaceholder;
 
     private copyResetTimeout: number | undefined;
 
@@ -69,6 +73,10 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
             this.eDismiss.textContent = '✕';
         }
         this.addManagedElementListeners(this.eDismiss, { click: () => beans.errorOverlay?.dismiss() });
+
+        // Fixed for the life of the grid (its modules are registered before any bean), so rendered
+        // here rather than on every diagnostic update.
+        this.eVersions.textContent = this.getVersionsText();
 
         this.renderBody();
 
@@ -92,13 +100,18 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
     }
 
+    /** The AG package versions this grid is running, for the panel footer and the copied diagnostics. */
+    private getVersionsText(): string {
+        const { context, gos } = this.beans;
+        return _getAgVersionsText(_getRegisteredModules(context.getId(), gos.get('rowModelType')));
+    }
+
     private copyDiagnostics(): void {
         const diagnostics = this.beans.errorOverlay?.getDiagnostics() ?? [];
         if (!diagnostics.length) {
             return;
         }
-        const text = diagnostics.map(diagnosticToMarkdown).join('\n\n');
-        copyDiagnosticsToClipboard(text);
+        copyDiagnosticsToClipboard(diagnosticsToMarkdown(diagnostics, this.getVersionsText()));
         if (this.copyResetTimeout !== undefined) {
             window.clearTimeout(this.copyResetTimeout);
         }
