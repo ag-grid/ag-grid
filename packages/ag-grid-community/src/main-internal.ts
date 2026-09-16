@@ -438,7 +438,6 @@ export {
     _errorForGrid,
     _errorWithoutAttribution,
     _logPreInitWarn,
-    _preInitErrMsg,
     _resetMissingModuleReports,
     _warnForGrid,
     _warnWithoutAttribution,

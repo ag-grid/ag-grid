@@ -538,14 +538,17 @@ export function _errorForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 
-/** Used for messages before the ValidationService has been created */
+/**
+ * Used for messages before the ValidationService has been created. `gridId` attributes the captured
+ * diagnostic to one grid, for a pre-init failure that belongs to a specific grid rather than the page.
+ */
 export function _logPreInitErr<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
+>(id: TId, args: GetErrorParams<TId>, defaultMessage: string, gridId?: string) {
     logToConsole(_errorOnce, id, args as any, false, defaultMessage);
-    emitDiagnostic(id, args as any, 'error', defaultMessage);
+    emitDiagnostic(id, args as any, 'error', defaultMessage, gridId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -573,17 +576,4 @@ export function _errMsg<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
     return getErrMsg(undefined, args);
-}
-
-/**
- * Used for messages before the ValidationService has been created
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _preInitErrMsg<
-    TId extends ErrorId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
-    // as well as displaying an extra line break, this will remove the part of the message about adding the validation module
-    return getErrMsg('\n', args);
 }

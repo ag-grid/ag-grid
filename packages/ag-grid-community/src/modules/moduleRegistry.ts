@@ -1,6 +1,7 @@
 import type { Module, ModuleName, _ModuleWithLicenseManager } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/log';
+import { _logPreInitErr } from '../validation/logging';
 
 interface RowModelModuleStore {
     [name: string]: Module;
@@ -24,7 +25,7 @@ function isValidModuleVersion(module: Module): boolean {
     return moduleMajor === currentModuleMajor && moduleMinor === currentModuleMinor;
 }
 
-function runVersionChecks(module: Module) {
+function runVersionChecks(module: Module, gridId: string | undefined) {
     if (!currentModuleVersion) {
         currentModuleVersion = module.version;
     }
@@ -42,13 +43,19 @@ function runVersionChecks(module: Module) {
 
     const result = module.validate?.();
     if (result && !result.isValid) {
-        _errorOnce(`${result.message}`);
+        if (result.errorId !== undefined) {
+            // Route by id so the failure reaches the dev overlay and `issueRaised`, not just the console.
+            // A grid-scoped registration attributes to that grid; a global one stays untied.
+            _logPreInitErr(result.errorId, result.errorParams, '\n', gridId);
+        } else {
+            _errorOnce(`${result.message}`);
+        }
     }
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _registerModule(module: Module, gridId: string | undefined): void {
-    runVersionChecks(module);
+    runVersionChecks(module, gridId);
     const rowModels = module.rowModels ?? ['all'];
 
     allRegisteredModules.add(module);
