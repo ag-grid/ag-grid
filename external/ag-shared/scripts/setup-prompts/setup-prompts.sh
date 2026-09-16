@@ -418,7 +418,21 @@ generate_config() {
     local cache_manifest="${AG_DEV_PROMPTS_CACHE:-$HOME/.cache/ag-dev-prompts}/repo/.claude-plugin/plugin-assignments.json"
     local fetch_script="$REPO_ROOT/external/ag-shared/scripts/rulesync-fetch/fetch.sh"
     local stage_script="$REPO_ROOT/external/ag-shared/scripts/rulesync-fetch/stage.py"
-    if [[ -x "$fetch_script" ]] && [[ -f "$stage_script" ]]; then
+    # On a GitHub Actions runner the fetch only succeeds with a token that can read
+    # the private ag-dev-prompts repo (the workflow's own GITHUB_TOKEN cannot), and
+    # the content it feeds — rule generation for Cursor / Codex / Copilot — is not
+    # consumed there. Skip it unless the workflow supplies a token explicitly; the
+    # AI Workflow and PR-review jobs pass an App token as GITHUB_TOKEN and are
+    # unaffected. AG_DEV_PROMPTS_SKIP_FETCH=1 forces the skip in any environment.
+    local skip_fetch_reason=""
+    if [[ "${AG_DEV_PROMPTS_SKIP_FETCH:-}" == "1" ]]; then
+        skip_fetch_reason="AG_DEV_PROMPTS_SKIP_FETCH=1"
+    elif [[ -n "${GITHUB_ACTIONS:-}" && -z "${GITHUB_TOKEN:-}" && -z "${AG_DEV_PROMPTS_REPO:-}" ]]; then
+        skip_fetch_reason="GitHub Actions run with no GITHUB_TOKEN"
+    fi
+    if [[ -n "$skip_fetch_reason" ]]; then
+        echo -e "${YELLOW}!${NC} Skipping ag-dev-prompts fetch (${skip_fetch_reason}) — non-Claude tools will use whatever is already staged." >&2
+    elif [[ -x "$fetch_script" ]] && [[ -f "$stage_script" ]]; then
         if [[ "$verbose" == "true" ]]; then
             echo -e "${BLUE}Fetching ag-dev-prompts...${NC}"
         fi
