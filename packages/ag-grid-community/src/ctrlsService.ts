@@ -4,43 +4,35 @@ import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
 import type { GridBodyScrollFeature } from './gridBodyComp/gridBodyScrollFeature';
-import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
+import type { RowContainerCtrl, RowContainerName } from './gridBodyComp/rowContainer/rowContainerCtrl';
+import { ROW_CONTAINER_NAMES } from './gridBodyComp/rowContainer/rowContainerCtrl';
 import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 
-/** If adding or removing a control, update `REQUIRED_CTRLS` below. */
-interface ReadyParams {
+/** If adding or removing a control, update `SINGLETON_CTRLS` below. The row containers come from
+ *  `ROW_CONTAINER_NAMES`, so adding one there reaches both without an edit here. */
+type ReadyParams = Record<RowContainerName, RowContainerCtrl> & {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
-
-    scrolling: RowContainerCtrl;
-    pinnedTop: RowContainerCtrl;
-    pinnedBottom: RowContainerCtrl;
-    stickyTop: RowContainerCtrl;
-    stickyBottom: RowContainerCtrl;
 
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
     headerRowContainerCtrl: HeaderRowContainerCtrl;
-}
+};
 
 type CtrlType = keyof ReadyParams;
-const REQUIRED_CTRLS: CtrlType[] = [
+const REQUIRED_CTRLS = [
     'gridCtrl',
     'gridBodyCtrl',
-    'scrolling',
-    'pinnedTop',
-    'pinnedBottom',
-    'stickyTop',
-    'stickyBottom',
+    ...ROW_CONTAINER_NAMES,
     'fakeHScrollComp',
     'fakeVScrollComp',
     'gridHeaderCtrl',
     'headerRowContainerCtrl',
-];
+] as const satisfies readonly CtrlType[];
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 
@@ -75,11 +67,14 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         );
     }
     private updateReady(): void {
-        // ready when all required controls have been registered and are alive
-        this.ready = REQUIRED_CTRLS.every((ctrlType) => {
-            const ctrl = this.params[ctrlType];
-            return ctrl?.isAlive() ?? false;
-        });
+        const params = this.params;
+        for (let i = 0, len = REQUIRED_CTRLS.length; i < len; ++i) {
+            if (!params[REQUIRED_CTRLS[i]]?.isAlive()) {
+                this.ready = false;
+                return;
+            }
+        }
+        this.ready = true;
     }
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {

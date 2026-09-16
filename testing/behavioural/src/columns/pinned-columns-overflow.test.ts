@@ -2,7 +2,7 @@ import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
-import type { GridApi } from 'ag-grid-community';
+import type { AgEvent, GridApi, GridSizeChangedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
 
 const overflowingColumnDefs = [
@@ -23,13 +23,14 @@ const query = <T extends Element>(selector: string): T => {
     return element!;
 };
 
+/** The payload is checked against the real event; only `dispatchEvent`'s base type needs the cast. */
 const dispatchGridSizeChanged = (api: GridApi, width: number): void => {
-    const beans = (api.getAllGridColumns()[0] as any).beans;
-    beans.eventSvc.dispatchEvent({
+    const event: Pick<GridSizeChangedEvent, 'type' | 'clientWidth' | 'clientHeight'> = {
         type: 'gridSizeChanged',
         clientWidth: width,
         clientHeight: mockGridLayout.gridHeight,
-    });
+    };
+    api.dispatchEvent(event as AgEvent);
 };
 
 describe('Pinned columns wider than the viewport', () => {
@@ -128,6 +129,27 @@ describe('Pinned columns wider than the viewport', () => {
 
         api.ensureColumnVisible('g');
         expect(viewport.scrollLeft).toBe(0);
+    });
+
+    // Print lays every column out at once, so the clipping that applies on screen must not.
+    test('does not clip overflowing pinned columns in print layout', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: overflowingColumnDefs,
+            rowData,
+            processUnpinnedColumns: () => [],
+        });
+        await asyncSetTimeout(0);
+
+        const viewport = query<HTMLElement>('.ag-grid-viewport');
+        expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(true);
+
+        api.setGridOption('domLayout', 'print');
+        await asyncSetTimeout(0);
+        expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(false);
+
+        api.setGridOption('domLayout', 'normal');
+        await asyncSetTimeout(0);
+        expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(true);
     });
 
     test('keeps the normal scroll range while pinned columns fit in the viewport', async () => {

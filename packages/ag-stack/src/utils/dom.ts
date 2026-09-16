@@ -106,6 +106,8 @@ export function _isElementChildOfClass(
     return false;
 }
 
+const pf = Number.parseFloat;
+
 // returns back sizes as doubles instead of strings. similar to
 // getBoundingClientRect, however getBoundingClientRect does not:
 // a) work with fractions (eg browser is zooming)values
@@ -146,7 +148,6 @@ export function _getElementSize(el: HTMLElement): {
         boxSizing,
     } = window.getComputedStyle(el);
 
-    const pf = Number.parseFloat;
     return {
         height: pf(height || '0'),
         width: pf(width || '0'),
@@ -166,40 +167,54 @@ export function _getElementSize(el: HTMLElement): {
     };
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getInnerHeight(el: HTMLElement): number {
-    const size = _getElementSize(el);
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  Pass `style` when both axes of one element are wanted, so the style resolves once. */
+export function _getInnerHeight(el: HTMLElement, style: CSSStyleDeclaration = window.getComputedStyle(el)): number {
+    const height = pf(style.height || '0');
 
-    if (size.boxSizing === 'border-box') {
-        return size.height - size.paddingTop - size.paddingBottom - size.borderTopWidth - size.borderBottomWidth;
+    if (style.boxSizing === 'border-box') {
+        return (
+            height -
+            pf(style.paddingTop || '0') -
+            pf(style.paddingBottom || '0') -
+            pf(style.borderTopWidth || '0') -
+            pf(style.borderBottomWidth || '0')
+        );
     }
 
-    return size.height;
+    return height;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getInnerWidth(el: HTMLElement): number {
-    const size = _getElementSize(el);
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  Pass `style` when both axes of one element are wanted, so the style resolves once. */
+export function _getInnerWidth(el: HTMLElement, style: CSSStyleDeclaration = window.getComputedStyle(el)): number {
+    const width = pf(style.width || '0');
 
-    if (size.boxSizing === 'border-box') {
-        return size.width - size.paddingLeft - size.paddingRight - size.borderLeftWidth - size.borderRightWidth;
+    if (style.boxSizing === 'border-box') {
+        return (
+            width -
+            pf(style.paddingLeft || '0') -
+            pf(style.paddingRight || '0') -
+            pf(style.borderLeftWidth || '0') -
+            pf(style.borderRightWidth || '0')
+        );
     }
 
-    return size.width;
+    return width;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getAbsoluteHeight(el: HTMLElement): number {
-    const { height, marginBottom, marginTop } = _getElementSize(el);
+    const style = window.getComputedStyle(el);
 
-    return Math.floor(height + marginBottom + marginTop);
+    return Math.floor(pf(style.height || '0') + pf(style.marginBottom || '0') + pf(style.marginTop || '0'));
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getAbsoluteWidth(el: HTMLElement): number {
-    const { width, marginLeft, marginRight } = _getElementSize(el);
+    const style = window.getComputedStyle(el);
 
-    return Math.floor(width + marginLeft + marginRight);
+    return Math.floor(pf(style.width || '0') + pf(style.marginLeft || '0') + pf(style.marginRight || '0'));
 }
 
 export function _getElementRectWithOffset(el: HTMLElement): {

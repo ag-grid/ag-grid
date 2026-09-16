@@ -149,8 +149,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightWidth = newRightWidth;
         this.totalWidth = newBodyWidth + newLeftWidth + newRightWidth;
 
-        // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: viewport must resize
-        // before the scrollbar updates its visibility.
+        // `columnContainerWidthChanged` has no listener inside the grid; it is kept, and kept ahead of
+        // `displayedColumnsWidthChanged`, because both are observable from `addEventListener`.
         const eventSvc = this.eventSvc;
         eventSvc.dispatchEvent({ type: 'columnContainerWidthChanged' });
         eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });

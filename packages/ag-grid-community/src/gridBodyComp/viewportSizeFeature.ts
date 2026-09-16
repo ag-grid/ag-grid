@@ -1,4 +1,4 @@
-import { _getInnerHeight, _observeResize, _requestAnimationFrame } from 'ag-stack';
+import { _getInnerHeight, _getInnerWidth, _observeResize, _requestAnimationFrame } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -19,7 +19,6 @@ export class ViewportSizeFeature extends BeanStub {
 
     private centerWidth: number;
     private bodyHeight: number;
-    private viewportWidth: number;
     private centerViewportResizeQueued = false;
     private viewportGeometryRefreshQueued = false;
     private scrollVisibilityRefreshQueued = false;
@@ -124,6 +123,9 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             const { pinnedCols, colFlex } = this.beans;
+            const gridBodyCtrl = this.gridBodyCtrl;
+            // The viewport has just resized, and the pinned-width rule is enforced against it.
+            gridBodyCtrl.refreshViewportWidth(_getInnerWidth(gridBodyCtrl.eGridViewport));
             pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
@@ -150,12 +152,19 @@ export class ViewportSizeFeature extends BeanStub {
             return;
         }
 
+        const eGridViewport = gridBodyCtrl.eGridViewport;
+        const style = window.getComputedStyle(eGridViewport);
+
+        // Before the visibility pass, which resolves both the horizontal scrollbar and the scroll gap
+        // from this width and would otherwise decide them on the previous layout.
+        gridBodyCtrl.refreshViewportWidth(_getInnerWidth(eGridViewport, style));
+
         // results in updating anything that depends on scroll showing
         this.scrollVisibleSvc.refresh();
 
+        // After it: an applied horizontal scrollbar takes its space out of the viewport's height.
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
-        this.checkBodyHeight();
-        this.checkViewportWidth();
+        this.checkBodyHeight(_getInnerHeight(eGridViewport, style));
 
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
@@ -167,35 +176,18 @@ export class ViewportSizeFeature extends BeanStub {
         return this.bodyHeight;
     }
 
-    private checkBodyHeight(): void {
+    private checkBodyHeight(innerHeight: number): void {
         const gridBodyCtrl = this.gridBodyCtrl;
         if (!gridBodyCtrl) {
             return;
         }
 
-        const eGridViewport = gridBodyCtrl.eGridViewport;
-        const bodyHeight = gridBodyCtrl.getBodyViewportHeight(_getInnerHeight(eGridViewport));
+        const bodyHeight = gridBodyCtrl.getBodyViewportHeight(innerHeight);
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
             this.eventSvc.dispatchEvent({
                 type: 'bodyHeightChanged',
-            });
-        }
-    }
-
-    private checkViewportWidth(): void {
-        const gridBodyCtrl = this.gridBodyCtrl;
-        if (!gridBodyCtrl) {
-            return;
-        }
-
-        const viewportWidth = gridBodyCtrl.getHorizontalViewportWidth();
-
-        if (this.viewportWidth !== viewportWidth) {
-            this.viewportWidth = viewportWidth;
-            this.eventSvc.dispatchEvent({
-                type: 'gridViewportWidthChanged',
             });
         }
     }

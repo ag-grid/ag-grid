@@ -99,8 +99,20 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         }
     }
 
+    private containerHeightSyncQueued = false;
+
+    /** Several events report one change, and each sync reads layout, so they coalesce into one frame. */
     private queueContainerHeightSync(): void {
-        _requestAnimationFrame(this.beans, () => this.syncContainerHeight());
+        if (this.containerHeightSyncQueued) {
+            return;
+        }
+        this.containerHeightSyncQueued = true;
+        _requestAnimationFrame(this.beans, () => {
+            this.containerHeightSyncQueued = false;
+            if (this.isAlive()) {
+                this.syncContainerHeight();
+            }
+        });
     }
 
     private syncContainerHeight(): void {
@@ -109,8 +121,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
             return;
         }
 
-        const gridScrollHeight = gridBodyCtrl.getScrollContentHeight();
         const gridHeight = gridBodyCtrl.eGridViewport.clientHeight;
+        const gridScrollHeight = gridBodyCtrl.getScrollContentHeight(gridHeight);
         const fakeVScrollHeight = this.eViewport.clientHeight;
         const diff = gridHeight - fakeVScrollHeight;
         this.eContainer.style.height = `${Math.max(1, gridScrollHeight - diff)}px`;

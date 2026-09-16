@@ -96,7 +96,11 @@ export class HeaderRowCtrl extends BeanStub {
             this.onVirtualColumnsChanged();
         }
         // width is managed directly regardless of framework and so is not included in initCompState
-        this.setWidth();
+        const headerRowContainerCtrl = this.beans.ctrlsSvc.getHeaderRowContainerCtrl();
+        // The first row of a grid mounts before any width has been pushed, and still needs its groups sized.
+        if (!headerRowContainerCtrl?.applyRowWidth(this)) {
+            this.refreshPinnedCellGroupWidths();
+        }
 
         this.addEventListeners(compBean);
         this.refreshTabIndex();
@@ -116,12 +120,9 @@ export class HeaderRowCtrl extends BeanStub {
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         const refreshTabIndex = this.refreshTabIndex.bind(this);
         compBean.addManagedEventListeners({
-            columnResized: this.setWidth.bind(this),
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
-            gridSizeChanged: this.setWidth.bind(this),
-            gridViewportWidthChanged: this.setWidth.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
@@ -151,30 +152,17 @@ export class HeaderRowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         this.isPrintLayout = _isDomLayout(this.gos, 'print');
         this.onVirtualColumnsChanged();
-        this.setWidth();
         this.onRowHeightChanged();
     }
 
-    private setWidth(): void {
-        if (!this.comp) {
-            return;
-        }
-        const width = this.getWidthForRow();
-        this.comp.setWidth(`${width}px`);
+    /** Pushed by `GridBodyCtrl.updateWidths`, so the row does not derive it from the viewport itself. */
+    public setRowWidth(width: number): void {
+        this.comp?.setWidth(`${width}px`);
         this.refreshPinnedCellGroupWidths();
     }
 
     private refreshPinnedCellGroupWidths(): void {
         this.comp?.refreshPinnedCellGroupWidths();
-    }
-
-    private getWidthForRow(): number {
-        const { visibleCols } = this.beans;
-        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-        const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? visibleCols.totalWidth;
-        const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? 0;
-
-        return Math.max(contentWidth, viewportWidth);
     }
 
     private onRowHeightChanged(): void {

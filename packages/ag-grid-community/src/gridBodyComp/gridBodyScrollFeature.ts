@@ -22,6 +22,7 @@ import { _clamp } from '../utils/number';
 const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
 const HORIZONTAL_SOURCES = ['fakeHScrollComp'] as const;
+const HORIZONTAL_CONTAINERS = [...HORIZONTAL_SOURCES, VIEWPORT] as const;
 
 type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR;
 type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
@@ -206,7 +207,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private setScrollLeftForAllContainersExceptCurrent(scrollLeft: number): void {
-        for (const container of [...HORIZONTAL_SOURCES, VIEWPORT] as const) {
+        for (const container of HORIZONTAL_CONTAINERS) {
             if (this.lastScrollSource[Direction.Horizontal] === container) {
                 continue;
             }
@@ -319,7 +320,8 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.fireScrollEvent(Direction.Horizontal);
         this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
-        this.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport(true);
+        // Already clamped and reconciled to the grid viewport above, for either scroll source.
+        this.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport(true, scrollLeft);
     }
 
     public isScrolling(): boolean {
@@ -436,13 +438,14 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getMaxHorizontalScrollLeft(): number {
-        const viewportWidth = _getInnerWidth(this.eGridViewport);
         const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
         if (!gridBodyCtrl) {
-            const contentWidth = this.eGridViewport.scrollWidth;
-            return Math.max(0, contentWidth - viewportWidth);
+            const viewportWidth = _getInnerWidth(this.eGridViewport);
+            return Math.max(0, this.eGridViewport.scrollWidth - viewportWidth);
         }
 
+        // The cached measurement: this runs on every scroll event, and scrolling cannot resize the viewport.
+        const viewportWidth = gridBodyCtrl.getHorizontalViewportWidth();
         const contentWidth = Math.max(gridBodyCtrl.getHorizontalContentWidth(), viewportWidth);
         return Math.max(0, contentWidth - viewportWidth);
     }

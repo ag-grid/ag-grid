@@ -117,22 +117,23 @@ export class GridCtrl extends BeanStub {
 
     public getOptionalSelectors(): OptionalGridComponents {
         const beans = this.beans;
-
+        const registry = beans.registry;
         return {
             paginationSelector: beans.pagination?.getPaginationSelector(),
-            gridHeaderDropZonesSelector: beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
+            gridHeaderDropZonesSelector: registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
-            statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
-            toolbarSelector: beans.registry?.getSelector('AG-TOOLBAR'),
+            statusBarSelector: registry?.getSelector('AG-STATUS-BAR'),
+            toolbarSelector: registry?.getSelector('AG-TOOLBAR'),
             watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }
 
     private onGridSizeChanged(): void {
+        const eGui = this.eGui;
         this.eventSvc.dispatchEvent({
             type: 'gridSizeChanged',
-            clientWidth: this.eGui.clientWidth,
-            clientHeight: this.eGui.clientHeight,
+            clientWidth: eGui.clientWidth,
+            clientHeight: eGui.clientHeight,
         });
     }
 

@@ -22,6 +22,7 @@ import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
 import { INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
+import { ROW_CONTAINER_NAMES } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
@@ -79,6 +80,9 @@ export class GridBodyCtrl extends BeanStub {
     public stickyTopHeight: number = 0;
     public stickyBottomHeight: number = 0;
 
+    /** `null` rather than a numeric sentinel: the measurement may be negative or NaN. */
+    private viewportWidth: number | null = null;
+
     public scrollFeature: GridBodyScrollFeature;
 
     public setComp(
@@ -125,6 +129,9 @@ export class GridBodyCtrl extends BeanStub {
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollingClasses();
 
+        // Pushed on every completion of the registered set, not just the first: React mounts the
+        // consumers asynchronously and may re-create one, and it is sized by this rather than by asking.
+        this.addManagedListeners(this.ctrlsSvc, { ready: () => this.updateWidths() });
         this.ctrlsSvc.register('gridBodyCtrl', this);
     }
 
@@ -133,27 +140,36 @@ export class GridBodyCtrl extends BeanStub {
         const setGridRootRole = this.setGridRole.bind(this);
         const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
-        const onGridSizeChanged = this.onGridSizeChanged.bind(this);
 
         const onPinnedWidthChanged = () => {
-            this.updateScrollableAreaWidth();
+            this.updateWidths();
             this.updateScrollingClasses();
         };
 
+        const updateWidths = this.updateWidths.bind(this);
+
+        this.addManagedPropertyListener('domLayout', updateWidths);
+
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
-            displayedColumnsWidthChanged: this.updateScrollableAreaWidth.bind(this),
+            displayedColumnsChanged: updateWidths,
+            displayedColumnsWidthChanged: updateWidths,
             leftPinnedWidthChanged: onPinnedWidthChanged,
             rightPinnedWidthChanged: onPinnedWidthChanged,
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
-            scrollbarWidthChanged: updatePinnedColumnStickyOffsets,
+            scrollbarWidthChanged: this.updateViewportGeometry.bind(this),
             scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setPinnedRowsHeights,
             pinnedHeightChanged: setPinnedRowsHeights,
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
-            gridSizeChanged: onGridSizeChanged,
-            gridViewportWidthChanged: onGridSizeChanged,
+            gridSizeChanged: () => {
+                // The grid resized, so the measurement taken before it is void. Re-measure through the
+                // reporting path, or a resize fills the cache silently and is never announced.
+                if (!this.refreshViewportWidth(_getInnerWidth(this.eGridViewport))) {
+                    this.updateViewportGeometry();
+                }
+            },
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
@@ -172,34 +188,47 @@ export class GridBodyCtrl extends BeanStub {
     private onGridColumnsChanged(): void {
         const columns = this.beans.colModel.colsList;
         this.comp.setColumnCount(columns.length);
-        this.updateScrollableAreaWidth();
+        this.updateWidths();
         // Row-group / pivot columns declared in the initial column defs are only populated by the time the
         // grid columns are refreshed, which is after this ctrl is constructed.
         this.setGridRole();
     }
 
     private onScrollVisibilityChanged(): void {
-        const { scrollVisibleSvc } = this;
-        const visible = scrollVisibleSvc.verticalScrollShowing;
-        this.setStickyWidth(visible);
-        this.updatePinnedColumnStickyOffsets();
-        this.updateScrollableAreaWidth();
+        // No re-measure: `ViewportSizeFeature` answers the same event by measuring once and pushing the width.
+        this.setStickyWidth(this.scrollVisibleSvc.verticalScrollShowing);
+        this.updateViewportGeometry();
         this.updateScrollingClasses();
-        this.updateGridViewportWidth();
     }
 
-    private onGridSizeChanged(): void {
-        this.updateScrollableAreaWidth();
+    /** Everything sized from the viewport. */
+    private updateViewportGeometry(): void {
+        this.updateWidths();
         this.updatePinnedColumnStickyOffsets();
         this.updateGridViewportWidth();
     }
 
-    private updateScrollableAreaWidth(): void {
-        const pinnedColumnsOverflowing = this.isPinnedWidthOverflowingViewport();
-        const contentWidth = this.getHorizontalContentWidth();
+    /** The one place the horizontal widths are worked out; consumers are pushed the result. */
+    private updateWidths(): void {
+        const verticalScrollShowing = this.scrollVisibleSvc.verticalScrollShowing;
+        const scrollbarWidth = this.getVerticalScrollbarWidth(verticalScrollShowing);
         const viewportWidth = this.getHorizontalViewportWidth();
-        this.comp.setGridScrollableAreaWidth(`${Math.max(contentWidth, viewportWidth, 1)}px`);
+        const pinnedColumnsOverflowing = this.isPinnedWidthOverflowingViewport(verticalScrollShowing);
+        const contentWidth = this.getHorizontalContentWidth(verticalScrollShowing, pinnedColumnsOverflowing);
+        const stretchedWidth = Math.max(contentWidth, viewportWidth);
+        // A zero-width container collapses the scroll range.
+        const containerWidth = Math.max(stretchedWidth, 1);
+
+        this.comp.setGridScrollableAreaWidth(`${containerWidth}px`);
         this.comp.setPinnedColumnsOverflowing(pinnedColumnsOverflowing);
+
+        const ctrlsSvc = this.ctrlsSvc;
+        for (let i = 0, len = ROW_CONTAINER_NAMES.length; i < len; ++i) {
+            ctrlsSvc.get(ROW_CONTAINER_NAMES[i])?.setContainerWidth(containerWidth);
+        }
+        // The end spacer already reserves the vertical scrollbar width in the viewport.
+        ctrlsSvc.get('fakeHScrollComp')?.setContentWidth(contentWidth - scrollbarWidth);
+        ctrlsSvc.getHeaderRowContainerCtrl()?.setRowWidths(stretchedWidth);
 
         if (pinnedColumnsOverflowing && this.getHorizontalScrollLeft() !== 0) {
             this.setHorizontalScrollLeft(0);
@@ -207,9 +236,10 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getHorizontalContentWidth(
-        verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
+        verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing,
+        pinnedColumnsOverflowing: boolean = this.isPinnedWidthOverflowingViewport(verticalScrollShowing)
     ): number {
-        if (this.isPinnedWidthOverflowingViewport(verticalScrollShowing)) {
+        if (pinnedColumnsOverflowing) {
             // Retained pinned overflow is clipped and must not create a horizontal scroll range.
             return 0;
         }
@@ -243,16 +273,46 @@ export class GridBodyCtrl extends BeanStub {
         return visibleCols.getLeftStickyColumnContainerWidth() + visibleCols.getRightStickyColumnContainerWidth();
     }
 
+    /** Cached, because measuring forces a style recalculation and one column refresh needs it for every
+     *  row container, header row and the fake scrollbar. */
     public getHorizontalViewportWidth(): number {
+        const cached = this.viewportWidth;
+        if (cached !== null) {
+            return cached;
+        }
         // Not `getBoundingClientRect`: that reports the post-transform box, so a grid inside a
         // `transform: scale()` measures wider than its layout and suppresses the horizontal scrollbar.
-        return _getInnerWidth(this.eGridViewport);
+        const width = _getInnerWidth(this.eGridViewport);
+        this.cacheViewportWidth(width);
+        return width;
+    }
+
+    /** Takes a width the caller has already measured, updates everything sized from it if it changed,
+     *  and reports whether it did. */
+    public refreshViewportWidth(width: number): boolean {
+        const previous = this.viewportWidth;
+        if (this.cacheViewportWidth(width) === previous) {
+            return false;
+        }
+        this.updateViewportGeometry();
+        // No listener inside the grid, but observable from `addEventListener`.
+        this.eventSvc.dispatchEvent({ type: 'gridViewportWidthChanged' });
+        return true;
+    }
+
+    /** Anything but a positive width means the grid is not laid out yet rather than that it is that
+     *  wide, and caching it would leave every pinned column reported as overflowing the viewport.
+     *  Returns what was stored, so a caller comparing against it compares like with like. */
+    private cacheViewportWidth(width: number): number | null {
+        const cached = width > 0 ? width : null;
+        this.viewportWidth = cached;
+        return cached;
     }
 
     public getViewportWidthWithoutScrollbar(
         verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing
     ): number {
-        return Math.max(0, _getInnerWidth(this.eGridViewport) - this.getVerticalScrollbarWidth(verticalScrollShowing));
+        return Math.max(0, this.getHorizontalViewportWidth() - this.getVerticalScrollbarWidth(verticalScrollShowing));
     }
 
     public getCenterWidth(verticalScrollShowing: boolean = this.scrollVisibleSvc.verticalScrollShowing): number {
@@ -275,8 +335,13 @@ export class GridBodyCtrl extends BeanStub {
         };
     }
 
-    public updateColumnViewport(afterScroll: boolean = false): void {
-        this.beans.colViewport.setScrollPosition(this.getCenterWidth(), this.getHorizontalScrollLeft(), afterScroll);
+    /** `scrollLeft` when the caller already holds it, so a scroll does not read it back from the DOM. */
+    public updateColumnViewport(afterScroll: boolean = false, scrollLeft?: number): void {
+        this.beans.colViewport.setScrollPosition(
+            this.getCenterWidth(),
+            scrollLeft ?? this.getHorizontalScrollLeft(),
+            afterScroll
+        );
     }
 
     private updateGridViewportWidth(): void {
@@ -619,13 +684,13 @@ export class GridBodyCtrl extends BeanStub {
 
     /** Total scroll content height calculated from JS values. Used by FakeVScrollComp
      *  to avoid reading eGridViewport.scrollHeight which can return stale intermediate values. */
-    public getScrollContentHeight(): number {
+    public getScrollContentHeight(viewportHeight: number): number {
         const topSectionHeight = this.getTopPinnedRowsOffset();
         const scrollingHeight = this.beans.rowContainerHeight.getAdjustedUiContainerHeight() ?? 0;
         const bottomSectionHeight = this.bottomPinnedRowsHeight + this.stickyBottomHeight;
         const contentHeight = topSectionHeight + scrollingHeight + bottomSectionHeight;
         // scrollHeight is never less than clientHeight (min-height: 100% on scrollable area)
-        return Math.max(contentHeight, this.eGridViewport.clientHeight);
+        return Math.max(contentHeight, viewportHeight);
     }
 
     public getVerticalScrollbarWidth(

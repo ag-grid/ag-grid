@@ -1,4 +1,4 @@
-import { _getInnerWidth, _isInDOM, _observeResize } from 'ag-stack';
+import { _isInDOM, _observeResize } from 'ag-stack';
 
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
@@ -6,13 +6,14 @@ import { _isDomLayout } from '../../gridOptionsUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
-import { CenterWidthFeature } from '../centerWidthFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
 
+export const ROW_CONTAINER_NAMES = ['scrolling', 'pinnedTop', 'pinnedBottom', 'stickyTop', 'stickyBottom'] as const;
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
+export type RowContainerName = (typeof ROW_CONTAINER_NAMES)[number];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerType = 'center';
@@ -171,43 +172,36 @@ export class RowContainerCtrl extends BeanStub {
             this.createManagedBean(new SetHeightFeature(this.eContainer));
         }
 
-        const updateContainerWidth = this.updateContainerWidth.bind(this);
-
-        this.createManagedBean(new CenterWidthFeature(updateContainerWidth));
-        this.registerViewportResizeListener(updateContainerWidth);
+        this.setPinnedRowBorderWidth();
         this.addListeners();
         this.registerWithCtrlsService();
     }
 
-    private updateContainerWidth(): void {
-        const { visibleCols, ctrlsSvc } = this.beans;
-        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
-        const fallbackContentWidth =
-            visibleCols.bodyWidth +
-            visibleCols.getLeftStickyColumnContainerWidth() +
-            visibleCols.getRightStickyColumnContainerWidth();
-        const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? fallbackContentWidth;
-        const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? _getInnerWidth(this.eViewport);
-        const width = Math.max(contentWidth, viewportWidth, 1);
-        this.comp.setContainerWidth(`${width}px`);
-
-        // Set viewport width (without scrollbar) as a CSS variable so full-width
-        // row anchors can size themselves without per-row JS listeners.
+    /** Nothing in the grid reads this; it is published for application CSS, and has been since 36.0.0. */
+    private setPinnedRowBorderWidth(): void {
         this.eContainer.style.setProperty(
             '--ag-pinned-row-border-width',
             `${this.beans.environment.getPinnedRowBorderWidth()}px`
         );
     }
 
+    private containerWidth: number | null = null;
+
+    /** Pushed by `GridBodyCtrl.updateWidths`, which measures the viewport once for every container.
+     *  Several events report one column change, so the same width arrives more than once per refresh. */
+    public setContainerWidth(width: number): void {
+        if (width !== this.containerWidth) {
+            this.containerWidth = width;
+            this.comp.setContainerWidth(`${width}px`);
+        }
+    }
+
     private addListeners(): void {
         const { spannedRowRenderer, gos } = this.beans;
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
-        const updateContainerWidth = this.updateContainerWidth.bind(this);
 
         this.addManagedEventListeners({
-            scrollVisibilityChanged: updateContainerWidth,
-            scrollbarWidthChanged: updateContainerWidth,
-            gridSizeChanged: updateContainerWidth,
+            stylesChanged: this.setPinnedRowBorderWidth.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
             displayedColumnsWidthChanged: onDisplayedColumnsChanged,
             displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),
