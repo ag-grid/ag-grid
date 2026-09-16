@@ -12,11 +12,17 @@ const MARKDOC_CONFIG = {};
  * followed by the clauses and schedules rendered from the `.mdoc` source.
  *
  * Served at `/eula/license-en.html`, which the ecommerce site embeds in an iframe (with the
- * click-to-accept notice, `EULA_CLICKWRAP_CONTENT`), and written into the `ag-grid-enterprise`
- * package as `LICENSE.html` by `scripts/licence/generate-enterprise-licence.ts`.
+ * click-to-accept notice, `EULA_CLICKWRAP_CONTENT`, and `embedded` so the iframe controls how the
+ * text flows), and written into the `ag-grid-enterprise` package as `LICENSE.html` by
+ * `scripts/licence/generate-enterprise-licence.ts`.
  */
-export function renderEulaHtml(eulaSource: string, content: PolicyContent = EULA_CONTENT): string {
+export function renderEulaHtml(
+    eulaSource: string,
+    { content = EULA_CONTENT, embedded = false }: { content?: PolicyContent; embedded?: boolean } = {}
+): string {
     const { heading, meta, intro } = content;
+    // A document read on its own keeps a readable measure; an embedded one takes the iframe's width.
+    const bodyLayout = embedded ? 'margin: 0; padding: 0 1em;' : 'max-width: 52em; margin: 2em auto; padding: 0 1em;';
     const body = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG));
 
     return `<!doctype html>
@@ -26,7 +32,7 @@ export function renderEulaHtml(eulaSource: string, content: PolicyContent = EULA
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${heading}</title>
 <style>
-body { max-width: 52em; margin: 2em auto; padding: 0 1em; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; color: #222; }
+body { ${bodyLayout} font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; color: #222; }
 hr { border: 0; border-top: 1px solid #ccc; margin: 1.5em 0; }
 </style>
 </head>

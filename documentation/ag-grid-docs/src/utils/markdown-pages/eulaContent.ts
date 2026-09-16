@@ -1,17 +1,17 @@
 import type { PolicyContent } from '@ag-website-shared/components/policies/policyContent';
 
 /**
- * The introductory notice above the clauses. `acceptance` is the act by which the Licensee accepts
- * the Terms: using the software on the page and in the package, clicking the button beneath the
- * ecommerce checkout's iframe.
+ * The introductory notice above the clauses. `acceptance` and `refusal` are how the Licensee
+ * accepts or declines the Terms: by using or not using the software on the page and in the
+ * package, by clicking or not clicking the button beneath the ecommerce checkout's iframe.
  */
-function eulaIntro(acceptance: string): string[] {
+function eulaIntro({ acceptance, refusal }: { acceptance: string; refusal: string }): string[] {
     return [
         '<strong>PLEASE READ THESE LICENCE TERMS (v40) CAREFULLY BEFORE DOWNLOADING ANY SOFTWARE:</strong>',
         'These terms and conditions and schedules (“<strong>Terms</strong>”) are entered into between AG GRID LTD (registered company number 07318192) (“<strong>Licensor</strong>”) and the entity whose details are set out on the Quote or otherwise submitted to the Licensor (“<strong>Licensee</strong>”) effective as of the date of acceptance of these Terms (“<strong>Effective Date</strong>”).',
         `<strong>${acceptance}, YOU CONFIRM THAT YOU ACCEPT AND AGREE TO BE BOUND BY THESE TERMS AND ACKNOWLEDGE THAT THEY CONSTITUTE A LEGALLY BINDING CONTRACT BETWEEN US AND YOU.</strong>`,
         '<strong>IF YOU ARE ACTING ON BEHALF OF ANY ORGANISATION, YOU CONFIRM THAT YOU HAVE THE REQUISITE AUTHORITY, POWER AND RIGHT TO FULLY BIND THAT ORGANISATION.</strong>',
-        '<strong>IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, DO NOT USE THE SOFTWARE.</strong>',
+        `<strong>IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, ${refusal}.</strong>`,
     ];
 }
 
@@ -29,7 +29,7 @@ export const EULA_CONTENT: PolicyContent = {
     description:
         'The licence terms and conditions under which AG Grid Ltd licenses AG Grid Enterprise software, documentation and support services to its customers.',
     meta: ['Version: 40', 'Last Updated: 9 September 2026'],
-    intro: eulaIntro('BY USING OUR SOFTWARE'),
+    intro: eulaIntro({ acceptance: 'BY USING OUR SOFTWARE', refusal: 'DO NOT USE THE SOFTWARE' }),
 };
 
 /**
@@ -38,5 +38,8 @@ export const EULA_CONTENT: PolicyContent = {
  */
 export const EULA_CLICKWRAP_CONTENT: PolicyContent = {
     ...EULA_CONTENT,
-    intro: eulaIntro('BY CLICKING ON THE “I ACCEPT” BUTTON BELOW'),
+    intro: eulaIntro({
+        acceptance: 'BY CLICKING ON THE “I ACCEPT” BUTTON BELOW',
+        refusal: 'DO NOT CLICK ON THE “I ACCEPT” BUTTON BELOW',
+    }),
 };

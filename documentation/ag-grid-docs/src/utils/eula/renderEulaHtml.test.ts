@@ -15,6 +15,7 @@ describe('renderEulaHtml', () => {
         expect(html).not.toContain('<nav');
         expect(html).not.toContain('<script');
         expect(html.trimEnd().endsWith('</html>')).toBe(true);
+        expect(html).toContain('max-width: 52em');
     });
 
     it('renders the preamble, the clauses and the schedules', () => {
@@ -27,10 +28,23 @@ describe('renderEulaHtml', () => {
     });
 
     it('renders the click-to-accept notice for the ecommerce iframe', () => {
-        const clickwrap = renderEulaHtml(eulaSource, EULA_CLICKWRAP_CONTENT);
+        const clickwrap = renderEulaHtml(eulaSource, { content: EULA_CLICKWRAP_CONTENT });
         expect(clickwrap).toContain('<strong>BY CLICKING ON THE “I ACCEPT” BUTTON BELOW, YOU CONFIRM THAT YOU ACCEPT');
-        expect(clickwrap).not.toContain('BY USING OUR SOFTWARE');
-        // Only that notice differs from the package licence.
-        expect(clickwrap.replace('BY CLICKING ON THE “I ACCEPT” BUTTON BELOW', 'BY USING OUR SOFTWARE')).toBe(html);
+        expect(clickwrap).toContain(
+            'DO NOT AGREE TO THE TERMS OF THIS LICENCE, DO NOT CLICK ON THE “I ACCEPT” BUTTON BELOW.'
+        );
+        expect(clickwrap).not.toContain('USE THE SOFTWARE');
+        // Only those two notices differ from the package licence.
+        expect(
+            clickwrap
+                .replace('BY CLICKING ON THE “I ACCEPT” BUTTON BELOW', 'BY USING OUR SOFTWARE')
+                .replace('DO NOT CLICK ON THE “I ACCEPT” BUTTON BELOW', 'DO NOT USE THE SOFTWARE')
+        ).toBe(html);
+    });
+
+    it('imposes no width when embedded, so the iframe controls how the text flows', () => {
+        const embedded = renderEulaHtml(eulaSource, { embedded: true });
+        expect(embedded).not.toContain('max-width');
+        expect(embedded).toContain('body { margin: 0; padding: 0 1em;');
     });
 });
