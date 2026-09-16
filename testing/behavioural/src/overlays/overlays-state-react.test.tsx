@@ -196,8 +196,7 @@ describe('ag-grid overlays state (react)', () => {
                 params.overlayType === 'loading' ? { component: TrackingOverlay } : undefined,
         };
 
-        const getOverlayText = () =>
-            document.querySelector('.tracking-selector-loading-overlay')?.textContent;
+        const getOverlayText = () => document.querySelector('.tracking-selector-loading-overlay')?.textContent;
 
         const { rerender } = render(<AgGridReact {...baseProps} overlayComponentParams={{ label: 'one' }} />);
 
