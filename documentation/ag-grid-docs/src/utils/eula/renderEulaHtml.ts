@@ -37,11 +37,7 @@ hr { border: 0; border-top: 1px solid #ccc; margin: 1.5em 0; }
 </style>
 </head>
 <body>
-<h1>${heading}</h1>
-<hr>
-${meta.map((line) => `<h4>${line}</h4>`).join('\n')}
-${intro.map((line) => `<p>${line}</p>`).join('\n')}
-${body}
+${[`<h1>${heading}</h1>`, '<hr>', ...meta.map((line) => `<h4>${line}</h4>`), ...intro.map((line) => `<p>${line}</p>`), body].join('\n')}
 </body>
 </html>
 `;

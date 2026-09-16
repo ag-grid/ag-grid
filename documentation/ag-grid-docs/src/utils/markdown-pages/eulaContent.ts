@@ -35,9 +35,11 @@ export const EULA_CONTENT: PolicyContent = {
 /**
  * The same agreement as presented in the ecommerce checkout at `/eula/license-en.html`, where the
  * customer accepts it by clicking a button beneath the iframe rather than by using the software.
+ * The version and last-updated lines are omitted: the checkout presents the current agreement only.
  */
 export const EULA_CLICKWRAP_CONTENT: PolicyContent = {
     ...EULA_CONTENT,
+    meta: [],
     intro: eulaIntro({
         acceptance: 'BY CLICKING ON THE “I ACCEPT” BUTTON BELOW',
         refusal: 'DO NOT CLICK ON THE “I ACCEPT” BUTTON BELOW',

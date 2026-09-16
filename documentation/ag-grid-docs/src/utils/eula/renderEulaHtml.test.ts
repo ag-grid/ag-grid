@@ -34,12 +34,16 @@ describe('renderEulaHtml', () => {
             'DO NOT AGREE TO THE TERMS OF THIS LICENCE, DO NOT CLICK ON THE “I ACCEPT” BUTTON BELOW.'
         );
         expect(clickwrap).not.toContain('USE THE SOFTWARE');
-        // Only those two notices differ from the package licence.
+        // The checkout presents the current agreement only, so no version or last-updated lines.
+        expect(clickwrap).not.toContain('<h4>Version: 40</h4>');
+        expect(clickwrap).not.toContain('<h4>Last Updated:');
+        // Otherwise only the two notices differ from the package licence.
+        const metaLines = EULA_CONTENT.meta.map((line) => `<h4>${line}</h4>\n`).join('');
         expect(
             clickwrap
                 .replace('BY CLICKING ON THE “I ACCEPT” BUTTON BELOW', 'BY USING OUR SOFTWARE')
                 .replace('DO NOT CLICK ON THE “I ACCEPT” BUTTON BELOW', 'DO NOT USE THE SOFTWARE')
-        ).toBe(html);
+        ).toBe(html.replace(metaLines, ''));
     });
 
     it('imposes no width when embedded, so the iframe controls how the text flows', () => {
