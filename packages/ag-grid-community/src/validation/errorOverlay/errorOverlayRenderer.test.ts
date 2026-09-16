@@ -1,7 +1,6 @@
 import type { CapturedDiagnostic } from '../logging';
 import {
     diagnosticContentToMarkdown,
-    diagnosticToMarkdown,
     diagnosticsToMarkdown,
     parseDiagnosticText,
     renderDiagnostic,
@@ -192,8 +191,8 @@ describe('against real error definitions', () => {
         expect(el.querySelector('.ag-overlay-error-message')?.textContent?.length).toBeGreaterThan(0);
     });
 
-    test('diagnosticToMarkdown produces a docs link for the id', () => {
-        const md = diagnosticToMarkdown(diagnostic);
+    test('diagnosticsToMarkdown produces a docs link for the id', () => {
+        const md = diagnosticsToMarkdown([diagnostic], 'AG Grid Community=9.9.9');
         expect(md).toContain('### [Warning] AG Grid #22');
         expect(md).toContain('/errors/22');
     });

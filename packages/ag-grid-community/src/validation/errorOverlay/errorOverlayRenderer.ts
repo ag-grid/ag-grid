@@ -339,8 +339,8 @@ export function diagnosticContentToMarkdown(
     return lines.join('\n');
 }
 
-/** Plain-text/markdown rendering of a diagnostic for the Copy button. */
-export function diagnosticToMarkdown(diagnostic: CapturedDiagnostic): string {
+/** Plain-text/markdown rendering of a single diagnostic, one entry of the copied text. */
+function diagnosticToMarkdown(diagnostic: CapturedDiagnostic): string {
     return diagnosticContentToMarkdown(
         diagnostic.severity,
         diagnostic.id,
