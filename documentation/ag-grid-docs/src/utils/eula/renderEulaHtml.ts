@@ -13,7 +13,7 @@ const MARKDOC_CONFIG = {};
  *
  * Served at `/eula/license-en.html`, which the ecommerce site embeds in an iframe (with the
  * click-to-accept notice, `EULA_CLICKWRAP_CONTENT`, and `embedded` so the iframe controls how the
- * text flows), and written into the `ag-grid-enterprise` package as `LICENSE.html` by
+ * text flows and supplies the heading), and written into the `ag-grid-enterprise` package as `LICENSE.html` by
  * `scripts/licence/generate-enterprise-licence.ts`.
  */
 export function renderEulaHtml(
@@ -21,8 +21,10 @@ export function renderEulaHtml(
     { content = EULA_CONTENT, embedded = false }: { content?: PolicyContent; embedded?: boolean } = {}
 ): string {
     const { heading, meta, intro } = content;
-    // A document read on its own keeps a readable measure; an embedded one takes the iframe's width.
+    // A document read on its own keeps a readable measure and opens with its heading; an embedded one
+    // takes the iframe's width and starts straight at the notice, since the checkout supplies the heading.
     const bodyLayout = embedded ? 'margin: 0; padding: 0 1em;' : 'max-width: 52em; margin: 2em auto; padding: 0 1em;';
+    const headingBlock = embedded ? [] : [`<h1>${heading}</h1>`, '<hr>'];
     const body = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG));
 
     return `<!doctype html>
@@ -37,7 +39,7 @@ hr { border: 0; border-top: 1px solid #ccc; margin: 1.5em 0; }
 </style>
 </head>
 <body>
-${[`<h1>${heading}</h1>`, '<hr>', ...meta.map((line) => `<h4>${line}</h4>`), ...intro.map((line) => `<p>${line}</p>`), body].join('\n')}
+${[...headingBlock, ...meta.map((line) => `<h4>${line}</h4>`), ...intro.map((line) => `<p>${line}</p>`), body].join('\n')}
 </body>
 </html>
 `;

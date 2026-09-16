@@ -46,9 +46,14 @@ describe('renderEulaHtml', () => {
         ).toBe(html.replace(metaLines, ''));
     });
 
-    it('imposes no width when embedded, so the iframe controls how the text flows', () => {
-        const embedded = renderEulaHtml(eulaSource, { embedded: true });
+    it('when embedded, imposes no width and starts at the notice, since the iframe controls the flow and the heading', () => {
+        const embedded = renderEulaHtml(eulaSource, { content: EULA_CLICKWRAP_CONTENT, embedded: true });
         expect(embedded).not.toContain('max-width');
         expect(embedded).toContain('body { margin: 0; padding: 0 1em;');
+        expect(embedded).not.toContain('<h1>');
+        expect(embedded).not.toContain('<hr>\n<p>');
+        expect(embedded).toContain(
+            '<body>\n<p><strong>PLEASE READ THESE LICENCE TERMS (v40) CAREFULLY BEFORE DOWNLOADING ANY SOFTWARE:</strong></p>'
+        );
     });
 });
