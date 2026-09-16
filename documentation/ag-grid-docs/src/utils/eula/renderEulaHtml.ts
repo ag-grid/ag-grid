@@ -1,3 +1,4 @@
+import type { PolicyContent } from '@ag-website-shared/components/policies/policyContent';
 import Markdoc from '@markdoc/markdoc';
 
 import { EULA_CONTENT } from '../markdown-pages/eulaContent';
@@ -10,11 +11,12 @@ const MARKDOC_CONFIG = {};
  * layout: the same heading, version and introductory notice as the `/eula/commercial/` page,
  * followed by the clauses and schedules rendered from the `.mdoc` source.
  *
- * Served at `/eula/license-en.html`, which the ecommerce site embeds in an iframe, and written into
- * the `ag-grid-enterprise` package as `LICENSE.html` by `scripts/licence/generate-enterprise-licence.ts`.
+ * Served at `/eula/license-en.html`, which the ecommerce site embeds in an iframe (with the
+ * click-to-accept notice, `EULA_CLICKWRAP_CONTENT`), and written into the `ag-grid-enterprise`
+ * package as `LICENSE.html` by `scripts/licence/generate-enterprise-licence.ts`.
  */
-export function renderEulaHtml(eulaSource: string): string {
-    const { heading, meta, intro } = EULA_CONTENT;
+export function renderEulaHtml(eulaSource: string, content: PolicyContent = EULA_CONTENT): string {
+    const { heading, meta, intro } = content;
     const body = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG));
 
     return `<!doctype html>
