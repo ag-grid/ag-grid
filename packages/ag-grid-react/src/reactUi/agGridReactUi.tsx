@@ -334,6 +334,7 @@ class ReactFrameworkComponentWrapper
                         return DragAndDropImageComponentWrapper;
                     case 'loadingOverlayComponent':
                     case 'noRowsOverlayComponent':
+                    case 'overlayComponent':
                     case 'activeOverlay':
                         return CustomOverlayComponentWrapper;
                     case 'statusPanel':
@@ -362,6 +363,7 @@ class ReactFrameworkComponentWrapper
                 case 'dragAndDropImageComponent':
                 case 'loadingOverlayComponent':
                 case 'noRowsOverlayComponent':
+                case 'overlayComponent':
                 case 'activeOverlay':
                 case 'statusPanel':
                 case 'toolPanel':

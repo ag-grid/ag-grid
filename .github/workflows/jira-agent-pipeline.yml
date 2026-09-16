@@ -309,15 +309,19 @@ jobs:
             group: ${{ needs.concurrency-key.outputs.group || format('claude-fallback-{0}', github.run_id) }}
             queue: max
             cancel-in-progress: false
+        # Green AND `cancelled`: a whole run reads `cancelled` if any one job is,
+        # so the handler re-verifies a cancelled run's own jobs (AG-17920).
         if: |
             !cancelled() &&
             github.event_name == 'workflow_run' &&
-            github.event.workflow_run.conclusion == 'success'
+            (github.event.workflow_run.conclusion == 'success' ||
+             github.event.workflow_run.conclusion == 'cancelled')
         runs-on: ubuntu-latest
         # Queue time is not charged against `timeout-minutes`.
         timeout-minutes: 10
         permissions:
             contents: read
+            # Reads this CI run's own jobs, to re-verify a cancelled run (AG-17920).
             actions: read
             pull-requests: read
             packages: read
@@ -327,6 +331,8 @@ jobs:
             pr_number: ${{ steps.handler.outputs.pr_number }}
             # Green CI held on open P0/P1 review findings; routed into agent-run.
             dispatch_pr_iterate: ${{ steps.handler.outputs.dispatch_pr_iterate }}
+            # The per-PR UMD bundles never published, so pr-plnkr must not run.
+            preview_unavailable: ${{ steps.handler.outputs.preview_unavailable }}
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
@@ -343,6 +349,8 @@ jobs:
                   head_branch: ${{ github.event.workflow_run.head_branch }}
                   head_sha: ${{ github.event.workflow_run.head_sha }}
                   run_url: ${{ github.event.workflow_run.html_url }}
+                  # Drives the cancelled-run re-verification (AG-17920).
+                  ci_conclusion: ${{ github.event.workflow_run.conclusion }}
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
@@ -365,7 +373,7 @@ jobs:
     # promoting green, so this runs once per PR with no marker field.
     pr-plnkr:
         needs: ci-success-handler
-        if: needs.ci-success-handler.outputs.handled == 'true'
+        if: needs.ci-success-handler.outputs.handled == 'true' && needs.ci-success-handler.outputs.preview_unavailable != 'true'
         runs-on: ubuntu-latest
         timeout-minutes: 20
         permissions:
