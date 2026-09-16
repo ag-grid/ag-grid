@@ -436,6 +436,8 @@ export type { LogService } from './validation/logService';
 export {
     _errMsg,
     _errorForGrid,
+    _errorToThrowForGrid,
+    _errorToThrowWithoutAttribution,
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
