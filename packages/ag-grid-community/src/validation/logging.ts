@@ -574,16 +574,3 @@ export function _errMsg<
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
     return getErrMsg(undefined, args);
 }
-
-/**
- * Used for messages before the ValidationService has been created
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _preInitErrMsg<
-    TId extends ErrorId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
-    // as well as displaying an extra line break, this will remove the part of the message about adding the validation module
-    return getErrMsg('\n', args);
-}

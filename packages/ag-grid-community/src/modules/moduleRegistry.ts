@@ -1,6 +1,7 @@
 import type { Module, ModuleName, _ModuleWithLicenseManager } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/log';
+import { _logPreInitErr } from '../validation/logging';
 
 interface RowModelModuleStore {
     [name: string]: Module;
@@ -42,7 +43,12 @@ function runVersionChecks(module: Module) {
 
     const result = module.validate?.();
     if (result && !result.isValid) {
-        _errorOnce(`${result.message}`);
+        if (result.errorId !== undefined) {
+            // Route by id so the failure reaches the dev overlay and `issueRaised`, not just the console.
+            _logPreInitErr(result.errorId, result.errorParams, '\n');
+        } else {
+            _errorOnce(`${result.message}`);
+        }
     }
 }
 
