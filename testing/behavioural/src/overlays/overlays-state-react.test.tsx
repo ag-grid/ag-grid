@@ -157,6 +157,57 @@ describe('ag-grid overlays state (react)', () => {
         await waitFor(() => expect(getOverlayText()).toBe('active-updated'));
     });
 
+    // AG-18512: an overlay supplied via overlayComponentSelector / overlayComponent was wrapped by
+    // the generic ReactComponent (no `refresh`), so overlayComponentParams updates were dropped.
+    test('react overlay component selector refreshes when overlayComponentParams change', async () => {
+        const TrackingOverlay: React.FC<{ label?: string }> = ({ label }) => (
+            <div className="tracking-selector-overlay">{label ?? ''}</div>
+        );
+
+        const baseProps = {
+            columnDefs,
+            rowData: [],
+            overlayComponentSelector: (params: { overlayType: string }) =>
+                params.overlayType === 'noRows' ? { component: TrackingOverlay } : undefined,
+        };
+
+        const getOverlayText = () => document.querySelector('.tracking-selector-overlay')?.textContent;
+
+        const { rerender } = render(<AgGridReact {...baseProps} overlayComponentParams={{ label: 'one' }} />);
+
+        await waitFor(() => expect(getOverlayText()).toBe('one'));
+
+        rerender(<AgGridReact {...baseProps} overlayComponentParams={{ label: 'two' }} />);
+
+        await waitFor(() => expect(getOverlayText()).toBe('two'));
+    });
+
+    // AG-18512: the overlayComponent route is shared by every provided overlay type, not just noRows.
+    test('react overlay component selector refreshes the loading overlay when overlayComponentParams change', async () => {
+        const TrackingOverlay: React.FC<{ label?: string }> = ({ label }) => (
+            <div className="tracking-selector-loading-overlay">{label ?? ''}</div>
+        );
+
+        const baseProps = {
+            columnDefs,
+            rowData: [{}],
+            loading: true,
+            overlayComponentSelector: (params: { overlayType: string }) =>
+                params.overlayType === 'loading' ? { component: TrackingOverlay } : undefined,
+        };
+
+        const getOverlayText = () =>
+            document.querySelector('.tracking-selector-loading-overlay')?.textContent;
+
+        const { rerender } = render(<AgGridReact {...baseProps} overlayComponentParams={{ label: 'one' }} />);
+
+        await waitFor(() => expect(getOverlayText()).toBe('one'));
+
+        rerender(<AgGridReact {...baseProps} overlayComponentParams={{ label: 'two' }} />);
+
+        await waitFor(() => expect(getOverlayText()).toBe('two'));
+    });
+
     test('loading=true custom component has precedence over rowData=[] in React StrictMode', async () => {
         const CustomLoadingOverlay: React.FC = () => <div className="custom-loading">Custom Loading</div>;
         const CustomNoRowsOverlay: React.FC = () => <div className="custom-no-rows">Custom No Rows</div>;
