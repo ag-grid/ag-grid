@@ -4,6 +4,7 @@ import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
 import type { IconName } from '../utils/icon';
+import type { ErrorId } from '../validation/errorMessages/errorText';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
@@ -13,11 +14,32 @@ type ModuleValidationValidResult = {
 
 type ModuleValidationInvalidResult = {
     isValid: false;
+    /**
+     * Free-text explanation of the failure. Prefer `errorId` where the failure has an error id, so that
+     * the registry can route it through the diagnostic pipeline rather than the console alone.
+     */
     message: string;
+    errorId?: never;
+    errorParams?: never;
+};
+
+type ModuleValidationInvalidIdResult = {
+    isValid: false;
+    /**
+     * The error id explaining the failure. Reported by the registry through the diagnostic pipeline, so
+     * that a registration-time failure reaches the error overlay and `issueRaised` as well as the console.
+     */
+    errorId: ErrorId;
+    /** Params for `errorId`'s message, for the ids that take them. Loosely typed as `validate` is not generic. */
+    errorParams?: any;
+    message?: never;
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
+export type ModuleValidationResult =
+    | ModuleValidationValidResult
+    | ModuleValidationInvalidResult
+    | ModuleValidationInvalidIdResult;
 
 /** A Module contains all the code related to this feature to enable tree shaking when this module is not used. */
 export interface Module {
