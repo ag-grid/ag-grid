@@ -96,6 +96,24 @@ function shouldNotify(diagnosticGridId: string | undefined, listenerGridId: stri
 const bufferedDiagnostics: CapturedDiagnostic[] = [];
 const MAX_BUFFERED_DIAGNOSTICS = 100;
 
+/**
+ * Module registration runs before the ValidationModule may have turned capture on — `registerModules([
+ * IntegratedChartsModule, ValidationModule])` validates the charts module first — so a registration
+ * failure is held here regardless of `captureEnabled` and replayed once capture is enabled. Without this
+ * the overlay's contents would depend on the order modules were passed in. Capped far lower than the
+ * main buffer: only a handful of modules can fail `validate()`, and nothing ever flushes this in
+ * production, where capture is never enabled.
+ */
+const pendingPreInitDiagnostics: CapturedDiagnostic[] = [];
+const MAX_PENDING_PRE_INIT_DIAGNOSTICS = 10;
+
+function replayPreInitDiagnostics(): void {
+    const pending = pendingPreInitDiagnostics.splice(0);
+    for (const { id, params, severity, defaultMessage, gridId } of pending) {
+        captureDiagnostic(id, params, severity, defaultMessage, gridId);
+    }
+}
+
 // Both default off so that without the ValidationModule (i.e. production) each log call is two boolean
 // checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
 let captureEnabled = false;
@@ -115,7 +133,14 @@ export function _configureDiagnostics(config: {
     suppress?: ErrorId[];
 }): void {
     if (config.capture !== undefined) {
+        const wasEnabled = captureEnabled;
         captureEnabled = config.capture;
+        if (!captureEnabled) {
+            // Turning capture off discards buffered state, as dropping the last listener does.
+            pendingPreInitDiagnostics.length = 0;
+        } else if (!wasEnabled) {
+            replayPreInitDiagnostics();
+        }
     }
     if (config.throwOn !== undefined) {
         throwSeverities = config.throwOn;
@@ -548,6 +573,9 @@ export function _logPreInitErr<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string, gridId?: string) {
     logToConsole(_errorOnce, id, args as any, false, defaultMessage);
+    if (!captureEnabled && pendingPreInitDiagnostics.length < MAX_PENDING_PRE_INIT_DIAGNOSTICS) {
+        pendingPreInitDiagnostics.push({ id, params: args, severity: 'error', gridId, defaultMessage });
+    }
     emitDiagnostic(id, args as any, 'error', defaultMessage, gridId);
 }
 

@@ -1,7 +1,7 @@
 import type { CapturedDiagnostic } from '../validation/logging';
 
 // Registration is process-global, so each case needs a fresh module graph to register a fake module into.
-async function loadRegistry() {
+async function loadRegistry({ captureFromTheStart = true } = {}) {
     vi.resetModules();
     const logModule = await import('../utils/log');
     const errorOnce = vi.spyOn(logModule, '_errorOnce').mockImplementation(() => undefined);
@@ -11,7 +11,9 @@ async function loadRegistry() {
         import('../validation/validationConfig'),
     ]);
 
-    _enableDiagnosticCapture();
+    if (captureFromTheStart) {
+        _enableDiagnosticCapture();
+    }
     const cleanups: (() => void)[] = [];
     const listen = (gridId: string | undefined) => {
         const received: CapturedDiagnostic[] = [];
@@ -19,7 +21,13 @@ async function loadRegistry() {
         return received;
     };
 
-    return { _registerModule, errorOnce, listen, detachAll: () => cleanups.forEach((off) => off()) };
+    return {
+        _registerModule,
+        errorOnce,
+        listen,
+        _enableDiagnosticCapture,
+        detachAll: () => cleanups.forEach((off) => off()),
+    };
 }
 
 const failingCharts = {
@@ -81,5 +89,20 @@ describe('module validation failures', () => {
 
         expect(received).toEqual([]);
         expect(errorOnce).toHaveBeenCalledWith('no charts for you');
+    });
+
+    // registerModules([IntegratedChartsModule, ValidationModule]) validates the charts module before the
+    // ValidationModule has turned capture on, so the failure has to survive until it does.
+    test('a failure raised before capture is enabled is replayed once it is', async () => {
+        const { _registerModule, listen, _enableDiagnosticCapture, detachAll } = await loadRegistry({
+            captureFromTheStart: false,
+        });
+
+        _registerModule(failingCharts, undefined);
+        const received = listen(undefined);
+        _enableDiagnosticCapture();
+        detachAll();
+
+        expect(received.map(({ id, severity }) => ({ id, severity }))).toEqual([{ id: 257, severity: 'error' }]);
     });
 });
