@@ -171,6 +171,7 @@
     flex-wrap: wrap;
     gap: calc(var(--ag-spacing) * 1.5);
 }
+
 .ag-overlay-error-versions {
     /* footer: stays pinned below the scrolling body, reporting the AG package versions in use. */
     flex: none;
