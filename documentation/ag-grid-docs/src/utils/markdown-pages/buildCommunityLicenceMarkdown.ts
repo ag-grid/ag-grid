@@ -21,8 +21,9 @@ export function buildCommunityLicenceMarkdown({ siteRoot }: { siteRoot?: string 
             description,
         }),
         `# ${heading}`,
-        ...meta.map((line) => htmlInlineToMarkdown(line, siteRoot)),
+        // The intro sits above the licence, which opens with its name and copyright line.
         ...intro.map((line) => htmlInlineToMarkdown(line, siteRoot)),
+        ...meta.map((line) => htmlInlineToMarkdown(line, siteRoot)),
         ...COMMUNITY_LICENCE.terms,
     ];
 

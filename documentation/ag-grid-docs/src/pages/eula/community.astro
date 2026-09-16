@@ -3,7 +3,7 @@ import Layout from '@layouts/Layout.astro';
 import styles from '@ag-website-shared/components/policies/policyPage.module.scss';
 import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/markdown-pages/communityLicenceContent';
 
-// Heading, licence name, copyright and intro copy are shared with the /eula/community.md twin so
+// Heading, intro copy, licence name and copyright are shared with the /eula/community.md twin so
 // the two cannot drift; the terms below are read from the LICENSE.txt shipped in the
 // ag-grid-community package, which is the golden source for the licence.
 ---
@@ -21,12 +21,12 @@ import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    {content.meta.map((line) => <h4 set:html={line} />)}
                     {content.intro.map((line) => <p set:html={line} />)}
                 </div>
             </header>
 
             <div class={styles.policyList}>
+                {content.meta.map((line) => <h4 set:html={line} />)}
                 {COMMUNITY_LICENCE.terms.map((term) => <p>{term}</p>)}
             </div>
         </div>

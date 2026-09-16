@@ -3,14 +3,14 @@ import type { PolicyContent } from '@ag-website-shared/components/policies/polic
 /**
  * Prose for the End User Licence Agreement page that lives outside its `.mdoc` body — the
  * heading, the version and last-updated lines and the introductory notice. Shared with the
- * `/eula/enterprise.md` twin so the two cannot drift. The numbered clauses and schedules are
+ * `/eula/commercial.md` twin so the two cannot drift. The numbered clauses and schedules are
  * `src/content/policies/eula.mdoc`.
  *
  * Grid-only, like the Terms of Use: the agreement is published from ag-grid.com.
  */
 export const EULA_CONTENT: PolicyContent = {
-    heading: 'AG Grid End User Licence Agreement',
-    metaTitle: 'End User Licence Agreement',
+    heading: 'AG Grid Commercial End User Licence Agreement',
+    metaTitle: 'Commercial End User Licence Agreement',
     description:
         'The licence terms and conditions under which AG Grid Ltd licenses AG Grid Enterprise software, documentation and support services to its customers.',
     meta: ['Version: 40', 'Last Updated: 9 September 2026'],

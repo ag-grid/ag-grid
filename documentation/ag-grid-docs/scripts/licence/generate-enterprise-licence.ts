@@ -1,17 +1,16 @@
 /* eslint-disable no-console -- standalone CLI: reports the files it writes */
 /**
  * Generates the AG Grid Enterprise licence files shipped in the `ag-grid-enterprise` package from
- * the End User Licence Agreement published at /eula/enterprise/, so the package and the website cannot drift:
+ * the End User Licence Agreement published at /eula/commercial/, so the package and the website cannot drift:
  *
  *   packages/ag-grid-enterprise/LICENSE.md    plain markdown (no site frontmatter)
- *   packages/ag-grid-enterprise/LICENSE.html  standalone HTML
+ *   packages/ag-grid-enterprise/LICENSE.html  standalone HTML, the same document served at /eula/license-en.html
  *
  * Both are rendered from the same sources as the page: `src/content/policies/eula.mdoc` for the
  * clauses and schedules, and `EULA_CONTENT` for the heading, version and introductory notice.
  * Run by `scripts/deployments/prep_and_archive/updateLicenses.sh` at deployment, and by hand with
  * `npx tsx scripts/licence/generate-enterprise-licence.ts` from `documentation/ag-grid-docs`.
  */
-import Markdoc from '@markdoc/markdoc';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
@@ -19,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 import type * as HtmlInlineToMarkdownModule from '../../../../external/ag-website-shared/src/markdoc/htmlInlineToMarkdown';
 import type * as RenderMarkdocToMarkdownModule from '../../../../external/ag-website-shared/src/markdoc/renderMarkdocToMarkdown';
+import { renderEulaHtml } from '../../src/utils/eula/renderEulaHtml';
 import { EULA_CONTENT } from '../../src/utils/markdown-pages/eulaContent';
 
 // `external/ag-website-shared` has no `"type": "module"`, so under tsx its sources load as
@@ -60,32 +60,6 @@ async function buildMarkdown(): Promise<string> {
     return `${document.join('\n\n').trimEnd()}\n`;
 }
 
-function buildHtml(): string {
-    const ast = Markdoc.parse(eulaSource);
-    const body = Markdoc.renderers.html(Markdoc.transform(ast, MARKDOC_CONFIG));
-
-    return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${heading}</title>
-<style>
-body { max-width: 52em; margin: 2em auto; padding: 0 1em; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; color: #222; }
-hr { border: 0; border-top: 1px solid #ccc; margin: 1.5em 0; }
-</style>
-</head>
-<body>
-<h1>${heading}</h1>
-<hr>
-${meta.map((line) => `<h4>${line}</h4>`).join('\n')}
-${intro.map((line) => `<p>${line}</p>`).join('\n')}
-${body}
-</body>
-</html>
-`;
-}
-
 async function main() {
     mkdirSync(outputDir, { recursive: true });
 
@@ -94,7 +68,7 @@ async function main() {
     console.log(`Wrote ${markdownPath}`);
 
     const htmlPath = resolve(outputDir, 'LICENSE.html');
-    writeFileSync(htmlPath, buildHtml());
+    writeFileSync(htmlPath, renderEulaHtml(eulaSource));
     console.log(`Wrote ${htmlPath}`);
 }
 

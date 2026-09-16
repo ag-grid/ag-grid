@@ -9,9 +9,9 @@ import { EULA_CONTENT } from './eulaContent';
 import { GRID_PRODUCT_NAME, gridSiteFrontmatter } from './gridFrontmatter';
 
 const PAGE_NAME = 'eula';
-const PAGE_URL = '/eula/enterprise/';
+const PAGE_URL = '/eula/commercial/';
 
-/** The `/eula/enterprise.md` twin, from the same preamble and `.mdoc` body the page renders. */
+/** The `/eula/commercial.md` twin, from the same preamble and `.mdoc` body the page renders. */
 export function buildEulaMarkdown({
     siteRoot,
     resolvers,

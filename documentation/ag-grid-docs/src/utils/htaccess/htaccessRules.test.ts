@@ -909,7 +909,7 @@ describe('htaccessRules', () => {
             '/privacy/',
             '/terms-of-use/',
             '/eula/community/',
-            '/eula/enterprise/',
+            '/eula/commercial/',
             '/example-finance/',
             '/example-hr/',
             '/example-inventory/',
@@ -930,7 +930,8 @@ describe('htaccessRules', () => {
             '/data-grid/cell-editing/', // framework-agnostic redirect stub
             '/contact/success/', // form result, sitemap-excluded
             '/privacy/your-choice/', // opt-out confirmation, robots-disallowed and sitemap-excluded
-            '/eula/', // no page: the licences live at /eula/community/ and /eula/enterprise/
+            '/eula/', // no page: the licences live at /eula/community/ and /eula/commercial/
+            '/eula/license-en.html', // bare document for the ecommerce iframe, no twin
             '/examples/cell-editing/component-editor/reactFunctionalTs/',
             '/debug/files/',
             '/sitemap-0.xml',

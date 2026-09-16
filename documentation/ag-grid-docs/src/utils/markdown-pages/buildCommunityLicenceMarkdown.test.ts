@@ -16,7 +16,7 @@ describe('buildCommunityLicenceMarkdown', () => {
 
     it('relates the page to the other legal pages in its footer group', () => {
         const output = buildCommunityLicenceMarkdown({ siteRoot: SITE_ROOT });
-        expect(output).toContain('url: "https://www.ag-grid.com/eula/enterprise/"');
+        expect(output).toContain('url: "https://www.ag-grid.com/eula/commercial/"');
         expect(output).toContain('url: "https://www.ag-grid.com/terms-of-use/"');
     });
 
@@ -24,7 +24,11 @@ describe('buildCommunityLicenceMarkdown', () => {
         const output = buildCommunityLicenceMarkdown({ siteRoot: SITE_ROOT });
         expect(output).toContain('\nThe MIT License\n');
         expect(output).toMatch(/\nCopyright \(c\) 2015-\d{4} AG GRID LTD\n/);
-        expect(output).toContain('AG Grid Community is free and open source under the MIT licence');
+        expect(output).toContain(
+            'reproduced below. [AG Grid Enterprise](https://www.ag-grid.com/data-grid/community-vs-enterprise/) is licensed separately under the [AG Grid Commercial End User Licence Agreement](https://www.ag-grid.com/eula/commercial/).'
+        );
+        // The intro comes before the licence text it introduces.
+        expect(output.indexOf('reproduced below.')).toBeLessThan(output.indexOf('\nThe MIT License\n'));
         expect(output).toContain(
             'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'
         );

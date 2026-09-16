@@ -3387,8 +3387,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/react/expressions(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/react/overview(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/(react|angular|vue|javascript)/(.*)', to: 'https://www.ag-grid.com/charts/$1/$2' },
-    // SE-169: the static Word-export EULA files were replaced by the /eula/enterprise/ page.
-    { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/enterprise/' },
-    { from: '/eula/license-en.html', to: '/eula/enterprise/' },
+    // SE-169: the static Word-export EULA files were replaced by the /eula/ pages. /eula/license-en.html
+    // is not redirected: it is served as a bare document for the ecommerce site's iframe.
+    { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
 ];

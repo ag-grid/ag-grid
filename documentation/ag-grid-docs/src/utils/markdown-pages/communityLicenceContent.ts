@@ -34,7 +34,7 @@ export const COMMUNITY_LICENCE = parseLicenceText(licenceText);
 
 /**
  * Prose for the AG Grid Community licence page that lives outside the licence text — the heading,
- * the licence name and copyright lines and the introductory sentence. Shared with the
+ * the introductory sentence and the licence name and copyright lines. Shared with the
  * `/eula/community.md` twin so the two cannot drift. The terms themselves are `COMMUNITY_LICENCE`.
  *
  * Grid-only, like the End User Licence Agreement: the licence is published from ag-grid.com.
@@ -44,8 +44,9 @@ export const COMMUNITY_LICENCE_CONTENT: PolicyContent = {
     metaTitle: 'Community Licence',
     description:
         'The MIT licence under which AG Grid Community is free to use, as shipped in the ag-grid-community package.',
+    // Unlike the other policy pages, the intro is rendered above these lines: they open the licence.
     meta: [COMMUNITY_LICENCE.name, COMMUNITY_LICENCE.copyright],
     intro: [
-        'AG Grid Community is free and open source under the MIT licence, reproduced below. AG Grid Enterprise is licensed separately under the AG Grid End User Licence Agreement.',
+        'AG Grid Community is free and open source under the MIT licence, reproduced below. <a href="/data-grid/community-vs-enterprise/">AG Grid Enterprise</a> is licensed separately under the <a href="/eula/commercial/">AG Grid Commercial End User Licence Agreement</a>.',
     ],
 };

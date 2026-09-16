@@ -11,7 +11,7 @@ describe('buildEulaMarkdown', () => {
         expect(output.startsWith('---\n')).toBe(true);
         expect(output).toContain(`title: ${JSON.stringify(`AG Grid: ${EULA_CONTENT.metaTitle}`)}`);
         expect(output.match(/^# /gm)?.length).toBe(1);
-        expect(output).toContain('# AG Grid End User Licence Agreement');
+        expect(output).toContain('# AG Grid Commercial End User Licence Agreement');
         expect(output).not.toContain('\ntitle: ""');
     });
 

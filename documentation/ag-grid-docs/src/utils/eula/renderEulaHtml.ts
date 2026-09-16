@@ -1,0 +1,40 @@
+import Markdoc from '@markdoc/markdoc';
+
+import { EULA_CONTENT } from '../markdown-pages/eulaContent';
+
+// The EULA body uses no Markdoc tags, functions or variables, so no site config is needed to render it.
+const MARKDOC_CONFIG = {};
+
+/**
+ * The Commercial End User Licence Agreement as a standalone HTML document, without the website
+ * layout: the same heading, version and introductory notice as the `/eula/commercial/` page,
+ * followed by the clauses and schedules rendered from the `.mdoc` source.
+ *
+ * Served at `/eula/license-en.html`, which the ecommerce site embeds in an iframe, and written into
+ * the `ag-grid-enterprise` package as `LICENSE.html` by `scripts/licence/generate-enterprise-licence.ts`.
+ */
+export function renderEulaHtml(eulaSource: string): string {
+    const { heading, meta, intro } = EULA_CONTENT;
+    const body = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG));
+
+    return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${heading}</title>
+<style>
+body { max-width: 52em; margin: 2em auto; padding: 0 1em; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; color: #222; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 1.5em 0; }
+</style>
+</head>
+<body>
+<h1>${heading}</h1>
+<hr>
+${meta.map((line) => `<h4>${line}</h4>`).join('\n')}
+${intro.map((line) => `<p>${line}</p>`).join('\n')}
+${body}
+</body>
+</html>
+`;
+}

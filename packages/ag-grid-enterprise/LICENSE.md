@@ -1,4 +1,4 @@
-# AG Grid End User Licence Agreement
+# AG Grid Commercial End User Licence Agreement
 
 Version: 40
 
