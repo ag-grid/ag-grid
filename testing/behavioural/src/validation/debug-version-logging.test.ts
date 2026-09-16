@@ -31,7 +31,7 @@ describe('debug version logging', () => {
         });
 
         const messages = loggedMessages();
-        const versionIndex = messages.indexOf(`AG Grid: Version: AG Grid Community=${VERSION}`);
+        const versionIndex = messages.indexOf(`AG Grid: Version: ag-grid-community=${VERSION}`);
         const rowContainerIndex = messages.findIndex((message) => message.includes('RowContainerHeightService'));
 
         expect(versionIndex).toBeGreaterThanOrEqual(0);
@@ -45,6 +45,6 @@ describe('debug version logging', () => {
             rowData: [],
         });
 
-        expect(loggedMessages().some((message) => message.includes('Version: AG Grid Community='))).toBe(false);
+        expect(loggedMessages().some((message) => message.includes('Version: ag-grid-community='))).toBe(false);
     });
 });

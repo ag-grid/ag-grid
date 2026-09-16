@@ -37,13 +37,13 @@ describe('dev validation overlay versions', () => {
     test('reports the community version in the panel footer', () => {
         communityGrids.createGrid('myGrid', withUnknownOption());
 
-        expect(versionsFooterText()).toBe(`AG Grid Community=${VERSION}`);
+        expect(versionsFooterText()).toBe(`ag-grid-community=${VERSION}`);
     });
 
     test('reports the enterprise version too when an enterprise module is registered', () => {
         enterpriseGrids.createGrid('myGrid', withUnknownOption());
 
-        expect(versionsFooterText()).toBe(`AG Grid Community=${VERSION}, AG Grid Enterprise=${VERSION}`);
+        expect(versionsFooterText()).toBe(`ag-grid-community=${VERSION}, ag-grid-enterprise=${VERSION}`);
     });
 
     test('leads the copied diagnostics with the versions', () => {
@@ -55,7 +55,7 @@ describe('dev validation overlay versions', () => {
         document.querySelector<HTMLButtonElement>('.ag-overlay-error-copy')!.click();
 
         // Whoever (or whatever) reads a pasted diagnostic needs the build it came from first.
-        expect(writeText.mock.calls[0][0].split('\n')[0]).toBe(`Version: AG Grid Community=${VERSION}`);
+        expect(writeText.mock.calls[0][0].split('\n')[0]).toBe(`Version: ag-grid-community=${VERSION}`);
     });
 
     // Must be the last test in the file: a global module registration cannot be undone.
@@ -69,7 +69,7 @@ describe('dev validation overlay versions', () => {
         vitest.stubGlobal('navigator', { clipboard: { writeText } });
         document.querySelector<HTMLButtonElement>('.ag-overlay-error-copy')!.click();
 
-        expect(versionsFooterText()).toBe(`AG Grid Community=${VERSION}`);
-        expect(writeText.mock.calls[0][0].split('\n')[0]).toBe(`Version: AG Grid Community=${VERSION}`);
+        expect(versionsFooterText()).toBe(`ag-grid-community=${VERSION}`);
+        expect(writeText.mock.calls[0][0].split('\n')[0]).toBe(`Version: ag-grid-community=${VERSION}`);
     });
 });

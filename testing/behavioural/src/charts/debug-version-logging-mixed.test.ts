@@ -40,7 +40,7 @@ describe('debug version logging with differently configured charts modules', () 
         integratedChartsOnlyGrids.createGrid('myGrid', gridOptions);
 
         expect(consoleLogSpy).toHaveBeenCalledWith(
-            `AG Grid: Version: AG Grid Community=${VERSION}, AG Grid Enterprise=${VERSION}, AG Charts Enterprise=${AgChartsEnterpriseModule.VERSION}`
+            `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=${VERSION}, ag-charts-enterprise=${AgChartsEnterpriseModule.VERSION}`
         );
     });
 
@@ -50,8 +50,8 @@ describe('debug version logging with differently configured charts modules', () 
         bothGrids.createGrid('myGrid', gridOptions);
 
         expect(consoleLogSpy).toHaveBeenCalledWith(
-            `AG Grid: Version: AG Grid Community=${VERSION}, AG Grid Enterprise=${VERSION}, ` +
-                `AG Charts Enterprise=${AgChartsEnterpriseModule.VERSION}, AG Charts Community=${AgChartsCommunityModule.VERSION}`
+            `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=${VERSION}, ` +
+                `ag-charts-enterprise=${AgChartsEnterpriseModule.VERSION}, ag-charts-community=${AgChartsCommunityModule.VERSION}`
         );
     });
 });

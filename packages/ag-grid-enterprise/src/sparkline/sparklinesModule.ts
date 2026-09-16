@@ -1,7 +1,7 @@
 import type { IntegratedModule } from 'ag-charts-types';
 
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { _preInitErrMsg, _setAgChartsInfo } from 'ag-grid-community';
+import { _preInitErrMsg, _setAgPackageInfo } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -50,7 +50,7 @@ export const SparklinesModule: SparklineChartsModuleType = {
                 return { isValid: true };
             },
         };
-        _setAgChartsInfo(module, params.VERSION, params.isEnterprise);
+        _setAgPackageInfo(module, params.isEnterprise ? 'ag-charts-enterprise' : 'ag-charts-community', params.VERSION);
         return module;
     },
 };

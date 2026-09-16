@@ -72,8 +72,6 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         }
         this.addManagedElementListeners(this.eDismiss, { click: () => beans.errorOverlay?.dismiss() });
 
-        // Captured from this grid's own module list at creation, so it neither changes over the
-        // grid's life nor drifts as the application registers modules for its other grids.
         this.eVersions.textContent = beans.agVersionsText;
 
         this.renderBody();

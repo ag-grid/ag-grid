@@ -192,15 +192,15 @@ describe('against real error definitions', () => {
     });
 
     test('diagnosticsToMarkdown produces a docs link for the id', () => {
-        const md = diagnosticsToMarkdown([diagnostic], 'AG Grid Community=9.9.9');
+        const md = diagnosticsToMarkdown([diagnostic], 'ag-grid-community=9.9.9');
         expect(md).toContain('### [Warning] AG Grid #22');
         expect(md).toContain('/errors/22');
     });
 
     test('diagnosticsToMarkdown leads the copied text with the AG package versions', () => {
-        const md = diagnosticsToMarkdown([diagnostic, diagnostic], 'AG Grid Community=9.9.9');
+        const md = diagnosticsToMarkdown([diagnostic, diagnostic], 'ag-grid-community=9.9.9');
 
-        expect(md.split('\n')[0]).toBe('Version: AG Grid Community=9.9.9');
+        expect(md.split('\n')[0]).toBe('Version: ag-grid-community=9.9.9');
         expect(md.match(/### \[Warning\] AG Grid #22/g)).toHaveLength(2);
     });
 

@@ -1,7 +1,7 @@
 import type { IntegratedModule } from 'ag-charts-types';
 
 import type { Module, ModuleName, _GridChartsGridApi, _ModuleWithApi } from 'ag-grid-community';
-import { _PopupModule, _SharedDragAndDropModule, _preInitErrMsg, _setAgChartsInfo } from 'ag-grid-community';
+import { _PopupModule, _SharedDragAndDropModule, _preInitErrMsg, _setAgPackageInfo } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import type { ILicenseManager } from '../license/shared/licenseManager';
@@ -154,7 +154,7 @@ export const IntegratedChartsModule: IntegratedChartsModuleType = {
                 AdvancedSettingsMenuFactory,
             ],
         };
-        _setAgChartsInfo(module, params.VERSION, params.isEnterprise);
+        _setAgPackageInfo(module, params.isEnterprise ? 'ag-charts-enterprise' : 'ag-charts-community', params.VERSION);
         return module;
     },
 };

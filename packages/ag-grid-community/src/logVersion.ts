@@ -2,44 +2,51 @@ import type { Module } from './interfaces/iModule';
 import { _logDebug } from './utils/log';
 import { VERSION } from './version';
 
-// The AG Charts build handed to `IntegratedChartsModule.with()` / `SparklinesModule.with()`, keyed
-// on the module object that `with()` returns. Community never imports ag-charts, so the enterprise
-// modules push this in through a setter to keep the dependency direction one-way — the same idiom
-// as `_configureDiagnostics` (validation/logging.ts) and `LicenseManager.setChartsLicenseManager`.
-// Keying on the module rather than holding a single value means each grid reports the charts build
-// of the modules it actually registered, even when another `.with()` call used a different one.
-const agChartsInfoByModule = new WeakMap<Module, { version: string; isEnterprise: boolean }>();
+/** The npm package an AG library was registered from, with the version of that build. */
+interface AgPackageInfo {
+    packageName: string;
+    version: string;
+}
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _setAgChartsInfo(module: Module, version: string, isEnterprise: boolean): void {
-    agChartsInfoByModule.set(module, { version, isEnterprise });
+// Keyed on the module rather than a single value, so each grid reports the builds of the modules it
+// actually registered even when another `with()` call used a different one.
+const agPackageInfoByModule = new WeakMap<Module, AgPackageInfo>();
+
+/**
+ * Records the npm package and version an AG library was registered from, against the module providing
+ * it, so the version line and the dev validation overlay report it. Community imports neither ag-charts
+ * nor ag-studio, so those packages push their info in through here to keep the dependency direction
+ * one-way — AG Charts via integrated charts / sparklines, AG Studio via its own module.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _setAgPackageInfo(module: Module, packageName: string, version: string): void {
+    agPackageInfoByModule.set(module, { packageName, version });
 }
 
 /**
- * Builds the `AG Grid Community=<v>, ...` clause list for the AG packages this grid has registered,
- * one clause per package in use. Shared by the `debug` console line and the dev validation overlay,
- * so both surfaces report the same versions in the same format.
+ * Builds the `ag-grid-community=<v>, ...` clause list for the AG npm packages this grid has registered.
+ * Shared by the `debug` console line and the dev validation overlay so both report the same versions.
  */
 export function _getAgVersionsText(registeredModules: Module[]): string {
-    const versions = [`AG Grid Community=${VERSION}`];
+    const versions = [`ag-grid-community=${VERSION}`];
 
-    // Every enterprise module depends on `EnterpriseCore`, and `registeredModules` is
+    // Every enterprise module depends on `EnterpriseCore` and `registeredModules` is
     // dependency-flattened, so this is the enterprise package's own version whenever it is in use.
     const enterpriseCore = registeredModules.find(({ moduleName }) => moduleName === 'EnterpriseCore');
     if (enterpriseCore) {
-        versions.push(`AG Grid Enterprise=${enterpriseCore.version}`);
+        versions.push(`ag-grid-enterprise=${enterpriseCore.version}`);
     }
 
-    // Every distinct charts build registered for this grid is listed: two modules given different
-    // AG Charts packages is exactly the mismatch this line exists to surface.
-    const chartsVersions = new Set<string>();
+    // Each distinct build is listed: two modules given different builds of one package is exactly the
+    // mismatch this line exists to surface.
+    const packageVersions = new Set<string>();
     for (const module of registeredModules) {
-        const info = agChartsInfoByModule.get(module);
+        const info = agPackageInfoByModule.get(module);
         if (info) {
-            chartsVersions.add(`AG Charts ${info.isEnterprise ? 'Enterprise' : 'Community'}=${info.version}`);
+            packageVersions.add(`${info.packageName}=${info.version}`);
         }
     }
-    versions.push(...chartsVersions);
+    versions.push(...packageVersions);
 
     return versions.join(', ');
 }

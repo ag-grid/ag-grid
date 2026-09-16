@@ -455,7 +455,7 @@ describe('dev validation config', () => {
     });
 });
 
-const VERSIONS_TEXT = 'AG Grid Community=99.9.9';
+const VERSIONS_TEXT = 'ag-grid-community=99.9.9';
 
 describe('bootstrap panel', () => {
     test('renders only the buffered diagnostics not tied to a grid', () => {

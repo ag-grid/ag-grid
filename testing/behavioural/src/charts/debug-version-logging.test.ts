@@ -26,7 +26,7 @@ describe('debug version logging with integrated charts', () => {
         consoleLogSpy.mockRestore();
     });
 
-    const expectedMessage = `AG Grid: Version: AG Grid Community=${VERSION}, AG Grid Enterprise=${VERSION}, AG Charts Enterprise=${AgChartsEnterpriseModule.VERSION}`;
+    const expectedMessage = `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=${VERSION}, ag-charts-enterprise=${AgChartsEnterpriseModule.VERSION}`;
 
     test.each([
         ['IntegratedChartsModule.with()', () => integratedChartsGrids],

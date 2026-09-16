@@ -23,7 +23,7 @@ describe('debug version logging with sparklines', () => {
         consoleLogSpy.mockRestore();
     });
 
-    test('labels the AG Charts Community build used by sparklines', () => {
+    test('names the ag-charts-community package used by sparklines', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],
             rowData: [],
@@ -31,7 +31,7 @@ describe('debug version logging with sparklines', () => {
         });
 
         expect(consoleLogSpy).toHaveBeenCalledWith(
-            `AG Grid: Version: AG Grid Community=${VERSION}, AG Grid Enterprise=${VERSION}, AG Charts Community=${AgChartsCommunityModule.VERSION}`
+            `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=${VERSION}, ag-charts-community=${AgChartsCommunityModule.VERSION}`
         );
     });
 });

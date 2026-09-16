@@ -8,7 +8,7 @@ const errorDiagnostic: CapturedDiagnostic = {
     severity: 'error',
 };
 
-const VERSIONS = 'AG Grid Community=99.9.9, AG Grid Enterprise=99.9.9';
+const VERSIONS = 'ag-grid-community=99.9.9, ag-grid-enterprise=99.9.9';
 
 describe('renderBootstrapPanel', () => {
     test('renders a panel with the diagnostic, an error link and a Copy control', () => {
