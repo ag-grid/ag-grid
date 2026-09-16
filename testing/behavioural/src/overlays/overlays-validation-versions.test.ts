@@ -1,8 +1,8 @@
 import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
+import type { GridOptions, Module } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
 import { VERSION } from '../version';
@@ -55,6 +55,21 @@ describe('dev validation overlay versions', () => {
         document.querySelector<HTMLButtonElement>('.ag-overlay-error-copy')!.click();
 
         // Whoever (or whatever) reads a pasted diagnostic needs the build it came from first.
+        expect(writeText.mock.calls[0][0].split('\n')[0]).toBe(`Version: AG Grid Community=${VERSION}`);
+    });
+
+    // Must be the last test in the file: a global module registration cannot be undone.
+    test('ignores modules the application registers globally after this grid was created', () => {
+        communityGrids.createGrid('myGrid', withUnknownOption());
+
+        const lateModule: Module = { moduleName: 'EnterpriseCore', version: VERSION };
+        ModuleRegistry.registerModules([lateModule]);
+
+        const writeText = vitest.fn().mockResolvedValue(undefined);
+        vitest.stubGlobal('navigator', { clipboard: { writeText } });
+        document.querySelector<HTMLButtonElement>('.ag-overlay-error-copy')!.click();
+
+        expect(versionsFooterText()).toBe(`AG Grid Community=${VERSION}`);
         expect(writeText.mock.calls[0][0].split('\n')[0]).toBe(`Version: AG Grid Community=${VERSION}`);
     });
 });

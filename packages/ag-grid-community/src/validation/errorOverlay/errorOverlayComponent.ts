@@ -1,7 +1,5 @@
 import { RefPlaceholder } from 'ag-stack';
 
-import { _getAgVersionsText } from '../../logVersion';
-import { _getRegisteredModules } from '../../modules/moduleRegistry';
 import { OverlayComponent } from '../../rendering/overlays/overlayComponent';
 import type { IOverlayComp } from '../../rendering/overlays/overlayComponent';
 import type { ElementParams } from '../../utils/element';
@@ -74,9 +72,9 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         }
         this.addManagedElementListeners(this.eDismiss, { click: () => beans.errorOverlay?.dismiss() });
 
-        // Fixed for the life of the grid (its modules are registered before any bean), so rendered
-        // here rather than on every diagnostic update.
-        this.eVersions.textContent = this.getVersionsText();
+        // Captured from this grid's own module list at creation, so it neither changes over the
+        // grid's life nor drifts as the application registers modules for its other grids.
+        this.eVersions.textContent = beans.agVersionsText;
 
         this.renderBody();
 
@@ -100,18 +98,12 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
     }
 
-    /** The AG package versions this grid is running, for the panel footer and the copied diagnostics. */
-    private getVersionsText(): string {
-        const { context, gos } = this.beans;
-        return _getAgVersionsText(_getRegisteredModules(context.getId(), gos.get('rowModelType')));
-    }
-
     private copyDiagnostics(): void {
         const diagnostics = this.beans.errorOverlay?.getDiagnostics() ?? [];
         if (!diagnostics.length) {
             return;
         }
-        copyDiagnosticsToClipboard(diagnosticsToMarkdown(diagnostics, this.getVersionsText()));
+        copyDiagnosticsToClipboard(diagnosticsToMarkdown(diagnostics, this.beans.agVersionsText));
         if (this.copyResetTimeout !== undefined) {
             window.clearTimeout(this.copyResetTimeout);
         }
