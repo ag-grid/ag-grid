@@ -276,10 +276,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     public onColumnsChanged(): void {
         const params = this.params;
-        if (!this.hasLoadedInitialState) {
-            this.hasLoadedInitialState = true;
-            this.isInitialState = !!params.initialState;
-        }
+        this.loadInitialState();
 
         const expandedStates = this.getExpandedStates();
 
@@ -295,7 +292,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         } else if (this.customColumnLayout && !pivotModeActive) {
             // A custom layout set via setColumnLayout owns the panel: grid column changes leave it untouched
             // until the app calls setColumnLayout again to pick up added/removed columns.
-            this.isInitialState = false;
             return;
         } else {
             this.buildTreeFromProvidedColumnDefs();
@@ -305,8 +301,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+    }
 
-        this.isInitialState = false;
+    private loadInitialState(): void {
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
     }
 
     public getDisplayedColsList(): ColumnModelItem[] {
@@ -348,6 +349,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
 
         const { isInitialState } = this;
+        let groupsExist = false;
         this.forEachItem((item) => {
             if (!item.group) {
                 return;
@@ -355,6 +357,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const colGroup = item.columnGroup;
             if (colGroup) {
                 // group should always exist, this is defensive
+                groupsExist = true;
                 const expanded = states[colGroup.groupId];
                 const groupExistedLastTime = expanded != null;
                 if (groupExistedLastTime || isInitialState) {
@@ -362,6 +365,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 }
             }
         });
+
+        // The restored state only names groups, so it stays pending while the panel shows none - a custom
+        // layout applied later (which can introduce groups the grid layout does not have) still gets it.
+        if (groupsExist) {
+            this.isInitialState = false;
+        }
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {
@@ -383,7 +392,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     public setColumnLayout(colDefs: AbstractColDef[]): void {
         // Marks the panel as owned by a custom layout so later grid column changes leave it frozen.
         this.customColumnLayout = colDefs;
+        this.loadInitialState();
+
+        const expandedStates = this.getExpandedStates();
         this.applyColumnLayout(colDefs);
+        // the rebuilt tree defaults every group to `expandGroupsByDefault`, so expansion - live, or
+        // restored from grid state - has to be re-applied and the list re-flattened
+        this.setExpandedStates(expandedStates);
+        this.flattenAndFilterModel();
     }
 
     private applyColumnLayout(colDefs: AbstractColDef[]): void {
