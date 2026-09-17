@@ -45,13 +45,13 @@ const gridOptions = {
 }
 ```
 
-When [Cell Selection](./cell-selection/) is enabled as well, it takes precedence and the Row Number click selects the cells in the row rather than the row itself. Suppressing the Cell Selection integration restores the Row Selection behaviour.
+When [Cell Selection](./cell-selection/) is enabled as well, a Row Number click does both: it selects all the cells in the row and, with click selection enabled, the row itself. Suppressing the Cell Selection integration leaves only the Row Selection behaviour.
 
 ### Suppressing Integration
 
 By default, clicking a row number selects a cell range including all the cells in the row. To prevent this behaviour use the `suppressCellSelectionIntegration` option.
 
-With the integration suppressed, the Row Number click falls through to [Row Selection](./row-selection/), so the row itself is selected when click selection is enabled.
+With the integration suppressed, a Row Number click no longer selects the cells in the row, so only the [Row Selection](./row-selection/) behaviour remains and just the row is selected when click selection is enabled.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
