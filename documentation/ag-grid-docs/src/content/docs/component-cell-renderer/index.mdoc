@@ -177,6 +177,30 @@ const gridOptions = {
 
 {% /if %}
 
+{% if isFramework("vue") %}
+
+### Providing Custom Components via Slots
+
+`AgGridVue` also supports Vue's scoped slots as an alternative to `cellRenderer`. Name a slot `cell-<colId>` (the column's `colId`, or its `field` when no `colId` is set) and it renders instead of the column's default cell content, receiving the same `params` object as `cellRenderer` for its scope:
+
+```html
+<template>
+    <ag-grid-vue :columnDefs="columnDefs" :rowData="rowData">
+        <template #cell-price="params">
+            <strong>{{ params.value }}</strong>
+        </template>
+    </ag-grid-vue>
+</template>
+```
+
+A column only picks up its slot when neither `cellRenderer` nor `cellRendererSelector` is set on it — an explicit renderer always wins.
+
+The example below demonstrates using a scoped slot to render the `Price` column, while the `Product` and `Category` columns use the grid's default rendering.
+
+{% gridExampleRunner title="Cell Renderer Slots" name="cell-slots" exampleHeight=300 /%}
+
+{% /if %}
+
 ### Providing Custom Components Dynamically
 
 The `colDef.cellRendererSelector` function allows setting different Cell Components for different Rows within a Column.

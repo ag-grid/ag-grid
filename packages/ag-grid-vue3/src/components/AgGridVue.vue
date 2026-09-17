@@ -5,7 +5,18 @@ import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 import type { Props } from './utils';
 import { debounce, deepToRaw, getProps } from './utils';
 import type { Ref } from 'vue';
-import { getCurrentInstance, markRaw, onMounted, onUnmounted, shallowRef, toRefs, useTemplateRef, watch } from 'vue';
+import {
+    defineComponent,
+    getCurrentInstance,
+    markRaw,
+    onMounted,
+    onUnmounted,
+    shallowRef,
+    toRefs,
+    useSlots,
+    useTemplateRef,
+    watch,
+} from 'vue';
 
 import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -38,6 +49,41 @@ const propsAsRefs = toRefs<any>(props);
 // Per-option shallow vs deep watching — reduces overhead for options that don't need deep tracking
 const shallowOptions: Set<string> = new Set(_GET_SHALLOW_GRID_OPTIONS());
 
+// cell slots
+const slots = useSlots();
+const slotCellRenderers = new Map<string, any>();
+
+const getSlotCellRenderer = (slotName: string) => {
+    let component = slotCellRenderers.get(slotName);
+    if (!component) {
+        component = defineComponent({
+            props: ['params'],
+            // withCtx-wrapped slot functions carry their own component context, so calling them from this unrelated wrapper still resolves provide/inject correctly
+            setup(props: any) {
+                return () => slots[slotName]?.(props.params);
+            },
+        });
+        slotCellRenderers.set(slotName, component);
+    }
+    return component;
+};
+
+const applyCellSlots = (columnDefs: any): any => {
+    if (!columnDefs) return columnDefs;
+    return columnDefs.map((colDef: any) => {
+        if (colDef.children) {
+            return { ...colDef, children: applyCellSlots(colDef.children) };
+        }
+        const colId = colDef.colId ?? colDef.field;
+        const slotName = colId != null ? `cell-${colId}` : undefined;
+        if (slotName && slots[slotName] && colDef.cellRenderer == null && colDef.cellRendererSelector == null) {
+            return { ...colDef, cellRenderer: getSlotCellRenderer(slotName) };
+        }
+        return colDef;
+    });
+};
+// cell slots end
+
 _GET_ALL_GRID_OPTIONS()
     .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
     .forEach((propertyName: string) => {
@@ -46,9 +92,10 @@ _GET_ALL_GRID_OPTIONS()
         watch(
             propRef,
             (newValue: any, oldValue: any) => {
+                const value = propertyName === 'columnDefs' ? applyCellSlots(newValue) : newValue;
                 if ((propertyName === "rowData" && !emittingRowData.value) ||
                     propertyName !== "rowData") {
-                    processChanges(propertyName, newValue, oldValue);
+                    processChanges(propertyName, value, oldValue);
                 }
                 if (propertyName === "rowData") {
                     emittingRowData.value = false;
@@ -183,6 +230,7 @@ onMounted(() => {
             ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP),
         ])
     );
+    gridOptions.columnDefs = applyCellSlots(gridOptions.columnDefs);
 
     const rowData = getRowDataBasedOnBindings();
     if (rowData !== undefined) {

@@ -95,6 +95,11 @@ const routes = [
         name: 'AG-14654 Change Detection',
         component: () => import('./test-cases/AG-14654-change-detection/Page.vue'),
     },
+    {
+        path: '/cell-slots',
+        name: 'Cell Slots',
+        component: () => import('./test-cases/cell-slots/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
