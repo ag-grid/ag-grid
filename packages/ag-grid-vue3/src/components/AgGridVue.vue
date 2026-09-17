@@ -73,11 +73,14 @@ const getSlotCellRenderer = (slotName: string) => {
 };
 
 const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
-    const typeKeys: string[] = Array.isArray(colDef.type)
-        ? colDef.type
-        : typeof colDef.type === 'string'
-          ? colDef.type.split(',')
-          : [];
+    let typeKeys: string[];
+    if (Array.isArray(colDef.type)) {
+        typeKeys = colDef.type;
+    } else if (typeof colDef.type === 'string') {
+        typeKeys = colDef.type.split(',');
+    } else {
+        typeKeys = [];
+    }
     const columnTypes = props.columnTypes as { [key: string]: any } | undefined;
     const hasTypeRenderer = typeKeys.some((key) => {
         const typeDef = columnTypes?.[key];
