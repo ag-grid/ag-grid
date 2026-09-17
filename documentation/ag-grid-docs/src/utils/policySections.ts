@@ -5,11 +5,13 @@ export interface PolicySection {
     title: string;
 }
 
-// A numbered section heading in a policy `.mdoc`, e.g. `1.  ### Acceptance of Terms {% id="acceptance-of-terms" %}`.
-const SECTION_HEADING = /^\s*\d+\.\s+#{2,4}\s+(?<title>.+?)\s+\{%\s*id="(?<id>[^"]+)"\s*%\}\s*$/gm;
+// A section heading in a policy `.mdoc`: a numbered one such as
+// `1.  ### Acceptance of Terms {% id="acceptance-of-terms" %}`, or an un-numbered one following the
+// numbered list, such as an agreement's `### Schedule 1: Support Services {% id="..." %}`.
+const SECTION_HEADING = /^\s*(?:\d+\.\s+)?#{2,4}\s+(?<title>.+?)\s+\{%\s*id="(?<id>[^"]+)"\s*%\}\s*$/gm;
 
 /**
- * The sections of a policy `.mdoc`, in document order, read from its numbered headings. Pages
+ * The sections of a policy `.mdoc`, in document order, read from its headings. Pages
  * build their table of contents from this rather than repeating the titles and ids by hand,
  * so an edit to the policy cannot leave the navigation stale.
  */
