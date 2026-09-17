@@ -42,7 +42,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     endsWith: 'Se konča z',
 
     // Date Filter
-    dateFormatOoo: 'llll-mm-dd',
+    dateFormatOoo: 'yyyy-mm-dd',
     before: 'Pred',
     after: 'Po',
 

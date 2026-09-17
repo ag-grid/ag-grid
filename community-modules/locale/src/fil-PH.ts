@@ -42,7 +42,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     endsWith: 'Nagtatapos sa',
 
     // Date Filter
-    dateFormatOoo: 'taon-buwan-araw',
+    dateFormatOoo: 'yyyy-mm-dd',
     before: 'Bago',
     after: 'Pagkatapos',
 

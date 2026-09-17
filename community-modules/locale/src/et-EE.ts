@@ -42,7 +42,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     endsWith: 'Lõpeb',
 
     // Date Filter
-    dateFormatOoo: 'aaaa-kk-pp',
+    dateFormatOoo: 'yyyy-mm-dd',
     before: 'Enne',
     after: 'Pärast',
 
