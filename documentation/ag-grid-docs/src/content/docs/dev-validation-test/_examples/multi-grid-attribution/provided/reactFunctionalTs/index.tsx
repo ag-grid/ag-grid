@@ -5,8 +5,6 @@ import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 // Opt into dev-only validation diagnostics, surfaced in an overlay over each grid.
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();

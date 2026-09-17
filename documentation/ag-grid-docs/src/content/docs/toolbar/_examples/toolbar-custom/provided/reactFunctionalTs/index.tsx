@@ -7,7 +7,6 @@ import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarM
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { ToolPanelRadio, type ToolPanelRadioHandle, WinnersToggle } from './customToolbarItem';
-import './styles.css';
 
 const modules = [AllCommunityModule, ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarModule];
 
