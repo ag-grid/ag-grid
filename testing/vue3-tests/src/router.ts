@@ -116,11 +116,6 @@ const routes = [
         component: () => import('./test-cases/cell-slots-priority/Page.vue'),
     },
     {
-        path: '/cell-slots-swap',
-        name: 'Cell Slots Swap',
-        component: () => import('./test-cases/cell-slots-swap/Page.vue'),
-    },
-    {
         path: '/cell-slots-editor-scope',
         name: 'Cell Slots Editor Scope',
         component: () => import('./test-cases/cell-slots-editor-scope/Page.vue'),
@@ -129,16 +124,6 @@ const routes = [
         path: '/cell-slots-component-multi-root',
         name: 'Cell Slots Component Multi-Root',
         component: () => import('./test-cases/cell-slots-component-multi-root/Page.vue'),
-    },
-    {
-        path: '/cell-slots-indirect-swap',
-        name: 'Cell Slots Indirect Swap',
-        component: () => import('./test-cases/cell-slots-indirect-swap/Page.vue'),
-    },
-    {
-        path: '/cell-slots-auto-group-swap',
-        name: 'Cell Slots Auto Group Swap',
-        component: () => import('./test-cases/cell-slots-auto-group-swap/Page.vue'),
     },
 ];
 

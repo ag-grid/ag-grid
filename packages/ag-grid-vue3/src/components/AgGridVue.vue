@@ -10,19 +10,16 @@ import {
     markRaw,
     onMounted,
     onUnmounted,
-    onUpdated,
     shallowRef,
     toRefs,
-    useSlots,
     useTemplateRef,
     watch,
 } from 'vue';
 
-import type { AgEventType, Column, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
-    RenderApiModule,
     RowApiModule,
     _PUBLIC_EVENT_HANDLERS_MAP,
     _GET_ALL_GRID_OPTIONS,
@@ -175,8 +172,6 @@ const getProvides = () => {
 onMounted(() => {
     // Row API module is required for getRowData to work
     _registerModule(RowApiModule,undefined);
-    // Render API module is required for the refreshCells() call the slot-update watcher below makes
-    _registerModule(RenderApiModule, undefined);
     const frameworkComponentWrapper = new VueFrameworkComponentWrapper(getCurrentInstance(), getProvides());
 
     const gridParams = {
@@ -206,51 +201,6 @@ onMounted(() => {
 
     api.value = createGrid(rootRef.value!, gridOptions, gridParams);
     gridCreated.value = true;
-});
-
-// A cellRenderer resolved from a slot (VueComponentFactory) reads this instance's slots directly,
-// bypassing Vue's normal parent-to-child update propagation since it's mounted into a detached
-// fragment. Refresh only the columns using a slot whose function reference changed, so e.g. a
-// v-if/v-else swap between two templates for the same slot name is picked up rather than left stale.
-const slots = useSlots();
-let lastSlotFns: Record<string, unknown> = { ...slots };
-
-// A cellRenderer name may also resolve to a slot indirectly, via the `components` alias map
-// (VueFrameworkOverrides mirrors this same fallback). A cellRendererSelector's result is per-row
-// and can't be resolved without invoking it, so any column using one is refreshed defensively.
-const resolvesToSlot = (name: unknown, slotNames: Set<string>, components: any): boolean => {
-    if (typeof name !== 'string') return false;
-    if (slotNames.has(name)) return true;
-    const indirectName = components?.[name];
-    return typeof indirectName === 'string' && slotNames.has(indirectName);
-};
-
-// getAllGridColumns(), not getColumnDefs()/getColumns() — both of those report only the primary,
-// user-defined columns, missing a generated auto-group or pivot-result column's cellRenderer.
-const findColIdsUsingSlots = (columns: Column[] | null | undefined, slotNames: Set<string>, components: any): string[] => {
-    if (!columns) return [];
-    return columns.flatMap((col) => {
-        const colDef = col.getColDef();
-        if (colDef.cellRendererSelector) return [col.getColId()];
-        return resolvesToSlot(colDef.cellRenderer, slotNames, components) ? [col.getColId()] : [];
-    });
-};
-
-onUpdated(() => {
-    if (!gridCreated.value) return;
-    const changedNames = new Set(
-        [...Object.keys(slots), ...Object.keys(lastSlotFns)].filter(
-            (key) => key !== '_' && slots[key] !== lastSlotFns[key]
-        )
-    );
-    if (changedNames.size > 0) {
-        const components = api.value?.getGridOption('components');
-        const columns = findColIdsUsingSlots(api.value?.getAllGridColumns(), changedNames, components);
-        if (columns.length > 0) {
-            api.value?.refreshCells({ columns, force: true });
-        }
-    }
-    lastSlotFns = { ...slots };
 });
 
 onUnmounted(() => {
