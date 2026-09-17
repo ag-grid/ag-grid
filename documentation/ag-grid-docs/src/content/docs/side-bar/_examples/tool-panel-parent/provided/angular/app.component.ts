@@ -13,7 +13,6 @@ import {
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

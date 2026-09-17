@@ -4,8 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { AllCommunityModule, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './style.css';
-
 const GridExample = () => {
     return (
         <AgGridProvider modules={[AllCommunityModule]}>

@@ -16,7 +16,6 @@ import {
 
 import type { IProduct } from './data';
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

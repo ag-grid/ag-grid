@@ -17,7 +17,6 @@ import { getData } from './data';
 import FileCellRenderer from './fileCellRenderer';
 import { moveFiles } from './fileUtils';
 import type { IFile } from './fileUtils';
-import './style.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

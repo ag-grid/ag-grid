@@ -13,7 +13,6 @@ import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import { getData } from './data';
 import PartialMatchFilter from './partialMatchFilter';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

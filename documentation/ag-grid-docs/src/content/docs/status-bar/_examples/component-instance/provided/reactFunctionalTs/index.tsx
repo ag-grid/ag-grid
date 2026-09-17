@@ -13,7 +13,6 @@ import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

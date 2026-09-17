@@ -21,7 +21,6 @@ import { AgGridVue } from 'ag-grid-vue3';
 import { getData } from './data.ts';
 import MoodEditor from './moodEditorVue.ts';
 import NumericCellEditor from './numericCellEditorVue.ts';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

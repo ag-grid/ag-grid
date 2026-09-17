@@ -5,7 +5,6 @@ import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

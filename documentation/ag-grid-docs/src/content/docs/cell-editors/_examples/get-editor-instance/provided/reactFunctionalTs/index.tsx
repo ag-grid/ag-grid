@@ -14,7 +14,6 @@ import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import type { MySimpleInterface } from './mySimpleEditor';
 import MySimpleEditor from './mySimpleEditor';
-import './style.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
