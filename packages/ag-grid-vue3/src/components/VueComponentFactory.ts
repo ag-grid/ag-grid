@@ -84,7 +84,12 @@ export class VueComponentFactory {
                     // reflects the slot's current content.
                     return () => {
                         const rendered = parent.slots[slotName]?.(props.params);
-                        const nodes = Array.isArray(rendered) ? rendered : rendered != null ? [rendered] : [];
+                        let nodes: any[];
+                        if (Array.isArray(rendered)) {
+                            nodes = rendered;
+                        } else {
+                            nodes = rendered != null ? [rendered] : [];
+                        }
                         const [only] = nodes;
                         // Only a plain element (`.type` is a tag-name string, unlike text/comment/
                         // fragment/component vnodes) is trusted to have exactly one DOM root.
