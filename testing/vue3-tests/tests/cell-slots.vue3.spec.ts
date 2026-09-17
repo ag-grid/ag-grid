@@ -70,3 +70,15 @@ test('a matching slot takes priority over a globally registered component of the
     await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:42');
     await expect(page.locator('[data-testid="registered-cell"]')).toHaveCount(0);
 });
+
+test('a v-if/v-else swap between two templates for the same slot is picked up, not left stale', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-swap');
+
+    const cell = page.locator('.ag-cell[col-id="value"]').first();
+    await expect(cell).toHaveText('Before:42');
+
+    await page.locator('#toggle').click();
+    await expect(cell).toHaveText('After:42');
+});

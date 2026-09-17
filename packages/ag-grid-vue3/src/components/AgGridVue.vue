@@ -5,7 +5,18 @@ import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 import type { Props } from './utils';
 import { debounce, deepToRaw, getProps } from './utils';
 import type { Ref } from 'vue';
-import { getCurrentInstance, markRaw, onMounted, onUnmounted, shallowRef, toRefs, useTemplateRef, watch } from 'vue';
+import {
+    getCurrentInstance,
+    markRaw,
+    onMounted,
+    onUnmounted,
+    onUpdated,
+    shallowRef,
+    toRefs,
+    useSlots,
+    useTemplateRef,
+    watch,
+} from 'vue';
 
 import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -192,6 +203,24 @@ onMounted(() => {
 
     api.value = createGrid(rootRef.value!, gridOptions, gridParams);
     gridCreated.value = true;
+});
+
+// A cellRenderer resolved from a slot (VueComponentFactory) reads this instance's slots directly,
+// bypassing Vue's normal parent-to-child update propagation since it's mounted into a detached
+// fragment. Force a refresh whenever a slot's own function reference changes, so e.g. a v-if/v-else
+// swap between two templates for the same slot name is picked up rather than left stale.
+const slots = useSlots();
+let lastSlotFns: Record<string, unknown> = { ...slots };
+onUpdated(() => {
+    if (!gridCreated.value) return;
+    const currentKeys = Object.keys(slots);
+    const changed =
+        currentKeys.length !== Object.keys(lastSlotFns).length ||
+        currentKeys.some((key) => slots[key] !== lastSlotFns[key]);
+    if (changed) {
+        api.value?.refreshCells({ force: true });
+    }
+    lastSlotFns = { ...slots };
 });
 
 onUnmounted(() => {

@@ -115,6 +115,11 @@ const routes = [
         name: 'Cell Slots Priority',
         component: () => import('./test-cases/cell-slots-priority/Page.vue'),
     },
+    {
+        path: '/cell-slots-swap',
+        name: 'Cell Slots Swap',
+        component: () => import('./test-cases/cell-slots-swap/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
