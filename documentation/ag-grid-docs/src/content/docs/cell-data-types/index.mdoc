@@ -56,8 +56,6 @@ By default, when using the Client-Side Row Model, the grid will infer cell data 
 
 If any condition is not met, no cell data type will be inferred. You can still set one explicitly via `cellDataType` on the column definition.
 
-The type is inferred from the first non-null value in the column, so a column whose leading rows are empty is still typed from the values further down.
-
 Where inference is possible but the values do not match any pre-defined type, it defaults to `'object'`.
 
 ### Disabling Inference
