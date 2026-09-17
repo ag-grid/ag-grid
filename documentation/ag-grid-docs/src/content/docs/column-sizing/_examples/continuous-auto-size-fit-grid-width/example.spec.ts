@@ -1,8 +1,5 @@
-import { ensureGridReady, expect, test, waitForGridContent, withGridEvent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
-
-/** What the continuous `fitGridWidth` strategy dispatches once the new widths are on screen. */
-const RE_DISTRIBUTED = { finished: true, source: 'sizeColumnsToFit' } as const;
 
 /** The example sets `animateColumnResizing`, so a box read on the event lands mid-transition. */
 async function widthTransitionsSettled(page: Page): Promise<void> {
@@ -13,8 +10,18 @@ async function widthTransitionsSettled(page: Page): Promise<void> {
     );
 }
 
-async function reDistributes(page: Page, action: () => Promise<unknown>): Promise<void> {
-    await withGridEvent(page, 'columnResized', RE_DISTRIBUTED, action);
+/**
+ * Gated on observed state, not a `columnResized` event: a pass left over from the previous action can
+ * fire that event first, and on Angular the click's own effect can land after the click returns.
+ */
+async function reDistributes(
+    page: Page,
+    action: () => Promise<unknown>,
+    effectLanded: () => Promise<unknown>
+): Promise<void> {
+    await action();
+    await effectLanded();
+    await expectColumnsToFillGrid(page);
     await widthTransitionsSettled(page);
 }
 
@@ -85,22 +92,26 @@ test.agExample(import.meta, () => {
             let previousWidth = firstColumnWidth;
 
             for (const expectedCount of [6, 7, 8]) {
-                await reDistributes(page, () => page.locator('button.add-column-button').click());
-                await expect(headerCells(page)).toHaveCount(expectedCount);
+                await reDistributes(
+                    page,
+                    () => page.locator('button.add-column-button').click(),
+                    () => expect(headerCells(page)).toHaveCount(expectedCount)
+                );
 
                 const narrowed = await columnWidth(page, 'column1');
                 expect(narrowed).toBeLessThan(previousWidth);
-                await expectColumnsToFillGrid(page);
                 previousWidth = narrowed;
             }
 
             for (const expectedCount of [7, 6, 5]) {
-                await reDistributes(page, () => page.locator('button.remove-column-button').click());
-                await expect(headerCells(page)).toHaveCount(expectedCount);
+                await reDistributes(
+                    page,
+                    () => page.locator('button.remove-column-button').click(),
+                    () => expect(headerCells(page)).toHaveCount(expectedCount)
+                );
 
                 const widened = await columnWidth(page, 'column1');
                 expect(widened).toBeGreaterThan(previousWidth);
-                await expectColumnsToFillGrid(page);
                 previousWidth = widened;
             }
 
@@ -152,14 +163,22 @@ test.agExample(import.meta, () => {
         await expectColumnsToFillGrid(page);
 
         const wideTotal = await totalColumnWidth(page);
+        const wideAvailable = await availableWidth(page);
+        const availableWidthBecomes = (predicate: (width: number) => boolean) => () =>
+            expect(async () => expect(predicate(await availableWidth(page))).toBe(true)).toPass();
 
-        await reDistributes(page, () => page.locator('button.narrower-button').click());
-        const narrowTotal = await totalColumnWidth(page);
-        expect(narrowTotal).toBeLessThan(wideTotal);
-        await expectColumnsToFillGrid(page);
+        await reDistributes(
+            page,
+            () => page.locator('button.narrower-button').click(),
+            availableWidthBecomes((width) => width < wideAvailable)
+        );
+        expect(await totalColumnWidth(page)).toBeLessThan(wideTotal);
 
-        await reDistributes(page, () => page.locator('button.wider-button').click());
+        await reDistributes(
+            page,
+            () => page.locator('button.wider-button').click(),
+            availableWidthBecomes((width) => Math.abs(width - wideAvailable) <= 1)
+        );
         expect(await totalColumnWidth(page)).toBeCloseTo(wideTotal, 0);
-        await expectColumnsToFillGrid(page);
     });
 });
