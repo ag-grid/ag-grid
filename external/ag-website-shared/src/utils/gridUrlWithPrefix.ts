@@ -3,8 +3,6 @@ import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlas
 import { GRID_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 
-import { addTrailingSlashToPath } from './addTrailingSlash';
-
 export const gridUrlWithPrefix = ({
     url = '',
     framework,
