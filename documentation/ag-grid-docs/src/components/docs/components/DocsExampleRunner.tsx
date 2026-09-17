@@ -3,7 +3,7 @@ import { getLoadingIFrameId } from '@ag-website-shared/components/loading-logo/g
 import type { GeneratedContents } from '@components/example-generator/types';
 import { DEFAULT_HEIGHT, ExampleRunner } from '@components/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@components/example-runner/components/ExternalLinks';
-import { pruneExampleFiles } from '@components/example-runner/utils/exampleViewerFiles';
+import { pruneExampleFiles, pruneExportFiles } from '@components/example-runner/utils/exampleViewerFiles';
 import { resolveInternalFramework } from '@components/example-runner/utils/resolveInternalFramework';
 import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
@@ -88,7 +88,7 @@ const DocsExampleRunnerInner = ({
                             return {};
                         }
 
-                        return { ...json, files: pruneExampleFiles(json.files, internalFramework) };
+                        return json;
                     }),
             ]) as Promise<[GeneratedContents]>;
         },
@@ -122,11 +122,14 @@ const DocsExampleRunnerInner = ({
         setSupportedFrameworks(contents.supportedFrameworks ?? []);
     }, [contents, isError]);
 
+    const exportFiles = contents?.files && pruneExportFiles(contents.files, internalFramework);
+    const viewerFiles = contents?.files && pruneExampleFiles(contents.files, internalFramework);
+
     const externalLinks = contents ? (
         <ExternalLinks
             title={title}
             internalFramework={internalFramework}
-            exampleFiles={contents.files}
+            exampleFiles={exportFiles}
             packageJson={contents.packageJson}
             initialSelectedFile={contents.mainFileName}
             plunkrHtmlUrl={urls.plunkrHtmlUrl}
@@ -147,7 +150,7 @@ const DocsExampleRunnerInner = ({
             exampleUrl={urls.exampleUrl}
             exampleRunnerExampleUrl={urls.exampleRunnerExampleUrl}
             exampleHeight={exampleHeight}
-            exampleFiles={contents?.files}
+            exampleFiles={viewerFiles}
             initialSelectedFile={contents?.mainFileName}
             internalFramework={internalFramework}
             externalLinks={externalLinks}
