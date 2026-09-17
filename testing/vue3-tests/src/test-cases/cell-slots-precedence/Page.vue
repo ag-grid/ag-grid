@@ -1,4 +1,5 @@
 <script setup>
+// Verifies a slot never overrides a cellRenderer supplied via columnTypes or defaultColDef.
 import { h } from 'vue';
 
 import { AgGridVue } from 'ag-grid-vue3';

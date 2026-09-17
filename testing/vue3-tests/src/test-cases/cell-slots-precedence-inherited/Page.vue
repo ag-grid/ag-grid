@@ -1,4 +1,5 @@
 <script setup>
+// Verifies the precedence check resolves defaultColDef/columnTypes supplied only via gridOptions, including a type inherited from defaultColDef.type.
 import { h } from 'vue';
 
 import { AgGridVue } from 'ag-grid-vue3';

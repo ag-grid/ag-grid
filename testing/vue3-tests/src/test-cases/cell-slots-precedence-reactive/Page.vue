@@ -1,4 +1,5 @@
 <script setup>
+// Verifies slot precedence is re-evaluated when defaultColDef changes reactively, in both directions.
 import { h, ref } from 'vue';
 
 import { AgGridVue } from 'ag-grid-vue3';

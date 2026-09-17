@@ -1,4 +1,5 @@
 <script setup>
+// Verifies a `cell-<colId>` scoped slot renders custom content for its column while an unslotted column still renders its default value.
 import { AgGridVue } from 'ag-grid-vue3';
 
 const rowData = [

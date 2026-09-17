@@ -1,4 +1,5 @@
 <script setup>
+// Verifies slot content with multiple root nodes and leading text is not truncated by the cell-renderer mounting pipeline.
 import { AgGridVue } from 'ag-grid-vue3';
 
 const rowData = [{ label: 'Alpha' }, { label: 'Beta' }];

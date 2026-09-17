@@ -1,4 +1,5 @@
 <script setup>
+// Verifies a column type resolved from a comma-separated, untrimmed type list still matches its columnTypes renderer.
 import { h } from 'vue';
 
 import { AgGridVue } from 'ag-grid-vue3';
