@@ -1,5 +1,6 @@
 <script setup>
-// Verifies a `cell-<colId>` scoped slot renders custom content for its column while an unslotted column still renders its default value.
+// Verifies a cellRenderer string that matches a named slot on this AgGridVue renders that slot's
+// content, while a column with no matching cellRenderer/slot still renders its default value.
 import { AgGridVue } from 'ag-grid-vue3';
 
 const rowData = [
@@ -10,7 +11,7 @@ const rowData = [
 
 const columnDefs = [
     { headerName: 'Name', field: 'name' },
-    { headerName: 'Price', field: 'price' },
+    { headerName: 'Price', field: 'price', cellRenderer: 'priceCell' },
 ];
 </script>
 
@@ -22,7 +23,7 @@ const columnDefs = [
         theme="legacy"
         style="height: 300px"
     >
-        <template #cell-price="params">
+        <template #priceCell="params">
             <span class="slot-cell" data-testid="slot-cell">SLOT:{{ params.value }}</span>
         </template>
     </AgGridVue>

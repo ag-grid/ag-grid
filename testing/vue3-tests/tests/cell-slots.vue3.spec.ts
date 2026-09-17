@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('cell slot renders custom content while other columns render normally', async ({ page }) => {
+test('a cellRenderer string matching a slot renders it, while other columns render normally', async ({ page }) => {
     test.setTimeout(5_000);
 
     await page.goto('/cell-slots');
@@ -45,63 +45,28 @@ test('multi-root slot content is not truncated', async ({ page }) => {
     await expect(emEls.nth(1)).toHaveText('!');
 });
 
-test('a slot never overrides a renderer from columnTypes or defaultColDef', async ({ page }) => {
+test('two columns using the same cellRenderer string share the one matching slot', async ({ page }) => {
     test.setTimeout(5_000);
 
-    await page.goto('/cell-slots-precedence');
+    await page.goto('/cell-slots-shared');
 
     const firstCell = page.locator('.ag-cell').first();
     await firstCell.waitFor();
 
-    await expect(page.locator('[data-testid="type-renderer"]')).toHaveText('TYPE:9.99');
-    await expect(page.locator('[data-testid="default-renderer"]')).toHaveText('DEFAULT:100');
-    await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
+    const boundCells = page.locator('[data-testid="bound-cell"]');
+    await expect(boundCells).toHaveCount(2);
+    await expect(page.locator('.ag-cell[col-id="min"] [data-testid="bound-cell"]')).toHaveText('BOUND:1');
+    await expect(page.locator('.ag-cell[col-id="max"] [data-testid="bound-cell"]')).toHaveText('BOUND:10');
 });
 
-test('a slot respects a renderer supplied only via gridOptions, inherited through defaultColDef.type', async ({
-    page,
-}) => {
+test('a matching slot takes priority over a globally registered component of the same name', async ({ page }) => {
     test.setTimeout(5_000);
 
-    await page.goto('/cell-slots-precedence-inherited');
+    await page.goto('/cell-slots-priority');
 
     const firstCell = page.locator('.ag-cell').first();
     await firstCell.waitFor();
 
-    await expect(page.locator('[data-testid="type-renderer"]')).toHaveText('TYPE:9.99');
-    await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
-});
-
-test('a slot respects a renderer resolved from a trimmed, comma-separated column type', async ({ page }) => {
-    test.setTimeout(5_000);
-
-    await page.goto('/cell-slots-precedence-trim');
-
-    const firstCell = page.locator('.ag-cell').first();
-    await firstCell.waitFor();
-
-    await expect(page.locator('[data-testid="type-renderer"]')).toHaveText('TYPE:3');
-    await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
-});
-
-test('explicit-null clearing is resolved per-property, not by clearing both together', async ({ page }) => {
-    test.setTimeout(5_000);
-
-    await page.goto('/cell-slots-precedence-cleared');
-
-    const firstCell = page.locator('.ag-cell').first();
-    await firstCell.waitFor();
-
-    // total: cellRenderer explicitly null clears the inherited defaultColDef renderer, so its slot applies.
-    await expect(page.locator('[data-testid="slot-cell-total"]')).toHaveText('SLOT:100');
-
-    // qty: only cellRendererSelector is null; cellRenderer still inherits from defaultColDef, so
-    // that renderer must win and the slot must not apply.
-    await expect(page.locator('.ag-cell[col-id="qty"] [data-testid="default-renderer"]')).toHaveText('DEFAULT:3');
-    await expect(page.locator('[data-testid="slot-cell-qty"]')).toHaveCount(0);
-
-    // amount: cellRenderer is explicitly undefined, which core treats as unset (not a clearing
-    // override like null), so it still inherits defaultColDef's renderer and the slot must not apply.
-    await expect(page.locator('.ag-cell[col-id="amount"] [data-testid="default-renderer"]')).toHaveText('DEFAULT:50');
-    await expect(page.locator('[data-testid="slot-cell-amount"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:42');
+    await expect(page.locator('[data-testid="registered-cell"]')).toHaveCount(0);
 });

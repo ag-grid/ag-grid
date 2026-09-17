@@ -5,19 +5,7 @@ import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 import type { Props } from './utils';
 import { debounce, deepToRaw, getProps } from './utils';
 import type { Ref } from 'vue';
-import {
-    defineComponent,
-    getCurrentInstance,
-    h,
-    markRaw,
-    onMounted,
-    onUnmounted,
-    shallowRef,
-    toRefs,
-    useSlots,
-    useTemplateRef,
-    watch,
-} from 'vue';
+import { getCurrentInstance, markRaw, onMounted, onUnmounted, shallowRef, toRefs, useTemplateRef, watch } from 'vue';
 
 import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -50,98 +38,6 @@ const propsAsRefs = toRefs<any>(props);
 // Per-option shallow vs deep watching — reduces overhead for options that don't need deep tracking
 const shallowOptions: Set<string> = new Set(_GET_SHALLOW_GRID_OPTIONS());
 
-// cell slots
-const slots = useSlots();
-const slotCellRenderers = new Map<string, any>();
-
-const getSlotCellRenderer = (slotName: string) => {
-    let component = slotCellRenderers.get(slotName);
-    if (!component) {
-        component = defineComponent({
-            props: { params: { type: Object, required: true } },
-            setup(props: any) {
-                // A span, since the mounting pipeline keeps only the fragment's firstElementChild
-                // as the cell's GUI; withCtx-wrapped slots still resolve provide/inject here.
-                return () => h('span', slots[slotName]?.(props.params));
-            },
-        });
-        slotCellRenderers.set(slotName, component);
-    }
-    return component;
-};
-
-// Falls back to gridOptions only when the prop is undefined — an explicit null is a real
-// override there too, matching _combineAttributesAndGridOptions.
-const getEffectiveOption = (name: string): any => {
-    const value = (props as any)[name];
-    return value !== undefined ? value : (props.gridOptions as any)?.[name];
-};
-
-// Resolves cellRenderer/cellRendererSelector like _addColumnDefaultAndTypes: defaultColDef, then
-// each type in order, each key overridden only when that stage explicitly declares it (null included).
-const resolveInheritedRenderers = (
-    colDef: any,
-    defaultColDef: { type?: any; cellRenderer?: any; cellRendererSelector?: any } | undefined,
-    columnTypes: { [key: string]: any } | undefined
-): { cellRenderer: any; cellRendererSelector: any } => {
-    let cellRenderer = defaultColDef?.cellRenderer;
-    let cellRendererSelector = defaultColDef?.cellRendererSelector;
-
-    const effectiveType = colDef.type ?? defaultColDef?.type;
-    let typeKeys: string[];
-    if (Array.isArray(effectiveType)) {
-        typeKeys = effectiveType;
-    } else if (typeof effectiveType === 'string') {
-        typeKeys = effectiveType.split(',');
-    } else {
-        typeKeys = [];
-    }
-    // Core's own type-key resolution (mergeTypeKeys) trims every key, array-sourced or not.
-    typeKeys = typeKeys.map((key) => key.trim());
-
-    typeKeys.forEach((key) => {
-        const typeDef = columnTypes?.[key];
-        if (!typeDef) return;
-        // _mergeDeep is called with copyUndefined=false, so an explicit undefined is skipped —
-        // only null or a real value overrides the running value from the previous stage.
-        if (typeDef.cellRenderer !== undefined) cellRenderer = typeDef.cellRenderer;
-        if (typeDef.cellRendererSelector !== undefined) cellRendererSelector = typeDef.cellRendererSelector;
-    });
-
-    return { cellRenderer, cellRendererSelector };
-};
-
-const applyCellSlots = (columnDefs: any): any => {
-    if (!columnDefs) return columnDefs;
-    // Hoisted out of the per-column loop below — both are the same for every column in this call.
-    const defaultColDef = getEffectiveOption('defaultColDef');
-    const columnTypes = getEffectiveOption('columnTypes');
-
-    return columnDefs.map((colDef: any) => {
-        if (colDef.children) {
-            return { ...colDef, children: applyCellSlots(colDef.children) };
-        }
-        const colId = colDef.colId ?? colDef.field;
-        const slotName = colId != null ? `cell-${colId}` : undefined;
-        if (!slotName || !slots[slotName]) {
-            return colDef;
-        }
-
-        // The column's own value wins whenever it's set to null or a real value (explicit null
-        // clears an inherited one); only undefined still resolves through defaultColDef/columnTypes.
-        const inherited = resolveInheritedRenderers(colDef, defaultColDef, columnTypes);
-        const effectiveCellRenderer = colDef.cellRenderer !== undefined ? colDef.cellRenderer : inherited.cellRenderer;
-        const effectiveCellRendererSelector =
-            colDef.cellRendererSelector !== undefined ? colDef.cellRendererSelector : inherited.cellRendererSelector;
-
-        if (effectiveCellRenderer == null && effectiveCellRendererSelector == null) {
-            return { ...colDef, cellRenderer: getSlotCellRenderer(slotName) };
-        }
-        return colDef;
-    });
-};
-// cell slots end
-
 _GET_ALL_GRID_OPTIONS()
     .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
     .forEach((propertyName: string) => {
@@ -150,10 +46,9 @@ _GET_ALL_GRID_OPTIONS()
         watch(
             propRef,
             (newValue: any, oldValue: any) => {
-                const value = propertyName === 'columnDefs' ? applyCellSlots(newValue) : newValue;
                 if ((propertyName === "rowData" && !emittingRowData.value) ||
                     propertyName !== "rowData") {
-                    processChanges(propertyName, value, oldValue);
+                    processChanges(propertyName, newValue, oldValue);
                 }
                 if (propertyName === "rowData") {
                     emittingRowData.value = false;
@@ -288,7 +183,6 @@ onMounted(() => {
             ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP),
         ])
     );
-    gridOptions.columnDefs = applyCellSlots(gridOptions.columnDefs);
 
     const rowData = getRowDataBasedOnBindings();
     if (rowData !== undefined) {

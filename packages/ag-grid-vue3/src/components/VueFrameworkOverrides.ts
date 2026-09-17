@@ -17,6 +17,12 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
      * Note: This is only really used/necessary with cellRendererSelectors
      */
     public override frameworkComponent(name: string, components?: any): any {
+        // A named slot on this AgGridVue instance counts as a framework component too, so a
+        // slot-only name (no registered component) still reaches VueComponentFactory instead of
+        // being reported as an unregistered component before Vue-specific resolution runs.
+        if (this.parent.slots?.[name]) {
+            return name;
+        }
         let result = VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
         if (!result && components && components[name]) {
             const indirectName = components[name];

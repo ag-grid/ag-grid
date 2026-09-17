@@ -1,18 +1,23 @@
-import { createVNode, defineComponent, render } from 'vue';
+import { createVNode, defineComponent, h, render } from 'vue';
 
 import { _errorForGrid, _errorWithoutAttribution } from 'ag-grid-community';
 
 export class VueComponentFactory {
     // WeakMap avoids repeat component tree traversals and allows GC of parent components
     private static componentCache = new WeakMap<any, Map<string, any>>();
+    // Separate from componentCache: a name can resolve to a slot on one lookup and, if that slot
+    // is later removed, to a registered component on the next — the two must not collide.
+    private static slotComponentCache = new WeakMap<any, Map<string, any>>();
 
     private static getComponentDefinition(component: any, parent: any, gridId: string | undefined) {
         let componentDefinition: any;
 
         // when referencing components by name - ie: cellRenderer: 'MyComponent'
         if (typeof component === 'string') {
-            // look up the definition in Vue
-            componentDefinition = this.searchForComponentInstance(parent, component, 10, false, gridId);
+            // A named slot on this AgGridVue instance takes precedence over a registered component.
+            componentDefinition = parent.slots?.[component]
+                ? this.getSlotComponentDefinition(parent, component)
+                : this.searchForComponentInstance(parent, component, 10, false, gridId);
         } else {
             componentDefinition = { extends: defineComponent({ ...component }) };
         }
@@ -34,6 +39,28 @@ export class VueComponentFactory {
             componentDefinition.props = this.addParamsToProps(componentDefinition.props);
         }
 
+        return componentDefinition;
+    }
+
+    private static getSlotComponentDefinition(parent: any, slotName: string) {
+        let parentCache = this.slotComponentCache.get(parent);
+        if (!parentCache) {
+            parentCache = new Map();
+            this.slotComponentCache.set(parent, parentCache);
+        }
+        let componentDefinition = parentCache.get(slotName);
+        if (!componentDefinition) {
+            componentDefinition = defineComponent({
+                props: { params: { type: Object, required: true } },
+                setup(props: any) {
+                    // Looked up fresh each render (not captured here) so it reflects the slot's
+                    // current content. Wrapped in a span, since the mounting pipeline keeps only
+                    // the fragment's firstElementChild as the cell's GUI.
+                    return () => h('span', parent.slots[slotName]?.(props.params));
+                },
+            });
+            parentCache.set(slotName, componentDefinition);
+        }
         return componentDefinition;
     }
 

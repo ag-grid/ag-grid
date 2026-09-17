@@ -28,7 +28,7 @@ const App = {
             columnDefs: [
                 { field: 'name', headerName: 'Product', flex: 2 },
                 { field: 'category' },
-                { field: 'price' },
+                { field: 'price', cellRenderer: 'priceCell' },
             ] as ColDef<IRow>[],
             rowData: [
                 { name: 'Wireless Mouse', category: 'Electronics', price: 24.99 },
@@ -47,7 +47,7 @@ const App = {
             :columnDefs="columnDefs"
             :rowData="rowData"
         >
-            <template #cell-price="params">
+            <template #priceCell="params">
                 <strong>£{{ params.value.toFixed(2) }}</strong>
             </template>
         </ag-grid-vue>

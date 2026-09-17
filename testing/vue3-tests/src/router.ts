@@ -106,24 +106,14 @@ const routes = [
         component: () => import('./test-cases/cell-slots-multi-root/Page.vue'),
     },
     {
-        path: '/cell-slots-precedence',
-        name: 'Cell Slots Precedence',
-        component: () => import('./test-cases/cell-slots-precedence/Page.vue'),
+        path: '/cell-slots-shared',
+        name: 'Cell Slots Shared',
+        component: () => import('./test-cases/cell-slots-shared/Page.vue'),
     },
     {
-        path: '/cell-slots-precedence-inherited',
-        name: 'Cell Slots Precedence Inherited',
-        component: () => import('./test-cases/cell-slots-precedence-inherited/Page.vue'),
-    },
-    {
-        path: '/cell-slots-precedence-trim',
-        name: 'Cell Slots Precedence Trim',
-        component: () => import('./test-cases/cell-slots-precedence-trim/Page.vue'),
-    },
-    {
-        path: '/cell-slots-precedence-cleared',
-        name: 'Cell Slots Precedence Cleared',
-        component: () => import('./test-cases/cell-slots-precedence-cleared/Page.vue'),
+        path: '/cell-slots-priority',
+        name: 'Cell Slots Priority',
+        component: () => import('./test-cases/cell-slots-priority/Page.vue'),
     },
 ];
 

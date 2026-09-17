@@ -1,10 +1,11 @@
 <script setup>
-// Verifies slot content with multiple root nodes and leading text is not truncated by the cell-renderer mounting pipeline.
+// Verifies slot content with multiple root nodes and leading text is not truncated by the
+// cell-renderer mounting pipeline when resolved via a cellRenderer string.
 import { AgGridVue } from 'ag-grid-vue3';
 
 const rowData = [{ label: 'Alpha' }, { label: 'Beta' }];
 
-const columnDefs = [{ headerName: 'Label', field: 'label' }];
+const columnDefs = [{ headerName: 'Label', field: 'label', cellRenderer: 'labelCell' }];
 </script>
 
 <template>
@@ -15,7 +16,7 @@ const columnDefs = [{ headerName: 'Label', field: 'label' }];
         theme="legacy"
         style="height: 200px"
     >
-        <template #cell-label="params"
+        <template #labelCell="params"
             >Note: <strong data-testid="multi-root-strong">{{ params.value }}</strong>
             <em data-testid="multi-root-em">!</em></template
         >

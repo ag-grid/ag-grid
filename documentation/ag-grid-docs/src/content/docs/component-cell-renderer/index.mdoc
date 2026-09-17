@@ -181,19 +181,23 @@ const gridOptions = {
 
 ### Providing Custom Components via Slots
 
-`AgGridVue` also supports Vue's scoped slots as an alternative to `cellRenderer`. Name a slot `cell-<colId>` (the column's `colId`, or its `field` when no `colId` is set) and it renders instead of the column's default cell content, receiving the same `params` object as `cellRenderer` for its scope:
+`AgGridVue` also supports Vue's scoped slots as an alternative to registering a component and referencing it by name. Set `cellRenderer` to a string as usual, and if a slot of that name exists on `AgGridVue`, it renders instead of a registered component, receiving the same `params` object as `cellRenderer` for its scope:
 
 ```html
 <template>
     <ag-grid-vue :columnDefs="columnDefs" :rowData="rowData">
-        <template #cell-price="params">
+        <template #priceCell="params">
             <strong>{{ params.value }}</strong>
         </template>
     </ag-grid-vue>
 </template>
 ```
 
-A column only picks up its slot when it has no `cellRenderer` or `cellRendererSelector` of its own, and none is supplied via `columnTypes` or `defaultColDef` either — a configured renderer always wins.
+```js
+const columnDefs = [{ field: 'price', cellRenderer: 'priceCell' }];
+```
+
+A slot takes priority over a registered component of the same name, so this is purely additive — existing string-based `cellRenderer` values keep resolving to their registered components as before, for any name with no matching slot. Multiple columns can share one slot by using the same `cellRenderer` string.
 
 The example below demonstrates using a scoped slot to render the `Price` column, while the `Product` and `Category` columns use the grid's default rendering.
 
