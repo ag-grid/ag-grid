@@ -741,31 +741,33 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().rowGroupExpansion).toEqual(savedState.rowGroupExpansion);
         });
 
+        // AG-18529: two top-level country groups, each with one leaf child, so a restored
+        // expansion has children the display index must pick up.
+        const twoGroupsOneLeafEach: IServerSideDatasource = {
+            getRows({ request, success }: IServerSideGetRowsParams) {
+                if (request.groupKeys.length === 0) {
+                    success({
+                        rowData: [
+                            { id: 'ie', country: 'Ireland' },
+                            { id: 'fr', country: 'France' },
+                        ],
+                    });
+                } else {
+                    success({
+                        rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
+                    });
+                }
+            },
+        };
+
         // AG-18529: setState must do more than flip the expanded flag — the restored group's child
         // rows must actually be displayed. Previously the chevron rendered as expanded while the
         // children stayed out of the display index, so this asserts the displayed rows, not the flag.
         test('SSRM: setState re-displays the child rows of a restored expanded group', async () => {
-            const datasource: IServerSideDatasource = {
-                getRows({ request, success }: IServerSideGetRowsParams) {
-                    if (request.groupKeys.length === 0) {
-                        success({
-                            rowData: [
-                                { id: 'ie', country: 'Ireland' },
-                                { id: 'fr', country: 'France' },
-                            ],
-                        });
-                    } else {
-                        success({
-                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
-                        });
-                    }
-                },
-            };
-
             const api = gridsManager.createGrid('ssrmRestoreDisplaysChildren', {
                 columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
                 rowModelType: 'serverSide',
-                serverSideDatasource: datasource,
+                serverSideDatasource: twoGroupsOneLeafEach,
                 getRowId: ({ data }) => data.id,
             });
             await waitForNoLoadingRows(api);
@@ -789,27 +791,10 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('SSRM expandAll strategy: setState re-displays the child rows of a restored expanded group', async () => {
-            const datasource: IServerSideDatasource = {
-                getRows({ request, success }: IServerSideGetRowsParams) {
-                    if (request.groupKeys.length === 0) {
-                        success({
-                            rowData: [
-                                { id: 'ie', country: 'Ireland' },
-                                { id: 'fr', country: 'France' },
-                            ],
-                        });
-                    } else {
-                        success({
-                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
-                        });
-                    }
-                },
-            };
-
             const api = gridsManager.createGrid('ssrmBulkRestoreDisplaysChildren', {
                 columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
                 rowModelType: 'serverSide',
-                serverSideDatasource: datasource,
+                serverSideDatasource: twoGroupsOneLeafEach,
                 getRowId: ({ data }) => data.id,
                 ssrmExpandAllAffectsAllRows: true,
             });
@@ -837,27 +822,10 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('SSRM: setState expands a group that has never been expanded', async () => {
-            const datasource: IServerSideDatasource = {
-                getRows({ request, success }: IServerSideGetRowsParams) {
-                    if (request.groupKeys.length === 0) {
-                        success({
-                            rowData: [
-                                { id: 'ie', country: 'Ireland' },
-                                { id: 'fr', country: 'France' },
-                            ],
-                        });
-                    } else {
-                        success({
-                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
-                        });
-                    }
-                },
-            };
-
             const api = gridsManager.createGrid('ssrmNeverExpanded', {
                 columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
                 rowModelType: 'serverSide',
-                serverSideDatasource: datasource,
+                serverSideDatasource: twoGroupsOneLeafEach,
                 getRowId: ({ data }) => data.id,
             });
             await waitForNoLoadingRows(api);
@@ -877,27 +845,10 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('SSRM: setState re-displays children when purgeClosedRowNodes destroyed the store', async () => {
-            const datasource: IServerSideDatasource = {
-                getRows({ request, success }: IServerSideGetRowsParams) {
-                    if (request.groupKeys.length === 0) {
-                        success({
-                            rowData: [
-                                { id: 'ie', country: 'Ireland' },
-                                { id: 'fr', country: 'France' },
-                            ],
-                        });
-                    } else {
-                        success({
-                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
-                        });
-                    }
-                },
-            };
-
             const api = gridsManager.createGrid('ssrmPurgeClosed', {
                 columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
                 rowModelType: 'serverSide',
-                serverSideDatasource: datasource,
+                serverSideDatasource: twoGroupsOneLeafEach,
                 getRowId: ({ data }) => data.id,
                 purgeClosedRowNodes: true,
             });
