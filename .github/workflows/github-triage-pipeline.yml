@@ -56,6 +56,17 @@ name: GitHub issue AI triage
 #       triage, not resume"), so this needed zero action-side code changes.
 #       POST /repos/ag-grid/ag-grid/dispatches
 #       {"event_type":"gh-triage-manual-triage","client_payload":{"issue_key":"AITGH-XXX"}})
+#   repository_dispatch gh-triage-manual-construct-repro → ALWAYS stage=construct-repro — a fifth
+#       AITGH button. The MIRROR IMAGE of gh-triage-manual-repro-rebuild above: repro-rebuild only
+#       ever forks an ALREADY-verified repro, so this fires instead when NO verified repro exists
+#       at all and github-bug-triage's constructibility framework (rules.md) says one is buildable
+#       from scratch. Unlike every other stage here, this one is MANUAL-DISPATCH-ONLY,
+#       PERMANENTLY — it deliberately never graduates to an auto-chain job the way
+#       browser-verify-chain/repro-rebuild-chain below did, because "is a repro worth
+#       constructing" is a PM's judgment call, not a mechanical precondition. See the
+#       github-triage-pipeline action's own CLAUDE.md.
+#       POST /repos/ag-grid/ag-grid/dispatches
+#       {"event_type":"gh-triage-manual-construct-repro","client_payload":{"issue_key":"AITGH-XXX"}})
 #   workflow_dispatch                  → force a stage (dry-run / debugging)
 # ============================================================================
 
@@ -75,14 +86,14 @@ on:
     issues:
         types: [opened, labeled]
     repository_dispatch:
-        types: [gh-triage-resume, gh-triage-manual-resume, gh-triage-manual-browser-verify, gh-triage-manual-repro-rebuild, gh-triage-manual-triage]
+        types: [gh-triage-resume, gh-triage-manual-resume, gh-triage-manual-browser-verify, gh-triage-manual-repro-rebuild, gh-triage-manual-triage, gh-triage-manual-construct-repro]
     workflow_dispatch:
         inputs:
             stage:
                 description: 'Pipeline stage'
                 type: choice
                 default: triage
-                options: [triage, resume, browser-verify, repro-rebuild, execute, open-investigation]
+                options: [triage, resume, browser-verify, repro-rebuild, construct-repro, execute, open-investigation]
             gh_issue:
                 description: 'GitHub issue number (triage)'
                 type: string
@@ -299,6 +310,7 @@ jobs:
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-browser-verify')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-repro-rebuild')
               || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-triage')
+              || (github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-manual-construct-repro')
             ) &&
             needs.preflight.outputs.stage != 'execute' && inputs.stage != 'execute'
         runs-on: ubuntu-latest
@@ -344,12 +356,12 @@ jobs:
                   # makes it structurally impossible for anything
                   # preflight-related to override or block a manual dispatch,
                   # regardless of preflight's own behaviour.
-                  stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'triage') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  stage: ${{ (github.event.action == 'gh-triage-manual-resume' && 'resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'triage') || (github.event.action == 'gh-triage-manual-construct-repro' && 'construct-repro') || needs.preflight.outputs.stage || inputs.stage || 'triage' }}
                   # `manual-<stage>` marks a run a human started from an AITGH
                   # "Manual trigger" button; empty on the auto-chain. Lets the action
                   # record on the ticket when a pressed stage mechanically no-ops.
                   # See ag-dev-prompts docs/github-triage-pipeline.md.
-                  trigger: ${{ (github.event.action == 'gh-triage-manual-resume' && 'manual-resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'manual-browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'manual-repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'manual-triage') || '' }}
+                  trigger: ${{ (github.event.action == 'gh-triage-manual-resume' && 'manual-resume') || (github.event.action == 'gh-triage-manual-browser-verify' && 'manual-browser-verify') || (github.event.action == 'gh-triage-manual-repro-rebuild' && 'manual-repro-rebuild') || (github.event.action == 'gh-triage-manual-triage' && 'manual-triage') || (github.event.action == 'gh-triage-manual-construct-repro' && 'manual-construct-repro') || '' }}
                   product: grid
                   # NOTE: `allowed_non_write_users` is deliberately NOT passed, and must
                   # stay unset — setting it re-breaks the auto-triage path. The actor is a

@@ -1,7 +1,7 @@
 import type { AgChartThemeName } from 'ag-charts-types';
 
 import type { ChartModel } from 'ag-grid-community';
-import { _errMsg } from 'ag-grid-community';
+import { _errorToThrowWithoutAttribution } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
@@ -464,7 +464,7 @@ function versionParts(versionRaw: string): VersionParts {
     const version = versionRaw.includes('-beta') ? versionRaw.replace(/-beta.*/, '') : versionRaw;
     const split = typeof version === 'string' ? version.split('.').map((v) => Number(v)) : [];
     if (split.length !== 3 || split.some((v) => isNaN(v))) {
-        throw new Error(_errMsg(253, { version }));
+        throw _errorToThrowWithoutAttribution(253, { version });
     }
 
     return {

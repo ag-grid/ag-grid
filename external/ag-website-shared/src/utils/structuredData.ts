@@ -1,3 +1,4 @@
+import agGridOrganization from '@ag-website-shared/content/organization/agGridOrganization.json';
 import { PRODUCTION_GRID_SITE_URL } from '@constants';
 
 /**
@@ -243,6 +244,15 @@ export function buildOrganization({
         result.contactPoint = contactPoints.map((point) => ({ '@type': 'ContactPoint', ...point }));
     }
     return result;
+}
+
+/**
+ * The Organization node for AG Grid Ltd, the company behind every AG product. All AG sites
+ * emit it under the grid `@id` (see `getOrganizationId`); the company details live in
+ * `content/organization/agGridOrganization.json`.
+ */
+export function buildAgGridOrganization(): JsonLdObject {
+    return buildOrganization({ canonicalUrlBase: PRODUCTION_GRID_SITE_URL, ...agGridOrganization });
 }
 
 export function buildWebSite({ canonicalUrlBase, name, description }: WebSiteInput): JsonLdObject {

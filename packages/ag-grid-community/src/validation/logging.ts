@@ -96,6 +96,24 @@ function shouldNotify(diagnosticGridId: string | undefined, listenerGridId: stri
 const bufferedDiagnostics: CapturedDiagnostic[] = [];
 const MAX_BUFFERED_DIAGNOSTICS = 100;
 
+/**
+ * Module registration runs before the ValidationModule may have turned capture on — `registerModules([
+ * IntegratedChartsModule, ValidationModule])` validates the charts module first — so a registration
+ * failure is held here regardless of `captureEnabled` and replayed once capture is enabled. Without this
+ * the overlay's contents would depend on the order modules were passed in. Capped far lower than the
+ * main buffer: only a handful of modules can fail `validate()`, and nothing ever flushes this in
+ * production, where capture is never enabled.
+ */
+const pendingPreInitDiagnostics: CapturedDiagnostic[] = [];
+const MAX_PENDING_PRE_INIT_DIAGNOSTICS = 10;
+
+function replayPreInitDiagnostics(): void {
+    const pending = pendingPreInitDiagnostics.splice(0);
+    for (const { id, params, severity, defaultMessage, gridId } of pending) {
+        captureDiagnostic(id, params, severity, defaultMessage, gridId);
+    }
+}
+
 // Both default off so that without the ValidationModule (i.e. production) each log call is two boolean
 // checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
 let captureEnabled = false;
@@ -114,14 +132,22 @@ export function _configureDiagnostics(config: {
     throwOn?: readonly Severity[];
     suppress?: ErrorId[];
 }): void {
-    if (config.capture !== undefined) {
-        captureEnabled = config.capture;
-    }
     if (config.throwOn !== undefined) {
         throwSeverities = config.throwOn;
     }
     if (config.suppress !== undefined) {
         suppressedIds = new Set(config.suppress);
+    }
+    // Capture last: the replay below must see this call's suppressed ids, not the previous ones.
+    if (config.capture !== undefined) {
+        const wasEnabled = captureEnabled;
+        captureEnabled = config.capture;
+        if (!captureEnabled) {
+            // Turning capture off discards buffered state, as dropping the last listener does.
+            pendingPreInitDiagnostics.length = 0;
+        } else if (!wasEnabled) {
+            replayPreInitDiagnostics();
+        }
     }
 }
 
@@ -149,7 +175,7 @@ export function _addDiagnosticListener(gridId: string | undefined, listener: Dia
     };
 }
 
-type BootstrapPanelRenderer = (container: HTMLElement, diagnostics: CapturedDiagnostic[]) => void;
+type BootstrapPanelRenderer = (container: HTMLElement, diagnostics: CapturedDiagnostic[], versionsText: string) => void;
 let bootstrapPanelRenderer: BootstrapPanelRenderer | null = null;
 
 /**
@@ -166,7 +192,7 @@ export function _provideBootstrapPanelRenderer(renderer: BootstrapPanelRenderer)
  * creation) into `container`, when the ValidationModule has provided a renderer. No-op otherwise, so core
  * stays decoupled and production pays nothing.
  */
-export function _renderBootstrapPanel(container: HTMLElement): void {
+export function _renderBootstrapPanel(container: HTMLElement, versionsText: string): void {
     if (!bootstrapPanelRenderer) {
         return;
     }
@@ -186,7 +212,7 @@ export function _renderBootstrapPanel(container: HTMLElement): void {
             bufferedDiagnostics.splice(i, 1);
         }
     }
-    bootstrapPanelRenderer(container, untied);
+    bootstrapPanelRenderer(container, untied, versionsText);
 }
 
 // Buffers the diagnostic for the overlay and notifies matching listeners. Does not throw — the throw
@@ -538,6 +564,26 @@ export function _errorForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 
+// Throw-site variants: capture the error for the overlay and `issueRaised`, then return it for the caller to
+// throw. Nothing is logged, as the thrown error already reaches the console, and throw mode is not consulted
+// because the caller throws regardless. Use these rather than `throw new Error(_errMsg(...))`, which the
+// dev-diagnostics surfaces never see.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _errorToThrowForGrid(gridId: string, id: ErrorId, params?: any): Error {
+    captureDiagnostic(id, params, 'error', undefined, gridId);
+    return new Error(getErrMsg(undefined, [id, params]));
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _errorToThrowWithoutAttribution<
+    TId extends ErrorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): Error {
+    captureDiagnostic(args[0], args[1], 'error');
+    return new Error(getErrMsg(undefined, args));
+}
+
 /**
  * Used for messages before the ValidationService has been created. `gridId` attributes the captured
  * diagnostic to one grid, for a pre-init failure that belongs to a specific grid rather than the page.
@@ -548,6 +594,9 @@ export function _logPreInitErr<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string, gridId?: string) {
     logToConsole(_errorOnce, id, args as any, false, defaultMessage);
+    if (!captureEnabled && pendingPreInitDiagnostics.length < MAX_PENDING_PRE_INIT_DIAGNOSTICS) {
+        pendingPreInitDiagnostics.push({ id, params: args, severity: 'error', gridId, defaultMessage });
+    }
     emitDiagnostic(id, args as any, 'error', defaultMessage, gridId);
 }
 
@@ -569,7 +618,11 @@ function getErrMsg<TId extends ErrorId>(
     return `error #${id} ` + getErrorParts(id, args[1] as any, defaultMessage).join(' ');
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * Formats an error's text without capturing it. To throw an error, use `_errorToThrowForGrid` or
+ * `_errorToThrowWithoutAttribution` instead, so the developer overlay and `issueRaised` also see it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _errMsg<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

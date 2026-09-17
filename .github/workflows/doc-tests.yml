@@ -149,6 +149,8 @@ jobs:
           framework: vanilla
           browsers: all
           test_pattern: ${{github.event.inputs.test_pattern}}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
 
   test-typescript:
     needs: initialise
@@ -171,6 +173,8 @@ jobs:
           framework: typescript
           browsers: chromium
           test_pattern: ${{github.event.inputs.test_pattern}}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
 
   test-reactFunctionalTs:
     needs: initialise
@@ -193,6 +197,8 @@ jobs:
           framework: reactFunctionalTs
           browsers: all
           test_pattern: ${{github.event.inputs.test_pattern}}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
 
   test-vue3:
     needs: initialise
@@ -215,6 +221,8 @@ jobs:
           framework: vue3
           browsers: chromium
           test_pattern: ${{github.event.inputs.test_pattern}}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
 
   test-angular:
     needs: initialise
@@ -237,6 +245,8 @@ jobs:
           framework: angular
           browsers: chromium
           test_pattern: ${{github.event.inputs.test_pattern}}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
 
 
   test-recipes:

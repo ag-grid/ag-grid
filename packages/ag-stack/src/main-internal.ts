@@ -168,6 +168,7 @@ export {
     _isInvisibleScrollbar,
     _isIOSUserAgent,
     _isMacOsUserAgent,
+    _isRealCssEngine,
 } from './utils/browser';
 export {
     _dateToFormattedString,

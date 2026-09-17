@@ -30,7 +30,6 @@ import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl } from './row/rowCtrl';
@@ -738,7 +737,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private getLockOnRefresh(): void {
         if (this.refreshInProgress) {
-            throw new Error(_errMsg(252));
+            throw this.beans.log.errorToThrow(252);
         }
 
         this.refreshInProgress = true;

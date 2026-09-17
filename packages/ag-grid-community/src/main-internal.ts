@@ -427,6 +427,7 @@ export {
     _skipFocusableContainerListenerForAgGrid,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
+export { _setAgPackageInfo } from './logVersion';
 export { _consoleError, _warnOnce } from './utils/log';
 export { _isProtoPollutionKey, _mergeDeep, _mergedEqual } from './utils/mergeDeep';
 export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
@@ -436,6 +437,8 @@ export type { LogService } from './validation/logService';
 export {
     _errMsg,
     _errorForGrid,
+    _errorToThrowForGrid,
+    _errorToThrowWithoutAttribution,
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,

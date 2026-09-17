@@ -9,7 +9,7 @@ import {
     COPY_LABEL,
     SEVERITY_ORDER,
     copyDiagnosticsToClipboard,
-    diagnosticToMarkdown,
+    diagnosticsToMarkdown,
     flashCopied,
     renderDiagnosticSections,
 } from './errorOverlayRenderer';
@@ -39,6 +39,7 @@ const ErrorOverlayElement: ElementParams = {
             ],
         },
         { tag: 'div', ref: 'eBody', cls: 'ag-overlay-error-body' },
+        { tag: 'div', ref: 'eVersions', cls: 'ag-overlay-error-versions' },
     ],
 };
 
@@ -53,6 +54,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
     private readonly eCopy: HTMLButtonElement = RefPlaceholder;
     private readonly eDismiss: HTMLButtonElement = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
+    private readonly eVersions: HTMLElement = RefPlaceholder;
 
     private copyResetTimeout: number | undefined;
 
@@ -69,6 +71,8 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
             this.eDismiss.textContent = '✕';
         }
         this.addManagedElementListeners(this.eDismiss, { click: () => beans.errorOverlay?.dismiss() });
+
+        this.eVersions.textContent = beans.agVersionsText;
 
         this.renderBody();
 
@@ -97,8 +101,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         if (!diagnostics.length) {
             return;
         }
-        const text = diagnostics.map(diagnosticToMarkdown).join('\n\n');
-        copyDiagnosticsToClipboard(text);
+        copyDiagnosticsToClipboard(diagnosticsToMarkdown(diagnostics, this.beans.agVersionsText));
         if (this.copyResetTimeout !== undefined) {
             window.clearTimeout(this.copyResetTimeout);
         }

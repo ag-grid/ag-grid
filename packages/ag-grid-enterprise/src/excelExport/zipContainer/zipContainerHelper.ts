@@ -1,4 +1,4 @@
-import { _errMsg } from 'ag-grid-community';
+import { _errorToThrowWithoutAttribution } from 'ag-grid-community';
 
 import { deflateLocalFile } from './compress';
 import { convertDate, convertDecToHex, convertTime } from './convert';
@@ -68,7 +68,7 @@ function _utf8_encode(s: string | null): string {
 
     function checkScalarValue(point: number) {
         if (point >= 0xd800 && point <= 0xdfff) {
-            throw new Error(_errMsg(255, { point }));
+            throw _errorToThrowWithoutAttribution(255, { point });
         }
     }
 

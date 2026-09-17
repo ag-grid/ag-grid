@@ -68,12 +68,31 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         return this.groupHierarchCols?.getVirtualCols(column);
     }
 
-    /** Seat the col's hierarchy virtuals before it (bulk path; their flags are set later by the diff). */
-    protected override seatActiveCol(res: Set<AgColumn>, col: AgColumn): void {
+    /** Seat the col's hierarchy virtuals before it (bulk path; their flags are set later by the diff).
+     *
+     *  A caller that names any of `col`'s virtuals itself is choosing levels explicitly, so its list is taken
+     *  literally and the unnamed levels are left out — the only way to express "group by just this level", and
+     *  what the drop zone needs so a level the user removed is not re-seated by the next full-list set. A list
+     *  naming no virtual still gets every configured level. Either way the result is a function of the list
+     *  alone, never of the current state.
+     */
+    protected override seatActiveCol(res: Set<AgColumn>, col: AgColumn, provided?: Set<AgColumn>): void {
         const virtuals = this.getActiveVirtuals(col);
         if (virtuals !== undefined) {
-            for (let i = 0, len = virtuals.length; i < len; ++i) {
-                res.add(virtuals[i]);
+            const len = virtuals.length;
+            let explicit = false;
+            if (provided !== undefined) {
+                for (let i = 0; i < len; ++i) {
+                    if (provided.has(virtuals[i])) {
+                        explicit = true;
+                        break;
+                    }
+                }
+            }
+            if (!explicit) {
+                for (let i = 0; i < len; ++i) {
+                    res.add(virtuals[i]);
+                }
             }
         }
         res.add(col);

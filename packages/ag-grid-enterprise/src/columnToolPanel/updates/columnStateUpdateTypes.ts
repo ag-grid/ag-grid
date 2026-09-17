@@ -11,6 +11,9 @@ export interface ColumnStateConcreteUpdateStrategy {
     setColumnsVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void;
     isColumnVisibleInToolPanel(column: AgColumn): boolean;
     setRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    /** Deactivate just these cols, leaving the rest of the active list alone — unlike
+     *  {@link setRowGroupColumns}, which re-derives the list and so re-seats hierarchy levels. */
+    removeRowGroupColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getRowGroupColumns(): AgColumn[];
     getPrimaryColumns(): AgColumn[];
     hasDeferredColumnOrder(): boolean;
@@ -19,6 +22,8 @@ export interface ColumnStateConcreteUpdateStrategy {
     setColumnAggFunc(column: AgColumn, aggFunc: ColAggFunc, eventType: ColumnEventType): void;
     getColumnAggFunc(column: AgColumn): ColAggFunc;
     setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
+    /** Pivot counterpart of {@link removeRowGroupColumns}. */
+    removePivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getPivotColumns(): AgColumn[];
     setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
     getPivotMode(): boolean;
@@ -31,6 +36,10 @@ export interface ColumnStateConcreteUpdateStrategy {
 
 type Seq = { seq: number; eventType: ColumnEventType };
 type ColIdsDraft = { colIds: string[] } & Seq;
+/** A role draft (`rowGroup` / `pivot`) also carries the columns the user explicitly removed. Commit
+ *  replays `setColumns(colIds)`, which re-seats each source column's hierarchy virtuals, so an
+ *  explicit removal has to be re-applied afterwards or the pill returns on Apply. */
+export type RoleColIdsDraft = ColIdsDraft & { removedColIds?: string[] };
 type ColumnStateDraft = { patches: Map<string, ColumnState> } & Seq;
 type PivotModeDraft = { pivotMode: boolean } & Seq;
 type SortDraft = { sortDefsByColId: Map<string, SortDef | null>; baselineCleared: boolean } & Seq;
@@ -39,9 +48,9 @@ type AggFuncsDraft = { values: Map<string, ColAggFunc> } & Seq;
 export type DeferredState = {
     columnState?: ColumnStateDraft;
     columnOrder?: ColIdsDraft;
-    rowGroup?: ColIdsDraft;
+    rowGroup?: RoleColIdsDraft;
     aggregation?: ColIdsDraft;
-    pivot?: ColIdsDraft;
+    pivot?: RoleColIdsDraft;
     pivotMode?: PivotModeDraft;
     sort?: SortDraft;
     aggFuncs?: AggFuncsDraft;
@@ -50,9 +59,9 @@ export type DeferredState = {
 export type CommitOperation =
     | ({ type: 'columnState' } & ColumnStateDraft)
     | ({ type: 'columnOrder' } & ColIdsDraft)
-    | ({ type: 'rowGroup' } & ColIdsDraft)
+    | ({ type: 'rowGroup' } & RoleColIdsDraft)
     | ({ type: 'aggregation' } & ColIdsDraft)
-    | ({ type: 'pivot' } & ColIdsDraft)
+    | ({ type: 'pivot' } & RoleColIdsDraft)
     | ({ type: 'pivotMode' } & PivotModeDraft)
     | ({ type: 'sort' } & SortDraft)
     | ({ type: 'aggFuncs' } & AggFuncsDraft);

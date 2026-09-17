@@ -10,7 +10,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { Module } from '../../interfaces/iModule';
 import type { IconName } from '../../utils/icon';
-import { _errMsg } from '../../validation/logging';
+import { _errorToThrowForGrid } from '../../validation/logging';
 import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -140,10 +140,11 @@ export class Registry
         return this.icons[name];
     }
 
-    protected override getDynamicError(name: DynamicBeanName, init: boolean): string {
+    protected override createDynamicError(name: DynamicBeanName, init: boolean): Error {
+        const gridId = this.beans.context.getId();
         if (init) {
-            return _errMsg(279, { name });
+            return _errorToThrowForGrid(gridId, 279, { name });
         }
-        return this.beans.validation?.missingDynamicBean(name) ?? _errMsg(256);
+        return this.beans.validation?.missingDynamicBean(name) ?? _errorToThrowForGrid(gridId, 256);
     }
 }

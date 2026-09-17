@@ -121,8 +121,15 @@ test.agExample(import.meta, () => {
         const goldHeader = page.locator('.ag-header-cell[col-id="gold"]').first();
         const scrollViewport = page.locator('.ag-body-horizontal-scroll-viewport').first();
 
-        await scrollViewport.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
-        await expect(goldHeader).toBeVisible();
+        // The jump to the far edge is retried until "Gold" is actually rendered: a continuous auto-size
+        // pass lands while the scroll is in flight, changes the total column width and so clamps
+        // `scrollLeft` back, leaving the last group out of the (horizontally virtualised) header. A
+        // single un-retried jump then waits out the whole timeout on a header cell that is not in the
+        // DOM at all, which is how this spec fails on a different browser most nights.
+        await expect(async () => {
+            await scrollViewport.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+            await expect(goldHeader).toBeVisible({ timeout: 2_000 });
+        }).toPass();
 
         // Continuous auto-sizing is debounced and fits each column as it arrives, so the width is
         // polled to its fitted state rather than sampled off a single `columnResized` event: that
