@@ -77,8 +77,11 @@ export class ServerSideExpansionService
             this.setStrategy(isExpandAllState ? new ExpandAllStrategy() : new ExpandStrategy());
         }
         this.strategy.setExpandedState(state as any); // cast to any, as we know the type is correct due to the previous assertion
-        this.dispatchStateUpdatedEvent();
+        // node flags must be written before the event is dispatched: the listeners triggered by
+        // `dispatchStateUpdatedEvent` create the child stores and recompute the display indexes, so
+        // dispatching first would run that pass against a still-collapsed model.
         this.updateAllNodes();
+        this.dispatchStateUpdatedEvent();
     }
 
     public getExpansionState(): RowGroupExpansionState | RowGroupBulkExpansionState {

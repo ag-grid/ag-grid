@@ -741,6 +741,187 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().rowGroupExpansion).toEqual(savedState.rowGroupExpansion);
         });
 
+        // AG-18529: setState must do more than flip the expanded flag — the restored group's child
+        // rows must actually be displayed. Previously the chevron rendered as expanded while the
+        // children stayed out of the display index, so this asserts the displayed rows, not the flag.
+        test('SSRM: setState re-displays the child rows of a restored expanded group', async () => {
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', country: 'Ireland' },
+                                { id: 'fr', country: 'France' },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
+                        });
+                    }
+                },
+            };
+
+            const api = gridsManager.createGrid('ssrmRestoreDisplaysChildren', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+                getRowId: ({ data }) => data.id,
+            });
+            await waitForNoLoadingRows(api);
+
+            api.setRowNodeExpanded(api.getRowNode('ie')!, true);
+            await waitForNoLoadingRows(api);
+            const savedState = api.getState();
+
+            api.setRowNodeExpanded(api.getRowNode('ie')!, false);
+            await waitForNoLoadingRows(api);
+
+            api.setState(savedState);
+            await waitForNoLoadingRows(api);
+
+            await new GridRows(api, `SSRM: setState re-displays the child rows of a restored expanded group`).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:5
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
+        });
+
+        test('SSRM expandAll strategy: setState re-displays the child rows of a restored expanded group', async () => {
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', country: 'Ireland' },
+                                { id: 'fr', country: 'France' },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
+                        });
+                    }
+                },
+            };
+
+            const api = gridsManager.createGrid('ssrmBulkRestoreDisplaysChildren', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+                getRowId: ({ data }) => data.id,
+                ssrmExpandAllAffectsAllRows: true,
+            });
+            await waitForNoLoadingRows(api);
+
+            api.setRowNodeExpanded(api.getRowNode('ie')!, true);
+            await waitForNoLoadingRows(api);
+            const savedState = api.getState();
+
+            api.setRowNodeExpanded(api.getRowNode('ie')!, false);
+            await waitForNoLoadingRows(api);
+
+            api.setState(savedState);
+            await waitForNoLoadingRows(api);
+
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: setState re-displays the child rows of a restored expanded group`
+            ).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:5
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
+        });
+
+        test('SSRM: setState expands a group that has never been expanded', async () => {
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', country: 'Ireland' },
+                                { id: 'fr', country: 'France' },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
+                        });
+                    }
+                },
+            };
+
+            const api = gridsManager.createGrid('ssrmNeverExpanded', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+                getRowId: ({ data }) => data.id,
+            });
+            await waitForNoLoadingRows(api);
+
+            api.setState({
+                ...api.getState(),
+                rowGroupExpansion: { expandedRowGroupIds: ['ie'], collapsedRowGroupIds: [] },
+            });
+            await waitForNoLoadingRows(api);
+
+            await new GridRows(api, `SSRM: setState expands a group that has never been expanded`).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:5
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
+        });
+
+        test('SSRM: setState re-displays children when purgeClosedRowNodes destroyed the store', async () => {
+            const datasource: IServerSideDatasource = {
+                getRows({ request, success }: IServerSideGetRowsParams) {
+                    if (request.groupKeys.length === 0) {
+                        success({
+                            rowData: [
+                                { id: 'ie', country: 'Ireland' },
+                                { id: 'fr', country: 'France' },
+                            ],
+                        });
+                    } else {
+                        success({
+                            rowData: [{ id: `${request.groupKeys[0]}-leaf`, country: request.groupKeys[0], medals: 5 }],
+                        });
+                    }
+                },
+            };
+
+            const api = gridsManager.createGrid('ssrmPurgeClosed', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+                getRowId: ({ data }) => data.id,
+                purgeClosedRowNodes: true,
+            });
+            await waitForNoLoadingRows(api);
+
+            api.setRowNodeExpanded(api.getRowNode('ie')!, true);
+            await waitForNoLoadingRows(api);
+            const savedState = api.getState();
+
+            api.setRowNodeExpanded(api.getRowNode('ie')!, false);
+            await waitForNoLoadingRows(api);
+
+            api.setState(savedState);
+            await waitForNoLoadingRows(api);
+
+            await new GridRows(api, `SSRM: setState re-displays children when purgeClosedRowNodes destroyed the store`)
+                .check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:5
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
+        });
+
         test('SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState restores it', async () => {
             const datasource: IServerSideDatasource = {
                 getRows({ request, success }: IServerSideGetRowsParams) {
