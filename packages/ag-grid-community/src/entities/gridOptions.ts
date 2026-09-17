@@ -149,6 +149,9 @@ import type {
     GetChildCount,
     GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
+    GetDefaultCsvExportParams,
+    GetDefaultExcelExportParams,
+    GetDefaultPdfExportParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
     GetGroupIncludeTotalRowParams,
@@ -2336,6 +2339,29 @@ export interface GridOptions<TData = any> {
      * @agModule `ClipboardModule`
      */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>;
+
+    // *** Export *** //
+    /**
+     * Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
+     * each time an export is performed. Function should return a configuration object used to export to CSV.
+     * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
+     * @agModule `CsvExportModule`
+     */
+    getDefaultCsvExportParams?: GetDefaultCsvExportParams<TData>;
+    /**
+     * Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
+     * each time an export is performed. Function should return a configuration object used to export to Excel.
+     * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
+     * @agModule `ExcelExportModule`
+     */
+    getDefaultExcelExportParams?: GetDefaultExcelExportParams<TData>;
+    /**
+     * Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
+     * each time an export is performed. Function should return a configuration object used to export to PDF.
+     * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
+     * @agModule `PdfExportModule`
+     */
+    getDefaultPdfExportParams?: GetDefaultPdfExportParams<TData>;
 
     // *** Filtering *** //
     /**

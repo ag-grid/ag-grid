@@ -1,6 +1,7 @@
 import { _downloadFile } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
+import type { ExportSource } from '../export/baseCreator';
 import { BaseCreator } from '../export/baseCreator';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -12,12 +13,16 @@ export class CsvCreator
 {
     beanName = 'csvCreator' as const;
 
-    protected getMergedParams(params?: CsvExportParams): CsvExportParams {
-        const baseParams = this.gos.get('defaultCsvExportParams');
+    protected getMergedParams(params?: CsvExportParams, source: ExportSource = 'api'): CsvExportParams {
+        const baseParams = this.mergeDefaultParams(
+            this.gos.get('defaultCsvExportParams'),
+            this.gos.getCallback('getDefaultCsvExportParams'),
+            source
+        );
         return Object.assign({}, baseParams, params);
     }
 
-    protected export(userParams?: CsvExportParams): void {
+    protected export(userParams?: CsvExportParams, source: ExportSource = 'api'): void {
         if (this.isExportSuppressed()) {
             // Export cancelled.
             this.warn(51);
@@ -25,7 +30,7 @@ export class CsvCreator
         }
 
         this.runExport(() => {
-            const mergedParams = this.getMergedParams(userParams);
+            const mergedParams = this.getMergedParams(userParams, source);
             const data = this.getData(mergedParams);
 
             const packagedFile = new Blob(['\ufeff', data], { type: 'text/plain' });

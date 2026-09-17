@@ -29,13 +29,14 @@ describe('PdfCreator', () => {
     it('inherits the grid text direction unless the export direction is specified', () => {
         const creator = new PdfCreator() as unknown as {
             getMergedParams: (params?: PdfExportParams) => PdfExportParams;
-            gos: { get: (key: string) => unknown };
+            gos: { get: (key: string) => unknown; getCallback: (key: string) => undefined };
             beans: { eRootDiv: HTMLElement };
         };
         const root = document.createElement('div');
         let enableRtl = true;
         creator.gos = {
             get: (key: string) => (key === 'enableRtl' ? enableRtl : undefined),
+            getCallback: () => undefined,
         };
         creator.beans = { eRootDiv: root };
 
@@ -53,12 +54,13 @@ describe('PdfCreator', () => {
         document.body.appendChild(root);
         const creator = new PdfCreator() as unknown as {
             getMergedParams: (params?: PdfExportParams) => PdfExportParams;
-            gos: { get: (key: string) => unknown };
+            gos: { get: (key: string) => unknown; getCallback: (key: string) => undefined };
             beans: { eRootDiv: HTMLElement };
         };
         creator.gos = {
             get: (key: string) =>
                 key === 'defaultPdfExportParams' ? { defaultCellStyle: { color: 'red', padding: 6 } } : undefined,
+            getCallback: () => undefined,
         };
         creator.beans = { eRootDiv: root };
 
@@ -73,7 +75,7 @@ describe('PdfCreator', () => {
     it('does not return PDF data when PDF export is suppressed', () => {
         const creator = new PdfCreator() as unknown as {
             getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;
-            gos: { get: (key: string) => unknown };
+            gos: { get: (key: string) => unknown; getCallback: (key: string) => undefined };
             beans: { log: { warn: ReturnType<typeof vi.fn> } };
             getData: (params: PdfExportParams) => string;
         };
@@ -82,6 +84,7 @@ describe('PdfCreator', () => {
 
         creator.gos = {
             get: (key: string) => key === 'suppressPdfExport',
+            getCallback: () => undefined,
         };
         creator.beans = { log: { warn: vi.fn() } };
         creator.getData = () => {
@@ -100,14 +103,14 @@ describe('PdfCreator', () => {
     it('does not return PDF data when a requested font family is not registered', () => {
         const creator = new PdfCreator() as unknown as {
             getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;
-            gos: { get: (key: string) => unknown };
+            gos: { get: (key: string) => unknown; getCallback: (key: string) => undefined };
             beans: { eRootDiv: HTMLElement; log: { error: ReturnType<typeof vi.fn> } };
             getData: (params: PdfExportParams) => string;
         };
         const error = new PdfFontFamilyNotRegisteredError('Noto Sans Arabik', ['Noto Sans Arabic', 'Helvetica']);
         const errorLogger = vi.fn();
 
-        creator.gos = { get: () => undefined };
+        creator.gos = { get: () => undefined, getCallback: () => undefined };
         creator.beans = { eRootDiv: document.createElement('div'), log: { error: errorLogger } };
         creator.getData = () => {
             throw error;

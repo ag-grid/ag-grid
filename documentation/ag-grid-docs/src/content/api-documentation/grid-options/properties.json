@@ -509,6 +509,12 @@
                 "url": "./csv-export"
             }
         },
+        "getDefaultCsvExportParams": {
+            "more": {
+                "name": "CSV Export",
+                "url": "./csv-export"
+            }
+        },
         "suppressCsvExport": {
             "more": {
                 "name": "What Gets Exported",
@@ -521,6 +527,12 @@
                 "url": "./excel-export"
             }
         },
+        "getDefaultExcelExportParams": {
+            "more": {
+                "name": "Excel Export",
+                "url": "./excel-export"
+            }
+        },
         "suppressExcelExport": {
             "more": {
                 "name": "Excel Export",
@@ -528,6 +540,12 @@
             }
         },
         "defaultPdfExportParams": {
+            "more": {
+                "name": "PDF Export",
+                "url": "./pdf-export"
+            }
+        },
+        "getDefaultPdfExportParams": {
             "more": {
                 "name": "PDF Export",
                 "url": "./pdf-export"

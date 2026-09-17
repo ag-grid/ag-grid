@@ -376,19 +376,23 @@ export class ExcelCreator
     beanName = 'excelCreator' as const;
     private readonly workbook = new Workbook();
 
-    protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
-        const baseParams = this.gos.get('defaultExcelExportParams');
+    protected getMergedParams(params?: ExcelExportParams, source: 'api' | 'contextMenu' = 'api'): ExcelExportParams {
+        const baseParams = this.mergeDefaultParams(
+            this.gos.get('defaultExcelExportParams'),
+            this.gos.getCallback('getDefaultExcelExportParams'),
+            source
+        );
         return Object.assign({}, baseParams, params);
     }
 
-    protected export(userParams?: ExcelExportParams): void {
+    protected export(userParams?: ExcelExportParams, source: 'api' | 'contextMenu' = 'api'): void {
         if (this.isExportSuppressed()) {
             this.warn(160);
             return;
         }
 
         this.runExport(() => {
-            const mergedParams = this.getMergedParams(userParams);
+            const mergedParams = this.getMergedParams(userParams, source);
             const data = this.getData(mergedParams);
 
             const { fontSize, author, mimeType, customMetadata, suppressPrependAuthorToNotes } = mergedParams;

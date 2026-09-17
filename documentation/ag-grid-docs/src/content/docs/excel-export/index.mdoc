@@ -50,6 +50,22 @@ in the context menu, or the 'Export to Excel' button provided. Note the followin
 
 {% /note %}
 
+## Dynamic Default Export Params
+
+`defaultExcelExportParams` is a static configuration object, so it cannot react to the state of the application at the time of the export. The `getDefaultExcelExportParams` callback is the dynamic equivalent: it is called to provide the default Excel export configuration each time an export is performed, and should return a configuration object. The callback receives `source`, which reports how the export was triggered - `'api'` when it came from `exportDataAsExcel()`, `getDataAsExcel()` or `getSheetDataForExcel()`, and `'contextMenu'` when it came from one of the grid's menus. The [Context Menu](./context-menu/), the [Column Menu](./column-menu/), the [Toolbar](./toolbar/) and the [Columns Tool Panel](./tool-panel-columns/) all report `'contextMenu'`.
+
+The callback is re-evaluated on **every** export, so the configuration it returns is free to change between exports.
+
+Export params are resolved in three layers, each taking precedence over the one before it:
+
+1. The `defaultExcelExportParams` grid option.
+1. The object returned by the `getDefaultExcelExportParams` callback.
+1. The params passed directly to an Excel export API method.
+
+Each layer is applied as a shallow merge, so a property supplied by a later layer replaces the earlier value outright instead of being merged into it. This applies to nested objects too: an object-valued property returned by the callback replaces the equivalent object from `defaultExcelExportParams` wholesale, and none of the properties of the replaced object are inherited.
+
+The [Multiple Sheets](./excel-export-multiple-sheets/) recipe builds each sheet with `getSheetDataForExcel()`, which resolves the default export params, so the callback is invoked once per sheet with `source` set to `'api'`. By contrast, `getMultipleSheetsAsExcel()` and `exportMultipleSheetsAsExcel()` only package sheets that have already been built and never resolve default export params, so neither `defaultExcelExportParams` nor `getDefaultExcelExportParams` is applied by those two methods.
+
 ## Custom Excel Export
 
 The [Default Excel Export](./excel-export/#default-excel-export) behaviour will meet the requirements of most applications. However, you can apply extensive customisation to the values exported, layout, value formatting and styling of the exported spreadsheets.

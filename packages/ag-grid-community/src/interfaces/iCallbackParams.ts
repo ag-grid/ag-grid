@@ -1,12 +1,15 @@
 import type { TooltipLocation } from '../tooltip/tooltipComponent';
 import type { BrandedType } from './brandedType';
+import type { CsvExportParams } from './exportParams';
 import type { EditingCellPosition } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
 import type { Column, ProvidedColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { ExcelExportParams } from './iExcelCreator';
 import type { FocusableContainerName } from './iFocusableContainer';
 import type { HeaderPosition } from './iHeaderPosition';
+import type { PdfExportParams } from './iPdfCreator';
 import type { IRowNode, RowPinnedType } from './iRowNode';
 import type { DefaultColumnMenuItem, DefaultMenuItem } from './menuItem';
 import type { GetNoteParams } from './notes';
@@ -400,6 +403,20 @@ export interface GetLocaleTextParams<TData = any, TContext = any> extends AgGrid
     key: string;
     defaultValue: string;
     variableValues?: string[];
+}
+
+export type GetDefaultCsvExportParams<TData = any, TContext = any> = (
+    params: GetDefaultExportParamsParams<TData, TContext>
+) => CsvExportParams;
+export type GetDefaultExcelExportParams<TData = any, TContext = any> = (
+    params: GetDefaultExportParamsParams<TData, TContext>
+) => ExcelExportParams;
+export type GetDefaultPdfExportParams<TData = any, TContext = any> = (
+    params: GetDefaultExportParamsParams<TData, TContext>
+) => PdfExportParams;
+export interface GetDefaultExportParamsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** How the export was triggered. */
+    source: 'api' | 'contextMenu';
 }
 
 export interface GetGroupAggFilteringParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
