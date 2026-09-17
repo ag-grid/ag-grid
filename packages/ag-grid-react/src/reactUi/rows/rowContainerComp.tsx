@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { IRowContainerComp, RowCtrl } from 'ag-grid-community';
+import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
 import {
     RowContainerCtrl,
     _getRowContainerClass,
@@ -13,14 +13,12 @@ import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
-export type ReactRowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
-
 const RowContainerComp = ({
     name,
     viewportElement,
     extraClassName,
 }: {
-    name: ReactRowContainerName;
+    name: RowContainerName;
     viewportElement?: HTMLElement | null;
     extraClassName?: string | null;
 }) => {

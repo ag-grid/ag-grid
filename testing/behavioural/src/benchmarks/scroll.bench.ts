@@ -32,11 +32,18 @@ const buildRows = (rowCount: number, colCount: number): Record<string, string>[]
     return rows;
 };
 
-const cols200 = buildCols(200);
-const cols200Pinned = buildCols(200, 3);
-const cols20 = buildCols(20);
-const rows1k = buildRows(1000, 200);
-const rows10k = buildRows(10_000, 20);
+// Built on first use, not at import: 200k cell values would otherwise be allocated even when the run is
+// filtered to a bench in another file.
+const memo = <T>(build: () => T): (() => T) => {
+    let value: T | undefined;
+    return () => (value ??= build());
+};
+
+const cols200 = memo(() => buildCols(200));
+const cols200Pinned = memo(() => buildCols(200, 3));
+const cols20 = memo(() => buildCols(20));
+const rows1k = memo(() => buildRows(1000, 200));
+const rows10k = memo(() => buildRows(10_000, 20));
 
 suite('scroll — horizontal and vertical virtualisation', () => {
     let gridId = 0;
@@ -71,6 +78,14 @@ suite('scroll — horizontal and vertical virtualisation', () => {
                     // resize observation that follows. Measuring before that measures an unsized grid.
                     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
                     api.flushAllAnimationFrames();
+                    // Without a laid-out, overflowing viewport the browser clamps every scroll write to 0
+                    // and the bench reports a fast number for doing nothing, which no assertion would catch.
+                    if (
+                        viewport.scrollWidth <= viewport.clientWidth &&
+                        viewport.scrollHeight <= viewport.clientHeight
+                    ) {
+                        throw new Error('viewport is not laid out: neither axis can scroll');
+                    }
                 },
             }
         );
@@ -85,7 +100,7 @@ suite('scroll — horizontal and vertical virtualisation', () => {
 
     benchScroll(
         'horizontal scroll 200 cols (alternating far/near)',
-        { columnDefs: cols200, rowData: rows1k },
+        { columnDefs: cols200(), rowData: rows1k() },
         (api, viewport, i) => {
             scrollTo(viewport, i & 1 ? 0 : 12_000, 0);
             api.flushAllAnimationFrames();
@@ -94,7 +109,7 @@ suite('scroll — horizontal and vertical virtualisation', () => {
 
     benchScroll(
         'horizontal scroll 200 cols, 3 pinned (alternating far/near)',
-        { columnDefs: cols200Pinned, rowData: rows1k },
+        { columnDefs: cols200Pinned(), rowData: rows1k() },
         (api, viewport, i) => {
             scrollTo(viewport, i & 1 ? 0 : 12_000, 0);
             api.flushAllAnimationFrames();
@@ -104,7 +119,7 @@ suite('scroll — horizontal and vertical virtualisation', () => {
     /** Small steps are the common case: a wheel or trackpad gesture, not a jump to the far end. */
     benchScroll(
         'horizontal scroll 200 cols (small steps)',
-        { columnDefs: cols200, rowData: rows1k },
+        { columnDefs: cols200(), rowData: rows1k() },
         (api, viewport, i) => {
             scrollTo(viewport, 600 + (i % 20) * 120, 0);
             api.flushAllAnimationFrames();
@@ -113,7 +128,7 @@ suite('scroll — horizontal and vertical virtualisation', () => {
 
     benchScroll(
         'vertical scroll 10k rows (alternating far/near)',
-        { columnDefs: cols20, rowData: rows10k },
+        { columnDefs: cols20(), rowData: rows10k() },
         (api, viewport, i) => {
             scrollTo(viewport, 0, i & 1 ? 0 : 100_000);
             api.flushAllAnimationFrames();
@@ -122,7 +137,7 @@ suite('scroll — horizontal and vertical virtualisation', () => {
 
     benchScroll(
         'vertical scroll 10k rows (small steps)',
-        { columnDefs: cols20, rowData: rows10k },
+        { columnDefs: cols20(), rowData: rows10k() },
         (api, viewport, i) => {
             scrollTo(viewport, 0, 1000 + (i % 20) * 42);
             api.flushAllAnimationFrames();
@@ -131,7 +146,7 @@ suite('scroll — horizontal and vertical virtualisation', () => {
 
     benchScroll(
         'ensureColumnVisible across 200 cols',
-        { columnDefs: cols200, rowData: rows1k },
+        { columnDefs: cols200(), rowData: rows1k() },
         (api, _viewport, i) => {
             api.ensureColumnVisible(`c${(i * 37) % 200}`);
             api.flushAllAnimationFrames();

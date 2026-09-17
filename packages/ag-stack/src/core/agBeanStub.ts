@@ -17,6 +17,7 @@ import type {
     IPropertiesService,
 } from '../interfaces/iProperties';
 import { _removeFromArray } from '../utils/array';
+import { _requestAnimationFrame } from '../utils/dom';
 import { _addSafePassiveEventListener } from '../utils/event';
 import { _getLocaleTextFunc } from '../utils/locale';
 
@@ -292,6 +293,24 @@ export abstract class AgBeanStub<
     // Prototype method, not a per-instance arrow — never invoked detached, so binding per bean only wastes memory.
     public isAlive(): boolean {
         return !this.destroyed;
+    }
+
+    /** Returns a function that runs `callback` at most once per animation frame. `_requestAnimationFrame`
+     *  has no cancellation, so a destroyed bean instead leaves the flag set and queues no further frames. */
+    protected throttleToFrame(callback: () => void): () => void {
+        let queued = false;
+        const run = () => {
+            if (this.isAlive()) {
+                queued = false;
+                callback();
+            }
+        };
+        return () => {
+            if (!queued) {
+                queued = true;
+                _requestAnimationFrame(this.beans, run);
+            }
+        };
     }
 
     public getLocaleTextFunc(): LocaleTextFunc {

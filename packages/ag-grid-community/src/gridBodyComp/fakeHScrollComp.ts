@@ -23,6 +23,7 @@ const FakeHScrollElement: ElementParams = {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     private scrollVisibleSvc: ScrollVisibleService;
+    private contentWidth: number | null = null;
 
     public wireBeans(beans: BeanCollection): void {
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
@@ -73,8 +74,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }
-
-    private contentWidth: number | null = null;
 
     /** Pushed by `GridBodyCtrl.updateWidths`, already net of the vertical scrollbar the end spacer reserves. */
     public setContentWidth(width: number): void {

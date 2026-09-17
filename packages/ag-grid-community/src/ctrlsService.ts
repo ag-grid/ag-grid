@@ -10,8 +10,8 @@ import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 
-/** If adding or removing a control, update `SINGLETON_CTRLS` below. The row containers come from
- *  `ROW_CONTAINER_NAMES`, so adding one there reaches both without an edit here. */
+/** A name added to `ROW_CONTAINER_NAMES` must be a container every view layer always renders, React
+ *  included, or readiness never completes and no width is ever pushed. */
 type ReadyParams = Record<RowContainerName, RowContainerCtrl> & {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
@@ -34,6 +34,11 @@ const REQUIRED_CTRLS = [
     'headerRowContainerCtrl',
 ] as const satisfies readonly CtrlType[];
 
+type AssertNever<T extends never> = T;
+/** `satisfies` only checks the entries above are valid keys; this checks none is missing. An omitted
+ *  control would never gate readiness, and `whenReady` would hand it out as `undefined`. */
+type _ = AssertNever<Exclude<CtrlType, (typeof REQUIRED_CTRLS)[number]>>;
+
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 
 // for all controllers that are singletons, they can register here so other parts
@@ -42,7 +47,7 @@ type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsSvc' as const;
 
-    private params: ReadyParams = {} as any;
+    private params: Partial<ReadyParams> = {};
     private ready = false;
     private readonly readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
@@ -58,7 +63,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
                 this.updateReady();
                 if (this.ready) {
                     for (const callback of this.readyCallbacks) {
-                        callback(this.params);
+                        callback(this.params as ReadyParams);
                     }
                     this.readyCallbacks.length = 0;
                 }
@@ -66,6 +71,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
             this.beans.frameworkOverrides.runWhenReadyAsync?.() ?? false
         );
     }
+
     private updateReady(): void {
         const params = this.params;
         for (let i = 0, len = REQUIRED_CTRLS.length; i < len; ++i) {
@@ -79,7 +85,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {
         if (this.ready) {
-            callback(this.params);
+            callback(this.params as ReadyParams);
         } else {
             this.readyCallbacks.push(callback);
         }
@@ -107,12 +113,14 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         });
     }
 
-    public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] {
+    /** Undefined until that control registers, which for most of them is after the grid body exists. */
+    public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] | undefined {
         return this.params[ctrlType];
     }
 
+    /** Asserts a control that is only guaranteed once `ready`. */
     public getGridBodyCtrl(): GridBodyCtrl {
-        return this.params.gridBodyCtrl;
+        return this.params.gridBodyCtrl!;
     }
 
     public getHeaderRowContainerCtrl(): HeaderRowContainerCtrl | undefined {

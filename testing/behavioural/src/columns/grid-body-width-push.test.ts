@@ -1,9 +1,15 @@
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, dispatchGridSizeChanged } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterEach, describe, expect, test } from 'vitest';
 
-import type { AgEvent, ColDef, GridApi, GridSizeChangedEvent } from 'ag-grid-community';
-import { CellSpanModule, ClientSideRowModelModule, ColumnApiModule, GridStateModule } from 'ag-grid-community';
+import type { AgEvent, ColDef } from 'ag-grid-community';
+import {
+    CellSpanModule,
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    GridStateModule,
+    ScrollApiModule,
+} from 'ag-grid-community';
 
 const VIEWPORT_WIDTH = mockGridLayout.gridWidth;
 
@@ -45,21 +51,9 @@ const buildCols = (count: number): ColDef[] => {
     return cols;
 };
 
-/** No public API resizes the grid element, and happy-dom has no ResizeObserver, so the event is the entry
- *  point. The payload is checked against the real event; only `dispatchEvent`'s base type needs the cast. */
-const dispatchGridSizeChanged = (api: GridApi, width: number): void => {
-    mockGridLayout.gridWidth = width;
-    const event: Pick<GridSizeChangedEvent, 'type' | 'clientWidth' | 'clientHeight'> = {
-        type: 'gridSizeChanged',
-        clientWidth: width,
-        clientHeight: mockGridLayout.gridHeight,
-    };
-    api.dispatchEvent(event as AgEvent);
-};
-
 describe('Grid body width push', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, GridStateModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, GridStateModule, ScrollApiModule],
     });
     const spanGridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ColumnApiModule, CellSpanModule],
@@ -86,17 +80,15 @@ describe('Grid body width push', () => {
         expect(pushedWidths()).toEqual(expected(1516, 1500));
     });
 
-    test('stretches every container to the viewport when the columns do not fill it', async () => {
-        gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
+    // Both branches of the one `Math.max`: the containers stretch to the viewport while the columns are
+    // narrower than it, and follow the columns once they overflow it.
+    test('stretches every container to the viewport, then to the columns once they overflow it', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
         await asyncSetTimeout(0);
-
         expect(pushedWidths()).toEqual(expected(VIEWPORT_WIDTH, 300));
-    });
 
-    test('sizes every container to the columns once they overflow the viewport', async () => {
-        gridsManager.createGrid('myGrid', { columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
+        api.setGridOption('columnDefs', buildCols(15));
         await asyncSetTimeout(0);
-
         expect(pushedWidths()).toEqual(expected(1500, 1500));
     });
 
@@ -111,6 +103,67 @@ describe('Grid body width push', () => {
         await asyncSetTimeout(0);
 
         expect(pushedWidths()).toEqual(expected(1800, 1800));
+
+        // The case the dropped `columnResized` trigger actually rests on: width moves between two columns
+        // in one section, so `updateBodyWidths` early-returns and no width event is dispatched at all.
+        // Every container has to stay on the width it already holds.
+        api.setColumnWidths([
+            { key: 'c0', newWidth: 200 },
+            { key: 'c1', newWidth: 300 },
+        ]);
+        await asyncSetTimeout(0);
+
+        // Without this the assertion below passes just as well if the resize did nothing at all.
+        expect([api.getColumn('c0')?.getActualWidth(), api.getColumn('c1')?.getActualWidth()]).toEqual([200, 300]);
+        expect(pushedWidths()).toEqual(expected(1800, 1800));
+    });
+
+    // The header row's pinned sections are sized from the column widths, not from the row width the grid
+    // body pushes, so a resize that leaves the pushed width alone still has to reach them.
+    test('resizes the header pinned sections when the columns change inside an unchanged container', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'p0', field: 'p0', width: 100, pinned: 'left' }, ...buildCols(3)],
+            rowData: [{ c0: 1 }],
+        });
+        await asyncSetTimeout(0);
+
+        const headerSections = () => ({
+            pinnedLeft: query('.ag-header-row .ag-grid-pinned-left-cells').style.width,
+            scrolling: query('.ag-header-row .ag-grid-scrolling-cells').style.width,
+        });
+        expect(headerSections()).toEqual({ pinnedLeft: '100px', scrolling: '300px' });
+
+        // 500px of columns is still under the viewport, so the pushed container width does not move and
+        // the push early-returns.
+        api.setColumnWidths([{ key: 'c0', newWidth: 300 }]);
+        await asyncSetTimeout(0);
+
+        expect(query('.ag-grid-scrolling-container').style.width).toBe(`${VIEWPORT_WIDTH}px`);
+        expect(headerSections()).toEqual({ pinnedLeft: '100px', scrolling: '500px' });
+    });
+
+    // A grid hidden by an ancestor measures 0. That is not a width: taken as one, every pinned column reads
+    // as overflowing and the position is discarded. Losing the layout also clears the reported width, so
+    // every later push re-measures the same 0 — the guard has to sit on the width, not on one path to it.
+    test('keeps the scroll position when the grid loses its layout, and when the columns then change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'p0', field: 'p0', width: 100, pinned: 'left' }, ...buildCols(15)],
+            rowData: [{ c0: 1 }],
+        });
+        await asyncSetTimeout(0);
+        api.ensureColumnVisible('c14');
+        await asyncSetTimeout(0);
+
+        const scrollLeft = query('.ag-grid-viewport').scrollLeft;
+        expect(scrollLeft, 'the grid must be scrolled before it can lose the position').toBeGreaterThan(0);
+
+        dispatchGridSizeChanged(api, 0);
+        await asyncSetTimeout(0);
+        expect(query('.ag-grid-viewport').scrollLeft, 'after losing the layout').toBe(scrollLeft);
+
+        api.setColumnWidths([{ key: 'c0', newWidth: 300 }]);
+        await asyncSetTimeout(0);
+        expect(query('.ag-grid-viewport').scrollLeft, 'after a column change while still hidden').toBe(scrollLeft);
     });
 
     test('hiding and showing columns moves every container between the two widths', async () => {
@@ -174,16 +227,28 @@ describe('Grid body width push', () => {
         expect(pushedWidths()).toEqual(expected(1500, 1500));
     });
 
-    // Published for application CSS since 36.0.0, and nothing in the grid reads it back, so this is the
-    // only thing that would notice it going missing.
-    test('sets the pinned row border width variable on every row container', async () => {
-        gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
+    // Published for application CSS, and nothing in the grid reads it back, so this is the only thing that
+    // would notice it going missing. `stylesChanged` is its sole refresh path, so that is asserted too.
+    test('sets the pinned row border width variable on every row container, and again on stylesChanged', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
         await asyncSetTimeout(0);
 
-        const values = ROW_CONTAINER_SELECTORS.map((selector) =>
-            query(selector).style.getPropertyValue('--ag-pinned-row-border-width')
-        );
-        expect(values).toEqual(ROW_CONTAINER_SELECTORS.map(() => '1px'));
+        const borderWidths = () =>
+            ROW_CONTAINER_SELECTORS.map((selector) =>
+                query(selector).style.getPropertyValue('--ag-pinned-row-border-width')
+            );
+        expect(borderWidths()).toEqual(ROW_CONTAINER_SELECTORS.map(() => '1px'));
+
+        // Cleared behind the grid's back, so only a re-push can restore it.
+        for (const selector of ROW_CONTAINER_SELECTORS) {
+            query(selector).style.removeProperty('--ag-pinned-row-border-width');
+        }
+        expect(borderWidths()).toEqual(ROW_CONTAINER_SELECTORS.map(() => ''));
+
+        api.dispatchEvent({ type: 'stylesChanged' } as AgEvent);
+        await asyncSetTimeout(0);
+
+        expect(borderWidths()).toEqual(ROW_CONTAINER_SELECTORS.map(() => '1px'));
     });
 
     // The spanned-cell container sits beside the row container and is sized by the same push, so a width
@@ -200,12 +265,13 @@ describe('Grid body width push', () => {
             document.querySelectorAll<HTMLElement>('[class*="-spanned-cells-container"]'),
             (el) => el.style.width
         );
-        expect(spanned.length).toBeGreaterThan(0);
-        expect(spanned).toEqual(spanned.map(() => '1500px'));
+        // The count is pinned too: comparing the array against one derived from itself would pass if the
+        // spanned containers dropped to one. Three of the five row containers have one.
+        expect(spanned).toEqual(['1500px', '1500px', '1500px']);
     });
 
-    // The scroll clamp reads the cached viewport width rather than measuring on every scroll event, so a
-    // cache that never filled would leave the whole content width scrollable.
+    // The scrollable range is worked out from the column widths and the viewport width rather than read
+    // back as `scrollWidth`, so a viewport width that never arrived leaves the whole content scrollable.
     test('clamps a restored scroll position to the columns that overflow the viewport', async () => {
         gridsManager.createGrid('myGrid', {
             columnDefs: buildCols(15),
@@ -217,9 +283,42 @@ describe('Grid body width push', () => {
         expect(query('.ag-grid-viewport').scrollLeft).toBe(1500 - VIEWPORT_WIDTH);
     });
 
+    // A resize reaches the grid asynchronously, so an api call can land while the last width the grid was
+    // told is the pre-resize one. Answering from it scrolls to the wrong place, or nowhere: a column that
+    // is off-screen at 200px is comfortably inside a viewport believed to be 1000px wide.
+    test('ensureColumnVisible measures a viewport that has resized without reporting it', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
+        await asyncSetTimeout(0);
+        expect(query('.ag-grid-viewport').scrollLeft).toBe(0);
+
+        mockGridLayout.gridWidth = 200;
+        api.ensureColumnVisible('c5');
+
+        // c5 spans 500 to 600, so the 200px viewport has to start at 400 to bring its end into view.
+        expect(query('.ag-grid-viewport').scrollLeft).toBe(400);
+    });
+
+    // Container widths sized from the last reported width are re-pushed when the next report arrives, so
+    // they can lag it harmlessly. Discarding the scroll position cannot be taken back that way, so the
+    // pinned overflow that discards it is decided on the layout as it is.
+    test('does not drop the scroll position for an overflow only the last reported width shows', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(30), rowData: [{ c0: 1 }] });
+        await asyncSetTimeout(0);
+
+        query('.ag-grid-viewport').scrollLeft = 500;
+        await asyncSetTimeout(0);
+
+        // Twice the width it last reported, so 10 pinned columns overflow that and not the viewport.
+        mockGridLayout.gridWidth = 2 * VIEWPORT_WIDTH;
+        api.setColumnsPinned(['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9'], 'left');
+        await asyncSetTimeout(0);
+
+        expect(query('.ag-grid-viewport').scrollLeft).toBe(500);
+    });
+
     // An unlaid-out grid measures 0, which is deliberately not cached, so every later check finds the same
     // unknown state. Reporting that as a change re-pushes to every consumer and re-fires the event.
-    test('a grid with no layout reports its viewport width once, not on every check', async () => {
+    test('a grid with no layout does not report a width it does not have', async () => {
         mockGridLayout.gridWidth = 0;
         const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
         await asyncSetTimeout(0);
@@ -238,6 +337,40 @@ describe('Grid body width push', () => {
         await asyncSetTimeout(0);
 
         expect(dispatches, 'gridViewportWidthChanged while the grid has no width').toBe(0);
+
+        // The control, without which the zero above is equally satisfied by the check never running.
+        dispatchGridSizeChanged(api, 800);
+        await asyncSetTimeout(0);
+        expect(dispatches, 'gridViewportWidthChanged once the grid has a width').toBe(1);
+    });
+
+    // The event has no listener inside the grid and is kept only for applications that registered for it,
+    // so what they can observe is pinned here. The initial width is adopted inside `createGrid`, before
+    // any listener can be attached, so a resize is the first report anyone sees — and a report that
+    // repeats the last width is not a change.
+    test('reports a resized viewport width, and stays silent when the width repeats', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
+        await asyncSetTimeout(0);
+
+        // `addGlobalListener`, because the event is excluded from the public event-name union.
+        let dispatches = 0;
+        api.addGlobalListener((eventType) => {
+            if (String(eventType) === 'gridViewportWidthChanged') {
+                ++dispatches;
+            }
+        });
+
+        dispatchGridSizeChanged(api, 600);
+        await asyncSetTimeout(0);
+        expect(dispatches, 'dispatches after a resize').toBe(1);
+
+        dispatchGridSizeChanged(api, 600);
+        await asyncSetTimeout(0);
+        expect(dispatches, 'dispatches after a no-op resize').toBe(1);
+
+        dispatchGridSizeChanged(api, 1200);
+        await asyncSetTimeout(0);
+        expect(dispatches, 'dispatches after a second real resize').toBe(2);
     });
 
     // Group and floating-filter rows are created with the column set rather than with the grid body, so

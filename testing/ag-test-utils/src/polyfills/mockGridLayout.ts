@@ -514,3 +514,14 @@ export function innerTextPolyfill() {
         },
     });
 }
+
+/** No public API resizes the grid element, and happy-dom has no ResizeObserver, so the event is the entry
+ *  point. Sets the mocked layout too, so anything that measures agrees with what was reported. */
+export function dispatchGridSizeChanged(
+    api: { dispatchEvent: (event: { type: string }) => void },
+    width: number
+): void {
+    mockGridLayout.gridWidth = width;
+    const height = mockGridLayout.gridHeight;
+    api.dispatchEvent({ type: 'gridSizeChanged', clientWidth: width, clientHeight: height } as { type: string });
+}

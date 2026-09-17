@@ -145,9 +145,12 @@ export class AgVirtualList<
     }
 
     private addResizeObserver(): void {
-        // do this in an animation frame to prevent loops
-        const listener = () => _requestAnimationFrame(this.beans, () => this.drawVirtualRows());
-        const destroyObserver = _observeResize(this.beans, this.getGui(), listener);
+        // Deferred to a frame to prevent loops, and coalesced because a resize arrives in bursts.
+        const destroyObserver = _observeResize(
+            this.beans,
+            this.getGui(),
+            this.throttleToFrame(() => this.drawVirtualRows())
+        );
         this.addDestroyFunc(destroyObserver);
     }
 

@@ -13,6 +13,11 @@ const ROW_DATA: Row[] = [
     { id: 'r2', a: 'a2', b: 'b2' },
 ];
 
+const centreHeaderColIds = (root: HTMLElement): (string | null)[] =>
+    Array.from(root.querySelectorAll('.ag-header-row .ag-grid-scrolling-cells .ag-header-cell'), (cell) =>
+        cell.getAttribute('col-id')
+    );
+
 /**
  * Print layout flows every column through the centre lane and detaches the pinned lanes, so a cell
  * routed by what it is pinned to lands in a container that is not in the document.
@@ -45,6 +50,7 @@ describe('print layout', () => {
         );
 
         expect(colIds).toEqual(['l', 'c', 'r']);
+        expect(centreHeaderColIds(root)).toEqual(['l', 'c', 'r']);
     });
 
     // Switching into print layout rebuilds the lanes, a different path from rendering into it.
@@ -69,5 +75,8 @@ describe('print layout', () => {
         );
 
         expect(colIds).toEqual(['l', 'c', 'r']);
+        // The header rows skip a rebuild when the rendered set has not moved, and a layout switch moves
+        // the pinned headers without moving it.
+        expect(centreHeaderColIds(root)).toEqual(['l', 'c', 'r']);
     });
 });

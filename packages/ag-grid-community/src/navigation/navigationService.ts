@@ -428,7 +428,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 keyboardEvent.preventDefault();
             } else if (movedToNextCell === null) {
                 // want to let browser handle, however some of the containers prevent browser focus
-                ctrlsSvc.get('gridCtrl').allowFocusForNextCoreContainer(backwards);
+                ctrlsSvc.get('gridCtrl')?.allowFocusForNextCoreContainer(backwards);
             }
             return;
         }

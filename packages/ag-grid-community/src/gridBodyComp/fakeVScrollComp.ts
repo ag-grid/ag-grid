@@ -1,4 +1,4 @@
-import { RefPlaceholder, _isVisible, _requestAnimationFrame, _setFixedWidth } from 'ag-stack';
+import { RefPlaceholder, _isVisible, _setFixedWidth } from 'ag-stack';
 
 import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/element';
@@ -26,7 +26,7 @@ const FakeVScrollElement: ElementParams = {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeVScrollComp extends AbstractFakeScrollComp {
     private readonly eSpacer: HTMLElement = RefPlaceholder;
-    private enableRtl: boolean;
+    private readonly queueContainerHeightSync = this.throttleToFrame(() => this.syncContainerHeight());
 
     constructor() {
         super(FakeVScrollElement, 'vertical');
@@ -35,11 +35,10 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     public override postConstruct(): void {
         super.postConstruct();
 
-        this.enableRtl = this.gos.get('enableRtl');
         const { ctrlsSvc } = this.beans;
         ctrlsSvc.register('fakeVScrollComp', this);
 
-        const queueContainerHeightSync = this.queueContainerHeightSync.bind(this);
+        const queueContainerHeightSync = this.queueContainerHeightSync;
         this.addManagedEventListeners({
             rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this, ctrlsSvc),
             headerHeightChanged: this.onScrollVisibilityChanged.bind(this),
@@ -55,7 +54,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
 
     protected setScrollVisible(): void {
         const { scrollVisibleSvc } = this.beans;
-        this.enableRtl = this.gos.get('enableRtl');
         const vScrollShowing = scrollVisibleSvc.verticalScrollShowing;
         const invisibleScrollbar = this.invisibleScrollbar;
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
@@ -97,22 +95,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         if (eViewportScrollTop != gridBodyViewportScrollTop) {
             this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
-    }
-
-    private containerHeightSyncQueued = false;
-
-    /** Several events report one change, and each sync reads layout, so they coalesce into one frame. */
-    private queueContainerHeightSync(): void {
-        if (this.containerHeightSyncQueued) {
-            return;
-        }
-        this.containerHeightSyncQueued = true;
-        _requestAnimationFrame(this.beans, () => {
-            this.containerHeightSyncQueued = false;
-            if (this.isAlive()) {
-                this.syncContainerHeight();
-            }
-        });
     }
 
     private syncContainerHeight(): void {

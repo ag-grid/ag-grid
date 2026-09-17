@@ -23,7 +23,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private filtersRowCtrl: HeaderRowCtrl | undefined;
     private columnsRowCtrl: HeaderRowCtrl | undefined;
     private groupsRowCtrls: HeaderRowCtrl[] = [];
-    private rowWidth: number | null = null;
+    /** The last width pushed here, so a group or floating-filter row arriving later can size itself from
+     *  it rather than ask the grid body to recompute. `null` until the first push. */
+    public rowWidth: number | null = null;
     public eViewport: HTMLElement;
 
     public setComp(comp: IHeaderRowsComp, eGui: HTMLElement, eScrollViewport: HTMLElement = eGui): void {
@@ -50,6 +52,10 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     /** Pushed by `GridBodyCtrl.updateWidths`. Walks the fields rather than `getAllCtrls`, which
      *  allocates, because this runs on every column width change. */
     public setRowWidths(width: number): void {
+        // Several events report one column change, and a row created later reads `rowWidth` itself.
+        if (width === this.rowWidth) {
+            return;
+        }
         this.rowWidth = width;
         const groupsRowCtrls = this.groupsRowCtrls;
         for (let i = 0, len = groupsRowCtrls.length; i < len; ++i) {
@@ -57,18 +63,6 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         }
         this.columnsRowCtrl?.setRowWidth(width);
         this.filtersRowCtrl?.setRowWidth(width);
-    }
-
-    /** Group and floating-filter rows come and go with the column set, so the last pushed width is kept
-     *  to size one on arrival rather than have it ask the grid body to recompute. Reports whether there
-     *  was a width to give it. */
-    public applyRowWidth(ctrl: HeaderRowCtrl): boolean {
-        const rowWidth = this.rowWidth;
-        if (rowWidth === null) {
-            return false;
-        }
-        ctrl.setRowWidth(rowWidth);
-        return true;
     }
 
     public getAllCtrls(): HeaderRowCtrl[] {

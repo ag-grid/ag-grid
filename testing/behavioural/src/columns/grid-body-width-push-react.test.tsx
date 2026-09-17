@@ -19,7 +19,11 @@ const ROW_CONTAINER_SELECTORS = [
 ];
 
 const containerWidths = (): string[] =>
-    ROW_CONTAINER_SELECTORS.map((selector) => document.querySelector<HTMLElement>(selector)?.style.width ?? selector);
+    ROW_CONTAINER_SELECTORS.map((selector) => {
+        const element = document.querySelector<HTMLElement>(selector);
+        expect(element, `Expected ${selector} to be rendered`).not.toBeNull();
+        return element!.style.width;
+    });
 
 const headerRowWidths = (): string[] =>
     Array.from(document.querySelectorAll<HTMLElement>('.ag-header-row'), (row) => row.style.width);
@@ -52,16 +56,17 @@ describe('Grid body width push (React)', () => {
         cleanup();
     });
 
-    test('sizes every row container and header row on mount', async () => {
+    // On mount, on a remount, and in both branches of the stretch-or-follow-the-columns rule.
+    test('sizes every row container and header row on mount and on a remount', async () => {
         await renderGrid({ columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
 
         await waitFor(() =>
             expect(containerWidths()).toEqual(new Array(ROW_CONTAINER_SELECTORS.length).fill('1500px'))
         );
         expect(headerRowWidths()).toEqual(['1500px']);
-    });
 
-    test('stretches to the viewport when the columns do not fill it', async () => {
+        // Remounted with columns narrower than the viewport, so the containers stretch to it instead.
+        cleanup();
         await renderGrid({ columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
 
         const stretched = `${VIEWPORT_WIDTH}px`;
@@ -75,7 +80,9 @@ describe('Grid body width push (React)', () => {
         const api = await renderGrid({ columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
         await waitFor(() => expect(containerWidths()[0]).toBe('1500px'));
 
-        api.setColumnWidths([{ key: 'c0', newWidth: 400 }]);
+        act(() => {
+            api.setColumnWidths([{ key: 'c0', newWidth: 400 }]);
+        });
 
         await waitFor(() =>
             expect(containerWidths()).toEqual(new Array(ROW_CONTAINER_SELECTORS.length).fill('1800px'))
@@ -119,6 +126,7 @@ describe('Grid body width push (React)', () => {
     test('sizes every header row re-created by refreshHeader', async () => {
         const api = await renderGrid({ columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
         await waitFor(() => expect(headerRowWidths()).toEqual(['1500px']));
+        const before = Array.from(document.querySelectorAll('.ag-header-row'));
 
         act(() => {
             api.refreshHeader();
@@ -129,19 +137,9 @@ describe('Grid body width push (React)', () => {
         await act(async () => {
             await asyncSetTimeout(0);
         });
+        // The identity check is what makes the width assertion load-bearing: without it the test passes
+        // against the old rows.
+        expect(Array.from(document.querySelectorAll('.ag-header-row'))).not.toEqual(before);
         expect(headerRowWidths()).toEqual(['1500px']);
-    });
-
-    test('sizes the row containers of a grid mounted a second time', async () => {
-        await renderGrid({ columnDefs: buildCols(15), rowData: [{ c0: 1 }] });
-        await waitFor(() => expect(containerWidths()[0]).toBe('1500px'));
-        cleanup();
-
-        await renderGrid({ columnDefs: buildCols(8), rowData: [{ c0: 1 }] });
-
-        await waitFor(() =>
-            expect(containerWidths()).toEqual(new Array(ROW_CONTAINER_SELECTORS.length).fill('1000px'))
-        );
-        expect(headerRowWidths()).toEqual(['1000px']);
     });
 });

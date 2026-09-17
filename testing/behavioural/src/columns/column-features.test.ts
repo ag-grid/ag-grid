@@ -20,7 +20,7 @@ import {
     mockGridLayout,
 } from 'ag-test-utils';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
@@ -1009,6 +1009,46 @@ describe('Column Features', () => {
             } finally {
                 mockGridLayout.useRealOffsetDimensions = false;
             }
+        });
+
+        // The header set is the rendered-row set plus the columns the rows filtered out that still have to
+        // be measured, and it is what the group header rows are built from. So a group whose leaves are
+        // all outside the rendered window is still rendered when one of them has auto header height.
+        test('autoHeaderHeight: keeps the group of an unrendered column in the header rows', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [];
+            for (let i = 0; i < 28; ++i) {
+                columnDefs.push({ colId: `c${i}`, width: 100 });
+            }
+            // Two equally distant groups, differing only in whether a leaf is auto-header-height.
+            columnDefs.push({
+                groupId: 'withAuto',
+                headerName: 'With auto',
+                children: [{ colId: 'auto', width: 100, autoHeaderHeight: true }],
+            });
+            columnDefs.push({
+                groupId: 'withoutAuto',
+                headerName: 'Without auto',
+                children: [{ colId: 'plain', width: 100 }],
+            });
+
+            const api = gridsManager.createGrid('autoHeaderOutsideViewport', {
+                columnDefs,
+                rowData: [{ c0: 1 }],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            // Without this the window is every column and the rest of the test proves nothing.
+            const rendered = api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+            expect(rendered).not.toContain('auto');
+            expect(rendered).not.toContain('plain');
+
+            const renderedGroups = Array.from(document.querySelectorAll('.ag-header-group-cell'), (cell) =>
+                cell.getAttribute('col-id')
+            );
+            // The auto-header column pulls its group in; its twin with no auto-header leaf stays out.
+            expect(renderedGroups).toContain('withAuto_0');
+            expect(renderedGroups).not.toContain('withoutAuto_0');
         });
 
         test('isColumnFunc invokes function with column params; clamps boolean false', async () => {

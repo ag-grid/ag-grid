@@ -113,6 +113,7 @@ export class RowContainerCtrl extends BeanStub {
     public viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
     // Maintaining a constant reference enables optimization in React.
     private readonly EMPTY_CTRLS = [];
+    private containerWidth: number | null = null;
 
     constructor(private readonly name: RowContainerName) {
         super();
@@ -133,7 +134,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private registerWithCtrlsService(): void {
-        this.beans.ctrlsSvc.register(this.name as any, this);
+        this.beans.ctrlsSvc.register(this.name, this);
     }
 
     private isScrollingCenterContainer(): boolean {
@@ -177,7 +178,7 @@ export class RowContainerCtrl extends BeanStub {
         this.registerWithCtrlsService();
     }
 
-    /** Nothing in the grid reads this; it is published for application CSS, and has been since 36.0.0. */
+    /** Published for application CSS; nothing in the grid reads it. */
     private setPinnedRowBorderWidth(): void {
         this.eContainer.style.setProperty(
             '--ag-pinned-row-border-width',
@@ -185,10 +186,8 @@ export class RowContainerCtrl extends BeanStub {
         );
     }
 
-    private containerWidth: number | null = null;
-
-    /** Pushed by `GridBodyCtrl.updateWidths`, which measures the viewport once for every container.
-     *  Several events report one column change, so the same width arrives more than once per refresh. */
+    /** Pushed by `GridBodyCtrl.updateWidths`. Several events report one column change, so the same
+     *  width arrives more than once per refresh. */
     public setContainerWidth(width: number): void {
         if (width !== this.containerWidth) {
             this.containerWidth = width;

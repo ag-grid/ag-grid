@@ -1,17 +1,20 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, ColGroupDef, ColumnGroup } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 
 describe('Column Groups', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule],
     });
 
     afterEach(() => {
         gridsManager.reset();
     });
+
+    const renderedGroupIds = () =>
+        Array.from(document.querySelectorAll('.ag-header-group-cell'), (cell) => cell.getAttribute('col-id'));
 
     describe('empty groups stay findable (matches released behaviour)', () => {
         test('a group declared with no children remains discoverable via the group APIs', async () => {
@@ -1873,6 +1876,114 @@ describe('Column Groups', () => {
                 │ └── c width:200
                 └── x width:200
             `);
+        });
+
+        test('a regroup rebuilds the rendered header rows, though the columns are unchanged', async () => {
+            const api = gridsManager.createGrid('regroupSameCols', {
+                columnDefs: [
+                    { groupId: 'g1', headerName: 'G1', children: [{ colId: 'a' }, { colId: 'b' }] },
+                    { groupId: 'g2', headerName: 'G2', children: [{ colId: 'c' }] },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await waitFor(() => expect(renderedGroupIds()).toEqual(['g1_0', 'g2_0']));
+
+            // The same leaf columns, in the same order and the same section, under a differently
+            // identified group: nothing a column carries records which group it sits under.
+            api.setGridOption('columnDefs', [
+                { groupId: 'gX', headerName: 'GX', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { groupId: 'g2', headerName: 'G2', children: [{ colId: 'c' }] },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(renderedGroupIds()).toEqual(['gX_0', 'g2_0']);
+            await new GridColumns(api, 'regrouped with the same leaf columns').checkColumns(`
+                CENTER
+                ├─┬ "GX" GROUP
+                │ ├── a width:200
+                │ └── b width:200
+                └─┬ "G2" GROUP
+                  └── c width:200
+            `);
+        });
+
+        // With virtualisation on, the rendered columns are a window onto the centre section, so a move
+        // outside that window can re-group a column inside it without the window itself changing.
+        test('a regroup outside the rendered window still rebuilds the header rows', async () => {
+            const COL_WIDTH = 100;
+            const grouped: ColDef[] = [];
+            for (let i = 0; i <= 25; ++i) {
+                grouped.push({ colId: `c${i}`, width: COL_WIDTH });
+            }
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'x', width: COL_WIDTH },
+                { groupId: 'G', headerName: 'G', children: grouped },
+            ];
+            for (let i = 26; i <= 33; ++i) {
+                columnDefs.push({ colId: `c${i}`, width: COL_WIDTH });
+            }
+
+            const api = gridsManager.createGrid('virtualRegroup', {
+                columnDefs,
+                rowData: [{ c0: 1 }],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            const viewport = document.querySelector<HTMLElement>('.ag-grid-viewport')!;
+            viewport.scrollLeft = 2000;
+            viewport.dispatchEvent(new Event('scroll'));
+            await asyncSetTimeout(0);
+
+            // Without this the window is every column, the comparison sees the move directly, and the
+            // rest of the test proves nothing.
+            const rendered = () => api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+            expect(rendered()).not.toContain('c0');
+            expect(rendered()).toContain('c20');
+            expect(renderedGroupIds()).toEqual(['G_0']);
+
+            // `x` moves from the head of the columns into the middle of the group's run, splitting it.
+            // Both positions are outside the window and the width ahead of it is unchanged, so the
+            // rendered columns keep their identity, their order and their lefts, while `c20`'s group
+            // instance changes. A move, not `applyColumnState`, which would rebuild the column model.
+            const before = rendered();
+            api.moveColumns(['x'], 7);
+            await asyncSetTimeout(0);
+
+            // The rendered window must not move, or the comparison sees the change directly.
+            expect(rendered()).toEqual(before);
+            // The split must hand the rendered columns a new group instance.
+            const liveParentId = api.getColumn('c20')!.getParent()!.getUniqueId();
+            expect(liveParentId).toBe('G_1');
+            expect(renderedGroupIds()).toEqual([liveParentId]);
+        });
+
+        // The counter that decides whether the header rows rebuild. It has no public projection — the
+        // rebuild recycles its ctrls, so the cells keep their identity either way — hence reading it.
+        // The two tests above are the positive half: a real re-parent must still move it.
+        test('a rebuild that changes nothing does not report a re-parent, however deep the nesting', async () => {
+            const groupVersion = (api: GridApi): number =>
+                (api.getDisplayedRowAtIndex(0) as any).beans.colGroupSvc.groupVersion;
+
+            const nested = (): ColGroupDef[] => [
+                {
+                    groupId: 'outer',
+                    headerName: 'Outer',
+                    children: [{ groupId: 'inner', headerName: 'Inner', children: [{ colId: 'a' }, { colId: 'b' }] }],
+                },
+            ];
+
+            const api = gridsManager.createGrid('noopRebuild', { columnDefs: nested(), rowData: [{ a: 1, b: 2 }] });
+            await asyncSetTimeout(0);
+
+            // Without this the zero below is equally satisfied by a counter that never moves at all.
+            expect(groupVersion(api)).toBeGreaterThan(0);
+
+            const before = groupVersion(api);
+            api.setGridOption('columnDefs', nested());
+            await asyncSetTimeout(0);
+
+            expect(groupVersion(api) - before).toBe(0);
         });
 
         test('group split across pinned sections has dense partId-indexed instances', async () => {

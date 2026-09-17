@@ -1,8 +1,7 @@
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, dispatchGridSizeChanged } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
-import type { AgEvent, GridApi, GridSizeChangedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
 
 const overflowingColumnDefs = [
@@ -21,16 +20,6 @@ const query = <T extends Element>(selector: string): T => {
     const element = document.querySelector<T>(selector);
     expect(element, `Expected ${selector} to be rendered`).not.toBeNull();
     return element!;
-};
-
-/** The payload is checked against the real event; only `dispatchEvent`'s base type needs the cast. */
-const dispatchGridSizeChanged = (api: GridApi, width: number): void => {
-    const event: Pick<GridSizeChangedEvent, 'type' | 'clientWidth' | 'clientHeight'> = {
-        type: 'gridSizeChanged',
-        clientWidth: width,
-        clientHeight: mockGridLayout.gridHeight,
-    };
-    api.dispatchEvent(event as AgEvent);
 };
 
 describe('Pinned columns wider than the viewport', () => {
@@ -97,14 +86,12 @@ describe('Pinned columns wider than the viewport', () => {
         const viewport = query<HTMLElement>('.ag-grid-viewport');
         expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(true);
 
-        mockGridLayout.gridWidth = 2400;
         dispatchGridSizeChanged(api, 2400);
 
         expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(false);
         expect(query<HTMLElement>('.ag-grid-scrollable-area').style.width).toBe('2400px');
         expect(query<HTMLElement>('.ag-body-horizontal-scroll-container').style.width).not.toBe('1px');
 
-        mockGridLayout.gridWidth = 600;
         dispatchGridSizeChanged(api, 600);
 
         expect(viewport.classList.contains('ag-pinned-columns-overflow')).toBe(true);
