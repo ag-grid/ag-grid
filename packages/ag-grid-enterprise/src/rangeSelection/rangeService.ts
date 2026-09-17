@@ -50,7 +50,6 @@ import {
     _getRowCtrlForEventTarget,
     _getRowNode,
     _getSuppressMultiRanges,
-    _interpretAsRightClick,
     _isCellSelectionEnabled,
     _isRowBefore,
     _isSameRow,
@@ -429,7 +428,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.handleCellSelectionInput(cell, {
             target: event.target as HTMLElement | null,
             shiftKey: event.shiftKey,
-            isRightClick: _interpretAsRightClick(this.beans, event),
             isMultiRange: this.isMultiRange(event),
             isMultiKey,
             preventDefault: () => event.preventDefault(),
@@ -441,8 +439,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.handleCellSelectionInput(cell, {
             target: event.target as HTMLElement | null,
             shiftKey: event.shiftKey,
-            // keyboard selection should never be interpreted as a right click.
-            isRightClick: false,
             isMultiRange: this.isMultiRangeForKeyState(isMultiKey),
             isMultiKey,
             preventDefault: () => event.preventDefault(),
@@ -454,13 +450,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         params: {
             target: HTMLElement | null;
             shiftKey: boolean;
-            isRightClick: boolean;
             isMultiRange: boolean;
             isMultiKey: boolean;
             preventDefault: () => void;
         }
     ): void {
-        const { target, shiftKey, isRightClick, isMultiRange, isMultiKey, preventDefault } = params;
+        const { target, shiftKey, isMultiRange, isMultiKey, preventDefault } = params;
 
         if (this.shouldSuppressRangeSelection(target)) {
             return;
@@ -473,10 +468,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         if (shiftKey) {
             return this.extendLatestRangeToCell(cell);
-        }
-
-        if (isAllColumnsCell && isRightClick) {
-            return;
         }
 
         this.updateSelectionModeForCell(cell);

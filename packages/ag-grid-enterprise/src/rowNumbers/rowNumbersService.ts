@@ -46,8 +46,6 @@ import type {
 } from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
-const emptyContextMenuItems: GetContextMenuItems = () => [];
-
 export class RowNumbersService
     extends _BaseSingleColService
     implements NamedBean, IRowNumbersService, RangeSelectionExtension
@@ -74,6 +72,10 @@ export class RowNumbersService
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
+    // The row-number column is not integrated with cell selection here, so the grid contributes no
+    // default items of its own - but a user-supplied menu must still be honoured (AG-16355).
+    private readonly boundContextMenuItems: GetContextMenuItems = (params) =>
+        this.gos.getCallback('getContextMenuItems')?.(params) ?? [];
 
     public postConstruct(): void {
         const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
@@ -353,7 +355,8 @@ export class RowNumbersService
             width: 60,
             resizable: false,
             valueGetter: this.boundValueGetter,
-            contextMenuItems: this.isIntegratedWithSelection || !contextMenuSvc ? undefined : emptyContextMenuItems,
+            contextMenuItems:
+                this.isIntegratedWithSelection || !contextMenuSvc ? undefined : this.boundContextMenuItems,
             // overrides
             ...this.rowNumberOverrides,
             // non-overridable properties
