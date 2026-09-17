@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import {
     TestGridsManager,
+    asyncSetTimeout,
     clickMenuOption,
     clipboardUtils,
     fireGridPointerDown,
@@ -27,8 +28,8 @@ function cell(gridDiv: HTMLElement, rowIndex: number, colId: string): HTMLElemen
 }
 
 /** Right-click on a cell: the press the row container listens for, then the contextmenu event. */
-function rightClick(element: HTMLElement): void {
-    fireGridPointerDown(element, { button: 2, buttons: 2 });
+function rightClick(element: HTMLElement, options?: MouseEventInit): void {
+    fireGridPointerDown(element, { button: 2, buttons: 2, ...options });
     fireContextMenu(element);
 }
 
@@ -99,6 +100,7 @@ describe('Row Numbers context menu (AG-16355)', () => {
 
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Aleksey Nemov\t24'));
         expect(api.getFocusedCell()?.rowIndex).toBe(2);
+        expect(api.getCellRanges()).toHaveLength(1);
         expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(2);
         // the whole-row range spans the data columns; the row-number column itself is excluded
         // (rangeService.getColumnsFromModel -> shouldSkipColumn), which is why the copied text has no row number
@@ -145,7 +147,8 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
 
         rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
-        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+        await asyncSetTimeout(50);
+        expect(document.querySelectorAll('.ag-menu')).toHaveLength(0);
     });
 
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
@@ -195,5 +198,23 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(api.getCellRanges()).toHaveLength(1);
         expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(0);
         expect(api.getCellRanges()?.[0]?.endRow?.rowIndex).toBe(2);
+    });
+    // Guard: a right-click must not append to the existing ranges, even with the multi-range modifier.
+    test('ctrl right-clicking a row-number cell selects only that row', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxMultiRange', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            cellSelection: true,
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID), { ctrlKey: true });
+
+        expect(api.getCellRanges()).toHaveLength(1);
+        expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(2);
     });
 });

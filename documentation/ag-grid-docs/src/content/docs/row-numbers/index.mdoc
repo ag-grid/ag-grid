@@ -49,11 +49,12 @@ const gridOptions = {
 ## Context Menu
 
 Right-clicking a Row Number cell opens the grid [Context Menu](./context-menu/) with the items returned by
-`getContextMenuItems`, whether or not [Cell Selection](./cell-selection/) is enabled. When no context menu items are
-configured, the browser's own menu is shown, as it is for any other cell.
+`getContextMenuItems`, whether or not [Cell Selection](./cell-selection/) is enabled.
 
-When Cell Selection is enabled, the right-click also selects the whole row, so that items such as `Copy` act on the
-right-clicked row. A right-click within a row range that is already selected leaves that selection untouched.
+When Cell Selection is integrated with the Row Numbers Column, the right-click also selects the whole row, so that
+items such as `Copy` act on the right-clicked row. A right-click on a row that is already part of a selected row range
+leaves that selection untouched. Where the integration is suppressed, and no `getContextMenuItems` is configured, the
+Row Numbers Column shows the browser's own menu: unlike other columns, it contributes no default items of its own.
 
 The `contextMenuItems` option overrides `getContextMenuItems` for the Row Numbers Column only.
 

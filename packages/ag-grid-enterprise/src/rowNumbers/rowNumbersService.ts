@@ -72,8 +72,8 @@ export class RowNumbersService
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
-    // The row-number column is not integrated with cell selection here, so the grid contributes no
-    // default items of its own - but a user-supplied menu must still be honoured (AG-16355).
+    // The row-number column suppresses the grid's own context menu when it is not integrated with cell
+    // selection, but a user-supplied menu must still be honoured (AG-16355).
     private readonly boundContextMenuItems: GetContextMenuItems = (params) =>
         this.gos.getCallback('getContextMenuItems')?.(params) ?? [];
 

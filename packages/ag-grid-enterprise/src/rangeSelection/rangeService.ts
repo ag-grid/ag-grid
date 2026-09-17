@@ -179,11 +179,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     private isRowInAllColumnsRange(cell: CellPosition): boolean {
         const allDataColumns = this.getColumnsFromModel(this.visibleCols.allCols) ?? [];
-        return (
-            allDataColumns.length > 0 &&
-            this.cellRanges.some(
-                (range) => this.isRowInRange(cell, range) && this.isAllColumnsRange(range, allDataColumns)
-            )
+        return this.cellRanges.some(
+            (range) => this.isRowInRange(cell, range) && this.isAllColumnsRange(range, allDataColumns)
         );
     }
 
@@ -490,7 +487,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         // in cellMouseListenerFeature cannot cover this, because the row-number column is excluded from a
         // range's columns and so such a cell is never reported as being inside one. Outside a whole-row
         // range the right-click selects the row, so that the context menu acts on it (AG-16355).
-        if (isAllColumnsCell && isRightClick && this.isRowInAllColumnsRange(cell)) {
+        const isRightClickOnAllColumnsCell = isAllColumnsCell && isRightClick;
+        if (isRightClickOnAllColumnsCell && this.isRowInAllColumnsRange(cell)) {
             return;
         }
 
@@ -512,7 +510,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         if (isMultiRangeRemoval && containingRange) {
             this.removeRowFromAllColumnsRange(cell, containingRange);
         } else {
-            this.setRangeToCell(cell, isMultiRange);
+            // a right-click selects only the row it is on, rather than appending to the existing ranges
+            this.setRangeToCell(cell, isMultiRange && !isRightClickOnAllColumnsCell);
         }
     }
 
