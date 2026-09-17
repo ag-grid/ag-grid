@@ -214,7 +214,12 @@ export class GridBodyCtrl extends BeanStub {
     private updateWidths(viewportWidth: number = this.getReportedViewportWidth()): void {
         const verticalScrollShowing = this.scrollVisibleSvc.verticalScrollShowing;
         const scrollbarWidth = this.getVerticalScrollbarWidth(verticalScrollShowing);
-        const pinnedColumnsOverflowing = this.isPinnedWidthOverflowingViewport(viewportWidth, verticalScrollShowing);
+        // Collapsing the scroll range lets the browser clamp the scroll position, which the next report
+        // does not undo, so the overflow is confirmed against the current layout. Retaining the range for
+        // a frame is the safe direction.
+        const pinnedColumnsOverflowing =
+            this.isPinnedWidthOverflowingViewport(viewportWidth, verticalScrollShowing) &&
+            this.isPinnedWidthOverflowingViewport(undefined, verticalScrollShowing);
         const contentWidth = this.getHorizontalContentWidth(pinnedColumnsOverflowing, verticalScrollShowing);
         // A zero-width container collapses the scroll range.
         const containerWidth = Math.max(contentWidth, viewportWidth, 1);
@@ -233,13 +238,7 @@ export class GridBodyCtrl extends BeanStub {
         ctrlsSvc.get('fakeHScrollComp')?.setContentWidth(contentWidth - scrollbarWidth);
         ctrlsSvc.getHeaderRowContainerCtrl()?.setRowWidths(containerWidth);
 
-        // Discarding the scroll position is not something the next report undoes, so the overflow is
-        // confirmed against the current layout. Retaining it for a frame is the safe direction.
-        if (
-            pinnedColumnsOverflowing &&
-            this.getHorizontalScrollLeft() !== 0 &&
-            this.isPinnedWidthOverflowingViewport(undefined, verticalScrollShowing)
-        ) {
+        if (pinnedColumnsOverflowing && this.getHorizontalScrollLeft() !== 0) {
             this.setHorizontalScrollLeft(0);
         }
     }

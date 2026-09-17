@@ -78,9 +78,9 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         rowTop = 0;
         forEach(this.pinnedTopRows, updateRowHeight);
 
-        this.eventSvc.dispatchEvent({
-            type: 'pinnedHeightChanged',
-        });
+        if (anyChange) {
+            this.eventSvc.dispatchEvent({ type: 'pinnedHeightChanged' });
+        }
 
         return anyChange;
     }

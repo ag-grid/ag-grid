@@ -50,8 +50,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private scrollWidth: number;
     private scrollPosition: number;
 
-    /** Zero until the first `setScrollPosition`, which `isColumnVirtualisationSuppressed` reads as
-     *  "not laid out": bounds of `NaN` would instead exclude every column. */
+    /** Zero until the first `setScrollPosition`: bounds of `NaN` would instead exclude every column. */
     private viewportLeft = 0;
     private viewportRight = 0;
 

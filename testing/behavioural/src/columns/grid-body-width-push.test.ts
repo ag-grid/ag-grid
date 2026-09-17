@@ -313,6 +313,9 @@ describe('Grid body width push', () => {
         api.setColumnsPinned(['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9'], 'left');
         await asyncSetTimeout(0);
 
+        // The width, not the position: a container narrower than the viewport is what makes the browser
+        // clamp, and jsdom stores `scrollLeft` unclamped, so only the width tells the two apart here.
+        expect(query('.ag-grid-scrollable-area').style.width).toBe('3000px');
         expect(query('.ag-grid-viewport').scrollLeft).toBe(500);
     });
 
