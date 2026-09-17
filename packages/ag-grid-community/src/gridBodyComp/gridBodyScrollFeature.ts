@@ -704,7 +704,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return; // defensive
         }
 
-        const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);
+        const viewportWidth = this.ctrlsSvc.getGridBodyCtrl()?.getCenterWidth() ?? 0;
+        const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position, viewportWidth);
 
         frameworkOverrides.wrapIncoming(() => {
             const ctrl = this.ctrlsSvc.getGridBodyCtrl();
@@ -716,7 +717,7 @@ export class GridBodyScrollFeature extends BeanStub {
             // it is possible that the ensureColumnVisible method is called from within AG Grid and
             // the caller will need to have the columns rendered to continue, which will be before
             // the event has been worked on (which is the case for cell navigation).
-            ctrl?.updateColumnViewport();
+            ctrl?.updateColumnViewport(false, undefined, viewportWidth);
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
@@ -725,11 +726,10 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private getPositionedHorizontalScroll(
         column: AgColumn,
-        position: 'auto' | 'start' | 'middle' | 'end'
+        position: 'auto' | 'start' | 'middle' | 'end',
+        viewportWidth: number
     ): number | null {
         const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
-        // Measured, not taken from the last report: the scroll offset it produces is kept.
-        const viewportWidth = gridBodyCtrl?.getCenterWidth() ?? 0;
         const colLeft = column.getLeft()!;
         const colWidth = column.getActualWidth();
 

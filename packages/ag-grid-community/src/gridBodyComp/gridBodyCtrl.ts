@@ -343,10 +343,15 @@ export class GridBodyCtrl extends BeanStub {
         };
     }
 
-    /** Pass `scrollLeft` when already held, so a scroll does not read it back from the DOM. */
-    public updateColumnViewport(afterScroll: boolean = false, scrollLeft?: number): void {
+    /** Pass values already held by the caller so a scroll does not read them back from the DOM, and a
+     *  synchronous layout measurement is not replaced by the last asynchronously reported width. */
+    public updateColumnViewport(
+        afterScroll: boolean = false,
+        scrollLeft?: number,
+        centerWidth: number = this.getCenterWidth(this.getReportedViewportWidth())
+    ): void {
         this.beans.colViewport.setScrollPosition(
-            this.getCenterWidth(this.getReportedViewportWidth()),
+            centerWidth,
             scrollLeft ?? this.getHorizontalScrollLeft(),
             afterScroll
         );
