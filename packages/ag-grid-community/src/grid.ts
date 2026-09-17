@@ -23,6 +23,7 @@ import type {
     _ModuleWithoutApi,
 } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
+import { _getAgVersionsText, _logVersionIfDebug } from './logVersion';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
@@ -126,13 +127,16 @@ export class GridCoreCreator {
 
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
+        const agVersionsText = _getAgVersionsText(registeredModules);
+        _logVersionIfDebug(gridOptions.debug, registeredModules);
+
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, agVersionsText, params);
 
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList. The grid root is already
             // in the DOM but no beans (and so no overlay) exist, so render the dev bootstrap panel here.
-            _renderBootstrapPanel(eOutermostGridOwned);
+            _renderBootstrapPanel(eOutermostGridOwned, agVersionsText);
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
         }
@@ -215,7 +219,12 @@ export class GridCoreCreator {
         }
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
+    private createProvidedBeans(
+        eGridDiv: HTMLElement,
+        gridOptions: GridOptions,
+        agVersionsText: string,
+        params?: GridParams
+    ): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -229,6 +238,7 @@ export class GridCoreCreator {
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
             hasAncestorStyledRoot: params?.hasAncestorStyledRoot,
+            agVersionsText,
         };
         if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);

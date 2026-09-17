@@ -5,7 +5,7 @@ import { _getDevOverlaySeverities } from '../validationConfig';
 import {
     COPY_LABEL,
     copyDiagnosticsToClipboard,
-    diagnosticToMarkdown,
+    diagnosticsToMarkdown,
     flashCopied,
     renderDiagnosticSections,
 } from './errorOverlayRenderer';
@@ -43,6 +43,15 @@ const HEADER_STYLE = [
 const BODY_STYLE = ['display: flex', 'flex-direction: column', 'gap: 16px', 'padding: 12px 16px'].join(';');
 
 const TITLE_STYLE = ['font-weight: 600', 'font-size: 14px', 'color: #cc222f'].join(';');
+
+// Mirrors `.ag-overlay-error-versions` in errorOverlay.css / _common-structural.scss.
+const VERSIONS_STYLE = [
+    'flex: none',
+    'padding: 8px 16px',
+    'border-top: 1px solid #babfc7',
+    'color: #68686e',
+    'font-size: 12px',
+].join(';');
 
 const COPY_STYLE = [
     'flex: none',
@@ -151,7 +160,11 @@ function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnosti
  * {@link renderDiagnostic}. Honours the configured overlay severities, so `showOverlayOn: []` shows
  * nothing and `showOverlayOn: ['error']` shows only errors.
  */
-export function renderBootstrapPanel(container: HTMLElement, diagnostics: CapturedDiagnostic[]): void {
+export function renderBootstrapPanel(
+    container: HTMLElement,
+    diagnostics: CapturedDiagnostic[],
+    versionsText: string
+): void {
     // A re-created grid (e.g. React's dev/StrictMode double-invoke) calls this again against the same
     // container; remove any panel from a previous render before the mode checks below, so disabling the
     // overlay between renders clears the old panel rather than leaving it stranded.
@@ -191,7 +204,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
     eCopy.title = 'Copy diagnostics to the clipboard';
     eCopy.style.cssText = COPY_STYLE;
     eCopy.addEventListener('click', () => {
-        copyDiagnosticsToClipboard(visible.map(diagnosticToMarkdown).join('\n\n'));
+        copyDiagnosticsToClipboard(diagnosticsToMarkdown(visible, versionsText));
         flashCopied(eCopy);
     });
     eHeader.appendChild(eCopy);
@@ -203,6 +216,11 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
     // No `showsUnattributedOrigin`: there is no grid here to contrast against, so the flag would be noise.
     eBody.append(...renderDiagnosticSections(visible));
     ePanel.appendChild(eBody);
+
+    const eVersions = _createElement({ tag: 'div' });
+    eVersions.style.cssText = VERSIONS_STYLE;
+    eVersions.textContent = versionsText;
+    ePanel.appendChild(eVersions);
 
     container.appendChild(ePanel);
 }

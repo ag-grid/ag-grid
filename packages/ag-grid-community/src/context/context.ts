@@ -326,6 +326,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     eRootDiv: HTMLElement;
+    agVersionsText: string;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;

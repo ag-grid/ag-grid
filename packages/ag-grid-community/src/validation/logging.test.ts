@@ -337,6 +337,16 @@ describe('suppression', () => {
         off();
     });
 
+    test('applies suppression before replaying errors raised while capture was off', () => {
+        _logPreInitErr(257, {} as any, 'boom');
+        _configureDiagnostics({ capture: true, suppress: [257] });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(received).toEqual([]);
+        off();
+    });
+
     test('does not throw a suppressed id even when its severity is enabled', () => {
         _configureDiagnostics({ throwOn: ['error'], suppress: [11] });
 
@@ -503,6 +513,8 @@ describe('dev validation config', () => {
     });
 });
 
+const VERSIONS_TEXT = 'ag-grid-community=99.9.9';
+
 describe('bootstrap panel', () => {
     test('renders only the buffered diagnostics not tied to a grid', () => {
         _configureDiagnostics({ capture: true });
@@ -511,12 +523,14 @@ describe('bootstrap panel', () => {
 
         const renderer = vi.fn();
         _provideBootstrapPanelRenderer(renderer);
-        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).toHaveBeenCalledTimes(1);
         const passed = renderer.mock.calls[0][1] as CapturedDiagnostic[];
         expect(passed.map((d) => d.id)).toEqual([200]);
         expect(passed.every((d) => d.gridId === undefined)).toBe(true);
+        // The versions reach the panel so a reported bootstrap failure carries the build it came from.
+        expect(renderer.mock.calls[0][2]).toBe(VERSIONS_TEXT);
     });
 
     test('does not invoke the renderer when there are no untied diagnostics', () => {
@@ -525,7 +539,7 @@ describe('bootstrap panel', () => {
 
         const renderer = vi.fn();
         _provideBootstrapPanelRenderer(renderer);
-        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).not.toHaveBeenCalled();
     });
@@ -538,8 +552,8 @@ describe('bootstrap panel', () => {
         _provideBootstrapPanelRenderer(renderer);
 
         // A re-created grid (e.g. React StrictMode) renders again; the consumed diagnostic must not repeat.
-        _renderBootstrapPanel(document.createElement('div'));
-        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).toHaveBeenCalledTimes(1);
     });

@@ -2,10 +2,15 @@ import { _doOnce } from 'ag-stack';
 
 import type { GridOptionsService } from '../gridOptionsService';
 
+/** Writes a debug line with the standard grid prefix. Callers are responsible for the `debug` check. */
+export function _logDebug(message: string, ...args: any[]) {
+    // eslint-disable-next-line no-console
+    console.log('AG Grid: ' + message, ...args);
+}
+
 export function _logIfDebug(gos: GridOptionsService, message: string, ...args: any[]) {
     if (gos.get('debug')) {
-        // eslint-disable-next-line no-console
-        console.log('AG Grid: ' + message, ...args);
+        _logDebug(message, ...args);
     }
 }
 
