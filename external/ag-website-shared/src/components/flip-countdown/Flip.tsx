@@ -1,0 +1,51 @@
+import '@pqina/flip/dist/flip.min.css';
+import React, { useEffect, useRef } from 'react';
+
+interface FlipProps {
+    value: string | number;
+}
+
+const Flip: React.FC<FlipProps> = ({ value }) => {
+    const root = useRef<HTMLDivElement>(null);
+    const tick = useRef<any>(null);
+
+    // mount
+    useEffect(() => {
+        const initTick = async () => {
+            try {
+                const Tick = await import('@pqina/flip');
+                if (root.current) {
+                    tick.current = Tick.default.DOM.create(root.current, { value });
+                }
+            } catch {
+                // Failed to load Tick library
+            }
+        };
+
+        initTick();
+
+        return () => {
+            if (tick.current) {
+                tick.current.destroy();
+            }
+        };
+        // Mount only: the initial value is seeded here and later values are pushed by the update
+        // effect below, so re-running this on a `value` change would tear down the flipper mid-count.
+    }, []);
+
+    // update
+    useEffect(() => {
+        if (tick.current) {
+            tick.current.value = value;
+        }
+    }, [value]);
+
+    return (
+        <div ref={root} className="tick">
+            {/* one flipper for the whole value */}
+            <span data-view="flip" />
+        </div>
+    );
+};
+
+export default Flip;

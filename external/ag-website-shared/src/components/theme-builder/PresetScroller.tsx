@@ -59,6 +59,7 @@ export const PresetButton = styled('button')`
     text-align: left;
     margin: 0 12px 8px 0;
     padding: 0;
+    box-shadow: none;
     scroll-snap-align: center;
 
     // Higher z index than blur container z index

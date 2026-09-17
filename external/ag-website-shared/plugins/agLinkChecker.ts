@@ -195,7 +195,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
 
                 const hrefMatch = /(?:^|\s)href=(["'])(.*?)\1/i.exec(tag);
                 if (hrefMatch) {
-                    recordUsage(hrefMatch[2]);
+                    recordUsage(decodeHtmlEntities(hrefMatch[2]));
                 }
             }
         };

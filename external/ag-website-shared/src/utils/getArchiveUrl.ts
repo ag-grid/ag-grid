@@ -43,9 +43,9 @@ export const getDocumentationArchiveUrl = ({
     const useDocumentationLink = getHasDocumentationLink({ version, site });
     let documentationArchiveLink = versionArchiveLink;
     if (path) {
-        documentationArchiveLink = pathJoin(versionArchiveLink, path);
+        documentationArchiveLink = addTrailingSlashToPath(pathJoin(versionArchiveLink, path));
     } else if (useDocumentationLink) {
-        documentationArchiveLink = pathJoin(versionArchiveLink, '/documentation');
+        documentationArchiveLink = addTrailingSlashToPath(pathJoin(versionArchiveLink, '/documentation'));
     }
 
     // `pathJoin` drops the trailing slash, so it has to be put back here.

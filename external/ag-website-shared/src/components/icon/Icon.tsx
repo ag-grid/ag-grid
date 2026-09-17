@@ -94,6 +94,7 @@ const CHARTS_ICON_MAP = {
     chartsCandlestick: CarbonIcon.ChartCandlestick,
     chartsOHLC: CarbonIcon.ChartHighLow,
     chartsOrg: CarbonIcon.ContainerServices,
+    chartsQuadrant: CarbonIcon.QuadrantPlot,
 };
 
 export const ICON_MAP = {

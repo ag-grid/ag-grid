@@ -392,6 +392,19 @@ a.metaValue {
     }
 }
 
+// `button-as-link` and `button-style-none` strip the design system's focus ring;
+// these controls are keyboard reachable, so give them an indicator of their own.
+.childButton,
+.unionTypesButton,
+.seeMore {
+    &:global(.button-as-link):focus-visible,
+    &:global(.button-style-none):focus-visible {
+        outline: 2px solid var(--color-link);
+        outline-offset: 2px;
+        border-radius: var(--radius-sm);
+    }
+}
+
 button.seeMore {
     color: var(--color-link);
     cursor: pointer;

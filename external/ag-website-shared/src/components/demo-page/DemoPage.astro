@@ -33,14 +33,24 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
                                     class:list={[styles.featureItem, isActive && styles.featureItemActive]}
                                     aria-current={isActive ? 'page' : undefined}
                                 >
-                                    <span class={styles.featureTitle}>{example.title}</span>
-                                    <span class={styles.featureDescription}>{example.description}</span>
+                                    {example.image && (
+                                        <span class={styles.featureImage}>
+                                            <img src={urlWithBaseUrl(example.image)} alt="" decoding="async" />
+                                        </span>
+                                    )}
+                                    <span class={styles.featureBody}>
+                                        <span class={styles.featureTitle}>{example.title}</span>
+                                        <span class={styles.featureDescription}>{example.description}</span>
+                                    </span>
                                 </a>
                             </li>
                         );
                     })
                 }
             </ul>
+
+            {/* Stands in for the demo card, hidden at this notice's breakpoint. The hero copy above stays. */}
+            <slot name="mobile-notice" />
 
             <div class={styles.ctaButtons}>
                 <a class="button" href={primaryCta.href}>{primaryCta.label}</a>
@@ -51,9 +61,6 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
             </div>
         </div>
     </aside>
-
-    {/* Stands in for the hero and demo card, both hidden at this notice's breakpoint. */}
-    <slot name="mobile-notice" />
 
     <div class={styles.demoCard}>
         <div class={styles.stage} data-demo-stage data-expanded="false" data-cutoff="true">
