@@ -146,8 +146,10 @@ describe('Row Numbers context menu (AG-16355)', () => {
         api.hidePopupMenu();
         await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
 
+        // the menu opens synchronously (the check above resolved on the first poll), so one
+        // flushed tick is a real window in which a row-number menu would have appeared
         rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
-        await asyncSetTimeout(50);
+        await asyncSetTimeout(0);
         expect(document.querySelectorAll('.ag-menu')).toHaveLength(0);
     });
 
