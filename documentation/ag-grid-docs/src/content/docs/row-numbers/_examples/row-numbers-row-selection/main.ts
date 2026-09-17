@@ -36,6 +36,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowSelection: {
         mode: 'multiRow',
         enableClickSelection: true,
+        checkboxes: false,
+        headerCheckbox: false,
     },
     rowNumbers: {
         suppressCellSelectionIntegration: true,
