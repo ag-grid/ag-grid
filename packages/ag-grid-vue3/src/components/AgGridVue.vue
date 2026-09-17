@@ -57,7 +57,7 @@ const getSlotCellRenderer = (slotName: string) => {
     let component = slotCellRenderers.get(slotName);
     if (!component) {
         component = defineComponent({
-            props: ['params'],
+            props: { params: { type: Object, required: true } },
             // withCtx-wrapped slot functions carry their own component context, so calling them from this unrelated wrapper still resolves provide/inject correctly
             setup(props: any) {
                 return () => slots[slotName]?.(props.params);
