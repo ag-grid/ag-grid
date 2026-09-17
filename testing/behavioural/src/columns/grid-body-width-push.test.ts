@@ -298,6 +298,32 @@ describe('Grid body width push', () => {
         expect(query('.ag-grid-viewport').scrollLeft).toBe(400);
     });
 
+    // The same timing window in the other direction: after a grow, the requested column can already fit in
+    // the measured viewport, so no scroll event arrives to refresh the virtual columns. The synchronous
+    // refresh inside ensureColumnVisible must therefore use that measurement rather than the last report.
+    test('ensureColumnVisible renders a column exposed by an unreported viewport grow', async () => {
+        mockGridLayout.gridWidth = 200;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: buildCols(15),
+            rowData: [{ c0: 1 }],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+
+        // Establish the initial 200px virtual window through the public path used by the assertion below.
+        dispatchGridSizeChanged(api, 200);
+        api.ensureColumnVisible('c0');
+        const virtualColumnIds = () => api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+        expect(virtualColumnIds()).not.toContain('c9');
+
+        mockGridLayout.gridWidth = 1000;
+        api.ensureColumnVisible('c9');
+
+        // c9 spans 900 to 1000, so it needs no scroll but must be rendered before the API returns.
+        expect(query('.ag-grid-viewport').scrollLeft).toBe(0);
+        expect(virtualColumnIds()).toContain('c9');
+    });
+
     // Container widths sized from the last reported width are re-pushed when the next report arrives, so
     // they can lag it harmlessly. Discarding the scroll position cannot be taken back that way, so the
     // pinned overflow that discards it is decided on the layout as it is.
