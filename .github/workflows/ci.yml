@@ -436,7 +436,7 @@ jobs:
         id: build_umd
         if: github.event_name == 'pull_request' && steps.build.outcome == 'success'
         run: |
-          yarn nx run-many -t build:umd -p ag-grid-community ag-grid-enterprise
+          yarn nx run-many -t build:umd -c staging -p ag-grid-community ag-grid-enterprise
 
       # Runs from the docs project so tsx picks up its tsconfig `paths` — the generator imports
       # the site's own import-map builder through the `@utils`/`@constants` aliases.
