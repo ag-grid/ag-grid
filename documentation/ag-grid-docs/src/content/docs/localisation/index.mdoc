@@ -64,6 +64,8 @@ The default language of the grid is [American English](https://github.com/ag-gri
 Translations are provided as an illustration only and are not guaranteed to be accurate or error free. They are designed to show developers where to store their chosen phrase or spelling variant in the target language.
 {% /note %}
 
+Each locale module is named after its full BCP47 tag, e.g. `AG_GRID_LOCALE_DA_DK` for `da-DK`. Locales that shipped before v36.2 are also still exported under their older region-only name, e.g. `AG_GRID_LOCALE_DK`. Those older names are deprecated and will be removed in a future major version — prefer the full-tag name.
+
 ## Using a Provided Locale Module
 
 All of the provided locales listed above are available in the `@ag-grid-community/locale` package. To use any of the provided locales in your application, follow these steps:
