@@ -192,8 +192,8 @@
     .ag-row-highlight-indent:where(:not(.ag-row-highlight-indent-pinned)) > .ag-grid-scrolling-cells::after,
     .ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
         margin-left: calc(
-            var(--ag-row-highlight-widgets, 2) * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
-                var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
+            var(--ag-row-highlight-widgets, 2) * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) +
+                var(--ag-cell-horizontal-padding) + var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
         );
     }
 
