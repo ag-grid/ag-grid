@@ -129,9 +129,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
                 rowCols.push(col);
                 headerCols?.push(col);
             } else if (hasAutoHeaderHeight(col)) {
-                if (headerCols === null) {
-                    headerCols = rowCols.slice();
-                }
+                headerCols ??= rowCols.slice();
                 headerCols.push(col);
             }
         }
@@ -256,6 +254,31 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 /** Module-level to avoid three Set allocations per header rebuild. */
 const seenGroups = new Set<AgColumnGroup>();
 
+/** Buckets `group` and its ancestors by level, stopping at the first one already bucketed. */
+const addGroupChain = (group: AgColumnGroup | null, skipFillers: boolean, groupsToRender: AgColumnGroup[][]): void => {
+    while (group) {
+        // Already bucketed means its ancestors are too, so the rest of the chain adds nothing.
+        if (seenGroups.has(group)) {
+            return;
+        }
+
+        if (skipFillers && group.isPadding()) {
+            group = group.parent;
+            continue;
+        }
+
+        const level = group.getProvidedColumnGroup().getLevel();
+        const row = groupsToRender[level];
+        if (!row) {
+            groupsToRender[level] = [group];
+        } else {
+            row.push(group);
+        }
+        seenGroups.add(group);
+        group = group.parent;
+    }
+};
+
 /** The groups above `cols`, bucketed by level, which is what one header row renders. */
 const workOutGroupsToRender = (cols: AgColumn[]): AgColumnGroup[][] => {
     seenGroups.clear();
@@ -267,37 +290,12 @@ const workOutGroupsToRender = (cols: AgColumn[]): AgColumnGroup[][] => {
     let lastSkipFillers = false;
     for (let i = 0, len = cols.length; i < len; ++i) {
         const col = cols[i];
-        let group = col.parent;
+        const group = col.parent;
         const skipFillers = col.isSpanHeaderHeight();
-        if (group === lastParent && skipFillers === lastSkipFillers) {
-            continue;
-        }
-        lastParent = group;
-        lastSkipFillers = skipFillers;
-
-        while (group) {
-            if (seenGroups.has(group)) {
-                // if we already have this group, then we don't need to add it again
-                // or traverse up the tree
-                break;
-            }
-
-            const skipFillerGroup = skipFillers && group.isPadding();
-            if (skipFillerGroup) {
-                group = group.parent;
-                continue;
-            }
-
-            const level = group.getProvidedColumnGroup().getLevel();
-
-            const row = groupsToRender[level];
-            if (!row) {
-                groupsToRender[level] = [group];
-            } else {
-                row.push(group);
-            }
-            seenGroups.add(group);
-            group = group.parent;
+        if (group !== lastParent || skipFillers !== lastSkipFillers) {
+            lastParent = group;
+            lastSkipFillers = skipFillers;
+            addGroupChain(group, skipFillers, groupsToRender);
         }
     }
 

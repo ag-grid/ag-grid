@@ -19,6 +19,8 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private nextId = 0;
     private readonly pinnedTopRows: OrderedCache<RowNode> = { cache: {}, order: [] };
     private readonly pinnedBottomRows: OrderedCache<RowNode> = { cache: {}, order: [] };
+    private topHeight = 0;
+    private bottomHeight = 0;
 
     public postConstruct(): void {
         const gos = this.gos;
@@ -75,14 +77,20 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
             rowTop += rowNode.rowHeight!;
         };
         forEach(this.pinnedBottomRows, updateRowHeight);
+        const bottomHeight = rowTop;
         rowTop = 0;
         forEach(this.pinnedTopRows, updateRowHeight);
 
-        if (anyChange) {
-            this.eventSvc.dispatchEvent({ type: 'pinnedHeightChanged' });
+        // A height applied outside this pass, by column autoHeight, moves no row top when it lands on the
+        // last row of its section, so only the total reports it.
+        if (!anyChange && rowTop === this.topHeight && bottomHeight === this.bottomHeight) {
+            return false;
         }
 
-        return anyChange;
+        this.topHeight = rowTop;
+        this.bottomHeight = bottomHeight;
+        this.eventSvc.dispatchEvent({ type: 'pinnedHeightChanged' });
+        return true;
     }
 
     private setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
