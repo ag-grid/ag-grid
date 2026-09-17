@@ -20,9 +20,6 @@ import {
 } from './parser-utils';
 import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path');
-
 function getOnGridReadyCode(bindings: ParsedBindings): string {
     const { onGridReady, data } = bindings;
     const additionalLines = [];
@@ -134,8 +131,7 @@ function getPropertyBindings(
 function getModuleImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
+    componentFileNames: string[]
 ): string[] {
     const { properties } = bindings;
 
@@ -143,10 +139,6 @@ function getModuleImports(
         "import { createApp, defineComponent, onBeforeMount, ref, shallowRef } from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue3';",
     ];
-
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
 
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindings.imports || []).filter((entry) => !entry.module.includes('./'))];
@@ -171,12 +163,7 @@ function getModuleImports(
     return imports;
 }
 
-function getImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
-): string[] {
+function getImports(bindings: ParsedBindings, exampleConfig: ExampleConfig, componentFileNames: string[]): string[] {
     const imports = [];
 
     const localeImport = findLocaleImport(bindings.imports);
@@ -184,7 +171,7 @@ function getImports(
         imports.push(`import { ${localeImport.imports.join(', ')} } from '@ag-grid-community/locale';`);
     }
 
-    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames));
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
@@ -201,8 +188,7 @@ function getImports(
 export function vanillaToVue3(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
+    componentFileNames: string[]
 ): () => string {
     const { typeDeclares, interfaces } = bindings;
 
@@ -220,7 +206,7 @@ export function vanillaToVue3(
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
     return () => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFileNames);
         const [propertyAssignments, propertyAttributes, _, propertyNames] = getPropertyBindings(
             bindings,
             rowDataType,

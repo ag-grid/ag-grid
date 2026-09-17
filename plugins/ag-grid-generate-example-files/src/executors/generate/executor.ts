@@ -263,7 +263,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             );
         }
 
-        let styleFilesKeys = [];
+        const styleFilesKeys = Object.keys(mergedStyleFiles);
         let mergedFiles = {
             ...mergedStyleFiles,
             ...htmlFiles,
@@ -271,10 +271,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             ...provideFrameworkFiles,
             ...interfaceContents,
         };
-        if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
-            styleFilesKeys = Object.keys(mergedStyleFiles);
-        }
-
         if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
             if (mergedFiles[mainFileName].includes('useFetchJson')) {
                 mergedFiles['useFetchJson.' + (internalFramework === 'reactFunctionalTs' ? 'tsx' : 'jsx')] =
