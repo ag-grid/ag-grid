@@ -18,7 +18,7 @@ import {
     watch,
 } from 'vue';
 
-import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { AgEventType, Column, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
@@ -225,14 +225,14 @@ const resolvesToSlot = (name: unknown, slotNames: Set<string>, components: any):
     return typeof indirectName === 'string' && slotNames.has(indirectName);
 };
 
-const findColIdsUsingSlots = (columnDefs: any, slotNames: Set<string>, components: any): string[] => {
-    if (!columnDefs) return [];
-    return columnDefs.flatMap((colDef: any) => {
-        if (colDef.children) return findColIdsUsingSlots(colDef.children, slotNames, components);
-        const colId = colDef.colId ?? colDef.field;
-        if (colId == null) return [];
-        if (colDef.cellRendererSelector) return [colId];
-        return resolvesToSlot(colDef.cellRenderer, slotNames, components) ? [colId] : [];
+// getAllGridColumns(), not getColumnDefs()/getColumns() — both of those report only the primary,
+// user-defined columns, missing a generated auto-group or pivot-result column's cellRenderer.
+const findColIdsUsingSlots = (columns: Column[] | null | undefined, slotNames: Set<string>, components: any): string[] => {
+    if (!columns) return [];
+    return columns.flatMap((col) => {
+        const colDef = col.getColDef();
+        if (colDef.cellRendererSelector) return [col.getColId()];
+        return resolvesToSlot(colDef.cellRenderer, slotNames, components) ? [col.getColId()] : [];
     });
 };
 
@@ -245,7 +245,7 @@ onUpdated(() => {
     );
     if (changedNames.size > 0) {
         const components = api.value?.getGridOption('components');
-        const columns = findColIdsUsingSlots(api.value?.getColumnDefs(), changedNames, components);
+        const columns = findColIdsUsingSlots(api.value?.getAllGridColumns(), changedNames, components);
         if (columns.length > 0) {
             api.value?.refreshCells({ columns, force: true });
         }

@@ -125,6 +125,19 @@ test('a slot swap is picked up when reached via a components alias or a cellRend
     await expect(selectorCell).toHaveText('After:42');
 });
 
+test('a slot swap on a generated auto-group column is picked up, not left stale', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-auto-group-swap');
+
+    const cell = page.locator('.ag-cell[col-id="ag-Grid-AutoColumn"]').first();
+    await expect(cell).toContainText('Before:A');
+
+    await page.locator('#toggle').click();
+
+    await expect(cell).toContainText('After:A');
+});
+
 test('a slot whose single root is a multi-root component keeps every DOM root', async ({ page }) => {
     test.setTimeout(5_000);
 

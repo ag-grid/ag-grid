@@ -135,6 +135,11 @@ const routes = [
         name: 'Cell Slots Indirect Swap',
         component: () => import('./test-cases/cell-slots-indirect-swap/Page.vue'),
     },
+    {
+        path: '/cell-slots-auto-group-swap',
+        name: 'Cell Slots Auto Group Swap',
+        component: () => import('./test-cases/cell-slots-auto-group-swap/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
