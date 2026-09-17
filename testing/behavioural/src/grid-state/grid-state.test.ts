@@ -798,11 +798,21 @@ describe('StateService - Grid State Management', () => {
             });
             await waitForNoLoadingRows(api);
 
-            api.setRowNodeExpanded(api.getRowNode('ie')!, true);
+            // expandAll is what activates ExpandAllStrategy; setRowNodeExpanded alone leaves the
+            // default strategy in place, so the saved state has to be the bulk one to test this path.
+            api.expandAll();
             await waitForNoLoadingRows(api);
-            const savedState = api.getState();
 
-            api.setRowNodeExpanded(api.getRowNode('ie')!, false);
+            // Collapse France individually — recorded as an exception in the bulk state.
+            api.setRowNodeExpanded(api.getRowNode('fr')!, false);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0); // allow debounced state update to flush
+
+            const savedState = api.getState();
+            expect(savedState.ssrmRowGroupExpansion).toEqual({ expandAll: true, invertedRowGroupIds: ['fr'] });
+            expect(savedState.rowGroupExpansion).toBeUndefined();
+
+            api.collapseAll();
             await waitForNoLoadingRows(api);
 
             api.setState(savedState);
