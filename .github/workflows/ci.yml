@@ -429,22 +429,20 @@ jobs:
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       # The enterprise UMD loads ag-grid-community at runtime, so publish both even when nx rebuilt
-      # only one. The same reasoning applies to the ESM entries and `styles/` the preview manifest
-      # names: they are listed explicitly so a narrower `build` above cannot silently omit one and
-      # leave the manifest promising a file that 404s. The file list itself is derived from the
-      # site's own import-map builder — see ag-dev-prompts docs/pr-plnkr-v2-plan.md.
-      - name: Build PR preview packages
-        id: build_preview_packages
+      # only one. The ESM entries and `styles/` the preview manifest names come from the `build`
+      # above, which covers every package. The file list itself is derived from the site's own
+      # import-map builder — see ag-dev-prompts docs/pr-plnkr-v2-plan.md.
+      - name: Build UMD bundles for PR preview
+        id: build_umd
         if: github.event_name == 'pull_request' && steps.build.outcome == 'success'
         run: |
-          yarn nx run-many -t build -p ag-grid-community ag-grid-enterprise ag-grid-react ag-grid-angular ag-grid-vue3 ag-stack @ag-grid-community/locale @ag-grid-community/styles
           yarn nx run-many -t build:umd -p ag-grid-community ag-grid-enterprise
 
       # Runs from the docs project so tsx picks up its tsconfig `paths` — the generator imports
       # the site's own import-map builder through the `@utils`/`@constants` aliases.
       - name: Stage PR preview payload
         id: build_preview
-        if: github.event_name == 'pull_request' && steps.build_preview_packages.outcome == 'success'
+        if: github.event_name == 'pull_request' && steps.build_umd.outcome == 'success'
         working-directory: documentation/ag-grid-docs
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
