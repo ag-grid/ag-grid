@@ -19,6 +19,11 @@ test('a cellRenderer string matching a slot renders it, while other columns rend
     await expect(slotCells.nth(0)).toHaveText('SLOT:9.99');
     await expect(slotCells.nth(1)).toHaveText('SLOT:19.5');
     await expect(slotCells.nth(2)).toHaveText('SLOT:100');
+
+    // A single-root slot is used as its own cell content, with no extra wrapper element, matching
+    // how any other Vue cellRenderer's own root becomes the cell's GUI (AG-14151).
+    const priceCellHtml = await page.locator('.ag-cell[col-id="price"]').first().innerHTML();
+    expect(priceCellHtml).toBe('<span class="slot-cell" data-testid="slot-cell">SLOT:9.99</span>');
 });
 
 test('multi-root slot content is not truncated', async ({ page }) => {
@@ -81,4 +86,17 @@ test('a v-if/v-else swap between two templates for the same slot is picked up, n
 
     await page.locator('#toggle').click();
     await expect(cell).toHaveText('After:42');
+});
+
+test('a slot matching a cellEditor name does not hijack the editor role', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-editor-scope');
+
+    const cell = page.locator('.ag-cell[col-id="value"]').first();
+    await cell.waitFor();
+    await cell.dblclick();
+
+    await expect(page.locator('[data-testid="real-editor"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="slot-should-not-be-used"]')).toHaveCount(0);
 });

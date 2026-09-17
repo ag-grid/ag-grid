@@ -17,8 +17,9 @@ export interface IFrameworkOverrides extends AgFrameworkOverrides {
      * vue components are specified in the "components" part of the vue component - as such we need a way to deteremine if a given component is
      * within that context - this method provides this
      * Note: This is only really used/necessary with cellRendererSelectors
+     * `propertyName` (e.g. 'cellRenderer', 'cellEditor') lets a framework scope its resolution to specific roles.
      */
-    frameworkComponent(name: string, components?: any): any;
+    frameworkComponent(name: string, components?: any, propertyName?: string): any;
 
     /*
      * Allows framework to identify if a class is a component from that framework.

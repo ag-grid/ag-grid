@@ -120,6 +120,11 @@ const routes = [
         name: 'Cell Slots Swap',
         component: () => import('./test-cases/cell-slots-swap/Page.vue'),
     },
+    {
+        path: '/cell-slots-editor-scope',
+        name: 'Cell Slots Editor Scope',
+        component: () => import('./test-cases/cell-slots-editor-scope/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
