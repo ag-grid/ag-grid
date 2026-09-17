@@ -741,8 +741,7 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().rowGroupExpansion).toEqual(savedState.rowGroupExpansion);
         });
 
-        // AG-18529: two top-level country groups, each with one leaf child, so a restored
-        // expansion has children the display index must pick up.
+        // Two country groups, each with one leaf child, so a restored expansion has children.
         const twoGroupsOneLeafEach: IServerSideDatasource = {
             getRows({ request, success }: IServerSideGetRowsParams) {
                 if (request.groupKeys.length === 0) {
@@ -760,9 +759,8 @@ describe('StateService - Grid State Management', () => {
             },
         };
 
-        // AG-18529: setState must do more than flip the expanded flag — the restored group's child
-        // rows must actually be displayed. Previously the chevron rendered as expanded while the
-        // children stayed out of the display index, so this asserts the displayed rows, not the flag.
+        // AG-18529: the restored group's child rows must be displayed, not merely flagged expanded,
+        // so these assert the displayed rows rather than `rowNode.expanded`.
         test('SSRM: setState re-displays the child rows of a restored expanded group', async () => {
             const api = gridsManager.createGrid('ssrmRestoreDisplaysChildren', {
                 columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
