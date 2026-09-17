@@ -8,6 +8,7 @@ import {
     polyfillOffsetParent,
 } from 'ag-test-utils';
 
+import type { GetContextMenuItemsParams } from 'ag-grid-community';
 import { ROW_NUMBERS_COLUMN_ID, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -102,5 +103,99 @@ describe('Row Numbers context menu (AG-16355)', () => {
         // the whole-row range spans the data columns; the row-number column itself is excluded
         // (rangeService.getColumnsFromModel -> shouldSkipColumn), which is why the copied text has no row number
         expect(api.getCellRanges()?.[0]?.columns.map((c) => c.getColId())).toEqual(['athlete', 'age']);
+    });
+    // The delegating default must pass the context-menu params straight through to the user callback.
+    test('the user callback receives the context-menu params for a row-number cell', async () => {
+        let params: GetContextMenuItemsParams | undefined;
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxParams', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getContextMenuItems: (p) => {
+                params = p;
+                return [{ name: 'Foo' }];
+            },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        rightClick(cell(gridDiv, 1, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Foo')).not.toBeNull());
+
+        expect(params?.column?.getColId()).toBe(ROW_NUMBERS_COLUMN_ID);
+        expect(params?.node?.rowIndex).toBe(1);
+        expect(params?.api).toBe(api);
+    });
+
+    // Guard: the fix must not hand a menu to grids that configured none.
+    test('no context menu is shown when no getContextMenuItems is configured', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxNoCallback', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // the default menu does open on a normal cell, so the absence below is not a dead assertion
+        rightClick(cell(gridDiv, 0, 'athlete'));
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).not.toHaveLength(0));
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+    });
+
+    // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
+    test('rowNumbers.contextMenuItems overrides the grid-level getContextMenuItems', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxOverride', {
+            columnDefs,
+            rowData,
+            rowNumbers: { contextMenuItems: [{ name: 'Bar' }] },
+            getContextMenuItems: () => [{ name: 'Foo' }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Bar')).not.toBeNull());
+        expect(menuOption('Foo')).toBeNull();
+    });
+
+    // Guard: right-clicking inside an existing whole-row range preserves it, rather than collapsing
+    // the range onto the right-clicked row.
+    test('right-clicking within an existing whole-row range preserves the range', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxExistingRange', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            cellSelection: true,
+            getContextMenuItems: (params) => params.defaultItems!,
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // select rows 0-2 by their row numbers
+        fireGridPointerDown(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        fireGridPointerDown(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID), { shiftKey: true });
+        expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(0);
+        expect(api.getCellRanges()?.[0]?.endRow?.rowIndex).toBe(2);
+
+        // right-clicking a row within it must not collapse it onto that row
+        rightClick(cell(gridDiv, 1, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Copy');
+
+        // rows are separated by the clipboard's CRLF line delimiter
+        await waitFor(() =>
+            expect(clipboardUtils.getText()).toBe(
+                'Michael Phelps\t23\r\nNatalie Coughlin\t25\r\nAleksey Nemov\t24'
+            )
+        );
+        expect(api.getCellRanges()).toHaveLength(1);
+        expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(0);
+        expect(api.getCellRanges()?.[0]?.endRow?.rowIndex).toBe(2);
     });
 });

@@ -48,6 +48,7 @@ import {
     _getRowAbove,
     _getRowBelow,
     _getRowCtrlForEventTarget,
+    _interpretAsRightClick,
     _getRowNode,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
@@ -174,6 +175,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     private isAllColumnsRange(range: CellRange, allColumns: AgColumn[]): boolean {
         return this.rangeSelectionExtensions.some((extension) => extension.isAllColumnsRange?.(range, allColumns));
+    }
+
+    private isRowInAllColumnsRange(cell: CellPosition): boolean {
+        const allDataColumns = this.getColumnsFromModel(this.visibleCols.allCols) ?? [];
+        return (
+            allDataColumns.length > 0 &&
+            this.cellRanges.some(
+                (range) => this.isRowInRange(cell, range) && this.isAllColumnsRange(range, allDataColumns)
+            )
+        );
     }
 
     private updateSelectionModeForCell(cellPosition: CellPosition): void {
@@ -428,6 +439,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.handleCellSelectionInput(cell, {
             target: event.target as HTMLElement | null,
             shiftKey: event.shiftKey,
+            isRightClick: _interpretAsRightClick(this.beans, event),
             isMultiRange: this.isMultiRange(event),
             isMultiKey,
             preventDefault: () => event.preventDefault(),
@@ -439,6 +451,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.handleCellSelectionInput(cell, {
             target: event.target as HTMLElement | null,
             shiftKey: event.shiftKey,
+            // keyboard selection should never be interpreted as a right click.
+            isRightClick: false,
             isMultiRange: this.isMultiRangeForKeyState(isMultiKey),
             isMultiKey,
             preventDefault: () => event.preventDefault(),
@@ -450,12 +464,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         params: {
             target: HTMLElement | null;
             shiftKey: boolean;
+            isRightClick: boolean;
             isMultiRange: boolean;
             isMultiKey: boolean;
             preventDefault: () => void;
         }
     ): void {
-        const { target, shiftKey, isMultiRange, isMultiKey, preventDefault } = params;
+        const { target, shiftKey, isRightClick, isMultiRange, isMultiKey, preventDefault } = params;
 
         if (this.shouldSuppressRangeSelection(target)) {
             return;
@@ -468,6 +483,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         if (shiftKey) {
             return this.extendLatestRangeToCell(cell);
+        }
+
+        // A right-click on an all-columns (row number) cell whose row already sits in a whole-row range
+        // preserves that range, as right-clicking inside a range does for a normal cell. The shared guard
+        // in cellMouseListenerFeature cannot cover this, because the row-number column is excluded from a
+        // range's columns and so such a cell is never reported as being inside one. Outside a whole-row
+        // range the right-click selects the row, so that the context menu acts on it (AG-16355).
+        if (isAllColumnsCell && isRightClick && this.isRowInAllColumnsRange(cell)) {
+            return;
         }
 
         this.updateSelectionModeForCell(cell);
