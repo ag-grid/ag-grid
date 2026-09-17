@@ -24,6 +24,7 @@ const VARIANTS = [
     { isEnterprise: false, isIntegratedCharts: false },
     { isEnterprise: true, isIntegratedCharts: false },
     { isEnterprise: false, isIntegratedCharts: true },
+    { isEnterprise: true, isIntegratedCharts: true },
 ] as const;
 
 const publishedMode = async () => {
