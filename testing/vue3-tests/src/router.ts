@@ -130,6 +130,11 @@ const routes = [
         name: 'Cell Slots Component Multi-Root',
         component: () => import('./test-cases/cell-slots-component-multi-root/Page.vue'),
     },
+    {
+        path: '/cell-slots-indirect-swap',
+        name: 'Cell Slots Indirect Swap',
+        component: () => import('./test-cases/cell-slots-indirect-swap/Page.vue'),
+    },
 ];
 
 export const router = createRouter({

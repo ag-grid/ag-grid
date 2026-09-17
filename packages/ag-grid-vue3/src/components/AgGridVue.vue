@@ -215,13 +215,24 @@ onMounted(() => {
 const slots = useSlots();
 let lastSlotFns: Record<string, unknown> = { ...slots };
 
-const findColIdsUsingSlots = (columnDefs: any, slotNames: Set<string>): string[] => {
+// A cellRenderer name may also resolve to a slot indirectly, via the `components` alias map
+// (VueFrameworkOverrides mirrors this same fallback). A cellRendererSelector's result is per-row
+// and can't be resolved without invoking it, so any column using one is refreshed defensively.
+const resolvesToSlot = (name: unknown, slotNames: Set<string>, components: any): boolean => {
+    if (typeof name !== 'string') return false;
+    if (slotNames.has(name)) return true;
+    const indirectName = components?.[name];
+    return typeof indirectName === 'string' && slotNames.has(indirectName);
+};
+
+const findColIdsUsingSlots = (columnDefs: any, slotNames: Set<string>, components: any): string[] => {
     if (!columnDefs) return [];
     return columnDefs.flatMap((colDef: any) => {
-        if (colDef.children) return findColIdsUsingSlots(colDef.children, slotNames);
-        if (typeof colDef.cellRenderer !== 'string' || !slotNames.has(colDef.cellRenderer)) return [];
+        if (colDef.children) return findColIdsUsingSlots(colDef.children, slotNames, components);
         const colId = colDef.colId ?? colDef.field;
-        return colId != null ? [colId] : [];
+        if (colId == null) return [];
+        if (colDef.cellRendererSelector) return [colId];
+        return resolvesToSlot(colDef.cellRenderer, slotNames, components) ? [colId] : [];
     });
 };
 
@@ -233,7 +244,8 @@ onUpdated(() => {
         )
     );
     if (changedNames.size > 0) {
-        const columns = findColIdsUsingSlots(api.value?.getColumnDefs(), changedNames);
+        const components = api.value?.getGridOption('components');
+        const columns = findColIdsUsingSlots(api.value?.getColumnDefs(), changedNames, components);
         if (columns.length > 0) {
             api.value?.refreshCells({ columns, force: true });
         }

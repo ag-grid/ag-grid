@@ -109,6 +109,22 @@ test('a slot matching a cellEditor name does not hijack the editor role', async 
     await expect(page.locator('[data-testid="slot-should-not-be-used"]')).toHaveCount(0);
 });
 
+test('a slot swap is picked up when reached via a components alias or a cellRendererSelector', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-indirect-swap');
+
+    const aliasCell = page.locator('.ag-cell[col-id="alias"]').first();
+    const selectorCell = page.locator('.ag-cell[col-id="selector"]').first();
+    await expect(aliasCell).toHaveText('Before:42');
+    await expect(selectorCell).toHaveText('Before:42');
+
+    await page.locator('#toggle').click();
+
+    await expect(aliasCell).toHaveText('After:42');
+    await expect(selectorCell).toHaveText('After:42');
+});
+
 test('a slot whose single root is a multi-root component keeps every DOM root', async ({ page }) => {
     test.setTimeout(5_000);
 
