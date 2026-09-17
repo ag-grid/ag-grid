@@ -7,6 +7,7 @@ let isFirefox: boolean;
 let isMacOs: boolean;
 let isIOS: boolean;
 let invisibleScrollbar: boolean;
+let realCssEngine: boolean | undefined;
 let browserScrollbarWidth: number;
 let maxDivHeight: number;
 
@@ -61,6 +62,36 @@ export function _getTabIndex(el: HTMLElement | null): string | null {
     }
 
     return numberTabIndex.toString();
+}
+
+const CSS_ENGINE_PROBE_PROPERTY = '--ag-css-engine-probe';
+const CSS_ENGINE_PROBE_VALUE = '137px';
+
+/**
+ * Whether a real CSS engine backs the DOM, as opposed to a headless one (jsdom, happy-dom) that
+ * parses styles without computing them. `null` while there is no body to probe against.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isRealCssEngine(): boolean | null {
+    if (realCssEngine !== undefined) {
+        return realCssEngine;
+    }
+    const body = typeof document === 'undefined' ? null : document.body;
+    if (!body) {
+        return null;
+    }
+    const parent = document.createElement('div');
+    parent.style.setProperty(CSS_ENGINE_PROBE_PROPERTY, CSS_ENGINE_PROBE_VALUE);
+    const child = document.createElement('div');
+    parent.appendChild(child);
+    body.appendChild(parent);
+    // A real engine inherits the custom property down to the child, a headless DOM does not. Reading a
+    // computed value rather than a measured one so a hidden body still gives a usable answer.
+    realCssEngine =
+        getComputedStyle(child).getPropertyValue(CSS_ENGINE_PROBE_PROPERTY).trim() === CSS_ENGINE_PROBE_VALUE;
+    parent.remove();
+    return realCssEngine;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
