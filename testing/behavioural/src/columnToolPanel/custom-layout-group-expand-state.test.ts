@@ -26,9 +26,13 @@ describe('column tool panel custom layout group expand state (AG-18218)', () => 
         gridMgr.reset();
     });
 
-    async function createGrid(gridId: string, initialState?: GridState): Promise<GridApi> {
+    async function createGrid(
+        gridId: string,
+        initialState?: GridState,
+        gridColumnDefs: (ColDef | ColGroupDef)[] = columnDefs
+    ): Promise<GridApi> {
         const gridApi = await gridMgr.createGridAndWait(gridId, {
-            columnDefs,
+            columnDefs: gridColumnDefs,
             rowData,
             initialState,
             sideBar: {
@@ -98,5 +102,30 @@ describe('column tool panel custom layout group expand state (AG-18218)', () => 
         const restoredApi = await createGrid('restoredGrid2', state);
 
         expect(getGroupExpandedStates(restoredApi)).toEqual({ athleteDetails: true });
+    });
+
+    test('restored state survives a grid layout whose groups the custom layout does not have', async () => {
+        // the panel first builds the grid's own group, which the saved state knows nothing about
+        const groupedColumnDefs: ColGroupDef[] = [
+            {
+                headerName: 'Grid Group',
+                groupId: 'gridGroup',
+                children: columnDefs,
+            },
+        ];
+
+        const gridApi = await createGrid('groupedGrid', undefined, groupedColumnDefs);
+
+        await waitFor(() => expect(getGroupExpandedStates(gridApi)).toEqual({ athleteDetails: true }));
+
+        gridApi.getToolPanelInstance('columns')!.collapseColumnGroups(['athleteDetails']);
+        const state = gridApi.getState();
+        expect(getSavedExpandedGroupIds(state)).toEqual([]);
+
+        gridMgr.reset();
+
+        const restoredApi = await createGrid('restoredGroupedGrid', state, groupedColumnDefs);
+
+        expect(getGroupExpandedStates(restoredApi)).toEqual({ athleteDetails: false });
     });
 });

@@ -71,7 +71,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private displayedColsList: ColumnModelItem[];
     private destroyColumnItemFuncs: (() => void)[] = [];
     private hasLoadedInitialState: boolean = false;
-    private isInitialState: boolean = false;
+    // expanded group ids from the restored grid state, or null when there is no state to restore
+    private restoredExpandedGroupIds: Set<string> | null = null;
     private skipRefocus: boolean = false;
     private customColumnLayout: AbstractColDef[] | null = null;
 
@@ -304,9 +305,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private loadInitialState(): void {
-        if (!this.hasLoadedInitialState) {
-            this.hasLoadedInitialState = true;
-            this.isInitialState = !!this.params.initialState;
+        if (this.hasLoadedInitialState) {
+            return;
+        }
+        this.hasLoadedInitialState = true;
+        const initialState = this.params.initialState as ColumnToolPanelState | undefined;
+        if (initialState) {
+            this.restoredExpandedGroupIds = new Set(initialState.expandedGroupIds);
         }
     }
 
@@ -317,28 +322,27 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private getExpandedStates(): { [key: string]: boolean } {
         const res: { [id: string]: boolean } = {};
 
-        if (this.isInitialState) {
-            const { expandedGroupIds } = this.params.initialState as ColumnToolPanelState;
-            for (const id of expandedGroupIds) {
-                res[id] = true;
-            }
-            return res;
+        if (this.allColsTree) {
+            this.forEachItem((item) => {
+                if (!item.group) {
+                    return;
+                }
+                const colGroup = item.columnGroup;
+                if (colGroup) {
+                    // group should always exist, this is defensive
+                    res[colGroup.groupId] = item.expanded;
+                }
+            });
         }
 
-        if (!this.allColsTree) {
-            return {};
+        // Groups the current tree does not contain fall back to the restored state, so it survives until the
+        // layout that owns them exists - a custom layout can introduce groups the grid layout never has.
+        const restoredIds = this.restoredExpandedGroupIds;
+        if (restoredIds) {
+            for (const id of restoredIds) {
+                res[id] ??= true;
+            }
         }
-
-        this.forEachItem((item) => {
-            if (!item.group) {
-                return;
-            }
-            const colGroup = item.columnGroup;
-            if (colGroup) {
-                // group should always exist, this is defensive
-                res[colGroup.groupId] = item.expanded;
-            }
-        });
 
         return res;
     }
@@ -348,8 +352,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return;
         }
 
-        const { isInitialState } = this;
-        let groupsExist = false;
+        // the restored state only names expanded groups, so every group it omits is collapsed
+        const hasRestoredState = !!this.restoredExpandedGroupIds;
         this.forEachItem((item) => {
             if (!item.group) {
                 return;
@@ -357,20 +361,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const colGroup = item.columnGroup;
             if (colGroup) {
                 // group should always exist, this is defensive
-                groupsExist = true;
                 const expanded = states[colGroup.groupId];
                 const groupExistedLastTime = expanded != null;
-                if (groupExistedLastTime || isInitialState) {
+                if (groupExistedLastTime || hasRestoredState) {
                     item.expanded = !!expanded;
                 }
             }
         });
-
-        // The restored state only names groups, so it stays pending while the panel shows none - a custom
-        // layout applied later (which can introduce groups the grid layout does not have) still gets it.
-        if (groupsExist) {
-            this.isInitialState = false;
-        }
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {
