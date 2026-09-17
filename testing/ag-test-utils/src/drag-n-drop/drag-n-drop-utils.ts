@@ -22,6 +22,7 @@ export function assertDropIndicatorVisible(api: GridApi): void {
         expect(!!row).toBeFalsy();
         expect(highlightElement).toBeUndefined();
         expect(gridElement.querySelector('.ag-row-highlight-indent')).toBeNull();
+        expect(gridElement.querySelector('.ag-row-highlight-indent-pinned')).toBeNull();
         return;
     }
 
@@ -65,6 +66,12 @@ export function assertDropIndicatorVisible(api: GridApi): void {
 
     const hasIndentClass = elementWithHighlight.classList.contains('ag-row-highlight-indent');
     expect(hasIndentClass).toBe(shouldIndent);
+
+    // The suppression class only ever qualifies an active indent; which configurations suppress is
+    // asserted in row-drop-highlight-api.test.ts, where the group column's pinning is known.
+    if (elementWithHighlight.classList.contains('ag-row-highlight-indent-pinned')) {
+        expect(hasIndentClass).toBe(true);
+    }
 
     const actualLevel = elementWithHighlight.style.getPropertyValue('--ag-row-highlight-level');
     const normalizedLevel = actualLevel === '' ? '0' : actualLevel;

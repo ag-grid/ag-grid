@@ -748,11 +748,26 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         rowGui?.rowComp.toggleCss('ag-row-highlight-inside', insideOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-below', belowOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-indent', shouldIndent);
+        rowGui?.rowComp.toggleCss('ag-row-highlight-indent-pinned', shouldIndent && this.isGroupColPinned());
         if (highlightActive) {
             rowGui?.element.style.setProperty('--ag-row-highlight-level', highlightLevel);
         } else {
             rowGui?.element.style.removeProperty('--ag-row-highlight-level');
         }
+    }
+
+    private isGroupColPinned(): boolean {
+        // In print layout every column renders into the centre section although it still reports a pinned side.
+        if (this.printLayout) {
+            return false;
+        }
+        const { showRowGroupCols, visibleCols } = this.beans;
+        const groupCols = showRowGroupCols?.columns;
+        if (!groupCols?.length) {
+            return false;
+        }
+        const groupCol = groupCols.find((col) => col.colDef.showRowGroup === true) ?? groupCols[0];
+        return visibleCols.leftCols.includes(groupCol) || visibleCols.rightCols.includes(groupCol);
     }
 
     private postProcessRowDragging(): void {
@@ -763,6 +778,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onDisplayedColumnsChanged(): void {
         this.rowModeFeature.onDisplayedColumnsChanged();
+        // RowDropHighlightService only dispatches on a node / position / uiLevel change, so a pinning
+        // change while the indicator is shown would otherwise leave the indent classes stale.
+        if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
+            this.onRowNodeHighlightChanged();
+        }
     }
 
     private onVirtualColumnsChanged(): void {

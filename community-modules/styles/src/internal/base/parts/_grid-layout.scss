@@ -189,7 +189,7 @@
         --ag-internal-row-highlight-inset: auto 0 0;
     }
 
-    .ag-row-highlight-indent > .ag-grid-scrolling-cells::after,
+    .ag-row-highlight-indent:not(.ag-row-highlight-indent-pinned) > .ag-grid-scrolling-cells::after,
     .ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
         margin-left: calc(
             2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
