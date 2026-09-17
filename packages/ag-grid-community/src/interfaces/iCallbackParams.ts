@@ -280,8 +280,10 @@ export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = an
     TData,
     TContext
 > {
-    data: any;
-    rowNode: IRowNode;
+    /** The data item provided to the grid for the row in question */
+    data: TData;
+    /** The row node being considered. */
+    rowNode: IRowNode<TData>;
 }
 
 export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
