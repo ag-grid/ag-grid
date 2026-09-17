@@ -2,7 +2,7 @@ import { BeanStub } from '../context/beanStub';
 import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
-import type { IClientSideRowModel, RefreshModelParams } from '../interfaces/iClientSideRowModel';
+import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
@@ -299,11 +299,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
-        // the row nodes are not built yet, so listeners that need the rows read them from the row model
-        const rowModel = this.beans.rowModel as IClientSideRowModel<TData>;
-        rowModel._updatingRowData = data ?? null;
-        this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', firstRowData: data?.length ? data[0] : null });
-        rowModel._updatingRowData = null;
+        // the row nodes are not built yet, so the event carries the data for listeners that need the rows
+        this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', rowData: data ?? null });
     }
 
     private createRowNode(data: TData, level: number, sourceRowIndex?: number): RowNode<TData> {

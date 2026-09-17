@@ -397,8 +397,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colAutosize.shouldQueueResizeOperations = true;
         }
         const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: () => {
-                const rowData = (this.beans.rowModel as IClientSideRowModel)._updatingRowData;
+            rowDataUpdateStarted: ({ rowData }) => {
                 if (!rowData?.length) {
                     return;
                 }
