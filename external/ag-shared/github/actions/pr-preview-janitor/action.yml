@@ -1,5 +1,5 @@
 name: 'PR preview — janitor sweep'
-description: Reclaim dead weight from a GitHub Pages publish branch — previews for closed PRs, and source maps that pr-preview-publish no longer publishes. Everything found is removed in ONE push. Caller supplies the schedule; this action is the whole sweep.
+description: Reclaim dead weight from a GitHub Pages publish branch — previews for closed PRs, and source maps that pr-preview-publish no longer publishes. Everything found is removed in ONE push, then the branch history is squashed so the removed blobs are actually reclaimed. Caller supplies the schedule; this action is the whole sweep.
 
 # Why this exists: GitHub Pages rebuilds and republishes the WHOLE site on every push to the
 # publish branch, and its branch builds are single-flight — a new push cancels the in-flight
@@ -11,6 +11,11 @@ description: Reclaim dead weight from a GitHub Pages publish branch — previews
 #      skip_when_closed narrows that race to seconds; only a periodic sweep closes it.
 #   2. Source maps. pr-preview-publish stopped publishing them, but publishes overlay rather than
 #      replace, so previously-published maps persist until their PR closes.
+#
+# Removing a path does not reclaim its blobs: pr-preview-publish only ever adds commits, so the
+# branch history is monotonic and every preview ever published is still reachable from the tip's
+# ancestry. The sweep therefore finishes by squashing the branch to one parentless commit
+# carrying the current tree. See ag-dev-prompts docs/pr-plnkr-v2-plan.md.
 #
 # Caller requirements: check out the repo first (this action runs the shared commit script from
 # the working tree), and grant `contents: write` plus `pull-requests: read`.
@@ -30,6 +35,13 @@ inputs:
         default: 'false'
     purge_source_maps:
         description: 'Also delete .map files under pr-*/. Leave off in repos that opt into include_source_maps.'
+        required: false
+        default: 'true'
+    squash_history:
+        # Force-pushing a publish branch is only safe because nothing branches from it and no
+        # clone of it is long-lived; it is still a force-push, so it is confined to the scheduled
+        # sweep (and a deliberate manual dispatch of it) and never runs on a PR publish path.
+        description: 'Replace the publish branch with one parentless commit carrying its current tree, so reclaimed previews actually free blobs. Runs only on a schedule or workflow_dispatch, and never under dry_run.'
         required: false
         default: 'true'
 
@@ -114,6 +126,24 @@ runs:
               PUBLISH_BRANCH: ${{ inputs.publish_branch }}
           run: bash "${{ github.action_path }}/../pr-preview-lib/gh-pages-commit.sh"
 
+        # After the removal, so the blobs the removal orphaned go with the history that still
+        # reaches them. Re-fetches the branch tip itself and pushes under a lease, so a preview
+        # published between the removal and here is squashed with the rest rather than lost.
+        # Not `always()`: squashing a branch whose planned removal failed would rewrite history
+        # for no gain and hide the failure behind a fresh commit.
+        - name: Squash publish branch history
+          id: squash
+          if: |
+              inputs.squash_history == 'true' && inputs.dry_run != 'true' &&
+              (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github_token }}
+              MODE: squash
+              COMMIT_MESSAGE: 'pr-preview: squash publish branch history'
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+          run: bash "${{ github.action_path }}/../pr-preview-lib/gh-pages-commit.sh"
+
         # always(): the summary is the only place a scheduled run reports anything, so it has to
         # survive a failure in either step above. It therefore reports on step OUTCOMES, not just
         # on the paths output — an empty output means "planning failed" just as readily as
@@ -126,6 +156,7 @@ runs:
               COUNT: ${{ steps.plan.outputs.count }}
               PLAN_OUTCOME: ${{ steps.plan.outcome }}
               REMOVE_OUTCOME: ${{ steps.remove.outcome }}
+              SQUASH_OUTCOME: ${{ steps.squash.outcome }}
               DRY_RUN: ${{ inputs.dry_run }}
               PUBLISH_BRANCH: ${{ inputs.publish_branch }}
           run: |
@@ -153,4 +184,11 @@ runs:
                       tr ' ' '\n' <<< "$PATHS"
                       echo '```'
                   fi
+                  echo
+                  case "$SQUASH_OUTCOME" in
+                      success) echo "History squashed to one commit — reclaimed blobs are now unreachable." ;;
+                      skipped) echo "History squash skipped." ;;
+                      '') echo "History squash did not run." ;;
+                      *) echo ":x: History squash failed (\`${SQUASH_OUTCOME}\`) — removed paths are still reachable from history." ;;
+                  esac
               } >> "$GITHUB_STEP_SUMMARY"
