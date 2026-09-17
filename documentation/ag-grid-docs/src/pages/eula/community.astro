@@ -25,10 +25,20 @@ import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/
                 </div>
             </header>
 
-            <div class={styles.policyList}>
+            <div class:list={[styles.policyList, 'licence']}>
                 {content.meta.map((line) => <h4 set:html={line} />)}
                 {COMMUNITY_LICENCE.terms.map((term) => <p>{term}</p>)}
             </div>
         </div>
     </div>
 </Layout>
+
+<style lang="scss">
+    @use 'design-system' as *;
+
+    // The intro above has no contents list beside it, unlike the other policy pages, so give the
+    // licence's own heading room to stand apart from it.
+    .licence {
+        margin-top: $spacing-size-12;
+    }
+</style>
