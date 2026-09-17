@@ -60,10 +60,8 @@ const getSlotCellRenderer = (slotName: string) => {
         component = defineComponent({
             props: { params: { type: Object, required: true } },
             setup(props: any) {
-                // Wrapped in a single host element: the mounting pipeline uses only the rendered
-                // fragment's firstElementChild as the cell's GUI, so multi-root or text-only slot
-                // content would otherwise be silently dropped.
-                // withCtx-wrapped slot functions carry their own component context, so calling them from this unrelated wrapper still resolves provide/inject correctly
+                // A span, since the mounting pipeline keeps only the fragment's firstElementChild
+                // as the cell's GUI; withCtx-wrapped slots still resolve provide/inject here.
                 return () => h('span', slots[slotName]?.(props.params));
             },
         });
@@ -72,21 +70,24 @@ const getSlotCellRenderer = (slotName: string) => {
     return component;
 };
 
-// An unset (undefined) component prop falls back to the same-named gridOptions property, matching
-// the precedence _combineAttributesAndGridOptions applies when the grid is built — an explicit
-// null prop is a real override there, so it must not fall back either.
+// Falls back to gridOptions only when the prop is undefined — an explicit null is a real
+// override there too, matching _combineAttributesAndGridOptions.
 const getEffectiveOption = (name: string): any => {
     const value = (props as any)[name];
     return value !== undefined ? value : (props.gridOptions as any)?.[name];
 };
 
-const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
-    const defaultColDef = getEffectiveOption('defaultColDef') as
-        | { type?: any; cellRenderer?: any; cellRendererSelector?: any }
-        | undefined;
-    // A colDef with no type of its own inherits defaultColDef's, same as _addColumnDefaultAndTypes.
-    const effectiveType = colDef.type ?? defaultColDef?.type;
+// Resolves cellRenderer/cellRendererSelector like _addColumnDefaultAndTypes: defaultColDef, then
+// each type in order, each key overridden only when that stage explicitly declares it (null included).
+const resolveInheritedRenderers = (
+    colDef: any,
+    defaultColDef: { type?: any; cellRenderer?: any; cellRendererSelector?: any } | undefined,
+    columnTypes: { [key: string]: any } | undefined
+): { cellRenderer: any; cellRendererSelector: any } => {
+    let cellRenderer = defaultColDef?.cellRenderer;
+    let cellRendererSelector = defaultColDef?.cellRendererSelector;
 
+    const effectiveType = colDef.type ?? defaultColDef?.type;
     let typeKeys: string[];
     if (Array.isArray(effectiveType)) {
         typeKeys = effectiveType;
@@ -98,19 +99,22 @@ const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
     // Core's own type-key resolution (mergeTypeKeys) trims every key, array-sourced or not.
     typeKeys = typeKeys.map((key) => key.trim());
 
-    const columnTypes = getEffectiveOption('columnTypes') as { [key: string]: any } | undefined;
-    const hasTypeRenderer = typeKeys.some((key) => {
+    typeKeys.forEach((key) => {
         const typeDef = columnTypes?.[key];
-        return typeDef?.cellRenderer != null || typeDef?.cellRendererSelector != null;
+        if (!typeDef) return;
+        if ('cellRenderer' in typeDef) cellRenderer = typeDef.cellRenderer;
+        if ('cellRendererSelector' in typeDef) cellRendererSelector = typeDef.cellRendererSelector;
     });
 
-    return (
-        hasTypeRenderer || defaultColDef?.cellRenderer != null || defaultColDef?.cellRendererSelector != null
-    );
+    return { cellRenderer, cellRendererSelector };
 };
 
 const applyCellSlots = (columnDefs: any): any => {
     if (!columnDefs) return columnDefs;
+    // Hoisted out of the per-column loop below — both are the same for every column in this call.
+    const defaultColDef = getEffectiveOption('defaultColDef');
+    const columnTypes = getEffectiveOption('columnTypes');
+
     return columnDefs.map((colDef: any) => {
         if (colDef.children) {
             return { ...colDef, children: applyCellSlots(colDef.children) };
@@ -120,16 +124,15 @@ const applyCellSlots = (columnDefs: any): any => {
         if (!slotName || !slots[slotName]) {
             return colDef;
         }
-        // A real value on either wins outright — the column already has its own renderer.
-        if (colDef.cellRenderer != null || colDef.cellRendererSelector != null) {
-            return colDef;
-        }
-        // An explicit null on either clears whatever defaultColDef/columnTypes would otherwise
-        // supply (_mergeDeep treats an explicit null as an override, not a no-op like undefined),
-        // so ancestors are skipped entirely in that case; only leaving both unset still lets an
-        // inherited renderer count.
-        const explicitlyCleared = colDef.cellRenderer === null || colDef.cellRendererSelector === null;
-        if (explicitlyCleared || !hasRendererFromTypeOrDefault(colDef)) {
+
+        // The column's own value wins whenever the key is present (explicit null clears an
+        // inherited one); only an absent key still resolves through defaultColDef/columnTypes.
+        const inherited = resolveInheritedRenderers(colDef, defaultColDef, columnTypes);
+        const effectiveCellRenderer = 'cellRenderer' in colDef ? colDef.cellRenderer : inherited.cellRenderer;
+        const effectiveCellRendererSelector =
+            'cellRendererSelector' in colDef ? colDef.cellRendererSelector : inherited.cellRendererSelector;
+
+        if (effectiveCellRenderer == null && effectiveCellRendererSelector == null) {
             return { ...colDef, cellRenderer: getSlotCellRenderer(slotName) };
         }
         return colDef;

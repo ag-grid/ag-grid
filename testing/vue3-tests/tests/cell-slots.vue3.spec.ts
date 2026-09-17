@@ -84,9 +84,7 @@ test('a slot respects a renderer resolved from a trimmed, comma-separated column
     await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
 });
 
-test('an explicit null cellRenderer clears an inherited defaultColDef renderer, letting the slot apply', async ({
-    page,
-}) => {
+test('explicit-null clearing is resolved per-property, not by clearing both together', async ({ page }) => {
     test.setTimeout(5_000);
 
     await page.goto('/cell-slots-precedence-cleared');
@@ -94,6 +92,11 @@ test('an explicit null cellRenderer clears an inherited defaultColDef renderer, 
     const firstCell = page.locator('.ag-cell').first();
     await firstCell.waitFor();
 
-    await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:100');
-    await expect(page.locator('[data-testid="default-renderer"]')).toHaveCount(0);
+    // total: cellRenderer explicitly null clears the inherited defaultColDef renderer, so its slot applies.
+    await expect(page.locator('[data-testid="slot-cell-total"]')).toHaveText('SLOT:100');
+
+    // qty: only cellRendererSelector is null; cellRenderer still inherits from defaultColDef, so
+    // that renderer must win and the slot must not apply.
+    await expect(page.locator('[data-testid="default-renderer"]')).toHaveText('DEFAULT:3');
+    await expect(page.locator('[data-testid="slot-cell-qty"]')).toHaveCount(0);
 });
