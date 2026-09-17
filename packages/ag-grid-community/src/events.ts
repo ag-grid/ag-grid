@@ -336,7 +336,7 @@ export interface RowDataUpdateStartedEvent<TData = any, TContext = any> extends 
     TData,
     TContext
 > {
-    firstRowData: TData | null;
+    rowData: TData[] | null;
 }
 
 export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
