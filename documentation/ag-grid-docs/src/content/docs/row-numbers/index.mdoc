@@ -46,6 +46,25 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } names=["suppressCellSelectionIntegration"] /%}
 
+## Context Menu
+
+Right-clicking a Row Number cell opens the grid [Context Menu](./context-menu/) with the items returned by
+`getContextMenuItems`, whether or not [Cell Selection](./cell-selection/) is enabled. When no context menu items are
+configured, the browser's own menu is shown, as it is for any other cell.
+
+When Cell Selection is enabled, the right-click also selects the whole row, so that items such as `Copy` act on the
+right-clicked row. A right-click within a row range that is already selected leaves that selection untouched.
+
+The `contextMenuItems` option overrides `getContextMenuItems` for the Row Numbers Column only.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: {
+        contextMenuItems: ['copy', 'export']
+    },
+}
+```
+
 ## Row Resizing
 
 To allow the Row Numbers feature to resize rows, the `enableRowResizer` property can be used.

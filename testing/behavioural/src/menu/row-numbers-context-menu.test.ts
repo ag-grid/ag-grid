@@ -190,9 +190,7 @@ describe('Row Numbers context menu (AG-16355)', () => {
 
         // rows are separated by the clipboard's CRLF line delimiter
         await waitFor(() =>
-            expect(clipboardUtils.getText()).toBe(
-                'Michael Phelps\t23\r\nNatalie Coughlin\t25\r\nAleksey Nemov\t24'
-            )
+            expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25\r\nAleksey Nemov\t24')
         );
         expect(api.getCellRanges()).toHaveLength(1);
         expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(0);
