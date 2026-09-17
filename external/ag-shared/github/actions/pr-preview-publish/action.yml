@@ -1,13 +1,27 @@
-name: 'PR preview — publish UMD bundles'
-description: Stage caller-supplied bundle files under pr-<N>/ and publish them to gh-pages (served at https://<owner>.github.io/<repo>/pr-<N>/<bundle>). Skips cleanly when no bundle exists. Concurrent publishes (other PRs, or this PR's other publishers) are resolved by a push-retry loop rather than a lock.
+name: 'PR preview — publish bundles'
+description: Stage caller-supplied bundle files and/or a staged directory under pr-<N>/ and publish them to gh-pages (served at https://<owner>.github.io/<repo>/pr-<N>/…). Skips cleanly when there is nothing to publish. Concurrent publishes (other PRs, or this PR's other publishers) are resolved by a push-retry loop rather than a lock.
 
 inputs:
     pr_number:
         description: 'PR number — bundles are published under pr-<pr_number>/.'
         required: true
     files:
-        description: 'Newline-separated bundle paths to publish (set include_source_maps to also publish a sibling <file>.map).'
-        required: true
+        description: 'Newline-separated bundle paths to publish FLAT at the root of pr-<N>/ (set include_source_maps to also publish a sibling <file>.map). Optional when source_dir is set.'
+        required: false
+        default: ''
+    source_dir:
+        # Flat files cannot express a package layout: a preview an ES module import map can point
+        # at needs `<pkg>/<path>` mirroring the npm package, and two packages legitimately ship a
+        # file of the same name (both ag-grid-community and ag-grid-enterprise ship
+        # dist/package/main.esm.mjs). Callers stage the tree they want and this copies it whole.
+        # See ag-dev-prompts docs/pr-plnkr-v2-plan.md.
+        description: 'Directory whose layout is preserved verbatim under pr-<N>/. Combines with files (which stay flat at the root). A missing directory is a warning, not a failure.'
+        required: false
+        default: ''
+    manifest:
+        description: 'Path to a JSON file published as pr-<N>/manifest.json — what the preview contains and how to rewrite URLs to it. A named-but-missing file fails the step.'
+        required: false
+        default: ''
     github_token:
         description: 'Token with contents:write for the publish branch.'
         required: false
@@ -23,7 +37,7 @@ inputs:
         # that weight is paid on every deploy by every PR and is the main driver of deploy
         # latency. Off by default: a preview bundle is loaded from a URL for live-testing, not
         # stepped through in a debugger. Opt in per caller where maps genuinely earn their cost.
-        description: 'Publish a sibling <file>.map alongside each bundle. Off by default — maps are large and rarely used in a preview.'
+        description: 'Publish a sibling <file>.map alongside each `files` bundle. Off by default — maps are large and rarely used in a preview. Does not filter source_dir, which is copied verbatim.'
         required: false
         default: 'false'
     skip_when_closed:
@@ -67,13 +81,33 @@ runs:
           env:
               PR_NUMBER: ${{ inputs.pr_number }}
               FILES: ${{ inputs.files }}
+              STAGE_SOURCE_DIR: ${{ inputs.source_dir }}
+              MANIFEST: ${{ inputs.manifest }}
               STAGE_DIR: ${{ runner.temp }}/pr-preview-stage
               INCLUDE_SOURCE_MAPS: ${{ inputs.include_source_maps }}
           run: |
               set -euo pipefail
+              if [ -z "$FILES" ] && [ -z "$STAGE_SOURCE_DIR" ]; then
+                  echo "::error::PR preview: one of 'files' or 'source_dir' is required." >&2
+                  exit 1
+              fi
               rm -rf "$STAGE_DIR"
               mkdir -p "$STAGE_DIR"
               found=0
+
+              # Whole-tree mode, copied before the flat list so a flat file wins any name clash at
+              # the root — the flat names are the back-compatible, externally-linked ones.
+              if [ -n "$STAGE_SOURCE_DIR" ]; then
+                  if [ -d "$STAGE_SOURCE_DIR" ]; then
+                      cp -R "$STAGE_SOURCE_DIR"/. "$STAGE_DIR"/
+                      staged=$(find "$STAGE_DIR" -type f | wc -l | tr -d ' ')
+                      echo "Staged ${staged} file(s) from ${STAGE_SOURCE_DIR}."
+                      found=$((found + staged))
+                  else
+                      echo "::warning::PR preview: source_dir not found, skipping: $STAGE_SOURCE_DIR"
+                  fi
+              fi
+
               while IFS= read -r f; do
                   [ -z "$f" ] && continue
                   if [ -f "$f" ]; then
@@ -90,9 +124,20 @@ runs:
               if [ "$found" -eq 0 ]; then
                   echo "::warning::PR preview: no bundles to publish — skipping deploy."
                   echo "publish=false" >> "$GITHUB_OUTPUT"
-              else
-                  echo "publish=true" >> "$GITHUB_OUTPUT"
+                  exit 0
               fi
+
+              # Publishing the payload without the manifest the caller named would silently
+              # degrade every reader of the preview to the legacy flat-UMD reading of it, so a
+              # missing manifest fails rather than warns.
+              if [ -n "$MANIFEST" ]; then
+                  if [ ! -f "$MANIFEST" ]; then
+                      echo "::error::PR preview: manifest not found: $MANIFEST" >&2
+                      exit 1
+                  fi
+                  cp "$MANIFEST" "$STAGE_DIR/manifest.json"
+              fi
+              echo "publish=true" >> "$GITHUB_OUTPUT"
 
         - name: Publish to ${{ inputs.publish_branch }}
           if: steps.guard.outputs.skip != 'true' && steps.stage.outputs.publish == 'true'

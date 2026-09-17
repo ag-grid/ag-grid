@@ -326,13 +326,9 @@ jobs:
             pull-requests: read
             packages: read
         outputs:
-            handled: ${{ steps.handler.outputs.handled }}
             issue_key: ${{ steps.handler.outputs.issue_key }}
-            pr_number: ${{ steps.handler.outputs.pr_number }}
             # Green CI held on open P0/P1 review findings; routed into agent-run.
             dispatch_pr_iterate: ${{ steps.handler.outputs.dispatch_pr_iterate }}
-            # The per-PR UMD bundles never published, so pr-plnkr must not run.
-            preview_unavailable: ${{ steps.handler.outputs.preview_unavailable }}
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
@@ -356,69 +352,27 @@ jobs:
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
                   # Effort-estimate write on promote; empty ⇒ skipped, never fatal.
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-                  # Live-test snippet over this PR's per-PR UMD bundles. `_append`,
-                  # not `_body`: `_body` posts only when AI summary is empty, which
-                  # on a real agent ticket never happens.
+                  # Live-test snippet over this PR's per-PR preview. `_append`, not
+                  # `_body`: `_body` posts only when AI summary is empty, which on a
+                  # real agent ticket never happens.
                   success_comment_append: |
-                      Live-test this PR in Plunker — paste these into a vanilla-JS sandbox:
+                      Live-test this PR in Plunker. A vanilla-JS repro loads the grid with a `<script src>`; a TypeScript, React, Angular or Vue one loads it through an import map. Replace whichever the repro uses.
+
+                      Script tags:
 
                       <script src="https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-community.min.js"></script>
                       <script src="https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-enterprise.min.js"></script>
 
-                      Bundles auto-cleanup on PR close. PR: {PR_URL}
+                      Import map — splice these into the repro's existing `<script type="importmap">`, replacing only the `ag-` entries and leaving `react`, `vue`, `@angular/*` and `ag-charts-*` alone:
 
-    # ------------------------------------------------------------ pr-plnkr
-    # Re-point the reporter's repro Plunker(s) at this PR's per-PR UMD bundles and
-    # post the fix-pinned links on the ticket. `handled` is true only on the first
-    # promoting green, so this runs once per PR with no marker field.
-    pr-plnkr:
-        needs: ci-success-handler
-        if: needs.ci-success-handler.outputs.handled == 'true' && needs.ci-success-handler.outputs.preview_unavailable != 'true'
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        permissions:
-            contents: read
-            packages: read
-            # The agent posts a marker comment on the PR (re-run idempotency).
-            pull-requests: write
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  fetch-depth: 1
+                      "ag-stack": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-stack/dist/package/main.esm.mjs",
+                      "ag-grid-community": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-community/dist/package/main.esm.mjs",
+                      "ag-grid-community/styles/": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-community/styles/",
+                      "ag-grid-enterprise": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-enterprise/dist/package/main.esm.mjs",
+                      "ag-grid-enterprise/styles/": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-community/styles/",
+                      "@ag-grid-community/locale": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/@ag-grid-community/locale/dist/package/main.esm.mjs",
+                      "ag-grid-react": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-react/dist/package/index.esm.mjs",
+                      "ag-grid-angular": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-angular/fesm2022/ag-grid-angular.mjs",
+                      "ag-grid-vue3": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-vue3/dist/main.mjs"
 
-            # setup-nx's postinstall renders .claude/settings.json, which the
-            # action verifies. No repo build runs here.
-            - name: Mint ag-dev-prompts read token
-              id: prompts-token
-              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-              with:
-                  app-id: ${{ vars.JIRA_AGENT_APP_ID }}
-                  private-key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
-                  owner: ag-grid
-                  repositories: ag-dev-prompts
-
-            - name: Setup Nx (renders .claude/settings.json)
-              uses: ./.github/actions/setup-nx
-              env:
-                  GITHUB_TOKEN: ${{ steps.prompts-token.outputs.token }}
-              with:
-                  cache_mode: ro
-                  fetch_base: skip
-
-            - name: Install @ag-grid/dev-prompts
-              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
-              with:
-                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
-
-            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-pr-plnkr
-              with:
-                  issue_key: ${{ needs.ci-success-handler.outputs.issue_key }}
-                  pr_number: ${{ needs.ci-success-handler.outputs.pr_number }}
-                  community_bundle_url: https://ag-grid.github.io/ag-grid/pr-${{ needs.ci-success-handler.outputs.pr_number }}/ag-grid-community.min.js
-                  enterprise_bundle_url: https://ag-grid.github.io/ag-grid/pr-${{ needs.ci-success-handler.outputs.pr_number }}/ag-grid-enterprise.min.js
-                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-                  jira_agent_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
-                  jira_agent_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
-                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
-                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
-                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                      The full published file list is at https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/manifest.json. All of it is removed on PR close. PR: {PR_URL}
