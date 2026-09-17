@@ -31,6 +31,39 @@ const CLIENT_HANDLED_FRAGMENTS = [
 ];
 
 /**
+ * The named character references that can appear in an href. The numeric forms below cover
+ * everything else, so only the handful HTML gives names to are spelled out here.
+ */
+const NAMED_HTML_ENTITIES: Record<string, string> = {
+    amp: '&',
+    apos: "'",
+    gt: '>',
+    lt: '<',
+    nbsp: '\u00a0',
+    quot: '"',
+};
+
+/**
+ * Decodes the character references in an href. Attribute values are read out of the raw HTML,
+ * so they arrive still encoded and have to be decoded before the href is picked apart: the `#`
+ * of a reference such as `&#38;` (the `&` between query parameters) would otherwise read as a
+ * fragment marker, turning `/gallery/?a=1&#38;b=2` into the unresolvable `/gallery/#38;b=2`.
+ */
+const decodeHtmlEntities = (value: string): string =>
+    value.replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, (reference, body: string) => {
+        if (!body.startsWith('#')) {
+            return NAMED_HTML_ENTITIES[body.toLowerCase()] ?? reference;
+        }
+        const isHex = body[1].toLowerCase() === 'x';
+        const codePoint = parseInt(isHex ? body.slice(2) : body.slice(1), isHex ? 16 : 10);
+        // Lone surrogates and out-of-range values would throw; leave them as they were.
+        if (!Number.isInteger(codePoint) || codePoint > 0x10ffff || (codePoint >= 0xd800 && codePoint <= 0xdfff)) {
+            return reference;
+        }
+        return String.fromCodePoint(codePoint);
+    });
+
+/**
  * Drops the whole query string (`?a=1&b=2`) while keeping the path and fragment, so
  * `/page/?ref=blog#foo` still validates the page and its `#foo` anchor. Only a `?` before
  * the fragment starts a query; one after `#` is part of the fragment itself.
