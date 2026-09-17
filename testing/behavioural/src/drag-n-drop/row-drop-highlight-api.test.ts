@@ -249,3 +249,72 @@ describe('ag-grid row highlight indent is suppressed in the centre section when 
         expect(getIndentState(api, 'a')).toEqual({ centreIndented: true, level: '1' });
     });
 });
+
+describe('ag-grid row highlight indent measures past the group cell’s own widgets', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowDragModule, TreeDataModule],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = [
+        {
+            id: 'root',
+            name: 'Root',
+            children: [{ id: 'a', name: 'A', children: [{ id: 'a1', name: 'A1' }] }],
+        },
+    ];
+
+    const createGrid = (id: string, autoGroupColumnDef: GridOptions['autoGroupColumnDef']) =>
+        gridsManager.createGrid(id, {
+            columnDefs: [{ field: 'type' }],
+            autoGroupColumnDef: { headerName: 'Name', field: 'name', ...autoGroupColumnDef },
+            treeData: true,
+            treeDataChildrenField: 'children',
+            rowDragManaged: true,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: ({ data }) => data.id,
+        });
+
+    /** The widget-slot multiplier the stylesheet applies to the indicator's base offset. */
+    const getIndentWidgets = (api: GridApi, rowId: string) =>
+        TestGridsManager.getHTMLElement(api)!
+            .querySelector<HTMLElement>(`.ag-row[row-id="${rowId}"]`)!
+            .style.getPropertyValue('--ag-row-highlight-widgets');
+
+    test('a drag handle on the group column takes two slots — the expander and the handle', () => {
+        const api = createGrid('handleOnGroupCol', { rowDrag: true });
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentWidgets(api, 'a')).toBe('2');
+    });
+
+    test('a drag handle on another column leaves one slot, so the indicator is not a level too deep', () => {
+        const api = createGrid('handleOnOtherCol', {});
+
+        // Group and leaf rows alike carry exactly one slot: the expander, or the leaf indent standing in for it.
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentWidgets(api, 'a')).toBe('1');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
+        expect(getIndentWidgets(api, 'a1')).toBe('1');
+    });
+
+    test('clearing the indicator removes the multiplier', () => {
+        const api = createGrid('cleared', { rowDrag: true });
+        const node = api.getRowNode('a')!;
+
+        api.setRowDropPositionIndicator({ row: node, dropIndicatorPosition: 'below' });
+        expect(getIndentWidgets(api, 'a')).toBe('2');
+
+        api.setRowDropPositionIndicator({ row: node, dropIndicatorPosition: 'none' });
+        expect(getIndentWidgets(api, 'a')).toBe('');
+    });
+});
