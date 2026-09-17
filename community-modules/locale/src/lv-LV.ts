@@ -853,7 +853,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaHasNote: 'Šai šūnai ir piezīme.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ' ',
+    thousandSeparator: ' ',
     decimalSeparator: ',',
 
     // Data types

@@ -855,7 +855,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaHasNote: 'Šis langelis turi pastabą.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: '.',
+    thousandSeparator: ' ',
     decimalSeparator: ',',
 
     // Data types

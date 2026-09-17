@@ -851,7 +851,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaHasNote: 'Sellel lahtril on märkus.',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ' ',
+    thousandSeparator: ' ',
     decimalSeparator: ',',
 
     // Data types
