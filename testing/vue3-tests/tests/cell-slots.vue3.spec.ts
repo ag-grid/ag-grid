@@ -84,22 +84,16 @@ test('a slot respects a renderer resolved from a trimmed, comma-separated column
     await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
 });
 
-test('slot precedence is re-evaluated when defaultColDef changes reactively', async ({ page }) => {
+test('an explicit null cellRenderer clears an inherited defaultColDef renderer, letting the slot apply', async ({
+    page,
+}) => {
     test.setTimeout(5_000);
 
-    await page.goto('/cell-slots-precedence-reactive');
+    await page.goto('/cell-slots-precedence-cleared');
 
     const firstCell = page.locator('.ag-cell').first();
     await firstCell.waitFor();
 
-    await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:100');
-    await expect(page.locator('[data-testid="default-renderer"]')).toHaveCount(0);
-
-    await page.locator('#add-default-renderer').click();
-    await expect(page.locator('[data-testid="default-renderer"]')).toHaveText('DEFAULT:100');
-    await expect(page.locator('[data-testid="slot-cell"]')).toHaveCount(0);
-
-    await page.locator('#remove-default-renderer').click();
     await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:100');
     await expect(page.locator('[data-testid="default-renderer"]')).toHaveCount(0);
 });

@@ -80,8 +80,6 @@ const getEffectiveOption = (name: string): any => {
     return value !== undefined ? value : (props.gridOptions as any)?.[name];
 };
 
-const hasCellSlot = (): boolean => Object.keys(slots).some((slotName) => slotName.startsWith('cell-'));
-
 const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
     const defaultColDef = getEffectiveOption('defaultColDef') as
         | { type?: any; cellRenderer?: any; cellRendererSelector?: any }
@@ -119,13 +117,19 @@ const applyCellSlots = (columnDefs: any): any => {
         }
         const colId = colDef.colId ?? colDef.field;
         const slotName = colId != null ? `cell-${colId}` : undefined;
-        if (
-            slotName &&
-            slots[slotName] &&
-            colDef.cellRenderer == null &&
-            colDef.cellRendererSelector == null &&
-            !hasRendererFromTypeOrDefault(colDef)
-        ) {
+        if (!slotName || !slots[slotName]) {
+            return colDef;
+        }
+        // A real value on either wins outright — the column already has its own renderer.
+        if (colDef.cellRenderer != null || colDef.cellRendererSelector != null) {
+            return colDef;
+        }
+        // An explicit null on either clears whatever defaultColDef/columnTypes would otherwise
+        // supply (_mergeDeep treats an explicit null as an override, not a no-op like undefined),
+        // so ancestors are skipped entirely in that case; only leaving both unset still lets an
+        // inherited renderer count.
+        const explicitlyCleared = colDef.cellRenderer === null || colDef.cellRendererSelector === null;
+        if (explicitlyCleared || !hasRendererFromTypeOrDefault(colDef)) {
             return { ...colDef, cellRenderer: getSlotCellRenderer(slotName) };
         }
         return colDef;
@@ -142,18 +146,6 @@ _GET_ALL_GRID_OPTIONS()
             propRef,
             (newValue: any, oldValue: any) => {
                 const value = propertyName === 'columnDefs' ? applyCellSlots(newValue) : newValue;
-                // A reactive defaultColDef/columnTypes change can add or remove an inherited
-                // renderer, so slot-vs-renderer precedence must be re-decided against the current
-                // columnDefs — the earlier decision baked into an already-transformed value goes
-                // stale otherwise. Skipped when no cell-* slot is in use, so this never resubmits
-                // columnDefs (and so never clobbers columns changed since via the grid API) for the
-                // common case where the feature isn't used at all.
-                if ((propertyName === 'defaultColDef' || propertyName === 'columnTypes') && hasCellSlot()) {
-                    const columnDefsSource = getEffectiveOption('columnDefs');
-                    if (columnDefsSource) {
-                        processChanges('columnDefs', applyCellSlots(columnDefsSource), undefined);
-                    }
-                }
                 if ((propertyName === "rowData" && !emittingRowData.value) ||
                     propertyName !== "rowData") {
                     processChanges(propertyName, value, oldValue);

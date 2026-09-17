@@ -121,9 +121,9 @@ const routes = [
         component: () => import('./test-cases/cell-slots-precedence-trim/Page.vue'),
     },
     {
-        path: '/cell-slots-precedence-reactive',
-        name: 'Cell Slots Precedence Reactive',
-        component: () => import('./test-cases/cell-slots-precedence-reactive/Page.vue'),
+        path: '/cell-slots-precedence-cleared',
+        name: 'Cell Slots Precedence Cleared',
+        component: () => import('./test-cases/cell-slots-precedence-cleared/Page.vue'),
     },
 ];
 
