@@ -1,0 +1,221 @@
+<div class="style-guide example-controls">
+    <div class="style-guide-item">
+        <code>p</code>
+        <p>I'm a paragraph.</p>
+        <p>I'm a paragraph with <code>some code</code></p>
+    </div>
+
+    <div class="style-guide-item">
+        <code>label</code>
+        <label>I'm a label</label>
+    </div>
+
+    <div class="style-guide-item">
+        <code>pre</code>
+        <pre>I'm a pre</pre>
+    </div>
+
+    <div class="style-guide-item">
+        <code>button</code>
+        <div class="controls-row">
+            <button>I'm a button</button>
+            <button>I'm a button with <code>some code</code></button>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>input type="submit"</code>
+        <input type="submit" value="I'm a submit input" />
+    </div>
+
+    <div class="style-guide-item">
+        <code>input type="text"</code>
+        <input type="text" placeholder="I'm a text input" />
+    </div>
+
+    <div class="style-guide-item">
+        <code>input type="checkbox"</code>
+        <div class="controls-row">
+            <label for="checked-c">I'm a checked checkbox with label:</label>
+            <input type="checkbox" id="checked-c" name="checked" checked="true" />
+            <label for="unchecked-c">I'm an unchecked checkbox with label:</label>
+            <input type="checkbox" id="unchecked-c" name="unchecked" />
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>input type="radio"</code>
+        <div class="controls-row">
+            <label for="checked-r">I'm a checked radio button with label:</label>
+            <input type="radio" id="checked-r" name="radio" checked="true" />
+            <label for="unchecked-r">I'm an unchecked radio button with label:</label>
+            <input type="radio" id="unchecked-r" name="radio" />
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>div class="button-group"</code>
+        <div class="controls-row">
+            <span>I'm a button group:</span>
+            <div class="button-group" role="group" aria-label="Button group">
+                <input type="radio" id="bg-alpha" name="button-group" value="alpha" checked />
+                <label for="bg-alpha">Alpha</label>
+                <input type="radio" id="bg-beta" name="button-group" value="beta" />
+                <label for="bg-beta">Beta</label>
+                <input type="radio" id="bg-gamma" name="button-group" value="gamma" />
+                <label for="bg-gamma">Gamma</label>
+            </div>
+        </div>
+        <div class="controls-row">
+            <span>I'm a button group containing code:</span>
+            <div class="button-group" role="group" aria-label="Button group with code">
+                <input type="radio" id="bg-code-left" name="button-group-code" value="left" checked />
+                <label for="bg-code-left"><code>'left'</code></label>
+                <input type="radio" id="bg-code-center" name="button-group-code" value="center" />
+                <label for="bg-code-center"><code>'center'</code></label>
+                <input type="radio" id="bg-code-right" name="button-group-code" value="right" />
+                <label for="bg-code-right"><code>'right'</code></label>
+            </div>
+        </div>
+        <div class="controls-row">
+            <span>I'm a button group with a disabled option:</span>
+            <div class="button-group" role="group" aria-label="Button group with a disabled option">
+                <input type="radio" id="bg-disabled-on" name="button-group-disabled" value="on" checked />
+                <label for="bg-disabled-on">Available</label>
+                <input type="radio" id="bg-disabled-off" name="button-group-disabled" value="off" disabled />
+                <label for="bg-disabled-off">Unavailable</label>
+            </div>
+        </div>
+        <div class="controls-row">
+            <span>I'm two button groups in one row:</span>
+            <div class="button-group gap-right" role="group" aria-label="First button group">
+                <input type="radio" id="bg-first-one" name="button-group-first" value="one" checked />
+                <label for="bg-first-one">One</label>
+                <input type="radio" id="bg-first-two" name="button-group-first" value="two" />
+                <label for="bg-first-two">Two</label>
+            </div>
+            <div class="button-group" role="group" aria-label="Second button group">
+                <input type="radio" id="bg-second-three" name="button-group-second" value="three" />
+                <label for="bg-second-three">Three</label>
+                <input type="radio" id="bg-second-four" name="button-group-second" value="four" checked />
+                <label for="bg-second-four">Four</label>
+            </div>
+        </div>
+        <div class="controls-row">
+            <fieldset class="control-group" disabled>
+                <span>I'm a button group in a disabled control-group:</span>
+                <div class="button-group" role="group" aria-label="Button group in a disabled control group">
+                    <input
+                        type="radio"
+                        id="bg-fieldset-selected"
+                        name="button-group-fieldset"
+                        value="selected"
+                        checked
+                    />
+                    <label for="bg-fieldset-selected">Selected</label>
+                    <input type="radio" id="bg-fieldset-other" name="button-group-fieldset" value="other" />
+                    <label for="bg-fieldset-other">Other</label>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>button aria-pressed</code>
+        <div class="controls-row">
+            <button aria-pressed="true">I'm a pressed toggle button</button>
+            <button aria-pressed="false">I'm an unpressed toggle button</button>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>disabled</code>
+        <div class="controls-row">
+            <button disabled>I'm a disabled button</button>
+            <select disabled>
+                <option value="Alpha">I'm a disabled select</option>
+            </select>
+            <input type="text" placeholder="I'm a disabled text input" disabled />
+            <input type="checkbox" disabled />
+        </div>
+        <div class="controls-row">
+            <fieldset class="control-group" disabled>
+                <label for="disabled-group-range">I'm a disabled control-group:</label>
+                <input type="range" id="disabled-group-range" min="0" max="10" step="1" value="5" />
+                <span>5</span>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>input type="number"</code>
+        <div class="controls-row">
+            <label for="number">I'm a number input with label:</label>
+            <input type="number" id="number" value="999" />
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>input type="range"</code>
+        <div class="controls-row">
+            <label for="number">I'm a range input (slider) with label: </label>
+            <input type="range" min="0" max="10" step="1" value="5" />
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>textarea</code>
+        <textarea placeholder="I'm a textarea"></textarea>
+    </div>
+
+    <div class="style-guide-item">
+        <code>select</code>
+        <label for="select">I'm a select with a label:</label>
+        <select name="select" id="select">
+            <option value="Alpha">Alpha</option>
+            <option value="Beta">Beta</option>
+            <option value="Gamma">Alpha</option>
+        </select>
+    </div>
+
+    <div class="style-guide-item">
+        <code>div class="controls-row"</code>
+        <div class="controls-row">
+            <button>Wrap</button>
+            <button>With</button>
+            <button>Row</button>
+            <label for="">To Vertically Center</label>
+            <button>Items</button>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>div class="controls-row center"</code>
+        <div class="controls-row center">
+            <button>Center</button>
+            <button>The</button>
+            <button>Row</button>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>button class="push-right"</code>
+        <div class="controls-row">
+            <button>Push</button>
+            <label>An item to the </label>
+            <button class="push-right">Right</button>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>button class="gap-left"</code>
+        <div class="controls-row">
+            <button>Add</button>
+            <button>A</button>
+            <button class="gap-left">Gap</button>
+            <label for="">To the left of the item</label>
+        </div>
+    </div>
+</div>
+
+<div id="myGrid" style="height: 300px"></div>

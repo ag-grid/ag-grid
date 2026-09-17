@@ -155,19 +155,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
-        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
         const componentNames = getComponentName(componentScriptFiles);
-        const indexTsx = vanillaToReactFunctionalTs(
-            deepCloneObject(typedBindings),
-            exampleConfig,
-            componentNames,
-            Object.keys(styleFiles)
-        )();
+        const indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames)();
 
         let indexJsx = convertTsxToJsx(indexTsx);
 
@@ -193,19 +187,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
-        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
         const entryFileName = getEntryFileName(internalFramework)!;
         const componentNames = getComponentName(componentScriptFiles);
-        let indexTsx = vanillaToReactFunctionalTs(
-            deepCloneObject(typedBindings),
-            exampleConfig,
-            componentNames,
-            Object.keys(styleFiles)
-        )();
+        let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames)();
 
         if (transformEntryFile) {
             indexTsx = transformEntryFile({ entryFile: indexTsx });
@@ -228,7 +216,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         typedBindings,
         otherScriptFiles,
         componentScriptFiles,
-        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
@@ -237,12 +224,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
 
         const componentNames = getComponentName(componentScriptFiles);
-        let appComponent = vanillaToAngular(
-            deepCloneObject(typedBindings),
-            exampleConfig,
-            componentNames,
-            Object.keys(styleFiles)
-        )();
+        let appComponent = vanillaToAngular(deepCloneObject(typedBindings), exampleConfig, componentNames)();
 
         if (transformEntryFile) {
             appComponent = transformEntryFile({ entryFile: appComponent });
@@ -269,18 +251,12 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         typedBindings,
         otherScriptFiles,
         componentScriptFiles,
-        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'vue3';
         const componentNames = getComponentName(componentScriptFiles);
-        let mainJs = vanillaToVue3(
-            deepCloneObject(typedBindings),
-            exampleConfig,
-            componentNames,
-            Object.keys(styleFiles)
-        )();
+        let mainJs = vanillaToVue3(deepCloneObject(typedBindings), exampleConfig, componentNames)();
 
         if (transformEntryFile) {
             mainJs = transformEntryFile({ entryFile: mainJs });
