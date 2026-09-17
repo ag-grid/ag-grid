@@ -287,7 +287,7 @@ describe('ag-grid row highlight indent measures past the group cell’s own widg
     const getIndentWidgets = (api: GridApi, rowId: string) =>
         TestGridsManager.getHTMLElement(api)!
             .querySelector<HTMLElement>(`.ag-row[row-id="${rowId}"]`)!
-            .style.getPropertyValue('--ag-row-highlight-widgets');
+            .style.getPropertyValue('--ag-internal-row-highlight-widgets');
 
     test('a drag handle on the group column takes two slots — the expander and the handle', () => {
         const api = createGrid('handleOnGroupCol', { rowDrag: true });

@@ -758,9 +758,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             style?.removeProperty('--ag-row-highlight-level');
         }
         if (indentWidgets === undefined) {
-            style?.removeProperty('--ag-row-highlight-widgets');
+            style?.removeProperty('--ag-internal-row-highlight-widgets');
         } else {
-            style?.setProperty('--ag-row-highlight-widgets', indentWidgets.toString());
+            style?.setProperty('--ag-internal-row-highlight-widgets', indentWidgets.toString());
         }
     }
 
