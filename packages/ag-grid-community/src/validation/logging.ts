@@ -132,6 +132,13 @@ export function _configureDiagnostics(config: {
     throwOn?: readonly Severity[];
     suppress?: ErrorId[];
 }): void {
+    if (config.throwOn !== undefined) {
+        throwSeverities = config.throwOn;
+    }
+    if (config.suppress !== undefined) {
+        suppressedIds = new Set(config.suppress);
+    }
+    // Capture last: the replay below must see this call's suppressed ids, not the previous ones.
     if (config.capture !== undefined) {
         const wasEnabled = captureEnabled;
         captureEnabled = config.capture;
@@ -141,12 +148,6 @@ export function _configureDiagnostics(config: {
         } else if (!wasEnabled) {
             replayPreInitDiagnostics();
         }
-    }
-    if (config.throwOn !== undefined) {
-        throwSeverities = config.throwOn;
-    }
-    if (config.suppress !== undefined) {
-        suppressedIds = new Set(config.suppress);
     }
 }
 

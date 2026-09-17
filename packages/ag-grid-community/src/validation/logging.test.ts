@@ -289,6 +289,16 @@ describe('suppression', () => {
         off();
     });
 
+    test('applies suppression before replaying errors raised while capture was off', () => {
+        _logPreInitErr(257, {} as any, 'boom');
+        _configureDiagnostics({ capture: true, suppress: [257] });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(received).toEqual([]);
+        off();
+    });
+
     test('does not throw a suppressed id even when its severity is enabled', () => {
         _configureDiagnostics({ throwOn: ['error'], suppress: [11] });
 
