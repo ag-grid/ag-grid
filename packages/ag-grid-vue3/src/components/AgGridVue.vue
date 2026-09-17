@@ -22,6 +22,7 @@ import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-commun
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
+    RenderApiModule,
     RowApiModule,
     _PUBLIC_EVENT_HANDLERS_MAP,
     _GET_ALL_GRID_OPTIONS,
@@ -174,6 +175,8 @@ const getProvides = () => {
 onMounted(() => {
     // Row API module is required for getRowData to work
     _registerModule(RowApiModule,undefined);
+    // Render API module is required for the refreshCells() call the slot-update watcher below makes
+    _registerModule(RenderApiModule, undefined);
     const frameworkComponentWrapper = new VueFrameworkComponentWrapper(getCurrentInstance(), getProvides());
 
     const gridParams = {

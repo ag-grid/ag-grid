@@ -1,4 +1,4 @@
-import { Comment, Fragment, Text, createVNode, defineComponent, h, render } from 'vue';
+import { createVNode, defineComponent, h, render } from 'vue';
 
 import { _errorForGrid, _errorWithoutAttribution } from 'ag-grid-community';
 
@@ -82,12 +82,10 @@ export class VueComponentFactory {
                         const rendered = parent.slots[slotName]?.(props.params);
                         const nodes = Array.isArray(rendered) ? rendered : rendered != null ? [rendered] : [];
                         const [only] = nodes;
-                        // A single real root is used unwrapped like any other cellRenderer's own
-                        // root (AG-14151); anything else needs a host element, since the mounting
-                        // pipeline otherwise only keeps the fragment's firstElementChild.
-                        const isSingleRealNode =
-                            nodes.length === 1 && only.type !== Text && only.type !== Comment && only.type !== Fragment;
-                        return isSingleRealNode ? only : h('span', nodes);
+                        // Only a plain element (`.type` is a tag-name string, unlike text/comment/
+                        // fragment/component vnodes) is trusted to have exactly one DOM root.
+                        const isSingleElementNode = nodes.length === 1 && typeof only.type === 'string';
+                        return isSingleElementNode ? only : h('span', nodes);
                     };
                 },
             });

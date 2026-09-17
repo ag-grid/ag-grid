@@ -100,3 +100,15 @@ test('a slot matching a cellEditor name does not hijack the editor role', async 
     await expect(page.locator('[data-testid="real-editor"]')).toHaveCount(1);
     await expect(page.locator('[data-testid="slot-should-not-be-used"]')).toHaveCount(0);
 });
+
+test('a slot whose single root is a multi-root component keeps every DOM root', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-component-multi-root');
+
+    const cell = page.locator('.ag-cell[col-id="value"]').first();
+    await cell.waitFor();
+
+    await expect(page.locator('[data-testid="component-root-a"]')).toHaveText('A:7');
+    await expect(page.locator('[data-testid="component-root-b"]')).toHaveText('B:7');
+});

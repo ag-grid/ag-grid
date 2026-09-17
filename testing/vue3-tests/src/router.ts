@@ -125,6 +125,11 @@ const routes = [
         name: 'Cell Slots Editor Scope',
         component: () => import('./test-cases/cell-slots-editor-scope/Page.vue'),
     },
+    {
+        path: '/cell-slots-component-multi-root',
+        name: 'Cell Slots Component Multi-Root',
+        component: () => import('./test-cases/cell-slots-component-multi-root/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
