@@ -17,7 +17,6 @@ import {
 import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { DetailCellRenderer } from './detail-cell-renderer.component';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

@@ -18,8 +18,6 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import './styles.css';
-
 const sharedModules = [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule];
 const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
 const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];

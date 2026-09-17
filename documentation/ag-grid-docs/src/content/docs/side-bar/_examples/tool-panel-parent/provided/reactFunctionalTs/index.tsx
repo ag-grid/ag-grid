@@ -15,7 +15,6 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
 if (process.env.NODE_ENV !== 'production') {
