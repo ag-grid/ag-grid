@@ -16,7 +16,6 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
 if (process.env.NODE_ENV !== 'production') {

@@ -15,8 +15,6 @@ import {
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 const { StrictMode, useCallback, useMemo, useRef, useState } = React;
 
 if (process.env.NODE_ENV !== 'production') {

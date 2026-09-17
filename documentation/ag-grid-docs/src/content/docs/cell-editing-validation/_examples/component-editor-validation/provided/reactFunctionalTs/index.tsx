@@ -14,7 +14,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import PhoneEditor from './phoneEditor';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

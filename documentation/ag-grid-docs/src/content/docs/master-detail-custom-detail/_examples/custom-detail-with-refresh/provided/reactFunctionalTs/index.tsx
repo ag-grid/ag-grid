@@ -13,7 +13,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import DetailCellRenderer from './detailCellRenderer';
 import type { IAccount } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

@@ -6,7 +6,6 @@ import type { ColDef, IOverlayParams } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomLoadingOverlay from './customLoadingOverlay';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
