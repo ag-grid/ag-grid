@@ -18,6 +18,12 @@ type Options = {
      * anchor links to them are validated against the framework pages they forward to.
      */
     frameworkRedirect?: { path: string; frameworks: readonly string[] };
+    /**
+     * Fragment prefixes whose target elements are rendered client-side, so the built HTML
+     * holds nothing to validate them against. Sites that server-render those targets should
+     * leave this unset and keep the stricter check.
+     */
+    clientRenderedFragmentPrefixes?: readonly string[];
 };
 
 const IGNORED_PATHS = ['/archive'];
@@ -141,7 +147,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     // `https://www.ag-grid.com/...` ones and the client-handled fragment links the existence
     // checks below leave alone, because the redirect happens before the target is consulted.
     const shapeIssues: Record<string, { message: string; filePaths: Set<string> }> = {};
-    const { prefix, frameworkRedirect } = options;
+    const { prefix, frameworkRedirect, clientRenderedFragmentPrefixes } = options;
 
     const fileSet = new Set(files);
     // A page served as `foo.html` rather than `foo/index.html` has no trailing-slash form.
@@ -191,6 +197,9 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                     return;
                 }
                 if (CLIENT_HANDLED_FRAGMENTS.includes(fragment)) {
+                    return;
+                }
+                if (clientRenderedFragmentPrefixes?.some((candidate) => fragment.startsWith(candidate))) {
                     return;
                 }
             }
