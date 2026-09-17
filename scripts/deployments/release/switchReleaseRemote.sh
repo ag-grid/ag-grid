@@ -52,7 +52,6 @@ mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/archive $GRID_ROOT_DIR/
 mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/charts $CHARTS_ROOT_DIR
 mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/studio $STUDIO_ROOT_DIR
 
-cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/eula $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/ecommerce $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/support $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/__shared $GRID_ROOT_DIR/
