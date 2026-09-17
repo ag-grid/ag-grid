@@ -57,3 +57,49 @@ test('a slot never overrides a renderer from columnTypes or defaultColDef', asyn
     await expect(page.locator('[data-testid="default-renderer"]')).toHaveText('DEFAULT:100');
     await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
 });
+
+test('a slot respects a renderer supplied only via gridOptions, inherited through defaultColDef.type', async ({
+    page,
+}) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-precedence-inherited');
+
+    const firstCell = page.locator('.ag-cell').first();
+    await firstCell.waitFor();
+
+    await expect(page.locator('[data-testid="type-renderer"]')).toHaveText('TYPE:9.99');
+    await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
+});
+
+test('a slot respects a renderer resolved from a trimmed, comma-separated column type', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-precedence-trim');
+
+    const firstCell = page.locator('.ag-cell').first();
+    await firstCell.waitFor();
+
+    await expect(page.locator('[data-testid="type-renderer"]')).toHaveText('TYPE:3');
+    await expect(page.locator('[data-testid="slot-should-not-render"]')).toHaveCount(0);
+});
+
+test('slot precedence is re-evaluated when defaultColDef changes reactively', async ({ page }) => {
+    test.setTimeout(5_000);
+
+    await page.goto('/cell-slots-precedence-reactive');
+
+    const firstCell = page.locator('.ag-cell').first();
+    await firstCell.waitFor();
+
+    await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:100');
+    await expect(page.locator('[data-testid="default-renderer"]')).toHaveCount(0);
+
+    await page.locator('#add-default-renderer').click();
+    await expect(page.locator('[data-testid="default-renderer"]')).toHaveText('DEFAULT:100');
+    await expect(page.locator('[data-testid="slot-cell"]')).toHaveCount(0);
+
+    await page.locator('#remove-default-renderer').click();
+    await expect(page.locator('[data-testid="slot-cell"]')).toHaveText('SLOT:100');
+    await expect(page.locator('[data-testid="default-renderer"]')).toHaveCount(0);
+});

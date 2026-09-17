@@ -110,6 +110,21 @@ const routes = [
         name: 'Cell Slots Precedence',
         component: () => import('./test-cases/cell-slots-precedence/Page.vue'),
     },
+    {
+        path: '/cell-slots-precedence-inherited',
+        name: 'Cell Slots Precedence Inherited',
+        component: () => import('./test-cases/cell-slots-precedence-inherited/Page.vue'),
+    },
+    {
+        path: '/cell-slots-precedence-trim',
+        name: 'Cell Slots Precedence Trim',
+        component: () => import('./test-cases/cell-slots-precedence-trim/Page.vue'),
+    },
+    {
+        path: '/cell-slots-precedence-reactive',
+        name: 'Cell Slots Precedence Reactive',
+        component: () => import('./test-cases/cell-slots-precedence-reactive/Page.vue'),
+    },
 ];
 
 export const router = createRouter({

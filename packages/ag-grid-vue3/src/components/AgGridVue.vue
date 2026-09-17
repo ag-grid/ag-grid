@@ -72,21 +72,32 @@ const getSlotCellRenderer = (slotName: string) => {
     return component;
 };
 
+// An unset component prop falls back to the same-named gridOptions property, matching the
+// precedence _combineAttributesAndGridOptions applies when the grid is built.
+const getEffectiveOption = (name: string): any => (props as any)[name] ?? (props.gridOptions as any)?.[name];
+
 const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
+    const defaultColDef = getEffectiveOption('defaultColDef') as
+        | { type?: any; cellRenderer?: any; cellRendererSelector?: any }
+        | undefined;
+    // A colDef with no type of its own inherits defaultColDef's, same as _addColumnDefaultAndTypes.
+    const effectiveType = colDef.type ?? defaultColDef?.type;
+
     let typeKeys: string[];
-    if (Array.isArray(colDef.type)) {
-        typeKeys = colDef.type;
-    } else if (typeof colDef.type === 'string') {
-        typeKeys = colDef.type.split(',');
+    if (Array.isArray(effectiveType)) {
+        typeKeys = effectiveType;
+    } else if (typeof effectiveType === 'string') {
+        typeKeys = effectiveType.split(',').map((key: string) => key.trim());
     } else {
         typeKeys = [];
     }
-    const columnTypes = props.columnTypes as { [key: string]: any } | undefined;
+
+    const columnTypes = getEffectiveOption('columnTypes') as { [key: string]: any } | undefined;
     const hasTypeRenderer = typeKeys.some((key) => {
         const typeDef = columnTypes?.[key];
         return typeDef?.cellRenderer != null || typeDef?.cellRendererSelector != null;
     });
-    const defaultColDef = props.defaultColDef as { cellRenderer?: any; cellRendererSelector?: any } | undefined;
+
     return (
         hasTypeRenderer || defaultColDef?.cellRenderer != null || defaultColDef?.cellRendererSelector != null
     );
@@ -123,6 +134,15 @@ _GET_ALL_GRID_OPTIONS()
             propRef,
             (newValue: any, oldValue: any) => {
                 const value = propertyName === 'columnDefs' ? applyCellSlots(newValue) : newValue;
+                // A reactive defaultColDef/columnTypes change can add or remove an inherited
+                // renderer, so slot-vs-renderer precedence must be re-decided against the current
+                // columnDefs — the earlier decision baked into an already-transformed value goes stale otherwise.
+                if (propertyName === 'defaultColDef' || propertyName === 'columnTypes') {
+                    const columnDefsSource = getEffectiveOption('columnDefs');
+                    if (columnDefsSource) {
+                        processChanges('columnDefs', applyCellSlots(columnDefsSource), undefined);
+                    }
+                }
                 if ((propertyName === "rowData" && !emittingRowData.value) ||
                     propertyName !== "rowData") {
                     processChanges(propertyName, value, oldValue);
