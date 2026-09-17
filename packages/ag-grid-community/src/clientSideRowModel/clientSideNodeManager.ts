@@ -299,7 +299,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
-        // the row nodes are not built yet, so the event carries the data for listeners that need the rows
         this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', rowData: data ?? null });
     }
 

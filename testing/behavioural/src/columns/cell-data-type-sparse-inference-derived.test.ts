@@ -21,8 +21,6 @@ interface Row {
     date?: string | null;
 }
 
-// A type inferred from a sparse column must drive every derived behaviour - editor, filter,
-// formatter, parser, grouping and aggregation - exactly as an explicit declaration does.
 describe('derived behaviour of a sparsely inferred cellDataType', () => {
     const gridsManager = new TestGridsManager({
         includeDefaultModules: true,
@@ -71,7 +69,6 @@ describe('derived behaviour of a sparsely inferred cellDataType', () => {
         return props;
     };
 
-    // `inferred` has no value in row 0, `explicit` declares the same type it should end up inferring
     const createParityGrid = (rowData: Row[], cellDataType: string) =>
         gridsManager.createGrid('grid', {
             columnDefs: [
@@ -130,7 +127,6 @@ describe('derived behaviour of a sparsely inferred cellDataType', () => {
         await user.type(input, '2001');
         await user.keyboard('{Enter}');
 
-        // the number parser returns a number, the fallback text type would leave a string
         expect(rowData[1].year).toBe(2001);
     });
 

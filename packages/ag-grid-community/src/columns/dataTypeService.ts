@@ -348,7 +348,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
             return fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
         };
 
-        // OPTIMIZATION: scanning stops at the first value, so a densely populated column reads one row
         let value: any;
         const rowData = this.getInitialRowData();
         if (rowData) {
@@ -376,7 +375,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return matchedType ?? 'object';
     }
 
-    /** The row data to infer from, or `null` if only the row nodes are available. */
     private getInitialRowData(): any[] | null {
         const rowData = this.gos.get('rowData');
         if (rowData?.length) {
@@ -417,7 +415,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
         const beans = this.beans;
-        // the row nodes are not built yet, so the updating row data is the only source to infer from
         this.initialData = rowData;
         const state: ColumnState[] = [];
         this.destroyColumnStateUpdateListeners();
@@ -453,7 +450,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.initialData = null;
     }
 
-    /** Re-creates the column definition with the inferred data type, returning any column state to re-apply */
     private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
         const column = this.colModel.colsById[colId];
         if (!column) {
