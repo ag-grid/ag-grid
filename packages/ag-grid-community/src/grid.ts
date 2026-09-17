@@ -127,14 +127,7 @@ export class GridCoreCreator {
 
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
-        // Captured here, from the modules this grid is actually created from, and shared by every
-        // surface that reports the versions. The global registry keeps changing as an application
-        // lazy-loads modules for its other grids, so re-deriving this later would report packages
-        // this grid never instantiated.
         const agVersionsText = _getAgVersionsText(registeredModules);
-
-        // Logged before `createBeansList`, which can bail out with no beans at all - the versions
-        // are most valuable in exactly that case.
         _logVersionIfDebug(gridOptions.debug, registeredModules);
 
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
