@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import styles from '@ag-website-shared/components/policies/policyPage.module.scss';
+import { htmlHrefsWithBaseUrl } from '@utils/htmlHrefsWithBaseUrl';
 import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/markdown-pages/communityLicenceContent';
 
 // Heading, intro copy, licence name and copyright are shared with the /eula/community.md twin so
@@ -21,7 +22,7 @@ import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    {content.intro.map((line) => <p set:html={line} />)}
+                    {content.intro.map((line) => <p set:html={htmlHrefsWithBaseUrl(line)} />)}
                 </div>
             </header>
 
