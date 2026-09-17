@@ -5,7 +5,7 @@ import markdocConfig from '../../../markdoc.config';
 // Raw Markdoc source for the body. The page imports the same file as a compiled Astro component;
 // `?raw` gives the twin the source to re-render as markdown.
 import eulaBody from '../../content/policies/eula.mdoc?raw';
-import { EULA_CONTENT } from './eulaContent';
+import { EULA_CONTENT } from '../eula/eulaPresentations';
 import { GRID_PRODUCT_NAME, gridSiteFrontmatter } from './gridFrontmatter';
 
 const PAGE_NAME = 'eula';

@@ -5,7 +5,7 @@
  * /eula/commercial/, so the package and the website cannot drift.
  *
  * The file is a standalone HTML document: the agreement's heading, version and introductory notice
- * (`EULA_CONTENT`), then the clauses and schedules rendered from `src/content/policies/eula.mdoc`.
+ * (`policies/eula.json`), then the clauses and schedules rendered from `src/content/policies/eula.mdoc`.
  * Run by `scripts/deployments/prep_and_archive/updateLicenses.sh` at deployment, and by hand with
  * `npx tsx scripts/licence/generate-enterprise-licence.ts` from `documentation/ag-grid-docs`.
  */

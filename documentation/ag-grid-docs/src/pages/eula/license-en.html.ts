@@ -1,5 +1,5 @@
+import { EULA_PRESENTATIONS } from '@utils/eula/eulaPresentations';
 import { renderEulaHtml } from '@utils/eula/renderEulaHtml';
-import { EULA_CLICKWRAP_CONTENT } from '@utils/markdown-pages/eulaContent';
 
 import eulaSource from '../../content/policies/eula.mdoc?raw';
 
@@ -8,7 +8,7 @@ import eulaSource from '../../content/policies/eula.mdoc?raw';
 // button, so the notice refers to that button. Otherwise rendered from the same sources as
 // /eula/commercial/, so the two cannot drift.
 export function GET() {
-    return new Response(renderEulaHtml(eulaSource, { content: EULA_CLICKWRAP_CONTENT, embedded: true }), {
+    return new Response(renderEulaHtml(eulaSource, { content: EULA_PRESENTATIONS.checkout, embedded: true }), {
         status: 200,
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });

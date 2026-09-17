@@ -1,7 +1,7 @@
 import type { PolicyContent } from '@ag-website-shared/components/policies/policyContent';
 import Markdoc from '@markdoc/markdoc';
 
-import { EULA_CONTENT } from '../markdown-pages/eulaContent';
+import { EULA_CONTENT } from './eulaPresentations';
 
 // The EULA body uses no Markdoc tags, functions or variables, so no site config is needed to render it.
 const MARKDOC_CONFIG = {};
@@ -12,7 +12,7 @@ const MARKDOC_CONFIG = {};
  * followed by the clauses and schedules rendered from the `.mdoc` source.
  *
  * Served at `/eula/license-en.html`, which the ecommerce site embeds in an iframe (with the
- * click-to-accept notice, `EULA_CLICKWRAP_CONTENT`, and `embedded` so the iframe controls how the
+ * click-to-accept notice, `EULA_PRESENTATIONS.checkout`, and `embedded` so the iframe controls how the
  * text flows and supplies the heading), and written into the `ag-grid-enterprise` package as `LICENSE.html` by
  * `scripts/licence/generate-enterprise-licence.ts`.
  */
@@ -21,10 +21,11 @@ export function renderEulaHtml(
     { content = EULA_CONTENT, embedded = false }: { content?: PolicyContent; embedded?: boolean } = {}
 ): string {
     const { heading, meta, intro } = content;
-    // A document read on its own keeps a readable measure and opens with its heading; an embedded one
-    // takes the iframe's width and starts straight at the notice, since the checkout supplies the heading.
+    // A document read on its own keeps a readable measure and opens with its heading and version lines;
+    // an embedded one takes the iframe's width and starts straight at the notice, since the checkout
+    // supplies the heading and presents the current agreement only.
     const bodyLayout = embedded ? 'margin: 0; padding: 0 1em;' : 'max-width: 52em; margin: 2em auto; padding: 0 1em;';
-    const headingBlock = embedded ? [] : [`<h1>${heading}</h1>`, '<hr>'];
+    const headingBlock = embedded ? [] : [`<h1>${heading}</h1>`, '<hr>', ...meta.map((line) => `<h4>${line}</h4>`)];
     const body = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG));
 
     return `<!doctype html>
@@ -39,7 +40,7 @@ hr { border: 0; border-top: 1px solid #ccc; margin: 1.5em 0; }
 </style>
 </head>
 <body>
-${[...headingBlock, ...meta.map((line) => `<h4>${line}</h4>`), ...intro.map((line) => `<p>${line}</p>`), body].join('\n')}
+${[...headingBlock, ...intro.map((line) => `<p>${line}</p>`), body].join('\n')}
 </body>
 </html>
 `;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { EULA_CONTENT } from '../eula/eulaPresentations';
 import { buildEulaMarkdown } from './buildEulaMarkdown';
-import { EULA_CONTENT } from './eulaContent';
 
 const SITE_ROOT = 'https://www.ag-grid.com/';
 
