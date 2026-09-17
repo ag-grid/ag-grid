@@ -210,18 +210,33 @@ onMounted(() => {
 
 // A cellRenderer resolved from a slot (VueComponentFactory) reads this instance's slots directly,
 // bypassing Vue's normal parent-to-child update propagation since it's mounted into a detached
-// fragment. Force a refresh whenever a slot's own function reference changes, so e.g. a v-if/v-else
-// swap between two templates for the same slot name is picked up rather than left stale.
+// fragment. Refresh only the columns using a slot whose function reference changed, so e.g. a
+// v-if/v-else swap between two templates for the same slot name is picked up rather than left stale.
 const slots = useSlots();
 let lastSlotFns: Record<string, unknown> = { ...slots };
+
+const findColIdsUsingSlots = (columnDefs: any, slotNames: Set<string>): string[] => {
+    if (!columnDefs) return [];
+    return columnDefs.flatMap((colDef: any) => {
+        if (colDef.children) return findColIdsUsingSlots(colDef.children, slotNames);
+        if (typeof colDef.cellRenderer !== 'string' || !slotNames.has(colDef.cellRenderer)) return [];
+        const colId = colDef.colId ?? colDef.field;
+        return colId != null ? [colId] : [];
+    });
+};
+
 onUpdated(() => {
     if (!gridCreated.value) return;
-    const currentKeys = Object.keys(slots);
-    const changed =
-        currentKeys.length !== Object.keys(lastSlotFns).length ||
-        currentKeys.some((key) => slots[key] !== lastSlotFns[key]);
-    if (changed) {
-        api.value?.refreshCells({ force: true });
+    const changedNames = new Set(
+        [...Object.keys(slots), ...Object.keys(lastSlotFns)].filter(
+            (key) => key !== '_' && slots[key] !== lastSlotFns[key]
+        )
+    );
+    if (changedNames.size > 0) {
+        const columns = findColIdsUsingSlots(api.value?.getColumnDefs(), changedNames);
+        if (columns.length > 0) {
+            api.value?.refreshCells({ columns, force: true });
+        }
     }
     lastSlotFns = { ...slots };
 });

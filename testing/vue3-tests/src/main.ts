@@ -10,6 +10,7 @@ import App from './App.vue';
 import { router } from './router';
 import RealEditor from './test-cases/cell-slots-editor-scope/RealEditor.vue';
 import RegisteredCell from './test-cases/cell-slots-priority/RegisteredCell.vue';
+import OtherRegisteredCell from './test-cases/cell-slots-swap/OtherRegisteredCell.vue';
 import DemoRenderer from './test-cases/zd34301-inject-provide/DemoRenderer.vue';
 
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
@@ -19,6 +20,7 @@ const demoTablePlugin = {
         app.component('DemoRenderer', DemoRenderer);
         app.component('PrioritySharedCell', RegisteredCell);
         app.component('EditorAndSlotName', RealEditor);
+        app.component('OtherRegisteredCell', OtherRegisteredCell);
     },
 };
 

@@ -16,7 +16,11 @@ export class VueComponentFactory {
     // hasOwnProperty guards against the internal slots object's prototype (e.g. `toString`,
     // `constructor`) being mistaken for a real slot.
     public static hasSlot(parent: any, name: string): boolean {
-        return !!parent.slots && Object.prototype.hasOwnProperty.call(parent.slots, name);
+        return (
+            !!parent.slots &&
+            Object.prototype.hasOwnProperty.call(parent.slots, name) &&
+            typeof parent.slots[name] === 'function'
+        );
     }
 
     private static getOrCreateCache(cache: WeakMap<any, Map<string, any>>, parent: any): Map<string, any> {

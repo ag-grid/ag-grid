@@ -84,8 +84,16 @@ test('a v-if/v-else swap between two templates for the same slot is picked up, n
     const cell = page.locator('.ag-cell[col-id="value"]').first();
     await expect(cell).toHaveText('Before:42');
 
+    const otherCell = page.locator('[data-testid="other-cell"]').first();
+    await expect(otherCell).toHaveText('Other:1');
+    const mountCountBefore = await otherCell.getAttribute('data-mount-count');
+
     await page.locator('#toggle').click();
     await expect(cell).toHaveText('After:42');
+
+    // The unrelated "other" column's slot didn't change, so its cellRenderer must not be
+    // refreshed/remounted just because the "value" column's slot toggled.
+    await expect(otherCell).toHaveAttribute('data-mount-count', mountCountBefore);
 });
 
 test('a slot matching a cellEditor name does not hijack the editor role', async ({ page }) => {

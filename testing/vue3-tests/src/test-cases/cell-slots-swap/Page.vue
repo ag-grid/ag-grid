@@ -1,13 +1,17 @@
 <script setup>
 // Verifies a cell whose cellRenderer resolves to a slot picks up a v-if/v-else swap between two
-// differently-named templates for the same slot, instead of staying stuck on the earlier content.
+// differently-named templates for the same slot, instead of staying stuck on the earlier content -
+// and that doing so doesn't refresh/remount an unrelated column using a globally registered component.
 import { ref } from 'vue';
 
 import { AgGridVue } from 'ag-grid-vue3';
 
 const showBefore = ref(true);
-const rowData = [{ value: 42 }];
-const columnDefs = [{ headerName: 'Value', field: 'value', cellRenderer: 'swapCell' }];
+const rowData = [{ value: 42, other: 1 }];
+const columnDefs = [
+    { headerName: 'Value', field: 'value', cellRenderer: 'swapCell' },
+    { headerName: 'Other', field: 'other', cellRenderer: 'OtherRegisteredCell' },
+];
 
 function toggle() {
     showBefore.value = !showBefore.value;
