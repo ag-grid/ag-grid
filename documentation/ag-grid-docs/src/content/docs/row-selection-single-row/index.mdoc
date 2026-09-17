@@ -45,6 +45,23 @@ Setting `rowSelection.checkboxes` to the boolean `false` removes the checkboxes 
 For rows where both `isRowSelectable` and `rowSelection.checkboxes` return `false`, checkboxes will be hidden, rather than disabled.
 {% /note %}
 
+## Selection via Row Numbers
+
+When [Row Numbers](./row-numbers/) are enabled, clicking a Row Number selects the row, provided click selection is enabled. This gives users a dedicated click target for selecting rows when the checkboxes have been removed.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: true,
+    rowSelection: {
+        mode: 'singleRow',
+        checkboxes: false,
+        enableClickSelection: true,
+    }
+}
+```
+
+If [Cell Selection](./cell-selection/) is also enabled, a Row Number click selects the row and the cells in it. To leave only the row selected, see [Suppressing Cell Selection Integration](./row-numbers/#suppressing-cell-selection-integration).
+
 ## Configure Selectable Rows
 
 It is possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
