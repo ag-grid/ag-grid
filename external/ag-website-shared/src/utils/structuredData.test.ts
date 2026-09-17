@@ -1,4 +1,5 @@
 import {
+    buildAgGridOrganization,
     buildBreadcrumbList,
     buildContactPage,
     buildJsonLdDocument,
@@ -482,5 +483,21 @@ describe('serializeJsonLd', () => {
         expect(serialised).not.toContain('</script>');
         expect(serialised).toContain('<\\/script>');
         expect(JSON.parse(serialised)).toEqual(data);
+    });
+});
+
+describe('buildAgGridOrganization', () => {
+    test('emits the AG Grid Ltd company node under the grid @id', () => {
+        const result = buildAgGridOrganization();
+
+        expect(result).toMatchObject({
+            '@type': 'Organization',
+            '@id': 'https://www.ag-grid.com/#organization',
+            name: 'AG Grid',
+            url: 'https://www.ag-grid.com/',
+            legalName: 'AG Grid Ltd',
+            sameAs: expect.arrayContaining(['https://www.wikidata.org/wiki/Q128283374']),
+        });
+        expect(result.contactPoint).toHaveLength(2);
     });
 });
