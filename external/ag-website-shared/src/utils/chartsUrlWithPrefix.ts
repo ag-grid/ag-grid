@@ -3,8 +3,6 @@ import { addTrailingSlashToPath } from '@ag-website-shared/utils/addTrailingSlas
 import { CHARTS_SITE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 
-import { addTrailingSlashToPath } from './addTrailingSlash';
-
 export const chartsUrlWithPrefix = ({
     url = '',
     framework,
