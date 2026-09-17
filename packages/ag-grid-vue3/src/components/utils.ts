@@ -39,6 +39,9 @@ import type {
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
+    GetDefaultCsvExportParams,
+    GetDefaultExcelExportParams,
+    GetDefaultPdfExportParams,
     GetDocument,
     GetFullRowEditValidationErrors,
     GetGroupRowAgg,
@@ -1894,6 +1897,24 @@ export interface Props<TData> {
          * @agModule `ClipboardModule`
          */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>,
+    /** Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
+         * each time an export is performed. Function should return a configuration object used to export to CSV.
+         * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
+         * @agModule `CsvExportModule`
+         */
+    getDefaultCsvExportParams?: GetDefaultCsvExportParams<TData>,
+    /** Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
+         * each time an export is performed. Function should return a configuration object used to export to Excel.
+         * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
+         * @agModule `ExcelExportModule`
+         */
+    getDefaultExcelExportParams?: GetDefaultExcelExportParams<TData>,
+    /** Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
+         * each time an export is performed. Function should return a configuration object used to export to PDF.
+         * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
+         * @agModule `PdfExportModule`
+         */
+    getDefaultPdfExportParams?: GetDefaultPdfExportParams<TData>,
     /** Grid calls this method to know if an external filter is present.
          * Called exactly once every time the grid senses a filter change.
          * Should return `true` if external filtering is active, otherwise `false`.
@@ -2533,6 +2554,9 @@ export function getProps() {
         processCellFromClipboard: undefined,
         sendToClipboard: undefined,
         processDataFromClipboard: undefined,
+        getDefaultCsvExportParams: undefined,
+        getDefaultExcelExportParams: undefined,
+        getDefaultPdfExportParams: undefined,
         isExternalFilterPresent: undefined,
         doesExternalFilterPass: undefined,
         getChartToolbarItems: undefined,
