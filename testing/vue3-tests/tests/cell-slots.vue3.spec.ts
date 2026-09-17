@@ -97,6 +97,11 @@ test('explicit-null clearing is resolved per-property, not by clearing both toge
 
     // qty: only cellRendererSelector is null; cellRenderer still inherits from defaultColDef, so
     // that renderer must win and the slot must not apply.
-    await expect(page.locator('[data-testid="default-renderer"]')).toHaveText('DEFAULT:3');
+    await expect(page.locator('.ag-cell[col-id="qty"] [data-testid="default-renderer"]')).toHaveText('DEFAULT:3');
     await expect(page.locator('[data-testid="slot-cell-qty"]')).toHaveCount(0);
+
+    // amount: cellRenderer is explicitly undefined, which core treats as unset (not a clearing
+    // override like null), so it still inherits defaultColDef's renderer and the slot must not apply.
+    await expect(page.locator('.ag-cell[col-id="amount"] [data-testid="default-renderer"]')).toHaveText('DEFAULT:50');
+    await expect(page.locator('[data-testid="slot-cell-amount"]')).toHaveCount(0);
 });

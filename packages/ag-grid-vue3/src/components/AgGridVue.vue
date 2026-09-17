@@ -102,8 +102,10 @@ const resolveInheritedRenderers = (
     typeKeys.forEach((key) => {
         const typeDef = columnTypes?.[key];
         if (!typeDef) return;
-        if ('cellRenderer' in typeDef) cellRenderer = typeDef.cellRenderer;
-        if ('cellRendererSelector' in typeDef) cellRendererSelector = typeDef.cellRendererSelector;
+        // _mergeDeep is called with copyUndefined=false, so an explicit undefined is skipped —
+        // only null or a real value overrides the running value from the previous stage.
+        if (typeDef.cellRenderer !== undefined) cellRenderer = typeDef.cellRenderer;
+        if (typeDef.cellRendererSelector !== undefined) cellRendererSelector = typeDef.cellRendererSelector;
     });
 
     return { cellRenderer, cellRendererSelector };
@@ -125,12 +127,12 @@ const applyCellSlots = (columnDefs: any): any => {
             return colDef;
         }
 
-        // The column's own value wins whenever the key is present (explicit null clears an
-        // inherited one); only an absent key still resolves through defaultColDef/columnTypes.
+        // The column's own value wins whenever it's set to null or a real value (explicit null
+        // clears an inherited one); only undefined still resolves through defaultColDef/columnTypes.
         const inherited = resolveInheritedRenderers(colDef, defaultColDef, columnTypes);
-        const effectiveCellRenderer = 'cellRenderer' in colDef ? colDef.cellRenderer : inherited.cellRenderer;
+        const effectiveCellRenderer = colDef.cellRenderer !== undefined ? colDef.cellRenderer : inherited.cellRenderer;
         const effectiveCellRendererSelector =
-            'cellRendererSelector' in colDef ? colDef.cellRendererSelector : inherited.cellRendererSelector;
+            colDef.cellRendererSelector !== undefined ? colDef.cellRendererSelector : inherited.cellRendererSelector;
 
         if (effectiveCellRenderer == null && effectiveCellRendererSelector == null) {
             return { ...colDef, cellRenderer: getSlotCellRenderer(slotName) };
