@@ -40,6 +40,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
     private headerObserver?: MutationObserver;
     private observedHeader?: Element;
+    private popupObserver?: MutationObserver;
+    private observedPopupParent?: Element;
 
     public postConstruct(): void {
         // Add a delayed setup that is also debounced to be more robust with Reacts async rendering.
@@ -98,6 +100,22 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         // watched for in the DOM instead - the same approach as the scroll listener above.
         this.headerObserver = new MutationObserver(setup);
         this.addDestroyFunc(() => this.headerObserver?.disconnect());
+
+        // Menus opened without a grid event (tool panel context menu, hover-opened sub menus) are still popups.
+        this.popupObserver = new MutationObserver(setup);
+        this.addDestroyFunc(() => this.popupObserver?.disconnect());
+    }
+
+    /** Watch the popup parent for popups being added. Called on every stamping pass, as `popupParent` can change. */
+    private observePopupParent(): void {
+        const popupParent = this.beans.popupSvc?.getPopupParent();
+        if (!popupParent || popupParent === this.observedPopupParent) {
+            return;
+        }
+        // Child list only, so the attributes stamped on a popup's contents cannot re-trigger this.
+        this.popupObserver?.disconnect();
+        this.popupObserver?.observe(popupParent, { childList: true });
+        this.observedPopupParent = popupParent;
     }
 
     /** Watch this grid's own header for rows being replaced. Called as the header is first stamped. */
@@ -122,6 +140,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         setTestId(gridWrapper, agTestIdFor.grid(gridId));
 
         this.observeHeader(gridWrapper);
+        this.observePopupParent();
 
         /** Headers */
 
