@@ -49,7 +49,7 @@ Export params are resolved in three layers, each taking precedence over the one 
 1. The object returned by the `getDefaultPdfExportParams` callback.
 1. The params passed directly to `exportDataAsPdf()` or `getDataAsPdf()`.
 
-Each layer is applied as a shallow merge, so a property supplied by a later layer replaces the earlier value outright instead of being merged into it. This applies to nested objects too: an object-valued property returned by the callback replaces the equivalent object from `defaultPdfExportParams` wholesale, and none of the properties of the replaced object are inherited.
+The `defaultPdfExportParams` and callback layers are combined with a shallow merge, so an object-valued property returned by the callback replaces the equivalent object from `defaultPdfExportParams` wholesale, and none of the properties of the replaced object are inherited. The params passed to the export method are then applied on top with a deeper merge: the nested PDF structures - `page`, `colors`, `defaultCellStyle`, `defaultHeaderStyle`, `documentTitleStyle`, `documentSubtitleStyle`, `headerFooterConfig` and `watermark` - are merged property by property into the resolved defaults, and every other property is replaced outright.
 
 ## PDF Export Sections
 
