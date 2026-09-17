@@ -72,9 +72,15 @@ const getSlotCellRenderer = (slotName: string) => {
     return component;
 };
 
-// An unset component prop falls back to the same-named gridOptions property, matching the
-// precedence _combineAttributesAndGridOptions applies when the grid is built.
-const getEffectiveOption = (name: string): any => (props as any)[name] ?? (props.gridOptions as any)?.[name];
+// An unset (undefined) component prop falls back to the same-named gridOptions property, matching
+// the precedence _combineAttributesAndGridOptions applies when the grid is built — an explicit
+// null prop is a real override there, so it must not fall back either.
+const getEffectiveOption = (name: string): any => {
+    const value = (props as any)[name];
+    return value !== undefined ? value : (props.gridOptions as any)?.[name];
+};
+
+const hasCellSlot = (): boolean => Object.keys(slots).some((slotName) => slotName.startsWith('cell-'));
 
 const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
     const defaultColDef = getEffectiveOption('defaultColDef') as
@@ -87,10 +93,12 @@ const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
     if (Array.isArray(effectiveType)) {
         typeKeys = effectiveType;
     } else if (typeof effectiveType === 'string') {
-        typeKeys = effectiveType.split(',').map((key: string) => key.trim());
+        typeKeys = effectiveType.split(',');
     } else {
         typeKeys = [];
     }
+    // Core's own type-key resolution (mergeTypeKeys) trims every key, array-sourced or not.
+    typeKeys = typeKeys.map((key) => key.trim());
 
     const columnTypes = getEffectiveOption('columnTypes') as { [key: string]: any } | undefined;
     const hasTypeRenderer = typeKeys.some((key) => {
@@ -136,8 +144,11 @@ _GET_ALL_GRID_OPTIONS()
                 const value = propertyName === 'columnDefs' ? applyCellSlots(newValue) : newValue;
                 // A reactive defaultColDef/columnTypes change can add or remove an inherited
                 // renderer, so slot-vs-renderer precedence must be re-decided against the current
-                // columnDefs — the earlier decision baked into an already-transformed value goes stale otherwise.
-                if (propertyName === 'defaultColDef' || propertyName === 'columnTypes') {
+                // columnDefs — the earlier decision baked into an already-transformed value goes
+                // stale otherwise. Skipped when no cell-* slot is in use, so this never resubmits
+                // columnDefs (and so never clobbers columns changed since via the grid API) for the
+                // common case where the feature isn't used at all.
+                if ((propertyName === 'defaultColDef' || propertyName === 'columnTypes') && hasCellSlot()) {
                     const columnDefsSource = getEffectiveOption('columnDefs');
                     if (columnDefsSource) {
                         processChanges('columnDefs', applyCellSlots(columnDefsSource), undefined);
