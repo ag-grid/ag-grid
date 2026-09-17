@@ -22,15 +22,12 @@ type Options = {
 
 const IGNORED_PATHS = ['/archive'];
 /**
- * Hrefs a client-side script handles rather than scrolling to an element, so the built HTML
- * has no target for them. Every other fragment must resolve to an `id` or `<a name>` in the
- * built page it points at.
+ * Fragments that a client-side script intercepts rather than scrolling to an element, so
+ * the built HTML has no target for them. Every other fragment must resolve to an `id` or
+ * `<a name>` in the built page it points at.
  */
-const HREF_PATTERNS_TO_IGNORE = [
-    '#reference-', // API references, as they are rendered client side
-    '#example-', // Example references, as they aren't headings
-    '#contact-section', // Contact form on about page
-    '#manage_cookies', // Footer link to open cookies management
+const CLIENT_HANDLED_FRAGMENTS = [
+    'manage_cookies', // Footer link that opens the cookie-consent preferences modal
 ];
 
 /**
@@ -108,7 +105,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     const linksToValidate: Record<string, { filePaths: Set<string> }> = {};
     // Links whose shape alone would cost a redirect (no trailing slash, non-canonical host, ...),
     // keyed by the offending href. Recorded for every internal link, including the absolute
-    // `https://www.ag-grid.com/...` ones and the client-side-injected fragment links the existence
+    // `https://www.ag-grid.com/...` ones and the client-handled fragment links the existence
     // checks below leave alone, because the redirect happens before the target is consulted.
     const shapeIssues: Record<string, { message: string; filePaths: Set<string> }> = {};
     const { prefix, frameworkRedirect } = options;
@@ -152,16 +149,15 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
 
             href = stripQueryString(href);
 
-            // Client-handled anchors have no static target to resolve against.
-            if (HREF_PATTERNS_TO_IGNORE.some((pattern) => href.includes(pattern))) {
-                return;
-            }
             // An empty fragment (#) or #top both scroll to the top of the page;
             // they always resolve and have no target element to check against.
             const hashIndex = href.indexOf('#');
             if (hashIndex !== -1) {
                 const fragment = href.slice(hashIndex + 1);
                 if (fragment === '' || fragment.toLowerCase() === 'top') {
+                    return;
+                }
+                if (CLIENT_HANDLED_FRAGMENTS.includes(fragment)) {
                     return;
                 }
             }
