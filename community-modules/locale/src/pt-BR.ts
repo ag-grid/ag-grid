@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_BR = {
+export const AG_GRID_LOCALE_PT_BR = {
     // Set Filter
     selectAll: '(Selecionar Todos)',
     selectAllSearchResults: '(Selecionar Todos os Resultados da Pesquisa)',
@@ -925,3 +925,6 @@ export const AG_GRID_LOCALE_BR = {
     deleteNote: 'Remover nota',
     notePlaceholder: 'Adicionar uma nota...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_PT_BR` instead. */
+export const AG_GRID_LOCALE_BR = AG_GRID_LOCALE_PT_BR;

@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_TR = {
+export const AG_GRID_LOCALE_TR_TR = {
     // Set Filter
     selectAll: '(Tümünü Seç)',
     selectAllSearchResults: '(Tüm Arama Sonuçlarını Seç)',
@@ -924,3 +924,6 @@ export const AG_GRID_LOCALE_TR = {
     deleteNote: 'Notu kaldır',
     notePlaceholder: 'Bir not ekle...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_TR_TR` instead. */
+export const AG_GRID_LOCALE_TR = AG_GRID_LOCALE_TR_TR;

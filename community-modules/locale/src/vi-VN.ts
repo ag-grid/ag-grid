@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_VN = {
+export const AG_GRID_LOCALE_VI_VN = {
     // Set Filter
     selectAll: '(Chọn Tất Cả)',
     selectAllSearchResults: '(Chọn Tất Cả Các Kết Quả Tìm Kiếm)',
@@ -920,3 +920,6 @@ export const AG_GRID_LOCALE_VN = {
     deleteNote: 'Xóa ghi chú',
     notePlaceholder: 'Thêm ghi chú...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_VI_VN` instead. */
+export const AG_GRID_LOCALE_VN = AG_GRID_LOCALE_VI_VN;

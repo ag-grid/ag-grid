@@ -1,4 +1,4 @@
-export const AG_GRID_LOCALE_EN = {
+export const AG_GRID_LOCALE_EN_US = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',
@@ -929,3 +929,6 @@ export const AG_GRID_LOCALE_EN = {
     deleteNote: 'Remove Note',
     notePlaceholder: 'Add a note...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_EN_US` instead. */
+export const AG_GRID_LOCALE_EN = AG_GRID_LOCALE_EN_US;

@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_GR = {
+export const AG_GRID_LOCALE_EL_GR = {
     // Set Filter
     selectAll: '(Επιλογή όλων)',
     selectAllSearchResults: '(Επιλογή όλων των αποτελεσμάτων αναζήτησης)',
@@ -925,3 +925,6 @@ export const AG_GRID_LOCALE_GR = {
     deleteNote: 'Αφαίρεση σημείωσης',
     notePlaceholder: 'Προσθέστε μια σημείωση...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_EL_GR` instead. */
+export const AG_GRID_LOCALE_GR = AG_GRID_LOCALE_EL_GR;

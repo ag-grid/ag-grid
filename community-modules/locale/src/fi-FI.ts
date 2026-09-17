@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_FI = {
+export const AG_GRID_LOCALE_FI_FI = {
     // Set Filter
     selectAll: '(Valitse kaikki)',
     selectAllSearchResults: '(Valitse kaikki hakutulokset)',
@@ -924,3 +924,6 @@ export const AG_GRID_LOCALE_FI = {
     deleteNote: 'Poista muistiinpano',
     notePlaceholder: 'Lisää muistiinpano...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_FI_FI` instead. */
+export const AG_GRID_LOCALE_FI = AG_GRID_LOCALE_FI_FI;

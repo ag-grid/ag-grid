@@ -1,4 +1,4 @@
-import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_DE_DE } from '@ag-grid-community/locale';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
@@ -140,7 +140,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSize: 500,
     paginationPageSizeSelector: [100, 500, 1000],
     enableCharts: true,
-    localeText: AG_GRID_LOCALE_DE,
+    localeText: AG_GRID_LOCALE_DE_DE,
     rowSelection: { mode: 'multiRow' },
 };
 

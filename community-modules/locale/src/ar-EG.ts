@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_EG = {
+export const AG_GRID_LOCALE_AR_EG = {
     // Set Filter
     selectAll: '(تحديد الكل)',
     selectAllSearchResults: '(تحديد كل نتائج البحث)',
@@ -918,3 +918,6 @@ export const AG_GRID_LOCALE_EG = {
     deleteNote: 'إزالة الملاحظة',
     notePlaceholder: 'أضف ملاحظة...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_AR_EG` instead. */
+export const AG_GRID_LOCALE_EG = AG_GRID_LOCALE_AR_EG;

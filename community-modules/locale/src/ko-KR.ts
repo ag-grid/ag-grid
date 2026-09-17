@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_KR = {
+export const AG_GRID_LOCALE_KO_KR = {
     // Set Filter
     selectAll: '(전체 선택)',
     selectAllSearchResults: '(검색 결과 모두 선택)',
@@ -919,3 +919,6 @@ export const AG_GRID_LOCALE_KR = {
     deleteNote: '메모 제거',
     notePlaceholder: '메모 추가...',
 };
+
+/** @deprecated v36.2 Use `AG_GRID_LOCALE_KO_KR` instead. */
+export const AG_GRID_LOCALE_KR = AG_GRID_LOCALE_KO_KR;
