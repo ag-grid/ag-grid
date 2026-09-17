@@ -8,6 +8,7 @@ import type { Ref } from 'vue';
 import {
     defineComponent,
     getCurrentInstance,
+    h,
     markRaw,
     onMounted,
     onUnmounted,
@@ -58,14 +59,34 @@ const getSlotCellRenderer = (slotName: string) => {
     if (!component) {
         component = defineComponent({
             props: { params: { type: Object, required: true } },
-            // withCtx-wrapped slot functions carry their own component context, so calling them from this unrelated wrapper still resolves provide/inject correctly
             setup(props: any) {
-                return () => slots[slotName]?.(props.params);
+                // Wrapped in a single host element: the mounting pipeline uses only the rendered
+                // fragment's firstElementChild as the cell's GUI, so multi-root or text-only slot
+                // content would otherwise be silently dropped.
+                // withCtx-wrapped slot functions carry their own component context, so calling them from this unrelated wrapper still resolves provide/inject correctly
+                return () => h('span', slots[slotName]?.(props.params));
             },
         });
         slotCellRenderers.set(slotName, component);
     }
     return component;
+};
+
+const hasRendererFromTypeOrDefault = (colDef: any): boolean => {
+    const typeKeys: string[] = Array.isArray(colDef.type)
+        ? colDef.type
+        : typeof colDef.type === 'string'
+          ? colDef.type.split(',')
+          : [];
+    const columnTypes = props.columnTypes as { [key: string]: any } | undefined;
+    const hasTypeRenderer = typeKeys.some((key) => {
+        const typeDef = columnTypes?.[key];
+        return typeDef?.cellRenderer != null || typeDef?.cellRendererSelector != null;
+    });
+    const defaultColDef = props.defaultColDef as { cellRenderer?: any; cellRendererSelector?: any } | undefined;
+    return (
+        hasTypeRenderer || defaultColDef?.cellRenderer != null || defaultColDef?.cellRendererSelector != null
+    );
 };
 
 const applyCellSlots = (columnDefs: any): any => {
@@ -76,7 +97,13 @@ const applyCellSlots = (columnDefs: any): any => {
         }
         const colId = colDef.colId ?? colDef.field;
         const slotName = colId != null ? `cell-${colId}` : undefined;
-        if (slotName && slots[slotName] && colDef.cellRenderer == null && colDef.cellRendererSelector == null) {
+        if (
+            slotName &&
+            slots[slotName] &&
+            colDef.cellRenderer == null &&
+            colDef.cellRendererSelector == null &&
+            !hasRendererFromTypeOrDefault(colDef)
+        ) {
             return { ...colDef, cellRenderer: getSlotCellRenderer(slotName) };
         }
         return colDef;

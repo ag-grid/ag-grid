@@ -193,7 +193,7 @@ const gridOptions = {
 </template>
 ```
 
-A column only picks up its slot when neither `cellRenderer` nor `cellRendererSelector` is set on it — an explicit renderer always wins.
+A column only picks up its slot when it has no `cellRenderer` or `cellRendererSelector` of its own, and none is supplied via `columnTypes` or `defaultColDef` either — a configured renderer always wins.
 
 The example below demonstrates using a scoped slot to render the `Price` column, while the `Product` and `Category` columns use the grid's default rendering.
 

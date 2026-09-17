@@ -100,6 +100,16 @@ const routes = [
         name: 'Cell Slots',
         component: () => import('./test-cases/cell-slots/Page.vue'),
     },
+    {
+        path: '/cell-slots-multi-root',
+        name: 'Cell Slots Multi-Root',
+        component: () => import('./test-cases/cell-slots-multi-root/Page.vue'),
+    },
+    {
+        path: '/cell-slots-precedence',
+        name: 'Cell Slots Precedence',
+        component: () => import('./test-cases/cell-slots-precedence/Page.vue'),
+    },
 ];
 
 export const router = createRouter({
