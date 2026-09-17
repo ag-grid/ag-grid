@@ -84,6 +84,19 @@ When column selection is enabled, [Row Sorting](./row-sorting) requires holding 
 Similarly [Column Group Expansion](./column-groups) via keyboard requires holding down the {% kbd "⌥ Alt" /%} key in addition to pressing {% kbd "↵ Enter" /%}.
 {% /note %}
 
+## Selecting Cells via Row Numbers
+
+When [Row Numbers](./row-numbers/) are enabled, clicking a Row Number selects all the currently visible cells in that row.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    cellSelection: true,
+    rowNumbers: true
+}
+```
+
+This integration can be suppressed so that clicking a Row Number selects the row via [Row Selection](./row-selection/) instead, as shown in [Suppressing Integration](./row-numbers/#suppressing-integration).
+
 ## Ranges with Pinned Columns and Rows
 
 It is possible to select a cell range that spans pinned and non-pinned sections of the grid. If you do this, the selected range will not have any gaps with regards to the column or row order.

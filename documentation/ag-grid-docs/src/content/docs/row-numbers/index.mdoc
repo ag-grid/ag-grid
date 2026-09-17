@@ -31,20 +31,44 @@ const gridOptions = {
 
 {% gridExampleRunner title="Row Numbers with Cell Selection" name="row-numbers-cell-selection" /%}
 
+## Row Selection
+
+When the grid is configured with [Row Selection](./row-selection/) and click selection is enabled via `rowSelection.enableClickSelection`, clicking a Row Number selects the row.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: true,
+    rowSelection: {
+        mode: 'multiRow',
+        enableClickSelection: true
+    }
+}
+```
+
+When [Cell Selection](./cell-selection/) is enabled as well, it takes precedence and the Row Number click selects the cells in the row rather than the row itself. Suppressing the Cell Selection integration restores the Row Selection behaviour.
+
 ### Suppressing Integration
 
 By default, clicking a row number selects a cell range including all the cells in the row. To prevent this behaviour use the `suppressCellSelectionIntegration` option.
+
+With the integration suppressed, the Row Number click falls through to [Row Selection](./row-selection/), so the row itself is selected when click selection is enabled.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowNumbers: {
         suppressCellSelectionIntegration: true
     },
-    cellSelection: true
+    cellSelection: true,
+    rowSelection: {
+        mode: 'multiRow',
+        enableClickSelection: true
+    }
 }
 ```
 
 {% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } names=["suppressCellSelectionIntegration"] /%}
+
+{% gridExampleRunner title="Row Numbers with Row Selection" name="row-numbers-row-selection" /%}
 
 ## Row Resizing
 
