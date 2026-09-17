@@ -6,7 +6,10 @@ import {
     _addDiagnosticListener,
     _configureDiagnostics,
     _deprecatedForGrid,
+    _errMsg,
     _errorForGrid,
+    _errorToThrowForGrid,
+    _errorToThrowWithoutAttribution,
     _errorWithoutAttribution,
     _logPreInitErr,
     _logPreInitWarn,
@@ -215,6 +218,51 @@ describe('grid attribution', () => {
 
         expect(received.map((e) => e.gridId)).toEqual(['own-grid']);
         off();
+    });
+});
+
+describe('errors to throw', () => {
+    test('captures the error for its grid and returns it without logging', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        const error = _errorToThrowForGrid('own-grid', 11);
+
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toBe(_errMsg(11));
+        expect(received.map((e) => [e.id, e.severity, e.gridId])).toEqual([[11, 'error', 'own-grid']]);
+        // The caller's throw reaches the console, so logging here would duplicate it.
+        expect(mockErrorOnce).not.toHaveBeenCalled();
+        off();
+    });
+
+    test('captures an unattributed error untied', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        const error = _errorToThrowWithoutAttribution(11);
+
+        expect(error.message).toBe(_errMsg(11));
+        expect(received.map((e) => [e.id, e.gridId])).toEqual([[11, undefined]]);
+        off();
+    });
+
+    test('does not capture a suppressed id, but still returns the error', () => {
+        _configureDiagnostics({ capture: true, suppress: [11] });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(_errorToThrowForGrid('own-grid', 11)).toBeInstanceOf(Error);
+        expect(received).toEqual([]);
+        off();
+    });
+
+    test('does not throw itself under throw mode, leaving the throw to the caller', () => {
+        _configureDiagnostics({ throwOn: ['error'] });
+
+        expect(() => _errorToThrowWithoutAttribution(11)).not.toThrow();
     });
 });
 

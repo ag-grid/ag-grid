@@ -538,6 +538,26 @@ export function _errorForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 
+// Throw-site variants: capture the error for the overlay and `issueRaised`, then return it for the caller to
+// throw. Nothing is logged, as the thrown error already reaches the console, and throw mode is not consulted
+// because the caller throws regardless. Use these rather than `throw new Error(_errMsg(...))`, which the
+// dev-diagnostics surfaces never see.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _errorToThrowForGrid(gridId: string, id: ErrorId, params?: any): Error {
+    captureDiagnostic(id, params, 'error', undefined, gridId);
+    return new Error(getErrMsg(undefined, [id, params]));
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _errorToThrowWithoutAttribution<
+    TId extends ErrorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): Error {
+    captureDiagnostic(args[0], args[1], 'error');
+    return new Error(getErrMsg(undefined, args));
+}
+
 /**
  * Used for messages before the ValidationService has been created. `gridId` attributes the captured
  * diagnostic to one grid, for a pre-init failure that belongs to a specific grid rather than the page.
@@ -569,7 +589,11 @@ function getErrMsg<TId extends ErrorId>(
     return `error #${id} ` + getErrorParts(id, args[1] as any, defaultMessage).join(' ');
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * Formats an error's text without capturing it. To throw an error, use `_errorToThrowForGrid` or
+ * `_errorToThrowWithoutAttribution` instead, so the developer overlay and `issueRaised` also see it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _errMsg<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
