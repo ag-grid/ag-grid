@@ -181,7 +181,7 @@ const gridOptions = {
 
 ### Providing Custom Components via Slots
 
-`AgGridVue` also supports Vue's scoped slots as an alternative to registering a component and referencing it by name. Set `cellRenderer` to a string as usual, and if a slot of that name exists on `AgGridVue`, it renders instead of a registered component, receiving the same `params` object as `cellRenderer` for its scope:
+`AgGridVue` also supports Vue's scoped slots as an alternative to registering a component and referencing it by name. Set `cellRenderer` to a slot's name and it renders that slot, receiving the same `params` object as `cellRenderer`:
 
 ```html
 <template>
