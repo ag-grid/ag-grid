@@ -6,6 +6,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
+import type { MenuItemDef } from './menuItem';
 
 export interface Note<TMetadata = any> {
     /** Text content of the note. */
@@ -158,6 +159,7 @@ export interface INotesService extends Bean {
     createFullWidthNotesFeature(ctrl: RowCtrl): INotesFeature | undefined;
     getNoteAccess(params: GetNoteParams): INoteAccess | undefined;
     getNote(params: GetNoteParams): Note | undefined;
+    getMenuItems(params: GetNoteParams): MenuItemDef[];
     showNote(params: GetNoteParams, focusEditor?: boolean): boolean;
     setNote(params: SetNoteParams): void;
     refreshNotes(params?: RefreshNotesParams): void;
