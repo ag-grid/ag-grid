@@ -66,6 +66,15 @@ const rootStaticFileCacheRules = `
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(robots\\.txt|favicon\\.ico)$#"
 `;
 
+// Unlike hashedAssetCacheRules, these filenames carry no content hash, so a stale copy can
+// persist after content changes. A moderate max-age bounds that staleness window instead of
+// relying on a release-time cache invalidation step being remembered.
+const staticAssetCacheRules = `
+# Images and example-page assets: unhashed filenames, so cap staleness with a moderate
+# max-age rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets)/#"
+`;
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -588,6 +597,7 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
+${staticAssetCacheRules}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
