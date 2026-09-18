@@ -9,21 +9,20 @@ import type {
     DefaultMenuItem,
     GetNoteParams,
     IAggFuncService,
-    IMenuActionParams,
-    INoteAccess,
-    INotesService,
     IValueColsService,
+    MappedMenuItem,
     MenuItemDef,
+    MenuItemMapParams,
     NamedBean,
     RowNode,
     SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _getRowNode, _normalizeSortType, _resetColumnState } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _normalizeSortType, _resetColumnState } from 'ag-grid-community';
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from './columnMenuTokenLabels';
+import { _getMenuItemProviders } from './menuItemProviders';
 import { validateMenuItem } from './menuItemValidations';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
@@ -73,49 +72,35 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
         const {
             aggFuncSvc,
-            chartMenuItemMapper,
-            clipboardSvc,
             colAutosize,
             colChooserFactory,
             colHeaderEditSvc,
             colModel,
             colNames,
             ctrlsSvc,
-            csvCreator,
-            excelCreator,
             expansionSvc,
             focusSvc,
             menuSvc,
-            notesSvc,
-            calculatedColsSvc,
-            pdfCreator,
             pinnedCols,
-            pinnedRowModel,
             pivotColsSvc,
-            rangeSvc,
             rowGroupColsSvc,
             showValuesAsSvc,
             sortSvc,
             valueColsSvc,
         } = beans;
 
-        const getPinActionHandler =
-            (sideOrRemove: 'top' | 'bottom' | null) =>
-            ({ node, column }: IMenuActionParams) => {
-                if (node) {
-                    pinnedRowModel!.pinRow(node as RowNode, sideOrRemove ?? null, column as AgColumn);
-                    return;
+        const mapParams: MenuItemMapParams = { column, node, source, sourceElement, noteParams };
+        const providers = _getMenuItemProviders(beans);
+        const mapProviderItem = (key: DefaultColumnMenuItem): MappedMenuItem | undefined => {
+            validateMenuItem(gos, key);
+            for (const provider of providers) {
+                const mapped = provider.mapMenuItem(key, mapParams);
+                if (mapped !== undefined) {
+                    return mapped;
                 }
-                // pick selected cells / rows / columns
-                rangeSvc?.getCellRanges()?.forEach((cellRange) => {
-                    rangeSvc.forEachRowInRange(cellRange, (row) => {
-                        const nodeFromSelection = _getRowNode(beans, row);
-                        if (nodeFromSelection) {
-                            pinnedRowModel!.pinRow(nodeFromSelection, sideOrRemove ?? null, null);
-                        }
-                    });
-                });
-            };
+            }
+            return undefined;
+        };
 
         const getStockMenuItem = (
             key: DefaultColumnMenuItem,
@@ -123,8 +108,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             sourceElement: () => HTMLElement,
             source: ColumnEventType
         ): MenuItemDef | 'separator' | null => {
-            validateMenuItem(gos, key);
-
             switch (key) {
                 case 'pinSubMenu':
                     return pinnedCols && column
@@ -156,55 +139,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('noPin', 'No Pin'),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
-                          }
-                        : null;
-                case 'pinRowSubMenu': {
-                    const enableRowPinning = gos.get('enableRowPinning');
-                    const subMenu: string[] = [];
-                    const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
-
-                    if (pinned) {
-                        subMenu.push('unpinRow');
-                    }
-
-                    if (enableRowPinning && enableRowPinning !== 'bottom' && pinned != 'top') {
-                        subMenu.push('pinTop');
-                    }
-
-                    if (enableRowPinning && enableRowPinning !== 'top' && pinned != 'bottom') {
-                        subMenu.push('pinBottom');
-                    }
-
-                    return pinnedRowModel?.isManual()
-                        ? {
-                              name: localeTextFunc('pinRow', 'Pin Row'),
-                              icon: _createIconNoSpan('rowPin', beans, column),
-                              subMenu,
-                          }
-                        : null;
-                }
-                case 'pinTop':
-                    return pinnedRowModel?.isManual()
-                        ? {
-                              name: localeTextFunc('pinTop', 'Pin to Top'),
-                              icon: _createIconNoSpan('rowPinTop', beans, column),
-                              action: getPinActionHandler('top'),
-                          }
-                        : null;
-                case 'pinBottom':
-                    return pinnedRowModel?.isManual()
-                        ? {
-                              name: localeTextFunc('pinBottom', 'Pin to Bottom'),
-                              icon: _createIconNoSpan('rowPinBottom', beans, column),
-                              action: getPinActionHandler('bottom'),
-                          }
-                        : null;
-                case 'unpinRow':
-                    return pinnedRowModel?.isManual()
-                        ? {
-                              name: localeTextFunc('unpinRow', 'Unpin Row'),
-                              icon: _createIconNoSpan('rowUnpin', beans, column),
-                              action: getPinActionHandler(null),
                           }
                         : null;
                 case 'valueAggSubMenu':
@@ -406,118 +340,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () => expansionSvc.expandAll(false),
                           }
                         : null;
-                case 'copy':
-                    return clipboardSvc
-                        ? {
-                              name: localeTextFunc('copy', 'Copy'),
-                              shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                              icon: _createIconNoSpan('clipboardCopy', beans, null),
-                              action: () => clipboardSvc.copyToClipboard(),
-                          }
-                        : null;
-                case 'copyWithHeaders':
-                    return clipboardSvc
-                        ? {
-                              name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
-                              // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                              icon: _createIconNoSpan('clipboardCopy', beans, null),
-                              action: () => clipboardSvc.copyToClipboard({ includeHeaders: true }),
-                          }
-                        : null;
-                case 'copyWithGroupHeaders':
-                    return clipboardSvc
-                        ? {
-                              name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
-                              // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                              icon: _createIconNoSpan('clipboardCopy', beans, null),
-                              action: () =>
-                                  clipboardSvc.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true }),
-                          }
-                        : null;
-                case 'cut':
-                    if (clipboardSvc) {
-                        const focusedCell = focusSvc.getFocusedCell();
-                        const rowNode = focusedCell ? _getRowNode(beans, focusedCell) : null;
-                        const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
-                        return {
-                            name: localeTextFunc('cut', 'Cut'),
-                            shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
-                            icon: _createIconNoSpan('clipboardCut', beans, null),
-                            disabled: !isEditable || gos.get('suppressCutToClipboard'),
-                            action: () => clipboardSvc.cutToClipboard(undefined, 'contextMenu'),
-                        };
-                    } else {
-                        return null;
-                    }
-                case 'paste':
-                    if (clipboardSvc) {
-                        const isPasteBlocked =
-                            gos.get('suppressClipboardApi') ||
-                            gos.get('suppressClipboardPaste') ||
-                            !column ||
-                            !node ||
-                            !column.isCellEditable(node) ||
-                            column.isSuppressPaste(node);
-
-                        return {
-                            name: localeTextFunc('paste', 'Paste'),
-                            shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                            icon: _createIconNoSpan('clipboardPaste', beans, null),
-                            disabled: isPasteBlocked,
-                            action: () => clipboardSvc.pasteFromClipboard(),
-                        };
-                    } else {
-                        return null;
-                    }
-                case 'export': {
-                    const exportSubMenuItems: string[] = [];
-
-                    if (!gos.get('suppressCsvExport') && csvCreator) {
-                        exportSubMenuItems.push('csvExport');
-                    }
-                    if (!gos.get('suppressExcelExport') && excelCreator) {
-                        exportSubMenuItems.push('excelExport');
-                    }
-                    if (!gos.get('suppressPdfExport') && pdfCreator) {
-                        exportSubMenuItems.push('pdfExport');
-                    }
-                    return exportSubMenuItems.length
-                        ? {
-                              name: localeTextFunc('export', 'Export'),
-                              subMenu: exportSubMenuItems,
-                              icon: _createIconNoSpan('save', beans, null),
-                          }
-                        : null;
-                }
-                case 'csvExport':
-                    return csvCreator
-                        ? {
-                              name: localeTextFunc('csvExport', 'CSV Export'),
-                              icon: _createIconNoSpan('csvExport', beans, null),
-                              action: () => csvCreator.exportDataAsCsv(),
-                          }
-                        : null;
-                case 'excelExport':
-                    return excelCreator
-                        ? {
-                              name: localeTextFunc('excelExport', 'Excel Export'),
-                              icon: _createIconNoSpan('excelExport', beans, null),
-                              action: () => excelCreator.exportDataAsExcel(),
-                          }
-                        : null;
-                case 'pdfExport':
-                    return pdfCreator
-                        ? {
-                              name: localeTextFunc('pdfExport', 'PDF Export'),
-                              icon: _createIconNoSpan('pdfExport', beans, null),
-                              action: () => pdfCreator.exportDataAsPdf(),
-                          }
-                        : null;
                 case 'separator':
                     return key;
-                case 'pivotChart':
-                case 'chartRange':
-                    return (chartMenuItemMapper as ChartMenuItemMapper).getChartItems(key);
                 case 'columnFilter':
                     return menuSvc && column
                         ? {
@@ -548,48 +372,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 }
 
-                case 'calculatedColumn': {
-                    if (!calculatedColsSvc?.isEnabled()) {
-                        return null;
-                    }
-
-                    const headerPosition = focusSvc.focusedHeader ?? (column ? { headerRowIndex: 0, column } : null);
-
-                    return {
-                        name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
-                        icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
-                        action: () =>
-                            calculatedColsSvc.openCalculatedColumnDialog(column, 'add', true, {
-                                eventSource: sourceElement(),
-                                headerPosition,
-                            }),
-                    };
-                }
-                case 'editCalculatedColumn': {
-                    if (!calculatedColsSvc?.isEnabled() || !column?.isCalculatedCol) {
-                        return null;
-                    }
-                    const headerPosition = focusSvc.focusedHeader ?? { headerRowIndex: 0, column };
-
-                    return {
-                        name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
-                        icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
-                        action: () =>
-                            calculatedColsSvc.openCalculatedColumnDialog(column, 'edit', true, {
-                                eventSource: sourceElement(),
-                                headerPosition,
-                            }),
-                    };
-                }
-
-                case 'removeCalculatedColumn':
-                    return calculatedColsSvc?.isEnabled() && column?.isCalculatedCol
-                        ? {
-                              name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
-                              icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
-                              action: () => calculatedColsSvc.removeCalculatedColumn(column),
-                          }
-                        : null;
                 case 'editColumnName': {
                     const editTarget = column ?? columnGroup;
                     return editTarget ? (colHeaderEditSvc?.getEditColumnNameMenuItem(editTarget) ?? null) : null;
@@ -623,23 +405,15 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
-                if (menuItemOrString === 'note') {
-                    const noteItems = createNoteMenuItems({
-                        notesSvc,
-                        column,
-                        node,
-                        noteParams,
-                        localeTextFunc,
-                    });
-
-                    if (noteItems.length) {
-                        resultList.push(MENU_ITEM_SEPARATOR, ...noteItems, MENU_ITEM_SEPARATOR);
+                const mapped = mapProviderItem(menuItemOrString);
+                if (Array.isArray(mapped)) {
+                    if (mapped.length) {
+                        resultList.push(MENU_ITEM_SEPARATOR, ...mapped, MENU_ITEM_SEPARATOR);
                     }
-
                     continue;
                 }
-
-                result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
+                result =
+                    mapped !== undefined ? mapped : getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
                 result = { ...menuItemOrString };
@@ -674,76 +448,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
         return resultList;
     }
-}
-
-function createNoteMenuItems({
-    notesSvc,
-    column,
-    node,
-    noteParams,
-    localeTextFunc,
-}: {
-    notesSvc: Pick<INotesService, 'hasDataSource' | 'getNoteAccess' | 'showNote' | 'setNote'> | undefined;
-    column: AgColumn | null;
-    node: RowNode | null;
-    noteParams: GetNoteParams | undefined;
-    localeTextFunc: LocaleTextFunc;
-}): MenuItemDef[] {
-    const access: INoteAccess | undefined = notesSvc?.hasDataSource()
-        ? noteParams
-            ? notesSvc.getNoteAccess(noteParams)
-            : column && node
-              ? notesSvc.getNoteAccess({ rowNode: node, column })
-              : undefined
-        : undefined;
-
-    if (!access) {
-        return [];
-    }
-
-    const result: MenuItemDef[] = [];
-
-    if (!access.note) {
-        result.push({
-            name: localeTextFunc('addNote', 'Add Note'),
-            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            disabled: !access.canCreate,
-            action: access.canCreate ? () => notesSvc!.showNote(access.params, true) : undefined,
-        });
-
-        return result;
-    }
-
-    if (access.canView && (access.isReadOnly || access.isSuppressed)) {
-        result.push({
-            name: localeTextFunc('viewNote', 'View Note'),
-            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            action: () => notesSvc!.showNote(access.params, true),
-        });
-    }
-
-    if (!access.isReadOnly && !access.isSuppressed) {
-        result.push({
-            name: localeTextFunc('editNote', 'Edit Note'),
-            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            disabled: !access.canEdit,
-            action: access.canEdit ? () => notesSvc!.showNote(access.params, true) : undefined,
-        });
-    }
-
-    result.push({
-        name: localeTextFunc('deleteNote', 'Remove Note'),
-        disabled: !access.canDelete,
-        action: access.canDelete
-            ? () =>
-                  notesSvc!.setNote({
-                      ...access.params,
-                      note: undefined,
-                  })
-            : undefined,
-    });
-
-    return result;
 }
 
 function createAggregationSubMenu(

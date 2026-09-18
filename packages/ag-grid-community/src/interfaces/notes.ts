@@ -5,6 +5,7 @@ import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { IMenuItemProvider } from './iContextMenu';
 import type { IRowNode } from './iRowNode';
 
 export interface Note<TMetadata = any> {
@@ -151,7 +152,7 @@ export interface INotesDataService extends Bean {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface INotesService extends Bean {
+export interface INotesService extends Bean, IMenuItemProvider {
     hasDataSource(): boolean;
     onDataSourceChanged(): void;
     createNotesFeature(ctrl: CellCtrl): INotesFeature | undefined;

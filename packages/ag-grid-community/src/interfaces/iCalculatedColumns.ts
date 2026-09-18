@@ -4,6 +4,7 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { IMenuItemProvider } from './iContextMenu';
 import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
@@ -46,7 +47,7 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
     calculatedExpression?: string;
 };
 
-export interface ICalculatedColumnsService extends Bean {
+export interface ICalculatedColumnsService extends Bean, IMenuItemProvider {
     removeCalculatedColumn(column: AgColumn | null | undefined): void;
     openCalculatedColumnDialog(
         column: AgColumn | null | undefined,

@@ -15,12 +15,15 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { ExportParams, ShouldRowBeSkippedParams } from '../interfaces/exportParams';
+import type { IMenuItemProvider, MappedMenuItem, MenuItemProviderParams } from '../interfaces/iContextMenu';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { DefaultColumnMenuItem, DefaultMenuItem } from '../interfaces/menuItem';
+import { _createIconNoSpan } from '../utils/icon';
 import { createExportHeaderLayout } from './exportHeaderLayout';
 import type { GridHeaderCell, GridSerializingSession, RowAccumulator } from './iGridSerializer';
 
-export class GridSerializer extends BeanStub implements NamedBean {
+export class GridSerializer extends BeanStub implements NamedBean, IMenuItemProvider {
     beanName = 'gridSerializer' as const;
 
     private visibleCols: VisibleColsService;
@@ -33,6 +36,70 @@ export class GridSerializer extends BeanStub implements NamedBean {
         this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
+    }
+
+    public getContextMenuItems({ node }: MenuItemProviderParams): DefaultMenuItem[] {
+        if (!node) {
+            return [];
+        }
+        const { gos, csvCreator, excelCreator, pdfCreator } = this.beans;
+        const canCsv = !!csvCreator && !gos.get('suppressCsvExport');
+        const canExcel = !!excelCreator && !gos.get('suppressExcelExport');
+        const canPdf = !!pdfCreator && !gos.get('suppressPdfExport');
+        return canCsv || canExcel || canPdf ? ['export'] : [];
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem): MappedMenuItem | undefined {
+        const { beans } = this;
+        const { gos, csvCreator, excelCreator, pdfCreator } = beans;
+        const localeTextFunc = this.getLocaleTextFunc();
+        switch (key) {
+            case 'export': {
+                const subMenu: DefaultMenuItem[] = [];
+                if (!gos.get('suppressCsvExport') && csvCreator) {
+                    subMenu.push('csvExport');
+                }
+                if (!gos.get('suppressExcelExport') && excelCreator) {
+                    subMenu.push('excelExport');
+                }
+                if (!gos.get('suppressPdfExport') && pdfCreator) {
+                    subMenu.push('pdfExport');
+                }
+                return subMenu.length
+                    ? {
+                          name: localeTextFunc('export', 'Export'),
+                          subMenu,
+                          icon: _createIconNoSpan('save', beans, null),
+                      }
+                    : null;
+            }
+            case 'csvExport':
+                return csvCreator
+                    ? {
+                          name: localeTextFunc('csvExport', 'CSV Export'),
+                          icon: _createIconNoSpan('csvExport', beans, null),
+                          action: () => csvCreator.exportDataAsCsv(),
+                      }
+                    : null;
+            case 'excelExport':
+                return excelCreator
+                    ? {
+                          name: localeTextFunc('excelExport', 'Excel Export'),
+                          icon: _createIconNoSpan('excelExport', beans, null),
+                          action: () => excelCreator.exportDataAsExcel(),
+                      }
+                    : null;
+            case 'pdfExport':
+                return pdfCreator
+                    ? {
+                          name: localeTextFunc('pdfExport', 'PDF Export'),
+                          icon: _createIconNoSpan('pdfExport', beans, null),
+                          action: () => pdfCreator.exportDataAsPdf(),
+                      }
+                    : null;
+            default:
+                return undefined;
+        }
     }
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {

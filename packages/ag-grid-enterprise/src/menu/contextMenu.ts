@@ -1,5 +1,3 @@
-import { _exists } from 'ag-stack';
-
 import type {
     AgColumn,
     AgComponentSelectorType,
@@ -16,6 +14,7 @@ import type {
     IContextMenuService,
     IMenuActionParams,
     MenuItemDef,
+    MenuItemProviderParams,
     MouseShowContextMenuParams,
     NamedBean,
     RowCtrl,
@@ -27,7 +26,6 @@ import {
     BeanStub,
     _addGridCommonParams,
     _attemptToRestoreCellFocus,
-    _getGrandTotalRow,
     isRowNumberCol,
     isSpecialCol,
 } from 'ag-grid-community';
@@ -35,6 +33,7 @@ import {
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
 import type { MenuItemMapper } from './menuItemMapper';
+import { _getMenuItemProviders } from './menuItemProviders';
 import type { MenuUtils } from './menuUtils';
 
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
@@ -91,88 +90,20 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     ): (DefaultMenuItem | MenuItemDef)[] | Promise<(DefaultMenuItem | MenuItemDef<any, any>)[]> | undefined {
         const { column, node, value } = menuActionParams;
 
-        const defaultMenuOptions: DefaultMenuItem[] = [];
+        const { rowNumbersSvc, gos } = this.beans;
 
-        const {
-            clipboardSvc,
-            chartSvc,
-            csvCreator,
-            excelCreator,
-            colModel,
-            rangeSvc,
-            gos,
-            notesSvc,
-            pdfCreator,
-            rowNumbersSvc,
-        } = this.beans;
-
-        const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
         // a selection or row-number cell has no data of its own, so it offers the row-level items only; the exception
         // is a row-number cell whose click selects the whole row, as the cell items then act on that row
         const isDatalessSpecialCell =
             !!column && isSpecialCol(column) && !(isRowNumberCol(column) && rowNumbersSvc?.isIntegratedWithSelection);
-        const dataColumn = isDatalessSpecialCell ? null : column;
-
-        if (_exists(node) && clipboardSvc) {
-            if (dataColumn) {
-                // only makes sense if column exists, could have originated from a row
-                if (!gos.get('suppressCutToClipboard')) {
-                    defaultMenuOptions.push('cut');
-                }
-                defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
-            }
-        }
-
-        if (_exists(node) && isCalculatedColumn) {
-            defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
-        }
-
-        if (_exists(node) && dataColumn && notesSvc?.hasDataSource()) {
-            defaultMenuOptions.push('note');
-        }
-
-        if (gos.get('enableCharts') && chartSvc) {
-            if (colModel.pivotMode) {
-                defaultMenuOptions.push('pivotChart');
-            }
-
-            if (rangeSvc && !rangeSvc.isEmpty()) {
-                defaultMenuOptions.push('chartRange');
-            }
-        }
-
-        // if user clicks a cell
-        if (_exists(node)) {
-            const enableRowPinning = gos.get('enableRowPinning');
-            const isRowPinnable = gos.get('isRowPinnable');
-            if (enableRowPinning) {
-                const isGroupTotalRow = node.level > -1 && node.footer;
-                const isGrandTotalRow = node.level === -1 && node.footer;
-                const grandTotalRow = _getGrandTotalRow(gos);
-                const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
-
-                // We do not allow pinning of group total rows. As such, only show pinning related menu options for
-                // grand total rows that are not fixed in place, and normal rows that are not group total rows.
-                if ((isGrandTotalRow && !isGrandTotalRowFixed) || (!isGrandTotalRow && !isGroupTotalRow)) {
-                    const pinnable = isRowPinnable?.(node) ?? true;
-                    // `pinnable` determines whether pinned status can be affected by the user via the context menu,
-                    // not whether the row may be pinned at all (via for example, the `isRowPinned` callback).
-                    // As-such if `pinnable` is falsy, don't show any context menu options for the end user.
-                    if (pinnable) {
-                        defaultMenuOptions.push('pinRowSubMenu');
-                    }
-                }
-            }
-
-            const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
-            const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
-            const suppressPdf = gos.get('suppressPdfExport') || !pdfCreator;
-            const anyExport = !suppressExcel || !suppressCsv || !suppressPdf;
-
-            if (anyExport) {
-                defaultMenuOptions.push('export');
-            }
-        }
+        const providerParams: MenuItemProviderParams = {
+            column: column ?? null,
+            dataColumn: isDatalessSpecialCell ? null : (column ?? null),
+            node: node ?? null,
+        };
+        const defaultMenuOptions = _getMenuItemProviders(this.beans).flatMap((provider) =>
+            provider.getContextMenuItems(providerParams)
+        );
 
         const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
         const columnContextMenuItems = column?.getColDef().contextMenuItems;

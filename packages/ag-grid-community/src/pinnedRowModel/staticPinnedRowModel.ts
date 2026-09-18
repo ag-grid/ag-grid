@@ -2,8 +2,11 @@ import { BeanStub } from '../context/beanStub';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import { _addRowHeightChangedListener, _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
+import type { MappedMenuItem } from '../interfaces/iContextMenu';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { DefaultColumnMenuItem, DefaultMenuItem } from '../interfaces/menuItem';
+import { isRowPinningMenuItem } from './rowPinningMenuItems';
 
 /**
  * Cache that maintains record of insertion order
@@ -31,6 +34,15 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     public reset(): void {
         // Not implemented for static pinned row model
+    }
+
+    public getContextMenuItems(): DefaultMenuItem[] {
+        return [];
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem): MappedMenuItem | undefined {
+        // row pinning is not available, so its items are dropped rather than passed on
+        return isRowPinningMenuItem(key) ? null : undefined;
     }
 
     public isEmpty(floating: RowPinnedType): boolean {

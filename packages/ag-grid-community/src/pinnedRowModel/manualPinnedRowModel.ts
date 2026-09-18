@@ -2,15 +2,25 @@ import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
-import { _addRowHeightChangedListener, _getGrandTotalPinnedFloat, _getRowHeightForNode } from '../gridOptionsUtils';
+import {
+    _addRowHeightChangedListener,
+    _getGrandTotalPinnedFloat,
+    _getGrandTotalRow,
+    _getRowHeightForNode,
+} from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { MappedMenuItem, MenuItemMapParams, MenuItemProviderParams } from '../interfaces/iContextMenu';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { DefaultColumnMenuItem, DefaultMenuItem } from '../interfaces/menuItem';
+import { _createIconNoSpan } from '../utils/icon';
 import { PinnedRows, _isPinnedNodeGrandTotal, _shouldHidePinnedRows } from './manualPinnedRowUtils';
+import { isRowPinningMenuItem } from './rowPinningMenuItems';
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top: PinnedRows;
@@ -93,6 +103,87 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public override destroy(): void {
         this.reset(false);
         super.destroy();
+    }
+
+    public getContextMenuItems({ node }: MenuItemProviderParams): DefaultMenuItem[] {
+        const { gos } = this;
+        if (!node || !gos.get('enableRowPinning')) {
+            return [];
+        }
+        const isGroupTotalRow = node.level > -1 && node.footer;
+        const isGrandTotalRow = node.level === -1 && node.footer;
+        const grandTotalRow = _getGrandTotalRow(gos);
+        const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+
+        // group total rows cannot be pinned; fixed grand total rows cannot be moved
+        const canBePinnedByUser = isGrandTotalRow ? !isGrandTotalRowFixed : !isGroupTotalRow;
+        if (!canBePinnedByUser) {
+            return [];
+        }
+        // isRowPinnable gates the user's control over pinning, not whether the row may be pinned at all
+        return (gos.get('isRowPinnable')?.(node) ?? true) ? ['pinRowSubMenu'] : [];
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem, { column, node }: MenuItemMapParams): MappedMenuItem | undefined {
+        if (!isRowPinningMenuItem(key)) {
+            return undefined;
+        }
+        const { beans, gos } = this;
+        const localeTextFunc = this.getLocaleTextFunc();
+        const pinAction = (side: 'top' | 'bottom' | null) => () => {
+            if (node) {
+                this.pinRow(node, side, column);
+                return;
+            }
+            // pin every row in the selected cell ranges
+            beans.rangeSvc?.getCellRanges()?.forEach((cellRange) => {
+                beans.rangeSvc!.forEachRowInRange(cellRange, (row) => {
+                    const rowNode = _getRowNode(beans, row);
+                    if (rowNode) {
+                        this.pinRow(rowNode, side, null);
+                    }
+                });
+            });
+        };
+        switch (key) {
+            case 'pinRowSubMenu': {
+                const enableRowPinning = gos.get('enableRowPinning');
+                const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
+                const subMenu: DefaultMenuItem[] = [];
+                if (pinned) {
+                    subMenu.push('unpinRow');
+                }
+                if (enableRowPinning && enableRowPinning !== 'bottom' && pinned != 'top') {
+                    subMenu.push('pinTop');
+                }
+                if (enableRowPinning && enableRowPinning !== 'top' && pinned != 'bottom') {
+                    subMenu.push('pinBottom');
+                }
+                return {
+                    name: localeTextFunc('pinRow', 'Pin Row'),
+                    icon: _createIconNoSpan('rowPin', beans, column),
+                    subMenu,
+                };
+            }
+            case 'pinTop':
+                return {
+                    name: localeTextFunc('pinTop', 'Pin to Top'),
+                    icon: _createIconNoSpan('rowPinTop', beans, column),
+                    action: pinAction('top'),
+                };
+            case 'pinBottom':
+                return {
+                    name: localeTextFunc('pinBottom', 'Pin to Bottom'),
+                    icon: _createIconNoSpan('rowPinBottom', beans, column),
+                    action: pinAction('bottom'),
+                };
+            default:
+                return {
+                    name: localeTextFunc('unpinRow', 'Unpin Row'),
+                    icon: _createIconNoSpan('rowUnpin', beans, column),
+                    action: pinAction(null),
+                };
+        }
     }
 
     public reset(dispatch = true): void {

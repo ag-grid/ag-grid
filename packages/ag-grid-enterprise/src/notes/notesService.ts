@@ -1,8 +1,14 @@
 import type {
     CellCtrl,
+    DefaultColumnMenuItem,
+    DefaultMenuItem,
     GetNoteParams,
     INoteAccess,
     INotesService,
+    MappedMenuItem,
+    MenuItemDef,
+    MenuItemMapParams,
+    MenuItemProviderParams,
     NamedBean,
     Note,
     RefreshNotesParams,
@@ -29,6 +35,68 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
 
     public hasDataSource(): boolean {
         return !!this.beans.notesDataSvc?.hasDataSource();
+    }
+
+    public getContextMenuItems({ dataColumn, node }: MenuItemProviderParams): DefaultMenuItem[] {
+        return node && dataColumn && this.hasDataSource() ? ['note'] : [];
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem, params: MenuItemMapParams): MappedMenuItem | undefined {
+        return key === 'note' ? this.createNoteMenuItems(params) : undefined;
+    }
+
+    private createNoteMenuItems({ column, node, noteParams }: MenuItemMapParams): MenuItemDef[] {
+        const localeTextFunc = this.getLocaleTextFunc();
+        const access: INoteAccess | undefined = this.hasDataSource()
+            ? noteParams
+                ? this.getNoteAccess(noteParams)
+                : column && node
+                  ? this.getNoteAccess({ rowNode: node, column })
+                  : undefined
+            : undefined;
+
+        if (!access) {
+            return [];
+        }
+
+        const show = () => this.showNote(access.params, true);
+        const result: MenuItemDef[] = [];
+
+        if (!access.note) {
+            result.push({
+                name: localeTextFunc('addNote', 'Add Note'),
+                shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
+                disabled: !access.canCreate,
+                action: access.canCreate ? show : undefined,
+            });
+
+            return result;
+        }
+
+        if (access.canView && (access.isReadOnly || access.isSuppressed)) {
+            result.push({
+                name: localeTextFunc('viewNote', 'View Note'),
+                shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
+                action: show,
+            });
+        }
+
+        if (!access.isReadOnly && !access.isSuppressed) {
+            result.push({
+                name: localeTextFunc('editNote', 'Edit Note'),
+                shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
+                disabled: !access.canEdit,
+                action: access.canEdit ? show : undefined,
+            });
+        }
+
+        result.push({
+            name: localeTextFunc('deleteNote', 'Remove Note'),
+            disabled: !access.canDelete,
+            action: access.canDelete ? () => this.setNote({ ...access.params, note: undefined }) : undefined,
+        });
+
+        return result;
     }
 
     public onDataSourceChanged(): void {

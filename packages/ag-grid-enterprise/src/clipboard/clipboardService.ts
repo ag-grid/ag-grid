@@ -6,6 +6,8 @@ import type {
     CellRange,
     ChangedPath,
     CsvExportParams,
+    DefaultColumnMenuItem,
+    DefaultMenuItem,
     GridCtrl,
     GridOptions,
     IClientSideRowModel,
@@ -13,6 +15,9 @@ import type {
     IClipboardCopyRowsParams,
     IClipboardService,
     IRangeService,
+    MappedMenuItem,
+    MenuItemMapParams,
+    MenuItemProviderParams,
     NamedBean,
     ProcessCellForExportParams,
     ProcessRowGroupForExportParams,
@@ -23,6 +28,7 @@ import type {
 import {
     BeanStub,
     _createCellId,
+    _createIconNoSpan,
     _forEachChangedGroupDepthFirst,
     _getRowBelow,
     _getRowNode,
@@ -136,6 +142,76 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private lastPasteOperationTime: number = 0;
 
     private navigatorApiFailed = false;
+
+    public getContextMenuItems({ dataColumn, node }: MenuItemProviderParams): DefaultMenuItem[] {
+        // only makes sense if column exists, could have originated from a row
+        if (!node || !dataColumn) {
+            return [];
+        }
+        const items: DefaultMenuItem[] = [];
+        if (!this.gos.get('suppressCutToClipboard')) {
+            items.push('cut');
+        }
+        items.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
+        return items;
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem, { column, node }: MenuItemMapParams): MappedMenuItem | undefined {
+        const { beans, gos } = this;
+        const localeTextFunc = this.getLocaleTextFunc();
+        const copyIcon = () => _createIconNoSpan('clipboardCopy', beans, null);
+        switch (key) {
+            case 'copy':
+                return {
+                    name: localeTextFunc('copy', 'Copy'),
+                    shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
+                    icon: copyIcon(),
+                    action: () => this.copyToClipboard(),
+                };
+            case 'copyWithHeaders':
+                return {
+                    name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
+                    icon: copyIcon(),
+                    action: () => this.copyToClipboard({ includeHeaders: true }),
+                };
+            case 'copyWithGroupHeaders':
+                return {
+                    name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
+                    icon: copyIcon(),
+                    action: () => this.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true }),
+                };
+            case 'cut': {
+                const focusedCell = beans.focusSvc.getFocusedCell();
+                const rowNode = focusedCell ? _getRowNode(beans, focusedCell) : null;
+                const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
+                return {
+                    name: localeTextFunc('cut', 'Cut'),
+                    shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
+                    icon: _createIconNoSpan('clipboardCut', beans, null),
+                    disabled: !isEditable || gos.get('suppressCutToClipboard'),
+                    action: () => this.cutToClipboard(undefined, 'contextMenu'),
+                };
+            }
+            case 'paste': {
+                const isPasteBlocked =
+                    gos.get('suppressClipboardApi') ||
+                    gos.get('suppressClipboardPaste') ||
+                    !column ||
+                    !node ||
+                    !column.isCellEditable(node) ||
+                    column.isSuppressPaste(node);
+                return {
+                    name: localeTextFunc('paste', 'Paste'),
+                    shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                    icon: _createIconNoSpan('clipboardPaste', beans, null),
+                    disabled: isPasteBlocked,
+                    action: () => this.pasteFromClipboard(),
+                };
+            }
+            default:
+                return undefined;
+        }
+    }
 
     public postConstruct(): void {
         const { gos, rowModel, ctrlsSvc } = this.beans;

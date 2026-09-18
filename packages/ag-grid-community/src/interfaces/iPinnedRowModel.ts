@@ -1,10 +1,11 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPinningState } from './gridState';
+import type { IMenuItemProvider } from './iContextMenu';
 import type { RowPinnedType } from './iRowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IPinnedRowModel {
+export interface IPinnedRowModel extends IMenuItemProvider {
     /** Reset the pinned row state. This is a no-op for the static pinned row model. */
     reset(): void;
 

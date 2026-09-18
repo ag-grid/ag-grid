@@ -19,14 +19,20 @@ import type {
     ColumnEventType,
     ColumnState,
     ColumnTreeBuild,
+    DefaultColumnMenuItem,
+    DefaultMenuItem,
     HeaderPosition,
     ICalculatedColumnsService,
+    MappedMenuItem,
+    MenuItemMapParams,
+    MenuItemProviderParams,
     NamedBean,
     _UserColumnService,
 } from 'ag-grid-community';
 import {
     BeanStub,
     _addColumnDefaultAndTypes,
+    _createIconNoSpan,
     _createUserColumn,
     _isCalculatedColumnsEnabled,
     _mergedEqual,
@@ -145,6 +151,53 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
     // Guaranteed present: registered by CalculatedColumnsModule alongside this service.
     private userColumnSvc!: _UserColumnService;
+
+    public getContextMenuItems({ column, node }: MenuItemProviderParams): DefaultMenuItem[] {
+        return node && (column as AgColumn | null)?.isCalculatedCol
+            ? ['separator', 'removeCalculatedColumn', 'separator']
+            : [];
+    }
+
+    public mapMenuItem(
+        key: DefaultColumnMenuItem,
+        { column, sourceElement }: MenuItemMapParams
+    ): MappedMenuItem | undefined {
+        const { beans } = this;
+        const localeTextFunc = this.getLocaleTextFunc();
+        const openDialog = (mode: 'add' | 'edit', headerPosition: HeaderPosition | null) => () =>
+            this.openCalculatedColumnDialog(column, mode, true, { eventSource: sourceElement(), headerPosition });
+        switch (key) {
+            case 'calculatedColumn':
+                return this.isEnabled()
+                    ? {
+                          name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
+                          icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
+                          action: openDialog(
+                              'add',
+                              beans.focusSvc.focusedHeader ?? (column ? { headerRowIndex: 0, column } : null)
+                          ),
+                      }
+                    : null;
+            case 'editCalculatedColumn':
+                return this.isEnabled() && column?.isCalculatedCol
+                    ? {
+                          name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
+                          icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                          action: openDialog('edit', beans.focusSvc.focusedHeader ?? { headerRowIndex: 0, column }),
+                      }
+                    : null;
+            case 'removeCalculatedColumn':
+                return this.isEnabled() && column?.isCalculatedCol
+                    ? {
+                          name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
+                          icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
+                          action: () => this.removeCalculatedColumn(column),
+                      }
+                    : null;
+            default:
+                return undefined;
+        }
+    }
 
     public postConstruct(): void {
         this.userColumnSvc = this.beans.userColumnSvc!;

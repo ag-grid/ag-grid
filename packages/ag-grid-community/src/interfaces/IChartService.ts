@@ -10,6 +10,7 @@ import type {
     SeriesChartType,
     SeriesGroupType,
 } from './iChartOptions';
+import type { IMenuItemProvider } from './iContextMenu';
 import type { SortModelItem } from './iSortModelItem';
 
 export interface GetChartImageDataUrlParams {
@@ -79,7 +80,7 @@ export interface ChartModel {
     useGroupColumnAsCategory?: boolean;
 }
 
-export interface IChartService {
+export interface IChartService extends IMenuItemProvider {
     isEnterprise(): boolean;
     getChartModels(): ChartModel[];
     getChartRef(chartId: string): ChartRef | undefined;

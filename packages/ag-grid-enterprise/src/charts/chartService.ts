@@ -14,10 +14,13 @@ import type {
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
+    DefaultColumnMenuItem,
+    DefaultMenuItem,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
     IRangeService,
+    MappedMenuItem,
     NamedBean,
     OpenChartToolPanelParams,
     PartialCellRange,
@@ -29,6 +32,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
+import type { ChartMenuItemMapper } from '../menu/chartMenuItemMapper';
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
 import type { GridChartParams } from './chartComp/gridChartComp';
@@ -68,6 +72,27 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         this.visibleCols = beans.visibleCols;
         this.rangeSvc = beans.rangeSvc;
         this.agChartsExports = beans.agChartsExports as AgChartsExports;
+    }
+
+    public getContextMenuItems(): DefaultMenuItem[] {
+        const { gos, colModel } = this.beans;
+        if (!gos.get('enableCharts')) {
+            return [];
+        }
+        const items: DefaultMenuItem[] = [];
+        if (colModel.pivotMode) {
+            items.push('pivotChart');
+        }
+        if (this.rangeSvc && !this.rangeSvc.isEmpty()) {
+            items.push('chartRange');
+        }
+        return items;
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem): MappedMenuItem | undefined {
+        return key === 'pivotChart' || key === 'chartRange'
+            ? (this.beans.chartMenuItemMapper as ChartMenuItemMapper).getChartItems(key)
+            : undefined;
     }
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including

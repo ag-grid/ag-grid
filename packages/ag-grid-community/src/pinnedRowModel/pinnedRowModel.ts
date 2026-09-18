@@ -4,8 +4,10 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _getGrandTotalRow } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
+import type { MappedMenuItem, MenuItemMapParams, MenuItemProviderParams } from '../interfaces/iContextMenu';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { DefaultColumnMenuItem, DefaultMenuItem } from '../interfaces/menuItem';
 import { ManualPinnedRowModel } from './manualPinnedRowModel';
 import { StaticPinnedRowModel } from './staticPinnedRowModel';
 
@@ -41,6 +43,14 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
 
     public reset(): void {
         return this.inner.reset();
+    }
+
+    public getContextMenuItems(params: MenuItemProviderParams): DefaultMenuItem[] {
+        return this.inner.getContextMenuItems(params);
+    }
+
+    public mapMenuItem(key: DefaultColumnMenuItem, params: MenuItemMapParams): MappedMenuItem | undefined {
+        return this.inner.mapMenuItem(key, params);
     }
 
     public isEmpty(container: NonNullable<RowPinnedType>): boolean {

@@ -1051,9 +1051,13 @@ export type {
 
 // Menus
 export type {
+    MenuItemProviderParams,
     EventShowContextMenuParams,
     IContextMenuParams,
     IContextMenuService,
+    IMenuItemProvider,
+    MappedMenuItem,
+    MenuItemMapParams,
     MouseShowContextMenuParams,
     ShowContextMenuParams,
     TouchShowContextMenuParam,
