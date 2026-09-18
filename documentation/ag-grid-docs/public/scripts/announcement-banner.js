@@ -2,12 +2,6 @@
  * Dismiss handler for the announcement banner. Externalised from an inline <script>
  * so the site Content-Security-Policy can drop script-src 'unsafe-inline'. Static,
  * served from 'self'. Guarded so it is safe to load once per page.
- *
- * The click listener is delegated from `document` rather than bound to the button
- * itself: a client-side navigation swaps <body>, so the banner on the incoming page
- * is a brand-new element with no listeners, while this script — already in the
- * document — is not re-executed (and the guard below would short-circuit it anyway).
- * `document` survives every swap, so a single listener covers every page.
  */
 (function () {
     if (window.__agAnnouncementBannerInit) {
@@ -15,10 +9,8 @@
     }
     window.__agAnnouncementBannerInit = true;
 
-    document.addEventListener('click', function (event) {
-        var target = event.target;
-        var button = target && target.closest && target.closest('[data-announcement-dismiss]');
-        var banner = button && button.closest('[data-announcement-banner]');
+    function onDismissClick(event) {
+        var banner = event.currentTarget.closest('[data-announcement-banner]');
 
         if (!banner) {
             return;
@@ -43,5 +35,21 @@
             },
             { once: true }
         );
-    });
+    }
+
+    function bindDismissButton() {
+        var button = document.querySelector('[data-announcement-dismiss]');
+
+        // Always the same function reference, so re-binding the same button is a no-op.
+        if (button) {
+            button.addEventListener('click', onDismissClick);
+        }
+    }
+
+    bindDismissButton();
+
+    // A client-side navigation swaps <body>, so the incoming page's banner is a brand-new
+    // element with no listener, while this script — already in the document — is not
+    // re-executed. Re-bind after every swap; astro:page-load covers the initial load too.
+    document.addEventListener('astro:page-load', bindDismissButton);
 })();
