@@ -72,7 +72,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 const staticAssetCacheRules = `
 # Images and example-page assets: unhashed filenames, so cap staleness with a moderate
 # max-age rather than caching indefinitely.
-Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets)/#"
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/#"
 `;
 
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
