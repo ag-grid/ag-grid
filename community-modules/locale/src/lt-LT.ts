@@ -505,7 +505,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     seriesLabels: 'Serijų žymos',
     aggregate: 'Agreguoti',
     xyValues: 'X Y reikšmės',
-    paired: 'Poriniai režimas',
+    paired: 'Porinis režimas',
     axis: 'Ašis',
     xAxis: 'Horizontali ašis',
     yAxis: 'Vertikali ašis',
