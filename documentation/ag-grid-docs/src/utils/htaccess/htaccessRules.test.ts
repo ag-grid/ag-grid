@@ -459,48 +459,47 @@ describe('htaccessRules', () => {
             expect(stagingContent).not.toContain('images|example-assets');
         });
 
-        // The rule is now `A && !(B)` in the generated Apache expr - a single m#...# extraction
-        // (as used elsewhere in this file) would only ever check A, silently ignoring the
-        // exclusion. matchesRule below models the real combined condition.
-        const matchesRule = (uri: string) => {
-            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
-            expect(line).toBeDefined();
-            const sources = [...line!.matchAll(/m#([^#]+)#/g)].map(([, src]) => src);
-            expect(sources).toHaveLength(2);
-            const [baseSource, exclusionSource] = sources;
-            return new RegExp(baseSource).test(uri) && !new RegExp(exclusionSource).test(uri);
-        };
-
         it('also matches /example/, not just /example-assets/', () => {
-            expect(matchesRule('/example/finance.png')).toBe(true);
-            expect(matchesRule('/example-assets/olympic-winners.json')).toBe(true);
-        });
-
-        it('matches assets nested in subdirectories, e.g. example-assets/space-company-logos/ or images/fw-logos/', () => {
-            // Real paths in public/ - a prior fix that anchored on a fixed extension list with
-            // no subdirectory silently broke exactly these.
-            expect(matchesRule('/example-assets/space-company-logos/nasa.png')).toBe(true);
-            expect(matchesRule('/images/fw-logos/react.svg')).toBe(true);
-        });
-
-        it('matches asset extensions beyond the common image types, e.g. .xlsx', () => {
-            expect(matchesRule('/example-assets/olympic-data.xlsx')).toBe(true);
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/finance.png')).toBe(true);
+            expect(pattern.test('/example-assets/olympic-winners.json')).toBe(true);
         });
 
         it('does NOT match the /example/ demo page itself, only asset files beneath it', () => {
             // staticAssetCacheRules is emitted after documentNoCacheRules, so an unanchored
             // match on the directory name alone would win and override the live demo page's
             // no-cache with a day-long public cache - see src/pages/example.astro.
-            expect(matchesRule('/example/')).toBe(false);
-            expect(matchesRule('/example/index.html')).toBe(false);
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/')).toBe(false);
+            expect(pattern.test('/example/index.html')).toBe(false);
+            expect(pattern.test('/example-assets/')).toBe(false);
+            expect(pattern.test('/images/')).toBe(false);
         });
 
-        it('does NOT falsely exclude a real nested HTML file under example-assets', () => {
-            // example-assets/flags/index.html is real - the exclusion clause is keyed on the
-            // exact demo-page path, not on ".html" generally, so this must still be excluded
-            // from caching for a different reason (no matching extension upstream would need
-            // one) but must not be caught by - or rely on - the /example/ demo-page exclusion.
-            expect(matchesRule('/example-assets/flags/index.html')).toBe(true);
+        it('matches assets nested in subdirectories, e.g. example-assets/space-company-logos/ or images/ag-logos/png-logos/', () => {
+            // Real paths in public/ - an earlier version of this rule anchored the filename
+            // segment with "[^/]+" (no subdirectory allowed), which silently broke exactly
+            // these: 334 of the 364 files under public/images/ live nested, not at the top level.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example-assets/space-company-logos/nasa.png')).toBe(true);
+            expect(pattern.test('/images/ag-logos/png-logos/react.png')).toBe(true);
+        });
+
+        it('covers the non-image extensions actually used under these paths (xlsx, mp4, webm)', () => {
+            // Real files: public/example-assets/*.xlsx, public/images/**/*.mp4 and *.webm. The
+            // original png/jpg/gif/svg/webp/ico/json list didn't include these.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example-assets/olympic-data.xlsx')).toBe(true);
+            expect(pattern.test('/images/about/carousel/intro.mp4')).toBe(true);
+            expect(pattern.test('/images/about/carousel/intro.webm')).toBe(true);
         });
     });
 
