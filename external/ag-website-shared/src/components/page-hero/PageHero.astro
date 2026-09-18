@@ -1,19 +1,51 @@
 ---
 import styles from './PageHero.module.scss';
 
+/**
+ * Each part takes either a plain string prop or, for markup a string can't express
+ * (a logotype standing in for words, a forced line break), a same-named slot.
+ */
 interface Props {
-    eyebrow: string;
-    headline: string;
-    subhead: string;
+    eyebrow?: string;
+    headline?: string;
+    subhead?: string;
+    /**
+     * `brand` paints the section as a solid brand-blue band with light text, matching the
+     * homepage hero. It holds the same colours in dark mode, so the band reads as a
+     * deliberate block of brand colour rather than following the page background.
+     */
+    tone?: 'default' | 'brand';
 }
 
-const { eyebrow, headline, subhead } = Astro.props as Props;
+const { eyebrow, headline, subhead, tone = 'default' } = Astro.props as Props;
+
+const hasEyebrow = eyebrow != null || Astro.slots.has('eyebrow');
+const hasHeadline = headline != null || Astro.slots.has('headline');
+const hasSubhead = subhead != null || Astro.slots.has('subhead');
 ---
 
-<section class={styles.pageHero}>
-    <p class={styles.pageHeroEyebrow}>{eyebrow}</p>
-    <h1 class={styles.pageHeroHeadline}>{headline}</h1>
-    <p class={styles.pageHeroSubhead}>{subhead}</p>
+<section class:list={[styles.pageHero, tone === 'brand' && styles.pageHeroBrand]}>
+    {
+        hasEyebrow && (
+            <p class={styles.pageHeroEyebrow}>
+                <slot name="eyebrow">{eyebrow}</slot>
+            </p>
+        )
+    }
+    {
+        hasHeadline && (
+            <h1 class={styles.pageHeroHeadline}>
+                <slot name="headline">{headline}</slot>
+            </h1>
+        )
+    }
+    {
+        hasSubhead && (
+            <p class={styles.pageHeroSubhead}>
+                <slot name="subhead">{subhead}</slot>
+            </p>
+        )
+    }
     {
         Astro.slots.has('default') && (
             <div class={styles.pageHeroContent}>
