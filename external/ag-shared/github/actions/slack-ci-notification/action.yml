@@ -20,6 +20,12 @@ inputs:
     LAST_SUCCESSFUL_SHA:
         description: SHA of the last successful workflow run on the target branch (used for git diff and change list).
         required: true
+    LAST_DEPLOYED_SHA:
+        description: >-
+            SHA of the commit the previous staging deploy shipped. Bounds the change list of the staging-deploy
+            notification instead of LAST_SUCCESSFUL_SHA, so a successful run that skipped the deploy does not drop
+            its commits from the next deploy's notification. Falls back to LAST_SUCCESSFUL_SHA when unset.
+        required: false
     JOB_STATUSES:
         description: JSON object mapping job name to status (success | failure | n/a | skipped | cancelled).
         required: true
@@ -79,7 +85,7 @@ runs:
               AG_PROJECT: ${{ inputs.AG_PROJECT }}
               RUN_ID: ${{ github.run_id }}
               CURRENT_SHA: ${{ github.sha }}
-              LAST_SUCCESSFUL_SHA: ${{ inputs.LAST_SUCCESSFUL_SHA }}
+              LAST_SUCCESSFUL_SHA: ${{ inputs.LAST_DEPLOYED_SHA || inputs.LAST_SUCCESSFUL_SHA }}
               WEBSITE_STATUS_CHANNEL: ${{ inputs.WEBSITE_STATUS_CHANNEL }}
               LIBRARY_WEBSITE_STATUS_CHANNEL: ${{ inputs.LIBRARY_WEBSITE_STATUS_CHANNEL }}
               DEPLOY_TO_STAGING: ${{ inputs.DEPLOY_TO_STAGING }}

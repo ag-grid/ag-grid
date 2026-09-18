@@ -563,6 +563,7 @@ jobs:
       fail-fast: false
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
+      previously_deployed_sha: ${{ steps.previously_deployed.outputs.sha }}
     steps:
       - name: Checkout
         id: checkout
@@ -592,6 +593,16 @@ jobs:
 
       - name: validate base url
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
+
+      - name: Read commit currently on staging
+        # Captured before the deploy below replaces it; the report job uses it as the base
+        # of the staging-deploy notification. Empty on failure so the report job falls back.
+        id: previously_deployed
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: |
+          sha=$(curl --silent --fail --max-time 30 https://grid-staging.ag-grid.com/debug/meta.json | node -pe 'JSON.parse(require("fs").readFileSync(0, "utf8")).git.hash' || true)
+          echo "sha=${sha}" >> $GITHUB_OUTPUT
+          echo "Commit currently on staging: ${sha:-<unknown>}"
 
       - name: Deploy to Staging
         id: deploy_to_staging
@@ -810,6 +821,30 @@ jobs:
           workflow: "ci"
           verify: false
 
+      - name: Resolve previously deployed commit
+        # The staging-deploy notification lists the commits between the previous deploy and
+        # this one. The previous deploy is what staging served before the docs job replaced
+        # it, not the last successful run: a successful run whose docs build was skipped
+        # deploys nothing, and starting from it would silently drop everyone whose commits
+        # it contained. Falls back to the last successful run when the docs job could not
+        # read staging.
+        id: previous_deploy
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+          && needs.docs.outputs.docs_deployed == 'success'
+        run: |
+          base="${{ needs.docs.outputs.previously_deployed_sha || steps.find_latest_sha.outputs.sha }}"
+          echo "sha=${base}" >> $GITHUB_OUTPUT
+          echo "Previous deploy: ${base}"
+
+          # The checkout is shallow, so deepen it until the base is an ancestor of HEAD;
+          # otherwise the notifier's `git log base..HEAD` only ever sees the head commit.
+          for _ in $(seq 1 20); do
+            if git merge-base --is-ancestor "$base" HEAD 2>/dev/null; then
+              break
+            fi
+            git fetch --quiet --deepen=50 origin latest
+          done
+
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         uses: ./external/ag-shared/github/actions/slack-ci-notification
@@ -819,6 +854,7 @@ jobs:
           NOTION_DATA_SOURCE_ID: ${{ secrets.SLACK_USER_CONFIG_NOTION_DATA_SOURCE_ID }}
           AG_PROJECT: AgGrid
           LAST_SUCCESSFUL_SHA: ${{ steps.find_latest_sha.outputs.sha }}
+          LAST_DEPLOYED_SHA: ${{ steps.previous_deploy.outputs.sha }}
           TEAM_CHANNEL: ${{ env.SLACK_CHANNEL }}
           DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
