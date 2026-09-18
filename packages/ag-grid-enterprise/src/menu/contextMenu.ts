@@ -8,6 +8,7 @@ import type {
     BeanCollection,
     CellCtrl,
     CellPosition,
+    Column,
     DefaultMenuItem,
     EventShowContextMenuParams,
     GetNoteParams,
@@ -107,11 +108,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         } = this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
-        // a selection or row-number cell has no data of its own, so it offers the row-level items only; the exception
-        // is a row-number cell whose click selects the whole row, as the cell items then act on that row
-        const isSpecialCell =
-            !!column && isSpecialCol(column) && !(isRowNumberCol(column) && rowNumbersSvc?.isIntegratedWithSelection);
-        const dataColumn = isSpecialCell ? null : column;
+        // a selection or row-number cell has no data of its own, so it offers the row-level items only, unless the
+        // clipboard would act on rows: a row-number click that selects the row, or a selection column with rows to copy
+        const clipboardActsOnRows = (col: Column) =>
+            isRowNumberCol(col) ? rowNumbersSvc?.isIntegratedWithSelection : clipboardSvc?.copiesSelectedRows();
+        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardActsOnRows(column);
+        const dataColumn = isDatalessSpecialCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {
             if (dataColumn) {

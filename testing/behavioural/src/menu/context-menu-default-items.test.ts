@@ -48,6 +48,10 @@ describe('Context menu default items', () => {
         modules: [ClientSideRowModelModule, ContextMenuModule, CsvExportModule],
     });
 
+    beforeEach(() => {
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
     afterEach(() => {
         enterpriseGrids.reset();
         communityGrids.reset();
@@ -78,7 +82,6 @@ describe('Context menu default items', () => {
             },
             { modules }
         );
-        restoreOffsetParent = polyfillOffsetParent();
         rightClick(cell(getGridElement(api)! as HTMLElement, 0, 'athlete'));
         await waitFor(() => expect(called).toBe(true));
         return { defaultItems: seen, entries: openMenuEntries };
@@ -174,7 +177,6 @@ describe('Context menu default items', () => {
             columnDefs: [{ field: 'athlete', contextMenuItems: ['copy', 'export'] }, { field: 'age' }],
             rowData,
         });
-        restoreOffsetParent = polyfillOffsetParent();
         rightClick(cell(getGridElement(api)! as HTMLElement, 0, 'athlete'));
         await waitFor(() => expect(openMenuEntries()).toEqual(['Copy', 'Export']));
     });

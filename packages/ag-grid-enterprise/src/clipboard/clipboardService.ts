@@ -799,11 +799,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyRows(rowSelection?: GridOptions['rowSelection']) {
-        const { selectionSvc, gos } = this.beans;
-        if (selectionSvc?.isEmpty() ?? true) {
-            return false;
-        }
+        return !(this.beans.selectionSvc?.isEmpty() ?? true) && this.copiesSelectedRows(rowSelection);
+    }
 
+    public copiesSelectedRows(rowSelection = this.gos.get('rowSelection')): boolean {
+        const { gos } = this.beans;
         if (rowSelection && typeof rowSelection !== 'string') {
             // If `rowSelection` is defined as an object, user is using the new selection API, so we determine
             // behaviour based on `copySelectedRows`

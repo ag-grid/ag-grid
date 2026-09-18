@@ -196,6 +196,29 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(menuOption('Paste')).toBeNull();
     });
 
+    // With copySelectedRows the clipboard copies the selected rows whatever cell was clicked, so the
+    // selection column keeps its copy items.
+    test('a selection-column cell offers Copy when copySelectedRows is enabled', async () => {
+        const api = await gridMgr.createGridAndWait('selectionColCtxCopyRows', {
+            columnDefs,
+            rowData,
+            rowSelection: { mode: 'multiRow', copySelectedRows: true },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Copy')).not.toBeNull());
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(1)!], newValue: true });
+        rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
+        await clickMenuOption('Copy');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Natalie Coughlin\t25'));
+    });
+
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
     test('rowNumbers.contextMenuItems overrides the grid-level getContextMenuItems', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxOverride', {

@@ -15,4 +15,6 @@ export interface IClipboardService {
     copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void;
     copySelectedRangeToClipboard(params?: IClipboardCopyParams): void;
     copyRangeDown(): void;
+    /** Whether the grid is configured to copy the selected rows rather than the focused cell. */
+    copiesSelectedRows(): boolean;
 }
