@@ -712,7 +712,6 @@ export interface IExcelCreator {
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 
     /** private methods */
-    _exportWithSource(source: 'api' | 'contextMenu', params?: ExcelExportParams): void;
     setFactoryMode(factoryMode: ExcelFactoryMode): void;
     getFactoryMode(): ExcelFactoryMode;
 }

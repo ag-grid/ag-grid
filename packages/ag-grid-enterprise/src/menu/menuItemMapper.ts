@@ -494,7 +494,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('csvExport', 'CSV Export'),
                               icon: _createIconNoSpan('csvExport', beans, null),
-                              action: () => csvCreator._exportWithSource('contextMenu'),
+                              action: () => csvCreator.exportDataAsCsv(),
                           }
                         : null;
                 case 'excelExport':
@@ -502,7 +502,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('excelExport', 'Excel Export'),
                               icon: _createIconNoSpan('excelExport', beans, null),
-                              action: () => excelCreator._exportWithSource('contextMenu'),
+                              action: () => excelCreator.exportDataAsExcel(),
                           }
                         : null;
                 case 'pdfExport':
@@ -510,7 +510,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pdfExport', 'PDF Export'),
                               icon: _createIconNoSpan('pdfExport', beans, null),
-                              action: () => pdfCreator._exportWithSource('contextMenu'),
+                              action: () => pdfCreator.exportDataAsPdf(),
                           }
                         : null;
                 case 'separator':

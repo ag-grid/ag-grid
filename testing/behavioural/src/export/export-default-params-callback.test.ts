@@ -2,8 +2,8 @@
  * `getDefaultCsvExportParams` / `getDefaultExcelExportParams` / `getDefaultPdfExportParams` — the callback
  * form of the static `default*ExportParams` options.
  *
- * Each test records the callback's `source` as it fires, so an empty recorder distinguishes "the callback
- * never ran" from "it ran and the merge went the wrong way".
+ * Each test counts the callback's invocations, so a zero count distinguishes "the callback never ran"
+ * from "it ran and the merge went the wrong way".
  */
 import { TestGridsManager } from 'ag-test-utils';
 
@@ -40,18 +40,18 @@ describe('export default params callback', () => {
 
     describe('CSV', () => {
         test('a callback supplied in the initial gridOptions provides the defaults', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             const api = await gridsManager.createGridAndWait('csv-callback-only', {
                 columnDefs,
                 rowData,
-                getDefaultCsvExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultCsvExportParams: () => {
+                    calls++;
                     return { columnSeparator: ';', suppressQuotes: true };
                 },
             });
 
             expect(api.getDataAsCsv()).toBe('Athlete;Country\r\nAmy;UK');
-            expect(seen).toEqual(['api']);
+            expect(calls).toBe(1);
         });
 
         test('merges static defaults, then the callback, then the params passed to the export', async () => {
@@ -69,59 +69,43 @@ describe('export default params callback', () => {
         });
 
         test('re-resolves on every export, picking up an option swapped at runtime', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             const api = await gridsManager.createGridAndWait('csv-re-evaluated', {
                 columnDefs,
                 rowData,
-                getDefaultCsvExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultCsvExportParams: () => {
+                    calls++;
                     return { columnSeparator: ';', suppressQuotes: true };
                 },
             });
 
-            expect(seen).toHaveLength(0);
+            expect(calls).toBe(0);
 
             const first = api.getDataAsCsv();
-            api.setGridOption('getDefaultCsvExportParams', (params) => {
-                seen.push(params.source);
+            api.setGridOption('getDefaultCsvExportParams', () => {
+                calls++;
                 return { columnSeparator: '|', suppressQuotes: true };
             });
             const second = api.getDataAsCsv();
 
             expect(first).toBe('Athlete;Country\r\nAmy;UK');
             expect(second).toBe('Athlete|Country\r\nAmy|UK');
-            expect(seen).toEqual(['api', 'api']);
-        });
-
-        test('reports source api', async () => {
-            const seen: string[] = [];
-            const api = await gridsManager.createGridAndWait('csv-source-api', {
-                columnDefs,
-                rowData,
-                getDefaultCsvExportParams: (params) => {
-                    seen.push(params.source);
-                    return {};
-                },
-            });
-
-            api.getDataAsCsv();
-
-            expect(seen).toEqual(['api']);
+            expect(calls).toBe(2);
         });
 
         test('is unaffected by the Excel callback', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             const api = await gridsManager.createGridAndWait('csv-cross-wiring', {
                 columnDefs,
                 rowData,
-                getDefaultExcelExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultExcelExportParams: () => {
+                    calls++;
                     return { columnWidth: 300 };
                 },
             });
 
             expect(api.getDataAsCsv({ suppressQuotes: true })).toBe('Athlete,Country\r\nAmy,UK');
-            expect(seen).toHaveLength(0);
+            expect(calls).toBe(0);
         });
     });
 
@@ -131,13 +115,13 @@ describe('export default params callback', () => {
 
         // First in this block: the xlsx factory mode is module-global, and `getSheetDataForExcel` leaves it
         // in multi-sheet mode, which makes a later `getDataAsExcel` a no-op.
-        test('reports source api', async () => {
-            const seen: string[] = [];
-            const api = await gridsManager.createGridAndWait('excel-source-api', {
+        test('resolves the callback for both the workbook and the single-sheet APIs', async () => {
+            let calls = 0;
+            const api = await gridsManager.createGridAndWait('excel-both-apis', {
                 columnDefs,
                 rowData,
-                getDefaultExcelExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultExcelExportParams: () => {
+                    calls++;
                     return {};
                 },
             });
@@ -145,22 +129,22 @@ describe('export default params callback', () => {
             api.getDataAsExcel();
             api.getSheetDataForExcel({});
 
-            expect(seen).toEqual(['api', 'api']);
+            expect(calls).toBe(2);
         });
 
         test('a callback supplied in the initial gridOptions provides the defaults', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             const api = await gridsManager.createGridAndWait('excel-callback-only', {
                 columnDefs,
                 rowData,
-                getDefaultExcelExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultExcelExportParams: () => {
+                    calls++;
                     return { columnWidth: 300 };
                 },
             });
 
             expect(api.getSheetDataForExcel({})).toContain(width(300));
-            expect(seen).toEqual(['api']);
+            expect(calls).toBe(1);
         });
 
         test('merges static defaults, then the callback, then the params passed to the export', async () => {
@@ -183,18 +167,18 @@ describe('export default params callback', () => {
         });
 
         test('re-resolves on every export', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             let columnWidth = 300;
             const api = await gridsManager.createGridAndWait('excel-re-evaluated', {
                 columnDefs,
                 rowData,
-                getDefaultExcelExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultExcelExportParams: () => {
+                    calls++;
                     return { columnWidth };
                 },
             });
 
-            expect(seen).toHaveLength(0);
+            expect(calls).toBe(0);
 
             const first = api.getSheetDataForExcel({});
             columnWidth = 500;
@@ -203,7 +187,7 @@ describe('export default params callback', () => {
             expect(first).toContain(width(300));
             expect(second).toContain(width(500));
             expect(second).not.toContain(width(300));
-            expect(seen).toEqual(['api', 'api']);
+            expect(calls).toBe(2);
         });
     });
 
@@ -212,33 +196,33 @@ describe('export default params callback', () => {
         const LETTER_PORTRAIT = '/MediaBox [0 0 612 792]';
 
         test('a callback supplied in the initial gridOptions provides the defaults', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             const api = await gridsManager.createGridAndWait('pdf-callback-only', {
                 columnDefs,
                 rowData,
-                getDefaultPdfExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultPdfExportParams: () => {
+                    calls++;
                     return { page: { orientation: 'portrait' } };
                 },
             });
 
             expect(await pdfText(api)).toContain(A4_PORTRAIT);
-            expect(seen).toEqual(['api']);
+            expect(calls).toBe(1);
         });
 
         test('re-resolves on every export', async () => {
-            const seen: string[] = [];
+            let calls = 0;
             let orientation: 'portrait' | 'landscape' = 'portrait';
             const api = await gridsManager.createGridAndWait('pdf-re-evaluated', {
                 columnDefs,
                 rowData,
-                getDefaultPdfExportParams: (params) => {
-                    seen.push(params.source);
+                getDefaultPdfExportParams: () => {
+                    calls++;
                     return { page: { orientation } };
                 },
             });
 
-            expect(seen).toHaveLength(0);
+            expect(calls).toBe(0);
 
             const first = await pdfText(api);
             orientation = 'landscape';
@@ -247,23 +231,7 @@ describe('export default params callback', () => {
             expect(first).toContain(A4_PORTRAIT);
             expect(second).toContain('/MediaBox [0 0 841.89 595.28]');
             expect(second).not.toContain(A4_PORTRAIT);
-            expect(seen).toEqual(['api', 'api']);
-        });
-
-        test('reports source api', async () => {
-            const seen: string[] = [];
-            const api = await gridsManager.createGridAndWait('pdf-source-api', {
-                columnDefs,
-                rowData,
-                getDefaultPdfExportParams: (params) => {
-                    seen.push(params.source);
-                    return {};
-                },
-            });
-
-            api.getDataAsPdf();
-
-            expect(seen).toEqual(['api']);
+            expect(calls).toBe(2);
         });
 
         test('the callback replaces the static page setup rather than merging into it', async () => {

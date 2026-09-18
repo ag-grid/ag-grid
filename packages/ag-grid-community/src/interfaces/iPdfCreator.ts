@@ -603,7 +603,4 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
 export interface IPdfCreator {
     getDataAsPdf(params?: PdfExportParams): Blob | undefined;
     exportDataAsPdf(params?: PdfExportParams): void;
-
-    /** private methods */
-    _exportWithSource(source: 'api' | 'contextMenu', params?: PdfExportParams): void;
 }

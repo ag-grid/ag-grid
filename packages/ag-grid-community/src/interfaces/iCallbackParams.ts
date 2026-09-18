@@ -414,10 +414,7 @@ export type GetDefaultExcelExportParams<TData = any, TContext = any> = (
 export type GetDefaultPdfExportParams<TData = any, TContext = any> = (
     params: GetDefaultExportParamsParams<TData, TContext>
 ) => PdfExportParams;
-export interface GetDefaultExportParamsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** How the export was triggered. */
-    source: 'api' | 'contextMenu';
-}
+export interface GetDefaultExportParamsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
 export interface GetGroupAggFilteringParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     node: IRowNode<TData>;

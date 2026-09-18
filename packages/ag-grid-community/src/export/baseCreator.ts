@@ -1,22 +1,21 @@
 import { BeanStub } from '../context/beanStub';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ExportParams } from '../interfaces/exportParams';
+import type { GetDefaultExportParamsParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { GridSerializingSession } from './iGridSerializer';
-
-export type ExportSource = 'api' | 'contextMenu';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BeanStub {
-    protected abstract export(userParams?: P, source?: ExportSource): void;
+    protected abstract export(userParams?: P): void;
 
-    protected abstract getMergedParams(params?: P, source?: ExportSource): P;
+    protected abstract getMergedParams(params?: P): P;
 
     protected mergeDefaultParams(
         staticParams: P | undefined,
-        callback: ((p: { source: ExportSource }) => P) | undefined,
-        source: ExportSource
+        callback: ((params: WithoutGridCommon<GetDefaultExportParamsParams>) => P) | undefined
     ): P | undefined {
-        return callback ? ({ ...staticParams, ...callback({ source }) } as P) : staticParams;
+        return callback ? ({ ...staticParams, ...callback({}) } as P) : staticParams;
     }
 
     protected getFileName(fileName?: string): string {
@@ -54,11 +53,6 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     public getDefaultFileName(): string {
         return `export.${this.getDefaultFileExtension()}`;
-    }
-
-    /** private methods */
-    public _exportWithSource(source: ExportSource, params?: P): void {
-        this.export(params, source);
     }
 
     public abstract createSerializingSession(params?: P): S;

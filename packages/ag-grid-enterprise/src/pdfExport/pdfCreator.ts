@@ -34,11 +34,10 @@ export class PdfCreator
      * @param params - Optional export params provided by the caller.
      * @returns The merged params with resolved theme styles applied.
      */
-    protected getMergedParams(params?: PdfExportParams, source: 'api' | 'contextMenu' = 'api'): PdfExportParams {
+    protected getMergedParams(params?: PdfExportParams): PdfExportParams {
         const baseParams = this.mergeDefaultParams(
             this.gos.get('defaultPdfExportParams'),
-            this.gos.getCallback('getDefaultPdfExportParams'),
-            source
+            this.gos.getCallback('getDefaultPdfExportParams')
         );
         const resolveColor = this.getResolveColorValueFn();
         const merged: PdfExportParams = { ...(baseParams ?? {}), ...(params ?? {}) };
@@ -81,14 +80,14 @@ export class PdfCreator
      * Run the export pipeline and trigger a download.
      * @param userParams - Optional export params to use for this export.
      */
-    protected export(userParams?: PdfExportParams, source: 'api' | 'contextMenu' = 'api'): void {
+    protected export(userParams?: PdfExportParams): void {
         if (this.isExportSuppressed()) {
             this.warn(160);
             return;
         }
 
         this.runExport(() => {
-            const mergedParams = this.getMergedParams(userParams, source);
+            const mergedParams = this.getMergedParams(userParams);
             const blob = this.createPdfBlob(mergedParams);
             if (blob) {
                 _downloadFile(this.resolveFileName(mergedParams), blob);

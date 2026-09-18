@@ -660,6 +660,13 @@ export interface GridOptions<TData = any> {
      */
     defaultCsvExportParams?: CsvExportParams;
     /**
+     * Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
+     * each time an export is performed. Function should return a configuration object used to export to CSV.
+     * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
+     * @agModule `CsvExportModule`
+     */
+    getDefaultCsvExportParams?: GetDefaultCsvExportParams<TData>;
+    /**
      * Prevents the user from exporting the grid to CSV.
      * @default false
      */
@@ -670,6 +677,13 @@ export interface GridOptions<TData = any> {
      */
     defaultExcelExportParams?: ExcelExportParams;
     /**
+     * Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
+     * each time an export is performed. Function should return a configuration object used to export to Excel.
+     * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
+     * @agModule `ExcelExportModule`
+     */
+    getDefaultExcelExportParams?: GetDefaultExcelExportParams<TData>;
+    /**
      * Prevents the user from exporting the grid to Excel.
      * @default false
      */
@@ -679,6 +693,13 @@ export interface GridOptions<TData = any> {
      * @agModule `PdfExportModule`
      */
     defaultPdfExportParams?: PdfExportParams;
+    /**
+     * Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
+     * each time an export is performed. Function should return a configuration object used to export to PDF.
+     * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
+     * @agModule `PdfExportModule`
+     */
+    getDefaultPdfExportParams?: GetDefaultPdfExportParams<TData>;
     /**
      * Prevents the user from exporting the grid to PDF.
      * @default false
@@ -2339,29 +2360,6 @@ export interface GridOptions<TData = any> {
      * @agModule `ClipboardModule`
      */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>;
-
-    // *** Export *** //
-    /**
-     * Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
-     * each time an export is performed. Function should return a configuration object used to export to CSV.
-     * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
-     * @agModule `CsvExportModule`
-     */
-    getDefaultCsvExportParams?: GetDefaultCsvExportParams<TData>;
-    /**
-     * Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
-     * each time an export is performed. Function should return a configuration object used to export to Excel.
-     * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
-     * @agModule `ExcelExportModule`
-     */
-    getDefaultExcelExportParams?: GetDefaultExcelExportParams<TData>;
-    /**
-     * Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
-     * each time an export is performed. Function should return a configuration object used to export to PDF.
-     * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
-     * @agModule `PdfExportModule`
-     */
-    getDefaultPdfExportParams?: GetDefaultPdfExportParams<TData>;
 
     // *** Filtering *** //
     /**

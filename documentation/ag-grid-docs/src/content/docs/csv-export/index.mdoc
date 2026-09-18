@@ -127,7 +127,7 @@ Note the following:
 
 ## Dynamic Default Export Params
 
-`defaultCsvExportParams` is a static configuration object, so it cannot react to the state of the application at the time of the export. The `getDefaultCsvExportParams` callback is the dynamic equivalent: it is called to provide the default CSV export configuration each time an export is performed, and should return a configuration object. The callback receives `source`, which reports how the export was triggered - `'api'` when it came from `exportDataAsCsv()` or `getDataAsCsv()`, and `'contextMenu'` when it came from one of the grid's menus. The [Context Menu](./context-menu/), the [Column Menu](./column-menu/), the [Toolbar](./toolbar/) and the [Columns Tool Panel](./tool-panel-columns/) all report `'contextMenu'`.
+`defaultCsvExportParams` is a static configuration object, so it cannot react to the state of the application at the time of the export. The `getDefaultCsvExportParams` callback is the dynamic equivalent: it is called to provide the default CSV export configuration each time an export is performed, and should return a configuration object.
 
 The callback is re-evaluated on **every** export, so the configuration it returns is free to change between exports.
 
