@@ -17,7 +17,6 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 // Import data interface
 import { IOlympicData } from './interfaces';
-import './styles.css';
 
 // Register AG Grid modules
 if (process.env.NODE_ENV !== 'production') {

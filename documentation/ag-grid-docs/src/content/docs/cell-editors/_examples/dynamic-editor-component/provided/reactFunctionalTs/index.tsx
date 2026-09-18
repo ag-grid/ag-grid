@@ -23,7 +23,6 @@ import type { IRow } from './data';
 import { getData } from './data';
 import MoodEditor from './moodEditor';
 import NumericCellEditor from './numericCellEditor';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

@@ -24,7 +24,6 @@ import { AgGridVue } from 'ag-grid-vue3';
 import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

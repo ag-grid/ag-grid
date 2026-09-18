@@ -15,7 +15,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { getData } from './data';
 import MoodEditor from './moodEditor';
 import MoodRenderer from './moodRenderer';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
