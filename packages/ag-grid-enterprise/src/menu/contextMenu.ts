@@ -109,9 +109,9 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
         // a selection or row-number cell has no data of its own, so it offers the row-level items only; the exception
         // is a row-number cell whose click selects the whole row, as the cell items then act on that row
-        const isDatalessSpecialCell =
+        const isSpecialCell =
             !!column && isSpecialCol(column) && !(isRowNumberCol(column) && rowNumbersSvc?.isIntegratedWithSelection);
-        const dataColumn = isDatalessSpecialCell ? null : column;
+        const dataColumn = isSpecialCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {
             if (dataColumn) {
