@@ -443,6 +443,23 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('Images and example-assets get a moderate max-age', () => {
+        it('applies a 24h max-age, not the year-long hashed-asset TTL', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            expect(line).toContain('max-age=86400');
+            expect(line).not.toContain('max-age=604800');
+        });
+
+        it('matches nested product paths too, e.g. /charts/images/ or /studio/example-assets/', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            expect(line).not.toContain('^/(images|example-assets)/');
+        });
+
+        it('is production-only, unlike the document no-cache rule', () => {
+            expect(stagingContent).not.toContain('images|example-assets');
+        });
+    });
+
     describe('SE-81: agent-useful Link header', () => {
         it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
             expect(productionContent).toContain('Header set Link');
