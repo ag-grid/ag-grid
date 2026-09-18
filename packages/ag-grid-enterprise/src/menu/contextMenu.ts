@@ -8,7 +8,6 @@ import type {
     BeanCollection,
     CellCtrl,
     CellPosition,
-    Column,
     DefaultMenuItem,
     EventShowContextMenuParams,
     GetNoteParams,
@@ -16,7 +15,6 @@ import type {
     GridOptionsWithDefaults,
     IContextMenuService,
     IMenuActionParams,
-    IRowNode,
     MenuItemDef,
     MouseShowContextMenuParams,
     NamedBean,
@@ -25,7 +23,14 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _attemptToRestoreCellFocus,
+    _getGrandTotalRow,
+    isRowNumberCol,
+    isSpecialCol,
+} from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
@@ -85,45 +90,31 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         mouseEvent: MouseEvent | Touch
     ): (DefaultMenuItem | MenuItemDef)[] | Promise<(DefaultMenuItem | MenuItemDef<any, any>)[]> | undefined {
         const { column, node, value } = menuActionParams;
-        const { gos } = this.beans;
 
-        const defaultMenuOptions = this.getDefaultMenuItems(column, node);
-
-        const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
-        const columnContextMenuItems = column?.getColDef().contextMenuItems;
-
-        if (Array.isArray(columnContextMenuItems)) {
-            return columnContextMenuItems;
-        }
-
-        if (typeof columnContextMenuItems === 'function') {
-            return columnContextMenuItems(
-                _addGridCommonParams(gos, {
-                    column,
-                    node,
-                    value,
-                    defaultItems,
-                    event: mouseEvent,
-                })
-            );
-        }
-
-        const userFunc = gos.getCallback('getContextMenuItems');
-
-        return userFunc?.({ column, node, value, defaultItems, event: mouseEvent }) ?? defaultMenuOptions;
-    }
-
-    /** With no `column`/`node` this yields the items an empty-grid right-click offers. */
-    public getDefaultMenuItems(column?: Column | null, node?: IRowNode | null): DefaultMenuItem[] {
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc, pdfCreator } =
-            this.beans;
+        const {
+            clipboardSvc,
+            chartSvc,
+            csvCreator,
+            excelCreator,
+            colModel,
+            rangeSvc,
+            gos,
+            notesSvc,
+            pdfCreator,
+            rowNumbersSvc,
+        } = this.beans;
 
-        const isCalculatedColumn = !!(column as AgColumn | null | undefined)?.isCalculatedCol;
+        const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
+        // a selection or row-number cell has no data of its own, so it offers the row-level items only; the exception
+        // is a row-number cell whose click selects the whole row, as the cell items then act on that row
+        const isDatalessSpecialCell =
+            !!column && isSpecialCol(column) && !(isRowNumberCol(column) && rowNumbersSvc?.isIntegratedWithSelection);
+        const dataColumn = isDatalessSpecialCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {
-            if (column) {
+            if (dataColumn) {
                 // only makes sense if column exists, could have originated from a row
                 if (!gos.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
@@ -136,7 +127,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
-        if (_exists(node) && column && notesSvc?.hasDataSource()) {
+        if (_exists(node) && dataColumn && notesSvc?.hasDataSource()) {
             defaultMenuOptions.push('note');
         }
 
@@ -183,7 +174,28 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             }
         }
 
-        return defaultMenuOptions;
+        const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
+        const columnContextMenuItems = column?.getColDef().contextMenuItems;
+
+        if (Array.isArray(columnContextMenuItems)) {
+            return columnContextMenuItems;
+        }
+
+        if (typeof columnContextMenuItems === 'function') {
+            return columnContextMenuItems(
+                _addGridCommonParams(gos, {
+                    column,
+                    node,
+                    value,
+                    defaultItems,
+                    event: mouseEvent,
+                })
+            );
+        }
+
+        const userFunc = gos.getCallback('getContextMenuItems');
+
+        return userFunc?.({ column, node, value, defaultItems, event: mouseEvent }) ?? defaultMenuOptions;
     }
 
     public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {

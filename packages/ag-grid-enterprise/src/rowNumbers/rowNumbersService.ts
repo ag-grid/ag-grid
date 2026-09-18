@@ -25,7 +25,6 @@ import type {
     CellRange,
     ColDef,
     ColKind,
-    GetContextMenuItems,
     IRangeService,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -64,7 +63,7 @@ export class RowNumbersService
         this.visibleCols = beans.visibleCols;
     }
 
-    private isIntegratedWithSelection: boolean = false;
+    public isIntegratedWithSelection: boolean = false;
     private isSuppressCellSelectionIntegration: boolean;
 
     private rowNumberOverrides: RowNumbersOptions | null = null;
@@ -72,19 +71,6 @@ export class RowNumbersService
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
-    // Without cell-selection integration the column suppresses the grid's own menu, but a user-supplied
-    // one is still honoured — and a row-number cell offers an empty-grid right-click's defaults, not a cell's.
-    private readonly boundContextMenuItems: GetContextMenuItems = (params) => {
-        const defaultItems = this.beans.contextMenuSvc?.getDefaultMenuItems(null, params.node);
-        return (
-            this.gos.getCallback('getContextMenuItems')?.({
-                ...params,
-                defaultItems: defaultItems?.length ? defaultItems : undefined,
-            }) ??
-            defaultItems ??
-            []
-        );
-    };
 
     public postConstruct(): void {
         const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
@@ -355,7 +341,6 @@ export class RowNumbersService
     }
 
     protected createColDef(): ColDef {
-        const contextMenuSvc = this.beans.contextMenuSvc;
         const enableRTL = this.gos.get('enableRtl');
 
         return {
@@ -364,8 +349,6 @@ export class RowNumbersService
             width: 60,
             resizable: false,
             valueGetter: this.boundValueGetter,
-            contextMenuItems:
-                this.isIntegratedWithSelection || !contextMenuSvc ? undefined : this.boundContextMenuItems,
             // overrides
             ...this.rowNumberOverrides,
             // non-overridable properties

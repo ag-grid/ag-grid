@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
     TestGridsManager,
-    asyncSetTimeout,
     clickMenuOption,
     clipboardUtils,
     fireGridPointerDown,
@@ -10,7 +9,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GetContextMenuItemsParams } from 'ag-grid-community';
-import { ROW_NUMBERS_COLUMN_ID, getGridElement } from 'ag-grid-community';
+import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 let restoreOffsetParent: (() => void) | undefined;
@@ -31,15 +30,6 @@ function cell(gridDiv: HTMLElement, rowIndex: number, colId: string): HTMLElemen
 function rightClick(element: HTMLElement, options?: MouseEventInit): void {
     fireGridPointerDown(element, { button: 2, buttons: 2, ...options });
     fireContextMenu(element);
-}
-
-/** The grid viewport itself, which is the part of the grid that is not a rendered row. */
-function emptyGridArea(gridDiv: HTMLElement): HTMLElement {
-    const el = gridDiv.querySelector<HTMLElement>('.ag-grid-viewport');
-    if (!el) {
-        throw new Error('No grid viewport rendered');
-    }
-    return el;
 }
 
 describe('Row Numbers context menu (AG-16355)', () => {
@@ -140,7 +130,7 @@ describe('Row Numbers context menu (AG-16355)', () => {
 
     // The row-number cell is not a data cell, so its default items must be an empty-grid right-click's,
     // not the clicked-cell ones a data column offers.
-    test('a row-number cell offers the same default items as an empty part of the grid', async () => {
+    test("a row-number cell offers the row-level default items, not a cell's", async () => {
         const seen: Record<string, string[] | undefined> = {};
         let target = '';
         const api = await gridMgr.createGridAndWait('rowNumbersCtxDefaultItems', {
@@ -162,22 +152,18 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(seen.cell).not.toBeUndefined());
         api.hidePopupMenu();
 
-        target = 'empty';
-        fireContextMenu(emptyGridArea(gridDiv));
-        await waitFor(() => expect('empty' in seen).toBe(true));
-
         target = 'rowNumber';
         rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
         await waitFor(() => expect('rowNumber' in seen).toBe(true));
 
-        expect(seen.rowNumber).toEqual(seen.empty);
-        // the data cell's items are the ones being excluded, so the comparison above is not a tautology
+        // the cell's items minus the clipboard ones, which have no meaning for a row number
         expect(seen.cell).toContain('copy');
-        expect(seen.rowNumber).not.toEqual(seen.cell);
+        expect(seen.rowNumber).toEqual(seen.cell!.filter((item) => !/cut|copy|paste|separator/i.test(item)));
+        expect(seen.rowNumber).toContain('export');
     });
 
-    // Guard: the fix must not hand a menu to grids that configured none.
-    test('no context menu is shown when no getContextMenuItems is configured', async () => {
+    // Guard: with no callback the row-number cell gets the grid's own row-level menu, not a cell's.
+    test('the default menu on a row-number cell offers the row-level items only', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxNoCallback', {
             columnDefs,
             rowData,
@@ -187,17 +173,27 @@ describe('Row Numbers context menu (AG-16355)', () => {
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
-        // the default menu does open on a normal cell, so the absence below is not a dead assertion
-        rightClick(cell(gridDiv, 0, 'athlete'));
-        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).not.toHaveLength(0));
-        api.hidePopupMenu();
-        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
-
-        // the menu opens synchronously (the check above resolved on the first poll), so one
-        // flushed tick is a real window in which a row-number menu would have appeared
         rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
-        await asyncSetTimeout(0);
-        expect(document.querySelectorAll('.ag-menu')).toHaveLength(0);
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
+        expect(menuOption('Paste')).toBeNull();
+    });
+
+    // The selection column is as dataless as a row number: nothing would be copied from it.
+    test('the default menu on a selection-column cell offers the row-level items only', async () => {
+        const api = await gridMgr.createGridAndWait('selectionColCtx', {
+            columnDefs,
+            rowData,
+            rowSelection: { mode: 'multiRow' },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
+        expect(menuOption('Paste')).toBeNull();
     });
 
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
