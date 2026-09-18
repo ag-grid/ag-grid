@@ -68,6 +68,10 @@ const gridOptions = {
 
 {% gridExampleRunner title="Row Numbers with Row Selection" name="row-numbers-row-selection" /%}
 
+## Context Menu
+
+Right-clicking a Row Number cell opens the [Context Menu](./context-menu/). As the cell holds no data of its own, the default items are the row-level ones, such as `Export`. `Copy` and `Paste` are included only when a cell range is selected or `rowSelection.copySelectedRows` is enabled. Use `rowNumbers.contextMenuItems` to override the items for the Row Numbers Column only.
+
 ## Row Resizing
 
 To allow the Row Numbers feature to resize rows, the `enableRowResizer` property can be used.

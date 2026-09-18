@@ -814,6 +814,16 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
+    public copiesSelectedRows(): boolean {
+        const rowSelection = this.gos.get('rowSelection');
+        if (!rowSelection) {
+            return false;
+        }
+        return typeof rowSelection === 'string'
+            ? !this.gos.get('suppressCopyRowsToClipboard')
+            : (rowSelection.copySelectedRows ?? false);
+    }
+
     private clearCellsAfterCopy(type: CellClearType) {
         const beans = this.beans;
         const { rangeSvc, focusSvc, eventSvc } = beans;

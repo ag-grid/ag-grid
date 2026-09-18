@@ -23,7 +23,13 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _attemptToRestoreCellFocus,
+    _getGrandTotalRow,
+    isSpecialCol,
+} from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
@@ -90,9 +96,15 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
+        // a selection or row-number cell has no data of its own, so it offers the row-level items only, unless the
+        // clipboard has something else to act on: a cell range (which the right-click may just have selected) or
+        // the selected rows
+        const clipboardHasTarget = (rangeSvc && !rangeSvc.isEmpty()) || clipboardSvc?.copiesSelectedRows();
+        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardHasTarget;
+        const dataColumn = isDatalessSpecialCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {
-            if (column) {
+            if (dataColumn) {
                 // only makes sense if column exists, could have originated from a row
                 if (!gos.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
@@ -105,6 +117,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
+        // notes attach to any cell, a row number or selection checkbox included
         if (_exists(node) && column && notesSvc?.hasDataSource()) {
             defaultMenuOptions.push('note');
         }

@@ -475,9 +475,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return this.extendLatestRangeToCell(cell);
         }
 
-        if (isAllColumnsCell && isRightClick) {
-            return;
-        }
+        const isRightClickOnAllColumnsCell = isAllColumnsCell && isRightClick;
 
         this.updateSelectionModeForCell(cell);
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
@@ -492,12 +490,20 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                   endRow: cell,
               })
             : undefined;
+
+        // a right-click inside an existing whole-row range keeps it, as it does for a normal cell; the shared guard
+        // in cellMouseListenerFeature cannot see this, since the row-number column is not part of a range's columns
+        if (isRightClickOnAllColumnsCell && containingRange) {
+            return;
+        }
+
         const isMultiRangeRemoval = isAllColumnsCell && !!containingRange && isMultiRange && isMultiKey;
 
         if (isMultiRangeRemoval && containingRange) {
             this.removeRowFromAllColumnsRange(cell, containingRange);
         } else {
-            this.setRangeToCell(cell, isMultiRange);
+            // a right-click selects only the row it is on, rather than appending to the existing ranges
+            this.setRangeToCell(cell, isMultiRange && !isRightClickOnAllColumnsCell);
         }
     }
 
