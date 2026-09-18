@@ -4,9 +4,12 @@ import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
+import type { DefaultMenuItem } from './menuItem';
 
 export interface IContextMenuService {
     hideActiveMenu(): void;
+    /** The stock items a right-click offers; with no `column`/`node`, those an empty-grid right-click offers. */
+    getDefaultMenuItems(column?: Column | null, node?: IRowNode | null): DefaultMenuItem[];
     getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number };
     showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void;
     handleContextMenuMouseEvent(

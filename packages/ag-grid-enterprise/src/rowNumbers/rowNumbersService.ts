@@ -72,10 +72,17 @@ export class RowNumbersService
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
-    // The row-number column suppresses the grid's own context menu when it is not integrated with cell
-    // selection, but a user-supplied menu must still be honoured (AG-16355).
-    private readonly boundContextMenuItems: GetContextMenuItems = (params) =>
-        this.gos.getCallback('getContextMenuItems')?.(params) ?? [];
+    // Without cell-selection integration the column suppresses the grid's own menu, but a user-supplied
+    // one is still honoured — and a row-number cell offers an empty-grid right-click's defaults, not a cell's.
+    private readonly boundContextMenuItems: GetContextMenuItems = (params) => {
+        const defaultItems = this.beans.contextMenuSvc?.getDefaultMenuItems();
+        return (
+            this.gos.getCallback('getContextMenuItems')?.({
+                ...params,
+                defaultItems: defaultItems?.length ? defaultItems : undefined,
+            }) ?? []
+        );
+    };
 
     public postConstruct(): void {
         const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);

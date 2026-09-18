@@ -8,6 +8,7 @@ import type {
     BeanCollection,
     CellCtrl,
     CellPosition,
+    Column,
     DefaultMenuItem,
     EventShowContextMenuParams,
     GetNoteParams,
@@ -15,6 +16,7 @@ import type {
     GridOptionsWithDefaults,
     IContextMenuService,
     IMenuActionParams,
+    IRowNode,
     MenuItemDef,
     MouseShowContextMenuParams,
     NamedBean,
@@ -83,13 +85,42 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         mouseEvent: MouseEvent | Touch
     ): (DefaultMenuItem | MenuItemDef)[] | Promise<(DefaultMenuItem | MenuItemDef<any, any>)[]> | undefined {
         const { column, node, value } = menuActionParams;
+        const { gos } = this.beans;
 
+        const defaultMenuOptions = this.getDefaultMenuItems(column, node);
+
+        const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
+        const columnContextMenuItems = column?.getColDef().contextMenuItems;
+
+        if (Array.isArray(columnContextMenuItems)) {
+            return columnContextMenuItems;
+        }
+
+        if (typeof columnContextMenuItems === 'function') {
+            return columnContextMenuItems(
+                _addGridCommonParams(gos, {
+                    column,
+                    node,
+                    value,
+                    defaultItems,
+                    event: mouseEvent,
+                })
+            );
+        }
+
+        const userFunc = gos.getCallback('getContextMenuItems');
+
+        return userFunc?.({ column, node, value, defaultItems, event: mouseEvent }) ?? defaultMenuOptions;
+    }
+
+    /** With no `column`/`node` this yields the items an empty-grid right-click offers. */
+    public getDefaultMenuItems(column?: Column | null, node?: IRowNode | null): DefaultMenuItem[] {
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
         const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc, pdfCreator } =
             this.beans;
 
-        const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
+        const isCalculatedColumn = !!(column as AgColumn | null | undefined)?.isCalculatedCol;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {
@@ -152,28 +183,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             }
         }
 
-        const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
-        const columnContextMenuItems = column?.getColDef().contextMenuItems;
-
-        if (Array.isArray(columnContextMenuItems)) {
-            return columnContextMenuItems;
-        }
-
-        if (typeof columnContextMenuItems === 'function') {
-            return columnContextMenuItems(
-                _addGridCommonParams(gos, {
-                    column,
-                    node,
-                    value,
-                    defaultItems,
-                    event: mouseEvent,
-                })
-            );
-        }
-
-        const userFunc = gos.getCallback('getContextMenuItems');
-
-        return userFunc?.({ column, node, value, defaultItems, event: mouseEvent }) ?? defaultMenuOptions;
+        return defaultMenuOptions;
     }
 
     public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {
