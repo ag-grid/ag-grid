@@ -40,6 +40,14 @@ on:
         types: [completed]
         branches: ['ghabot-ag-*']
 
+    # A merged agent PR: re-point the ticket's PR-pinned repro Plunkers at the
+    # staging CDN before the per-PR gh-pages preview is removed. Base-filtered to
+    # `latest`, the only branch staging is built from.
+    # See ag-dev-prompts docs/ai-workflow.md.
+    pull_request:
+        types: [closed]
+        branches: [latest]
+
 permissions:
     contents: read
 
@@ -67,6 +75,8 @@ jobs:
     # group — that is one group shared by every run, not "no group" — hence the
     # `continue-on-error` bootstrap plus the unique-per-run fallback below.
     concurrency-key:
+        # Nothing on the pull_request path needs a ticket-scoped concurrency group.
+        if: github.event_name != 'pull_request'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         permissions:
@@ -376,3 +386,44 @@ jobs:
                       "ag-grid-vue3": "https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-vue3/dist/main.mjs"
 
                       The full published file list is at https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/manifest.json. All of it is removed on PR close. PR: {PR_URL}
+
+    # -------------------------------------------------- staging-pin
+    # A merged agent PR: move the ticket's PR-pinned repro Plunkers onto the
+    # staging CDN. Writes only the test-case register's pin keys — no comment, no
+    # transition — and always exits 0, so it can never fail a merge.
+    # See ag-dev-prompts docs/ai-workflow.md.
+    staging-pin:
+        if: |
+            github.event_name == 'pull_request' &&
+            github.event.pull_request.merged == true &&
+            startsWith(github.event.pull_request.head.ref, 'ghabot-')
+        # Keyed on the merged PR, not the ticket: this runs once per merge and must
+        # neither queue behind nor cancel an in-flight agent run on the same ticket.
+        concurrency:
+            group: staging-pin-${{ github.event.pull_request.number }}
+            cancel-in-progress: false
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: read
+            pull-requests: read
+            packages: read
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            # The issue key is resolved from the head branch; the staging base
+            # comes from the pipeline's own per-repo table.
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-staging-pin
+              with:
+                  head_branch: ${{ github.event.pull_request.head.ref }}
+                  pr_number: ${{ github.event.pull_request.number }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
