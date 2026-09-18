@@ -46,6 +46,7 @@ export class HeaderRowCtrl extends BeanStub {
     private isPrintLayout: boolean;
     private isEnsureDomOrder: boolean;
     private renderedHeaderRowsVersion = -1;
+    private retainedFocusedCtrl: HeaderCellCtrl | null = null;
 
     constructor(
         public rowIndex: number,
@@ -211,10 +212,14 @@ export class HeaderRowCtrl extends BeanStub {
         if (!this.comp) {
             return;
         }
-        // One column change raises `virtualColumnsChanged` and then `displayedColumnsChanged`, and both
-        // land here; the second would recycle every ctrl against sections that have not moved.
+        // Both `virtualColumnsChanged` and `displayedColumnsChanged` land here for one column change, and
+        // the version covers only the rendered sections, not a ctrl kept alive for focus outside them.
         const headerRowsVersion = this.beans.colViewport.headerRowsVersion;
-        if (!force && headerRowsVersion === this.renderedHeaderRowsVersion) {
+        if (
+            !force &&
+            headerRowsVersion === this.renderedHeaderRowsVersion &&
+            this.retainedFocusedCtrl?.column.displayed !== false
+        ) {
             return;
         }
         this.renderedHeaderRowsVersion = headerRowsVersion;
@@ -242,13 +247,13 @@ export class HeaderRowCtrl extends BeanStub {
             return ctrl.column.displayed && this.beans.focusSvc.isHeaderWrapperFocused(ctrl);
         };
 
-        let keptCtrlOutOfOrder = false;
+        let keptCtrlOutOfOrder: HeaderCellCtrl | null = null;
         if (oldCtrls) {
             for (const [id, oldCtrl] of oldCtrls) {
                 const keepCtrl = isFocusedAndDisplayed(oldCtrl as HeaderCellCtrl);
                 if (keepCtrl) {
                     this.ctrlsById.set(id, oldCtrl);
-                    keptCtrlOutOfOrder = true;
+                    keptCtrlOutOfOrder = oldCtrl as HeaderCellCtrl;
                 } else {
                     this.destroyBean(oldCtrl);
                 }
@@ -256,6 +261,7 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
         this.allCtrls = Array.from(this.ctrlsById.values());
+        this.retainedFocusedCtrl = keptCtrlOutOfOrder;
         if (keptCtrlOutOfOrder) {
             // a kept-alive focused ctrl was appended after the in-order viewport ctrls; restore column
             // order so consumers (e.g. React, which derives DOM order from this array) can rely on it.

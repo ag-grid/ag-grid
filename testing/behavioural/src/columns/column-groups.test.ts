@@ -2,11 +2,11 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule } from 'ag-grid-community';
 
 describe('Column Groups', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, ScrollApiModule],
     });
 
     afterEach(() => {
@@ -15,6 +15,9 @@ describe('Column Groups', () => {
 
     const renderedGroupIds = () =>
         Array.from(document.querySelectorAll('.ag-header-group-cell'), (cell) => cell.getAttribute('col-id'));
+
+    const renderedColumnIds = () =>
+        Array.from(document.querySelectorAll('.ag-header-cell'), (cell) => cell.getAttribute('col-id'));
 
     describe('empty groups stay findable (matches released behaviour)', () => {
         test('a group declared with no children remains discoverable via the group APIs', async () => {
@@ -419,6 +422,47 @@ describe('Column Groups', () => {
                   ├── open_only width:200 columnGroupShow:open
                   └── closed_only width:200 columnGroupShow:closed hidden
             `);
+        });
+
+        // A header kept alive for focus is outside the virtualised set, so collapsing its group leaves
+        // that set unchanged and only this row's own reconciliation can take the hidden header out.
+        test('collapsing removes a focused child header that is scrolled out of the viewport', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [];
+            for (let i = 0; i < 60; ++i) {
+                columnDefs.push({ colId: `c${i}` });
+            }
+            columnDefs.push({
+                headerName: 'Expandable',
+                groupId: 'expandable',
+                openByDefault: true,
+                children: [{ colId: 'always' }, { colId: 'open_only', columnGroupShow: 'open' }],
+            });
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ c0: 1 }],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            // Rendered, so it can be focused; then scrolled away, so only focus keeps it rendered.
+            api.ensureColumnVisible('open_only');
+            await asyncSetTimeout(0);
+            expect(renderedColumnIds()).toContain('open_only');
+            api.setFocusedHeader('open_only');
+
+            api.ensureColumnVisible('c0');
+            await asyncSetTimeout(0);
+            expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('open_only');
+            expect(renderedColumnIds()).toContain('open_only');
+
+            api.setColumnGroupOpened('expandable', false);
+            await asyncSetTimeout(0);
+
+            // The column stays visible, it just leaves the displayed set, so nothing clears it by visibility.
+            expect(api.getColumn('open_only')!.isVisible()).toBe(true);
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).not.toContain('open_only');
+            expect(renderedColumnIds()).not.toContain('open_only');
         });
     });
 
