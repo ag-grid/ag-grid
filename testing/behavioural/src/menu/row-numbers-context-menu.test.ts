@@ -33,6 +33,15 @@ function rightClick(element: HTMLElement, options?: MouseEventInit): void {
     fireContextMenu(element);
 }
 
+/** The grid viewport itself, which is the part of the grid that is not a rendered row. */
+function emptyGridArea(gridDiv: HTMLElement): HTMLElement {
+    const el = gridDiv.querySelector<HTMLElement>('.ag-grid-viewport');
+    if (!el) {
+        throw new Error('No grid viewport rendered');
+    }
+    return el;
+}
+
 describe('Row Numbers context menu (AG-16355)', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
 
@@ -127,6 +136,44 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(params?.column?.getColId()).toBe(ROW_NUMBERS_COLUMN_ID);
         expect(params?.node?.rowIndex).toBe(1);
         expect(params?.api).toBe(api);
+    });
+
+    // The row-number cell is not a data cell, so its default items must be an empty-grid right-click's,
+    // not the clicked-cell ones a data column offers.
+    test('a row-number cell offers the same default items as an empty part of the grid', async () => {
+        const seen: Record<string, string[] | undefined> = {};
+        let target = '';
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxDefaultItems', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            cellSelection: false,
+            getContextMenuItems: (p) => {
+                seen[target] = p.defaultItems;
+                return p.defaultItems ?? [];
+            },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        target = 'cell';
+        rightClick(cell(gridDiv, 0, 'athlete'));
+        await waitFor(() => expect(seen.cell).not.toBeUndefined());
+        api.hidePopupMenu();
+
+        target = 'empty';
+        fireContextMenu(emptyGridArea(gridDiv));
+        await waitFor(() => expect('empty' in seen).toBe(true));
+
+        target = 'rowNumber';
+        rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect('rowNumber' in seen).toBe(true));
+
+        expect(seen.rowNumber).toEqual(seen.empty);
+        // the data cell's items are the ones being excluded, so the comparison above is not a tautology
+        expect(seen.cell).toContain('copy');
+        expect(seen.rowNumber).not.toEqual(seen.cell);
     });
 
     // Guard: the fix must not hand a menu to grids that configured none.
