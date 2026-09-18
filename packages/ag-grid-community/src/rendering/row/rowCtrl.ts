@@ -743,16 +743,54 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const uiLevel = this.rowNode.uiLevel;
         const shouldIndent = dropEdge && uiLevel > 0;
         const highlightLevel = shouldIndent ? uiLevel.toString() : '0';
+        const groupCol = shouldIndent ? this.getGroupDisplayCol() : null;
+        const indentWidgets = this.getGroupCellWidgetCount(groupCol);
 
         rowGui?.rowComp.toggleCss('ag-row-highlight-above', aboveOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-inside', insideOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-below', belowOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-indent', shouldIndent);
+        rowGui?.rowComp.toggleCss('ag-row-highlight-indent-pinned', shouldIndent && this.isGroupColPinned(groupCol));
+        const style = rowGui?.element.style;
         if (highlightActive) {
-            rowGui?.element.style.setProperty('--ag-row-highlight-level', highlightLevel);
+            style?.setProperty('--ag-row-highlight-level', highlightLevel);
         } else {
-            rowGui?.element.style.removeProperty('--ag-row-highlight-level');
+            style?.removeProperty('--ag-row-highlight-level');
         }
+        if (indentWidgets === undefined) {
+            style?.removeProperty('--ag-internal-row-highlight-widgets');
+        } else {
+            style?.setProperty('--ag-internal-row-highlight-widgets', indentWidgets.toString());
+        }
+    }
+
+    /** The column the auto group cell renders into, or null when row grouping displays no such column. */
+    private getGroupDisplayCol(): AgColumn | null {
+        const groupCols = this.beans.showRowGroupCols?.columns;
+        if (!groupCols?.length) {
+            return null;
+        }
+        return groupCols.find((col) => col.colDef.showRowGroup === true) ?? groupCols[0];
+    }
+
+    private isGroupColPinned(groupCol: AgColumn | null): boolean {
+        // In print layout every column renders into the centre section although it still reports a pinned side.
+        if (this.printLayout || !groupCol) {
+            return false;
+        }
+        const { visibleCols } = this.beans;
+        return visibleCols.leftCols.includes(groupCol) || visibleCols.rightCols.includes(groupCol);
+    }
+
+    /**
+     * How many widget slots sit between the group cell's left padding and its label: one for the expander
+     * — or, on a leaf row, the `ag-row-group-leaf-indent` that stands in for it — plus every control the
+     * cell renders ahead of its value. The drop indicator lines up with that label, so it needs the same
+     * count. Returns undefined when the group cell is not rendered, leaving the CSS default in place.
+     */
+    private getGroupCellWidgetCount(groupCol: AgColumn | null): number | undefined {
+        const cellCtrl = groupCol && this.getCellCtrl(groupCol);
+        return cellCtrl ? 1 + cellCtrl.getLeadingWidgetCount() : undefined;
     }
 
     private postProcessRowDragging(): void {
@@ -763,6 +801,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onDisplayedColumnsChanged(): void {
         this.rowModeFeature.onDisplayedColumnsChanged();
+        // RowDropHighlightService only dispatches on a node / position / uiLevel change, so a pinning
+        // change while the indicator is shown would otherwise leave the indent classes stale.
+        if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
+            this.onRowNodeHighlightChanged();
+        }
     }
 
     private onVirtualColumnsChanged(): void {
