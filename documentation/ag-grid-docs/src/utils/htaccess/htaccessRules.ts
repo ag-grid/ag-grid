@@ -74,11 +74,14 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 // /example/index.html are the live demo page (documentNoCacheRules), and since this rule is
 // emitted after that one, an unanchored match here would win and override its no-cache with
 // a day-long public cache. Anchoring on the file extension makes that impossible by
-// construction, rather than relying on rule order to avoid it.
+// construction, rather than relying on rule order to avoid it. Uses ".+" rather than "[^/]+"
+// before the extension so nested paths still match (e.g. example-assets/space-company-logos/
+// nasa.png, images/ag-logos/png-logos/react.png) - a real example-assets/flags/index.html
+// proves the extension allowlist, not the lack of nesting, is what has to keep HTML out.
 const staticAssetCacheRules = `
 # Images and example-page assets: unhashed filenames, so cap staleness with a moderate
 # max-age rather than caching indefinitely.
-Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/[^/]+\\.(png|jpe?g|gif|svg|webp|ico|json)$#"
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm)$#"
 `;
 
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
