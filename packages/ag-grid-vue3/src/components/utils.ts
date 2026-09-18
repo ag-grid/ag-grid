@@ -600,6 +600,12 @@ export interface Props<TData> {
          * @agModule `CsvExportModule`
          */
     defaultCsvExportParams?: CsvExportParams,
+    /** Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
+         * each time an export is performed. Function should return a configuration object used to export to CSV.
+         * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
+         * @agModule `CsvExportModule`
+         */
+    getDefaultCsvExportParams?: GetDefaultCsvExportParams<TData>,
     /** Prevents the user from exporting the grid to CSV.
          * @default false
          */
@@ -608,6 +614,12 @@ export interface Props<TData> {
          * @agModule `ExcelExportModule`
          */
     defaultExcelExportParams?: ExcelExportParams,
+    /** Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
+         * each time an export is performed. Function should return a configuration object used to export to Excel.
+         * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
+         * @agModule `ExcelExportModule`
+         */
+    getDefaultExcelExportParams?: GetDefaultExcelExportParams<TData>,
     /** Prevents the user from exporting the grid to Excel.
          * @default false
          */
@@ -616,6 +628,12 @@ export interface Props<TData> {
          * @agModule `PdfExportModule`
          */
     defaultPdfExportParams?: PdfExportParams,
+    /** Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
+         * each time an export is performed. Function should return a configuration object used to export to PDF.
+         * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
+         * @agModule `PdfExportModule`
+         */
+    getDefaultPdfExportParams?: GetDefaultPdfExportParams<TData>,
     /** Prevents the user from exporting the grid to PDF.
          * @default false
          */
@@ -1897,24 +1915,6 @@ export interface Props<TData> {
          * @agModule `ClipboardModule`
          */
     processDataFromClipboard?: ProcessDataFromClipboard<TData>,
-    /** Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
-         * each time an export is performed. Function should return a configuration object used to export to CSV.
-         * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
-         * @agModule `CsvExportModule`
-         */
-    getDefaultCsvExportParams?: GetDefaultCsvExportParams<TData>,
-    /** Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
-         * each time an export is performed. Function should return a configuration object used to export to Excel.
-         * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
-         * @agModule `ExcelExportModule`
-         */
-    getDefaultExcelExportParams?: GetDefaultExcelExportParams<TData>,
-    /** Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
-         * each time an export is performed. Function should return a configuration object used to export to PDF.
-         * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
-         * @agModule `PdfExportModule`
-         */
-    getDefaultPdfExportParams?: GetDefaultPdfExportParams<TData>,
     /** Grid calls this method to know if an external filter is present.
          * Called exactly once every time the grid senses a filter change.
          * Should return `true` if external filtering is active, otherwise `false`.
@@ -2304,10 +2304,13 @@ export function getProps() {
         undoRedoCellEditing: undefined,
         undoRedoCellEditingLimit: undefined,
         defaultCsvExportParams: undefined,
+        getDefaultCsvExportParams: undefined,
         suppressCsvExport: undefined,
         defaultExcelExportParams: undefined,
+        getDefaultExcelExportParams: undefined,
         suppressExcelExport: undefined,
         defaultPdfExportParams: undefined,
+        getDefaultPdfExportParams: undefined,
         suppressPdfExport: undefined,
         excelStyles: undefined,
         findSearchValue: undefined,
@@ -2554,9 +2557,6 @@ export function getProps() {
         processCellFromClipboard: undefined,
         sendToClipboard: undefined,
         processDataFromClipboard: undefined,
-        getDefaultCsvExportParams: undefined,
-        getDefaultExcelExportParams: undefined,
-        getDefaultPdfExportParams: undefined,
         isExternalFilterPresent: undefined,
         doesExternalFilterPass: undefined,
         getChartToolbarItems: undefined,

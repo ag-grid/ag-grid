@@ -770,6 +770,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `CsvExportModule`
      */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
+    /** Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
+     * each time an export is performed. Function should return a configuration object used to export to CSV.
+     * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
+     * @agModule `CsvExportModule`
+     */
+    @Input() public getDefaultCsvExportParams: GetDefaultCsvExportParams<TData> | undefined = undefined;
     /** Prevents the user from exporting the grid to CSV.
      * @default false
      */
@@ -778,6 +784,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ExcelExportModule`
      */
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
+    /** Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
+     * each time an export is performed. Function should return a configuration object used to export to Excel.
+     * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
+     * @agModule `ExcelExportModule`
+     */
+    @Input() public getDefaultExcelExportParams: GetDefaultExcelExportParams<TData> | undefined = undefined;
     /** Prevents the user from exporting the grid to Excel.
      * @default false
      */
@@ -786,6 +798,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PdfExportModule`
      */
     @Input() public defaultPdfExportParams: PdfExportParams | undefined = undefined;
+    /** Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
+     * each time an export is performed. Function should return a configuration object used to export to PDF.
+     * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
+     * @agModule `PdfExportModule`
+     */
+    @Input() public getDefaultPdfExportParams: GetDefaultPdfExportParams<TData> | undefined = undefined;
     /** Prevents the user from exporting the grid to PDF.
      * @default false
      */
@@ -2075,24 +2093,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ClipboardModule`
      */
     @Input() public processDataFromClipboard: ProcessDataFromClipboard<TData> | undefined = undefined;
-    /** Callback version of property `defaultCsvExportParams` to provide the default CSV export configuration
-     * each time an export is performed. Function should return a configuration object used to export to CSV.
-     * Properties returned by the callback take precedence over those set via `defaultCsvExportParams`.
-     * @agModule `CsvExportModule`
-     */
-    @Input() public getDefaultCsvExportParams: GetDefaultCsvExportParams<TData> | undefined = undefined;
-    /** Callback version of property `defaultExcelExportParams` to provide the default Excel export configuration
-     * each time an export is performed. Function should return a configuration object used to export to Excel.
-     * Properties returned by the callback take precedence over those set via `defaultExcelExportParams`.
-     * @agModule `ExcelExportModule`
-     */
-    @Input() public getDefaultExcelExportParams: GetDefaultExcelExportParams<TData> | undefined = undefined;
-    /** Callback version of property `defaultPdfExportParams` to provide the default PDF export configuration
-     * each time an export is performed. Function should return a configuration object used to export to PDF.
-     * Properties returned by the callback take precedence over those set via `defaultPdfExportParams`.
-     * @agModule `PdfExportModule`
-     */
-    @Input() public getDefaultPdfExportParams: GetDefaultPdfExportParams<TData> | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.
      * Called exactly once every time the grid senses a filter change.
      * Should return `true` if external filtering is active, otherwise `false`.
