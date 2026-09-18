@@ -33,7 +33,7 @@ export function _addFocusableContainerListener(beans: BeanCollection, comp: Comp
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _focusGridInnerElement(beans: BeanCollection, fromBottom?: boolean): boolean {
-    return beans.ctrlsSvc.get('gridCtrl').focusInnerElement(fromBottom);
+    return beans.ctrlsSvc.get('gridCtrl')?.focusInnerElement(fromBottom) ?? false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -60,6 +60,9 @@ export function _focusNextGridCoreContainer(
     exitBehaviour: GridExitBehaviour = 'auto'
 ): boolean {
     const gridCtrl = beans.ctrlsSvc.get('gridCtrl');
+    if (!gridCtrl) {
+        return false;
+    }
     const focusResult = gridCtrl.focusNextInnerContainer(backwards);
 
     if (focusResult === true) {

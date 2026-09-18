@@ -4,7 +4,6 @@ import {
     _isInvisibleScrollbar,
     _isMacOsUserAgent,
     _isVisible,
-    _requestAnimationFrame,
     _waitUntil,
 } from 'ag-stack';
 
@@ -29,6 +28,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     protected abstract setScrollVisible(): void;
     public abstract getScrollPosition(): number;
     public abstract setScrollPosition(value: number): void;
+    private readonly queueSetScrollVisible = this.throttleToFrame(() => this.setScrollVisible());
 
     constructor(
         template: ElementParams,
@@ -86,7 +86,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
             this.initialiseInvisibleScrollbar();
         }
 
-        _requestAnimationFrame(this.beans, () => this.setScrollVisible());
+        this.queueSetScrollVisible();
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {

@@ -1,4 +1,4 @@
-import { KeyCode, _exists, _getActiveDomElement, _requestAnimationFrame } from 'ag-stack';
+import { KeyCode, _exists, _getActiveDomElement } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -83,8 +83,8 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedEventListeners({
             headerRowsChanged: listener,
             columnHeaderHeightChanged: listener,
-            // add this to the animation frame to avoid a feedback loop
-            columnGroupHeaderHeightChanged: () => _requestAnimationFrame(this.beans, () => listener()),
+            // Deferred to a frame to avoid a feedback loop.
+            columnGroupHeaderHeightChanged: this.throttleToFrame(listener),
             stylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });

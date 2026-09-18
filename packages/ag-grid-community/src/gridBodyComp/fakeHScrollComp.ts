@@ -1,6 +1,5 @@
 import { RefPlaceholder, _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from 'ag-stack';
 
-import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -23,11 +22,10 @@ const FakeHScrollElement: ElementParams = {
 };
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeHScrollComp extends AbstractFakeScrollComp {
-    private visibleCols: VisibleColsService;
     private scrollVisibleSvc: ScrollVisibleService;
+    private contentWidth: number | null = null;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleCols = beans.visibleCols;
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
@@ -41,22 +39,11 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     public override postConstruct(): void {
         super.postConstruct();
 
-        const widthListener = this.setContainerWidth.bind(this);
-
         this.addManagedEventListeners({
-            displayedColumnsChanged: widthListener,
-            displayedColumnsWidthChanged: widthListener,
-            leftPinnedWidthChanged: widthListener,
-            rightPinnedWidthChanged: widthListener,
-            gridSizeChanged: widthListener,
-            scrollVisibilityChanged: widthListener,
             pinnedRowDataChanged: this.refreshCompBottom.bind(this),
         });
 
-        this.addManagedPropertyListener('domLayout', widthListener);
-
         this.beans.ctrlsSvc.register('fakeHScrollComp', this);
-        this.setContainerWidth();
 
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
@@ -88,15 +75,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }
 
-    private setContainerWidth(): void {
-        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-        // The end spacer already reserves the vertical scrollbar width in the viewport.
-        const width = gridBodyCtrl
-            ? gridBodyCtrl.getHorizontalContentWidth() - gridBodyCtrl.getVerticalScrollbarWidth()
-            : this.visibleCols.bodyWidth +
-              this.visibleCols.getLeftStickyColumnContainerWidth() +
-              this.visibleCols.getRightStickyColumnContainerWidth();
-        this.eContainer.style.width = `${Math.max(width, 1)}px`;
+    /** Pushed by `GridBodyCtrl.updateWidths`, already net of the vertical scrollbar the end spacer reserves. */
+    public setContentWidth(width: number): void {
+        const floored = Math.max(width, 1);
+        if (floored !== this.contentWidth) {
+            this.contentWidth = floored;
+            this.eContainer.style.width = `${floored}px`;
+        }
     }
 
     private setScrollVisibleDebounce = 0;

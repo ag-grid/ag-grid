@@ -1,4 +1,4 @@
-import { _debounce, _getDocument, _getElementSize, _observeResize } from 'ag-stack';
+import { _debounce, _getDocument, _getVerticalPaddingAndBorder, _observeResize } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
@@ -169,8 +169,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+            const extraHeight = _getVerticalPaddingAndBorder(eParentCell);
 
             const wrapperHeight = eCellWrapper.offsetHeight;
             const autoHeight = wrapperHeight + extraHeight;

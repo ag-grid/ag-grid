@@ -53,8 +53,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     public rightWidth = 0;
     public totalWidth = 0;
 
-    /** `bodyWidth` changed in the last `updateBodyWidths()` — drives the RTL virtual-col calc. */
-    public isBodyWidthDirty = true;
+    /** Bumped once per pass that restamps the column lefts, so anything derived from where the columns
+     *  are can tell whether it is looking at the same layout without re-deriving it. */
+    public layoutVersion = 0;
 
     /** Prev refresh's pinned-edge cols — drive an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
     private prevLastLeftPinned: AgColumn | null = null;
@@ -101,6 +102,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 updateGroupsAndCollectLeaves(treeRight[i], null, rightCols);
             }
         }
+        // Replaced, never mutated in place: `colViewport` detects a changed render set by comparing
+        // against the array it last kept, so an in-place edit would read as unchanged forever.
         this.leftCols = leftCols;
         this.centerCols = centerCols;
         this.rightCols = rightCols;
@@ -133,15 +136,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** `widths` reuses totals already computed on the hot `refresh` path; omit to re-sum. */
     public updateBodyWidths(widths?: SectionWidths): void {
+        // Above the comparison below: a move restamps the lefts and leaves all three totals unchanged.
+        ++this.layoutVersion;
+
         const newBodyWidth = widths ? widths.center : getWidthOfColsInList(this.centerCols);
         const newLeftWidth = widths ? widths.left : getWidthOfColsInList(this.leftCols);
         const newRightWidth = widths ? widths.right : getWidthOfColsInList(this.rightCols);
 
-        // Drives the RTL virtual-col calc — body-width changes flip y coords.
-        const bodyWidthDirty = this.bodyWidth !== newBodyWidth;
-        this.isBodyWidthDirty = bodyWidthDirty;
-
-        if (!bodyWidthDirty && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
+        if (this.bodyWidth === newBodyWidth && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
             return;
         }
         this.bodyWidth = newBodyWidth;
@@ -149,8 +151,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightWidth = newRightWidth;
         this.totalWidth = newBodyWidth + newLeftWidth + newRightWidth;
 
-        // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: viewport must resize
-        // before the scrollbar updates its visibility.
+        // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: the viewport must resize
+        // before the scrollbar updates its visibility, and both are public, so the order is observable.
         const eventSvc = this.eventSvc;
         eventSvc.dispatchEvent({ type: 'columnContainerWidthChanged' });
         eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });

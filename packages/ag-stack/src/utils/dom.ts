@@ -106,100 +106,66 @@ export function _isElementChildOfClass(
     return false;
 }
 
-// returns back sizes as doubles instead of strings. similar to
-// getBoundingClientRect, however getBoundingClientRect does not:
-// a) work with fractions (eg browser is zooming)values
-// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getElementSize(el: HTMLElement): {
-    height: number;
-    width: number;
-    borderTopWidth: number;
-    borderRightWidth: number;
-    borderBottomWidth: number;
-    borderLeftWidth: number;
-    paddingTop: number;
-    paddingRight: number;
-    paddingBottom: number;
-    paddingLeft: number;
-    marginTop: number;
-    marginRight: number;
-    marginBottom: number;
-    marginLeft: number;
-    boxSizing: string;
-} {
-    const {
-        height,
-        width,
-        borderTopWidth,
-        borderRightWidth,
-        borderBottomWidth,
-        borderLeftWidth,
-        paddingTop,
-        paddingRight,
-        paddingBottom,
-        paddingLeft,
-        marginTop,
-        marginRight,
-        marginBottom,
-        marginLeft,
-        boxSizing,
-    } = window.getComputedStyle(el);
+/** A computed box metric can be `''` or a keyword like `initial`; both must read as zero, not NaN. */
+const pf = (value: string): number => Number.parseFloat(value) || 0;
 
-    const pf = Number.parseFloat;
-    return {
-        height: pf(height || '0'),
-        width: pf(width || '0'),
-        borderTopWidth: pf(borderTopWidth || '0'),
-        borderRightWidth: pf(borderRightWidth || '0'),
-        borderBottomWidth: pf(borderBottomWidth || '0'),
-        borderLeftWidth: pf(borderLeftWidth || '0'),
-        paddingTop: pf(paddingTop || '0'),
-        paddingRight: pf(paddingRight || '0'),
-        paddingBottom: pf(paddingBottom || '0'),
-        paddingLeft: pf(paddingLeft || '0'),
-        marginTop: pf(marginTop || '0'),
-        marginRight: pf(marginRight || '0'),
-        marginBottom: pf(marginBottom || '0'),
-        marginLeft: pf(marginLeft || '0'),
-        boxSizing,
-    };
-}
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  Pass `style` to share one `getComputedStyle` call across both axes of `el`; the declaration stays
+ *  live, so a read after a layout write sees the new value rather than a snapshot. */
+export function _getInnerHeight(el: HTMLElement, style: CSSStyleDeclaration = window.getComputedStyle(el)): number {
+    const height = pf(style.height);
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getInnerHeight(el: HTMLElement): number {
-    const size = _getElementSize(el);
-
-    if (size.boxSizing === 'border-box') {
-        return size.height - size.paddingTop - size.paddingBottom - size.borderTopWidth - size.borderBottomWidth;
+    if (style.boxSizing === 'border-box') {
+        return (
+            height -
+            pf(style.paddingTop) -
+            pf(style.paddingBottom) -
+            pf(style.borderTopWidth) -
+            pf(style.borderBottomWidth)
+        );
     }
 
-    return size.height;
+    return height;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getInnerWidth(el: HTMLElement): number {
-    const size = _getElementSize(el);
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  `style` as above — one `getComputedStyle` for both axes. */
+export function _getInnerWidth(el: HTMLElement, style: CSSStyleDeclaration = window.getComputedStyle(el)): number {
+    const width = pf(style.width);
 
-    if (size.boxSizing === 'border-box') {
-        return size.width - size.paddingLeft - size.paddingRight - size.borderLeftWidth - size.borderRightWidth;
+    if (style.boxSizing === 'border-box') {
+        return (
+            width -
+            pf(style.paddingLeft) -
+            pf(style.paddingRight) -
+            pf(style.borderLeftWidth) -
+            pf(style.borderRightWidth)
+        );
     }
 
-    return size.width;
+    return width;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  The height an auto-height measurement has to add back to a wrapper's `offsetHeight`. */
+export function _getVerticalPaddingAndBorder(el: HTMLElement): number {
+    const style = window.getComputedStyle(el);
+
+    return pf(style.paddingTop) + pf(style.paddingBottom) + pf(style.borderTopWidth) + pf(style.borderBottomWidth);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getAbsoluteHeight(el: HTMLElement): number {
-    const { height, marginBottom, marginTop } = _getElementSize(el);
+    const style = window.getComputedStyle(el);
 
-    return Math.floor(height + marginBottom + marginTop);
+    return Math.floor(pf(style.height) + pf(style.marginBottom) + pf(style.marginTop));
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getAbsoluteWidth(el: HTMLElement): number {
-    const { width, marginLeft, marginRight } = _getElementSize(el);
+    const style = window.getComputedStyle(el);
 
-    return Math.floor(width + marginLeft + marginRight);
+    return Math.floor(pf(style.width) + pf(style.marginLeft) + pf(style.marginRight));
 }
 
 export function _getElementRectWithOffset(el: HTMLElement): {
@@ -209,13 +175,13 @@ export function _getElementRectWithOffset(el: HTMLElement): {
     bottom: number;
 } {
     const offsetElementRect = el.getBoundingClientRect();
-    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = _getElementSize(el);
+    const style = window.getComputedStyle(el);
 
     return {
-        top: offsetElementRect.top + (borderTopWidth || 0),
-        left: offsetElementRect.left + (borderLeftWidth || 0),
-        right: offsetElementRect.right + (borderRightWidth || 0),
-        bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
+        top: offsetElementRect.top + pf(style.borderTopWidth),
+        left: offsetElementRect.left + pf(style.borderLeftWidth),
+        right: offsetElementRect.right + pf(style.borderRightWidth),
+        bottom: offsetElementRect.bottom + pf(style.borderBottomWidth),
     };
 }
 

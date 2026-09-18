@@ -1,4 +1,4 @@
-import { _getInnerHeight, _observeResize, _requestAnimationFrame } from 'ag-stack';
+import { _getInnerHeight, _getInnerWidth, _observeResize } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -19,10 +19,10 @@ export class ViewportSizeFeature extends BeanStub {
 
     private centerWidth: number;
     private bodyHeight: number;
-    private viewportWidth: number;
-    private centerViewportResizeQueued = false;
-    private viewportGeometryRefreshQueued = false;
-    private scrollVisibilityRefreshQueued = false;
+
+    private readonly scheduleCenterViewportResize = this.throttleToFrame(() => this.onCenterViewportResized());
+    private readonly scheduleViewportGeometryRefresh = this.throttleToFrame(() => this.onViewportGeometryChanged());
+    private readonly scheduleScrollVisibilityRefresh = this.throttleToFrame(() => this.scrollVisibleSvc.refresh());
 
     constructor(private readonly centerContainerCtrl: RowContainerCtrl) {
         super();
@@ -34,7 +34,7 @@ export class ViewportSizeFeature extends BeanStub {
             this.listenForResize();
         });
 
-        const scheduleViewportGeometryRefresh = this.scheduleViewportGeometryRefresh.bind(this);
+        const scheduleViewportGeometryRefresh = this.scheduleViewportGeometryRefresh;
         this.addManagedEventListeners({
             scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this),
             scrollVisibilityChanged: this.onViewportGeometryChanged.bind(this),
@@ -54,60 +54,19 @@ export class ViewportSizeFeature extends BeanStub {
             return;
         }
 
-        const scheduleCenterViewportResize = () => this.scheduleCenterViewportResize();
-
         // In the flattened layout this viewport is the shared horizontal+vertical scroll container.
-        centerContainerCtrl.registerViewportResizeListener(scheduleCenterViewportResize);
+        centerContainerCtrl.registerViewportResizeListener(this.scheduleCenterViewportResize);
 
-        const unsubscribeFromContainerResize = _observeResize(beans, centerContainerCtrl.eContainer, () =>
-            this.scheduleScrollVisibilityRefresh()
+        const unsubscribeFromContainerResize = _observeResize(
+            beans,
+            centerContainerCtrl.eContainer,
+            this.scheduleScrollVisibilityRefresh
         );
         this.addDestroyFunc(() => unsubscribeFromContainerResize());
     }
 
-    private scheduleCenterViewportResize(): void {
-        if (this.centerViewportResizeQueued) {
-            return;
-        }
-        this.centerViewportResizeQueued = true;
-
-        const { beans } = this;
-        // onCenterViewportResize can trigger flex recalculations, which in turn trigger more resizes.
-        // Queueing once per frame prevents duplicate work and avoids resize-observer loops.
-        _requestAnimationFrame(beans, () => {
-            this.centerViewportResizeQueued = false;
-            this.onCenterViewportResized();
-        });
-    }
-
-    private scheduleScrollVisibilityRefresh(): void {
-        if (this.scrollVisibilityRefreshQueued) {
-            return;
-        }
-        this.scrollVisibilityRefreshQueued = true;
-
-        const { beans } = this;
-        _requestAnimationFrame(beans, () => {
-            this.scrollVisibilityRefreshQueued = false;
-            this.scrollVisibleSvc.refresh();
-        });
-    }
-
     private onScrollbarWidthChanged() {
         this.checkViewportAndScrolls();
-    }
-
-    private scheduleViewportGeometryRefresh(): void {
-        if (this.viewportGeometryRefreshQueued) {
-            return;
-        }
-        this.viewportGeometryRefreshQueued = true;
-
-        const { beans } = this;
-        _requestAnimationFrame(beans, () => {
-            this.viewportGeometryRefreshQueued = false;
-            this.onViewportGeometryChanged();
-        });
     }
 
     private onViewportGeometryChanged(): void {
@@ -124,10 +83,17 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             const { pinnedCols, colFlex } = this.beans;
+            const gridBodyCtrl = this.gridBodyCtrl;
+            // One resolution for the whole frame. It stays live, so the reads below still see the effect of
+            // anything written in between.
+            const style = window.getComputedStyle(gridBodyCtrl.eGridViewport);
+            // The viewport has just resized, and the pinned-width rule is enforced against it.
+            gridBodyCtrl.refreshViewportWidth(_getInnerWidth(gridBodyCtrl.eGridViewport, style));
             pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
-            this.checkViewportAndScrolls();
+            this.checkViewportAndScrolls(style);
 
-            const newWidth = this.gridBodyCtrl.getCenterWidth();
+            // The width reported above, so the flex pass and the containers are sized from the same one.
+            const newWidth = gridBodyCtrl.getCenterWidth(gridBodyCtrl.getReportedViewportWidth());
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
@@ -144,18 +110,25 @@ export class ViewportSizeFeature extends BeanStub {
 
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
     // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
-    private checkViewportAndScrolls(): void {
+    private checkViewportAndScrolls(sharedStyle?: CSSStyleDeclaration): void {
         const gridBodyCtrl = this.gridBodyCtrl;
         if (!gridBodyCtrl) {
             return;
         }
 
+        const eGridViewport = gridBodyCtrl.eGridViewport;
+        const style = sharedStyle ?? window.getComputedStyle(eGridViewport);
+
+        // Before the visibility pass, which resolves both the horizontal scrollbar and the scroll gap
+        // from this width and would otherwise decide them on the previous layout.
+        gridBodyCtrl.refreshViewportWidth(_getInnerWidth(eGridViewport, style));
+
         // results in updating anything that depends on scroll showing
         this.scrollVisibleSvc.refresh();
 
+        // After it: an applied horizontal scrollbar takes its space out of the viewport's height.
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
-        this.checkBodyHeight();
-        this.checkViewportWidth();
+        this.checkBodyHeight(_getInnerHeight(eGridViewport, style));
 
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
@@ -167,35 +140,18 @@ export class ViewportSizeFeature extends BeanStub {
         return this.bodyHeight;
     }
 
-    private checkBodyHeight(): void {
+    private checkBodyHeight(innerHeight: number): void {
         const gridBodyCtrl = this.gridBodyCtrl;
         if (!gridBodyCtrl) {
             return;
         }
 
-        const eGridViewport = gridBodyCtrl.eGridViewport;
-        const bodyHeight = gridBodyCtrl.getBodyViewportHeight(_getInnerHeight(eGridViewport));
+        const bodyHeight = gridBodyCtrl.getBodyViewportHeight(innerHeight);
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
             this.eventSvc.dispatchEvent({
                 type: 'bodyHeightChanged',
-            });
-        }
-    }
-
-    private checkViewportWidth(): void {
-        const gridBodyCtrl = this.gridBodyCtrl;
-        if (!gridBodyCtrl) {
-            return;
-        }
-
-        const viewportWidth = gridBodyCtrl.getHorizontalViewportWidth();
-
-        if (this.viewportWidth !== viewportWidth) {
-            this.viewportWidth = viewportWidth;
-            this.eventSvc.dispatchEvent({
-                type: 'gridViewportWidthChanged',
             });
         }
     }

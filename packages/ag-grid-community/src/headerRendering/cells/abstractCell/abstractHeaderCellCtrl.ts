@@ -6,7 +6,7 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
-    _getElementSize,
+    _getVerticalPaddingAndBorder,
     _normaliseQwertyAzerty,
     _observeResize,
     _setAriaColIndex,
@@ -195,8 +195,7 @@ export abstract class AbstractHeaderCellCtrl<
                 return;
             }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(this.eGui);
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+            const extraHeight = _getVerticalPaddingAndBorder(this.eGui);
 
             const wrapperHeight = wrapperElement.offsetHeight;
             const autoHeight = wrapperHeight + extraHeight;
