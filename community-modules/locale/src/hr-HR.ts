@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_HR = {
+export const AG_GRID_LOCALE_HR_HR = {
     // Set Filter
     selectAll: '(Odaberi sve)',
     selectAllSearchResults: '(Odaberi sve rezultate pretraživanja)',
@@ -922,3 +922,6 @@ export const AG_GRID_LOCALE_HR = {
     deleteNote: 'Ukloni napomenu',
     notePlaceholder: 'Dodaj napomenu...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HR_HR` instead. */
+export const AG_GRID_LOCALE_HR = AG_GRID_LOCALE_HR_HR;

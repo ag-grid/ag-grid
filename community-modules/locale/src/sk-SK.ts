@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_SK = {
+export const AG_GRID_LOCALE_SK_SK = {
     // Set Filter
     selectAll: '(Vybrať všetko)',
     selectAllSearchResults: '(Vybrať všetky výsledky vyhľadávania)',
@@ -920,3 +920,6 @@ export const AG_GRID_LOCALE_SK = {
     deleteNote: 'Odstrániť poznámku',
     notePlaceholder: 'Pridať poznámku...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_SK_SK` instead. */
+export const AG_GRID_LOCALE_SK = AG_GRID_LOCALE_SK_SK;

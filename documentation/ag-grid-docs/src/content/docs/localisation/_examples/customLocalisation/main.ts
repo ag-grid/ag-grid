@@ -1,4 +1,4 @@
-import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_DE_DE } from '@ag-grid-community/locale';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
@@ -36,7 +36,7 @@ import {
 import { zzzLocale } from './locale';
 
 // Create a dummy locale based on english but prefix everything with zzz
-const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_DE);
+const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_DE_DE);
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

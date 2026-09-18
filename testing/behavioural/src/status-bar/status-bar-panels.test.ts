@@ -1,4 +1,4 @@
-import { AG_GRID_LOCALE_JP } from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_JA_JP } from '@ag-grid-community/locale';
 import { TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { AggregationStatusPanelAggFunc, GridApi, IStatusPanel } from 'ag-grid-community';
@@ -234,7 +234,7 @@ describe('Status bar panels', () => {
             getRowId: (params) => params.data?.id,
             cellSelection: true,
             statusBar: { statusPanels: [{ statusPanel: 'agAggregationComponent' }] },
-            localeText: AG_GRID_LOCALE_JP,
+            localeText: AG_GRID_LOCALE_JA_JP,
         });
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
