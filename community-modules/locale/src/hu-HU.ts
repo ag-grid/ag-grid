@@ -928,5 +928,5 @@ export const AG_GRID_LOCALE_HU_HU = {
     notePlaceholder: 'Megjegyzés hozzáadása...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_HU_HU` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HU_HU` instead. */
 export const AG_GRID_LOCALE_HU = AG_GRID_LOCALE_HU_HU;

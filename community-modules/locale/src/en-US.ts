@@ -930,5 +930,5 @@ export const AG_GRID_LOCALE_EN_US = {
     notePlaceholder: 'Add a note...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_EN_US` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_EN_US` instead. */
 export const AG_GRID_LOCALE_EN = AG_GRID_LOCALE_EN_US;

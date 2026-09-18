@@ -925,5 +925,5 @@ export const AG_GRID_LOCALE_FI_FI = {
     notePlaceholder: 'Lisää muistiinpano...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_FI_FI` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_FI_FI` instead. */
 export const AG_GRID_LOCALE_FI = AG_GRID_LOCALE_FI_FI;

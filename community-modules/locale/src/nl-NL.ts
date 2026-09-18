@@ -923,5 +923,5 @@ export const AG_GRID_LOCALE_NL_NL = {
     notePlaceholder: 'Een notitie toevoegen...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_NL_NL` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_NL_NL` instead. */
 export const AG_GRID_LOCALE_NL = AG_GRID_LOCALE_NL_NL;

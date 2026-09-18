@@ -922,5 +922,5 @@ export const AG_GRID_LOCALE_FA_IR = {
     notePlaceholder: 'یک یادداشت اضافه کنید...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_FA_IR` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_FA_IR` instead. */
 export const AG_GRID_LOCALE_IR = AG_GRID_LOCALE_FA_IR;

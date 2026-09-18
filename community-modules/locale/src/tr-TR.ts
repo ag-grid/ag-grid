@@ -925,5 +925,5 @@ export const AG_GRID_LOCALE_TR_TR = {
     notePlaceholder: 'Bir not ekle...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_TR_TR` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_TR_TR` instead. */
 export const AG_GRID_LOCALE_TR = AG_GRID_LOCALE_TR_TR;

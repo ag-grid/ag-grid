@@ -920,5 +920,5 @@ export const AG_GRID_LOCALE_UR_PK = {
     notePlaceholder: 'ایک نوٹ شامل کریں...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_UR_PK` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_UR_PK` instead. */
 export const AG_GRID_LOCALE_PK = AG_GRID_LOCALE_UR_PK;

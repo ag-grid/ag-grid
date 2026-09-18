@@ -919,5 +919,5 @@ export const AG_GRID_LOCALE_HE_IL = {
     notePlaceholder: 'הוסף הערה...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_HE_IL` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HE_IL` instead. */
 export const AG_GRID_LOCALE_IL = AG_GRID_LOCALE_HE_IL;

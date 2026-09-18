@@ -924,5 +924,5 @@ export const AG_GRID_LOCALE_SV_SE = {
     notePlaceholder: 'Lägg till en anteckning...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_SV_SE` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_SV_SE` instead. */
 export const AG_GRID_LOCALE_SE = AG_GRID_LOCALE_SV_SE;

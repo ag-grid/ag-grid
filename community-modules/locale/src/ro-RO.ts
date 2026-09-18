@@ -925,5 +925,5 @@ export const AG_GRID_LOCALE_RO_RO = {
     notePlaceholder: 'Adaugă o notă...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_RO_RO` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_RO_RO` instead. */
 export const AG_GRID_LOCALE_RO = AG_GRID_LOCALE_RO_RO;

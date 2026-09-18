@@ -919,5 +919,5 @@ export const AG_GRID_LOCALE_AR_EG = {
     notePlaceholder: 'أضف ملاحظة...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_AR_EG` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_AR_EG` instead. */
 export const AG_GRID_LOCALE_EG = AG_GRID_LOCALE_AR_EG;

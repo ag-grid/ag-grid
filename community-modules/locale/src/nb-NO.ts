@@ -921,5 +921,5 @@ export const AG_GRID_LOCALE_NB_NO = {
     notePlaceholder: 'Legg til et notat...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_NB_NO` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_NB_NO` instead. */
 export const AG_GRID_LOCALE_NO = AG_GRID_LOCALE_NB_NO;

@@ -926,5 +926,5 @@ export const AG_GRID_LOCALE_BG_BG = {
     notePlaceholder: 'Добавете бележка...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_BG_BG` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_BG_BG` instead. */
 export const AG_GRID_LOCALE_BG = AG_GRID_LOCALE_BG_BG;

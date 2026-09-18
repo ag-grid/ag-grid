@@ -919,5 +919,5 @@ export const AG_GRID_LOCALE_ZH_TW = {
     notePlaceholder: '新增備註...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_ZH_TW` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_ZH_TW` instead. */
 export const AG_GRID_LOCALE_TW = AG_GRID_LOCALE_ZH_TW;

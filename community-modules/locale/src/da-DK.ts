@@ -923,5 +923,5 @@ export const AG_GRID_LOCALE_DA_DK = {
     notePlaceholder: 'Tilføj en note...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_DA_DK` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_DA_DK` instead. */
 export const AG_GRID_LOCALE_DK = AG_GRID_LOCALE_DA_DK;

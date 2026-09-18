@@ -920,5 +920,5 @@ export const AG_GRID_LOCALE_JA_JP = {
     notePlaceholder: 'メモを追加...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_JA_JP` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_JA_JP` instead. */
 export const AG_GRID_LOCALE_JP = AG_GRID_LOCALE_JA_JP;

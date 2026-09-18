@@ -920,5 +920,5 @@ export const AG_GRID_LOCALE_KO_KR = {
     notePlaceholder: '메모 추가...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_KO_KR` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_KO_KR` instead. */
 export const AG_GRID_LOCALE_KR = AG_GRID_LOCALE_KO_KR;

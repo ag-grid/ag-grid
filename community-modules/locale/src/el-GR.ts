@@ -926,5 +926,5 @@ export const AG_GRID_LOCALE_EL_GR = {
     notePlaceholder: 'Προσθέστε μια σημείωση...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_EL_GR` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_EL_GR` instead. */
 export const AG_GRID_LOCALE_GR = AG_GRID_LOCALE_EL_GR;

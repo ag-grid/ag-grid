@@ -921,5 +921,5 @@ export const AG_GRID_LOCALE_SK_SK = {
     notePlaceholder: 'Pridať poznámku...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_SK_SK` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_SK_SK` instead. */
 export const AG_GRID_LOCALE_SK = AG_GRID_LOCALE_SK_SK;

@@ -923,5 +923,5 @@ export const AG_GRID_LOCALE_UK_UA = {
     notePlaceholder: 'Додати нотатку...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_UK_UA` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_UK_UA` instead. */
 export const AG_GRID_LOCALE_UA = AG_GRID_LOCALE_UK_UA;

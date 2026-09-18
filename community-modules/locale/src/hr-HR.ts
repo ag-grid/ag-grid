@@ -923,5 +923,5 @@ export const AG_GRID_LOCALE_HR_HR = {
     notePlaceholder: 'Dodaj napomenu...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_HR_HR` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HR_HR` instead. */
 export const AG_GRID_LOCALE_HR = AG_GRID_LOCALE_HR_HR;

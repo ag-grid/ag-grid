@@ -921,5 +921,5 @@ export const AG_GRID_LOCALE_CS_CZ = {
     notePlaceholder: 'Přidat poznámku...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_CS_CZ` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_CS_CZ` instead. */
 export const AG_GRID_LOCALE_CZ = AG_GRID_LOCALE_CS_CZ;

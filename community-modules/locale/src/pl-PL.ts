@@ -925,5 +925,5 @@ export const AG_GRID_LOCALE_PL_PL = {
     notePlaceholder: 'Dodaj notatkę...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_PL_PL` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_PL_PL` instead. */
 export const AG_GRID_LOCALE_PL = AG_GRID_LOCALE_PL_PL;

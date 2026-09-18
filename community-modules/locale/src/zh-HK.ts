@@ -918,5 +918,5 @@ export const AG_GRID_LOCALE_ZH_HK = {
     notePlaceholder: '新增備註...',
 };
 
-/** @deprecated v36.2 Use `AG_GRID_LOCALE_ZH_HK` instead. */
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_ZH_HK` instead. */
 export const AG_GRID_LOCALE_HK = AG_GRID_LOCALE_ZH_HK;
