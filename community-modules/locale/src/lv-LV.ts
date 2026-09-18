@@ -902,8 +902,8 @@ export const AG_GRID_LOCALE_LV_LV = {
     timeFormatDotsMDDYY: 'M.DD.GG',
     timeFormatDashesYYYYMMDD: 'GGGG-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
-    timeFormatHHMMSS: 'SS:MM:SS',
-    timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
+    timeFormatHHMMSS: 'SS:MM:SK',
+    timeFormatHHMMSSAmPm: 'SS:MM:SK AM/PM',
 
     // Editable Column Header Name
     editColumnName: 'Rediģēt kolonnas nosaukumu',

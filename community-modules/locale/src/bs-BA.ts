@@ -880,7 +880,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     may: 'Maj',
     june: 'Juni',
     july: 'Juli',
-    august: 'Avgust',
+    august: 'August',
     september: 'Septembar',
     october: 'Oktobar',
     november: 'Novembar',
@@ -904,8 +904,8 @@ export const AG_GRID_LOCALE_BS_BA = {
     timeFormatDotsMDDYY: 'M.DD.GG',
     timeFormatDashesYYYYMMDD: 'GGGG-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
-    timeFormatHHMMSS: 'SS:MM:SS',
-    timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
+    timeFormatHHMMSS: 'SS:MM:SK',
+    timeFormatHHMMSSAmPm: 'SS:MM:SK AM/PM',
 
     // Editable Column Header Name
     editColumnName: 'Uredi naziv kolone',
