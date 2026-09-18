@@ -75,6 +75,17 @@ const staticAssetCacheRules = `
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets)/#"
 `;
 
+// public/scripts/ (cookie consent, GTM, video/carousel players, the announcement banner,
+// etc.) - unhashed filenames, so the same reasoning as staticAssetCacheRules applies.
+// Anchored to .js so it can only ever match an actual script file, not a directory or
+// anything else that might one day live under /scripts/ - the /example/ bug this rule was
+// added alongside showed relying on that never happening is not a safe assumption.
+const scriptAssetCacheRules = `
+# Static script bundles: unhashed filenames, so cap staleness with a moderate max-age
+# rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
+`;
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -598,6 +609,7 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
 ${staticAssetCacheRules}
+${scriptAssetCacheRules}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
