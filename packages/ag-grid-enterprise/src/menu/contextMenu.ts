@@ -117,7 +117,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
-        if (_exists(node) && dataColumn && notesSvc?.hasDataSource()) {
+        // notes attach to any cell, a row number or selection checkbox included
+        if (_exists(node) && column && notesSvc?.hasDataSource()) {
             defaultMenuOptions.push('note');
         }
 

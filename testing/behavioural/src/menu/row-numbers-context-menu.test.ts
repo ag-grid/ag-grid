@@ -305,6 +305,28 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
     });
 
+    // Notes attach to any cell, so the special columns keep their note actions without any clipboard target.
+    test('row-number and selection-column cells offer the note actions', async () => {
+        const api = await gridMgr.createGridAndWait('specialColsCtxNotes', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            rowSelection: { mode: 'multiRow' },
+            getRowId: ({ data }) => data.athlete,
+            notesDataSource: { getNote: () => undefined, setNote: () => {} },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        for (const colId of [ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID]) {
+            rightClick(cell(gridDiv, 0, colId));
+            await waitFor(() => expect(menuOption('Add Note')).not.toBeNull());
+            expect(menuOption('Copy')).toBeNull();
+            api.hidePopupMenu();
+            await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+        }
+    });
+
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
     test('rowNumbers.contextMenuItems overrides the grid-level getContextMenuItems', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxOverride', {
