@@ -28,7 +28,6 @@ import {
     _addGridCommonParams,
     _attemptToRestoreCellFocus,
     _getGrandTotalRow,
-    isRowNumberCol,
     isSpecialCol,
 } from 'ag-grid-community';
 
@@ -93,26 +92,15 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const {
-            clipboardSvc,
-            chartSvc,
-            csvCreator,
-            excelCreator,
-            colModel,
-            rangeSvc,
-            gos,
-            notesSvc,
-            pdfCreator,
-            rowNumbersSvc,
-        } = this.beans;
+        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc, pdfCreator } =
+            this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
         // a selection or row-number cell has no data of its own, so it offers the row-level items only, unless the
-        // clipboard acts on rows: it copies the selected rows, or a row-number click selects the row as a range
-        const clipboardActsOnRows =
-            clipboardSvc?.copiesSelectedRows() ||
-            (!!column && isRowNumberCol(column) && rowNumbersSvc?.isIntegratedWithSelection);
-        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardActsOnRows;
+        // clipboard has something else to act on: a cell range (which the right-click may just have selected) or
+        // the selected rows
+        const clipboardHasTarget = (rangeSvc && !rangeSvc.isEmpty()) || clipboardSvc?.copiesSelectedRows();
+        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardHasTarget;
         const dataColumn = isDatalessSpecialCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {

@@ -70,26 +70,10 @@ const gridOptions = {
 
 ## Context Menu
 
-Right-clicking a Row Number cell opens the grid [Context Menu](./context-menu/) with the items returned by
-`getContextMenuItems`, whether or not [Cell Selection](./cell-selection/) is enabled.
-
-When Cell Selection is integrated with the Row Numbers Column, the right-click also selects the whole row, so that
-items such as `Copy` act on the right-clicked row. A right-click on a row that is already part of a selected row range
-leaves that selection untouched.
-
-Where the Cell Selection integration is not in use, a Row Number cell holds no data of its own, so its default items,
-and the `defaultItems` passed to `getContextMenuItems`, are the row-level items only, such as `Export`. Cell items
-such as `Cut`, `Copy` and `Paste` are not included.
-
-The `contextMenuItems` option overrides `getContextMenuItems` for the Row Numbers Column only.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    rowNumbers: {
-        contextMenuItems: ['copy', 'export']
-    },
-}
-```
+Right-clicking a Row Number cell opens the [Context Menu](./context-menu/). As the cell holds no data of its own, the
+default items are the row-level ones, such as `Export`; `Copy` and `Paste` are included only when a cell range is
+selected or `rowSelection.copySelectedRows` is enabled. Use `rowNumbers.contextMenuItems` to override the items for the
+Row Numbers Column only.
 
 ## Row Resizing
 

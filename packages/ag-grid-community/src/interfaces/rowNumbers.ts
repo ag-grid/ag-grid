@@ -63,8 +63,6 @@ export interface RowNumbersOptions extends Pick<
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNumbersService {
     column: AgColumn | null;
-    /** Whether a click on a row number selects the row as a cell range. */
-    isIntegratedWithSelection: boolean;
     refreshCols(): AgColumn<any> | null;
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;

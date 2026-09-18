@@ -63,7 +63,7 @@ export class RowNumbersService
         this.visibleCols = beans.visibleCols;
     }
 
-    public isIntegratedWithSelection: boolean = false;
+    private isIntegratedWithSelection: boolean = false;
     private isSuppressCellSelectionIntegration: boolean;
 
     private rowNumberOverrides: RowNumbersOptions | null = null;

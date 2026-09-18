@@ -235,6 +235,27 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Aleksey Nemov\t24'));
     });
 
+    // A right-click on the checkbox leaves an existing cell range in place, and Copy copies that range.
+    test('a selection-column checkbox offers Copy for an existing cell range', async () => {
+        const api = await gridMgr.createGridAndWait('selectionColCtxRange', {
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowSelection: { mode: 'multiRow' },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
+        fireGridPointerDown(cell(gridDiv, 1, 'age'), { shiftKey: true });
+        expect(api.getCellRanges()).toHaveLength(1);
+
+        const checkbox = cell(gridDiv, 2, SELECTION_COLUMN_ID).querySelector<HTMLElement>('.ag-selection-checkbox')!;
+        rightClick(checkbox);
+        await clickMenuOption('Copy');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
+    });
+
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
     test('rowNumbers.contextMenuItems overrides the grid-level getContextMenuItems', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxOverride', {
