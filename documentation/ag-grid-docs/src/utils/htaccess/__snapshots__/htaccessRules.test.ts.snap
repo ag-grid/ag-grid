@@ -27,7 +27,7 @@ Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQ
 
 # Images and example-page assets: unhashed filenames, so cap staleness with a moderate
 # max-age rather than caching indefinitely.
-Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/#"
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/[^/]+\\.(png|jpe?g|gif|svg|webp|ico|json)$#"
 
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
