@@ -1,9 +1,9 @@
 import type { VisibleColsService } from '../../columns/visibleColsService';
-import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { ColumnLane } from '../../entities/agColumn';
 
 interface HorizontalOffsetParams {
     left: number | null;
-    pinned: ColumnPinnedType;
+    lane: ColumnLane;
     width: number;
     isPrintLayout: boolean;
     isRtl: boolean;
@@ -12,7 +12,7 @@ interface HorizontalOffsetParams {
 
 interface ApplyHorizontalPositionParams {
     offset: number;
-    pinned: ColumnPinnedType;
+    lane: ColumnLane;
     width: number;
     isPrintLayout: boolean;
     isRtl: boolean;
@@ -20,7 +20,7 @@ interface ApplyHorizontalPositionParams {
 }
 
 export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): number | null {
-    const { left, pinned, width, isPrintLayout, isRtl, visibleCols } = params;
+    const { left, lane, width, isPrintLayout, isRtl, visibleCols } = params;
     if (left == null || !isPrintLayout) {
         return left;
     }
@@ -28,9 +28,9 @@ export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): num
     let physicalLeft = left;
     if (isRtl) {
         let sectionWidth: number;
-        if (pinned === 'left') {
+        if (lane === 0) {
             sectionWidth = visibleCols.getLeftStickyColumnContainerWidth();
-        } else if (pinned === 'right') {
+        } else if (lane === 2) {
             sectionWidth = visibleCols.getRightStickyColumnContainerWidth();
         } else {
             sectionWidth = visibleCols.bodyWidth;
@@ -38,12 +38,12 @@ export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): num
         physicalLeft = sectionWidth - left - width;
     }
 
-    if (pinned === 'left') {
+    if (lane === 0) {
         return physicalLeft;
     }
 
     const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
-    if (pinned === 'right') {
+    if (lane === 2) {
         return leftWidth + visibleCols.bodyWidth + physicalLeft;
     }
 
@@ -51,9 +51,9 @@ export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): num
 }
 
 export function applyHorizontalPosition(eElement: HTMLElement, params: ApplyHorizontalPositionParams): void {
-    const { offset, pinned, width, isPrintLayout, isRtl, visibleCols } = params;
+    const { offset, lane, width, isPrintLayout, isRtl, visibleCols } = params;
 
-    const useRightAnchor = !isPrintLayout && (isRtl ? pinned !== 'left' : pinned === 'right');
+    const useRightAnchor = !isPrintLayout && (isRtl ? lane !== 0 : lane === 2);
 
     if (useRightAnchor) {
         if (isRtl) {

@@ -269,12 +269,10 @@ export {
     getFloatingFiltersHeight as _getFloatingFiltersHeight,
     getHeaderRowCount as _getHeaderRowCount,
     getPinnedSectionWidths as _getPinnedSectionWidths,
-    partitionByPinned as _partitionByPinned,
     updatePinnedSectionWidths as _updatePinnedSectionWidths,
 } from './headerRendering/headerUtils';
 export type {
     PinnedSectionElements,
-    PinnedSections,
     PinnedSectionWidths,
     PinnedSectionWidthsCache,
 } from './headerRendering/headerUtils';
