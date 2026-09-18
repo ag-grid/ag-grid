@@ -8,7 +8,6 @@ import type {
     BeanCollection,
     CellCtrl,
     CellPosition,
-    Column,
     DefaultMenuItem,
     EventShowContextMenuParams,
     GetNoteParams,
@@ -109,10 +108,11 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
         // a selection or row-number cell has no data of its own, so it offers the row-level items only, unless the
-        // clipboard would act on rows: a row-number click that selects the row, or a selection column with rows to copy
-        const clipboardActsOnRows = (col: Column) =>
-            isRowNumberCol(col) ? rowNumbersSvc?.isIntegratedWithSelection : clipboardSvc?.copiesSelectedRows();
-        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardActsOnRows(column);
+        // clipboard acts on rows: it copies the selected rows, or a row-number click selects the row as a range
+        const clipboardActsOnRows =
+            clipboardSvc?.copiesSelectedRows() ||
+            (!!column && isRowNumberCol(column) && rowNumbersSvc?.isIntegratedWithSelection);
+        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardActsOnRows;
         const dataColumn = isDatalessSpecialCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {

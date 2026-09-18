@@ -219,6 +219,22 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Natalie Coughlin\t25'));
     });
 
+    test('a row-number cell offers Copy when copySelectedRows is enabled without cell selection', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCopyRows', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            rowSelection: { mode: 'multiRow', copySelectedRows: true },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(2)!], newValue: true });
+        rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Copy');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Aleksey Nemov\t24'));
+    });
+
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
     test('rowNumbers.contextMenuItems overrides the grid-level getContextMenuItems', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxOverride', {
