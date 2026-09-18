@@ -1,6 +1,142 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-19635226:
+    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:46:00.155Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:46:00.146Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:46:00.139Z
+  SNYK-JS-UNDICI-19635222:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:41.093Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:41.078Z
+  SNYK-JS-UNDICI-19635216:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:26.328Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:26.324Z
+  SNYK-JS-UNDICI-19635210:
+    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:10.341Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:10.328Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:10.322Z
+  SNYK-JS-UNDICI-19635208:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:48.354Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:48.350Z
+  SNYK-JS-UNDICI-19635206:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:31.654Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:31.650Z
+  SNYK-JS-SMOLTOML-19643959:
+    - rulesync@8.8.1 > smol-toml@1.6.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:43:36.650Z
+    - knip@6.6.2 > smol-toml@1.6.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:43:36.635Z
+  SNYK-JS-EXTRACTZIP-19653641:
+    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > extract-zip@2.0.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:43:06.198Z
+  SNYK-JS-ADMZIP-19846655:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > adm-zip@0.5.10':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:42:45.666Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > adm-zip@0.5.16':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:42:45.651Z
+  SNYK-JS-UNDICI-19635218:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.29.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:51.030Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:51.012Z
+  SNYK-JS-PROXYADDR-19812342:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > express@4.21.2 > proxy-addr@2.0.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:14.985Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > proxy-addr@2.0.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:14.981Z
+    - rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1 > express@5.2.1 > proxy-addr@2.0.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:14.976Z
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > proxy-addr@2.0.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:14.973Z
   SNYK-JS-ADMZIP-19276676:
     - '@nx/react@* > @nx/module-federation@* > @module-federation/enhanced@* > @module-federation/dts-plugin@* > adm-zip@*':
         reason: 'No published fix exists - Snyk reports fixedIn: [] for this advisory. Dev-only: reached solely through @nx/react > @nx/module-federation > @module-federation/dts-plugin, which is build tooling and is not shipped in any published AG Grid package. Expected to disappear with the nx 22.7.7+ upgrade tracked by SNYK-JS-NX-18593778. Time-boxed pending a published fix or that upgrade.'
