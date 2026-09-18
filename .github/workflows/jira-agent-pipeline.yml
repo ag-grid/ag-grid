@@ -413,14 +413,18 @@ jobs:
               with:
                   fetch-depth: 1
 
+            # Best-effort: a bootstrap failure must not paint the merged PR red.
             - name: Install @ag-grid/dev-prompts
+              id: install
+              continue-on-error: true
               uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
               with:
                   channel: ${{ env.DEV_PROMPTS_CHANNEL }}
 
             # The issue key is resolved from the head branch; the staging base
             # comes from the pipeline's own per-repo table.
-            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-staging-pin
+            - if: steps.install.outcome == 'success'
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-staging-pin
               with:
                   head_branch: ${{ github.event.pull_request.head.ref }}
                   pr_number: ${{ github.event.pull_request.number }}
