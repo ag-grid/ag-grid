@@ -458,6 +458,14 @@ describe('htaccessRules', () => {
         it('is production-only, unlike the document no-cache rule', () => {
             expect(stagingContent).not.toContain('images|example-assets');
         });
+
+        it('also matches /example/, not just /example-assets/', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/finance.png')).toBe(true);
+            expect(pattern.test('/example-assets/olympic-winners.json')).toBe(true);
+        });
     });
 
     describe('SE-81: agent-useful Link header', () => {
