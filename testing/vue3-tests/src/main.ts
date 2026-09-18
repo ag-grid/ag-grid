@@ -8,12 +8,18 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import App from './App.vue';
 import { router } from './router';
+import RealEditor from './test-cases/cell-slots-editor-scope/RealEditor.vue';
+import RegisteredCell from './test-cases/cell-slots-priority/RegisteredCell.vue';
 import DemoRenderer from './test-cases/zd34301-inject-provide/DemoRenderer.vue';
 
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 
 const demoTablePlugin = {
-    install: (app: any) => app.component('DemoRenderer', DemoRenderer),
+    install: (app: any) => {
+        app.component('DemoRenderer', DemoRenderer);
+        app.component('PrioritySharedCell', RegisteredCell);
+        app.component('EditorAndSlotName', RealEditor);
+    },
 };
 
 const app = createApp(App);

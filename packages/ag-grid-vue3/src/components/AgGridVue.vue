@@ -5,9 +5,18 @@ import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 import type { Props } from './utils';
 import { debounce, deepToRaw, getProps } from './utils';
 import type { Ref } from 'vue';
-import { getCurrentInstance, markRaw, onMounted, onUnmounted, shallowRef, toRefs, useTemplateRef, watch } from 'vue';
+import {
+    getCurrentInstance,
+    markRaw,
+    onMounted,
+    onUnmounted,
+    shallowRef,
+    toRefs,
+    useTemplateRef,
+    watch,
+} from 'vue';
 
-import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { AgEventType, GridApi, GridOptions, ICellRendererParams, IRowNode } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
@@ -21,6 +30,9 @@ import {
 } from 'ag-grid-community';
 
 const props = withDefaults(defineProps<Props<TData>>(), getProps());
+
+// A cellRenderer string can name any slot, so the name isn't known ahead of time here.
+defineSlots<{ [slotName: string]: (params: ICellRendererParams<TData>) => any }>();
 
 const rootRef = useTemplateRef<HTMLDivElement>('root');
 
