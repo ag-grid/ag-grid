@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     TestGridsManager,
     clickMenuOption,
     clipboardUtils,
@@ -9,7 +10,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GetContextMenuItemsParams } from 'ag-grid-community';
-import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, getGridElement } from 'ag-grid-community';
+import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 let restoreOffsetParent: (() => void) | undefined;
@@ -252,6 +253,54 @@ describe('Row Numbers context menu (AG-16355)', () => {
 
         const checkbox = cell(gridDiv, 2, SELECTION_COLUMN_ID).querySelector<HTMLElement>('.ag-selection-checkbox')!;
         rightClick(checkbox);
+        await clickMenuOption('Copy');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
+    });
+
+    // The legacy string rowSelection copies selected rows by default, unless suppressCopyRowsToClipboard is set.
+    test('a row-number cell follows the legacy rowSelection copy behaviour', async () => {
+        // the string form of rowSelection is deprecated (#306) but still supported
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+        const withCopy = await gridMgr.createGridAndWait('rowNumbersCtxLegacy', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            rowSelection: 'multiple',
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+        withCopy.setNodesSelected({ nodes: [withCopy.getDisplayedRowAtIndex(1)!], newValue: true });
+        rightClick(cell(getGridElement(withCopy)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Copy');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Natalie Coughlin\t25'));
+        gridMgr.reset();
+
+        const suppressed = await gridMgr.createGridAndWait('rowNumbersCtxLegacySuppressed', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            rowSelection: 'multiple',
+            suppressCopyRowsToClipboard: true,
+        });
+        rightClick(cell(getGridElement(suppressed)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
+    });
+
+    // With the integration suppressed a row-number right-click leaves an existing range alone, and Copy copies it.
+    test('a row-number cell offers Copy for an existing cell range when the integration is suppressed', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxSuppressedRange', {
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { suppressCellSelectionIntegration: true },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
+        fireGridPointerDown(cell(gridDiv, 1, 'age'), { shiftKey: true });
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
         await clickMenuOption('Copy');
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
     });
