@@ -211,14 +211,14 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let result = dragChange;
         const { columnGroup } = this;
         const firstDisplayedLeafCol = edgeLeafColumn(columnGroup, true, false);
-        const pinned = firstDisplayedLeafCol?.getPinned() ?? columnGroup.getPinned();
+        const lane = firstDisplayedLeafCol ? firstDisplayedLeafCol.pinnedLane : columnGroup.pinnedLane;
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
-            if (pinned !== 'left') {
+            if (lane !== 0) {
                 result *= -1;
             }
-        } else if (pinned === 'right') {
+        } else if (lane === 2) {
             // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
             result *= -1;
         }

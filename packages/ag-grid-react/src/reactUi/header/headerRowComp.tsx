@@ -10,12 +10,7 @@ import type {
     IHeaderRowComp,
     PinnedSectionWidthsCache,
 } from 'ag-grid-community';
-import {
-    _EmptyBean,
-    _isHeaderFocusSuppressed,
-    _partitionByPinned,
-    _updatePinnedSectionWidths,
-} from 'ag-grid-community';
+import { _EmptyBean, _isHeaderFocusSuppressed, _updatePinnedSectionWidths } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
@@ -28,13 +23,18 @@ function getCellSectionSignature(ctrls: AbstractHeaderCellCtrl[], isPrint: boole
         return 'print';
     }
 
-    return ctrls
-        .map((ctrl) => {
-            const pinned = ctrl.column?.getPinned() ?? 'center';
-            return `${ctrl.instanceId}:${pinned}`;
-        })
-        .join('|');
+    return ctrls.map((ctrl) => `${ctrl.instanceId}:${ctrl.column?.pinnedLane ?? 1}`).join('|');
 }
+
+/** A header cell with no column renders in the centre. */
+const partitionByLane = (cellCtrls: AbstractHeaderCellCtrl[]) => {
+    const byLane: AbstractHeaderCellCtrl[][] = [[], [], []];
+    for (let i = 0, len = cellCtrls.length; i < len; ++i) {
+        const cellCtrl = cellCtrls[i];
+        byLane[cellCtrl.column?.pinnedLane ?? 1].push(cellCtrl);
+    }
+    return { left: byLane[0], center: byLane[1], right: byLane[2] };
+};
 
 const HeaderRowComp = ({
     ctrl,
@@ -152,7 +152,7 @@ const HeaderRowComp = ({
         if (isPrint) {
             return { left: [] as AbstractHeaderCellCtrl[], center: cellCtrls, right: [] as AbstractHeaderCellCtrl[] };
         }
-        return _partitionByPinned(cellCtrls, (ctrl: AbstractHeaderCellCtrl) => ctrl.column?.getPinned());
+        return partitionByLane(cellCtrls);
     }, [cellCtrls, isPrint]);
 
     const createCellJsx = useCallback(

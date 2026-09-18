@@ -124,7 +124,7 @@ export function _getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): 
         colsSpanning.push(column);
     } else {
         let pointer: AgColumn | null = column;
-        const pinned = column.getPinned();
+        const lane = column.pinnedLane;
         for (let i = 0; pointer && i < colSpan; i++) {
             colsSpanning.push(pointer);
             pointer = beans.visibleCols.getColAfter(pointer);
@@ -132,7 +132,7 @@ export function _getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): 
                 break;
             }
             // we do not allow col spanning to span outside of pinned areas
-            if (pinned !== pointer.getPinned()) {
+            if (lane !== pointer.pinnedLane) {
                 break;
             }
         }
@@ -149,7 +149,7 @@ export function _onCellLeftChanged(beans: BeanCollection, cellCtrl: CellCtrl): v
     const { gos, visibleCols } = beans;
     const left = getResolvedHorizontalOffset({
         left: getCellLeft(cellCtrl),
-        pinned: cellCtrl.column.getPinned(),
+        lane: cellCtrl.column.pinnedLane,
         width: getCellWidth(cellCtrl),
         isPrintLayout: cellCtrl.printLayout,
         isRtl: gos.get('enableRtl'),
@@ -172,7 +172,7 @@ function setHorizontalPosition(beans: BeanCollection, cellCtrl: CellCtrl, eSetLe
     const { gos, visibleCols } = beans;
     applyHorizontalPosition(eSetLeft, {
         offset: left,
-        pinned: cellCtrl.column.getPinned(),
+        lane: cellCtrl.column.pinnedLane,
         width: getCellWidth(cellCtrl),
         isPrintLayout: cellCtrl.printLayout,
         isRtl: gos.get('enableRtl'),

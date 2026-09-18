@@ -2,6 +2,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { _laneOfPinned } from '../../entities/agColumn';
 import { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
@@ -92,6 +93,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                     if (reuse && reuse.buildToken !== buildToken) {
                         reuse.buildToken = buildToken;
                         reuse.pinned = pinned;
+                        reuse.pinnedLane = _laneOfPinned(pinned);
                         reuse.children = null;
                         // reset to [] (not null) — an empty part keeps [] after recompute, matching released behaviour
                         reuse.displayedChildren = [];

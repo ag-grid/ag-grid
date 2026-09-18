@@ -361,25 +361,16 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const showCells = !isFullWidth && cellCtrlsMerged != null;
 
     const { leftCellCtrls, centerCellCtrls, rightCellCtrls } = useMemo(() => {
-        const left: CellCtrl[] = [];
-        const center: CellCtrl[] = [];
-        const right: CellCtrl[] = [];
+        const byLane: CellCtrl[][] = [[], [], []];
 
         for (const cellCtrl of cellCtrlsMerged ?? []) {
-            const pinned = rowCtrl.getCellLane(cellCtrl);
-            if (pinned === 'left') {
-                left.push(cellCtrl);
-            } else if (pinned === 'right') {
-                right.push(cellCtrl);
-            } else {
-                center.push(cellCtrl);
-            }
+            byLane[rowCtrl.laneFor(cellCtrl.column)].push(cellCtrl);
         }
 
         return {
-            leftCellCtrls: left,
-            centerCellCtrls: center,
-            rightCellCtrls: right,
+            leftCellCtrls: byLane[0],
+            centerCellCtrls: byLane[1],
+            rightCellCtrls: byLane[2],
         };
     }, [cellCtrlsMerged, rowCtrl]);
 

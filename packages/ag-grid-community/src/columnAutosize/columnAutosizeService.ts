@@ -185,8 +185,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 if (!resolved || resolved.colDef.suppressAutoSize || resolved.colKind === 'row-number') {
                     return false;
                 }
-                const pinned = resolved.pinned;
-                return !(resolved.displayed && (pinned === 'left' || pinned === 'right'));
+                return !(resolved.displayed && resolved.pinnedLane !== 1);
             });
 
             this.sizeColumnsToFit(availableGridWidth, params.source, true, {

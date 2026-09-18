@@ -3,10 +3,9 @@ import { _areEqual, _isRealCssEngine } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
+import type { AgColumn, ColumnLane } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
-import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
@@ -87,28 +86,20 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     /**
      * Returns the columns that are currently rendered in the viewport.
      */
-    public getColumnHeadersToRender(type: ColumnPinnedType): AgColumn[] {
-        switch (type) {
-            case 'left':
-                return this.columnsToRenderLeft;
-            case 'right':
-                return this.columnsToRenderRight;
-            default:
-                return this.columnsToRenderCenter;
+    public getColumnHeadersToRender(lane: ColumnLane): AgColumn[] {
+        if (lane === 0) {
+            return this.columnsToRenderLeft;
         }
+        return lane === 2 ? this.columnsToRenderRight : this.columnsToRenderCenter;
     }
 
     /** Undefined for a header row with no groups in that section, which the caller skips rather than
      *  paying for an empty array. */
-    public getHeadersToRender(type: ColumnPinnedType, depth: number): AgColumnGroup[] | undefined {
-        switch (type) {
-            case 'left':
-                return this.rowsOfHeadersToRenderLeft[depth];
-            case 'right':
-                return this.rowsOfHeadersToRenderRight[depth];
-            default:
-                return this.rowsOfHeadersToRenderCenter[depth];
+    public getHeadersToRender(lane: ColumnLane, depth: number): AgColumnGroup[] | undefined {
+        if (lane === 0) {
+            return this.rowsOfHeadersToRenderLeft[depth];
         }
+        return lane === 2 ? this.rowsOfHeadersToRenderRight[depth] : this.rowsOfHeadersToRenderCenter[depth];
     }
 
     private extractViewportColumns(): void {

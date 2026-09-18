@@ -114,6 +114,37 @@ describe('ensureDomOrder', () => {
             right: ['r1', 'r2'],
         });
     });
+
+    // The header buckets its cells by lane and sorts within each lane; that path runs only on a
+    // forceOrder rebuild, which outside print layout is what ensureDomOrder turns on.
+    test('keeps header DOM order aligned with displayed order when enabled', async () => {
+        const api = createCellOrderGrid(gridsManager, true);
+
+        expect(getHeaderOrder(api)).toEqual({
+            left: ['l1', 'l2'],
+            center: ['c1', 'c2'],
+            right: ['r1', 'r2'],
+        });
+
+        api.applyColumnState({
+            applyOrder: true,
+            state: [
+                { colId: 'l2' },
+                { colId: 'l1' },
+                { colId: 'c2' },
+                { colId: 'c1' },
+                { colId: 'r2' },
+                { colId: 'r1' },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        expect(getHeaderOrder(api)).toEqual({
+            left: ['l2', 'l1'],
+            center: ['c2', 'c1'],
+            right: ['r2', 'r1'],
+        });
+    });
 });
 
 function createRowOrderGrid(gridsManager: TestGridsManager, ensureDomOrder: boolean): GridApi<OrderRow> {
@@ -211,6 +242,26 @@ function getCellOrder(api: GridApi<OrderRow>, rowId: string): { left: string[]; 
 
 function getCellColIds(row: HTMLElement, containerSelector: string): string[] {
     return Array.from(row.querySelectorAll<HTMLElement>(`${containerSelector} .ag-cell`))
+        .map((cell) => cell.getAttribute('col-id') ?? '')
+        .filter((colId) => !!colId);
+}
+
+function getHeaderOrder(api: GridApi<OrderRow>): { left: string[]; center: string[]; right: string[] } {
+    const root = TestGridsManager.getHTMLElement(api);
+    const header = root?.querySelector<HTMLElement>('.ag-header');
+    if (!header) {
+        return { left: [], center: [], right: [] };
+    }
+
+    return {
+        left: getHeaderColIds(header, '.ag-grid-pinned-left-cells'),
+        center: getHeaderColIds(header, '.ag-grid-scrolling-cells'),
+        right: getHeaderColIds(header, '.ag-grid-pinned-right-cells'),
+    };
+}
+
+function getHeaderColIds(header: HTMLElement, containerSelector: string): string[] {
+    return Array.from(header.querySelectorAll<HTMLElement>(`${containerSelector} .ag-header-cell`))
         .map((cell) => cell.getAttribute('col-id') ?? '')
         .filter((colId) => !!colId);
 }

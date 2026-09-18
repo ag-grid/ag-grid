@@ -1,6 +1,6 @@
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
-import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -11,10 +11,10 @@ import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import {
+    compareCtrlsByPinnedThenLeft,
     getColumnHeaderRowHeight,
     getFloatingFiltersHeight,
     getGroupRowsHeight,
-    sortCtrlsByPinnedThenLeft,
 } from '../headerUtils';
 import type { HeaderRowType } from './headerRowComp';
 
@@ -265,7 +265,7 @@ export class HeaderRowCtrl extends BeanStub {
         if (keptCtrlOutOfOrder) {
             // a kept-alive focused ctrl was appended after the in-order viewport ctrls; restore column
             // order so consumers (e.g. React, which derives DOM order from this array) can rely on it.
-            this.allCtrls = sortCtrlsByPinnedThenLeft(this.allCtrls);
+            this.allCtrls.sort(compareCtrlsByPinnedThenLeft);
         }
         return this.allCtrls;
     }
@@ -340,18 +340,18 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
         const viewportColumns: (AgColumn | AgColumnGroup)[] = [];
-        this.appendComponentsToRender('left', viewportColumns);
-        this.appendComponentsToRender(null, viewportColumns);
-        this.appendComponentsToRender('right', viewportColumns);
+        this.appendComponentsToRender(0, viewportColumns);
+        this.appendComponentsToRender(1, viewportColumns);
+        this.appendComponentsToRender(2, viewportColumns);
         return viewportColumns;
     }
 
-    private appendComponentsToRender(pinned: 'left' | 'right' | null, into: (AgColumn | AgColumnGroup)[]): void {
+    private appendComponentsToRender(lane: ColumnLane, into: (AgColumn | AgColumnGroup)[]): void {
         const { colViewport } = this.beans;
         const cols =
             this.type === 'group'
-                ? colViewport.getHeadersToRender(pinned, this.rowIndex)
-                : colViewport.getColumnHeadersToRender(pinned);
+                ? colViewport.getHeadersToRender(lane, this.rowIndex)
+                : colViewport.getColumnHeadersToRender(lane);
         if (!cols) {
             return;
         }

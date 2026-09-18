@@ -126,17 +126,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             return false;
         }
 
-        let activeColsForRow: AgColumn[] = [];
-        switch (col.getPinned()) {
-            case 'left':
-                activeColsForRow = visibleCols.getLeftColsForRow(node);
-                break;
-            case 'right':
-                activeColsForRow = visibleCols.getRightColsForRow(node);
-                break;
-            case null:
-                activeColsForRow = colViewport.getColsWithinViewport(node);
-                break;
+        const lane = col.pinnedLane;
+        let activeColsForRow: AgColumn[];
+        if (lane === 0) {
+            activeColsForRow = visibleCols.getLeftColsForRow(node);
+        } else if (lane === 2) {
+            activeColsForRow = visibleCols.getRightColsForRow(node);
+        } else {
+            activeColsForRow = colViewport.getColsWithinViewport(node);
         }
         return !activeColsForRow.includes(col);
     }

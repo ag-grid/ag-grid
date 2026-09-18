@@ -293,7 +293,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private registerCellEventListeners(): void {
         const refreshRightPinnedCellPositions = () => {
             for (const cellCtrl of this.getAllCellCtrls()) {
-                if (cellCtrl.column.getPinned() === 'right') {
+                if (cellCtrl.column.pinnedLane === 2) {
                     cellCtrl.onLeftChanged();
                 }
             }

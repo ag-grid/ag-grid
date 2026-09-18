@@ -259,10 +259,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         for (let i = 0, len = colsList.length; i < len; ++i) {
             const col = colsList[i];
             const colKind = col.colKind;
-            const pinned = col.pinned;
+            const lane = col.pinnedLane;
             // right cursor derives from total - left - center, so only left/center need counting
-            if (pinned !== 'right') {
-                if (pinned) {
+            if (lane !== 2) {
+                if (lane === 0) {
                     ++leftCount;
                 } else {
                     ++centerCount;
@@ -291,19 +291,19 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 hasDataCol = true;
             }
             if (pending !== null && colKind !== 'row-number') {
-                const selPinned = pending.pinned;
-                if (selPinned === 'right') {
+                const selLane = pending.pinnedLane;
+                if (selLane === 2) {
                     rightCols.push(pending);
-                } else if (selPinned) {
+                } else if (selLane === 0) {
                     leftCols.push(pending);
                 } else {
                     centerCols.push(pending);
                 }
                 pending = null;
             }
-            if (pinned === 'right') {
+            if (lane === 2) {
                 rightCols.push(col);
-            } else if (pinned) {
+            } else if (lane === 0) {
                 leftCols.push(col);
             } else {
                 centerCols.push(col);
@@ -332,10 +332,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         let rightCursor = leftCount + centerCount + 1;
         for (let i = 0, total = cols.length; i < total; ++i) {
             const col = cols[i];
-            const pinned = col.pinned;
-            if (pinned === 'right') {
+            const lane = col.pinnedLane;
+            if (lane === 2) {
                 col.ariaColIndex = rightCursor++;
-            } else if (pinned) {
+            } else if (lane === 0) {
                 col.ariaColIndex = leftCursor++;
             } else {
                 col.ariaColIndex = centerCursor++;

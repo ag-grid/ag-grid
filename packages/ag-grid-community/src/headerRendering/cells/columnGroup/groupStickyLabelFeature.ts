@@ -21,7 +21,7 @@ export class GroupStickyLabelFeature extends BeanStub {
             const refreshPosition = this.refreshPosition.bind(this);
             const refreshStickyOffset = this.refreshStickyOffset.bind(this);
 
-            if (columnGroup.getPinned() == null) {
+            if (columnGroup.pinnedLane === 1) {
                 this.addManagedEventListeners({
                     bodyScroll: (event: BodyScrollEvent) => {
                         if (event.direction === 'horizontal') {
@@ -91,7 +91,7 @@ export class GroupStickyLabelFeature extends BeanStub {
     }
 
     private refreshStickyOffset(): void {
-        if (this.columnGroup.getPinned() != null) {
+        if (this.columnGroup.pinnedLane !== 1) {
             this.eLabel.style.removeProperty('left');
             this.eLabel.style.removeProperty('right');
             return;
