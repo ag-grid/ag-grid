@@ -75,12 +75,14 @@ export class RowNumbersService
     // Without cell-selection integration the column suppresses the grid's own menu, but a user-supplied
     // one is still honoured — and a row-number cell offers an empty-grid right-click's defaults, not a cell's.
     private readonly boundContextMenuItems: GetContextMenuItems = (params) => {
-        const defaultItems = this.beans.contextMenuSvc?.getDefaultMenuItems();
+        const defaultItems = this.beans.contextMenuSvc?.getDefaultMenuItems(null, params.node);
         return (
             this.gos.getCallback('getContextMenuItems')?.({
                 ...params,
                 defaultItems: defaultItems?.length ? defaultItems : undefined,
-            }) ?? []
+            }) ??
+            defaultItems ??
+            []
         );
     };
 
