@@ -26,8 +26,9 @@ Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQ
 
 
 # Images and example-page assets: unhashed filenames, so cap staleness with a moderate
-# max-age rather than caching indefinitely.
-Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/[^/]+\\.(png|jpe?g|gif|svg|webp|ico|json)$#"
+# max-age rather than caching indefinitely. Excludes the /example/ demo page itself, which
+# must keep revalidating (documentNoCacheRules) rather than inheriting this rule's max-age.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/# && !( %{REQUEST_URI} =~ m#^/example/(index\\.html)?$# )"
 
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
