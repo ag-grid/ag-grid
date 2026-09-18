@@ -177,13 +177,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         return this.rangeSelectionExtensions.some((extension) => extension.isAllColumnsRange?.(range, allColumns));
     }
 
-    private isRowInAllColumnsRange(cell: CellPosition): boolean {
-        const allDataColumns = this.getColumnsFromModel(this.visibleCols.allCols) ?? [];
-        return this.cellRanges.some(
-            (range) => this.isRowInRange(cell, range) && this.isAllColumnsRange(range, allDataColumns)
-        );
-    }
-
     private updateSelectionModeForCell(cellPosition: CellPosition): void {
         this.setSelectionMode(this.isAllColumnsSelectionCell(cellPosition));
     }
@@ -482,15 +475,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return this.extendLatestRangeToCell(cell);
         }
 
-        // A right-click on an all-columns (row number) cell whose row already sits in a whole-row range
-        // preserves that range, as right-clicking inside a range does for a normal cell. The shared guard
-        // in cellMouseListenerFeature cannot cover this, because the row-number column is excluded from a
-        // range's columns and so such a cell is never reported as being inside one. Outside a whole-row
-        // range the right-click selects the row, so that the context menu acts on it (AG-16355).
         const isRightClickOnAllColumnsCell = isAllColumnsCell && isRightClick;
-        if (isRightClickOnAllColumnsCell && this.isRowInAllColumnsRange(cell)) {
-            return;
-        }
 
         this.updateSelectionModeForCell(cell);
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
@@ -505,6 +490,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                   endRow: cell,
               })
             : undefined;
+
+        // a right-click inside an existing whole-row range keeps it, as it does for a normal cell; the shared guard
+        // in cellMouseListenerFeature cannot see this, since the row-number column is not part of a range's columns
+        if (isRightClickOnAllColumnsCell && containingRange) {
+            return;
+        }
+
         const isMultiRangeRemoval = isAllColumnsCell && !!containingRange && isMultiRange && isMultiKey;
 
         if (isMultiRangeRemoval && containingRange) {
