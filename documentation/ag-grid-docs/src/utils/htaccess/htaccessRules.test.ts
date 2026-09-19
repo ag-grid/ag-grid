@@ -503,6 +503,34 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('Static script bundles under /scripts/ get a moderate max-age', () => {
+        const getScriptCacheRule = () => {
+            const line = productionContent.split('\n').find((l) => l.includes('/scripts/[^/]'));
+            expect(line).toBeDefined();
+            return line!;
+        };
+
+        it('applies a 24h max-age, not the year-long hashed-asset TTL', () => {
+            const line = getScriptCacheRule();
+            expect(line).toContain('max-age=86400');
+            expect(line).not.toContain('max-age=604800');
+        });
+
+        it('is anchored to .js, so it can never match a directory or a non-script file', () => {
+            const line = getScriptCacheRule();
+            const [, source] = line.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/scripts/gtm-init.js')).toBe(true);
+            expect(pattern.test('/scripts/persist-cookie-consent.js')).toBe(true);
+            expect(pattern.test('/scripts/')).toBe(false);
+            expect(pattern.test('/scripts/gtm-init.js.map')).toBe(false);
+        });
+
+        it('is production-only, unlike the document no-cache rule', () => {
+            expect(stagingContent).not.toContain('/scripts/[^/]');
+        });
+    });
+
     describe('SE-81: agent-useful Link header', () => {
         it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
             expect(productionContent).toContain('Header set Link');
