@@ -458,6 +458,49 @@ describe('htaccessRules', () => {
         it('is production-only, unlike the document no-cache rule', () => {
             expect(stagingContent).not.toContain('images|example-assets');
         });
+
+        it('also matches /example/, not just /example-assets/', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/finance.png')).toBe(true);
+            expect(pattern.test('/example-assets/olympic-winners.json')).toBe(true);
+        });
+
+        it('does NOT match the /example/ demo page itself, only asset files beneath it', () => {
+            // staticAssetCacheRules is emitted after documentNoCacheRules, so an unanchored
+            // match on the directory name alone would win and override the live demo page's
+            // no-cache with a day-long public cache - see src/pages/example.astro.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/')).toBe(false);
+            expect(pattern.test('/example/index.html')).toBe(false);
+            expect(pattern.test('/example-assets/')).toBe(false);
+            expect(pattern.test('/images/')).toBe(false);
+        });
+
+        it('matches assets nested in subdirectories, e.g. example-assets/space-company-logos/ or images/ag-logos/png-logos/', () => {
+            // Real paths in public/ - an earlier version of this rule anchored the filename
+            // segment with "[^/]+" (no subdirectory allowed), which silently broke exactly
+            // these: 334 of the 364 files under public/images/ live nested, not at the top level.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example-assets/space-company-logos/nasa.png')).toBe(true);
+            expect(pattern.test('/images/ag-logos/png-logos/react.png')).toBe(true);
+        });
+
+        it('covers the non-image extensions actually used under these paths (xlsx, mp4, webm)', () => {
+            // Real files: public/example-assets/*.xlsx, public/images/**/*.mp4 and *.webm. The
+            // original png/jpg/gif/svg/webp/ico/json list didn't include these.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example-assets/olympic-data.xlsx')).toBe(true);
+            expect(pattern.test('/images/about/carousel/intro.mp4')).toBe(true);
+            expect(pattern.test('/images/about/carousel/intro.webm')).toBe(true);
+        });
     });
 
     describe('SE-81: agent-useful Link header', () => {
