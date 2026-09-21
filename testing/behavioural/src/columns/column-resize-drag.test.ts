@@ -146,18 +146,59 @@ describe('header resize drag direction', () => {
         expect(['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([100, 250, 250]);
     });
 
-    test('widening a group across a maxWidth bound never shrinks another column', async () => {
-        // 660 is the widest `a` reaches before its 110 cap binds, so 664 is the first width with a
-        // frozen column: the step across that threshold is where a mis-scaled share shows up.
-        const below = await dragGroupTo(createBoundedGroup({ maxWidth: 110 }), 660);
-        expect(below).toEqual([110, 220, 330]);
+    test('one drag across a maxWidth bound never narrows another column, tick by tick', async () => {
+        const api = createBoundedGroup({ maxWidth: 110 });
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const bar = root.querySelector<HTMLElement>('.ag-header-group-cell .ag-header-cell-resize')!;
+        const widths = () => ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
 
-        gridsManager.reset();
-
-        const above = await dragGroupTo(createBoundedGroup({ maxWidth: 110 }), 664);
-        expect(above).toEqual([110, 222, 332]);
-        for (let i = 0; i < below.length; ++i) {
-            expect(above[i]).toBeGreaterThanOrEqual(below[i]);
+        // `a` binds at its cap between 662 and 663, so those two ticks straddle the threshold where the
+        // remaining columns start sharing what it left. The ratios are captured once, at mousedown.
+        const dispatcher = new DragEventDispatcher('mouse');
+        await dispatcher.startDrag(bar, 600, 10);
+        const seen: number[][] = [];
+        for (const toX of [660, 662, 663, 664, 720]) {
+            await dispatcher.movePointer(bar, toX, 10);
+            await asyncSetTimeout(0);
+            seen.push(widths());
         }
+        await dispatcher.finishDrag();
+
+        expect(seen).toEqual([
+            [110, 220, 330],
+            [110, 221, 331],
+            [110, 221, 332],
+            [110, 222, 332],
+            [110, 244, 366],
+        ]);
+        for (let i = 1; i < seen.length; ++i) {
+            for (let col = 0; col < 3; ++col) {
+                expect(seen[i][col]).toBeGreaterThanOrEqual(seen[i - 1][col]);
+            }
+        }
+    });
+
+    test('each further group drag grows every column still inside the distribution', async () => {
+        const api = createBoundedGroup({ maxWidth: 110 });
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const widths = () => ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
+
+        const seen: number[][] = [];
+        for (let from = 600; from < 960; from += 120) {
+            const bar = root.querySelector<HTMLElement>('.ag-header-group-cell .ag-header-cell-resize')!;
+            const dispatcher = new DragEventDispatcher('mouse');
+            await dispatcher.startDrag(bar, from, 10);
+            await dispatcher.movePointer(bar, from + 120, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            seen.push(widths());
+        }
+
+        // `a` stays at its cap; `b` and `c` keep splitting what is left 2:3 on every drag.
+        expect(seen).toEqual([
+            [110, 244, 366],
+            [110, 292, 438],
+            [110, 340, 510],
+        ]);
     });
 });
