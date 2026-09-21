@@ -36,10 +36,7 @@ test.agExample(import.meta, () => {
         await expect(filterCards).toHaveCount(3);
         await expect(filterCards.nth(0).getByRole('button', { name: 'Country' })).toBeVisible();
         await expect(filterCards.nth(1).getByRole('button', { name: 'Age is (All)' })).toBeVisible();
-        await expect(filterToolPanel.getByRole('button', { name: 'Country' })).toHaveAttribute(
-            'aria-expanded',
-            'true'
-        );
+        await expect(filterToolPanel.getByRole('button', { name: 'Country' })).toHaveAttribute('aria-expanded', 'true');
 
         // a saved state restores both the cards and their filter values
         await gridApi.setFilterModel({ age: { type: 'lessThan', filter: 25 } });
