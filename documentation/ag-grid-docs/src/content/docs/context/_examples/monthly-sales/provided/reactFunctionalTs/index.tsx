@@ -195,33 +195,35 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="test-container">
-                    <div className="test-header">
-                        <input
-                            type="text"
-                            id="filter-text-box"
-                            style={{ width: '100px' }}
-                            onChange={(e) => onQuickFilterChanged(e.target.value)}
-                            placeholder="Filter..."
-                        />
+                    <div className="test-header example-controls">
+                        <div className="controls-row">
+                            <input
+                                type="text"
+                                id="filter-text-box"
+                                style={{ width: '100px' }}
+                                onChange={(e) => onQuickFilterChanged(e.target.value)}
+                                placeholder="Filter..."
+                            />
 
-                        <span style={{ paddingLeft: '20px' }}>
-                            <b>Period:</b>
-                            <button onClick={() => onChangeMonth(-1)}>
-                                <i className="fa fa-chevron-left"></i>
-                            </button>
-                            <button onClick={() => onChangeMonth(1)}>
-                                <i className="fa fa-chevron-right"></i>
-                            </button>
-                            <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
-                                Year to Jan
+                            <span style={{ paddingLeft: '20px' }}>
+                                <b>Period:</b>
+                                <button onClick={() => onChangeMonth(-1)}>
+                                    <i className="fa fa-chevron-left"></i>
+                                </button>
+                                <button onClick={() => onChangeMonth(1)}>
+                                    <i className="fa fa-chevron-right"></i>
+                                </button>
+                                <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
+                                    Year to Jan
+                                </span>
                             </span>
-                        </span>
 
-                        <span style={{ paddingLeft: '20px' }}>
-                            <b>Legend:</b>&nbsp;&nbsp;
-                            <div className="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
-                            <div className="cell-act legend-box"></div> Budget
-                        </span>
+                            <span style={{ paddingLeft: '20px' }}>
+                                <b>Legend:</b>&nbsp;&nbsp;
+                                <div className="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
+                                <div className="cell-act legend-box"></div> Budget
+                            </span>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

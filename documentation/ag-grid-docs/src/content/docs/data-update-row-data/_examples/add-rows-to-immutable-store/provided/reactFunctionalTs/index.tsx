@@ -77,8 +77,8 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <div>
-                        <div style={{ marginBottom: '5px', minHeight: '30px' }}>
+                    <div className="example-controls">
+                        <div className="controls-row" style={{ marginBottom: '5px', minHeight: '30px' }}>
                             <button onClick={addNewRow}>Add New Row</button>
                         </div>
                     </div>

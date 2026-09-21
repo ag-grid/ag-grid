@@ -44,33 +44,35 @@ ModuleRegistry.registerModules([
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `<div class="test-container">
-        <div class="test-header">
-            <input
-                type="text"
-                id="filter-text-box"
-                style="width: 100px;"
-                (input)="onQuickFilterChanged()"
-                placeholder="Filter..."
-            />
+        <div class="test-header example-controls">
+            <div class="controls-row">
+                <input
+                    type="text"
+                    id="filter-text-box"
+                    style="width: 100px;"
+                    (input)="onQuickFilterChanged()"
+                    placeholder="Filter..."
+                />
 
-            <span style="padding-left: 20px;">
-                <b>Period:</b>
-                <button (click)="onChangeMonth(-1)">
-                    <i class="fa fa-chevron-left"></i>
-                </button>
-                <button (click)="onChangeMonth(1)">
-                    <i class="fa fa-chevron-right"></i>
-                </button>
-                <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
-            </span>
+                <span style="padding-left: 20px;">
+                    <b>Period:</b>
+                    <button (click)="onChangeMonth(-1)">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button (click)="onChangeMonth(1)">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                    <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
+                </span>
 
-            <span style="padding-left: 20px;">
-                <b>Legend:</b>&nbsp;&nbsp;
-                <div class="cell-bud legend-box"></div>
-                Actual&nbsp;&nbsp;
-                <div class="cell-act legend-box"></div>
-                Budget
-            </span>
+                <span style="padding-left: 20px;">
+                    <b>Legend:</b>&nbsp;&nbsp;
+                    <div class="cell-bud legend-box"></div>
+                    Actual&nbsp;&nbsp;
+                    <div class="cell-act legend-box"></div>
+                    Budget
+                </span>
+            </div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"

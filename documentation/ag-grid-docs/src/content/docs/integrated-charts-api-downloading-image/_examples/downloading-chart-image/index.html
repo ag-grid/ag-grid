@@ -1,8 +1,10 @@
 <div class="wrapper">
-    <div id="buttons">
-        <button onclick="downloadChartImage('image/png')">Download Chart Image (PNG)</button>
-        <button onclick="downloadChart({ width: 800, height: 500 })">Download Chart Image (JPG 800x500)</button>
-        <button onclick="openChartImage('image/jpeg')">Open Chart Image (JPG)</button>
+    <div class="example-controls" id="buttons">
+        <div class="controls-row">
+            <button onclick="downloadChartImage('image/png')">Download Chart Image (PNG)</button>
+            <button onclick="downloadChart({ width: 800, height: 500 })">Download Chart Image (JPG 800x500)</button>
+            <button onclick="openChartImage('image/jpeg')">Open Chart Image (JPG)</button>
+        </div>
     </div>
     <div id="myGrid"></div>
     <div id="myChart" class="my-chart"></div>

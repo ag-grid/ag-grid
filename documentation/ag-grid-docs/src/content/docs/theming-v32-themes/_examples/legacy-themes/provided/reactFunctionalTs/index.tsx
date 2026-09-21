@@ -35,8 +35,8 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={[AllEnterpriseModule]}>
             <div className="example-wrapper">
-                <div className="example-header">
-                    <span className="button-group">
+                <div className="example-header example-controls">
+                    <div className="controls-row">
                         <button onClick={() => applyTheme('quartz', false)}>Quartz</button>
                         <button onClick={() => applyTheme('quartz', true)}>Quartz Dark</button>
                         <button onClick={() => applyTheme('alpine', false)}>Alpine</button>
@@ -45,7 +45,7 @@ const GridExample = () => {
                         <button onClick={() => applyTheme('balham', true)}>Balham Dark</button>
                         <button onClick={() => applyTheme('material', false)}>Material</button>
                         <button onClick={() => applyTheme('material', true)}>Material Dark</button>
-                    </span>
+                    </div>
                 </div>
                 <div id="myGrid" className={themeClass}>
                     <AgGridReact theme="legacy" columnDefs={columnDefs} rowData={data} />

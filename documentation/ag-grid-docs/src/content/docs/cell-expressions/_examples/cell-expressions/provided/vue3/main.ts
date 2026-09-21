@@ -53,9 +53,11 @@ let rightApi: GridApi | undefined;
 const VueExample = defineComponent({
     template: /* html */ `
         <div class="example-wrapper">
-            <div class="item-header">
-                Enter a number to analyse:
-                <input type="text" @input="onNewNumber($event.target.value)" />
+            <div class="item-header example-controls">
+                <div class="controls-row">
+                    Enter a number to analyse:
+                    <input type="text" @input="onNewNumber($event.target.value)" />
+                </div>
             </div>
             <div class="item-header">Edit data on RHS, table updates on LHS</div>
             <ag-grid-vue

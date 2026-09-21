@@ -1,18 +1,18 @@
-<div class="test-header">
-    <div>
+<div class="test-header example-controls">
+    <div class="controls-row">
         <button onclick="updateRowData(0)">0 Rows</button>
         <button onclick="updateRowData(5)">5 Rows</button>
         <button onclick="updateRowData(50)">50 Rows</button>
     </div>
-    <div>
+    <div class="controls-row">
         <button onclick="setDomLayoutAutoHeight()">Auto Height</button>
         <button onclick="setDomLayoutNormal()">Fixed Height</button>
     </div>
-    <div>
+    <div class="controls-row">
         <input name="pinned-rows" type="checkbox" id="floating-rows" onclick="toggleFloatingRows()" />
         <label for="pinned-rows"> Pinned Rows </label>
     </div>
-    <div>Row Count = <span id="currentRowCount"></span></div>
+    <div class="controls-row">Row Count = <span id="currentRowCount"></span></div>
 </div>
 
 <div id="myGrid"></div>

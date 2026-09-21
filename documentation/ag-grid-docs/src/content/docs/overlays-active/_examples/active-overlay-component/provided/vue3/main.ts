@@ -20,10 +20,12 @@ interface IAthlete {
 
 const VueExample = defineComponent({
     template: `<div class="example-wrapper">
-            <div class="button-row">
-                <button v-on:click="showActiveOverlay()">Show custom overlay</button>
-                <button v-on:click="clearActiveOverlay()">Hide custom overlay</button>
-                <button v-on:click="incrementParam()">Increment Param</button>
+            <div class="button-row example-controls">
+                <div class="controls-row">
+                    <button v-on:click="showActiveOverlay()">Show custom overlay</button>
+                    <button v-on:click="clearActiveOverlay()">Hide custom overlay</button>
+                    <button v-on:click="incrementParam()">Increment Param</button>
+                </div>
             </div>
             <ag-grid-vue
                 class="grid-wrapper"

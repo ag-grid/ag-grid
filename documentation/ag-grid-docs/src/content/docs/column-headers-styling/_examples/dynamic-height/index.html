@@ -1,50 +1,36 @@
 <div class="example-wrapper">
-    <div class="button-bar example-header">
-        <table>
-            <tr>
-                <td class="labels">pivot<br />(<span id="pivot">off</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setPivotOn()">on</button>
-                    <button onclick="setPivotOff()">off</button>
-                </td>
-            </tr>
-            <tr>
-                <td class="labels">groupHeaderHeight<br />(<span id="groupHeaderHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setGroupHeaderHeight(40)">40px</button>
-                    <button onclick="setGroupHeaderHeight(60)">60px</button>
-                    <button onclick="setGroupHeaderHeight(undefined)">undefined</button>
-                </td>
-                <td class="labels">headerHeight<br />(<span id="headerHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setHeaderHeight(70)">70px</button>
-                    <button onclick="setHeaderHeight(80)">80px</button>
-                    <button onclick="setHeaderHeight(undefined)">undefined</button>
-                </td>
-            </tr>
-            <tr id="requiresPivot" class="hidden">
-                <td class="labels">pivotGroupHeaderHeight<br />(<span id="pivotGroupHeaderHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
-                    <button onclick="setPivotGroupHeaderHeight(70)">70px</button>
-                    <button onclick="setPivotGroupHeaderHeight(undefined)">undefined</button>
-                </td>
-                <td class="labels">pivotHeaderHeight<br />(<span id="pivotHeaderHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setPivotHeaderHeight(60)">60px</button>
-                    <button onclick="setPivotHeaderHeight(80)">80px</button>
-                    <button onclick="setPivotHeaderHeight(undefined)">undefined</button>
-                </td>
-            </tr>
-            <tr id="requiresNotPivot">
-                <td class="labels">floatingFiltersHeight<br />(<span id="floatingFiltersHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setFloatingFiltersHeight(35)">35px</button>
-                    <button onclick="setFloatingFiltersHeight(55)">55px</button>
-                    <button onclick="setFloatingFiltersHeight(undefined)">undefined</button>
-                </td>
-            </tr>
-        </table>
+    <div class="example-header example-controls">
+        <div class="controls-row">
+            <span>pivot (<span id="pivot">off</span>)</span>
+            <button onclick="setPivotOn()">on</button>
+            <button onclick="setPivotOff()">off</button>
+        </div>
+        <div class="controls-row">
+            <span>groupHeaderHeight (<span id="groupHeaderHeight">undefined</span>)</span>
+            <button onclick="setGroupHeaderHeight(40)">40px</button>
+            <button onclick="setGroupHeaderHeight(60)">60px</button>
+            <button class="gap-right" onclick="setGroupHeaderHeight(undefined)">undefined</button>
+            <span>headerHeight (<span id="headerHeight">undefined</span>)</span>
+            <button onclick="setHeaderHeight(70)">70px</button>
+            <button onclick="setHeaderHeight(80)">80px</button>
+            <button onclick="setHeaderHeight(undefined)">undefined</button>
+        </div>
+        <div id="requiresPivot" class="controls-row hidden">
+            <span>pivotGroupHeaderHeight (<span id="pivotGroupHeaderHeight">undefined</span>)</span>
+            <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
+            <button onclick="setPivotGroupHeaderHeight(70)">70px</button>
+            <button class="gap-right" onclick="setPivotGroupHeaderHeight(undefined)">undefined</button>
+            <span>pivotHeaderHeight (<span id="pivotHeaderHeight">undefined</span>)</span>
+            <button onclick="setPivotHeaderHeight(60)">60px</button>
+            <button onclick="setPivotHeaderHeight(80)">80px</button>
+            <button onclick="setPivotHeaderHeight(undefined)">undefined</button>
+        </div>
+        <div id="requiresNotPivot" class="controls-row">
+            <span>floatingFiltersHeight (<span id="floatingFiltersHeight">undefined</span>)</span>
+            <button onclick="setFloatingFiltersHeight(35)">35px</button>
+            <button onclick="setFloatingFiltersHeight(55)">55px</button>
+            <button onclick="setFloatingFiltersHeight(undefined)">undefined</button>
+        </div>
     </div>
     <div id="myGrid"></div>
 </div>

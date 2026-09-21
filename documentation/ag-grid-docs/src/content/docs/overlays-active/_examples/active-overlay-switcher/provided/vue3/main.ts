@@ -34,13 +34,15 @@ const VueExample = defineComponent({
     },
     template: `
         <div class="example-wrapper">
-            <div class="button-row">
-                <label class="toggle loading-toggle">
-                    <input type="checkbox" :checked="loading === true" @change="onLoadingToggle" /> Loading
-                </label>
-                <button type="button" @click="showNoRowsOverlay">activeOverlay = agNoRowsOverlay</button>
-                <button type="button" @click="showCustomOverlay">activeOverlay = CustomOverlay</button>
-                <button type="button" @click="clearOverlay">Hide activeOverlay</button>
+            <div class="button-row example-controls">
+                <div class="controls-row">
+                    <label class="toggle loading-toggle">
+                        <input type="checkbox" :checked="loading === true" @change="onLoadingToggle" /> Loading
+                    </label>
+                    <button type="button" @click="showNoRowsOverlay">activeOverlay = agNoRowsOverlay</button>
+                    <button type="button" @click="showCustomOverlay">activeOverlay = CustomOverlay</button>
+                    <button type="button" @click="clearOverlay">Hide activeOverlay</button>
+                </div>
             </div>
             <ag-grid-vue
                 class="grid-wrapper"

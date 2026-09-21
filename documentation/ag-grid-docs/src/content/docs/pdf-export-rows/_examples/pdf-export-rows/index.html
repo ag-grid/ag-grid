@@ -1,10 +1,12 @@
 <div class="example-wrapper">
-    <div class="controls" onchange="onPdfExportOptionsChanged()">
-        <button onclick="onBtExport()">Export to PDF</button>
-        <label><input id="onlySelected" type="checkbox" /> Selected rows only</label>
-        <label><input id="allRows" type="checkbox" /> Ignore filtering and sorting</label>
-        <label><input id="skipPinnedTop" type="checkbox" /> Skip pinned top</label>
-        <label><input id="skipPinnedBottom" type="checkbox" /> Skip pinned bottom</label>
+    <div class="controls example-controls" onchange="onPdfExportOptionsChanged()">
+        <div class="controls-row">
+            <button onclick="onBtExport()">Export to PDF</button>
+            <label><input id="onlySelected" type="checkbox" /> Selected rows only</label>
+            <label><input id="allRows" type="checkbox" /> Ignore filtering and sorting</label>
+            <label><input id="skipPinnedTop" type="checkbox" /> Skip pinned top</label>
+            <label><input id="skipPinnedBottom" type="checkbox" /> Skip pinned bottom</label>
+        </div>
     </div>
     <div id="myGrid"></div>
 </div>

@@ -20,9 +20,11 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
     template: `
         <div class="test-container">
             <div class="test-header">
-                <div style="margin-bottom: 1rem;">
-                    <input type="checkbox" id="pinFirstColumnOnLoad" />
-                    <label for="pinFirstColumnOnLoad">Pin first column on load</label>
+                <div class="example-controls" style="margin-bottom: 1rem;">
+                    <div class="controls-row">
+                        <input type="checkbox" id="pinFirstColumnOnLoad" />
+                        <label for="pinFirstColumnOnLoad">Pin first column on load</label>
+                    </div>
                 </div>
                 <div style="margin-bottom: 1rem;">
                     <button id="reloadGridButton" (click)="reloadGrid()">Reload Grid</button>

@@ -101,8 +101,11 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="container">
-                    <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => onFormSubmit(e)}>
-                        <div className="columns">
+                    <form
+                        className="example-controls"
+                        onSubmit={(e: React.FormEvent<HTMLFormElement>) => onFormSubmit(e)}
+                    >
+                        <div className="columns controls-row">
                             <div className="column">
                                 <label className="option" htmlFor="pageOrientation">
                                     Page Orientation =
@@ -164,7 +167,7 @@ const GridExample = () => {
                                 </label>
                             </fieldset>
                         </div>
-                        <div>
+                        <div className="controls-row">
                             <input
                                 type="submit"
                                 style={{ margin: '5px 0px', fontWeight: 'bold' }}

@@ -1,31 +1,33 @@
 <div style="height: 100%; display: flex; flex-direction: column">
-    <p style="flex: 0 1 0%">
-        Theme:
-        <select style="margin-right: 16px" onchange="setBaseTheme(this.value)">
-            <option value="quartz">themeQuartz</option>
-            <option value="balham">themeBalham</option>
-            <option value="alpine">themeAlpine</option>
-            <option value="material">themeMaterial</option>
-        </select>
-        Icons:
-        <select style="margin-right: 16px" onchange="setIconSet(this.value)">
-            <option>(unchanged)</option>
-            <option value="quartzLight">iconSetQuartzLight</option>
-            <option value="quartzRegular">iconSetQuartzRegular</option>
-            <option value="quartzBold">iconSetQuartzBold</option>
-            <option value="alpine">iconSetAlpine</option>
-            <option value="material">iconSetMaterial</option>
-        </select>
-        Color scheme:
-        <select style="margin-right: 16px" onchange="setColorScheme(this.value)">
-            <option>(unchanged)</option>
-            <option value="light">colorSchemeLight</option>
-            <option value="lightCold">colorSchemeLightCold</option>
-            <option value="lightWarm">colorSchemeLightWarm</option>
-            <option value="dark">colorSchemeDark</option>
-            <option value="darkWarm">colorSchemeDarkWarm</option>
-            <option value="darkBlue">colorSchemeDarkBlue</option>
-        </select>
-    </p>
+    <div class="example-controls" style="flex: 0 1 0%">
+        <div class="controls-row">
+            Theme:
+            <select style="margin-right: 16px" onchange="setBaseTheme(this.value)">
+                <option value="quartz">themeQuartz</option>
+                <option value="balham">themeBalham</option>
+                <option value="alpine">themeAlpine</option>
+                <option value="material">themeMaterial</option>
+            </select>
+            Icons:
+            <select style="margin-right: 16px" onchange="setIconSet(this.value)">
+                <option>(unchanged)</option>
+                <option value="quartzLight">iconSetQuartzLight</option>
+                <option value="quartzRegular">iconSetQuartzRegular</option>
+                <option value="quartzBold">iconSetQuartzBold</option>
+                <option value="alpine">iconSetAlpine</option>
+                <option value="material">iconSetMaterial</option>
+            </select>
+            Color scheme:
+            <select style="margin-right: 16px" onchange="setColorScheme(this.value)">
+                <option>(unchanged)</option>
+                <option value="light">colorSchemeLight</option>
+                <option value="lightCold">colorSchemeLightCold</option>
+                <option value="lightWarm">colorSchemeLightWarm</option>
+                <option value="dark">colorSchemeDark</option>
+                <option value="darkWarm">colorSchemeDarkWarm</option>
+                <option value="darkBlue">colorSchemeDarkBlue</option>
+            </select>
+        </div>
+    </div>
     <div style="flex: 1 1 0%"><div id="myGrid" style="height: 100%"></div></div>
 </div>
