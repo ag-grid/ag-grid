@@ -165,6 +165,9 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
                 // and so the ratioScale will be 1.
                 const ratioScale = 1 / subsetRatioTotal;
+                // What the unfrozen cols share. Scaling the full width instead would hand them the frozen
+                // cols' pixels too, so crossing a bound would shrink a col while the group grows.
+                const distributable = pixelsToDistribute;
 
                 for (let i = 0, len = subsetIndexes.length; i < len; ++i) {
                     const index = subsetIndexes[i];
@@ -173,7 +176,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                     if (i === len - 1) {
                         colNewWidth = pixelsToDistribute;
                     } else {
-                        colNewWidth = Math.round(ratios[index] * width * ratioScale);
+                        colNewWidth = Math.round(ratios[index] * distributable * ratioScale);
                         pixelsToDistribute -= colNewWidth;
                     }
 

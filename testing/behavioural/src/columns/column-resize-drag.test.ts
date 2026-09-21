@@ -105,15 +105,31 @@ describe('header resize drag direction', () => {
         return ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
     };
 
-    // A column frozen at a bound drops out of the next distribution pass, and the columns still in it
-    // must keep their own share of the group rather than inheriting the frozen column's.
+    // A column frozen at a bound drops out of the next distribution pass. The columns still in it must
+    // keep their own share, and share only what the frozen one left rather than the whole group width.
     test('a group column frozen at its maxWidth leaves the rest sized by their own ratios', async () => {
         const api = createBoundedGroup({ maxWidth: 110 });
-        expect(await dragGroupTo(api, 720)).toEqual([110, 288, 322]);
+        // 610 left once `a` takes 110, split 2:3 between `b` and `c`.
+        expect(await dragGroupTo(api, 720)).toEqual([110, 244, 366]);
     });
 
     test('a group column frozen at its minWidth leaves the rest sized by their own ratios', async () => {
         const api = createBoundedGroup({ minWidth: 90 });
-        expect(await dragGroupTo(api, 480)).toEqual([90, 192, 198]);
+        expect(await dragGroupTo(api, 480)).toEqual([90, 156, 234]);
+    });
+
+    test('widening a group across a maxWidth bound never shrinks another column', async () => {
+        // 660 is the widest `a` reaches before its 110 cap binds, so 664 is the first width with a
+        // frozen column: the step across that threshold is where a mis-scaled share shows up.
+        const below = await dragGroupTo(createBoundedGroup({ maxWidth: 110 }), 660);
+        expect(below).toEqual([110, 220, 330]);
+
+        gridsManager.reset();
+
+        const above = await dragGroupTo(createBoundedGroup({ maxWidth: 110 }), 664);
+        expect(above).toEqual([110, 222, 332]);
+        for (let i = 0; i < below.length; ++i) {
+            expect(above[i]).toBeGreaterThanOrEqual(below[i]);
+        }
     });
 });
