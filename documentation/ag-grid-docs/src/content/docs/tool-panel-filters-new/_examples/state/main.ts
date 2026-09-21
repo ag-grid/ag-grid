@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, NewFiltersToolPanelState } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridState, NewFiltersToolPanelState, SideBarState } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -30,6 +30,25 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<IOlympicData>;
 
+const initialSideBarState: SideBarState = {
+    visible: true,
+    position: 'right',
+    openToolPanel: 'filters-new',
+    toolPanels: {
+        'filters-new': {
+            filters: [
+                {
+                    colId: 'country',
+                    expanded: true,
+                },
+                {
+                    colId: 'age',
+                },
+            ],
+        } as NewFiltersToolPanelState,
+    },
+};
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete' },
@@ -47,26 +66,46 @@ const gridOptions: GridOptions<IOlympicData> = {
     enableFilterHandlers: true,
     suppressSetFilterByDefault: true,
     initialState: {
+        sideBar: initialSideBarState,
+    },
+};
+
+let savedState: GridState | undefined;
+
+function clearFilterValues() {
+    gridApi.setFilterModel(null);
+}
+
+function clearToolPanel() {
+    gridApi.setState({
         sideBar: {
             visible: true,
             position: 'right',
             openToolPanel: 'filters-new',
             toolPanels: {
                 'filters-new': {
-                    filters: [
-                        {
-                            colId: 'country',
-                            expanded: true,
-                        },
-                        {
-                            colId: 'age',
-                        },
-                    ],
+                    filters: [],
                 } as NewFiltersToolPanelState,
             },
         },
-    },
-};
+    });
+}
+
+function restoreInitialState() {
+    gridApi.setState({ sideBar: initialSideBarState });
+}
+
+function saveState() {
+    savedState = gridApi.getState();
+    console.log('Saved state', savedState);
+}
+
+function restoreSavedState() {
+    if (savedState) {
+        gridApi.setState({ filter: savedState.filter, sideBar: savedState.sideBar });
+        console.log('Restored state', savedState);
+    }
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
