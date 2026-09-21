@@ -376,6 +376,63 @@ describe('Column Flex', () => {
         `);
     });
 
+    test('resizing a left-pinned col re-flexes the centre cols to the new centre width', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'athlete', pinned: 'left', width: 150 },
+                { colId: 'age', flex: 1 },
+                { colId: 'country', flex: 1 },
+                { colId: 'total', pinned: 'right', width: 150 },
+            ],
+        });
+        await new GridColumns(api, 'before pinned resize').checkColumns(`
+            LEFT
+            └── athlete width:150
+            CENTER
+            ├── age width:350 flex:1
+            └── country width:350 flex:1
+            RIGHT
+            └── total width:150
+        `);
+
+        api.setColumnWidths([{ key: 'athlete', newWidth: 100 }]);
+
+        expect(api.getColumn('age')!.getActualWidth() + api.getColumn('country')!.getActualWidth()).toBe(750);
+        await new GridColumns(api, 'after pinned resize').checkColumns(`
+            LEFT
+            └── athlete width:100
+            CENTER
+            ├── age width:375 flex:1
+            └── country width:375 flex:1
+            RIGHT
+            └── total width:150
+        `);
+    });
+
+    test('resizing a right-pinned col re-flexes the centre cols to the new centre width', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'athlete', pinned: 'left', width: 150 },
+                { colId: 'age', flex: 1 },
+                { colId: 'country', flex: 1 },
+                { colId: 'total', pinned: 'right', width: 150 },
+            ],
+        });
+
+        api.setColumnWidths([{ key: 'total', newWidth: 100 }]);
+
+        expect(api.getColumn('age')!.getActualWidth() + api.getColumn('country')!.getActualWidth()).toBe(750);
+        await new GridColumns(api, 'after right-pinned resize').checkColumns(`
+            LEFT
+            └── athlete width:150
+            CENTER
+            ├── age width:375 flex:1
+            └── country width:375 flex:1
+            RIGHT
+            └── total width:100
+        `);
+    });
+
     test('pinned col with flex does not flex centre cols (flexActive considers only centre)', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [

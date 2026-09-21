@@ -208,11 +208,17 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         let flexedCols: AgColumn[] = [];
 
         if (atLeastOneColChanged) {
-            const { colFlex, visibleCols, colViewport } = this.beans;
+            const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
+            // colFlex's cached viewport width only updates on DOM resize, but resizing a pinned col changes
+            // centre width without one. Derive it from the reported width: `onResizing` runs per drag tick,
+            // so measuring the DOM here would add a layout read to every tick.
+            const gridBodyCtrl = ctrlsSvc.get('gridBodyCtrl');
+            const viewportWidth = gridBodyCtrl?.getCenterWidth(gridBodyCtrl.getReportedViewportWidth());
             flexedCols =
                 colFlex?.refreshFlexedColumns({
                     resizingCols: allResizedCols,
                     skipSetLeft: true,
+                    viewportWidth,
                 }) ?? [];
             visibleCols.updateBodyWidths(visibleCols.setLeftValues(source));
             colViewport.checkViewportColumns();
