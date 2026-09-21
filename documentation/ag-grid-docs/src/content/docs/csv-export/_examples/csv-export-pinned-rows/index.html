@@ -1,13 +1,17 @@
 <div style="display: flex; flex-direction: column; height: 100%">
-    <div style="display: flex">
-        <div class="row">
-            <label for="skipPinnedTop"><input id="skipPinnedTop" type="checkbox" />Skip Pinned Top Rows</label>
-            <label for="skipPinnedBottom"><input id="skipPinnedBottom" type="checkbox" />Skip Pinned Bottom Rows</label>
+    <div class="example-controls">
+        <div class="controls-row" style="display: flex">
+            <div class="row">
+                <label for="skipPinnedTop"><input id="skipPinnedTop" type="checkbox" />Skip Pinned Top Rows</label>
+                <label for="skipPinnedBottom"
+                    ><input id="skipPinnedBottom" type="checkbox" />Skip Pinned Bottom Rows</label
+                >
+            </div>
         </div>
-    </div>
-    <div style="margin: 10px 0">
-        <button onclick="onBtnUpdate()">Show CSV export content text</button>
-        <button onclick="onBtnExport()">Download CSV export file</button>
+        <div class="controls-row" style="margin: 10px 0">
+            <button onclick="onBtnUpdate()">Show CSV export content text</button>
+            <button onclick="onBtnExport()">Download CSV export file</button>
+        </div>
     </div>
     <div style="flex: 1 1 0; position: relative; display: flex; flex-direction: row; gap: 20px">
         <div id="gridContainer" style="flex: 1">

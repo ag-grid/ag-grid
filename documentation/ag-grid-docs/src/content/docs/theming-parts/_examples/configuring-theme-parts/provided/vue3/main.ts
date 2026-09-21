@@ -61,20 +61,22 @@ const iconSets = [
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                Theme:
-                <select style="margin-right: 16px" v-model="baseTheme">
-                    <option v-for="t in baseThemes" :value="t">{{ t.id }}</option>
-                </select>
-                Icons:
-                <select style="margin-right: 16px" v-model="iconSet">
-                    <option v-for="iconSet in iconSets" :value="iconSet">{{ iconSet.id }}</option>
-                </select>
-                Color scheme:
-                <select style="margin-right: 16px" v-model="colorScheme">
-                    <option v-for="colorScheme in colorSchemes" :value="colorScheme">{{ colorScheme.id }}</option>
-                </select>
-            </p>
+            <div class="example-controls" style="flex: 0 1 0%">
+                <div class="controls-row">
+                    Theme:
+                    <select style="margin-right: 16px" v-model="baseTheme">
+                        <option v-for="t in baseThemes" :value="t">{{ t.id }}</option>
+                    </select>
+                    Icons:
+                    <select style="margin-right: 16px" v-model="iconSet">
+                        <option v-for="iconSet in iconSets" :value="iconSet">{{ iconSet.id }}</option>
+                    </select>
+                    Color scheme:
+                    <select style="margin-right: 16px" v-model="colorScheme">
+                        <option v-for="colorScheme in colorSchemes" :value="colorScheme">{{ colorScheme.id }}</option>
+                    </select>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-vue
                     style="height: 100%;"

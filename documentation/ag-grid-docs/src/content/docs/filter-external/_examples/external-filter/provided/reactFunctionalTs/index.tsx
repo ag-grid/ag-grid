@@ -104,43 +104,45 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="test-container">
-                <div className="test-header">
-                    <label>
-                        <input
-                            type="radio"
-                            name="filter"
-                            id="everyone"
-                            defaultChecked
-                            onChange={() => setAgeType('everyone')}
-                        />
-                        Everyone
-                    </label>
-                    <label>
-                        <input type="radio" name="filter" id="below25" onChange={() => setAgeType('below25')} />
-                        Below 25
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="filter"
-                            id="between25and50"
-                            onChange={() => setAgeType('between25and50')}
-                        />
-                        Between 25 and 50
-                    </label>
-                    <label>
-                        <input type="radio" name="filter" id="above50" onChange={() => setAgeType('above50')} />
-                        Above 50
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="filter"
-                            id="dateAfter2008"
-                            onChange={() => setAgeType('dateAfter2008')}
-                        />
-                        After 01/01/2008
-                    </label>
+                <div className="test-header example-controls">
+                    <div className="controls-row">
+                        <label>
+                            <input
+                                type="radio"
+                                name="filter"
+                                id="everyone"
+                                defaultChecked
+                                onChange={() => setAgeType('everyone')}
+                            />
+                            Everyone
+                        </label>
+                        <label>
+                            <input type="radio" name="filter" id="below25" onChange={() => setAgeType('below25')} />
+                            Below 25
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="filter"
+                                id="between25and50"
+                                onChange={() => setAgeType('between25and50')}
+                            />
+                            Between 25 and 50
+                        </label>
+                        <label>
+                            <input type="radio" name="filter" id="above50" onChange={() => setAgeType('above50')} />
+                            Above 50
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="filter"
+                                id="dateAfter2008"
+                                onChange={() => setAgeType('dateAfter2008')}
+                            />
+                            After 01/01/2008
+                        </label>
+                    </div>
                 </div>
                 <div style={{ height: '100%' }}>
                     <AgGridReact<IOlympicData>

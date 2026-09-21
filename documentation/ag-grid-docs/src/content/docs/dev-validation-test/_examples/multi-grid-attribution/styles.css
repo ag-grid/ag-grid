@@ -13,12 +13,7 @@
 }
 
 .controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     margin-bottom: 0.5rem;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 13px;
 }
 
 .grid-label {

@@ -68,11 +68,14 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={[AllEnterpriseModule]}>
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <p style={{ flex: 0 }}>
-                    Theme: <PartSelector options={baseThemes} value={baseTheme} setValue={setBaseTheme} />
-                    Icons: <PartSelector options={iconSets} value={iconSet} setValue={setIconSet} />
-                    Color scheme: <PartSelector options={colorSchemes} value={colorScheme} setValue={setColorScheme} />
-                </p>
+                <div className="example-controls" style={{ flex: 0 }}>
+                    <div className="controls-row">
+                        Theme: <PartSelector options={baseThemes} value={baseTheme} setValue={setBaseTheme} />
+                        Icons: <PartSelector options={iconSets} value={iconSet} setValue={setIconSet} />
+                        Color scheme:{' '}
+                        <PartSelector options={colorSchemes} value={colorScheme} setValue={setColorScheme} />
+                    </div>
+                </div>
                 <div style={{ flex: 1 }}>
                     <AgGridReact
                         theme={theme}

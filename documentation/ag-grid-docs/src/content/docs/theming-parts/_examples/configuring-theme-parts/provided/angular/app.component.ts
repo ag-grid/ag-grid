@@ -39,26 +39,28 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     selector: 'my-app',
     template: `
         <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                Theme:
-                <select style="margin-right: 16px" [(ngModel)]="baseTheme">
-                    <option *ngFor="let baseTheme of baseThemes" [ngValue]="baseTheme.value">
-                        {{ baseTheme.id }}
-                    </option>
-                </select>
-                Icons:
-                <select style="margin-right: 16px" [(ngModel)]="iconSet">
-                    <option *ngFor="let iconSet of iconSets" [ngValue]="iconSet.value">
-                        {{ iconSet.id }}
-                    </option>
-                </select>
-                Color scheme:
-                <select style="margin-right: 16px" [(ngModel)]="colorScheme">
-                    <option *ngFor="let colorScheme of colorSchemes" [ngValue]="colorScheme.value">
-                        {{ colorScheme.id }}
-                    </option>
-                </select>
-            </p>
+            <div class="example-controls" style="flex: 0 1 0%">
+                <div class="controls-row">
+                    Theme:
+                    <select style="margin-right: 16px" [(ngModel)]="baseTheme">
+                        <option *ngFor="let baseTheme of baseThemes" [ngValue]="baseTheme.value">
+                            {{ baseTheme.id }}
+                        </option>
+                    </select>
+                    Icons:
+                    <select style="margin-right: 16px" [(ngModel)]="iconSet">
+                        <option *ngFor="let iconSet of iconSets" [ngValue]="iconSet.value">
+                            {{ iconSet.id }}
+                        </option>
+                    </select>
+                    Color scheme:
+                    <select style="margin-right: 16px" [(ngModel)]="colorScheme">
+                        <option *ngFor="let colorScheme of colorSchemes" [ngValue]="colorScheme.value">
+                            {{ colorScheme.id }}
+                        </option>
+                    </select>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-angular
                     style="height: 100%;"

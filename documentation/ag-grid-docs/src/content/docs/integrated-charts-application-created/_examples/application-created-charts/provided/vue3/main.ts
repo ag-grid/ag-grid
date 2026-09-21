@@ -57,16 +57,18 @@ function numberCellFormatter(params: ValueFormatterParams) {
 const VueExample = defineComponent({
     template: `
     <div id="myApp" class="wrapper">
-        <div style="padding-bottom: 4px">
-            <span>
-                <button v-on:click="onStopMessages()">&#9632; Stop</button>
-                <button v-on:click="onStartLoad()">&#9658; Start</button>
-            </span>
-            <span style="margin-left: 30px">
-                <button v-on:click="updateChart('stackedColumn')">Stacked Column Chart</button>
-                <button v-on:click="updateChart('groupedColumn')">Grouped Column Chart</button>
-                <button v-on:click="updateChart('line')">Line Chart</button>
-            </span>
+        <div class="example-controls" style="padding-bottom: 4px">
+            <div class="controls-row">
+                <span>
+                    <button v-on:click="onStopMessages()">&#9632; Stop</button>
+                    <button v-on:click="onStartLoad()">&#9658; Start</button>
+                </span>
+                <span style="margin-left: 30px">
+                    <button v-on:click="updateChart('stackedColumn')">Stacked Column Chart</button>
+                    <button v-on:click="updateChart('groupedColumn')">Grouped Column Chart</button>
+                    <button v-on:click="updateChart('line')">Line Chart</button>
+                </span>
+            </div>
         </div>
         <ag-grid-vue
             class="my-grid"

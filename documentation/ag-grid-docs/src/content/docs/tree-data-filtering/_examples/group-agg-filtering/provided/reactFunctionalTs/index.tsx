@@ -83,16 +83,18 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <label>
-                            <span>suppressAggFilteredOnly:</span>
-                            <input
-                                type="checkbox"
-                                id="suppressAggFilteredOnly"
-                                onClick={toggleCheckbox}
-                                defaultChecked
-                            />
-                        </label>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <label>
+                                <span>suppressAggFilteredOnly:</span>
+                                <input
+                                    type="checkbox"
+                                    id="suppressAggFilteredOnly"
+                                    onClick={toggleCheckbox}
+                                    defaultChecked
+                                />
+                            </label>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

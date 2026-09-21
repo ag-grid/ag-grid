@@ -53,13 +53,15 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div className="button-row">
-                    <label className="toggle loading-toggle">
-                        <input type="checkbox" checked={loading === true} onChange={onLoadingToggle} /> Loading
-                    </label>
-                    <button onClick={setNoRowsOverlay}>activeOverlay = agNoRowsOverlay</button>
-                    <button onClick={setCustomOverlay}>activeOverlay = CustomOverlay</button>
-                    <button onClick={clearOverlay}>Hide activeOverlay</button>
+                <div className="button-row example-controls">
+                    <div className="controls-row">
+                        <label className="toggle loading-toggle">
+                            <input type="checkbox" checked={loading === true} onChange={onLoadingToggle} /> Loading
+                        </label>
+                        <button onClick={setNoRowsOverlay}>activeOverlay = agNoRowsOverlay</button>
+                        <button onClick={setCustomOverlay}>activeOverlay = CustomOverlay</button>
+                        <button onClick={clearOverlay}>Hide activeOverlay</button>
+                    </div>
                 </div>
 
                 <div className="grid-wrapper">

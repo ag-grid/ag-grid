@@ -119,13 +119,15 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div style={{ marginBottom: '5px' }}>
-                        <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
-                            Start Editing Line 2
-                        </button>
-                        <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
-                            Stop Editing
-                        </button>
+                    <div className="example-controls" style={{ marginBottom: '5px' }}>
+                        <div className="controls-row">
+                            <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
+                                Start Editing Line 2
+                            </button>
+                            <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
+                                Stop Editing
+                            </button>
+                        </div>
                     </div>
                     <div style={gridStyle}>
                         <AgGridReact

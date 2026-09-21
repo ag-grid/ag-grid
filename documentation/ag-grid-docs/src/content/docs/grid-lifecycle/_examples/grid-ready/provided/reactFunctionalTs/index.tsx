@@ -50,9 +50,11 @@ const GridExample = () => {
             <div style={containerStyle}>
                 <div className="test-container">
                     <div className="test-header">
-                        <div style={{ marginBottom: '1rem' }}>
-                            <input type="checkbox" id="pinFirstColumnOnLoad" />
-                            <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
+                        <div className="example-controls" style={{ marginBottom: '1rem' }}>
+                            <div className="controls-row">
+                                <input type="checkbox" id="pinFirstColumnOnLoad" />
+                                <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
+                            </div>
                         </div>
 
                         <div style={{ marginBottom: '1rem' }}>

@@ -1,0 +1,24 @@
+/**
+ * Page-level reset for example documents, split out of `example-controls.css`.
+ *
+ * A site whose example runner supplies no reset of its own (AG Charts) links this alongside
+ * `example-controls.css`. A site that already resets its example pages (AG Grid, in
+ * `ExampleStyle.astro`) links only the controls stylesheet: these rules would otherwise fight
+ * it — a global `box-sizing` reaches every element in the example rather than just the page
+ * root, and `overflow: hidden` clips example pages that are meant to scroll.
+ *
+ * The controls stylesheet does not depend on this file; it scopes its own `box-sizing`.
+ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+}

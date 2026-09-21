@@ -1,28 +1,30 @@
 <div style="display: flex; flex-direction: column; height: 100%">
-    <div style="display: flex">
-        <div style="margin-left: 10px">
-            <div class="row">
-                <label>prependContent = </label>
-                <select id="prependContent">
-                    <option>none</option>
-                    <option value="array">CSVCell[][] (recommended format)</option>
-                    <option value="string">string (legacy format)</option>
-                </select>
-            </div>
-            <div class="row">
-                <label>appendContent = </label>
-                <select id="appendContent">
-                    <option>none</option>
-                    <option value="array">CSVCell[][] (recommended format)</option>
-                    <option value="string">string (legacy format)</option>
-                </select>
+    <div class="example-controls">
+        <div class="controls-row" style="display: flex">
+            <div style="margin-left: 10px">
+                <div class="row">
+                    <label>prependContent = </label>
+                    <select id="prependContent">
+                        <option>none</option>
+                        <option value="array">CSVCell[][] (recommended format)</option>
+                        <option value="string">string (legacy format)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label>appendContent = </label>
+                    <select id="appendContent">
+                        <option>none</option>
+                        <option value="array">CSVCell[][] (recommended format)</option>
+                        <option value="string">string (legacy format)</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div style="margin: 10px 0">
-        <button onclick="onBtnUpdate()">Show CSV export content text</button>
-        <button onclick="onBtnExport()">Download CSV export file</button>
+        <div class="controls-row" style="margin: 10px 0">
+            <button onclick="onBtnUpdate()">Show CSV export content text</button>
+            <button onclick="onBtnExport()">Download CSV export file</button>
+        </div>
     </div>
 
     <div style="flex: 1 1 0; position: relative; display: flex; flex-direction: row; gap: 20px">

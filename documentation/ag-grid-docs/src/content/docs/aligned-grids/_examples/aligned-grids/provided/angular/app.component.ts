@@ -33,10 +33,12 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `
-        <div class="test-header" style="height: 5%">
-            <label><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label>
-            <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)" />Age</label>
-            <label><input type="checkbox" checked (change)="onCbCountry($event.target.checked)" />Country</label>
+        <div class="test-header example-controls" style="height: 5%">
+            <div class="controls-row">
+                <label><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label>
+                <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)" />Age</label>
+                <label><input type="checkbox" checked (change)="onCbCountry($event.target.checked)" />Country</label>
+            </div>
         </div>
 
         <ag-grid-angular

@@ -182,8 +182,8 @@ const GridExample = () => {
     };
 
     const getTopToolBar = () => (
-        <div className="example-toolbar panel panel-default">
-            <div className="panel-body">
+        <div className="example-toolbar panel panel-default example-controls">
+            <div className="panel-body controls-row">
                 <div onChange={onRadioChange}>
                     <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />{' '}
                     <label htmlFor="move">Remove Source Rows</label>

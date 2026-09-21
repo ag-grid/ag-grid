@@ -104,9 +104,13 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
-                    Toggle Status Bar Component
-                </button>
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
+                            Toggle Status Bar Component
+                        </button>
+                    </div>
+                </div>
 
                 <div style={gridStyle}>
                     <AgGridReact

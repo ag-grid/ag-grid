@@ -23,10 +23,12 @@ interface IAthlete {
     standalone: true,
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
-        <div class="button-row">
-            <button (click)="showActiveOverlay()">Show custom overlay</button>
-            <button (click)="clearActiveOverlay()">Hide custom overlay</button>
-            <button (click)="incParam()">Increment Param</button>
+        <div class="button-row example-controls">
+            <div class="controls-row">
+                <button (click)="showActiveOverlay()">Show custom overlay</button>
+                <button (click)="clearActiveOverlay()">Hide custom overlay</button>
+                <button (click)="incParam()">Increment Param</button>
+            </div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"

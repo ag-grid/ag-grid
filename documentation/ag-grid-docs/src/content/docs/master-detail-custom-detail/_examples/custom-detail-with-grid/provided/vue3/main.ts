@@ -32,9 +32,11 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="example-wrapper">
-                <div style="margin-bottom: 5px;">
-                    <button v-on:click="printDetailGridInfo()">Print Detail Grid Info</button>
-                    <button v-on:click="expandCollapseAll()">Toggle Expand / Collapse</button>
+                <div class="example-controls" style="margin-bottom: 5px;">
+                    <div class="controls-row">
+                        <button v-on:click="printDetailGridInfo()">Print Detail Grid Info</button>
+                        <button v-on:click="expandCollapseAll()">Toggle Expand / Collapse</button>
+                    </div>
                 </div>
                 <ag-grid-vue
                         style="width: 100%; height: 100%;"

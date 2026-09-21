@@ -37,9 +37,11 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div id="wrapper" class="example-wrapper">
-                <div class="example-header">
-                    <button @click="openPopup">Open Columns Tool Panel</button>
-                    <button @click="openDrawer">Open Filters Tool Panel</button>
+                <div class="example-header example-controls">
+                    <div class="controls-row">
+                        <button @click="openPopup">Open Columns Tool Panel</button>
+                        <button @click="openDrawer">Open Filters Tool Panel</button>
+                    </div>
                 </div>
                 <ag-grid-vue
                     style="width: 100%; height: 100%"
@@ -57,7 +59,9 @@ const VueExample = defineComponent({
             <!-- Pop-up Panel -->
             <div id="popup" ref="popup">
                 <div class="inner">
-                    <button @click="closePopup">Close</button>
+                    <div class="example-controls">
+                        <div class="controls-row"><button @click="closePopup">Close</button></div>
+                    </div>
                     <div class="content" ref="popupContent"></div>
                 </div>
             </div>
@@ -65,7 +69,9 @@ const VueExample = defineComponent({
             <!-- Drawer Panel -->
             <div id="drawer" ref="drawer">
                 <div class="inner">
-                    <button @click="closeDrawer">Close</button>
+                    <div class="example-controls">
+                        <div class="controls-row"><button @click="closeDrawer">Close</button></div>
+                    </div>
                     <div class="content" ref="drawerContent"></div>
                 </div>
             </div>

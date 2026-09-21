@@ -29,8 +29,8 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="container">
-                <form @submit="this.onFormSubmit">
-                    <div class="columns">
+                <form class="example-controls" @submit="this.onFormSubmit">
+                    <div class="columns controls-row">
                         <div class="column">
                             <label class="option" for="pageOrientation">
                                 Page Orientation =
@@ -80,7 +80,7 @@ const VueExample = defineComponent({
                             <label for="footer">Footer = <input type="number" id="footer" value="0.3" min="0" step="0.05"></label>
                         </fieldset>
                     </div>
-                    <div>
+                    <div class="controls-row">
                         <input type="submit" style="margin: 5px 0px; font-weight: bold;" value="Export to Excel">
                     </div>
                 </form>
