@@ -28,7 +28,7 @@ import {
     _addGridCommonParams,
     _attemptToRestoreCellFocus,
     _getGrandTotalRow,
-    isSpecialCol,
+    isRowNumberCol,
 } from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
@@ -96,13 +96,13 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
-        // a selection or row-number cell has no data of its own, so it offers the row-level items only, unless the
-        // clipboard has something else to act on: a cell range (which the right-click may just have selected) or
-        // a row selection the clipboard would copy. Offering them otherwise would let Copy/Cut fall back to the
+        // a row-number cell has no data of its own, so it offers the row-level items only, unless the clipboard
+        // has something else to act on: a cell range (which the right-click may just have selected) or a row
+        // selection the clipboard would copy. Offering them otherwise would let Copy/Cut fall back to the
         // previously focused data cell, copying - and, on Cut, clearing - a cell the user never right-clicked.
         const clipboardHasTarget = (rangeSvc && !rangeSvc.isEmpty()) || clipboardSvc?.copiesSelectedRows();
-        const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardHasTarget;
-        const dataColumn = isDatalessSpecialCell ? null : column;
+        const isDatalessRowNumberCell = !!column && isRowNumberCol(column) && !clipboardHasTarget;
+        const dataColumn = isDatalessRowNumberCell ? null : column;
 
         if (_exists(node) && clipboardSvc) {
             if (dataColumn) {
@@ -118,7 +118,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
-        // notes attach to any cell, a row number or selection checkbox included
+        // notes attach to any cell, a row number included
         if (_exists(node) && column && notesSvc?.hasDataSource()) {
             defaultMenuOptions.push('note');
         }

@@ -180,8 +180,8 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(menuOption('Paste')).toBeNull();
     });
 
-    // The selection column is as dataless as a row number: nothing would be copied from it.
-    test('the default menu on a selection-column cell offers the row-level items only', async () => {
+    // The Selection Column is out of this ticket's scope: its menu stays as it is on latest.
+    test('a selection-column cell keeps the clipboard items', async () => {
         const api = await gridMgr.createGridAndWait('selectionColCtx', {
             columnDefs,
             rowData,
@@ -193,32 +193,8 @@ describe('Row Numbers context menu (AG-16355)', () => {
 
         rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
         await waitFor(() => expect(menuOption('Export')).not.toBeNull());
-        expect(menuOption('Copy')).toBeNull();
-        expect(menuOption('Paste')).toBeNull();
-    });
-
-    // With copySelectedRows the clipboard copies the selected rows whatever cell was clicked, so the
-    // selection column keeps its copy items - but only once there are rows to copy.
-    test('a selection-column cell offers Copy when copySelectedRows is enabled', async () => {
-        const api = await gridMgr.createGridAndWait('selectionColCtxCopyRows', {
-            columnDefs,
-            rowData,
-            rowSelection: { mode: 'multiRow', copySelectedRows: true },
-        });
-        restoreOffsetParent = polyfillOffsetParent();
-
-        const gridDiv = getGridElement(api)! as HTMLElement;
-
-        rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
-        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
-        expect(menuOption('Copy')).toBeNull();
-        api.hidePopupMenu();
-        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
-
-        api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(1)!], newValue: true });
-        rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
-        await clickMenuOption('Copy');
-        await waitFor(() => expect(clipboardUtils.getText()).toBe('Natalie Coughlin\t25'));
+        expect(menuOption('Copy')).not.toBeNull();
+        expect(menuOption('Paste')).not.toBeNull();
     });
 
     // copySelectedRows with nothing selected leaves the clipboard falling back to the focused cell, so offering
@@ -337,9 +313,9 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
     });
 
-    // Notes attach to any cell, so the special columns keep their note actions without any clipboard target.
-    test('row-number and selection-column cells offer the note actions', async () => {
-        const api = await gridMgr.createGridAndWait('specialColsCtxNotes', {
+    // Notes attach to any cell, so a row-number cell keeps its note actions without any clipboard target.
+    test('a row-number cell offers the note actions', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxNotes', {
             columnDefs,
             rowData,
             rowNumbers: true,
@@ -350,13 +326,9 @@ describe('Row Numbers context menu (AG-16355)', () => {
         restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
-        for (const colId of [ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID]) {
-            rightClick(cell(gridDiv, 0, colId));
-            await waitFor(() => expect(menuOption('Add Note')).not.toBeNull());
-            expect(menuOption('Copy')).toBeNull();
-            api.hidePopupMenu();
-            await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
-        }
+        rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Add Note')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
     });
 
     // Guard: rowNumbers.contextMenuItems still wins over the grid-level callback.
