@@ -20,8 +20,10 @@ test.agExample(import.meta, () => {
         // 2 cards and 1 add
         await expect(filterCards).toHaveCount(3);
 
+        // the card summary renders the filter value, so it is the handle for "this filter is active"
+        const ageCard = filterCards.nth(1);
         await gridApi.setFilterModel({ age: { type: 'lessThan', filter: 25 } });
-        await expect(filterToolPanel.getByRole('button', { name: 'Age < 25' })).toBeVisible();
+        await expect(ageCard).toContainText('25');
 
         // clearing the filter model clears the values but leaves the cards in place
         await button('Clear Filter Values').click();
@@ -40,7 +42,7 @@ test.agExample(import.meta, () => {
 
         // a saved state restores both the cards and their filter values
         await gridApi.setFilterModel({ age: { type: 'lessThan', filter: 25 } });
-        await expect(filterToolPanel.getByRole('button', { name: 'Age < 25' })).toBeVisible();
+        await expect(ageCard).toContainText('25');
 
         await button('Save State').click();
         await button('Clear Tool Panel').click();
@@ -48,7 +50,8 @@ test.agExample(import.meta, () => {
 
         await button('Restore Saved State').click();
         await expect(filterCards).toHaveCount(3);
-        await expect(filterToolPanel.getByRole('button', { name: 'Age < 25' })).toBeVisible();
+        await expect(filterCards.nth(1).getByRole('button', { name: 'Age' })).toBeVisible();
+        await expect(filterCards.nth(1)).toContainText('25');
     });
 });
 
