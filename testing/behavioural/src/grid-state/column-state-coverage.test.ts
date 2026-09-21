@@ -1,12 +1,19 @@
+import { TestGridsManager } from 'ag-test-utils';
+
 import type { ColumnState, ColumnStateParams } from 'ag-grid-community';
 import { convertColumnState } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 type ConvertedState = ReturnType<typeof convertColumnState>;
+
+const sizeOf = (state: ConvertedState, colId: string) =>
+    state.columnSizing?.columnSizingModel.find((item) => item.colId === colId);
 
 /** One column per feature, each with every field of that feature set to a non-default value. */
 const COLUMN_STATE: ColumnState[] = [
     { colId: 'hidden', hide: true },
-    { colId: 'sized', width: 321, flex: 2 },
+    { colId: 'sized', width: 321 },
+    { colId: 'flexed', flex: 2 },
     { colId: 'sortedSecond', sort: 'asc', sortIndex: 1 },
     { colId: 'sortedFirst', sort: 'desc', sortType: 'absolute', sortIndex: 0 },
     { colId: 'groupedSecond', rowGroup: true, rowGroupIndex: 1 },
@@ -28,8 +35,8 @@ const COLUMN_STATE: ColumnState[] = [
  */
 const GRID_STATE_LOCATION = {
     hide: [(state) => state.columnVisibility?.hiddenColIds, ['hidden']],
-    width: [(state) => state.columnSizing?.columnSizingModel[0].width, 321],
-    flex: [(state) => state.columnSizing?.columnSizingModel[0].flex, 2],
+    width: [(state) => sizeOf(state, 'sized')?.width, 321],
+    flex: [(state) => sizeOf(state, 'flexed')?.flex, 2],
     sort: [(state) => state.sort?.sortModel.map((item) => item.sort), ['desc', 'asc']],
     sortType: [(state) => state.sort?.sortModel[0].type, 'absolute'],
     // Positional: `sortIndex` is the order of `sortModel`, not a field on it.
@@ -47,16 +54,38 @@ const GRID_STATE_LOCATION = {
     pivot: [(state) => state.pivot?.pivotColIds.includes('pivotedFirst'), true],
     // Positional: `pivotIndex` is the order of `pivotColIds`.
     pivotIndex: [(state) => state.pivot?.pivotColIds, ['pivotedFirst', 'pivotedSecond']],
-    pivotSort: [(state) => state.pivot?.pivotSortModel, [{ colId: 'pivotedFirst', sort: 'desc' }]],
+    pivotSort: [(state) => state.pivot?.pivotSortModel?.find((item) => item.colId === 'pivotedFirst')?.sort, 'desc'],
     pinned: [(state) => state.columnPinning?.rightColIds, ['pinnedRight']],
     headerName: [(state) => state.columnHeaderName?.columnHeaderNames, [{ colId: 'renamed', headerName: 'Renamed' }]],
 } satisfies Record<keyof ColumnStateParams, [read: (state: ConvertedState) => unknown, expected: unknown] | null>;
 
 describe('grid state carries every column state field', () => {
-    const converted = convertColumnState(COLUMN_STATE, true);
     const fields = Object.entries(GRID_STATE_LOCATION).filter(([, location]) => location !== null);
 
-    test.each(fields)('%s', (_field, [read, expected]) => {
-        expect(read(converted)).toEqual(expected);
+    describe('convertColumnState', () => {
+        const converted = convertColumnState(COLUMN_STATE, true);
+
+        test.each(fields)('%s', (_field, [read, expected]) => {
+            expect(read(converted)).toEqual(expected);
+        });
+    });
+
+    /** The same map read from a live grid after `setState`, so a field must survive the write side too. */
+    describe('setState then getState', () => {
+        const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+        afterEach(() => {
+            gridsManager.reset();
+        });
+
+        test.each(fields)('%s', (_field, [read, expected]) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: COLUMN_STATE.map(({ colId }) => ({ colId, field: colId })),
+                rowData: [],
+            });
+            api.setState(convertColumnState(COLUMN_STATE, true));
+
+            expect(read(api.getState())).toEqual(expected);
+        });
     });
 });
