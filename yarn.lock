@@ -9097,61 +9097,61 @@ adm-zip@^0.5.10:
   resolved "https://registry.npmjs.org/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-angular/-/ag-charts-angular-14.2.0-beta.20260920.tgz#d4a92c303f37edc0dd8691f633edd8b7a35599ea"
-  integrity sha512-0tJnUjBQKIOmSlVTfx0JLWKCnyXEiJpkaJl620S0cGQJAL5xUiHQ5dXzT6OttW3xbpofqht+TW9WPSt5gmwhMg==
+ag-charts-angular@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-angular/-/ag-charts-angular-14.2.0-beta.20260921.1518.tgz#763cfd3e4871bfaee8439acd45d23bc13412cb78"
+  integrity sha512-Cm1yMX0luObqM5gyPeX3UemkrDnWHXQ+0r2YmgbRZJ00FhHOFgY0zITAc9M9F5SxpuhOrm17+2/a5uksh891uA==
   dependencies:
-    ag-charts-community "14.2.0-beta.20260920"
+    ag-charts-community "14.2.0-beta.20260921.1518"
     tslib "^2.8.1"
 
-ag-charts-community@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-community/-/ag-charts-community-14.2.0-beta.20260920.tgz#46158f9a29830e157a98be140fa43777ea3544ed"
-  integrity sha512-6DWRlsNZC3BoUt8kMhp2aXzBQFbzzpXb+p8wSWyM0tEso4mZOVHZ6Mqx4MPT8PXNN+HmgnMcGVqU4gUzOFHXUQ==
+ag-charts-community@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-community/-/ag-charts-community-14.2.0-beta.20260921.1518.tgz#9e6cf599c4e1944570eb4b31c665dac8feb4e1c1"
+  integrity sha512-yNHHo4dZRhMWIILxClIAEARg046wzt/DGm4H2uGGz9Q0fg3PYxFe1O/fcruRrXzjODCPx9hd6mAZ18d2hguWEQ==
   dependencies:
-    ag-charts-core "14.2.0-beta.20260920"
-    ag-charts-locale "14.2.0-beta.20260920"
-    ag-charts-types "14.2.0-beta.20260920"
+    ag-charts-core "14.2.0-beta.20260921.1518"
+    ag-charts-locale "14.2.0-beta.20260921.1518"
+    ag-charts-types "14.2.0-beta.20260921.1518"
 
-ag-charts-core@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-core/-/ag-charts-core-14.2.0-beta.20260920.tgz#9b5ff376238b7a79eb4456d91a570db0020e2b76"
-  integrity sha512-kU7eqZtXgku2UD0dkKgFwFUuUoeW3y/Q+NX7H7Joaoi/MRpZVFP+8+NfPTHiabRoFouQZpYE3rSxu0WpYzQIPQ==
+ag-charts-core@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-core/-/ag-charts-core-14.2.0-beta.20260921.1518.tgz#2a3a698bec3e5d326d61f4ced16e0393c9a95735"
+  integrity sha512-/CowNRqxvT1+BGaFWiNe3qSq7kYmeW4ie6RoKTDtZjTR1h5XVIR8tezp6pUBsXgC5stn0hRkBrTWbIvNCiSDJw==
   dependencies:
-    ag-charts-types "14.2.0-beta.20260920"
+    ag-charts-types "14.2.0-beta.20260921.1518"
 
-ag-charts-enterprise@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-enterprise/-/ag-charts-enterprise-14.2.0-beta.20260920.tgz#39d240694d3c2a50e127d0a1a6b5b444c4677f1e"
-  integrity sha512-hnpWBABhqGPf7i7e4EqvticLuwB9y+kXnIyGzrpIMqnFXjMPCAJ68cUgU/C1am8y/Hijz1iqj3V5r0nvTWI70Q==
+ag-charts-enterprise@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-enterprise/-/ag-charts-enterprise-14.2.0-beta.20260921.1518.tgz#94a48d8a23ec7ef36ed72e2cabd0e834b53a4835"
+  integrity sha512-P9r/H02X0W6WovEejvViGM4d3B52utnGX5Mm8wvMYLWqA8lkjwAJLT2s9I4/RQcwXTsRtAi+2dyqe1TpPA1riw==
   dependencies:
-    ag-charts-community "14.2.0-beta.20260920"
-    ag-charts-core "14.2.0-beta.20260920"
+    ag-charts-community "14.2.0-beta.20260921.1518"
+    ag-charts-core "14.2.0-beta.20260921.1518"
 
-ag-charts-locale@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-locale/-/ag-charts-locale-14.2.0-beta.20260920.tgz#d81676ede2f8603ae213c275a53fd255146bad4d"
-  integrity sha512-O7Nt0g3q/tsX5h8EsS8VTVsq6R9pyYyhGNaNdKXlhDyyveyMlGmPmyw/afw0KzrezLknxrl+7IXcSHt+E6gctw==
+ag-charts-locale@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-locale/-/ag-charts-locale-14.2.0-beta.20260921.1518.tgz#b6e276cbcba25c1d39315dff825103f4ad5a43f9"
+  integrity sha512-MXibyGaK29W/rNMUojT1xkiFGHMbGdt/hVu29Asu5v6MMFnRg+J7Vft3RdjzM/ecz5b8vwmqjBmLCB2RYUmGbQ==
 
-ag-charts-react@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-react/-/ag-charts-react-14.2.0-beta.20260920.tgz#c241a86e024be8e1549fce117f413ab8b21b31d8"
-  integrity sha512-z6d/ju61hY+tIw4LKax1P38rUGSObSqLJr6hsL8UO49/0tej+bqW50uPsV4CEsiKM95FW3W5rOvaim5rxoL08g==
+ag-charts-react@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-react/-/ag-charts-react-14.2.0-beta.20260921.1518.tgz#6ed50c398a1707b376133c6ef4ac74a17fce022b"
+  integrity sha512-yPlhVUeR+/Gn2IZsiE1L4PwxwTailAfY/hrwhu3HsS3urKG1E/a4BFcuInNujHUc6ujTAPIadirAw4bxoNgh4w==
   dependencies:
-    ag-charts-community "14.2.0-beta.20260920"
+    ag-charts-community "14.2.0-beta.20260921.1518"
 
-ag-charts-types@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-types/-/ag-charts-types-14.2.0-beta.20260920.tgz#d06c1dedbf6bc11e570d2c8822da7e56938ef300"
-  integrity sha512-4O4SofNRlkoefrbgthuqgLzDTX3OokZ9EvrLvmrxwUob+COmoIrlVZDbdb31FUX/rjOJ11lPmYHx8l6UDD4lGA==
+ag-charts-types@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-types/-/ag-charts-types-14.2.0-beta.20260921.1518.tgz#bf599ba9432cf7c1c3bebcf00994af17ff1418b9"
+  integrity sha512-S4Ipe8k2J40UVvo86G1bUSBftSO6377ZFWM0RK036Y6hx/fp6q0hQKQZ3AKVBxhXhp2grwSm6UfhmMe/Rd/S5Q==
 
-ag-charts-vue3@14.2.0-beta.20260920:
-  version "14.2.0-beta.20260920"
-  resolved "https://registry.ag-grid.com/ag-charts-vue3/-/ag-charts-vue3-14.2.0-beta.20260920.tgz#4c4015361bede66b9a4b1c9eb65767bc2b4194eb"
-  integrity sha512-xdiAKcLfylVt3GgKqwrtcDTGfIfZG4pMcUbJ5/cdsUeyaoug+MJyIp78UIba/ejac1wTu6BQsI7UCcyJq8L6dg==
+ag-charts-vue3@14.2.0-beta.20260921.1518:
+  version "14.2.0-beta.20260921.1518"
+  resolved "https://registry.ag-grid.com/ag-charts-vue3/-/ag-charts-vue3-14.2.0-beta.20260921.1518.tgz#044bca387dd8df08909af5755d4215e7020b8f3e"
+  integrity sha512-cad9e4iHCSvzccs244okg+cXymhuxggVTD89JuOFp/E2uOK1nxxskMepiAmqUX0XZw+GKn7jSbQ+qFEjz3rdDA==
   dependencies:
-    ag-charts-community "14.2.0-beta.20260920"
+    ag-charts-community "14.2.0-beta.20260921.1518"
 
 agent-base@6, agent-base@^6.0.2:
   version "6.0.2"
