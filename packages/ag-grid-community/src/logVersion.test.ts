@@ -28,7 +28,8 @@ describe('_logVersionIfDebug', () => {
     test.each([[undefined], [false]])('logs nothing when debug is %s', async (debug) => {
         const { _logVersionIfDebug } = await loadModule();
 
-        _logVersionIfDebug(debug, [newIntegratedCharts(), enterpriseCore]);
+        _logVersionIfDebug(debug, [newIntegratedCharts(), enterpriseCore], 'before-beans');
+        _logVersionIfDebug(debug, [newIntegratedCharts(), enterpriseCore], 'after-beans');
 
         expect(logSpy).not.toHaveBeenCalled();
     });
@@ -36,7 +37,7 @@ describe('_logVersionIfDebug', () => {
     test('logs the community version alone for a community-only grid', async () => {
         const { _logVersionIfDebug } = await loadModule();
 
-        _logVersionIfDebug(true, []);
+        _logVersionIfDebug(true, [], 'before-beans');
 
         expect(logSpy).toHaveBeenCalledWith(`AG Grid: Version: ag-grid-community=${VERSION}`);
     });
@@ -44,7 +45,7 @@ describe('_logVersionIfDebug', () => {
     test('logs the enterprise package version separately when enterprise is registered', async () => {
         const { _logVersionIfDebug } = await loadModule();
 
-        _logVersionIfDebug(true, [enterpriseCore]);
+        _logVersionIfDebug(true, [enterpriseCore], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(`AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3`);
     });
@@ -56,7 +57,7 @@ describe('_logVersionIfDebug', () => {
             const integratedCharts = newIntegratedCharts();
             _setAgPackageInfo(integratedCharts, packageName, '9.9.9');
 
-            _logVersionIfDebug(true, [enterpriseCore, integratedCharts]);
+            _logVersionIfDebug(true, [enterpriseCore, integratedCharts], 'after-beans');
 
             expect(logSpy).toHaveBeenCalledWith(
                 `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ${packageName}=9.9.9`
@@ -69,7 +70,7 @@ describe('_logVersionIfDebug', () => {
         const studio = newStudio();
         _setAgPackageInfo(studio, 'ag-studio', '2.0.0');
 
-        _logVersionIfDebug(true, [enterpriseCore, studio]);
+        _logVersionIfDebug(true, [enterpriseCore, studio], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(
             `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ag-studio=2.0.0`
@@ -81,7 +82,7 @@ describe('_logVersionIfDebug', () => {
         const sparklines = newSparklines();
         _setAgPackageInfo(sparklines, 'ag-charts-community', '9.9.9');
 
-        _logVersionIfDebug(true, [enterpriseCore, sparklines]);
+        _logVersionIfDebug(true, [enterpriseCore, sparklines], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('ag-charts-community=9.9.9'));
     });
@@ -90,7 +91,7 @@ describe('_logVersionIfDebug', () => {
         const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
         _setAgPackageInfo(newIntegratedCharts(), 'ag-charts-enterprise', '9.9.9');
 
-        _logVersionIfDebug(true, [enterpriseCore]);
+        _logVersionIfDebug(true, [enterpriseCore], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('ag-charts'));
     });
@@ -98,7 +99,7 @@ describe('_logVersionIfDebug', () => {
     test('omits the AG Charts clause when no charts version was pushed in', async () => {
         const { _logVersionIfDebug } = await loadModule();
 
-        _logVersionIfDebug(true, [enterpriseCore, newIntegratedCharts()]);
+        _logVersionIfDebug(true, [enterpriseCore, newIntegratedCharts()], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('ag-charts'));
     });
@@ -110,7 +111,7 @@ describe('_logVersionIfDebug', () => {
         // A second `.with()` call elsewhere in the app, never registered for this grid.
         _setAgPackageInfo(newSparklines(), 'ag-charts-community', '8.8.8');
 
-        _logVersionIfDebug(true, [enterpriseCore, integratedCharts]);
+        _logVersionIfDebug(true, [enterpriseCore, integratedCharts], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(
             `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ag-charts-enterprise=9.9.9`
@@ -124,7 +125,7 @@ describe('_logVersionIfDebug', () => {
         _setAgPackageInfo(integratedCharts, 'ag-charts-enterprise', '9.9.9');
         _setAgPackageInfo(sparklines, 'ag-charts-community', '8.8.8');
 
-        _logVersionIfDebug(true, [enterpriseCore, integratedCharts, sparklines]);
+        _logVersionIfDebug(true, [enterpriseCore, integratedCharts, sparklines], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(
             `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ` +
@@ -139,10 +140,32 @@ describe('_logVersionIfDebug', () => {
         _setAgPackageInfo(integratedCharts, 'ag-charts-enterprise', '9.9.9');
         _setAgPackageInfo(sparklines, 'ag-charts-enterprise', '9.9.9');
 
-        _logVersionIfDebug(true, [enterpriseCore, integratedCharts, sparklines]);
+        _logVersionIfDebug(true, [enterpriseCore, integratedCharts, sparklines], 'after-beans');
 
         expect(logSpy).toHaveBeenCalledWith(
             `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ag-charts-enterprise=9.9.9`
         );
+    });
+
+    test('logs a community grid before the beans are built, and not after', async () => {
+        const { _logVersionIfDebug } = await loadModule();
+
+        _logVersionIfDebug(true, [], 'after-beans');
+        expect(logSpy).not.toHaveBeenCalled();
+
+        _logVersionIfDebug(true, [], 'before-beans');
+        expect(logSpy).toHaveBeenCalledTimes(1);
+    });
+
+    // The enterprise licence banner is printed from a bean's `postConstruct`, and the version line is
+    // easy to miss above it.
+    test('logs an enterprise grid after the beans are built, and not before', async () => {
+        const { _logVersionIfDebug } = await loadModule();
+
+        _logVersionIfDebug(true, [enterpriseCore], 'before-beans');
+        expect(logSpy).not.toHaveBeenCalled();
+
+        _logVersionIfDebug(true, [enterpriseCore], 'after-beans');
+        expect(logSpy).toHaveBeenCalledTimes(1);
     });
 });
