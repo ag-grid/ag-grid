@@ -106,6 +106,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         const changedCols: AgColumn[] = [];
         const allResizedCols: AgColumn[] = [];
+        let pinnedColChanged = false;
 
         for (const set of resizeSets) {
             const { width, columns, ratios } = set;
@@ -198,6 +199,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 if (actualWidth !== newWidth) {
                     col.setActualWidth(newWidth, source);
                     changedCols.push(col);
+                    pinnedColChanged ||= col.pinnedLane !== 1;
                 }
             }
         }
@@ -209,15 +211,13 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         if (atLeastOneColChanged) {
             const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
-            // colFlex's cached width only updates on DOM resize, but resizing a pinned col changes centre
-            // width without one. Reported, not measured: `onResizing` runs per drag tick.
-            const gridBodyCtrl = ctrlsSvc.get('gridBodyCtrl');
-            const viewportWidth = gridBodyCtrl?.getCenterWidth(gridBodyCtrl.getReportedViewportWidth());
             flexedCols =
                 colFlex?.refreshFlexedColumns({
                     resizingCols: allResizedCols,
                     skipSetLeft: true,
-                    viewportWidth,
+                    // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
+                    viewportWidth:
+                        (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
                 }) ?? [];
             visibleCols.updateBodyWidths(visibleCols.setLeftValues(source));
             colViewport.checkViewportColumns();

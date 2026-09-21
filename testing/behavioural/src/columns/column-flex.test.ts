@@ -1,4 +1,13 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    installMockResizeObserver,
+    mockGridLayout,
+    polyfillOffsetParent,
+    triggerResizeObservers,
+} from 'ag-test-utils';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import type { ColDef } from 'ag-grid-community';
@@ -376,7 +385,7 @@ describe('Column Flex', () => {
         `);
     });
 
-    test('resizing a left-pinned col re-flexes the centre cols to the new centre width', async () => {
+    test('resizing a left- or right-pinned col re-flexes the centre cols to the new centre width', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { colId: 'athlete', pinned: 'left', width: 150 },
@@ -397,8 +406,7 @@ describe('Column Flex', () => {
 
         api.setColumnWidths([{ key: 'athlete', newWidth: 100 }]);
 
-        expect(api.getColumn('age')!.getActualWidth() + api.getColumn('country')!.getActualWidth()).toBe(750);
-        await new GridColumns(api, 'after pinned resize').checkColumns(`
+        await new GridColumns(api, 'after left-pinned resize').checkColumns(`
             LEFT
             └── athlete width:100
             CENTER
@@ -407,30 +415,56 @@ describe('Column Flex', () => {
             RIGHT
             └── total width:150
         `);
-    });
-
-    test('resizing a right-pinned col re-flexes the centre cols to the new centre width', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { colId: 'athlete', pinned: 'left', width: 150 },
-                { colId: 'age', flex: 1 },
-                { colId: 'country', flex: 1 },
-                { colId: 'total', pinned: 'right', width: 150 },
-            ],
-        });
 
         api.setColumnWidths([{ key: 'total', newWidth: 100 }]);
 
-        expect(api.getColumn('age')!.getActualWidth() + api.getColumn('country')!.getActualWidth()).toBe(750);
         await new GridColumns(api, 'after right-pinned resize').checkColumns(`
             LEFT
-            └── athlete width:150
+            └── athlete width:100
             CENTER
-            ├── age width:375 flex:1
-            └── country width:375 flex:1
+            ├── age width:400 flex:1
+            └── country width:400 flex:1
             RIGHT
             └── total width:100
         `);
+    });
+
+    test('a viewport resize back to the previously reported centre width still re-flexes', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        let uninstallResizeObserver: (() => void) | undefined;
+        let restoreOffsetParent: (() => void) | undefined;
+        try {
+            // `_isInDOM` tests offsetParent, and the container-resize path returns early without one.
+            restoreOffsetParent = polyfillOffsetParent();
+            uninstallResizeObserver = installMockResizeObserver();
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'athlete', pinned: 'left', width: 200 },
+                    { colId: 'age', flex: 1 },
+                    { colId: 'country', flex: 1 },
+                ],
+            });
+            const centreWidth = () =>
+                api.getColumn('age')!.getActualWidth() + api.getColumn('country')!.getActualWidth();
+            expect(centreWidth()).toBe(800);
+
+            mockGridLayout.gridWidth = 1100;
+            triggerResizeObservers();
+            await waitFor(() => expect(centreWidth()).toBe(900));
+
+            api.setColumnWidths([{ key: 'athlete', newWidth: 150 }]);
+            expect(centreWidth()).toBe(950);
+
+            // The same centre width, 900, is reachable from two different pinned widths, so an equality
+            // memo only holds if it is the one the flex pass itself owns.
+            mockGridLayout.gridWidth = 1050;
+            triggerResizeObservers();
+            await waitFor(() => expect(centreWidth()).toBe(900));
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver?.();
+            restoreOffsetParent?.();
+        }
     });
 
     test('pinned col with flex does not flex centre cols (flexActive considers only centre)', async () => {

@@ -327,6 +327,11 @@ export class GridBodyCtrl extends BeanStub {
         return Math.max(0, this.getViewportWidthWithoutScrollbar(viewportWidth) - this.getPinnedWidth());
     }
 
+    /** Measurement-free, and 0 until something has reported a positive viewport width. */
+    public getReportedCenterWidth(): number {
+        return this.getCenterWidth(this.getReportedViewportWidth());
+    }
+
     public getHorizontalScrollLeft(): number {
         return _getScrollLeft(this.eGridViewport, this.gos.get('enableRtl'));
     }
@@ -348,7 +353,7 @@ export class GridBodyCtrl extends BeanStub {
     public updateColumnViewport(
         afterScroll: boolean = false,
         scrollLeft?: number,
-        centerWidth: number = this.getCenterWidth(this.getReportedViewportWidth())
+        centerWidth: number = this.getReportedCenterWidth()
     ): void {
         this.beans.colViewport.setScrollPosition(
             centerWidth,
