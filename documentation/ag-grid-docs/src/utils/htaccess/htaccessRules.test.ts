@@ -501,6 +501,39 @@ describe('htaccessRules', () => {
             expect(pattern.test('/images/about/carousel/intro.mp4')).toBe(true);
             expect(pattern.test('/images/about/carousel/intro.webm')).toBe(true);
         });
+
+        it('also matches /theme-icons/, including the per-theme zip bundle', () => {
+            // public/theme-icons/<theme>/<icon>.svg plus a public/theme-icons/<theme>/<theme>-icons.zip
+            // bundle per theme - same asset class (unhashed, build-time static) as images/example-assets,
+            // so it shares this rule. The "does not match anything mutable" hashed-asset test elsewhere
+            // in this file already confirms /theme-icons/alpine.svg isn't hash-shaped; this confirms it's
+            // covered by *this* rule instead, not left uncached altogether.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/theme-icons/material/filter.svg')).toBe(true);
+            expect(pattern.test('/theme-icons/quartz/quartz-icons.zip')).toBe(true);
+        });
+
+        it('does NOT match a bare /theme-icons/ directory request, only files beneath it', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/theme-icons/')).toBe(false);
+            expect(pattern.test('/theme-icons/material/')).toBe(false);
+        });
+
+        it('also matches /videos/, on both the grid root (json/png) and product subtrees (mp4/webm)', () => {
+            // public/videos/*.json and *.png live directly under grid root; /studio/videos/*.mp4
+            // and *.webm are the nested-.htaccess-cascade case this rule intentionally reaches -
+            // see the "cascades into /charts/ or /studio/" test below for why that's expected.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/videos/getting-started.json')).toBe(true);
+            expect(pattern.test('/studio/videos/drag-drop.webm')).toBe(true);
+            expect(pattern.test('/studio/videos/drag-drop.mp4')).toBe(true);
+        });
     });
 
     describe('Static script bundles under /scripts/ get a moderate max-age', () => {
