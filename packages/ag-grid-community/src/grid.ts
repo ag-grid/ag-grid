@@ -128,7 +128,6 @@ export class GridCoreCreator {
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
         const agVersionsText = _getAgVersionsText(registeredModules);
-        _logVersionIfDebug(gridOptions.debug, registeredModules, 'before-beans');
 
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, agVersionsText, params);
@@ -136,8 +135,7 @@ export class GridCoreCreator {
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList. The grid root is already
             // in the DOM but no beans (and so no overlay) exist, so render the dev bootstrap panel here.
-            // No beans means no licence banner is coming, so a deferred version line is logged now.
-            _logVersionIfDebug(gridOptions.debug, registeredModules, 'after-beans');
+            _logVersionIfDebug(gridOptions.debug, registeredModules);
             _renderBootstrapPanel(eOutermostGridOwned, agVersionsText);
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
@@ -175,8 +173,8 @@ export class GridCoreCreator {
         >(contextParams);
 
         // Every bean's `postConstruct` has run by now, so this is the first point below the enterprise
-        // licence banner — see `getVersionLogPoint`.
-        _logVersionIfDebug(gridOptions.debug, registeredModules, 'after-beans');
+        // licence banner, which a bean prints and which buries anything logged above it.
+        _logVersionIfDebug(gridOptions.debug, registeredModules);
 
         this.registerModuleFeatures(context, registeredModules);
 

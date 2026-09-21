@@ -31,25 +31,16 @@ describe('debug version logging', () => {
 
     const gridOptions = { columnDefs: [{ field: 'a' }], rowData: [], debug: true };
 
-    test('logs the grid version before the other debug output', () => {
-        gridsManager.createGrid('myGrid', gridOptions);
-
-        const messages = loggedMessages();
-        const versionIndex = messages.indexOf(`AG Grid: Version: ag-grid-community=${VERSION}`);
-        const rowContainerIndex = messages.findIndex((message) => message.includes('RowContainerHeightService'));
-
-        expect(versionIndex).toBeGreaterThanOrEqual(0);
-        expect(rowContainerIndex).toBeGreaterThanOrEqual(0);
-        expect(versionIndex).toBeLessThan(rowContainerIndex);
-    });
-
     // The enterprise licence banner is printed from a bean's `postConstruct` and fills the console, so
     // the version line is only readable once every bean has had its say.
-    test('logs the grid version after the bean debug output for an enterprise grid', () => {
-        enterpriseGridsManager.createGrid('myGrid', gridOptions);
+    test.each<[string, TestGridsManager]>([
+        ['community', gridsManager],
+        ['enterprise', enterpriseGridsManager],
+    ])('logs the grid version after the bean debug output for a %s grid', (_edition, manager) => {
+        manager.createGrid('myGrid', gridOptions);
 
         const messages = loggedMessages();
-        const versionIndex = messages.findIndex((message) => message.includes('Version: ag-grid-community='));
+        const versionIndex = messages.findIndex((message) => message.includes(`Version: ag-grid-community=${VERSION}`));
         const rowContainerIndex = messages.findIndex((message) => message.includes('RowContainerHeightService'));
 
         expect(versionIndex).toBeGreaterThanOrEqual(0);

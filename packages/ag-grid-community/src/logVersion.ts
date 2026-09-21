@@ -24,21 +24,15 @@ export function _setAgPackageInfo(module: Module, packageName: string, version: 
 }
 
 /**
- * Every enterprise module depends on `EnterpriseCore` and `registeredModules` is dependency-flattened,
- * so this module carries the enterprise package's own version whenever enterprise is in use.
- */
-function findEnterpriseCore(registeredModules: Module[]): Module | undefined {
-    return registeredModules.find(({ moduleName }) => moduleName === 'EnterpriseCore');
-}
-
-/**
  * Builds the `ag-grid-community=<v>, ...` clause list for the AG npm packages this grid has registered.
  * Shared by the `debug` console line and the dev validation overlay so both report the same versions.
  */
 export function _getAgVersionsText(registeredModules: Module[]): string {
     const versions = [`ag-grid-community=${VERSION}`];
 
-    const enterpriseCore = findEnterpriseCore(registeredModules);
+    // Every enterprise module depends on `EnterpriseCore` and `registeredModules` is
+    // dependency-flattened, so this is the enterprise package's own version whenever it is in use.
+    const enterpriseCore = registeredModules.find(({ moduleName }) => moduleName === 'EnterpriseCore');
     if (enterpriseCore) {
         versions.push(`ag-grid-enterprise=${enterpriseCore.version}`);
     }
@@ -57,28 +51,12 @@ export function _getAgVersionsText(registeredModules: Module[]): string {
     return versions.join(', ');
 }
 
-/** Where in grid creation the `debug` version line is emitted. */
-type VersionLogPoint = 'before-beans' | 'after-beans';
-
 /**
- * Enterprise prints its licence banner from a bean's `postConstruct`, which fills the console — a
- * version line above that wall of output is easy to miss, so enterprise grids log theirs below it.
- * Community has no banner, so its version line stays the first thing `debug` mode prints.
+ * Logs the version of each AG package in use. Called once per grid, so that mismatched versions across
+ * the packages are visible in `debug` mode.
  */
-function getVersionLogPoint(registeredModules: Module[]): VersionLogPoint {
-    return findEnterpriseCore(registeredModules) ? 'after-beans' : 'before-beans';
-}
-
-/**
- * Logs the version of each AG package in use, once per grid, so that mismatched versions across the
- * packages are visible in `debug` mode. Called at both log points; emits at the one this grid uses.
- */
-export function _logVersionIfDebug(
-    debug: boolean | undefined,
-    registeredModules: Module[],
-    logPoint: VersionLogPoint
-): void {
-    if (debug && getVersionLogPoint(registeredModules) === logPoint) {
+export function _logVersionIfDebug(debug: boolean | undefined, registeredModules: Module[]): void {
+    if (debug) {
         _logDebug(`Version: ${_getAgVersionsText(registeredModules)}`);
     }
 }
