@@ -33,14 +33,14 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div>
-                <span class="button-group">
+            <div class="example-controls">
+                <div class="controls-row">
                     <button (click)="recreateWithCurrentState()">Recreate with State</button>
                     <button (click)="saveState()">Save State</button>
                     <button (click)="recreateWithNoState()">Recreate without State</button>
                     <button (click)="setState()">Set State</button>
                     <button (click)="printState()">Print State</button>
-                </span>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular

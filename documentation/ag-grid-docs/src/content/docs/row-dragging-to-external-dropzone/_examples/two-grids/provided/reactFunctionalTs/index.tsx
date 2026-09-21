@@ -194,7 +194,11 @@ const GridExample = () => {
 
     const getInnerGridCol = (side: string) => (
         <div className="inner-col">
-            <div className="toolbar">{['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}</div>
+            <div className="toolbar example-controls">
+                <div className="controls-row">
+                    {['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}
+                </div>
+            </div>
             <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
                     defaultColDef={defaultColDef}

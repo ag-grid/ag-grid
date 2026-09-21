@@ -85,13 +85,15 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div style={{ marginBottom: '5px' }}>
-                        <button onClick={toggleCellSelection}>
-                            {cellSelection ? 'Disable' : 'Enable'} Cell Selection
-                        </button>
-                        <button onClick={toggleRowSelection}>
-                            {rowSelection ? 'Disable' : 'Enable'} Row Selection
-                        </button>
+                    <div className="example-controls" style={{ marginBottom: '5px' }}>
+                        <div className="controls-row">
+                            <button onClick={toggleCellSelection}>
+                                {cellSelection ? 'Disable' : 'Enable'} Cell Selection
+                            </button>
+                            <button onClick={toggleRowSelection}>
+                                {rowSelection ? 'Disable' : 'Enable'} Row Selection
+                            </button>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

@@ -130,17 +130,22 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <label htmlFor="language">Language:</label>
-                    <select
-                        id="language"
-                        value={language}
-                        onChange={(event) => onLanguageChange(event.target.value as Language)}
-                    >
-                        <option value="arabic">العربية (Arabic)</option>
-                        <option value="hebrew">עברית (Hebrew)</option>
-                        <option value="english">English</option>
-                    </select>
+                <div
+                    className="example-controls"
+                    style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+                >
+                    <div className="controls-row">
+                        <label htmlFor="language">Language:</label>
+                        <select
+                            id="language"
+                            value={language}
+                            onChange={(event) => onLanguageChange(event.target.value as Language)}
+                        >
+                            <option value="arabic">العربية (Arabic)</option>
+                            <option value="hebrew">עברית (Hebrew)</option>
+                            <option value="english">English</option>
+                        </select>
+                    </div>
                 </div>
                 <div style={{ height: '100%', width: '100%' }}>
                     {gridVisible && (

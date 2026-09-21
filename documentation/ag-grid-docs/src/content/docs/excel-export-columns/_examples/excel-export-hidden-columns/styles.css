@@ -24,9 +24,3 @@
     flex-direction: column;
     height: 100%;
 }
-.columns {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
-}

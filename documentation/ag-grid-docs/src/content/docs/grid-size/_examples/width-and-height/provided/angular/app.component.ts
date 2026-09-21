@@ -20,10 +20,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     selector: 'my-app',
     template: `
         <div style="height: 100%; display: flex; flex-direction: column;">
-            <div style="margin-bottom: 5px;">
-                <button (click)="fillLarge()">Fill 100%</button>
-                <button (click)="fillMedium()">Fill 60%</button>
-                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+            <div class="example-controls" style="margin-bottom: 5px;">
+                <div class="controls-row">
+                    <button (click)="fillLarge()">Fill 100%</button>
+                    <button (click)="fillMedium()">Fill 60%</button>
+                    <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+                </div>
             </div>
             <div [ngStyle]="style">
                 <ag-grid-angular

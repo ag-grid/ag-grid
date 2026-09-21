@@ -27,14 +27,16 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     selector: 'my-app',
     template: `
         <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                Theme:
-                <select style="margin-right: 16px" [(ngModel)]="theme">
-                    <option *ngFor="let theme of themes" [ngValue]="theme.theme">
-                        {{ theme.label }}
-                    </option>
-                </select>
-            </p>
+            <div class="example-controls" style="flex: 0 1 0%">
+                <div class="controls-row">
+                    Theme:
+                    <select style="margin-right: 16px" [(ngModel)]="theme">
+                        <option *ngFor="let theme of themes" [ngValue]="theme.theme">
+                            {{ theme.label }}
+                        </option>
+                    </select>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-angular
                     style="height: 100%;"

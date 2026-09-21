@@ -68,11 +68,13 @@ const statusCellClassRules: CellClassRules = {
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                <button class="ag-toggleButton" @click="setThemeMode()">
-                    {{ themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode' }}
-                </button>
-            </p>
+            <div class="example-controls" style="flex: 0 1 0%">
+                <div class="controls-row">
+                    <button @click="setThemeMode()">
+                        {{ themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode' }}
+                    </button>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-vue
                     style="height: 100%;"

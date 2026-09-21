@@ -29,16 +29,18 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div>
-                    <label className="checkbox">
-                        <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
-                        loading
-                    </label>
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <label className="checkbox">
+                            <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
+                            loading
+                        </label>
 
-                    <button onClick={() => setRowData([])}>Clear rowData</button>
-                    <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>
-                        Set rowData
-                    </button>
+                        <button onClick={() => setRowData([])}>Clear rowData</button>
+                        <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>
+                            Set rowData
+                        </button>
+                    </div>
                 </div>
 
                 <div style={{ height: '100%' }}>

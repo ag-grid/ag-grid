@@ -33,8 +33,8 @@ ModuleRegistry.registerModules([
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `<div class="container">
-        <form (submit)="onFormSubmit($event)">
-            <div class="columns">
+        <form class="example-controls" (submit)="onFormSubmit($event)">
+            <div class="columns controls-row">
                 <div class="column">
                     <label class="option" for="pageOrientation">
                         Page Orientation =
@@ -92,7 +92,7 @@ ModuleRegistry.registerModules([
                     /></label>
                 </fieldset>
             </div>
-            <div>
+            <div class="controls-row">
                 <input type="submit" style="margin: 5px 0px; font-weight: bold;" value="Export to Excel" />
             </div>
         </form>

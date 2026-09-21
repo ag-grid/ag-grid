@@ -6,10 +6,6 @@
     width: 100%;
 }
 
-button {
-    height: unset !important;
-}
-
 .example-button-row {
     display: flex;
     gap: 5px;

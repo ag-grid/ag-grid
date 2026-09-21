@@ -5,14 +5,7 @@
 }
 
 .button-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
     padding: 12px;
-}
-
-.button-row button {
-    padding: 4px 12px;
 }
 
 .button-row .loading-toggle {

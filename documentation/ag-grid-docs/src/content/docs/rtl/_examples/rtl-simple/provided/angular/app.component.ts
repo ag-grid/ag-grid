@@ -112,13 +112,18 @@ const LANGUAGES: Record<Language, LanguageConfig> = {
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
-                <label for="language">Language:</label>
-                <select id="language" (change)="onLanguageChange($event)">
-                    <option value="arabic" selected>العربية (Arabic)</option>
-                    <option value="hebrew">עברית (Hebrew)</option>
-                    <option value="english">English</option>
-                </select>
+            <div
+                class="example-controls"
+                style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;"
+            >
+                <div class="controls-row">
+                    <label for="language">Language:</label>
+                    <select id="language" (change)="onLanguageChange($event)">
+                        <option value="arabic" selected>العربية (Arabic)</option>
+                        <option value="hebrew">עברית (Hebrew)</option>
+                        <option value="english">English</option>
+                    </select>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular

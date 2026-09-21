@@ -59,10 +59,12 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button onClick={() => fillLarge()}>Fill 100%</button>
-                    <button onClick={() => fillMedium()}>Fill 60%</button>
-                    <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
+                <div className="example-controls" style={{ marginBottom: '5px' }}>
+                    <div className="controls-row">
+                        <button onClick={() => fillLarge()}>Fill 100%</button>
+                        <button onClick={() => fillMedium()}>Fill 60%</button>
+                        <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
+                    </div>
                 </div>
                 <div className="grid-wrapper">
                     <div style={style}>

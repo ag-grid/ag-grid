@@ -5,13 +5,7 @@
     width: 100%;
 }
 
-button {
-    height: unset !important;
-}
-
 .example-button-row {
-    display: inline;
-    gap: 5px;
     padding-right: 8px;
 }
 

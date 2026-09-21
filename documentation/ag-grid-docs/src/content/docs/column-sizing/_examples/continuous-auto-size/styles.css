@@ -6,12 +6,6 @@
 
 .interaction-bar {
     margin-bottom: 1rem;
-    display: flex;
-    gap: 0.5em;
-}
-
-.interaction-bar button {
-    margin: 0px !important;
 }
 
 .grid-wrapper {
