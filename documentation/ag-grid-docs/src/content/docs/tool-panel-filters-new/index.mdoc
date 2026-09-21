@@ -69,11 +69,11 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 ### Managing Tool Panel State
 
-The filter cards shown in the tool panel are part of the Side Bar state, which is separate from the filter model. Clearing the filter model with `api.setFilterModel(null)` therefore clears the filter values but leaves the (now inactive) cards in place.
+The filter cards shown in the tool panel are part of the [Side Bar](./side-bar/) state, which is separate from the filter model. Clearing the filter model with `api.setFilterModel(null)` therefore clears the filter values but leaves the (now inactive) cards in place.
 
 To remove every card, set the Side Bar state again with an empty `filters` array. Note that removing a card also clears that column's filter, so the rows are unfiltered as well:
 
-```js
+```
 api.setState({
     sideBar: {
         visible: true,
