@@ -98,7 +98,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
         // a selection or row-number cell has no data of its own, so it offers the row-level items only, unless the
         // clipboard has something else to act on: a cell range (which the right-click may just have selected) or
-        // the selected rows
+        // a row selection the clipboard would copy. Offering them otherwise would let Copy/Cut fall back to the
+        // previously focused data cell, copying - and, on Cut, clearing - a cell the user never right-clicked.
         const clipboardHasTarget = (rangeSvc && !rangeSvc.isEmpty()) || clipboardSvc?.copiesSelectedRows();
         const isDatalessSpecialCell = !!column && isSpecialCol(column) && !clipboardHasTarget;
         const dataColumn = isDatalessSpecialCell ? null : column;

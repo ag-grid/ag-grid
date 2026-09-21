@@ -198,7 +198,7 @@ describe('Row Numbers context menu (AG-16355)', () => {
     });
 
     // With copySelectedRows the clipboard copies the selected rows whatever cell was clicked, so the
-    // selection column keeps its copy items.
+    // selection column keeps its copy items - but only once there are rows to copy.
     test('a selection-column cell offers Copy when copySelectedRows is enabled', async () => {
         const api = await gridMgr.createGridAndWait('selectionColCtxCopyRows', {
             columnDefs,
@@ -210,7 +210,8 @@ describe('Row Numbers context menu (AG-16355)', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
-        await waitFor(() => expect(menuOption('Copy')).not.toBeNull());
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
         api.hidePopupMenu();
         await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
 
@@ -218,6 +219,36 @@ describe('Row Numbers context menu (AG-16355)', () => {
         rightClick(cell(gridDiv, 0, SELECTION_COLUMN_ID));
         await clickMenuOption('Copy');
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Natalie Coughlin\t25'));
+    });
+
+    // copySelectedRows with nothing selected leaves the clipboard falling back to the focused cell, so offering
+    // Copy/Cut on a row-number cell would copy - and, on Cut, clear - a data cell the user never right-clicked.
+    test('Cut from a row-number cell acts on the selected rows, never on the focused data cell', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCopyRowsNoneSelected', {
+            columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
+            rowData,
+            rowNumbers: true,
+            rowSelection: { mode: 'multiRow', copySelectedRows: true },
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        api.setFocusedCell(0, 'athlete');
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
+        expect(menuOption('Cut')).toBeNull();
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        // once there are rows to copy, Cut acts on them and leaves the focused cell alone
+        api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(2)!], newValue: true });
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Cut');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Aleksey Nemov\t24'));
+        expect(api.getDisplayedRowAtIndex(2)!.data.athlete).toBeFalsy();
+        expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
     });
 
     test('a row-number cell offers Copy when copySelectedRows is enabled without cell selection', async () => {
