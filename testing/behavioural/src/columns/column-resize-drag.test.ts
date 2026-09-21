@@ -118,6 +118,34 @@ describe('header resize drag direction', () => {
         expect(await dragGroupTo(api, 480)).toEqual([90, 156, 234]);
     });
 
+    // The worked example in `resizeColumnSets`: A capped at 100 leaves B and C splitting the remaining 500.
+    test('a group resize splits the remaining width, as the resize algorithm documents', async () => {
+        const api = gridsManager.createGrid('resizeDrag', {
+            columnDefs: [
+                {
+                    headerName: 'G',
+                    groupId: 'g',
+                    children: [
+                        { colId: 'a', field: 'a', width: 50, maxWidth: 100, resizable: true },
+                        { colId: 'b', field: 'b', width: 50, resizable: true },
+                        { colId: 'c', field: 'c', width: 50, resizable: true },
+                    ],
+                },
+            ],
+            rowData: [{ a: 'a1', b: 'b1', c: 'c1' }],
+        });
+
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const bar = root.querySelector<HTMLElement>('.ag-header-group-cell .ag-header-cell-resize')!;
+        const dispatcher = new DragEventDispatcher('mouse');
+        await dispatcher.startDrag(bar, 150, 10);
+        await dispatcher.movePointer(bar, 600, 10);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+
+        expect(['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([100, 250, 250]);
+    });
+
     test('widening a group across a maxWidth bound never shrinks another column', async () => {
         // 660 is the widest `a` reaches before its 110 cap binds, so 664 is the first width with a
         // frozen column: the step across that threshold is where a mis-scaled share shows up.
