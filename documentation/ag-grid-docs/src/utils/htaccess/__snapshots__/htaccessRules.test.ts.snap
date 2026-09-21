@@ -25,9 +25,9 @@ Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !(
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 
 
-# Images and example-page assets: unhashed filenames, so cap staleness with a moderate
-# max-age rather than caching indefinitely.
-Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm)$#"
+# Images, example-page assets, theme icon downloads, and videos: unhashed filenames, so cap
+# staleness with a moderate max-age rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example|theme-icons|videos)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm|zip)$#"
 
 
 # Static script bundles: unhashed filenames, so cap staleness with a moderate max-age
