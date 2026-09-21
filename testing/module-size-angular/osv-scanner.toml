@@ -174,3 +174,132 @@ reason = "undici is only used in testing/build, not in the final production buil
 [[IgnoredVulns]]
 id = "GHSA-g8m3-5g58-fq7m"
 reason = "undici is only used in testing/build, not in the final production build"
+
+# OpenSSF Scorecard 'Vulnerabilities' review (2026-09-21) - dev/build transitive deps
+[[IgnoredVulns]]
+id = "GHSA-p498-v437-472g"
+reason = "@humanfs/node is a transitive dependency of eslint's filesystem helper and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-p95v-992w-h6c3"
+reason = "@toon-format/toon is a transitive dependency of rulesync (prompt tooling) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-7q85-xj36-vmfc"
+reason = "adm-zip is a transitive dependency of @module-federation/dts-plugin build tooling and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-vwc7-r8mq-g2x9"
+reason = "adm-zip is a transitive dependency of @module-federation/dts-plugin build tooling and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-xcpc-8h2w-3j85"
+reason = "adm-zip is a transitive dependency of @module-federation/dts-plugin build tooling and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-26w7-cxv4-gfx2"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-376h-93r7-7g6f"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-4g3v-8h47-v7g6"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-7pw4-f3q4-r2p2"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-f48w-9m4c-m7f5"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-w5vr-8v7q-w6rv"
+reason = "baseline-browser-mapping is a transitive dependency of browserslist (via @babel/helper-compilation-targets), used only during build - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-v422-hmwv-36x6"
+reason = "body-parser is a transitive dependency of express/karma dev servers, used only in testing/build - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-2wm5-q62r-hmrv"
+reason = "colord is a transitive dependency of stylelint and cssnano's postcss color plugins, used only during build/lint - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-9rgm-9g3h-6x36"
+reason = "devalue is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-7pqw-9j4j-h8q3"
+reason = "extract-zip is a transitive dependency of chromedriver (via @axe-core/cli), used only for accessibility testing - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-jmr9-qjv8-65gv"
+reason = "extract-zip is a transitive dependency of chromedriver (via @axe-core/cli), used only for accessibility testing - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-px8p-9vwx-vf98"
+reason = "fflate is a transitive dependency of @vitest/ui and the compression-streams-polyfill dev dependency, used only in testing/build - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-5p2g-fcmc-qvqq"
+reason = "image-size is a transitive dependency of less (via ng-packagr, Angular's library build tool), used only during build - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-w3rx-r6r6-pgpr"
+reason = "image-size is a transitive dependency of less (via ng-packagr, Angular's library build tool), used only during build - not included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-mwp4-54f8-5fhr"
+reason = "ip-address is a transitive dev dependency (via @modelcontextprotocol/sdk and socks-proxy-agent) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-g2r8-wvmj-jf5w"
+reason = "nx is the build/task orchestrator (root devDependency); its dev-server tooling is not used or included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-vp3h-ghgh-jr7g"
+reason = "nx is the build/task orchestrator (root devDependency); its remote-cache tooling is not used or included in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-4mjr-xmp4-gh2g"
+reason = "qs is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-x5fp-wj9c-mxmx"
+reason = "qs is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-f88m-g3jw-g9cj"
+reason = "sharp is a transitive dependency of astro's image optimization, used only for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-rgj7-g3m4-5g8c"
+reason = "sharp is a transitive dependency of astro's image optimization, used only for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-7w5x-hrqm-74c2"
+reason = "smol-toml is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-23hp-3jrh-7fpw"
+reason = "tar is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-8x88-c5mf-7j5w"
+reason = "tar is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-gvwx-54wh-qm9j"
+reason = "tar is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-r292-9mhp-454m"
+reason = "tar is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-w8wr-v893-vjvp"
+reason = "tar is used in build & dev - not included in final production build"
