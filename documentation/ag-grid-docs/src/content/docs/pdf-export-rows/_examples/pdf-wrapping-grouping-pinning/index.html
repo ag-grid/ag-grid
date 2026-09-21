@@ -1,9 +1,11 @@
 <div class="example-wrapper">
-    <div class="controls" onchange="onPdfExportOptionsChanged()">
-        <button onclick="onBtExport()">Export to PDF</button>
-        <label><input id="includeTop" type="checkbox" checked /> Include pinned top</label>
-        <label><input id="includeBottom" type="checkbox" checked /> Include pinned bottom</label>
-        <label><input id="limitLines" type="checkbox" /> Limit wrapped text to two lines</label>
+    <div class="controls example-controls" onchange="onPdfExportOptionsChanged()">
+        <div class="controls-row">
+            <button onclick="onBtExport()">Export to PDF</button>
+            <label><input id="includeTop" type="checkbox" checked /> Include pinned top</label>
+            <label><input id="includeBottom" type="checkbox" checked /> Include pinned bottom</label>
+            <label><input id="limitLines" type="checkbox" /> Limit wrapped text to two lines</label>
+        </div>
     </div>
     <div id="myGrid"></div>
 </div>

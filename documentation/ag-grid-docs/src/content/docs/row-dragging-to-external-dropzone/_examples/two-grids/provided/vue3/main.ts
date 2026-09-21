@@ -48,16 +48,18 @@ const VueExample = defineComponent({
     /* html */
     template: `<div class="example-wrapper">        
             <div class="inner-col">
-                <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Red
-                    </button>
-                    <button class="factory factory-green" data-color="Green" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Green
-                    </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Blue
-                    </button>
+                <div class="toolbar example-controls">
+                    <div class="controls-row">
+                        <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Red
+                        </button>
+                        <button class="factory factory-green" data-color="Green" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Green
+                        </button>
+                        <button class="factory factory-blue" data-color="Blue" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Blue
+                        </button>
+                    </div>
                 </div>
                 <div style="height: 100%;" class="inner-col" ref="eLeftGrid">
                     <ag-grid-vue
@@ -82,16 +84,18 @@ const VueExample = defineComponent({
             </div>
 
             <div class="inner-col">
-                <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Red
-                    </button>
-                    <button class="factory factory-green" data-color="Green" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Green
-                    </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Blue
-                    </button>
+                <div class="toolbar example-controls">
+                    <div class="controls-row">
+                        <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Red
+                        </button>
+                        <button class="factory factory-green" data-color="Green" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Green
+                        </button>
+                        <button class="factory factory-blue" data-color="Blue" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Blue
+                        </button>
+                    </div>
                 </div>
                 <div style="height: 100%;" class="inner-col" ref="eRightGrid">
                     <ag-grid-vue

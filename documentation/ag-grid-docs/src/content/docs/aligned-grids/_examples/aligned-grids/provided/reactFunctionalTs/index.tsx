@@ -91,19 +91,21 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="container">
-                <div className="header">
-                    <label>
-                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
-                        Athlete
-                    </label>
-                    <label>
-                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAge(event)} />
-                        Age
-                    </label>
-                    <label>
-                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbCountry(event)} />
-                        Country
-                    </label>
+                <div className="header example-controls">
+                    <div className="controls-row">
+                        <label>
+                            <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
+                            Athlete
+                        </label>
+                        <label>
+                            <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAge(event)} />
+                            Age
+                        </label>
+                        <label>
+                            <input type="checkbox" defaultChecked={true} onChange={(event) => onCbCountry(event)} />
+                            Country
+                        </label>
+                    </div>
                 </div>
 
                 <div className="grid">

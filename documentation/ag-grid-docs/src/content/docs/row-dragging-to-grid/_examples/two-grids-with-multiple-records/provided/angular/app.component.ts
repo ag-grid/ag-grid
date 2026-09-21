@@ -59,8 +59,8 @@ export class SportRenderer implements ICellRendererAngularComp {
     imports: [AgGridAngular],
     selector: 'my-app',
     template: /*html */ ` <div class="top-container">
-        <div class="example-toolbar panel panel-default">
-            <div class="panel-body">
+        <div class="example-toolbar panel panel-default example-controls">
+            <div class="panel-body controls-row">
                 <input type="radio" id="move" name="radio" checked #eMoveRadio />
                 <label for="move">Remove Source Rows</label>
                 <input type="radio" id="deselect" name="radio" #eDeselectRadio />

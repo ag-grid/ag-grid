@@ -36,30 +36,32 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div>
-                    <label className="checkbox">
-                        <input
-                            type="checkbox"
-                            onChange={(e) => setLoading(e.target.checked)}
-                            defaultChecked={loading}
-                        />
-                        loading
-                    </label>
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <label className="checkbox">
+                            <input
+                                type="checkbox"
+                                onChange={(e) => setLoading(e.target.checked)}
+                                defaultChecked={loading}
+                            />
+                            loading
+                        </label>
 
-                    <button onClick={() => setRowData(rawRowData)}>Set Row Data</button>
-                    <button onClick={() => setRowData([])}>Clear Row Data</button>
-                    <button
-                        onClick={() => {
-                            setRowData(rawRowData);
-                            gridRef.current?.api.setFilterModel({
-                                country: { filterType: 'text', type: 'equals', filter: 'Spain' },
-                            });
-                        }}
-                    >
-                        Set Non Matching Filter
-                    </button>
-                    <button onClick={() => gridRef.current?.api.setFilterModel(null)}>Clear Filter</button>
-                    <button onClick={() => gridRef.current?.api.exportDataAsCsv()}>Export CSV</button>
+                        <button onClick={() => setRowData(rawRowData)}>Set Row Data</button>
+                        <button onClick={() => setRowData([])}>Clear Row Data</button>
+                        <button
+                            onClick={() => {
+                                setRowData(rawRowData);
+                                gridRef.current?.api.setFilterModel({
+                                    country: { filterType: 'text', type: 'equals', filter: 'Spain' },
+                                });
+                            }}
+                        >
+                            Set Non Matching Filter
+                        </button>
+                        <button onClick={() => gridRef.current?.api.setFilterModel(null)}>Clear Filter</button>
+                        <button onClick={() => gridRef.current?.api.exportDataAsCsv()}>Export CSV</button>
+                    </div>
                 </div>
 
                 <div style={{ height: '100%' }}>

@@ -121,8 +121,8 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <div>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
                             Case Insensitive:
                             <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => getModel('insensitive')}>API: getModel()</button>
@@ -132,7 +132,7 @@ const GridExample = () => {
                             <button onClick={() => getValues('insensitive')}>API: getFilterValues()</button>
                             <button onClick={() => reset('insensitive')}>Reset</button>
                         </div>
-                        <div style={{ paddingTop: '10px' }}>
+                        <div className="controls-row" style={{ paddingTop: '10px' }}>
                             Case Sensitive:
                             <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => getModel('sensitive')}>API: getModel()</button>

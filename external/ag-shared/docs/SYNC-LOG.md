@@ -50,6 +50,27 @@ The hollowing relies on yarn v1 internals (an entry counts as cached when `.yarn
 - [ ] Run `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh` (or `yarn install`) to re-render `.claude/settings.json`, and commit the result
 - [ ] Restart Claude Code so the newly enabled plugin installs
 
+## 2026-09-21 -- Example page reset split out of the controls stylesheet; controls recognise both dark-mode attributes
+
+**Branch:** `AG-18581-example-controls-styles`
+
+### Changes
+
+- **[ag-website-shared: src/components/example-runner/styles/example-page-reset.css]** New file, holding the page-level reset `example-controls.css` used to carry: the global `box-sizing: border-box` and `:root, body { height: 100%; width: 100%; margin: 0; overflow: hidden }`.
+- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** Those reset rules are gone from this file. `box-sizing: border-box` is re-applied scoped to `.example-controls` and its descendants — the controls size themselves with fixed heights and padding, so that is all they need — which lets a site that already resets its example pages link the controls stylesheet on its own. The dark palette now also triggers on `:root[data-color-scheme='dark']` alongside `:root[data-dark-mode='true']`: AG Charts sets the latter from its init script, AG Grid's example runner sets the former.
+- **[ag-website-shared: src/components/codeSandbox/utils/codeSandbox.ts]** Every `.css` file now maps to `public/`, not only `ag-example-styles.css`. The stylesheets are linked from `public/index.html`, so a sheet left at the sandbox root 404s. `EXAMPLE_STYLE_FILE_NAME` is no longer imported here.
+
+### Migration Actions
+
+- [ ] **AG Charts and AG Studio: link `example-page-reset.css` alongside `example-controls.css`** wherever the controls stylesheet is linked today. Without it those example pages silently lose the global `box-sizing` and the `:root, body` sizing, because those rules no longer travel with the controls sheet. Tracked as a follow-up ticket on the charts side.
+- [ ] Sync `codeSandbox.ts` together with its test — the test asserts the new `public/` mapping.
+
+### Notes
+
+AG Grid deliberately links only `example-controls.css`. Its example runner already emits a page reset from `ExampleStyle.astro`, and the charts reset would fight it: `overflow: hidden` clips example pages that are meant to scroll, and the global `box-sizing` reaches grid markup rather than just the controls.
+
+`.example-controls .button-group` in the controls stylesheet means a joined row of radio segments. The name is load-bearing now that the sheet is linked from every example — AG Grid had ~26 examples using it for a plain span of buttons, which had to be renamed.
+
 ## 2026-09-18 -- l10n review script accepts script-subtag and three-letter locale file names
 
 **Branch:** `ghabot-ag-18590-localization-add-new-languages-to`

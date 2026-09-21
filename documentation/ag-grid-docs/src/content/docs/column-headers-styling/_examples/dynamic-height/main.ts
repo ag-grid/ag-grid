@@ -95,15 +95,15 @@ function setIdText(id: string, value: string | number | undefined) {
 }
 
 function setPivotOn() {
-    document.querySelector('#requiresPivot')!.className = '';
-    document.querySelector('#requiresNotPivot')!.className = 'hidden';
+    document.querySelector('#requiresPivot')!.classList.remove('hidden');
+    document.querySelector('#requiresNotPivot')!.classList.add('hidden');
     gridApi!.setGridOption('pivotMode', true);
     setIdText('pivot', 'on');
 }
 
 function setPivotOff() {
-    document.querySelector('#requiresPivot')!.className = 'hidden';
-    document.querySelector('#requiresNotPivot')!.className = '';
+    document.querySelector('#requiresPivot')!.classList.add('hidden');
+    document.querySelector('#requiresNotPivot')!.classList.remove('hidden');
     gridApi!.setGridOption('pivotMode', false);
     setIdText('pivot', 'off');
 }

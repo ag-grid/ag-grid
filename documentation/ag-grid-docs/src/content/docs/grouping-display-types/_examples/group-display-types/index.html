@@ -1,13 +1,15 @@
 <div class="example-wrapper">
-    <div class="example-header">
-        <label>
-            <span>groupDisplayType:</span>
-            <select id="input-display-type" onchange="onDisplayTypeChange()">
-                <option value="singleColumn">"singleColumn"</option>
-                <option value="multipleColumns">"multipleColumns"</option>
-                <option value="groupRows">"groupRows"</option>
-            </select>
-        </label>
+    <div class="example-header example-controls">
+        <div class="controls-row">
+            <label>
+                <span>groupDisplayType:</span>
+                <select id="input-display-type" onchange="onDisplayTypeChange()">
+                    <option value="singleColumn">"singleColumn"</option>
+                    <option value="multipleColumns">"multipleColumns"</option>
+                    <option value="groupRows">"groupRows"</option>
+                </select>
+            </label>
+        </div>
     </div>
     <div id="myGrid" style="height: 100%"></div>
 </div>
