@@ -8,6 +8,51 @@ test.agExample(import.meta, () => {
         // test that the initial state has been applied to the filters tool panel
         await runTestLogic(agIdFor, remoteGrid, page);
     });
+
+    test.eachFramework('State buttons', async ({ page, agIdFor, remoteGrid }) => {
+        const gridApi = remoteGrid(page);
+        const filterToolPanel = agIdFor.filterToolPanel();
+        await expect(filterToolPanel).toBeVisible();
+
+        const filterCards = filterToolPanel.locator('.ag-filter-card');
+        const button = (name: string) => page.getByRole('button', { name, exact: true });
+
+        // 2 cards and 1 add
+        await expect(filterCards).toHaveCount(3);
+
+        await gridApi.setFilterModel({ age: { type: 'lessThan', filter: 25 } });
+        await expect(filterToolPanel.getByRole('button', { name: 'Age < 25' })).toBeVisible();
+
+        // clearing the filter model clears the values but leaves the cards in place
+        await button('Clear Filter Values').click();
+        await expect(filterCards).toHaveCount(3);
+        await expect(filterToolPanel.getByRole('button', { name: 'Age is (All)' })).toBeVisible();
+
+        // clearing the tool panel state removes every card, leaving only the add card
+        await button('Clear Tool Panel').click();
+        await expect(filterCards).toHaveCount(1);
+
+        await button('Restore Initial State').click();
+        await expect(filterCards).toHaveCount(3);
+        await expect(filterCards.nth(0).getByRole('button', { name: 'Country' })).toBeVisible();
+        await expect(filterCards.nth(1).getByRole('button', { name: 'Age is (All)' })).toBeVisible();
+        await expect(filterToolPanel.getByRole('button', { name: 'Country' })).toHaveAttribute(
+            'aria-expanded',
+            'true'
+        );
+
+        // a saved state restores both the cards and their filter values
+        await gridApi.setFilterModel({ age: { type: 'lessThan', filter: 25 } });
+        await expect(filterToolPanel.getByRole('button', { name: 'Age < 25' })).toBeVisible();
+
+        await button('Save State').click();
+        await button('Clear Tool Panel').click();
+        await expect(filterCards).toHaveCount(1);
+
+        await button('Restore Saved State').click();
+        await expect(filterCards).toHaveCount(3);
+        await expect(filterToolPanel.getByRole('button', { name: 'Age < 25' })).toBeVisible();
+    });
 });
 
 test.agExample(import.meta, () => {
