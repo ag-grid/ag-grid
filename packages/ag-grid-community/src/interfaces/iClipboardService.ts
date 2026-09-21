@@ -15,6 +15,6 @@ export interface IClipboardService {
     copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void;
     copySelectedRangeToClipboard(params?: IClipboardCopyParams): void;
     copyRangeDown(): void;
-    /** Whether a copy would act on the selected rows rather than the focused cell. */
-    copiesSelectedRows(): boolean;
+    /** Whether a copy would act on a cell range or the selected rows rather than falling back to the focused cell. */
+    copiesRangeOrSelectedRows(): boolean;
 }

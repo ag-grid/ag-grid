@@ -294,6 +294,41 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(menuOption('Copy')).toBeNull();
     });
 
+    // A range is not always a copy target: under the legacy API `suppressCopySingleCellRanges` makes the clipboard
+    // skip a single-cell range and fall back to the focused cell, so the row-number guard must ask the clipboard
+    // rather than assume a non-empty range means Copy is safe.
+    test('a row-number cell hides Copy when suppressCopySingleCellRanges rejects the range', async () => {
+        // the legacy enableRangeSelection/suppressCopySingleCellRanges options are deprecated (#306) but supported
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxSuppressedSingleCellRange', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            enableRangeSelection: true,
+            suppressCopySingleCellRanges: true,
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // a single-cell range on a data cell: the clipboard would skip it and copy the focused cell instead
+        fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
+        expect(api.getCellRanges()).toHaveLength(1);
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Copy')).toBeNull();
+        expect(menuOption('Cut')).toBeNull();
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        // extend the range past one cell and the clipboard will copy it, so the items come back
+        fireGridPointerDown(cell(gridDiv, 1, 'age'), { shiftKey: true });
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Copy');
+        await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
+    });
+
     // With the integration suppressed a row-number right-click leaves an existing range alone, and Copy copies it.
     test('a row-number cell offers Copy for an existing cell range when the integration is suppressed', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxSuppressedRange', {
