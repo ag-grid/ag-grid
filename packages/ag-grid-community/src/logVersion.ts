@@ -58,7 +58,7 @@ export function _getAgVersionsText(registeredModules: Module[]): string {
 }
 
 /** Where in grid creation the `debug` version line is emitted. */
-export type VersionLogPoint = 'before-beans' | 'after-beans';
+type VersionLogPoint = 'before-beans' | 'after-beans';
 
 /**
  * Enterprise prints its licence banner from a bean's `postConstruct`, which fills the console — a
