@@ -91,33 +91,37 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         source: ColumnEventType;
     }): void {
         const { resizeSets, finished, source } = params;
-        const passMinMaxCheck =
-            !resizeSets || resizeSets.every((columnResizeSet) => checkMinAndMaxWidthsForSet(columnResizeSet));
 
-        if (!passMinMaxCheck) {
-            // even though we are not going to resize beyond min/max size, we still need to dispatch event when finished
-            if (finished) {
-                const columns = resizeSets && resizeSets.length > 0 ? resizeSets[0].columns : null;
-                dispatchColumnResizedEvent(this.eventSvc, columns, finished, source);
+        for (let i = 0, len = resizeSets.length; i < len; ++i) {
+            if (checkMinAndMaxWidthsForSet(resizeSets[i])) {
+                continue;
             }
-
-            return; // don't resize!
+            // Not resizing past min/max, but a finished drag still owes its event.
+            if (finished) {
+                dispatchColumnResizedEvent(this.eventSvc, resizeSets[0].columns, finished, source);
+            }
+            return;
         }
 
-        const changedCols: AgColumn[] = [];
         const allResizedCols: AgColumn[] = [];
+        let atLeastOneColChanged = false;
         let pinnedColChanged = false;
 
-        for (const set of resizeSets) {
-            const { width, columns, ratios } = set;
+        // Indexed by slot in `columns`, parallel to `ratios`: keying by id lets a frozen col shift the rest
+        // onto each other's ratio. Reused across sets; only `finishedCols` needs clearing, widths precede reads.
+        const newWidths: number[] = [];
+        const finishedCols: boolean[] = [];
+        const subsetIndexes: number[] = [];
 
-            // keep track of pixels used, and last column gets the remaining,
-            // to cater for rounding errors, and min width adjustments
-            const newWidths: { [colId: string]: number } = Object.create(null);
-            const finishedCols: { [colId: string]: boolean } = Object.create(null);
+        for (let s = 0, setCount = resizeSets.length; s < setCount; ++s) {
+            const { width, columns, ratios } = resizeSets[s];
+            const colCount = columns.length;
 
-            for (const col of columns) {
-                allResizedCols.push(col);
+            finishedCols.length = colCount;
+            finishedCols.fill(false);
+
+            for (let i = 0; i < colCount; ++i) {
+                allResizedCols.push(columns[i]);
             }
 
             // the loop below goes through each col. if a col exceeds it's min/max width,
@@ -144,71 +148,69 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
                 finishedColsGrew = false;
 
-                const subsetCols: AgColumn[] = [];
+                subsetIndexes.length = 0;
                 let subsetRatioTotal = 0;
                 let pixelsToDistribute = width;
 
-                columns.forEach((col, index) => {
-                    const thisColFinished = finishedCols[col.getId()];
-                    if (thisColFinished) {
-                        pixelsToDistribute -= newWidths[col.getId()];
+                for (let i = 0; i < colCount; ++i) {
+                    if (finishedCols[i]) {
+                        pixelsToDistribute -= newWidths[i];
                     } else {
-                        subsetCols.push(col);
-                        const ratioThisCol = ratios[index];
-                        subsetRatioTotal += ratioThisCol;
+                        subsetIndexes.push(i);
+                        subsetRatioTotal += ratios[i];
                     }
-                });
+                }
 
                 // because we are not using all of the ratios (cols can be missing),
                 // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
                 // and so the ratioScale will be 1.
                 const ratioScale = 1 / subsetRatioTotal;
 
-                subsetCols.forEach((col, index) => {
-                    const lastCol = index === subsetCols.length - 1;
+                for (let i = 0, len = subsetIndexes.length; i < len; ++i) {
+                    const index = subsetIndexes[i];
                     let colNewWidth: number;
 
-                    if (lastCol) {
+                    if (i === len - 1) {
                         colNewWidth = pixelsToDistribute;
                     } else {
                         colNewWidth = Math.round(ratios[index] * width * ratioScale);
                         pixelsToDistribute -= colNewWidth;
                     }
 
+                    const col = columns[index];
                     const minWidth = col.getMinWidth();
                     const maxWidth = col.getMaxWidth();
 
                     if (colNewWidth < minWidth) {
                         colNewWidth = minWidth;
-                        finishedCols[col.getId()] = true;
+                        finishedCols[index] = true;
                         finishedColsGrew = true;
                     } else if (maxWidth > 0 && colNewWidth > maxWidth) {
                         colNewWidth = maxWidth;
-                        finishedCols[col.getId()] = true;
+                        finishedCols[index] = true;
                         finishedColsGrew = true;
                     }
 
-                    newWidths[col.getId()] = colNewWidth;
-                });
+                    newWidths[index] = colNewWidth;
+                }
             }
 
-            for (const col of columns) {
-                const newWidth = newWidths[col.getId()];
+            for (let i = 0; i < colCount; ++i) {
+                const col = columns[i];
+                const newWidth = newWidths[i];
                 const actualWidth = col.getActualWidth();
 
                 if (actualWidth !== newWidth) {
                     col.setActualWidth(newWidth, source);
-                    changedCols.push(col);
+                    atLeastOneColChanged = true;
                     pinnedColChanged ||= col.pinnedLane !== 1;
                 }
             }
         }
 
-        // if no cols changed, then no need to update more or send event.
-        const atLeastOneColChanged = changedCols.length > 0;
-
         let flexedCols: AgColumn[] = [];
 
+        // if no cols changed, then no need to update more or send event.
         if (atLeastOneColChanged) {
             const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
             flexedCols =
@@ -228,9 +230,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will dispatch change events
         // in all the columns in the group, but only one with get the pixel.
-        const colsForEvent = allResizedCols.concat(flexedCols);
-
         if (atLeastOneColChanged || finished) {
+            const colsForEvent = flexedCols.length ? allResizedCols.concat(flexedCols) : allResizedCols;
             dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexedCols);
         }
     }
@@ -276,16 +277,15 @@ function checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
     let maxWidthAccumulated = 0;
     let maxWidthActive = true;
 
-    for (const col of columns) {
-        const minWidth = col.getMinWidth();
-        minWidthAccumulated += minWidth || 0;
+    for (let i = 0, len = columns.length; i < len; ++i) {
+        const col = columns[i];
+        minWidthAccumulated += col.getMinWidth() || 0;
 
         const maxWidth = col.getMaxWidth();
         if (maxWidth > 0) {
             maxWidthAccumulated += maxWidth;
         } else {
-            // if at least one columns has no max width, it means the group of columns
-            // then has no max width, as at least one column can take as much width as possible
+            // one column with no max width means the whole set has none: it can absorb any width
             maxWidthActive = false;
         }
     }

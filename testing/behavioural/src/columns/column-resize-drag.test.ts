@@ -75,4 +75,45 @@ describe('header resize drag direction', () => {
         const leftPinned = await dragGroupResizeBy(createGrid('left', true), 60);
         expect(leftPinned).toBeGreaterThan(0);
     });
+
+    /** 100/200/300 in one group, so the three ratios differ and a frozen column is detectable. */
+    const createBoundedGroup = (bounds: ColDef): GridApi =>
+        gridsManager.createGrid('resizeDrag', {
+            columnDefs: [
+                {
+                    headerName: 'G',
+                    groupId: 'g',
+                    children: [
+                        { colId: 'a', field: 'a', width: 100, resizable: true, ...bounds },
+                        { colId: 'b', field: 'b', width: 200, resizable: true },
+                        { colId: 'c', field: 'c', width: 300, resizable: true },
+                    ],
+                },
+            ],
+            rowData: [{ a: 'a1', b: 'b1', c: 'c1' }],
+        });
+
+    const dragGroupTo = async (api: GridApi, toX: number): Promise<number[]> => {
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const bar = root.querySelector<HTMLElement>('.ag-header-group-cell .ag-header-cell-resize')!;
+        const dispatcher = new DragEventDispatcher('mouse');
+        await dispatcher.startDrag(bar, 600, 10);
+        await dispatcher.movePointer(bar, toX, 10);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+
+        return ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
+    };
+
+    // A column frozen at a bound drops out of the next distribution pass, and the columns still in it
+    // must keep their own share of the group rather than inheriting the frozen column's.
+    test('a group column frozen at its maxWidth leaves the rest sized by their own ratios', async () => {
+        const api = createBoundedGroup({ maxWidth: 110 });
+        expect(await dragGroupTo(api, 720)).toEqual([110, 288, 322]);
+    });
+
+    test('a group column frozen at its minWidth leaves the rest sized by their own ratios', async () => {
+        const api = createBoundedGroup({ minWidth: 90 });
+        expect(await dragGroupTo(api, 480)).toEqual([90, 192, 198]);
+    });
 });
