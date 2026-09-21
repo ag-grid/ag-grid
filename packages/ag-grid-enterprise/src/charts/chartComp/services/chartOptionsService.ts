@@ -543,20 +543,11 @@ export class ChartOptionsService extends BeanStub {
             const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
             return get(series, expression, undefined) as T;
         }
-        const value = this.readProcessed<T>({ kind: 'series', seriesType }, expression);
-        if (value !== undefined) {
-            return value as T;
-        }
-        // The processed options carry only what the theme configures. Anything left at an AG Charts
-        // property default appears there as undefined, and is only resolved on the live series.
-        const properties = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s))?.properties;
-        const property = get(properties, expression, undefined) as T | undefined;
-        if (property !== undefined) {
-            return property as T;
-        }
-        // A few options inherit their effective value from a sibling, and the series only applies that
-        // inheritance when it serialises itself (e.g. a box plot whisker's stroke from the series stroke).
-        return get(properties?.toJson(), expression, undefined) as T;
+        // The processed options are the full post-theme series options - the live series holds the same
+        // object. An option unset there has no value of its own: the chart derives it at render time (a
+        // box plot whisker inherits the series stroke, a funnel stage label is drawn by the category axis),
+        // so a panel that needs the effective value has to look where the chart does; see `ValueWhenUnset`.
+        return this.readProcessed<T>({ kind: 'series', seriesType }, expression) as T;
     }
 
     private setSeriesOptions<T = string>(

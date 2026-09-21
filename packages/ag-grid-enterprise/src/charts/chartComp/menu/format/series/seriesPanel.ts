@@ -322,15 +322,15 @@ export class SeriesPanel extends Component {
     }
 
     private initStageLabels(): FontPanel {
-        const params = this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels);
         // The stage labels are drawn by the category axis, whose labels the theme clones from
-        // `stageLabel`, so the axis carries the effective font when none has been set here.
-        params.fontValueWhenUnset = (fontKey) => {
+        // `stageLabel`, so the axis carries the effective value - whether the labels are shown and in
+        // which font - when none has been set here.
+        const params = this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels, (key) => {
             const isHorizontal = this.chartMenuUtils.getChartOptions().getValue('direction') === 'horizontal';
             return this.options.chartOptionsService
                 .getCartesianAxisThemeOverridesProxy(isHorizontal ? 'xAxis' : 'yAxis')
-                .getValue(`label.${fontKey}`);
-        };
+                .getValue(`label.${key}`);
+        });
         return new FontPanel(params);
     }
 

@@ -19,6 +19,9 @@ interface Font {
     color?: string;
 }
 
+/** Everything a font panel reads: the font keys and the `enabled` flag behind its toggle. */
+type FontPanelOption = Font & { enabled?: boolean };
+
 export interface FontPanelParams {
     name?: string;
     enabled: boolean;
@@ -27,8 +30,8 @@ export interface FontPanelParams {
     chartMenuParamsFactory: ChartMenuParamsFactory;
     keyMapper: (key: string) => string;
     cssIdentifier?: string;
-    /** Where the effective value for a font key lives when the label itself holds none. */
-    fontValueWhenUnset?: <K extends keyof Font>(fontKey: K) => Font[K];
+    /** Where the effective value for a key lives when the label itself holds none. */
+    valueWhenUnset?: <K extends keyof FontPanelOption>(key: K) => FontPanelOption[K];
 }
 
 export class FontPanel extends Component {
@@ -107,9 +110,10 @@ export class FontPanel extends Component {
     }
 
     private getColorPickerParams(): ColorPickerParams {
-        const { chartMenuParamsFactory, keyMapper, fontValueWhenUnset } = this.params;
-        const params = chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color'));
-        params.value ??= fontValueWhenUnset?.('color');
+        const { chartMenuParamsFactory, keyMapper, valueWhenUnset } = this.params;
+        const params = chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color'), undefined, {
+            valueWhenUnset: valueWhenUnset && (() => valueWhenUnset('color')),
+        });
         // Series labels have no `color` of their own - the effective colour is resolved onto
         // `insideStyle` / `outsideStyle` according to the label placement. Read the style matching the
         // current placement so the picker has a value to show. Writes still go to `color`, which the
@@ -264,8 +268,8 @@ export class FontPanel extends Component {
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
-        const { keyMapper, fontValueWhenUnset } = this.params;
-        return this.chartOptions.getValue<Font[K]>(keyMapper(fontKey)) ?? fontValueWhenUnset?.(fontKey);
+        const { keyMapper, valueWhenUnset } = this.params;
+        return this.chartOptions.getValue<Font[K]>(keyMapper(fontKey)) ?? valueWhenUnset?.(fontKey);
     }
 }
 
