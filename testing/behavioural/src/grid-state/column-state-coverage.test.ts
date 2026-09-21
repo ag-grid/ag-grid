@@ -1,6 +1,6 @@
 import { TestGridsManager } from 'ag-test-utils';
 
-import type { ColumnState, ColumnStateParams } from 'ag-grid-community';
+import type { ColumnState, ColumnStateParams, GridState } from 'ag-grid-community';
 import { convertColumnState } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -87,5 +87,53 @@ describe('grid state carries every column state field', () => {
 
             expect(read(api.getState())).toEqual(expected);
         });
+    });
+});
+
+/**
+ * The write side's reset rule: a full state nulls the fields of every column it omits, so colDef defaults give way
+ * to the state; a partial state (`partialColumnState`) resets only the sections it carries. `pivotSort` is never
+ * reset, as `null` would wipe the colDef default on every pivoted column.
+ */
+describe('setting state resets the column state fields it does not mention', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const stateOf = (api: ReturnType<typeof gridsManager.createGrid>, colId: string) =>
+        api.getColumnState().find((col) => col.colId === colId)!;
+
+    /** colDef defaults for one field per section, none of which the initial state below mentions. */
+    const createWithDefaults = (initialState: GridState) =>
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'sorted', field: 'sorted', sort: 'asc' },
+                { colId: 'pinned', field: 'pinned', pinned: 'left' },
+                { colId: 'pivoted', field: 'pivoted', pivot: true, pivotSort: 'desc' },
+            ],
+            rowData: [],
+            // the initial state carries the sort section only, with nothing sorted
+            initialState: { sort: { sortModel: [] }, ...initialState },
+        });
+
+    test('a full state clears the defaults of every section', () => {
+        const api = createWithDefaults({});
+
+        expect(stateOf(api, 'sorted').sort).toBeNull();
+        expect(stateOf(api, 'pinned').pinned).toBeNull();
+        expect(stateOf(api, 'pivoted').pivot).toBe(false);
+        // never reset, so the colDef default stands
+        expect(stateOf(api, 'pivoted').pivotSort).toBe('desc');
+    });
+
+    test('a partial state clears only the sections it carries', () => {
+        const api = createWithDefaults({ partialColumnState: true });
+
+        expect(stateOf(api, 'sorted').sort).toBeNull();
+        expect(stateOf(api, 'pinned').pinned).toBe('left');
+        expect(stateOf(api, 'pivoted').pivot).toBe(true);
+        expect(stateOf(api, 'pivoted').pivotSort).toBe('desc');
     });
 });
