@@ -226,7 +226,8 @@ describe('Row Numbers context menu (AG-16355)', () => {
     test('Cut from a row-number cell acts on the selected rows, never on the focused data cell', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxCopyRowsNoneSelected', {
             columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
-            rowData,
+            // Cut mutates the row data, so this grid gets its own copy rather than the shared rows
+            rowData: rowData.map((row) => ({ ...row })),
             rowNumbers: true,
             rowSelection: { mode: 'multiRow', copySelectedRows: true },
         });
