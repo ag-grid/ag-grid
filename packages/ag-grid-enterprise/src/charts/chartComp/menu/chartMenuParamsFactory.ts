@@ -17,10 +17,8 @@ import type { ChartTranslationKey, ChartTranslationService } from '../services/c
 import type { FontPanelParams } from './format/fontPanel';
 
 /**
- * Resolves the value a widget shows when the option it binds to is unset. AG Charts leaves some options
- * unset and derives their effective value elsewhere at render time - a box plot whisker inherits the
- * series stroke, a funnel stage label is drawn by the category axis - so the panel has to look where the
- * chart does, otherwise the control shows blank or 0 while the chart renders something else.
+ * What a widget shows when its option is unset and AG Charts derives the effective value elsewhere at
+ * render time (a box plot whisker inherits the series stroke, a stage label is drawn by the category axis).
  */
 type ValueWhenUnset<T = any> = () => T | undefined;
 
@@ -94,8 +92,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         defaultMaxValue: number,
-        isArray?: boolean,
-        valueWhenUnset?: ValueWhenUnset<number | number[]>
+        { isArray, valueWhenUnset }: { isArray?: boolean; valueWhenUnset?: ValueWhenUnset<number | number[]> } = {}
     ): AgSliderParams {
         const optionValue = this.chartOptionsProxy.getValue<number | number[]>(expression) ?? valueWhenUnset?.() ?? 0;
         const value = isArray && Array.isArray(optionValue) ? optionValue[0] : (optionValue as number);

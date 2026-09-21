@@ -1,4 +1,5 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
 import type { ChartType, GridOptions } from 'ag-grid-community';
@@ -368,8 +369,7 @@ const BENIGN_UNRESOLVED: { key: string; chartTypes: ChartType[] }[] = [
         chartTypes: ['radarLine', 'radarArea', 'nightingale'],
     },
     // The whisker inherits the series line dash, which the theme sets to solid (`[0]`, offset 0), so the
-    // panel resolves the same 0 the slider would mask with. `format-panel-inherited-options` pins that
-    // the resolved value is the series' own.
+    // panel resolves the same 0 the slider masks with; `format-panel-inherited-options` pins the value.
     { key: 'getSeriesOptionsProxy() -> whisker.lineDash', chartTypes: ['boxPlot'] },
     { key: 'getSeriesOptionsProxy() -> whisker.lineDashOffset', chartTypes: ['boxPlot'] },
 ];
@@ -386,7 +386,16 @@ export function benignUnresolved(chartType: ChartType): string[] {
  * chart family, and they run in parallel. Each file then runs one `test.each` case per chart type: all 37
  * in one test reported "the format panel is broken" without saying where.
  */
-export function setupFormatPanelSuite(): (chartType: ChartType, read?: string[]) => Promise<PanelBindings> {
+interface OpenFormatPanelOptions {
+    /** Further `scope -> expression` options to look up through the same proxies before the chart is torn down. */
+    read?: string[];
+    chartThemeOverrides?: AgChartThemeOverrides;
+}
+
+export function setupFormatPanelSuite(): (
+    chartType: ChartType,
+    options?: OpenFormatPanelOptions
+) => Promise<PanelBindings> {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -404,11 +413,11 @@ export function setupFormatPanelSuite(): (chartType: ChartType, read?: string[])
     afterAll(() => canvasPolyfill.reset());
     afterEach(() => gridsManager.reset());
 
-    /**
-     * Opens the format panel on a chart of `chartType` and probes every binding it built. `read` names
-     * further options to look up through the same proxies before the chart is torn down.
-     */
-    async function openFormatPanel(chartType: ChartType, read: string[] = []): Promise<PanelBindings> {
+    /** Opens the format panel on a chart of `chartType` and probes every binding it built. */
+    async function openFormatPanel(
+        chartType: ChartType,
+        { read = [], chartThemeOverrides }: OpenFormatPanelOptions = {}
+    ): Promise<PanelBindings> {
         const unresolved: string[] = [];
         const rejected: string[] = [];
         const unexpected: string[] = [];
@@ -424,6 +433,7 @@ export function setupFormatPanelSuite(): (chartType: ChartType, read?: string[])
             const chartRef = api.createRangeChart({
                 cellRange: { columns: ALL_COLUMNS },
                 chartType,
+                chartThemeOverrides,
                 seriesChartTypes:
                     chartType === 'customCombo'
                         ? [

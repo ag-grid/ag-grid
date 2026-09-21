@@ -1,9 +1,8 @@
 import { setupFormatPanelSuite } from './formatPanelOptions';
 
 /**
- * Options AG Charts leaves unset and resolves elsewhere at render time. The sibling suites only prove
- * these bindings resolve to *something*; this one pins *what* the panel shows to the value the chart
- * actually draws with, so a fallback wired to the wrong option cannot pass as resolved.
+ * The sibling suites only prove these bindings resolve to *something*; this one pins *what* the panel
+ * shows to the value the chart draws with, so a fallback wired to the wrong option cannot pass as resolved.
  */
 describe('chart tool panel options - inherited values', () => {
     const openFormatPanel = setupFormatPanelSuite();
@@ -15,15 +14,20 @@ describe('chart tool panel options - inherited values', () => {
     test('box plot whiskers show the series stroke styling they inherit', async () => {
         // Not every inherited option has a series-level control of its own, so ask for them directly.
         const inherited = ['stroke', 'strokeWidth', 'strokeOpacity', 'lineDash', 'lineDashOffset'];
-        const { shown, options } = await openFormatPanel('boxPlot', inherited.map(series));
+        const { shown, options } = await openFormatPanel('boxPlot', {
+            read: inherited.map(series),
+            // The theme's solid dash is the same 0 an unresolved slider masks with, so pin a visible one.
+            chartThemeOverrides: { 'box-plot': { series: { lineDash: [4, 2], lineDashOffset: 3 } } },
+        });
 
-        // The theme leaves `whisker` unset and the chart strokes whiskers with the series stroke, so the
-        // whisker controls must show the series' own values rather than blank or 0.
+        // The theme leaves `whisker` unset, so the controls must show the series' own stroke values.
         expect(options.get(series('stroke'))).toEqual(expect.stringMatching(/^#/));
         expect(shown.get(series('whisker.stroke'))).toBe(options.get(series('stroke')));
         for (const key of inherited.slice(1)) {
-            expect(options.get(series(key))).toBeDefined();
-            expect(shown.get(series(`whisker.${key}`))).toBe(asSliderText(options.get(series(key))));
+            const value = options.get(series(key));
+            expect(value).toBeDefined();
+            expect(asSliderText(value)).not.toBe('0');
+            expect(shown.get(series(`whisker.${key}`))).toBe(asSliderText(value));
         }
     });
 
@@ -32,8 +36,8 @@ describe('chart tool panel options - inherited values', () => {
         async (chartType) => {
             const { shown, options } = await openFormatPanel(chartType);
 
-            // The series holds no `stageLabel` of its own: the theme clones it onto the category axis label,
-            // which is enabled by default, so the toggle must open checked rather than masked to `false`.
+            // The theme clones the unset `stageLabel` onto the category axis label, which is enabled by default.
+            expect(options.has(series('stageLabel.enabled'))).toBe(true);
             expect(options.get(series('stageLabel.enabled'))).toBeUndefined();
             expect(shown.get(series('stageLabel.enabled'))).toBe(true);
             expect(shown.get(series('stageLabel.fontSize'))).toEqual(expect.any(Number));

@@ -543,10 +543,8 @@ export class ChartOptionsService extends BeanStub {
             const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
             return get(series, expression, undefined) as T;
         }
-        // The processed options are the full post-theme series options - the live series holds the same
-        // object. An option unset there has no value of its own: the chart derives it at render time (a
-        // box plot whisker inherits the series stroke, a funnel stage label is drawn by the category axis),
-        // so a panel that needs the effective value has to look where the chart does; see `ValueWhenUnset`.
+        // The processed options are the full post-theme series options. An option unset there is derived by
+        // the chart at render time; a panel needing that effective value names where it lives (`ValueWhenUnset`).
         return this.readProcessed<T>({ kind: 'series', seriesType }, expression) as T;
     }
 

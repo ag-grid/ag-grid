@@ -225,7 +225,7 @@ export class SeriesPanel extends Component {
                 expression ? `${expression}.lineDash` : 'lineDash',
                 'lineDash',
                 30,
-                true
+                { isArray: true }
             )
         );
     }
@@ -322,9 +322,8 @@ export class SeriesPanel extends Component {
     }
 
     private initStageLabels(): FontPanel {
-        // The stage labels are drawn by the category axis, whose labels the theme clones from
-        // `stageLabel`, so the axis carries the effective value - whether the labels are shown and in
-        // which font - when none has been set here.
+        // The stage labels are drawn by the category axis, whose labels the theme clones from `stageLabel`,
+        // so the axis carries the effective value (shown or not, and in which font) when none is set here.
         const params = this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels, (key) => {
             const isHorizontal = this.chartMenuUtils.getChartOptions().getValue('direction') === 'horizontal';
             return this.options.chartOptionsService

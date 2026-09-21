@@ -55,8 +55,7 @@ export class PolarChartProxy extends ChartProxy<
         if (!['nightingale', 'radial-bar', 'radial-column'].includes(standaloneChartType)) {
             return undefined;
         }
-        // The grouping is whatever this proxy last wrote (see `getSeriesGroupTypeOptions`), so the
-        // options the chart was given hold it.
+        // The grouping is whatever this proxy last wrote, so the options handed to the chart hold it.
         const options = this.getChartRef().getOptions() as AgPolarChartOptions;
         const firstSeries = options.series?.[0] as
             | Pick<AgNightingaleSeriesOptions, 'grouped' | 'stacked' | 'normalizedTo'>

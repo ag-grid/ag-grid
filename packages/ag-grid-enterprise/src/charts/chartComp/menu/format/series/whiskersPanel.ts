@@ -19,8 +19,7 @@ export class WhiskersPanel extends Component {
     }
 
     public postConstruct() {
-        // A whisker option left unset inherits the series' own stroke styling, so the controls read
-        // the same value the chart draws with.
+        // A whisker option left unset inherits the series' own stroke styling.
         const seriesOptions = this.chartMenuUtils.getChartOptions();
         const inherited = (expression: string) => () => seriesOptions.getValue<any>(expression);
         const whiskersGroupParams: GroupComponentParams = {
@@ -51,29 +50,23 @@ export class WhiskersPanel extends Component {
                     'whisker.strokeWidth',
                     'strokeWidth',
                     10,
-                    false,
-                    inherited('strokeWidth')
+                    { valueWhenUnset: inherited('strokeWidth') }
                 ),
                 whiskerOpacitySlider: this.chartMenuUtils.getDefaultSliderParams(
                     'whisker.strokeOpacity',
                     'strokeOpacity',
                     1,
-                    false,
-                    inherited('strokeOpacity')
+                    { valueWhenUnset: inherited('strokeOpacity') }
                 ),
-                whiskerLineDashSlider: this.chartMenuUtils.getDefaultSliderParams(
-                    'whisker.lineDash',
-                    'lineDash',
-                    30,
-                    true,
-                    inherited('lineDash')
-                ),
+                whiskerLineDashSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.lineDash', 'lineDash', 30, {
+                    isArray: true,
+                    valueWhenUnset: inherited('lineDash'),
+                }),
                 whiskerLineDashOffsetSlider: this.chartMenuUtils.getDefaultSliderParams(
                     'whisker.lineDashOffset',
                     'lineDashOffset',
                     30,
-                    false,
-                    inherited('lineDashOffset')
+                    { valueWhenUnset: inherited('lineDashOffset') }
                 ),
             }
         );
