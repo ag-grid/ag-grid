@@ -212,30 +212,6 @@ Clicking the header checkbox, however, will select all rows even if their checkb
 
 {% gridExampleRunner title="Force Checkboxes to be Selected" name="force-enable-checkboxes" /%}
 
-## Deselecting a Row by Clicking It
-
-By default, clicking a row that is already selected has no effect beyond clearing any other selected rows: deselection requires a {% kbd "^ Ctrl" /%}-click, the {% kbd "␣ Space" /%} key, or clicking a selected checkbox. Setting `rowSelection.enableClickToggle` to `true` deselects the row when it is the only selected row, so a single click toggles selection on and off.
-
-{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["enableClickToggle"] config={"description": ""}/%}
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    rowSelection: {
-        mode: 'multiRow',
-        enableClickSelection: true,
-        enableClickToggle: true,
-    }
-}
-```
-
-In the example below, click a row to select it and click it again to deselect it. {% kbd "^ Ctrl" /%}-click a second row first to see that clicking a selected row still reduces the selection to that row rather than deselecting it.
-
-{% gridExampleRunner title="Toggle Selection on Click" name="toggle-selection-on-click" /%}
-
-{% note %}
-This property requires deselection to be permitted by `enableClickSelection`, so it has no effect when that property is `false` or `'enableSelection'`, and the grid warns if it is configured that way. It is also redundant when [`enableSelectionWithoutKeys`](#selecting-multiple-rows-without-ctrl-key) is enabled, as clicking a selected row already deselects it in that mode.
-{% /note %}
-
 ## Selecting Multiple Rows without Ctrl key
 
 In certain circumstances, especially in the context of touchscreen devices, users may want to select multiple rows without having to use the {% kbd "^ Ctrl" /%} key.

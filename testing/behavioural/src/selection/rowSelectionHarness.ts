@@ -1,7 +1,7 @@
 // Shared setup for the client-side row-selection suites: the grid manager, the flat and grouped fixtures
 // every one of them drives, and the hooks. Siblings rather than one file because vitest parallelises across
 // files but not within one, so 124 grid-building tests in a single file serialise in one worker.
-import { TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { StudioStubModule, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
 import {
@@ -70,6 +70,16 @@ export async function createGridAndWait(gridOptions: GridOptions, params?: Param
     await waitForEvent('firstDataRendered', api);
 
     return [api, actions];
+}
+
+/** Creates a grid that behaves as if it were running inside AG Studio. */
+export function createStudioGrid(gridOptions: GridOptions): [GridApi, GridActions] {
+    return createGrid(gridOptions, { modules: [StudioStubModule] });
+}
+
+/** Creates a grid that behaves as if it were running inside AG Studio, waiting for the first render. */
+export function createStudioGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
+    return createGridAndWait(gridOptions, { modules: [StudioStubModule] });
 }
 
 /** Registers the hooks every sibling suite needs. */

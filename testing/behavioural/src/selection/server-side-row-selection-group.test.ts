@@ -4,7 +4,11 @@ import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByInde
 import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
 
 import { fakeFetch } from './group-data';
-import { createGridAndWait, setupServerSideRowSelectionSuite } from './serverSideRowSelectionHarness';
+import {
+    createGridAndWait,
+    createStudioGridAndWait,
+    setupServerSideRowSelectionSuite,
+} from './serverSideRowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -184,14 +188,13 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('enableClickToggle deselects a group row whose subtree is the whole selection', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking a group row whose subtree is the whole selection deselects it', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 
@@ -202,14 +205,13 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([], api);
             });
 
-            test('enableClickToggle does not deselect a group row while another group is selected', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking a group row does not deselect it while another group is selected', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 
@@ -228,14 +230,13 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
             });
 
-            test("enableClickToggle deselects a group that is its parent's only row", async () => {
-                const [api, actions] = await createGridAndWait({
+            test("in Studio, clicking a group that is its parent's only row deselects it", async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 
@@ -252,12 +253,12 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([], api);
             });
 
-            test('enableClickToggle does not deselect a row while filtered-out siblings are selected', async () => {
+            test('in Studio, clicking a row does not deselect it while filtered-out siblings are selected', async () => {
                 const rows = [
                     { country: 'X', name: 'A' },
                     { country: 'X', name: 'B' },
                 ];
-                const [api, actions] = await createGridAndWait({
+                const [api, actions] = await createStudioGridAndWait({
                     columnDefs: [
                         { field: 'country', rowGroup: true, hide: true },
                         { field: 'name', filter: 'agTextColumnFilter' },
@@ -280,7 +281,6 @@ describe('Row Selection Grid Options', () => {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 

@@ -147,30 +147,6 @@ The example below demonstrates the three possible configurations for this proper
 Note that deselection is still possible using the {% kbd "␣ Space" /%} key or when checkboxes are enabled by clicking a selected checkbox.
 {% /note %}
 
-## Deselecting a Row by Clicking It
-
-By default, clicking a row that is already selected has no effect: deselection requires a {% kbd "^ Ctrl" /%}-click, the {% kbd "␣ Space" /%} key, or clicking a selected checkbox. Setting `rowSelection.enableClickToggle` to `true` instead deselects the row, so a single click toggles selection on and off.
-
-{% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["enableClickToggle"] config={"description": ""}/%}
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    rowSelection: {
-        mode: 'singleRow',
-        enableClickSelection: true,
-        enableClickToggle: true,
-    }
-}
-```
-
-In the example below, click a row to select it and click it again to deselect it.
-
-{% gridExampleRunner title="Toggle Selection on Click" name="toggle-selection-on-click" /%}
-
-{% note %}
-This property requires deselection to be permitted by `enableClickSelection`, so it has no effect when that property is `false` or `'enableSelection'`, and the grid warns if it is configured that way.
-{% /note %}
-
 ## API Reference
 
 See the full list of configuration options available in `'singleRow'` mode.

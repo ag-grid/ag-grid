@@ -1,6 +1,11 @@
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
-import { createGridAndWait, groupGridOptions, setupRowSelectionSuite } from './rowSelectionHarness';
+import {
+    createGridAndWait,
+    createStudioGridAndWait,
+    groupGridOptions,
+    setupRowSelectionSuite,
+} from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -367,14 +372,13 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('enableClickToggle deselects a group row whose subtree is the whole selection', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking a group row whose subtree is the whole selection deselects it', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 
@@ -385,14 +389,13 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('enableClickToggle does not deselect a group row while another branch is selected', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking a group row does not deselect it while another branch is selected', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 

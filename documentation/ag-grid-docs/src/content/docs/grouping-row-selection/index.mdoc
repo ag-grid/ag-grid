@@ -33,27 +33,6 @@ const gridOptions = {
 When using `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'`, group nodes will not be returned as part of `api.getSelectedNodes()` or `api.getSelectedRows()`.
 {% /note %}
 
-## Deselecting a Group Row by Clicking It
-
-[`rowSelection.enableClickToggle`](./row-selection-multi-row/#deselecting-a-row-by-clicking-it) also applies to group rows. Clicking a selected group deselects it and its descendants, as long as no other rows are selected. When rows elsewhere in the grid are selected, the click reduces the selection to that group instead.
-
-{% gridExampleRunner title="Toggle Group Selection on Click" name="toggle-group-selection-on-click" /%}
-
-The example above demonstrates the following configuration:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    rowSelection: {
-        mode: 'multiRow',
-        groupSelects: 'descendants',
-        enableClickSelection: true,
-        enableClickToggle: true,
-    },
-}
-```
-
-Click a country to select it and its descendants, then click it again to deselect them. {% kbd "^ Ctrl" /%}-click a second country to see the next click reduce the selection to one country rather than deselect it.
-
 ## Checkboxes in Group Cells
 
 When using [Row Selection](./row-selection/) with grouping, the grid can be configured to render checkboxes in the group cell, to

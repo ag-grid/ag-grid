@@ -5,6 +5,7 @@ import type { RowSelectedEvent } from 'ag-grid-community';
 import {
     columnDefs,
     createGridAndWait,
+    createStudioGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
@@ -175,8 +176,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('enableClickToggle deselects the only selected row when it is clicked', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking the only selected row deselects it', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     columnDefs,
                     rowModelType: 'serverSide',
                     serverSideDatasource: {
@@ -187,7 +188,6 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: {
                         mode: 'multiRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 
@@ -198,8 +198,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('enableClickToggle still reduces the selection when other rows are selected', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking a selected row still reduces a wider selection to it', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     columnDefs,
                     rowModelType: 'serverSide',
                     serverSideDatasource: {
@@ -210,7 +210,6 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: {
                         mode: 'multiRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                     },
                 });
 
@@ -220,7 +219,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([3], api);
                 await new GridRows(
                     api,
-                    `enableClickToggle still reduces the selection when other rows are selected after reducing`
+                    `in Studio, clicking a selected row still reduces a wider selection to it after reducing`
                 ).check(`
                     ROOT id:<no-id>
                     ├── LEAF id:0 sport:"football"

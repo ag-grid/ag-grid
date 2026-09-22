@@ -9,7 +9,6 @@ import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
     _getCheckboxes,
-    _getEnableClickToggle,
     _getEnableDeselection,
     _getEnableSelection,
     _getEnableSelectionWithoutKeys,
@@ -289,7 +288,8 @@ export abstract class BaseSelectionService extends BeanStub {
         const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         const enableClickSelection = _getEnableSelection(gos);
         const enableDeselection = _getEnableDeselection(gos);
-        const enableClickToggle = _getEnableClickToggle(gos);
+        // AG Studio only: clicking the sole selected row deselects it rather than re-selecting it
+        const enableClickToggle = !!this.beans.studio;
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
 

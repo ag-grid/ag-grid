@@ -1,10 +1,11 @@
-// `rowSelection.enableClickToggle` turns a click on the row that is the whole selection into a
-// deselection, which means the click path first asks `isSoleSelection`. That read is O(1) on a flat
-// grid but walks the selected nodes under `groupSelects: 'descendants'`, so both shapes are measured.
+// Inside AG Studio a click on the row that is the whole selection is a deselection, which means the
+// click path first asks `isSoleSelection`. That read is O(1) on a flat grid but walks the selected
+// nodes under `groupSelects: 'descendants'`, so both shapes are measured.
 //
 // Each iteration clicks the same row, so state alternates: select, then deselect. The measurement is
 // the whole gesture — the `isSoleSelection` read plus the selection mutation it enables — and the
 // mutation dominates for the grouped case, where selecting a group touches every descendant.
+import { StudioStubModule } from 'ag-test-utils';
 import { bench, suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
@@ -13,7 +14,8 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { BenchGridsManager, benchDefaults } from './bench-utils';
 
-const modules = [ClientSideRowModelModule, RowSelectionModule, RowGroupingModule];
+// the toggle only applies inside Studio, so every grid here is created as if it were
+const modules = [ClientSideRowModelModule, RowSelectionModule, RowGroupingModule, StudioStubModule];
 
 const ROW_COUNT = 20_000;
 
@@ -69,7 +71,6 @@ suite('row selection — click toggle', () => {
                 mode: 'multiRow',
                 checkboxes: false,
                 enableClickSelection: true,
-                enableClickToggle: true,
             },
         },
         buildRowData(1)
@@ -85,7 +86,6 @@ suite('row selection — click toggle', () => {
                 groupSelects: 'descendants',
                 checkboxes: false,
                 enableClickSelection: true,
-                enableClickToggle: true,
             },
         },
         buildRowData(1)
@@ -100,7 +100,6 @@ suite('row selection — click toggle', () => {
                 groupSelects: 'descendants',
                 checkboxes: false,
                 enableClickSelection: true,
-                enableClickToggle: true,
             },
         },
         buildRowData(100)

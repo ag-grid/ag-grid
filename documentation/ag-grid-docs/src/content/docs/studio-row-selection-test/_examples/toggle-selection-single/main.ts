@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -13,6 +13,18 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
+// AG Studio contributes a `studio` bean to every grid it creates, and the deselect-on-click behaviour
+// this page exercises is gated on that bean. This stands in for it so the behaviour can be driven here.
+class StudioStub {
+    beanName = 'studio' as const;
+}
+
+const StudioStubModule: Module = {
+    moduleName: 'Studio' as Module['moduleName'],
+    version: ClientSideRowModelModule.version,
+    beans: [StudioStub],
+};
+
 ModuleRegistry.registerModules([
     RowSelectionModule,
     ClientSideRowModelModule,
@@ -20,6 +32,7 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
+    StudioStubModule,
 ]);
 
 let gridApi: GridApi<IOlympicData>;
@@ -28,11 +41,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
     defaultColDef: { flex: 1, minWidth: 100 },
     rowSelection: {
-        mode: 'multiRow',
+        mode: 'singleRow',
         checkboxes: false,
-        headerCheckbox: false,
         enableClickSelection: true,
-        enableClickToggle: true,
     },
 };
 

@@ -4,6 +4,7 @@ import {
     capturedWarnings,
     columnDefs,
     createGridAndWait,
+    createStudioGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
@@ -254,13 +255,12 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('enableClickToggle deselects the only selected row when it is clicked', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking the only selected row deselects it', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     columnDefs,
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                         checkboxes: false,
                     },
                     rowModelType: 'serverSide',

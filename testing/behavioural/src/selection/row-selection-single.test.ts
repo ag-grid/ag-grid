@@ -1,9 +1,15 @@
-import { ALL_SEVERITIES, GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
+import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
-import { enableDevValidations } from 'ag-grid-community';
 
-import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import {
+    columnDefs,
+    createGrid,
+    createStudioGrid,
+    createStudioGridAndWait,
+    rowData,
+    setupRowSelectionSuite,
+} from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -265,14 +271,13 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('enableClickToggle deselects the only selected row when it is clicked', async () => {
-                const [api, actions] = createGrid({
+            test('in Studio, clicking the only selected row deselects it', async () => {
+                const [api, actions] = createStudioGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                         checkboxes: false,
                     },
                 });
@@ -284,14 +289,13 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('enableClickToggle leaves clicking a different row unchanged', async () => {
-                const [api, actions] = createGrid({
+            test('in Studio, clicking a different row still moves the selection', async () => {
+                const [api, actions] = createStudioGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                         checkboxes: false,
                     },
                 });
@@ -301,7 +305,7 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(4);
                 assertSelectedRowsByIndex([4], api);
-                await new GridRows(api, `enableClickToggle leaves clicking a different row unchanged final state`)
+                await new GridRows(api, `in Studio, clicking a different row still moves the selection final state`)
                     .check(`
                         ROOT id:ROOT_NODE_ID
                         ├── LEAF id:0 sport:"football"
@@ -314,17 +318,13 @@ describe('Row Selection Grid Options', () => {
                     `);
             });
 
-            test('enableClickToggle does not deselect when deselection is disabled', async () => {
-                // the misconfiguration is the point of this test, so #319 is accepted
-                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
-
-                const [api, actions] = createGrid({
+            test('in Studio, clicking the only selected row does not deselect it when deselection is disabled', async () => {
+                const [api, actions] = createStudioGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: 'enableSelection',
-                        enableClickToggle: true,
                         checkboxes: false,
                     },
                 });
@@ -334,8 +334,7 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(2);
                 assertSelectedRowsByIndex([2], api);
-                await new GridRows(api, `enableClickToggle does not deselect when deselection is disabled final state`)
-                    .check(`
+                await new GridRows(api, `in Studio, deselection stays disabled final state`).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
@@ -347,15 +346,14 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('enableClickToggle deselection forwards the browser click event', async () => {
+            test('in Studio, deselecting by click forwards the browser click event', async () => {
                 const events: RowSelectedEvent[] = [];
-                const [api, actions] = createGrid({
+                const [api, actions] = createStudioGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                         checkboxes: false,
                     },
                     onRowSelected: (event) => events.push(event),
@@ -371,8 +369,8 @@ describe('Row Selection Grid Options', () => {
                 expect(events.map(({ event }) => event)).toEqual([selectClick, deselectClick]);
             });
 
-            test('enableClickToggle deselects a manually pinned row', async () => {
-                const [api, actions] = await createGridAndWait({
+            test('in Studio, clicking the only selected row deselects it when the row is pinned', async () => {
+                const [api, actions] = await createStudioGridAndWait({
                     columnDefs,
                     rowData,
                     enableRowPinning: true,
@@ -380,7 +378,6 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: true,
-                        enableClickToggle: true,
                         checkboxes: false,
                     },
                 });
@@ -395,26 +392,6 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowById(pinned[0]);
                 assertSelectedRowsByIndex([], api);
-            });
-
-            test('enableClickToggle without click selection warns and does nothing', async () => {
-                // this test asserts #319 fires, so it opts out of the throw, not the warning
-                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
-                const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-
-                const [api, actions] = createGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: { mode: 'singleRow', enableClickToggle: true, checkboxes: false },
-                });
-
-                actions.clickRowByIndex(2);
-                assertSelectedRowsByIndex([], api);
-
-                const warnings = warnSpy.mock.calls.flat().join(' ');
-                warnSpy.mockRestore();
-                expect(warnings).toContain('warning #319');
-                expect(warnings).toContain('enableClickToggle');
             });
 
             test('un-selectable row cannot be selected', async () => {

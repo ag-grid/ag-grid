@@ -557,15 +557,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         value: (rowSelection as any).mode,
                     });
                 }
-                if (rowSelection?.enableClickToggle) {
-                    const { enableClickSelection } = rowSelection;
-                    if (enableClickSelection !== true && enableClickSelection !== 'enableDeselection') {
-                        return _createValidationWarning(319, {
-                            feature: '`rowSelection.enableClickToggle`',
-                            requirement: '`enableClickSelection` to be `true` or `"enableDeselection"`',
-                        });
-                    }
-                }
                 return null;
             },
         },

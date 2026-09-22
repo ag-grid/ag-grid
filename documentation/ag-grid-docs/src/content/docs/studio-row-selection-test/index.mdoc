@@ -1,0 +1,25 @@
+---
+title: "Studio Row Selection Test"
+---
+
+This is an internal page used to check the deselect-on-click behaviour that the grid enables only when it is running inside AG Studio. It is intentionally left out of the site navigation.
+
+Studio contributes a `studio` bean to every grid it creates, and this behaviour is gated on that bean rather than on a grid option, so each example here registers a stand-in module that supplies the same bean.
+
+## Single row selection
+
+Clicking a row selects it, and clicking it again deselects it — where by default a click on the selected row does nothing.
+
+{% gridExampleRunner title="Toggle Selection Single" name="toggle-selection-single" /%}
+
+## Multi row selection
+
+The same toggle, but only when the clicked row is the whole selection. {% kbd "^ Ctrl" /%}-click a second row first to check that the next click reduces the selection to the clicked row rather than deselecting it.
+
+{% gridExampleRunner title="Toggle Selection Multi" name="toggle-selection-multi" /%}
+
+## Grouped rows
+
+With `groupSelects: 'descendants'`, clicking a selected group deselects it and its descendants, as long as nothing outside that subtree is selected. {% kbd "^ Ctrl" /%}-click a second country to check that the click reduces the selection to one country instead.
+
+{% gridExampleRunner title="Toggle Group Selection" name="toggle-group-selection" /%}
