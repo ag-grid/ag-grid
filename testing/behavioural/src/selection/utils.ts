@@ -69,16 +69,20 @@ export class GridActions {
         assertSelectedRowsById(ids, this.api);
     }
 
-    clickRowByIndex(index: number, opts?: MouseEventInit): void {
-        this.getRowByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    clickRowByIndex(index: number, opts?: MouseEventInit): MouseEvent {
+        const event = new MouseEvent('click', { ...opts, bubbles: true });
+        this.getRowByIndex(index)?.dispatchEvent(event);
+        return event;
     }
 
     clickRowById(id: string, opts?: MouseEventInit): void {
         this.getRowById(id)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
     }
 
-    toggleCheckboxByIndex(index: number, opts?: MouseEventInit): void {
-        this.getCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    toggleCheckboxByIndex(index: number, opts?: MouseEventInit): MouseEvent {
+        const event = new MouseEvent('click', { ...opts, bubbles: true });
+        this.getCheckboxByIndex(index)?.dispatchEvent(event);
+        return event;
     }
 
     toggleCheckboxById(id: string, opts?: MouseEventInit): void {

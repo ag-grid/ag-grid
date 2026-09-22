@@ -341,10 +341,8 @@ describe('Row Selection Grid Options', () => {
                     onRowSelected: (event) => events.push(event),
                 });
 
-                const rowClick = new MouseEvent('click', { bubbles: true });
-                const checkboxClick = new MouseEvent('click', { bubbles: true });
-                actions.getRowByIndex(1)!.dispatchEvent(rowClick);
-                actions.getCheckboxByIndex(3)!.dispatchEvent(checkboxClick);
+                const rowClick = actions.clickRowByIndex(1);
+                const checkboxClick = actions.toggleCheckboxByIndex(3);
 
                 // gridOptions callbacks are dispatched asynchronously via setTimeout
                 await new Promise((resolve) => setTimeout(resolve, 0));
