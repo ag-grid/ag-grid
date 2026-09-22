@@ -104,7 +104,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             });
         }
 
-        this.shotgunResetNodeSelectionState(source);
+        this.shotgunResetNodeSelectionState(source, event);
         this.dispatchSelectionChanged(source);
 
         return updatedRows;
@@ -161,7 +161,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         }
 
         const changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
-        this.shotgunResetNodeSelectionState(adjustedParams.source);
+        this.shotgunResetNodeSelectionState(adjustedParams.source, adjustedParams.event);
         this.dispatchSelectionChanged(adjustedParams.source);
         return changedNodes;
     }
@@ -180,7 +180,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged('api');
     }
 
-    private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
+    private shotgunResetNodeSelectionState(source?: SelectionEventSourceType, event?: Event) {
         this.beans.rowModel.forEachNode((node) => {
             if (node.stub) {
                 return;
@@ -188,15 +188,15 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
             const isNodeSelected = this.selectionStrategy.isNodeSelected(node);
             if (isNodeSelected !== node.isSelected()) {
-                this.selectRowNode(node, isNodeSelected, undefined, source);
+                this.selectRowNode(node, isNodeSelected, event, source);
             }
         });
 
-        this.syncRootNode(source);
+        this.syncRootNode(source, event);
     }
 
     /** `forEachNode` skips the root, whose selection the grand total row reports as its own. */
-    private syncRootNode(source?: SelectionEventSourceType): void {
+    private syncRootNode(source?: SelectionEventSourceType, event?: Event): void {
         const rootNode = this.beans.rowModel.rootNode;
         if (!rootNode) {
             return;
@@ -204,7 +204,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
         const isRootSelected = this.selectionStrategy.isNodeSelected(rootNode);
         if (isRootSelected !== rootNode.isSelected()) {
-            this.selectRowNode(rootNode, isRootSelected, undefined, source);
+            this.selectRowNode(rootNode, isRootSelected, event, source);
         }
     }
 
