@@ -390,8 +390,9 @@ export abstract class BaseSelectionService extends BeanStub {
             }
 
             if (isRowClicked) {
+                // isSoleSelection matches by identity, so a pinned clone must resolve to its source row
                 const newValue = currentSelection
-                    ? !(enableSelectionWithoutKeys || (enableClickToggle && this.isSoleSelection(node)))
+                    ? !(enableSelectionWithoutKeys || (enableClickToggle && this.isSoleSelection(node.primaryRow)))
                     : enableClickSelection;
 
                 // if selecting, only proceed if not disabled by grid options

@@ -3,7 +3,7 @@ import { ALL_SEVERITIES, GridColumns, GridRows, assertSelectedRowsByIndex } from
 import type { RowSelectedEvent } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 
-import { columnDefs, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -369,6 +369,32 @@ describe('Row Selection Grid Options', () => {
 
                 assertSelectedRowsByIndex([], api);
                 expect(events.map(({ event }) => event)).toEqual([selectClick, deselectClick]);
+            });
+
+            test('enableClickToggle deselects a manually pinned row', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowData,
+                    enableRowPinning: true,
+                    isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+                    rowSelection: {
+                        mode: 'singleRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                        checkboxes: false,
+                    },
+                });
+
+                // the pinned row is a clone of row 1, carrying its own id
+                const pinned: string[] = [];
+                api.forEachPinnedRow('top', (node) => pinned.push(node.id!));
+                expect(pinned).toEqual(['t-top-1']);
+
+                actions.clickRowById(pinned[0]);
+                assertSelectedRowsByIndex([1], api);
+
+                actions.clickRowById(pinned[0]);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('enableClickToggle without click selection warns and does nothing', async () => {
