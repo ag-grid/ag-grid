@@ -22,12 +22,14 @@ export abstract class BaseExpansionService extends BeanStub {
     public getRowExpandedListeners(rowCtrl: RowCtrl): {
         expandedChanged: () => void;
         hasChildrenChanged: () => void;
+        masterChanged: () => void;
     } {
         const { rowNode } = rowCtrl;
         const updateExpandedCss = this.updateExpandedCss.bind(this, rowCtrl, rowNode);
         return {
             expandedChanged: updateExpandedCss,
             hasChildrenChanged: updateExpandedCss,
+            masterChanged: updateExpandedCss,
         };
     }
 

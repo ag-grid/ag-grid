@@ -1,4 +1,5 @@
 import {
+    _debounce,
     _getInnerWidth,
     _getScrollLeft,
     _isElementChildOfClass,
@@ -12,7 +13,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
-import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import { _isAnimateRows, _isDomLayout, _isServerSideRowModel } from '../gridOptionsUtils';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { VerticalSection } from '../interfaces/iGridSection';
@@ -175,9 +176,18 @@ export class GridBodyCtrl extends BeanStub {
             },
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
+            modelUpdated: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
             rowResizeEnded: toggleRowResizeStyle,
         });
+
+        const masterDetailSvc = this.beans.masterDetailSvc;
+        if (_isServerSideRowModel(this.gos) && masterDetailSvc) {
+            // Individual SSRM row updates can change master status without refreshing the model.
+            this.addManagedListeners(masterDetailSvc, {
+                masterChanged: _debounce(this, setGridRootRole, 0),
+            });
+        }
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
         this.addManagedPropertyListener('enableRtl', updatePinnedColumnStickyOffsets);
@@ -377,6 +387,10 @@ export class GridBodyCtrl extends BeanStub {
             const rowGroupColumnLen = !rowGroupColsSvc ? 0 : rowGroupColsSvc.columns.length;
             const columnsNeededForGrouping = isPivotActive ? 2 : 1;
             isTreeGrid = rowGroupColumnLen >= columnsNeededForGrouping;
+        }
+
+        if (!isTreeGrid && gos.get('masterDetail')) {
+            isTreeGrid = this.beans.masterDetailSvc?.hasExpandableMasterRows() ?? false;
         }
 
         this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');
