@@ -109,7 +109,7 @@ const GridExample = () => {
                     <div>
                         <span className="button-group">
                             <button onClick={reloadGrid}>Recreate Grid with Current State</button>
-                            <button onClick={printState}>Print State</button>
+                            <button onClick={printState}>Print Grid State</button>
                         </span>
                     </div>
                     <div style={gridStyle}>

@@ -37,7 +37,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
             <div>
                 <span class="button-group">
                     <button (click)="reloadGrid()">Recreate Grid with Current State</button>
-                    <button (click)="printState()">Print State</button>
+                    <button (click)="printState()">Print Grid State</button>
                 </span>
             </div>
             @if (gridVisible()) {

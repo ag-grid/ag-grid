@@ -55,7 +55,7 @@ async function captureSettledGrid(page: Page) {
 
 // The grid records every state change (onStateUpdated) and, when recreated, seeds the new
 // grid from the previous grid's state so sort/filter/etc. are restored. State changes and
-// getState() are logged to the console via the Print State / Recreate buttons.
+// getState() are logged to the console via the Print Grid State / Recreate buttons.
 test.agExample(import.meta, () => {
     test.eachFramework('Sorting fires the state updated event', async ({ agIdFor, page }) => {
         const logs: string[] = [];
@@ -76,7 +76,7 @@ test.agExample(import.meta, () => {
         page.off('console', handler);
     });
 
-    test.eachFramework('Print State logs the current grid state', async ({ page }) => {
+    test.eachFramework('Print Grid State logs the current grid state', async ({ page }) => {
         const logs: string[] = [];
         const handler = (msg: { text: () => string }) => logs.push(msg.text());
         page.on('console', handler);
@@ -84,7 +84,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
-        await page.getByRole('button', { name: 'Print State', exact: true }).click();
+        await page.getByRole('button', { name: 'Print Grid State', exact: true }).click();
         await expect(() => {
             expect(logs.some((l) => l.includes('Grid state'))).toBe(true);
         }).toPass();

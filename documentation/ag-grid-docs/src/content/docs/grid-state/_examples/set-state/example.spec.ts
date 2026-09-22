@@ -195,7 +195,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'none');
     });
 
-    test.eachFramework('Print State logs the current grid state', async ({ page }) => {
+    test.eachFramework('Print Grid State logs the current grid state', async ({ page }) => {
         const logs: string[] = [];
         const handler = (msg: { text: () => string }) => logs.push(msg.text());
         page.on('console', handler);
@@ -203,7 +203,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
-        await page.getByRole('button', { name: 'Print State', exact: true }).click();
+        await page.getByRole('button', { name: 'Print Grid State', exact: true }).click();
         await expect(() => {
             expect(logs.some((l) => l.includes('Grid state'))).toBe(true);
         }).toPass();

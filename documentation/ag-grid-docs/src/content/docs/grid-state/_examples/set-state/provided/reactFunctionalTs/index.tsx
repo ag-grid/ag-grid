@@ -128,7 +128,7 @@ const GridExample = () => {
                             <button onClick={saveState}>Save State</button>
                             <button onClick={reloadGrid}>Recreate Grid with No State</button>
                             <button onClick={setState}>Set State</button>
-                            <button onClick={printState}>Print State</button>
+                            <button onClick={printState}>Print Grid State</button>
                         </span>
                     </div>
                     <div style={gridStyle}>

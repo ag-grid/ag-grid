@@ -39,7 +39,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     <button (click)="saveState()">Save State</button>
                     <button (click)="reloadGrid()">Recreate Grid with No State</button>
                     <button (click)="setState()">Set State</button>
-                    <button (click)="printState()">Print State</button>
+                    <button (click)="printState()">Print Grid State</button>
                 </span>
             </div>
             @if (gridVisible()) {
