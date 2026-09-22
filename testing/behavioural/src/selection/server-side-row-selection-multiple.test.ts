@@ -1,5 +1,7 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
 
+import type { RowSelectedEvent } from 'ag-grid-community';
+
 import {
     columnDefs,
     createGridAndWait,
@@ -323,6 +325,30 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('rowSelected reports the originating browser event', async () => {
+                const events: RowSelectedEvent[] = [];
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                    onRowSelected: (event) => events.push(event),
+                });
+
+                const rowClick = actions.clickRowByIndex(1);
+                const checkboxClick = actions.toggleCheckboxByIndex(3);
+
+                // gridOptions callbacks are dispatched asynchronously via setTimeout
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                assertSelectedRowsByIndex([1, 3], api);
+                expect(events.map(({ event }) => event)).toEqual([rowClick, checkboxClick]);
             });
         });
     });
