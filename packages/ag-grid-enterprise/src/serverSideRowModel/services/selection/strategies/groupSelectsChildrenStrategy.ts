@@ -403,9 +403,28 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return -1;
     }
 
-    public isSoleSelection(_node: RowNode): boolean {
-        // selection is a tree of toggled routes here, not a row set, so this is not yet derivable
-        return false;
+    public isSoleSelection(node: RowNode): boolean {
+        if (this.rootSelected || node.level === -1) {
+            return false;
+        }
+
+        let state = this.selectedState;
+        const route = this.getRouteToNode(node);
+        // `selectAllChildren` means rows outside the subtree are selected; a second toggle, a sibling branch
+        for (const step of route) {
+            if (state.selectAllChildren || state.toggledNodes.size !== 1) {
+                return false;
+            }
+            const nextState = state.toggledNodes.get(step.id!);
+            if (!nextState) {
+                return false;
+            }
+            state = nextState;
+        }
+
+        // a selected row — leaf or wholly-selected group — is written as `selectAllChildren` with no
+        // toggles beneath it; anything below means part of the subtree is deselected
+        return state.selectAllChildren && state.toggledNodes.size === 0;
     }
 
     public isEmpty(): boolean {

@@ -183,6 +183,43 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
+            test('enableClickToggle deselects a group row whose subtree is the whole selection', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                    },
+                });
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([], api);
+            });
+
+            test('enableClickToggle does not deselect a group row while another group is selected', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                    },
+                });
+
+                actions.clickRowByIndex(0);
+                actions.clickRowByIndex(1, { ctrlKey: true });
+
+                // a second branch holds its own selection state, so the click reduces rather than clears
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
+            });
+
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
