@@ -400,9 +400,10 @@ describe('Row Selection Grid Options', () => {
                 actions.clickRowByIndex(2);
                 assertSelectedRowsByIndex([], api);
 
-                const warnings = warnSpy.mock.calls.map((call) => call.map(String).join(' '));
+                const warnings = warnSpy.mock.calls.flat().join(' ');
                 warnSpy.mockRestore();
-                expect(warnings.filter((warning) => warning.includes('enableClickToggle'))).toHaveLength(1);
+                expect(warnings).toContain('warning #319');
+                expect(warnings).toContain('enableClickToggle');
             });
 
             test('un-selectable row cannot be selected', async () => {

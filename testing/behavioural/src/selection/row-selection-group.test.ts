@@ -398,6 +398,7 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(0);
                 actions.clickRowByIndex(15, { ctrlKey: true });
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 17], api);
 
                 // a second branch is selected, so the click reduces the selection rather than clearing it
                 actions.clickRowByIndex(0);

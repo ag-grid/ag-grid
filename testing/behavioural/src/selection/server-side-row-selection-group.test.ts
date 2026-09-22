@@ -214,6 +214,13 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(0);
                 actions.clickRowByIndex(1, { ctrlKey: true });
+                assertSelectedRowsById(
+                    [
+                        getRowIdRaw({ data: { country: 'United States' }, api }),
+                        getRowIdRaw({ data: { country: 'Russia' }, api }),
+                    ],
+                    api
+                );
 
                 // a second branch holds its own selection state, so the click reduces rather than clears
                 actions.clickRowByIndex(0);
