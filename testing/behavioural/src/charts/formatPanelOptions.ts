@@ -135,7 +135,7 @@ function instrumentPanels(): Instrumentation {
     ) => {
         const proxy = (factory as any).chartOptionsProxy as ChartOptionsProxy;
         const choices = kind === 'select' && Array.isArray(args[2]) ? args[2].map((o: any) => o?.value) : undefined;
-        const isArray = kind === 'slider' && args[3] === true;
+        const isArray = kind === 'slider' && args[3]?.isArray === true;
         widgets.push({ scope: scopes.get(proxy) ?? 'unknown', expression, kind, choices, isArray, proxy, params });
     };
 
