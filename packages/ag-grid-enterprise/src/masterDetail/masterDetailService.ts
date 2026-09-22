@@ -19,7 +19,7 @@ import {
     _isServerSideRowModel,
 } from 'ag-grid-community';
 
-export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
+export class MasterDetailService extends BeanStub<'masterChanged'> implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
 
     public store: { [id: string]: DetailGridInfo | undefined } = {};
@@ -109,7 +109,17 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         if (newMaster !== oldMaster) {
             row.master = newMaster;
             row.dispatchRowEvent('masterChanged');
+            this.dispatchLocalEvent({ type: 'masterChanged' });
         }
+    }
+
+    public hasExpandableMasterRows(): boolean {
+        const rootNode = this.beans.rowModel.rootNode;
+        return !!(
+            rootNode?._leafs?.some(function isExpandableMaster(row) {
+                return row.master && row.isExpandable();
+            }) || rootNode?.childStore?.hasExpandableMasterRows()
+        );
     }
 
     private setMasters(changedRowNodes: _ChangedRowNodes | null | undefined): void {

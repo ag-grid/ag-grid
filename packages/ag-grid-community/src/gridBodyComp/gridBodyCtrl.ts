@@ -181,15 +181,11 @@ export class GridBodyCtrl extends BeanStub {
             rowResizeEnded: toggleRowResizeStyle,
         });
 
-        if (_isServerSideRowModel(this.gos)) {
-            // individual SSRM row updates can change master status without refreshing the model.
-            const refreshGridRole = _debounce(this, setGridRootRole, 0);
-            this.addManagedEventListeners({
-                rowNodeDataChanged: () => {
-                    if (this.gos.get('masterDetail')) {
-                        refreshGridRole();
-                    }
-                },
+        const masterDetailSvc = this.beans.masterDetailSvc;
+        if (_isServerSideRowModel(this.gos) && masterDetailSvc) {
+            // Individual SSRM row updates can change master status without refreshing the model.
+            this.addManagedListeners(masterDetailSvc, {
+                masterChanged: _debounce(this, setGridRootRole, 0),
             });
         }
 
@@ -394,9 +390,7 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         if (!isTreeGrid && gos.get('masterDetail')) {
-            this.beans.rowModel.forEachNode((rowNode) => {
-                isTreeGrid ||= rowNode.master && rowNode.isExpandable();
-            });
+            isTreeGrid = this.beans.masterDetailSvc?.hasExpandableMasterRows() ?? false;
         }
 
         this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');

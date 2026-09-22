@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { GetDetailRowDataParams, GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { PaginationModule, QuickFilterModule, getGridElement } from 'ag-grid-community';
@@ -56,7 +56,10 @@ describe('master/detail grid ARIA roles', () => {
         ],
     });
 
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        vi.restoreAllMocks();
+        gridsManager.reset();
+    });
 
     test('uses treegrid for static master rows without isRowMaster', () => {
         const api = gridsManager.createGrid(null, {
@@ -322,6 +325,38 @@ describe('master/detail grid ARIA roles', () => {
         await waitFor(() => expect(container.getAttribute('role')).toBe('grid'));
         expect(getRowElement(api, 'nora').hasAttribute('aria-expanded')).toBe(false);
     });
+
+    test.each([false, true])(
+        'does not inspect other rows for unchanged SSRM master eligibility (%s)',
+        async (master) => {
+            const updatedData: RowData = { id: 'updated', children: master ? [{ id: 'call' }] : [] };
+            const api = gridsManager.createGrid<RowData>(null, {
+                ...baseOptions,
+                suppressAnimationFrame: true,
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params) =>
+                        params.success({
+                            rowData: [{ id: 'other-master', children: [{ id: 'other-call' }] }, updatedData],
+                            rowCount: 2,
+                        }),
+                },
+            });
+            await waitForNoLoadingRows(api);
+
+            const isExpandable = vi.spyOn(api.getRowNode('other-master')!, 'isExpandable');
+            const updatedRow = api.getRowNode('updated')!;
+
+            for (let i = 0; i < 3; ++i) {
+                updatedRow.updateData({ ...updatedData });
+                // Flush each update separately so a debounce cannot hide repeated role scans.
+                await asyncSetTimeout(0);
+            }
+
+            expect(isExpandable).not.toHaveBeenCalled();
+            expect(getGridContainer(api).getAttribute('role')).toBe('treegrid');
+        }
+    );
 
     test('recalculates SSRM roles when transactions add, update and remove masters', async () => {
         const api = gridsManager.createGrid<RowData>(null, {
