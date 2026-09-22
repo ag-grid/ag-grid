@@ -38,8 +38,8 @@
     "glob": "^11.1.0",
     "@nx/devkit": "^20.8.4",
     "@types/yargs": "^17.0.35",
-    "@swc/helpers": "0.5.21",
-    "tinypool": "^2.1.0",
+    "@swc/helpers": "0.5.23",
+    "tinypool": "^2.2.0",
     "process": "0.11.10",
     "xml-js": "^1.6.11"
   },
