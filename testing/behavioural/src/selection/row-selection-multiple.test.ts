@@ -1,12 +1,39 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex, isElementDisplayed } from 'ag-test-utils';
 
-import { columnDefs, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import type { RowSelectedEvent } from 'ag-grid-community';
+
+import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
         setupRowSelectionSuite();
 
         describe('Multiple Row Selection', () => {
+            test('shift-click range carries the originating browser event', async () => {
+                const events: RowSelectedEvent[] = [];
+                const [, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                    onRowSelected: (event) => events.push(event),
+                });
+
+                actions.clickRowByIndex(0);
+                await new Promise((resolve) => setTimeout(resolve, 0));
+                events.length = 0;
+
+                actions.clickRowByIndex(2, { shiftKey: true });
+
+                // gridOptions callbacks are dispatched asynchronously via setTimeout
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                expect(events).toHaveLength(2);
+                for (const { event } of events) {
+                    expect(event).toBeInstanceOf(MouseEvent);
+                    // shiftKey is the tell that the dispatched event itself arrives, rather than a stand-in
+                    expect((event as MouseEvent).shiftKey).toBe(true);
+                }
+            });
             test('un-selectable row cannot be selected', async () => {
                 const [api, actions] = createGrid({
                     columnDefs,

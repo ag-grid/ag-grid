@@ -96,11 +96,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if ('select' in selection) {
             if (selection.reset) {
-                this.resetNodes();
+                this.resetNodes(event);
             } else {
-                this.selectRange(selection.deselect, false, source);
+                this.selectRange(selection.deselect, false, source, event);
             }
-            return this.selectRange(selection.select, true, source);
+            return this.selectRange(selection.select, true, source, event);
         } else {
             const newValue = selection.checkFilteredNodes
                 ? recursiveCanNodesBeSelected(selection.node)
@@ -205,7 +205,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private selectRange(nodesToSelect: readonly RowNode[], value: boolean, source: SelectionEventSourceType): number {
+    private selectRange(
+        nodesToSelect: readonly RowNode[],
+        value: boolean,
+        source: SelectionEventSourceType,
+        event?: Event
+    ): number {
         let updatedCount = 0;
 
         for (let i = 0, len = nodesToSelect.length; i < len; ++i) {
@@ -215,13 +220,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            if (this.selectRowNode(rowNode, value, undefined, source)) {
+            if (this.selectRowNode(rowNode, value, event, source)) {
                 updatedCount++;
             }
         }
 
         if (updatedCount > 0) {
-            this.updateGroupsFromChildrenSelections(source);
+            this.updateGroupsFromChildrenSelections(source, undefined, event);
             this.dispatchSelectionChanged(source);
         }
 
@@ -411,10 +416,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    private resetNodes(): void {
+    private resetNodes(event?: Event): void {
         const selectedNodes = this.selectedNodes;
         for (const node of selectedNodes.values()) {
-            this.selectRowNode(node, false);
+            this.selectRowNode(node, false, event);
         }
         selectedNodes.clear();
     }
