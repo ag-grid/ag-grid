@@ -9,6 +9,7 @@ import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
     _getCheckboxes,
+    _getEnableClickToggle,
     _getEnableDeselection,
     _getEnableSelection,
     _getEnableSelectionWithoutKeys,
@@ -123,6 +124,8 @@ export abstract class BaseSelectionService extends BeanStub {
     ): boolean;
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
+
+    protected abstract isSoleSelection(node: RowNode): boolean;
 
     protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
@@ -286,6 +289,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         const enableClickSelection = _getEnableSelection(gos);
         const enableDeselection = _getEnableDeselection(gos);
+        const enableClickToggle = _getEnableClickToggle(gos);
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
 
@@ -386,7 +390,9 @@ export abstract class BaseSelectionService extends BeanStub {
             }
 
             if (isRowClicked) {
-                const newValue = currentSelection ? !enableSelectionWithoutKeys : enableClickSelection;
+                const newValue = currentSelection
+                    ? !(enableSelectionWithoutKeys || (enableClickToggle && this.isSoleSelection(node)))
+                    : enableClickSelection;
 
                 // if selecting, only proceed if not disabled by grid options
                 const selectingWhenDisabled = newValue && !enableClickSelection;

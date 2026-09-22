@@ -197,6 +197,98 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
+            test('enableClickToggle deselects the only selected row when it is clicked', async () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                        checkboxes: false,
+                    },
+                });
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+                await new GridRows(
+                    api,
+                    `enableClickToggle deselects the only selected row when it is clicked final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
+            test('enableClickToggle still reduces the selection when other rows are selected', async () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                        checkboxes: false,
+                    },
+                });
+
+                actions.selectRowsByIndex([1, 3, 5], true);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+                await new GridRows(
+                    api,
+                    `enableClickToggle still reduces the selection when other rows are selected final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
+            test('enableClickToggle deselection forwards the browser click event', async () => {
+                const events: RowSelectedEvent[] = [];
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                        checkboxes: false,
+                    },
+                    onRowSelected: (event) => events.push(event),
+                });
+
+                actions.clickRowByIndex(3);
+                actions.clickRowByIndex(3);
+
+                // gridOptions callbacks are dispatched asynchronously via setTimeout
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                assertSelectedRowsByIndex([], api);
+                const forwarded = events.map(({ event }) => event);
+                expect(forwarded.map((event) => event?.type)).toEqual(['click', 'click']);
+                expect(forwarded.every((event) => event instanceof MouseEvent)).toBe(true);
+            });
+
             test('Disabled checkbox shown when `isRowSelectable` returns `true` and `checkboxes` returns `false`', () => {
                 const [_, actions] = createGrid({
                     columnDefs,

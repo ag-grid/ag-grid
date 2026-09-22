@@ -254,6 +254,43 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
+            test('enableClickToggle deselects the only selected row when it is clicked', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowSelection: {
+                        mode: 'singleRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                        checkboxes: false,
+                    },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                });
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([], api);
+                await new GridRows(
+                    api,
+                    `enableClickToggle deselects the only selected row when it is clicked final state`
+                ).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
             test('un-selectable row cannot be selected', async () => {
                 const [api, actions] = await createGridAndWait({
                     columnDefs,

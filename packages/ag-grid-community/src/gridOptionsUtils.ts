@@ -541,6 +541,16 @@ export function _getEnableDeselection(gos: GridOptionsService): boolean {
     return enableClickSelection === true || enableClickSelection === 'enableDeselection';
 }
 
+export function _getEnableClickToggle(gos: GridOptionsService): boolean {
+    const selection = gos.get('rowSelection');
+
+    if (typeof selection === 'string') {
+        return false;
+    }
+
+    return selection?.enableClickToggle ?? false;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | undefined {
     const selection = gos.get('rowSelection');

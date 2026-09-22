@@ -3359,6 +3359,15 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
      */
     enableClickSelection?: boolean | 'enableDeselection' | 'enableSelection';
     /**
+     * Set to `true` to deselect a row by clicking it when it is the only selected row.
+     *
+     * Clicking a row while other rows are also selected continues to reduce the selection to the
+     * clicked row. Requires deselection to be permitted by `enableClickSelection`.
+     *
+     * @default false
+     */
+    enableClickToggle?: boolean;
+    /**
      * Set to `true` or return `true` from the callback to render a selection checkbox.
      * @default true
      */

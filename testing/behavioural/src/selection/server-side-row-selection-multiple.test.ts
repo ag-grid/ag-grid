@@ -175,6 +175,80 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
+            test('enableClickToggle deselects the only selected row when it is clicked', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                    },
+                });
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+                await new GridRows(
+                    api,
+                    `enableClickToggle deselects the only selected row when it is clicked final state`
+                ).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
+            test('enableClickToggle still reduces the selection when other rows are selected', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                    },
+                });
+
+                actions.selectRowsByIndex([1, 3, 5], false);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+                await new GridRows(
+                    api,
+                    `enableClickToggle still reduces the selection when other rows are selected final state`
+                ).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
             test('must de-select with CTRL when `enableClickSelection: true`', async () => {
                 const [api, actions] = await createGridAndWait({
                     columnDefs,

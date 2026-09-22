@@ -235,6 +235,15 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return this.selectedState.toggledNodes.size + (this.rootSelected ? 1 : 0);
     }
 
+    public isSoleSelection(node: RowNode): boolean {
+        const { selectedState, rootSelected } = this;
+        // under select-all the toggled nodes are the *de*selected ones, so the count is unknowable here
+        if (selectedState.selectAll || rootSelected) {
+            return false;
+        }
+        return selectedState.toggledNodes.size === 1 && selectedState.toggledNodes.has(node.id!);
+    }
+
     public isEmpty(): boolean {
         return !this.selectedState.selectAll && !this.selectedState.toggledNodes?.size && !this.rootSelected;
     }

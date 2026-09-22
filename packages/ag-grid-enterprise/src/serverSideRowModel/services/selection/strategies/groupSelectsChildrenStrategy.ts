@@ -403,6 +403,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return -1;
     }
 
+    public isSoleSelection(_node: RowNode): boolean {
+        // selection is a tree of toggled routes here, not a row set, so this is not yet derivable
+        return false;
+    }
+
     public isEmpty(): boolean {
         return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size && !this.rootSelected;
     }

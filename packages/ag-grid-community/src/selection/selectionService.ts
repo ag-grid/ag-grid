@@ -266,6 +266,25 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return this.selectedNodes.size;
     }
 
+    protected isSoleSelection(node: RowNode): boolean {
+        const { selectedNodes } = this;
+        if (node.isSelected() !== true) {
+            return false;
+        }
+
+        if (!this.groupSelectsDescendants) {
+            return selectedNodes.size === 1 && selectedNodes.get(node.id!) === node;
+        }
+
+        // a group selected with its descendants is computed, not stored (see `selectRowNode`)
+        for (const selected of selectedNodes.values()) {
+            if (selected !== node && !isDescendantOf(node, selected)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Drops a node leaving the model (destroyed, removed or detached) from the selection. Event-free
      * and allocation-free: only updates the map, so callers can call it inline as they tear nodes down.
