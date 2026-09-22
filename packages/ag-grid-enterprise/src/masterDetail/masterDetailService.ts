@@ -116,9 +116,8 @@ export class MasterDetailService extends BeanStub<'masterChanged'> implements Na
     public hasExpandableMasterRows(): boolean {
         const rootNode = this.beans.rowModel.rootNode;
         return !!(
-            rootNode?._leafs?.some(function isExpandableMaster(row) {
-                return row.master && row.isExpandable();
-            }) || rootNode?.childStore?.hasExpandableMasterRows()
+            rootNode?._leafs?.some((row) => row.master && row.isExpandable()) ||
+            rootNode?.childStore?.hasExpandableMasterRows()
         );
     }
 
