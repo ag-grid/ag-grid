@@ -20,24 +20,26 @@ export class ComboChartModel extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.initComboCharts();
+        this.initComboCharts(this.seriesChartTypes.length > 0);
     }
 
     public update(seriesChartTypes?: SeriesChartType[]): void {
+        // built-in combos derive their own `seriesChartTypes`, so only types supplied by this update
+        // identify a custom combo
+        const suppliedSeriesChartTypes = seriesChartTypes != null && seriesChartTypes.length > 0;
         this.seriesChartTypes = seriesChartTypes ?? this.seriesChartTypes;
-        this.initComboCharts();
+        this.initComboCharts(suppliedSeriesChartTypes);
         this.updateSeriesChartTypes();
     }
 
-    private initComboCharts() {
-        const seriesChartTypesExist = this.seriesChartTypes && this.seriesChartTypes.length > 0;
-        const customCombo = this.chartDataModel.chartType === 'customCombo' || seriesChartTypesExist;
+    private initComboCharts(suppliedSeriesChartTypes: boolean) {
+        const customCombo = this.chartDataModel.chartType === 'customCombo' || suppliedSeriesChartTypes;
         if (customCombo) {
             // it is not necessary to supply a chart type for combo charts when `seriesChartTypes` is supplied
             this.chartDataModel.chartType = 'customCombo';
 
             // cache supplied `seriesChartTypes` to allow switching between different chart types in the settings panel
-            this.savedCustomSeriesChartTypes = this.seriesChartTypes || [];
+            this.savedCustomSeriesChartTypes = this.seriesChartTypes;
         }
     }
 

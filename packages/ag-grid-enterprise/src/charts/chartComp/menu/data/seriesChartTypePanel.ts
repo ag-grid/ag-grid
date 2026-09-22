@@ -148,8 +148,10 @@ export class SeriesChartTypePanel extends Component {
             const chartTypeComp = this.chartTypeComps.get(colId);
             const secondaryAxisComp = this.secondaryAxisComps.get(colId);
 
-            chartTypeComp?.setValue(seriesChartType.chartType);
-            secondaryAxisComp?.setValue(!!seriesChartType.secondaryAxis);
+            // silent: these comps are reflecting model state, so firing their change handlers would
+            // report the refresh back as a user edit and convert a built-in combo to a custom one
+            chartTypeComp?.setValue(seriesChartType.chartType, true);
+            secondaryAxisComp?.setValue(!!seriesChartType.secondaryAxis, true);
             secondaryAxisComp?.setDisabled(this.isSecondaryAxisDisabled(seriesChartType.chartType));
         }
     }

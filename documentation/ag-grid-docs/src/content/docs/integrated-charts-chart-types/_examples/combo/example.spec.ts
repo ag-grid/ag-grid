@@ -12,17 +12,14 @@ test.agExample(import.meta, () => {
 
         const gridApi = remoteGrid(page);
 
-        // Reads the per-series chart types from the grid's chart model as a colId -> chartType map.
-        // This is the framework-independent signal for a combination chart: the top-level chartType
-        // label of a combo varies by framework (columnLineCombo vs customCombo), but the per-series
-        // composition is identical everywhere.
-        const seriesTypes = async (): Promise<Record<string, string>> => {
+        // Reads the chart's combination type and its per-series chart types as a colId -> chartType map.
+        const comboState = async (): Promise<{ chartType: string; seriesTypes: Record<string, string> }> => {
             const model = (await gridApi.getChartModels())![0] as any;
-            const map: Record<string, string> = {};
+            const seriesTypes: Record<string, string> = {};
             for (let i = 0, types = model.seriesChartTypes, len = types.length; i < len; ++i) {
-                map[types[i].colId] = types[i].chartType;
+                seriesTypes[types[i].colId] = types[i].chartType;
             }
-            return map;
+            return { chartType: model.chartType, seriesTypes };
         };
 
         // Grid renders the documented category + series columns.
@@ -37,20 +34,27 @@ test.agExample(import.meta, () => {
 
         // The chart is initially the Column & Line combination: recurring drawn as columns, individual
         // drawn as a line.
+        const columnLineState = {
+            chartType: 'columnLineCombo',
+            seriesTypes: { recurring: 'groupedColumn', individual: 'line' },
+        };
         await expect(async () => {
-            expect(await seriesTypes()).toEqual({ recurring: 'groupedColumn', individual: 'line' });
+            expect(await comboState()).toEqual(columnLineState);
         }).toPass({ timeout: 5000 });
 
         // The Area Column Combo button recomposes the series: recurring becomes an area, individual a column.
         await switchChartType(page, 'Area Column Combo');
         await expect(async () => {
-            expect(await seriesTypes()).toEqual({ recurring: 'stackedArea', individual: 'groupedColumn' });
+            expect(await comboState()).toEqual({
+                chartType: 'areaColumnCombo',
+                seriesTypes: { recurring: 'stackedArea', individual: 'groupedColumn' },
+            });
         }).toPass({ timeout: 5000 });
 
         // The Column Line Combo button restores the column + line composition.
         await switchChartType(page, 'Column Line Combo');
         await expect(async () => {
-            expect(await seriesTypes()).toEqual({ recurring: 'groupedColumn', individual: 'line' });
+            expect(await comboState()).toEqual(columnLineState);
         }).toPass({ timeout: 5000 });
     });
 });
