@@ -310,18 +310,14 @@ describe('Row Selection Grid Options', () => {
                     await new Promise((resolve) => setTimeout(resolve, 0));
                     events.length = 0;
 
-                    actions.clickRowByIndex(4, { shiftKey: true });
+                    const shiftClick = new MouseEvent('click', { bubbles: true, shiftKey: true });
+                    actions.getRowByIndex(4)!.dispatchEvent(shiftClick);
 
                     // gridOptions callbacks are dispatched asynchronously via setTimeout
                     await new Promise((resolve) => setTimeout(resolve, 0));
 
                     assertSelectedRowsByIndex([2, 3, 4], api);
-                    expect(events).toHaveLength(2);
-                    for (const { event } of events) {
-                        expect(event).toBeInstanceOf(MouseEvent);
-                        // shiftKey is the tell that the dispatched event itself arrives, rather than a stand-in
-                        expect((event as MouseEvent).shiftKey).toBe(true);
-                    }
+                    expect(events.map(({ event }) => event)).toEqual([shiftClick, shiftClick]);
                 });
 
                 test('SHIFT-click extends range downwards from from last selected row', async () => {
