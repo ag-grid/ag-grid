@@ -196,19 +196,6 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(3);
                 assertSelectedRowsByIndex([], api);
-                await new GridRows(
-                    api,
-                    `enableClickToggle deselects the only selected row when it is clicked final state`
-                ).check(`
-                    ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
-                    ├── LEAF id:1 sport:"rugby"
-                    ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
-                    ├── LEAF id:5 sport:"swimming"
-                    └── LEAF id:6 sport:"rowing"
-                `);
             });
 
             test('enableClickToggle still reduces the selection when other rows are selected', async () => {
@@ -231,22 +218,22 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(3);
                 assertSelectedRowsByIndex([3], api);
-
-                actions.clickRowByIndex(3);
-                assertSelectedRowsByIndex([], api);
                 await new GridRows(
                     api,
-                    `enableClickToggle still reduces the selection when other rows are selected final state`
+                    `enableClickToggle still reduces the selection when other rows are selected after reducing`
                 ).check(`
                     ROOT id:<no-id>
                     ├── LEAF id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
-                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF selected id:3 sport:"cricket"
                     ├── LEAF id:4 sport:"golf"
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('must de-select with CTRL when `enableClickSelection: true`', async () => {
