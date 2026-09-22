@@ -20,8 +20,8 @@
   "devDependencies": {
     "@angular/compiler-cli": "^21.0.0",
     "@types/jest": "^30.0.0",
-    "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "jest-preset-angular": "^16.0.0",
     "typescript": "~5.8.3"
   }

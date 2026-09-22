@@ -123,7 +123,7 @@
     "ag-charts-types": "14.2.0-beta.20260922"
   },
   "devDependencies": {
-    "web-streams-polyfill": "^4.2.0",
+    "web-streams-polyfill": "^4.3.0",
     "blob-polyfill": "^9.0.20240710",
     "compression-streams-polyfill": "^0.1.7",
     "text-encoding-polyfill": "^0.6.7"

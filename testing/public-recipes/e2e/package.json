@@ -7,8 +7,8 @@
   "license": "MIT",
   "devDependencies": {
     "ag-grid-community": "36.2.0-beta.20260922.1430",
-    "playwright": "^1.59.1",
-    "@playwright/test": "^1.59.1",
+    "playwright": "^1.63.0",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.15.3"
   }
 }

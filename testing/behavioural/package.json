@@ -13,10 +13,10 @@
     "ag-grid-react": "36.2.0-beta.20260922.1430",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
-    "@testing-library/dom": "^10.4.1",
+    "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^6.10.0",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.4",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "xlsx": "^0.18.5"
