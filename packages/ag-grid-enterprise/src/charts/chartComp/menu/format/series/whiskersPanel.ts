@@ -19,6 +19,9 @@ export class WhiskersPanel extends Component {
     }
 
     public postConstruct() {
+        // A whisker option left unset inherits the series' own stroke styling.
+        const seriesOptions = this.chartMenuUtils.getChartOptions();
+        const inherited = (expression: string) => () => seriesOptions.getValue<any>(expression);
         const whiskersGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -40,27 +43,30 @@ export class WhiskersPanel extends Component {
             [AgGroupComponentSelector, ColorPickerSelector, AgSliderSelector],
             {
                 whiskersGroup: whiskersGroupParams,
-                whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke'),
+                whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke', undefined, {
+                    valueWhenUnset: inherited('stroke'),
+                }),
                 whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams(
                     'whisker.strokeWidth',
                     'strokeWidth',
-                    10
+                    10,
+                    { valueWhenUnset: inherited('strokeWidth') }
                 ),
                 whiskerOpacitySlider: this.chartMenuUtils.getDefaultSliderParams(
                     'whisker.strokeOpacity',
                     'strokeOpacity',
-                    1
+                    1,
+                    { valueWhenUnset: inherited('strokeOpacity') }
                 ),
-                whiskerLineDashSlider: this.chartMenuUtils.getDefaultSliderParams(
-                    'whisker.lineDash',
-                    'lineDash',
-                    30,
-                    true
-                ),
+                whiskerLineDashSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.lineDash', 'lineDash', 30, {
+                    isArray: true,
+                    valueWhenUnset: inherited('lineDash'),
+                }),
                 whiskerLineDashOffsetSlider: this.chartMenuUtils.getDefaultSliderParams(
                     'whisker.lineDashOffset',
                     'lineDashOffset',
-                    30
+                    30,
+                    { valueWhenUnset: inherited('lineDashOffset') }
                 ),
             }
         );

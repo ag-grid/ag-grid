@@ -1,5 +1,6 @@
 import type {
     AgChartThemeOverrides,
+    AgNightingaleSeriesOptions,
     AgPolarAxisOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
@@ -54,12 +55,17 @@ export class PolarChartProxy extends ChartProxy<
         if (!['nightingale', 'radial-bar', 'radial-column'].includes(standaloneChartType)) {
             return undefined;
         }
-        const firstSeriesProperties = this.getChart().series?.[0]?.properties.toJson();
-        const getStackedValue = () => (firstSeriesProperties.normalizedTo ? 'normalized' : 'stacked');
+        // Read the post-theme options: grouping set through theme overrides is absent from the
+        // options this proxy supplied, and `getOptions()` only returns those.
+        const options = this.getChart().chartOptions?.processedOptions as AgPolarChartOptions | undefined;
+        const firstSeries = options?.series?.[0] as
+            | Pick<AgNightingaleSeriesOptions, 'grouped' | 'stacked' | 'normalizedTo'>
+            | undefined;
+        const getStackedValue = () => (firstSeries?.normalizedTo ? 'normalized' : 'stacked');
         if (standaloneChartType === 'nightingale') {
-            return firstSeriesProperties.grouped ? 'grouped' : getStackedValue();
+            return firstSeries?.grouped ? 'grouped' : getStackedValue();
         } else {
-            return firstSeriesProperties.stacked ? getStackedValue() : 'grouped';
+            return firstSeries?.stacked ? getStackedValue() : 'grouped';
         }
     }
 
