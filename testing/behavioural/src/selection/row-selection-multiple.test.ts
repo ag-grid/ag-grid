@@ -2,38 +2,13 @@ import { GridColumns, GridRows, assertSelectedRowsByIndex, isElementDisplayed } 
 
 import type { RowSelectedEvent } from 'ag-grid-community';
 
-import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import { columnDefs, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
         setupRowSelectionSuite();
 
         describe('Multiple Row Selection', () => {
-            test('shift-click range carries the originating browser event', async () => {
-                const events: RowSelectedEvent[] = [];
-                const [, actions] = await createGridAndWait({
-                    columnDefs,
-                    rowData,
-                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
-                    onRowSelected: (event) => events.push(event),
-                });
-
-                actions.clickRowByIndex(0);
-                await new Promise((resolve) => setTimeout(resolve, 0));
-                events.length = 0;
-
-                actions.clickRowByIndex(2, { shiftKey: true });
-
-                // gridOptions callbacks are dispatched asynchronously via setTimeout
-                await new Promise((resolve) => setTimeout(resolve, 0));
-
-                expect(events).toHaveLength(2);
-                for (const { event } of events) {
-                    expect(event).toBeInstanceOf(MouseEvent);
-                    // shiftKey is the tell that the dispatched event itself arrives, rather than a stand-in
-                    expect((event as MouseEvent).shiftKey).toBe(true);
-                }
-            });
             test('un-selectable row cannot be selected', async () => {
                 const [api, actions] = createGrid({
                     columnDefs,
@@ -320,6 +295,33 @@ describe('Row Selection Grid Options', () => {
                         ├── LEAF selected id:5 sport:"swimming"
                         └── LEAF id:6 sport:"rowing"
                     `);
+                });
+
+                test('SHIFT-click range reports the originating browser event', async () => {
+                    const events: RowSelectedEvent[] = [];
+                    const [api, actions] = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                        onRowSelected: (event) => events.push(event),
+                    });
+
+                    actions.clickRowByIndex(2);
+                    await new Promise((resolve) => setTimeout(resolve, 0));
+                    events.length = 0;
+
+                    actions.clickRowByIndex(4, { shiftKey: true });
+
+                    // gridOptions callbacks are dispatched asynchronously via setTimeout
+                    await new Promise((resolve) => setTimeout(resolve, 0));
+
+                    assertSelectedRowsByIndex([2, 3, 4], api);
+                    expect(events).toHaveLength(2);
+                    for (const { event } of events) {
+                        expect(event).toBeInstanceOf(MouseEvent);
+                        // shiftKey is the tell that the dispatched event itself arrives, rather than a stand-in
+                        expect((event as MouseEvent).shiftKey).toBe(true);
+                    }
                 });
 
                 test('SHIFT-click extends range downwards from from last selected row', async () => {

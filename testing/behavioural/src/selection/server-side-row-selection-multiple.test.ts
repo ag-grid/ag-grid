@@ -14,33 +14,6 @@ describe('Row Selection Grid Options', () => {
         setupServerSideRowSelectionSuite();
 
         describe('Multiple Row Selection', () => {
-            test('rowSelected event carries the originating browser event', async () => {
-                const events: RowSelectedEvent[] = [];
-                const [, actions] = await createGridAndWait({
-                    columnDefs,
-                    rowModelType: 'serverSide',
-                    serverSideDatasource: {
-                        getRows(params) {
-                            return params.success({ rowData, rowCount: rowData.length });
-                        },
-                    },
-                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
-                    onRowSelected: (event) => events.push(event),
-                });
-
-                // ctrlKey is the tell that the dispatched event itself arrives, rather than a stand-in
-                actions.clickRowByIndex(1, { ctrlKey: true });
-                actions.toggleCheckboxByIndex(3, { ctrlKey: true });
-
-                // gridOptions callbacks are dispatched asynchronously via setTimeout
-                await new Promise((resolve) => setTimeout(resolve, 0));
-
-                expect(events).toHaveLength(2);
-                for (const { event } of events) {
-                    expect(event).toBeInstanceOf(MouseEvent);
-                    expect((event as MouseEvent).ctrlKey).toBe(true);
-                }
-            });
             test('un-selectable row cannot be selected', async () => {
                 const [api, actions] = await createGridAndWait({
                     columnDefs,
@@ -352,6 +325,35 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('rowSelected reports the originating browser event', async () => {
+                const events: RowSelectedEvent[] = [];
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                    onRowSelected: (event) => events.push(event),
+                });
+
+                // ctrlKey is the tell that the dispatched event itself arrives, rather than a stand-in
+                actions.clickRowByIndex(1, { ctrlKey: true });
+                actions.toggleCheckboxByIndex(3, { ctrlKey: true });
+
+                // gridOptions callbacks are dispatched asynchronously via setTimeout
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                assertSelectedRowsByIndex([1, 3], api);
+                expect(events).toHaveLength(2);
+                for (const { event } of events) {
+                    expect(event).toBeInstanceOf(MouseEvent);
+                    expect((event as MouseEvent).ctrlKey).toBe(true);
+                }
             });
         });
     });
