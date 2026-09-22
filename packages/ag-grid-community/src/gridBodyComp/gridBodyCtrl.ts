@@ -1,4 +1,5 @@
 import {
+    _debounce,
     _getInnerWidth,
     _getScrollLeft,
     _isElementChildOfClass,
@@ -12,7 +13,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
-import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import { _isAnimateRows, _isDomLayout, _isServerSideRowModel } from '../gridOptionsUtils';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { VerticalSection } from '../interfaces/iGridSection';
@@ -175,9 +176,22 @@ export class GridBodyCtrl extends BeanStub {
             },
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
+            modelUpdated: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
             rowResizeEnded: toggleRowResizeStyle,
         });
+
+        if (_isServerSideRowModel(this.gos)) {
+            // individual SSRM row updates can change master status without refreshing the model.
+            const refreshGridRole = _debounce(this, setGridRootRole, 0);
+            this.addManagedEventListeners({
+                rowNodeDataChanged: () => {
+                    if (this.gos.get('masterDetail')) {
+                        refreshGridRole();
+                    }
+                },
+            });
+        }
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
         this.addManagedPropertyListener('enableRtl', updatePinnedColumnStickyOffsets);
@@ -377,6 +391,12 @@ export class GridBodyCtrl extends BeanStub {
             const rowGroupColumnLen = !rowGroupColsSvc ? 0 : rowGroupColsSvc.columns.length;
             const columnsNeededForGrouping = isPivotActive ? 2 : 1;
             isTreeGrid = rowGroupColumnLen >= columnsNeededForGrouping;
+        }
+
+        if (!isTreeGrid && gos.get('masterDetail')) {
+            this.beans.rowModel.forEachNode((rowNode) => {
+                isTreeGrid ||= rowNode.master && rowNode.isExpandable();
+            });
         }
 
         this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');
