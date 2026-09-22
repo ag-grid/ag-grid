@@ -35,7 +35,7 @@ When using `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'
 
 ## Deselecting a Group Row by Clicking It
 
-[`rowSelection.enableClickToggle`](./row-selection-multi-row/#deselecting-a-row-by-clicking-it) also applies to group rows. Because a group's selection is derived from its descendants, a click deselects the group only when nothing outside its own subtree is selected; while another branch is selected the click reduces the selection to the clicked subtree instead, exactly as it does for leaf rows.
+[`rowSelection.enableClickToggle`](./row-selection-multi-row/#deselecting-a-row-by-clicking-it) also applies to group rows. Clicking a selected group deselects it and its descendants, as long as no other rows are selected. When rows elsewhere in the grid are selected, the click reduces the selection to that group instead.
 
 {% gridExampleRunner title="Toggle Group Selection on Click" name="toggle-group-selection-on-click" /%}
 
@@ -52,7 +52,7 @@ const gridOptions = {
 }
 ```
 
-Click a country group to select it and its descendants, then click it again to deselect the whole subtree. {% kbd "^ Ctrl" /%}-click a second country first to see the click reduce the selection to one branch before it deselects anything.
+Click a country to select it and its descendants, then click it again to deselect them. {% kbd "^ Ctrl" /%}-click a second country to see the next click reduce the selection to one country rather than deselect it.
 
 ## Checkboxes in Group Cells
 
