@@ -6,7 +6,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
 import { type IOlympicData, gridOptions } from './gridOptions';
-import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
 interface ChatMessage {

@@ -25,7 +25,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
-import './styles.css';
 
 /** PROVIDED EXAMPLE DARK INTEGRATED **/
 

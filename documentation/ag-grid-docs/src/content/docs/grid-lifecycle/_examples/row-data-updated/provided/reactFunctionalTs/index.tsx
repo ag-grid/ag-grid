@@ -7,7 +7,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { fetchDataAsync } from './data';
 import type { TAthlete } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

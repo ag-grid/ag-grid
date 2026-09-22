@@ -9,7 +9,6 @@ import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import FindRenderer from './findRenderer';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

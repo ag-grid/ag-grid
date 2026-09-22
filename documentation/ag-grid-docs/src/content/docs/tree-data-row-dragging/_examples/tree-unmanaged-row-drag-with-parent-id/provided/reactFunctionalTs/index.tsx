@@ -17,7 +17,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { getData } from './data';
 import type { IFile } from './fileUtils';
 import { getFileDropPosition, moveFiles } from './fileUtils';
-import './style.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
