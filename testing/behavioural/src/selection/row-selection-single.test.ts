@@ -374,16 +374,14 @@ describe('Row Selection Grid Options', () => {
                     onRowSelected: (event) => events.push(event),
                 });
 
-                actions.clickRowByIndex(2);
-                actions.clickRowByIndex(2);
+                const selectClick = actions.clickRowByIndex(2);
+                const deselectClick = actions.clickRowByIndex(2);
 
                 // gridOptions callbacks are dispatched asynchronously via setTimeout
                 await new Promise((resolve) => setTimeout(resolve, 0));
 
                 assertSelectedRowsByIndex([], api);
-                const forwarded = events.map(({ event }) => event);
-                expect(forwarded.map((event) => event?.type)).toEqual(['click', 'click']);
-                expect(forwarded.every((event) => event instanceof MouseEvent)).toBe(true);
+                expect(events.map(({ event }) => event)).toEqual([selectClick, deselectClick]);
             });
 
             test('enableClickToggle without click selection warns and does nothing', async () => {
