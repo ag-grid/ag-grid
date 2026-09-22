@@ -411,9 +411,13 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         let state = this.selectedState;
         const route = this.getRouteToNode(node);
         for (let i = 0; i < route.length; i++) {
-            // a wholly-selected ancestor holds nothing else only if each group below it has one row
+            // store counts are post-filter while the selection is not, so this only holds unfiltered
             if (state.selectAllChildren) {
-                return state.toggledNodes.size === 0 && route.slice(i).every((step) => this.isOnlyChild(step));
+                return (
+                    !this.filterManager?.isAnyFilterPresent() &&
+                    state.toggledNodes.size === 0 &&
+                    route.slice(i).every((step) => this.isOnlyChild(step))
+                );
             }
             if (state.toggledNodes.size !== 1) {
                 return false;

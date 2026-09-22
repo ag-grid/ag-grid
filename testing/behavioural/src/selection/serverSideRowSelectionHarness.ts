@@ -9,9 +9,10 @@ import {
     ClientSideRowModelModule,
     PaginationModule,
     RowSelectionModule,
+    TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridActions } from './utils';
 
@@ -21,7 +22,9 @@ const gridMgr = new TestGridsManager({
         ClientSideRowModelModule,
         RowGroupingModule,
         ServerSideRowModelModule,
+        ServerSideRowModelApiModule,
         PaginationModule,
+        TextFilterModule,
     ],
 });
 

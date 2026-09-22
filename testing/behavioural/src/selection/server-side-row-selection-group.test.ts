@@ -252,6 +252,59 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([], api);
             });
 
+            test('enableClickToggle does not deselect a row while filtered-out siblings are selected', async () => {
+                const rows = [
+                    { country: 'X', name: 'A' },
+                    { country: 'X', name: 'B' },
+                ];
+                const [api, actions] = await createGridAndWait({
+                    columnDefs: [
+                        { field: 'country', rowGroup: true, hide: true },
+                        { field: 'name', filter: 'agTextColumnFilter' },
+                    ],
+                    autoGroupColumnDef: { headerName: 'Athlete', cellRenderer: 'agGroupCellRenderer' },
+                    rowModelType: 'serverSide',
+                    getRowId,
+                    serverSideDatasource: {
+                        getRows(params) {
+                            const { filterModel, groupKeys } = params.request;
+                            const name = (filterModel as Record<string, { filter?: string }>)?.name?.filter;
+                            const visible = rows.filter((row) => !name || row.name === name);
+                            const rowData = groupKeys.length
+                                ? visible.filter((row) => row.country === groupKeys[0])
+                                : [...new Set(visible.map((row) => row.country))].map((country) => ({ country }));
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                    },
+                });
+
+                const groupX = getRowIdRaw({ data: { country: 'X' }, api });
+                const rowA = getRowIdRaw({ data: { country: 'X', name: 'A' }, parentKeys: ['X'], api });
+                const rowB = getRowIdRaw({ data: { country: 'X', name: 'B' }, parentKeys: ['X'], api });
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([groupX], api);
+
+                // B leaves the view but stays selected, so A is not the whole selection
+                api.setFilterModel({ name: { filterType: 'text', type: 'equals', filter: 'A' } });
+                await waitFor(() => expect(api.getRowNode(rowB)).toBeUndefined());
+                await waitFor(() => expect(api.getRowNode(groupX)).toBeDefined());
+                api.getRowNode(groupX)!.setExpanded(true);
+                await waitFor(() => expect(api.getRowNode(rowA)).toBeDefined());
+
+                actions.clickRowByIndex(1);
+                expect(api.getServerSideSelectionState()).toEqual({
+                    selectAllChildren: false,
+                    toggledNodes: [{ nodeId: groupX, selectAllChildren: false, toggledNodes: [{ nodeId: rowA }] }],
+                });
+            });
+
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
