@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
@@ -225,6 +226,30 @@ describe('Row Selection Grid Options', () => {
                 // a second branch holds its own selection state, so the click reduces rather than clears
                 actions.clickRowByIndex(0);
                 assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
+            });
+
+            test("enableClickToggle deselects a group that is its parent's only row", async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        enableClickSelection: true,
+                        enableClickToggle: true,
+                    },
+                });
+
+                const russia = getRowIdRaw({ data: { country: 'Russia' }, api });
+                const gymnastics = getRowIdRaw({ data: { sport: 'Gymnastics' }, parentKeys: ['Russia'], api });
+                api.getRowNode(russia)!.setExpanded(true);
+                await waitFor(() => expect(api.getRowNode(gymnastics)).toBeDefined());
+
+                // Russia holds this sport alone, so selecting it marks Russia selected as well
+                actions.clickRowByIndex(2);
+                assertSelectedRowsById([russia, gymnastics], api);
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsById([], api);
             });
 
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
