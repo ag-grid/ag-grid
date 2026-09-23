@@ -1521,6 +1521,16 @@ describe('Manual pinned rows', () => {
             return api;
         };
 
+        // the pinned row font weight etc. reach a spanned cell only through its own spanned row
+        const SPANNED_PIN_CLASSES = { 't-top-1': ['ag-row-pinned'], '1': ['ag-row-pinned-source'] };
+        const spannedRowPinClasses = () =>
+            Object.fromEntries(
+                Array.from(document.querySelectorAll('#myGrid .ag-spanned-row'), (row) => [
+                    row.getAttribute('row-id'),
+                    Array.from(row.classList).filter((c) => c === 'ag-row-pinned' || c === 'ag-row-pinned-source'),
+                ])
+            );
+
         const rightClickCell = async (rowId: string) => {
             const cell = await waitFor(() => {
                 const found = document.querySelector<HTMLElement>(`#myGrid .ag-row[row-id="${rowId}"] .ag-cell`);
@@ -1591,6 +1601,23 @@ describe('Manual pinned rows', () => {
                 ├── LEAF id:2 country:"Ireland"↥ sport:"Hurling"
                 └── LEAF id:3 country:"Italy" sport:"Cycling"
             `);
+            await waitFor(() => expect(spannedRowPinClasses()).toEqual(SPANNED_PIN_CLASSES));
+        });
+
+        test('spanned cells of a row pinned from initial state carry the pinned row styling', async () => {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', spanRows: true }, { field: 'sport' }],
+                rowData: [
+                    { id: '1', country: 'Ireland', sport: 'Rugby' },
+                    { id: '2', country: 'Ireland', sport: 'Hurling' },
+                    { id: '3', country: 'Italy', sport: 'Cycling' },
+                ],
+                getRowId: (params) => params.data.id,
+                enableRowPinning: true,
+                enableCellSpan: true,
+                initialState: { rowPinning: { top: ['1', '2'], bottom: [] } },
+            });
+            await waitFor(() => expect(spannedRowPinClasses()).toEqual(SPANNED_PIN_CLASSES));
         });
 
         test('pinning a cell range that includes an already pinned row pins only the others', async () => {
