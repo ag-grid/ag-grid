@@ -23,8 +23,11 @@ const cssPlugin = {
             // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
             const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
             if (isUmd && isLegacyCSS) {
+                // Legacy CSS is embedded as a string, so JS minification can't shrink it; minify it here.
+                // esbuild (unlike the csso-built .min.css files) preserves values such as `outline: none`.
+                const minifiedCSS = (await esbuild.transform(outputCSS, { loader: 'css', minify: true })).code;
                 return {
-                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(outputCSS)};document.head.appendChild(s);}})();`,
+                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(minifiedCSS)};document.head.appendChild(s);}})();`,
                     loader: 'js',
                 };
             }
