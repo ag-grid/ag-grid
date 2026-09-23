@@ -1,20 +1,10 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
 
-import type { Module, RowSelectedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
+import type { RowSelectedEvent } from 'ag-grid-community';
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
-
-// Stands in for the `studio` bean AG Studio adds to every grid. It also skips licence validation.
-class StudioStub {
-    public readonly beanName = 'studio' as const;
-}
-
-const StudioStubModule: Module = {
-    moduleName: 'Studio' as Module['moduleName'],
-    version: ClientSideRowModelModule.version,
-    beans: [StudioStub],
-};
+import { StudioStubModule } from './utils';
 
 const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
