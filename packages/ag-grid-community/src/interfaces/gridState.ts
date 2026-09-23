@@ -311,8 +311,8 @@ export interface GridState {
     userColumns?: UserColumnState[];
     /**
      * Set to `true` when `initialState` supplies some but not all of the column state sections.
-     * Without it, the omitted sections are reset and their column definition defaults, such as `hide`, `pinned`
-     * or `aggFunc`, are cleared.
+     * Without it, the omitted sections are reset, overriding column definition values such as `hide`, `pinned`
+     * or `aggFunc`.
      * - Not required when passing the whole state object retrieved from the grid.
      * - Ignored by `api.setState`; use the second argument `propertiesToIgnore` to leave sections untouched.
      */

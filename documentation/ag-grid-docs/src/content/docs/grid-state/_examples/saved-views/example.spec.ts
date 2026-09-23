@@ -3,7 +3,7 @@ import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/t
 const GRID_ID = 'savedViews';
 
 const filterButton = (page: Parameters<typeof ensureGridReady>[0]) =>
-    page.getByRole('button', { name: 'Filter Country: United States', exact: true });
+    page.getByRole('button', { name: 'Filter: United States', exact: true });
 
 test.agExample(import.meta, () => {
     test.eachFramework('Medals by Country groups, aggregates and hides columns', async ({ agIdFor, page }) => {

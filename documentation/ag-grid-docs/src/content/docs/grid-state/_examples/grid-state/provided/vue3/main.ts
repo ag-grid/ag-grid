@@ -30,11 +30,11 @@ const VueExample = defineComponent({
             <div class="example-wrapper">
                 <div>
                     <span class="button-group">
-                        <button v-on:click="recreateWithCurrentState()">Recreate Grid with Current State</button>
+                        <button v-on:click="recreateWithCurrentState()">Recreate with State</button>
                         <button v-on:click="saveState()">Save State</button>
-                        <button v-on:click="recreateWithNoState()">Recreate Grid with No State</button>
+                        <button v-on:click="recreateWithNoState()">Recreate without State</button>
                         <button v-on:click="setState()">Set State</button>
-                        <button v-on:click="printState()">Print Grid State</button>
+                        <button v-on:click="printState()">Print State</button>
                     </span>
                 </div>
                 <ag-grid-vue

@@ -38,7 +38,7 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
         await expectColDefDefaults(agIdFor, page, true);
 
-        await page.getByRole('button', { name: 'Column Order Only (defaults cleared)', exact: true }).click();
+        await page.getByRole('button', { name: 'Column Order (overrides defaults)', exact: true }).click();
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
@@ -51,7 +51,7 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         await page
-            .getByRole('button', { name: 'Column Order Only + partialColumnState (defaults kept)', exact: true })
+            .getByRole('button', { name: 'Column Order + partialColumnState (keeps defaults)', exact: true })
             .click();
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
@@ -59,7 +59,7 @@ test.agExample(import.meta, () => {
         await expectGoldBeforeAthlete(agIdFor);
         await expectColDefDefaults(agIdFor, page, true);
 
-        await page.getByRole('button', { name: 'No State (column defaults)', exact: true }).click();
+        await page.getByRole('button', { name: 'No State', exact: true }).click();
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
         await expectColDefDefaults(agIdFor, page, true);

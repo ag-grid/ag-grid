@@ -127,11 +127,11 @@ const GridExample = () => {
                 <div className="example-wrapper">
                     <div>
                         <span className="button-group">
-                            <button onClick={recreateWithCurrentState}>Recreate Grid with Current State</button>
+                            <button onClick={recreateWithCurrentState}>Recreate with State</button>
                             <button onClick={saveState}>Save State</button>
-                            <button onClick={recreateWithNoState}>Recreate Grid with No State</button>
+                            <button onClick={recreateWithNoState}>Recreate without State</button>
                             <button onClick={setState}>Set State</button>
-                            <button onClick={printState}>Print Grid State</button>
+                            <button onClick={printState}>Print State</button>
                         </span>
                     </div>
                     <div style={gridStyle}>

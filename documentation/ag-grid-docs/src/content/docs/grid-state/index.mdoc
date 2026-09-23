@@ -9,8 +9,8 @@ Grid State is a serialisable object capturing a user's changes to the grid, such
 The following example shows how the current grid state can be saved and restored.
 
 - Try sorting / re-sizing / hiding a column / apply a filter / scroll the grid / change the current page
-- Click **Recreate Grid with Current State** to destroy the grid and re-create using the saved state. Note how the grid returns to the same state.
-- Alternatively click **Save State**, then **Recreate Grid with No State** to start from the column definitions, and **Set State** to restore the saved state.
+- Click **Recreate with State** to destroy the grid and re-create using the saved state. Note how the grid returns to the same state.
+- Alternatively click **Save State**, then **Recreate without State** to start from the column definitions, and **Set State** to restore the saved state.
 
 {% gridExampleRunner title="Grid State" name="grid-state"  exampleHeight=630 /%}
 
@@ -51,9 +51,9 @@ Because of this, an absent property means "none" rather than "unspecified". Rest
 
 ### Restore via Initial State
 
-To restore a saved state to a new grid, pass the saved state to the grid option `initialState`. It is read once on creation, applying filters and groups before any data renders, so there is no flash of unfiltered or ungrouped data.
+To restore a saved state to a new grid, pass the saved [GridState](#gridstate) to the grid option `initialState`. It is read once on creation, applying filters and groups before any data renders, so there is no flash of unfiltered or ungrouped data.
 
-{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["initialState"] /%}
+If cell data types are inferred and the row data is empty or not yet set, the filter state is applied once row data is added. To apply it straight away, set `cellDataType: false` on the default column definition, or provide a cell data type for every column.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -61,10 +61,6 @@ const gridOptions = {
     initialState: savedState,
 }
 ```
-
-{% note %}
-If cell data types are inferred and the row data is empty or not yet set, the filter state is applied once row data is added. To apply it straight away, set `cellDataType: false` on the default column definition, or provide a cell data type for every column.
-{% /note %}
 
 To exclude a property from being restored, for example the `scroll` position, remove it from the `initialState` object. The grid then uses its default for that property.
 
@@ -77,7 +73,7 @@ const gridOptions = {
 };
 ```
 
-Column state properties are the exception. When `initialState` contains any of them, an omitted one also clears the matching value from the column definitions. See [Column State and Column Definitions](#column-state-and-column-definitions).
+Column state properties are the exception. When `initialState` contains any of them, an omitted one is reset, overriding the matching value in the column definitions. See [Column State and Column Definitions](#column-state-and-column-definitions).
 
 ### Restore via API
 
@@ -118,7 +114,7 @@ Column state properties such as `sort`, `hide`, `pinned` and `aggFunc` have two 
 
 By default the missing properties are reset, overriding the column definition values. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` property came from an unsorted grid, and restoring it must produce an unsorted grid even if a column definition sets a sort.
 
-In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is cleared when the grid is created.
+In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is overridden and the grid is created unsorted.
 
 ```js
 columnDefs: [
@@ -138,9 +134,9 @@ To fall back to the column definition values instead, set `partialColumnState: t
 
 In the example below the column definitions pin Country, hide Year and sum Gold and Silver into a grand total row. Each button recreates the grid with a different `initialState`.
 
-- **No State (column defaults)** shows the grid as defined by the column definitions.
-- **Column Order Only (defaults cleared)** supplies only `columnOrder`. Country is unpinned, Year appears and the totals are blank.
-- **Column Order Only + partialColumnState (defaults kept)** supplies the same `columnOrder` with `partialColumnState: true`. The order is applied and the column definition defaults remain.
+- **No State** shows the grid as defined by the column definitions.
+- **Column Order (overrides defaults)** supplies only `columnOrder`. Country is unpinned, Year appears and the totals are blank.
+- **Column Order + partialColumnState (keeps defaults)** supplies the same `columnOrder` with `partialColumnState: true`. The order is applied and the column definition defaults remain.
 
 {% gridExampleRunner title="Partial Column State" name="partial-column-state"  exampleHeight=500 /%}
 

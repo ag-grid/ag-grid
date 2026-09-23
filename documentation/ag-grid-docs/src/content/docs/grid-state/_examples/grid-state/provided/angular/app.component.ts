@@ -36,11 +36,11 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="recreateWithCurrentState()">Recreate Grid with Current State</button>
+                    <button (click)="recreateWithCurrentState()">Recreate with State</button>
                     <button (click)="saveState()">Save State</button>
-                    <button (click)="recreateWithNoState()">Recreate Grid with No State</button>
+                    <button (click)="recreateWithNoState()">Recreate without State</button>
                     <button (click)="setState()">Set State</button>
-                    <button (click)="printState()">Print Grid State</button>
+                    <button (click)="printState()">Print State</button>
                 </span>
             </div>
             @if (gridVisible()) {

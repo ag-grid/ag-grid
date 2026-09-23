@@ -24,8 +24,7 @@ function stripHistory(dom: string): string {
 
 type Page = Parameters<typeof serializeGridDom>[0];
 
-const recreateButton = (page: Page) =>
-    page.getByRole('button', { name: 'Recreate Grid with Current State', exact: true });
+const recreateButton = (page: Page) => page.getByRole('button', { name: 'Recreate with State', exact: true });
 
 // Group header cells carry no colId-based test id that survives a rename, so locate them by the
 // name they currently display.
@@ -55,7 +54,7 @@ async function captureSettledGrid(page: Page) {
 
 // The grid records every state change (onStateUpdated) and, when recreated, seeds the new
 // grid from the previous grid's state so sort/filter/etc. are restored. State changes and
-// getState() are logged to the console via the Print Grid State / Recreate buttons.
+// getState() are logged to the console via the Print State / Recreate buttons.
 test.agExample(import.meta, () => {
     test.eachFramework('Sorting fires the state updated event', async ({ agIdFor, page }) => {
         const logs: string[] = [];
@@ -76,7 +75,7 @@ test.agExample(import.meta, () => {
         page.off('console', handler);
     });
 
-    test.eachFramework('Print Grid State logs the current grid state', async ({ page }) => {
+    test.eachFramework('Print State logs the current grid state', async ({ page }) => {
         const logs: string[] = [];
         const handler = (msg: { text: () => string }) => logs.push(msg.text());
         page.on('console', handler);
@@ -84,7 +83,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
-        await page.getByRole('button', { name: 'Print Grid State', exact: true }).click();
+        await page.getByRole('button', { name: 'Print State', exact: true }).click();
         await expect(() => {
             expect(logs.some((l) => l.includes('Grid state'))).toBe(true);
         }).toPass();
@@ -315,7 +314,7 @@ test.agExample(import.meta, () => {
             }).toPass();
 
             // Recreate with no state: the fresh grid has no sort.
-            await page.getByRole('button', { name: 'Recreate Grid with No State', exact: true }).click();
+            await page.getByRole('button', { name: 'Recreate without State', exact: true }).click();
             await ensureGridReady(page, GRID_ID);
             await waitForGridContent(page);
             await expect(agIdFor.headerCell('age')).toHaveAttribute('aria-sort', 'none');
@@ -359,7 +358,7 @@ test.agExample(import.meta, () => {
         await page.getByRole('button', { name: 'Save State', exact: true }).click();
 
         // Recreate with no state: both headers fall back to their column definition names.
-        await page.getByRole('button', { name: 'Recreate Grid with No State', exact: true }).click();
+        await page.getByRole('button', { name: 'Recreate without State', exact: true }).click();
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
         await expect(agIdFor.headerCell('athlete')).toContainText('Athlete');
@@ -402,7 +401,7 @@ test.agExample(import.meta, () => {
             await page.getByRole('button', { name: 'Save State', exact: true }).click();
 
             // Recreate with no state: the column is not in `columnDefs`, so nothing recreates it.
-            await page.getByRole('button', { name: 'Recreate Grid with No State', exact: true }).click();
+            await page.getByRole('button', { name: 'Recreate without State', exact: true }).click();
             await ensureGridReady(page, GRID_ID);
             await waitForGridContent(page);
             await expect(calculatedHeader('Age Plus Ten')).toHaveCount(0);
@@ -446,7 +445,7 @@ test.agExample(import.meta, () => {
 
         await page.getByRole('button', { name: 'Save State', exact: true }).click();
 
-        await page.getByRole('button', { name: 'Recreate Grid with No State', exact: true }).click();
+        await page.getByRole('button', { name: 'Recreate without State', exact: true }).click();
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
         await expect(agIdFor.headerCell('athlete')).not.toHaveClass(/ag-header-cell-last-left-pinned/);

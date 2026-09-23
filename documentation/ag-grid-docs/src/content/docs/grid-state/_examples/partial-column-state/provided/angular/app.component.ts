@@ -31,10 +31,10 @@ const columnOrderState: GridState = {
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="recreateWithNoState()">No State (column defaults)</button>
-                    <button (click)="recreateWithColumnOrder()">Column Order Only (defaults cleared)</button>
+                    <button (click)="recreateWithNoState()">No State</button>
+                    <button (click)="recreateWithColumnOrder()">Column Order (overrides defaults)</button>
                     <button (click)="recreateWithPartialColumnOrder()">
-                        Column Order Only + partialColumnState (defaults kept)
+                        Column Order + partialColumnState (keeps defaults)
                     </button>
                 </span>
             </div>
