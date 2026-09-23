@@ -22,6 +22,8 @@ const {
     REF,
     CURRENT_SHA,
     LAST_SUCCESSFUL_SHA,
+    GITHUB_REPOSITORY,
+    GITHUB_TOKEN,
     TEAM_CHANNEL,
     DEBUG_CHANNEL,
     JOB_STATUSES,
@@ -29,7 +31,7 @@ const {
     REPORT_URL,
 } = process.env;
 
-const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA, JOB_STATUSES };
+const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA, GITHUB_REPOSITORY, GITHUB_TOKEN, JOB_STATUSES };
 for (const [name, value] of Object.entries(required)) {
     if (!value) {
         ghaError(`${name} environment variable is not set.`, { title: 'Slack notification: missing config' });
@@ -64,7 +66,10 @@ const THREAD_DEBUG_RAW = true;
         process.exit(1);
     }
 
-    const changes = getGitChanges(CURRENT_SHA, LAST_SUCCESSFUL_SHA, users);
+    const changes = await getGitChanges(CURRENT_SHA, LAST_SUCCESSFUL_SHA, users, {
+        repository: GITHUB_REPOSITORY,
+        token: GITHUB_TOKEN,
+    });
 
     const ctx = {
         project: AG_PROJECT,

@@ -1,5 +1,3 @@
-import { execSync } from 'node:child_process';
-
 // ────────────────────────────────────────────────────────────────────────────
 // Per-library config. Add/edit entries here when a new library is onboarded.
 // `project` values match the AG_PROJECT env var set by the calling workflow.
@@ -132,34 +130,54 @@ export function updateWithGithubPRUrl({ str, baseGithubUrl }) {
     return str.replace(/#(\d+)/gm, `<${baseGithubUrl}/pull/$1 | #$1>`);
 }
 
-export function getGitChanges(currentSha, lastSuccessfulSha, users) {
-    // Trim trailing newline before interpolating — `head -1` keeps it and the
-    // embedded newline would otherwise break the next `git log` command.
-    const firstAfterSuccess = execSync(
-        `git log --reverse --ancestry-path --pretty=%H ${lastSuccessfulSha}..HEAD | head -1`,
-        { stdio: 'pipe', encoding: 'utf-8' }
-    ).trim();
+async function githubApi(path, token) {
+    const response = await fetch(new URL(path, 'https://api.github.com'), {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+        },
+    });
+    if (!response.ok) {
+        throw new Error(`GET ${path} -> ${response.status} ${await response.text()}`);
+    }
+    return response.json();
+}
 
-    const gitCommand =
-        firstAfterSuccess.length === 0 || firstAfterSuccess === currentSha
-            ? `git log ${currentSha} --format="%ae||%an||%h||%s" | head -1`
-            : `git log ${lastSuccessfulSha}..${currentSha} --format="%ae||%an||%h||%s"`;
-
-    const rawChanges = execSync(gitCommand, { stdio: 'pipe', encoding: 'utf-8' });
-
-    return rawChanges
-        .split('\n')
-        .filter((change) => change.length > 0)
-        .map((change) => change.split('||'))
-        .map(([email, authorName, version, comment]) => {
-            const user = findUserByEmail(email, users);
-            return {
-                username: user?.github || authorName,
-                slackId: user?.slackId,
-                version,
-                comment,
-            };
+/**
+ * Commits in baseSha..currentSha (newest first) via the compare API, so the shallow CI
+ * checkout is irrelevant. Falls back to the current commit alone when the range is empty
+ * or cannot be compared. The API caps the list at 250 commits.
+ */
+export async function getGitChanges(currentSha, baseSha, users, { repository, token }) {
+    let commits;
+    try {
+        const comparison = await githubApi(`/repos/${repository}/compare/${baseSha}...${currentSha}`, token);
+        if (comparison.total_commits > comparison.commits.length) {
+            ghaWarning(
+                `Range spans ${comparison.total_commits} commits but the compare API returned ${comparison.commits.length}; the oldest are not listed.`,
+                { title: 'Change list truncated' }
+            );
+        }
+        commits = comparison.commits.reverse();
+    } catch (error) {
+        ghaWarning(`Could not compare ${baseSha}..${currentSha}; listing the current commit only. ${error.message}`, {
+            title: 'Change list unavailable',
         });
+    }
+    if (!commits?.length) {
+        commits = [await githubApi(`/repos/${repository}/commits/${currentSha}`, token)];
+    }
+
+    return commits.map(({ sha, commit }) => {
+        const user = findUserByEmail(commit.author?.email, users);
+        return {
+            username: user?.github || commit.author?.name,
+            slackId: user?.slackId,
+            version: sha,
+            comment: commit.message,
+        };
+    });
 }
 
 export function getChangesData({ currentSha, lastSuccessfulSha, project, gitChanges, userDisplayTypeSetting, users }) {
