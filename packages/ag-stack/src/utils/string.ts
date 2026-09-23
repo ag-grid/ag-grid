@@ -67,8 +67,10 @@ export function _camelCaseToHumanText(camelCase: string | undefined): string | n
     // eslint-disable-next-line sonarjs/null-dereference -- camelCase is narrowed non-null by the guard above
     const words: string[] = camelCase.replace(rex, '$1 $2').replace(rexCaps, '$1 $2$3').replace(/\./g, ' ').split(' ');
 
-    return words
-        // eslint-disable-next-line sonarjs/null-dereference -- word is always a string from splitting words above
-        .map((word) => word.substring(0, 1).toUpperCase() + (word.length > 1 ? word.substring(1, word.length) : ''))
-        .join(' ');
+    return (
+        words
+            // eslint-disable-next-line sonarjs/null-dereference -- word is always a string from splitting words above
+            .map((word) => word.substring(0, 1).toUpperCase() + (word.length > 1 ? word.substring(1, word.length) : ''))
+            .join(' ')
+    );
 }
