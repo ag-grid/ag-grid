@@ -103,7 +103,9 @@ describe('Focused cell restore after row removal', () => {
         async (suppressAnimationFrame) => {
             const { api, hasCell } = await createGridWithFocusedColumnScrolledOut(suppressAnimationFrame);
 
-            expect(() => api.applyTransaction({ remove: buildRows(ROW_COUNT).slice(ROW_COUNT - REMOVE) })).not.toThrow();
+            expect(() =>
+                api.applyTransaction({ remove: buildRows(ROW_COUNT).slice(ROW_COUNT - REMOVE) })
+            ).not.toThrow();
 
             await expectFocusOnFallbackCellAndGridUsable(api, hasCell);
         }
