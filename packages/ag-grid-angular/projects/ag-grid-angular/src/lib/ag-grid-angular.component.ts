@@ -652,10 +652,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressGroupChangesColumnVisibility:
-        | boolean
-        | 'suppressHideOnGroup'
-        | 'suppressShowOnUngroup'
-        | undefined = undefined;
+        boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup' | undefined = undefined;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
      * @default false
      * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
@@ -935,9 +932,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `IntegratedChartsModule`
      */
     @Input() public chartMenuItems:
-        | (DefaultChartMenuItem | MenuItemDef<TData>)[]
-        | GetChartMenuItems<TData>
-        | undefined = undefined;
+        (DefaultChartMenuItem | MenuItemDef<TData>)[] | GetChartMenuItems<TData> | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
