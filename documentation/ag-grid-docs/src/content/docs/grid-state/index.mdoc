@@ -62,22 +62,22 @@ const gridOptions = {
 }
 ```
 
-To exclude a property from being restored, for example the `scroll` position, either delete it or set it to `undefined` on the `initialState` object. An omitted property is simply not applied and the grid starts with its normal defaults for it.
+To exclude a property from being restored, for example the `scroll` position, remove it from the `initialState` object. An omitted property is simply not applied and the grid starts with its normal defaults for it.
 
 ```js
 // Restore everything except the scroll position and the row selection.
-initialState: {
-    ...savedState,
-    scroll: undefined,
-    rowSelection: undefined,
-}
+const { scroll, rowSelection, ...stateToRestore } = savedState;
+
+const gridOptions = {
+    initialState: stateToRestore,
+};
 ```
 
 Omitting a column state property does more than skip it, because the column definitions supply their own values for the same properties. See [Column State and Column Definitions](#column-state-and-column-definitions).
 
 ### Restore via API
 
-To restore state on an existing grid use the `api.setState(state)` method. For example, to enable a user to save multiple configurations of the same grid, and be able to switch between them on demand.
+To restore state on an existing grid use the `api.setState(state)` method. This enables, for example, a user to save multiple configurations of the same grid and switch between them on demand.
 
 ```js
 // Restore a saved state onto an existing grid
@@ -97,12 +97,12 @@ To exclude properties from being restored, pass their names as the second argume
 api.setState(savedState, ['filter']);
 ```
 
-Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand built state containing only `columnOrder` will clear the sort, filters, row groups, pinning and every other property.
+Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand-built state containing only `columnOrder` will clear the sort, filters, row groups, pinning and every other property.
 
 The example below has three saved states, captured with `api.getState()` after a user configured the grid, that are applied via the buttons.
 
 - **Default View**, **Medals by Country** and **Swimming Leaders** each call `api.setState()` with a full saved state.
-- **Column Order Only** applies a hand built state containing just `columnOrder` showing omitted properties are all reset.
+- **Column Order Only** applies a hand-built state containing just `columnOrder`, showing that omitted properties are reset.
 - Toggle **Ignore Filter** to conditionally pass `['filter']` as `propertiesToIgnore` to enable maintaining the current filter state while switching views.
 
 {% gridExampleRunner title="Switching Between Saved States" name="saved-views"  exampleHeight=500 /%}
@@ -151,10 +151,10 @@ For best results ensure columns and groups have unique `field` or explicit `colI
 
 ### Grid State API vs Column State API
 
-Grid state and [Column State](./column-state/) overlap: the [column state properties](#gridstate-column-properties) of grid state carry the same information as Column State, in a different shape. Which one to reach for depends on what you're doing:
+Grid state and [Column State](./column-state/) overlap: the [column state properties](#gridstate-column-properties) of grid state carry the same information as Column State, in a different shape. Which one to use depends on the task:
 
-- **Grid state** saves and restores the grid as a whole, columns included, typically round-tripped through storage between sessions and updates all columns together.
-- **Column State** targets one aspect of the columns directly, in place, without touching anything else. Use `api.applyColumnState()` for a one-off change such as reordering or resizing a subset of columns while leaving sort, filters and the rest of the grid untouched. See [Applying Partial State](./column-state/#partial-state) for more examples.
+- **Grid state** saves and restores the grid as a whole, columns included. It is typically round-tripped through storage between sessions, and restoring it updates all columns together.
+- **Column State** targets one aspect of the columns directly, in place, without touching anything else. Use `api.applyColumnState()` for a one-off change such as reordering or resizing a subset of columns while leaving sort, filters and the rest of the grid untouched. See [Applying Partial State](./column-state/#applying-partial-state) for more examples.
 
 If code was already using Column State alongside other custom APIs to manage grid-level state by hand, `convertColumnState` and `convertColumnGroupState` convert that Column State into the equivalent grid state sections:
 
@@ -183,6 +183,6 @@ The grid state is designed to be serialisable, so any functions will be stripped
 
 ### GridState (column properties)
 
-These following properties are all the Column State options and impacted by `partialColumnState`.
+The following properties hold column state and are affected by `partialColumnState`.
 
 {% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" names=["sort", "rowGroup", "aggregation", "showValuesAs", "pivot", "columnPinning", "columnVisibility", "columnSizing", "columnOrder", "columnHeaderName", "partialColumnState"] config={ "description": "" } /%}
