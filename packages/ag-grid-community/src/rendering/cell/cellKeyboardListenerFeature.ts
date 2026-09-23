@@ -290,10 +290,10 @@ export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl,
 
 function onSpaceKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const { gos, editSvc } = beans;
-    const { rowNode } = cellCtrl;
+    const { rowNode, column } = cellCtrl;
 
     if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) && _isRowSelection(gos)) {
-        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey');
+        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', column);
     }
 
     // prevent default as space key, by default, moves browser scroll down

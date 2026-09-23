@@ -282,7 +282,8 @@ export abstract class BaseSelectionService extends BeanStub {
         node: RowNode,
         shiftKey: boolean,
         metaKey: boolean,
-        source: SelectionEventSourceType
+        source: SelectionEventSourceType,
+        column?: AgColumn
     ): null | NodeSelection {
         const { gos, selectionCtx } = this;
         const currentSelection = node.isSelected();
@@ -292,10 +293,15 @@ export abstract class BaseSelectionService extends BeanStub {
         const enableClickToggle = _isInternalFeatureFlagEnabled(this.beans, 'clickToggleSelection');
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
+        const isClickGated = isRowClicked || this.isSpaceKeyClickGated(node, source, column);
 
-        if (isRowClicked && !(enableClickSelection || enableDeselection)) {
+        if (isClickGated && !(enableClickSelection || enableDeselection)) {
             return null;
         }
+
+        // whether `enableClickSelection` forbids moving the node to `newValue`
+        const isBlockedByClickSelection = (newValue: boolean) =>
+            isClickGated && (newValue ? !enableClickSelection : !enableDeselection);
 
         if (shiftKey && metaKey && isMultiSelect) {
             // SHIFT+CTRL or SHIFT+CMD is used for bulk deselection, except where the selection root
@@ -341,31 +347,17 @@ export abstract class BaseSelectionService extends BeanStub {
             };
         } else if (metaKey) {
             // CTRL is used for deselection of a single node or adding a single node to selection
-            if (isRowClicked) {
-                const newValue = !currentSelection;
-
-                const selectingWhenDisabled = newValue && !enableClickSelection;
-                const deselectingWhenDisabled = !newValue && !enableDeselection;
-
-                if (selectingWhenDisabled || deselectingWhenDisabled) {
-                    return null;
-                }
-
-                selectionCtx.setRoot(node);
-
-                return {
-                    node,
-                    newValue,
-                    clearSelection: false,
-                };
+            const newValue = !currentSelection;
+            if (isBlockedByClickSelection(newValue)) {
+                return null;
             }
 
             selectionCtx.setRoot(node);
 
             return {
                 node,
-                newValue: !currentSelection,
-                clearSelection: !isMultiSelect,
+                newValue,
+                clearSelection: !isRowClicked && !isMultiSelect,
             };
         } else {
             // Otherwise we just do normal selection of a single node
@@ -395,14 +387,10 @@ export abstract class BaseSelectionService extends BeanStub {
                     ? !(enableSelectionWithoutKeys || (enableClickToggle && this.isSoleSelection(node.primaryRow)))
                     : enableClickSelection;
 
-                // if selecting, only proceed if not disabled by grid options
-                const selectingWhenDisabled = newValue && !enableClickSelection;
-                // if deselecting, only proceed if not disabled by grid options
-                const deselectingWhenDisabled = !newValue && !enableDeselection;
                 // only transistion to same state if we also want to clear other selected nodes
                 const wouldStateBeUnchanged = newValue === currentSelection && !shouldClear;
 
-                if (wouldStateBeUnchanged || selectingWhenDisabled || deselectingWhenDisabled) {
+                if (wouldStateBeUnchanged || isBlockedByClickSelection(newValue)) {
                     return null;
                 }
 
@@ -414,12 +402,26 @@ export abstract class BaseSelectionService extends BeanStub {
                 };
             }
 
+            const newValue = !currentSelection;
+            if (isBlockedByClickSelection(newValue)) {
+                return null;
+            }
+
             return {
                 node,
-                newValue: !currentSelection,
+                newValue,
                 clearSelection: !isMultiSelect || shouldClear,
             };
         }
+    }
+
+    /** Whether Space must obey `enableClickSelection`. On a selection checkbox cell it acts like clicking the checkbox. */
+    private isSpaceKeyClickGated(node: RowNode, source: SelectionEventSourceType, column?: AgColumn): boolean {
+        return (
+            source === 'spaceKey' &&
+            _isInternalFeatureFlagEnabled(this.beans, 'spaceKeyFollowsClickSelection') &&
+            !(column && this.isCellCheckboxSelection(column, node))
+        );
     }
 }
 
