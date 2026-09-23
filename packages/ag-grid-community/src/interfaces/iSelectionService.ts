@@ -56,13 +56,7 @@ export interface ISelectionService {
     updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
     createDaemonNode?(rowNode: RowNode): RowNode | undefined;
-    /** `column` is the cell the event came from, if any. */
-    handleSelectionEvent(
-        event: MouseEvent | KeyboardEvent,
-        rowNode: RowNode,
-        source: SelectionEventSourceType,
-        column?: AgColumn
-    ): number;
+    handleSelectionEvent(event: MouseEvent | KeyboardEvent, rowNode: RowNode, source: SelectionEventSourceType): number;
     isCellCheckboxSelection(column: AgColumn, rowNode: IRowNode): boolean;
     refreshMasterNodeState(node: RowNode, e?: Event): void;
     setDetailSelectionState(masterNode: RowNode, option: GridOptions, detailApi: GridApi): void;

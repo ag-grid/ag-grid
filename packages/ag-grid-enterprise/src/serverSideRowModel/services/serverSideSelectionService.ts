@@ -1,5 +1,4 @@
 import type {
-    AgColumn,
     ISelectionService,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
@@ -73,8 +72,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     public handleSelectionEvent(
         event: MouseEvent | KeyboardEvent,
         rowNode: RowNode<any>,
-        source: SelectionEventSourceType,
-        column?: AgColumn
+        source: SelectionEventSourceType
     ): number {
         if (this.isRowSelectionBlocked(rowNode)) {
             return 0;
@@ -85,7 +83,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             event.shiftKey,
             event.metaKey || event.ctrlKey,
             source,
-            column
+            event.target
         );
 
         if (selection == null) {
