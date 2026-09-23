@@ -109,6 +109,32 @@ const scriptAssetCacheRules = `
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
 `;
 
+// A released archive version is permanently immutable - unlike every other rule in this file,
+// this one carries no extension allowlist and no content-type restriction, because literally
+// everything under a released version (HTML, JS, CSS, raw .ts example source, dist bundles)
+// is guaranteed to never change again. Matched on the same numeric-version-prefix shape
+// documentNoCacheRules already uses to exclude archive HTML from forced no-cache
+// (archive/[0-9] - a real version starts with a digit) - this is the rule that actually fills
+// that exclusion with a positive cache header, which nothing previously did: /archive/* and
+// /charts/archive/* returned no Cache-Control at all until this rule existed (confirmed live
+// 2026-09-23 while investigating a Sitebulb crawl that hit thousands of these uncached pages
+// in one run). Emitted after staticAssetCacheRules/scriptAssetCacheRules so an archived path
+// that also happens to match one of those (e.g. .../images/foo.png) gets this rule's longer,
+// immutable-content TTL instead of their moderate one - and before studioArchiveNoCacheRules
+// and getInFlightArchiveRules, both of which must keep overriding it for their own scope.
+//
+// getInFlightArchiveRules is what makes the "released -> cached" flip real: a version listed
+// there gets forced back to no-cache regardless of this rule, and removing it from that list
+// is what lets the version fall through to here for the first time - completing a promise the
+// in-flight mechanism made from the start but that this rule's absence had left unfulfilled.
+const archiveCacheRules = `
+# Released archive versions: fully immutable, so cache literally everything under them
+# indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
+# no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
+# in-flight block below, which overrides this back to no-cache for that version only.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+`;
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -633,6 +659,7 @@ ${documentNoCacheRules}
 ${hashedAssetCacheRules}
 ${staticAssetCacheRules}
 ${scriptAssetCacheRules}
+${archiveCacheRules}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
