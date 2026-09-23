@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridStateKey } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -29,6 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
         filter: true,
+        floatingFilter: true,
         enableRowGroup: true,
         enableValue: true,
     },
@@ -39,10 +40,34 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: 'columns',
 };
 
+function filterCountry() {
+    gridApi.setFilterModel({
+        country: { filterType: 'set', values: ['United States'] },
+    });
+}
+
+// `propertiesToIgnore` lists the properties to leave untouched when the state is applied.
+function getPropertiesToIgnore(): GridStateKey[] | undefined {
+    const ignoreFilter = document.querySelector<HTMLInputElement>('#ignoreFilter')!.checked;
+    return ignoreFilter ? ['filter'] : undefined;
+}
+
 function applyView(viewName: string) {
     const state = savedStates[viewName];
-    gridApi.setState(state);
+    gridApi.setState(state, getPropertiesToIgnore());
     console.log(`Applied view "${viewName}"`, state);
+}
+
+function setColumnOrderOnly() {
+    // A sparse state: every property it omits is reset unless it is ignored.
+    gridApi.setState(
+        {
+            columnOrder: {
+                orderedColIds: ['total', 'gold', 'silver', 'bronze', 'athlete', 'country', 'sport', 'year'],
+            },
+        },
+        getPropertiesToIgnore()
+    );
 }
 
 // setup the grid after the page has finished loading

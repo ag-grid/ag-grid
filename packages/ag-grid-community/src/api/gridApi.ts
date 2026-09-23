@@ -1221,11 +1221,9 @@ export interface _StateGridApi {
     /**
      * Set the current state of the grid.
      * Can be used in conjunction with `api.getState()` or `onStateUpdated` to save and restore grid state.
-     * The provided state replaces the grid state rather than patching it: every section it omits is reset
-     * unless listed in `propertiesToIgnore`.
-     * This method should only be used to restore state;
-     * it should not be called on every state update (the grid does not support being used as a controlled component).
+     * The provided state replaces the grid state rather than patching it: every section it omits is reset unless listed in `propertiesToIgnore`.
      * @param propertiesToIgnore Top-level state sections to leave as they are, e.g. `['filter']` keeps the current filters.
+     * @agModule `GridStateModule`
      */
     setState(state: GridState, propertiesToIgnore?: GridStateKey[]): void;
 }

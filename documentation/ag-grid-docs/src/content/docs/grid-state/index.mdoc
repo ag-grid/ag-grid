@@ -16,7 +16,7 @@ The following example shows how the current grid state can be saved and restored
 
 ### Saving State
 
-The current grid state can be retrieved by listening to the `stateUpdated` event, which is fired with the latest state when it changes. The state is also available on the [Grid Pre-Destroyed Event](./grid-lifecycle/#grid-pre-destroyed), which can be used to get the state when the grid is destroyed.
+The current grid state can be retrieved from the `stateUpdated` event, which fires whenever the state changes. The state is also available on the [Grid Pre-Destroyed Event](./grid-lifecycle/#grid-pre-destroyed), which can be used to get the state when the grid is destroyed.
 
 {% apiDocumentation source="grid-events/events.json" section="gridLifecycle" names=["stateUpdated", "gridPreDestroyed"] /%}
 
@@ -33,15 +33,14 @@ It is the application's responsibility to persist the grid state to a suitable l
 The state object only records what differs from the grid's defaults. Taking sort as an example, `sortModel` lists only the sorted columns, and if no column is sorted the `sort` property is omitted entirely.
 
 ```js
-// State saved from a grid where the user sorted by gold. No other column is sorted,
-// so silver, athlete and country do not appear in the sort model.
+// State of grid sorted by gold.
 {
     version: '{% $agGridVersion %}',
     sort: { sortModel: [{ colId: 'gold', sort: 'desc' }] },
     columnOrder: { orderedColIds: ['athlete', 'gold', 'silver', 'country'] },
 }
 
-// State saved after the user cleared the sort. The sort property is absent, not empty.
+// State after the user cleared the sort. The sort property is absent, not empty.
 {
     version: '{% $agGridVersion %}',
     columnOrder: { orderedColIds: ['athlete', 'gold', 'silver', 'country'] },
@@ -52,7 +51,9 @@ Because of this, an absent property means "none" rather than "unspecified". Rest
 
 ### Restore via Initial State
 
-To restore a saved state to a new grid, pass the saved state to the grid option `initialState`. It is read once on creation, applying filters and groups before any data renders, so there's no flash of unfiltered or ungrouped data.
+To restore a saved state to a new grid, pass the saved state to the grid option `initialState`. It is read once on creation, applying filters and groups before any data renders, so there is no flash of unfiltered or ungrouped data.
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["initialState"] /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -61,30 +62,7 @@ const gridOptions = {
 }
 ```
 
-### Restore via API
-
-To restore state on an existing grid use the `api.setState(state)` method. For example, to enable a user to save multiple configurations of the same grid, and be able to switch between them on demand.
-
-```js
-// Restore a saved state onto an existing grid
-api.setState(savedState);
-```
-
-{% note %}
-`setState` should only be used to restore grid state. The grid does not support being used as a controlled component, so do not call this on every state update.
-{% /note %}
-
-The example below has three saved states that can be applied via the buttons.
-
-{% gridExampleRunner title="Switching Between Saved States" name="saved-views"  exampleHeight=500 /%}
-
-## Excluding Properties
-
-It is possible to exclude properties from the save and restore process, for example, the application may not wish to restore the `scroll` position. The following sections explain how this is achieved for [Initial State](#excluding-via-initial-state) and [`api.setState()`](#excluding-via-api).
-
-### Excluding via Initial State
-
-To exclude a property, either delete the property or set it to `undefined` on the `initialState` object. A grid state section that is omitted, such as `scroll` or `filter`, is simply not applied and the grid starts with its normal defaults for that property.
+To exclude a property from being restored, for example the `scroll` position, either delete it or set it to `undefined` on the `initialState` object. An omitted property is simply not applied and the grid starts with its normal defaults for it.
 
 ```js
 // Restore everything except the scroll position and the row selection.
@@ -97,22 +75,37 @@ initialState: {
 
 Omitting a column state property does more than skip it, because the column definitions supply their own values for the same properties. See [Column State and Column Definitions](#column-state-and-column-definitions).
 
-### Excluding via API
+### Restore via API
 
-`api.setState()` takes a second parameter called `propertiesToIgnore`. This lists the top-level properties to leave as they are. For example, the following snippet restores everything except the filters.
+To restore state on an existing grid use the `api.setState(state)` method. For example, to enable a user to save multiple configurations of the same grid, and be able to switch between them on demand.
+
+```js
+// Restore a saved state onto an existing grid
+api.setState(savedState);
+```
+
+{% apiDocumentation source="grid-api/api.json" section="gridState" names=["setState"] /%}
+
+{% note %}
+`setState` should only be used to restore grid state. The grid does not support being used as a controlled component, so do not call this on every state update.
+{% /note %}
+
+To exclude properties from being restored, pass their names as the second argument, `propertiesToIgnore`. Those properties are left as they are on the grid.
 
 ```js
 // Restore a saved state but keep the current filter state of the grid.
 api.setState(savedState, ['filter']);
 ```
 
-In the example below use the **Filter Sport** button between each restore to see the impact of `propertiesToIgnore`:
+Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand built state containing only `columnOrder` will clear the sort, filters, row groups, pinning and every other property.
 
-- **Restore State** applies the saved state and clears the `filter`.
-- **Restore State, Ignore Filter** passes `['filter']` as `propertiesToIgnore`, so the current filter is preserved.
-- **Set Column Order Only** calls `api.setState()` with a hand built object containing just `columnOrder`. Because of the [sparse nature](#sparse-state-object) of the state object, every other property is cleared.
+The example below has three saved states, captured with `api.getState()` after a user configured the grid, that are applied via the buttons.
 
-{% gridExampleRunner title="Partial State with setState" name="set-state-partial"  exampleHeight=500 /%}
+- **Default View**, **Medals by Country** and **Swimming Leaders** each call `api.setState()` with a full saved state.
+- **Column Order Only** applies a hand built state containing just `columnOrder` showing omitted properties are all reset.
+- Toggle **Ignore Filter** to conditionally pass `['filter']` as `propertiesToIgnore` to enable maintaining the current filter state while switching views.
+
+{% gridExampleRunner title="Switching Between Saved States" name="saved-views"  exampleHeight=500 /%}
 
 ## Column State and Column Definitions
 
@@ -165,10 +158,12 @@ Grid state and [Column State](./column-state/) overlap: the [column state proper
 
 If code was already using Column State alongside other custom APIs to manage grid-level state by hand, `convertColumnState` and `convertColumnGroupState` convert that Column State into the equivalent grid state sections:
 
-```
+```js
+import { convertColumnState, convertColumnGroupState } from 'ag-grid-community';
+
 const state = {
     ...convertColumnState(columnState),
-    ...convertColumnGroupState(columnGroupState)
+    ...convertColumnGroupState(columnGroupState),
 };
 ```
 
