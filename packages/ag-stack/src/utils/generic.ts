@@ -89,5 +89,6 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
     }
 
     // localeCompare also handles Chinese / accented collation.
+    // eslint-disable-next-line sonarjs/null-dereference -- valueA is narrowed non-null and to string by the guards above
     return valueA.localeCompare(valueB);
 };

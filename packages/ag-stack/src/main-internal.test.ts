@@ -141,7 +141,9 @@ function getJSDocForSymbol(filePath: string, symbolName: string): string | null 
     for (let i = comments.length - 1; i >= 0; i--) {
         const comment = comments[i];
         if (comment.kind === ts.SyntaxKind.MultiLineCommentTrivia) {
+            // eslint-disable-next-line sonarjs/null-dereference -- text is the non-null cache value from getSourceFile()
             const commentText = text.substring(comment.pos, comment.end);
+            // eslint-disable-next-line sonarjs/null-dereference -- commentText was just assigned above, never null
             if (commentText.startsWith('/**')) {
                 return commentText;
             }
@@ -211,6 +213,7 @@ function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): 
     for (const filePath of collectSourceFiles(srcDir)) {
         const text = fs.readFileSync(filePath, 'utf-8');
         // Cheap pre-filter: only parse files that actually carry the annotation.
+        // eslint-disable-next-line sonarjs/null-dereference -- readFileSync with an encoding always returns a string
         if (!text.includes(AG_GRID_INTERNAL)) {
             continue;
         }

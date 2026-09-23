@@ -17,6 +17,7 @@ export class CssClassManager {
 
         // we check for spaces before doing the split, as doing the split
         // created a performance problem (on windows only, see AG-6765)
+        // eslint-disable-next-line sonarjs/null-dereference -- already guarded by the empty-check above
         if (className.includes(' ')) {
             const list = (className || '').split(' ');
             if (list.length > 1) {

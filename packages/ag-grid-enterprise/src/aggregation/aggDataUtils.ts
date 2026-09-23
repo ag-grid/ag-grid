@@ -16,7 +16,10 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
     return Array.isArray(mapPointer) ? mapPointer : [];
 };
 
-/** An aggData key and the column it came from. Structurally a {@link ResolvedValueColumn}. */
+/**
+ * An aggData key and the column it came from. Structurally a {@link ResolvedValueColumn}.
+ * @knipIgnore Consumed via the exported `AggDataEventCols.cols` array, not imported by name.
+ */
 export interface AggDataEventCol {
     readonly colId: string;
     readonly column: AgColumn;

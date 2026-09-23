@@ -86,6 +86,7 @@ describe('_parseDateTimeFromString', () => {
         'parses a year before 100AD without shifting into the 1900s: %s',
         (value) => {
             const result = _parseDateTimeFromString(value);
+            // eslint-disable-next-line sonarjs/null-dereference -- value is inferred as string from the it.each array
             const expectedYear = Number.parseInt(value.slice(0, 4), 10);
 
             expect(result).not.toBeNull();

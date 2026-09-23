@@ -633,6 +633,7 @@ export abstract class BasePopupService<
 
         const sourceRect = element.getBoundingClientRect();
 
+        // eslint-disable-next-line sonarjs/null-dereference -- pxSize is typed as a non-nullable string parameter
         const extractFromPixelValue = (pxSize: string) => Number.parseInt(pxSize.substring(0, pxSize.length - 1), 10);
         const createPosition = (prop: 'top' | 'left', direction: Direction) => {
             const initialDiff = parentRect[prop] - sourceRect[prop];

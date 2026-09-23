@@ -289,6 +289,7 @@ export function _setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTM
  * @returns {string}
  */
 function _camelCaseToHyphenated(camelCase: string): string {
+    // eslint-disable-next-line sonarjs/null-dereference -- camelCase and the regex match s are always strings
     return camelCase.replace(/[A-Z]/g, (s) => `-${s.toLocaleLowerCase()}`);
 }
 
@@ -315,7 +316,9 @@ export function _addStylesToElement(
         // changes the key from camelCase into a hyphenated-string
         const parsedKey = _camelCaseToHyphenated(key);
         const valueAsString = value.toString();
+        // eslint-disable-next-line sonarjs/null-dereference, sonarjs/super-linear-regex -- valueAsString is always a string; \s* cannot overlap with the fixed literal that follows
         const parsedValue = valueAsString.replace(/\s*!important/g, '');
+        // eslint-disable-next-line sonarjs/null-dereference -- parsedValue is always a string from String.replace()
         const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
 
         eElement.style.setProperty(parsedKey, parsedValue, priority);

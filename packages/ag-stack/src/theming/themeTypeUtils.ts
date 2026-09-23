@@ -33,6 +33,7 @@ export type ParamType = (typeof paramTypes)[number];
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const getParamType = memoize((param: string): ParamType => {
+    // eslint-disable-next-line sonarjs/null-dereference -- param is typed as a non-nullable string parameter
     param = param.toLowerCase();
     return paramTypes.find((type) => param.endsWith(type.toLowerCase())) ?? 'length';
 });
@@ -80,6 +81,7 @@ const lengthValueToCss = (value: LengthValue): string | false => {
         const valueWithSpaces = value.calc.replace(/ ?[*/+] ?/g, ' $& ');
         // convert param names to variable expressions, e.g. "fooBar" -> "var(--ag-foo-bar)",
         // ignoring words that are part of function names "fooBar()" or variables "--fooBar"
+        // eslint-disable-next-line sonarjs/null-dereference -- valueWithSpaces and the regex match p are always strings
         return `calc(${valueWithSpaces.replace(/-?\b[a-z][a-z0-9]*\b(?![-(])/gi, (p) => (p[0] === '-' ? p : ' ' + paramToVariableExpression(p) + ' '))})`;
     }
     if (typeof value === 'object' && value && 'ref' in value) {
@@ -149,6 +151,7 @@ export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => 
     // we add the quotes, unless a comma is present in which case we assume that
     // it's a list of correctly quoted font names
     if (typeof value === 'string') {
+        // eslint-disable-next-line sonarjs/null-dereference -- narrowed to string by the typeof check above
         return value.includes(',') ? value : quoteUnsafeChars(value);
     }
 

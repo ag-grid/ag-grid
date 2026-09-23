@@ -1,5 +1,6 @@
 import type { ColorValue } from './themeTypes';
 
+// eslint-disable-next-line sonarjs/null-dereference -- str is typed as a non-nullable string parameter
 const kebabCase = (str: string) => str.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
