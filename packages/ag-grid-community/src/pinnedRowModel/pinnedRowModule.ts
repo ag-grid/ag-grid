@@ -3,6 +3,7 @@ import type { _ModuleWithApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import manualPinnedRowCSS from './manualPinnedRow.css';
 import {
+    forEachHiddenPinnedRow,
     forEachPinnedRow,
     getPinnedBottomRow,
     getPinnedBottomRowCount,
@@ -26,6 +27,7 @@ export const PinnedRowModule: _ModuleWithApi<_PinnedRowGridApi> = {
         getPinnedTopRow,
         getPinnedBottomRow,
         forEachPinnedRow,
+        forEachHiddenPinnedRow,
     },
     icons: {
         rowPin: 'pin',

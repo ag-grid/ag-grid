@@ -5,7 +5,7 @@ import type { RowPinnedType } from './iRowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPinnedRowModel {
-    /** Reset the pinned row state. This is a no-op for the static pinned row model. */
+    /** Unpins manually pinned rows, keeping the grand total row and queued ids. No-op for the static model. */
     reset(): void;
 
     /**
@@ -42,18 +42,16 @@ export interface IPinnedRowModel {
 
     getPinnedRowById(id: string, float: NonNullable<RowPinnedType>): RowNode | undefined;
 
-    /** Iterate over the pinned rows in a particular floating container. */
+    /** Iterate over the displayed pinned rows in a particular floating container. */
     forEachPinnedRow(float: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
+
+    /** Iterate over the pinned rows a filter or pivot mode hides, in pin order. None for the static pinned row model. */
+    forEachHiddenPinnedRow(float: NonNullable<RowPinnedType>, callback: (node: RowNode) => void): void;
 
     /** Used by the state service. This is a no-op for the static pinned row model. */
     getPinnedState(): RowPinningState;
 
-    /**
-     * Setup the pinned row state based on a state object.
-     * Used to allow pinned state to be populated from initial state.
-     *
-     * This is a no-op for the static pinned row model.
-     */
+    /** Replaces the manually pinned rows with `state`, keeping rows already where it lists them. No-op for static. */
     setPinnedState(state: RowPinningState): void;
 
     /**

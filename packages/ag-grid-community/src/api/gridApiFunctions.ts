@@ -146,6 +146,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getPinnedTopRow: 0,
         getPinnedBottomRow: 0,
         forEachPinnedRow: 0,
+        forEachHiddenPinnedRow: 0,
     }),
     ...mod<_OverlayGridApi>('Overlay', {
         showLoadingOverlay: 0,

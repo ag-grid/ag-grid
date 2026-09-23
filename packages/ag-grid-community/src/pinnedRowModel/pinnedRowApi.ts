@@ -24,3 +24,11 @@ export function forEachPinnedRow(
 ): void {
     return beans.pinnedRowModel?.forEachPinnedRow(floating, callback);
 }
+
+export function forEachHiddenPinnedRow(
+    beans: BeanCollection,
+    floating: NonNullable<RowPinnedType>,
+    callback: (rowNode: IRowNode) => void
+): void {
+    return beans.pinnedRowModel?.forEachHiddenPinnedRow(floating, callback);
+}

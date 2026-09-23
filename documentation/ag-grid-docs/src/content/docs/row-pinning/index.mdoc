@@ -82,7 +82,7 @@ This is illustrated in the example below. Note that the "Pin Rows" submenu does 
 
 ## Sorting and Filtering Pinned Rows
 
-When sorts and filters are applied to the grid, they will also be applied to pinned rows.
+When sorts and filters are applied to the grid, they will also be applied to pinned rows. A pinned row hidden by a filter stays pinned: use `api.forEachHiddenPinnedRow(floating, callback)` to get references to these rows.
 
 {% gridExampleRunner title="Sorting and Filtering Pinned Rows" name="sorting-and-filtering" /%}
 

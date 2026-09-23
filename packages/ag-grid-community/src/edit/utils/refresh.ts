@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../../context/context';
+import type { RowNode } from '../../entities/rowNode';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { _getRowCtrl } from './controllers';
@@ -18,6 +19,9 @@ export const _purgeStalePinnedEdits = (beans: BeanCollection) => () => {
     editMap.forEach((editRow, rowNode) => {
         const pinned = rowNode.rowPinned;
         const id = rowNode.id;
+        if ((rowNode as RowNode).pinnedSibling) {
+            return; // a manual pinned copy releases its edits on unpin, and stays pinned while filtered out
+        }
         // No id means membership can't be tested, so keep the edit rather than discard it on a guess.
         if (pinned == null || id == null || pinnedRowModel?.getPinnedRowById(id, pinned) === rowNode) {
             return;

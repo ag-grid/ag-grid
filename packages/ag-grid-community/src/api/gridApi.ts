@@ -1298,34 +1298,44 @@ export interface _PaginationGridApi {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _PinnedRowGridApi {
     /**
-     * Gets the number of top pinned rows.
+     * Gets the number of displayed top pinned rows.
      * @agModule `PinnedRowModule`
      */
     getPinnedTopRowCount(): number;
 
     /**
-     * Gets the number of bottom pinned rows.
+     * Gets the number of displayed bottom pinned rows.
      * @agModule `PinnedRowModule`
      */
     getPinnedBottomRowCount(): number;
 
     /**
-     * Gets the top pinned row with the specified index.
+     * Gets the displayed top pinned row with the specified index.
      * @agModule `PinnedRowModule`
      */
     getPinnedTopRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
 
     /**
-     * Gets the bottom pinned row with the specified index.
+     * Gets the displayed bottom pinned row with the specified index.
      * @agModule `PinnedRowModule`
      */
     getPinnedBottomRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
 
     /**
-     * Iterates over each pinned row, calling the provided callback for each row
+     * Iterates over each displayed pinned row, in display order, calling the provided callback for each row.
      * @agModule `PinnedRowModule`
      */
     forEachPinnedRow<TPinnedData = any>(
+        floating: NonNullable<RowPinnedType>,
+        callback: (rowNode: IRowNode<TPinnedData>) => void
+    ): void;
+
+    /**
+     * Iterates over each manually pinned row hidden by a filter or by pivot mode, in pin order.
+     * A hidden pinned row has no position, so its `rowIndex` and `rowTop` are `null`.
+     * @agModule `PinnedRowModule`
+     */
+    forEachHiddenPinnedRow<TPinnedData = any>(
         floating: NonNullable<RowPinnedType>,
         callback: (rowNode: IRowNode<TPinnedData>) => void
     ): void;

@@ -183,7 +183,8 @@
         "getPinnedBottomRowCount": {},
         "getPinnedTopRow": {},
         "getPinnedBottomRow": {},
-        "forEachPinnedRow": {}
+        "forEachPinnedRow": {},
+        "forEachHiddenPinnedRow": {}
     },
     "rowNodes": {
         "meta": {

@@ -34,38 +34,41 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.csrm = _getClientSideRowModel(beans) ?? null;
         this.ssrm = beans.rowModel.getType() === 'serverSide';
 
-        const shouldHide = (node: RowNode) => _shouldHidePinnedRows(beans, node.pinnedSibling!);
-
         const runIsRowPinned = () => {
             const isRowPinned = gos.get('isRowPinned');
+            const sources: RowNode[] = [];
             if (isRowPinned && gos.get('enableRowPinning')) {
-                beans.rowModel.forEachNode((node) => this.pinRow(node, isRowPinned(node)), true);
+                beans.rowModel.forEachNode((node) => this.pinLoaded(node, isRowPinned(node), sources), true);
             }
-            this.refreshRowPositions();
-            this.dispatchRowPinnedEvents();
+            this.dispatchPinningChanged(sources);
         };
 
-        _addRowHeightChangedListener(this, () => this.estimateRowHeights());
+        _addRowHeightChangedListener(this, () => {
+            estimateRowHeights(this.top);
+            estimateRowHeights(this.bottom);
+        });
 
         this.addManagedEventListeners({
             modelUpdated: ({ keepRenderedRows }) => {
-                this.tryToEmptyQueues();
+                const sources: RowNode[] = [];
+                this.emptyQueue(this.top, sources);
+                this.emptyQueue(this.bottom, sources);
                 this.pinGrandTotalRow();
 
-                let visibilityChanged = false;
-                this.forContainers((container) => {
-                    visibilityChanged ||= container.hide(shouldHide);
-                });
-
+                const topVisibilityChanged = this.top.refreshVisibility();
+                const visibilityChanged = this.bottom.refreshVisibility() || topVisibilityChanged;
                 const positionsChanged = this.refreshRowPositions();
 
-                if (!keepRenderedRows || positionsChanged || visibilityChanged) {
-                    this.dispatchRowPinnedEvents();
+                if (!keepRenderedRows || positionsChanged || visibilityChanged || sources.length) {
+                    this.eventSvc.dispatchEvent({ type: 'pinnedRowsChanged' });
                 }
+                dispatchRowPinned(sources);
             },
             columnRowGroupChanged: () => {
-                this.forContainers(removeGroupRows);
-                this.refreshRowPositions();
+                const sources = this.detachPinnedRows(isPinnedGroupRow);
+                if (sources.length) {
+                    this.dispatchPinningChanged(sources);
+                }
             },
             rowNodeDataChanged: ({ node }) => {
                 const isRowPinnable = gos.get('isRowPinnable');
@@ -79,8 +82,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         });
 
         this.addManagedPropertyListener('pivotMode', () => {
-            this.forContainers((container) => container.hide(shouldHide));
-            this.dispatchRowPinnedEvents();
+            this.top.refreshVisibility();
+            this.bottom.refreshVisibility();
+            this.refreshRowPositions();
+            this.eventSvc.dispatchEvent({ type: 'pinnedRowsChanged' });
         });
 
         this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
@@ -96,27 +101,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public reset(dispatch = true): void {
-        this.forContainers((container) => {
-            const nodesToUnpin: RowNode[] = [];
-            // The grand total row is owned by the `grandTotalRow` option, not manual row-pinning
-            // state, so preserve it across a manual-pin reset; on destroy (dispatch false) clear it too.
-            let grandTotalNode: RowNode | undefined;
-            container.forEach((n) => {
-                if (dispatch && _isPinnedNodeGrandTotal(n)) {
-                    grandTotalNode = n;
-                } else {
-                    nodesToUnpin.push(n);
-                }
-            });
-            // Have to collect up the nodes to unpin because unpinning mutates the container
-            nodesToUnpin.forEach((n) => this.pinRow(n, null));
-            container.clear();
-            if (grandTotalNode) {
-                container.add(grandTotalNode);
-            }
-        });
+        // The grand total row belongs to `grandTotalRow`, so only destroy clears it. Queued ids are kept:
+        // a row data replace resets here and brings the rows they wait for.
+        const sources = this.detachPinnedRows(dispatch ? isManuallyPinnedRow : isAnyPinnedRow);
         if (dispatch) {
-            this.dispatchRowPinnedEvents();
+            this.dispatchPinningChanged(sources);
         }
     }
 
@@ -156,56 +145,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             }
         }
 
-        // May have been called on either the pinned row or the source row, check both
-        const currentFloat = rowNode.rowPinned ?? rowNode.pinnedSibling?.rowPinned;
-
-        // We're only switching if neither the current nor the target container are null
-        const switching = currentFloat != null && float != null && float != currentFloat;
-        if (switching) {
-            // call unpin on pinned row, re-pin on source row, since we always want to dispatch events
-            // on the source rows
-            const pinned = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
-            const source = rowNode.rowPinned ? rowNode.pinnedSibling! : rowNode;
-            this.pinRow(pinned, null, column);
-            this.pinRow(source, float, column);
-            return;
-        }
-
         // cell-span pinning/unpinning
         const spannedRows = column && getSpannedRows(this.beans, rowNode, column);
-        if (spannedRows) {
-            spannedRows.forEach((node) => this.pinRow(node, float));
-            return;
+        const sources: RowNode[] = [];
+        for (const node of spannedRows ?? [rowNode]) {
+            this.collectPinChange(node, float, sources);
         }
-
-        // unpinning
-        if (float == null) {
-            // Want to act on the pinned row, not the source row
-            const node = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
-            const found = this.findPinnedRowNode(node);
-            if (!found) {
-                return;
-            }
-
-            found.delete(node);
-            const source = node.pinnedSibling!;
-            _destroyRowNodeSibling(node);
-            this.refreshRowPositions(float);
-
-            this.dispatchRowPinnedEvents(source);
-        } else {
-            // pinning
-            const sibling = _createPinnedSibling(this.beans, rowNode, float);
-            const container = this.getContainer(float);
-            container.add(sibling);
-            // Check if we should hide this row -- covers us for some asynchronicities
-            // between (e.g.) applying filters and pinning rows.
-            if (_shouldHidePinnedRows(this.beans, rowNode)) {
-                container.hide((node) => _shouldHidePinnedRows(this.beans, node.pinnedSibling!));
-            }
-            this.refreshRowPositions(float);
-
-            this.dispatchRowPinnedEvents(rowNode);
+        if (sources.length) {
+            this.dispatchPinningChanged(sources);
         }
     }
 
@@ -214,7 +161,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public isEmpty(floating: NonNullable<RowPinnedType>): boolean {
-        return this.getContainer(floating).size() === 0;
+        return this.getContainer(floating).getDisplayedCount() === 0;
     }
 
     public isRowsToRender(floating: NonNullable<RowPinnedType>): boolean {
@@ -222,25 +169,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public ensureRowHeightsValid(): boolean {
-        let anyChange = false;
-        let rowTop = 0;
-        const updateRowHeight = (rowNode: RowNode) => {
-            if (rowNode.rowHeightEstimated) {
-                const rowHeight = _getRowHeightForNode(this.beans, rowNode);
-                rowNode.setRowTop(rowTop);
-                rowNode.setRowHeight(rowHeight.height);
-                rowTop += rowHeight.height;
-                anyChange = true;
-            }
-        };
-        this.bottom.forEach(updateRowHeight);
-        rowTop = 0;
-        this.top.forEach(updateRowHeight);
-
+        const bottomChanged = ensureRowHeightsValid(this.beans, this.bottom);
+        const anyChange = ensureRowHeightsValid(this.beans, this.top) || bottomChanged;
         if (anyChange) {
-            this.eventSvc.dispatchEvent({
-                type: 'pinnedHeightChanged',
-            });
+            this.eventSvc.dispatchEvent({ type: 'pinnedHeightChanged' });
         }
 
         return anyChange;
@@ -255,19 +187,19 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public getPinnedTopRowCount(): number {
-        return this.top.size();
+        return this.top.getDisplayedCount();
     }
 
     public getPinnedBottomRowCount(): number {
-        return this.bottom.size();
+        return this.bottom.getDisplayedCount();
     }
 
     public getPinnedTopRow(index: number): RowNode | undefined {
-        return this.top.getByIndex(index);
+        return this.top.getSorted()[index];
     }
 
     public getPinnedBottomRow(index: number): RowNode | undefined {
-        return this.bottom.getByIndex(index);
+        return this.bottom.getSorted()[index];
     }
 
     public getPinnedRowById(id: string, floating: NonNullable<RowPinnedType>): RowNode | undefined {
@@ -278,43 +210,52 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         floating: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
     ): void {
-        this.getContainer(floating).forEach(callback);
+        const container = this.getContainer(floating);
+        const sorted = container.getSorted(); // re-sorted in place, so the reference stays valid
+        // Length re-read each pass so a callback that pins or unpins cannot read past the end.
+        for (let i = 0; i < container.getSorted().length; ++i) {
+            callback(sorted[i], i);
+        }
+    }
+
+    public forEachHiddenPinnedRow(floating: NonNullable<RowPinnedType>, callback: (node: RowNode) => void): void {
+        const { all, hidden } = this.getContainer(floating);
+        if (hidden.size === 0) {
+            return;
+        }
+        for (const node of all) {
+            if (hidden.has(node)) {
+                callback(node); // walks `all` rather than `hidden` to report pin order
+            }
+        }
     }
 
     public getPinnedState(): RowPinningState {
-        const buildState = (floating: NonNullable<RowPinnedType>) => {
-            const list: string[] = [];
-            this.forEachPinnedRow(floating, (node) => {
-                // The grand total row is driven by the `grandTotalRow` option, not manual
-                // row-pinning state, so it must not be serialised as a pinned row id.
-                if (_isPinnedNodeGrandTotal(node)) {
-                    return;
-                }
-                const id = node.pinnedSibling?.id;
-                if (id != null) {
-                    list.push(id);
-                }
-            });
-            return list;
-        };
-
-        return {
-            top: buildState('top'),
-            bottom: buildState('bottom'),
-        };
+        return { top: getPinnedIds(this.top), bottom: getPinnedIds(this.bottom) };
     }
 
     public setPinnedState(state: RowPinningState): void {
-        this.forContainers((pinned, floating) => {
-            for (const id of state[floating]) {
-                const node = this.beans.rowModel.getRowNode(id);
-                if (node) {
-                    this.pinRow(node, floating);
-                } else {
-                    pinned.queue(id);
-                }
+        const { top, bottom } = this;
+        const topQueued = top.queued;
+        const bottomQueued = bottom.queued;
+        topQueued.clear();
+        bottomQueued.clear();
+        for (const id of state.bottom) {
+            bottomQueued.add(id);
+        }
+        for (const id of state.top) {
+            if (!bottomQueued.has(id)) {
+                topQueued.add(id); // an id listed in both containers goes to the bottom
             }
+        }
+        // Rows listed in the other container are moved, not detached, so they report one `rowPinned`.
+        const sources = this.detachPinnedRows((n) => {
+            const id = n.pinnedSibling?.id;
+            return isManuallyPinnedRow(n) && (id == null || !(topQueued.has(id) || bottomQueued.has(id)));
         });
+        this.emptyQueue(top, sources);
+        this.emptyQueue(bottom, sources);
+        this.dispatchPinningChanged(sources); // even when only the queue changed, so the saved state follows
     }
 
     public getGrandTotalPinned(): RowPinnedType {
@@ -325,22 +266,34 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this._grandTotalPinned = value;
     }
 
-    private tryToEmptyQueues(): void {
-        this.forContainers((pinned, container) => {
-            const nodesToPin = new Set<RowNode>();
-
-            pinned.forEachQueued((id) => {
-                const node = this.beans.rowModel.getRowNode(id);
-                if (node) {
-                    nodesToPin.add(node);
-                }
-            });
-
-            for (const node of nodesToPin) {
-                pinned.unqueue(node.id!);
-                this.pinRow(node, container);
+    /** Pins the queued rows the row model has loaded, leaving the rest queued. */
+    private emptyQueue(container: PinnedRows, sources: RowNode[]): void {
+        const { queued, floating } = container;
+        const rowModel = this.beans.rowModel;
+        for (const id of queued) {
+            const node = rowModel.getRowNode(id);
+            if (node) {
+                queued.delete(id);
+                this.pinLoaded(node, floating, sources);
             }
-        });
+        }
+    }
+
+    private pinLoaded(node: RowNode, float: RowPinnedType, sources: RowNode[]): void {
+        if (node.footer) {
+            this.pinRow(node, float); // the grand total row has its own path
+        } else {
+            this.collectPinChange(node, float, sources);
+        }
+    }
+
+    /** Accepts the pinned row or its source row. */
+    private collectPinChange(node: RowNode, float: RowPinnedType, sources: RowNode[]): void {
+        const pinned = node.rowPinned ? node : node.pinnedSibling;
+        const source = float ? this.attachPinnedRow(node, float) : this.detachPinnedRow(pinned);
+        if (source) {
+            sources.push(source);
+        }
     }
 
     private pinGrandTotalRow() {
@@ -355,32 +308,13 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
 
         const pinnedSibling = sibling.pinnedSibling;
-        const container = pinnedSibling && this.findPinnedRowNode(pinnedSibling);
-        if (!float) {
-            // unpin
-            if (!container) {
-                return;
-            }
-            _destroyRowNodeSibling(pinnedSibling);
-            container.delete(pinnedSibling);
-        } else {
-            // pin
-            if (container && container.floating !== float) {
-                // already have pinned grand total row, need to unpin first
-                _destroyRowNodeSibling(pinnedSibling);
-                container.delete(pinnedSibling);
-            }
-            if (container?.floating !== float) {
-                const newPinnedSibling = _createPinnedSibling(beans, sibling, float);
-                this.getContainer(float).add(newPinnedSibling);
-            }
+        if (float && pinnedSibling?.rowPinned === float) {
+            return;
         }
-    }
-
-    private estimateRowHeights(): void {
-        this.forContainers((container) =>
-            container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
-        );
+        this.detachPinnedRow(pinnedSibling);
+        if (float) {
+            this.getContainer(float).add(_createPinnedSibling(beans, sibling, float), false);
+        }
     }
 
     private getContainer(floating: NonNullable<RowPinnedType>): PinnedRows {
@@ -388,45 +322,114 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private findPinnedRowNode(node: RowNode): PinnedRows | undefined {
-        if (this.top.has(node)) {
+        if (this.top.all.has(node)) {
             return this.top;
         }
-        if (this.bottom.has(node)) {
+        if (this.bottom.all.has(node)) {
             return this.bottom;
         }
     }
 
-    private refreshRowPositions(floating?: RowPinnedType): boolean {
-        const refreshAll = (pinned: PinnedRows) => refreshRowPositions(this.beans, pinned);
-
-        if (floating) {
-            return refreshAll(this.getContainer(floating));
+    /** Unpins without refreshing positions or dispatching, so a batch pays for those once. Returns the source row. */
+    private detachPinnedRow(pinned: RowNode | undefined): RowNode | undefined {
+        const container = pinned && this.findPinnedRowNode(pinned);
+        if (!container) {
+            return undefined;
         }
-
-        let changed = false;
-        this.forContainers((container) => {
-            const updated = refreshAll(container);
-            changed ||= updated;
-        });
-        return changed;
+        container.delete(pinned);
+        const source = pinned.pinnedSibling;
+        _destroyRowNodeSibling(pinned);
+        return source;
     }
 
-    private forContainers(fn: (container: PinnedRows, floating: NonNullable<RowPinnedType>) => void): void {
-        fn(this.top, 'top');
-        fn(this.bottom, 'bottom');
+    /** Detaches every pinned node matching `predicate`, hidden ones included. Returns their source rows. */
+    private detachPinnedRows(predicate: (pinned: RowNode) => boolean): RowNode[] {
+        // Collected first: detaching mutates the set being iterated.
+        const matched: RowNode[] = [];
+        collectPinnedRows(this.top, predicate, matched);
+        collectPinnedRows(this.bottom, predicate, matched);
+        const sources: RowNode[] = [];
+        for (let i = 0, len = matched.length; i < len; ++i) {
+            const source = this.detachPinnedRow(matched[i]);
+            if (source) {
+                sources.push(source); // a synchronous listener may already have unpinned it
+            }
+        }
+        return sources;
     }
 
-    private dispatchRowPinnedEvents(node?: RowNode): void {
+    /** Pins or moves without refreshing positions or dispatching. Returns the source row if anything changed. */
+    private attachPinnedRow(rowNode: RowNode, float: NonNullable<RowPinnedType>): RowNode | undefined {
+        const source = rowNode.rowPinned ? rowNode.pinnedSibling : rowNode;
+        if (!source || source.destroyed || source.pinnedSibling?.rowPinned === float) {
+            return undefined;
+        }
+        this.detachPinnedRow(source.pinnedSibling);
+        const hidden = _shouldHidePinnedRows(this.beans, source);
+        this.getContainer(float).add(_createPinnedSibling(this.beans, source, float), hidden);
+        return source;
+    }
+
+    private dispatchPinningChanged(sources: RowNode[]): void {
+        this.refreshRowPositions();
         this.eventSvc.dispatchEvent({ type: 'pinnedRowsChanged' });
-        node?.dispatchRowEvent('rowPinned');
+        dispatchRowPinned(sources);
+    }
+
+    private refreshRowPositions(): boolean {
+        const beans = this.beans;
+        const topChanged = refreshRowPositions(beans, this.top);
+        return refreshRowPositions(beans, this.bottom) || topChanged;
     }
 }
 
-function refreshRowPositions(beans: BeanCollection, container: PinnedRows): boolean {
+/** The grand total row is driven by the `grandTotalRow` option, not manual row-pinning state. */
+const isManuallyPinnedRow = (pinned: RowNode): boolean => !_isPinnedNodeGrandTotal(pinned);
+
+const isAnyPinnedRow = (): boolean => true;
+
+const isPinnedGroupRow = (pinned: RowNode): boolean => !!pinned.group && isManuallyPinnedRow(pinned);
+
+const getPinnedIds = (container: PinnedRows): string[] => {
+    const ids: string[] = [];
+    for (const node of container.all) {
+        const id = node.pinnedSibling?.id;
+        if (id != null && isManuallyPinnedRow(node)) {
+            ids.push(id);
+        }
+    }
+    for (const id of container.queued) {
+        ids.push(id);
+    }
+    return ids;
+};
+
+const dispatchRowPinned = (sources: RowNode[]): void => {
+    for (let i = 0, len = sources.length; i < len; ++i) {
+        sources[i].dispatchRowEvent('rowPinned');
+    }
+};
+
+const estimateRowHeights = (container: PinnedRows): void => {
+    for (const rowNode of container.all) {
+        rowNode.setRowHeight(rowNode.rowHeight, true);
+    }
+};
+
+const collectPinnedRows = (container: PinnedRows, predicate: (pinned: RowNode) => boolean, out: RowNode[]): void => {
+    for (const node of container.all) {
+        if (predicate(node)) {
+            out.push(node);
+        }
+    }
+};
+
+const refreshRowPositions = (beans: BeanCollection, container: PinnedRows): boolean => {
+    const order = container.getSorted();
     let rowTop = 0;
     let changed = false;
-
-    container.forEach((node, index) => {
+    for (let i = 0, len = order.length; i < len; ++i) {
+        const node = order[i];
         changed ||= node.rowTop !== rowTop;
         node.setRowTop(rowTop);
 
@@ -436,14 +439,34 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows): bool
             node.setRowHeight(rowHeight);
         }
 
-        node.setRowIndex(index);
+        node.setRowIndex(i);
         rowTop += node.rowHeight!;
-    });
-
+    }
     return changed;
-}
+};
 
-function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, floating: NonNullable<RowPinnedType>): RowNode {
+const ensureRowHeightsValid = (beans: BeanCollection, container: PinnedRows): boolean => {
+    const order = container.getSorted();
+    let rowTop = 0;
+    let changed = false;
+    for (let i = 0, len = order.length; i < len; ++i) {
+        const node = order[i];
+        if (node.rowHeightEstimated) {
+            const rowHeight = _getRowHeightForNode(beans, node).height;
+            node.setRowTop(rowTop);
+            node.setRowHeight(rowHeight);
+            rowTop += rowHeight;
+            changed = true;
+        }
+    }
+    return changed;
+};
+
+const _createPinnedSibling = (
+    beans: BeanCollection,
+    rowNode: RowNode,
+    floating: NonNullable<RowPinnedType>
+): RowNode => {
     // only create sibling node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
     if (rowNode.pinnedSibling) {
@@ -465,55 +488,30 @@ function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, floating:
     rowNode.pinnedSibling = sibling;
 
     return sibling;
-}
+};
 
 /** Expect to be passed the pinned node, not the original node. Therefore `pinnedSibling` is the original. */
-function _destroyRowNodeSibling(rowNode: RowNode): void {
-    if (!rowNode.pinnedSibling) {
+const _destroyRowNodeSibling = (rowNode: RowNode): void => {
+    const mainNode = rowNode.pinnedSibling;
+    if (!mainNode) {
         return;
     }
-
+    rowNode._destroy(false); // while still pinned, so it leaves the source row's footer and detail rows alone
     rowNode.rowPinned = null;
-    rowNode._destroy(false);
 
-    const mainNode = rowNode.pinnedSibling;
-    rowNode.pinnedSibling = undefined as any;
+    rowNode.pinnedSibling = undefined;
+    mainNode.pinnedSibling = undefined;
+    mainNode.rowPinned = null;
+};
 
-    if (mainNode) {
-        mainNode.pinnedSibling = undefined as any;
-        mainNode.rowPinned = null;
-    }
-}
+const getSpannedRows = (beans: BeanCollection, rowNode: RowNode, column: AgColumn) => {
+    const rowSpanSvc = beans.rowSpanSvc;
+    return rowSpanSvc?.isCellSpanning(column, rowNode)
+        ? rowSpanSvc.getCellSpan(column, rowNode)?.spannedNodes
+        : undefined;
+};
 
-function removeGroupRows(set: PinnedRows) {
-    const rowsToRemove = new Set<RowNode>();
-    set.forEach((node) => {
-        if (node.group) {
-            rowsToRemove.add(node);
-        }
-    });
-
-    rowsToRemove.forEach((node) => set.delete(node));
-}
-
-function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColumn) {
-    const { rowSpanSvc } = beans;
-    const isCellSpanning = (column && rowSpanSvc?.isCellSpanning(column, rowNode)) ?? false;
-    if (column && isCellSpanning) {
-        return rowSpanSvc?.getCellSpan(column, rowNode)?.spannedNodes;
-    }
-}
-
-function getTotalHeight(container: PinnedRows): number {
-    const size = container.size();
-    if (size === 0) {
-        return 0;
-    }
-
-    const node = container.getByIndex(size - 1);
-    if (node === undefined) {
-        return 0;
-    }
-
-    return node.rowTop! + node.rowHeight!;
-}
+const getTotalHeight = (container: PinnedRows): number => {
+    const node = container.getSorted().at(-1);
+    return node ? node.rowTop! + node.rowHeight! : 0;
+};
