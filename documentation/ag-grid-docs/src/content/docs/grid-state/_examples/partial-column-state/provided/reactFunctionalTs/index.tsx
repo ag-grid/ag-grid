@@ -68,10 +68,10 @@ const GridExample = () => {
                 <div className="example-wrapper">
                     <div>
                         <span className="button-group">
-                            <button onClick={recreateWithNoState}>Recreate: No State</button>
-                            <button onClick={recreateWithColumnOrder}>Recreate: Column Order Only</button>
+                            <button onClick={recreateWithNoState}>No State (column defaults)</button>
+                            <button onClick={recreateWithColumnOrder}>Column Order Only (defaults cleared)</button>
                             <button onClick={recreateWithPartialColumnOrder}>
-                                Recreate: Column Order Only + partialColumnState
+                                Column Order Only + partialColumnState (defaults kept)
                             </button>
                         </span>
                     </div>

@@ -2,74 +2,8 @@ import type { GridState } from 'ag-grid-community';
 
 // Full grid states as returned by `api.getState()` after a user configured the grid and saved.
 export const savedStates: Record<string, GridState> = {
-    default: {
-        version: '36.2.0',
-        sideBar: {
-            visible: true,
-            position: 'right',
-            openToolPanel: 'columns',
-            toolPanels: {
-                columns: {
-                    expandedGroupIds: [],
-                },
-            },
-        },
-        columnSizing: {
-            columnSizingModel: [
-                {
-                    colId: 'athlete',
-                    flex: 1,
-                    width: 150,
-                },
-                {
-                    colId: 'country',
-                    flex: 1,
-                    width: 150,
-                },
-                {
-                    colId: 'sport',
-                    flex: 1,
-                    width: 150,
-                },
-                {
-                    colId: 'year',
-                    flex: 1,
-                    width: 110,
-                },
-                {
-                    colId: 'gold',
-                    flex: 1,
-                    width: 110,
-                },
-                {
-                    colId: 'silver',
-                    flex: 1,
-                    width: 110,
-                },
-                {
-                    colId: 'bronze',
-                    flex: 1,
-                    width: 110,
-                },
-                {
-                    colId: 'total',
-                    flex: 1,
-                    width: 110,
-                },
-            ],
-        },
-        columnOrder: {
-            orderedColIds: ['athlete', 'country', 'sport', 'year', 'gold', 'silver', 'bronze', 'total'],
-        },
-        rowGroupExpansion: {
-            expandedRowGroupIds: [],
-            collapsedRowGroupIds: [],
-        },
-        pagination: {
-            page: 0,
-            pageSize: 100,
-        },
-    },
+    // An empty initialState uses all the defaults based on grid and column definitions
+    default: {},
     medalsByCountry: {
         version: '36.2.0',
         sideBar: {

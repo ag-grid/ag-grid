@@ -27,10 +27,10 @@ const VueExample = defineComponent({
             <div class="example-wrapper">
                 <div>
                     <span class="button-group">
-                        <button v-on:click="recreateWithNoState()">Recreate: No State</button>
-                        <button v-on:click="recreateWithColumnOrder()">Recreate: Column Order Only</button>
+                        <button v-on:click="recreateWithNoState()">No State (column defaults)</button>
+                        <button v-on:click="recreateWithColumnOrder()">Column Order Only (defaults cleared)</button>
                         <button v-on:click="recreateWithPartialColumnOrder()">
-                            Recreate: Column Order Only + partialColumnState
+                            Column Order Only + partialColumnState (defaults kept)
                         </button>
                     </span>
                 </div>

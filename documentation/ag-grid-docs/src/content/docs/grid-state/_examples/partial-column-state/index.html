@@ -1,9 +1,11 @@
 <div class="example-wrapper">
     <div>
         <span class="button-group">
-            <button onclick="recreateWithNoState()">Recreate: No State</button>
-            <button onclick="recreateWithColumnOrder()">Recreate: Column Order Only</button>
-            <button onclick="recreateWithPartialColumnOrder()">Recreate: Column Order Only + partialColumnState</button>
+            <button onclick="recreateWithNoState()">No State (column defaults)</button>
+            <button onclick="recreateWithColumnOrder()">Column Order Only (defaults cleared)</button>
+            <button onclick="recreateWithPartialColumnOrder()">
+                Column Order Only + partialColumnState (defaults kept)
+            </button>
         </span>
     </div>
     <div id="myGrid"></div>
