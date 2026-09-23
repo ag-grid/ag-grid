@@ -2,8 +2,19 @@ import { escapeQuotes } from 'ag-test-utils';
 import { assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils/test-utils-assertions';
 import { waitForEvent } from 'ag-test-utils/test-utils-events';
 
-import type { GridApi } from 'ag-grid-community';
-import { KeyCode } from 'ag-grid-community';
+import type { GridApi, Module } from 'ag-grid-community';
+import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
+
+// Stands in for the `studio` bean AG Studio adds to every grid. It also skips licence validation.
+class StudioStub {
+    public readonly beanName = 'studio' as const;
+}
+
+export const StudioStubModule: Module = {
+    moduleName: 'Studio' as Module['moduleName'],
+    version: ClientSideRowModelModule.version,
+    beans: [StudioStub],
+};
 
 export class GridActions {
     private parent: HTMLElement;
