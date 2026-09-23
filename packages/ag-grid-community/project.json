@@ -20,7 +20,7 @@
     "build:umd": {
       "executor": "@nx/esbuild:esbuild",
       "dependsOn": ["^build:package", "build:copy-styles", "build:package"],
-      "inputs": ["tsDefaults", "styleOutputs"],
+      "inputs": ["tsDefaults", "styleOutputs", "manglePropsSources"],
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
         "outputPath": "{projectRoot}/dist",
@@ -120,7 +120,8 @@
         "defaultExcludes",
         {
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
-        }
+        },
+        "manglePropsSources"
       ],
       "outputs": ["{options.outputPath}"],
       "options": {

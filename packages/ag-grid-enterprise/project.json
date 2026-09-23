@@ -27,7 +27,8 @@
         {
           "dependentTasksOutputFiles": "**/*.js",
           "transitive": true
-        }
+        },
+        "manglePropsSources"
       ],
       "outputs": ["{projectRoot}/dist/ag-grid-enterprise*.js"],
       "options": {
@@ -132,7 +133,8 @@
         "chartsPackages",
         {
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
-        }
+        },
+        "manglePropsSources"
       ],
       "outputs": ["{options.outputPath}"],
       "options": {

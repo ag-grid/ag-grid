@@ -63,6 +63,17 @@
       }
     ],
     "sharedGlobals": ["{workspaceRoot}/esbuild*.cjs", "{workspaceRoot}/tsconfig.*.json"],
+    "manglePropsSources": [
+      "{workspaceRoot}/packages/ag-stack/src/**/*",
+      "{workspaceRoot}/packages/ag-grid-community/src/**/*",
+      "{workspaceRoot}/packages/ag-grid-enterprise/src/**/*",
+      "{workspaceRoot}/packages/ag-grid-react/src/**/*",
+      "{workspaceRoot}/packages/ag-grid-angular/projects/**/*",
+      "{workspaceRoot}/packages/ag-grid-vue3/src/**/*",
+      "{workspaceRoot}/testing/behavioural/src/**/*",
+      "{workspaceRoot}/testing/ag-test-utils/src/**/*",
+      "chartsTypes"
+    ],
     "charts": ["chartsPackages", "chartsTypes"],
     "chartsPackages": [
       {

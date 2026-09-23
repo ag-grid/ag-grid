@@ -4,6 +4,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const postcss = require('postcss');
 const postcssPlugins = require('./postcss-plugins.cjs');
+const { MANGLED_PROJECTS, getManglePropsOptions } = require('./esbuild-mangle-props.cjs');
 const { superclassAliasPlugin } = require('./esbuild-plugin-superclass-alias.cjs');
 
 /** @type {import('esbuild').Plugin} */
@@ -164,10 +165,16 @@ if (!isWatch) {
     plugins.push(postBuildMinificationPlugin);
 }
 
+// Shortens private member names in every artefact built from our packages. A watch build is never
+// published, and keeping readable names there keeps local debugging easy.
+const mangleOptions =
+    !isWatch && MANGLED_PROJECTS.includes(process.env.NX_TASK_TARGET_PROJECT) ? getManglePropsOptions() : {};
+
 /** @type {import('esbuild').BuildOptions} */
 const options = {
     outExtension,
     plugins,
+    ...mangleOptions,
 };
 
 module.exports = options;
