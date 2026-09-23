@@ -85,8 +85,7 @@ export type LayoutOptions = {
     imageRegistry?: PdfImageRegistry;
 };
 
-/** @knipIgnore Used throughout this module's own cell-measurement helpers, not imported by name. */
-export type MeasuredCell = {
+type MeasuredCell = {
     columnIndex: number;
     span: number;
     width: number;

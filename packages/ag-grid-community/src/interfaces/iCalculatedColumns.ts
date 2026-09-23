@@ -8,8 +8,7 @@ import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
-/** @knipIgnore Consumed via the `CalculatedColumnsOptions.applyMode` field, not imported by name. */
-export type CalculatedColumnApplyMode = 'live' | 'deferred';
+type CalculatedColumnApplyMode = 'live' | 'deferred';
 
 export interface CalculatedColumnsOptions {
     /**
