@@ -377,7 +377,7 @@ describe('htaccessRules', () => {
         it('does not apply to the live Studio site, which caches normally', () => {
             // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
             // document rule and the long hashed-asset cache.
-            const line = productionContent.split('\n').find((l) => l.includes('/studio/archive/'));
+            const line = productionContent.split('\n').find((l) => l.includes('m#^/studio/archive/#'));
             expect(line).toContain('m#^/studio/archive/#');
         });
 
@@ -400,6 +400,85 @@ describe('htaccessRules', () => {
             const doc = productionContent.split('\n').find((l) => l.includes('CONTENT_TYPE'));
             expect(doc).toContain('^/(charts/)?archive/[0-9]');
             expect(doc).not.toContain('studio');
+        });
+    });
+
+    describe('Released archive versions get cached, not just excluded from no-cache', () => {
+        // documentNoCacheRules excludes archive/[0-9] from forced no-cache, but that alone
+        // produces no Cache-Control header at all - confirmed live 2026-09-23, every request to
+        // a released archive page hit origin, including a 30k-request Sitebulb crawl of
+        // /charts/archive/11.0.4/. This rule is what actually fills that gap.
+        const line = () => productionContent.split('\n').find((l) => l.includes('^/(charts/)?archive/[0-9]#"'));
+
+        it('caches with the long, hashed-asset-class TTL, not the moderate unhashed one', () => {
+            const l = line();
+            expect(l).toContain('max-age=604800, s-maxage=31536000');
+        });
+
+        it('is production-only, like every other asset-caching rule', () => {
+            expect(stagingContent).not.toContain('archive/[0-9]#"');
+        });
+
+        it('matches a real released grid and charts archive page, any content type', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/archive/32.3.9/react-data-grid/getting-started/')).toBe(true);
+            expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/')).toBe(true);
+            // No extension allowlist, unlike every other unhashed-asset rule - a released
+            // archive's raw example source and dist bundles are just as frozen as its HTML.
+            expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/main.ts')).toBe(true);
+            expect(pattern.test('/charts/archive/11.0.4/dev/ag-charts-enterprise/dist/package/main.cjs.js')).toBe(
+                true
+            );
+        });
+
+        it('does not match the archive listing pages, only a real numbered version', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/documentation-archive')).toBe(false);
+            expect(pattern.test('/charts/documentation-archive/')).toBe(false);
+        });
+
+        it('never matches /studio/archive/, which stays no-cache always', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/studio/archive/3.0.0/react/getting-started/')).toBe(false);
+        });
+
+        it('is emitted before studioArchiveNoCacheRules, though the paths never overlap anyway', () => {
+            const lines = productionContent.split('\n');
+            const archiveAt = lines.findIndex((l) => l.includes('archive/[0-9]#"'));
+            const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+            expect(archiveAt).toBeGreaterThan(-1);
+            expect(studioAt).toBeGreaterThan(archiveAt);
+        });
+
+        it('is overridden back to no-cache for a version still listed as in-flight', () => {
+            // getInFlightArchiveRules is emitted last, so its no-cache for a specific version
+            // wins over this rule's general cache header - the mechanism that lets a version
+            // stay uncached during release-candidate testing and only get cached once removed
+            // from that list.
+            const content = getHtaccessContent({
+                env: 'production',
+                uncachedGridArchive: '36.2.0',
+                uncachedChartsArchive: '14.3.0',
+            });
+            const lines = content.split('\n');
+            const archiveAt = lines.findIndex((l) => l.includes('archive/[0-9]#"'));
+            const inFlightGridAt = lines.findIndex((l) => l.includes('m#^/archive/36\\.2\\.0/#'));
+            const inFlightChartsAt = lines.findIndex((l) => l.includes('m#^/charts/archive/14\\.3\\.0/#'));
+            expect(archiveAt).toBeGreaterThan(-1);
+            expect(inFlightGridAt).toBeGreaterThan(archiveAt);
+            expect(inFlightChartsAt).toBeGreaterThan(archiveAt);
+        });
+
+        it('a version removed from the in-flight list falls through to this rule - the promised flip', () => {
+            const rule = getInFlightArchiveRules(null, null);
+            expect(rule).not.toContain('Cache-Control');
+            // With nothing in flight, every released archive is governed solely by this rule.
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/archive/36.2.0/react-data-grid/getting-started/')).toBe(true);
         });
     });
 
