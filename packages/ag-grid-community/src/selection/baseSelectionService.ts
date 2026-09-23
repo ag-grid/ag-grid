@@ -102,9 +102,10 @@ export abstract class BaseSelectionService extends BeanStub {
             return;
         }
 
+        const { beans } = this;
         const selected = rowNode.isSelected()!;
-        const isEditing = this.beans.editSvc?.isEditing({ rowNode });
-        if (!rowNode.selectable || isEditing) {
+        const isEditing = beans.editSvc?.isEditing({ rowNode });
+        if (!rowNode.selectable || isEditing || this.isSpaceKeyBlocked(_getActiveDomElement(beans), !selected)) {
             return;
         }
 
@@ -114,7 +115,7 @@ export abstract class BaseSelectionService extends BeanStub {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row`
         );
 
-        this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
+        beans.ariaAnnounce?.announceValue(label, 'rowSelection');
     }
 
     public updateGroupsFromChildrenSelections?(
@@ -413,6 +414,15 @@ export abstract class BaseSelectionService extends BeanStub {
                 clearSelection: !isMultiSelect || shouldClear,
             };
         }
+    }
+
+    /** Whether Space on `target` is refused because `enableClickSelection` forbids moving the row to `newValue`. */
+    private isSpaceKeyBlocked(target: EventTarget | null, newValue: boolean): boolean {
+        const { gos } = this;
+        return (
+            this.isSpaceKeyClickGated('spaceKey', target) &&
+            (newValue ? !_getEnableSelection(gos) : !_getEnableDeselection(gos))
+        );
     }
 
     /** Whether Space must obey `enableClickSelection`. On a selection checkbox cell it acts like clicking the checkbox. */

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex, asyncSetTimeout } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions, Module, _InternalFeatureFlags } from 'ag-grid-community';
@@ -569,6 +569,61 @@ describe('Row Selection with Keyboard', () => {
 
             pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-SelectionColumn')!);
             assertSelectedRowsByIndex([], api);
+        });
+
+        describe('the Space announcement', () => {
+            // the announcement is debounced and then written on a second timer
+            async function settleAnnouncement(): Promise<void> {
+                await asyncSetTimeout(0);
+                await asyncSetTimeout(0);
+            }
+
+            function getAnnouncement(): string {
+                return document.querySelector('#myGrid .ag-aria-description-container')?.textContent ?? '';
+            }
+
+            test('is not made on a row where Space does nothing', async () => {
+                const [api] = createFlaggedGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: false },
+                });
+
+                api.setFocusedCell(1, 'sport');
+                await settleAnnouncement();
+                expect(getAnnouncement()).toBe('');
+
+                // the checkbox cell still accepts Space, which also shows the announcement is wired up here
+                api.setFocusedCell(1, 'ag-Grid-SelectionColumn');
+                await waitFor(() => expect(getAnnouncement()).toContain('Press SPACE to select this row'));
+            });
+
+            test('only offers the direction click selection allows', async () => {
+                const [api] = createFlaggedGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: 'enableSelection' },
+                });
+
+                api.getDisplayedRowAtIndex(1)!.setSelected(true);
+                api.setFocusedCell(1, 'sport');
+                await settleAnnouncement();
+                expect(getAnnouncement()).toBe('');
+
+                api.setFocusedCell(2, 'sport');
+                await waitFor(() => expect(getAnnouncement()).toContain('Press SPACE to select this row'));
+            });
+
+            test('is made on every row without the flag', async () => {
+                const [api] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: false },
+                });
+
+                api.setFocusedCell(1, 'sport');
+                await waitFor(() => expect(getAnnouncement()).toContain('Press SPACE to select this row'));
+            });
         });
 
         describe('with grouped rows', () => {
