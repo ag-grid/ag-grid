@@ -37,4 +37,3 @@ export * from './test-utils-assertions';
 export * from './test-utils-events';
 export * from './test-utils-edit';
 export * from './dev-validations';
-export * from './studio-module';

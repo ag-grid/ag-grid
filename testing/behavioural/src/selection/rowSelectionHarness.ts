@@ -3,7 +3,7 @@
 // files but not within one, so 124 grid-building tests in a single file serialise in one worker.
 import { TestGridsManager, waitForEvent } from 'ag-test-utils';
 
-import type { GridApi, GridOptions, Params } from 'ag-grid-community';
+import type { GridApi, GridOptions, Params, _InternalFeatureFlags } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     PaginationModule,
@@ -11,7 +11,7 @@ import {
     QuickFilterModule,
     RowSelectionModule,
     TextEditorModule,
-    _createInternalFlagsModule,
+    _createInternalFeatureFlagsModule,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -73,14 +73,18 @@ export async function createGridAndWait(gridOptions: GridOptions, params?: Param
     return [api, actions];
 }
 
-const ClickToggleModule = _createInternalFlagsModule({ clickToggleSelection: true });
-
-export function createClickToggleGrid(gridOptions: GridOptions): [GridApi, GridActions] {
-    return createGrid(gridOptions, { modules: [ClickToggleModule] });
+export function createInternalFeatureFlagGrid(
+    gridOptions: GridOptions,
+    flags: _InternalFeatureFlags
+): [GridApi, GridActions] {
+    return createGrid(gridOptions, { modules: [_createInternalFeatureFlagsModule(flags)] });
 }
 
-export function createClickToggleGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
-    return createGridAndWait(gridOptions, { modules: [ClickToggleModule] });
+export function createInternalFeatureFlagGridAndWait(
+    gridOptions: GridOptions,
+    flags: _InternalFeatureFlags
+): Promise<[GridApi, GridActions]> {
+    return createGridAndWait(gridOptions, { modules: [_createInternalFeatureFlagsModule(flags)] });
 }
 
 /** Registers the hooks every sibling suite needs. */

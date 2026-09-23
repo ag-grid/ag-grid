@@ -23,7 +23,7 @@ export class GridLicenseManager extends BeanStub implements NamedBean, IWatermar
 
     public validateLicense(): void {
         const beans = this.beans;
-        // eslint-disable-next-line no-restricted-syntax -- licensing depends on who hosts the grid, not on a behaviour
+        // eslint-disable-next-line no-restricted-syntax
         if (beans.studio) {
             this.licenseManager = {
                 isDisplayWatermark: () => false,

@@ -81,7 +81,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupEditService } from '../interfaces/iGroupEditService';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
-import type { IInternalFlagsBean } from '../interfaces/iInternalFlags';
+import type { IInternalFeatureFlagsBean } from '../interfaces/iInternalFeatureFlags';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
 import type { IFilterPanelService, ISelectableFilterService } from '../interfaces/iNewFiltersToolPanel';
@@ -422,7 +422,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
-    internalFlags?: IInternalFlagsBean;
+    internalFeatureFlags?: IInternalFeatureFlagsBean;
     colDelayRenderSvc?: ColumnDelayRenderService;
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;

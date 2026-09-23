@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { IInternalFlagsBean, InternalFlags } from '../interfaces/iInternalFlags';
+import type { IInternalFeatureFlagsBean, InternalFeatureFlags } from '../interfaces/iInternalFeatureFlags';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 
@@ -9,17 +9,17 @@ import { VERSION } from '../version';
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _createInternalFlagsModule(flags: InternalFlags): _ModuleWithoutApi {
+export function _createInternalFeatureFlagsModule(flags: InternalFeatureFlags): _ModuleWithoutApi {
     const frozenFlags = Object.freeze({ ...flags });
 
-    class InternalFlagsBean extends BeanStub implements NamedBean, IInternalFlagsBean {
-        beanName = 'internalFlags' as const;
+    class InternalFeatureFlagsBean extends BeanStub implements NamedBean, IInternalFeatureFlagsBean {
+        beanName = 'internalFeatureFlags' as const;
         public readonly flags = frozenFlags;
     }
 
     return {
-        moduleName: 'InternalFlags',
+        moduleName: 'InternalFeatureFlags',
         version: VERSION,
-        beans: [InternalFlagsBean],
+        beans: [InternalFeatureFlagsBean],
     };
 }

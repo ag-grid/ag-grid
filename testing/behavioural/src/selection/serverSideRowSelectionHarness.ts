@@ -4,13 +4,13 @@
 import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions, Params } from 'ag-grid-community';
+import type { GridApi, GridOptions, Params, _InternalFeatureFlags } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     PaginationModule,
     RowSelectionModule,
     TextFilterModule,
-    _createInternalFlagsModule,
+    _createInternalFeatureFlagsModule,
     enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -55,10 +55,11 @@ export async function createGridAndWait(gridOptions: GridOptions, params?: Param
     return [api, actions];
 }
 
-const ClickToggleModule = _createInternalFlagsModule({ clickToggleSelection: true });
-
-export function createClickToggleGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
-    return createGridAndWait(gridOptions, { modules: [ClickToggleModule] });
+export function createInternalFeatureFlagGridAndWait(
+    gridOptions: GridOptions,
+    flags: _InternalFeatureFlags
+): Promise<[GridApi, GridActions]> {
+    return createGridAndWait(gridOptions, { modules: [_createInternalFeatureFlagsModule(flags)] });
 }
 
 /** The one advisory these suites run into by design: server-side selection with no `getRowId`. */

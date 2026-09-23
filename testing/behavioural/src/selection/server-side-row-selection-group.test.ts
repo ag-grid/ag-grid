@@ -5,8 +5,8 @@ import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
 
 import { fakeFetch } from './group-data';
 import {
-    createClickToggleGridAndWait,
     createGridAndWait,
+    createInternalFeatureFlagGridAndWait,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
 
@@ -189,14 +189,17 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    ...groupGridOptions,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        enableClickSelection: true,
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(0);
                 assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
@@ -206,14 +209,17 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a group row does not deselect it while another group is selected', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    ...groupGridOptions,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        enableClickSelection: true,
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(0);
                 actions.clickRowByIndex(1, { ctrlKey: true });
@@ -231,14 +237,17 @@ describe('Row Selection Grid Options', () => {
             });
 
             test("with click toggle, clicking a group that is its parent's only row deselects it", async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    ...groupGridOptions,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        enableClickSelection: true,
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 const russia = getRowIdRaw({ data: { country: 'Russia' }, api });
                 const gymnastics = getRowIdRaw({ data: { sport: 'Gymnastics' }, parentKeys: ['Russia'], api });
@@ -258,31 +267,34 @@ describe('Row Selection Grid Options', () => {
                     { country: 'X', name: 'A' },
                     { country: 'X', name: 'B' },
                 ];
-                const [api, actions] = await createClickToggleGridAndWait({
-                    columnDefs: [
-                        { field: 'country', rowGroup: true, hide: true },
-                        { field: 'name', filter: 'agTextColumnFilter' },
-                    ],
-                    autoGroupColumnDef: { headerName: 'Athlete', cellRenderer: 'agGroupCellRenderer' },
-                    rowModelType: 'serverSide',
-                    getRowId,
-                    serverSideDatasource: {
-                        getRows(params) {
-                            const { filterModel, groupKeys } = params.request;
-                            const name = (filterModel as Record<string, { filter?: string }>)?.name?.filter;
-                            const visible = rows.filter((row) => !name || row.name === name);
-                            const rowData = groupKeys.length
-                                ? visible.filter((row) => row.country === groupKeys[0])
-                                : [...new Set(visible.map((row) => row.country))].map((country) => ({ country }));
-                            return params.success({ rowData, rowCount: rowData.length });
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        columnDefs: [
+                            { field: 'country', rowGroup: true, hide: true },
+                            { field: 'name', filter: 'agTextColumnFilter' },
+                        ],
+                        autoGroupColumnDef: { headerName: 'Athlete', cellRenderer: 'agGroupCellRenderer' },
+                        rowModelType: 'serverSide',
+                        getRowId,
+                        serverSideDatasource: {
+                            getRows(params) {
+                                const { filterModel, groupKeys } = params.request;
+                                const name = (filterModel as Record<string, { filter?: string }>)?.name?.filter;
+                                const visible = rows.filter((row) => !name || row.name === name);
+                                const rowData = groupKeys.length
+                                    ? visible.filter((row) => row.country === groupKeys[0])
+                                    : [...new Set(visible.map((row) => row.country))].map((country) => ({ country }));
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
                         },
                     },
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        enableClickSelection: true,
-                    },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 const groupX = getRowIdRaw({ data: { country: 'X' }, api });
                 const rowA = getRowIdRaw({ data: { country: 'X', name: 'A' }, parentKeys: ['X'], api });

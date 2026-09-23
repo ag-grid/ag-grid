@@ -2,7 +2,7 @@
  * Behaviour enabled for internal consumers only, so it is not public API. Name each flag after the behaviour, so it
  * can become a public option or the default without a rename, and say on each what is planned for it.
  */
-export interface InternalFlags {
+export interface InternalFeatureFlags {
     /**
      * Clicking the row that is the whole selection deselects it rather than re-selecting it.
      *
@@ -11,8 +11,8 @@ export interface InternalFlags {
     clickToggleSelection?: boolean;
 }
 
-export type InternalFlag = keyof InternalFlags;
+export type InternalFeatureFlag = keyof InternalFeatureFlags;
 
-export interface IInternalFlagsBean {
-    readonly flags: Readonly<InternalFlags>;
+export interface IInternalFeatureFlagsBean {
+    readonly flags: Readonly<InternalFeatureFlags>;
 }

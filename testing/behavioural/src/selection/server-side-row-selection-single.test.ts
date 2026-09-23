@@ -3,8 +3,8 @@ import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByInde
 import {
     capturedWarnings,
     columnDefs,
-    createClickToggleGridAndWait,
     createGridAndWait,
+    createInternalFeatureFlagGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
@@ -256,20 +256,23 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    columnDefs,
-                    rowSelection: {
-                        mode: 'singleRow',
-                        enableClickSelection: true,
-                        checkboxes: false,
-                    },
-                    rowModelType: 'serverSide',
-                    serverSideDatasource: {
-                        getRows(params) {
-                            return params.success({ rowData, rowCount: rowData.length });
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        columnDefs,
+                        rowSelection: {
+                            mode: 'singleRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
                         },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(2);
                 assertSelectedRowsByIndex([2], api);

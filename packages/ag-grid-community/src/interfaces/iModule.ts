@@ -138,7 +138,7 @@ type InternalModuleName =
     | 'GroupHierarchy'
     | 'HorizontalResize'
     | 'InfiniteRowModelCore'
-    | 'InternalFlags'
+    | 'InternalFeatureFlags'
     | 'KeyboardNavigation'
     | 'LoadingCellRenderer'
     | 'MenuCore'

@@ -528,7 +528,8 @@ export type {
     ModuleName,
     ModuleValidationResult,
 } from './interfaces/iModule';
-export { _createInternalFlagsModule } from './internalFlags/internalFlagsModule';
+export { _createInternalFeatureFlagsModule } from './internalFeatureFlags/internalFeatureFlagsModule';
+export type { InternalFeatureFlags as _InternalFeatureFlags } from './interfaces/iInternalFeatureFlags';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';
 export { SharedRowSelectionModule as _SharedRowSelectionModule } from './selection/rowSelectionModule';

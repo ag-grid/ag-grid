@@ -2,7 +2,13 @@ import { GridColumns, GridRows, assertSelectedRowsByIndex, isElementDisplayed } 
 
 import type { RowSelectedEvent } from 'ag-grid-community';
 
-import { columnDefs, createClickToggleGrid, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import {
+    columnDefs,
+    createGrid,
+    createInternalFeatureFlagGrid,
+    rowData,
+    setupRowSelectionSuite,
+} from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -198,15 +204,18 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it', async () => {
-                const [api, actions] = createClickToggleGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        enableClickSelection: true,
-                        checkboxes: false,
+                const [api, actions] = createInternalFeatureFlagGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(3);
                 assertSelectedRowsByIndex([3], api);
@@ -216,15 +225,18 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
-                const [api, actions] = createClickToggleGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        enableClickSelection: true,
-                        checkboxes: false,
+                const [api, actions] = createInternalFeatureFlagGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.selectRowsByIndex([1, 3, 5], true);
 
@@ -250,16 +262,19 @@ describe('Row Selection Grid Options', () => {
 
             test('with click toggle, deselecting by click forwards the browser click event', async () => {
                 const events: RowSelectedEvent[] = [];
-                const [api, actions] = createClickToggleGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        enableClickSelection: true,
-                        checkboxes: false,
+                const [api, actions] = createInternalFeatureFlagGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
+                        onRowSelected: (event) => events.push(event),
                     },
-                    onRowSelected: (event) => events.push(event),
-                });
+                    { clickToggleSelection: true }
+                );
 
                 const selectClick = actions.clickRowByIndex(3);
                 const deselectClick = actions.clickRowByIndex(3);

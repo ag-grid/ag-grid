@@ -11,7 +11,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     RowSelectionModule,
-    _createInternalFlagsModule,
+    _createInternalFeatureFlagsModule,
     getGridElement,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -22,7 +22,7 @@ const modules = [
     ClientSideRowModelModule,
     RowSelectionModule,
     RowGroupingModule,
-    _createInternalFlagsModule({ clickToggleSelection: true }),
+    _createInternalFeatureFlagsModule({ clickToggleSelection: true }),
 ];
 
 const ROW_COUNT = 20_000;

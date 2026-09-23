@@ -4,8 +4,8 @@ import type { RowSelectedEvent } from 'ag-grid-community';
 
 import {
     columnDefs,
-    createClickToggleGridAndWait,
     createGridAndWait,
+    createInternalFeatureFlagGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
@@ -177,19 +177,22 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    columnDefs,
-                    rowModelType: 'serverSide',
-                    serverSideDatasource: {
-                        getRows(params) {
-                            return params.success({ rowData, rowCount: rowData.length });
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
                         },
                     },
-                    rowSelection: {
-                        mode: 'multiRow',
-                        enableClickSelection: true,
-                    },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(3);
                 assertSelectedRowsByIndex([3], api);
@@ -199,19 +202,22 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    columnDefs,
-                    rowModelType: 'serverSide',
-                    serverSideDatasource: {
-                        getRows(params) {
-                            return params.success({ rowData, rowCount: rowData.length });
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
                         },
                     },
-                    rowSelection: {
-                        mode: 'multiRow',
-                        enableClickSelection: true,
-                    },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.selectRowsByIndex([1, 3, 5], false);
 

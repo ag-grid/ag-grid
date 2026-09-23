@@ -70,7 +70,7 @@ export default [
                     selector:
                         "MemberExpression[property.name='studio']:matches([object.name='beans'], [object.property.name='beans'])",
                     message:
-                        'Gate behaviour on an internal flag with `_isInternalFlagEnabled` rather than on running inside AG Studio.',
+                        'Gate behaviour on an internal feature flag with `_isInternalFeatureFlagEnabled` rather than on running inside AG Studio.',
                 },
             ],
             'no-restricted-imports': [

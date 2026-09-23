@@ -1,13 +1,13 @@
 import type { BeanCollection } from '../context/context';
-import type { InternalFlag, InternalFlags } from '../interfaces/iInternalFlags';
+import type { InternalFeatureFlag, InternalFeatureFlags } from '../interfaces/iInternalFeatureFlags';
 
 // Studio only supplies the `studio` bean, so what it turns on is decided here and needs no change in Studio
-const STUDIO_FLAGS: Required<InternalFlags> = {
+const STUDIO_FLAGS: Required<InternalFeatureFlags> = {
     clickToggleSelection: true,
 };
 
-export function _isInternalFlagEnabled(beans: BeanCollection, flag: InternalFlag): boolean {
-    const override = beans.internalFlags?.flags[flag];
+export function _isInternalFeatureFlagEnabled(beans: BeanCollection, flag: InternalFeatureFlag): boolean {
+    const override = beans.internalFeatureFlags?.flags[flag];
     if (override !== undefined) {
         return override;
     }

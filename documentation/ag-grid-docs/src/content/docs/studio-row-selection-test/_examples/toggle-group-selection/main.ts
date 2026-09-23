@@ -3,7 +3,7 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowSelectionModule,
-    _createInternalFlagsModule,
+    _createInternalFeatureFlagsModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     RowGroupingModule,
     RowSelectionModule,
-    _createInternalFlagsModule({ clickToggleSelection: true }),
+    _createInternalFeatureFlagsModule({ clickToggleSelection: true }),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

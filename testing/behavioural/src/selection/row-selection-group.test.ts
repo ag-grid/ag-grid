@@ -1,8 +1,8 @@
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import {
-    createClickToggleGridAndWait,
     createGridAndWait,
+    createInternalFeatureFlagGridAndWait,
     groupGridOptions,
     setupRowSelectionSuite,
 } from './rowSelectionHarness';
@@ -373,14 +373,17 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    ...groupGridOptions,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        enableClickSelection: true,
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(0);
                 assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14], api);
@@ -390,14 +393,17 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a group row does not deselect it while another branch is selected', async () => {
-                const [api, actions] = await createClickToggleGridAndWait({
-                    ...groupGridOptions,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        enableClickSelection: true,
+                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
                     },
-                });
+                    { clickToggleSelection: true }
+                );
 
                 actions.clickRowByIndex(0);
                 actions.clickRowByIndex(15, { ctrlKey: true });
