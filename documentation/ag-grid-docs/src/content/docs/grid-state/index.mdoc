@@ -112,9 +112,9 @@ initialState: {
 
 ### Column State and ColDefs
 
-If some but not all of the [column state properties](#gridstate-column-properties) are included in initialState the default behaviour of a missing column state properties is to reset those values, overriding their corresponding column definition value. This is to be consistent with the [sparse nature](#sparse-state-object) of the grid state object.
+When `initialState` includes some but not all of the [column state properties](#gridstate-column-properties), the missing properties are reset. This is the same as if the user had cleared that state before saving, so any defaults on the column definitions, such as `sort`, `hide`, `pinned` or `aggFunc`, are overridden. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` section came from an unsorted grid, and restoring it must produce an unsorted grid.
 
-So in the snippet below, as at least one column state property is provided, `columnOrder`, all the other column states are inferred as empty. This means to correctly restore a users state
+In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is ignored when the grid is created.
 
 ```js
 columnDefs: [
@@ -123,20 +123,14 @@ columnDefs: [
 ],
 
 initialState: {
-    // Only Column Order provided, other columns states will be reset
+    // Only the column order is provided, so every other column state property is reset.
     columnOrder: {
-        orderedColIds: ['gold', 'silver', 'athlete', 'sport', 'country', 'year'],
+        orderedColIds: ['country', 'athlete'],
     },
 }
 ```
 
-When saving and restoring full states, the grid optimises the size of the state object by only including state that is different from the empty case: an unsorted column is not listed in `sortModel`, and a grid with no sort has no `sort` section at all. When this state is restored the grid translates a missing `sort` state as "no sort is applied". This must override any default sorts applied on the column definitions to be correct.
-
-It is possible to override this behaviour so that a missing column state falls back to the column definition value by setting `partialColumnState : true` on the initialState object.
-
-When `initialState` supplies at least one of the [column state properties](#gridstate-column-properties), all the other column state properties that are omitted are treated as "reset". In other words, the same as if an end user has cleared that columns state, i.e cleared all default sorts applied via column definitions. If the column definition includes defaults, such as `hide`, `pinned` or `aggFunc` these are overridden and cleared. To exclude a column state section and keep its defaults, set `partialColumnState: true`.
-
-`getState()` only records what differs from the default: an unsorted column is not listed in `sortModel`, and a grid with no sort has no `sort` section at all. So when a user clears every sort and saves, the saved state omits `sort` entirely, and restoring it must clear any sort the column definitions supply. Absence means "none", not "unspecified". `partialColumnState` flips that meaning, which is only correct for a state you built by hand rather than one saved from the grid.
+To keep the column definition values for the missing properties instead, set `partialColumnState: true`. This is only correct for a state built by hand. For a state saved from the grid, a missing property means the user had none, and the flag would wrongly reapply the column definition defaults.
 
 {% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" names=["partialColumnState"] config={ "description": "" } /%}
 
@@ -148,7 +142,7 @@ In the example below the column definitions pin Country, hide Year and sum Gold 
 
 {% gridExampleRunner title="Partial Column State" name="partial-column-state"  exampleHeight=500 /%}
 
-`partialColumnState` only affects the column state sections. It has no effect on the grid state sections, which `initialState` never resets, and it is ignored by `api.setState()`, which resets every omitted section unless it is listed in `propertiesToIgnore` as described [below](#excluding-via-api).
+`partialColumnState` only affects the column state properties. It has no effect on the other grid state properties. It is ignored by `api.setState()`, which resets every omitted property unless it is listed in `propertiesToIgnore` as described [below](#excluding-via-api).
 
 ### Excluding via API
 
