@@ -816,6 +816,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.onRowFocused?.(event);
     }
 
+    public renderFocusedCell(): void {
+        this.rowModeFeature.renderFocusedCell?.();
+    }
+
     public recreateCell(cellCtrl: CellCtrl) {
         this.rowModeFeature.recreateCell(cellCtrl);
     }
