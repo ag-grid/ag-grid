@@ -48,7 +48,7 @@ The state object only records what differs from the grid's defaults. Taking sort
 }
 ```
 
-Because of this, an absent property means "none" rather than "unspecified". Restoring the second state must leave the grid unsorted. This matters when restoring a state that supplies only some of the column state properties, as covered in [Excluding Column State via Initial State](#excluding-column-state-via-initial-state).
+Because of this, an absent property means "none" rather than "unspecified". Restoring the second state must leave the grid unsorted. This matters when restoring a state that supplies only some of the column state properties, as covered in [Column State and Column Definitions](#column-state-and-column-definitions).
 
 ### Restore via Initial State
 
@@ -95,37 +95,7 @@ initialState: {
 }
 ```
 
-### Excluding Column State via Initial State
-
-When `initialState` includes some but not all of the [column state properties](#gridstate-column-properties), the missing properties are reset. This is the same as if the user had cleared that state before saving, so any defaults on the column definitions, such as `sort`, `hide`, `pinned` or `aggFunc`, are overridden. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` section came from an unsorted grid, and restoring it must produce an unsorted grid.
-
-In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is cleared when the grid is created.
-
-```js
-columnDefs: [
-    { field: 'athlete' },
-    { field: 'country', sort: 'asc' },
-],
-
-initialState: {
-    // Only the column order is provided, so every other column state property is reset.
-    columnOrder: {
-        orderedColIds: ['country', 'athlete'],
-    },
-}
-```
-
-To keep the column definition values for the missing properties instead, set `partialColumnState: true`. This is only correct for a state built by hand. For a state saved from the grid, a missing property means the user had none, and the flag would wrongly reapply the column definition defaults.
-
-{% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" names=["partialColumnState"] config={ "description": "" } /%}
-
-In the example below the column definitions pin Country, hide Year and sum Gold and Silver into a grand total row. Each button recreates the grid with a different `initialState`.
-
-- **No State (column defaults)** shows the grid as defined by the column definitions.
-- **Column Order Only (defaults cleared)** supplies only `columnOrder`. Country is unpinned, Year appears and the totals are blank.
-- **Column Order Only + partialColumnState (defaults kept)** supplies the same `columnOrder` with `partialColumnState: true`. The order is applied and the column definition defaults remain.
-
-{% gridExampleRunner title="Partial Column State" name="partial-column-state"  exampleHeight=500 /%}
+Omitting a column state property does more than skip it, because the column definitions supply their own values for the same properties. See [Column State and Column Definitions](#column-state-and-column-definitions).
 
 ### Excluding via API
 
@@ -143,6 +113,38 @@ In the example below use the **Filter Sport** button between each restore to see
 - **Set Column Order Only** calls `api.setState()` with a hand built object containing just `columnOrder`. Because of the [sparse nature](#sparse-state-object) of the state object, every other property is cleared.
 
 {% gridExampleRunner title="Partial State with setState" name="set-state-partial"  exampleHeight=500 /%}
+
+## Column State and Column Definitions
+
+Column state properties such as `sort`, `hide`, `pinned` and `aggFunc` have two possible sources: the grid state and the column definitions. When `initialState` includes some but not all of the [column state properties](#gridstate-column-properties), the grid must decide what to do with the missing ones.
+
+By default the missing properties are reset, overriding the column definition values. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` property came from an unsorted grid, and restoring it must produce an unsorted grid even if a column definition sets a sort.
+
+In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is cleared when the grid is created.
+
+```js
+columnDefs: [
+    { field: 'athlete' },
+    { field: 'country', sort: 'asc' },
+],
+
+initialState: {
+    // Only the column order is provided, so every other column state property is reset.
+    columnOrder: {
+        orderedColIds: ['country', 'athlete'],
+    },
+}
+```
+
+To fall back to the column definition values instead, set `partialColumnState: true`. Missing column state properties then keep whatever the column definitions specify. This is the right choice for a state built by hand. For a state saved from the grid, a missing property means the user had none, and the flag would wrongly reapply the column definition values.
+
+In the example below the column definitions pin Country, hide Year and sum Gold and Silver into a grand total row. Each button recreates the grid with a different `initialState`.
+
+- **No State (column defaults)** shows the grid as defined by the column definitions.
+- **Column Order Only (defaults cleared)** supplies only `columnOrder`. Country is unpinned, Year appears and the totals are blank.
+- **Column Order Only + partialColumnState (defaults kept)** supplies the same `columnOrder` with `partialColumnState: true`. The order is applied and the column definition defaults remain.
+
+{% gridExampleRunner title="Partial Column State" name="partial-column-state"  exampleHeight=500 /%}
 
 ## Compatibility
 
