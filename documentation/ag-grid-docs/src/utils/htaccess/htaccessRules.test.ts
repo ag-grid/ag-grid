@@ -427,9 +427,7 @@ describe('htaccessRules', () => {
             // No extension allowlist, unlike every other unhashed-asset rule - a released
             // archive's raw example source and dist bundles are just as frozen as its HTML.
             expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/main.ts')).toBe(true);
-            expect(pattern.test('/charts/archive/11.0.4/dev/ag-charts-enterprise/dist/package/main.cjs.js')).toBe(
-                true
-            );
+            expect(pattern.test('/charts/archive/11.0.4/dev/ag-charts-enterprise/dist/package/main.cjs.js')).toBe(true);
         });
 
         it('does not match the archive listing pages, only a real numbered version', () => {
