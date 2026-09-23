@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
 import type { GridApi } from 'ag-grid-community';
@@ -51,7 +51,7 @@ describe('Focused cell restore after row removal', () => {
         api.ensureColumnVisible(LAST_COL);
         await waitFor(() => expect(hasCell(LAST_ROW, LAST_COL)).toBe(true));
         api.setFocusedCell(LAST_ROW, LAST_COL);
-        await asyncSetTimeout(0);
+        await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe(LAST_COL));
         api.ensureColumnVisible('col0');
         await waitFor(() => expect(hasCell(FALLBACK_ROW, 'col0')).toBe(true));
 
@@ -86,7 +86,6 @@ describe('Focused cell restore after row removal', () => {
         await waitFor(() => expect(hasCell(0, 'col0')).toBe(true));
     }
 
-    // AG-18636: removing the focused row while its column is virtualised out of the other rows threw error #252
     test.each([false, true])(
         'rowData update removing the focused row completes when the focused column is scrolled out of view (suppressAnimationFrame: %s)',
         async (suppressAnimationFrame) => {

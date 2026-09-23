@@ -275,7 +275,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             if (!this.isCellBeingRendered(rowIndex, col)) {
                 const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
                 if (rowCtrl) {
-                    // redraw() would not build cells on an existing row, and can be reached while a redraw is in progress
+                    // must not redraw: this can run inside redrawAfterModelUpdate while it holds the refresh lock
                     rowCtrl.renderFocusedCell();
                 } else {
                     this.redraw();

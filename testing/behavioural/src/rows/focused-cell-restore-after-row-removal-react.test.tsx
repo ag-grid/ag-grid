@@ -72,7 +72,8 @@ describe('Focused cell restore after row removal (React)', () => {
             await act(async () => api.ensureColumnVisible('col0'));
             await waitFor(() => expect(hasCell(FALLBACK_ROW, 'col0')).toBe(true));
 
-            // precondition: the row focus falls back to has no cell for the focused column
+            // preconditions: the focused column stays rendered only on the focused row, and the row focus falls back to is rendered
+            expect(hasCell(LAST_ROW, LAST_COL)).toBe(true);
             expect(hasCell(FALLBACK_ROW, LAST_COL)).toBe(false);
 
             let error: unknown;
@@ -91,6 +92,11 @@ describe('Focused cell restore after row removal (React)', () => {
                     rowIndex: active?.closest('.ag-row')?.getAttribute('row-index'),
                     colId: active?.getAttribute('col-id'),
                 }).toEqual({ rowIndex: String(FALLBACK_ROW), colId: LAST_COL });
+            });
+            const focused = api.getFocusedCell();
+            expect({ rowIndex: focused?.rowIndex, colId: focused?.column.getColId() }).toEqual({
+                rowIndex: FALLBACK_ROW,
+                colId: LAST_COL,
             });
 
             // the grid remains usable: it can still render rows
