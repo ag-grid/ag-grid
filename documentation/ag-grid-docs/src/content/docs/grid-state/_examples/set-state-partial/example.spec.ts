@@ -1,5 +1,5 @@
 import type { AgGridFixtures } from '@utils/grid/test-utils';
-import { clickHeaderToSort, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 const GRID_ID = 'setStatePartial';
 
@@ -15,15 +15,18 @@ const expectGoldBeforeAthlete = async (agIdFor: AgGridFixtures['agIdFor']) => {
 };
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Set Column Order Only resets every omitted section', async ({ agIdFor, page }) => {
+    test.eachFramework('Set Column Order Only resets every omitted property', async ({ agIdFor, page }) => {
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
-        // Column definition defaults: Gold sorted desc, Country pinned, sum aggregation in the grand total row.
         const goldTotal = page.locator('.ag-row-footer [col-id="gold"]');
         await expect(agIdFor.headerCell('gold')).toHaveAttribute('aria-sort', 'descending');
         await expect(agIdFor.headerCell('country')).toHaveClass(/ag-header-cell-last-left-pinned/);
         await expect(goldTotal).not.toBeEmpty();
+
+        await page.getByRole('button', { name: 'Filter Sport: Swimming', exact: true }).click();
+        const floatingFilter = agIdFor.floatingFilter('sport').locator('input');
+        await expect(floatingFilter).toHaveValue('Swimming');
 
         await page.getByRole('button', { name: 'Set Column Order Only', exact: true }).click();
 
@@ -31,36 +34,49 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('gold')).toHaveAttribute('aria-sort', 'none');
         await expect(agIdFor.headerCell('country')).not.toHaveClass(/ag-header-cell-last-left-pinned/);
         await expect(goldTotal).toBeEmpty();
+        await expect(floatingFilter).toHaveValue('');
     });
 
-    test.eachFramework('Restore State, Keep Filter leaves the current filter in place', async ({ agIdFor, page }) => {
+    test.eachFramework(
+        'Restore Saved State applies the saved state and clears the filter',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page, GRID_ID);
+            await waitForGridContent(page);
+
+            const goldTotal = page.locator('.ag-row-footer [col-id="gold"]');
+            await expect(goldTotal).toHaveText('3143');
+
+            await page.getByRole('button', { name: 'Filter Sport: Swimming', exact: true }).click();
+            const floatingFilter = agIdFor.floatingFilter('sport').locator('input');
+            await expect(floatingFilter).toHaveValue('Swimming');
+            await expect(goldTotal).not.toHaveText('3143');
+
+            await page.getByRole('button', { name: 'Restore Saved State', exact: true }).click();
+
+            await expect(agIdFor.headerCell('athlete')).toHaveClass(/ag-header-cell-last-left-pinned/);
+            await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'ascending');
+            await expect(agIdFor.headerCell('year')).toHaveCount(0);
+            await expect(floatingFilter).toHaveValue('');
+            await expect(goldTotal).toHaveText('3143');
+        }
+    );
+
+    test.eachFramework('Restore Saved State, Ignore Filter leaves the filter in place', async ({ agIdFor, page }) => {
         await ensureGridReady(page, GRID_ID);
         await waitForGridContent(page);
 
-        // The grand total row shows whether a filter is applied.
         const goldTotal = page.locator('.ag-row-footer [col-id="gold"]');
-        await expect(goldTotal).toHaveText('3143');
-
-        await page.getByRole('button', { name: 'Save State', exact: true }).click();
-
-        // Change the sort and the filter after saving.
-        await clickHeaderToSort(agIdFor.headerCell('athlete'));
-        await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'ascending');
+        await page.getByRole('button', { name: 'Filter Sport: Swimming', exact: true }).click();
         const floatingFilter = agIdFor.floatingFilter('sport').locator('input');
-        await floatingFilter.fill('Swimming');
+        await expect(floatingFilter).toHaveValue('Swimming');
         await expect(goldTotal).not.toHaveText('3143');
         const swimmingTotal = await goldTotal.textContent();
 
-        // Restore keeping the filter: the sort reverts, the filter stays.
-        await page.getByRole('button', { name: 'Restore State, Keep Filter', exact: true }).click();
-        await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'none');
-        await expect(agIdFor.headerCell('gold')).toHaveAttribute('aria-sort', 'descending');
+        await page.getByRole('button', { name: 'Restore Saved State, Ignore Filter', exact: true }).click();
+
+        await expect(agIdFor.headerCell('athlete')).toHaveClass(/ag-header-cell-last-left-pinned/);
+        await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'ascending');
         await expect(floatingFilter).toHaveValue('Swimming');
         await expect(goldTotal).toHaveText(swimmingTotal!);
-
-        // A plain restore clears the filter too.
-        await page.getByRole('button', { name: 'Restore State', exact: true }).click();
-        await expect(floatingFilter).toHaveValue('');
-        await expect(goldTotal).toHaveText('3143');
     });
 });

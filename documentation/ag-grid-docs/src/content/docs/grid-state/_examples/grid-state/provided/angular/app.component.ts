@@ -36,7 +36,10 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="reloadGrid()">Recreate Grid with Current State</button>
+                    <button (click)="recreateWithCurrentState()">Recreate Grid with Current State</button>
+                    <button (click)="saveState()">Save State</button>
+                    <button (click)="recreateWithNoState()">Recreate Grid with No State</button>
+                    <button (click)="setState()">Set State</button>
                     <button (click)="printState()">Print Grid State</button>
                 </span>
             </div>
@@ -116,10 +119,31 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {}
 
-    reloadGrid(): void {
-        const state = this.gridApi.getState();
+    private savedState?: GridState;
+
+    recreateWithCurrentState(): void {
+        this.recreateGrid(this.gridApi.getState());
+    }
+
+    recreateWithNoState(): void {
+        this.recreateGrid();
+    }
+
+    saveState(): void {
+        this.savedState = this.gridApi.getState();
+        console.log('Saved state', this.savedState);
+    }
+
+    setState(): void {
+        if (this.savedState) {
+            this.gridApi.setState(this.savedState);
+            console.log('Set state', this.savedState);
+        }
+    }
+
+    private recreateGrid(initialState?: GridState): void {
         this.gridVisible.set(false);
-        this.initialState = state;
+        this.initialState = initialState;
         this.rowData = undefined;
         setTimeout(() => {
             this.gridVisible.set(true);

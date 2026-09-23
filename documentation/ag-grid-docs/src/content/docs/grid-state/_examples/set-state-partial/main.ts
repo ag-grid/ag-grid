@@ -26,33 +26,42 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
         floatingFilter: true,
-        enableRowGroup: true,
     },
-    rowGroupPanelShow: 'always',
     grandTotalRow: 'bottom',
 };
 
-let savedState: GridState | undefined;
+// A state saved earlier: Athlete pinned and sorted, Year hidden, medals summed.
+const savedState: GridState = {
+    columnOrder: {
+        orderedColIds: ['athlete', 'country', 'sport', 'year', 'gold', 'silver'],
+    },
+    columnPinning: { leftColIds: ['athlete'], rightColIds: [] },
+    columnVisibility: { hiddenColIds: ['year'] },
+    sort: { sortModel: [{ colId: 'athlete', sort: 'asc' }] },
+    aggregation: {
+        aggregationModel: [
+            { colId: 'gold', aggFunc: 'sum' },
+            { colId: 'silver', aggFunc: 'sum' },
+        ],
+    },
+};
 
-function saveState() {
-    savedState = gridApi.getState();
-    console.log('Saved state', savedState);
+function filterSwimming() {
+    gridApi.setFilterModel({
+        sport: { filterType: 'text', type: 'contains', filter: 'Swimming' },
+    });
 }
 
 function restoreState() {
-    if (savedState) {
-        gridApi.setState(savedState);
-    }
+    gridApi.setState(savedState);
 }
 
 function restoreStateKeepFilter() {
-    if (savedState) {
-        gridApi.setState(savedState, ['filter']);
-    }
+    gridApi.setState(savedState, ['filter']);
 }
 
 function setColumnOrderOnly() {
-    // Every section this state omits is reset, not left as it is.
+    // A sparse state: every property it omits is reset, not left as it is.
     gridApi.setState({
         columnOrder: {
             orderedColIds: ['gold', 'silver', 'athlete', 'sport', 'country', 'year'],
