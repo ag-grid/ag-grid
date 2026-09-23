@@ -5,7 +5,7 @@ import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 
 /**
- * Sets internal behaviour flags explicitly, overriding the Studio preset. Register it per grid so flags cannot leak.
+ * Sets internal behaviour flags explicitly. Register it per grid so flags cannot leak.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
