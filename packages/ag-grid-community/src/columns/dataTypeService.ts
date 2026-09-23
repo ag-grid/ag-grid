@@ -326,6 +326,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (columnTypes) {
             const columnTypeDefs = gos.get('columnTypes') ?? {};
             const hasPropsPreventingInference = convertColumnTypes(columnTypes).some((columnType) => {
+                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 const columnTypeDef = columnTypeDefs[columnType.trim()];
                 return columnTypeDef && doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
             });
@@ -340,6 +341,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!field) {
             return undefined;
         }
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
         const getValue = (data: any) => {
             if (data == null) {

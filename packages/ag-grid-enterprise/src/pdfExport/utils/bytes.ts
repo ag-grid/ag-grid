@@ -25,14 +25,17 @@ export function encodeAsciiHex(data: Uint8Array): string {
  * @returns Decoded bytes.
  */
 export function decodeBase64(value: string): Uint8Array {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const separatorIndex = value.indexOf(',');
     const encoded = separatorIndex >= 0 ? value.slice(separatorIndex + 1) : value;
     let decoded: string;
     try {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         decoded = atob(encoded.replace(/\s/g, ''));
     } catch {
         throw new Error('AG Grid: PDF image data is not valid base64.');
     }
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const bytes = new Uint8Array(decoded.length);
 
     for (let index = 0; index < decoded.length; index++) {

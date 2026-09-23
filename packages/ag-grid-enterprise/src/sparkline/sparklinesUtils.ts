@@ -107,6 +107,7 @@ const hasCompleteSparklineSummary = (summary: SparklineSummary): summary is Comp
     summary.count > 0 && summary.min != null && summary.max != null && summary.start != null && summary.end != null;
 
 export const interpolateTemplate = (template: string, values: SparklineTemplateValues): string =>
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     template.replace(/\$\{([^}]+)\}/g, (match, token: string) => values[token] ?? match);
 
 const getYValue = (datum: any, yKey: string): number | null => {

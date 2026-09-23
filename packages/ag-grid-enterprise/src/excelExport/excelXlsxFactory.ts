@@ -107,6 +107,7 @@ export function createXlsxExcel(
 }
 
 function getXlsxSanitizedTableName(name: string) {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return name
         .replace(/^[^a-zA-Z_]+/, '_')
         .replace(/\s/g, '_')
@@ -286,6 +287,7 @@ function addSheetName(worksheet: ExcelWorksheet): void {
         if (append === '') {
             append = '_1';
         } else {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const curr = parseInt(append.slice(1), 10);
             append = `_${curr + 1}`;
         }

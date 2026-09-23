@@ -281,6 +281,7 @@ function getTableOffset(data: Uint8Array, targetTag: string): number {
 
 function writeTag(data: Uint8Array, offset: number, tag: string): void {
     for (let index = 0; index < 4; index++) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         data[offset + index] = tag.charCodeAt(index);
     }
 }

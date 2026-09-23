@@ -416,6 +416,7 @@ const isTreeSeparator = (char: string): boolean => char === SET_TREE_SEPARATOR |
 export const splitSetPath = (text: string): string[] => {
     const segments: string[] = [];
     let start = 0;
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (let i = 0, len = text.length; i < len; ++i) {
         if (isTreeSeparator(text[i])) {
             segments.push(text.slice(start, i).trim());

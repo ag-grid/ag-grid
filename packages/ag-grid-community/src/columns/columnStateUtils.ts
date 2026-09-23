@@ -248,6 +248,7 @@ function applyStateToCols(
             if (colId != null) {
                 // Service cols are (re)created by the refresh, so collect their states for `syncServiceColumnsWithState`
                 // — not into `unmatchedStates` (that would wrongly force the pivot pass).
+                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
                     autoColStates ??= [];
                     autoColStates.push(state);

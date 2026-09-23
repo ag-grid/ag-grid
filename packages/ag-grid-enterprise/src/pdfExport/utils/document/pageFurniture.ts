@@ -111,6 +111,7 @@ export function resolvePagePlaceholders(value: string, placeholders: PdfPagePlac
         Time: placeholders.time,
     };
 
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return value.replace(/&\[(Page|Pages|Date|Time)\]/g, (_match, name: string) => replacements[name]);
 }
 
@@ -145,6 +146,7 @@ export function getPageDateTime(date: Date, language?: string): Pick<PdfPagePlac
 }
 
 function normaliseDateTimeSpacing(value: string): string {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return value.replace(/[\u00a0\u202f]/g, ' ');
 }
 

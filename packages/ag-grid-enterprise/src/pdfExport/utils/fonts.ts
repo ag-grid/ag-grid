@@ -10,6 +10,7 @@ export function resolveTextAlignment(value?: string): PdfCellStyle['alignment'] 
         return undefined;
     }
 
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (value.startsWith('center')) {
         return 'center';
     }
@@ -75,6 +76,7 @@ function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
         return undefined;
     }
 
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const primaryFamily = fontFamilyValue
         .split(',')[0]
         .trim()
@@ -82,6 +84,7 @@ function mapFontFamily(fontFamilyValue?: string): PdfFontFamily | undefined {
         .toLowerCase();
 
     // map common browser families to the nearest PDF base-14 font.
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (primaryFamily.includes('helvetica-bold')) {
         return 'Helvetica-Bold';
     }

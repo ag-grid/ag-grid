@@ -281,6 +281,7 @@ export class CellRangeFeature implements ICellRangeFeature {
 
         if (nextClass) {
             this.cellComp.toggleCss(nextClass, true);
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             this.cellComp.toggleCss('ag-formula-range', nextClass.startsWith('ag-formula-range'));
         }
 

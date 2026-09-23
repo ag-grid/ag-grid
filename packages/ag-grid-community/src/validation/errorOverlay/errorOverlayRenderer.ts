@@ -3,13 +3,16 @@ import { getError } from '../errorMessages/errorText';
 import type { CapturedDiagnostic } from '../logging';
 import { getErrorLink } from '../logging';
 
+// eslint-disable-next-line sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
 const DOC_LINK_REGEX = /\s*(See|Visit) https?:\/\/\S+/g;
 /** The general "For more info see: <url>" convention messages use to point at documentation. */
+// eslint-disable-next-line sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
 const MORE_INFO_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
 const IMPORT_LINE_REGEX = /^\s*import\s/;
 const CODE_LINE_PREFIX_REGEX = /^(import |const |let |function |class |ModuleRegistry|<|>|\}|\))/;
 const URL_REGEX = /https?:\/\/\S+/g;
 /** Trailing punctuation that follows a URL in prose rather than being part of it. */
+// eslint-disable-next-line sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
 const URL_TRAILING_PUNCTUATION_REGEX = /[.,;:)\]]+$/;
 
 /** Delimiter the error messages use to mark inline code (reasons, module names). See `asCode` in errorText.ts. */
@@ -69,6 +72,7 @@ function getRawMessage(diagnostic: CapturedDiagnostic): string {
  * @knipIgnore Used in tests
  */
 export function parseDiagnosticText(raw: string): DiagnosticContent {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const docLink = raw.match(MORE_INFO_LINK_REGEX)?.[1];
     const text = raw.replace(DOC_LINK_REGEX, '').replace(MORE_INFO_LINK_REGEX, '').trim();
     return { ...splitCodeSnippet(text), docLink };
@@ -79,10 +83,12 @@ function getDiagnosticContent(diagnostic: CapturedDiagnostic): DiagnosticContent
 }
 
 function isCodeLine(line: string): boolean {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = line.trim();
     if (trimmed === '') {
         return false;
     }
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return CODE_LINE_PREFIX_REGEX.test(trimmed) || /[;{(]$/.test(trimmed) || trimmed.includes('=>');
 }
 
@@ -92,6 +98,7 @@ function isCodeLine(line: string): boolean {
  * snippet — the common case for warnings and deprecations.
  */
 function splitCodeSnippet(text: string): { message: string; code?: string; note?: string } {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const lines = text.split('\n');
     let start = -1;
     for (let i = 0, len = lines.length; i < len; ++i) {
@@ -128,6 +135,7 @@ function splitCodeSnippet(text: string): { message: string; code?: string; note?
  * elements so reasons and option names stand out, and any URLs as clickable links.
  */
 function appendRichText(el: HTMLElement, text: string): void {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const parts = text.split(CODE_DELIMITER);
     for (let i = 0, len = parts.length; i < len; ++i) {
         const part = parts[i];
@@ -152,12 +160,14 @@ function appendTextWithLinks(el: HTMLElement, text: string): void {
     let match: RegExpExecArray | null;
     while ((match = URL_REGEX.exec(text)) !== null) {
         if (match.index > lastIndex) {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             el.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
         }
         // Keep trailing sentence punctuation out of the href.
         let href = match[0];
         const trailing = URL_TRAILING_PUNCTUATION_REGEX.exec(href)?.[0] ?? '';
         if (trailing) {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             href = href.slice(0, href.length - trailing.length);
         }
         el.appendChild(createLink(href, href));
@@ -177,6 +187,7 @@ function appendTextWithLinks(el: HTMLElement, text: string): void {
  * case-sensitive and must not be altered.
  */
 function capitaliseLeadingProse(text: string): string {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return text.replace(/^[a-z]/, (c) => c.toUpperCase());
 }
 

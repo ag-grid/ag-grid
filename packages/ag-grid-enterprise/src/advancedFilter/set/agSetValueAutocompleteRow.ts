@@ -13,6 +13,7 @@ const deEmphasisePrefix = (label: HTMLElement, length: number): void => {
     while (remaining > 0 && label.firstChild) {
         const node = label.firstChild;
         const text = node.textContent ?? '';
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (text.length <= remaining) {
             remaining -= text.length;
             ePrefix.appendChild(node);

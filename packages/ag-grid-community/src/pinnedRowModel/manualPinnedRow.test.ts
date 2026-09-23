@@ -7,7 +7,9 @@ const CSS_PATH = path.join(__dirname, 'manualPinnedRow.css');
 // `.css` imports resolve to an empty string under the package vitest config, so read the shipped file.
 function selectorForPinnedRowBackground(): string {
     const css = fs.readFileSync(CSS_PATH, 'utf-8');
+    // eslint-disable-next-line sonarjs/null-dereference, sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed); flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
     const rules = css.match(/[^{}]+\{[^{}]*\}/g) ?? [];
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const rule = rules.find((r) => r.includes('var(--ag-pinned-row-background-color)'));
     expect(rule, 'expected a rule declaring var(--ag-pinned-row-background-color)').toBeDefined();
     return rule!.slice(0, rule!.indexOf('{')).trim();

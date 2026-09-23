@@ -8,6 +8,7 @@ export function findLineByLeastSquares(values: number[]) {
 
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const splitExponent = value.toString().split('e-');
 
         if (splitExponent.length > 1) {

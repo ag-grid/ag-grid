@@ -317,6 +317,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private forceLastSelection({ key, displayValue }: AutocompleteEntry, searchString: string): boolean {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         return !!searchString.toLocaleLowerCase().match(`^${(displayValue ?? key).toLocaleLowerCase()}\\s*$`);
     }
 

@@ -669,6 +669,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private splitPathKey(segments: number[], pathKey: string): number {
         let segmentsLen = 0;
         let scanPos = 0;
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const pathKeyLen = pathKey.length;
         while (scanPos < pathKeyLen) {
             const sepPos = pathKey.indexOf(PATH_KEY_SEPARATOR, scanPos);
@@ -700,6 +701,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         do {
             const start = level === 0 ? 0 : segments[level - 1] + PATH_KEY_SEPARATOR_LEN;
             const end = segments[level];
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const subPath = pathKey.slice(0, end);
             let current = nodesByPath.get(subPath);
             if (current === undefined) {
@@ -769,6 +771,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         while (prefixLevel < level) {
             const start = prefixLevel > 0 ? segments[prefixLevel - 1] + PATH_KEY_SEPARATOR_LEN : 0;
             const end = segments[prefixLevel];
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             prefix += '-' + prefixLevel + '-' + pathKey.slice(start, end);
             ++prefixLevel;
         }

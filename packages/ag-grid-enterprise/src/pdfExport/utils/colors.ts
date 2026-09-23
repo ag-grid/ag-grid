@@ -59,19 +59,23 @@ export function extractBorderColor(value?: string): string | undefined {
         return undefined;
     }
 
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = value.trim();
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const functionalColorMatch = trimmed.match(/(var\([^)]+\)|(?:rgb|hsl)a?\([^)]+\)|color\([^)]+\))\s*$/i);
 
     if (functionalColorMatch) {
         return functionalColorMatch[1];
     }
 
+    // eslint-disable-next-line sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
     const tokenColorMatch = trimmed.match(/(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)\s*$/);
     if (!tokenColorMatch) {
         return undefined;
     }
 
     const candidate = tokenColorMatch[1];
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (BORDER_STYLE_VALUES.has(candidate.toLowerCase())) {
         return undefined;
     }

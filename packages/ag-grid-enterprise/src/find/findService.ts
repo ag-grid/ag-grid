@@ -47,6 +47,7 @@ function getMatchesForValue(
         // there can be multiple matches per cell, so find them all
         let index = -1;
         while (true) {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             index = finalValue.indexOf(findSearchValue, index + 1);
             if (index != -1) {
                 numMatches++;

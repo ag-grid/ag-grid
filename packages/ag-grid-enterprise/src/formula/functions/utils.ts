@@ -70,6 +70,7 @@ type OperatorSymbol = (typeof OPERATOR_TOKENS)[number];
 
 function findOperatorSymbol(s: string): OperatorSymbol | null {
     for (const tok of OPERATOR_TOKENS) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (s.startsWith(tok)) {
             return tok;
         }
@@ -113,6 +114,7 @@ function toText(x: unknown): string {
 
 function wildcardToRegExp(pattern: string): RegExp {
     let out = '^';
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (let i = 0; i < pattern.length; i++) {
         const ch = pattern[i];
         if (ch === '~' && i + 1 < pattern.length && (pattern[i + 1] === '*' || pattern[i + 1] === '?')) {
@@ -181,15 +183,18 @@ export function criteriaToPredicate(criteria: unknown): (cell: unknown) => boole
         return (cell: unknown) => criteria === cell;
     }
 
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = criteria.trim();
     if (trimmed === '') {
         return EMPTY_PREDICATE;
     }
 
     const symbol = findOperatorSymbol(trimmed);
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const query = symbol ? trimmed.substring(symbol.length) : trimmed;
     const wildcard = /[*?]/.test(query);
     if (!wildcard) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         return COMPARE_VALUES.bind(null, symbol ?? '=', query.toUpperCase());
     }
 

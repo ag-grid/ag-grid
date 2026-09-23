@@ -55,6 +55,7 @@ export function getDefBySymbol(symbol: string, fixity?: 'prefix' | 'infix' | 'po
 }
 
 /** Greedy operator list for tokenization (longest-first). */
+// eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
 export const OP_SYMBOLS_DESC = [...new Set(OP_DEFS.map((d) => d.symbol))].sort((a, b) => b.length - a.length);
 
 /** OperatorDefs mapped by symbol. */

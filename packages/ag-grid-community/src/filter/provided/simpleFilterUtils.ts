@@ -167,6 +167,7 @@ export function _getCustomOptionDisplayName(
     translate: (key: string, defaultValue: string) => string
 ): string {
     const displayKey = String(option.displayKey);
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return translate(displayKey, option.displayName).trim() || displayKey.trim();
 }
 

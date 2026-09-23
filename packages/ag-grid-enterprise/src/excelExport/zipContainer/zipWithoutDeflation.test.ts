@@ -14,6 +14,7 @@ describe('When adding a file to a zip container without deflation', () => {
         const expectedLocalFileHeader =
             4 + // bytes - signature: PK\x03\x04
             expectedCommonHeaderSize +
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             testPath.length;
 
         const expectedCentralDirectoryHeader =
@@ -60,6 +61,7 @@ describe('When adding a file to a zip container without deflation', () => {
         expect(result.size).toEqual(
             expectedCentralDirectoryHeader +
                 expectedLocalFileHeader +
+                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 largeContent.length +
                 expectedCentralDirectoryEndSize
         );

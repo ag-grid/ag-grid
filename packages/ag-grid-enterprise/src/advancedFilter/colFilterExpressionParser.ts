@@ -257,7 +257,9 @@ function isNameAt(
     displayValue: string,
     lowerCaseDisplayValue: string
 ): boolean {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const endPosition = startPosition + displayValue.length;
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const nextChar = expression[endPosition];
     return (
         (nextChar === undefined || nextChar === ' ' || nextChar === ')') &&
@@ -1039,6 +1041,7 @@ function addToListAndGetIndex<T>(list: T[], value: T): number {
 
 /** The character opening an operand region at `position` — a list, a range or a quoted value — if any does. */
 function operandOpener(expression: string, position: number): string | undefined {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const char = expression[findStartPosition(expression, position, expression.length)];
     return char === SET_LIST_OPEN_CHAR || char === '(' || char === '"' || char === `'` ? char : undefined;
 }

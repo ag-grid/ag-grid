@@ -1,6 +1,7 @@
 import { BASE_URL } from '../../baseUrl';
 import { AG_GRID_ERRORS, MAX_ERROR_ID } from './errorText';
 
+// eslint-disable-next-line sonarjs/null-dereference, sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed); flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
 const trimTrailingSpaces = (s: string) => s.replace(/ +\n/g, '\n');
 
 describe('Validate AG_GRID_ERRORS', () => {

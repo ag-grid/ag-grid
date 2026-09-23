@@ -162,6 +162,7 @@ const replaceHeaderFooterTokens = (value: string): string => {
     };
 
     for (const key of Object.keys(map) as (keyof typeof map)[]) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         value = value.replace(key, map[key]);
     }
 
@@ -322,6 +323,7 @@ const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
 };
 
 const getPasswordHash = (password: string): string => {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const passwordLength = password.length;
     if (!passwordLength) {
         return '';

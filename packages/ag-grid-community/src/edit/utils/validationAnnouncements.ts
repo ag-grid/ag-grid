@@ -49,6 +49,7 @@ const collectValidationAnnouncements = (
                 column,
             })?.errorMessages;
             if (
+                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 message.length > 0 &&
                 (!previousMessages ||
                     message !== _formatValidationMessages(previousMessages, translate, 'announcement'))
@@ -63,6 +64,7 @@ const collectValidationAnnouncements = (
         const message = _formatValidationMessages(errorMessages, translate, 'announcement');
         const previousMessages = previous?.row.getRowValidation({ rowNode: validationRowNode })?.errorMessages;
         if (
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             message.length > 0 &&
             (!previousMessages || message !== _formatValidationMessages(previousMessages, translate, 'announcement'))
         ) {
@@ -83,6 +85,7 @@ const hasRemovedValidationAnnouncement = (
             const previousMessage = _formatValidationMessages(errorMessages, translate, 'announcement');
             const currentMessages = current.cell.getCellValidation({ rowNode, column })?.errorMessages ?? [];
             if (
+                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 previousMessage.length > 0 &&
                 _formatValidationMessages(currentMessages, translate, 'announcement').length === 0
             ) {
@@ -95,6 +98,7 @@ const hasRemovedValidationAnnouncement = (
         const previousMessage = _formatValidationMessages(errorMessages, translate, 'announcement');
         const currentMessages = current.row.getRowValidation({ rowNode })?.errorMessages ?? [];
         if (
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             previousMessage.length > 0 &&
             _formatValidationMessages(currentMessages, translate, 'announcement').length === 0
         ) {
@@ -239,6 +243,7 @@ export const _announceChangedValidationErrors = (
     const changed = collectValidationAnnouncements(translate, current, { previous });
     const announcement = formatChangedValidationAnnouncements(beans, translate, changed);
 
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (announcement.length > 0) {
         beans.ariaAnnounce.announceValue(announcement, 'editorValidation');
     } else if (hasRemovedValidationAnnouncement(translate, previous, current)) {
@@ -272,6 +277,7 @@ export const _announceFullRowEditValidationErrors = (beans: BeanCollection, cont
     );
 
     const validationDetails = formatValidationDetails(beans, translate, { cells, rows }, rowIndices);
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (validationDetails.length === 0) {
         return;
     }

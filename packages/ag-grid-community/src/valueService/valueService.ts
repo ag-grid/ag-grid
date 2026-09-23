@@ -936,5 +936,6 @@ const readSsrmFooterGroupValue = (rowNode: IRowNode, data: any, rowGroupColId: s
         return undefined;
     }
     // Read the group's own field (`rowField`); the column's cached `fieldPath` is for the column's `field`.
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return rowField.includes('.') ? _getValueUsingDotPath(data, rowField.split('.')) : data[rowField];
 };

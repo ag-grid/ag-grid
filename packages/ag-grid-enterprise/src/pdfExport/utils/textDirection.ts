@@ -170,9 +170,11 @@ export function resolveVisualText(
 function createCharacters(text: string): BidiCharacter[] {
     const characters: BidiCharacter[] = [];
     let sourceIndex = 0;
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (const value of text) {
         characters.push({
             text: value,
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             codePoint: value.codePointAt(0) ?? 0xfffd,
             sourceIndex,
             direction: 'ltr',

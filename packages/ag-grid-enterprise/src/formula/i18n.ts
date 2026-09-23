@@ -120,6 +120,7 @@ const interpolateVariables = (template: string, variableValues?: string[]): stri
     let found = 0;
 
     while (found < variableValues.length) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const idx = localisedText.indexOf('${variable}');
         if (idx === -1) {
             break;

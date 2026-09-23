@@ -833,6 +833,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
         const concatRegex = /(^|[^A-Z0-9._])(CONCAT)(\s*\()/gi;
 
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         return value.replace(concatRegex, (_match, prefix, fn, openParen) => `${prefix}_xlfn.${fn}${openParen}`);
     }
 

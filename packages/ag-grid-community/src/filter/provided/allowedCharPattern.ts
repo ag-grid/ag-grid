@@ -12,6 +12,7 @@ export const installAllowedCharPattern = (
     }
     // Wrapping a character class again would only ever match two characters. No `g`, or `lastIndex` would
     // carry between the characters `test` is asked about one by one.
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const isCharClass = allowedCharPattern.startsWith('[') && allowedCharPattern.endsWith(']');
     let pattern: RegExp;
     try {

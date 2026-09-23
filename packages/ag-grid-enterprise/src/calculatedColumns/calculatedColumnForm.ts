@@ -473,6 +473,7 @@ export class CalculatedColumnForm extends Component {
         this.eType.hidePicker();
 
         const suggestions = this.getSuggestionsForType(type);
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const searchLower = search.toLocaleLowerCase();
         const hasMatch =
             !searchLower ||
@@ -731,6 +732,7 @@ export class CalculatedColumnForm extends Component {
         }
 
         let start = caret;
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         while (start > 0 && /[A-Za-z0-9_.]/.test(value[start - 1])) {
             start--;
         }
@@ -754,6 +756,7 @@ export class CalculatedColumnForm extends Component {
 
     private getPreviousNonSpaceChar(value: string, offset: number): string | null {
         for (let i = offset - 1; i >= 0; i--) {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             if (value[i] !== ' ') {
                 return value[i];
             }

@@ -488,6 +488,7 @@ function createChunk(type: string, data: Uint8Array): Uint8Array {
         (length >>> 16) & 0xff,
         (length >>> 8) & 0xff,
         length & 0xff,
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         type.charCodeAt(0),
         type.charCodeAt(1),
         type.charCodeAt(2),

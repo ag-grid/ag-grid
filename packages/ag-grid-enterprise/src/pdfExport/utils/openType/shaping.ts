@@ -21,6 +21,7 @@ export function shapeTrueTypeText(
     direction: PdfTextDirection,
     language?: string
 ): PdfGlyphRun {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const shapingText = text.normalize('NFC');
     const logicalCharacters = createLogicalCharacters(shapingText);
     const script = detectOpenTypeScript(logicalCharacters, language);
@@ -744,7 +745,9 @@ function getValueRecordSize(format: number): number {
 function createLogicalCharacters(text: string): Array<{ text: string; codePoint: number; sourceIndex: number }> {
     const characters: Array<{ text: string; codePoint: number; sourceIndex: number }> = [];
     let sourceIndex = 0;
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (const value of text) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         characters.push({ text: value, codePoint: value.codePointAt(0) ?? 0xfffd, sourceIndex });
         sourceIndex += value.length;
     }
@@ -860,7 +863,9 @@ function toOpenTypeLanguageTag(language: string | undefined): string | undefined
     if (!language) {
         return undefined;
     }
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const normalised = language.toLowerCase();
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const primary = normalised.split('-')[0];
     const tags: Record<string, string> = {
         ar: 'ARA ',

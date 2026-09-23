@@ -32,6 +32,7 @@ let registeredCellStyles: ExcelCellStyle[];
 let currentSheet: number;
 
 const getStyleName = (name: string, currentSheet: number): string => {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (name.includes('mixedStyle') && currentSheet > 1) {
         name += `_${currentSheet}`;
     }
@@ -232,6 +233,7 @@ const registerFont = (font: ExcelFont): number => {
             strikeThrough,
             underline: convertedUnderline as any,
             verticalAlign: convertedVerticalAlign as any,
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             family: familyId != null ? familyId.toString() : undefined,
         });
     }

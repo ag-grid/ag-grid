@@ -286,6 +286,7 @@ export class PdfFontRegistry {
         unicode: string,
         sourceFont: ResolvedPdfFont
     ): ResolvedPdfFont | undefined {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (glyphId || unicode.length !== 1) {
             return undefined;
         }

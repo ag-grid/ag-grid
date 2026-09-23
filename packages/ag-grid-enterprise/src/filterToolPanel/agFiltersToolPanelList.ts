@@ -450,12 +450,14 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     public performFilterSearch(searchText: string) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         this.searchFilterText = _exists(searchText) ? searchText.toLowerCase() : null;
         this.searchFilters(this.searchFilterText);
     }
 
     private searchFilters(searchFilter: string | null) {
         const passesFilter = (groupName: string) => {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             return !_exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
 

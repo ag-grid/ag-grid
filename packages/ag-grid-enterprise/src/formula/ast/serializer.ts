@@ -48,6 +48,7 @@ export function rowIdFromIndex(beans: BeanCollection, idx: number): string | nul
 const LETTERS_ONLY = /^[A-Za-z]+$/;
 
 function quoteString(s: string): string {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (s.includes('"')) {
         throw new FormulaError(18);
     }
@@ -59,10 +60,12 @@ function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
     const looksLetters = LETTERS_ONLY.test(id);
     if (ref.absolute) {
         if (looksLetters) {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             return id.toUpperCase();
         }
         const label = colLabelFromId(beans, id);
         if (label) {
+            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             return label.toUpperCase();
         }
         throw new FormulaError(19, [id]);
@@ -98,6 +101,7 @@ function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
 
     const label = colLabelFromId(beans, id);
     if (label) {
+        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         return label.toUpperCase();
     }
     throw new FormulaError(22, [id]);

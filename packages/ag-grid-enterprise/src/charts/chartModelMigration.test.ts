@@ -10,6 +10,7 @@ function loadChartModel(name: string): ChartModel {
 }
 
 function snapshotVersion(name: string): string {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const hyphenIndex = name.indexOf('-');
     if (hyphenIndex >= 0) {
         return name.substring(0, hyphenIndex);

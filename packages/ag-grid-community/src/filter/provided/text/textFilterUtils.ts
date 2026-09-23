@@ -9,6 +9,7 @@ import type { TextFilterModel, TextFormatter } from './iTextFilter';
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const defaultLowercaseFormatter: TextFormatter = (from: string) =>
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     from == null ? null : from.toString().toLowerCase();
 
 /**
@@ -19,11 +20,15 @@ export const TEXT_COMPARISONS: Record<
     Exclude<TextFilterOptionKey, CommonFilterOptionKey>,
     (value: string, filterText: string) => boolean
 > = {
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     contains: (value, filterText) => value.includes(filterText),
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     notContains: (value, filterText) => !value.includes(filterText),
     equals: (value, filterText) => value === filterText,
     notEqual: (value, filterText) => value != filterText,
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     startsWith: (value, filterText) => value.startsWith(filterText),
+    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     endsWith: (value, filterText) => value.endsWith(filterText),
 };
 
