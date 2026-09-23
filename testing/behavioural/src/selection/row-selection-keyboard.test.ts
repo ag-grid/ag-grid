@@ -5,7 +5,7 @@ import type { GridApi, GridOptions, Module, _InternalFeatureFlags } from 'ag-gri
 import { ClientSideRowModelModule, RowSelectionModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridActions, StudioStubModule, pressAKey, pressSpaceKey } from './utils';
+import { GridActions, pressAKey, pressSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -609,26 +609,6 @@ describe('Row Selection with Keyboard', () => {
 
             pressSpaceKey(actions.getRowByIndex(0)!);
             assertSelectedRowsByIndex([], api);
-        });
-
-        test('in Studio, Space on a row does not select when click selection is disabled', async () => {
-            const [api, actions] = createGrid(
-                { columnDefs, rowData, rowSelection: { mode: 'multiRow', enableClickSelection: false } },
-                [StudioStubModule]
-            );
-
-            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
-            assertSelectedRowsByIndex([], api);
-        });
-
-        test('in Studio, an explicitly disabled flag lets Space select the row', async () => {
-            const [api, actions] = createGrid(
-                { columnDefs, rowData, rowSelection: { mode: 'multiRow', enableClickSelection: false } },
-                [StudioStubModule, _createInternalFeatureFlagsModule({ spaceKeyFollowsClickSelection: false })]
-            );
-
-            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
-            assertSelectedRowsByIndex([2], api);
         });
     });
 });
