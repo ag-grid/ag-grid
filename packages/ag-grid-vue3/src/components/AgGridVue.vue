@@ -31,8 +31,10 @@ import {
 
 const props = withDefaults(defineProps<Props<TData>>(), getProps());
 
-// A cellRenderer string can name any slot, so the name isn't known ahead of time here.
-defineSlots<{ [slotName: string]: (params: ICellRendererParams<TData>) => any }>();
+// A cellRenderer string can name any slot, so the name isn't known ahead of time here. Allows
+// undefined to match Vue's own InternalSlots shape, so AgGridVue still type-checks as a generic
+// Component (e.g. app.component()).
+defineSlots<{ [slotName: string]: ((params: ICellRendererParams<TData>) => any) | undefined }>();
 
 const rootRef = useTemplateRef<HTMLDivElement>('root');
 
