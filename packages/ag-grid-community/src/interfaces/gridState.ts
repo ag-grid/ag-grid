@@ -267,8 +267,8 @@ export interface GridState {
     /**
      * Current page and page size. With the Server Side Row Model or Infinite Row Model, restoring a page
      * beyond the rows the grid already knows about needs `serverSideInitialRowCount` or
-     * `infiniteInitialRowCount` respectively set high enough to cover it, otherwise the grid restores to
-     * page 0 instead.
+     * `infiniteInitialRowCount` respectively set high enough to cover it, otherwise the grid restores the
+     * last page it knows about instead.
      */
     pagination?: PaginationState;
     /** Currently manually pinned rows */
