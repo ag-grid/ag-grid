@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
@@ -553,6 +554,71 @@ describe('Row Selection with Keyboard', () => {
 
             pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-SelectionColumn')!);
             assertSelectedRowsByIndex([], api);
+        });
+
+        test('Space on a row whose checkbox is disabled obeys click selection', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                rowSelection: {
+                    mode: 'multiRow',
+                    enableClickSelection: false,
+                    checkboxes: (params) => params.node?.rowIndex !== 2,
+                },
+            });
+
+            pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-SelectionColumn')!);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        describe('with grouped rows', () => {
+            const groupedColumnDefs = [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }];
+            const groupedRowData = [
+                { country: 'Ireland', sport: 'football' },
+                { country: 'Ireland', sport: 'rugby' },
+                { country: 'Italy', sport: 'tennis' },
+            ];
+
+            test('Space on the group column checkbox cell still toggles the row', async () => {
+                const [api, actions] = createFlaggedGrid({
+                    columnDefs: groupedColumnDefs,
+                    rowData: groupedRowData,
+                    groupDefaultExpanded: -1,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: false,
+                        checkboxLocation: 'autoGroupColumn',
+                    },
+                });
+
+                const groupCell = actions.getCellByPosition(1, 'ag-Grid-AutoColumn')!;
+                await waitFor(() => expect(groupCell.querySelector('.ag-selection-checkbox')).not.toBeNull());
+
+                pressSpaceKey(actions.getCellByPosition(1, 'sport')!);
+                assertSelectedRowsByIndex([], api);
+
+                pressSpaceKey(groupCell);
+                assertSelectedRowsByIndex([1], api);
+            });
+
+            test('Space on a full-width group row with a checkbox still toggles the group', async () => {
+                const [api, actions] = createFlaggedGrid({
+                    columnDefs: groupedColumnDefs,
+                    rowData: groupedRowData,
+                    groupDisplayType: 'groupRows',
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: false,
+                        checkboxLocation: 'autoGroupColumn',
+                    },
+                });
+
+                const groupRow = actions.getRowByIndex(0)!;
+                await waitFor(() => expect(groupRow.querySelector('.ag-selection-checkbox')).not.toBeNull());
+
+                pressSpaceKey(groupRow);
+                assertSelectedRowsByIndex([0], api);
+            });
         });
 
         test('Space on a row can select but not deselect with enableSelection', async () => {

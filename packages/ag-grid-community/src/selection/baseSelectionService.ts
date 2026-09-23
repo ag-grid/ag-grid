@@ -283,7 +283,7 @@ export abstract class BaseSelectionService extends BeanStub {
         shiftKey: boolean,
         metaKey: boolean,
         source: SelectionEventSourceType,
-        column?: AgColumn
+        target: EventTarget | null
     ): null | NodeSelection {
         const { gos, selectionCtx } = this;
         const currentSelection = node.isSelected();
@@ -293,7 +293,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const enableClickToggle = _isInternalFeatureFlagEnabled(this.beans, 'clickToggleSelection');
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
-        const isClickGated = isRowClicked || this.isSpaceKeyClickGated(node, source, column);
+        const isClickGated = isRowClicked || this.isSpaceKeyClickGated(source, target);
 
         if (isClickGated && !(enableClickSelection || enableDeselection)) {
             return null;
@@ -416,13 +416,28 @@ export abstract class BaseSelectionService extends BeanStub {
     }
 
     /** Whether Space must obey `enableClickSelection`. On a selection checkbox cell it acts like clicking the checkbox. */
-    private isSpaceKeyClickGated(node: RowNode, source: SelectionEventSourceType, column?: AgColumn): boolean {
+    private isSpaceKeyClickGated(source: SelectionEventSourceType, target: EventTarget | null): boolean {
         return (
             source === 'spaceKey' &&
             _isInternalFeatureFlagEnabled(this.beans, 'spaceKeyFollowsClickSelection') &&
-            !(column && this.isCellCheckboxSelection(column, node))
+            !hasVisibleSelectionCheckbox(target)
         );
     }
+}
+
+/** Reads the DOM so every checkbox placement is covered without repeating the rules that decide where they go. */
+function hasVisibleSelectionCheckbox(element: EventTarget | null): boolean {
+    const checkbox = element instanceof Element ? element.querySelector('.ag-selection-checkbox') : null;
+    const input = checkbox?.querySelector<HTMLInputElement>('input');
+    if (!input || input.disabled) {
+        return false;
+    }
+    for (let el: Element | null = checkbox; el && el !== element; el = el.parentElement) {
+        if (el.classList.contains('ag-hidden') || el.classList.contains('ag-invisible')) {
+            return false;
+        }
+    }
+    return true;
 }
 
 interface SingleNodeSelection {

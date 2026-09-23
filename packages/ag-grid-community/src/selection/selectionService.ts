@@ -2,7 +2,6 @@ import type { GridApi } from '../api/gridApi';
 import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { NamedBean } from '../context/bean';
-import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions, RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
@@ -81,8 +80,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     public handleSelectionEvent(
         event: MouseEvent | KeyboardEvent,
         rowNode: RowNode,
-        source: SelectionEventSourceType,
-        column?: AgColumn
+        source: SelectionEventSourceType
     ): number {
         if (this.isRowSelectionBlocked(rowNode)) {
             return 0;
@@ -93,7 +91,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             event.shiftKey,
             event.metaKey || event.ctrlKey,
             source,
-            column
+            event.target
         );
 
         if (selection == null) {
