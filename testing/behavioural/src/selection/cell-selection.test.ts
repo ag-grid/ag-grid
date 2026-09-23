@@ -492,6 +492,36 @@ describe('Cell Selection', () => {
             `);
         });
 
+        test('Ctrl+A range ends on the last pinned bottom row', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: true,
+                enableRowPinning: true,
+                isRowPinned: (node) => {
+                    if (node.data?.year < 2010) {
+                        return 'top';
+                    }
+                    if (node.data?.year < 2020) {
+                        return 'bottom';
+                    }
+                    return null;
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'sport')));
+            await userSession.click(cell);
+            await userSession.keyboard('{Control>}a{/Control}');
+
+            const ranges = api.getCellRanges()!;
+            expect(ranges).toHaveLength(1);
+            expect(ranges[0].startRow).toEqual({ rowIndex: 0, rowPinned: 'top' });
+            expect(ranges[0].endRow).toEqual({ rowIndex: 1, rowPinned: 'bottom' });
+        });
+
         test('De-selecting column does not affect existing ranges', async () => {
             const userSession = userEvent.setup();
 

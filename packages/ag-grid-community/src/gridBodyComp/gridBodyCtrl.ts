@@ -567,7 +567,7 @@ export class GridBodyCtrl extends BeanStub {
         const eTarget = target instanceof Element ? target : null;
         const isOnGridViewport =
             eTarget != null && (eTarget === this.eGridViewport || this.eGridViewport.contains(eTarget));
-        const isOnRenderedRow = !!eTarget?.closest('.ag-row, .ag-header-row');
+        const isOnRenderedRow = !!eTarget?.closest('.ag-row, .ag-spanned-row, .ag-header-row');
         const isOnPinnedTopSection = !!eTarget?.closest('.ag-grid-pinned-top-rows');
 
         if (isOnGridViewport && !isOnRenderedRow && !isOnPinnedTopSection) {

@@ -49,6 +49,7 @@ describe('SSRM grand total row', () => {
 
     afterEach(() => {
         gridManager.reset();
+        vi.restoreAllMocks();
     });
 
     interface RowData {
@@ -826,6 +827,19 @@ describe('SSRM grand total row', () => {
         expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
         // Displayed (non-pinned) row count should not include the pinned grand total
         expect(api.getDisplayedRowCount()).toBe(3);
+    });
+
+    test('pinned grand total picks up a theme row height change', async () => {
+        const api = gridManager.createGrid(null, createFlatGridOptions({ grandTotalRow: 'pinnedBottom' }));
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+
+        // `stylesChanged` is internal with no public trigger; drive it as the theme code does.
+        const beans = (api.getPinnedBottomRow(0) as any).beans;
+        vi.spyOn(beans.environment, 'getDefaultRowHeight').mockReturnValue(64);
+        beans.eventSvc.dispatchEvent({ type: 'stylesChanged', rowHeightChanged: true });
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.rowHeight).toBe(64));
     });
 
     test('grand total at pinnedTop renders in pinned area, not inline', async () => {

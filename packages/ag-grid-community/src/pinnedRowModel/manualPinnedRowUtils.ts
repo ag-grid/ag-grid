@@ -1,148 +1,136 @@
-import { _removeFromArray } from 'ag-stack';
-
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import { _getGrandTotalRow, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
 export class PinnedRows {
-    /** Canonical set of pinned nodes */
-    private readonly all = new Set<RowNode>();
-    /**
-     * Set of nodes that should currently be visible given the context of the grid.
-     * This is currently used for hiding leaf nodes in pivot mode and filtered nodes.
-     */
-    private readonly visible = new Set<RowNode>();
-    /** Ordering of nodes in the pinned area */
-    private order: RowNode[] = [];
-    /** IDs of nodes that need to be pinned once they are available from the row model (SSRM) */
-    private readonly queued = new Set<string>();
+    /** Canonical set of pinned nodes, hidden ones included, in pin order. Mutate only via methods. */
+    public readonly all = new Set<RowNode>();
+    /** The subset of `all` hidden by a filter, pivot mode or the SSRM cache, usually empty. */
+    private readonly hidden = new Set<RowNode>();
+    /** IDs of nodes that need to be pinned once they are available from the row model */
+    public readonly queued = new Set<string>();
+    private readonly sorted: RowNode[] = [];
+    private sortedValid = true;
 
     constructor(
         private readonly beans: BeanCollection,
         public readonly floating: NonNullable<RowPinnedType>
     ) {}
 
-    public size(): number {
-        return this.visible.size;
+    public getDisplayedCount(): number {
+        return this.all.size - this.hidden.size;
     }
 
-    public add(node: RowNode): void {
-        const { all, visible, order } = this;
+    /** The displayed nodes in display order, re-sorted in place on the first read after a change. */
+    public getSorted(): RowNode[] {
+        const sorted = this.sorted;
+        if (!this.sortedValid) {
+            this.sortedValid = true;
+            sortPinnedRows(this.beans, this.all, this.hidden, sorted);
+        }
+        return sorted;
+    }
+
+    public add(node: RowNode, hidden: boolean): void {
+        const all = this.all;
         if (all.has(node)) {
             return;
         }
         all.add(node);
-        visible.add(node);
-        order.push(node);
-        this.sort();
+        if (hidden) {
+            this.hidden.add(node);
+        } else {
+            this.sortedValid = false;
+        }
     }
 
     public delete(item: RowNode): void {
         this.beans.editSvc?.releaseRowEdits(item);
-        this.all.delete(item);
-        this.visible.delete(item);
-        this.queued.delete(item.id!);
-        _removeFromArray(this.order, item);
-    }
-
-    public has(item: RowNode): boolean {
-        return this.visible.has(item);
-    }
-
-    public forEach(fn: (node: RowNode, i: number) => void): void {
-        this.order.forEach(fn);
-    }
-
-    public getByIndex(i: number): RowNode | undefined {
-        return this.order[i];
+        if (!this.all.delete(item)) {
+            return;
+        }
+        if (!this.hidden.delete(item)) {
+            this.sortedValid = false;
+        }
     }
 
     public getById(id: string): RowNode | undefined {
-        for (const node of this.visible) {
-            if (node.id == id) {
+        const hidden = this.hidden;
+        for (const node of this.all) {
+            if (node.id == id && !hidden.has(node)) {
                 return node;
             }
         }
     }
 
-    public clear(): void {
-        const { all, visible, order, queued } = this;
-        all.clear();
-        queued.clear();
-        visible.clear();
-        order.length = 0;
-    }
-
-    public sort(): void {
-        const { sortSvc, rowNodeSorter, gos } = this.beans;
-        const sortOptions = sortSvc?.getSortOptions() ?? [];
-        // first remove the grand total row so it doesn't get sorted
-        const order = this.order;
-        const grandTotalNode = _removeGrandTotalRow(order);
-        // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
-        order.sort(
-            (a, b) =>
-                rowNodeSorter?.compareRowNodes(sortOptions, a, b) ||
-                (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0)
-        );
-        // post-sort re-insert the grand total row in the correct place
-        if (!grandTotalNode) {
-            return;
+    /** Re-evaluates visibility and invalidates the display order, which the source rows' sort and index drive.
+     *  Returns whether any row was hidden or revealed; a swap leaves the count unchanged. */
+    public refreshVisibility(): boolean {
+        const { beans, hidden } = this;
+        let changed = false;
+        for (const node of this.all) {
+            if (!_shouldHidePinnedRows(beans, node.pinnedSibling!)) {
+                changed = hidden.delete(node) || changed;
+            } else if (!hidden.has(node)) {
+                hidden.add(node);
+                node.setRowTop(null); // a hidden row has no position
+                node.setRowIndex(null);
+                changed = true;
+            }
         }
-        const grandTotalRow = _getGrandTotalRow(gos);
-        if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
-            this.order.push(grandTotalNode);
-        } else {
-            this.order.unshift(grandTotalNode);
-        }
-    }
-
-    public hide(shouldHide: (node: RowNode) => boolean): boolean {
-        const { all, visible } = this;
-        const sizeBefore = visible.size;
-
-        all.forEach((node) => (shouldHide(node) ? visible.delete(node) : visible.add(node)));
-        this.order = Array.from(visible);
-        this.sort();
-
-        return sizeBefore != visible.size;
-    }
-
-    public queue(id: string): void {
-        this.queued.add(id);
-    }
-
-    public unqueue(id: string): void {
-        this.queued.delete(id);
-    }
-
-    public forEachQueued(fn: (id: string) => void): void {
-        this.queued.forEach(fn);
+        this.sortedValid = false;
+        return changed;
     }
 }
+
+const sortPinnedRows = (beans: BeanCollection, all: Set<RowNode>, hidden: Set<RowNode>, sorted: RowNode[]): void => {
+    const { sortSvc, rowNodeSorter, gos } = beans;
+    sorted.length = 0;
+    // The grand total row is placed by `grandTotalRow`, not by the sort.
+    let grandTotalNode: RowNode | undefined;
+    for (const node of all) {
+        if (hidden.has(node)) {
+            continue;
+        }
+        if (_isPinnedNodeGrandTotal(node)) {
+            grandTotalNode = node;
+        } else {
+            sorted.push(node);
+        }
+    }
+    const sortOptions = sortSvc?.getSortOptions() ?? [];
+    // Falls back to the source row index, otherwise rows would keep the order they were pinned in.
+    sorted.sort(
+        (a, b) =>
+            rowNodeSorter?.compareRowNodes(sortOptions, a, b) ||
+            (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0)
+    );
+    if (grandTotalNode) {
+        const grandTotalRow = _getGrandTotalRow(gos);
+        if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
+            sorted.push(grandTotalNode);
+        } else {
+            sorted.unshift(grandTotalNode);
+        }
+    }
+};
 
 /**
  * Recursively check the parent node's `childrenAfterSort`.
  * For CSRM, this is currently the "least bad" way to check whether a node is
  * displayed after filtering, accounting for both normal filters and aggregate filters.
  */
-function _isDisplayedAfterFilterCSRM(node: RowNode): boolean {
+const _isDisplayedAfterFilterCSRM = (node: RowNode): boolean => {
     if (node.level === -1) {
         return true;
     }
-
     const parent = node.parent;
-
-    if (parent?.childrenAfterSort?.some((child) => child == node)) {
-        return _isDisplayedAfterFilterCSRM(parent);
-    }
-
-    return false;
-}
+    return !!parent?.childrenAfterSort?.includes(node) && _isDisplayedAfterFilterCSRM(parent);
+};
 
 /** Expect to be passed the source node, not the pinned node */
-export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boolean {
+export const _shouldHidePinnedRows = (beans: BeanCollection, node: RowNode): boolean => {
     const { gos, rowModel, filterManager } = beans;
 
     if (_isServerSideRowModel(gos, rowModel)) {
@@ -151,28 +139,14 @@ export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boo
         return !rowModel.getRowNode(node.id!);
     }
 
-    if (filterManager?.isAnyFilterPresent()) {
-        return !_isDisplayedAfterFilterCSRM(node);
+    if (gos.get('pivotMode') && !node.group) {
+        return true;
     }
 
-    if (gos.get('pivotMode')) {
-        return !node.group;
-    }
+    return !!filterManager?.isAnyFilterPresent() && !_isDisplayedAfterFilterCSRM(node);
+};
 
-    return false;
-}
+const _isNodeGrandTotal = (node: RowNode): boolean => !!node.footer && node.level === -1;
 
-function _isNodeGrandTotal(node: RowNode): boolean {
-    return !!node.footer && node.level === -1;
-}
-
-export function _isPinnedNodeGrandTotal(node: RowNode): boolean {
-    return !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);
-}
-
-function _removeGrandTotalRow(order: RowNode[]): RowNode | undefined {
-    const index = order.findIndex(_isPinnedNodeGrandTotal);
-    if (index > -1) {
-        return order.splice(index, 1)?.[0];
-    }
-}
+export const _isPinnedNodeGrandTotal = (node: RowNode): boolean =>
+    !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);

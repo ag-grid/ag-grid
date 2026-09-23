@@ -959,10 +959,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowSelectionState():
-        | string[]
-        | ServerSideRowSelectionState
-        | ServerSideRowGroupSelectionState
-        | undefined {
+        string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {
         const selectionSvc = this.beans.selectionSvc;
         if (!selectionSvc) {
             return undefined;
@@ -1001,12 +998,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowPinningState(state?: RowPinningState): void {
-        const pinnedRowModel = this.beans.pinnedRowModel;
-        if (state) {
-            pinnedRowModel?.setPinnedState(state);
-        } else {
-            pinnedRowModel?.reset();
-        }
+        this.beans.pinnedRowModel?.setPinnedState(state ?? { top: [], bottom: [] });
     }
 
     private setRowGroupExpansionState(
