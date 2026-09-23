@@ -209,8 +209,8 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Determines if the row auto height service has cells to grow.
-     * @returns true if all of the rendered rows are at least as tall as their rendered cells.
+     * @returns true if every rendered row is at least as tall as its auto-height cells, or no auto-height
+     * column is displayed.
      */
     public areRowsMeasured(): boolean {
         if (!this.active) {
