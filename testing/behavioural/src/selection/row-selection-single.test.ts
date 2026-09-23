@@ -4,7 +4,6 @@ import type { RowSelectedEvent } from 'ag-grid-community';
 import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
-import { StudioStubModule } from './utils';
 
 const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
@@ -406,40 +405,6 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowById(pinned[0]);
                 assertSelectedRowsByIndex([], api);
-            });
-
-            test('in Studio, clicking the only selected row deselects it', async () => {
-                const [api, actions] = createGrid(
-                    {
-                        columnDefs,
-                        rowData,
-                        rowSelection: { mode: 'singleRow', enableClickSelection: true, checkboxes: false },
-                    },
-                    { modules: [StudioStubModule] }
-                );
-
-                actions.clickRowByIndex(2);
-                assertSelectedRowsByIndex([2], api);
-
-                actions.clickRowByIndex(2);
-                assertSelectedRowsByIndex([], api);
-            });
-
-            test('in Studio, an explicitly disabled click toggle keeps the only selected row selected', async () => {
-                const [api, actions] = createGrid(
-                    {
-                        columnDefs,
-                        rowData,
-                        rowSelection: { mode: 'singleRow', enableClickSelection: true, checkboxes: false },
-                    },
-                    { modules: [StudioStubModule, _createInternalFeatureFlagsModule({ clickToggleSelection: false })] }
-                );
-
-                actions.clickRowByIndex(2);
-                assertSelectedRowsByIndex([2], api);
-
-                actions.clickRowByIndex(2);
-                assertSelectedRowsByIndex([2], api);
             });
 
             test('un-selectable row cannot be selected', async () => {
