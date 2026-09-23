@@ -1,11 +1,11 @@
 import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, Module, _InternalFeatureFlags } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridActions, pressAKey, pressSpaceKey } from './utils';
+import { GridActions, StudioStubModule, pressAKey, pressSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -21,8 +21,8 @@ describe('Row Selection with Keyboard', () => {
     let consoleErrorSpy: MockInstance;
     let consoleWarnSpy: MockInstance;
 
-    function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
-        const api = gridMgr.createGrid('myGrid', gridOptions);
+    function createGrid(gridOptions: GridOptions, modules?: Module[]): [GridApi, GridActions] {
+        const api = gridMgr.createGrid('myGrid', gridOptions, { modules });
         const actions = new GridActions(api, '#myGrid');
         return [api, actions];
     }
@@ -517,5 +517,118 @@ describe('Row Selection with Keyboard', () => {
             ├── LEAF selected id:0 sport:"football" athlete:"Alice"
             └── LEAF id:1 sport:"rugby" athlete:"Bob"
         `);
+    });
+
+    describe('Space following enableClickSelection', () => {
+        const followsFlag: _InternalFeatureFlags = { spaceKeyFollowsClickSelection: true };
+
+        function createFlaggedGrid(gridOptions: GridOptions): [GridApi, GridActions] {
+            return createGrid(gridOptions, [_createInternalFeatureFlagsModule(followsFlag)]);
+        }
+
+        test('Space on a row neither selects nor deselects when click selection is disabled', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                rowSelection: { mode: 'multiRow', enableClickSelection: false },
+            });
+
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            assertSelectedRowsByIndex([], api);
+
+            api.getDisplayedRowAtIndex(3)!.setSelected(true);
+            pressSpaceKey(actions.getCellByPosition(3, 'sport')!);
+            assertSelectedRowsByIndex([3], api);
+        });
+
+        test('Space on the selection checkbox cell still toggles the row', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                rowSelection: { mode: 'multiRow', enableClickSelection: false },
+            });
+
+            pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-SelectionColumn')!);
+            assertSelectedRowsByIndex([2], api);
+
+            pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-SelectionColumn')!);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('Space on a row can select but not deselect with enableSelection', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                rowSelection: { mode: 'multiRow', enableClickSelection: 'enableSelection' },
+            });
+
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            assertSelectedRowsByIndex([2], api);
+
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            assertSelectedRowsByIndex([2], api);
+        });
+
+        test('Space on a row can deselect but not select with enableDeselection', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                rowSelection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+            });
+
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            assertSelectedRowsByIndex([], api);
+
+            api.getDisplayedRowAtIndex(3)!.setSelected(true);
+            pressSpaceKey(actions.getCellByPosition(3, 'sport')!);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('SHIFT+Space and CTRL+Space on a row do nothing when click selection is disabled', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                rowSelection: { mode: 'multiRow', enableClickSelection: false },
+            });
+
+            api.getDisplayedRowAtIndex(1)!.setSelected(true);
+            pressSpaceKey(actions.getCellByPosition(4, 'sport')!, { shiftKey: true });
+            pressSpaceKey(actions.getCellByPosition(5, 'sport')!, { ctrlKey: true });
+            pressSpaceKey(actions.getCellByPosition(1, 'sport')!, { ctrlKey: true });
+            assertSelectedRowsByIndex([1], api);
+        });
+
+        test('Space on a full-width row does nothing when click selection is disabled', async () => {
+            const [api, actions] = createFlaggedGrid({
+                columnDefs,
+                rowData,
+                isFullWidthRow: (p) => (p.rowNode.rowIndex ?? -1) === 0,
+                fullWidthCellRenderer: () => 'full width',
+                rowSelection: { mode: 'multiRow', enableClickSelection: false },
+            });
+
+            pressSpaceKey(actions.getRowByIndex(0)!);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('in Studio, Space on a row does not select when click selection is disabled', async () => {
+            const [api, actions] = createGrid(
+                { columnDefs, rowData, rowSelection: { mode: 'multiRow', enableClickSelection: false } },
+                [StudioStubModule]
+            );
+
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('in Studio, an explicitly disabled flag lets Space select the row', async () => {
+            const [api, actions] = createGrid(
+                { columnDefs, rowData, rowSelection: { mode: 'multiRow', enableClickSelection: false } },
+                [StudioStubModule, _createInternalFeatureFlagsModule({ spaceKeyFollowsClickSelection: false })]
+            );
+
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            assertSelectedRowsByIndex([2], api);
+        });
     });
 });
