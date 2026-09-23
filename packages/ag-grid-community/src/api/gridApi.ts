@@ -720,7 +720,7 @@ export interface _ColumnGridApi<TData> {
     getColumnState(): ColumnState[];
 
     /**
-     * Sets the state back to match the originally provided column definitions.
+     * Resets the column state to match the current column definitions, i.e. the `columnDefs` most recently provided to the grid.
      * @agModule `ColumnApiModule`
      */
     resetColumnState(): void;
@@ -828,7 +828,7 @@ export interface _ColumnGroupGridApi {
     /** Sets the state of the column group state from a previous state. */
     setColumnGroupState(stateItems: { groupId: string; open: boolean }[]): void;
 
-    /** Sets the state back to match the originally provided column definitions. */
+    /** Resets the column group state to match the current column definitions, i.e. the `columnDefs` most recently provided to the grid. */
     resetColumnGroupState(): void;
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */

@@ -62,6 +62,10 @@ const gridOptions = {
 }
 ```
 
+{% note %}
+If cell data types are inferred and the row data is empty or not yet set, the filter state is applied once row data is added. To apply it straight away, set `cellDataType: false` on the default column definition, or provide a cell data type for every column.
+{% /note %}
+
 To exclude a property from being restored, for example the `scroll` position, remove it from the `initialState` object. The grid then uses its default for that property.
 
 ```js
