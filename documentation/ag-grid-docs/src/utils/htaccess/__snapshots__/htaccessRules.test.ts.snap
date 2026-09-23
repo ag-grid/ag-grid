@@ -35,6 +35,13 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(ima
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
 
 
+# Released archive versions: fully immutable, so cache literally everything under them
+# indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
+# no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
+# in-flight block below, which overrides this back to no-cache for that version only.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+
+
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 
