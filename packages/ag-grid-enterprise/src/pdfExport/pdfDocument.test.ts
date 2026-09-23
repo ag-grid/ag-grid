@@ -21,11 +21,9 @@ const createRows = (): PdfRow[] => [
     { type: 'BODY', cells: [{ value: 'Value' }] },
 ];
 
-// eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
 
 const parseRectangles = (pdf: string): Array<{ x: number; y: number; width: number; height: number }> =>
-    // eslint-disable-next-line sonarjs/null-dereference, sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed); flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
     [...pdf.matchAll(/(-?[\d.]+) (-?[\d.]+) ([\d.]+) ([\d.]+) re S/g)].map((match) => ({
         x: Number(match[1]),
         y: Number(match[2]),
@@ -38,7 +36,6 @@ const redPixelPng =
 
 const assertRowRectanglesRespectBottomMargin = (pdf: string, bottomMargin: number): void => {
     const rectanglePattern = /(?:^|\n)-?\d+(?:\.\d+)? (-?\d+(?:\.\d+)?) \d+(?:\.\d+)? \d+(?:\.\d+)? re S/g;
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const matches = [...pdf.matchAll(rectanglePattern)];
     expect(matches.length).toBeGreaterThan(0);
     for (const match of matches) {

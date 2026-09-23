@@ -153,7 +153,6 @@ export function buildPdf(
         // each page has its own content stream object and page object.
         // content is ASCII-only, so string length equals the byte length required by /Length.
         const content = page.content;
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const contentStream = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
         const contentId = store.add(contentStream);
         const annotationRefs: string[] = [];
@@ -185,7 +184,6 @@ export function buildPdf(
     const catalogId = store.add(`<< /Type /Catalog /Pages ${pagesId} 0 R${languageEntry} >>`);
 
     const resolvedTitle = documentTitle?.trim() ?? '';
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const infoId = resolvedTitle.length
         ? store.add(`<< /Title ${encodePdfMetadataString(resolvedTitle)} >>`)
         : undefined;
@@ -200,7 +198,6 @@ function addImageResource(store: PdfObjectStore, image: PdfImageResource): numbe
         alphaId = store.add(
             `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} ` +
                 `/ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /ASCIIHexDecode ` +
-                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 `/Length ${encodedAlpha.length} >>\nstream\n${encodedAlpha}\nendstream`
         );
     }
@@ -211,7 +208,6 @@ function addImageResource(store: PdfObjectStore, image: PdfImageResource): numbe
     return store.add(
         `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} ` +
             `/ColorSpace /${image.colorSpace} /BitsPerComponent ${image.bitsPerComponent} ${filters}` +
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             `${softMask} /Length ${encodedImage.length} >>\nstream\n${encodedImage}\nendstream`
     );
 }
@@ -235,7 +231,6 @@ function addTrueTypeFontResource(store: PdfObjectStore, font: ResolvedPdfFont): 
     const subset = trueType.createSubset(Array.from(font.mappingByCid.values(), (mapping) => mapping.glyphId));
     const encodedFont = encodeAsciiHex(subset);
     const fontFileId = store.add(
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         `<< /Length ${encodedFont.length} /Length1 ${subset.length} /Filter /ASCIIHexDecode >>\nstream\n${encodedFont}\nendstream`
     );
     const scale = 1000 / trueType.unitsPerEm;
@@ -251,7 +246,6 @@ function addTrueTypeFontResource(store: PdfObjectStore, font: ResolvedPdfFont): 
     const widths = createCidWidths(font);
     const cidToGid = createCidToGidMap(font);
     const cidToGidId = store.add(
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         `<< /Length ${cidToGid.length} /Filter /ASCIIHexDecode >>\nstream\n${cidToGid}\nendstream`
     );
     const descendantId = store.add(
@@ -261,7 +255,6 @@ function addTrueTypeFontResource(store: PdfObjectStore, font: ResolvedPdfFont): 
             `/CIDToGIDMap ${cidToGidId} 0 R >>`
     );
     const toUnicode = createToUnicodeCMap(font);
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const toUnicodeId = store.add(`<< /Length ${toUnicode.length} >>\nstream\n${toUnicode}\nendstream`);
     return store.add(
         `<< /Type /Font /Subtype /Type0 /BaseFont /${embeddedFontName} /Encoding /Identity-H ` +
@@ -321,7 +314,6 @@ function createCidToGidMap(font: ResolvedPdfFont): string {
 }
 
 function toHex(value: number, length: number): string {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return value.toString(16).toUpperCase().padStart(length, '0');
 }
 
@@ -332,7 +324,6 @@ function toHex(value: number, length: number): string {
  */
 function encodePdfUri(uri: string): string {
     const encodedUri = encodeURI(replaceUnpairedSurrogates(uri));
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return encodedUri.replace(/%25([0-9a-f]{2})/gi, '%$1');
 }
 
@@ -344,7 +335,6 @@ function encodePdfUri(uri: string): string {
 function replaceUnpairedSurrogates(value: string): string {
     let result = '';
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (let i = 0; i < value.length; i++) {
         const codeUnit = value.charCodeAt(i);
 

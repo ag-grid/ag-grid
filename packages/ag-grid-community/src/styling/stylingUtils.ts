@@ -19,7 +19,6 @@ export function processClassRules(
 
     const forEachSingleClass = (className: string, callback: (singleClass: string) => void) => {
         // in case className = 'my-class1 my-class2', we need to split into individual class names
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         for (const singleClass of className.split(' ')) {
             if (singleClass.trim() == '') {
                 continue;

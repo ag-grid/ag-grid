@@ -461,9 +461,7 @@ function migrateIfBefore(maxVersion: string, model: ChartModel, migration: (m: C
 
 type VersionParts = { major: number; minor: number; patch: number };
 function versionParts(versionRaw: string): VersionParts {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const version = versionRaw.includes('-beta') ? versionRaw.replace(/-beta.*/, '') : versionRaw;
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const split = typeof version === 'string' ? version.split('.').map((v) => Number(v)) : [];
     if (split.length !== 3 || split.some((v) => isNaN(v))) {
         throw _errorToThrowWithoutAttribution(253, { version });
@@ -501,7 +499,6 @@ function jsonBackfill(path: string | string[], defaultValue: any, json: any): an
 
 function jsonAdd(path: string | string[], value: any, json: any): any {
     if (typeof path === 'string') {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         path = path.split('.');
     }
 
@@ -573,7 +570,6 @@ function jsonMutateProperty(
     json: any,
     mutator: (parent: any, targetProp: string) => any
 ) {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const pathElements = path instanceof Array ? path : path.split('.');
     const parentPathElements = pathElements.slice(0, pathElements.length - 1);
     const targetName = pathElements[pathElements.length - 1];
@@ -591,7 +587,6 @@ function jsonMutateProperty(
 }
 
 function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any): any {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const pathElements = path instanceof Array ? path : path.split('.');
 
     // Clone to avoid mutating original input.

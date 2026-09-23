@@ -6,7 +6,6 @@ export function get(source: any, expression: string, defaultValue: any): any {
         return defaultValue;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const keys = expression.split('.');
     let objectToRead = source;
 
@@ -28,7 +27,6 @@ export function set(target: any, expression: string, value: any) {
         return;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const keys = expression.split('.');
 
     let objectToUpdate = target;

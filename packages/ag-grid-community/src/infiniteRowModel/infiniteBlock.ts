@@ -127,7 +127,6 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
             // index for the row. this will allow selection to work (that is based
             // on index) as long user is not inserting or deleting rows,
             // or wanting to keep selection between server side sorting or filtering
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             rowNode.setDataAndId(data, index.toString());
         } else {
             rowNode.setDataAndId(undefined, undefined);

@@ -478,7 +478,6 @@ function truncateUrl(baseUrl: string, params: URLSearchParams, maxLength: number
         if (key === VERSION_PARAM_NAME) {
             continue;
         }
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const excessLength = url.length - maxLength;
         if (excessLength <= 0) {
             break;
@@ -491,7 +490,6 @@ function truncateUrl(baseUrl: string, params: URLSearchParams, maxLength: number
         // other params.
         // Assume there isn't a lot of params that are all long.
         const truncatedValue =
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             value.length - truncateAmount > MIN_PARAM_LENGTH
                 ? value.slice(0, value.length - truncateAmount) + ellipse
                 : value.slice(0, MIN_PARAM_LENGTH) + ellipse;
@@ -514,7 +512,6 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const baseUrl = `${baseDocLink}/errors/${errorNum}`;
     const url = getParamsUrl(baseUrl, params);
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return url.length <= MAX_URL_LENGTH ? url : truncateUrl(baseUrl, params, MAX_URL_LENGTH);
 }
 

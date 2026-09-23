@@ -4,7 +4,6 @@ const VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION = 28;
 const VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION = 6;
 
 function isValidVersion(version: string) {
-    // eslint-disable-next-line sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
     return version?.match(/\d+\.\d+\.\d+/);
 }
 
@@ -36,7 +35,6 @@ export function gridChartVersion(gridVersion: string):
         return undefined;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const [gridMajor, gridMinor] = gridVersion.split('.') || [];
     const gridMajorMinor = `${gridMajor}.${gridMinor}.x`;
 
@@ -110,16 +108,13 @@ export function validGridChartsVersion({
         };
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const [gridMajor, gridMinor] = gridVersion.split('.') || [];
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const [chartsMajor, chartsMinor, chartsPatch] = chartsVersion.split('.') || [];
     const isValidMajor = isValidMajorVersion({
         gridMajorVersion: gridMajor,
         chartsMajorVersion: chartsMajor,
     });
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if ((isValidMajor && gridMinor === chartsMinor) || chartsPatch.includes('beta')) {
         return {
             isValid: true,

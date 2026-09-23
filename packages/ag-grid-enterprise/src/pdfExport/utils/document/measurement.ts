@@ -571,7 +571,6 @@ export function measureTextLines(value: string, availableWidth: number, style: R
         );
     } else {
         const normalised = normaliseText(value, style.preserveLineBreaks, !!style.font.trueType);
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const sourceLines = style.preserveLineBreaks ? normalised.split('\n') : [normalised];
         lines = [];
         for (const line of sourceLines) {
@@ -815,7 +814,6 @@ function resolveTableCellStyle(
 
 function getIntrinsicTextWidth(value: string, style: ResolvedCellStyle): number {
     const normalised = normaliseText(value, style.preserveLineBreaks, !!style.font.trueType);
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const lines = style.preserveLineBreaks ? normalised.split('\n') : [normalised];
     let width = 0;
     for (const line of lines) {

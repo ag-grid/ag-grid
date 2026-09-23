@@ -71,7 +71,6 @@ export class AgInputRange<
     public setMinValue(value: number): this {
         this.min = value;
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         this.eInput.setAttribute('min', value.toString());
 
         return this;
@@ -80,14 +79,12 @@ export class AgInputRange<
     public setMaxValue(value: number): this {
         this.max = value;
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         this.eInput.setAttribute('max', value.toString());
 
         return this;
     }
 
     public setStep(value: number): this {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         this.eInput.setAttribute('step', value.toString());
 
         return this;

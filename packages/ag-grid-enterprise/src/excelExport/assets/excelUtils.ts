@@ -136,7 +136,6 @@ export const getExcelColumnName = (colIdx: number): string => {
 };
 
 export const sanitizeTableName = (name: string): string => {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return name.replaceAll('\n', '_x000a_');
 };
 
@@ -147,14 +146,11 @@ export const replaceInvisibleCharacters = (str: string | null): string | null =>
     // Excel breaks when characters with code below 30 are exported
     // we use the loop below to wrap these characters between _x(code)_
     let newString = '';
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (let i = 0; i < str.length; i++) {
         const point = str.charCodeAt(i);
 
         if (point >= 0 && point <= 31 && point !== 10) {
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const convertedCode = point.toString(16).toUpperCase();
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const paddedCode = convertedCode.padStart(4, '0');
             const newValue = `_x${paddedCode}_`;
 
@@ -170,7 +166,6 @@ export const buildSharedString = (strMap: Map<string, number>): XmlElement[] => 
     const ret: XmlElement[] = [];
 
     for (const key of strMap.keys()) {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const textNode = key.toString();
 
         const child: XmlElement = {
@@ -179,7 +174,6 @@ export const buildSharedString = (strMap: Map<string, number>): XmlElement[] => 
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const preserveSpaces = textNode.trim().length !== textNode.length;
 
         if (preserveSpaces) {

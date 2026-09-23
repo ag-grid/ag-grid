@@ -28,7 +28,6 @@ const tableFactory: ExcelOOXMLTemplate = {
             name: 'filterColumn',
             properties: {
                 rawMap: {
-                    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                     colId: idx.toString(), // For filters, this should start with 0
                     hiddenButton: showFilterButtons[idx] ? 0 : 1,
                 },

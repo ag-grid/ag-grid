@@ -33,7 +33,6 @@ const buildRichTextRun = (value: string, bold: boolean, preserveSpace: boolean):
 
 const buildNoteTextChildren = (text: string, author: string | undefined, prependAuthor: boolean): XmlElement[] => {
     if (!author || !prependAuthor) {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         return [buildRichTextRun(text, false, text.includes('\n') || text.trim().length !== text.length)];
     }
 

@@ -7,12 +7,10 @@ export const _parseBigIntOrNull = (value: unknown): bigint | null => {
     if (typeof value === 'number') {
         trimmed = value;
     } else if (typeof value === 'string') {
-        // eslint-disable-next-line sonarjs/null-dereference -- value is narrowed to string by the typeof check above
         trimmed = value.trim();
         if (trimmed === '') {
             return null;
         }
-        // eslint-disable-next-line sonarjs/null-dereference -- trimmed was just assigned a string above
         if (trimmed.endsWith('n')) {
             trimmed = trimmed.slice(0, -1);
         }

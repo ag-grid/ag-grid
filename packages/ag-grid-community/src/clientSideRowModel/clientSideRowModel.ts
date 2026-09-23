@@ -1196,7 +1196,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const sibling = this.rootNode?.sibling;
             return sibling?.footer ? sibling : undefined;
         }
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
             const groupId = id.slice(GROUP_TOTAL_ROW_ID_PREFIX.length);
             const groupNode = this.getRowNode(groupId);

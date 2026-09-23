@@ -14,7 +14,6 @@ const DATE_TIME_REGEXP = new RegExp(
 );
 
 function _padStartWidthZeros(value: number, totalStringSize: number): string {
-    // eslint-disable-next-line sonarjs/null-dereference -- value is typed as a non-nullable number parameter
     return value.toString().padStart(totalStringSize, '0');
 }
 
@@ -123,7 +122,6 @@ export function _dateToFormattedString(date: Date, format?: string): string {
     const fullYear = _padStartWidthZeros(date.getFullYear(), 4);
 
     const replace: { [key: string]: () => string } = {
-        // eslint-disable-next-line sonarjs/null-dereference -- fullYear is a const string assigned above
         YYYY: () => fullYear.slice(fullYear.length - 4, fullYear.length),
         YY: () => fullYear.slice(fullYear.length - 2, fullYear.length),
         Y: () => `${date.getFullYear()}`,
@@ -142,7 +140,6 @@ export function _dateToFormattedString(date: Date, format?: string): string {
         d: () => `${date.getDay()}`,
     };
     const regexp = new RegExp(Object.keys(replace).join('|'), 'g');
-    // eslint-disable-next-line sonarjs/null-dereference -- format is narrowed non-null by the guard above
     return format.replace(regexp, (match) => {
         if (match in replace) {
             return replace[match]();
@@ -187,14 +184,12 @@ export function _parseDateTimeFromString(
         return null;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- value is narrowed non-null by the guard above
     const [dateStr, timeStr] = value.split(DATE_TIME_SEPARATOR_REGEXP);
 
     if (!dateStr) {
         return null;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- dateStr is narrowed non-null by the guard above
     const fields = dateStr.split('-').map((f) => Number.parseInt(f, 10));
 
     if (fields.filter((f) => !isNaN(f)).length !== 3) {
@@ -222,7 +217,6 @@ export function _parseDateTimeFromString(
         return date;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- timeStr is narrowed non-null by the guard above
     const [hours, minutes, seconds] = timeStr.split(':').map((part) => Number.parseInt(part, 10)); // if last part includes Z, it is dropped here
 
     if (hours >= 0 && hours < 24) {

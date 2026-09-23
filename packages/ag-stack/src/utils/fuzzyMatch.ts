@@ -23,7 +23,6 @@ export function _fuzzySuggestions(params: {
 
     if (hideIrrelevant) {
         thisSuggestions = thisSuggestions.filter(
-            // eslint-disable-next-line sonarjs/null-dereference -- inputValue is a non-nullable string field of params
             (suggestion) => suggestion.relevance < Math.max(suggestion.value.length, inputValue.length)
         );
     }
@@ -52,9 +51,7 @@ export function _fuzzySuggestions(params: {
  * @knipIgnore Used in tests
  */
 export function _getLevenshteinSimilarityDistance(source: string, target: string): number {
-    // eslint-disable-next-line sonarjs/null-dereference -- source is typed as a non-nullable string parameter
     const sourceLength = source.length;
-    // eslint-disable-next-line sonarjs/null-dereference -- target is typed as a non-nullable string parameter
     const targetLength = target.length;
 
     if (targetLength === 0) {
@@ -68,7 +65,6 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
     // Substring match: if the input appears verbatim (case-insensitive)
     // within the target, score based on position. Position 0 (prefix) = 0 (best).
     if (sourceLength > 0) {
-        // eslint-disable-next-line sonarjs/null-dereference -- targetLower/inputLower are always strings from toLocaleLowerCase()
         const substringPos = targetLower.indexOf(inputLower);
         if (substringPos >= 0) {
             return substringPos * 0.01;
@@ -100,7 +96,6 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
 
     for (let i = 1; i <= sourceLength; i++) {
         const inputChar = source[i - 1];
-        // eslint-disable-next-line sonarjs/null-dereference -- inputLower is always a string, indexed within bounds
         const inputCharLower = inputLower[i - 1];
 
         currentRow[0] = i;

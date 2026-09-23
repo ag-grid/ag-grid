@@ -449,7 +449,6 @@ export class ChartDatasource extends BeanStub {
             const groupId = columnGroup.getGroupId();
             if (!columnGroup.getParent()) {
                 // removing groupId ('2000') from childId ('2000|Swimming') yields '|Swimming' so first char is separator
-                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 return childId.split(groupId)[1][0];
             }
             return extractSeparator(columnGroup.getParent()!, groupId);

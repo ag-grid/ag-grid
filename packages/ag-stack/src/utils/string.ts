@@ -33,7 +33,6 @@ export function _isStringLargerThan(value: unknown, length: number, trim?: boole
     }
 
     if (trim) {
-        // eslint-disable-next-line sonarjs/null-dereference -- value is narrowed to string by the typeof guard above
         value = value.trim();
     }
 
@@ -44,7 +43,6 @@ export function _isStringLargerThan(value: unknown, length: number, trim?: boole
 export function _isExpressionString(value: unknown): value is `=${string}` {
     // 61 = '='.codePointAt(0). Direct integer read is cheaper than `startsWith('=')`, which pays
     // for argument-length and UTF-16 boundary handling on a single-char prefix.
-    // eslint-disable-next-line sonarjs/null-dereference -- _isStringLargerThan is a `value is string` type guard
     return _isStringLargerThan(value, 1) && value.codePointAt(0) === 61;
 }
 
@@ -62,15 +60,10 @@ export function _camelCaseToHumanText(camelCase: string | undefined): string | n
     // either split on a lowercase followed by uppercase ie  asHereTo -> as Here To
     const rex = /([a-z])([A-Z])/g;
     // or starts with uppercase and we take all expect the last which is assumed to be part of next word if followed by lowercase HEREToThere -> HERE To There
-    // eslint-disable-next-line sonarjs/super-linear-regex -- input is a bounded-length identifier, not user-controlled text
     const rexCaps = /([A-Z]+)([A-Z])([a-z])/g;
-    // eslint-disable-next-line sonarjs/null-dereference -- camelCase is narrowed non-null by the guard above
     const words: string[] = camelCase.replace(rex, '$1 $2').replace(rexCaps, '$1 $2$3').replace(/\./g, ' ').split(' ');
 
-    return (
-        words
-            // eslint-disable-next-line sonarjs/null-dereference -- word is always a string from splitting words above
-            .map((word) => word.substring(0, 1).toUpperCase() + (word.length > 1 ? word.substring(1, word.length) : ''))
-            .join(' ')
-    );
+    return words
+        .map((word) => word.substring(0, 1).toUpperCase() + (word.length > 1 ? word.substring(1, word.length) : ''))
+        .join(' ');
 }

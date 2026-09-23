@@ -4,7 +4,6 @@
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getValueUsingDotField(data: any, field: string): any {
-    // eslint-disable-next-line sonarjs/null-dereference -- field is typed as a non-nullable string parameter
     const fields = field.split('.');
     let currentObject = data;
     for (let i = 0; i < fields.length; i++) {

@@ -58,7 +58,6 @@ import { SET_LIST_CLOSE_CHAR, SET_LIST_OPEN_CHAR, writeSetPath } from './set/set
 /** What an unquoted operand cannot carry: a space or `)` ends it, a quote opens one, a `,` ends it in a pair. */
 function needsQuotes(operand: string, inPair?: boolean): boolean {
     return (
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         operand.includes(' ') ||
         operand.includes(')') ||
         operand.startsWith(`'`) ||
@@ -69,7 +68,6 @@ function needsQuotes(operand: string, inPair?: boolean): boolean {
 
 /** The quote a value can be wrapped in, or null when it holds both kinds: either one would end it early. */
 function quoteChar(operand: string): `'` | `"` | null {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (!operand.includes('"')) {
         return '"';
     }
@@ -80,7 +78,6 @@ function quoteChar(operand: string): `'` | `"` | null {
 export function quoteSetValue(value: string): string {
     const quote = quoteChar(value);
     // No quote wraps a value holding both untouched, so the one that does is doubled instead.
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return quote ? `${quote}${value}${quote}` : `"${value.replaceAll('"', '""')}"`;
 }
 
@@ -602,7 +599,6 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getColId(columnName: string): { colId: string; columnName: string } | null {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const upperCaseColumnName = columnName.toLocaleUpperCase();
         const cachedColId = this.columnNameToIdMap[upperCaseColumnName];
         if (cachedColId) {

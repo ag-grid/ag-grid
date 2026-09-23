@@ -664,7 +664,6 @@ export class LazyCache extends BeanStub {
         if (this.defaultNodeIdPrefix) {
             return this.defaultNodeIdPrefix + '-' + id;
         } else {
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             return id.toString();
         }
     }

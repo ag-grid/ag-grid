@@ -7,7 +7,6 @@ const parseCellRef = (ref: string): { row: number; column: number } => {
     let column = 0;
     let index = 0;
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     while (index < ref.length) {
         const code = ref.charCodeAt(index);
 

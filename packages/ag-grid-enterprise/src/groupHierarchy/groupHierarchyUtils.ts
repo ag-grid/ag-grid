@@ -41,7 +41,6 @@ export const getHeaderValueGetter =
     };
 
 /** Map from named month to corresponding key in provided localeText maps (in @ag-grid-community/locale) */
-// eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
 const MONTH_TO_LOCALE_KEY = Object.fromEntries(MONTHS.map((m) => [m, m.toLowerCase()]));
 
 export const numericalMonthToNamedMonth = (monthStr: string): { month: string; localeKey: string } => {

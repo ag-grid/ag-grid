@@ -303,7 +303,6 @@ function createLocaTable(offsets: number[], indexToLocFormat: number): Uint8Arra
 }
 
 function buildSfnt(tables: Map<string, Uint8Array>): Uint8Array {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const entries = Array.from(tables.entries()).sort(([left], [right]) => left.localeCompare(right));
     const tableCount = entries.length;
     const greatestPowerOfTwo = 2 ** Math.floor(Math.log2(tableCount));
@@ -368,7 +367,6 @@ function alignToFourBytes(value: number): number {
 
 function writeTag(data: Uint8Array, offset: number, tag: string): void {
     for (let index = 0; index < 4; index++) {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         data[offset + index] = tag.charCodeAt(index);
     }
 }
@@ -586,7 +584,6 @@ function decodeLatin1(data: Uint8Array, offset: number, length: number): string 
 }
 
 function sanitisePdfName(value: string): string {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const sanitised = value.replace(/[^A-Za-z0-9_.+-]/g, '');
     return sanitised || 'CustomFont';
 }

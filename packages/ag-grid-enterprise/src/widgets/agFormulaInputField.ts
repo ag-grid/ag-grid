@@ -143,7 +143,6 @@ export class AgFormulaInputField extends AgContentEditableField<
         const contentElement = this.getContentElement();
         const caretOffset = caret ?? getCaretOffset(this.beans, contentElement, this.currentValue);
         contentElement.textContent = value ?? '';
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const targetCaret = caretOffset != null ? Math.min(caretOffset, value.length) : null;
         restoreCaret(this.beans, contentElement, targetCaret);
     }
@@ -293,7 +292,6 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.applyFormulaValueChange({
             currentValue: value,
             nextValue: updatedValue,
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             caret: caretOffset + ref.length,
             updateTracking: () => {
                 previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
@@ -422,7 +420,6 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.applyFormulaValueChange({
             currentValue: value,
             nextValue: updated,
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             caret: token.start + nextRef.length,
             updateTracking: () => {
                 this.updateLastTokenTracking(nextRef, token.start, token.start);
@@ -501,7 +498,6 @@ export class AgFormulaInputField extends AgContentEditableField<
     private updateLastTokenTracking(ref: string, caretOffset: number, valueOffset: number): string | undefined {
         const previousRef = this.lastTokenRef;
         this.lastTokenValueOffset = valueOffset;
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         this.lastTokenValueLength = ref.length;
         this.lastTokenCaretOffset = caretOffset;
         this.lastTokenRef = ref;
@@ -511,7 +507,6 @@ export class AgFormulaInputField extends AgContentEditableField<
     private getFormulaState(text: string): { isFormula: boolean; hasFormulaPrefix: boolean } {
         // keep "=" as a plain value for commit/validation, but still enable range selection
         // when it appears so clicking a cell can insert a token.
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const hasFormulaPrefix = text.trimStart().startsWith('=');
         const isFormula = this.beans.formula?.isFormula(text) ?? hasFormulaPrefix;
         return { isFormula, hasFormulaPrefix };
@@ -615,13 +610,11 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (colorIndex != null) {
             this.formulaColorByRef.set(nextRef, colorIndex);
         }
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
         const resolvedIndex = getTokenIndex(token);
         this.applyFormulaValueChange({
             currentValue: value,
             nextValue: updated,
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             caret: caretOffset + nextRef.length,
             updateTracking: () => {
                 this.updateLastTokenTracking(nextRef, caretOffset, valueOffset);
@@ -698,7 +691,6 @@ const tokenize = (
 
     for (const match of matches) {
         if (match.start > lastIndex) {
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             nodes.push(doc.createTextNode(formatForDisplay(value.slice(lastIndex, match.start))));
         }
 
@@ -727,7 +719,6 @@ const createReferenceNode = (
     const attrs: Record<string, string> = {
         'aria-label': ref,
         'data-formula-ref': ref,
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         'data-formula-token-index': tokenIndex.toString(),
     };
     let tokenClass: string | undefined;
@@ -761,7 +752,6 @@ const renderFormula = (params: {
     // rebuild the DOM and restore the caret to the same logical position.
     const { beans, contentElement, currentValue, value, getColorIndexForToken, caret } = params;
     const caretOffset = caret ?? getCaretOffset(beans, contentElement, currentValue);
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const maxCaret = value.length;
 
     contentElement.textContent = '';
@@ -936,9 +926,7 @@ const getTokenIndex = (tokenEl: HTMLElement): number | null => {
 
 // text formatting helpers
 const formatForDisplay = (text: string): string =>
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     text.replace(/[/*]/g, (match) => DISPLAY_OPERATOR_LOOKUP[match] ?? match);
 
 const formatForValue = (text: string): string =>
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     text.replace(/[÷×]/g, (match) => VALUE_OPERATOR_LOOKUP[match] ?? match);

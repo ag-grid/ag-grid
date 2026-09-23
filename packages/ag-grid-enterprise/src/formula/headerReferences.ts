@@ -81,7 +81,6 @@ function getColumnPath(beans: BeanCollection, column: AgColumn): string[] {
 }
 
 function getUsableName(name: string | null | undefined, fallback: string): string {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return name?.trim() || fallback.trim() || fallback;
 }
 
@@ -105,6 +104,5 @@ function getStableReferenceSuffix(colId: string): string {
 }
 
 function normaliseReference(reference: string, caseInsensitive: boolean): string {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return caseInsensitive ? reference.toLocaleLowerCase() : reference;
 }

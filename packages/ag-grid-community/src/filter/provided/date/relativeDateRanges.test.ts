@@ -63,7 +63,6 @@ describe('relative date ranges', () => {
     it('validate answers', () =>
         Object.values(ANSWERS).forEach((date, index, arr) => {
             if (arr[index + 1] && new Date(date) > new Date(arr[index + 1])) {
-                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 expect(''.toString()).toBe(`${date.toString()} <= ${arr[index + 1].toString()}`);
             }
         }));

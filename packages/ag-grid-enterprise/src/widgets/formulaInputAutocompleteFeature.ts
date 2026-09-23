@@ -129,7 +129,6 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
         }
 
         const searchLower = prefix.toLocaleLowerCase();
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const hasMatch = entries.some(({ key }) => key.toLocaleLowerCase().startsWith(searchLower));
 
         if (!hasMatch) {
@@ -259,7 +258,6 @@ const getFunctionTokenAtOffset = (
     formula: IFormulaService | null
 ): FunctionTokenMatch | null => {
     // show functions when the caret is within a formula identifier.
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (caretOffset < 0 || caretOffset > value.length || isInsideStringLiteral(value, caretOffset)) {
         return null;
     }
@@ -290,7 +288,6 @@ const getFunctionTokenAtOffset = (
     }
 
     const token = value.slice(start, tokenEnd);
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (!token || !isFormulaIdentStart(token[0])) {
         return null;
     }
@@ -323,7 +320,6 @@ const isCaretInsideRefToken = (beans: BeanCollection, value: string, caretOffset
 const isInsideStringLiteral = (value: string, offset: number): boolean => {
     // treat doubled quotes as escaped quotes when scanning.
     let inString = false;
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (let i = 0; i < offset && i < value.length; i++) {
         if (value[i] !== '"') {
             continue;

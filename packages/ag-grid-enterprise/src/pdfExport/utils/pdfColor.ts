@@ -233,20 +233,16 @@ function resolveColor(value: string | undefined, fallback: string, blendWith?: P
  * @returns Parsed RGBA, `null` for explicit transparent/none, or `undefined` when unsupported.
  */
 function parseColor(value: string): PdfRgba | null | undefined {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const normalised = value.trim().toLowerCase();
     if (!normalised || normalised === 'transparent' || normalised === 'none') {
         return null;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference, sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed); flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
     const srgbMatch = normalised.match(/^color\(\s*srgb\s+(.+)\)$/);
     if (srgbMatch) {
         // support css color() syntax with optional slash alpha channel.
         const raw = srgbMatch[1].trim();
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const [channelPart, alphaPart] = raw.split('/').map((part) => part.trim());
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const channels = channelPart.split(/\s+/).filter(Boolean);
         if (channels.length < 3) {
             return undefined;
@@ -269,7 +265,6 @@ function parseColor(value: string): PdfRgba | null | undefined {
             return undefined;
         }
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (hex.length === 3 || hex.length === 4) {
             const r = Number.parseInt(hex[0] + hex[0], 16);
             const g = Number.parseInt(hex[1] + hex[1], 16);
@@ -295,10 +290,8 @@ function parseColor(value: string): PdfRgba | null | undefined {
         let channels: string[];
         let alphaPart: string | undefined;
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (inner.includes(',')) {
             // legacy comma-separated rgb()/rgba() syntax.
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const parts = inner.split(',').map((part) => part.trim());
             if (parts.length < 3) {
                 return undefined;
@@ -307,9 +300,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
             alphaPart = parts[3];
         } else {
             // modern space-separated rgb() syntax, optional "/ alpha".
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const [channelPart, optionalAlpha] = inner.split('/').map((part) => part.trim());
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             channels = channelPart.split(/\s+/).filter(Boolean);
             alphaPart = optionalAlpha;
             if (channels.length < 3) {
@@ -332,10 +323,8 @@ function parseColor(value: string): PdfRgba | null | undefined {
         let channels: string[];
         let alphaPart: string | undefined;
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (inner.includes(',')) {
             // legacy comma-separated hsl()/hsla() syntax.
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const parts = inner.split(',').map((part) => part.trim());
             if (parts.length < 3) {
                 return undefined;
@@ -344,9 +333,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
             alphaPart = parts[3];
         } else {
             // modern space-separated hsl() syntax, optional "/ alpha".
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const [channelPart, optionalAlpha] = inner.split('/').map((part) => part.trim());
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             channels = channelPart.split(/\s+/).filter(Boolean);
             alphaPart = optionalAlpha;
             if (channels.length < 3) {
@@ -376,9 +363,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
  * @returns Parsed channel, or `null` when invalid.
  */
 function parseColorChannel(value: string, scaleUnitless: boolean): number | null {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = value.trim();
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const isPercent = trimmed.endsWith('%');
     const numeric = Number.parseFloat(trimmed);
 
@@ -403,9 +388,7 @@ function parseColorChannel(value: string, scaleUnitless: boolean): number | null
  * @returns Parsed alpha, or `null` when invalid.
  */
 function parseAlpha(value: string): number | null {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = value.trim();
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const isPercent = trimmed.endsWith('%');
     const numeric = Number.parseFloat(trimmed);
 
@@ -426,9 +409,7 @@ function parseAlpha(value: string): number | null {
  * @returns Parsed ratio, or `null` when invalid.
  */
 function parsePercent(value: string): number | null {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = value.trim();
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (!trimmed.endsWith('%')) {
         return null;
     }

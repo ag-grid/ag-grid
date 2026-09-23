@@ -123,7 +123,6 @@ export class RowSummaryComp extends Component {
         const strOf = localeTextFunc('of', 'of');
         this.ariaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\s+/g, ' ');
         this.getGui().style.setProperty(
             '--ag-internal-pagination-width-string',

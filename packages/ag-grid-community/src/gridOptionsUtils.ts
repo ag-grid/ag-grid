@@ -666,7 +666,6 @@ export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean 
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getCallbackForEvent(eventName: string): string {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (!eventName || eventName.length < 2) {
         return eventName;
     }

@@ -8,16 +8,13 @@ import { migrateGridStateModel } from './stateModelMigration';
 const FIXTURES_DIR = path.join(__dirname, 'fixtures');
 
 function loadFixtures(): [name: string, version: string | undefined, state: GridState][] {
-    return (
-        fs
-            .readdirSync(FIXTURES_DIR)
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
-            .filter((f) => f.endsWith('.json'))
-            .map((file) => {
-                const contents = JSON.parse(fs.readFileSync(path.join(FIXTURES_DIR, file), 'utf-8')) as GridState;
-                return [file, contents.version, contents];
-            })
-    );
+    return fs
+        .readdirSync(FIXTURES_DIR)
+        .filter((f) => f.endsWith('.json'))
+        .map((file) => {
+            const contents = JSON.parse(fs.readFileSync(path.join(FIXTURES_DIR, file), 'utf-8')) as GridState;
+            return [file, contents.version, contents];
+        });
 }
 
 describe('Grid State Migration', () => {

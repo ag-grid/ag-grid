@@ -807,7 +807,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         let suggestions: string[] = [];
         const filteredValues: TValue[] = [];
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (!searchValue.length) {
             return { suggestions, filteredValues };
         }
@@ -830,7 +829,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             }
         } else {
             suggestions = valueList.filter((val, idx) => {
-                // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
                 const currentValue = val.toLocaleLowerCase();
                 const valueToMatch = this.searchString.toLocaleLowerCase();
 

@@ -61,7 +61,6 @@ export function _getTabIndex(el: HTMLElement | null): string | null {
         return null;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- el.tabIndex is typed as a non-nullable number
     return numberTabIndex.toString();
 }
 

@@ -6,7 +6,6 @@ import { replaceInvisibleCharacters } from '../../assets/excelUtils';
 import { getStyleId } from './styles/stylesheet';
 
 const convertLegacyType = (type: string): string => {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const t = type.charAt(0).toLowerCase();
 
     return t === 's' ? 'inlineStr' : t;

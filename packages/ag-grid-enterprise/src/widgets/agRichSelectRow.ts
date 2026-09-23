@@ -85,7 +85,6 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
         let hasMatch = _exists(matchString);
 
         if (hasMatch) {
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const index = parsedValue?.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
             if (index >= 0) {
                 const highlightEndIndex = index + matchString.length;

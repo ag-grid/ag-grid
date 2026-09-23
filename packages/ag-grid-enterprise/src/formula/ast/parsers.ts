@@ -28,11 +28,9 @@ const parseOperand = (
     operand: string,
     unsafe: boolean
 ): string | number | boolean | Cell | null | undefined => {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const trimmed = operand.trim();
 
     // string literal
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
         return trimmed.slice(1, -1);
     }
@@ -87,7 +85,6 @@ const parseOperand = (
         } = parsed;
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string, unsafe: boolean): Cell => {
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const col = colAbs || unsafe ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
             const row = rowAbs || unsafe ? rowStr : getFormulaRowByIndex(beans, Number(rowStr) - 1)?.id;
 
@@ -131,7 +128,6 @@ function tokenize(expr: string): string[] {
     const lexCellRange = (s: string, start: number): number => {
         let j = start;
 
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const dollar = () => (s[j] === '$' ? (j++, true) : false);
         const letters = () => {
             const k = j;
@@ -186,7 +182,6 @@ function tokenize(expr: string): string[] {
         return j - start; // length of cell or range token
     };
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     while (i < expr.length) {
         const ch = expr[i];
 
@@ -264,7 +259,6 @@ function tokenize(expr: string): string[] {
         }
 
         tokens.push(firstMatch);
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         i += firstMatch.length;
     }
 
@@ -388,7 +382,6 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
         const token = tokens[i];
 
         // Function start: IDENT '('
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (isFormulaIdentStart(token[0]) && tokens[i + 1] === '(') {
             const name = token;
             ops.push({ kind: 'function', name, args: [] });
@@ -546,7 +539,6 @@ export const parseFormula = (beans: BeanCollection, formula: string, unsafe: boo
 };
 
 function isOperation(node: FormulaNode, name: string): node is FormulaOperation {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return node.type === 'operation' && node.operation.toUpperCase() === name.toUpperCase();
 }
 

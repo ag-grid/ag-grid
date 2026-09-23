@@ -198,7 +198,6 @@ export class AgAutocompleteList extends AgPopupComponent<
         searchString: string,
         entries: AutocompleteEntry[]
     ): { matches: AutocompleteEntry[]; topIndex: number } {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
         const matches: AutocompleteEntry[] = [];
         let topIndex = -1;
@@ -227,7 +226,6 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     private runStartsWithSearch(searchString: string, entries: AutocompleteEntry[]): AutocompleteEntry[] {
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
         const matches: AutocompleteEntry[] = [];
         for (let i = 0, len = entries.length; i < len; ++i) {

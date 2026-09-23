@@ -31,9 +31,7 @@ export function _formatNumberCommas(value: number | null, getLocaleTextFunc: () 
 
     // Split before substituting the decimal separator: grouping first would let a `.` thousand
     // separator (de-DE) be mistaken for the decimal point when rejoining.
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const [integerPart, fractionPart] = value.toString().split('.');
-    // eslint-disable-next-line sonarjs/null-dereference, sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed); flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
     const groupedInteger = integerPart.replace(/(\d)(?=(\d{3})+(?!\d))/g, (digit) => digit + thousandSeparator);
 
     return fractionPart === undefined ? groupedInteger : `${groupedInteger}${decimalSeparator}${fractionPart}`;

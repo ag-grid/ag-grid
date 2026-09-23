@@ -127,7 +127,6 @@ export class AgInputTextField<
 
     public setCustomValidity(message: string): void {
         const eInput = this.eInput;
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const isInvalid = message.length > 0;
         eInput.setCustomValidity(message);
 

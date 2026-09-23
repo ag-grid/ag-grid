@@ -124,7 +124,6 @@ export class DateCompWrapper {
         const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             const isInvalid = message.length > 0;
             const messageChanged = message !== this.lastValidityMessage;
             this.lastValidityMessage = message;

@@ -117,7 +117,6 @@ export function getBase14GlyphWidth(char: string, fontFamily: PdfFontFamily): nu
     }
 
     const metrics = getFontWidths(resolvedFamily);
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const codePoint = char.codePointAt(0) ?? 0;
     if (codePoint >= FIRST_PRINTABLE_ASCII && codePoint <= LAST_PRINTABLE_ASCII) {
         return metrics[codePoint - FIRST_PRINTABLE_ASCII] ?? DEFAULT_GLYPH_WIDTH;
@@ -170,8 +169,6 @@ function resolveBaseCharacter(char: string): string {
         return specialBase;
     }
 
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const decomposed = char.normalize('NFD');
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     return decomposed[0] ?? '?';
 }

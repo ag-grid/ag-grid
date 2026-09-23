@@ -146,7 +146,6 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
     if (iconContents) {
         const { className } = iconContents;
         if (
-            // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
             (typeof className === 'string' && className.includes('ag-icon')) ||
             (typeof className === 'object' && className['ag-icon'])
         ) {

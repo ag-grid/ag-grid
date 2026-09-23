@@ -91,7 +91,6 @@ export const getGroupingLocaleText = (
     const localStr = localeTextFunc(key, `${prefix} ${displayName}`, [displayName]);
 
     // Check if the displayName variable is present in the localized string, if not fallback to the old way of concatenating the column name
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (localStr.indexOf(displayName) >= 0) {
         return localStr;
     } else {

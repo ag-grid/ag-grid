@@ -92,7 +92,6 @@ export function findMatch<T>(
     getDisplayValue: (value: T) => string
 ): string | null | undefined {
     let partialMatch = false;
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const searchValueLowerCase = searchValue.toLocaleLowerCase();
     const partialSearchValue = searchValueLowerCase + ' ';
     const parsedValue = Object.keys(values).find((key) => {

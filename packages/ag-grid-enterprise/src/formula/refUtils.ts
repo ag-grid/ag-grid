@@ -1,4 +1,3 @@
-// eslint-disable-next-line sonarjs/super-linear-regex -- flagged by eslint-plugin-sonarjs 4.2.1; pattern runs on short, non-user-controlled input
 const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?/g;
 const FULL_CELL_OR_RANGE_REGEX = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/;
 const WORD_CHAR_REGEX = /[A-Za-z0-9]/;
@@ -12,7 +11,6 @@ export const isFormulaIdentStart = (char: string | undefined): boolean => {
 };
 
 export const isValidFunctionName = (name: string): boolean => {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (!isFormulaIdentStart(name[0])) {
         return false;
     }
@@ -40,13 +38,11 @@ const isWordChar = (char: string | null | undefined): boolean => {
 };
 
 export const isStandaloneRefToken = (text: string, matchIndex: number, ref: string): boolean => {
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const prevChar = matchIndex > 0 ? text[matchIndex - 1] : null;
     if (isWordChar(prevChar)) {
         return false;
     }
     // Allow partial ranges (trailing ":") even if the next character is a letter.
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     if (ref.endsWith(':')) {
         return true;
     }
@@ -57,7 +53,6 @@ export const isStandaloneRefToken = (text: string, matchIndex: number, ref: stri
 
 export const parseA1Ref = (ref: string, options: { allowTrailingColon?: boolean } = {}): ParsedA1Ref | null => {
     const allowTrailingColon = options.allowTrailingColon ?? false;
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     const normalizedRef = allowTrailingColon && ref.endsWith(':') ? ref.slice(0, -1) : ref;
     const match = FULL_CELL_OR_RANGE_REGEX.exec(normalizedRef);
     if (!match) {
@@ -93,10 +88,8 @@ export const getRefTokenMatches = (text: string): RefTokenMatch[] => {
     while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
         let ref = match[0];
         const start = match.index ?? 0;
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         const endIndex = start + ref.length;
         // Allow partial ranges (e.g. "A1:" or "A1:B2:") without relying on regex backtracking.
-        // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
         if (endIndex < text.length && text[endIndex] === ':') {
             ref += ':';
         }

@@ -62,7 +62,6 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
     }
 
     // iterate over each character, keep track of current row and column (of the returned array)
-    // eslint-disable-next-line sonarjs/null-dereference -- flagged by eslint-plugin-sonarjs 4.2.1's stricter heuristic; value is non-null here (typed, guarded, or narrowed)
     for (let row = 0, column = 0, position = 0; position < strData.length; position++) {
         const previousChar = strData[position - 1];
         const currentChar = strData[position];
