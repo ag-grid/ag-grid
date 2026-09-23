@@ -1172,48 +1172,32 @@ describe('Manual pinned rows', () => {
             expect(api.getState().rowPinning).toEqual({ top: ['3', '1'], bottom: [] });
         });
 
-        test('are visited by forEachHiddenPinnedRow, not by forEachPinnedRow', async () => {
+        test('are skipped by forEachPinnedRow while hidden, and come back in display order', async () => {
             const api = await gridsManager.createGridAndWait(
                 'myGrid',
                 countryGridOptions({ rowPinning: { top: ['3', '1'], bottom: [] } })
             );
-            type Visited = [string | undefined, number | null, number | null];
             const visit = () => {
-                const displayed: Visited[] = [];
-                const hidden: Visited[] = [];
+                const displayed: [string | undefined, number | null, number | null][] = [];
                 api.forEachPinnedRow('top', (node) => displayed.push([node.id, node.rowIndex, node.rowTop]));
-                api.forEachHiddenPinnedRow('top', (node) => hidden.push([node.id, node.rowIndex, node.rowTop]));
-                return { displayed, hidden };
+                return displayed;
             };
-            expect(visit()).toEqual({
-                displayed: [
-                    ['t-top-1', 0, 0],
-                    ['t-top-3', 1, 42],
-                ],
-                hidden: [],
-            });
+            expect(visit()).toEqual([
+                ['t-top-1', 0, 0],
+                ['t-top-3', 1, 42],
+            ]);
 
             api.setFilterModel(notIreland);
-            expect(visit()).toEqual({ displayed: [['t-top-3', 0, 0]], hidden: [['t-top-1', null, null]] });
+            expect(visit()).toEqual([['t-top-3', 0, 0]]);
 
-            // Hidden rows come in pin order, not in the display order above.
             api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'France' } });
-            expect(visit()).toEqual({
-                displayed: [],
-                hidden: [
-                    ['t-top-3', null, null],
-                    ['t-top-1', null, null],
-                ],
-            });
+            expect(visit()).toEqual([]);
 
             api.setFilterModel(null);
-            expect(visit()).toEqual({
-                displayed: [
-                    ['t-top-1', 0, 0],
-                    ['t-top-3', 1, 42],
-                ],
-                hidden: [],
-            });
+            expect(visit()).toEqual([
+                ['t-top-1', 0, 0],
+                ['t-top-3', 1, 42],
+            ]);
         });
 
         test('swap when one filter change hides one pinned row and reveals another', async () => {

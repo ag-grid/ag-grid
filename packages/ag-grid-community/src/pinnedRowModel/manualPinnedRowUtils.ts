@@ -6,8 +6,8 @@ import type { RowPinnedType } from '../interfaces/iRowNode';
 export class PinnedRows {
     /** Canonical set of pinned nodes, hidden ones included, in pin order. Mutate only via methods. */
     public readonly all = new Set<RowNode>();
-    /** The subset of `all` hidden by a filter, pivot mode or the SSRM cache, usually empty. Mutate only via methods. */
-    public readonly hidden = new Set<RowNode>();
+    /** The subset of `all` hidden by a filter, pivot mode or the SSRM cache, usually empty. */
+    private readonly hidden = new Set<RowNode>();
     /** IDs of nodes that need to be pinned once they are available from the row model */
     public readonly queued = new Set<string>();
     private readonly sorted: RowNode[] = [];

@@ -211,10 +211,6 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         return forEach(this.getCache(floating), callback);
     }
 
-    public forEachHiddenPinnedRow(): void {
-        // Static pinned rows are never hidden
-    }
-
     private getCache(floating: RowPinnedType): OrderedCache<RowNode> {
         return floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
     }

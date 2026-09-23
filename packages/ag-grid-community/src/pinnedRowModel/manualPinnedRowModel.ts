@@ -218,18 +218,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    public forEachHiddenPinnedRow(floating: NonNullable<RowPinnedType>, callback: (node: RowNode) => void): void {
-        const { all, hidden } = this.getContainer(floating);
-        if (hidden.size === 0) {
-            return;
-        }
-        for (const node of all) {
-            if (hidden.has(node)) {
-                callback(node); // walks `all` rather than `hidden` to report pin order
-            }
-        }
-    }
-
     public getPinnedState(): RowPinningState {
         return { top: getPinnedIds(this.top), bottom: getPinnedIds(this.bottom) };
     }

@@ -1329,16 +1329,6 @@ export interface _PinnedRowGridApi {
         floating: NonNullable<RowPinnedType>,
         callback: (rowNode: IRowNode<TPinnedData>) => void
     ): void;
-
-    /**
-     * Iterates over each manually pinned row hidden by a filter or by pivot mode, in pin order.
-     * A hidden pinned row has no position, so its `rowIndex` and `rowTop` are `null`.
-     * @agModule `PinnedRowModule`
-     */
-    forEachHiddenPinnedRow<TPinnedData = any>(
-        floating: NonNullable<RowPinnedType>,
-        callback: (rowNode: IRowNode<TPinnedData>) => void
-    ): void;
 }
 
 export interface _RenderGridApi<TData> {

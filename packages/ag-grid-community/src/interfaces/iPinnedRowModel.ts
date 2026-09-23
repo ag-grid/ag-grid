@@ -45,9 +45,6 @@ export interface IPinnedRowModel {
     /** Iterate over the displayed pinned rows in a particular floating container. */
     forEachPinnedRow(float: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
 
-    /** Iterate over the pinned rows a filter or pivot mode hides, in pin order. None for the static pinned row model. */
-    forEachHiddenPinnedRow(float: NonNullable<RowPinnedType>, callback: (node: RowNode) => void): void;
-
     /** Used by the state service. This is a no-op for the static pinned row model. */
     getPinnedState(): RowPinningState;
 
