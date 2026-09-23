@@ -1,6 +1,8 @@
 /**
  * Behaviour enabled for internal consumers only, so it is not public API. Name each flag after the behaviour, so it
  * can become a public option or the default without a rename, and say on each what is planned for it.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface InternalFeatureFlags {
     /**

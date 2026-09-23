@@ -354,9 +354,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                     ? null
                     : this.selectionStrategy.getSelectedNodes(true, false),
             serverSideState: this.getSelectionState() as
-                | IServerSideSelectionState
-                | IServerSideGroupSelectionState
-                | null,
+                IServerSideSelectionState | IServerSideGroupSelectionState | null,
         });
     }
 
