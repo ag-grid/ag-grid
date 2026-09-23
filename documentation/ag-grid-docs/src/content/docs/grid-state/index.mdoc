@@ -62,7 +62,7 @@ const gridOptions = {
 }
 ```
 
-To exclude a property from being restored, for example the `scroll` position, remove it from the `initialState` object. An omitted property is simply not applied and the grid starts with its normal defaults for it.
+To exclude a property from being restored, for example the `scroll` position, remove it from the `initialState` object. The grid then uses its default for that property.
 
 ```js
 // Restore everything except the scroll position and the row selection.
@@ -73,7 +73,7 @@ const gridOptions = {
 };
 ```
 
-Omitting a column state property does more than skip it, because the column definitions supply their own values for the same properties. See [Column State and Column Definitions](#column-state-and-column-definitions).
+Column state properties are the exception. When `initialState` contains any of them, an omitted one also clears the matching value from the column definitions. See [Column State and Column Definitions](#column-state-and-column-definitions).
 
 ### Restore via API
 
