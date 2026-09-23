@@ -2,8 +2,6 @@ import type { GridState } from 'ag-grid-community';
 
 // Full grid states as returned by `api.getState()` after a user configured the grid and saved.
 export const savedStates: Record<string, GridState> = {
-    // An empty initialState uses all the defaults based on grid and column definitions
-    default: {},
     medalsByCountry: {
         version: '36.2.0',
         sideBar: {

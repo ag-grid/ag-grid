@@ -49,6 +49,13 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('athlete')).toBeVisible();
         await expect(agIdFor.headerCell('total')).toHaveAttribute('aria-sort', 'none');
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+        await expect
+            .poll(async () => {
+                const athlete = await agIdFor.headerCell('athlete').boundingBox();
+                const country = await agIdFor.headerCell('country').boundingBox();
+                return athlete && country ? athlete.x < country.x : false;
+            })
+            .toBe(true);
     });
 
     test.eachFramework(

@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, GridStateKey } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions, GridState, GridStateKey } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -12,6 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 let gridApi: GridApi<IOlympicData>;
+let defaultState: GridState | undefined;
 
 const gridOptions: GridOptions<IOlympicData> = {
     gridId: 'savedViews',
@@ -38,7 +39,19 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     rowGroupPanelShow: 'always',
     sideBar: 'columns',
+    onFirstDataRendered: onFirstDataRendered,
 };
+
+function onFirstDataRendered(event: FirstDataRenderedEvent<IOlympicData>) {
+    // Capture the state before any view is applied, so the default view can be restored.
+    defaultState = event.api.getState();
+}
+
+function applyDefaultView() {
+    if (defaultState) {
+        gridApi.setState(defaultState, getPropertiesToIgnore());
+    }
+}
 
 function filterCountry() {
     gridApi.setFilterModel({

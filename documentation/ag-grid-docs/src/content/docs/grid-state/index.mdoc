@@ -99,9 +99,10 @@ api.setState(savedState, ['filter']);
 
 Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand-built state containing only `columnOrder` will clear the sort, filters, row groups, pinning and every other property.
 
-The example below has three saved states, captured with `api.getState()` after a user configured the grid, that are applied via the buttons.
+The example below switches between full states captured with `api.getState()`.
 
-- **Default View**, **Medals by Country** and **Swimming Leaders** each call `api.setState()` with a full saved state.
+- **Default View** applies the state captured when the grid first rendered, before any view was applied.
+- **Medals by Country** and **Swimming Leaders** apply states saved after a user configured the grid.
 - **Column Order Only** applies a hand-built state containing just `columnOrder`, showing that omitted properties are reset.
 - Toggle **Ignore Filter** to conditionally pass `['filter']` as `propertiesToIgnore` to enable maintaining the current filter state while switching views.
 
