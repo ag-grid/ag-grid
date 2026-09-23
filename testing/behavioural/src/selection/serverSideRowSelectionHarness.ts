@@ -1,7 +1,7 @@
 // Shared setup for the server-side row-selection suites: the grid manager, the flat fixture every one of
 // them drives, and the hooks. Siblings rather than one file because vitest parallelises across files but not
 // within one, so ~100 grid-building tests in a single file serialise in one worker.
-import { ALL_SEVERITIES, StudioStubModule, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
@@ -10,6 +10,7 @@ import {
     PaginationModule,
     RowSelectionModule,
     TextFilterModule,
+    _createInternalFlagsModule,
     enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -54,9 +55,10 @@ export async function createGridAndWait(gridOptions: GridOptions, params?: Param
     return [api, actions];
 }
 
-/** Creates a grid that behaves as if it were running inside AG Studio, waiting for the first render. */
-export function createStudioGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
-    return createGridAndWait(gridOptions, { modules: [StudioStubModule] });
+const ClickToggleModule = _createInternalFlagsModule({ clickToggleSelection: true });
+
+export function createClickToggleGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
+    return createGridAndWait(gridOptions, { modules: [ClickToggleModule] });
 }
 
 /** The one advisory these suites run into by design: server-side selection with no `getRowId`. */

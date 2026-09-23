@@ -4,7 +4,7 @@ title: "Studio Row Selection Test"
 
 This is an internal page used to check the deselect-on-click behaviour that the grid enables only when it is running inside AG Studio. It is intentionally left out of the site navigation.
 
-Studio contributes a `studio` bean to every grid it creates, and this behaviour is gated on that bean rather than on a grid option, so each example here registers a stand-in module that supplies the same bean.
+The behaviour sits behind an internal flag rather than a grid option. Every grid created inside Studio has it on automatically, so each example here turns it on with `_createInternalFlagsModule` instead.
 
 ## Single row selection
 

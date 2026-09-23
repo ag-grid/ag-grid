@@ -21,6 +21,7 @@ import {
 } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
+import { _isInternalFlagEnabled } from '../internalFlags/internalFlags';
 import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ChangedPath } from '../utils/changedPath';
@@ -288,8 +289,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         const enableClickSelection = _getEnableSelection(gos);
         const enableDeselection = _getEnableDeselection(gos);
-        // AG Studio only: clicking the sole selected row deselects it rather than re-selecting it
-        const enableClickToggle = !!this.beans.studio;
+        const enableClickToggle = _isInternalFlagEnabled(this.beans, 'clickToggleSelection');
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
 

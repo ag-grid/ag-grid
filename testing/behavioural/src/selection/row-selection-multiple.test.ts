@@ -2,7 +2,7 @@ import { GridColumns, GridRows, assertSelectedRowsByIndex, isElementDisplayed } 
 
 import type { RowSelectedEvent } from 'ag-grid-community';
 
-import { columnDefs, createGrid, createStudioGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import { columnDefs, createClickToggleGrid, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -197,8 +197,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, clicking the only selected row deselects it', async () => {
-                const [api, actions] = createStudioGrid({
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
@@ -215,8 +215,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('in Studio, clicking a selected row still reduces a wider selection to it', async () => {
-                const [api, actions] = createStudioGrid({
+            test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
@@ -232,7 +232,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([3], api);
                 await new GridRows(
                     api,
-                    `in Studio, clicking a selected row still reduces a wider selection to it after reducing`
+                    `with click toggle, clicking a selected row still reduces a wider selection to it after reducing`
                 ).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF id:0 sport:"football"
@@ -248,9 +248,9 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('in Studio, deselecting by click forwards the browser click event', async () => {
+            test('with click toggle, deselecting by click forwards the browser click event', async () => {
                 const events: RowSelectedEvent[] = [];
-                const [api, actions] = createStudioGrid({
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {

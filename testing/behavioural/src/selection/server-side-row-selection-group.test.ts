@@ -5,8 +5,8 @@ import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
 
 import { fakeFetch } from './group-data';
 import {
+    createClickToggleGridAndWait,
     createGridAndWait,
-    createStudioGridAndWait,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
 
@@ -188,8 +188,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, clicking a group row whose subtree is the whole selection deselects it', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
@@ -205,8 +205,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([], api);
             });
 
-            test('in Studio, clicking a group row does not deselect it while another group is selected', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking a group row does not deselect it while another group is selected', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
@@ -230,8 +230,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
             });
 
-            test("in Studio, clicking a group that is its parent's only row deselects it", async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test("with click toggle, clicking a group that is its parent's only row deselects it", async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
@@ -253,12 +253,12 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([], api);
             });
 
-            test('in Studio, clicking a row does not deselect it while filtered-out siblings are selected', async () => {
+            test('with click toggle, clicking a row does not deselect it while filtered-out siblings are selected', async () => {
                 const rows = [
                     { country: 'X', name: 'A' },
                     { country: 'X', name: 'B' },
                 ];
-                const [api, actions] = await createStudioGridAndWait({
+                const [api, actions] = await createClickToggleGridAndWait({
                     columnDefs: [
                         { field: 'country', rowGroup: true, hide: true },
                         { field: 'name', filter: 'agTextColumnFilter' },

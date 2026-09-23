@@ -1,8 +1,8 @@
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import {
+    createClickToggleGridAndWait,
     createGridAndWait,
-    createStudioGridAndWait,
     groupGridOptions,
     setupRowSelectionSuite,
 } from './rowSelectionHarness';
@@ -372,8 +372,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, clicking a group row whose subtree is the whole selection deselects it', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',
@@ -389,8 +389,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('in Studio, clicking a group row does not deselect it while another branch is selected', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking a group row does not deselect it while another branch is selected', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
                         mode: 'multiRow',

@@ -2,9 +2,8 @@ import type { Module } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
 /**
- * Stands in for the `studio` bean that AG Studio contributes to every grid it creates, so that tests
- * can exercise grid behaviour gated on running inside Studio. The bean carries no behaviour of its
- * own — the grid only ever checks whether it is present.
+ * Stands in for the `studio` bean AG Studio adds to every grid, to test what running inside Studio turns on. It also
+ * skips licence validation, so test a single behaviour with `_createInternalFlagsModule` instead.
  */
 class StudioStub {
     beanName = 'studio' as const;

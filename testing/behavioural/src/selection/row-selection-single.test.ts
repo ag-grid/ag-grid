@@ -1,12 +1,13 @@
-import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
+import { GridColumns, GridRows, StudioStubModule, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
+import { _createInternalFlagsModule } from 'ag-grid-community';
 
 import {
     columnDefs,
+    createClickToggleGrid,
+    createClickToggleGridAndWait,
     createGrid,
-    createStudioGrid,
-    createStudioGridAndWait,
     rowData,
     setupRowSelectionSuite,
 } from './rowSelectionHarness';
@@ -271,8 +272,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, clicking the only selected row deselects it', async () => {
-                const [api, actions] = createStudioGrid({
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
@@ -289,8 +290,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('in Studio, clicking a different row still moves the selection', async () => {
-                const [api, actions] = createStudioGrid({
+            test('with click toggle, clicking a different row still moves the selection', async () => {
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
@@ -305,8 +306,10 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(4);
                 assertSelectedRowsByIndex([4], api);
-                await new GridRows(api, `in Studio, clicking a different row still moves the selection final state`)
-                    .check(`
+                await new GridRows(
+                    api,
+                    `with click toggle, clicking a different row still moves the selection final state`
+                ).check(`
                         ROOT id:ROOT_NODE_ID
                         ├── LEAF id:0 sport:"football"
                         ├── LEAF id:1 sport:"rugby"
@@ -318,8 +321,8 @@ describe('Row Selection Grid Options', () => {
                     `);
             });
 
-            test('in Studio, clicking the only selected row does not deselect it when deselection is disabled', async () => {
-                const [api, actions] = createStudioGrid({
+            test('with click toggle, clicking the only selected row does not deselect it when deselection is disabled', async () => {
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
@@ -334,7 +337,7 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowByIndex(2);
                 assertSelectedRowsByIndex([2], api);
-                await new GridRows(api, `in Studio, deselection stays disabled final state`).check(`
+                await new GridRows(api, `with click toggle, deselection stays disabled final state`).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
@@ -346,9 +349,9 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, deselecting by click forwards the browser click event', async () => {
+            test('with click toggle, deselecting by click forwards the browser click event', async () => {
                 const events: RowSelectedEvent[] = [];
-                const [api, actions] = createStudioGrid({
+                const [api, actions] = createClickToggleGrid({
                     columnDefs,
                     rowData,
                     rowSelection: {
@@ -369,8 +372,8 @@ describe('Row Selection Grid Options', () => {
                 expect(events.map(({ event }) => event)).toEqual([selectClick, deselectClick]);
             });
 
-            test('in Studio, clicking the only selected row deselects it when the row is pinned', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking the only selected row deselects it when the row is pinned', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     columnDefs,
                     rowData,
                     enableRowPinning: true,
@@ -392,6 +395,40 @@ describe('Row Selection Grid Options', () => {
 
                 actions.clickRowById(pinned[0]);
                 assertSelectedRowsByIndex([], api);
+            });
+
+            test('in Studio, clicking the only selected row deselects it', async () => {
+                const [api, actions] = createGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'singleRow', enableClickSelection: true, checkboxes: false },
+                    },
+                    { modules: [StudioStubModule] }
+                );
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([], api);
+            });
+
+            test('in Studio, an explicitly disabled click toggle keeps the only selected row selected', async () => {
+                const [api, actions] = createGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'singleRow', enableClickSelection: true, checkboxes: false },
+                    },
+                    { modules: [StudioStubModule, _createInternalFlagsModule({ clickToggleSelection: false })] }
+                );
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
             });
 
             test('un-selectable row cannot be selected', async () => {

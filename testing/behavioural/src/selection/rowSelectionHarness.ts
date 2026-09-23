@@ -1,7 +1,7 @@
 // Shared setup for the client-side row-selection suites: the grid manager, the flat and grouped fixtures
 // every one of them drives, and the hooks. Siblings rather than one file because vitest parallelises across
 // files but not within one, so 124 grid-building tests in a single file serialise in one worker.
-import { StudioStubModule, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { TestGridsManager, waitForEvent } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
 import {
@@ -11,6 +11,7 @@ import {
     QuickFilterModule,
     RowSelectionModule,
     TextEditorModule,
+    _createInternalFlagsModule,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -72,14 +73,14 @@ export async function createGridAndWait(gridOptions: GridOptions, params?: Param
     return [api, actions];
 }
 
-/** Creates a grid that behaves as if it were running inside AG Studio. */
-export function createStudioGrid(gridOptions: GridOptions): [GridApi, GridActions] {
-    return createGrid(gridOptions, { modules: [StudioStubModule] });
+const ClickToggleModule = _createInternalFlagsModule({ clickToggleSelection: true });
+
+export function createClickToggleGrid(gridOptions: GridOptions): [GridApi, GridActions] {
+    return createGrid(gridOptions, { modules: [ClickToggleModule] });
 }
 
-/** Creates a grid that behaves as if it were running inside AG Studio, waiting for the first render. */
-export function createStudioGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
-    return createGridAndWait(gridOptions, { modules: [StudioStubModule] });
+export function createClickToggleGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
+    return createGridAndWait(gridOptions, { modules: [ClickToggleModule] });
 }
 
 /** Registers the hooks every sibling suite needs. */

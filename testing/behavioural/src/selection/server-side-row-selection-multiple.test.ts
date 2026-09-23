@@ -4,8 +4,8 @@ import type { RowSelectedEvent } from 'ag-grid-community';
 
 import {
     columnDefs,
+    createClickToggleGridAndWait,
     createGridAndWait,
-    createStudioGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
@@ -176,8 +176,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, clicking the only selected row deselects it', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     columnDefs,
                     rowModelType: 'serverSide',
                     serverSideDatasource: {
@@ -198,8 +198,8 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('in Studio, clicking a selected row still reduces a wider selection to it', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     columnDefs,
                     rowModelType: 'serverSide',
                     serverSideDatasource: {
@@ -219,7 +219,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([3], api);
                 await new GridRows(
                     api,
-                    `in Studio, clicking a selected row still reduces a wider selection to it after reducing`
+                    `with click toggle, clicking a selected row still reduces a wider selection to it after reducing`
                 ).check(`
                     ROOT id:<no-id>
                     ├── LEAF id:0 sport:"football"

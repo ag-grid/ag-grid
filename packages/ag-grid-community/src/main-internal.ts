@@ -528,6 +528,7 @@ export type {
     ModuleName,
     ModuleValidationResult,
 } from './interfaces/iModule';
+export { _createInternalFlagsModule } from './internalFlags/internalFlagsModule';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';
 export { SharedRowSelectionModule as _SharedRowSelectionModule } from './selection/rowSelectionModule';

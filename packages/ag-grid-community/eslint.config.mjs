@@ -47,6 +47,12 @@ export default [
                     selector: 'PropertyDefinition[static=true]',
                     message: 'Static class properties prevent tree-shaking. Use an alternative if possible.',
                 },
+                {
+                    selector:
+                        "MemberExpression[property.name='studio']:matches([object.name='beans'], [object.property.name='beans'])",
+                    message:
+                        'Gate behaviour on an internal flag with `_isInternalFlagEnabled` rather than on running inside AG Studio.',
+                },
             ],
             'no-restricted-properties': [
                 'error',

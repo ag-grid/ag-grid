@@ -3,8 +3,8 @@ import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByInde
 import {
     capturedWarnings,
     columnDefs,
+    createClickToggleGridAndWait,
     createGridAndWait,
-    createStudioGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
@@ -255,8 +255,8 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('in Studio, clicking the only selected row deselects it', async () => {
-                const [api, actions] = await createStudioGridAndWait({
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = await createClickToggleGridAndWait({
                     columnDefs,
                     rowSelection: {
                         mode: 'singleRow',
