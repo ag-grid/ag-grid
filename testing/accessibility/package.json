@@ -28,7 +28,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "playwright": "^1.59.1",
-    "@playwright/test": "^1.59.1"
+    "playwright": "^1.63.0",
+    "@playwright/test": "^1.63.0"
   }
 }

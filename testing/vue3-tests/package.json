@@ -13,21 +13,21 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "vue": "^3.5.32",
-    "vue-router": "^5.0.6",
+    "vue": "^3.5.43",
+    "vue-router": "^5.3.1",
     "ag-grid-community": "36.2.0-beta.20260922.1430",
     "ag-grid-enterprise": "36.2.0-beta.20260922.1430",
     "ag-grid-vue3": "36.2.0-beta.20260922.1430",
     "decimal.js": "^10.6.0"
   },
   "devDependencies": {
-    "@mobileaction/action-kit": "^1.58.16",
-    "playwright": "^1.59.1",
-    "@playwright/test": "^1.59.1",
+    "@mobileaction/action-kit": "^1.60.1",
+    "playwright": "^1.63.0",
+    "@playwright/test": "^1.63.0",
     "vite": "^6.0.0",
     "@vitejs/plugin-vue": "^5.2.0",
     "typescript": "~5.8.3",
-    "vue-tsc": "^3.2.7",
+    "vue-tsc": "^3.3.11",
     "npm-run-all": "^4.1.5"
   }
 }
