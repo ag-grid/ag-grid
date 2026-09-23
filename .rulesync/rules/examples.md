@@ -75,7 +75,8 @@ shape differences:
 
 - **React** — `columnDefs` is typed React state (e.g. `useState<(ColDef | ColGroupDef)[]>`); grid
   options are JSX props; modules are passed via `AgGridProvider modules={...}` (no
-  `ModuleRegistry`).
+  `ModuleRegistry`). Do not add a `useFetchJson.tsx`: the generator writes its own for any React
+  variant that uses the hook, replacing a local copy, and adds the import if it is missing.
 - **Angular** — `columnDefs` is a typed class field; grid options are template bindings
   (`[option]="..."`); modules via `ModuleRegistry.registerModules`.
 - **Vue** — `columnDefs` is a typed `ref`; grid options are template bindings (`:option="..."`);

@@ -5,8 +5,18 @@ import { SpannedCellCtrl } from './spannedCellCtrl';
 
 export class SpannedRowCtrl extends RowCtrl {
     protected override getInitialRowClasses(): string[] {
-        const positionClass = this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute';
-        return ['ag-spanned-row', positionClass];
+        const { rowNode, beans } = this;
+        const classes = ['ag-spanned-row', this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute'];
+        // the spanned cell inherits the pinned row styling from here, not from the row it overlays
+        if (rowNode.isRowPinned()) {
+            classes.push('ag-row-pinned');
+            if (beans.pinnedRowModel?.isManual()) {
+                classes.push('ag-row-pinned-manual');
+            }
+        } else if (rowNode.pinnedSibling) {
+            classes.push('ag-row-pinned-source');
+        }
+        return classes;
     }
 
     public override getNewCellCtrl(col: AgColumn<any>): CellCtrl | undefined {
