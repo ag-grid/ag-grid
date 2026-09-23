@@ -317,12 +317,8 @@ const announcementBannerProps = {
         page; see public/scripts/persist-cookie-consent.js for the mechanism. */
         }
         <script is:inline src={urlWithBaseUrl('/scripts/persist-cookie-consent.js')}></script>
-        {
-            /* Restart <video>/<audio> that the router adopted from its DOMParser document mid-load,
-        which otherwise stay blank until a hard reload; see public/scripts/reload-swapped-media.js
-        for the mechanism. */
-        }
-        <script is:inline src={urlWithBaseUrl('/scripts/reload-swapped-media.js')}></script>
+        {/* Re-mute media rebuilt by client-side navigation; see the script for why. */}
+        <script is:inline src={urlWithBaseUrl('/scripts/restore-swapped-media-muted.js')}></script>
         {
             /* The dark-mode listeners that theme <ImageCaption>, <Gif> and <Video> media are
         registered by the first copy of these scripts to run, and each component renders its own

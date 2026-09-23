@@ -107,11 +107,11 @@ const altTextMediaSections = new WeakSet<object>();
             ))}
             {/*
              * `set:html` is the canonical Astro pattern for injecting a literal
-             * JS string into an inline <script>. The previous form
-             * `<script is:inline>{`…`}</script>` did NOT work: `is:inline`
-             * disables expression evaluation inside the tag, so the page
-             * shipped the literal template-literal source to the browser and
-             * the IIFE never ran.
+             * JS string into an inline script tag. The previous form, an
+             * `is:inline` script tag wrapping a template-literal expression,
+             * did NOT work: `is:inline` disables expression evaluation inside
+             * the tag, so the page shipped the literal template-literal source
+             * to the browser and the IIFE never ran.
              */}
             <script
                 is:inline

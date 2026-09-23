@@ -197,26 +197,6 @@ id = "GHSA-xcpc-8h2w-3j85"
 reason = "adm-zip is a transitive dependency of @module-federation/dts-plugin build tooling and is not included in the libraries distributables"
 
 [[IgnoredVulns]]
-id = "GHSA-26w7-cxv4-gfx2"
-reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-376h-93r7-7g6f"
-reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-4g3v-8h47-v7g6"
-reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-7pw4-f3q4-r2p2"
-reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-f48w-9m4c-m7f5"
-reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
-
-[[IgnoredVulns]]
 id = "GHSA-w5vr-8v7q-w6rv"
 reason = "baseline-browser-mapping is a transitive dependency of browserslist (via @babel/helper-compilation-targets), used only during build - not included in the final production build"
 
@@ -227,10 +207,6 @@ reason = "body-parser is a transitive dependency of express/karma dev servers, u
 [[IgnoredVulns]]
 id = "GHSA-2wm5-q62r-hmrv"
 reason = "colord is a transitive dependency of stylelint and cssnano's postcss color plugins, used only during build/lint - not included in the final production build"
-
-[[IgnoredVulns]]
-id = "GHSA-9rgm-9g3h-6x36"
-reason = "devalue is only used in testing/build, not in the final production build"
 
 [[IgnoredVulns]]
 id = "GHSA-7pqw-9j4j-h8q3"
@@ -271,14 +247,6 @@ reason = "qs is used in build & dev - not included in final production build"
 [[IgnoredVulns]]
 id = "GHSA-x5fp-wj9c-mxmx"
 reason = "qs is used in build & dev - not included in final production build"
-
-[[IgnoredVulns]]
-id = "GHSA-f88m-g3jw-g9cj"
-reason = "sharp is a transitive dependency of astro's image optimization, used only for the documentation site during development and doesn't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-rgj7-g3m4-5g8c"
-reason = "sharp is a transitive dependency of astro's image optimization, used only for the documentation site during development and doesn't appear in the libraries distributables"
 
 [[IgnoredVulns]]
 id = "GHSA-7w5x-hrqm-74c2"

@@ -267,6 +267,8 @@ export default defineConfig({
     ],
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
+    // Astro 7's 'jsx' default drops the space in `hosted by\n<span>`, which many pages rely on.
+    compressHTML: true,
     security: {
         /**
          * Allow cross-origin dev-server fetches from external example hosts.
@@ -287,6 +289,12 @@ export default defineConfig({
     },
     vite: {
         plugins,
+        resolve: {
+            // Per-file tsconfig paths redirect ag-grid-community's built `ag-stack` import to source.
+            tsconfigPaths: false,
+            // Left external, the prerender output resolves the hoisted cookie 0.x, not Astro's 2.x.
+            noExternal: ['cookie'],
+        },
         server: {
             https: httpsEnabled,
             cors: {

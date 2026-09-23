@@ -64,7 +64,7 @@
       }
     },
     "dev": {
-      "command": "astro dev --port=${PORT} --host",
+      "command": "ASTRO_DEV_BACKGROUND=${ASTRO_DEV_BACKGROUND-0} astro dev --port=${PORT} --host",
       "options": {
         "cwd": "{projectRoot}"
       },
@@ -78,7 +78,7 @@
           "target": "build"
         }
       ],
-      "command": "astro preview --port=${PORT}",
+      "command": "ASTRO_PREVIEW_BACKGROUND=${ASTRO_PREVIEW_BACKGROUND-0} astro preview --port=${PORT}",
       "options": {
         "cwd": "{projectRoot}"
       },
