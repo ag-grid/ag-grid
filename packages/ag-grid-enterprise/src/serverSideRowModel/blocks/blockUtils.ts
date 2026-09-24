@@ -220,9 +220,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_exists(data)) {
             rowNode.setRowHeight(_getRowHeightForNode(this.beans, rowNode, false, cachedRowHeight).height);
-            rowNode.sibling?.setRowHeight(
-                _getRowHeightForNode(this.beans, rowNode.sibling, false, cachedRowHeight).height
-            );
         }
     }
 
@@ -284,6 +281,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     ): void {
         const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
         const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
+        rowNode.setUiLevel(uiLevel);
         if (isHiddenOpenGroup || isUnbalancedGroup) {
             rowNode.setRowIndex(null);
             rowNode.setRowTop(null);
@@ -291,9 +289,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // set this row
             rowNode.setRowIndex(displayIndexSeq.value++);
             rowNode.setRowTop(nextRowTop.value);
+            // Total rows are created unsized, so getRowHeight sees the total row rather than its group.
+            if (rowNode.rowHeight == null) {
+                rowNode.setRowHeight(_getRowHeightForNode(this.beans, rowNode).height);
+            }
             nextRowTop.value += rowNode.rowHeight!;
         }
-        rowNode.setUiLevel(uiLevel);
 
         if (rowNode.footer) {
             return;

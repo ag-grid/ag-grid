@@ -37,6 +37,22 @@ const gridOptions = {
 }
 ```
 
+`getRowHeight(params)` is also called for [Group and Grand Total Rows](./aggregation-total-rows/) and [Pinned Rows](./row-pinning/), separately from the row they duplicate. To give them their own height, check `params.node.footer` (true for total rows) and `params.node.rowPinned` (`'top'` or `'bottom'` for pinned rows):
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    getRowHeight: params => {
+        if (params.node.footer) {
+            return 30;
+        }
+        if (params.node.rowPinned) {
+            return 40;
+        }
+        return params.node.group ? 50 : 20;
+    },
+}
+```
+
 The example below shows dynamic row height, specifying a different row height for each row. It uses the `getRowHeight(params)` callback to achieve this.
 
 {% gridExampleRunner title="Row Height Simple" name="row-height-simple" /%}

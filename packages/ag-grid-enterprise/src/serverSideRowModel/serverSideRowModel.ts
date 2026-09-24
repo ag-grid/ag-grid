@@ -393,18 +393,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.forEachNode((rowNode) => {
             const rowHeightForNode = _getRowHeightForNode(this.beans, rowNode);
             rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
-            // we keep the height each row is at, however we set estimated=true rather than clear the height.
-            // this means the grid will not reset the row heights back to defaults, rather it will re-calc
-            // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
             const detailNode = rowNode.detailNode;
             if (detailNode) {
                 const detailRowHeight = _getRowHeightForNode(this.beans, detailNode);
                 detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
             }
 
-            if (rowNode.sibling) {
-                const siblingRowHeight = _getRowHeightForNode(this.beans, rowNode.sibling);
-                detailNode?.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+            const sibling = rowNode.sibling;
+            if (sibling) {
+                const siblingRowHeight = _getRowHeightForNode(this.beans, sibling);
+                sibling.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
         });
