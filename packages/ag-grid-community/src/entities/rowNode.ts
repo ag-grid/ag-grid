@@ -980,7 +980,7 @@ export class RowNode<TData = any>
             this.displayed = false;
         }
 
-        if (!this.footer) {
+        if (!this.footer && !(this.rowPinned && pinnedSibling)) {
             const detailNode = this.detailNode;
             if (detailNode) {
                 detailNode._destroy(fadeOut);

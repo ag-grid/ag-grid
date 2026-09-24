@@ -1,9 +1,32 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { userEvent } from '@testing-library/user-event';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clickMenuOption,
+    polyfillOffsetParent,
+} from 'ag-test-utils';
 
-import { ClientSideRowModelModule, CsvExportModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
-import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    CellSpanModule,
+    ClientSideRowModelModule,
+    CsvExportModule,
+    GRAND_TOTAL_ROW_ID,
+    GridStateModule,
+    PaginationModule,
+    PinnedRowModule,
+    TextFilterModule,
+} from 'ag-grid-community';
+import type { GridApi, GridOptions, GridState, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
+import {
+    CellSelectionModule,
+    ContextMenuModule,
+    MasterDetailModule,
+    PivotModule,
+    RowGroupingModule,
+} from 'ag-grid-enterprise';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
@@ -32,6 +55,12 @@ describe('Manual pinned rows', () => {
             RowGroupingModule,
             PaginationModule,
             PivotModule,
+            TextFilterModule,
+            GridStateModule,
+            ContextMenuModule,
+            CellSelectionModule,
+            CellSpanModule,
+            MasterDetailModule,
         ],
     });
 
@@ -274,6 +303,28 @@ describe('Manual pinned rows', () => {
 
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
         await new GridRows(api, `grand total row can be pinned without _enableRowPinning_ final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 sport:"football"
+            ├── LEAF id:1 sport:"rugby"
+            ├── LEAF id:2 sport:"tennis"
+            ├── LEAF id:3 sport:"cricket"
+            ├── LEAF id:4 sport:"golf"
+            ├── LEAF id:5 sport:"swimming"
+            └── LEAF id:6 sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+        `);
+    });
+
+    test('`isRowPinned` returning null for the grand total row keeps it where `grandTotalRow` pins it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'pinnedBottom',
+            isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+        });
+        await new GridRows(api, 'isRowPinned null keeps the grand total pinned').check(`
+            PINNED_TOP id:t-top-1 sport:"rugby"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 sport:"football"
             ├── LEAF id:1 sport:"rugby"
@@ -882,7 +933,7 @@ describe('Manual pinned rows', () => {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', pivot: true, hide: true },
-                { field: 'sport' },
+                { field: 'sport', filter: true },
                 { field: 'value', aggFunc: 'sum' },
             ],
             rowData: [
@@ -962,6 +1013,18 @@ describe('Manual pinned rows', () => {
             expect(afterPivot.length).toBeLessThan(initialCount);
             expect(afterPivot.every((n) => n.group)).toBe(true); // only groups visible
         });
+        expect(api.getState().rowPinning?.top).toEqual(['row-group-country-A', 'leaf-A-rugby', 'leaf-B-rugby']);
+
+        api.setFilterModel({ sport: { filterType: 'text', type: 'notEqual', filter: 'tennis' } });
+        await new GridRows(api, 'pivot mode with a filter still hides pinned leaves').check(`
+            PINNED_TOP id:t-top-row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2024_value:1
+            ROOT id:ROOT_NODE_ID pivot_year_2024_value:4
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2024_value:1
+            │ └── LEAF hidden id:leaf-A-rugby pivot_year_2024_value:1
+            └─┬ LEAF_GROUP collapsed id:row-group-country-B ag-Grid-AutoColumn:"B" pivot_year_2024_value:3
+            · └── LEAF hidden id:leaf-B-rugby pivot_year_2024_value:3
+        `);
+        api.setFilterModel(null);
 
         // Source nodes for hidden leaves should NOT be destroyed — they're still pinned, just hidden.
         for (const leaf of leafClones) {
@@ -1058,5 +1121,723 @@ describe('Manual pinned rows', () => {
         `);
 
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
+    });
+
+    describe('pinned rows hidden by a filter or not loaded yet', () => {
+        const countryRowData = [
+            { id: '1', country: 'Ireland', sport: 'Rugby' },
+            { id: '2', country: 'France', sport: 'Football' },
+            { id: '3', country: 'Italy', sport: 'Cycling' },
+        ];
+        const notIreland = { country: { filterType: 'text', type: 'notEqual', filter: 'Ireland' } };
+        const countryGridOptions = (initialState?: GridState): GridOptions => ({
+            columnDefs: [{ field: 'country', filter: true }, { field: 'sport' }],
+            rowData: countryRowData,
+            getRowId: (params) => params.data.id,
+            enableRowPinning: true,
+            initialState,
+        });
+
+        afterEach(() => {
+            vi.restoreAllMocks();
+        });
+
+        test('stay in the saved state in pin order, and are restored in display order', async () => {
+            let api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['3', '1'], bottom: [] } })
+            );
+            api.setFilterModel(notIreland);
+            await new GridRows(api, 'filtered').check(`
+                PINNED_TOP id:t-top-3 country:"Italy" sport:"Cycling"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            const state = api.getState();
+            expect(state.rowPinning).toEqual({ top: ['3', '1'], bottom: [] });
+
+            api.destroy();
+            api = await gridsManager.createGridAndWait('myGrid', countryGridOptions(state));
+            expect(api.getState().rowPinning).toEqual({ top: ['3', '1'], bottom: [] });
+            api.setFilterModel(null);
+            await new GridRows(api, 'restored').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                PINNED_TOP id:t-top-3 country:"Italy" sport:"Cycling"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            expect(api.getState().rowPinning).toEqual({ top: ['3', '1'], bottom: [] });
+        });
+
+        test('are skipped by forEachPinnedRow while hidden, and come back in display order', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['3', '1'], bottom: [] } })
+            );
+            const visit = () => {
+                const displayed: [string | undefined, number | null, number | null][] = [];
+                api.forEachPinnedRow('top', (node) => displayed.push([node.id, node.rowIndex, node.rowTop]));
+                return displayed;
+            };
+            expect(visit()).toEqual([
+                ['t-top-1', 0, 0],
+                ['t-top-3', 1, 42],
+            ]);
+
+            api.setFilterModel(notIreland);
+            expect(visit()).toEqual([['t-top-3', 0, 0]]);
+
+            api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'France' } });
+            expect(visit()).toEqual([]);
+
+            api.setFilterModel(null);
+            expect(visit()).toEqual([
+                ['t-top-1', 0, 0],
+                ['t-top-3', 1, 42],
+            ]);
+        });
+
+        test('swap when one filter change hides one pinned row and reveals another', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['1', '2'], bottom: [] } })
+            );
+            api.setFilterModel(notIreland);
+            await new GridRows(api, 'Ireland hidden').check(`
+                PINNED_TOP id:t-top-2 country:"France" sport:"Football"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+
+            api.setFilterModel({ country: { filterType: 'text', type: 'notEqual', filter: 'France' } });
+            await new GridRows(api, 'France hidden').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+        });
+
+        test('are hidden from both containers by one filter change', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['1'], bottom: ['2'] } })
+            );
+            api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'Italy' } });
+            await new GridRows(api, 'only Italy passes').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+        });
+
+        test('rows not loaded yet stay in the saved state until they arrive', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                ...countryGridOptions({ rowPinning: { top: ['9', '1'], bottom: [] } }),
+                rowData: [],
+            });
+            expect(api.getState().rowPinning).toEqual({ top: ['9', '1'], bottom: [] });
+
+            api.applyTransaction({ add: countryRowData });
+            await new GridRows(api, 'rows loaded').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            // A row still waiting is listed after the pinned ones.
+            expect(api.getState().rowPinning).toEqual({ top: ['1', '9'], bottom: [] });
+        });
+
+        test('rows not loaded yet are pinned when rowData replaces the empty data', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                ...countryGridOptions({ rowPinning: { top: ['1'], bottom: [] } }),
+                rowData: [],
+            });
+            api.setGridOption('rowData', countryRowData);
+            await new GridRows(api, 'rows loaded').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            expect(api.getState().rowPinning).toEqual({ top: ['1'], bottom: [] });
+        });
+
+        test('rows not loaded yet are dropped by setState without rowPinning', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                ...countryGridOptions({ rowPinning: { top: ['1'], bottom: [] } }),
+                rowData: [],
+            });
+            api.setState({});
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+            api.setGridOption('rowData', countryRowData);
+            await new GridRows(api, 'rows loaded').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+        });
+
+        test('are unpinned when their source row is removed while hidden', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['1'], bottom: [] } })
+            );
+            api.setFilterModel(notIreland);
+            api.applyTransaction({ remove: [{ id: '1' }] });
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+            api.setFilterModel(null);
+            await new GridRows(api, 'filter cleared').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+        });
+
+        test('are exported from the body when skipping pinned duplicates', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['1', '2'], bottom: [] } })
+            );
+            api.setFilterModel(notIreland);
+            expect(api.getDataAsCsv({ suppressQuotes: true, skipPinnedRowDuplicates: true, exportedRows: 'all' })).toBe(
+                ['Country,Sport', 'France,Football', 'Ireland,Rugby', 'Italy,Cycling'].join('\r\n')
+            );
+        });
+
+        test('are fully unpinned by a row pinning reset, so they can be pinned elsewhere', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['1'], bottom: [] } })
+            );
+            api.setFilterModel(notIreland);
+            api.setState({ filter: { filterModel: notIreland } });
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+            api.setState({ rowPinning: { top: [], bottom: ['1'] } });
+            await new GridRows(api, 'pinned bottom').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+                PINNED_BOTTOM id:b-bottom-1 country:"Ireland" sport:"Rugby"
+            `);
+        });
+
+        test('stay hidden when pinned while the filter already hides them', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', countryGridOptions());
+            api.setFilterModel(notIreland);
+            api.setGridOption('isRowPinned', (node) => (node.id === '1' ? 'top' : null));
+            await new GridRows(api, 'pinned while filtered').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            expect(api.getState().rowPinning).toEqual({ top: ['1'], bottom: [] });
+
+            api.setFilterModel(null);
+            await new GridRows(api, 'filter cleared').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+        });
+
+        test('move to the other container when isRowPinned changes while hidden', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                ...countryGridOptions(),
+                isRowPinned: (node) => (node.id === '1' ? 'top' : null),
+            });
+            api.setFilterModel(notIreland);
+            api.setGridOption('isRowPinned', (node) => (node.id === '1' ? 'bottom' : null));
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: ['1'] });
+
+            api.setFilterModel(null);
+            await new GridRows(api, 'filter cleared').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+                PINNED_BOTTOM id:b-bottom-1 country:"Ireland" sport:"Rugby"
+            `);
+        });
+
+        test('pick up a theme row height change, displayed or hidden', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'myGrid',
+                countryGridOptions({ rowPinning: { top: ['1', '2'], bottom: [] } })
+            );
+            api.setFilterModel(notIreland);
+            // `stylesChanged` is internal with no public trigger; drive it as the theme code does.
+            const beans = (api.getRowNode('1') as any).beans;
+            vi.spyOn(beans.environment, 'getDefaultRowHeight').mockReturnValue(64);
+            beans.eventSvc.dispatchEvent({ type: 'stylesChanged', rowHeightChanged: true });
+            await waitFor(() => expect(api.getPinnedTopRow(0)?.rowHeight).toBe(64));
+            api.setFilterModel(null);
+            await waitFor(() => expect(api.getPinnedTopRow(0)?.id).toBe('t-top-1'));
+            expect(api.getPinnedTopRow(0)?.rowHeight).toBe(64);
+        });
+
+        test('group rows are dropped from the state when grouping is removed while hidden', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', filter: true },
+                ],
+                rowData: countryRowData,
+                getRowId: (params) => params.data.id,
+                enableRowPinning: true,
+                initialState: { rowPinning: { top: ['row-group-country-Ireland'], bottom: [] } },
+            });
+            api.setFilterModel({ sport: { filterType: 'text', type: 'notEqual', filter: 'Rugby' } });
+            api.setRowGroupColumns([]);
+            api.setFilterModel(null);
+            await new GridRows(api, 'ungrouped').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+        });
+    });
+
+    test('setState replaces the pinned rows rather than adding to them', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowId: (params) => params.data.sport,
+            initialState: { rowPinning: { top: ['rugby'], bottom: [] } },
+        });
+
+        let rugbyPinned = 0;
+        let swimmingPinned = 0;
+        api.getRowNode('rugby')!.addEventListener('rowPinned', () => ++rugbyPinned);
+        api.getRowNode('swimming')!.addEventListener('rowPinned', () => ++swimmingPinned);
+
+        // Swimming is listed in both containers, so it goes to the bottom.
+        api.setState({ rowPinning: { top: ['golf', 'swimming', 'tennis'], bottom: ['rugby', 'swimming'] } });
+        expect(rugbyPinned).toBe(1); // moved, not unpinned then pinned
+        expect(swimmingPinned).toBe(1);
+        await new GridRows(api, 'after setState').check(`
+            PINNED_TOP id:t-top-tennis sport:"tennis"
+            PINNED_TOP id:t-top-golf sport:"golf"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:football sport:"football"
+            ├── LEAF id:rugby sport:"rugby"
+            ├── LEAF id:tennis sport:"tennis"
+            ├── LEAF id:cricket sport:"cricket"
+            ├── LEAF id:golf sport:"golf"
+            ├── LEAF id:swimming sport:"swimming"
+            └── LEAF id:rowing sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rugby sport:"rugby"
+            PINNED_BOTTOM id:b-bottom-swimming sport:"swimming"
+        `);
+        expect(api.getState().rowPinning).toEqual({ top: ['golf', 'tennis'], bottom: ['rugby', 'swimming'] });
+    });
+
+    test('an isRowPinned change pinning, moving and unpinning rows fires one pinnedRowsChanged', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowId: (params) => params.data.sport,
+            isRowPinned: (node) => (node.id === 'rugby' || node.id === 'golf' ? 'top' : null),
+        });
+        let pinnedRowsChanged = 0;
+        api.addEventListener('pinnedRowsChanged', () => ++pinnedRowsChanged);
+
+        api.setGridOption('isRowPinned', (node) => (node.id === 'rugby' || node.id === 'tennis' ? 'bottom' : null));
+        await new GridRows(api, 'after isRowPinned change').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:football sport:"football"
+            ├── LEAF id:rugby sport:"rugby"
+            ├── LEAF id:tennis sport:"tennis"
+            ├── LEAF id:cricket sport:"cricket"
+            ├── LEAF id:golf sport:"golf"
+            ├── LEAF id:swimming sport:"swimming"
+            └── LEAF id:rowing sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rugby sport:"rugby"
+            PINNED_BOTTOM id:b-bottom-tennis sport:"tennis"
+        `);
+        // API listeners run asynchronously; one extra tick lets any second event land.
+        await waitFor(() => expect(pinnedRowsChanged).toBe(1));
+        await asyncSetTimeout(0);
+        expect(pinnedRowsChanged).toBe(1);
+    });
+
+    test('destroying the grid fires no pinning events', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowId: (params) => params.data.sport,
+            initialState: { rowPinning: { top: ['rugby'], bottom: ['golf'] } },
+        });
+        let events = 0;
+        api.addEventListener('pinnedRowsChanged', () => ++events);
+        api.getRowNode('rugby')!.addEventListener('rowPinned', () => ++events);
+
+        api.destroy();
+        await asyncSetTimeout(0);
+        expect(events).toBe(0);
+    });
+
+    describe('pinning through the context menu', () => {
+        let restoreOffsetParent: (() => void) | undefined;
+
+        afterEach(() => {
+            restoreOffsetParent?.();
+            restoreOffsetParent = undefined;
+        });
+
+        const createMenuGrid = (initialState?: GridState) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country' }, { field: 'sport' }],
+                rowData: [
+                    { id: '1', country: 'Ireland', sport: 'Rugby' },
+                    { id: '2', country: 'France', sport: 'Football' },
+                    { id: '3', country: 'Italy', sport: 'Cycling' },
+                ],
+                getRowId: (params) => params.data.id,
+                enableRowPinning: true,
+                cellSelection: true,
+                initialState,
+                getContextMenuItems: () => ['pinTop', 'pinBottom', 'unpinRow'],
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            return api;
+        };
+
+        // the pinned row font weight etc. reach a spanned cell only through its own spanned row
+        const SPANNED_PIN_CLASSES = { 't-top-1': ['ag-row-pinned'], '1': ['ag-row-pinned-source'] };
+        const spannedRowPinClasses = () =>
+            Object.fromEntries(
+                Array.from(document.querySelectorAll('#myGrid .ag-spanned-row'), (row) => [
+                    row.getAttribute('row-id'),
+                    Array.from(row.classList).filter((c) => c === 'ag-row-pinned' || c === 'ag-row-pinned-source'),
+                ])
+            );
+
+        const rightClickCell = async (rowId: string) => {
+            const cell = await waitFor(() => {
+                const found = document.querySelector<HTMLElement>(`#myGrid .ag-row[row-id="${rowId}"] .ag-cell`);
+                expect(found).not.toBeNull();
+                return found!;
+            });
+            await userEvent.pointer({ keys: '[MouseRight]', target: cell });
+        };
+
+        test('pins a row, moves it to the other container and unpins it', async () => {
+            const api = createMenuGrid();
+            await rightClickCell('1');
+            await clickMenuOption('Pin to Top');
+            await new GridRows(api, 'pinned top').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+
+            await rightClickCell('t-top-1');
+            await clickMenuOption('Pin to Bottom');
+            await new GridRows(api, 'moved bottom').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+                PINNED_BOTTOM id:b-bottom-1 country:"Ireland" sport:"Rugby"
+            `);
+
+            await rightClickCell('b-bottom-1');
+            await clickMenuOption('Unpin Row');
+            await new GridRows(api, 'unpinned').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+        });
+
+        test('pinning a spanned cell pins every row the span covers', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', spanRows: true }, { field: 'sport' }],
+                rowData: [
+                    { id: '1', country: 'Ireland', sport: 'Rugby' },
+                    { id: '2', country: 'Ireland', sport: 'Hurling' },
+                    { id: '3', country: 'Italy', sport: 'Cycling' },
+                ],
+                getRowId: (params) => params.data.id,
+                enableRowPinning: true,
+                enableCellSpan: true,
+                getContextMenuItems: () => ['pinTop'],
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            const spannedCell = await waitFor(() => {
+                const found = document.querySelector<HTMLElement>('#myGrid .ag-spanned-cell-wrapper .ag-cell');
+                expect(found).not.toBeNull();
+                return found!;
+            });
+            await userEvent.pointer({ keys: '[MouseRight]', target: spannedCell });
+            await clickMenuOption('Pin to Top');
+            await new GridRows(api, 'span pinned').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland"↧2 sport:"Rugby"
+                PINNED_TOP id:t-top-2 country:"Ireland"↥ sport:"Hurling"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland"↧2 sport:"Rugby"
+                ├── LEAF id:2 country:"Ireland"↥ sport:"Hurling"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            await waitFor(() => expect(spannedRowPinClasses()).toEqual(SPANNED_PIN_CLASSES));
+        });
+
+        test('spanned cells of a row pinned from initial state carry the pinned row styling', async () => {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', spanRows: true }, { field: 'sport' }],
+                rowData: [
+                    { id: '1', country: 'Ireland', sport: 'Rugby' },
+                    { id: '2', country: 'Ireland', sport: 'Hurling' },
+                    { id: '3', country: 'Italy', sport: 'Cycling' },
+                ],
+                getRowId: (params) => params.data.id,
+                enableRowPinning: true,
+                enableCellSpan: true,
+                initialState: { rowPinning: { top: ['1', '2'], bottom: [] } },
+            });
+            await waitFor(() => expect(spannedRowPinClasses()).toEqual(SPANNED_PIN_CLASSES));
+        });
+
+        test('pinning a cell range that includes an already pinned row pins only the others', async () => {
+            const api = createMenuGrid({ rowPinning: { top: ['1'], bottom: [] } });
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            api.addCellRange({
+                rowStartIndex: 0,
+                rowStartPinned: 'top',
+                rowEndIndex: 1,
+                rowEndPinned: null,
+                columns: ['country'],
+            });
+            api.showContextMenu();
+            await clickMenuOption('Pin to Top');
+            await new GridRows(api, 'range pinned top').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                PINNED_TOP id:t-top-2 country:"France" sport:"Football"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            expect(api.getState().rowPinning).toEqual({ top: ['1', '2'], bottom: [] });
+        });
+
+        test('unpinning a cell range over pinned rows unpins every row in it', async () => {
+            const api = createMenuGrid({ rowPinning: { top: ['1', '2'], bottom: [] } });
+            await new GridRows(api, 'initial').check(`
+                PINNED_TOP id:t-top-1 country:"Ireland" sport:"Rugby"
+                PINNED_TOP id:t-top-2 country:"France" sport:"Football"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 country:"Ireland" sport:"Rugby"
+                ├── LEAF id:2 country:"France" sport:"Football"
+                └── LEAF id:3 country:"Italy" sport:"Cycling"
+            `);
+            api.addCellRange({
+                rowStartIndex: 0,
+                rowStartPinned: 'top',
+                rowEndIndex: 1,
+                rowEndPinned: 'top',
+                columns: ['country'],
+            });
+            api.showContextMenu();
+            await clickMenuOption('Unpin Row');
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+        });
+    });
+
+    test('re-running an unchanged isRowPinned leaves the pinned rows alone', async () => {
+        const isRowPinned = (node: IRowNode) => (node.data?.sport === 'rugby' ? 'top' : null);
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowId: (params) => params.data.sport,
+            isRowPinned,
+        });
+        const pinned = api.getPinnedTopRow(0);
+        let rowPinnedEvents = 0;
+        api.getRowNode('rugby')!.addEventListener('rowPinned', () => ++rowPinnedEvents);
+
+        api.setGridOption('isRowPinned', (node) => isRowPinned(node));
+        expect(api.getPinnedTopRow(0)).toBe(pinned);
+        expect(rowPinnedEvents).toBe(0);
+    });
+
+    test('a row id listed twice in the state is pinned once', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowId: (params) => params.data.sport,
+            initialState: { rowPinning: { top: ['rugby', 'rugby'], bottom: [] } },
+        });
+        await new GridRows(api, 'pinned once').check(`
+            PINNED_TOP id:t-top-rugby sport:"rugby"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:football sport:"football"
+            ├── LEAF id:rugby sport:"rugby"
+            ├── LEAF id:tennis sport:"tennis"
+            ├── LEAF id:cricket sport:"cricket"
+            ├── LEAF id:golf sport:"golf"
+            ├── LEAF id:swimming sport:"swimming"
+            └── LEAF id:rowing sport:"rowing"
+        `);
+        expect(api.getState().rowPinning).toEqual({ top: ['rugby'], bottom: [] });
+    });
+
+    test('the grand total row id in the state pins the grand total row', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }],
+            rowData: [
+                { country: 'Ireland', sport: 'Rugby' },
+                { country: 'France', sport: 'Football' },
+            ],
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } }, ['rowGroup', 'columnVisibility']);
+        await waitFor(() => expect(api.getPinnedTopRow(0)?.footer).toBe(true));
+        // A model update re-derives the grand total's place, so it must have been pinned through `grandTotalRow`.
+        api.refreshClientSideRowModel('aggregate');
+        await new GridRows(api, 'grand total pinned top').check(`
+            PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total "
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF hidden id:0 country:"Ireland" sport:"Rugby"
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF hidden id:1 country:"France" sport:"Football"
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total "
+        `);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+    });
+
+    test('removing row grouping unpins every pinned group row with one pinnedRowsChanged', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }],
+            rowData: [
+                { country: 'Ireland', sport: 'Rugby' },
+                { country: 'France', sport: 'Football' },
+            ],
+            enableRowPinning: true,
+            initialState: {
+                rowPinning: { top: ['row-group-country-Ireland'], bottom: ['row-group-country-France'] },
+            },
+        });
+        await new GridRows(api, 'grouped').check(`
+            PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF hidden id:0 country:"Ireland" sport:"Rugby"
+            └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF hidden id:1 country:"France" sport:"Football"
+            PINNED_BOTTOM id:b-bottom-row-group-country-France ag-Grid-AutoColumn:"France"
+        `);
+        let pinnedRowsChanged = 0;
+        api.addEventListener('pinnedRowsChanged', () => ++pinnedRowsChanged);
+
+        api.setRowGroupColumns([]);
+        await new GridRows(api, 'ungrouped').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"Ireland" sport:"Rugby"
+            └── LEAF id:1 country:"France" sport:"Football"
+        `);
+        // API listeners run asynchronously; one extra tick lets any second event land.
+        await waitFor(() => expect(pinnedRowsChanged).toBe(1));
+        await asyncSetTimeout(0);
+        expect(pinnedRowsChanged).toBe(1);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+    });
+
+    test('unpinning a master row keeps its detail row', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'sport' }],
+            rowData: [
+                { id: '1', sport: 'rugby', orders: [{ orderId: 'A' }] },
+                { id: '2', sport: 'golf', orders: [] },
+            ],
+            getRowId: (params) => params.data.id,
+            enableRowPinning: true,
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'orderId' }] },
+                getDetailRowData: (params: any) => params.successCallback(params.data.orders),
+            },
+        });
+        const master = api.getRowNode('1') as RowNode;
+        api.setRowNodeExpanded(master, true);
+        await waitFor(() => expect(master.detailNode).toBeDefined());
+        const detailNode = master.detailNode!;
+
+        // Pinned after expanding, so the pinned copy shares the detail row.
+        api.setGridOption('isRowPinned', (node) => (node.id === '1' ? 'top' : null));
+        expect((api.getPinnedTopRow(0) as RowNode).detailNode).toBe(detailNode);
+        api.setGridOption('isRowPinned', () => null);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(detailNode.destroyed).toBe(false);
+        expect(master.detailNode).toBe(detailNode);
+    });
+
+    test('setState with unchanged pinning keeps the pinned rows and their nodes', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowId: (params) => params.data.sport,
+            initialState: { rowPinning: { top: ['rugby'], bottom: ['golf'] } },
+        });
+        const pinnedTop = api.getPinnedTopRow(0);
+        let rowPinnedEvents = 0;
+        api.getRowNode('rugby')!.addEventListener('rowPinned', () => ++rowPinnedEvents);
+
+        api.setState({ rowPinning: { top: ['rugby'], bottom: ['golf'] } });
+        expect(api.getPinnedTopRow(0)).toBe(pinnedTop);
+        expect(pinnedTop?.destroyed).toBe(false);
+        expect(rowPinnedEvents).toBe(0);
+        expect(api.getState().rowPinning).toEqual({ top: ['rugby'], bottom: ['golf'] });
+    });
+
+    test('a pinned grand total row keeps its node when row grouping changes', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }],
+            rowData: [
+                { country: 'Ireland', sport: 'Rugby' },
+                { country: 'France', sport: 'Football' },
+            ],
+            enableRowPinning: true,
+            grandTotalRow: 'pinnedBottom',
+        });
+        const grandTotal = api.getPinnedBottomRow(0);
+        expect(grandTotal?.footer).toBe(true);
+
+        api.setRowGroupColumns(['sport']);
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.footer).toBe(true));
+        expect(api.getPinnedBottomRow(0)).toBe(grandTotal);
     });
 });

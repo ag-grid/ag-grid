@@ -52,8 +52,8 @@ export function _getAgVersionsText(registeredModules: Module[]): string {
 }
 
 /**
- * Logs the version of each AG package in use. Called once per grid, before any bean exists, so that
- * mismatched versions across the packages are visible as the first thing `debug` mode prints.
+ * Logs the version of each AG package in use. Called once per grid, so that mismatched versions across
+ * the packages are visible in `debug` mode.
  */
 export function _logVersionIfDebug(debug: boolean | undefined, registeredModules: Module[]): void {
     if (debug) {

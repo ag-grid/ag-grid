@@ -303,18 +303,19 @@ export class CartesianAxisPanel extends Component {
     private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgSliderParams {
         const chartOptions = chartAxisThemeOverrides.getChartOptions();
         // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line width is
-        // changed, the value for `line.enabled` is inferred based on the whether the `line.width` value is non-zero.
+        // changed, the value for `line.enabled` is inferred based on the whether the `line.strokeWidth` value is
+        // non-zero.
         const getAxisLineWidth = (): number | null => {
             const isAxisLineEnabled = chartOptions.getValue<boolean>('line.enabled');
             if (!isAxisLineEnabled) {
                 return null;
             }
-            return chartOptions.getValue<number>('line.width');
+            return chartOptions.getValue<number>('line.strokeWidth');
         };
         const setAxisLineWidth = (value: number | null): void => {
             chartOptions.setValues<number | boolean>([
                 { expression: 'line.enabled', value: value != null },
-                { expression: 'line.width', value: value ?? 0 },
+                { expression: 'line.strokeWidth', value: value ?? 0 },
             ]);
         };
         const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParamsWithoutValueParams(

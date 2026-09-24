@@ -107,16 +107,22 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private calculateScrollVisibilityState(gridBodyCtrl: GridBodyCtrl): ScrollVisibilityState {
+        // Nothing writes between the two evaluations below, so one read serves both.
+        const viewportClientHeight = gridBodyCtrl.eGridViewport.clientHeight;
         // Resolve both axes from the layout without a horizontal scrollbar. Otherwise two scrollbars that
         // only overflow because of each other can become a stable, but incorrect, visibility state.
-        const verticalScrollShowingWithoutHorizontal = this.calculateVerticalScrollShowing(gridBodyCtrl, false);
+        const verticalScrollShowingWithoutHorizontal = this.calculateVerticalScrollShowing(
+            gridBodyCtrl,
+            false,
+            viewportClientHeight
+        );
         const horizontalScrollShowing = this.calculateHorizontalScrollShowing(
             gridBodyCtrl,
             verticalScrollShowingWithoutHorizontal
         );
         const verticalScrollShowing =
             verticalScrollShowingWithoutHorizontal ||
-            (horizontalScrollShowing && this.calculateVerticalScrollShowing(gridBodyCtrl, true));
+            (horizontalScrollShowing && this.calculateVerticalScrollShowing(gridBodyCtrl, true, viewportClientHeight));
 
         return {
             horizontalScrollShowing,
@@ -124,7 +130,11 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         };
     }
 
-    private calculateVerticalScrollShowing(gridBodyCtrl: GridBodyCtrl, horizontalScrollShowing: boolean): boolean {
+    private calculateVerticalScrollShowing(
+        gridBodyCtrl: GridBodyCtrl,
+        horizontalScrollShowing: boolean,
+        viewportClientHeight: number
+    ): boolean {
         if (this.gos.get('alwaysShowVerticalScroll')) {
             return true;
         }
@@ -136,7 +146,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         // clientHeight already excludes an applied fake horizontal scrollbar, so restore that space before
         // evaluating the requested visibility state.
         const viewportHeightWithoutHorizontalScroll =
-            gridBodyCtrl.eGridViewport.clientHeight + this.getAppliedHorizontalScrollbarLayoutHeight();
+            viewportClientHeight + this.getAppliedHorizontalScrollbarLayoutHeight();
         const viewportHeight =
             viewportHeightWithoutHorizontalScroll - this.getHorizontalScrollbarLayoutHeight(horizontalScrollShowing);
         const bodyViewportHeight = gridBodyCtrl.getBodyViewportHeight(viewportHeight);
@@ -166,16 +176,23 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             return true;
         }
 
-        return (
-            gridBodyCtrl.getHorizontalContentWidth(verticalScrollShowing) - gridBodyCtrl.getHorizontalViewportWidth() >
-            0.5
+        // One width for both the overflow check and the comparison, or they can disagree about the viewport.
+        const viewportWidth = gridBodyCtrl.getReportedViewportWidth();
+        const pinnedColumnsOverflowing = gridBodyCtrl.isPinnedWidthOverflowingViewport(
+            viewportWidth,
+            verticalScrollShowing
         );
+        const contentWidth = gridBodyCtrl.getHorizontalContentWidth(pinnedColumnsOverflowing, verticalScrollShowing);
+        return contentWidth - viewportWidth > 0.5;
     }
 
     private calculateScrollGapState(gridBodyCtrl: GridBodyCtrl, verticalScrollShowing: boolean): ScrollGapState {
         const { rowContainerHeight } = this.beans;
         const horizontalContentWidth = gridBodyCtrl.getColumnsWidth();
-        const horizontalViewportWidth = gridBodyCtrl.getViewportWidthWithoutScrollbar(verticalScrollShowing);
+        const horizontalViewportWidth = gridBodyCtrl.getViewportWidthWithoutScrollbar(
+            gridBodyCtrl.getReportedViewportWidth(),
+            verticalScrollShowing
+        );
         const verticalContentHeight = rowContainerHeight.getAdjustedUiContainerHeight() ?? 0;
         const verticalViewportHeight = gridBodyCtrl.getBodyViewportHeight(gridBodyCtrl.eGridViewport.clientHeight);
 

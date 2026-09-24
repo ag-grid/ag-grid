@@ -3,6 +3,7 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import { _laneOfPinned } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
@@ -167,12 +168,12 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         } else {
             column.pinned = null;
         }
+        column.pinnedLane = _laneOfPinned(column.pinned);
         column.dispatchStateUpdatedEvent('pinned');
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
-        const pinned = column.getPinned();
-        if (pinned) {
+        if (column.pinnedLane !== 1) {
             const { leftWidth, rightWidth } = this;
 
             const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;

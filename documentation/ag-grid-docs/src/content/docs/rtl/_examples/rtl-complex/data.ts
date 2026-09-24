@@ -1,4 +1,4 @@
-import { AG_GRID_LOCALE_EG, AG_GRID_LOCALE_IL } from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_AR_EG, AG_GRID_LOCALE_HE_IL } from '@ag-grid-community/locale';
 
 export interface LanguageConfig {
     localeText: Record<string, string> | undefined;
@@ -259,7 +259,7 @@ const ENGLISH: LanguageConfig = {
 };
 
 const ARABIC: LanguageConfig = {
-    localeText: AG_GRID_LOCALE_EG,
+    localeText: AG_GRID_LOCALE_AR_EG,
     enableRtl: true,
     headers: {
         group: 'مجموعة',
@@ -481,7 +481,7 @@ const ARABIC: LanguageConfig = {
 };
 
 const HEBREW: LanguageConfig = {
-    localeText: AG_GRID_LOCALE_IL,
+    localeText: AG_GRID_LOCALE_HE_IL,
     enableRtl: true,
     headers: {
         group: 'קבוצה',

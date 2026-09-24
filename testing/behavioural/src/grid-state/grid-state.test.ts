@@ -2182,7 +2182,7 @@ describe('StateService - Grid State Management', () => {
                     pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
                 })
             );
-            // Print State must report the restored filter, not undefined.
+            // Print Grid State must report the restored filter, not undefined.
             await waitFor(() =>
                 expect(api.getState().filter?.filterModel).toEqual({
                     pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },

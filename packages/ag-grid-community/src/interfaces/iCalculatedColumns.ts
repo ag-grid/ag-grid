@@ -8,7 +8,7 @@ import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
-export type CalculatedColumnApplyMode = 'live' | 'deferred';
+type CalculatedColumnApplyMode = 'live' | 'deferred';
 
 export interface CalculatedColumnsOptions {
     /**

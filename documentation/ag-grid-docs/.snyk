@@ -1,6 +1,70 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-19635226:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:46:00.162Z
+  SNYK-JS-UNDICI-19635222:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:41.099Z
+  SNYK-JS-UNDICI-19635216:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:26.334Z
+  SNYK-JS-UNDICI-19635210:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:10.348Z
+  SNYK-JS-UNDICI-19635208:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:48.362Z
+  SNYK-JS-UNDICI-19635206:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:31.659Z
+  SNYK-JS-SMOLTOML-19643959:
+    - '@astrojs/markdoc@1.0.4 > @astrojs/markdown-remark@7.1.1 > smol-toml@1.6.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:43:36.660Z
+    - astro@6.1.9 > @astrojs/markdown-remark@7.1.1 > smol-toml@1.6.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:43:36.654Z
+    - astro@6.1.9 > smol-toml@1.6.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:43:36.652Z
+  SNYK-JS-ASTRO-19652369:
+    - astro@6.1.9:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:42:19.217Z
+  SNYK-JS-UNDICI-19635218:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:51.034Z
   SNYK-JS-ESBUILD-17750822:
     - '@astrojs/react@5.0.4 > vite@7.3.2 > esbuild@0.27.7':
         reason: Used in build & dev - not included in final production build

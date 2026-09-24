@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_PK = {
+export const AG_GRID_LOCALE_UR_PK = {
     // Set Filter
     selectAll: '(سب منتخب کریں)',
     selectAllSearchResults: '(تمام تلاش کے نتائج منتخب کریں)',
@@ -919,3 +919,6 @@ export const AG_GRID_LOCALE_PK = {
     deleteNote: 'نوٹ ہٹائیں',
     notePlaceholder: 'ایک نوٹ شامل کریں...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_UR_PK` instead. */
+export const AG_GRID_LOCALE_PK = AG_GRID_LOCALE_UR_PK;

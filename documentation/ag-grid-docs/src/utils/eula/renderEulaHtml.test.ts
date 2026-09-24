@@ -27,6 +27,16 @@ describe('renderEulaHtml', () => {
         expect(html).toContain('<strong>BY USING OUR SOFTWARE, YOU CONFIRM THAT YOU ACCEPT');
     });
 
+    it('puts each clause on its own line so the generated licence diffs per clause', () => {
+        const lines = html.split('\n');
+        const clauseLines = lines.filter((line) => /^<p>\d+\.\d+ /.test(line));
+        expect(clauseLines.length).toBeGreaterThan(50);
+        expect(clauseLines.some((line) => line.startsWith('<p>2.6 '))).toBe(true);
+        expect(clauseLines.some((line) => line.startsWith('<p>5.3 '))).toBe(true);
+        // Inline emphasis stays on the same line as its clause.
+        expect(html).toContain('<p>1.1 <em>Definitions</em></p>');
+    });
+
     it('renders the click-to-accept notice for the ecommerce iframe', () => {
         const clickwrap = renderEulaHtml(eulaSource, { content: EULA_PRESENTATIONS.checkout });
         expect(clickwrap).toContain('<strong>BY CLICKING ON THE “I ACCEPT” BUTTON BELOW, YOU CONFIRM THAT YOU ACCEPT');
@@ -50,7 +60,6 @@ describe('renderEulaHtml', () => {
         // The checkout presents the current agreement only, so no version or last-updated lines either.
         expect(embedded).not.toContain('<h4>Version: 40</h4>');
         expect(embedded).not.toContain('<h4>Last Updated:');
-        expect(embedded).not.toContain('<hr>\n<p>');
         expect(embedded).toContain(
             '<body>\n<p><strong>PLEASE READ THESE LICENCE TERMS (v40) CAREFULLY BEFORE DOWNLOADING ANY SOFTWARE:</strong></p>'
         );

@@ -1,5 +1,5 @@
 import type { IPopupService } from 'ag-stack';
-import { BasePopupService } from 'ag-stack';
+import { BasePopupService, _getDocument } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
@@ -24,7 +24,7 @@ export class PopupService
     implements NamedBean, IPopupService<PopupPositionParams>
 {
     protected getDefaultPopupParent(): HTMLElement {
-        return this.beans.ctrlsSvc.get('gridCtrl').getGui();
+        return this.beans.ctrlsSvc.get('gridCtrl')?.getGui() ?? _getDocument(this.beans).body;
     }
 
     public callPostProcessPopup(

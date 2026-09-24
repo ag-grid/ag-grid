@@ -263,9 +263,8 @@ const MISSING_MODULE_DEBOUNCE_MS = 50;
 
 /**
  * The context a single missing-module report carries, matching the id-200 message params.
- * @knipIgnore Param type of the exported `_reportMissingModule`; also used in tests.
  */
-export interface MissingModuleReportParams {
+interface MissingModuleReportParams {
     reasonOrId: string | keyof MissingModuleErrors;
     moduleName: ValidationModuleName | ValidationModuleName[];
     gridScoped: boolean;

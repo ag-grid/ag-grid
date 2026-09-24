@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_HK = {
+export const AG_GRID_LOCALE_ZH_HK = {
     // Set Filter
     selectAll: '(全選)',
     selectAllSearchResults: '(選擇所有搜索結果)',
@@ -917,3 +917,6 @@ export const AG_GRID_LOCALE_HK = {
     deleteNote: '移除備註',
     notePlaceholder: '新增備註...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_ZH_HK` instead. */
+export const AG_GRID_LOCALE_HK = AG_GRID_LOCALE_ZH_HK;

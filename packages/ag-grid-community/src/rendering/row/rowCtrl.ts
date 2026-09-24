@@ -14,7 +14,7 @@ import {
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { RowStyle } from '../../entities/gridOptions';
 import { _getAbsoluteRowIndex } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
@@ -478,9 +478,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
-    /** Print layout has no pinned lanes, so every cell renders in the scrolling lane. */
-    public getCellLane(cell: CellCtrl): ColumnPinnedType {
-        return this.printLayout ? null : cell.column.getPinned();
+    /** Print layout has no pinned lanes, so everything scrolls. */
+    public laneFor(column: AgColumn): ColumnLane {
+        if (this.printLayout) {
+            return 1;
+        }
+        return column.pinnedLane;
     }
 
     public setEmbeddedSectionHasContent(section: HorizontalSection, hasContent: boolean): void {

@@ -2,11 +2,11 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { _laneOfPinned } from '../../entities/agColumn';
 import { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ColumnModel } from '../columnModel';
-import type { ColumnViewportService } from '../columnViewportService';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
 import { ColWrapperCache } from './colWrapperCache';
 
@@ -14,14 +14,16 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     beanName = 'colGroupSvc' as const;
 
     private colModel: ColumnModel;
-    private colViewport: ColumnViewportService;
+
+    /** Bumped whenever a build moves a column or group under a different parent. Group instances are
+     *  reused across builds, so it stays put when the structure does; readers only compare it. */
+    public groupVersion = 0;
 
     /** Cache service-column wrappers (auto-group/selection/row-numbers) across `refreshCols` by `(col, depth)`. */
     public wrapperCache: ColWrapperCache;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.colViewport = beans.colViewport;
         this.wrapperCache = new ColWrapperCache(beans);
     }
 
@@ -41,7 +43,6 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         isStandaloneStructure: boolean = false
     ): (AgColumn | AgColumnGroup)[] {
         const setParents = !isStandaloneStructure;
-        const colViewport = this.colViewport;
 
         // Fast path: if the first leaf has `originalParent === null`, treat all leaves as ungrouped and return columns.
         if (columns.length === 0 || columns[0].originalParent === null) {
@@ -50,7 +51,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                     const col = columns[i];
                     if (col.parent) {
                         col.parent = null;
-                        colViewport.colsWithinViewportHash = '';
+                        ++this.groupVersion;
                     }
                 }
             }
@@ -80,7 +81,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                         topLevelResultCols.push(node);
                         if (setParents && node.parent !== null) {
                             node.parent = null;
-                            colViewport.colsWithinViewportHash = '';
+                            ++this.groupVersion;
                         }
                     }
                 } else {
@@ -92,7 +93,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                     if (reuse && reuse.buildToken !== buildToken) {
                         reuse.buildToken = buildToken;
                         reuse.pinned = pinned;
-                        reuse.parent = null;
+                        reuse.pinnedLane = _laneOfPinned(pinned);
                         reuse.children = null;
                         // reset to [] (not null) — an empty part keeps [] after recompute, matching released behaviour
                         reuse.displayedChildren = [];
@@ -121,7 +122,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                         groupChildren.push(node);
                         if (setParents && node.parent !== newGroup) {
                             node.parent = newGroup;
-                            colViewport.colsWithinViewportHash = '';
+                            ++this.groupVersion;
                         }
                     }
                     nextLevel.push(newGroup);

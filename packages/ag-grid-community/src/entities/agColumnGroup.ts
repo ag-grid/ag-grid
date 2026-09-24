@@ -9,7 +9,8 @@ import type {
     ColumnPinnedType,
     HeaderColumnId,
 } from '../interfaces/iColumn';
-import type { AgColumn } from './agColumn';
+import type { AgColumn, ColumnLane } from './agColumn';
+import { _laneOfPinned } from './agColumn';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type { AbstractColDef, ColGroupDef, HeaderLocation } from './colDef';
 
@@ -43,6 +44,9 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     /** Most recent build token that claimed this instance — sweeps use it to spot orphans. */
     public buildToken: number = 0;
 
+    /** `pinned` resolved to a lane; written wherever `pinned` is. */
+    public pinnedLane: ColumnLane;
+
     constructor(
         public readonly providedColumnGroup: AgProvidedColumnGroup,
         public readonly groupId: string,
@@ -50,6 +54,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         public pinned: ColumnPinnedType
     ) {
         super();
+        this.pinnedLane = _laneOfPinned(pinned);
         this.uniqueId = `${groupId}_${partId}` as HeaderColumnId;
         this.colIdSanitised = _escapeString(this.uniqueId)!;
     }

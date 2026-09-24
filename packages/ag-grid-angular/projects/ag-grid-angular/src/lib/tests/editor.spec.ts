@@ -115,7 +115,7 @@ describe('Editor Component', () => {
         });
 
         const instances = component.agGrid.api.getCellEditorInstances();
-        expect(instances.length).toEqual(1);
+        expect(instances).toHaveSize(1);
 
         const editorComponent = instances[0] as EditorComponent;
         editorComponent.setValue(100);
@@ -124,7 +124,7 @@ describe('Editor Component', () => {
         await fixture.whenStable();
 
         const cellElements = fixture.nativeElement.querySelectorAll('.ag-cell-value');
-        expect(cellElements.length).toEqual(3);
+        expect(cellElements).toHaveSize(3);
 
         expect(cellElements[0].textContent).toEqual('Test Name');
         expect(cellElements[1].textContent).toEqual('100');

@@ -2,99 +2,188 @@
 title: "Grid State"
 ---
 
-This section covers saving and restoring the grid state, such as the filter model, selected rows, etc.
+Grid State is a serialisable object capturing a user's changes to the grid, such as sort, filters and column order. Save it to restore a view between sessions, or switch between saved configurations on demand.
 
 ## Saving and Restoring State
 
-The following buttons log saving and restoring state to the developer console.
+The following example shows how the current grid state can be saved and restored.
+
+- Try sorting / re-sizing / hiding a column / apply a filter / scroll the grid / change the current page
+- Click **Recreate with State** to destroy the grid and re-create using the saved state. Note how the grid returns to the same state.
+- Alternatively click **Save State**, then **Recreate without State** to start from the column definitions, and **Set State** to restore the saved state.
 
 {% gridExampleRunner title="Grid State" name="grid-state"  exampleHeight=630 /%}
 
-The initial state is provided via the grid option `initialState`. It is only read once when the grid is created.
+### Saving State
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    initialState: {
-        filter: {
-            filterModel: {
-                year: {
-                    filterType: 'set',
-                    values: ['2012'],
-                }
-            }
-        },
-        columnVisibility: {
-            hiddenColIds: ['athlete'],
-        },
-        rowGroup: {
-            groupColIds: ['athlete'],
-        }
-    }
-}
-```
-
-The current grid state can be retrieved by listening to the state updated event, which is fired with the latest state when it changes, or via `api.getState()`.
-
-The state is also passed in the [Grid Pre-Destroyed Event](./grid-lifecycle/#grid-pre-destroyed), which can be used to get the state when the grid is destroyed.
+The current grid state can be retrieved from the `stateUpdated` event, which fires whenever the state changes. The state is also available on the [Grid Pre-Destroyed Event](./grid-lifecycle/#grid-pre-destroyed), which can be used to get the state when the grid is destroyed.
 
 {% apiDocumentation source="grid-events/events.json" section="gridLifecycle" names=["stateUpdated", "gridPreDestroyed"] /%}
 
-## State Contents
+The state can also be retrieved on demand via the `gridApi.getState()` method.
 
-The grid state is made up of the sections below, each of which can be provided or omitted independently. If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
-
-`partialColumnState` controls _which_ column state sections you supply, not whether those sections may themselves be partial. Any section you include must match its documented shape.
-
-The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
-
-The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
-
-{% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" /%}
+{% apiDocumentation source="grid-api/api.json" section="gridState" names=["getState"] /%}
 
 {% note %}
-When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
-additional configuration is required:
-
-- For the Server Side Row Model - set the `serverSideInitialRowCount` property to a value which includes the rows to be shown.
-- For the Infinite Row Model - set the `infiniteInitialRowCount` property to a value which includes the rows to be shown.
-
+It is the application's responsibility to persist the grid state to a suitable location.
 {% /note %}
 
-## Column and Group IDs
+### Sparse State Object
 
-{% warning %}
-Give every column a `colId` or a `field`, and every column group a `groupId`. Without them, state can be restored onto the wrong column.
-{% /warning %}
+The state object only records what differs from the grid's defaults. Taking sort as an example, `sortModel` lists only the sorted columns, and if no column is sorted the `sort` property is omitted entirely.
 
-Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. These IDs are the only link between a saved state and the columns it describes, so they need to mean the same thing when the state is restored as they did when it was saved.
+```js
+// State of grid sorted by gold.
+{
+    version: '{% $agGridVersion %}',
+    sort: { sortModel: [{ colId: 'gold', sort: 'desc' }] },
+    columnOrder: { orderedColIds: ['athlete', 'gold', 'silver', 'country'] },
+}
 
-A column that provides neither `colId` nor `field` - one using only a `valueGetter`, for example - is given a positional ID instead. That ID follows the column's position in `columnDefs` rather than the column itself. If the definitions are reordered between saving and restoring, each column's state is applied to whichever column now occupies its old position.
+// State after the user cleared the sort. The sort property is absent, not empty.
+{
+    version: '{% $agGridVersion %}',
+    columnOrder: { orderedColIds: ['athlete', 'gold', 'silver', 'country'] },
+}
+```
 
-This affects every column state section: sizes, sort, pinning, visibility, order and header names. A restored grid can silently show another column's width, or a header the user renamed on the wrong column.
+Because of this, an absent property means "none" rather than "unspecified". Restoring the second state must leave the grid unsorted. This matters when restoring a state that supplies only some of the column state properties, as covered in [Column State and Column Definitions](#column-state-and-column-definitions).
 
-Column groups behave the same way. A group definition without a `groupId` is given a generated ID which changes when the column definitions change, so the open / closed state of that group may not be restored.
+### Restore via Initial State
 
-## Setting State
+To restore a saved state to a new grid, pass the saved [GridState](#gridstate) to the grid option `initialState`. It is read once on creation, applying filters and groups before any data renders, so there is no flash of unfiltered or ungrouped data.
 
-The best way to restore grid state is via initial state as described above. However, it is also possible to restore state on an existing grid via `api.setState(state)`.
+If cell data types are inferred and the row data is empty or not yet set, the filter state is applied once row data is added. To apply it straight away, set `cellDataType: false` on the default column definition, or provide a cell data type for every column.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // A state previously saved by the application
+    initialState: savedState,
+}
+```
+
+To exclude a property from being restored, for example the `scroll` position, remove it from the `initialState` object. The grid then uses its default for that property.
+
+```js
+// Restore everything except the scroll position and the row selection.
+const { scroll, rowSelection, ...stateToRestore } = savedState;
+
+const gridOptions = {
+    initialState: stateToRestore,
+};
+```
+
+Column state properties are the exception. When `initialState` contains any of them, an omitted one is reset, overriding the matching value in the column definitions. See [Column State and Column Definitions](#column-state-and-column-definitions).
+
+### Restore via API
+
+To restore state on an existing grid use the `api.setState(state)` method. This enables, for example, a user to save multiple configurations of the same grid and switch between them on demand.
+
+```js
+// Restore a saved state onto an existing grid
+api.setState(savedState);
+```
+
+{% apiDocumentation source="grid-api/api.json" section="gridState" names=["setState"] /%}
 
 {% note %}
 `setState` should only be used to restore grid state. The grid does not support being used as a controlled component, so do not call this on every state update.
 {% /note %}
 
-It is possible to maintain the existing state for individual state contents by passing a second argument to `setState` that contains the top-level properties to ignore. E.g. `api.setState(state, ['filter'])` will maintain the existing filter state in the grid.
+To exclude properties from being restored, pass their names as the second argument, `propertiesToIgnore`. Those properties are left as they are on the grid.
 
-Anything the provided state omits is reset rather than left as is. For example, a state without a `quickFilter` section clears the quick filter value in the toolbar.
-
-{% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
-
-## Converting Column State to Grid State
-
-State retrieved via the [Column State](./column-state/) APIs can be converted into grid state via the helper functions `convertColumnState` and `convertColumnGroupState`.
-
+```js
+// Restore a saved state but keep the current filter state of the grid.
+api.setState(savedState, ['filter']);
 ```
+
+Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand-built state containing only `columnOrder` will clear the sort, filters, row groups, pinning and every other property.
+
+The example below switches between full states captured with `api.getState()`.
+
+- **Default View** applies the state captured when the grid first rendered, before any view was applied.
+- **Medals by Country** and **Swimming Leaders** apply states saved after a user configured the grid.
+- **Column Order Only** applies a hand-built state containing just `columnOrder`, showing that omitted properties are reset.
+- Toggle **Ignore Filter** to conditionally pass `['filter']` as `propertiesToIgnore` to enable maintaining the current filter state while switching views.
+
+{% gridExampleRunner title="Switching Between Saved States" name="saved-views"  exampleHeight=500 /%}
+
+## Column State and Column Definitions
+
+Column state properties such as `sort`, `hide`, `pinned` and `aggFunc` have two possible sources: the grid state and the column definitions. When `initialState` includes some but not all of the [column state properties](#gridstate-column-properties), the grid must decide what to do with the missing ones.
+
+By default the missing properties are reset, overriding the column definition values. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` property came from an unsorted grid, and restoring it must produce an unsorted grid even if a column definition sets a sort.
+
+In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is overridden and the grid is created unsorted.
+
+```js
+columnDefs: [
+    { field: 'athlete' },
+    { field: 'country', sort: 'asc' },
+],
+
+initialState: {
+    // Only the column order is provided, so every other column state property is reset.
+    columnOrder: {
+        orderedColIds: ['country', 'athlete'],
+    },
+}
+```
+
+To fall back to the column definition values instead, set `partialColumnState: true`. Missing column state properties then keep whatever the column definitions specify. This is the right choice for a state built by hand. For a state saved from the grid, a missing property means the user had none, and the flag would wrongly reapply the column definition values.
+
+In the example below the column definitions pin Country, hide Year and sum Gold and Silver into a grand total row. Each button recreates the grid with a different `initialState`.
+
+- **No State** shows the grid as defined by the column definitions.
+- **Column Order (overrides defaults)** supplies only `columnOrder`. Country is unpinned, Year appears and the totals are blank.
+- **Column Order + partialColumnState (keeps defaults)** supplies the same `columnOrder` with `partialColumnState: true`. The order is applied and the column definition defaults remain.
+
+{% gridExampleRunner title="Partial Column State" name="partial-column-state"  exampleHeight=500 /%}
+
+## Compatibility
+
+### Column and Group Ids
+
+Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. A column that provides neither `colId` nor `field` is given a positional ID. If the column definitions are reordered between saving and restoring, column state could be restored to the wrong column.
+
+{%note %}
+For best results ensure columns and groups have unique `field` or explicit `colId` and groups have an explicit `groupId`.
+{%/note %}
+
+### Grid State API vs Column State API
+
+Grid state and [Column State](./column-state/) overlap: the [column state properties](#gridstate-column-properties) of grid state carry the same information as Column State, in a different shape. Which one to use depends on the task:
+
+- **Grid state** saves and restores the grid as a whole, columns included. It is typically round-tripped through storage between sessions, and restoring it updates all columns together.
+- **Column State** targets one aspect of the columns directly, in place, without touching anything else. Use `api.applyColumnState()` for a one-off change such as reordering or resizing a subset of columns while leaving sort, filters and the rest of the grid untouched. See [Applying Partial State](./column-state/#applying-partial-state) for more examples.
+
+If code was already using Column State alongside other custom APIs to manage grid-level state by hand, `convertColumnState` and `convertColumnGroupState` convert that Column State into the equivalent grid state sections:
+
+```js
+import { convertColumnState, convertColumnGroupState } from 'ag-grid-community';
+
 const state = {
     ...convertColumnState(columnState),
-    ...convertColumnGroupState(columnGroupState)
+    ...convertColumnGroupState(columnGroupState),
 };
 ```
+
+### Versioned State
+
+The grid state includes the version it was generated from. This enables grid states generated on older versions of the grid to be consumed by newer versions of the grid. If there is a change in format the grid will automatically apply the conversion to the old state.
+
+### Serializable State
+
+The grid state is designed to be serialisable, so any functions will be stripped out. This has implications for features such as Aggregation. If a custom aggregation function has been provided it must be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) via a string, as opposed to directly registering the function with the column. This enables the grid state to safely store the `aggFunc` string value against the column. A column using an inline aggregation function is left out of the `aggregation` property, so a state saved from such a grid does not restore that aggregation.
+
+## API Reference
+
+### GridState
+
+{% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" exclude=["sort", "rowGroup", "aggregation", "showValuesAs", "pivot", "columnPinning", "columnVisibility", "columnSizing", "columnOrder", "columnHeaderName", "partialColumnState"] /%}
+
+### GridState (column properties)
+
+The following properties hold column state and are affected by `partialColumnState`.
+
+{% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" names=["sort", "rowGroup", "aggregation", "showValuesAs", "pivot", "columnPinning", "columnVisibility", "columnSizing", "columnOrder", "columnHeaderName", "partialColumnState"] config={ "description": "" } /%}

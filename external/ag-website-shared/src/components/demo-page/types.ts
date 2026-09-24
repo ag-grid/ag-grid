@@ -6,6 +6,11 @@ export interface DemoPageExample {
     path: string;
     /** Short supporting copy shown beneath the title. */
     description: string;
+    /**
+     * Base-relative path to a screenshot of the demo, shown on its switcher button. One image
+     * whatever the site's theme: each demo app has a fixed appearance of its own.
+     */
+    image?: string;
 }
 
 /** A call to action rendered beneath the feature list. */

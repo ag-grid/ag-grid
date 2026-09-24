@@ -18,6 +18,12 @@ type Options = {
      * anchor links to them are validated against the framework pages they forward to.
      */
     frameworkRedirect?: { path: string; frameworks: readonly string[] };
+    /**
+     * Fragment prefixes whose target elements are rendered client-side, so the built HTML
+     * holds nothing to validate them against. Sites that server-render those targets should
+     * leave this unset and keep the stricter check.
+     */
+    clientRenderedFragmentPrefixes?: readonly string[];
 };
 
 const IGNORED_PATHS = ['/archive'];
@@ -29,6 +35,39 @@ const IGNORED_PATHS = ['/archive'];
 const CLIENT_HANDLED_FRAGMENTS = [
     'manage_cookies', // Footer link that opens the cookie-consent preferences modal
 ];
+
+/**
+ * The named character references that can appear in an href. The numeric forms below cover
+ * everything else, so only the handful HTML gives names to are spelled out here.
+ */
+const NAMED_HTML_ENTITIES: Record<string, string> = {
+    amp: '&',
+    apos: "'",
+    gt: '>',
+    lt: '<',
+    nbsp: '\u00a0',
+    quot: '"',
+};
+
+/**
+ * Decodes the character references in an href. Attribute values are read out of the raw HTML,
+ * so they arrive still encoded and have to be decoded before the href is picked apart: the `#`
+ * of a reference such as `&#38;` (the `&` between query parameters) would otherwise read as a
+ * fragment marker, turning `/gallery/?a=1&#38;b=2` into the unresolvable `/gallery/#38;b=2`.
+ */
+const decodeHtmlEntities = (value: string): string =>
+    value.replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, (reference, body: string) => {
+        if (!body.startsWith('#')) {
+            return NAMED_HTML_ENTITIES[body.toLowerCase()] ?? reference;
+        }
+        const isHex = body[1].toLowerCase() === 'x';
+        const codePoint = parseInt(isHex ? body.slice(2) : body.slice(1), isHex ? 16 : 10);
+        // Lone surrogates and out-of-range values would throw; leave them as they were.
+        if (!Number.isInteger(codePoint) || codePoint > 0x10ffff || (codePoint >= 0xd800 && codePoint <= 0xdfff)) {
+            return reference;
+        }
+        return String.fromCodePoint(codePoint);
+    });
 
 /**
  * Drops the whole query string (`?a=1&b=2`) while keeping the path and fragment, so
@@ -108,7 +147,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     // `https://www.ag-grid.com/...` ones and the client-handled fragment links the existence
     // checks below leave alone, because the redirect happens before the target is consulted.
     const shapeIssues: Record<string, { message: string; filePaths: Set<string> }> = {};
-    const { prefix, frameworkRedirect } = options;
+    const { prefix, frameworkRedirect, clientRenderedFragmentPrefixes } = options;
 
     const fileSet = new Set(files);
     // A page served as `foo.html` rather than `foo/index.html` has no trailing-slash form.
@@ -160,6 +199,9 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                 if (CLIENT_HANDLED_FRAGMENTS.includes(fragment)) {
                     return;
                 }
+                if (clientRenderedFragmentPrefixes?.some((candidate) => fragment.startsWith(candidate))) {
+                    return;
+                }
             }
             // Same-page (#foo) links resolve against this page; absolute
             // (/page#foo) links resolve against another page. Anything else
@@ -195,7 +237,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
 
                 const hrefMatch = /(?:^|\s)href=(["'])(.*?)\1/i.exec(tag);
                 if (hrefMatch) {
-                    recordUsage(hrefMatch[2]);
+                    recordUsage(decodeHtmlEntities(hrefMatch[2]));
                 }
             }
         };

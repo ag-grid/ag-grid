@@ -403,7 +403,7 @@ describe('cspRules', () => {
 
         it('authorises both capture tags by hash in the site scope', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
-            expect(site).toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='"); // page-view capture
+            expect(site).toContain("'sha256-UZ79CQlmQa9u4xp1a60kP2//w3o9IvBsC2tdqv57moc='"); // page-view capture
             expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST (live)
         });
 
@@ -413,14 +413,14 @@ describe('cspRules', () => {
             // alongside it until the rollout is complete and the old hash is confirmed
             // unused. AG-3390.
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
-            expect(site).toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
+            expect(site).toContain("'sha256-7slCn/usH14D/QjSBhHPAkSInIZY56XqT8LTtYE71U8='");
         });
 
         it('is site-scope only, since examples keeps unsafe-inline', () => {
             const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
-            expect(examples).not.toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='");
+            expect(examples).not.toContain("'sha256-UZ79CQlmQa9u4xp1a60kP2//w3o9IvBsC2tdqv57moc='");
             expect(examples).not.toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='");
-            expect(examples).not.toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
+            expect(examples).not.toContain("'sha256-7slCn/usH14D/QjSBhHPAkSInIZY56XqT8LTtYE71U8='");
         });
     });
 

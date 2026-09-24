@@ -1,6 +1,6 @@
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
-import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -11,10 +11,10 @@ import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import {
+    compareCtrlsByPinnedThenLeft,
     getColumnHeaderRowHeight,
     getFloatingFiltersHeight,
     getGroupRowsHeight,
-    sortCtrlsByPinnedThenLeft,
 } from '../headerUtils';
 import type { HeaderRowType } from './headerRowComp';
 
@@ -45,6 +45,8 @@ export class HeaderRowCtrl extends BeanStub {
 
     private isPrintLayout: boolean;
     private isEnsureDomOrder: boolean;
+    private renderedHeaderRowsVersion = -1;
+    private retainedFocusedCtrl: HeaderCellCtrl | null = null;
 
     constructor(
         public rowIndex: number,
@@ -96,7 +98,12 @@ export class HeaderRowCtrl extends BeanStub {
             this.onVirtualColumnsChanged();
         }
         // width is managed directly regardless of framework and so is not included in initCompState
-        this.setWidth();
+        // The first row of a grid mounts before any width has been pushed, and still needs its groups sized.
+        const rowWidth = this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.rowWidth;
+        if (rowWidth != null) {
+            comp.setWidth(`${rowWidth}px`);
+        }
+        this.refreshPinnedCellGroupWidths();
 
         this.addEventListeners(compBean);
         this.refreshTabIndex();
@@ -115,13 +122,12 @@ export class HeaderRowCtrl extends BeanStub {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         const refreshTabIndex = this.refreshTabIndex.bind(this);
+        const refreshPinnedCellGroupWidths = this.refreshPinnedCellGroupWidths.bind(this);
         compBean.addManagedEventListeners({
-            columnResized: this.setWidth.bind(this),
-            leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
-            rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            displayedColumnsWidthChanged: refreshPinnedCellGroupWidths,
+            leftPinnedWidthChanged: refreshPinnedCellGroupWidths,
+            rightPinnedWidthChanged: refreshPinnedCellGroupWidths,
             displayedColumnsChanged: onDisplayedColumnsChanged,
-            gridSizeChanged: this.setWidth.bind(this),
-            gridViewportWidthChanged: this.setWidth.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
@@ -134,7 +140,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         // when print layout changes, it changes what columns are in what section
         compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);
-        compBean.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
+        compBean.addManagedPropertyListener('ensureDomOrder', (e) => {
+            this.isEnsureDomOrder = e.currentValue;
+            this.onVirtualColumnsChanged(false, true);
+        });
 
         compBean.addManagedPropertyListeners(
             [
@@ -149,32 +158,21 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.isPrintLayout = _isDomLayout(this.gos, 'print');
-        this.onVirtualColumnsChanged();
-        this.setWidth();
+        const isPrintLayout = _isDomLayout(this.gos, 'print');
+        const layoutChanged = isPrintLayout !== this.isPrintLayout;
+        this.isPrintLayout = isPrintLayout;
+        this.onVirtualColumnsChanged(false, layoutChanged);
         this.onRowHeightChanged();
     }
 
-    private setWidth(): void {
-        if (!this.comp) {
-            return;
-        }
-        const width = this.getWidthForRow();
-        this.comp.setWidth(`${width}px`);
+    /** Pushed by `GridBodyCtrl.updateWidths`, so the row does not derive it from the viewport itself. */
+    public setRowWidth(width: number): void {
+        this.comp?.setWidth(`${width}px`);
         this.refreshPinnedCellGroupWidths();
     }
 
     private refreshPinnedCellGroupWidths(): void {
         this.comp?.refreshPinnedCellGroupWidths();
-    }
-
-    private getWidthForRow(): number {
-        const { visibleCols } = this.beans;
-        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-        const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? visibleCols.totalWidth;
-        const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? 0;
-
-        return Math.max(contentWidth, viewportWidth);
     }
 
     private onRowHeightChanged(): void {
@@ -210,10 +208,22 @@ export class HeaderRowCtrl extends BeanStub {
         return { topOffset, rowHeight: filterHeight };
     }
 
-    private onVirtualColumnsChanged(afterScroll: boolean = false): void {
+    private onVirtualColumnsChanged(afterScroll: boolean = false, force: boolean = false): void {
         if (!this.comp) {
             return;
         }
+        // Both `virtualColumnsChanged` and `displayedColumnsChanged` land here for one column change, and
+        // the version covers only the rendered sections, not a ctrl kept alive for focus outside them.
+        const headerRowsVersion = this.beans.colViewport.headerRowsVersion;
+        if (
+            !force &&
+            headerRowsVersion === this.renderedHeaderRowsVersion &&
+            this.retainedFocusedCtrl?.column.displayed !== false
+        ) {
+            return;
+        }
+        this.renderedHeaderRowsVersion = headerRowsVersion;
+
         const ctrlsToDisplay = this.getUpdatedHeaderCtrls();
         const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
         this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
@@ -237,13 +247,13 @@ export class HeaderRowCtrl extends BeanStub {
             return ctrl.column.displayed && this.beans.focusSvc.isHeaderWrapperFocused(ctrl);
         };
 
-        let keptCtrlOutOfOrder = false;
+        let keptCtrlOutOfOrder: HeaderCellCtrl | null = null;
         if (oldCtrls) {
             for (const [id, oldCtrl] of oldCtrls) {
                 const keepCtrl = isFocusedAndDisplayed(oldCtrl as HeaderCellCtrl);
                 if (keepCtrl) {
                     this.ctrlsById.set(id, oldCtrl);
-                    keptCtrlOutOfOrder = true;
+                    keptCtrlOutOfOrder = oldCtrl as HeaderCellCtrl;
                 } else {
                     this.destroyBean(oldCtrl);
                 }
@@ -251,10 +261,11 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
         this.allCtrls = Array.from(this.ctrlsById.values());
+        this.retainedFocusedCtrl = keptCtrlOutOfOrder;
         if (keptCtrlOutOfOrder) {
             // a kept-alive focused ctrl was appended after the in-order viewport ctrls; restore column
             // order so consumers (e.g. React, which derives DOM order from this array) can rely on it.
-            this.allCtrls = sortCtrlsByPinnedThenLeft(this.allCtrls);
+            this.allCtrls.sort(compareCtrlsByPinnedThenLeft);
         }
         return this.allCtrls;
     }
@@ -329,17 +340,26 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
         const viewportColumns: (AgColumn | AgColumnGroup)[] = [];
-        for (const pinned of ['left', null, 'right'] as const) {
-            viewportColumns.push(...this.getComponentsToRender(pinned));
-        }
+        this.appendComponentsToRender(0, viewportColumns);
+        this.appendComponentsToRender(1, viewportColumns);
+        this.appendComponentsToRender(2, viewportColumns);
         return viewportColumns;
     }
 
-    private getComponentsToRender(pinned: 'left' | 'right' | null): (AgColumn | AgColumnGroup)[] {
-        if (this.type === 'group') {
-            return this.beans.colViewport.getHeadersToRender(pinned, this.rowIndex);
+    private appendComponentsToRender(lane: ColumnLane, into: (AgColumn | AgColumnGroup)[]): void {
+        const { colViewport } = this.beans;
+        const cols =
+            this.type === 'group'
+                ? colViewport.getHeadersToRender(lane, this.rowIndex)
+                : colViewport.getColumnHeadersToRender(lane);
+        if (!cols) {
+            return;
         }
-        return this.beans.colViewport.getColumnHeadersToRender(pinned);
+        // Appended one at a time: `push(...cols)` allocates an argument array per call, and this runs per
+        // header row on every virtual-columns change.
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            into.push(cols[i]);
+        }
     }
 
     public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {

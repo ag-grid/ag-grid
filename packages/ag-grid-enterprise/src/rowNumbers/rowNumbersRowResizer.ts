@@ -49,8 +49,7 @@ export class AgRowNumbersRowResizer extends Component {
             beans: { ctrlsSvc, eventSvc },
         } = this;
 
-        const ctrl = ctrlsSvc.get('gridCtrl');
-        ctrl.setResizeCursor(Direction.Vertical, true);
+        ctrlsSvc.get('gridCtrl')?.setResizeCursor(Direction.Vertical, true);
 
         this.dragging = true;
         this.initialHeight = this.node.rowHeight as number;
@@ -121,8 +120,7 @@ export class AgRowNumbersRowResizer extends Component {
         this.dragging = false;
 
         if (fromDragEvent) {
-            const ctrl = this.beans.ctrlsSvc.get('gridCtrl');
-            ctrl.setResizeCursor(false);
+            this.beans.ctrlsSvc.get('gridCtrl')?.setResizeCursor(false);
         }
     }
 

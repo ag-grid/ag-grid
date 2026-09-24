@@ -1,13 +1,13 @@
 {
   "name": "ag-grid-generate-code-reference-files",
-  "version": "36.2.0-beta.20260917.132",
+  "version": "36.2.0-beta.20260922.1430",
   "private": true,
   "dependencies": {
     "ag-shared": "0.0.1",
     "glob": "^11.1.0",
     "typescript": "~5.8.3",
     "@nx/devkit": "20.8.4",
-    "@swc/helpers": "0.5.21"
+    "@swc/helpers": "0.5.23"
   },
   "type": "commonjs",
   "main": "./dist/src/index.js",

@@ -13,6 +13,24 @@
     }
 }
 
+// Repeated for dark mode so every colour stays pinned: the band must not follow the theme.
+.pageHeroBrand,
+#{$selector-darkmode} .pageHeroBrand {
+    background: var(--color-bg-site-header);
+
+    .pageHeroEyebrow {
+        color: var(--color-brand-300);
+    }
+
+    .pageHeroHeadline {
+        color: var(--color-white);
+    }
+
+    .pageHeroSubhead {
+        color: var(--color-brand-200);
+    }
+}
+
 .pageHeroEyebrow {
     margin: 0;
     font-size: var(--text-fs-base);
@@ -38,7 +56,7 @@
 }
 
 .pageHeroSubhead {
-    max-width: 48ch;
+    max-width: 54ch;
     margin-top: $spacing-size-2;
     font-size: var(--text-fs-base);
     color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);

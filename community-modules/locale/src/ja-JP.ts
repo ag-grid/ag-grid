@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_JP = {
+export const AG_GRID_LOCALE_JA_JP = {
     // Set Filter
     selectAll: '(すべて選択)',
     selectAllSearchResults: '(検索結果をすべて選択)',
@@ -919,3 +919,6 @@ export const AG_GRID_LOCALE_JP = {
     deleteNote: 'メモを削除',
     notePlaceholder: 'メモを追加...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_JA_JP` instead. */
+export const AG_GRID_LOCALE_JP = AG_GRID_LOCALE_JA_JP;

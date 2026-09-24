@@ -9,6 +9,7 @@
  * - Column definitions matching and updating
  * - defaultColDef and defaultColGroupDef
  * - Column types
+ * - Cell ctrl recycling under column virtualisation, and which lane a cell renders into
  */
 import { waitFor } from '@testing-library/dom';
 import {
@@ -20,14 +21,16 @@ import {
     mockGridLayout,
 } from 'ag-test-utils';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
     ClientSideRowModelModule,
     DragAndDropModule,
+    RenderApiModule,
     RowAutoHeightModule,
     RowDragModule,
+    ScrollApiModule,
     TextEditorModule,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -49,9 +52,11 @@ describe('Column Features', () => {
             CellStyleModule,
             ClientSideRowModelModule,
             DragAndDropModule,
+            RenderApiModule,
             RowAutoHeightModule,
             RowDragModule,
             RowGroupingModule,
+            ScrollApiModule,
             TextEditorModule,
         ],
     });
@@ -1011,6 +1016,46 @@ describe('Column Features', () => {
             }
         });
 
+        // The header set is the rendered-row set plus the columns the rows filtered out that still have to
+        // be measured, and it is what the group header rows are built from. So a group whose leaves are
+        // all outside the rendered window is still rendered when one of them has auto header height.
+        test('autoHeaderHeight: keeps the group of an unrendered column in the header rows', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [];
+            for (let i = 0; i < 28; ++i) {
+                columnDefs.push({ colId: `c${i}`, width: 100 });
+            }
+            // Two equally distant groups, differing only in whether a leaf is auto-header-height.
+            columnDefs.push({
+                groupId: 'withAuto',
+                headerName: 'With auto',
+                children: [{ colId: 'auto', width: 100, autoHeaderHeight: true }],
+            });
+            columnDefs.push({
+                groupId: 'withoutAuto',
+                headerName: 'Without auto',
+                children: [{ colId: 'plain', width: 100 }],
+            });
+
+            const api = gridsManager.createGrid('autoHeaderOutsideViewport', {
+                columnDefs,
+                rowData: [{ c0: 1 }],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            // Without this the window is every column and the rest of the test proves nothing.
+            const rendered = api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+            expect(rendered).not.toContain('auto');
+            expect(rendered).not.toContain('plain');
+
+            const renderedGroups = Array.from(document.querySelectorAll('.ag-header-group-cell'), (cell) =>
+                cell.getAttribute('col-id')
+            );
+            // The auto-header column pulls its group in; its twin with no auto-header leaf stays out.
+            expect(renderedGroups).toContain('withAuto_0');
+            expect(renderedGroups).not.toContain('withoutAuto_0');
+        });
+
         test('isColumnFunc invokes function with column params; clamps boolean false', async () => {
             // Function-driven colDef callbacks route through `createColumnFunctionCallbackParams`
             // which is otherwise only reached via internal cell-editable / dnd-source paths.
@@ -1224,6 +1269,468 @@ describe('Column Features', () => {
             const bState = api.getColumnState().find((s) => s.colId === 'b')!;
             expect(bState.sort).toBe('asc');
             expect((bState as any).sortType).toBe('absolute');
+        });
+    });
+
+    // The row rebuilds its cell ctrls whenever the rendered column set changes, recycling by column
+    // identity and deliberately keeping cells the viewport no longer covers.
+    describe('cell ctrl recycling and render lanes', () => {
+        const virtualisedCols = (count: number): ColDef[] => {
+            const cols: ColDef[] = [];
+            for (let i = 0; i < count; ++i) {
+                cols.push({ colId: `c${i}`, field: `c${i}`, width: 120, editable: true });
+            }
+            return cols;
+        };
+
+        const virtualisedRow = (count: number): Record<string, string> => {
+            const row: Record<string, string> = {};
+            for (let i = 0; i < count; ++i) {
+                row[`c${i}`] = `v${i}`;
+            }
+            return row;
+        };
+
+        const gridRoot = (api: GridApi): HTMLElement => TestGridsManager.getHTMLElement(api)!;
+
+        const renderedCells = (api: GridApi): HTMLElement[] =>
+            Array.from(gridRoot(api).querySelectorAll<HTMLElement>('.ag-cell'));
+
+        const cellFor = (api: GridApi, colId: string): HTMLElement | null =>
+            gridRoot(api).querySelector<HTMLElement>(`.ag-cell[col-id="${colId}"]`);
+
+        const cellsFor = (api: GridApi, colId: string): HTMLElement[] =>
+            Array.from(gridRoot(api).querySelectorAll<HTMLElement>(`.ag-cell[col-id="${colId}"]`));
+
+        const createVirtualisedGrid = (): GridApi =>
+            gridsManager.createGrid('virtualisedCells', {
+                columnDefs: virtualisedCols(120),
+                rowData: [virtualisedRow(120)],
+                suppressColumnVirtualisation: false,
+            });
+
+        const renderedColIds = (api: GridApi): string[] =>
+            renderedCells(api).map((cell) => cell.getAttribute('col-id')!);
+
+        const virtualColIds = (api: GridApi): string[] =>
+            api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+
+        // A cell's element lives in its lane's container, so the lane a cell is rendered into has to
+        // track its column's pinning rather than wherever the cell was first built.
+        const laneOfCell = (cell: HTMLElement): string | null => {
+            if (cell.closest('.ag-grid-pinned-left-cells')) {
+                return 'left';
+            }
+            return cell.closest('.ag-grid-pinned-right-cells') ? 'right' : null;
+        };
+
+        const laneOfRenderedCell = (api: GridApi, colId: string): string | null | undefined => {
+            const cell = cellFor(api, colId);
+            return cell ? laneOfCell(cell) : undefined;
+        };
+
+        /** Every rendered cell of every row, judged on the element itself so a second row cannot hide. */
+        const expectLanesConsistent = (api: GridApi) => {
+            const cells = renderedCells(api);
+            expect(cells.length).toBeGreaterThan(0);
+            for (const cell of cells) {
+                const colId = cell.getAttribute('col-id')!;
+                const rowId = cell.closest<HTMLElement>('.ag-row')?.getAttribute('row-id');
+                expect({ rowId, colId, lane: laneOfCell(cell) }).toEqual({
+                    rowId,
+                    colId,
+                    lane: api.getColumn(colId)?.getPinned() ?? null,
+                });
+            }
+        };
+
+        // `true` is the legacy spelling of left-pinned, normalised on the way in; the rendered lane has
+        // to follow the normalised value.
+        test('a focused cell keeps its ctrl across both a short and a long scroll out of the viewport', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c0');
+            await asyncSetTimeout(0);
+
+            // A short scroll moves the viewport by a few columns; a long one replaces it outright.
+            for (const colId of ['c12', 'c60']) {
+                api.ensureColumnVisible(colId);
+                await asyncSetTimeout(0);
+
+                expect(virtualColIds(api)).not.toContain('c0');
+                // Destroying it would lose the focus position, which is what breaks keyboard navigation.
+                expect(cellFor(api, 'c0')).not.toBeNull();
+                expect(api.getFocusedCell()?.column.getColId()).toBe('c0');
+            }
+        });
+
+        test('an unfocused cell is removed when its column scrolls out of the viewport', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+            expect(cellFor(api, 'c60')).not.toBeNull();
+
+            api.ensureColumnVisible('c0');
+            await asyncSetTimeout(0);
+
+            expect(cellFor(api, 'c60')).toBeNull();
+        });
+
+        test('an editing cell keeps its ctrl when its column scrolls out of the viewport', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+            api.startEditingCell({ rowIndex: 0, colKey: 'c60' });
+            await asyncSetTimeout(0);
+            expect(api.getEditingCells().map((cell) => cell.column?.getColId())).toEqual(['c60']);
+
+            api.ensureColumnVisible('c0');
+            await asyncSetTimeout(0);
+
+            expect(cellFor(api, 'c60')).not.toBeNull();
+            expect(api.getEditingCells().map((cell) => cell.column?.getColId())).toEqual(['c60']);
+        });
+
+        // A short scroll changes the viewport by only a few columns, which is where a row is most likely
+        // to keep a cell it should have dropped.
+        test('a short scroll leaves the rendered cells matching the virtual columns', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            for (const colId of ['c12', 'c18', 'c90', 'c12', 'c6', 'c0']) {
+                api.ensureColumnVisible(colId);
+                await asyncSetTimeout(0);
+
+                // A cell added twice, or dropped without its DOM, leaves the two out of step.
+                expect(renderedColIds(api)).toEqual(virtualColIds(api));
+            }
+        });
+
+        // With ordering off the cells are not re-sorted after a change, so the rendered set is all that
+        // is promised — and it must still be exactly the virtual columns, with nothing rendered twice.
+        test('a short scroll with ensureDomOrder off still renders exactly the virtual columns', async () => {
+            const api = gridsManager.createGrid('virtualisedCells', {
+                columnDefs: virtualisedCols(120),
+                rowData: [virtualisedRow(120)],
+                suppressColumnVirtualisation: false,
+                ensureDomOrder: false,
+            });
+            await asyncSetTimeout(0);
+
+            for (const colId of ['c12', 'c18', 'c6']) {
+                api.ensureColumnVisible(colId);
+                await asyncSetTimeout(0);
+
+                const rendered = renderedColIds(api);
+                expect(rendered.slice().sort()).toEqual(virtualColIds(api).slice().sort());
+                expect(new Set(rendered).size).toBe(rendered.length);
+            }
+        });
+
+        // A cell is kept past its column leaving the viewport only while it is focused, so once focus
+        // moves on the next change has to drop it.
+        test('a retained cell is dropped once it stops being focused', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c0');
+            await asyncSetTimeout(0);
+
+            api.ensureColumnVisible('c12');
+            await asyncSetTimeout(0);
+            expect(cellFor(api, 'c0')).not.toBeNull();
+
+            // Cleared rather than moved: focusing another column would retain that one in turn, which is
+            // correct but would hide whether c0 was dropped.
+            api.clearFocusedCell();
+            await asyncSetTimeout(0);
+
+            api.ensureColumnVisible('c16');
+            await asyncSetTimeout(0);
+
+            expect(virtualColIds(api)).not.toContain('c0');
+            expect(cellFor(api, 'c0')).toBeNull();
+            expect(renderedColIds(api).slice().sort()).toEqual(virtualColIds(api).slice().sort());
+        });
+
+        // A move leaves the column set alone and changes only its order, so a row that tracks only which
+        // columns it renders would miss it entirely.
+        test('a column move after a short scroll still reorders the rendered cells', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.ensureColumnVisible('c12');
+            await asyncSetTimeout(0);
+
+            const moved = virtualColIds(api)[1];
+            const movedIndex = api.getAllDisplayedColumns().findIndex((col) => col.getColId() === moved);
+            api.moveColumnByIndex(movedIndex, 0);
+            await asyncSetTimeout(0);
+
+            expect(api.getAllDisplayedColumns()[0].getColId()).toBe(moved);
+            expect(renderedColIds(api)).toEqual(virtualColIds(api));
+        });
+
+        // Pinning moves a column out of the centre and into a lane, so the cell has to change container
+        // as well as stay rendered.
+        test('pinning a column after a short scroll keeps the rendered cells correct', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.ensureColumnVisible('c12');
+            await asyncSetTimeout(0);
+
+            const toPin = virtualColIds(api)[2];
+            api.setColumnsPinned([toPin], 'left');
+            await asyncSetTimeout(0);
+
+            expect(cellFor(api, toPin)).not.toBeNull();
+            expect(renderedColIds(api).slice().sort()).toEqual(virtualColIds(api).slice().sort());
+        });
+
+        test('a column pinned with `true` renders in the left lane', async () => {
+            const cols = virtualisedCols(6);
+            cols[1] = { ...cols[1], pinned: true };
+            const api = gridsManager.createGrid('truePinnedLane', {
+                columnDefs: cols,
+                rowData: [virtualisedRow(6)],
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('c1')?.getPinned()).toBe('left');
+            expect(laneOfRenderedCell(api, 'c1')).toBe('left');
+            expectLanesConsistent(api);
+            await new GridColumns(api).checkColumns(`
+                LEFT
+                └── c1 "C1" width:120 editable
+                CENTER
+                ├── c0 "C0" width:120 editable
+                ├── c2 "C2" width:120 editable
+                ├── c3 "C3" width:120 editable
+                ├── c4 "C4" width:120 editable
+                └── c5 "C5" width:120 editable
+            `);
+        });
+
+        // Print layout has no pinned lanes. Pinning cannot be changed under it (warning 37), so a
+        // colDef is the only way to reach this.
+        test('print layout renders a pinned column in the centre lane', async () => {
+            const cols = virtualisedCols(6);
+            cols[1] = { ...cols[1], pinned: 'left' };
+            const api = gridsManager.createGrid('printLayoutLanes', {
+                columnDefs: cols,
+                rowData: [virtualisedRow(6)],
+                domLayout: 'print',
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('c1')?.getPinned()).toBe('left');
+            expect(cellFor(api, 'c1')).not.toBeNull();
+            expect(laneOfRenderedCell(api, 'c1')).toBeNull();
+        });
+
+        // A displayed column group instance is reused across rebuilds, so re-pinning a grouped column has
+        // to re-lane the surviving group as well as the column.
+        test('re-pinning a grouped column re-lanes its group header', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { headerName: 'G', groupId: 'g', children: [{ colId: 'a', field: 'a' }] },
+                { colId: 'b', field: 'b' },
+            ];
+            const api = gridsManager.createGrid('groupedLanes', {
+                columnDefs,
+                rowData: [{ a: 'a1', b: 'b1' }],
+            });
+            await asyncSetTimeout(0);
+
+            const groupHeaderLane = (): string | null | undefined => {
+                const header = gridRoot(api).querySelector<HTMLElement>('.ag-header .ag-header-group-cell');
+                return header ? laneOfCell(header) : undefined;
+            };
+
+            expect(groupHeaderLane()).toBeNull();
+
+            api.setColumnsPinned(['a'], 'right');
+            await asyncSetTimeout(0);
+
+            expect(laneOfRenderedCell(api, 'a')).toBe('right');
+            expect(groupHeaderLane()).toBe('right');
+            expectLanesConsistent(api);
+
+            api.setColumnsPinned(['a'], null);
+            await asyncSetTimeout(0);
+
+            expect(laneOfRenderedCell(api, 'a')).toBeNull();
+            expect(groupHeaderLane()).toBeNull();
+            expectLanesConsistent(api);
+        });
+
+        // A cell is rebuilt when its lane changes, so each operation can leave a later one placing a cell
+        // in the wrong container. A single operation cannot show that; a sequence can.
+        test('lanes stay consistent across a sequence of pin, move, scroll and toggle', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setColumnsPinned(['c0'], 'left');
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+
+            api.setColumnsPinned(['c2'], 'right');
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+
+            api.ensureColumnVisible('c12');
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+
+            api.moveColumnByIndex(3, 5);
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+
+            api.setColumnsVisible(['c4'], false);
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+
+            api.setColumnsPinned(['c0'], null);
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+
+            api.ensureColumnVisible('c0');
+            await asyncSetTimeout(0);
+            expectLanesConsistent(api);
+        });
+
+        // Adding `rowDrag` gives the cell a handle the existing element cannot absorb, so it is destroyed
+        // and rebuilt — and a pinned cell has to be rebuilt back into the lane it came from.
+        test('a pinned cell rebuilt by a colDef change keeps its lane and is rendered once', async () => {
+            const cols = virtualisedCols(8);
+            const api = gridsManager.createGrid('recreateLanes', {
+                columnDefs: cols,
+                rowData: [virtualisedRow(8)],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnsPinned(['c1'], 'left');
+            await asyncSetTimeout(0);
+            expect(laneOfRenderedCell(api, 'c1')).toBe('left');
+            const beforeRebuild = cellFor(api, 'c1');
+            expect(beforeRebuild).not.toBeNull();
+
+            api.setGridOption(
+                'columnDefs',
+                cols.map((col) => (col.colId === 'c1' ? { ...col, pinned: 'left' as const, rowDrag: true } : col))
+            );
+            await asyncSetTimeout(0);
+            api.refreshCells({ force: true });
+            await asyncSetTimeout(0);
+
+            expect(cellFor(api, 'c1')).not.toBe(beforeRebuild);
+            expect(cellsFor(api, 'c1').length).toBe(1);
+            expect(laneOfRenderedCell(api, 'c1')).toBe('left');
+            expectLanesConsistent(api);
+        });
+
+        // Column spanning gives each row its own column set, so a lane has to be decided per row rather
+        // than once for the grid. Only the marked row spans, so the two rows genuinely disagree.
+        test('a scroll with column spanning renders each row consistently', async () => {
+            const spanIfMarked: ColDef['colSpan'] = (params) => (params.data?.c0 === 'span' ? 2 : 1);
+            const cols = virtualisedCols(40).map((col, i) => (i === 3 ? { ...col, colSpan: spanIfMarked } : col));
+            cols[1] = { ...cols[1], pinned: 'left' };
+            const api = gridsManager.createGrid('spanLanes', {
+                columnDefs: cols,
+                rowData: [{ ...virtualisedRow(40), c0: 'span' }, virtualisedRow(40)],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            for (const colId of ['c10', 'c20', 'c4', 'c0']) {
+                api.ensureColumnVisible(colId);
+                await asyncSetTimeout(0);
+                expectLanesConsistent(api);
+            }
+
+            // c3 swallows c4 in the spanning row only, so the two rows must not render the same columns.
+            const rows = Array.from(gridRoot(api).querySelectorAll<HTMLElement>('.ag-row'));
+            const colIdsOf = (row: HTMLElement): string[] =>
+                Array.from(row.querySelectorAll<HTMLElement>('.ag-cell')).map((cell) => cell.getAttribute('col-id')!);
+            expect(rows.length).toBe(2);
+            expect(colIdsOf(rows[0])).toContain('c3');
+            expect(colIdsOf(rows[0])).not.toContain('c4');
+            expect(colIdsOf(rows[1])).toContain('c4');
+        });
+
+        // Recycling is by column identity, so a reorder must not rebuild a cell that is still rendered.
+        test('a column move recycles the rendered cells rather than rebuilding them', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            const before = cellFor(api, 'c1');
+            expect(before).not.toBeNull();
+
+            api.moveColumnByIndex(0, 3);
+            await asyncSetTimeout(0);
+
+            expect(api.getAllDisplayedColumns()[3].getColId()).toBe('c0');
+            expect(cellFor(api, 'c1')).toBe(before);
+        });
+
+        // A retained cell keeps its element and so its container. Unpinning a cell held only by focus is
+        // the one way to re-lane it while it is in no lane's column list, where nothing else would notice.
+        test('a cell retained by focus is rebuilt when its column is unpinned out of view', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setColumnsPinned(['c0'], 'left');
+            api.setFocusedCell(0, 'c0');
+            await asyncSetTimeout(0);
+            expect(laneOfRenderedCell(api, 'c0')).toBe('left');
+
+            api.ensureColumnVisible('c40');
+            await asyncSetTimeout(0);
+            expect(laneOfRenderedCell(api, 'c0')).toBe('left');
+
+            api.setColumnsPinned(['c0'], null);
+            await asyncSetTimeout(0);
+
+            expect(virtualColIds(api)).not.toContain('c0');
+            expect(api.getFocusedCell()?.column.getColId()).toBe('c0');
+            expect(cellsFor(api, 'c0').length).toBe(1);
+            expect(laneOfRenderedCell(api, 'c0')).toBeNull();
+            expectLanesConsistent(api);
+        });
+
+        // Full-row editing makes every cell of the row worth retaining, so a scroll that takes them all out
+        // of the viewport retains the whole row at once.
+        test('a full-row edit retains every cell across a scroll', async () => {
+            const api = gridsManager.createGrid('fullRowRetention', {
+                columnDefs: virtualisedCols(120),
+                rowData: [virtualisedRow(120)],
+                suppressColumnVirtualisation: false,
+                editType: 'fullRow',
+            });
+            await asyncSetTimeout(0);
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'c0' });
+            await asyncSetTimeout(0);
+            expect(api.getEditingCells().length).toBeGreaterThan(1);
+
+            const renderedBefore = renderedColIds(api);
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+
+            const rendered = renderedColIds(api);
+            // Every cell the edit held on to is still there, exactly once, alongside the new viewport.
+            expect(new Set(rendered).size).toBe(rendered.length);
+            for (const colId of renderedBefore) {
+                expect(rendered).toContain(colId);
+            }
+            expect(rendered).toContain('c60');
+            expectLanesConsistent(api);
         });
     });
 });

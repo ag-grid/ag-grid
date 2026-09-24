@@ -303,7 +303,7 @@ export const Changelog: FunctionComponent<Props> = ({ library }) => {
             IssueColDef,
             {
                 field: 'summary',
-                tooltip: true,
+                tooltipField: 'summary',
                 width: 300,
                 minWidth: 200,
                 filter: 'agTextColumnFilter',

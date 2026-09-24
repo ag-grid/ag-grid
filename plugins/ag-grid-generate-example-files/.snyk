@@ -1,6 +1,48 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-19635226:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:46:00.165Z
+  SNYK-JS-UNDICI-19635222:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:41.101Z
+  SNYK-JS-UNDICI-19635216:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:26.340Z
+  SNYK-JS-UNDICI-19635210:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:45:10.351Z
+  SNYK-JS-UNDICI-19635208:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:48.365Z
+  SNYK-JS-UNDICI-19635206:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:44:31.661Z
+  SNYK-JS-UNDICI-19635218:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-18T15:41:51.037Z
   SNYK-JS-TMP-17315641:
     - '@nx/devkit@20.8.4 > tmp@0.2.5':
         reason: Used in build & dev - not included in final production build

@@ -1,4 +1,4 @@
-import { _debounce, _getDocument, _getElementSize, _observeResize } from 'ag-stack';
+import { _debounce, _getDocument, _getVerticalPaddingAndBorder, _observeResize } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
@@ -126,17 +126,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             return false;
         }
 
-        let activeColsForRow: AgColumn[] = [];
-        switch (col.getPinned()) {
-            case 'left':
-                activeColsForRow = visibleCols.getLeftColsForRow(node);
-                break;
-            case 'right':
-                activeColsForRow = visibleCols.getRightColsForRow(node);
-                break;
-            case null:
-                activeColsForRow = colViewport.getColsWithinViewport(node);
-                break;
+        const lane = col.pinnedLane;
+        let activeColsForRow: AgColumn[];
+        if (lane === 0) {
+            activeColsForRow = visibleCols.getLeftColsForRow(node);
+        } else if (lane === 2) {
+            activeColsForRow = visibleCols.getRightColsForRow(node);
+        } else {
+            activeColsForRow = colViewport.getColsWithinViewport(node);
         }
         return !activeColsForRow.includes(col);
     }
@@ -169,8 +166,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+            const extraHeight = _getVerticalPaddingAndBorder(eParentCell);
 
             const wrapperHeight = eCellWrapper.offsetHeight;
             const autoHeight = wrapperHeight + extraHeight;
@@ -213,8 +209,8 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Determines if the row auto height service has cells to grow.
-     * @returns true if all of the rendered rows are at least as tall as their rendered cells.
+     * @returns true if every rendered row is at least as tall as its auto-height cells, or no auto-height
+     * column is displayed.
      */
     public areRowsMeasured(): boolean {
         if (!this.active) {

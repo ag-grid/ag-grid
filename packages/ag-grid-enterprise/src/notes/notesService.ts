@@ -3,6 +3,7 @@ import type {
     GetNoteParams,
     INoteAccess,
     INotesService,
+    MenuItemDef,
     NamedBean,
     Note,
     RefreshNotesParams,
@@ -125,6 +126,56 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     private resetActivePopupState(save = true): void {
         this.hoverGeneration++;
         this.activePopupOwner?.closeNotePopup(save);
+    }
+
+    public getMenuItems(params: GetNoteParams): MenuItemDef[] {
+        const access = this.getNoteAccess(params);
+        if (!access) {
+            return [];
+        }
+
+        const translate = this.getLocaleTextFunc();
+        const shortcut = translate('shiftF2', 'Shift+F2');
+        const showNote = () => this.showNote(access.params, true);
+        const result: MenuItemDef[] = [];
+
+        if (!access.note) {
+            result.push({
+                name: translate('addNote', 'Add Note'),
+                shortcut,
+                disabled: !access.canCreate,
+                action: access.canCreate ? showNote : undefined,
+            });
+
+            return result;
+        }
+
+        const isLocked = access.isReadOnly || access.isSuppressed;
+
+        if (access.canView && isLocked) {
+            result.push({
+                name: translate('viewNote', 'View Note'),
+                shortcut,
+                action: showNote,
+            });
+        }
+
+        if (!isLocked) {
+            result.push({
+                name: translate('editNote', 'Edit Note'),
+                shortcut,
+                disabled: !access.canEdit,
+                action: access.canEdit ? showNote : undefined,
+            });
+        }
+
+        result.push({
+            name: translate('deleteNote', 'Remove Note'),
+            disabled: !access.canDelete,
+            action: access.canDelete ? () => this.setNote({ ...access.params, note: undefined }) : undefined,
+        });
+
+        return result;
     }
 
     public showNote(params: GetNoteParams, focusEditor = false): boolean {

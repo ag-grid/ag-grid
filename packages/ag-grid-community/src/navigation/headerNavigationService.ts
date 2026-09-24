@@ -281,7 +281,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     public scrollToColumn(column: AgColumn | AgColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
-        if (column.getPinned()) {
+        if (column.pinnedLane !== 1) {
             return;
         }
 

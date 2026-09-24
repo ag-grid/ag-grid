@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import * as logModule from '../utils/log';
-import type { CapturedDiagnostic, MissingModuleReportParams } from './logging';
+import type { CapturedDiagnostic } from './logging';
 import {
     _addDiagnosticListener,
     _configureDiagnostics,
@@ -359,10 +359,14 @@ describe('suppression', () => {
 // overlay entry) rather than one per unregistered module, and deduped per grid by module+reason. Fake
 // timers exercise the real debounce; `_resetMissingModuleReports` clears the batch + dedup between tests.
 describe('missing-module batching', () => {
-    function report(reasonOrId: string, moduleName: string, gridId = 'grid-a'): void {
+    function report(
+        reasonOrId: string,
+        moduleName: Parameters<typeof _reportMissingModule>[0]['moduleName'],
+        gridId = 'grid-a'
+    ): void {
         _reportMissingModule({
             reasonOrId,
-            moduleName: moduleName as MissingModuleReportParams['moduleName'],
+            moduleName,
             gridScoped: false,
             gridId,
             rowModelType: 'clientSide',

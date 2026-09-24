@@ -15,3 +15,12 @@ Rows should be loaded in blocks of 100 as you scroll, rather than loaded up fron
 1. Open [/examples/grid-size-test/auto-height-detached/vanilla](/examples/grid-size-test/auto-height-detached/vanilla)
 2. Click "Measure detached"
 3. Less than 100 rows should be rendered or have getRowHeight called for them (the data set has 200 rows)
+
+## Columns in a Hidden or Detached Container
+
+A hidden or detached container has no layout to measure, so the grid has no viewport bounds to filter columns against.
+
+1. Open [/examples/grid-size-test/hidden-container-columns/vanilla](/examples/grid-size-test/hidden-container-columns/vanilla)
+2. Read both counts. A small window of columns should be built, not all 400
+3. Click "Show grid". The count should rise to the window the 800px viewport covers, still far below 400
+4. Click "Hide grid". The count should return to the small window

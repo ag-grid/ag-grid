@@ -1,0 +1,114 @@
+@use 'design-system' as *;
+
+.carousel {
+    // Callers override this to set the spacing between slides.
+    --carousel-gap: #{$spacing-size-4};
+
+    position: relative;
+}
+
+// Positioning context for the fades, which must not scroll with the track.
+.viewport {
+    position: relative;
+}
+
+.track {
+    display: flex;
+    gap: var(--carousel-gap);
+    padding-bottom: $spacing-size-2;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    // Snapping and sizing belong to the track, so slides stay unaware they are in a carousel.
+    > * {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+    }
+}
+
+.fadeStart,
+.fadeEnd {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: $spacing-size-16;
+    pointer-events: none;
+}
+
+.fadeStart {
+    left: 0;
+    background: linear-gradient(to right, var(--color-bg-primary), transparent);
+}
+
+.fadeEnd {
+    right: 0;
+    background: linear-gradient(to left, var(--color-bg-primary), transparent);
+}
+
+// An outlined circle, not one of the filled button variants. The global `button` element
+// styles fill every state from `--color-button-primary-*`, so each state below restates the
+// background rather than only the border — otherwise hover repaints the control solid.
+.control {
+    --icon-size: #{$spacing-size-4};
+    --icon-color: var(--color-fg-secondary);
+
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $spacing-size-8;
+    height: $spacing-size-8;
+    padding: 0;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 50%;
+    box-shadow: none;
+    cursor: pointer;
+    transition:
+        border-color $transition-default-timing,
+        opacity $transition-default-timing;
+
+    &:hover:not([aria-disabled]),
+    &:active:not([aria-disabled]) {
+        --icon-color: var(--color-link-hover);
+
+        background-color: var(--color-bg-primary);
+        border-color: var(--color-link);
+    }
+
+    // `:hover`/`:active` are matched too: the element styles reset an aria-disabled button's
+    // fill from `&:hover &[aria-disabled]`, which outweighs the plain attribute selector.
+    &[aria-disabled],
+    &[aria-disabled]:hover,
+    &[aria-disabled]:active {
+        background-color: var(--color-bg-primary);
+        border-color: var(--color-border-primary);
+        opacity: 0.35;
+        cursor: default;
+    }
+
+    // The element styles hang the icon off negative margins to sit beside button text;
+    // here it is the only child of a centring flex box.
+    :global(.icon) {
+        margin: 0;
+        bottom: 0;
+    }
+}
+
+// The overhang fits inside the page's horizontal margin at every breakpoint.
+.controlPrevious {
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+
+.controlNext {
+    right: 0;
+    transform: translate(50%, -50%);
+}

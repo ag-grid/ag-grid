@@ -120,8 +120,11 @@ describe('htaccessRules', () => {
         });
 
         it('should NOT long-cache on staging, so testers never see a stale asset', () => {
-            // Staging carries the no-cache document rule but no max-age of any kind.
-            expect(stagingContent).not.toContain('max-age');
+            // Staging carries the no-cache document rule and no year-long asset cache. The
+            // SE-189 root-static rule (max-age=86400 for /robots.txt and /favicon.ico only) is
+            // a deliberate, bounded exception - see that describe block - so this checks for
+            // the hashed-asset value specifically rather than any max-age.
+            expect(stagingContent).not.toContain('max-age=604800');
         });
 
         it('should NOT use immutable, which would make a mistake unfixable for a year', () => {
@@ -374,7 +377,7 @@ describe('htaccessRules', () => {
         it('does not apply to the live Studio site, which caches normally', () => {
             // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
             // document rule and the long hashed-asset cache.
-            const line = productionContent.split('\n').find((l) => l.includes('/studio/archive/'));
+            const line = productionContent.split('\n').find((l) => l.includes('m#^/studio/archive/#'));
             expect(line).toContain('m#^/studio/archive/#');
         });
 
@@ -397,6 +400,244 @@ describe('htaccessRules', () => {
             const doc = productionContent.split('\n').find((l) => l.includes('CONTENT_TYPE'));
             expect(doc).toContain('^/(charts/)?archive/[0-9]');
             expect(doc).not.toContain('studio');
+        });
+    });
+
+    describe('Released archive versions get cached, not just excluded from no-cache', () => {
+        // documentNoCacheRules excludes archive/[0-9] from forced no-cache, but that alone
+        // produces no Cache-Control header at all - confirmed live 2026-09-23, every request to
+        // a released archive page hit origin, including a 30k-request Sitebulb crawl of
+        // /charts/archive/11.0.4/. This rule is what actually fills that gap.
+        const line = () => productionContent.split('\n').find((l) => l.includes('^/(charts/)?archive/[0-9]#"'));
+
+        it('caches with the long, hashed-asset-class TTL, not the moderate unhashed one', () => {
+            const l = line();
+            expect(l).toContain('max-age=604800, s-maxage=31536000');
+        });
+
+        it('is production-only, like every other asset-caching rule', () => {
+            expect(stagingContent).not.toContain('archive/[0-9]#"');
+        });
+
+        it('matches a real released grid and charts archive page, any content type', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/archive/32.3.9/react-data-grid/getting-started/')).toBe(true);
+            expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/')).toBe(true);
+            // No extension allowlist, unlike every other unhashed-asset rule - a released
+            // archive's raw example source and dist bundles are just as frozen as its HTML.
+            expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/main.ts')).toBe(true);
+            expect(pattern.test('/charts/archive/11.0.4/dev/ag-charts-enterprise/dist/package/main.cjs.js')).toBe(true);
+        });
+
+        it('does not match the archive listing pages, only a real numbered version', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/documentation-archive')).toBe(false);
+            expect(pattern.test('/charts/documentation-archive/')).toBe(false);
+        });
+
+        it('never matches /studio/archive/, which stays no-cache always', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/studio/archive/3.0.0/react/getting-started/')).toBe(false);
+        });
+
+        it('is emitted before studioArchiveNoCacheRules, though the paths never overlap anyway', () => {
+            const lines = productionContent.split('\n');
+            const archiveAt = lines.findIndex((l) => l.includes('archive/[0-9]#"'));
+            const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+            expect(archiveAt).toBeGreaterThan(-1);
+            expect(studioAt).toBeGreaterThan(archiveAt);
+        });
+
+        it('is overridden back to no-cache for a version still listed as in-flight', () => {
+            // getInFlightArchiveRules is emitted last, so its no-cache for a specific version
+            // wins over this rule's general cache header - the mechanism that lets a version
+            // stay uncached during release-candidate testing and only get cached once removed
+            // from that list.
+            const content = getHtaccessContent({
+                env: 'production',
+                uncachedGridArchive: '36.2.0',
+                uncachedChartsArchive: '14.3.0',
+            });
+            const lines = content.split('\n');
+            const archiveAt = lines.findIndex((l) => l.includes('archive/[0-9]#"'));
+            const inFlightGridAt = lines.findIndex((l) => l.includes('m#^/archive/36\\.2\\.0/#'));
+            const inFlightChartsAt = lines.findIndex((l) => l.includes('m#^/charts/archive/14\\.3\\.0/#'));
+            expect(archiveAt).toBeGreaterThan(-1);
+            expect(inFlightGridAt).toBeGreaterThan(archiveAt);
+            expect(inFlightChartsAt).toBeGreaterThan(archiveAt);
+        });
+
+        it('a version removed from the in-flight list falls through to this rule - the promised flip', () => {
+            const rule = getInFlightArchiveRules(null, null);
+            expect(rule).not.toContain('Cache-Control');
+            // With nothing in flight, every released archive is governed solely by this rule.
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/archive/36.2.0/react-data-grid/getting-started/')).toBe(true);
+        });
+    });
+
+    describe('SE-189: /robots.txt and /favicon.ico get a sensible cache lifetime', () => {
+        // Pulls the expr= regex out of the GENERATED output rather than re-declaring it: a
+        // copy would let the rule and its test drift apart.
+        const getRootStaticCacheRule = (content: string) => {
+            const line = content.split('\n').find((l) => l.includes('robots\\.txt|favicon\\.ico'));
+            expect(line).toBeDefined();
+            return line!;
+        };
+
+        it('should set a moderate Cache-Control on /robots.txt and /favicon.ico, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                const rule = getRootStaticCacheRule(content);
+                expect(rule).toContain('Cache-Control "public, max-age=86400"');
+            });
+        });
+
+        it('should NOT use the year-long immutable lifetime given to hashed assets', () => {
+            // Neither /robots.txt nor /favicon.ico is content-addressed, so a real change
+            // must be able to land same-day rather than waiting out a year-long cache.
+            const rule = getRootStaticCacheRule(productionContent);
+            expect(rule).not.toContain('604800');
+            expect(rule).not.toContain('31536000');
+            expect(rule).not.toContain('immutable');
+        });
+
+        it('should NOT use no-cache, which would defeat the point of caching them at all', () => {
+            expect(getRootStaticCacheRule(productionContent)).not.toContain('no-cache');
+        });
+
+        it('should match /robots.txt and /favicon.ico only, not any other root file', () => {
+            const rule = getRootStaticCacheRule(productionContent);
+            const pattern = new RegExp(rule.match(/m#([^#]+)#/)![1]);
+            expect(pattern.test('/robots.txt')).toBe(true);
+            expect(pattern.test('/favicon.ico')).toBe(true);
+            expect(pattern.test('/sitemap-index.xml')).toBe(false);
+            expect(pattern.test('/llms.txt')).toBe(false);
+            expect(pattern.test('/some/robots.txt')).toBe(false);
+        });
+    });
+
+    describe('Images and example-assets get a moderate max-age', () => {
+        it('applies a 24h max-age, not the year-long hashed-asset TTL', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            expect(line).toContain('max-age=86400');
+            expect(line).not.toContain('max-age=604800');
+        });
+
+        it('matches nested product paths too, e.g. /charts/images/ or /studio/example-assets/', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            expect(line).not.toContain('^/(images|example-assets)/');
+        });
+
+        it('is production-only, unlike the document no-cache rule', () => {
+            expect(stagingContent).not.toContain('images|example-assets');
+        });
+
+        it('also matches /example/, not just /example-assets/', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/finance.png')).toBe(true);
+            expect(pattern.test('/example-assets/olympic-winners.json')).toBe(true);
+        });
+
+        it('does NOT match the /example/ demo page itself, only asset files beneath it', () => {
+            // staticAssetCacheRules is emitted after documentNoCacheRules, so an unanchored
+            // match on the directory name alone would win and override the live demo page's
+            // no-cache with a day-long public cache - see src/pages/example.astro.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example/')).toBe(false);
+            expect(pattern.test('/example/index.html')).toBe(false);
+            expect(pattern.test('/example-assets/')).toBe(false);
+            expect(pattern.test('/images/')).toBe(false);
+        });
+
+        it('matches assets nested in subdirectories, e.g. example-assets/space-company-logos/ or images/ag-logos/png-logos/', () => {
+            // Real paths in public/ - an earlier version of this rule anchored the filename
+            // segment with "[^/]+" (no subdirectory allowed), which silently broke exactly
+            // these: 334 of the 364 files under public/images/ live nested, not at the top level.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example-assets/space-company-logos/nasa.png')).toBe(true);
+            expect(pattern.test('/images/ag-logos/png-logos/react.png')).toBe(true);
+        });
+
+        it('covers the non-image extensions actually used under these paths (xlsx, mp4, webm)', () => {
+            // Real files: public/example-assets/*.xlsx, public/images/**/*.mp4 and *.webm. The
+            // original png/jpg/gif/svg/webp/ico/json list didn't include these.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/example-assets/olympic-data.xlsx')).toBe(true);
+            expect(pattern.test('/images/about/carousel/intro.mp4')).toBe(true);
+            expect(pattern.test('/images/about/carousel/intro.webm')).toBe(true);
+        });
+
+        it('also matches /theme-icons/, including the per-theme zip bundle', () => {
+            // public/theme-icons/<theme>/<icon>.svg plus a public/theme-icons/<theme>/<theme>-icons.zip
+            // bundle per theme - same asset class (unhashed, build-time static) as images/example-assets,
+            // so it shares this rule. The "does not match anything mutable" hashed-asset test elsewhere
+            // in this file already confirms /theme-icons/alpine.svg isn't hash-shaped; this confirms it's
+            // covered by *this* rule instead, not left uncached altogether.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/theme-icons/material/filter.svg')).toBe(true);
+            expect(pattern.test('/theme-icons/quartz/quartz-icons.zip')).toBe(true);
+        });
+
+        it('does NOT match a bare /theme-icons/ directory request, only files beneath it', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/theme-icons/')).toBe(false);
+            expect(pattern.test('/theme-icons/material/')).toBe(false);
+        });
+
+        it('also matches /videos/, on both the grid root (json/png) and product subtrees (mp4/webm)', () => {
+            // public/videos/*.json and *.png live directly under grid root; /studio/videos/*.mp4
+            // and *.webm are the nested-.htaccess-cascade case this rule intentionally reaches -
+            // see the "cascades into /charts/ or /studio/" test below for why that's expected.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/videos/getting-started.json')).toBe(true);
+            expect(pattern.test('/studio/videos/drag-drop.webm')).toBe(true);
+            expect(pattern.test('/studio/videos/drag-drop.mp4')).toBe(true);
+        });
+    });
+
+    describe('Static script bundles under /scripts/ get a moderate max-age', () => {
+        const getScriptCacheRule = () => {
+            const line = productionContent.split('\n').find((l) => l.includes('/scripts/[^/]'));
+            expect(line).toBeDefined();
+            return line!;
+        };
+
+        it('applies a 24h max-age, not the year-long hashed-asset TTL', () => {
+            const line = getScriptCacheRule();
+            expect(line).toContain('max-age=86400');
+            expect(line).not.toContain('max-age=604800');
+        });
+
+        it('is anchored to .js, so it can never match a directory or a non-script file', () => {
+            const line = getScriptCacheRule();
+            const [, source] = line.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/scripts/gtm-init.js')).toBe(true);
+            expect(pattern.test('/scripts/persist-cookie-consent.js')).toBe(true);
+            expect(pattern.test('/scripts/')).toBe(false);
+            expect(pattern.test('/scripts/gtm-init.js.map')).toBe(false);
+        });
+
+        it('is production-only, unlike the document no-cache rule', () => {
+            expect(stagingContent).not.toContain('/scripts/[^/]');
         });
     });
 
@@ -536,9 +777,10 @@ describe('htaccessRules', () => {
 
         it('should include the asset cache header in production only', () => {
             // Replaces an assertion that the (inert, now removed) mod_expires block was
-            // present. Staging gets no max-age so testers never hit a stale asset.
+            // present. Staging gets no long-lived asset cache so testers never hit a stale
+            // asset (the SE-189 root-static exception aside - see that describe block).
             expect(productionContent).toContain('max-age=604800');
-            expect(stagingContent).not.toContain('max-age');
+            expect(stagingContent).not.toContain('max-age=604800');
         });
 
         it('should include CORS headers in production only', () => {

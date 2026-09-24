@@ -3,6 +3,7 @@ import type { IRowNode } from './iRowNode';
 
 export interface IServerSideStore extends Bean {
     getStoreBounds(): { topPx: number; heightPx: number };
+    hasExpandableMasterRows(): boolean;
     /**
      * Returns the first child of the group (index 0), if the node is not loaded, returns null.
      */

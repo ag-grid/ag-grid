@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_HU = {
+export const AG_GRID_LOCALE_HU_HU = {
     // Set Filter
     selectAll: '(Mindet kiválaszt)',
     selectAllSearchResults: '(Összes keresési találat kiválasztása)',
@@ -927,3 +927,6 @@ export const AG_GRID_LOCALE_HU = {
     deleteNote: 'Megjegyzés eltávolítása',
     notePlaceholder: 'Megjegyzés hozzáadása...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HU_HU` instead. */
+export const AG_GRID_LOCALE_HU = AG_GRID_LOCALE_HU_HU;

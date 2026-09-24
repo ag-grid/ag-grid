@@ -1,5 +1,7 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex, isElementDisplayed } from 'ag-test-utils';
 
+import type { RowSelectedEvent } from 'ag-grid-community';
+
 import { columnDefs, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
 
 describe('Row Selection Grid Options', () => {
@@ -293,6 +295,25 @@ describe('Row Selection Grid Options', () => {
                         ├── LEAF selected id:5 sport:"swimming"
                         └── LEAF id:6 sport:"rowing"
                     `);
+                });
+
+                test('SHIFT-click range reports the originating browser event', async () => {
+                    const events: RowSelectedEvent[] = [];
+                    const [api, actions] = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                        onRowSelected: (event) => events.push(event),
+                    });
+
+                    const anchorClick = actions.clickRowByIndex(2);
+                    const shiftClick = actions.clickRowByIndex(4, { shiftKey: true });
+
+                    // gridOptions callbacks are dispatched asynchronously via setTimeout
+                    await new Promise((resolve) => setTimeout(resolve, 0));
+
+                    assertSelectedRowsByIndex([2, 3, 4], api);
+                    expect(events.map(({ event }) => event)).toEqual([anchorClick, shiftClick, shiftClick]);
                 });
 
                 test('SHIFT-click extends range downwards from from last selected row', async () => {

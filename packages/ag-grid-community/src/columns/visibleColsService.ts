@@ -53,8 +53,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     public rightWidth = 0;
     public totalWidth = 0;
 
-    /** `bodyWidth` changed in the last `updateBodyWidths()` — drives the RTL virtual-col calc. */
-    public isBodyWidthDirty = true;
+    /** Bumped once per pass that restamps the column lefts, so anything derived from where the columns
+     *  are can tell whether it is looking at the same layout without re-deriving it. */
+    public layoutVersion = 0;
 
     /** Prev refresh's pinned-edge cols — drive an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
     private prevLastLeftPinned: AgColumn | null = null;
@@ -101,6 +102,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 updateGroupsAndCollectLeaves(treeRight[i], null, rightCols);
             }
         }
+        // Replaced, never mutated in place: `colViewport` detects a changed render set by comparing
+        // against the array it last kept, so an in-place edit would read as unchanged forever.
         this.leftCols = leftCols;
         this.centerCols = centerCols;
         this.rightCols = rightCols;
@@ -133,15 +136,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** `widths` reuses totals already computed on the hot `refresh` path; omit to re-sum. */
     public updateBodyWidths(widths?: SectionWidths): void {
+        // Above the comparison below: a move restamps the lefts and leaves all three totals unchanged.
+        ++this.layoutVersion;
+
         const newBodyWidth = widths ? widths.center : getWidthOfColsInList(this.centerCols);
         const newLeftWidth = widths ? widths.left : getWidthOfColsInList(this.leftCols);
         const newRightWidth = widths ? widths.right : getWidthOfColsInList(this.rightCols);
 
-        // Drives the RTL virtual-col calc — body-width changes flip y coords.
-        const bodyWidthDirty = this.bodyWidth !== newBodyWidth;
-        this.isBodyWidthDirty = bodyWidthDirty;
-
-        if (!bodyWidthDirty && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
+        if (this.bodyWidth === newBodyWidth && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
             return;
         }
         this.bodyWidth = newBodyWidth;
@@ -149,8 +151,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightWidth = newRightWidth;
         this.totalWidth = newBodyWidth + newLeftWidth + newRightWidth;
 
-        // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: viewport must resize
-        // before the scrollbar updates its visibility.
+        // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: the viewport must resize
+        // before the scrollbar updates its visibility, and both are public, so the order is observable.
         const eventSvc = this.eventSvc;
         eventSvc.dispatchEvent({ type: 'columnContainerWidthChanged' });
         eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });
@@ -257,10 +259,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         for (let i = 0, len = colsList.length; i < len; ++i) {
             const col = colsList[i];
             const colKind = col.colKind;
-            const pinned = col.pinned;
+            const lane = col.pinnedLane;
             // right cursor derives from total - left - center, so only left/center need counting
-            if (pinned !== 'right') {
-                if (pinned) {
+            if (lane !== 2) {
+                if (lane === 0) {
                     ++leftCount;
                 } else {
                     ++centerCount;
@@ -289,19 +291,19 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 hasDataCol = true;
             }
             if (pending !== null && colKind !== 'row-number') {
-                const selPinned = pending.pinned;
-                if (selPinned === 'right') {
+                const selLane = pending.pinnedLane;
+                if (selLane === 2) {
                     rightCols.push(pending);
-                } else if (selPinned) {
+                } else if (selLane === 0) {
                     leftCols.push(pending);
                 } else {
                     centerCols.push(pending);
                 }
                 pending = null;
             }
-            if (pinned === 'right') {
+            if (lane === 2) {
                 rightCols.push(col);
-            } else if (pinned) {
+            } else if (lane === 0) {
                 leftCols.push(col);
             } else {
                 centerCols.push(col);
@@ -330,10 +332,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         let rightCursor = leftCount + centerCount + 1;
         for (let i = 0, total = cols.length; i < total; ++i) {
             const col = cols[i];
-            const pinned = col.pinned;
-            if (pinned === 'right') {
+            const lane = col.pinnedLane;
+            if (lane === 2) {
                 col.ariaColIndex = rightCursor++;
-            } else if (pinned) {
+            } else if (lane === 0) {
                 col.ariaColIndex = leftCursor++;
             } else {
                 col.ariaColIndex = centerCursor++;

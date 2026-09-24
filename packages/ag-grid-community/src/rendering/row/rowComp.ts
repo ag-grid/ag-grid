@@ -49,6 +49,8 @@ export class RowComp extends Component {
     private domOrder: boolean;
     private readonly cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
 
+    private readonly laneContainers: (HTMLElement | undefined)[];
+
     constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();
 
@@ -71,6 +73,7 @@ export class RowComp extends Component {
             // The centre lane is always present; the pinned lanes are attached on demand.
             rowDiv.append(centerSection.container);
         }
+        this.laneContainers = [this.ePinnedLeftCells, this.eScrollingCells, this.ePinnedRightCells];
         this.setInitialStyle(rowDiv);
         this.setTemplateFromElement(rowDiv);
 
@@ -291,46 +294,26 @@ export class RowComp extends Component {
             return;
         }
 
-        const leftElementsInOrder: HTMLElement[] = [];
-        const centerElementsInOrder: HTMLElement[] = [];
-        const rightElementsInOrder: HTMLElement[] = [];
+        const elementsByLane: HTMLElement[][] = [[], [], []];
         for (const cellCtrl of cellCtrls) {
             const cellComp = this.cellComps.get(cellCtrl.instanceId);
             if (cellComp) {
-                const pinned = this.rowCtrl.getCellLane(cellCtrl);
-                if (pinned === 'left') {
-                    leftElementsInOrder.push(cellComp.getGui());
-                } else if (pinned === 'right') {
-                    rightElementsInOrder.push(cellComp.getGui());
-                } else {
-                    centerElementsInOrder.push(cellComp.getGui());
-                }
+                elementsByLane[this.rowCtrl.laneFor(cellCtrl.column)].push(cellComp.getGui());
             }
         }
 
-        if (this.ePinnedLeftCells) {
-            _setDomChildOrder(this.ePinnedLeftCells, leftElementsInOrder);
-        }
-        if (this.eScrollingCells) {
-            _setDomChildOrder(this.eScrollingCells, centerElementsInOrder);
-        }
-        if (this.ePinnedRightCells) {
-            _setDomChildOrder(this.ePinnedRightCells, rightElementsInOrder);
+        const containers = this.laneContainers;
+        for (let lane = 0, len = containers.length; lane < len; ++lane) {
+            const container = containers[lane];
+            if (container) {
+                _setDomChildOrder(container, elementsByLane[lane]);
+            }
         }
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
-        const pinned = this.rowCtrl.getCellLane(cellCtrl);
-        let parent: HTMLElement | null | undefined;
-        if (pinned === 'left') {
-            parent = this.ePinnedLeftCells;
-        } else if (pinned === 'right') {
-            parent = this.ePinnedRightCells;
-        } else {
-            parent = this.eScrollingCells;
-        }
-        const eParent = parent ?? this.getGui();
+        const eParent = this.laneContainers[this.rowCtrl.laneFor(cellCtrl.column)] ?? this.getGui();
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eParent, editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);
         eParent.appendChild(cellComp.getGui());

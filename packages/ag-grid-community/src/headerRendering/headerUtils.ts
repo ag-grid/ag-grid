@@ -1,7 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
-import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { AbstractHeaderCellCtrl } from './cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
@@ -169,41 +168,9 @@ export function updatePinnedSectionWidths(
     }
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface PinnedSections<T> {
-    left: T[];
-    center: T[];
-    right: T[];
-}
-
-export function compareCtrlsByLeft(a: AbstractHeaderCellCtrl, b: AbstractHeaderCellCtrl): number {
-    return (a.column.getLeft() ?? 0) - (b.column.getLeft() ?? 0);
-}
-
-export function sortCtrlsByPinnedThenLeft(ctrls: AbstractHeaderCellCtrl[]): AbstractHeaderCellCtrl[] {
-    const { left, center, right } = partitionByPinned(ctrls, (c) => c.column.getPinned());
-    left.sort(compareCtrlsByLeft);
-    center.sort(compareCtrlsByLeft);
-    right.sort(compareCtrlsByLeft);
-    return [...left, ...center, ...right];
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function partitionByPinned<T>(items: T[], getPinned: (item: T) => ColumnPinnedType): PinnedSections<T> {
-    const left: T[] = [];
-    const center: T[] = [];
-    const right: T[] = [];
-
-    for (const item of items) {
-        const pinned = getPinned(item);
-        if (pinned === 'left') {
-            left.push(item);
-        } else if (pinned === 'right') {
-            right.push(item);
-        } else {
-            center.push(item);
-        }
-    }
-
-    return { left, center, right };
+/** Lane then position is the order the header renders in. */
+export function compareCtrlsByPinnedThenLeft(a: AbstractHeaderCellCtrl, b: AbstractHeaderCellCtrl): number {
+    const colA = a.column;
+    const colB = b.column;
+    return colA.pinnedLane - colB.pinnedLane || (colA.left ?? 0) - (colB.left ?? 0);
 }

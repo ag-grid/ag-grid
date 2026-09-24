@@ -6,6 +6,20 @@ import { EULA_CONTENT } from './eulaPresentations';
 // The EULA body uses no Markdoc tags, functions or variables, so no site config is needed to render it.
 const MARKDOC_CONFIG = {};
 
+// Block-level elements in the rendered agreement. Whitespace between them is insignificant in HTML,
+// so each can start on its own line without changing how the document renders. A line breaks where a
+// block opens, and where one closes and another tag follows; a closing tag stays on its block's line.
+const BLOCK_TAG = 'article|ol|ul|li|p|h[1-6]|hr|table|thead|tbody|tr|th|td|blockquote';
+const BLOCK_BOUNDARY = new RegExp(`(?<=<\\/(?:${BLOCK_TAG})>|<hr>)(?=<)|(?<=>)(?=<(?:${BLOCK_TAG})[\\s>])`, 'g');
+
+/**
+ * Breaks the single line Markdoc renders into one line per block-level element, so that a change to
+ * one clause shows up as a change to one line when the generated licence is diffed.
+ */
+function oneBlockPerLine(html: string): string {
+    return html.replace(BLOCK_BOUNDARY, '\n');
+}
+
 /**
  * The Commercial End User Licence Agreement as a standalone HTML document, without the website
  * layout: the same heading, version and introductory notice as the `/eula/commercial/` page,
@@ -26,7 +40,7 @@ export function renderEulaHtml(
     // supplies the heading and presents the current agreement only.
     const bodyLayout = embedded ? 'margin: 0; padding: 0 1em;' : 'max-width: 52em; margin: 2em auto; padding: 0 1em;';
     const headingBlock = embedded ? [] : [`<h1>${heading}</h1>`, '<hr>', ...meta.map((line) => `<h4>${line}</h4>`)];
-    const body = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG));
+    const body = oneBlockPerLine(Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(eulaSource), MARKDOC_CONFIG)));
 
     return `<!doctype html>
 <html lang="en">

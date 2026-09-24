@@ -1,0 +1,34 @@
+/**
+ * Colour scheme for documentation example charts. The generated dark-mode snippet points the
+ * default theme's colour parameters at these variables, and AG Charts resolves them against the
+ * chart container and watches them for changes - so an example paints in the right scheme on
+ * first render and repaints itself when the site toggles `data-dark-mode`, with no `chart.update()`.
+ *
+ * The values are the `ag-default` / `ag-default-dark` parameters as resolved by the theme,
+ * covering only those the dark theme actually retunes. To refresh them, read the
+ * `--ag-charts-*` properties AG Charts writes onto a chart's root element under each theme
+ * (`DOMManager.setThemeParameters`) - see `chart/themes/{chartTheme,darkTheme}.ts` for the source.
+ */
+:root {
+    --ag-example-chart-axis-line-color: #dcdddd;
+    --ag-example-chart-background-color: #ffffff;
+    --ag-example-chart-border-color: #dcdddd;
+    --ag-example-chart-chrome-background-color: #fafafb;
+    --ag-example-chart-crosshair-label-background-color: #181d1f;
+    --ag-example-chart-foreground-color: #181d1f;
+    --ag-example-chart-grid-line-color: #e8e9e9;
+    --ag-example-chart-grouped-category-line-color: #d8d9d9;
+    --ag-example-chart-subtle-text-color: #707374;
+}
+
+:root[data-dark-mode='true'] {
+    --ag-example-chart-axis-line-color: #c3c5c9;
+    --ag-example-chart-background-color: #192232;
+    --ag-example-chart-border-color: #4b525e;
+    --ag-example-chart-chrome-background-color: #293140;
+    --ag-example-chart-crosshair-label-background-color: #afb2b7;
+    --ag-example-chart-foreground-color: #fff;
+    --ag-example-chart-grid-line-color: #545b67;
+    --ag-example-chart-grouped-category-line-color: #7e838c;
+    --ag-example-chart-subtle-text-color: #7c818a;
+}

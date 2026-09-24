@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, GridPreDestroyedEvent, StateUpdatedEvent } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridPreDestroyedEvent, GridState, StateUpdatedEvent } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -74,20 +74,40 @@ function onStateUpdated(event: StateUpdatedEvent<IOlympicData>): void {
     console.log('State updated', event.state);
 }
 
-function reloadGrid() {
-    const state = gridApi.getState();
-
+function recreateGrid(initialState?: GridState) {
     gridApi.destroy();
 
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    gridOptions.initialState = state;
+    gridOptions.initialState = initialState;
 
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then((data) => gridApi.setGridOption('rowData', data));
+}
+
+function recreateWithCurrentState() {
+    recreateGrid(gridApi.getState());
+}
+
+function recreateWithNoState() {
+    recreateGrid();
+}
+
+let savedState: GridState | undefined;
+
+function saveState() {
+    savedState = gridApi.getState();
+    console.log('Saved state', savedState);
+}
+
+function setState() {
+    if (savedState) {
+        gridApi.setState(savedState);
+        console.log('Set state', savedState);
+    }
 }
 
 function printState() {

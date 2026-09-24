@@ -9,7 +9,11 @@ describe('addTrailingSlash', () => {
         ${'./docs/path'}         | ${'./docs/path/'}
         ${'/gallery'}            | ${'/gallery/'}
         ${'/gallery/'}           | ${'/gallery/'}
-        ${'/docs#section'}       | ${'/docs#section'}
+        ${'/docs#section'}       | ${'/docs/#section'}
+        ${'/docs/#section'}      | ${'/docs/#section'}
+        ${'/docs?tab=trial'}     | ${'/docs/?tab=trial'}
+        ${'#section'}            | ${'#section'}
+        ${'/guide.pdf'}          | ${'/guide.pdf'}
         ${'https://youtube.com'} | ${'https://youtube.com'}
     `('$url -> $expected', ({ url, expected }) => {
         expect(addTrailingSlash(url)).toBe(expected);

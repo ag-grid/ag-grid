@@ -59,6 +59,68 @@ const studioArchiveNoCacheRules = `
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 `;
 
+const rootStaticFileCacheRules = `
+# Root static files (robots.txt, favicon.ico): unhashed but low-churn, so a moderate
+# max-age is enough to cut repeat crawler fetches (SE-189 measured /robots.txt refetched
+# ~25x/day with no header at all) without risking a stale copy for long after a real change.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(robots\\.txt|favicon\\.ico)$#"
+`;
+
+// Unlike hashedAssetCacheRules, these filenames carry no content hash, so a stale copy can
+// persist after content changes. A moderate max-age bounds that staleness window instead of
+// relying on a release-time cache invalidation step being remembered.
+//
+// Requires a real static-asset extension, not just the directory name - /example/ and
+// /example/index.html are the live demo page (documentNoCacheRules), and since this rule is
+// emitted after that one, an unanchored match here would win and override its no-cache with
+// a day-long public cache. Anchoring on the file extension makes that impossible by
+// construction, rather than relying on rule order to avoid it. Uses ".+" rather than "[^/]+"
+// before the extension so nested paths still match (e.g. example-assets/space-company-logos/
+// nasa.png, images/ag-logos/png-logos/react.png) - a real example-assets/flags/index.html
+// proves the extension allowlist, not the lack of nesting, is what has to keep HTML out.
+//
+// theme-icons (public/theme-icons/<theme>/<icon>.svg, plus a per-theme <theme>-icons.zip
+// bundle) is the same asset class - unhashed, build-time static, never a content page - so it
+// shares this rule rather than getting its own. zip is only needed for those bundle downloads;
+// none of images/example-assets/example are expected to contain one today, but allowing it
+// there too is no more risky than the rest of the allowlist.
+//
+// "videos" (public/videos/*.json|png here; public/videos/*.mp4|webm on the /studio side)
+// belongs for the same reason - and matters beyond grid's own directory: this rule is
+// unanchored on the directory segment (matches the substring anywhere in the path, same as
+// images/example-assets already did), so it cascades via nested .htaccess merge into
+// /charts/* and /studio/* too. Confirmed live: /studio/scripts/*.js and /studio/images/* were
+// already getting this header for free through that cascade, but /studio/videos/* was not -
+// "videos" was simply missing from the alternation, not a cascade failure.
+const staticAssetCacheRules = `
+# Images, example-page assets, theme icon downloads, and videos: unhashed filenames, so cap
+# staleness with a moderate max-age rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example|theme-icons|videos)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm|zip)$#"
+`;
+
+// public/scripts/ (cookie consent, GTM, video/carousel players, the announcement banner,
+// etc.) - unhashed filenames, so the same reasoning as staticAssetCacheRules applies.
+// Anchored to .js so it can only ever match an actual script file, not a directory or
+// anything else that might one day live under /scripts/ - the /example/ bug this rule was
+// added alongside showed relying on that never happening is not a safe assumption.
+const scriptAssetCacheRules = `
+# Static script bundles: unhashed filenames, so cap staleness with a moderate max-age
+# rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
+`;
+
+// A released archive version is permanently immutable, so unlike every other rule in this
+// file this one has no extension allowlist or content-type restriction - everything under it
+// can be cached. Emitted before studioArchiveNoCacheRules and getInFlightArchiveRules, both of
+// which must keep overriding it for their own scope.
+const archiveCacheRules = `
+# Released archive versions: fully immutable, so cache literally everything under them
+# indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
+# no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
+# in-flight block below, which overrides this back to no-cache for that version only.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+`;
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -558,6 +620,7 @@ function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${studioArchiveNoCacheRules}
+${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
@@ -580,7 +643,11 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
+${staticAssetCacheRules}
+${scriptAssetCacheRules}
+${archiveCacheRules}
 ${studioArchiveNoCacheRules}
+${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
