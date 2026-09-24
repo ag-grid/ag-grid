@@ -1,15 +1,18 @@
 import { waitFor } from '@testing-library/dom';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import {
     ALL_SEVERITIES,
     TestGridsManager,
+    canvasPolyfill,
     clickMenuOption,
     clipboardUtils,
     fireGridPointerDown,
     menuOption,
+    objectUrls,
     polyfillOffsetParent,
 } from 'ag-test-utils';
 
-import type { GetContextMenuItemsParams } from 'ag-grid-community';
+import type { GetContextMenuItemsParams, GridApi, GridOptions, NotesDataSourceGetNoteParams, NotesDataSourceSetNoteParams } from 'ag-grid-community';
 import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -19,7 +22,7 @@ function fireContextMenu(element: HTMLElement): void {
     element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
 }
 
-function cell(gridDiv: HTMLElement, rowIndex: number, colId: string): HTMLElement {
+function cell(gridDiv: HTMLElement, rowIndex: number | string, colId: string): HTMLElement {
     const el = gridDiv.querySelector<HTMLElement>(`[row-index="${rowIndex}"] [col-id="${colId}"]`);
     if (!el) {
         throw new Error(`No cell rendered at row ${rowIndex}, column ${colId}`);
@@ -441,5 +444,269 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(ranges[2].startRow?.rowIndex).toBe(2);
         expect(ranges[2].endRow?.rowIndex).toBe(2);
         expect(ranges[2].columns.map((col) => col.getColId())).toEqual(['athlete', 'age']);
+    });
+});
+
+// Without cell selection integration a row-number right-click leaves the cell ranges alone, so each default
+// item must act on the right-clicked row, or on whatever range or selection already exists.
+describe('Row Numbers context menu items without cell selection integration (AG-16355)', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    const columnDefs = [{ field: 'athlete' }, { field: 'age' }];
+    const rowData = [
+        { athlete: 'Michael Phelps', age: 23 },
+        { athlete: 'Natalie Coughlin', age: 25 },
+        { athlete: 'Aleksey Nemov', age: 24 },
+    ];
+
+    beforeEach(() => {
+        clipboardUtils.init();
+        objectUrls.init();
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        clipboardUtils.reset();
+        objectUrls.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+    });
+
+    test('Add Note opens the notes editor for the right-clicked row-number cell', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersNoCsAddNote', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getRowId: ({ data }) => data.athlete,
+            notesDataSource: { getNote: () => undefined, setNote: () => {} },
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 1, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Add Note');
+
+        await waitFor(() => expect(document.querySelector('.ag-notes-popup')).not.toBeNull());
+    });
+
+    test("Remove Note clears the right-clicked row-number cell's note", async () => {
+        const setNote = vi.fn<(params: NotesDataSourceSetNoteParams) => void>();
+        const api = await gridMgr.createGridAndWait('rowNumbersNoCsRemoveNote', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getRowId: ({ data }) => data.athlete,
+            notesDataSource: {
+                getNote: ({ column, rowNode }: NotesDataSourceGetNoteParams) =>
+                    column.getColId() === ROW_NUMBERS_COLUMN_ID && rowNode.rowIndex === 1 ? { text: 'Note' } : undefined,
+                setNote,
+            },
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 1, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Edit Note')).not.toBeNull());
+        await clickMenuOption('Remove Note');
+
+        await waitFor(() => expect(setNote).toHaveBeenCalledTimes(1));
+        const [{ column, rowNode, note }] = setNote.mock.calls[0];
+        expect(column.getColId()).toBe(ROW_NUMBERS_COLUMN_ID);
+        expect(rowNode.rowIndex).toBe(1);
+        expect(note).toBeUndefined();
+    });
+
+    test('Pin Row pins and unpins the right-clicked row', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersNoCsPin', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getRowId: ({ data }) => data.athlete,
+            enableRowPinning: true,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        rightClick(cell(gridDiv, 1, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Pin Row');
+        await clickMenuOption('Pin to Top');
+        await waitFor(() => expect(api.getState().rowPinning).toEqual({ top: ['Natalie Coughlin'], bottom: [] }));
+
+        rightClick(cell(gridDiv, 't-0', ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Pin Row');
+        await clickMenuOption('Unpin Row');
+        await waitFor(() => expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] }));
+    });
+
+    test('Pin Row is not offered when isRowPinnable declines the row', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersNoCsNotPinnable', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            enableRowPinning: true,
+            isRowPinnable: (node) => node.rowIndex !== 1,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        rightClick(cell(gridDiv, 1, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Pin Row')).toBeNull();
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Pin Row')).not.toBeNull());
+    });
+
+    test('CSV Export exports the grid data without the row numbers', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersNoCsCsv', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 1, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Export');
+        await clickMenuOption('CSV Export');
+
+        const csv = await (await objectUrls.pullBlob()).text();
+        // the export leads with a byte order mark
+        expect(csv).toBe(
+            '\ufeff"Athlete","Age"\r\n"Michael Phelps","23"\r\n"Natalie Coughlin","25"\r\n"Aleksey Nemov","24"'
+        );
+    });
+
+    // Paste writes from the focused cell, which a row-number cell can never be, as it is not editable: the item is
+    // offered alongside Copy but stays disabled, whether the copy target is a cell range or the selected rows.
+    test.each([
+        {
+            target: 'an existing cell range',
+            options: { cellSelection: true, rowNumbers: { suppressCellSelectionIntegration: true } } as GridOptions,
+            select: (api: GridApi) => fireGridPointerDown(cell(getGridElement(api)! as HTMLElement, 0, 'athlete')),
+        },
+        {
+            target: 'the selected rows',
+            options: { rowNumbers: true, rowSelection: { mode: 'multiRow', copySelectedRows: true } } as GridOptions,
+            select: (api: GridApi) => api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(2)!], newValue: true }),
+        },
+    ])('Paste is offered but disabled when the copy target is $target', async ({ options, select }) => {
+        const api = await gridMgr.createGridAndWait('rowNumbersNoCsPaste', {
+            columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
+            rowData,
+            ...options,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        select(api);
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Copy')).not.toBeNull());
+        const paste = menuOption('Paste')?.closest('.ag-menu-option');
+        expect(paste?.classList.contains('ag-menu-option-disabled')).toBe(true);
+    });
+});
+
+describe('Row Numbers context menu chart items (AG-16355)', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule.with(AgChartsEnterpriseModule)] });
+
+    const columnDefs = [
+        { field: 'athlete', chartDataType: 'category' as const },
+        { field: 'age', chartDataType: 'series' as const },
+    ];
+    const rowData = [
+        { athlete: 'Michael Phelps', age: 23 },
+        { athlete: 'Natalie Coughlin', age: 25 },
+        { athlete: 'Aleksey Nemov', age: 24 },
+    ];
+
+    beforeAll(async () => {
+        await canvasPolyfill.init();
+    });
+    afterAll(() => canvasPolyfill.reset());
+
+    beforeEach(() => {
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+    });
+
+    async function chartFromMenu(chartItem: 'Chart Range' | 'Pivot Chart'): Promise<void> {
+        await clickMenuOption(chartItem);
+        await clickMenuOption('Column');
+        // the pivot chart items carry a left-to-right mark, so they read correctly in RTL locales
+        await clickMenuOption(chartItem === 'Pivot Chart' ? 'Grouped\u200E' : 'Grouped');
+    }
+
+    test('without the integration, Chart Range charts the existing range rather than the right-clicked row', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersChartExistingRange', {
+            columnDefs,
+            rowData,
+            enableCharts: true,
+            cellSelection: true,
+            rowNumbers: { suppressCellSelectionIntegration: true },
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
+        fireGridPointerDown(cell(gridDiv, 1, 'age'), { shiftKey: true });
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await chartFromMenu('Chart Range');
+
+        await waitFor(() => expect(api.getChartModels()).toHaveLength(1));
+        const { cellRange, chartType } = api.getChartModels()![0];
+        expect(chartType).toBe('groupedColumn');
+        expect(cellRange.rowStartIndex).toBe(0);
+        expect(cellRange.rowEndIndex).toBe(1);
+    });
+
+    test('without the integration and without a range, Chart Range is not offered', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersChartNoRange', {
+            columnDefs,
+            rowData,
+            enableCharts: true,
+            rowNumbers: true,
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 2, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
+        expect(menuOption('Chart Range')).toBeNull();
+    });
+
+    test('with the integration, Chart Range charts the right-clicked row', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersChartIntegrated', {
+            columnDefs,
+            rowData,
+            enableCharts: true,
+            cellSelection: true,
+            rowNumbers: true,
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 2, ROW_NUMBERS_COLUMN_ID));
+        await chartFromMenu('Chart Range');
+
+        await waitFor(() => expect(api.getChartModels()).toHaveLength(1));
+        const { cellRange } = api.getChartModels()![0];
+        expect(cellRange.rowStartIndex).toBe(2);
+        expect(cellRange.rowEndIndex).toBe(2);
+    });
+
+    test('Pivot Chart charts the pivot result from a row-number cell', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersPivotChart', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true, chartDataType: 'category' as const },
+                { field: 'age', aggFunc: 'sum', chartDataType: 'series' as const },
+            ],
+            rowData,
+            enableCharts: true,
+            pivotMode: true,
+            rowNumbers: true,
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
+        await chartFromMenu('Pivot Chart');
+
+        await waitFor(() => expect(api.getChartModels()).toHaveLength(1));
+        const { modelType, chartType } = api.getChartModels()![0];
+        expect(modelType).toBe('pivot');
+        expect(chartType).toBe('groupedColumn');
     });
 });
