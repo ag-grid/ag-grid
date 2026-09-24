@@ -18,6 +18,7 @@ import {
     PaginationModule,
     PinnedRowModule,
     TextFilterModule,
+    getGridElement,
 } from 'ag-grid-community';
 import type { GridApi, GridOptions, GridState, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
 import {
@@ -335,6 +336,57 @@ describe('Manual pinned rows', () => {
             └── LEAF id:6 sport:"rowing"
             PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
         `);
+    });
+
+    test('a grand total pinned by `grandTotalRow` stays there when a context menu item pins or unpins it', async () => {
+        const restoreOffsetParent = polyfillOffsetParent();
+        try {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                enableRowPinning: true,
+                grandTotalRow: 'pinnedBottom',
+                getContextMenuItems: () => ['pinTop', 'unpinRow'],
+            });
+            const pinnedBottomElements = () => getGridElement(api)!.querySelectorAll('.ag-row-pinned[row-index^="b"]');
+            const expectPinnedBottomOnly = () => {
+                assertPinnedRows(api, 'top', []);
+                assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+                expect(pinnedBottomElements().length).toBe(1);
+            };
+            await waitFor(() => expect(pinnedBottomElements().length).toBe(1));
+            const modelUpdated = vi.fn();
+            api.addEventListener('modelUpdated', modelUpdated);
+
+            for (const option of ['Pin to Top', 'Unpin Row']) {
+                await userEvent.pointer({
+                    keys: '[MouseRight]',
+                    target: pinnedBottomElements()[0].querySelector<HTMLElement>('.ag-cell')!,
+                });
+                await clickMenuOption(option);
+                await asyncSetTimeout(0);
+                expectPinnedBottomOnly();
+            }
+            expect(modelUpdated).not.toHaveBeenCalled(); // nothing to re-map when the pin is refused
+        } finally {
+            restoreOffsetParent();
+        }
+    });
+
+    test('a grand total pinned by `grandTotalRow` stays there when the row pinning state names it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'pinnedBottom',
+        });
+
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await asyncSetTimeout(0);
+
+        assertPinnedRows(api, 'top', []);
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
     });
 
     test('can move position of pinned grand total row with `grandTotalRow`', async () => {

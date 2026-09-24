@@ -5,7 +5,12 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
-import { _addRowHeightChangedListener, _getGrandTotalPinnedFloat, _getRowHeightForNode } from '../gridOptionsUtils';
+import {
+    _addRowHeightChangedListener,
+    _getGrandTotalPinnedFloat,
+    _getGrandTotalRow,
+    _getRowHeightForNode,
+} from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
@@ -121,10 +126,17 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 return; // Forbid pinning group footers
             }
 
+            // `RowNode._destroy` marks the source destroyed before it unpins the copy.
+            const unpinningDestroyed =
+                float == null && !!(rowNode.rowPinned ? rowNode.pinnedSibling : rowNode)?.destroyed;
+            if (_getGrandTotalPinnedFloat(_getGrandTotalRow(this.gos)) && !unpinningDestroyed) {
+                return; // `grandTotalRow` fixes where it is pinned, so neither the user nor state can move it
+            }
+
             // Pinning grand total row is the only case in which pinned rows are not duplicates of rows
             // in the main viewport. So we have to handle them differently:
             // 1. We first set `_grandTotalPinned` to mark the location the grand total row should be pinned to.
-            // 2. Then we refresh the row model to hide the sticky footer.
+            // 2. Then we refresh the client-side row model to hide the sticky footer.
             // 3. We then react to the `modelUpdated` event (above) to actually add the footer to the pinned row model.
             // Otherwise we would run into either an infinite recursion of `modelUpdated` events, or be missing the `sibling`
             // on the root node.
@@ -133,14 +145,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const unpinningExistingClone = float == null && rowNode.rowPinned != null;
             if (level === -1 && !unpinningExistingClone) {
                 this._grandTotalPinned = float;
-                // CSRM goes through reMapRows so the modelUpdated listener picks up the
-                // change; SSRM has no model-update path so we apply it directly.
-                const csrm = this.csrm;
-                if (csrm) {
-                    csrm.reMapRows();
-                } else if (this.ssrm) {
-                    this.pinGrandTotalRow();
-                }
+                this.csrm?.reMapRows();
                 return;
             }
         }
