@@ -9,7 +9,7 @@ export interface InternalFeatureFlags {
      */
     clickToggleSelection?: boolean;
     /**
-     * Space on a row obeys `enableClickSelection` as a click does, except on a cell showing a selection checkbox.
+     * Space obeys `enableClickSelection` as a click does, except on a cell showing a selection checkbox.
      */
     spaceKeyFollowsClickSelection?: boolean;
 }
