@@ -265,6 +265,26 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
     });
 
+    test('clipboard items nested in a getContextMenuItems submenu are dropped on a row-number cell with nothing to copy', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCallbackSubMenu', {
+            columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
+            rowData: rowData.map((row) => ({ ...row })),
+            rowNumbers: true,
+            getContextMenuItems: () => [{ name: 'Clipboard', subMenu: ['cut', 'copy', { name: 'Foo' }] }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        api.setFocusedCell(0, 'athlete');
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await clickMenuOption('Clipboard');
+        await waitFor(() => expect(menuOption('Foo')).not.toBeNull());
+        expect(menuOption('Cut')).toBeNull();
+        expect(menuOption('Copy')).toBeNull();
+        expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
+    });
+
     test('a row-number cell offers Copy when copySelectedRows is enabled without cell selection', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxCopyRows', {
             columnDefs,

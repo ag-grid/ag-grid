@@ -47,8 +47,15 @@ const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>([
 
 type ContextMenuItems = (DefaultMenuItem | MenuItemDef)[];
 
-const withoutClipboardItems = (items: ContextMenuItems): ContextMenuItems =>
-    items.filter((item) => typeof item !== 'string' || !CLIPBOARD_MENU_ITEMS.has(item));
+/** Removes the stock clipboard items, including those nested in a custom item's submenu. */
+const withoutClipboardItems = <TItem extends string | MenuItemDef>(items: TItem[]): TItem[] =>
+    items.flatMap((item): TItem[] => {
+        if (typeof item === 'string') {
+            return CLIPBOARD_MENU_ITEMS.has(item as DefaultMenuItem) ? [] : [item];
+        }
+        const { subMenu } = item as MenuItemDef;
+        return Array.isArray(subMenu) ? [{ ...item, subMenu: withoutClipboardItems(subMenu) }] : [item];
+    });
 
 export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
     beanName = 'contextMenuSvc' as const;
