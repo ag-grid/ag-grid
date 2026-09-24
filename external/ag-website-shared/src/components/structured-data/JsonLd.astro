@@ -10,4 +10,4 @@ const nodes = Array.isArray(data) ? data : [data];
 const document = buildJsonLdDocument(nodes);
 ---
 
-{nodes.length > 0 && <script type="application/ld+json" set:html={serializeJsonLd(document)} />}
+{nodes.length > 0 && <script type="application/ld+json" set:html={serializeJsonLd(document)}></script>}

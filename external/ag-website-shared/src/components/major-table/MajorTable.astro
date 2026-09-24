@@ -39,62 +39,58 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
 ---
 
 <table class={styles.majorTable}>
-    {
-        versions.map((version) => {
-            const { isMajor, versionType } = parseVersion(version.version);
-            // A version links to a migration guide only when it is a major whose notes are an
-            // upgrade guide. Versions whose notes point at the changelog link to release notes.
-            const showMigrationGuide = isMajor && !version.notesPath?.includes('/changelog');
+    {versions.map((version) => {
+        const { isMajor, versionType } = parseVersion(version.version);
+        // A version links to a migration guide only when it is a major whose notes are an
+        // upgrade guide. Versions whose notes point at the changelog link to release notes.
+        const showMigrationGuide = isMajor && !version.notesPath?.includes('/changelog');
 
-            const guideUrl = isMigration ? urlWithPrefix({ framework, url: version.notesPath }) : null;
-            const changelogUrl = !isMigration ? getChangelogUrl({ site: library, version: version.version }) : null;
-            const docsUrl = !isMigration
-                ? getDocumentationArchiveUrl({ site: library, version: version.version })
-                : null;
+        const guideUrl = isMigration ? urlWithPrefix({ framework, url: version.notesPath }) : null;
+        const changelogUrl = !isMigration ? getChangelogUrl({ site: library, version: version.version }) : null;
+        const docsUrl = !isMigration ? getDocumentationArchiveUrl({ site: library, version: version.version }) : null;
 
-            return (
-                <tr class={isMajor ? styles.isMajor : ''}>
-                    <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
+        return (
+            <tr class={isMajor ? styles.isMajor : ''}>
+                <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
 
-                    <td class={styles.dateCol}>{version.date}</td>
+                <td class={styles.dateCol}>{version.date}</td>
 
-                    <td class={styles.versionType}>
-                        <span>{versionType}</span>
+                <td class={styles.versionType}>
+                    <span>{versionType}</span>
+                </td>
+
+                {isMigration && (
+                    <td>
+                        <a href={guideUrl}>
+                            <span class:list={['text-monospace', !showMigrationGuide ? styles.pad : '']}>
+                                {version.version}
+                            </span>
+                            {showMigrationGuide ? 'Migration Guide' : `Release Notes`}
+                            <Icon name="arrowRight" />
+                        </a>
                     </td>
+                )}
 
-                    {isMigration && (
-                        <td>
-                            <a href={guideUrl}>
-                                <span class:list={['text-monospace', !showMigrationGuide ? styles.pad : '']}>
-                                    {version.version}
-                                </span>
-                                {showMigrationGuide ? 'Migration Guide' : `Release Notes`}
-                                <Icon name="arrowRight" />
-                            </a>
-                        </td>
-                    )}
-
-                    {!isMigration && (
-                        <>
-                            {!suppressChangelog && (
-                                <td class={styles.changelog}>
-                                    <a href={changelogUrl}>
-                                        Changelog
-                                        <Icon name="arrowRight" />
-                                    </a>
-                                </td>
-                            )}
-
-                            <td>
-                                <a href={docsUrl}>
-                                    <span class={'text-monospace'}>{version.version}</span> Documentation{' '}
+                {!isMigration && (
+                    <>
+                        {!suppressChangelog && (
+                            <td class={styles.changelog}>
+                                <a href={changelogUrl}>
+                                    Changelog
                                     <Icon name="arrowRight" />
                                 </a>
                             </td>
-                        </>
-                    )}
-                </tr>
-            );
-        })
-    }
+                        )}
+
+                        <td>
+                            <a href={docsUrl}>
+                                <span class={'text-monospace'}>{version.version}</span> Documentation{' '}
+                                <Icon name="arrowRight" />
+                            </a>
+                        </td>
+                    </>
+                )}
+            </tr>
+        );
+    })}
 </table>

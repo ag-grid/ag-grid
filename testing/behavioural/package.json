@@ -14,7 +14,7 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^6.10.0",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
     "react": "^18.3.1",

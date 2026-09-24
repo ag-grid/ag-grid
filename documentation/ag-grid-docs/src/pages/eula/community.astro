@@ -22,13 +22,19 @@ import { COMMUNITY_LICENCE, COMMUNITY_LICENCE_CONTENT as content } from '@utils/
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    {content.intro.map((line) => <p set:html={htmlHrefsWithBaseUrl(line)} />)}
+                    {content.intro.map((line) => (
+                        <p set:html={htmlHrefsWithBaseUrl(line)} />
+                    ))}
                 </div>
             </header>
 
             <div class:list={[styles.policyList, 'licence']}>
-                {content.meta.map((line) => <h4 set:html={line} />)}
-                {COMMUNITY_LICENCE.terms.map((term) => <p>{term}</p>)}
+                {content.meta.map((line) => (
+                    <h4 set:html={line} />
+                ))}
+                {COMMUNITY_LICENCE.terms.map((term) => (
+                    <p>{term}</p>
+                ))}
             </div>
         </div>
     </div>

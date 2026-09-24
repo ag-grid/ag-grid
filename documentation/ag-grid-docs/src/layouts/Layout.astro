@@ -150,32 +150,21 @@ const announcementBannerProps = {
         <meta charset="UTF-8" />
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {
-            getFavIconsData().map(({ size, icon }: any) => (
-                <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={icon} />
-            ))
-        }
-        {
-            getAppleTouchIconsData().map(({ size, icon }: any) => (
-                <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
-            ))
-        }
+        {getFavIconsData().map(({ size, icon }: any) => (
+            <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={icon} />
+        ))}
+        {getAppleTouchIconsData().map(({ size, icon }: any) => (
+            <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
+        ))}
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <ClientRouter />
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
-        {
-            !isDev && (
-                <link
-                    rel="sitemap"
-                    type="application/xml"
-                    title="Sitemap"
-                    href={urlWithBaseUrl('/sitemap-index.xml')}
-                />
-            )
-        }
+        {!isDev && (
+            <link rel="sitemap" type="application/xml" title="Sitemap" href={urlWithBaseUrl('/sitemap-index.xml')} />
+        )}
 
         <Font cssVariable="--font-ibm-plex-sans" preload />
         <Font cssVariable="--font-jetbrains-mono" preload />
@@ -183,13 +172,11 @@ const announcementBannerProps = {
         <!-- Import all global design system CSS -->
         <link rel="stylesheet" href={dsStylesUrl} />
 
-        {
-            /* Astro's font system generates @font-face with hashed names (e.g. "IBM Plex Sans-abc123")
+        {/* Astro's font system generates @font-face with hashed names (e.g. "IBM Plex Sans-abc123")
             rather than the original font name. AG Grid's Quartz theme hardcodes font-family: 'IBM Plex Sans',
             so we redirect its CSS variable to the Astro-generated variable which resolves to the correct name.
             This must come after stylesheet imports so it wins the cascade over any theme CSS that also sets
-            --ag-font-family on the same selectors. */
-        }
+            --ag-font-family on the same selectors. */}
         <style is:global>
             .ag-theme-quartz,
             .ag-theme-quartz-dark,
@@ -223,15 +210,13 @@ const announcementBannerProps = {
 
         {structuredData.length > 0 && <JsonLd data={structuredData} />}
 
-        {
-            !isDev && (
-                <GoogleTagManager
-                    googleTagManagerId={PUBLIC_GTM_ID}
-                    googleTagManagerAuth={PUBLIC_GTM_AUTH}
-                    googleTagManagerPreview={PUBLIC_GTM_PREVIEW}
-                />
-            )
-        }
+        {!isDev && (
+            <GoogleTagManager
+                googleTagManagerId={PUBLIC_GTM_ID}
+                googleTagManagerAuth={PUBLIC_GTM_AUTH}
+                googleTagManagerPreview={PUBLIC_GTM_PREVIEW}
+            />
+        )}
         {isProduction && <Plausible domain="ag-grid.com" />}
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
@@ -247,80 +232,64 @@ const announcementBannerProps = {
         </style>
     </head>
     <body data-is-homepage={isHomepage}>
-        {
-            /* Authorised in script-src by SHA-256 hash (not 'unsafe-inline'); body lives in
-            @utils/csp/inlineScripts so the rendered bytes match the hashed source. */
-        }
-        <script is:inline set:html={DARK_MODE_INIT_SCRIPT} />
-        <script is:inline set:html={KBD_PLATFORM_INIT_SCRIPT} />
-
-        {
-            !isArchive && showAnnouncementBanner && (
-                <AnnouncementBanner
-                    href={urlWithBaseUrl(announcementBannerContent.href)}
-                    title={announcementBannerContent.title}
-                    description={announcementBannerContent.description}
-                    ctaLabel={announcementBannerContent.ctaLabel}
-                    external={announcementBannerContent.external}
-                />
-            )
-        }
+        {/* Authorised in script-src by SHA-256 hash (not 'unsafe-inline'); body lives in
+            @utils/csp/inlineScripts so the rendered bytes match the hashed source. */}
+        <script is:inline set:html={DARK_MODE_INIT_SCRIPT}></script>
+        <script is:inline set:html={KBD_PLATFORM_INIT_SCRIPT}></script>
+        {!isArchive && showAnnouncementBanner && (
+            <AnnouncementBanner
+                href={urlWithBaseUrl(announcementBannerContent.href)}
+                title={announcementBannerContent.title}
+                description={announcementBannerContent.description}
+                ctaLabel={announcementBannerContent.ctaLabel}
+                external={announcementBannerContent.external}
+            />
+        )}
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
-            {
-                noMainTransition ? (
-                    <main class:list={styles.pageMain}>
-                        <slot />
-                    </main>
-                ) : (
-                    <main
-                        class:list={styles.pageMain}
-                        transition:name="main"
-                        transition:animate={fade({ duration: '0.07s' })}
-                    >
-                        <slot />
-                    </main>
-                )
-            }
+            {noMainTransition ? (
+                <main class:list={styles.pageMain}>
+                    <slot />
+                </main>
+            ) : (
+                <main
+                    class:list={styles.pageMain}
+                    transition:name="main"
+                    transition:animate={fade({ duration: '0.07s' })}
+                >
+                    <slot />
+                </main>
+            )}
         </div>
 
-        {
-            !hideFooter && (
-                <Footer
-                    client:load
-                    showMicrosoftMessage={showMicrosoftMessage || path === SITE_BASE_URL || path === undefined}
-                    footerItems={footerItems}
-                />
-            )
-        }
+        {!hideFooter && (
+            <Footer
+                client:load
+                showMicrosoftMessage={showMicrosoftMessage || path === SITE_BASE_URL || path === undefined}
+                footerItems={footerItems}
+            />
+        )}
         <DevTools client:only="react" />
 
-        {
-            !isDev && (
-                <GoogleTagManagerBody
-                    googleTagManagerId={PUBLIC_GTM_ID}
-                    googleTagManagerAuth={PUBLIC_GTM_AUTH}
-                    googleTagManagerPreview={PUBLIC_GTM_PREVIEW}
-                />
-            )
-        }
-        {
-            /* Keep the AG libraries' runtime-injected <style> elements alive across a client-side
+        {!isDev && (
+            <GoogleTagManagerBody
+                googleTagManagerId={PUBLIC_GTM_ID}
+                googleTagManagerAuth={PUBLIC_GTM_AUTH}
+                googleTagManagerPreview={PUBLIC_GTM_PREVIEW}
+            />
+        )}
+        {/* Keep the AG libraries' runtime-injected <style> elements alive across a client-side
         navigation. Externalised to a 'self' script to stay off the CSP hash list; see
-        public/scripts/persist-injected-styles.js for the mechanism. */
-        }
+        public/scripts/persist-injected-styles.js for the mechanism. */}
         <script is:inline src={urlWithBaseUrl('/scripts/persist-injected-styles.js')}></script>
-        {
-            /* Keep the GTM-injected cookie-consent banner's DOM and stylesheets alive across a
+        {/* Keep the GTM-injected cookie-consent banner's DOM and stylesheets alive across a
         client-side navigation, so #manage_cookies still opens the preferences modal on every
-        page; see public/scripts/persist-cookie-consent.js for the mechanism. */
-        }
+        page; see public/scripts/persist-cookie-consent.js for the mechanism. */}
         <script is:inline src={urlWithBaseUrl('/scripts/persist-cookie-consent.js')}></script>
         {/* Re-mute media rebuilt by client-side navigation; see the script for why. */}
         <script is:inline src={urlWithBaseUrl('/scripts/restore-swapped-media-muted.js')}></script>
-        {
-            /* The dark-mode listeners that theme <ImageCaption>, <Gif> and <Video> media are
+        {/* The dark-mode listeners that theme <ImageCaption>, <Gif> and <Video> media are
         registered by the first copy of these scripts to run, and each component renders its own
         copy alongside its markup so that the correct source is in place before the first paint.
         Loading them here too covers the pages that render none of them: without that, arriving at
@@ -328,8 +297,7 @@ const announcementBannerProps = {
         through the scripts it has not run yet — leaves the media on its light source for as long as
         that takes, which on an example-heavy page is a few hundred milliseconds of light imagery on
         a dark page. All three are idempotent, so the copy the component renders simply finds the
-        work done. */
-        }
+        work done. */}
         <script is:inline src={urlWithBaseUrl('/scripts/image-caption-darkmode.js')}></script>
         <script is:inline src={urlWithBaseUrl('/scripts/gif-player.js')}></script>
         <script is:inline src={urlWithBaseUrl('/scripts/video-player.js')}></script>

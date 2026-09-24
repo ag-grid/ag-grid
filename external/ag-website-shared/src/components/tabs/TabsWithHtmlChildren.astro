@@ -21,31 +21,27 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
     <div class:list={['tabs-outer', styles.tabsOuter]}>
         <header class={'tabs-header'}>
             <ul class="tabs-nav-list" role="tablist">
-                {
-                    tabsData.map(({ id, label }) => {
-                        const tabId = getTabId({ id: id!, prefix: tabItemIdPrefix });
-                        return (
-                            <li id={tabId} class="tabs-nav-item" role="presentation">
-                                <button class:list={['button-style-none', 'tabs-nav-link']} role="tab">
-                                    {label}
-                                </button>
-                            </li>
-                        );
-                    })
-                }
+                {tabsData.map(({ id, label }) => {
+                    const tabId = getTabId({ id: id!, prefix: tabItemIdPrefix });
+                    return (
+                        <li id={tabId} class="tabs-nav-item" role="presentation">
+                            <button class:list={['button-style-none', 'tabs-nav-link']} role="tab">
+                                {label}
+                            </button>
+                        </li>
+                    );
+                })}
             </ul>
 
-            {
-                headerLinks && (
-                    <div class={styles.externalLinks}>
-                        {headerLinks.map(({ type, ...props }) => {
-                            if (type === 'codesandbox') {
-                                return <OpenInCTA type="codesandbox" {...props} />;
-                            }
-                        })}
-                    </div>
-                )
-            }
+            {headerLinks && (
+                <div class={styles.externalLinks}>
+                    {headerLinks.map(({ type, ...props }) => {
+                        if (type === 'codesandbox') {
+                            return <OpenInCTA type="codesandbox" {...props} />;
+                        }
+                    })}
+                </div>
+            )}
         </header>
         <div class:list={['tabs-content', { [styles.snippetTabs]: snippetTabs }]} role="tabpanel">
             <Fragment set:html={html} />

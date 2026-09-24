@@ -1,5 +1,5 @@
 import fs from 'fs';
-import yaml from 'js-yaml';
+import { load } from 'js-yaml';
 import path from 'path';
 
 function getSnykFiles({ dir, found = [], ignore = ['node_modules', '.git'] }) {
@@ -20,7 +20,7 @@ function getSnykFiles({ dir, found = [], ignore = ['node_modules', '.git'] }) {
 }
 
 function extractIgnoredDependencyPaths(filePath) {
-    const doc = yaml.load(fs.readFileSync(filePath, 'utf8'));
+    const doc = load(fs.readFileSync(filePath, 'utf8'));
     const deps = new Set();
 
     if (doc && doc.ignore) {

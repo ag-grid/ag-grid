@@ -33,27 +33,25 @@ const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEn
             <h1>What's New in {name}</h1>
             <p class={styles.description}>See what's new in recent {name} versions.</p>
             <div class={styles.versions}>
-                {
-                    versionsData
-                        .filter((version) => version.highlights)
-                        .slice(0, 12)
-                        .map((versionInfo, index) => {
-                            const { major, minor } = parseVersion(versionInfo.version);
-                            const blogUrl = `${minor ? `${blogPrefix}${major}-${minor}` : `${blogPrefix}${major}`}/`;
+                {versionsData
+                    .filter((version) => version.highlights)
+                    .slice(0, 12)
+                    .map((versionInfo, index) => {
+                        const { major, minor } = parseVersion(versionInfo.version);
+                        const blogUrl = `${minor ? `${blogPrefix}${major}-${minor}` : `${blogPrefix}${major}`}/`;
 
-                            return (
-                                <Version
-                                    client:load
-                                    isLatest={index === 0}
-                                    blogUrl={versionInfo.hideBlogPostLink ? undefined : blogUrl}
-                                    version={versionInfo.version}
-                                    date={versionInfo.date}
-                                    highlights={versionInfo.highlights}
-                                    notesPath={versionInfo.notesPath}
-                                />
-                            );
-                        })
-                }
+                        return (
+                            <Version
+                                client:load
+                                isLatest={index === 0}
+                                blogUrl={versionInfo.hideBlogPostLink ? undefined : blogUrl}
+                                version={versionInfo.version}
+                                date={versionInfo.date}
+                                highlights={versionInfo.highlights}
+                                notesPath={versionInfo.notesPath}
+                            />
+                        );
+                    })}
             </div>
         </div>
     </div>

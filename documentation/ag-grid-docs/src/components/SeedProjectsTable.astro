@@ -12,33 +12,39 @@ const { data: seedProjects } = (await getEntry(
 <table class={styles.reposTable} role="grid">
     <thead>
         <tr>
-            <th scope="col" data-column="GitHub Repo">GitHub Repo</th>
-            <th scope="col" data-column="Framework">Framework</th>
-            <th scope="col" data-column="Development Environment">Dev Environment</th>
-            <th scope="col" data-column="License Type">License Type</th>
+            <th scope="col" data-column="GitHub Repo">
+                GitHub Repo
+            </th>
+            <th scope="col" data-column="Framework">
+                Framework
+            </th>
+            <th scope="col" data-column="Development Environment">
+                Dev Environment
+            </th>
+            <th scope="col" data-column="License Type">
+                License Type
+            </th>
         </tr>
     </thead>
     <tbody>
-        {
-            seedProjects.map(({ name, url, framework, devEnvironment, licenseType }) => {
-                return (
-                    <tr>
-                        <td scope="row" data-column="GitHub Repo">
-                            <a class:list={[styles.repoButton, 'button-secondary']} href={url}>
-                                <Icon name="github" />
-                                {name}
-                            </a>
-                        </td>
-                        <td data-column="Framework">{framework}</td>
-                        <td data-column="Development Environment">{devEnvironment}</td>
-                        <td data-column="License Type">
-                            <a href="https://www.ag-grid.com/license-pricing/">
-                                {licenseType === 'enterprise-bundle' ? 'Enterprise Bundle' : 'AG Grid Enterprise'}
-                            </a>
-                        </td>
-                    </tr>
-                );
-            })
-        }
+        {seedProjects.map(({ name, url, framework, devEnvironment, licenseType }) => {
+            return (
+                <tr>
+                    <td scope="row" data-column="GitHub Repo">
+                        <a class:list={[styles.repoButton, 'button-secondary']} href={url}>
+                            <Icon name="github" />
+                            {name}
+                        </a>
+                    </td>
+                    <td data-column="Framework">{framework}</td>
+                    <td data-column="Development Environment">{devEnvironment}</td>
+                    <td data-column="License Type">
+                        <a href="https://www.ag-grid.com/license-pricing/">
+                            {licenseType === 'enterprise-bundle' ? 'Enterprise Bundle' : 'AG Grid Enterprise'}
+                        </a>
+                    </td>
+                </tr>
+            );
+        })}
     </tbody>
 </table>

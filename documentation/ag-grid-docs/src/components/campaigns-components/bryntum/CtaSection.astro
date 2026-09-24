@@ -19,14 +19,12 @@ const { section } = Astro.props;
         {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
         {section.body_html && <div set:html={decorateBryntumHtml(section.body_html)} />}
 
-        {
-            section.ctas && (
-                <BryntumCtaList
-                    ctas={section.ctas}
-                    buttonClass={['button', 'button-tertiary']}
-                    wrapperClass={styles.ctaButtons}
-                />
-            )
-        }
+        {section.ctas && (
+            <BryntumCtaList
+                ctas={section.ctas}
+                buttonClass={['button', 'button-tertiary']}
+                wrapperClass={styles.ctaButtons}
+            />
+        )}
     </div>
 </section>

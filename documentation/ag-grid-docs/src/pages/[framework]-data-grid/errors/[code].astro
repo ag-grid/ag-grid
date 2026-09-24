@@ -130,82 +130,78 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive') +
         <div id="doc-content" class:list={[styles.docPage, styles.errorPage]}>
             <Header client:load title={title} framework={framework} path={path} menuItems={docsNavData.sections} />
 
-            {
-                isArchive && (
-                    <Warning>
-                        You are using an older version of AG Grid. To upgrade, please see our{' '}
-                        <a href={migrationUrl}>migration guides</a>.
-                    </Warning>
-                )
-            }
+            {isArchive && (
+                <Warning>
+                    You are using an older version of AG Grid. To upgrade, please see our{' '}
+                    <a href={migrationUrl}>migration guides</a>.
+                </Warning>
+            )}
 
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
-                {
-                    isRetiredCode ? (
-                        <Warning>
-                            Error #{code} is no longer raised by AG Grid {VERSION}. If you are using an earlier version,
-                            the guidance below still applies — otherwise, find your version in the{' '}
-                            <a href={archiveUrl}>documentation archive</a>.
-                        </Warning>
-                    ) : isUnknownCode ? (
-                        <Warning>
-                            Error #{code} is not recognised in AG Grid {VERSION} — it either applies to an older
-                            version, or is not an error AG Grid raises. Following the link from your browser's developer
-                            console will bring you to the documentation for the version you are running; if you reached
-                            this page another way, find your version in the{' '}
-                            <a href={archiveUrl}>documentation archive</a>.
-                        </Warning>
-                    ) : (
-                        <>
-                            <pre id="errorCodeText">{defaultErrorText}</pre>
-                            {hasPlaceholders && (
-                                <>
-                                    <div id="error-missing-params" hidden>
-                                        <Warning>
-                                            This URL does not carry the specifics of your error, so the message above
-                                            shows placeholders (<code>&lt;name&gt;</code>) in their place. Follow the
-                                            full link from your browser's developer console to see the complete message.
-                                        </Warning>
-                                    </div>
-                                    {/* Nothing reveals the warning without JS, so CSS does it there. */}
-                                    <noscript>
-                                        <style is:inline set:html="#error-missing-params[hidden] { display: block }" />
-                                    </noscript>
-                                </>
-                            )}
-                            <Note>
-                                To show this error text in the dev console,{' '}
-                                <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
-                                    enable development validations
-                                </a>
-                                .
-                            </Note>
-                        </>
-                    )
-                }
+                {isRetiredCode ? (
+                    <Warning>
+                        Error #{code} is no longer raised by AG Grid {VERSION}. If you are using an earlier version, the
+                        guidance below still applies — otherwise, find your version in the{' '}
+                        <a href={archiveUrl}>documentation archive</a>.
+                    </Warning>
+                ) : isUnknownCode ? (
+                    <Warning>
+                        Error #{code} is not recognised in AG Grid {VERSION} — it either applies to an older version, or
+                        is not an error AG Grid raises. Following the link from your browser's developer console will
+                        bring you to the documentation for the version you are running; if you reached this page another
+                        way, find your version in the <a href={archiveUrl}>documentation archive</a>.
+                    </Warning>
+                ) : (
+                    <>
+                        <pre id="errorCodeText">{defaultErrorText}</pre>
+                        {hasPlaceholders && (
+                            <>
+                                <div id="error-missing-params" hidden>
+                                    <Warning>
+                                        This URL does not carry the specifics of your error, so the message above shows
+                                        placeholders (<code>&lt;name&gt;</code>) in their place. Follow the full link
+                                        from your browser's developer console to see the complete message.
+                                    </Warning>
+                                </div>
+                                {/* Nothing reveals the warning without JS, so CSS does it there. */}
+                                <noscript>
+                                    <style
+                                        is:inline
+                                        set:html="#error-missing-params[hidden] { display: block }"
+                                    ></style>
+                                </noscript>
+                            </>
+                        )}
+                        <Note>
+                            To show this error text in the dev console,{' '}
+                            <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
+                                enable development validations
+                            </a>
+                            .
+                        </Note>
+                    </>
+                )}
 
                 {Content ? <Content framework={framework} /> : undefined}
 
-                {
-                    errorLinks.length > 0 ? (
-                        <>
-                            <h2 id={relatedDocPages.slug}>{relatedDocPages.text}</h2>
-                            <p>
-                                The following documentation pages should provide additional context / guidance on how to
-                                resolve this error.
-                            </p>
-                            <ul>
-                                {errorLinks.map((e) => (
-                                    <li>
-                                        <a href={urlWithPrefix({ framework, url: e.url })}>{e.text}</a>
-                                        {e.description ? <span> - {e.description}</span> : undefined}
-                                    </li>
-                                ))}
-                            </ul>
-                        </>
-                    ) : undefined
-                }
+                {errorLinks.length > 0 ? (
+                    <>
+                        <h2 id={relatedDocPages.slug}>{relatedDocPages.text}</h2>
+                        <p>
+                            The following documentation pages should provide additional context / guidance on how to
+                            resolve this error.
+                        </p>
+                        <ul>
+                            {errorLinks.map((e) => (
+                                <li>
+                                    <a href={urlWithPrefix({ framework, url: e.url })}>{e.text}</a>
+                                    {e.description ? <span> - {e.description}</span> : undefined}
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                ) : undefined}
             </div>
         </div>
 

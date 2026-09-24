@@ -64,14 +64,12 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
     rel="stylesheet"
 />
 
-{
-    /*
+{/*
     Page-only global override: the campaign uses a #F2F2F2 page background, but the
     html/body still default to white from the global design system so over-scroll
     (macOS bounce, mobile rubber-band) flashes white. Scope this to the page by
     only emitting it from this .astro file.
-*/
-}
+*/}
 <style is:global>
     html,
     body {
@@ -93,7 +91,9 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
 
 <Layout
     title={'Beyond the Prompt: AG Grid & Bryntum Conference, 19 May 2026'}
-    description={'A one-day conference from AG Grid and Bryntum on building AI-assisted applications that hold up in production. Tuesday 19 May 2026, IET London.'}
+    description={
+        'A one-day conference from AG Grid and Bryntum on building AI-assisted applications that hold up in production. Tuesday 19 May 2026, IET London.'
+    }
     showDocsNav={false}
     showSearchBar={false}
     hideHeader={false}
@@ -118,7 +118,9 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                                 alt="AG Grid"
                                 class={styles.heroLogoAg}
                             />
-                            <span class={styles.heroLogoX} aria-hidden="true">×</span>
+                            <span class={styles.heroLogoX} aria-hidden="true">
+                                ×
+                            </span>
                             <img
                                 src={urlWithBaseUrl('images/campaigns/bryntum-logo.webp')}
                                 alt="Bryntum"
@@ -151,15 +153,15 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                             </li>
                         </ul>
 
-                        <a href="#notify" class={styles.heroNotifyBtn}>Get notified</a>
+                        <a href="#notify" class={styles.heroNotifyBtn}>
+                            Get notified
+                        </a>
                     </div>
 
                     <div class={styles.heroFaces} aria-hidden="true">
-                        {
-                            HERO_FACES.map((face) => (
-                                <img src={urlWithBaseUrl(face.src)} alt="" class={styles.heroFace} loading="eager" />
-                            ))
-                        }
+                        {HERO_FACES.map((face) => (
+                            <img src={urlWithBaseUrl(face.src)} alt="" class={styles.heroFace} loading="eager" />
+                        ))}
                     </div>
                 </div>
             </div>
@@ -195,7 +197,9 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                             <h2 class={styles.sectionTitle}>{PAGE_CONTENT.intro.heading}</h2>
                         </div>
                         <div class={styles.introBody}>
-                            {PAGE_CONTENT.intro.body.map((paragraph) => <p>{paragraph}</p>)}
+                            {PAGE_CONTENT.intro.body.map((paragraph) => (
+                                <p>{paragraph}</p>
+                            ))}
                         </div>
                     </div>
                     <img
@@ -242,20 +246,19 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                     <p class={styles.sectionLead}>{PAGE_CONTENT.programme.speakersLead}</p>
 
                     <div class={styles.speakerGrid}>
-                        {
-                            SPEAKERS.map((speaker) => (
-                                <article class={styles.speakerCard}>
-                                    <div class={styles.speakerImageWrap}>
-                                        <img
-                                            src={urlWithBaseUrl(speaker.image)}
-                                            alt={speaker.name}
-                                            class:list={[
-                                                styles.speakerImage,
-                                                speaker.imageFit === 'contain' && styles.speakerImageContain,
-                                            ]}
-                                            loading="lazy"
-                                        />
-                                        {/*
+                        {SPEAKERS.map((speaker) => (
+                            <article class={styles.speakerCard}>
+                                <div class={styles.speakerImageWrap}>
+                                    <img
+                                        src={urlWithBaseUrl(speaker.image)}
+                                        alt={speaker.name}
+                                        class:list={[
+                                            styles.speakerImage,
+                                            speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                        ]}
+                                        loading="lazy"
+                                    />
+                                    {/*
                                         Re-shaded variant for the orange hover state. Sits on top of
                                         the default illustration via `position: absolute` so the two
                                         portraits crossfade in place when the card is hovered. The
@@ -263,26 +266,25 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                                         SVG's dither/knockout reads correctly. Decorative; the
                                         first <img> already carries the speaker's name as alt text.
                                     */}
-                                        {speaker.imageOrange && (
-                                            <img
-                                                src={urlWithBaseUrl(speaker.imageOrange)}
-                                                alt=""
-                                                aria-hidden="true"
-                                                class:list={[
-                                                    styles.speakerImage,
-                                                    styles.speakerImageOrange,
-                                                    speaker.imageFit === 'contain' && styles.speakerImageContain,
-                                                ]}
-                                                loading="lazy"
-                                            />
-                                        )}
-                                    </div>
-                                    <h3 class={styles.speakerName}>{speaker.name}</h3>
-                                    <p class={styles.speakerTitle}>{speaker.title}</p>
-                                    <p class={styles.speakerBio}>{speaker.bio}</p>
-                                </article>
-                            ))
-                        }
+                                    {speaker.imageOrange && (
+                                        <img
+                                            src={urlWithBaseUrl(speaker.imageOrange)}
+                                            alt=""
+                                            aria-hidden="true"
+                                            class:list={[
+                                                styles.speakerImage,
+                                                styles.speakerImageOrange,
+                                                speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                            ]}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                </div>
+                                <h3 class={styles.speakerName}>{speaker.name}</h3>
+                                <p class={styles.speakerTitle}>{speaker.title}</p>
+                                <p class={styles.speakerBio}>{speaker.bio}</p>
+                            </article>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -295,112 +297,108 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                             <span>Speakers</span>
                         </div>
                         <ol class={styles.agendaList}>
-                            {
-                                SESSIONS.map((item) => {
-                                    const thumbSlug = sessionThumbSlug(item);
-                                    const mins = sessionDurationMins(item);
-                                    return (
-                                        <li class={styles.agendaRow} data-session-row>
-                                            <div class={styles.agendaBody}>
-                                                {item.youtubeUrl && (
-                                                    <span class={styles.agendaThumbWrap}>
-                                                        <img
-                                                            class={styles.agendaThumb}
-                                                            src={
-                                                                thumbSlug
-                                                                    ? urlWithBaseUrl(
-                                                                          `images/campaigns/beyond-the-prompt/thumbnails/${thumbSlug}.webp`
-                                                                      )
-                                                                    : `https://i.ytimg.com/vi/${youtubeId(item.youtubeUrl)}/hqdefault.jpg`
-                                                            }
-                                                            alt=""
-                                                            aria-hidden="true"
-                                                            loading="lazy"
-                                                        />
-                                                        <span class={styles.agendaThumbPlay} aria-hidden="true" />
-                                                    </span>
-                                                )}
-                                                <div class={styles.agendaText}>
-                                                    {mins && <p class={styles.agendaDuration}>{mins} mins</p>}
-                                                    {item.youtubeUrl ? (
-                                                        <a
-                                                            class={styles.agendaTitleLink}
-                                                            href={urlWithBaseUrl(
-                                                                `/session/${sessionSlug(item.title)}/`
-                                                            )}
-                                                            data-session-modal
-                                                            data-youtube-id={youtubeId(item.youtubeUrl)}
-                                                        >
-                                                            <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                        </a>
-                                                    ) : (
+                            {SESSIONS.map((item) => {
+                                const thumbSlug = sessionThumbSlug(item);
+                                const mins = sessionDurationMins(item);
+                                return (
+                                    <li class={styles.agendaRow} data-session-row>
+                                        <div class={styles.agendaBody}>
+                                            {item.youtubeUrl && (
+                                                <span class={styles.agendaThumbWrap}>
+                                                    <img
+                                                        class={styles.agendaThumb}
+                                                        src={
+                                                            thumbSlug
+                                                                ? urlWithBaseUrl(
+                                                                      `images/campaigns/beyond-the-prompt/thumbnails/${thumbSlug}.webp`
+                                                                  )
+                                                                : `https://i.ytimg.com/vi/${youtubeId(item.youtubeUrl)}/hqdefault.jpg`
+                                                        }
+                                                        alt=""
+                                                        aria-hidden="true"
+                                                        loading="lazy"
+                                                    />
+                                                    <span class={styles.agendaThumbPlay} aria-hidden="true" />
+                                                </span>
+                                            )}
+                                            <div class={styles.agendaText}>
+                                                {mins && <p class={styles.agendaDuration}>{mins} mins</p>}
+                                                {item.youtubeUrl ? (
+                                                    <a
+                                                        class={styles.agendaTitleLink}
+                                                        href={urlWithBaseUrl(`/session/${sessionSlug(item.title)}/`)}
+                                                        data-session-modal
+                                                        data-youtube-id={youtubeId(item.youtubeUrl)}
+                                                    >
                                                         <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                    )}
-                                                    {item.description && (
-                                                        <p class={styles.agendaDescription}>{item.description}</p>
-                                                    )}
-                                                </div>
+                                                    </a>
+                                                ) : (
+                                                    <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                )}
+                                                {item.description && (
+                                                    <p class={styles.agendaDescription}>{item.description}</p>
+                                                )}
                                             </div>
-                                            <div
-                                                class:list={[
-                                                    styles.agendaSpeakersCol,
-                                                    item.speakers &&
-                                                        item.speakers.length > 1 &&
-                                                        styles.agendaSpeakersColMulti,
-                                                    item.speakers &&
-                                                        item.speakers.length > 2 &&
-                                                        styles.agendaSpeakersColWide,
-                                                ]}
-                                            >
-                                                {item.speakers?.map((sp) => (
-                                                    <div class={styles.agendaSpeaker}>
-                                                        <span class={styles.agendaAvatar} aria-hidden="true">
-                                                            <img
-                                                                src={urlWithBaseUrl(
-                                                                    `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-cream.webp`
-                                                                )}
-                                                                alt=""
-                                                                loading="lazy"
-                                                                class={styles.agendaAvatarImg}
-                                                            />
-                                                            <img
-                                                                src={urlWithBaseUrl(
-                                                                    `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-orange.webp`
-                                                                )}
-                                                                alt=""
-                                                                aria-hidden="true"
-                                                                loading="lazy"
-                                                                class:list={[
-                                                                    styles.agendaAvatarImg,
-                                                                    styles.agendaAvatarImgOrange,
-                                                                ]}
-                                                            />
-                                                        </span>
-                                                        <span class={styles.agendaSpeakerName}>
-                                                            {sp.name} ({sp.role})
-                                                        </span>
+                                        </div>
+                                        <div
+                                            class:list={[
+                                                styles.agendaSpeakersCol,
+                                                item.speakers &&
+                                                    item.speakers.length > 1 &&
+                                                    styles.agendaSpeakersColMulti,
+                                                item.speakers &&
+                                                    item.speakers.length > 2 &&
+                                                    styles.agendaSpeakersColWide,
+                                            ]}
+                                        >
+                                            {item.speakers?.map((sp) => (
+                                                <div class={styles.agendaSpeaker}>
+                                                    <span class={styles.agendaAvatar} aria-hidden="true">
                                                         <img
-                                                            class={styles.agendaSpeakerRotating}
-                                                            data-head={headSlug(sp.name)}
+                                                            src={urlWithBaseUrl(
+                                                                `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-cream.webp`
+                                                            )}
+                                                            alt=""
+                                                            loading="lazy"
+                                                            class={styles.agendaAvatarImg}
+                                                        />
+                                                        <img
                                                             src={urlWithBaseUrl(
                                                                 `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-orange.webp`
                                                             )}
                                                             alt=""
                                                             aria-hidden="true"
                                                             loading="lazy"
+                                                            class:list={[
+                                                                styles.agendaAvatarImg,
+                                                                styles.agendaAvatarImgOrange,
+                                                            ]}
                                                         />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            {item.youtubeUrl && (
-                                                <span class={styles.agendaWatch} aria-hidden="true">
-                                                    Watch talk →
-                                                </span>
-                                            )}
-                                        </li>
-                                    );
-                                })
-                            }
+                                                    </span>
+                                                    <span class={styles.agendaSpeakerName}>
+                                                        {sp.name} ({sp.role})
+                                                    </span>
+                                                    <img
+                                                        class={styles.agendaSpeakerRotating}
+                                                        data-head={headSlug(sp.name)}
+                                                        src={urlWithBaseUrl(
+                                                            `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-orange.webp`
+                                                        )}
+                                                        alt=""
+                                                        aria-hidden="true"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {item.youtubeUrl && (
+                                            <span class={styles.agendaWatch} aria-hidden="true">
+                                                Watch talk →
+                                            </span>
+                                        )}
+                                    </li>
+                                );
+                            })}
                         </ol>
                     </div>
                 </div>
@@ -411,27 +409,22 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
             <div class={styles.galleryViewport}>
                 {/* Slides are rendered twice so the marquee loops seamlessly. */}
                 <ol class={styles.galleryTrack} aria-hidden="true">
-                    {
-                        [...GALLERY_IMAGES, ...GALLERY_IMAGES].map((src) => (
-                            <li
-                                class:list={[
-                                    styles.gallerySlide,
-                                    (src.includes('gallery-17') || src.includes('gallery-18')) &&
-                                        styles.gallerySlidePortrait,
-                                ]}
-                            >
-                                <img
-                                    src={urlWithBaseUrl(src)}
-                                    alt=""
-                                    loading="lazy"
-                                    class:list={[
-                                        styles.galleryImage,
-                                        src.includes('gallery-02') && styles.galleryImageTop,
-                                    ]}
-                                />
-                            </li>
-                        ))
-                    }
+                    {[...GALLERY_IMAGES, ...GALLERY_IMAGES].map((src) => (
+                        <li
+                            class:list={[
+                                styles.gallerySlide,
+                                (src.includes('gallery-17') || src.includes('gallery-18')) &&
+                                    styles.gallerySlidePortrait,
+                            ]}
+                        >
+                            <img
+                                src={urlWithBaseUrl(src)}
+                                alt=""
+                                loading="lazy"
+                                class:list={[styles.galleryImage, src.includes('gallery-02') && styles.galleryImageTop]}
+                            />
+                        </li>
+                    ))}
                 </ol>
             </div>
         </section>
@@ -481,15 +474,22 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                                 </label>
                                 <p class={styles.notifyGdprText}>
                                     By submitting this form, your information will be processed in accordance with our
-                                    <a href="https://www.ag-grid.com/privacy/" target="_blank" rel="noopener noreferrer"
-                                        >Privacy Policy</a
-                                    >. We will use it to respond to your enquiry and, where applicable, to manage our
+                                    <a
+                                        href="https://www.ag-grid.com/privacy/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Privacy Policy
+                                    </a>
+                                    . We will use it to respond to your enquiry and, where applicable, to manage our
                                     commercial relationship with you.
                                 </p>
                             </div>
 
                             {/* Hidden Mailchimp fields: audience tag + anti-bot honeypot (kept from the embed). */}
-                            <div hidden><input type="hidden" name="tags" value="10282800" /></div>
+                            <div hidden>
+                                <input type="hidden" name="tags" value="10282800" />
+                            </div>
                             <div aria-hidden="true" style="position: absolute; left: -5000px;">
                                 <input
                                     type="text"
@@ -518,20 +518,24 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/communi
                 type="button"
                 class={styles.sessionModalBackdrop}
                 data-session-modal-close
-                aria-label="Close recording"></button>
+                aria-label="Close recording"
+            ></button>
             <div class={styles.sessionModalDialog} role="dialog" aria-modal="true" aria-label="Session recording">
                 <button
                     type="button"
                     class={styles.sessionModalClose}
                     data-session-modal-close
-                    aria-label="Close recording">×</button
+                    aria-label="Close recording"
                 >
+                    ×
+                </button>
                 <div class={styles.sessionModalVideo}>
                     <iframe
                         data-session-modal-iframe
                         title="Session recording"
                         allow="autoplay; encrypted-media; picture-in-picture; web-share"
-                        allowfullscreen></iframe>
+                        allowfullscreen
+                    ></iframe>
                 </div>
             </div>
         </div>

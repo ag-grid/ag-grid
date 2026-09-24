@@ -80,35 +80,33 @@ if (sourceCode && !getIsArchive()) {
 }
 ---
 
-{
-    !DISABLE_EXAMPLE_RUNNER && (
-        <ExampleRunnerContainer
+{!DISABLE_EXAMPLE_RUNNER && (
+    <ExampleRunnerContainer
+        exampleHeight={exampleHeight}
+        pageName={pageName}
+        exampleName={name}
+        hasExampleConsoleLog={hasExampleConsoleLog}
+    >
+        <DocsExampleRunner
+            client:visible={{ rootMargin: '200px' }}
+            title={title}
+            name={name}
             exampleHeight={exampleHeight}
+            typescriptOnly={typescriptOnly}
+            suppressDarkMode={suppressDarkMode}
             pageName={pageName}
-            exampleName={name}
+            isDev={isDev}
             hasExampleConsoleLog={hasExampleConsoleLog}
-        >
-            <DocsExampleRunner
-                client:visible={{ rootMargin: '200px' }}
-                title={title}
-                name={name}
-                exampleHeight={exampleHeight}
-                typescriptOnly={typescriptOnly}
-                suppressDarkMode={suppressDarkMode}
-                pageName={pageName}
-                isDev={isDev}
-                hasExampleConsoleLog={hasExampleConsoleLog}
-                consoleBufferSize={consoleBufferSize}
-                supportedFrameworks={supportedFrameworksList}
+            consoleBufferSize={consoleBufferSize}
+            supportedFrameworks={supportedFrameworksList}
+        />
+        {sourceCode && (
+            <ExampleRunnerSourceCode
+                internalFramework={internalFramework}
+                files={sourceCode.files}
+                mainFileName={sourceCode.mainFileName}
             />
-            {sourceCode && (
-                <ExampleRunnerSourceCode
-                    internalFramework={internalFramework}
-                    files={sourceCode.files}
-                    mainFileName={sourceCode.mainFileName}
-                />
-            )}
-            {sourceCodeStructuredData && <JsonLd data={sourceCodeStructuredData} />}
-        </ExampleRunnerContainer>
-    )
-}
+        )}
+        {sourceCodeStructuredData && <JsonLd data={sourceCodeStructuredData} />}
+    </ExampleRunnerContainer>
+)}
