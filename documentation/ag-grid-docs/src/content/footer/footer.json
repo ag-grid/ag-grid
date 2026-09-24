@@ -7,6 +7,18 @@
                 "url": "/documentation/"
             },
             {
+                "name": "React Data Grid",
+                "url": "/react-data-grid/"
+            },
+            {
+                "name": "Angular Data Grid",
+                "url": "/angular-data-grid/"
+            },
+            {
+                "name": "Vue Data Grid",
+                "url": "/vue-data-grid/"
+            },
+            {
                 "name": "Roadmap",
                 "url": "/roadmap/"
             },

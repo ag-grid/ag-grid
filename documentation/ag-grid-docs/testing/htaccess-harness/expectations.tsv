@@ -94,6 +94,11 @@ www	/archive/	301	/documentation-archive/
 # --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200
+www	/react-data-grid/	200
+www	/angular-data-grid/	200
+www	/vue-data-grid/	200
+# apex reaches the same hub: host swap only, no forward on to getting-started
+apex	/vue-data-grid/	301	https://www.ag-grid.com/vue-data-grid/
 www	/charts/react/bar-series/	200
 
 # ── SE-91/SE-86: blog.ag-grid.com -> www.ag-grid.com/blog/ ────────────────────────────

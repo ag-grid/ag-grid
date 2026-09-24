@@ -2,25 +2,40 @@
 import { getDocsFrameworkPages } from '@components/docs/utils/pageData';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@components/docs/constants';
 import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
-import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
+import LandingPage from '@components/landing-pages/LandingPage.astro';
+import { FRAMEWORK_DISPLAY_TEXT, isFrameworkLandingHub } from '@constants';
 import Layout from '@layouts/Layout.astro';
+import { getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
     return getDocsFrameworkPages();
 }
 
-const frameworkDisplay = FRAMEWORK_DISPLAY_TEXT[Astro.params?.framework];
+const framework = Astro.params.framework;
+
+// A hub renders the same `landingPages` entry as the noindexed ad campaign page under
+// /landing-pages/, so only one of the two URLs competes for the framework's head term.
+const contentEntry = isFrameworkLandingHub(framework)
+    ? await getEntry('landingPages', `${framework}-data-grid`)
+    : undefined;
+const versionsEntry = contentEntry ? await getEntry('versions', 'ag-grid-versions') : undefined;
+
+const frameworkDisplay = FRAMEWORK_DISPLAY_TEXT[framework];
 ---
 
-<Layout
-    title="AG Grid: Documentation"
-    description={
-        'View the AG Grid Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'
-    }
-    showSearchBar={false}
-    showDocsNav={false}
->
-    <FrameworkRedirectPage framework={Astro.params.framework} redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE}>
-        <h1>Redirecting to AG Grid {frameworkDisplay} Documentation...</h1>
-    </FrameworkRedirectPage>
-</Layout>
+{contentEntry ? (
+    <LandingPage content={contentEntry.data} versions={versionsEntry?.data} />
+) : (
+    <Layout
+        title="AG Grid: Documentation"
+        description={
+            'View the AG Grid Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'
+        }
+        showSearchBar={false}
+        showDocsNav={false}
+    >
+        <FrameworkRedirectPage framework={framework} redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE}>
+            <h1>Redirecting to AG Grid {frameworkDisplay} Documentation...</h1>
+        </FrameworkRedirectPage>
+    </Layout>
+)}
