@@ -1,6 +1,29 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-HTTPCACHESEMANTICS-19964068:
+    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > http-cache-semantics@4.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T10:04:26.803Z
+  SNYK-JS-HTTPCACHESEMANTICS-19964064:
+    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > http-cache-semantics@4.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:38:20.442Z
+  SNYK-JS-BRACES-19963945:
+    - chokidar-cli@3.0.0 > chokidar@3.6.0 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.484Z
+    - stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.467Z
   SNYK-JS-HANDLEBARS-15807042:
     - '@vusion/webfonts-generator@0.8.0 > handlebars@4.7.8':
         reason: Used in build & dev - not included in final production build

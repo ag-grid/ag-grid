@@ -1,6 +1,40 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-SMOLTOML-19643959:
+    - astro@7.3.4 > @astrojs/internal-helpers@0.11.0 > smol-toml@1.6.1:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T11:16:29.554Z
+    - '@astrojs/react@7.0.0 > @astrojs/internal-helpers@0.11.0 > smol-toml@1.6.1':
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T11:16:29.552Z
+    - '@astrojs/markdoc@2.0.9 > @astrojs/internal-helpers@0.11.0 > smol-toml@1.6.1':
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T11:16:29.548Z
+  SNYK-JS-URIJS-19963963:
+    - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > request@2.88.2 > har-validator@5.1.5 > ajv@6.12.6 > uri-js@4.4.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T11:08:32.149Z
+  SNYK-JS-HTTPCACHESEMANTICS-19964068:
+    - astro@7.3.4 > http-cache-semantics@4.2.0:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T10:04:34.629Z
+  SNYK-JS-HTTPCACHESEMANTICS-19964064:
+    - astro@7.3.4 > http-cache-semantics@4.2.0:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T10:01:08.617Z
   SNYK-JS-UNDICI-19635226:
     - cheerio@1.2.0 > undici@7.29.0:
         reason: >-
@@ -58,6 +92,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:33:35.216Z
   SNYK-JS-PICOMATCH-15765511:
+    - astro@7.3.4 > unstorage@1.17.5 > anymatch@3.1.3 > picomatch@2.3.1:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T10:25:20.079Z
     - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
