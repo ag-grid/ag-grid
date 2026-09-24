@@ -314,5 +314,8 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     public resetRowHeights(): void {}
-    public onRowHeightChanged(): void {}
+    // Body rows have a fixed height here, so only pinned rows can have moved.
+    public onRowHeightChanged(): void {
+        this.beans.pinnedRowModel?.ensureRowHeightsValid();
+    }
 }
