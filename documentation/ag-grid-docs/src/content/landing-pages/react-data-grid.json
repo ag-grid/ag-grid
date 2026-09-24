@@ -1,7 +1,7 @@
 {
     "meta": {
-        "title": "AG Grid: A Fast, Powerful, and Flexible React Data Grid",
-        "description": "Explore AG Grid's fast, powerful, and customisable React Data Grid library. Add high-performance React Data Grids to your React applications in minutes, for free."
+        "title": "React Data Grid - Fast, Feature-Rich Data Table | AG Grid",
+        "description": "Build fast React data grids with AG Grid. Sorting, filtering, grouping and editing across large datasets, with React components, live demos and code to copy."
     },
     "internalFramework": "reactFunctionalTs",
     "packageName": "ag-grid-react",
