@@ -1,5 +1,11 @@
 import type { ColDef, ColumnToolPanelButtonActionParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ModuleRegistry,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -9,6 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
