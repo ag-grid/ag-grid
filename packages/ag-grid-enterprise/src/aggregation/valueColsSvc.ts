@@ -11,6 +11,7 @@ import type {
     NamedBean,
 } from 'ag-grid-community';
 
+import type { ColStateIntent } from '../columns/baseColsService';
 import { BaseColsService } from '../columns/baseColsService';
 
 /** {@link ValueColsSvc.applyAggFunc} outcome: nothing moved / func changed on an active col / (de)activated. */
@@ -129,28 +130,44 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         defaultState: ColumnStateParams | undefined,
         source: ColumnEventType
     ): void {
-        // Fall back to the default only when the state value is `undefined` (not `null`).
-        const stateAggFunc = stateItem?.aggFunc;
-        const aggFunc = stateAggFunc !== undefined ? stateAggFunc : defaultState?.aggFunc;
-        const stateValueIndex = stateItem?.valueIndex;
-        const valueIndex = stateValueIndex !== undefined ? stateValueIndex : defaultState?.valueIndex;
-        if (aggFunc === undefined && valueIndex === undefined) {
+        const aggFunc = resolveStateAggFunc(stateItem, defaultState);
+        if (!isValidStateAggFunc(aggFunc)) {
+            this.warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
+            return;
+        }
+        const intent = this.getStateIntent(column, stateItem, defaultState);
+        if (!intent) {
             return;
         }
         if (aggFunc !== undefined) {
-            if (typeof aggFunc !== 'string' && aggFunc != null) {
-                this.warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
-                return;
-            }
             this.applyAggFunc(column, aggFunc, source);
-        } else if (typeof valueIndex === 'number' && !column.aggregationActive) {
-            // An index without an aggFunc still activates the column (a default aggFunc is assigned on
-            // activation), matching the `rowGroupIndex`/`pivotIndex` semantics where the index alone is enough.
+        } else if (intent.active && !column.aggregationActive) {
             this.setColActive(column, true, source, true);
         }
-        if (typeof valueIndex === 'number' && column.aggregationActive) {
-            this.recordPendingStateOrder(column, valueIndex);
+        if (intent.index !== undefined && column.aggregationActive) {
+            this.recordPendingStateOrder(column, intent.index);
         }
+    }
+
+    protected override getStateIntent(
+        _column: AgColumn,
+        stateItem: ColumnState | null,
+        defaultState: ColumnStateParams | undefined
+    ): ColStateIntent | undefined {
+        const aggFunc = resolveStateAggFunc(stateItem, defaultState);
+        const stateValueIndex = stateItem?.valueIndex;
+        const valueIndex = stateValueIndex !== undefined ? stateValueIndex : defaultState?.valueIndex;
+        if ((aggFunc === undefined && valueIndex === undefined) || !isValidStateAggFunc(aggFunc)) {
+            return undefined;
+        }
+        const index = typeof valueIndex === 'number' ? valueIndex : undefined;
+        if (aggFunc !== undefined) {
+            const active = aggFunc != null && aggFunc !== '';
+            return { active, index: active ? index : undefined };
+        }
+        // An index without an aggFunc still activates the column (a default aggFunc is assigned on
+        // activation), matching the `rowGroupIndex`/`pivotIndex` semantics where the index alone is enough.
+        return { active: index === undefined ? undefined : true, index };
     }
 
     /** Stamps each active col's position as its value-column order (`aggregationActiveIndex`, valid only when active). */
@@ -175,4 +192,17 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
         return this.setColActive(column, false, source) ? AGG_MEMBERSHIP : AGG_UNCHANGED;
     }
+}
+
+/** Falls back to the default only when the state value is `undefined` (not `null`). */
+function resolveStateAggFunc(
+    stateItem: ColumnState | null,
+    defaultState: ColumnStateParams | undefined
+): ColumnState['aggFunc'] {
+    const stateAggFunc = stateItem?.aggFunc;
+    return stateAggFunc !== undefined ? stateAggFunc : defaultState?.aggFunc;
+}
+
+function isValidStateAggFunc(aggFunc: ColumnState['aggFunc']): boolean {
+    return aggFunc == null || typeof aggFunc === 'string';
 }

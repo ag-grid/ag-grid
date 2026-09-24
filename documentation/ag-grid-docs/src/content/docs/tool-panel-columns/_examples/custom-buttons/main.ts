@@ -1,8 +1,14 @@
-import type { ColDef, ColumnToolPanelButtonActionParams, GridApi, GridOptions } from 'ag-grid-community';
+import type {
+    ColDef,
+    ColumnState,
+    ColumnToolPanelButtonActionParams,
+    GridApi,
+    GridOptions,
+    GridReadyEvent,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
-    GridStateModule,
     ModuleRegistry,
     createGrid,
     enableDevValidations,
@@ -17,7 +23,6 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnApiModule,
-    GridStateModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
@@ -37,6 +42,7 @@ const columnDefs: ColDef[] = [
 ];
 
 let gridApi: GridApi<IOlympicData>;
+let savedColumnState: ColumnState[] = [];
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
@@ -46,15 +52,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     autoGroupColumnDef: {
         minWidth: 250,
-    },
-    // Start from a layout that differs from the column definitions, so Reset has something to undo
-    initialState: {
-        columnVisibility: {
-            hiddenColIds: ['age', 'year'],
-        },
-        columnOrder: {
-            orderedColIds: ['athlete', 'age', 'country', 'year', 'sport', 'total', 'gold', 'silver', 'bronze'],
-        },
     },
     sideBar: {
         toolPanels: [
@@ -67,29 +64,36 @@ const gridOptions: GridOptions<IOlympicData> = {
                 toolPanelParams: {
                     buttons: [
                         {
-                            label: 'Sports Stats',
+                            label: 'Medals by Country',
                             action: (params: ColumnToolPanelButtonActionParams<IOlympicData>) =>
-                                params.api.applyColumnState({
+                                params.updatePanelColumns({
                                     state: [
-                                        { colId: 'sport', rowGroup: true, hide: true },
+                                        { colId: 'country', rowGroup: true, hide: true },
+                                        { colId: 'athlete', hide: true },
+                                        { colId: 'age', hide: true },
+                                        { colId: 'year', hide: true },
                                         { colId: 'gold', hide: false, aggFunc: 'sum' },
                                         { colId: 'silver', hide: false, aggFunc: 'sum' },
                                         { colId: 'bronze', hide: false, aggFunc: 'sum' },
+                                        { colId: 'total', aggFunc: 'sum', sort: 'desc' },
                                     ],
-                                    // Hide and ungroup every column not listed above
-                                    defaultState: { hide: true, rowGroup: false, aggFunc: null },
                                 }),
                         },
                         {
                             label: 'Reset',
                             action: (params: ColumnToolPanelButtonActionParams<IOlympicData>) =>
-                                params.api.resetColumnState(),
+                                params.updatePanelColumns({ state: savedColumnState, applyOrder: true }),
                         },
+                        'cancel',
+                        'apply',
                     ],
                 },
             },
         ],
         defaultToolPanel: 'columns',
+    },
+    onGridReady: (params: GridReadyEvent<IOlympicData>) => {
+        savedColumnState = params.api.getColumnState();
     },
 };
 

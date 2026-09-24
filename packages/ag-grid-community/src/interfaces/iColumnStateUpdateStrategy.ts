@@ -3,10 +3,16 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { SortDef, SortDirection } from '../interfaces/iSort';
+import type { ColumnToolPanelUpdateColumnsParams } from '../interfaces/iToolPanel';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IColumnStateUpdateStrategy {
     applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void;
+    updatePanelColumns(
+        deferMode: boolean,
+        params: ColumnToolPanelUpdateColumnsParams,
+        eventType: ColumnEventType
+    ): void;
     commit(deferMode: boolean): void;
     hasPendingChanges(deferMode: boolean): boolean;
     moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;

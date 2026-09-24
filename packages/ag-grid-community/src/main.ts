@@ -531,6 +531,8 @@ export type {
     ColumnToolPanelAction,
     ColumnToolPanelButtonActionParams,
     ColumnToolPanelButtonDef,
+    ColumnToolPanelColumnState,
+    ColumnToolPanelUpdateColumnsParams,
     IToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,

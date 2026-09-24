@@ -8,7 +8,8 @@ import type {
     IOrderedColsService,
 } from 'ag-grid-community';
 
-import { BaseColsService } from './baseColsService';
+import type { ColStateIntent } from './baseColsService';
+import { BaseColsService, compareByStateIndex } from './baseColsService';
 
 /** Index-ordered boolean-activation services (`rowGroupColsSvc`/`pivotColsSvc`); owns shared state-sync,
  *  ordering and hierarchy seating. (`valueColsSvc` uses `aggFunc`, so extends the base directly.) */
@@ -106,7 +107,7 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         runSideEffects = false
     ): boolean {
         if (active) {
-            const virtuals = this.getActiveVirtuals(col);
+            const virtuals = this.getColsSeatedWith(col);
             if (virtuals !== undefined) {
                 const set = this.activeColSet;
                 for (let i = 0, len = virtuals.length; i < len; ++i) {
@@ -119,12 +120,34 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         return super.setColActive(col, active, source, runSideEffects);
     }
 
+    protected override getColsSeatedWith(col: AgColumn): readonly AgColumn[] | undefined {
+        return this.getActiveVirtuals(col);
+    }
+
     public override syncColState(
         column: AgColumn,
         stateItem: ColumnState | null,
         defaultState: ColumnStateParams | undefined,
         source: ColumnEventType
     ): void {
+        const intent = this.getStateIntent(column, stateItem, defaultState);
+        if (!intent) {
+            return;
+        }
+        if (intent.index !== undefined) {
+            // An explicit index can reorder an already-active col, so flag regardless of whether it flipped.
+            this.setColActive(column, true, source);
+            this.recordPendingStateOrder(column, intent.index);
+        } else if (this.setColActive(column, !!intent.active, source)) {
+            this.pendingStateChanged = true;
+        }
+    }
+
+    protected override getStateIntent(
+        _column: AgColumn,
+        stateItem: ColumnState | null,
+        defaultState: ColumnStateParams | undefined
+    ): ColStateIntent | undefined {
         // Enable + index read as a unit: `stateItem` wins if it mentions either, else both fall back to `defaultState`.
         const enableProp = this.enableProp;
         const indexProp = this.indexProp;
@@ -136,26 +159,21 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
                 idx = defaultState[indexProp];
             }
             if (enable === undefined && idx === undefined) {
-                return;
+                return undefined;
             }
         }
-        if (typeof idx === 'number') {
-            // An explicit index can reorder an already-active col, so flag regardless of whether it flipped.
-            this.setColActive(column, true, source);
-            this.recordPendingStateOrder(column, idx);
-        } else if (this.setColActive(column, !!enable, source)) {
-            this.pendingStateChanged = true;
-        }
+        return typeof idx === 'number' ? { active: true, index: idx } : { active: !!enable };
     }
 
     /** Fold hierarchy ordering in front of the state-index sort; else fall back to the base index sort. */
-    protected override sortPendingCols(cols: AgColumn[]): boolean {
+    protected override sortPendingCols(cols: AgColumn[], indexes: Map<AgColumn, number> | null): boolean {
         const hierarchy = this.getActiveHierarchyCols();
         if (hierarchy) {
-            cols.sort((a, b) => hierarchy.compareVirtualColumns(a, b) ?? this.compareByStateIndex(a, b));
+            const compareByIndex = indexes ? compareByStateIndex(indexes) : undefined;
+            cols.sort((a, b) => hierarchy.compareVirtualColumns(a, b) ?? compareByIndex?.(a, b) ?? 0);
             return true;
         }
-        return super.sortPendingCols(cols);
+        return super.sortPendingCols(cols, indexes);
     }
 
     /** Stamps synthetic `indexProp` onto `incoming`/`accumulator` so a `cellDataType`-inferred rowGroup/pivot

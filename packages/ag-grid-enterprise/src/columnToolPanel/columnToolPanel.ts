@@ -7,6 +7,7 @@ import type {
     ColGroupDef,
     ColumnToolPanelButtonDef,
     ColumnToolPanelState,
+    ColumnToolPanelUpdateColumnsParams,
     CustomFilterButton,
     FilterButton,
     IColumnToolPanel,
@@ -191,7 +192,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const translate = this.getLocaleTextFunc();
         const createCustomButton = ({ label, action }: ColumnToolPanelButtonDef): CustomFilterButton => ({
             label,
-            onClick: () => action(_addGridCommonParams(this.gos, {})),
+            onClick: () =>
+                action(
+                    _addGridCommonParams(this.gos, {
+                        updatePanelColumns: (params: ColumnToolPanelUpdateColumnsParams) =>
+                            this.updatePanelColumns(params),
+                    })
+                ),
         });
 
         const buttonDefs = buttons.map((button): FilterButton | CustomFilterButton => {
@@ -314,6 +321,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             _areEqual(a.aggFuncState, b.aggFuncState) &&
             _areEqual(a.widthState, b.widthState)
         );
+    }
+
+    /** Changes columns as the panel's own controls would: staged when Deferred Updates are enabled, else applied. */
+    private updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams): void {
+        this.beans.columnStateUpdateStrategy.updatePanelColumns(this.isDeferModeEnabled, params, 'toolPanelUi');
+        if (this.isDeferModeEnabled) {
+            this.refreshDeferredUi();
+        }
     }
 
     public refreshDeferredUi(): void {

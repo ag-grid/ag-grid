@@ -1,5 +1,6 @@
 import type { IComponent } from 'ag-stack';
 
+import type { ColumnState } from '../columns/columnStateUtils';
 import type { IAutoCompleteComponentParams } from './iAutoComplete';
 import type { IColumnSelectionPanelParams } from './iColumnSelectionPanel';
 import type { AgGridCommon } from './iCommon';
@@ -7,8 +8,38 @@ import type { FilterAction } from './iFilter';
 
 export type ColumnToolPanelAction = 'apply' | 'cancel';
 
+/** The column state that can be changed from the Columns Tool Panel. */
+export type ColumnToolPanelColumnState = Pick<
+    ColumnState,
+    | 'colId'
+    | 'hide'
+    | 'rowGroup'
+    | 'rowGroupIndex'
+    | 'pivot'
+    | 'pivotIndex'
+    | 'aggFunc'
+    | 'valueIndex'
+    | 'sort'
+    | 'sortIndex'
+    | 'pivotSort'
+>;
+
+export interface ColumnToolPanelUpdateColumnsParams {
+    /** The state to apply. Columns not included are left unchanged. */
+    state: ColumnToolPanelColumnState[];
+    /** Whether the column order should match the order of `state`. */
+    applyOrder?: boolean;
+}
+
 /** Params passed to a custom Columns Tool Panel button's `action` callback when the button is clicked. */
-export interface ColumnToolPanelButtonActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+export interface ColumnToolPanelButtonActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /**
+     * Update the columns as if the user had changed them in the Columns Tool Panel.
+     * When Deferred Updates are enabled, the changes are staged until the Apply button is clicked.
+     * Only state that can be changed from the Columns Tool Panel is applied.
+     */
+    updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams): void;
+}
 
 /** A custom button displayed at the bottom of the Columns Tool Panel. */
 export interface ColumnToolPanelButtonDef<TData = any, TContext = any> {

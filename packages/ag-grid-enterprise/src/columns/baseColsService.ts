@@ -387,33 +387,77 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
         this.pendingStateChanged = false;
         const cols = this.columns;
-        if (cols.length > 0 && this.sortPendingCols(cols)) {
+        if (cols.length > 0 && this.sortPendingCols(cols, this.pendingStateOrder)) {
             this.resetActiveCols(cols);
         }
         this.onColumnsChanged();
         this.pendingStateOrder = null;
     }
 
-    protected sortPendingCols(cols: AgColumn[]): boolean {
-        if (this.pendingStateOrder) {
-            cols.sort(this.compareByStateIndex);
+    /** The active cols that applying `states` on top of `current` would give, as {@link syncColState} and
+     *  {@link sortByPendingState} would order them, without changing any column. */
+    public previewColumns(current: AgColumn[], states: ColumnState[]): AgColumn[] {
+        const colModel = this.colModel;
+        const result = current.slice();
+        let indexes: Map<AgColumn, number> | null = null;
+        for (let i = 0, len = states.length; i < len; ++i) {
+            const state = states[i];
+            const column = colModel.getNonPivotColById(state.colId);
+            const intent =
+                column?.primary && column.colKind !== 'auto-group'
+                    ? this.getStateIntent(column, state, undefined)
+                    : undefined;
+            if (!column || !intent) {
+                continue;
+            }
+            const position = result.indexOf(column);
+            if (intent.active === false) {
+                if (position >= 0) {
+                    result.splice(position, 1);
+                }
+                continue;
+            }
+            if (intent.active) {
+                const seated = this.getColsSeatedWith(column) ?? [];
+                for (let j = 0, seatedLen = seated.length; j < seatedLen; ++j) {
+                    const seatedCol = seated[j];
+                    if (!result.includes(seatedCol)) {
+                        result.push(seatedCol);
+                    }
+                }
+                if (position < 0) {
+                    result.push(column);
+                }
+            }
+            if (intent.index !== undefined && result.includes(column)) {
+                indexes ??= new Map();
+                indexes.set(column, intent.index);
+            }
+        }
+        this.sortPendingCols(result, indexes);
+        return result;
+    }
+
+    /** Cols seated ahead of `col` whenever it is activated (e.g. its hierarchy virtuals). */
+    protected getColsSeatedWith(_col: AgColumn): readonly AgColumn[] | undefined {
+        return undefined;
+    }
+
+    protected sortPendingCols(cols: AgColumn[], indexes: Map<AgColumn, number> | null): boolean {
+        if (indexes) {
+            cols.sort(compareByStateIndex(indexes));
             return true;
         }
         return false;
     }
 
-    protected readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {
-        const indexes = this.pendingStateOrder;
-        if (!indexes) {
-            return 0;
-        }
-        const aIdx = indexes.get(a);
-        const bIdx = indexes.get(b);
-        if (aIdx == null) {
-            return bIdx == null ? 0 : 1;
-        }
-        return bIdx == null ? -1 : aIdx - bIdx;
-    };
+    /** What one `ColumnState` entry asks of this service, or `undefined` when it does not mention it. Pure, so
+     *  {@link syncColState} and {@link previewColumns} share it. */
+    protected abstract getStateIntent(
+        column: AgColumn,
+        stateItem: ColumnState | null,
+        defaultState: ColumnStateParams | undefined
+    ): ColStateIntent | undefined;
 
     /** Apply one `ColumnState` entry to this service; ordered services share the impl, `valueColsSvc` overrides. */
     public abstract syncColState(
@@ -422,4 +466,22 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         defaultState: ColumnStateParams | undefined,
         source: ColumnEventType
     ): void;
+}
+
+/** `active`: join (`true`), leave (`false`) or keep membership (`undefined`); `index`: the col's order key. */
+export interface ColStateIntent {
+    active?: boolean;
+    index?: number;
+}
+
+/** Cols with an index sort first, in index order; the rest keep their relative order (stable sort). */
+export function compareByStateIndex(indexes: Map<AgColumn, number>): (a: AgColumn, b: AgColumn) => number {
+    return (a, b) => {
+        const aIdx = indexes.get(a);
+        const bIdx = indexes.get(b);
+        if (aIdx == null) {
+            return bIdx == null ? 0 : 1;
+        }
+        return bIdx == null ? -1 : aIdx - bIdx;
+    };
 }

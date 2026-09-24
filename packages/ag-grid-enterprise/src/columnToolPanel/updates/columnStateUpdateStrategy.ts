@@ -3,6 +3,7 @@ import type {
     ColAggFunc,
     ColumnEventType,
     ColumnState,
+    ColumnToolPanelUpdateColumnsParams,
     IColumnStateUpdateStrategy,
     SortDef,
     SortDirection,
@@ -17,6 +18,14 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
         this.delegate('applyColumnState', deferMode, state, eventType);
+    }
+
+    public updatePanelColumns(
+        deferMode: boolean,
+        params: ColumnToolPanelUpdateColumnsParams,
+        eventType: ColumnEventType
+    ): void {
+        this.delegate('updatePanelColumns', deferMode, params, eventType);
     }
 
     public commit(deferMode: boolean): void {

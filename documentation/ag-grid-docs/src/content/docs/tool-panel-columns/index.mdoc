@@ -308,17 +308,28 @@ To add a custom button, provide an object with a `label` and an `action` callbac
 
 {% interfaceDocumentation interfaceName="ColumnToolPanelButtonDef" config={"overrideBottomMargin":"1rem"} /%}
 
+### Updating Columns from a Button
+
+Call `params.updatePanelColumns()` from an `action` to change columns in the same way as the Columns Tool Panel's own controls. It takes the same `state` and `applyOrder` as `api.applyColumnState()`, limited to the state the Columns Tool Panel can change: visibility, order, row groups, values, pivots and sort. Any other state, such as column widths, is ignored, so the output of `api.getColumnState()` can be passed directly.
+
+When [Deferred Updates](#deferred-updates) are enabled, the changes are staged in the Columns Tool Panel until **Apply** is clicked, and **Cancel** discards them. Otherwise, they apply straight away. To apply changes immediately regardless of Deferred Updates, call `params.api.applyColumnState()` instead.
+
+{% interfaceDocumentation interfaceName="ColumnToolPanelUpdateColumnsParams" config={"overrideBottomMargin":"1rem"} /%}
+
 Note that in the example below:
 
-- The grid starts from an initial state with **Age** and **Year** hidden, the medal columns shown, and **Total** moved before **Gold**.
-- A custom **Sports Stats** button calls `api.applyColumnState()` to show only the medal columns, summed and grouped by sport.
-- A custom **Reset** button calls `api.resetColumnState()` to restore the columns to their column definitions.
-- Deferred Updates are not enabled, so changes made in the Columns Tool Panel apply straight away.
+- The column state is saved in `onGridReady`.
+- A custom **Medals by Country** button groups by country, sums the medal columns and sorts by **Total**.
+- A custom **Reset** button restores the saved column state.
+- Deferred Updates are enabled, so both buttons stage their changes for review in the Columns Tool Panel until **Apply** is clicked.
 
 {% gridExampleRunner title="Custom Buttons" name="custom-buttons" exampleHeight=630 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    onGridReady: (params) => {
+        savedColumnState = params.api.getColumnState();
+    },
     sideBar: {
         toolPanels: [
             {
@@ -331,8 +342,10 @@ const gridOptions = {
                     buttons: [
                         {
                             label: 'Reset',
-                            action: (params) => params.api.resetColumnState(),
+                            action: (params) => params.updatePanelColumns({ state: savedColumnState, applyOrder: true }),
                         },
+                        'cancel',
+                        'apply',
                     ],
                 },
             },
@@ -343,7 +356,7 @@ const gridOptions = {
 ```
 
 {% note %}
-When Deferred Updates are enabled, a custom `action` that changes columns through the Grid API applies immediately and clears any pending changes, in the same way as other changes made outside the Columns Tool Panel.
+Changes made through the Grid API, including `params.api` in a custom `action`, apply immediately and clear any changes staged in the Columns Tool Panel.
 {% /note %}
 
 ## Deferred Updates

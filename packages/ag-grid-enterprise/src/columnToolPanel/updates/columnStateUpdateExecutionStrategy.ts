@@ -6,6 +6,8 @@ import type {
     ColAggFunc,
     ColumnEventType,
     ColumnState,
+    ColumnToolPanelColumnState,
+    ColumnToolPanelUpdateColumnsParams,
     IColsService,
     IColumnStateUpdateStrategy,
     SortDef,
@@ -15,6 +17,7 @@ import {
     BeanStub,
     _applyColumnState,
     _dispatchColumnChangedEvent,
+    _normalizeSortType,
     _resolvePivotSort,
     _setColsVisible,
     isColumnGroupAutoCol,
@@ -95,6 +98,15 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
 
     public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
         this.getUpdateStrategy(deferMode).applyColumnState(state, eventType);
+    }
+    public updatePanelColumns(
+        deferMode: boolean,
+        params: ColumnToolPanelUpdateColumnsParams,
+        eventType: ColumnEventType
+    ): void {
+        // Callers may pass full `ColumnState` (e.g. from `getColumnState()`), so drop what the panel cannot change.
+        const state = params.state.map(toPanelColumnState);
+        this.getUpdateStrategy(deferMode).updatePanelColumns({ state, applyOrder: params.applyOrder }, eventType);
     }
     public commit(deferMode: boolean): void {
         this.getUpdateStrategy(deferMode).commit();
@@ -209,6 +221,10 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
         if (state.length) {
             _applyColumnState(this.beans, { state }, eventType);
         }
+    }
+
+    public updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams, eventType: ColumnEventType): void {
+        _applyColumnState(this.beans, params, eventType);
     }
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
@@ -356,17 +372,26 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 }
                 if (
                     (patch.hide !== undefined && patch.hide !== !column.visible) ||
-                    (patch.rowGroup !== undefined && !!patch.rowGroup !== column.rowGroupActive) ||
-                    (patch.pivot !== undefined && !!patch.pivot !== column.pivotActive) ||
-                    (patch.aggFunc !== undefined &&
-                        ((patch.aggFunc ?? null) !== (column.aggFunc ?? null) ||
-                            (patch.aggFunc != null) !== column.isValueActive()))
+                    (patch.aggFunc !== undefined && isAggFuncPending(patch.aggFunc, column)) ||
+                    (patch.sort !== undefined && (patch.sort ?? null) !== (column.getSortDef()?.direction ?? null)) ||
+                    (patch.sortIndex !== undefined && (patch.sortIndex ?? null) !== (column.sortIndex ?? null)) ||
+                    (patch.pivotSort !== undefined &&
+                        _resolvePivotSort(beans, patch.pivotSort) !== _resolvePivotSort(beans, column.pivotSort))
                 ) {
                     return true;
                 }
             }
+            // Row group, value and pivot membership and order, compared as whole lists so that a staged index
+            // on a column already in its section is seen.
+            if (
+                !_areEqual(getColIds(this.getRowGroupColumns()), getColIds(beans.rowGroupColsSvc?.columns)) ||
+                !_areEqual(getColIds(this.getValueColumns()), getColIds(beans.valueColsSvc?.columns)) ||
+                (beans.colModel.pivotMode &&
+                    !_areEqual(getColIds(this.getPivotColumns()), getColIds(beans.pivotColsSvc?.columns)))
+            ) {
+                return true;
+            }
         }
-
         if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) {
             return true;
         }
@@ -429,6 +454,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         }
 
         const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
+        replaySortBeforeColumnState(sortedEntries);
 
         // Batch the role-column operations (rowGroup/aggregation/pivot) so consecutive ones share one
         // refresh. Order-sensitive ops read live model state that a deferred role op leaves stale until
@@ -565,6 +591,25 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         columnState.seq = nextSeq(this.sequence);
         this.sequence = columnState.seq;
         columnState.eventType = eventType;
+    }
+
+    public updatePanelColumns(
+        { state, applyOrder }: ColumnToolPanelUpdateColumnsParams,
+        eventType: ColumnEventType
+    ): void {
+        this.applyColumnState(state, eventType);
+        const sortDefsByColId = this.state.sort?.sortDefsByColId;
+        for (const { colId, sort } of state) {
+            if (sort !== undefined) {
+                sortDefsByColId?.delete(colId);
+            }
+        }
+        if (applyOrder) {
+            const columns = state
+                .map(({ colId }) => this.beans.colModel.getNonPivotColById(colId))
+                .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
+            this.moveColumns(columns, 0, eventType);
+        }
     }
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
@@ -734,15 +779,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        return getDraftColumns(
-            this.beans,
-            getDraftFunctionColumnIds(
-                this.state.rowGroup?.colIds,
-                this.beans.rowGroupColsSvc?.columns,
-                this.state.columnState?.patches,
-                (patch) => (patch.rowGroup == null ? undefined : !!patch.rowGroup)
-            )
-        );
+        const { rowGroupColsSvc } = this.beans;
+        return this.previewColumns(rowGroupColsSvc, this.state.rowGroup?.colIds, rowGroupColsSvc?.columns);
     }
 
     public getPrimaryColumns(): AgColumn[] {
@@ -754,15 +792,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public getValueColumns(): AgColumn[] {
-        return getDraftColumns(
-            this.beans,
-            getDraftFunctionColumnIds(
-                this.state.aggregation?.colIds,
-                this.beans.valueColsSvc?.columns,
-                this.state.columnState?.patches,
-                (patch) => (patch.aggFunc === undefined ? undefined : patch.aggFunc != null)
-            )
-        );
+        const { valueColsSvc } = this.beans;
+        return this.previewColumns(valueColsSvc, this.state.aggregation?.colIds, valueColsSvc?.columns);
     }
 
     public getPivotColumns(): AgColumn[] {
@@ -775,15 +806,19 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             ? livePivotColumns
             : getDraftColumns(this.beans, this.lastPivotColIds);
 
-        return getDraftColumns(
-            this.beans,
-            getDraftFunctionColumnIds(
-                this.state.pivot?.colIds,
-                fallbackColumns,
-                this.state.columnState?.patches,
-                (patch) => (patch.pivot == null ? undefined : !!patch.pivot)
-            )
-        );
+        return this.previewColumns(this.beans.pivotColsSvc, this.state.pivot?.colIds, fallbackColumns);
+    }
+
+    /** The role's staged list with the staged column state applied by the role's own service, so that the
+     *  preview follows the same membership and ordering rules as Apply. */
+    private previewColumns(
+        colsSvc: IColsService | undefined,
+        draftColIds: string[] | undefined,
+        liveColumns: AgColumn[] | undefined
+    ): AgColumn[] {
+        const current = draftColIds ? getDraftColumns(this.beans, draftColIds) : [...(liveColumns ?? [])];
+        const patches = this.state.columnState?.patches;
+        return colsSvc && patches?.size ? colsSvc.previewColumns(current, [...patches.values()]) : current;
     }
 
     public getPivotMode(): boolean {
@@ -796,6 +831,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         const sortDefsByColId = draftSortState?.sortDefsByColId;
         if (sortDefsByColId?.has(colId)) {
             return sortDefsByColId.get(colId) ?? null;
+        }
+        const stagedSort = this.state.columnState?.patches.get(colId)?.sort;
+        if (stagedSort !== undefined) {
+            return stagedSort ? { direction: stagedSort, type: _normalizeSortType() } : null;
         }
         if (draftSortState?.baselineCleared) {
             return null;
@@ -851,11 +890,23 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             currentDraft.sortDefsByColId.clear();
             currentDraft.baselineCleared = true;
         }
+        clearColumnStateSortPatches(this.state, doingMultiSort ? colId : null);
 
         currentDraft.sortDefsByColId.set(colId, nextSortDef.direction ? nextSortDef : null);
         currentDraft.seq = nextSeq(this.sequence);
         this.sequence = currentDraft.seq;
         this.state.sort = currentDraft;
+    }
+}
+
+/** A staged column-state sort always post-dates the panel sort draft (each clears the other's entries), so the
+ *  draft replays first; otherwise its `baselineCleared` would wipe the newer column-state sort. */
+function replaySortBeforeColumnState(operations: CommitOperations): void {
+    const sortIndex = operations.findIndex((operation) => operation.type === 'sort');
+    const columnStateIndex = operations.findIndex((operation) => operation.type === 'columnState');
+    if (sortIndex > columnStateIndex && columnStateIndex >= 0) {
+        const [sortOperation] = operations.splice(sortIndex, 1);
+        operations.splice(columnStateIndex, 0, sortOperation);
     }
 }
 
@@ -873,47 +924,6 @@ function getDraftColumns(beans: BeanStub['beans'], colIds: string[] | undefined)
     return colIds
         .map((colId) => beans.colModel.getNonPivotColById(colId))
         .filter((column): column is AgColumn => !!column);
-}
-
-function getDraftFunctionColumnIds(
-    draftColIds: string[] | undefined,
-    liveColumns: AgColumn[] | undefined,
-    columnStatePatches: Map<string, ColumnState> | undefined,
-    getPatchState: (patch: ColumnState) => boolean | undefined
-): string[] {
-    const colIds = [...(draftColIds ?? liveColumns?.map((column) => column.colId) ?? [])];
-
-    if (!columnStatePatches?.size) {
-        return colIds;
-    }
-
-    const colIdsSet = new Set(colIds);
-    for (const [colId, patch] of columnStatePatches) {
-        const nextState = getPatchState(patch);
-        if (nextState === undefined) {
-            continue;
-        }
-
-        if (nextState) {
-            if (!colIdsSet.has(colId)) {
-                colIds.push(colId);
-                colIdsSet.add(colId);
-            }
-            continue;
-        }
-
-        if (!colIdsSet.has(colId)) {
-            continue;
-        }
-
-        colIdsSet.delete(colId);
-        const index = colIds.indexOf(colId);
-        if (index >= 0) {
-            colIds.splice(index, 1);
-        }
-    }
-
-    return colIds;
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
@@ -952,6 +962,47 @@ function isPrimaryColDefColumn(column: AgColumn): boolean {
     return !isColumnGroupAutoCol(column) && !isSpecialCol(column);
 }
 
+const PANEL_COLUMN_STATE_KEYS = [
+    'hide',
+    'rowGroup',
+    'rowGroupIndex',
+    'pivot',
+    'pivotIndex',
+    'aggFunc',
+    'valueIndex',
+    'sort',
+    'sortIndex',
+    'pivotSort',
+] as const satisfies readonly (keyof ColumnToolPanelColumnState)[];
+
+/** Keys left `undefined` are omitted rather than copied, as a staged patch merges over any pending one. */
+function toPanelColumnState(state: ColumnState): ColumnToolPanelColumnState {
+    const panelState: ColumnToolPanelColumnState = { colId: state.colId };
+    for (const key of PANEL_COLUMN_STATE_KEYS) {
+        copyDefinedKey(panelState, state, key);
+    }
+    return panelState;
+}
+
+function copyDefinedKey<K extends keyof ColumnToolPanelColumnState>(
+    target: ColumnToolPanelColumnState,
+    source: ColumnState,
+    key: K
+): void {
+    const value = source[key];
+    if (value !== undefined) {
+        target[key] = value;
+    }
+}
+
+/** An inactive value column keeps its last `aggFunc`, so a `null` patch only changes an active column. */
+function isAggFuncPending(aggFunc: ColumnState['aggFunc'], column: AgColumn): boolean {
+    if (aggFunc == null) {
+        return column.isValueActive();
+    }
+    return !column.isValueActive() || aggFunc !== column.aggFunc;
+}
+
 function nextSeq(sequence: number): number {
     return sequence + 1;
 }
@@ -982,6 +1033,27 @@ function clearDeferredFunctionPatches(state: DeferredState, patchKey: 'rowGroup'
         }
 
         patches.set(colId, nextPatch as ColumnState);
+    }
+}
+
+/** Drop staged `sort`/`sortIndex` for `colId`, or for every column when `null`, so a later sort wins. */
+function clearColumnStateSortPatches(state: DeferredState, colId: string | null): void {
+    const patches = state.columnState?.patches;
+    if (!patches?.size) {
+        return;
+    }
+    for (const [patchColId, patch] of patches) {
+        if ((colId !== null && patchColId !== colId) || (patch.sort === undefined && patch.sortIndex === undefined)) {
+            continue;
+        }
+        const nextPatch = { ...patch };
+        delete nextPatch.sort;
+        delete nextPatch.sortIndex;
+        if (Object.keys(nextPatch).length === 1) {
+            patches.delete(patchColId);
+        } else {
+            patches.set(patchColId, nextPatch);
+        }
     }
 }
 

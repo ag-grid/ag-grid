@@ -33,6 +33,9 @@ export interface IColsService {
         defaultState: ColumnStateParams | undefined,
         source: ColumnEventType
     ): void;
+
+    /** The active cols that applying `states` on top of `current` would give, without changing any column. */
+    previewColumns(current: AgColumn[], states: ColumnState[]): AgColumn[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
