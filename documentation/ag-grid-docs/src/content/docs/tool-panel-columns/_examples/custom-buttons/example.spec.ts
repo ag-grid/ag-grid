@@ -2,7 +2,7 @@ import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
-        'the custom Reset button restores the column definitions, and changes apply immediately',
+        'custom buttons apply a preset layout and reset to the column definitions',
         async ({ agIdFor, page }) => {
             await waitForGridContent(page);
 
@@ -33,6 +33,23 @@ test.agExample(import.meta, () => {
             await expect(headerFor('total')).toBeVisible();
             await expect(checkboxFor('Age')).toBeChecked();
             await expect(checkboxFor('Gold')).not.toBeChecked();
+
+            // Sports Stats shows only the medal columns, summed and grouped by sport.
+            await page.getByRole('button', { name: 'Sports Stats' }).click();
+            await expect(headerFor('ag-Grid-AutoColumn')).toBeVisible();
+            for (const colId of ['gold', 'silver', 'bronze']) {
+                await expect(headerFor(colId)).toBeVisible();
+            }
+            for (const colId of ['athlete', 'age', 'country', 'year', 'sport', 'total']) {
+                await expect(headerFor(colId)).toBeHidden();
+            }
+            await expect(headerFor('gold')).toContainText('sum(Gold)');
+
+            // Reset again undoes it.
+            await page.getByRole('button', { name: 'Reset' }).click();
+            await expect(headerFor('ag-Grid-AutoColumn')).toBeHidden();
+            await expect(headerFor('athlete')).toBeVisible();
+            await expect(headerFor('gold')).toBeHidden();
 
             // A custom button does not enable deferred updates, so changes apply straight away.
             await checkboxFor('Gold').click();

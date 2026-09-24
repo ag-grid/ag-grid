@@ -67,6 +67,20 @@ const gridOptions: GridOptions<IOlympicData> = {
                 toolPanelParams: {
                     buttons: [
                         {
+                            label: 'Sports Stats',
+                            action: (params: ColumnToolPanelButtonActionParams<IOlympicData>) =>
+                                params.api.applyColumnState({
+                                    state: [
+                                        { colId: 'sport', rowGroup: true, hide: true },
+                                        { colId: 'gold', hide: false, aggFunc: 'sum' },
+                                        { colId: 'silver', hide: false, aggFunc: 'sum' },
+                                        { colId: 'bronze', hide: false, aggFunc: 'sum' },
+                                    ],
+                                    // Hide and ungroup every column not listed above
+                                    defaultState: { hide: true, rowGroup: false, aggFunc: null },
+                                }),
+                        },
+                        {
                             label: 'Reset',
                             action: (params: ColumnToolPanelButtonActionParams<IOlympicData>) =>
                                 params.api.resetColumnState(),
