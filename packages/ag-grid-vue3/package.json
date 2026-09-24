@@ -62,7 +62,7 @@
     "vue-tsc": "^3.3.11"
   },
   "peerDependencies": {
-    "vue": "^3.5.32"
+    "vue": "^3.5.43"
   },
   "publishConfig": {
     "access": "public"

@@ -23,7 +23,7 @@
     "yarn": "^1.22.21"
   },
   "dependencies": {
-    "fs-extra": "^11.4.0",
+    "fs-extra": "^11.4.1",
     "js-yaml": "^4.1.0",
     "tslib": "^2.8.1"
   },
@@ -75,7 +75,7 @@
     "glob": "^11.1.0",
     "globals": "^17.12.0",
     "happy-dom": "20.11.2",
-    "knip": "6.37.0",
+    "knip": "6.38.0",
     "node-fetch": "2.7.0",
     "nx": "20.8.4",
     "octokit": "^5.0.5",
@@ -84,7 +84,7 @@
     "postcss-rtlcss": "^6.0.0",
     "postcss-selector-parser": "^7.1.6",
     "postcss-url": "^10.1.4",
-    "prettier": "3.9.8",
+    "prettier": "3.9.9",
     "prompts": "^2.4.2",
     "rulesync": "^8.2.0",
     "skia-canvas": "3.0.8",

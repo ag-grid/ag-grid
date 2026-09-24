@@ -12,7 +12,7 @@
     "json5": "2.2.3",
     "@nx/devkit": "20.8.4",
     "@swc/helpers": "0.5.23",
-    "prettier": "3.9.8",
+    "prettier": "3.9.9",
     "tinypool": "^2.2.0"
   },
   "type": "commonjs",
