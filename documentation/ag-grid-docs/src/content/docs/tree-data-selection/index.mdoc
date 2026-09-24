@@ -16,6 +16,8 @@ To enable hierarchical selection, set the `rowSelection.groupSelects` option to 
 - `'descendants'`: Selecting a row will select all of its descendants. Its ancestor row will become indeterminate, unless all of its descendant rows are selected.
 - `'filteredDescendants'`: Selecting a group row will select all of its descendants that pass the filter. Its ancestor row will become indeterminate, unless all of its descendant rows are selected.
 
+With `'descendants'` or `'filteredDescendants'`, a selected row is deselected when it gains its first child row or loses its last one, because its selection no longer reflects its descendants.
+
 {% gridExampleRunner title="Group Selection" name="group-selection" /%}
 
 ## Checkboxes in Group Cells
