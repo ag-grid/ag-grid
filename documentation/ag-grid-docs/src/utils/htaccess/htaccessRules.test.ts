@@ -404,10 +404,9 @@ describe('htaccessRules', () => {
     });
 
     describe('Released archive versions get cached, not just excluded from no-cache', () => {
-        // documentNoCacheRules excludes archive/[0-9] from forced no-cache, but that alone
-        // produces no Cache-Control header at all - confirmed live 2026-09-23, every request to
-        // a released archive page hit origin, including a 30k-request Sitebulb crawl of
-        // /charts/archive/11.0.4/. This rule is what actually fills that gap.
+        // documentNoCacheRules excludes archive/[0-9] from forced no-cache, but never adds a
+        // positive Cache-Control - this rule is what actually caches released archive pages,
+        // instead of leaving them to hit origin on every request.
         const line = () => productionContent.split('\n').find((l) => l.includes('^/(charts/)?archive/[0-9]#"'));
 
         it('caches with the long, hashed-asset-class TTL, not the moderate unhashed one', () => {
