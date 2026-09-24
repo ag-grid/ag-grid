@@ -292,11 +292,73 @@ The example below demonstrates these methods in action. Note the following:
 
 {% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
 
+## Buttons
+
+Use `toolPanelParams.buttons` to display buttons at the bottom of the Columns Tool Panel, in the order they are listed. Each entry is either a provided button or a custom button:
+
+- `'apply'`: Enables [Deferred Updates](#deferred-updates) and commits all pending changes.
+- `'cancel'`: Discards all pending changes. Only has an effect alongside `'apply'`.
+- A custom button definition, described below.
+
+Only the **Apply** button enables Deferred Updates. Custom buttons can be used with or without it.
+
+### Custom Buttons
+
+To add a custom button, provide an object with a `label` and an `action` callback. The `action` is called with the grid `api` and `context` when the button is clicked.
+
+{% interfaceDocumentation interfaceName="ColumnToolPanelButtonDef" config={"overrideBottomMargin":"1rem"} /%}
+
+### Updating Columns from a Button
+
+Call `params.updatePanelColumns()` from an `action` to change columns as if the user had changed them in the Columns Tool Panel. It accepts the same `state` and `applyOrder` as [Column State](./column-state/#save-and-apply), for the settings the Columns Tool Panel controls: visibility, order, row groups, values, pivots and sort. Other settings, such as column widths, are ignored, so state saved with `api.getColumnState()` can be passed as is.
+
+When [Deferred Updates](#deferred-updates) are enabled, the changes appear in the Columns Tool Panel as pending changes, ready to apply or cancel. Otherwise they are applied immediately.
+
+{% interfaceDocumentation interfaceName="ColumnToolPanelUpdateColumnsParams" config={"overrideBottomMargin":"1rem"} /%}
+
+Note that in the example below:
+
+- **Medals by Country** groups by country, sums the medal columns and sorts by **Total**.
+- **Reset** restores the column state saved when the grid was created.
+- Deferred Updates are enabled, so the changes from either button can be reviewed before clicking **Apply**.
+
+{% gridExampleRunner title="Custom Buttons" name="custom-buttons" exampleHeight=630 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    onGridReady: (params) => {
+        savedColumnState = params.api.getColumnState();
+    },
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    buttons: [
+                        {
+                            label: 'Reset',
+                            action: (params) => params.updatePanelColumns({ state: savedColumnState, applyOrder: true }),
+                        },
+                        'cancel',
+                        'apply',
+                    ],
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+};
+```
+
 ## Deferred Updates
 
 You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
 
-Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`. Other [Buttons](#buttons) do not enable Deferred Updates.
 
 Note that in the example below:
 

@@ -23,6 +23,15 @@ export interface FilterButton {
     label: string;
 }
 
+/**
+ * A button with its own click handler, rather than dispatching a `FilterAction` event.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface CustomFilterButton {
+    label: string;
+    onClick: () => void;
+}
+
 function getElement(className: string): ElementParams {
     return {
         tag: 'div',
@@ -32,7 +41,7 @@ function getElement(className: string): ElementParams {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterButtonComp extends Component<FilterAction> {
-    private buttons: FilterButton[];
+    private buttons: (FilterButton | CustomFilterButton)[];
     private listeners: (() => void)[] = [];
     private eApply?: HTMLElement;
 
@@ -46,7 +55,7 @@ export class FilterButtonComp extends Component<FilterAction> {
         this.className = className;
     }
 
-    public updateButtons(buttons: FilterButton[], useForm?: boolean): void {
+    public updateButtons(buttons: (FilterButton | CustomFilterButton)[], useForm?: boolean): void {
         const oldButtons = this.buttons;
         this.buttons = buttons;
 
@@ -65,14 +74,17 @@ export class FilterButtonComp extends Component<FilterAction> {
 
         const className = this.className;
 
-        const addButton = ({ type, label }: FilterButton): void => {
+        const addButton = (buttonDef: FilterButton | CustomFilterButton): void => {
+            const { label } = buttonDef;
+            const type = 'type' in buttonDef ? buttonDef.type : undefined;
             const clickListener = (event?: Event) => {
-                this.dispatchLocalEvent<FilterButtonEvent>({
-                    type,
-                    event,
-                });
+                if ('onClick' in buttonDef) {
+                    buttonDef.onClick();
+                } else {
+                    this.dispatchLocalEvent<FilterButtonEvent>({ type: buttonDef.type, event });
+                }
             };
-            if (!['apply', 'clear', 'reset', 'cancel'].includes(type)) {
+            if (type && !['apply', 'clear', 'reset', 'cancel'].includes(type)) {
                 this.beans.log.warn(75);
             }
 
@@ -81,7 +93,7 @@ export class FilterButtonComp extends Component<FilterAction> {
             const button = _createElement({
                 tag: 'button',
                 attrs: { type: buttonType },
-                ref: `${type}FilterButton`,
+                ref: type ? `${type}FilterButton` : undefined,
                 cls: `ag-button ag-standard-button ${className}-button${isApply ? ' ' + className + '-apply-button' : ''}`,
                 children: label,
             });

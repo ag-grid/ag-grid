@@ -15,6 +15,7 @@ import {
     BeanStub,
     _applyColumnState,
     _dispatchColumnChangedEvent,
+    _normalizeSortType,
     _resolvePivotSort,
     _setColsVisible,
     isColumnGroupAutoCol,
@@ -93,8 +94,13 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     private syncUpdateStrategy?: SynchronousColumnStateUpdateStrategy;
     private deferredUpdateStrategy?: DeferredColumnStateUpdateStrategy;
 
-    public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
-        this.getUpdateStrategy(deferMode).applyColumnState(state, eventType);
+    public applyColumnState(
+        deferMode: boolean,
+        state: ColumnState[],
+        eventType: ColumnEventType,
+        applyOrder?: boolean
+    ): void {
+        this.getUpdateStrategy(deferMode).applyColumnState(state, eventType, applyOrder);
     }
     public commit(deferMode: boolean): void {
         this.getUpdateStrategy(deferMode).commit();
@@ -205,9 +211,9 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     public hasPendingChanges = () => false;
     public hasDeferredColumnOrder = () => false;
 
-    public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
+    public applyColumnState(state: ColumnState[], eventType: ColumnEventType, applyOrder?: boolean): void {
         if (state.length) {
-            _applyColumnState(this.beans, { state }, eventType);
+            _applyColumnState(this.beans, { state, applyOrder }, eventType);
         }
     }
 
@@ -345,7 +351,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
     public hasPendingChanges(): boolean {
         const { state, beans } = this;
-        const { columnState, columnOrder, rowGroup, aggregation, pivot, pivotMode, sort, aggFuncs } = state;
+        const { columnState, columnOrder, pivot, pivotMode, sort, aggFuncs } = state;
         const getColIds = (cols: AgColumn[] | undefined) => (cols ?? []).map((c) => c.colId);
 
         if (columnState) {
@@ -356,27 +362,33 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 }
                 if (
                     (patch.hide !== undefined && patch.hide !== !column.visible) ||
-                    (patch.rowGroup !== undefined && !!patch.rowGroup !== column.rowGroupActive) ||
-                    (patch.pivot !== undefined && !!patch.pivot !== column.pivotActive) ||
-                    (patch.aggFunc !== undefined &&
-                        ((patch.aggFunc ?? null) !== (column.aggFunc ?? null) ||
-                            (patch.aggFunc != null) !== column.isValueActive()))
+                    (patch.aggFunc !== undefined && isAggFuncPending(patch.aggFunc, column)) ||
+                    (patch.sort !== undefined && (patch.sort ?? null) !== (column.getSortDef()?.direction ?? null)) ||
+                    (patch.sortIndex !== undefined && (patch.sortIndex ?? null) !== (column.sortIndex ?? null)) ||
+                    (patch.pivotSort !== undefined &&
+                        _resolvePivotSort(beans, patch.pivotSort) !== _resolvePivotSort(beans, column.pivotSort))
                 ) {
                     return true;
                 }
             }
         }
-
+        // Compared as whole lists, drafts and patches included, so that a staged reorder counts.
+        if (
+            !_areEqual(getColIds(this.getRowGroupColumns()), getColIds(beans.rowGroupColsSvc?.columns)) ||
+            !_areEqual(getColIds(this.getValueColumns()), getColIds(beans.valueColsSvc?.columns))
+        ) {
+            return true;
+        }
+        // Outside pivot mode there is no pivot preview, so only a pivot draft can differ.
+        const stagedPivotColIds = this.getPivotMode() ? getColIds(this.getPivotColumns()) : pivot?.colIds;
+        if (
+            (pivot || columnState) &&
+            stagedPivotColIds &&
+            !_areEqual(stagedPivotColIds, getColIds(beans.pivotColsSvc?.columns))
+        ) {
+            return true;
+        }
         if (columnOrder && !_areEqual(columnOrder.colIds, getPrimaryColumnIds(beans))) {
-            return true;
-        }
-        if (rowGroup && !_areEqual(rowGroup.colIds, getColIds(beans.rowGroupColsSvc?.columns))) {
-            return true;
-        }
-        if (aggregation && !_areEqual(aggregation.colIds, getColIds(beans.valueColsSvc?.columns))) {
-            return true;
-        }
-        if (pivot && !_areEqual(pivot.colIds, getColIds(beans.pivotColsSvc?.columns))) {
             return true;
         }
         if (pivotMode && pivotMode.pivotMode !== beans.colModel.pivotMode) {
@@ -429,6 +441,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         }
 
         const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
+        replaySortBeforeColumnState(sortedEntries);
 
         // Batch the role-column operations (rowGroup/aggregation/pivot) so consecutive ones share one
         // refresh. Order-sensitive ops read live model state that a deferred role op leaves stale until
@@ -557,14 +570,24 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         }
     }
 
-    public applyColumnState(state: ColumnState[], eventType: ColumnEventType): void {
+    public applyColumnState(state: ColumnState[], eventType: ColumnEventType, applyOrder?: boolean): void {
+        const sortDefsByColId = this.state.sort?.sortDefsByColId;
         for (const patch of state) {
             mergeColumnStatePatch(this.state, patch);
+            if (patch.sort !== undefined) {
+                sortDefsByColId?.delete(patch.colId);
+            }
         }
         const columnState = ensureColumnStateDraft(this.state);
         columnState.seq = nextSeq(this.sequence);
         this.sequence = columnState.seq;
         columnState.eventType = eventType;
+        if (applyOrder) {
+            const columns = state
+                .map(({ colId }) => this.beans.colModel.getNonPivotColById(colId))
+                .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
+            this.moveColumns(columns, 0, eventType);
+        }
     }
 
     public moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void {
@@ -734,15 +757,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        return getDraftColumns(
-            this.beans,
-            getDraftFunctionColumnIds(
-                this.state.rowGroup?.colIds,
-                this.beans.rowGroupColsSvc?.columns,
-                this.state.columnState?.patches,
-                (patch) => (patch.rowGroup == null ? undefined : !!patch.rowGroup)
-            )
-        );
+        const { rowGroupColsSvc } = this.beans;
+        return this.previewColumns(rowGroupColsSvc, this.state.rowGroup?.colIds, rowGroupColsSvc?.columns);
     }
 
     public getPrimaryColumns(): AgColumn[] {
@@ -754,15 +770,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public getValueColumns(): AgColumn[] {
-        return getDraftColumns(
-            this.beans,
-            getDraftFunctionColumnIds(
-                this.state.aggregation?.colIds,
-                this.beans.valueColsSvc?.columns,
-                this.state.columnState?.patches,
-                (patch) => (patch.aggFunc === undefined ? undefined : patch.aggFunc != null)
-            )
-        );
+        const { valueColsSvc } = this.beans;
+        return this.previewColumns(valueColsSvc, this.state.aggregation?.colIds, valueColsSvc?.columns);
     }
 
     public getPivotColumns(): AgColumn[] {
@@ -775,15 +784,17 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             ? livePivotColumns
             : getDraftColumns(this.beans, this.lastPivotColIds);
 
-        return getDraftColumns(
-            this.beans,
-            getDraftFunctionColumnIds(
-                this.state.pivot?.colIds,
-                fallbackColumns,
-                this.state.columnState?.patches,
-                (patch) => (patch.pivot == null ? undefined : !!patch.pivot)
-            )
-        );
+        return this.previewColumns(this.beans.pivotColsSvc, this.state.pivot?.colIds, fallbackColumns);
+    }
+
+    private previewColumns(
+        colsSvc: IColsService | undefined,
+        draftColIds: string[] | undefined,
+        liveColumns: AgColumn[] | undefined
+    ): AgColumn[] {
+        const current = draftColIds ? getDraftColumns(this.beans, draftColIds) : [...(liveColumns ?? [])];
+        const patches = this.state.columnState?.patches;
+        return colsSvc && patches?.size ? colsSvc.previewColumns(current, [...patches.values()]) : current;
     }
 
     public getPivotMode(): boolean {
@@ -796,6 +807,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         const sortDefsByColId = draftSortState?.sortDefsByColId;
         if (sortDefsByColId?.has(colId)) {
             return sortDefsByColId.get(colId) ?? null;
+        }
+        const stagedSort = this.state.columnState?.patches.get(colId)?.sort;
+        if (stagedSort !== undefined) {
+            return stagedSort ? { direction: stagedSort, type: _normalizeSortType() } : null;
         }
         if (draftSortState?.baselineCleared) {
             return null;
@@ -851,11 +866,22 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             currentDraft.sortDefsByColId.clear();
             currentDraft.baselineCleared = true;
         }
+        clearPatchKeys(this.state, SORT_PATCH_KEYS, doingMultiSort ? colId : undefined);
 
         currentDraft.sortDefsByColId.set(colId, nextSortDef.direction ? nextSortDef : null);
         currentDraft.seq = nextSeq(this.sequence);
         this.sequence = currentDraft.seq;
         this.state.sort = currentDraft;
+    }
+}
+
+/** A staged column-state sort always post-dates the sort draft, whose `baselineCleared` would otherwise wipe it. */
+function replaySortBeforeColumnState(operations: CommitOperations): void {
+    const sortIndex = operations.findIndex((operation) => operation.type === 'sort');
+    const columnStateIndex = operations.findIndex((operation) => operation.type === 'columnState');
+    if (sortIndex > columnStateIndex && columnStateIndex >= 0) {
+        const [sortOperation] = operations.splice(sortIndex, 1);
+        operations.splice(columnStateIndex, 0, sortOperation);
     }
 }
 
@@ -873,47 +899,6 @@ function getDraftColumns(beans: BeanStub['beans'], colIds: string[] | undefined)
     return colIds
         .map((colId) => beans.colModel.getNonPivotColById(colId))
         .filter((column): column is AgColumn => !!column);
-}
-
-function getDraftFunctionColumnIds(
-    draftColIds: string[] | undefined,
-    liveColumns: AgColumn[] | undefined,
-    columnStatePatches: Map<string, ColumnState> | undefined,
-    getPatchState: (patch: ColumnState) => boolean | undefined
-): string[] {
-    const colIds = [...(draftColIds ?? liveColumns?.map((column) => column.colId) ?? [])];
-
-    if (!columnStatePatches?.size) {
-        return colIds;
-    }
-
-    const colIdsSet = new Set(colIds);
-    for (const [colId, patch] of columnStatePatches) {
-        const nextState = getPatchState(patch);
-        if (nextState === undefined) {
-            continue;
-        }
-
-        if (nextState) {
-            if (!colIdsSet.has(colId)) {
-                colIds.push(colId);
-                colIdsSet.add(colId);
-            }
-            continue;
-        }
-
-        if (!colIdsSet.has(colId)) {
-            continue;
-        }
-
-        colIdsSet.delete(colId);
-        const index = colIds.indexOf(colId);
-        if (index >= 0) {
-            colIds.splice(index, 1);
-        }
-    }
-
-    return colIds;
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
@@ -952,6 +937,14 @@ function isPrimaryColDefColumn(column: AgColumn): boolean {
     return !isColumnGroupAutoCol(column) && !isSpecialCol(column);
 }
 
+/** An inactive value column keeps its last `aggFunc`, so a `null` patch only changes an active column. */
+function isAggFuncPending(aggFunc: ColumnState['aggFunc'], column: AgColumn): boolean {
+    if (aggFunc == null) {
+        return column.isValueActive();
+    }
+    return !column.isValueActive() || aggFunc !== column.aggFunc;
+}
+
 function nextSeq(sequence: number): number {
     return sequence + 1;
 }
@@ -962,26 +955,41 @@ function mergeColumnStatePatch(state: DeferredState, patch: ColumnState): void {
     columnState.patches.set(patch.colId, existing ? { ...existing, ...patch } : patch);
 }
 
-function clearDeferredFunctionPatches(state: DeferredState, patchKey: 'rowGroup' | 'pivot' | 'aggFunc'): void {
+const ROLE_PATCH_KEYS = {
+    rowGroup: ['rowGroup', 'rowGroupIndex'],
+    pivot: ['pivot', 'pivotIndex'],
+    aggFunc: ['aggFunc', 'valueIndex'],
+} as const;
+
+const SORT_PATCH_KEYS = ['sort', 'sortIndex'] as const;
+
+function clearDeferredFunctionPatches(state: DeferredState, patchKey: keyof typeof ROLE_PATCH_KEYS): void {
+    clearPatchKeys(state, ROLE_PATCH_KEYS[patchKey]);
+}
+
+/** Drop `keys` from the staged patches (only `colId`'s, when given), removing patches left with just a `colId`. */
+function clearPatchKeys(state: DeferredState, keys: readonly (keyof ColumnState)[], colId?: string): void {
     const patches = state.columnState?.patches;
     if (!patches?.size) {
         return;
     }
 
-    for (const [colId, patch] of patches) {
-        if (!(patchKey in patch)) {
+    for (const [patchColId, patch] of patches) {
+        if ((colId !== undefined && patchColId !== colId) || !keys.some((key) => key in patch)) {
             continue;
         }
 
-        const nextPatch = { ...patch } as Partial<ColumnState>;
-        delete nextPatch[patchKey];
+        const nextPatch: Partial<ColumnState> = { ...patch };
+        for (const key of keys) {
+            delete nextPatch[key];
+        }
 
         if (Object.keys(nextPatch).length === 1) {
-            patches.delete(colId);
+            patches.delete(patchColId);
             continue;
         }
 
-        patches.set(colId, nextPatch as ColumnState);
+        patches.set(patchColId, nextPatch as ColumnState);
     }
 }
 

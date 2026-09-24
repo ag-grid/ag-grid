@@ -387,33 +387,60 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
         this.pendingStateChanged = false;
         const cols = this.columns;
-        if (cols.length > 0 && this.sortPendingCols(cols)) {
+        if (cols.length > 0 && this.sortPendingCols(cols, this.pendingStateOrder)) {
             this.resetActiveCols(cols);
         }
         this.onColumnsChanged();
         this.pendingStateOrder = null;
     }
 
-    protected sortPendingCols(cols: AgColumn[]): boolean {
-        if (this.pendingStateOrder) {
-            cols.sort(this.compareByStateIndex);
+    public previewColumns(current: AgColumn[], states: ColumnState[]): AgColumn[] {
+        const active = new Set(current);
+        const indexes = new Map<AgColumn, number>();
+        for (let i = 0, len = states.length; i < len; ++i) {
+            const state = states[i];
+            const column = this.colModel.getNonPivotColById(state.colId);
+            if (!column?.primary || column.colKind === 'auto-group') {
+                continue;
+            }
+            const intent = this.getStateIntent(column, state, undefined);
+            if (intent?.active === false) {
+                active.delete(column);
+            } else if (intent?.active) {
+                const seated = this.getColsSeatedWith(column) ?? [];
+                for (let j = 0, seatedLen = seated.length; j < seatedLen; ++j) {
+                    active.add(seated[j]);
+                }
+                active.add(column);
+            }
+            if (intent?.index !== undefined) {
+                indexes.set(column, intent.index);
+            }
+        }
+        const result = Array.from(active);
+        this.sortPendingCols(result, indexes.size ? indexes : null);
+        return result;
+    }
+
+    /** Cols seated ahead of `col` whenever it is activated (e.g. its hierarchy virtuals). */
+    protected getColsSeatedWith(_col: AgColumn): readonly AgColumn[] | undefined {
+        return undefined;
+    }
+
+    protected sortPendingCols(cols: AgColumn[], indexes: Map<AgColumn, number> | null): boolean {
+        if (indexes) {
+            cols.sort(compareByStateIndex(indexes));
             return true;
         }
         return false;
     }
 
-    protected readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {
-        const indexes = this.pendingStateOrder;
-        if (!indexes) {
-            return 0;
-        }
-        const aIdx = indexes.get(a);
-        const bIdx = indexes.get(b);
-        if (aIdx == null) {
-            return bIdx == null ? 0 : 1;
-        }
-        return bIdx == null ? -1 : aIdx - bIdx;
-    };
+    /** Pure: shared by {@link syncColState} and {@link previewColumns}. `undefined` when `stateItem` does not apply. */
+    protected abstract getStateIntent(
+        column: AgColumn,
+        stateItem: ColumnState | null,
+        defaultState: ColumnStateParams | undefined
+    ): ColStateIntent | undefined;
 
     /** Apply one `ColumnState` entry to this service; ordered services share the impl, `valueColsSvc` overrides. */
     public abstract syncColState(
@@ -422,4 +449,22 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         defaultState: ColumnStateParams | undefined,
         source: ColumnEventType
     ): void;
+}
+
+export interface ColStateIntent {
+    /** Join (`true`), leave (`false`) or keep membership (`undefined`). */
+    active?: boolean;
+    index?: number;
+}
+
+/** Cols with an index sort first, in index order; the rest keep their relative order (stable sort). */
+export function compareByStateIndex(indexes: Map<AgColumn, number>): (a: AgColumn, b: AgColumn) => number {
+    return (a, b) => {
+        const aIdx = indexes.get(a);
+        const bIdx = indexes.get(b);
+        if (aIdx == null) {
+            return bIdx == null ? 0 : 1;
+        }
+        return bIdx == null ? -1 : aIdx - bIdx;
+    };
 }

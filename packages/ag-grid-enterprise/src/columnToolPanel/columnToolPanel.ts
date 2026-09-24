@@ -5,8 +5,13 @@ import type {
     ColAggFunc,
     ColDef,
     ColGroupDef,
-    ColumnToolPanelAction,
+    ColumnState,
+    ColumnToolPanelButtonDef,
+    ColumnToolPanelColumnState,
     ColumnToolPanelState,
+    ColumnToolPanelUpdateColumnsParams,
+    CustomFilterButton,
+    FilterButton,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
@@ -24,7 +29,7 @@ import type { PivotModePanel } from './pivotModePanel';
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {}
+    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams<TData, TContext> {}
 
 /** Captures full grid state for no-op detection (includes width to distinguish from resize). */
 interface GridStateSnapshot {
@@ -55,7 +60,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private valuesDropZonePanel?: ValuesDropZonePanel;
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
-    private deferredButtonsComp?: FilterButtonComp;
+    private buttonsComp?: FilterButtonComp;
     private isDeferModeEnabled = false;
     private isCommitting = false;
     private lastKnownGridState?: GridStateSnapshot;
@@ -168,34 +173,51 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             );
         }
 
-        if (mergedParams.buttons) {
-            if (!mergedParams.buttons.includes('apply')) {
+        const buttons = mergedParams.buttons;
+        if (buttons?.length) {
+            if (buttons.includes('cancel') && !this.isDeferModeEnabled) {
                 this.beans.log.warn(298);
             }
-            if (mergedParams.buttons.length) {
-                this.initDeferredButtons(mergedParams.buttons);
-            }
+            this.initButtons(buttons);
         }
 
         this.initialised = true;
     }
 
-    private initDeferredButtons(buttons: ColumnToolPanelAction[]): void {
+    private initButtons(buttons: NonNullable<ToolPanelColumnCompParams['buttons']>): void {
         const buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-column-panel-buttons' }));
-        this.deferredButtonsComp = buttonComp;
+        this.buttonsComp = buttonComp;
         this.childDestroyFuncs.push(() => {
-            this.deferredButtonsComp = this.destroyBean(this.deferredButtonsComp);
+            this.buttonsComp = this.destroyBean(this.buttonsComp);
         });
 
         const translate = this.getLocaleTextFunc();
+        const createCustomButton = ({ label, action }: ColumnToolPanelButtonDef): CustomFilterButton => ({
+            label,
+            onClick: () =>
+                this.beans.frameworkOverrides.wrapOutgoing(() =>
+                    action(
+                        _addGridCommonParams(this.gos, {
+                            updatePanelColumns: (params: ColumnToolPanelUpdateColumnsParams) =>
+                                this.updatePanelColumns(params),
+                        })
+                    )
+                ),
+        });
 
-        const buttonDefs = buttons.map((type) => ({
-            type,
-            label: translate(
-                type === 'apply' ? 'applyColumnToolPanel' : 'cancelColumnToolPanel',
-                type === 'apply' ? 'Apply' : 'Cancel'
-            ),
-        }));
+        const buttonDefs = buttons.map((button): FilterButton | CustomFilterButton => {
+            if (typeof button === 'object') {
+                return createCustomButton(button);
+            }
+            const isApply = button === 'apply';
+            return {
+                type: button,
+                label: translate(
+                    isApply ? 'applyColumnToolPanel' : 'cancelColumnToolPanel',
+                    isApply ? 'Apply' : 'Cancel'
+                ),
+            };
+        });
         buttonComp.updateButtons(buttonDefs);
         buttonComp.updateValidity(false);
         buttonComp.addManagedListeners(buttonComp, {
@@ -213,13 +235,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         } finally {
             this.isCommitting = false;
         }
-        this.deferredButtonsComp?.updateValidity(false);
+        this.buttonsComp?.updateValidity(false);
         this.lastKnownGridState = this.captureGridState();
     };
 
     private readonly onDeferredCancel = (): void => {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
-        this.deferredButtonsComp?.updateValidity(false);
+        this.buttonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
         this.lastKnownGridState = this.captureGridState();
@@ -228,7 +250,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private readonly onPivotModePanelValueChanged = (): void => {
         this.refreshToolPanelLayouts();
         this.setLastVisible();
-        this.deferredButtonsComp?.updateValidity(
+        this.buttonsComp?.updateValidity(
             this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)
         );
     };
@@ -264,7 +286,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private resetDeferredState(): void {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
-        this.deferredButtonsComp?.updateValidity(false);
+        this.buttonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     }
@@ -305,11 +327,25 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         );
     }
 
+    private updatePanelColumns({ state, applyOrder }: ColumnToolPanelUpdateColumnsParams): void {
+        // Callers may pass full `getColumnState()` output.
+        const panelState = state.map(toPanelColumnState);
+        this.beans.columnStateUpdateStrategy.applyColumnState(
+            this.isDeferModeEnabled,
+            panelState,
+            'toolPanelUi',
+            applyOrder
+        );
+        if (this.isDeferModeEnabled) {
+            this.refreshDeferredUi();
+        }
+    }
+
     public refreshDeferredUi(): void {
         this.refreshToolPanelLayouts();
         this.setLastVisible();
         this.pivotModePanel?.refreshEditStrategy();
-        this.deferredButtonsComp?.updateValidity(
+        this.buttonsComp?.updateValidity(
             this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)
         );
     }
@@ -481,5 +517,38 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     public override destroy(): void {
         this.destroyChildren();
         super.destroy();
+    }
+}
+
+const PANEL_COLUMN_STATE_KEYS = [
+    'hide',
+    'rowGroup',
+    'rowGroupIndex',
+    'pivot',
+    'pivotIndex',
+    'aggFunc',
+    'valueIndex',
+    'sort',
+    'sortIndex',
+    'pivotSort',
+] as const satisfies readonly (keyof ColumnToolPanelColumnState)[];
+
+/** Keys left `undefined` are omitted rather than copied, as a staged patch merges over any pending one. */
+function toPanelColumnState(state: ColumnState): ColumnToolPanelColumnState {
+    const panelState: ColumnToolPanelColumnState = { colId: state.colId };
+    for (const key of PANEL_COLUMN_STATE_KEYS) {
+        copyDefinedKey(panelState, state, key);
+    }
+    return panelState;
+}
+
+function copyDefinedKey<K extends keyof ColumnToolPanelColumnState>(
+    target: ColumnToolPanelColumnState,
+    source: ColumnState,
+    key: K
+): void {
+    const value = source[key];
+    if (value !== undefined) {
+        target[key] = value;
     }
 }

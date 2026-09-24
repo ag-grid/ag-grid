@@ -15,8 +15,13 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
     public beanName = 'columnStateUpdateStrategy' as const;
     private executionStrategy?: ColumnStateUpdateExecutionStrategy;
 
-    public applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void {
-        this.delegate('applyColumnState', deferMode, state, eventType);
+    public applyColumnState(
+        deferMode: boolean,
+        state: ColumnState[],
+        eventType: ColumnEventType,
+        applyOrder?: boolean
+    ): void {
+        this.delegate('applyColumnState', deferMode, state, eventType, applyOrder);
     }
 
     public commit(deferMode: boolean): void {

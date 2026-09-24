@@ -6,7 +6,7 @@ import type { SortDef, SortDirection } from '../interfaces/iSort';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IColumnStateUpdateStrategy {
-    applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType): void;
+    applyColumnState(deferMode: boolean, state: ColumnState[], eventType: ColumnEventType, applyOrder?: boolean): void;
     commit(deferMode: boolean): void;
     hasPendingChanges(deferMode: boolean): boolean;
     moveColumns(deferMode: boolean, columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;
