@@ -35,7 +35,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:21.732Z
-    - stylelint@17.9.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1:
+    - 'stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:21.717Z
@@ -72,7 +72,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T11:14:48.488Z
   SNYK-JS-AJV-15274295:
-    - stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1:
+    - 'stylelint@17.15.0 > table@6.9.0 > ajv@8.17.1':
         reason: Lint dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T10:59:56.832Z
