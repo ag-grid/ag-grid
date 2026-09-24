@@ -303,7 +303,6 @@ export abstract class BaseSelectionService extends BeanStub {
             return null;
         }
 
-        // whether `enableClickSelection` forbids moving the node to `newValue`
         const isBlockedByClickSelection = (newValue: boolean) =>
             isClickGated && (newValue ? !enableClickSelection : !enableDeselection);
 
@@ -419,7 +418,6 @@ export abstract class BaseSelectionService extends BeanStub {
         }
     }
 
-    /** Whether Space is refused because `enableClickSelection` forbids moving the row to `newValue`. */
     private isSpaceKeyBlocked(rowNode: RowNode, column: AgColumn | undefined, newValue: boolean): boolean {
         const { gos } = this;
         return (
