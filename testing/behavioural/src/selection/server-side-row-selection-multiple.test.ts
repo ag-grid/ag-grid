@@ -1,14 +1,16 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import {
     columnDefs,
     createGridAndWait,
-    createInternalFeatureFlagGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -177,7 +179,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it', async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         columnDefs,
                         rowModelType: 'serverSide',
@@ -191,7 +193,7 @@ describe('Row Selection Grid Options', () => {
                             enableClickSelection: true,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(3);
@@ -202,7 +204,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         columnDefs,
                         rowModelType: 'serverSide',
@@ -216,7 +218,7 @@ describe('Row Selection Grid Options', () => {
                             enableClickSelection: true,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.selectRowsByIndex([1, 3, 5], false);

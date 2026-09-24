@@ -2,13 +2,12 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { fakeFetch } from './group-data';
-import {
-    createGridAndWait,
-    createInternalFeatureFlagGridAndWait,
-    setupServerSideRowSelectionSuite,
-} from './serverSideRowSelectionHarness';
+import { createGridAndWait, setupServerSideRowSelectionSuite } from './serverSideRowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -189,7 +188,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         ...groupGridOptions,
                         rowSelection: {
@@ -198,7 +197,7 @@ describe('Row Selection Grid Options', () => {
                             enableClickSelection: true,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(0);
@@ -209,7 +208,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a group row does not deselect it while another group is selected', async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         ...groupGridOptions,
                         rowSelection: {
@@ -218,7 +217,7 @@ describe('Row Selection Grid Options', () => {
                             enableClickSelection: true,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(0);
@@ -237,7 +236,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test("with click toggle, clicking a group that is its parent's only row deselects it", async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         ...groupGridOptions,
                         rowSelection: {
@@ -246,7 +245,7 @@ describe('Row Selection Grid Options', () => {
                             enableClickSelection: true,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 const russia = getRowIdRaw({ data: { country: 'Russia' }, api });
@@ -267,7 +266,7 @@ describe('Row Selection Grid Options', () => {
                     { country: 'X', name: 'A' },
                     { country: 'X', name: 'B' },
                 ];
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         columnDefs: [
                             { field: 'country', rowGroup: true, hide: true },
@@ -293,7 +292,7 @@ describe('Row Selection Grid Options', () => {
                             enableClickSelection: true,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 const groupX = getRowIdRaw({ data: { country: 'X' }, api });

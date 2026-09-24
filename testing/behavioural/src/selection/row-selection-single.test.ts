@@ -3,14 +3,7 @@ import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils'
 import type { Module, RowSelectedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
-import {
-    columnDefs,
-    createGrid,
-    createInternalFeatureFlagGrid,
-    createInternalFeatureFlagGridAndWait,
-    rowData,
-    setupRowSelectionSuite,
-} from './rowSelectionHarness';
+import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
 
 // Stands in for the `studio` bean AG Studio adds to every grid. It also skips licence validation.
 class StudioStub {
@@ -22,6 +15,8 @@ const StudioStubModule: Module = {
     version: ClientSideRowModelModule.version,
     beans: [StudioStub],
 };
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -284,7 +279,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it', async () => {
-                const [api, actions] = createInternalFeatureFlagGrid(
+                const [api, actions] = createGrid(
                     {
                         columnDefs,
                         rowData,
@@ -294,7 +289,7 @@ describe('Row Selection Grid Options', () => {
                             checkboxes: false,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(2);
@@ -305,7 +300,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking a different row still moves the selection', async () => {
-                const [api, actions] = createInternalFeatureFlagGrid(
+                const [api, actions] = createGrid(
                     {
                         columnDefs,
                         rowData,
@@ -315,7 +310,7 @@ describe('Row Selection Grid Options', () => {
                             checkboxes: false,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(2);
@@ -339,7 +334,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row does not deselect it when deselection is disabled', async () => {
-                const [api, actions] = createInternalFeatureFlagGrid(
+                const [api, actions] = createGrid(
                     {
                         columnDefs,
                         rowData,
@@ -349,7 +344,7 @@ describe('Row Selection Grid Options', () => {
                             checkboxes: false,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(2);
@@ -371,7 +366,7 @@ describe('Row Selection Grid Options', () => {
 
             test('with click toggle, deselecting by click forwards the browser click event', async () => {
                 const events: RowSelectedEvent[] = [];
-                const [api, actions] = createInternalFeatureFlagGrid(
+                const [api, actions] = createGrid(
                     {
                         columnDefs,
                         rowData,
@@ -382,7 +377,7 @@ describe('Row Selection Grid Options', () => {
                         },
                         onRowSelected: (event) => events.push(event),
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 const selectClick = actions.clickRowByIndex(2);
@@ -396,7 +391,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it when the row is pinned', async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         columnDefs,
                         rowData,
@@ -408,7 +403,7 @@ describe('Row Selection Grid Options', () => {
                             checkboxes: false,
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 // the pinned row is a clone of row 1, carrying its own id

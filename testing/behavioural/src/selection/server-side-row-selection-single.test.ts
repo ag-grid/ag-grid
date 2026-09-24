@@ -1,13 +1,16 @@
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
+
 import {
     capturedWarnings,
     columnDefs,
     createGridAndWait,
-    createInternalFeatureFlagGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -256,7 +259,7 @@ describe('Row Selection Grid Options', () => {
             });
 
             test('with click toggle, clicking the only selected row deselects it', async () => {
-                const [api, actions] = await createInternalFeatureFlagGridAndWait(
+                const [api, actions] = await createGridAndWait(
                     {
                         columnDefs,
                         rowSelection: {
@@ -271,7 +274,7 @@ describe('Row Selection Grid Options', () => {
                             },
                         },
                     },
-                    { clickToggleSelection: true }
+                    clickToggleSelection
                 );
 
                 actions.clickRowByIndex(2);
