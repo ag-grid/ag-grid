@@ -2,34 +2,41 @@ import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
-        'changes apply immediately, and the custom Reset button restores the column definitions',
+        'the custom Reset button restores the column definitions, and changes apply immediately',
         async ({ agIdFor, page }) => {
             await waitForGridContent(page);
 
             const toolPanel = page.locator('.ag-column-select');
             await expect(toolPanel).toBeVisible();
 
-            const ageHeader = agIdFor.headerCell('age');
-            const goldHeader = agIdFor.headerCell('gold');
+            const headerFor = (colId: string) => agIdFor.headerCell(colId);
             const checkboxFor = (label: string) =>
                 toolPanel.locator('.ag-column-select-column').filter({ hasText: label }).locator('.ag-checkbox-input');
+            const headerX = async (colId: string) => (await headerFor(colId).boundingBox())!.x;
 
-            // Initial state from the column definitions: 'Age' shown, 'Gold' hidden.
-            await expect(ageHeader).toBeVisible();
-            await expect(goldHeader).toBeHidden();
-
-            // A custom button does not enable deferred updates, so changes apply straight away.
-            await checkboxFor('Age').click();
-            await checkboxFor('Gold').click();
-            await expect(ageHeader).toBeHidden();
-            await expect(goldHeader).toBeVisible();
+            // Initial state differs from the column definitions: Age and Year hidden,
+            // the medal columns shown, and Total moved before Gold.
+            await expect(headerFor('age')).toBeHidden();
+            await expect(headerFor('year')).toBeHidden();
+            for (const colId of ['gold', 'silver', 'bronze', 'total']) {
+                await expect(headerFor(colId)).toBeVisible();
+            }
+            expect(await headerX('total')).toBeLessThan(await headerX('gold'));
 
             // Reset calls `api.resetColumnState()`, restoring the column definitions.
             await page.getByRole('button', { name: 'Reset' }).click();
-            await expect(ageHeader).toBeVisible();
-            await expect(goldHeader).toBeHidden();
+            await expect(headerFor('age')).toBeVisible();
+            await expect(headerFor('year')).toBeVisible();
+            for (const colId of ['gold', 'silver', 'bronze']) {
+                await expect(headerFor(colId)).toBeHidden();
+            }
+            await expect(headerFor('total')).toBeVisible();
             await expect(checkboxFor('Age')).toBeChecked();
             await expect(checkboxFor('Gold')).not.toBeChecked();
+
+            // A custom button does not enable deferred updates, so changes apply straight away.
+            await checkboxFor('Gold').click();
+            await expect(headerFor('gold')).toBeVisible();
         }
     );
 });

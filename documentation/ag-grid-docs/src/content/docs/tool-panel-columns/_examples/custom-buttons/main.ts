@@ -2,6 +2,7 @@ import type { ColDef, ColumnToolPanelButtonActionParams, GridApi, GridOptions } 
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
+    GridStateModule,
     ModuleRegistry,
     createGrid,
     enableDevValidations,
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnApiModule,
+    GridStateModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
@@ -44,6 +46,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     autoGroupColumnDef: {
         minWidth: 250,
+    },
+    // Start from a layout that differs from the column definitions, so Reset has something to undo
+    initialState: {
+        columnVisibility: {
+            hiddenColIds: ['age', 'year'],
+        },
+        columnOrder: {
+            orderedColIds: ['athlete', 'age', 'country', 'year', 'sport', 'total', 'gold', 'silver', 'bronze'],
+        },
     },
     sideBar: {
         toolPanels: [
