@@ -811,6 +811,23 @@ describe('ag-grid tree selection', () => {
             }
         );
 
+        test('indeterminate row that loses all its children is deselected', () => {
+            const childA = { id: '1-1', name: 'Child A', orgHierarchy: ['1', 'Child A'] };
+            const childB = { id: '1-2', name: 'Child B', orgHierarchy: ['1', 'Child B'] };
+            const { api, applyUpdate } = createTreeGrid([
+                { id: '1', name: 'One', orgHierarchy: ['1'] },
+                childA,
+                childB,
+            ]);
+
+            api.setNodesSelected({ nodes: [api.getRowNode('1-1')!], newValue: true });
+            expect(api.getRowNode('1')!.isSelected()).toBeUndefined();
+            applyUpdate('applyTransaction', [], [childA, childB]);
+
+            expect(api.getRowNode('1')!.isSelected()).toBe(false);
+            expect(api.getSelectedNodes()).toEqual([]);
+        });
+
         test('selected row that keeps a selected child after a removal stays selected', () => {
             const childA = { id: '1-1', name: 'Child A', orgHierarchy: ['1', 'Child A'] };
             const { api, applyUpdate } = createTreeGrid([
