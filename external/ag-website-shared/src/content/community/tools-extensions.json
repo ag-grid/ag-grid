@@ -359,5 +359,15 @@
         "link": "https://codesandbox.io/p/sandbox/ag-grid-server-side-row-model-sample-zqujt",
         "frameworks": ["TypeScript"],
         "tags": ["Framework"]
+    },
+    {
+        "link": "https://docs.velt.dev/integrations/ag-grid",
+        "title": "Velt",
+        "description": "Velt is a collaboration SDK that adds commenting, presence, and live collaboration to AG Grid. Attach threaded comments to individual cells with comment aggregation across rows and columns, see who else is viewing the grid, and follow along with live cursors \u2014 all with a few lines of code.",
+        "open_source": false,
+        "type": "Extension",
+        "tags": ["Extension"],
+        "frameworks": ["React", "TypeScript", "Vue"],
+        "img": "velt.webp"
     }
 ]
