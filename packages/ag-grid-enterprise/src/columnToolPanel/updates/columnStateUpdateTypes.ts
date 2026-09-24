@@ -3,7 +3,6 @@ import type {
     ColAggFunc,
     ColumnEventType,
     ColumnState,
-    ColumnToolPanelUpdateColumnsParams,
     IToolPanelColumnCompParams,
     SortDef,
     SortDirection,
@@ -12,8 +11,7 @@ import type {
 export type ColumnStateUpdateParams = Pick<IToolPanelColumnCompParams, 'buttons'>;
 
 export interface ColumnStateConcreteUpdateStrategy {
-    applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
-    updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams, eventType: ColumnEventType): void;
+    applyColumnState(state: ColumnState[], eventType: ColumnEventType, applyOrder?: boolean): void;
     commit(): void;
     hasPendingChanges(): boolean;
     moveColumns(columns: AgColumn[], targetIndex: number, eventType: ColumnEventType): void;

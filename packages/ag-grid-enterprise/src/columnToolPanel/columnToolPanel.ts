@@ -5,7 +5,9 @@ import type {
     ColAggFunc,
     ColDef,
     ColGroupDef,
+    ColumnState,
     ColumnToolPanelButtonDef,
+    ColumnToolPanelColumnState,
     ColumnToolPanelState,
     ColumnToolPanelUpdateColumnsParams,
     CustomFilterButton,
@@ -325,8 +327,15 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         );
     }
 
-    private updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams): void {
-        this.beans.columnStateUpdateStrategy.updatePanelColumns(this.isDeferModeEnabled, params, 'toolPanelUi');
+    private updatePanelColumns({ state, applyOrder }: ColumnToolPanelUpdateColumnsParams): void {
+        // Callers may pass full `getColumnState()` output.
+        const panelState = state.map(toPanelColumnState);
+        this.beans.columnStateUpdateStrategy.applyColumnState(
+            this.isDeferModeEnabled,
+            panelState,
+            'toolPanelUi',
+            applyOrder
+        );
         if (this.isDeferModeEnabled) {
             this.refreshDeferredUi();
         }
@@ -508,5 +517,38 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     public override destroy(): void {
         this.destroyChildren();
         super.destroy();
+    }
+}
+
+const PANEL_COLUMN_STATE_KEYS = [
+    'hide',
+    'rowGroup',
+    'rowGroupIndex',
+    'pivot',
+    'pivotIndex',
+    'aggFunc',
+    'valueIndex',
+    'sort',
+    'sortIndex',
+    'pivotSort',
+] as const satisfies readonly (keyof ColumnToolPanelColumnState)[];
+
+/** Keys left `undefined` are omitted rather than copied, as a staged patch merges over any pending one. */
+function toPanelColumnState(state: ColumnState): ColumnToolPanelColumnState {
+    const panelState: ColumnToolPanelColumnState = { colId: state.colId };
+    for (const key of PANEL_COLUMN_STATE_KEYS) {
+        copyDefinedKey(panelState, state, key);
+    }
+    return panelState;
+}
+
+function copyDefinedKey<K extends keyof ColumnToolPanelColumnState>(
+    target: ColumnToolPanelColumnState,
+    source: ColumnState,
+    key: K
+): void {
+    const value = source[key];
+    if (value !== undefined) {
+        target[key] = value;
     }
 }
