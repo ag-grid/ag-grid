@@ -4,14 +4,15 @@
 import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, Params } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     PaginationModule,
     RowSelectionModule,
+    TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridActions } from './utils';
 
@@ -21,7 +22,9 @@ const gridMgr = new TestGridsManager({
         ClientSideRowModelModule,
         RowGroupingModule,
         ServerSideRowModelModule,
+        ServerSideRowModelApiModule,
         PaginationModule,
+        TextFilterModule,
     ],
 });
 
@@ -37,14 +40,14 @@ export const rowData = [
     { sport: 'rowing' },
 ];
 
-function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
-    const api = gridMgr.createGrid('myGrid', gridOptions);
+function createGrid(gridOptions: GridOptions, params?: Params): [GridApi, GridActions] {
+    const api = gridMgr.createGrid('myGrid', gridOptions, params);
     const actions = new GridActions(api, '#myGrid');
     return [api, actions];
 }
 
-export async function createGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
-    const [api, actions] = createGrid(gridOptions);
+export async function createGridAndWait(gridOptions: GridOptions, params?: Params): Promise<[GridApi, GridActions]> {
+    const [api, actions] = createGrid(gridOptions, params);
 
     await waitForEvent('firstDataRendered', api);
 

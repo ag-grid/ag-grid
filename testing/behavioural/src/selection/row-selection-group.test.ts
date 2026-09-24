@@ -1,6 +1,10 @@
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
+
 import { createGridAndWait, groupGridOptions, setupRowSelectionSuite } from './rowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -365,6 +369,48 @@ describe('Row Selection Grid Options', () => {
                     · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
+            });
+
+            test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14], api);
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsByIndex([], api);
+            });
+
+            test('with click toggle, clicking a group row does not deselect it while another branch is selected', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(0);
+                actions.clickRowByIndex(15, { ctrlKey: true });
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 17], api);
+
+                // Russia is selected but is not the whole selection, so the click reduces rather than clears
+                actions.clickRowByIndex(15);
+                assertSelectedRowsByIndex([17], api);
             });
 
             test('toggling group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {

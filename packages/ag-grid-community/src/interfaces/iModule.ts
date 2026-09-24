@@ -37,9 +37,7 @@ type ModuleValidationInvalidIdResult = {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ModuleValidationResult =
-    | ModuleValidationValidResult
-    | ModuleValidationInvalidResult
-    | ModuleValidationInvalidIdResult;
+    ModuleValidationValidResult | ModuleValidationInvalidResult | ModuleValidationInvalidIdResult;
 
 /** A Module contains all the code related to this feature to enable tree shaking when this module is not used. */
 export interface Module {
@@ -138,6 +136,7 @@ type InternalModuleName =
     | 'GroupHierarchy'
     | 'HorizontalResize'
     | 'InfiniteRowModelCore'
+    | 'InternalFeatureFlags'
     | 'KeyboardNavigation'
     | 'LoadingCellRenderer'
     | 'MenuCore'

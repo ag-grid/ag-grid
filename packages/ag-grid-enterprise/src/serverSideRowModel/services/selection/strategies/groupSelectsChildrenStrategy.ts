@@ -403,6 +403,42 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return -1;
     }
 
+    public isSoleSelection(node: RowNode): boolean {
+        if (this.rootSelected || node.level === -1) {
+            return false;
+        }
+
+        let state = this.selectedState;
+        const route = this.getRouteToNode(node);
+        for (let i = 0; i < route.length; i++) {
+            // store counts are post-filter while the selection is not, so this only holds unfiltered
+            if (state.selectAllChildren) {
+                return (
+                    !this.filterManager?.isAnyFilterPresent() &&
+                    state.toggledNodes.size === 0 &&
+                    route.slice(i).every((step) => this.isOnlyChild(step))
+                );
+            }
+            if (state.toggledNodes.size !== 1) {
+                return false;
+            }
+            const nextState = state.toggledNodes.get(route[i].id!);
+            if (!nextState) {
+                return false;
+            }
+            state = nextState;
+        }
+
+        // a selected row is written as `selectAllChildren` with no toggles; anything below is partial
+        return state.selectAllChildren && state.toggledNodes.size === 0;
+    }
+
+    /** Whether `node` is the only row its parent can hold, so selecting it selects the parent whole. */
+    private isOnlyChild(node: RowNode): boolean {
+        const store = node.parent?.childStore as LazyStore | undefined;
+        return !!store?.isLastRowIndexKnown() && store.getRowCount() === 1;
+    }
+
     public isEmpty(): boolean {
         return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size && !this.rootSelected;
     }

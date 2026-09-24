@@ -220,6 +220,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return this.selectionStrategy.getSelectionCount();
     }
 
+    protected isSoleSelection(node: RowNode): boolean {
+        return this.selectionStrategy.isSoleSelection(node);
+    }
+
     public syncInRowNode(rowNode: RowNode<any>): void {
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
@@ -350,9 +354,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                     ? null
                     : this.selectionStrategy.getSelectedNodes(true, false),
             serverSideState: this.getSelectionState() as
-                | IServerSideSelectionState
-                | IServerSideGroupSelectionState
-                | null,
+                IServerSideSelectionState | IServerSideGroupSelectionState | null,
         });
     }
 

@@ -18,6 +18,8 @@ export interface ISelectionStrategy extends Bean {
     getSelectedNodes(nullWhenSelectAll?: boolean, warnWhenSelectAll?: boolean): RowNode<any>[] | null;
     getSelectedRows(): any[];
     getSelectionCount(): number;
+    /** Whether `node` accounts for the entire selection, i.e. nothing outside its own subtree is selected. */
+    isSoleSelection(node: RowNode): boolean;
     isEmpty(): boolean;
     selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;

@@ -1,5 +1,7 @@
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
+
 import {
     capturedWarnings,
     columnDefs,
@@ -7,6 +9,8 @@ import {
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -252,6 +256,32 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        columnDefs,
+                        rowSelection: {
+                            mode: 'singleRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('un-selectable row cannot be selected', async () => {
