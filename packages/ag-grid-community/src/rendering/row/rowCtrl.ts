@@ -116,6 +116,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private rowGui: RowGui | undefined;
     private readonly rowModeFeature: IRowModeFeature;
 
+    /** A spanned row's cell height belongs to the rows it covers, so auto height reaches it via the span. */
+    public readonly spannedRow: boolean = false;
+
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
 

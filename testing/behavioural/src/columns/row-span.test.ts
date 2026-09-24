@@ -1,4 +1,7 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
+import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -8,6 +11,7 @@ import {
     PinnedRowModule,
     QuickFilterModule,
     RowApiModule,
+    RowAutoHeightModule,
     getGridElement,
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
@@ -43,6 +47,7 @@ describe('row spanning', () => {
             PaginationModule,
             PinnedRowModule,
             QuickFilterModule,
+            RowAutoHeightModule,
             RowGroupingModule,
             CalculatedColumnsModule,
             FormulaModule,
@@ -495,6 +500,72 @@ describe('row spanning', () => {
                 ├── LEAF id:1 country:"A" year:2
                 └── LEAF id:2 country:"B" year:3
             `);
+        });
+
+        describe('with auto height', () => {
+            /** Measured height of each auto-height cell: `title` differs between a row's own cell and the span. */
+            const OWN_TITLE_HEIGHT = 120;
+            const ACTION_HEIGHT = 60;
+            // A is exactly as tall as its first row, so its last row needs nothing extra from it; B needs 70.
+            const SPAN_B_HEIGHT = 130;
+            const SPANNED_TITLE_HEIGHTS: Record<string, number> = { A: ACTION_HEIGHT, B: SPAN_B_HEIGHT };
+            let uninstallResizeObserver: () => void;
+
+            beforeAll(() => {
+                mockGridLayout.useRealOffsetDimensions = true;
+                mockGridLayout.elementHeightOverride = (el) => {
+                    const eCell = el.isConnected && el.classList.contains('ag-cell-wrapper') && el.closest('.ag-cell');
+                    if (!eCell) {
+                        return undefined;
+                    }
+                    if (eCell.getAttribute('col-id') === 'action') {
+                        return ACTION_HEIGHT;
+                    }
+                    return eCell.classList.contains('ag-spanned-cell')
+                        ? SPANNED_TITLE_HEIGHTS[eCell.textContent!]
+                        : OWN_TITLE_HEIGHT;
+                };
+            });
+
+            afterAll(() => {
+                mockGridLayout.useRealOffsetDimensions = false;
+                mockGridLayout.elementHeightOverride = undefined;
+            });
+
+            beforeEach(() => {
+                uninstallResizeObserver = installMockResizeObserver();
+            });
+
+            afterEach(() => {
+                uninstallResizeObserver();
+            });
+
+            test('toggling spanRows on sizes each span to the sum of its rows, every time', async () => {
+                const columnDefs = (spanRows: boolean): ColDef[] => [
+                    { field: 'title', autoHeight: true, spanRows },
+                    { field: 'action', autoHeight: true },
+                ];
+                const api = createGrid({
+                    columnDefs: columnDefs(false),
+                    rowData: [
+                        { title: 'A', action: 'a0' },
+                        { title: 'A', action: 'a1' },
+                        { title: 'B', action: 'b0' },
+                        { title: 'B', action: 'b1' },
+                    ],
+                });
+                const rowHeights = () => [0, 1, 2, 3].map((i) => api.getDisplayedRowAtIndex(i)!.rowHeight);
+                const unspanned = [OWN_TITLE_HEIGHT, OWN_TITLE_HEIGHT, OWN_TITLE_HEIGHT, OWN_TITLE_HEIGHT];
+                const spanned = [ACTION_HEIGHT, ACTION_HEIGHT, ACTION_HEIGHT, SPAN_B_HEIGHT - ACTION_HEIGHT];
+
+                await waitFor(() => expect(rowHeights()).toEqual(unspanned));
+                for (let i = 0; i < 3; ++i) {
+                    api.setGridOption('columnDefs', columnDefs(true));
+                    await waitFor(() => expect(rowHeights()).toEqual(spanned));
+                    api.setGridOption('columnDefs', columnDefs(false));
+                    await waitFor(() => expect(rowHeights()).toEqual(unspanned));
+                }
+            });
         });
 
         test('changing the value-producer (valueGetter) re-spans by new values', async () => {
