@@ -3,11 +3,14 @@ import { _getActiveDomElement, _setAriaSelected } from 'ag-stack';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { CheckboxSelectionCallbackParams } from '../entities/colDef';
 import type { IsRowSelectable } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
+    _addGridCommonParams,
+    _getCheckboxLocation,
     _getCheckboxes,
     _getEnableDeselection,
     _getEnableSelection,
@@ -97,7 +100,7 @@ export abstract class BaseSelectionService extends BeanStub {
         }
     }
 
-    public announceAriaRowSelection(rowNode: RowNode): void {
+    public announceAriaRowSelection(rowNode: RowNode, column: AgColumn | undefined): void {
         if (this.isRowSelectionBlocked(rowNode)) {
             return;
         }
@@ -105,7 +108,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const { beans } = this;
         const selected = rowNode.isSelected()!;
         const isEditing = beans.editSvc?.isEditing({ rowNode });
-        if (!rowNode.selectable || isEditing || this.isSpaceKeyBlocked(_getActiveDomElement(beans), !selected)) {
+        if (!rowNode.selectable || isEditing || this.isSpaceKeyBlocked(rowNode, column, !selected)) {
             return;
         }
 
@@ -284,7 +287,7 @@ export abstract class BaseSelectionService extends BeanStub {
         shiftKey: boolean,
         metaKey: boolean,
         source: SelectionEventSourceType,
-        target: EventTarget | null
+        column: AgColumn | undefined
     ): null | NodeSelection {
         const { gos, selectionCtx } = this;
         const currentSelection = node.isSelected();
@@ -294,7 +297,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const enableClickToggle = _isInternalFeatureFlagEnabled(this.beans, 'clickToggleSelection');
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
-        const isClickGated = isRowClicked || this.isSpaceKeyClickGated(source, target);
+        const isClickGated = isRowClicked || this.isSpaceKeyClickGated(source, node, column);
 
         if (isClickGated && !(enableClickSelection || enableDeselection)) {
             return null;
@@ -416,38 +419,54 @@ export abstract class BaseSelectionService extends BeanStub {
         }
     }
 
-    /** Whether Space on `target` is refused because `enableClickSelection` forbids moving the row to `newValue`. */
-    private isSpaceKeyBlocked(target: EventTarget | null, newValue: boolean): boolean {
+    /** Whether Space is refused because `enableClickSelection` forbids moving the row to `newValue`. */
+    private isSpaceKeyBlocked(rowNode: RowNode, column: AgColumn | undefined, newValue: boolean): boolean {
         const { gos } = this;
         return (
-            this.isSpaceKeyClickGated('spaceKey', target) &&
+            this.isSpaceKeyClickGated('spaceKey', rowNode, column) &&
             (newValue ? !_getEnableSelection(gos) : !_getEnableDeselection(gos))
         );
     }
 
     /** Whether Space must obey `enableClickSelection`. On a selection checkbox cell it acts like clicking the checkbox. */
-    private isSpaceKeyClickGated(source: SelectionEventSourceType, target: EventTarget | null): boolean {
+    private isSpaceKeyClickGated(
+        source: SelectionEventSourceType,
+        rowNode: RowNode,
+        column: AgColumn | undefined
+    ): boolean {
         return (
             source === 'spaceKey' &&
             _isInternalFeatureFlagEnabled(this.beans, 'spaceKeyFollowsClickSelection') &&
-            !hasVisibleSelectionCheckbox(target)
+            !this.isSelectionCheckboxShown(rowNode, column)
         );
     }
-}
 
-/** Reads the DOM so every checkbox placement is covered without repeating the rules that decide where they go. */
-function hasVisibleSelectionCheckbox(element: EventTarget | null): boolean {
-    const checkbox = element instanceof Element ? element.querySelector('.ag-selection-checkbox') : null;
-    const input = checkbox?.querySelector<HTMLInputElement>('input');
-    if (!input || input.disabled) {
-        return false;
-    }
-    for (let el: Element | null = checkbox; el && el !== element; el = el.parentElement) {
-        if (el.classList.contains('ag-hidden') || el.classList.contains('ag-invisible')) {
+    /** Whether `rowNode` shows a selection checkbox in `column`, or in its full-width row when there is no `column`. */
+    private isSelectionCheckboxShown(rowNode: RowNode, column: AgColumn | undefined): boolean {
+        if (column && this.isCellCheckboxSelection(column, rowNode)) {
+            return true;
+        }
+
+        // mirrors `GroupCellRendererCtrl.addCheckbox`
+        const rowSelection = this.gos.get('rowSelection');
+        if (typeof rowSelection !== 'object' || _getCheckboxLocation(rowSelection) !== 'autoGroupColumn') {
             return false;
         }
+
+        const checkboxes = _getCheckboxes(rowSelection);
+        if (column) {
+            return column.colDef.showRowGroup != null && column.isColumnFunc(rowNode, checkboxes);
+        }
+        if (!rowNode.group) {
+            return false;
+        }
+        if (typeof checkboxes !== 'function') {
+            return checkboxes;
+        }
+        // full-width rows have no column, as in `CheckboxSelectionComponent`
+        const params = _addGridCommonParams(this.gos, { node: rowNode as IRowNode, data: rowNode.data });
+        return checkboxes(params as CheckboxSelectionCallbackParams);
     }
-    return true;
 }
 
 interface SingleNodeSelection {

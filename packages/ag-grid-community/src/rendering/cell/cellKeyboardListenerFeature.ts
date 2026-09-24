@@ -293,7 +293,7 @@ function onSpaceKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
     const { rowNode } = cellCtrl;
 
     if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) && _isRowSelection(gos)) {
-        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey');
+        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', cellCtrl.column);
     }
 
     // prevent default as space key, by default, moves browser scroll down
