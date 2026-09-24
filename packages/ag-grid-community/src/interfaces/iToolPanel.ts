@@ -7,6 +7,17 @@ import type { FilterAction } from './iFilter';
 
 export type ColumnToolPanelAction = 'apply' | 'cancel';
 
+/** Params passed to a custom Columns Tool Panel button's `action` callback when the button is clicked. */
+export interface ColumnToolPanelButtonActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+
+/** A custom button displayed at the bottom of the Columns Tool Panel. */
+export interface ColumnToolPanelButtonDef<TData = any, TContext = any> {
+    /** Text displayed on the button. */
+    label: string;
+    /** Function invoked when the button is clicked. */
+    action: (params: ColumnToolPanelButtonActionParams<TData, TContext>) => void;
+}
+
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /**
      * The tool panel state to apply, if applicable. Provided from `initialState` in the grid options,
@@ -42,7 +53,8 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>
     extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> {}
 
-export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams, IAutoCompleteComponentParams {
+export interface IToolPanelColumnCompParams<TData = any, TContext = any>
+    extends IColumnSelectionPanelParams, IAutoCompleteComponentParams {
     /** Suppress Column Move */
     suppressColumnMove?: boolean;
     /** Suppress Row Groups section */
@@ -53,8 +65,17 @@ export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams,
     suppressPivots?: boolean;
     /** Suppress Pivot Mode selection */
     suppressPivotMode?: boolean;
-    /** Buttons to display at the bottom of the Columns Tool Panel. When 'apply' is included, changes are deferred until the apply button is clicked. */
-    buttons?: ColumnToolPanelAction[];
+    /**
+     * Buttons to display at the bottom of the Columns Tool Panel, in the order they should be displayed in.
+     * Each entry is either a provided button or a custom button definition:
+     *
+     *  - `'apply'`: Changes are deferred until the Apply button is clicked.
+     *  - `'cancel'`: The Cancel button discards any deferred changes. Only has an effect when `'apply'` is also included.
+     *  - `ColumnToolPanelButtonDef`: A custom button with a `label`, and an `action` callback invoked when clicked.
+     *
+     * Only the `'apply'` button enables deferred changes.
+     */
+    buttons?: (ColumnToolPanelAction | ColumnToolPanelButtonDef<TData, TContext>)[];
 }
 
 export interface IToolPanelFiltersCompParams extends IAutoCompleteComponentParams {

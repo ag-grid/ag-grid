@@ -136,7 +136,7 @@ export {
     _updateFilterModel,
 } from './filter/columnFilterUtils';
 export { AgFilterButtonSelector, FilterButtonComp } from './filter/filterButtonComp';
-export type { FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
+export type { CustomFilterButton, FilterButton, FilterButtonEvent } from './filter/filterButtonComp';
 export { FilterComp } from './filter/filterComp';
 export {
     _getDefaultSimpleFilter,

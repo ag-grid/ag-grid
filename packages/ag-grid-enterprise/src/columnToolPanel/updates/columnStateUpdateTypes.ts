@@ -1,6 +1,14 @@
-import type { AgColumn, ColAggFunc, ColumnEventType, ColumnState, SortDef, SortDirection } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ColAggFunc,
+    ColumnEventType,
+    ColumnState,
+    IToolPanelColumnCompParams,
+    SortDef,
+    SortDirection,
+} from 'ag-grid-community';
 
-export type ColumnStateUpdateParams = { buttons?: Array<'apply' | 'cancel'> };
+export type ColumnStateUpdateParams = Pick<IToolPanelColumnCompParams, 'buttons'>;
 
 export interface ColumnStateConcreteUpdateStrategy {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;
