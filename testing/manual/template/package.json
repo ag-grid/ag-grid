@@ -14,7 +14,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "vue": "^3.5.43",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.16.3"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^2.7.2",

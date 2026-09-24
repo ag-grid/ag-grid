@@ -22,6 +22,6 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "prettier": "3.9.8",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^1.0.1"
   }
 }
