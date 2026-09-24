@@ -414,22 +414,32 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(0);
         expect(api.getCellRanges()?.[0]?.endRow?.rowIndex).toBe(2);
     });
-    // Guard: a right-click must not append to the existing ranges, even with the multi-range modifier.
-    test('ctrl right-clicking a row-number cell selects only that row', async () => {
+    // A right-click with the multi-range modifier appends the row, as a ctrl-click does on a normal cell.
+    test.each([
+        { name: 'cmd right-click', options: { metaKey: true } },
+        { name: 'ctrl-click under allowContextMenuWithControlKey', options: { button: 0, buttons: 1, ctrlKey: true } },
+    ])('$name on a row-number cell appends that row to the existing ranges', async ({ options }) => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxMultiRange', {
             columnDefs,
             rowData,
             rowNumbers: true,
             cellSelection: true,
+            allowContextMenuWithControlKey: true,
         });
         restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
-        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID), { ctrlKey: true });
+        fireGridPointerDown(cell(gridDiv, 1, 'age'), { ctrlKey: true });
+        expect(api.getCellRanges()).toHaveLength(2);
 
-        expect(api.getCellRanges()).toHaveLength(1);
-        expect(api.getCellRanges()?.[0]?.startRow?.rowIndex).toBe(2);
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID), options);
+
+        const ranges = api.getCellRanges()!;
+        expect(ranges).toHaveLength(3);
+        expect(ranges[2].startRow?.rowIndex).toBe(2);
+        expect(ranges[2].endRow?.rowIndex).toBe(2);
+        expect(ranges[2].columns.map((col) => col.getColId())).toEqual(['athlete', 'age']);
     });
 });

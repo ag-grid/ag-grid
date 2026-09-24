@@ -502,8 +502,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         if (isMultiRangeRemoval && containingRange) {
             this.removeRowFromAllColumnsRange(cell, containingRange);
         } else {
-            // a right-click selects only the row it is on, rather than appending to the existing ranges
-            this.setRangeToCell(cell, isMultiRange && !isRightClickOnAllColumnsCell);
+            this.setRangeToCell(cell, isMultiRange);
         }
     }
 
