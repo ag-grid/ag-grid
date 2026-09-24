@@ -37,19 +37,19 @@ const gridOptions: GridOptions = {
                 {
                     field: 'latinText',
                     width: 180,
-                    cellStyle: { 'white-space': 'normal' },
+                    cellStyle: { whiteSpace: 'normal' },
                     headerName: 'Wrap Text',
                 },
                 {
                     field: 'latinText',
                     width: 180,
-                    cellStyle: { 'white-space-collapse': 'preserve-breaks' },
+                    cellStyle: { whiteSpaceCollapse: 'preserve-breaks' },
                     headerName: 'Maintain New Lines',
                 },
                 {
                     field: 'latinText',
                     width: 205,
-                    cellStyle: { 'white-space': 'pre-line' },
+                    cellStyle: { whiteSpace: 'pre-line' },
                     headerName: 'Wrap with New Lines',
                 },
             ],
