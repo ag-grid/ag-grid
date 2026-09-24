@@ -1,3 +1,4 @@
+import { AdvancedParamSelector } from '@ag-website-shared/components/theme-builder/AdvancedParamSelector';
 import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/CollapsibleSection';
 import { ParamEditor } from '@ag-website-shared/components/theme-builder/ParamEditor';
 import { PartEditor } from '@ag-website-shared/components/theme-builder/PartEditor';
@@ -9,7 +10,6 @@ import {
 import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import styled from '@emotion/styled';
 
-import { AdvancedParamSelector } from './AdvancedParamSelector';
 import { BordersEditor } from './BordersEditor';
 
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];

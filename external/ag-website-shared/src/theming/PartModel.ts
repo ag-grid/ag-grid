@@ -33,7 +33,10 @@ const partDocs: Record<string, string | undefined> = {
     inputStyle: 'The appearance of text input fields',
 };
 
-const quartzParts = new Set<Part>(_asThemeImpl(themeQuartz).parts);
+// Lazy, because reading grid's theme is only correct for a host that uses grid's
+// parts. A host with no swappable parts (`setFeatureModels(() => [])`) must be
+// able to load this module without grid's theming engine being involved at all.
+const getQuartzParts = memoize(() => new Set<Part>(_asThemeImpl(themeQuartz).parts));
 
 export class FeatureModel {
     readonly label: string;
@@ -49,7 +52,7 @@ export class FeatureModel {
         this.label = titleCase(featureName);
         this.docs = partDocs[featureName] || null;
         this.parts = Object.entries(parts).map(([variant, part]) => new PartModel(this, variant, part));
-        this.defaultPart = this.parts.find((pm) => quartzParts.has(pm.part))!;
+        this.defaultPart = this.parts.find((pm) => getQuartzParts().has(pm.part))!;
         if (!this.defaultPart) {
             throw new Error(`Default part for quartz theme is not one of the options for ${featureName}`);
         }
@@ -57,7 +60,7 @@ export class FeatureModel {
     }
 
     static for(featureId: string) {
-        const featureModel = featureModels[featureId];
+        const featureModel = getFeatureModels()[featureId];
         if (!featureModel) {
             throw new Error(`Invalid feature ${featureId}`);
         }
@@ -113,31 +116,35 @@ export const setFeatureModels = (source: () => FeatureModel[]) => {
 
 export const allFeatureModels = memoize(() => featureModelsSource());
 
-const featureModels: Record<string, FeatureModel | undefined> = {
-    colorScheme: new FeatureModel('colorScheme', {
-        lightCold: colorSchemeLightCold,
-        light: colorSchemeLight,
-        lightWarm: colorSchemeLightWarm,
-        darkBlue: colorSchemeDarkBlue,
-        dark: colorSchemeDark,
-        darkWarm: colorSchemeDarkWarm,
-        variable: colorSchemeVariable,
-    }),
-    iconSet: new FeatureModel('iconSet', {
-        alpine: iconSetAlpine,
-        material: iconSetMaterial,
-        quartzLight: iconSetQuartzLight,
-        quartzRegular: iconSetQuartzRegular,
-        quartzBold: iconSetQuartzBold,
-    }),
-    tabStyle: new FeatureModel('tabStyle', {
-        quartz: tabStyleQuartz,
-        alpine: tabStyleAlpine,
-        material: tabStyleMaterial,
-        rolodex: tabStyleRolodex,
-    }),
-    inputStyle: new FeatureModel('inputStyle', {
-        bordered: inputStyleBordered,
-        underlined: inputStyleUnderlined,
-    }),
-};
+// Lazy for the same reason as getQuartzParts: constructing these resolves grid's
+// default part for each feature, which a non-grid host must never trigger.
+const getFeatureModels = memoize(
+    (): Record<string, FeatureModel | undefined> => ({
+        colorScheme: new FeatureModel('colorScheme', {
+            lightCold: colorSchemeLightCold,
+            light: colorSchemeLight,
+            lightWarm: colorSchemeLightWarm,
+            darkBlue: colorSchemeDarkBlue,
+            dark: colorSchemeDark,
+            darkWarm: colorSchemeDarkWarm,
+            variable: colorSchemeVariable,
+        }),
+        iconSet: new FeatureModel('iconSet', {
+            alpine: iconSetAlpine,
+            material: iconSetMaterial,
+            quartzLight: iconSetQuartzLight,
+            quartzRegular: iconSetQuartzRegular,
+            quartzBold: iconSetQuartzBold,
+        }),
+        tabStyle: new FeatureModel('tabStyle', {
+            quartz: tabStyleQuartz,
+            alpine: tabStyleAlpine,
+            material: tabStyleMaterial,
+            rolodex: tabStyleRolodex,
+        }),
+        inputStyle: new FeatureModel('inputStyle', {
+            bordered: inputStyleBordered,
+            underlined: inputStyleUnderlined,
+        }),
+    })
+);

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { FloatingPortal, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
 import { useCombobox } from 'downshift';
-import { Fragment, type ReactElement, type ReactNode, useRef, useState } from 'react';
+import { Fragment, type ReactElement, type ReactNode, useCallback, useRef, useState } from 'react';
 
 import { StyledInput } from './Input';
 
@@ -105,11 +105,20 @@ export function ParamSearchSelector<T>({
 
     const inputProps = getInputProps();
 
-    // Floating UI and Downshift both want to set a ref, merge them into one
-    const inputRef = (instance: any) => {
-        refs.setReference(instance);
-        (inputProps as any).ref(instance);
-    };
+    // Floating UI and Downshift both want to set a ref, merged into one whose
+    // identity must hold across renders: React reattaches a changed function ref
+    // as null-then-element, and `setReference` stores it, so an inline callback
+    // sets state twice per commit until React aborts the tree at 50 nested
+    // updates. Downshift's ref is fresh each render, so it is read through one.
+    const downshiftInputRef = useRef<(instance: HTMLInputElement | null) => void>();
+    downshiftInputRef.current = (inputProps as any).ref;
+    const inputRef = useCallback(
+        (instance: HTMLInputElement | null) => {
+            refs.setReference(instance);
+            downshiftInputRef.current?.(instance);
+        },
+        [refs]
+    );
 
     const enabledItems = items.filter(isEnabled);
 
@@ -251,9 +260,8 @@ const EmphasiseMatches = ({ matcher, text }: EmphasiseMatchesProps) => {
 
 const FullHeightDropdown = styled('div')`
     z-index: 10010; // above a sticky site header (e.g. Studio's z-index:10002) so the popup isn't hidden
-    position: absolute;
     pointer-events: all;
-    height: calc(100vh);
+    height: 100vh;
     position: relative;
 `;
 
