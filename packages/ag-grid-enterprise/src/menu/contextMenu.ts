@@ -37,7 +37,13 @@ import type { MenuItemMapper } from './menuItemMapper';
 import type { MenuUtils } from './menuUtils';
 
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
-const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>(['cut', 'copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste']);
+const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>([
+    'cut',
+    'copy',
+    'copyWithHeaders',
+    'copyWithGroupHeaders',
+    'paste',
+]);
 
 type ContextMenuItems = (DefaultMenuItem | MenuItemDef)[];
 
