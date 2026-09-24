@@ -1,4 +1,4 @@
-import { _exists } from 'ag-stack';
+import { _exists, _isPromise } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -37,6 +37,12 @@ import type { MenuItemMapper } from './menuItemMapper';
 import type { MenuUtils } from './menuUtils';
 
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
+const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>(['cut', 'copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste']);
+
+type ContextMenuItems = (DefaultMenuItem | MenuItemDef)[];
+
+const withoutClipboardItems = (items: ContextMenuItems): ContextMenuItems =>
+    items.filter((item) => typeof item !== 'string' || !CLIPBOARD_MENU_ITEMS.has(item));
 
 export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
     beanName = 'contextMenuSvc' as const;
@@ -188,8 +194,21 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         const userFunc = gos.getCallback('getContextMenuItems');
+        const userItems = userFunc?.({ column, node, value, defaultItems, event: mouseEvent });
 
-        return userFunc?.({ column, node, value, defaultItems, event: mouseEvent }) ?? defaultMenuOptions;
+        if (!userItems) {
+            return defaultMenuOptions;
+        }
+
+        if (!isDatalessRowNumberCell) {
+            return userItems;
+        }
+
+        // the grid-wide callback can still name the clipboard items, which here would act on the previously
+        // focused data cell for the same reason they are left out of the defaults above
+        return _isPromise<ContextMenuItems>(userItems)
+            ? userItems.then(withoutClipboardItems)
+            : withoutClipboardItems(userItems);
     }
 
     public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {

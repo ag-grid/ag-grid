@@ -237,6 +237,34 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
     });
 
+    // The grid-wide callback can name the clipboard items itself; on a row-number cell with nothing to copy they
+    // would fall back to the focused data cell just as the default items would.
+    test('clipboard items named by getContextMenuItems are dropped on a row-number cell with nothing to copy', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCallbackCut', {
+            columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
+            rowData: rowData.map((row) => ({ ...row })),
+            rowNumbers: true,
+            getContextMenuItems: () => ['cut', 'copy', 'paste', { name: 'Foo' }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        api.setFocusedCell(0, 'athlete');
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(menuOption('Foo')).not.toBeNull());
+        expect(menuOption('Cut')).toBeNull();
+        expect(menuOption('Copy')).toBeNull();
+        expect(menuOption('Paste')).toBeNull();
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        // a normal cell still gets them
+        rightClick(cell(gridDiv, 0, 'athlete'));
+        await waitFor(() => expect(menuOption('Cut')).not.toBeNull());
+        expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
+    });
+
     test('a row-number cell offers Copy when copySelectedRows is enabled without cell selection', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxCopyRows', {
             columnDefs,
