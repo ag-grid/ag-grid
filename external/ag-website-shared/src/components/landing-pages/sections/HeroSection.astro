@@ -50,42 +50,36 @@ const showCustomerLogos = section.showCustomerLogos !== false;
     <div class={styles.heroSectionInner}>
         <div class={styles.heroSectionContainer}>
             <div class={styles.heroSectionHeadingContainer}>
-                {
-                    section.showVersionBadge && latestVersion && (
-                        <a
-                            href={urlWithBaseUrl('./whats-new/')}
-                            class:list={[
-                                styles.heroSectionVersionTagContainer,
-                                `plausible-event-name=${pageContent.analyticsPrefix}-whats-new`,
-                            ]}
-                        >
-                            <span class={styles.heroSectionVersion}>
-                                {productName} v{latestVersion.version}
+                {section.showVersionBadge && latestVersion && (
+                    <a
+                        href={urlWithBaseUrl('./whats-new/')}
+                        class:list={[
+                            styles.heroSectionVersionTagContainer,
+                            `plausible-event-name=${pageContent.analyticsPrefix}-whats-new`,
+                        ]}
+                    >
+                        <span class={styles.heroSectionVersion}>
+                            {productName} v{latestVersion.version}
+                        </span>
+                        {latestVersion.landingPageHighlight && (
+                            <span class={styles.heroSectionFeatureHighlight}>
+                                <span>{latestVersion.landingPageHighlight}</span>
+                                <Icon svgClasses={styles.heroSectionFeatureArrow} name="arrowRight" />
                             </span>
-                            {latestVersion.landingPageHighlight && (
-                                <span class={styles.heroSectionFeatureHighlight}>
-                                    <span>{latestVersion.landingPageHighlight}</span>
-                                    <Icon svgClasses={styles.heroSectionFeatureArrow} name="arrowRight" />
-                                </span>
-                            )}
-                        </a>
-                    )
-                }
+                        )}
+                    </a>
+                )}
                 <h1 class={styles.heroSectionTag}>{section.tag}</h1>
-                {
-                    section.headingHtml ? (
-                        <h2 class={styles.heroSectionHeading} set:html={section.headingHtml} />
-                    ) : (
-                        <h2 class={styles.heroSectionHeading}>{section.heading}</h2>
-                    )
-                }
-                {
-                    section.subHeadingHtml ? (
-                        <h3 class={styles.heroSectionSubHeading} set:html={section.subHeadingHtml} />
-                    ) : (
-                        <h3 class={styles.heroSectionSubHeading}>{section.subHeading}</h3>
-                    )
-                }
+                {section.headingHtml ? (
+                    <h2 class={styles.heroSectionHeading} set:html={section.headingHtml} />
+                ) : (
+                    <h2 class={styles.heroSectionHeading}>{section.heading}</h2>
+                )}
+                {section.subHeadingHtml ? (
+                    <h3 class={styles.heroSectionSubHeading} set:html={section.subHeadingHtml} />
+                ) : (
+                    <h3 class={styles.heroSectionSubHeading}>{section.subHeading}</h3>
+                )}
             </div>
             <div class={styles.heroSectionButtonContainer}>
                 <a
@@ -100,13 +94,11 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                     Get Started
                 </a>
 
-                {
-                    pageContent.packageName && (
-                        <div class={styles.heroSectionCta2}>
-                            <slot name="hero-install" />
-                        </div>
-                    )
-                }
+                {pageContent.packageName && (
+                    <div class={styles.heroSectionCta2}>
+                        <slot name="hero-install" />
+                    </div>
+                )}
 
                 <slot name="hero-trial-button" />
             </div>
@@ -114,22 +106,20 @@ const showCustomerLogos = section.showCustomerLogos !== false;
             <div class={styles.heroSectionDemoContainer}>
                 <slot name="hero-demo" />
             </div>
-            {
-                section.secondaryCta && (
-                    <a
-                        id="view-demos"
-                        class:list={[
-                            'button-tertiary',
-                            styles.heroSectionViewAllDemosLink,
-                            `plausible-event-name=${secondaryCtaAnalytics}`,
-                        ]}
-                        href={secondaryCtaUrl}
-                    >
-                        {section.secondaryCta.text}
-                        <Icon svgClasses={styles.heroSectionDemosArrow} name="arrowRight" />
-                    </a>
-                )
-            }
+            {section.secondaryCta && (
+                <a
+                    id="view-demos"
+                    class:list={[
+                        'button-tertiary',
+                        styles.heroSectionViewAllDemosLink,
+                        `plausible-event-name=${secondaryCtaAnalytics}`,
+                    ]}
+                    href={secondaryCtaUrl}
+                >
+                    {section.secondaryCta.text}
+                    <Icon svgClasses={styles.heroSectionDemosArrow} name="arrowRight" />
+                </a>
+            )}
             {showCustomerLogos && <slot name="hero-logos" />}
         </div>
     </div>

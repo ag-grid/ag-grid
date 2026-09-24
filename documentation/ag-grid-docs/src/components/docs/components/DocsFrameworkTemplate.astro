@@ -59,20 +59,18 @@ const exampleUrl = getExampleUrl({
 ---
 
 {!generatedContents && <p>Error generating content for: {JSON.stringify(contentParams)}</p>}
-{
-    generatedContents && (
-        <FrameworkTemplate
-            internalFramework={internalFramework}
-            pageName={pageName}
-            exampleName={exampleName}
-            exampleUrl={exampleUrl}
-            generatedContents={generatedContents!}
-            relativePath={relativePath}
-            addInitMessageScript={addInitMessageScript}
-            ignoreModuleLoader={ignoreModuleLoader}
-            extraStyles={extraStyles}
-            transpileInBrowser={transpileInBrowser}
-            nonce={generatedContents?.scriptNonce}
-        />
-    )
-}
+{generatedContents && (
+    <FrameworkTemplate
+        internalFramework={internalFramework}
+        pageName={pageName}
+        exampleName={exampleName}
+        exampleUrl={exampleUrl}
+        generatedContents={generatedContents!}
+        relativePath={relativePath}
+        addInitMessageScript={addInitMessageScript}
+        ignoreModuleLoader={ignoreModuleLoader}
+        extraStyles={extraStyles}
+        transpileInBrowser={transpileInBrowser}
+        nonce={generatedContents?.scriptNonce}
+    />
+)}

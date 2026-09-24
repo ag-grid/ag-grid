@@ -28,23 +28,21 @@ const { features, framework } = Astro.props;
 
         <!-- Example runners column -->
         <div class="landing-page-examples-column">
-            {
-                features.map((feature, index) => (
-                    <div
-                        class={`landing-page-example-panel ${index === 0 ? 'active' : ''}`}
-                        data-feature-id={feature.id}
-                        data-index={index}
-                    >
-                        <ExampleRunner
-                            title={feature.title}
-                            name={feature.example.exampleName}
-                            pageName={feature.example.pageName}
-                            exampleHeight={450}
-                            framework={framework}
-                        />
-                    </div>
-                ))
-            }
+            {features.map((feature, index) => (
+                <div
+                    class={`landing-page-example-panel ${index === 0 ? 'active' : ''}`}
+                    data-feature-id={feature.id}
+                    data-index={index}
+                >
+                    <ExampleRunner
+                        title={feature.title}
+                        name={feature.example.exampleName}
+                        pageName={feature.example.pageName}
+                        exampleHeight={450}
+                        framework={framework}
+                    />
+                </div>
+            ))}
         </div>
     </div>
 </div>

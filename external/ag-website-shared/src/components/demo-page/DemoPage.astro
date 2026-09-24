@@ -23,37 +23,37 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
             <p class={styles.description}>{description}</p>
 
             <ul class={styles.featureList}>
-                {
-                    examples.map((example) => {
-                        const isActive = example.id === currentId;
-                        return (
-                            <li>
-                                <a
-                                    href={urlWithBaseUrl(example.path)}
-                                    class:list={[styles.featureItem, isActive && styles.featureItemActive]}
-                                    aria-current={isActive ? 'page' : undefined}
-                                >
-                                    {example.image && (
-                                        <span class={styles.featureImage}>
-                                            <img src={urlWithBaseUrl(example.image)} alt="" decoding="async" />
-                                        </span>
-                                    )}
-                                    <span class={styles.featureBody}>
-                                        <span class={styles.featureTitle}>{example.title}</span>
-                                        <span class={styles.featureDescription}>{example.description}</span>
+                {examples.map((example) => {
+                    const isActive = example.id === currentId;
+                    return (
+                        <li>
+                            <a
+                                href={urlWithBaseUrl(example.path)}
+                                class:list={[styles.featureItem, isActive && styles.featureItemActive]}
+                                aria-current={isActive ? 'page' : undefined}
+                            >
+                                {example.image && (
+                                    <span class={styles.featureImage}>
+                                        <img src={urlWithBaseUrl(example.image)} alt="" decoding="async" />
                                     </span>
-                                </a>
-                            </li>
-                        );
-                    })
-                }
+                                )}
+                                <span class={styles.featureBody}>
+                                    <span class={styles.featureTitle}>{example.title}</span>
+                                    <span class={styles.featureDescription}>{example.description}</span>
+                                </span>
+                            </a>
+                        </li>
+                    );
+                })}
             </ul>
 
             {/* Stands in for the demo card, hidden at this notice's breakpoint. The hero copy above stays. */}
             <slot name="mobile-notice" />
 
             <div class={styles.ctaButtons}>
-                <a class="button" href={primaryCta.href}>{primaryCta.label}</a>
+                <a class="button" href={primaryCta.href}>
+                    {primaryCta.label}
+                </a>
                 <a class:list={['button-tertiary', styles.contactButton]} href={secondaryCta.href}>
                     {secondaryCta.label}
                     <Icon name="chevronRight" />
@@ -82,7 +82,8 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
                             stroke="currentColor"
                             stroke-width="2"
                             stroke-linecap="round"
-                            stroke-linejoin="round"></path>
+                            stroke-linejoin="round"
+                        ></path>
                     </svg>
                     <span>Click to interact</span>
                 </span>
@@ -101,7 +102,8 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
                         stroke="currentColor"
                         stroke-width="2"
                         stroke-linecap="round"
-                        stroke-linejoin="round"></path>
+                        stroke-linejoin="round"
+                    ></path>
                 </svg>
                 Minimise
             </button>
@@ -109,9 +111,7 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
     </div>
 </div>
 
-{
-    /* Each site consuming this component serves the script from its own public folder.
+{/* Each site consuming this component serves the script from its own public folder.
     data-astro-rerun: the router swaps in a fresh, unwired stage, so the launch overlay
-    needs re-binding on each visit rather than only on the first document to load this. */
-}
+    needs re-binding on each visit rather than only on the first document to load this. */}
 <script is:inline defer data-astro-rerun src={urlWithBaseUrl('/scripts/demo-page.js')}></script>

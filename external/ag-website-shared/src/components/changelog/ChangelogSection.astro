@@ -17,5 +17,13 @@ const changelogLink = getChangelogUrl({ site, version });
 const name = whatsNewData[site].name;
 ---
 
-<h2 id="changes-list">Changes List <LinkIcon href="#changes-list" /></h2>
-<p>See the full list of changes in the <a href={changelogLink}>{name} {major}.{minor} changelog</a>.</p>
+<h2 id="changes-list">
+    Changes List <LinkIcon href="#changes-list" />
+</h2>
+<p>
+    See the full list of changes in the{' '}
+    <a href={changelogLink}>
+        {name} {major}.{minor} changelog
+    </a>
+    .
+</p>

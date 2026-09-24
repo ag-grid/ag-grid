@@ -54,11 +54,13 @@ const {
         <ExampleStyle rootSelector="my-app" extraStyles={extraStyles} />
         <Styles
             baseUrl={appLocation}
-            files={isDev && styleFiles
-                ? styleFiles
-                      .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
-                      .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
-                : []}
+            files={
+                isDev && styleFiles
+                    ? styleFiles
+                          .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
+                          .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
+                    : []
+            }
         />
         <Extras extras={extras ?? []} />
         <Fragment set:html={headFragment} />
@@ -75,14 +77,15 @@ const {
         >
             window.__basePath = appLocation;
         </script>
-
         <script is:inline nonce={nonce}>
             document.write('<base href="' + document.location + '" />');
         </script>
         <script is:inline nonce={nonce} src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.6.5/minified.js"></script>
-        <script is:inline nonce={nonce} src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"
+        <script
+            is:inline
+            nonce={nonce}
+            src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"
         ></script>
-
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         <ExampleModules
             appLocation={appLocation}
@@ -97,9 +100,11 @@ const {
         />
         <Styles
             baseUrl={appLocation}
-            files={styleFiles
-                ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
-                : []}
+            files={
+                styleFiles
+                    ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
+                    : []
+            }
         />
         <slot />
     </body>

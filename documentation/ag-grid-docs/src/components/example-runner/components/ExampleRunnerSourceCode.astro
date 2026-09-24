@@ -24,13 +24,11 @@ const fileNames = [mainFileName, ...Object.keys(files).filter((fileName) => file
 ---
 
 <div class="example-runner-source-code" data-example-source-code data-internal-framework={internalFramework} hidden>
-    {
-        fileNames.map((fileName) => (
-            <figure>
-                <figcaption>{fileName}</figcaption>
-                {/* prettier-ignore */}
-                <pre><code data-file-name={fileName} set:text={files[fileName]} /></pre>
-            </figure>
-        ))
-    }
+    {fileNames.map((fileName) => (
+        <figure>
+            <figcaption>{fileName}</figcaption>
+            {/* prettier-ignore */}
+            <pre><code data-file-name={fileName} set:text={files[fileName]} /></pre>
+        </figure>
+    ))}
 </div>

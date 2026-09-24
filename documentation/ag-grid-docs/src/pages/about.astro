@@ -149,22 +149,20 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
                 <div class={styles.timeline}>
                     <div class={styles.timelineLine}></div>
 
-                    {
-                        timeline.map(({ year, icon: TimelineIcon, title, description }) => (
-                            <div class={styles.timelineItem}>
-                                <div class={styles.timelineYear}>{year}</div>
-                                <div class={styles.timelineIcon}>
-                                    <TimelineIcon />
-                                </div>
-                                <div class={styles.timelineContent}>
-                                    <div class={styles.timelineTitle}>
-                                        <span class={styles.mobileYear}>{year}:</span> {title}
-                                    </div>
-                                    <div class={styles.timelineDesc} set:html={description} />
-                                </div>
+                    {timeline.map(({ year, icon: TimelineIcon, title, description }) => (
+                        <div class={styles.timelineItem}>
+                            <div class={styles.timelineYear}>{year}</div>
+                            <div class={styles.timelineIcon}>
+                                <TimelineIcon />
                             </div>
-                        ))
-                    }
+                            <div class={styles.timelineContent}>
+                                <div class={styles.timelineTitle}>
+                                    <span class={styles.mobileYear}>{year}:</span> {title}
+                                </div>
+                                <div class={styles.timelineDesc} set:html={description} />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </section>
 
@@ -175,19 +173,17 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
                 </div>
 
                 <div class={styles.principlesList}>
-                    {
-                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
-                            <div class={styles.principleItem}>
-                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
-                                    <PrincipleIcon />
-                                </div>
-                                <div class={styles.principleText}>
-                                    <div class={styles.principleTitle}>{title}</div>
-                                    <div class={styles.principleDesc}>{description}</div>
-                                </div>
+                    {principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
+                        <div class={styles.principleItem}>
+                            <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
+                                <PrincipleIcon />
                             </div>
-                        ))
-                    }
+                            <div class={styles.principleText}>
+                                <div class={styles.principleTitle}>{title}</div>
+                                <div class={styles.principleDesc}>{description}</div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </section>
 
@@ -198,22 +194,20 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
                 </div>
 
                 <div class={styles.leadershipList}>
-                    {
-                        aboutContent.leadershipTeam.map(({ name, role, bio, imageSrc }) => (
-                            <div class={styles.leaderItem}>
-                                <img
-                                    src={urlWithBaseUrl(imageSrc)}
-                                    class={styles.leaderPhoto}
-                                    alt={`AG Grid ${name} - ${role}`}
-                                />
-                                <div class={styles.leaderText}>
-                                    <div class={styles.leaderName}>{name}</div>
-                                    <div class={styles.leaderTitle}>{role}</div>
-                                    <div class={styles.leaderDesc}>{bio}</div>
-                                </div>
+                    {aboutContent.leadershipTeam.map(({ name, role, bio, imageSrc }) => (
+                        <div class={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl(imageSrc)}
+                                class={styles.leaderPhoto}
+                                alt={`AG Grid ${name} - ${role}`}
+                            />
+                            <div class={styles.leaderText}>
+                                <div class={styles.leaderName}>{name}</div>
+                                <div class={styles.leaderTitle}>{role}</div>
+                                <div class={styles.leaderDesc}>{bio}</div>
                             </div>
-                        ))
-                    }
+                        </div>
+                    ))}
                 </div>
             </section>
         </div>
@@ -224,13 +218,11 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
             <div class={styles.carouselOuter}>
                 <div class={styles.blurLeft}></div>
                 <div class={styles.carouselTrack} id="carousel-track">
-                    {
-                        allCarouselImages.map((src, idx) => (
-                            <div class={styles.carouselImageWrapper}>
-                                <img src={src} alt={`Life at AG Grid ${idx + 1}`} class={styles.carouselImage} />
-                            </div>
-                        ))
-                    }
+                    {allCarouselImages.map((src, idx) => (
+                        <div class={styles.carouselImageWrapper}>
+                            <img src={src} alt={`Life at AG Grid ${idx + 1}`} class={styles.carouselImage} />
+                        </div>
+                    ))}
                 </div>
                 <div class={styles.blurRight}></div>
             </div>
@@ -243,23 +235,21 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
                     <p>{prose.resources.subheading}</p>
                 </div>
                 <div class={styles.resourcesList}>
-                    {
-                        resources.map(({ icon: ResourceIcon, title, description, href, external }) => (
-                            <a
-                                href={href}
-                                {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                                class={styles.resourceItem}
-                            >
-                                <div class={styles.resourceIcon}>
-                                    <ResourceIcon />
-                                </div>
-                                <div class={styles.resourceText}>
-                                    <div class={styles.resourceTitle}>{title}</div>
-                                    <div class={styles.resourceDesc}>{description}</div>
-                                </div>
-                            </a>
-                        ))
-                    }
+                    {resources.map(({ icon: ResourceIcon, title, description, href, external }) => (
+                        <a
+                            href={href}
+                            {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                            class={styles.resourceItem}
+                        >
+                            <div class={styles.resourceIcon}>
+                                <ResourceIcon />
+                            </div>
+                            <div class={styles.resourceText}>
+                                <div class={styles.resourceTitle}>{title}</div>
+                                <div class={styles.resourceDesc}>{description}</div>
+                            </div>
+                        </a>
+                    ))}
                 </div>
             </section>
 
@@ -277,14 +267,12 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
 
                         <div class={styles.contactOffice}>
                             <p>
-                                {
-                                    prose.office.addressLines.map((line) => (
-                                        <>
-                                            {line}
-                                            <br />
-                                        </>
-                                    ))
-                                }
+                                {prose.office.addressLines.map((line) => (
+                                    <>
+                                        {line}
+                                        <br />
+                                    </>
+                                ))}
                             </p>
                             <div class={styles.officeButton}>
                                 <a
@@ -300,20 +288,18 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
                         </div>
 
                         <div class={styles.socialLinks}>
-                            {
-                                prose.socials.map(({ icon, label, ariaLabel, url }) => (
-                                    <a
-                                        href={url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={ariaLabel}
-                                        class={styles.socialLinkRow}
-                                    >
-                                        <Icon name={icon as IconName} />
-                                        <span>{label}</span>
-                                    </a>
-                                ))
-                            }
+                            {prose.socials.map(({ icon, label, ariaLabel, url }) => (
+                                <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={ariaLabel}
+                                    class={styles.socialLinkRow}
+                                >
+                                    <Icon name={icon as IconName} />
+                                    <span>{label}</span>
+                                </a>
+                            ))}
                         </div>
                     </div>
                 </div>

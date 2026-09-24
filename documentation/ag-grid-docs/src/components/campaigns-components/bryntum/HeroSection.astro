@@ -24,25 +24,21 @@ const svgMarkup = media?.kind === 'svg-file' ? getBryntumSvg(media.src) : undefi
             {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
             {section.body_html && <div class={styles.heroBody} set:html={decorateBryntumHtml(section.body_html)} />}
 
-            {
-                section.ctas && (
-                    <BryntumCtaList ctas={section.ctas} buttonClass="button-secondary" wrapperClass={styles.heroCtas} />
-                )
-            }
+            {section.ctas && (
+                <BryntumCtaList ctas={section.ctas} buttonClass="button-secondary" wrapperClass={styles.heroCtas} />
+            )}
         </div>
 
         <div class={styles.heroMedia}>
             {svgMarkup && <Fragment set:html={svgMarkup} />}
-            {
-                media?.kind === 'image' && (
-                    <img
-                        src={resolveBryntumAsset(media.src, productSlug)}
-                        alt={media.alt ?? ''}
-                        width={media.width}
-                        height={media.height}
-                    />
-                )
-            }
+            {media?.kind === 'image' && (
+                <img
+                    src={resolveBryntumAsset(media.src, productSlug)}
+                    alt={media.alt ?? ''}
+                    width={media.width}
+                    height={media.height}
+                />
+            )}
         </div>
     </div>
 </section>

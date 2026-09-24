@@ -27,7 +27,9 @@ const content = POLICY_CONTENT['modern-slavery'];
 
             <header>
                 <div id="meta" class={styles.introduction}>
-                    {content.meta.map((line) => <p set:html={line} />)}
+                    {content.meta.map((line) => (
+                        <p set:html={line} />
+                    ))}
                 </div>
 
                 <nav>
