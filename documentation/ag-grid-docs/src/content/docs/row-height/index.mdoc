@@ -28,25 +28,15 @@ Changing the property will set a new row height for all rows, including [Pinned 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["getRowHeight"] /%}
 
 To change the row height so that each row can have a different height,
-implement the `getRowHeight(params)` callback. For example, to set the height
-to 50px for all group rows and 20px for all other rows, do the following:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    getRowHeight: params => params.node.group ? 50 : 20,
-}
-```
-
-`getRowHeight(params)` is also called for [Group and Grand Total Rows](./aggregation-total-rows/) and [Pinned Rows](./row-pinning/), separately from the row they duplicate. To give them their own height, check `params.node.footer` (true for total rows) and `params.node.rowPinned` (`'top'` or `'bottom'` for pinned rows):
+implement the `getRowHeight(params)` callback. It is also called for [Total Rows](./aggregation-total-rows/) and
+[Pinned Rows](./row-pinning/), separately from the row they duplicate. For example, to set the height to 30px for
+total rows, 50px for all other group rows and 20px for all other rows, do the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     getRowHeight: params => {
         if (params.node.footer) {
             return 30;
-        }
-        if (params.node.rowPinned) {
-            return 40;
         }
         return params.node.group ? 50 : 20;
     },
