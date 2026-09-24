@@ -403,6 +403,28 @@ describe('column tool panel custom buttons - updatePanelColumns', () => {
             expect(colIds(strategy.getPivotColumns(true))).toEqual(['athlete', 'year']);
         });
 
+        test('removing a staged column in the panel also drops its staged index', async () => {
+            const scenario: Scenario = {
+                name: 'group by sport, value silver',
+                getParams: () => ({
+                    state: [
+                        { colId: 'sport', rowGroup: true, rowGroupIndex: 0 },
+                        { colId: 'silver', aggFunc: 'sum', valueIndex: 0 },
+                    ],
+                }),
+            };
+            const { api, toolPanel, toolPanelGui } = await createPanelGrid(scenario, true);
+            const strategy = getUpdateStrategy(toolPanel);
+            const colIds = (columns: AgColumn[]) => columns.map((col) => col.getColId());
+
+            getButton(toolPanelGui, 'Preset').click();
+            strategy.removeRowGroupColumns(true, [api.getColumn('sport') as AgColumn], 'toolPanelUi');
+            strategy.setValueColumns(true, [api.getColumn('gold') as AgColumn], 'toolPanelUi');
+
+            expect(colIds(strategy.getRowGroupColumns(true))).toEqual(['country']);
+            expect(colIds(strategy.getValueColumns(true))).toEqual(['gold']);
+        });
+
         test('shows a staged sort in the panel before Apply', async () => {
             const scenario: Scenario = {
                 name: 'sort athlete',

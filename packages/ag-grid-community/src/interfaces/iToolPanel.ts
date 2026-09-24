@@ -35,8 +35,7 @@ export interface ColumnToolPanelUpdateColumnsParams {
 export interface ColumnToolPanelButtonActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * Update the columns as if the user had changed them in the Columns Tool Panel.
-     * When Deferred Updates are enabled, the changes are staged until the Apply button is clicked.
-     * Only state that can be changed from the Columns Tool Panel is applied.
+     * When Deferred Updates are enabled, the changes are pending until Apply is clicked.
      */
     updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams): void;
 }

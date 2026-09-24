@@ -193,11 +193,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const createCustomButton = ({ label, action }: ColumnToolPanelButtonDef): CustomFilterButton => ({
             label,
             onClick: () =>
-                action(
-                    _addGridCommonParams(this.gos, {
-                        updatePanelColumns: (params: ColumnToolPanelUpdateColumnsParams) =>
-                            this.updatePanelColumns(params),
-                    })
+                this.beans.frameworkOverrides.wrapOutgoing(() =>
+                    action(
+                        _addGridCommonParams(this.gos, {
+                            updatePanelColumns: (params: ColumnToolPanelUpdateColumnsParams) =>
+                                this.updatePanelColumns(params),
+                        })
+                    )
                 ),
         });
 
@@ -323,7 +325,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         );
     }
 
-    /** Changes columns as the panel's own controls would: staged when Deferred Updates are enabled, else applied. */
     private updatePanelColumns(params: ColumnToolPanelUpdateColumnsParams): void {
         this.beans.columnStateUpdateStrategy.updatePanelColumns(this.isDeferModeEnabled, params, 'toolPanelUi');
         if (this.isDeferModeEnabled) {

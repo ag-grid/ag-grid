@@ -104,7 +104,7 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
         params: ColumnToolPanelUpdateColumnsParams,
         eventType: ColumnEventType
     ): void {
-        // Callers may pass full `ColumnState` (e.g. from `getColumnState()`), so drop what the panel cannot change.
+        // Callers may pass full `getColumnState()` output.
         const state = params.state.map(toPanelColumnState);
         this.getUpdateStrategy(deferMode).updatePanelColumns({ state, applyOrder: params.applyOrder }, eventType);
     }
@@ -381,8 +381,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     return true;
                 }
             }
-            // Row group, value and pivot membership and order, compared as whole lists so that a staged index
-            // on a column already in its section is seen.
+            // Compared as lists so that a staged reorder counts.
             if (
                 !_areEqual(getColIds(this.getRowGroupColumns()), getColIds(beans.rowGroupColsSvc?.columns)) ||
                 !_areEqual(getColIds(this.getValueColumns()), getColIds(beans.valueColsSvc?.columns)) ||
@@ -809,8 +808,6 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         return this.previewColumns(this.beans.pivotColsSvc, this.state.pivot?.colIds, fallbackColumns);
     }
 
-    /** The role's staged list with the staged column state applied by the role's own service, so that the
-     *  preview follows the same membership and ordering rules as Apply. */
     private previewColumns(
         colsSvc: IColsService | undefined,
         draftColIds: string[] | undefined,
@@ -899,8 +896,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 }
 
-/** A staged column-state sort always post-dates the panel sort draft (each clears the other's entries), so the
- *  draft replays first; otherwise its `baselineCleared` would wipe the newer column-state sort. */
+/** A staged column-state sort always post-dates the sort draft, whose `baselineCleared` would otherwise wipe it. */
 function replaySortBeforeColumnState(operations: CommitOperations): void {
     const sortIndex = operations.findIndex((operation) => operation.type === 'sort');
     const columnStateIndex = operations.findIndex((operation) => operation.type === 'columnState');
@@ -1013,19 +1009,23 @@ function mergeColumnStatePatch(state: DeferredState, patch: ColumnState): void {
     columnState.patches.set(patch.colId, existing ? { ...existing, ...patch } : patch);
 }
 
+const ROLE_INDEX_KEYS = { rowGroup: 'rowGroupIndex', pivot: 'pivotIndex', aggFunc: 'valueIndex' } as const;
+
 function clearDeferredFunctionPatches(state: DeferredState, patchKey: 'rowGroup' | 'pivot' | 'aggFunc'): void {
     const patches = state.columnState?.patches;
     if (!patches?.size) {
         return;
     }
 
+    const indexKey = ROLE_INDEX_KEYS[patchKey];
     for (const [colId, patch] of patches) {
-        if (!(patchKey in patch)) {
+        if (!(patchKey in patch) && !(indexKey in patch)) {
             continue;
         }
 
         const nextPatch = { ...patch } as Partial<ColumnState>;
         delete nextPatch[patchKey];
+        delete nextPatch[indexKey];
 
         if (Object.keys(nextPatch).length === 1) {
             patches.delete(colId);

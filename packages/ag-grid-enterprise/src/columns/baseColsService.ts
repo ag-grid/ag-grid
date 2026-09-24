@@ -394,47 +394,31 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.pendingStateOrder = null;
     }
 
-    /** The active cols that applying `states` on top of `current` would give, as {@link syncColState} and
-     *  {@link sortByPendingState} would order them, without changing any column. */
     public previewColumns(current: AgColumn[], states: ColumnState[]): AgColumn[] {
-        const colModel = this.colModel;
-        const result = current.slice();
-        let indexes: Map<AgColumn, number> | null = null;
+        const active = new Set(current);
+        const indexes = new Map<AgColumn, number>();
         for (let i = 0, len = states.length; i < len; ++i) {
             const state = states[i];
-            const column = colModel.getNonPivotColById(state.colId);
-            const intent =
-                column?.primary && column.colKind !== 'auto-group'
-                    ? this.getStateIntent(column, state, undefined)
-                    : undefined;
-            if (!column || !intent) {
+            const column = this.colModel.getNonPivotColById(state.colId);
+            if (!column?.primary || column.colKind === 'auto-group') {
                 continue;
             }
-            const position = result.indexOf(column);
-            if (intent.active === false) {
-                if (position >= 0) {
-                    result.splice(position, 1);
-                }
-                continue;
-            }
-            if (intent.active) {
+            const intent = this.getStateIntent(column, state, undefined);
+            if (intent?.active === false) {
+                active.delete(column);
+            } else if (intent?.active) {
                 const seated = this.getColsSeatedWith(column) ?? [];
                 for (let j = 0, seatedLen = seated.length; j < seatedLen; ++j) {
-                    const seatedCol = seated[j];
-                    if (!result.includes(seatedCol)) {
-                        result.push(seatedCol);
-                    }
+                    active.add(seated[j]);
                 }
-                if (position < 0) {
-                    result.push(column);
-                }
+                active.add(column);
             }
-            if (intent.index !== undefined && result.includes(column)) {
-                indexes ??= new Map();
+            if (intent?.index !== undefined) {
                 indexes.set(column, intent.index);
             }
         }
-        this.sortPendingCols(result, indexes);
+        const result = Array.from(active);
+        this.sortPendingCols(result, indexes.size ? indexes : null);
         return result;
     }
 
@@ -451,8 +435,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         return false;
     }
 
-    /** What one `ColumnState` entry asks of this service, or `undefined` when it does not mention it. Pure, so
-     *  {@link syncColState} and {@link previewColumns} share it. */
+    /** Pure: shared by {@link syncColState} and {@link previewColumns}. `undefined` when `stateItem` does not apply. */
     protected abstract getStateIntent(
         column: AgColumn,
         stateItem: ColumnState | null,
@@ -468,8 +451,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     ): void;
 }
 
-/** `active`: join (`true`), leave (`false`) or keep membership (`undefined`); `index`: the col's order key. */
 export interface ColStateIntent {
+    /** Join (`true`), leave (`false`) or keep membership (`undefined`). */
     active?: boolean;
     index?: number;
 }
