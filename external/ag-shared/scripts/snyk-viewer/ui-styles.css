@@ -1432,6 +1432,7 @@ details.tool-section:not([open]) .tool-section-chevron {
 .s3-dep-group-chevron { font-size: 10px; color: var(--c-text-muted); transition: transform 0.2s; flex-shrink: 0; }
 .s3-dep-group--collapsed .s3-dep-group-chevron { transform: rotate(-90deg); }
 .s3-dep-group--collapsed .s3-dep-group-body { display: none; }
+.s3-dep-group--collapsed .s3-dep-group-header { margin-bottom: 0; }
 .s3-dep-group-name { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--c-accent); }
 .s3-dep-group-count { font-size: 10px; color: var(--c-text-muted); }
 .s3-dep-group-reason-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -1599,6 +1600,17 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     word-break: break-word;
     min-width: 0;
 }
+.path-top-dep {
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--c-accent);
+    background: rgba(124, 131, 245, 0.14);
+    border-radius: 3px;
+    padding: 0 4px;
+}
+.path-chain-rest {
+    color: var(--c-text-muted);
+}
 /* ── Category A: Batch ignore section ── */
 .batch-ignore-section {
     border: 1px solid rgba(76,175,130,0.2);
@@ -1705,12 +1717,86 @@ details.s3-vuln-card:not([open]) .s3-card-chevron {
     opacity: 1;
 }
 
+/* ── To-do vs resolved vuln cards ── */
+.s3-vuln-card {
+    border-left: 3px solid var(--c-medium);
+}
+.s3-vuln-card.s3-card-skipped {
+    border-left-color: var(--c-border);
+}
+.s3-todo-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--c-bg);
+    background: var(--c-medium);
+    border-radius: 10px;
+    padding: 1px 8px;
+    white-space: nowrap;
+}
+
 /* ── All-paths-ignored vuln card ── */
+.s3-card-all-ignored {
+    border-color: rgba(76, 175, 130, 0.25);
+    border-left-color: var(--c-fix);
+}
 .s3-card-all-ignored > .s3-card-header {
-    opacity: 0.65;
+    /* Opaque tint: the header is sticky, so card content scrolls beneath it */
+    background: linear-gradient(rgba(76, 175, 130, 0.06), rgba(76, 175, 130, 0.06)), var(--c-surface2);
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 .s3-card-all-ignored > .s3-card-header .s3-card-chevron {
     color: var(--c-fix);
+}
+.s3-card-all-ignored .s3-card-header-right {
+    display: none;
+}
+.s3-card-all-ignored .s3-card-header-main > .sev-badge,
+.s3-card-all-ignored .s3-card-header-main > .vuln-id-link,
+.s3-card-all-ignored .s3-card-header-main > .rq-card-title,
+.s3-card-all-ignored .s3-card-header-main > .s3-path-count-badge {
+    opacity: 0.5;
+}
+.s3-card-all-ignored .s3-card-header-main > .sev-badge {
+    filter: grayscale(1);
+}
+.s3-card-all-ignored .s3-card-header-main > .rq-card-title {
+    font-weight: 500;
+    color: var(--c-text-muted);
+}
+.s3-resolved-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-fix);
+}
+.s3-resolved-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(76, 175, 130, 0.3);
+}
+
+/* ── To-do path rows stand out; already-ignored rows recede ── */
+.path-checkbox-row:not(.path-already-ignored) {
+    border-color: rgba(255, 193, 7, 0.35);
+    background: rgba(255, 193, 7, 0.05);
+    box-shadow: inset 3px 0 0 var(--c-medium);
+}
+.s3-done-rows {
+    margin-top: 10px;
+}
+.s3-done-rows > summary {
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    color: var(--c-fix);
+    margin-bottom: 6px;
 }
 
 /* ── Cat A: shared expiry row (above file cards) ── */

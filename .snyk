@@ -1,8 +1,84 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-URIJS-19963963:
+    - '@nx/react@20.8.4 > file-loader@6.2.0 > schema-utils@3.3.0 > ajv@6.12.6 > uri-js@4.4.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T11:08:32.147Z
+    - eslint@10.11.0 > ajv@6.15.0 > uri-js@4.4.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T11:08:32.114Z
+  SNYK-JS-HTTPCACHESEMANTICS-19964068:
+    - '@swc/cli@0.8.1 > @xhmikosr/bin-wrapper@14.2.3 > @xhmikosr/downloader@16.1.2 > got@14.6.6 > cacheable-request@13.0.18 > http-cache-semantics@4.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T10:04:26.796Z
+  SNYK-JS-HTTPCACHESEMANTICS-19964064:
+    - '@swc/cli@0.8.1 > @xhmikosr/bin-wrapper@14.2.3 > @xhmikosr/downloader@16.1.2 > got@14.6.6 > cacheable-request@13.0.18 > http-cache-semantics@4.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:38:20.406Z
+  SNYK-JS-DEEPMERGE-19964053:
+    - '@nx/react@20.8.4 > @svgr/webpack@8.1.0 > @svgr/plugin-svgo@8.1.0 > deepmerge@4.3.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:37:22.971Z
+    - '@nx/rollup@20.8.4 > @rollup/plugin-node-resolve@15.3.1 > deepmerge@4.3.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:37:22.940Z
+  SNYK-JS-BRACES-19963945:
+    - '@nx/rollup@20.8.4 > rollup-plugin-copy@3.5.0 > globby@10.0.1 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.482Z
+    - '@nx/eslint-plugin@20.8.4 > @typescript-eslint/type-utils@8.46.3 > @typescript-eslint/typescript-estree@8.46.3 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.479Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > http-proxy-middleware@3.0.5 > micromatch@4.0.8 > braces@3.0.3':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.476Z
+    - rulesync@8.8.1 > globby@16.1.1 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.474Z
+    - patch-package@8.0.1 > find-yarn-workspace-root@2.0.0 > micromatch@4.0.8 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.471Z
+    - stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.454Z
+  SNYK-JS-ADMZIP-19963965:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > adm-zip@0.5.10':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:35:22.563Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > adm-zip@0.5.16':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:35:22.537Z
   SNYK-JS-UNDICI-19635226:
-    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
+    - '@lavamoat/allow-scripts@5.1.0 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -40,7 +116,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-18T15:45:26.324Z
   SNYK-JS-UNDICI-19635210:
-    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
+    - '@lavamoat/allow-scripts@5.1.0 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -89,7 +165,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-18T15:43:36.635Z
   SNYK-JS-EXTRACTZIP-19653641:
-    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > extract-zip@2.0.1':
+    - '@axe-core/cli@4.13.0 > chromedriver@147.0.4 > extract-zip@2.0.1':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -376,7 +452,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:04:22.528Z
-    - '@axe-core/cli@4.11.2 > selenium-webdriver@4.41.0 > tmp@0.2.5':
+    - '@axe-core/cli@4.13.0 > selenium-webdriver@4.44.0 > tmp@0.2.5':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-06-24T11:04:22.526Z
@@ -401,7 +477,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:06.805Z
-    - stylelint@17.9.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1:
+    - 'stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:06.789Z
@@ -1103,7 +1179,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-AJV-15274295:
-    - stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1:
+    - 'stylelint@17.15.0 > table@6.9.0 > ajv@8.17.1':
         reason: Used in linting - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T10:53:07.358Z
@@ -1730,7 +1806,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-BASICFTP-16438941:
-    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > proxy-agent@8.0.1 > pac-proxy-agent@9.0.1 > get-uri@8.0.0 > basic-ftp@5.3.0':
+    - '@axe-core/cli@4.13.0 > chromedriver@147.0.4 > proxy-agent@8.0.1 > pac-proxy-agent@9.0.1 > get-uri@8.0.0 > basic-ftp@5.3.0':
         reason: Dev dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
@@ -1747,7 +1823,7 @@ ignore:
         reason: Dev dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@axe-core/cli@4.11.2 > selenium-webdriver@4.41.0 > tmp@0.2.5':
+    - '@axe-core/cli@4.13.0 > selenium-webdriver@4.44.0 > tmp@0.2.5':
         reason: Dev dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
@@ -1901,7 +1977,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
   SNYK-JS-EXTRACTZIP-17660777:
-    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > extract-zip@2.0.1':
+    - '@axe-core/cli@4.13.0 > chromedriver@147.0.4 > extract-zip@2.0.1':
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
