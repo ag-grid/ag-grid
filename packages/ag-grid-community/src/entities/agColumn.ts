@@ -373,9 +373,9 @@ export class AgColumn<TValue = any>
         this.userSized = false;
     }
 
-    public resetActualWidth(source: ColumnEventType): void {
+    public resetActualWidth(source: ColumnEventType, silent: boolean = true): void {
         const initialWidth = this.calculateColInitialWidth(this.colDef);
-        this.setActualWidth(initialWidth, source, true);
+        this.setActualWidth(initialWidth, source, silent);
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {

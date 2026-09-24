@@ -33,4 +33,20 @@ describe('Grid State Migration', () => {
             version: VERSION,
         });
     });
+
+    test('a version-less state with cellSelection and no rangeSelection keeps its cellSelection', () => {
+        const cellSelection = { cellRanges: [{ id: '1' }] } as unknown as GridState['cellSelection'];
+        const migrated = migrateGridStateModel({ cellSelection } as GridState);
+
+        expect(migrated.cellSelection).toBe(cellSelection);
+        expect(migrated.rangeSelection).toBeUndefined();
+    });
+
+    test('a version-less state with only rangeSelection still copies it to cellSelection', () => {
+        const rangeSelection = { cellRanges: [{ id: '1' }] } as unknown as GridState['rangeSelection'];
+        const migrated = migrateGridStateModel({ rangeSelection } as GridState);
+
+        expect(migrated.cellSelection).toEqual(rangeSelection);
+        expect(migrated.rangeSelection).toEqual(rangeSelection);
+    });
 });

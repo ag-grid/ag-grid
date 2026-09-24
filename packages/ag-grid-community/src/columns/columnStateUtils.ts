@@ -81,6 +81,18 @@ export interface ApplyColumnStateParams {
     defaultState?: ColumnStateParams;
 }
 
+/** Resets `defaultState` cannot express, as each restores a column's own colDef value. */
+interface ColDefResetParams {
+    /** Restore the colDef declaration order, in place of `applyOrder`. */
+    resetOrder?: boolean;
+    /** Restore colDef `width`/`flex` on columns whose state sets neither. */
+    resetSizing?: boolean;
+    /** Restore colDef `pivotSort` on columns whose state omits it. */
+    resetPivotSort?: boolean;
+}
+
+type InternalApplyColumnStateParams = ApplyColumnStateParams & ColDefResetParams;
+
 /** Pre-mutation snapshot; `dispatchColStateChanges` diffs against it to fire the right column events. */
 interface ColumnStateChanges {
     /** Pre-mutation snapshot (`sortColumns` mutates `.columns` in place); `undefined` when empty/absent. */
@@ -177,7 +189,7 @@ export function _setColsVisible(
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _applyColumnState(
     beans: BeanCollection,
-    params: ApplyColumnStateParams,
+    params: InternalApplyColumnStateParams,
     source: ColumnEventType
 ): boolean {
     const { colModel, colAnimation, calculatedColsSvc } = beans;
@@ -214,7 +226,7 @@ export function _applyColumnState(
         }
 
         // Finalize once: re-order, single visible-cols refresh, single everything-changed + dispatch.
-        finalizeChange(beans, params, source, stateChanges);
+        finalizeChange(beans, params.resetOrder ? getColDefOrderParams(beans) : params, source, stateChanges);
 
         return unmatched === null; // true ⇒ every provided state matched a column
     } finally {
@@ -228,7 +240,7 @@ function applyStateToCols(
     beans: BeanCollection,
     states: ColumnState[] | null,
     existingColumns: AgColumn[] | null | undefined,
-    params: ApplyColumnStateParams,
+    params: InternalApplyColumnStateParams,
     source: ColumnEventType,
     primaryPass: boolean
 ): ColumnState[] | null {
@@ -271,7 +283,7 @@ function applyStateToCols(
                 unmatchedStates ??= [];
                 unmatchedStates.push(state);
             } else {
-                applyFieldState(beans, column, state, defaultState, source);
+                applyFieldState(beans, column, state, params, source);
                 matched?.add(column);
             }
         }
@@ -282,14 +294,14 @@ function applyStateToCols(
         for (let i = 0, len = existingColumns.length; i < len; ++i) {
             const col = existingColumns[i];
             if (!matched.has(col)) {
-                applyFieldState(beans, col, null, defaultState, source);
+                applyFieldState(beans, col, null, params, source);
             }
         }
     }
 
     // Only the primary pass is structural (rowGroup/pivot membership, service cols, sort/refresh/sync).
     if (primaryPass) {
-        applyStructuralStateChanges(beans, autoColStates, selectionColStates, defaultState, source);
+        applyStructuralStateChanges(beans, autoColStates, selectionColStates, params, source);
     }
 
     return unmatchedStates;
@@ -300,7 +312,7 @@ function applyStructuralStateChanges(
     beans: BeanCollection,
     autoColStates: ColumnState[] | null,
     selectionColStates: ColumnState[] | null,
-    defaultState: ColumnStateParams | undefined,
+    params: InternalApplyColumnStateParams,
     source: ColumnEventType
 ): void {
     const { autoColSvc, selectionColSvc, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = beans;
@@ -314,8 +326,8 @@ function applyStructuralStateChanges(
     beans.colModel.refreshCols(false, source);
 
     const selectionCol = selectionColSvc?.column;
-    syncServiceColumnsWithState(beans, autoColStates, autoColSvc?.columns ?? [], defaultState, source);
-    syncServiceColumnsWithState(beans, selectionColStates, selectionCol ? [selectionCol] : [], defaultState, source);
+    syncServiceColumnsWithState(beans, autoColStates, autoColSvc?.columns ?? [], params, source);
+    syncServiceColumnsWithState(beans, selectionColStates, selectionCol ? [selectionCol] : [], params, source);
 }
 
 /** Sync service cols (auto/selection) post-refresh: apply each state to its matching `serviceCols` entry,
@@ -324,7 +336,7 @@ function syncServiceColumnsWithState(
     beans: BeanCollection,
     colStates: ColumnState[] | null,
     serviceCols: readonly AgColumn[],
-    defaultState: ColumnStateParams | undefined,
+    params: InternalApplyColumnStateParams,
     source: ColumnEventType
 ): void {
     let matched: Set<AgColumn> | null = null;
@@ -337,18 +349,18 @@ function syncServiceColumnsWithState(
                 const sc = serviceCols[i];
                 if (sc.colId === stateColId) {
                     matched.add(sc);
-                    applyFieldState(beans, sc, stateItem, defaultState, source);
+                    applyFieldState(beans, sc, stateItem, params, source);
                     break;
                 }
             }
         }
     }
     // Service cols with no matching state get `defaultState`; skipped entirely when none supplied.
-    if (defaultState) {
+    if (params.defaultState) {
         for (let i = 0, len = serviceCols.length; i < len; ++i) {
             const c = serviceCols[i];
             if (!matched?.has(c)) {
-                applyFieldState(beans, c, null, defaultState, source);
+                applyFieldState(beans, c, null, params, source);
             }
         }
     }
@@ -359,11 +371,16 @@ function applyFieldState(
     beans: BeanCollection,
     column: AgColumn,
     stateItem: ColumnState | null,
-    defaultState: ColumnStateParams | undefined,
+    params: InternalApplyColumnStateParams,
     source: ColumnEventType
 ): void {
+    const { defaultState, resetSizing, resetPivotSort } = params;
+    const colDef = column.colDef;
+    const restoreColDefSizing = resetSizing && stateItem?.flex === undefined && stateItem?.width === undefined;
     // `orDefault` falls back only on `undefined` — an explicit `null` is kept, so state can clear a property.
-    const flex = orDefault(stateItem?.flex, defaultState?.flex);
+    const flex = restoreColDefSizing
+        ? (colDef.flex ?? colDef.initialFlex ?? null)
+        : orDefault(stateItem?.flex, defaultState?.flex);
     const maybeSortDir = orDefault(stateItem?.sort, defaultState?.sort);
     const maybeSortType = orDefault(stateItem?.sortType, defaultState?.sortType);
     const isSortUpdate = isSortDirectionValid(maybeSortDir) || isSortTypeValid(maybeSortType);
@@ -388,8 +405,13 @@ function applyFieldState(
         column.setHeaderNameOverride(headerName);
     }
 
-    // No flex → fall back to width.
-    if (flex == null) {
+    if (restoreColDefSizing) {
+        column.resetWidthOwnership();
+        if (flex == null) {
+            column.resetActualWidth(source, false);
+        }
+    } else if (flex == null) {
+        // No flex → fall back to width.
         const width = orDefault(stateItem?.width, defaultState?.width);
         if (width != null) {
             // Apply width only if valid (>= min), else keep the old width.
@@ -417,6 +439,8 @@ function applyFieldState(
     const maybePivotSort = orDefault(stateItem?.pivotSort, defaultState?.pivotSort);
     if (maybePivotSort !== undefined) {
         column.pivotSort = normalizeSortDirection(maybePivotSort);
+    } else if (resetPivotSort) {
+        column.pivotSort = _resolvePivotSortFromColDef(colDef);
     }
 }
 
@@ -504,22 +528,6 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
             col.resetWidthOwnership();
         }
 
-        // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
-        // with the row-group set), so use the post-apply instances, not the pre-apply ids in `columnStates`.
-        const autoCols = autoColSvc?.columns;
-        const autoColsLen = autoCols?.length ?? 0;
-        const orderState = new Array<ColumnState>((selectionCol ? 1 : 0) + autoColsLen + colModel.colDefList.length);
-        let orderIdx = 0;
-        if (selectionCol) {
-            orderState[orderIdx++] = { colId: selectionCol.colId };
-        }
-        for (let i = 0; i < autoColsLen; ++i) {
-            orderState[orderIdx++] = { colId: autoCols![i].colId };
-        }
-        forEachColTreeLeaf(colModel.colDefTree, (col) => {
-            orderState[orderIdx++] = { colId: col.colId };
-        });
-
         // Group header names live outside column state, so clear their overrides here too.
         const groupOverrides = colModel.groupHeaderNameOverrides;
         if (groupOverrides.size) {
@@ -534,7 +542,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         }
 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.
-        finalizeChange(beans, { state: orderState, applyOrder: true }, source, stateChanges);
+        finalizeChange(beans, getColDefOrderParams(beans), source, stateChanges);
     } finally {
         colAnimation?.finish();
     }
@@ -542,8 +550,29 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     eventSvc.dispatchEvent(_addGridCommonParams<ColumnsResetEvent>(gos, { type: 'columnsReset', source }));
 }
 
+/** Params that order cols as declared: selection col, auto cols, then colDef leaves. Must be built after the
+ *  structural pass, as auto cols may have been recreated (their colIds change with the row-group set). */
+function getColDefOrderParams(beans: BeanCollection): ApplyColumnStateParams {
+    const { colModel, autoColSvc, selectionColSvc } = beans;
+    const selectionCol = selectionColSvc?.column;
+    const autoCols = autoColSvc?.columns;
+    const autoColsLen = autoCols?.length ?? 0;
+    const state = new Array<ColumnState>((selectionCol ? 1 : 0) + autoColsLen + colModel.colDefList.length);
+    let orderIdx = 0;
+    if (selectionCol) {
+        state[orderIdx++] = { colId: selectionCol.colId };
+    }
+    for (let i = 0; i < autoColsLen; ++i) {
+        state[orderIdx++] = { colId: autoCols![i].colId };
+    }
+    forEachColTreeLeaf(colModel.colDefTree, (col) => {
+        state[orderIdx++] = { colId: col.colId };
+    });
+    return { state, applyOrder: true };
+}
+
 /** Shared tail of a state change: apply order, refresh visible cols once, dispatch the diffed events.
- *  Separate so {@link _resetColumnState} can build its order from the post-apply (recreated) service cols. */
+ *  Separate so a colDef order ({@link getColDefOrderParams}) can be built from the post-apply (recreated) service cols. */
 function finalizeChange(
     beans: BeanCollection,
     params: ApplyColumnStateParams,

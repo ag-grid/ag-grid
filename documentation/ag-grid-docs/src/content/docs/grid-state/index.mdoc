@@ -84,7 +84,7 @@ The best way to restore grid state is via initial state as described above. Howe
 
 It is possible to maintain the existing state for individual state contents by passing a second argument to `setState` that contains the top-level properties to ignore. E.g. `api.setState(state, ['filter'])` will maintain the existing filter state in the grid.
 
-Anything the provided state omits is reset rather than left as is. For example, a state without a `quickFilter` section clears the quick filter value in the toolbar.
+Anything the provided state omits is reset rather than left as is. For example, a state without a `quickFilter` section clears the quick filter value in the toolbar. A state without `columnOrder` returns the columns to their column definition order, and columns without an entry in `columnSizing` return to their column definition sizes. A state without `pivot` turns pivot mode off and restores each column's `pivotSort`.
 
 {% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
 

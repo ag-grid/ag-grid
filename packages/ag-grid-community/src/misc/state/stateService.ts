@@ -296,11 +296,13 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetState('quickFilter', quickFilterState)) {
             this.setQuickFilterState(quickFilterState, source);
         }
-        if (
-            shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
-            shouldSetState('ssrmRowGroupExpansion', ssrmRowGroupExpansion)
-        ) {
-            this.setRowGroupExpansionState(ssrmRowGroupExpansion, rowGroupExpansionState, source);
+        const ssrmExpansion = ignoreSet?.has('ssrmRowGroupExpansion') ? undefined : ssrmRowGroupExpansion;
+        const expansion = ignoreSet?.has('rowGroupExpansion') ? undefined : rowGroupExpansionState;
+        const expansionKey = this.gos.get('ssrmExpandAllAffectsAllRows')
+            ? 'ssrmRowGroupExpansion'
+            : 'rowGroupExpansion';
+        if (ssrmExpansion || expansion || shouldSetState(expansionKey, undefined)) {
+            this.setRowGroupExpansionState(ssrmExpansion, expansion, source);
         }
         if (shouldSetState('rowSelection', rowSelectionState)) {
             this.setRowSelectionState(rowSelectionState, source);
@@ -501,6 +503,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         // `null` resets a field on columns the state omits; `undefined` leaves it untouched.
         const reset = (shouldSet: boolean) => (shouldSet || !partialColumnState ? null : undefined);
+        const isApi = source === 'api';
         const defaultState: ColumnStateParams = {
             sort: reset(shouldSetSortState),
             sortIndex: reset(shouldSetSortState),
@@ -515,7 +518,7 @@ export class StateService extends BeanStub implements NamedBean {
             hide: reset(shouldSetColumnVisibilityState),
             flex: reset(shouldSetColumnSizingState),
             headerName: reset(shouldSetHeaderNameState),
-            // `null` pivotSort would clear the colDef default ('asc') on every pivoted column; width/sortType are no-ops.
+            // `setState` resets width/pivotSort to per-column colDef values (`resetSizing`/`resetPivotSort`); sortType is a no-op.
             // Including to enable type checking to guard against missing properties in the future
             sortType: undefined,
             width: undefined,
@@ -571,8 +574,10 @@ export class StateService extends BeanStub implements NamedBean {
             for (const { colId, sort } of pivotState.pivotSortModel ?? []) {
                 getColumnState(colId).pivotSort = sort;
             }
+        }
+        if (shouldSetPivotState && (pivotState || this.gos.get('pivotMode'))) {
             this.gos.updateGridOptions({
-                options: { pivotMode: !!pivotState.pivotMode },
+                options: { pivotMode: !!pivotState?.pivotMode },
                 source: source as any,
             });
         }
@@ -608,6 +613,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const columns = columnOrderState?.orderedColIds;
         const applyOrder = !!columns?.length && !ignoreSet?.has('columnOrder');
+        const resetOrder = isApi && shouldSetState('columnOrder', columnOrderState) && !applyOrder;
         const columnStates = applyOrder ? columns.map((colId) => getColumnState(colId)) : Object.values(columnStateMap);
 
         if (columnStates.length || forceSetState) {
@@ -618,6 +624,9 @@ export class StateService extends BeanStub implements NamedBean {
                     state: columnStates,
                     applyOrder,
                     defaultState,
+                    resetOrder,
+                    resetSizing: isApi && shouldSetColumnSizingState,
+                    resetPivotSort: isApi && shouldSetPivotState,
                 },
                 source
             );
@@ -959,7 +968,10 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowSelectionState():
-        string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {
+        | string[]
+        | ServerSideRowSelectionState
+        | ServerSideRowGroupSelectionState
+        | undefined {
         const selectionSvc = this.beans.selectionSvc;
         if (!selectionSvc) {
             return undefined;
