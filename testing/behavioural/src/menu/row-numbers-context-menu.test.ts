@@ -12,7 +12,13 @@ import {
     polyfillOffsetParent,
 } from 'ag-test-utils';
 
-import type { GetContextMenuItemsParams, GridApi, GridOptions, NotesDataSourceGetNoteParams, NotesDataSourceSetNoteParams } from 'ag-grid-community';
+import type {
+    GetContextMenuItemsParams,
+    GridApi,
+    GridOptions,
+    NotesDataSourceGetNoteParams,
+    NotesDataSourceSetNoteParams,
+} from 'ag-grid-community';
 import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -497,7 +503,9 @@ describe('Row Numbers context menu items without cell selection integration (AG-
             getRowId: ({ data }) => data.athlete,
             notesDataSource: {
                 getNote: ({ column, rowNode }: NotesDataSourceGetNoteParams) =>
-                    column.getColId() === ROW_NUMBERS_COLUMN_ID && rowNode.rowIndex === 1 ? { text: 'Note' } : undefined,
+                    column.getColId() === ROW_NUMBERS_COLUMN_ID && rowNode.rowIndex === 1
+                        ? { text: 'Note' }
+                        : undefined,
                 setNote,
             },
         });
