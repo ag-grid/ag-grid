@@ -335,3 +335,98 @@ describe('Editable header name — row grouping', () => {
         );
     });
 });
+
+/**
+ * A rename made while a column's pill is already showing in a drop zone must relabel that pill. Each
+ * test renders the pill before renaming, as a pill built after the rename picks up the new name anyway.
+ */
+describe('Editable header name — live drop zone pills', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridMgr.reset();
+        vi.resetAllMocks();
+    });
+
+    const rowData = [
+        { country: 'Ireland', sport: 'Swimming', year: 2008, total: 3 },
+        { country: 'Ireland', sport: 'Rowing', year: 2012, total: 1 },
+    ];
+
+    const columnsToolPanel = { toolPanels: ['columns'], defaultToolPanel: 'columns' };
+
+    const pillTexts = (zoneSelector: string): string[] =>
+        Array.from(document.querySelectorAll(`${zoneSelector} .ag-column-drop-cell-text`)).map(
+            (el) => el.textContent ?? ''
+        );
+
+    const rename = (api: GridApi, colId: string, headerName: string | null) =>
+        api.applyColumnState({ state: [{ colId, headerName }] });
+
+    test('the Values section relabels its pill and keeps the aggregation function', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'total', headerNameEditable: true, aggFunc: 'sum' },
+            ],
+            rowData,
+            sideBar: columnsToolPanel,
+        });
+        const values = '.ag-column-drop-vertical.ag-column-drop-aggregation';
+        await waitFor(() => expect(pillTexts(values)).toEqual(['sum(Total)']));
+
+        rename(api, 'total', 'NewTotal');
+        await waitFor(() => expect(pillTexts(values)).toEqual(['sum(NewTotal)']));
+
+        rename(api, 'total', null);
+        await waitFor(() => expect(pillTexts(values)).toEqual(['sum(Total)']));
+    });
+
+    test('the Row Groups section relabels only the renamed pill', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', headerNameEditable: true, rowGroup: true },
+                { field: 'year', headerNameEditable: true, rowGroup: true },
+                { field: 'total' },
+            ],
+            rowData,
+            sideBar: columnsToolPanel,
+        });
+        const rowGroups = '.ag-column-drop-vertical.ag-column-drop-rowgroup';
+        await waitFor(() => expect(pillTexts(rowGroups)).toEqual(['Country', 'Year']));
+
+        rename(api, 'country', 'Nation');
+        await waitFor(() => expect(pillTexts(rowGroups)).toEqual(['Nation', 'Year']));
+    });
+
+    test('the Column Labels section relabels its pill in pivot mode', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'sport', headerNameEditable: true, pivot: true },
+                { field: 'total', aggFunc: 'sum' },
+            ],
+            rowData,
+            pivotMode: true,
+            sideBar: columnsToolPanel,
+        });
+        const pivot = '.ag-column-drop-vertical.ag-column-drop-pivot';
+        await waitFor(() => expect(pillTexts(pivot)).toEqual(['Sport']));
+
+        rename(api, 'sport', 'Discipline');
+        await waitFor(() => expect(pillTexts(pivot)).toEqual(['Discipline']));
+    });
+
+    test('the row-group panel above the grid relabels its pill', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'country', headerNameEditable: true, rowGroup: true }, { field: 'total' }],
+            rowData,
+            rowGroupPanelShow: 'always',
+        });
+        const rowGroupPanel = '.ag-column-drop-horizontal.ag-column-drop-rowgroup';
+        await waitFor(() => expect(pillTexts(rowGroupPanel)).toEqual(['Country']));
+
+        rename(api, 'country', 'Nation');
+        await waitFor(() => expect(pillTexts(rowGroupPanel)).toEqual(['Nation']));
+    });
+});
