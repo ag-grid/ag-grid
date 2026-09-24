@@ -306,9 +306,27 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         let selectionChanged = false;
+        const selectedNodes = this.selectedNodes;
+        const treeData = this.gos.get('treeData');
 
         const nodeCallback = (rowNode: RowNode): void => {
+            if (treeData) {
+                // A tree row that lost all its children keeps the selection it had as a group, which was
+                // computed rather than chosen, so it must not survive as a selected leaf.
+                const children = rowNode.childrenAfterGroup!;
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    const child = children[i];
+                    if (child.__selected && !child.group && selectedNodes.get(child.id!) !== child) {
+                        selectionChanged = this.selectRowNode(child, false, event, source) || selectionChanged;
+                    }
+                }
+            }
             if (rowNode !== rootNode) {
+                // A leaf that gained children is a group now, so its entry no longer belongs in the map.
+                if (selectedNodes.get(rowNode.id!) === rowNode) {
+                    selectedNodes.delete(rowNode.id!);
+                    selectionChanged = true;
+                }
                 const selected = this.calculateSelectedFromChildren(rowNode);
                 selectionChanged =
                     this.selectRowNode(rowNode, selected === null ? false : selected, event, source) ||

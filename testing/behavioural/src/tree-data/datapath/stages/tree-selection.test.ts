@@ -4,6 +4,7 @@ import {
     GridRows,
     TestGridsManager,
     assertSelectedRowsById,
+    asyncSetTimeout,
     cachedJSONObjects,
     isElementDisplayed,
     waitForEvent,
@@ -704,5 +705,125 @@ describe('ag-grid tree selection', () => {
         expect(renamed.selectable).toBe(false);
         expect(renamed.isSelected()).toBe(false);
         expect(api.getSelectedNodes()).toEqual([]);
+    });
+
+    describe.each(['descendants', 'filteredDescendants'] as const)('groupSelects: "%s"', (groupSelects) => {
+        const createTreeGrid = (rows: { id: string; name: string; orgHierarchy: string[] }[]) => {
+            let selectionChangedCount = 0;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'name' }],
+                autoGroupColumnDef: { headerName: 'Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                rowSelection: { mode: 'multiRow', groupSelects },
+                groupDefaultExpanded: -1,
+                rowData: cachedJSONObjects.array(rows),
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            });
+            api.addEventListener('selectionChanged', () => ++selectionChangedCount);
+            const applyUpdate = (updateVia: 'applyTransaction' | 'rowData', add: typeof rows, remove: typeof rows) => {
+                if (updateVia === 'applyTransaction') {
+                    api.applyTransaction({ add, remove });
+                } else {
+                    const removedIds = new Set(remove.map((row) => row.id));
+                    rows = rows.filter((row) => !removedIds.has(row.id)).concat(add);
+                    api.setGridOption('rowData', cachedJSONObjects.array(rows));
+                }
+            };
+            return { api, applyUpdate, selectionChangedCount: () => selectionChangedCount };
+        };
+
+        test.each(['applyTransaction', 'rowData'] as const)(
+            'selected leaf that gains a child is deselected (%s)',
+            async (updateVia) => {
+                const { api, applyUpdate, selectionChangedCount } = createTreeGrid([
+                    { id: '1', name: 'One', orgHierarchy: ['1'] },
+                    { id: '2', name: 'Two', orgHierarchy: ['2'] },
+                ]);
+
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+                expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['1']);
+                await asyncSetTimeout(0);
+                const countBeforeAdd = selectionChangedCount();
+
+                applyUpdate(updateVia, [{ id: '1-1', name: 'Child A', orgHierarchy: ['1', 'Child A'] }], []);
+                expect(api.getRowNode('1')!.isSelected()).toBe(false);
+                expect(api.getRowNode('1-1')!.isSelected()).toBe(false);
+                expect(api.getSelectedNodes()).toEqual([]);
+
+                applyUpdate(updateVia, [{ id: '1-2', name: 'Child B', orgHierarchy: ['1', 'Child B'] }], []);
+                expect(api.getSelectedNodes()).toEqual([]);
+                await asyncSetTimeout(0);
+                expect(selectionChangedCount() - countBeforeAdd).toBe(1);
+
+                await new GridRows(api, 'children added under a selected leaf').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"One"
+                    │ ├── "Child A" LEAF id:"1-1" ag-Grid-AutoColumn:"Child A" name:"Child A"
+                    │ └── "Child B" LEAF id:"1-2" ag-Grid-AutoColumn:"Child B" name:"Child B"
+                    └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" name:"Two"
+                `);
+            }
+        );
+
+        test.each(['applyTransaction', 'rowData'] as const)(
+            'selected leaf that gains a nested child through a filler is deselected (%s)',
+            async (updateVia) => {
+                const { api, applyUpdate } = createTreeGrid([{ id: '1', name: 'One', orgHierarchy: ['1'] }]);
+
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+                applyUpdate(updateVia, [{ id: '1-x-y', name: 'y', orgHierarchy: ['1', 'x', 'y'] }], []);
+
+                expect(api.getRowNode('1')!.isSelected()).toBe(false);
+                expect(api.getRowNode('1-x-y')!.isSelected()).toBe(false);
+                expect(api.getSelectedNodes()).toEqual([]);
+            }
+        );
+
+        test.each(['applyTransaction', 'rowData'] as const)(
+            'selected row that loses its only child is deselected (%s)',
+            async (updateVia) => {
+                const child = { id: '1-1', name: 'Child A', orgHierarchy: ['1', 'Child A'] };
+                const { api, applyUpdate, selectionChangedCount } = createTreeGrid([
+                    { id: '1', name: 'One', orgHierarchy: ['1'] },
+                    child,
+                    { id: '2', name: 'Two', orgHierarchy: ['2'] },
+                ]);
+
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+                expect(api.getRowNode('1')!.isSelected()).toBe(true);
+                expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['1-1']);
+                await asyncSetTimeout(0);
+                const countBeforeRemove = selectionChangedCount();
+
+                applyUpdate(updateVia, [], [child]);
+                expect(api.getRowNode('1')!.isSelected()).toBe(false);
+                expect(api.getSelectedNodes()).toEqual([]);
+                await asyncSetTimeout(0);
+                expect(selectionChangedCount() - countBeforeRemove).toBe(1);
+
+                await new GridRows(api, 'only child removed from a selected row').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" name:"One"
+                    └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" name:"Two"
+                `);
+            }
+        );
+
+        test('selected row that keeps a selected child after a removal stays selected', () => {
+            const childA = { id: '1-1', name: 'Child A', orgHierarchy: ['1', 'Child A'] };
+            const { api, applyUpdate } = createTreeGrid([
+                { id: '1', name: 'One', orgHierarchy: ['1'] },
+                childA,
+                { id: '1-2', name: 'Child B', orgHierarchy: ['1', 'Child B'] },
+            ]);
+
+            api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+            applyUpdate('applyTransaction', [], [childA]);
+
+            expect(api.getRowNode('1')!.isSelected()).toBe(true);
+            expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['1-2']);
+        });
     });
 });
