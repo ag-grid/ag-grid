@@ -44,6 +44,8 @@ const IGNORED_SIBLING_PROPERTIES = new Set<
     'groupValue',
     'oldRowTop',
     'pinnedSibling',
+    'rowHeight',
+    'rowHeightEstimated',
     'rowPinned',
     'sticky',
     'treeNodeFlags',

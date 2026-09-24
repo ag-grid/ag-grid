@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager, ssrmExpandAndLoadAll, unindentText, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type {
@@ -444,6 +445,58 @@ describe('SSRM footer mirrors the group field value', () => {
         expect(footerNode.footer).toBe(true);
 
         expect(api.getCellValue({ rowNode: footerNode, colKey: 'grp' })).toBe('Ireland');
+    });
+
+    test('a group total row turned on after load takes the height getRowHeight gives it, not its group', async () => {
+        const footerUiLevels = new Set<number>();
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sales', aggFunc: 'sum' },
+            ],
+            rowModelType: 'serverSide',
+            serverSideDatasource: createMirrorDatasource(),
+            getRowId: ({ data }: GetRowIdParams) => data.id,
+            getRowHeight: ({ node }) => {
+                if (node.footer) {
+                    footerUiLevels.add(node.uiLevel);
+                }
+                return node.footer ? (node.sibling ? 30 : 99) : 50;
+            },
+        });
+        await ssrmExpandAndLoadAll(api);
+        await waitForNoLoadingRows(api);
+
+        api.setGridOption('groupTotalRow', 'bottom');
+
+        await waitFor(() => expect(api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')?.rowHeight).toBe(30));
+        const footerNode = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')!;
+        expect(api.getRowNode('g-Ireland')!.rowHeight).toBe(50);
+        expect(footerNode.rowTop).toBe(150);
+        expect(footerUiLevels).toEqual(new Set([1]));
+    });
+
+    test('resetting row heights asks a group total row its own height again', async () => {
+        let totalRowHeight = 30;
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sales', aggFunc: 'sum' },
+            ],
+            rowModelType: 'serverSide',
+            serverSideDatasource: createMirrorDatasource(),
+            getRowId: ({ data }: GetRowIdParams) => data.id,
+            groupTotalRow: 'bottom',
+            getRowHeight: ({ node }) => (node.footer ? totalRowHeight : 50),
+        });
+        await ssrmExpandAndLoadAll(api);
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')?.rowHeight).toBe(30));
+
+        totalRowHeight = 60;
+        api.resetRowHeights();
+
+        expect(api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')!.rowHeight).toBe(60);
     });
 });
 

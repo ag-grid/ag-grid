@@ -84,6 +84,33 @@ describe('Manual pinned rows', () => {
         gridsManager.reset();
     });
 
+    test('a row pinned after render takes the height getRowHeight gives the pinned row, not its source', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowHeight: ({ node }) => (node.rowPinned ? ((node as RowNode).pinnedSibling ? 30 : 99) : 50),
+        });
+        await asyncSetTimeout(0);
+        const football = api.getDisplayedRowAtIndex(0)!;
+        football.setRowHeight(80);
+        api.onRowHeightChanged();
+
+        api.setGridOption('isRowPinned', (node) =>
+            node.data?.sport === 'rugby' || node.data?.sport === 'football' ? 'top' : null
+        );
+
+        await waitFor(() =>
+            expect(getPinnedRows(api, 'top').map((node) => node.data.sport)).toEqual(['football', 'rugby'])
+        );
+        const [pinnedFootball, pinnedRugby] = getPinnedRows(api, 'top');
+        expect(pinnedFootball.rowHeight).toBe(30);
+        expect(football.rowHeight).toBe(80);
+        expect(pinnedRugby.rowHeight).toBe(30);
+        expect(pinnedRugby.pinnedSibling!.rowHeight).toBe(50);
+        expect(pinnedRugby.rowTop).toBe(30);
+    });
+
     test('exports manually pinned rows and optionally omits their body duplicates', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs,
