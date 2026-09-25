@@ -67,6 +67,19 @@ runs:
               set -uo pipefail
               paths=""
 
+              # A publish branch is created lazily by the first publish, so "not there yet" is a
+              # normal state for a scheduled sweep and must not fail the run. Separate that from a
+              # listing that failed for any other reason, which must still abort rather than guess.
+              # Authenticated remote: the same URL form gh-pages-commit.sh uses, so this works in
+              # private repos too rather than only where anonymous reads are allowed.
+              if ! git ls-remote --exit-code --heads \
+                       "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+                       "$PUBLISH_BRANCH" >/dev/null 2>&1; then
+                  echo "Publish branch ${PUBLISH_BRANCH} does not exist; nothing to sweep."
+                  { echo "paths="; echo "count=0"; } >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+
               tree=$(gh api "repos/${GITHUB_REPOSITORY}/git/trees/${PUBLISH_BRANCH}?recursive=1" \
                          --jq '.tree[] | select(.type=="blob") | .path')
               if [[ -z "$tree" ]]; then

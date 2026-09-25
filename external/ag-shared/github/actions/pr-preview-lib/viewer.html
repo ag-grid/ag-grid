@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Snapshot report viewer</title>
+        <!--
+            PROTOTYPE — see the plan on at/snapshot-report-raw-viewer.
+
+            Why this page exists at all: raw.githubusercontent.com serves every file as
+            `text/plain` with `x-content-type-options: nosniff`, so linking a reviewer straight at a
+            report shows them HTML source, not a rendered page. It does however send
+            `access-control-allow-origin: *`, so a page on another origin may fetch it and render it
+            itself. That is the whole trick.
+
+            The point of the exercise: report payloads could then live on a plain git branch with no
+            GitHub Pages build at all, removing the whole-site rebuild (and its single-flight
+            cancellation) from the path between CI finishing and a reviewer seeing the report.
+        -->
+        <style>
+            :root {
+                color-scheme: light dark;
+                --fg: #1b1f23;
+                --bg: #ffffff;
+                --muted: #57606a;
+                --line: #d0d7de;
+                --warn-bg: #fff8c5;
+                --warn-line: #d4a72c;
+            }
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --fg: #e6edf3;
+                    --bg: #0d1117;
+                    --muted: #8b949e;
+                    --line: #30363d;
+                    --warn-bg: #272115;
+                    --warn-line: #9e6a03;
+                }
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--fg);
+                font:
+                    14px/1.5 -apple-system,
+                    BlinkMacSystemFont,
+                    'Segoe UI',
+                    Helvetica,
+                    Arial,
+                    sans-serif;
+            }
+            header {
+                display: flex;
+                gap: 12px;
+                align-items: baseline;
+                flex-wrap: wrap;
+                padding: 8px 14px;
+                border-bottom: 1px solid var(--line);
+                /* Sticky, because the frame below is sized to its full content and the page owns
+                   the scrollbar — a static header would scroll away immediately. */
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                background: var(--bg);
+            }
+            header strong {
+                font-weight: 600;
+            }
+            header code {
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 12px;
+                color: var(--muted);
+            }
+            #frame {
+                display: block;
+                width: 100%;
+                /* Starting height only; report-frame.html posts its content height and the script
+                   replaces this. */
+                height: 90vh;
+                border: 0;
+            }
+            #status {
+                padding: 24px;
+                max-width: 60rem;
+            }
+            #status h1 {
+                font-size: 18px;
+                margin: 0 0 8px;
+            }
+            #status p {
+                margin: 0 0 12px;
+                color: var(--muted);
+            }
+            #status code {
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                background: var(--warn-bg);
+                border: 1px solid var(--warn-line);
+                border-radius: 4px;
+                padding: 1px 5px;
+                word-break: break-all;
+            }
+            .hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <header id="header" class="hidden">
+            <strong id="header-title"></strong>
+            <code id="header-source"></code>
+        </header>
+
+        <div id="status">
+            <h1 id="status-title">Loading report…</h1>
+            <p id="status-detail">Fetching from raw.githubusercontent.com.</p>
+        </div>
+
+        <!-- Placeholder only; the real frame is built in script and swapped in here. -->
+        <div id="frame" class="hidden"></div>
+
+        <script>
+            (() => {
+                'use strict';
+
+                // Exact owner/repo values, not an owner prefix: an owner-level allowlist still
+                // admits every repo that owner has, including ones anybody can get content into.
+                // This page renders fetched HTML under a domain that also serves our PR previews,
+                // so whoever chooses the repo chooses what appears under our name. The sandbox
+                // keeps that content away from our storage; it does nothing about what the address
+                // bar says, which is the whole of a phishing page's value.
+                //
+                // Keep in step with the copy in report-frame.html, which enforces the same list —
+                // that file is directly fetchable and cannot rely on this one having run.
+                const ALLOWED_REPOS = ['ag-grid/ag-charts'];
+
+                const el = (id) => document.getElementById(id);
+
+                function fail(title, detail) {
+                    el('status-title').textContent = title;
+                    // textContent throughout: every value here is attacker-controllable via the
+                    // query string, so nothing from it is ever parsed as markup.
+                    el('status-detail').textContent = '';
+                    el('status-detail').append(...detail);
+                    el('status').classList.remove('hidden');
+                    el('frame').classList.add('hidden');
+                }
+
+                function code(text) {
+                    const c = document.createElement('code');
+                    c.textContent = text;
+                    return c;
+                }
+
+                // An unvalidated viewer is a content-injection surface: it would happily render any
+                // HTML from any repo under our origin's URL bar, which is a convincing place to put
+                // a phishing page. Validate hard, fail closed.
+                function readParams() {
+                    const q = new URLSearchParams(location.search);
+                    const repo = q.get('repo') || '';
+                    const sha = q.get('sha') || '';
+                    const path = q.get('path') || '';
+
+                    if (!repo || !sha || !path) {
+                        return { error: ['Expected ', code('?repo=owner/name&sha=<40-hex>&path=<file>'), '.'] };
+                    }
+                    if (!/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/.test(repo)) {
+                        return { error: ['Malformed repo: ', code(repo)] };
+                    }
+                    if (!ALLOWED_REPOS.includes(repo)) {
+                        return {
+                            error: [
+                                'Refusing to load from ',
+                                code(repo),
+                                '. This viewer only serves: ',
+                                code(ALLOWED_REPOS.join(', ')),
+                                '.',
+                            ],
+                        };
+                    }
+                    // Commit SHA only, never a branch name. A branch URL is served with
+                    // `cache-control: max-age=300`, so it can be up to 5 minutes stale — and its
+                    // content can change under a link that has already been shared. A SHA URL names
+                    // one immutable blob.
+                    if (!/^[0-9a-f]{40}$/.test(sha)) {
+                        return { error: ['Expected a full 40-character commit SHA, got ', code(sha)] };
+                    }
+                    if (!/^[A-Za-z0-9._\-/]+$/.test(path) || path.includes('..') || path.startsWith('/')) {
+                        return { error: ['Malformed path: ', code(path)] };
+                    }
+                    return { repo, sha, path };
+                }
+
+                function main() {
+                    const params = readParams();
+                    if (params.error) {
+                        fail('Cannot load this report', params.error);
+                        return;
+                    }
+                    const { repo, sha, path } = params;
+
+                    // This page never touches the payload. It points a sandboxed frame at
+                    // report-frame.html, which fetches raw.githubusercontent.com from inside its own
+                    // opaque origin and writes the result into itself. See report-frame.html for why
+                    // the payload is not passed inwards.
+                    //
+                    // sandbox="allow-scripts" WITHOUT allow-same-origin: the report's own scripts
+                    // (onion-skin, swipe, side-by-side) run, but the document cannot read this
+                    // page's DOM, storage or cookies. Adding allow-same-origin would hand fetched
+                    // third-party HTML our origin, which defeats the point of framing it at all.
+                    const inner = new URLSearchParams({ repo, sha, path });
+                    const frame = document.createElement('iframe');
+                    frame.id = 'frame';
+                    frame.title = 'Snapshot report';
+                    frame.referrerPolicy = 'no-referrer';
+                    frame.setAttribute('sandbox', 'allow-scripts');
+                    frame.src = `report-frame.html?${inner}`;
+
+                    // Outcome arrives by postMessage — an opaque-origin frame cannot be inspected
+                    // from here, so a failed fetch inside it is otherwise indistinguishable from a
+                    // slow one.
+                    window.addEventListener('message', (ev) => {
+                        if (ev.source !== frame.contentWindow) return;
+                        const msg = ev.data;
+                        if (!msg || msg.source !== 'report-frame') return;
+                        if (msg.kind === 'height') {
+                            frame.style.height = `${msg.detail}px`;
+                            return;
+                        }
+                        if (msg.kind === 'error') {
+                            const hint =
+                                msg.detail === 'HTTP 404'
+                                    ? ' The commit or path may not exist, or it may have been swept by the janitor.'
+                                    : msg.detail === 'HTTP 403' || msg.detail === 'HTTP 429'
+                                      ? ' raw.githubusercontent.com rate-limits unauthenticated requests; wait a minute and reload.'
+                                      : '';
+                            fail('Report unavailable', [
+                                `${msg.detail} fetching `,
+                                code(`${repo}@${sha.slice(0, 7)}/${path}`),
+                                hint,
+                            ]);
+                            return;
+                        }
+                        el('status').classList.add('hidden');
+                        el('header-source').textContent =
+                            `${repo}@${sha.slice(0, 7)}/${path} · ${msg.detail} bytes`;
+                        el('header').classList.remove('hidden');
+                    });
+
+                    el('frame').replaceWith(frame);
+                    el('header-title').textContent = path.split('/').pop();
+                    document.title = `${path.split('/').pop()} · snapshot report`;
+                }
+
+                main();
+            })();
+        </script>
+    </body>
+</html>

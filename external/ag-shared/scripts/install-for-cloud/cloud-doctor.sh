@@ -93,9 +93,43 @@ if [[ -f "$AG_CLOUD_CACHE_DIR/setup.log" ]]; then
 else
     note "no setup log at $AG_CLOUD_CACHE_DIR/setup.log — the setup script never reached its first log line"
 fi
+# The SessionStart hook's own breadcrumb, written before it can fail. Deliberately
+# a note rather than a failure: the gaps it explains (node_modules, .claude/rules)
+# are already reported above, and counting it again would double-report one cause.
+# What it adds is *which* of three indistinguishable causes applies — the hook
+# never ran, it ran and exited early, or it ran and its notice was lost — and the
+# value of $CLAUDE_PROJECT_DIR as the hook itself saw it, which is not the same
+# environment a Bash tool call reports.
+#
+# Search the same candidate list the hook writes down, in the same order, rather
+# than assuming $AG_CLOUD_CACHE_DIR. The hook picks its location before that
+# variable is resolved, and takes the first *writable* candidate: the setup script
+# creates /opt/ag-cloud as root while the session runs as another user, so the
+# breadcrumb can legitimately land in $HOME/.cache/ag-cloud instead. Looking only
+# at /opt/ag-cloud would then report "the hook did not run" about a hook that did.
+hook_log=""
+for candidate in "$AG_CLOUD_CACHE_DIR" /opt/ag-cloud "$HOME/.cache/ag-cloud" /tmp; do
+    if [[ -f "$candidate/hook.log" ]]; then
+        hook_log="$candidate/hook.log"
+        break
+    fi
+done
+if [[ -n "$hook_log" ]]; then
+    note "hook log: $(grep -c '^--- ' "$hook_log" 2>/dev/null | tr -d ' ') invocation(s) at ${hook_log}"
+    note "  last:   $(grep '^--- ' "$hook_log" 2>/dev/null | tail -1 | cut -c5-70)"
+    note "  saw:    $(grep 'CLAUDE_PROJECT_DIR=' "$hook_log" 2>/dev/null | tail -1 | sed 's/^ *//')"
+    note "  exit:   $(grep '^    EXIT ' "$hook_log" 2>/dev/null | tail -1 | sed 's/^ *//' || echo 'no exit recorded — killed or still running')"
+else
+    note "no hook breadcrumb in ${AG_CLOUD_CACHE_DIR}, /opt/ag-cloud, \$HOME/.cache/ag-cloud or /tmp — the SessionStart hook did not run"
+fi
 if [[ -d "$AG_CLOUD_CACHE_DIR/node_modules" ]]; then
     if [[ -f "$AG_CLOUD_CACHE_DIR/unscripted" ]]; then
         note "cloud cache seeded but unscripted ($AG_CLOUD_CACHE_DIR)"
+    elif [[ -f "$AG_CLOUD_CACHE_DIR/prebuilt" ]]; then
+        # Distinguishing these two matters when a session misbehaves: a prebuilt
+        # tree was installed on a CI runner at a different path, so path-sensitive
+        # breakage looks quite different from a locally-installed one.
+        ok "cloud cache restored from a prebuilt asset ($(head -1 "$AG_CLOUD_CACHE_DIR/prebuilt" 2>/dev/null))"
     else
         ok "cloud cache seeded and scripted ($AG_CLOUD_CACHE_DIR)"
     fi
