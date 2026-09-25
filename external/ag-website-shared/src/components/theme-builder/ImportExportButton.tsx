@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type { Placement } from '@floating-ui/react';
 
-import { ThemeImportExportDialog } from './ThemeImportExportDialog';
+import { ThemeImportExportDialog, type ThemeImportExportDialogProps } from './ThemeImportExportDialog';
 import { UIPopupButton } from './UIPopupButton';
 
 /**
@@ -11,13 +11,16 @@ import { UIPopupButton } from './UIPopupButton';
  */
 export const ImportExportButton = ({
     allowedPlacements = ['top-end', 'right-end'],
+    dialogProps,
 }: {
     allowedPlacements?: Placement[];
+    /** Passed straight to the dialog, for a host whose theme is not a param bag. */
+    dialogProps?: Omit<ThemeImportExportDialogProps, 'close'>;
 }) => (
     <ButtonWrapper>
         <UIPopupButton
             allowedPlacements={allowedPlacements}
-            dropdownContent={(close) => <ThemeImportExportDialog close={close} />}
+            dropdownContent={(close) => <ThemeImportExportDialog close={close} {...dialogProps} />}
             variant="primary"
         >
             {downloadIcon} Import / Export

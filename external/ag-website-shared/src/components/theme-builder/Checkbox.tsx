@@ -36,6 +36,14 @@ const Container = styled('label')`
     cursor: pointer;
     user-select: none;
 
+    // The box is a fixed square, but a flex item shrinks by default, and the
+    // share it takes of a row's overflow is proportional to how far the label
+    // overruns - so a label long enough to wrap leaves a tall thin sliver where
+    // the box should be, and the longer the label the thinner the sliver.
+    input {
+        flex-shrink: 0;
+    }
+
     &.is-disabled {
         opacity: 0.5;
     }

@@ -71,25 +71,45 @@ let paramDocsProvider: ParamDocsProvider = () => undefined;
 
 /**
  * Hosts can plug in a source of per-param documentation strings (e.g. JSDoc
- * comments extracted from the theming engine at doc-site build time). Must be
- * called before any ParamModel is constructed, since docs are resolved eagerly
- * in the constructor.
+ * extracted from the theming engine at doc-site build time). Read on demand
+ * rather than at construction, so a host whose docs arrive as a render prop can
+ * register them then and still reach the models already built.
  */
 export const setParamDocsProvider = (provider: ParamDocsProvider) => {
     paramDocsProvider = provider;
 };
 
+type ParamDocsUrlProvider = (property: string) => string | undefined;
+
+let paramDocsUrlProvider: ParamDocsUrlProvider = () => undefined;
+
+/**
+ * Hosts can plug in a page to send the reader to for a param's full
+ * documentation - the site's API reference, anchored on the param itself. Kept
+ * apart from the descriptions, a host being able to have the text without
+ * having a page to link to; registering neither leaves the tooltip unlinked.
+ */
+export const setParamDocsUrlProvider = (provider: ParamDocsUrlProvider) => {
+    paramDocsUrlProvider = provider;
+};
+
 export class ParamModel<T> {
     readonly label: string;
-    readonly docs: string;
     readonly type: ParamType;
     readonly valueAtom: PersistentAtom<T | undefined>;
 
     private constructor(readonly property: ThemeParam) {
         this.label = titleCase(property);
         this.valueAtom = atomWithJSONStorage<T | undefined>(`param.${property}`, undefined);
-        this.docs = paramDocsProvider(property) || '';
         this.type = getParamType(property);
+    }
+
+    get docs(): string {
+        return paramDocsProvider(this.property) || '';
+    }
+
+    get docsUrl(): string | undefined {
+        return paramDocsUrlProvider(this.property);
     }
 
     hasValue = (store: Store) => store.get(this.valueAtom) != null;

@@ -10,7 +10,6 @@ export type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-    ShadowValueParams,
 } from 'ag-grid-community';
 export { getParamType, paramValueToCss } from 'ag-stack';
 
