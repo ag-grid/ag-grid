@@ -5,6 +5,8 @@ export const INTEGRATED_CHARTS_ID = 'Integrated Charts';
 export const AG_ROW_SELECTOR = '[role=row]:not(.ag-header-row)';
 export const AG_ROW_HOVER_CLASSNAME = 'ag-row-hover';
 export const AG_CELL_RANGE_SINGLE_CELL_CLASSNAME = 'ag-cell-range-single-cell';
+// Excludes the row selection checkbox column, so cell indexes match the grid's column defs
+export const AG_CELL_SELECTOR = '.ag-cell:not([col-id="ag-Grid-SelectionColumn"])';
 
 export const AG_SIDEBAR_BUTTON_LABEL_SELECTOR = '.ag-side-button-label';
 export const AG_COLUMN_SELECT_LABEL_SELECTOR = '.ag-column-select-column-label';
