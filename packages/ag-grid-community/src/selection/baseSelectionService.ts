@@ -3,11 +3,14 @@ import { _getActiveDomElement, _setAriaSelected } from 'ag-stack';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { CheckboxSelectionCallbackParams } from '../entities/colDef';
 import type { IsRowSelectable } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
+    _addGridCommonParams,
+    _getCheckboxLocation,
     _getCheckboxes,
     _getEnableDeselection,
     _getEnableSelection,
@@ -97,14 +100,15 @@ export abstract class BaseSelectionService extends BeanStub {
         }
     }
 
-    public announceAriaRowSelection(rowNode: RowNode): void {
+    public announceAriaRowSelection(rowNode: RowNode, column: AgColumn | undefined): void {
         if (this.isRowSelectionBlocked(rowNode)) {
             return;
         }
 
+        const { beans } = this;
         const selected = rowNode.isSelected()!;
-        const isEditing = this.beans.editSvc?.isEditing({ rowNode });
-        if (!rowNode.selectable || isEditing) {
+        const isEditing = beans.editSvc?.isEditing({ rowNode });
+        if (!rowNode.selectable || isEditing || this.isSpaceKeyBlocked(rowNode, column, !selected)) {
             return;
         }
 
@@ -114,7 +118,7 @@ export abstract class BaseSelectionService extends BeanStub {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row`
         );
 
-        this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
+        beans.ariaAnnounce?.announceValue(label, 'rowSelection');
     }
 
     public updateGroupsFromChildrenSelections?(
@@ -282,7 +286,8 @@ export abstract class BaseSelectionService extends BeanStub {
         node: RowNode,
         shiftKey: boolean,
         metaKey: boolean,
-        source: SelectionEventSourceType
+        source: SelectionEventSourceType,
+        column: AgColumn | undefined
     ): null | NodeSelection {
         const { gos, selectionCtx } = this;
         const currentSelection = node.isSelected();
@@ -292,10 +297,14 @@ export abstract class BaseSelectionService extends BeanStub {
         const enableClickToggle = _isInternalFeatureFlagEnabled(this.beans, 'clickToggleSelection');
         const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
+        const isClickGated = isRowClicked || this.isSpaceKeyClickGated(source, node, column);
 
-        if (isRowClicked && !(enableClickSelection || enableDeselection)) {
+        if (isClickGated && !(enableClickSelection || enableDeselection)) {
             return null;
         }
+
+        const isBlockedByClickSelection = (newValue: boolean) =>
+            isClickGated && (newValue ? !enableClickSelection : !enableDeselection);
 
         if (shiftKey && metaKey && isMultiSelect) {
             // SHIFT+CTRL or SHIFT+CMD is used for bulk deselection, except where the selection root
@@ -341,31 +350,17 @@ export abstract class BaseSelectionService extends BeanStub {
             };
         } else if (metaKey) {
             // CTRL is used for deselection of a single node or adding a single node to selection
-            if (isRowClicked) {
-                const newValue = !currentSelection;
-
-                const selectingWhenDisabled = newValue && !enableClickSelection;
-                const deselectingWhenDisabled = !newValue && !enableDeselection;
-
-                if (selectingWhenDisabled || deselectingWhenDisabled) {
-                    return null;
-                }
-
-                selectionCtx.setRoot(node);
-
-                return {
-                    node,
-                    newValue,
-                    clearSelection: false,
-                };
+            const newValue = !currentSelection;
+            if (isBlockedByClickSelection(newValue)) {
+                return null;
             }
 
             selectionCtx.setRoot(node);
 
             return {
                 node,
-                newValue: !currentSelection,
-                clearSelection: !isMultiSelect,
+                newValue,
+                clearSelection: !isRowClicked && !isMultiSelect,
             };
         } else {
             // Otherwise we just do normal selection of a single node
@@ -395,14 +390,10 @@ export abstract class BaseSelectionService extends BeanStub {
                     ? !(enableSelectionWithoutKeys || (enableClickToggle && this.isSoleSelection(node.primaryRow)))
                     : enableClickSelection;
 
-                // if selecting, only proceed if not disabled by grid options
-                const selectingWhenDisabled = newValue && !enableClickSelection;
-                // if deselecting, only proceed if not disabled by grid options
-                const deselectingWhenDisabled = !newValue && !enableDeselection;
                 // only transistion to same state if we also want to clear other selected nodes
                 const wouldStateBeUnchanged = newValue === currentSelection && !shouldClear;
 
-                if (wouldStateBeUnchanged || selectingWhenDisabled || deselectingWhenDisabled) {
+                if (wouldStateBeUnchanged || isBlockedByClickSelection(newValue)) {
                     return null;
                 }
 
@@ -414,12 +405,65 @@ export abstract class BaseSelectionService extends BeanStub {
                 };
             }
 
+            const newValue = !currentSelection;
+            if (isBlockedByClickSelection(newValue)) {
+                return null;
+            }
+
             return {
                 node,
-                newValue: !currentSelection,
+                newValue,
                 clearSelection: !isMultiSelect || shouldClear,
             };
         }
+    }
+
+    private isSpaceKeyBlocked(rowNode: RowNode, column: AgColumn | undefined, newValue: boolean): boolean {
+        const { gos } = this;
+        return (
+            this.isSpaceKeyClickGated('spaceKey', rowNode, column) &&
+            (newValue ? !_getEnableSelection(gos) : !_getEnableDeselection(gos))
+        );
+    }
+
+    /** Whether Space must obey `enableClickSelection`. On a selection checkbox cell it acts like clicking the checkbox. */
+    private isSpaceKeyClickGated(
+        source: SelectionEventSourceType,
+        rowNode: RowNode,
+        column: AgColumn | undefined
+    ): boolean {
+        return (
+            source === 'spaceKey' &&
+            _isInternalFeatureFlagEnabled(this.beans, 'spaceKeyFollowsClickSelection') &&
+            !this.isSelectionCheckboxShown(rowNode, column)
+        );
+    }
+
+    /** Whether `rowNode` shows a selection checkbox in `column`, or in its full-width row when there is no `column`. */
+    private isSelectionCheckboxShown(rowNode: RowNode, column: AgColumn | undefined): boolean {
+        if (column && this.isCellCheckboxSelection(column, rowNode)) {
+            return true;
+        }
+
+        // mirrors `GroupCellRendererCtrl.addCheckbox`
+        const rowSelection = this.gos.get('rowSelection');
+        if (typeof rowSelection !== 'object' || _getCheckboxLocation(rowSelection) !== 'autoGroupColumn') {
+            return false;
+        }
+
+        const checkboxes = _getCheckboxes(rowSelection);
+        if (column) {
+            return column.colDef.showRowGroup != null && column.isColumnFunc(rowNode, checkboxes);
+        }
+        if (!rowNode.group) {
+            return false;
+        }
+        if (typeof checkboxes !== 'function') {
+            return checkboxes;
+        }
+        // full-width rows have no column, as in `CheckboxSelectionComponent`
+        const params = _addGridCommonParams(this.gos, { node: rowNode as IRowNode, data: rowNode.data });
+        return checkboxes(params as CheckboxSelectionCallbackParams);
     }
 }
 

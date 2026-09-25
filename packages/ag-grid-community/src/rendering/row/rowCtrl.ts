@@ -1089,7 +1089,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public announceDescription(cellCtrl?: CellCtrl): void {
-        this.beans.selectionSvc?.announceAriaRowSelection(this.rowNode);
+        const { selectionSvc, focusSvc } = this.beans;
+        // selection changes announce without a cell, so use the focused one
+        const column =
+            cellCtrl?.column ??
+            (this.isFullWidth() ? undefined : (focusSvc.getFocusedCell()?.column as AgColumn | undefined));
+        selectionSvc?.announceAriaRowSelection(this.rowNode, column);
         this.announceNoteDescription(cellCtrl);
     }
 
