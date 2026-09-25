@@ -83,7 +83,9 @@ export const PresetButton = styled('button')`
 // instead of collapsing to 0. Nesting an extra plain block between this and
 // Main would break that.
 const Wrapper = styled('div')`
-    --scroller-height: 192px;
+    // A second name, because a host overriding --scroller-height on an ancestor
+    // would lose to this declaration of it.
+    --scroller-height: var(--preset-scroller-height, 192px);
 
     position: relative;
     width: 100%;

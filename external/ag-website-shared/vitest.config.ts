@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 import packageJson from '../../package.json';
 
@@ -12,9 +12,24 @@ const WEBSITE_PATH_PREFIX = {
     'ag-studio': '../../packages/ag-studio-docs',
 };
 
+// An unrecognised container is treated as ag-charts, so the aliases below still resolve.
+const CONTAINER_REPO = packageJson.name in WEBSITE_PATH_PREFIX ? packageJson.name : 'ag-charts';
+
+// The subrepo syncs whole, so every container receives all three theme builders. A foreign host's
+// tests assert against a product this repo may not install, or pins at its own version, so a
+// release of one product could redden an unrelated repository's CI. Run only our own host.
+const THEME_BUILDER_HOSTS = {
+    'ag-grid': 'theme-builder-grid',
+    'ag-charts': 'theme-builder-charts',
+    'ag-studio': 'theme-builder-studio',
+};
+
+const foreignThemeBuilderHosts = Object.entries(THEME_BUILDER_HOSTS)
+    .filter(([repo]) => repo !== CONTAINER_REPO)
+    .map(([, dir]) => `src/components/${dir}/**`);
+
 function resolvePath(srcPath) {
-    const pathPrefix = WEBSITE_PATH_PREFIX[packageJson.name] ?? WEBSITE_PATH_PREFIX['ag-charts'];
-    return path.resolve(__dirname, pathPrefix, srcPath);
+    return path.resolve(__dirname, WEBSITE_PATH_PREFIX[CONTAINER_REPO], srcPath);
 }
 
 export default defineConfig({
@@ -24,6 +39,7 @@ export default defineConfig({
         environment: 'node',
         pool: 'threads',
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        exclude: [...configDefaults.exclude, ...foreignThemeBuilderHosts],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-website-shared', provider: 'v8' },
     },

@@ -1,5 +1,6 @@
 import type { GetElement } from '.';
 import {
+    AG_CELL_SELECTOR,
     AG_CHARTS_CANVAS,
     AG_CHARTS_LEGEND_BUTTONS_SELECTOR,
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
@@ -171,7 +172,8 @@ export const agElementsConfig: AgElementsConfigItem = {
                 return;
             }
 
-            const cellEl = rowEl.children[colIndex] as HTMLElement;
+            // Cells are not direct children of the row, as they are wrapped in a cells container
+            const cellEl = rowEl.querySelectorAll<HTMLElement>(AG_CELL_SELECTOR)[colIndex];
             if (!cellEl) {
                 return;
             }

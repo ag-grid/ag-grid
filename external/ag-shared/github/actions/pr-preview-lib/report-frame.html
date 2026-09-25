@@ -1,0 +1,114 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Report frame</title>
+<!--
+    Inner half of the viewer. Never open this directly — viewer.html embeds it in a sandboxed
+    iframe, which is what puts this document in an opaque origin.
+
+    Why the fetch happens HERE rather than in viewer.html: handing a fetched 800 KB document to a
+    sandboxed frame from outside means encoding it into srcdoc or a data: URL, and both fail at this
+    size on Chrome 141 (srcdoc silently loads nothing; a data: URL renders blank on first navigation
+    and only paints if the identical URL is assigned a second time). Fetching from inside the frame
+    sidesteps the size ceiling entirely — the payload never has to travel through a URL or an
+    attribute.
+
+    Fetching cross-origin still works from here despite the opaque origin: the request carries
+    `Origin: null`, and raw.githubusercontent.com answers with `access-control-allow-origin: *`.
+-->
+<script>
+    (() => {
+        'use strict';
+        // Exact owner/repo values, never a pattern. This page renders fetched HTML, and it is
+        // served from a domain that also hosts our PR previews, so an attacker who can choose the
+        // repo can put their own page under our name — the sandbox stops it touching our storage
+        // but does nothing about what the address bar says. Keep this list in step with the copy
+        // in viewer.html.
+        const ALLOWED_REPOS = ['ag-grid/ag-charts'];
+
+        function report(kind, detail) {
+            // The parent cannot read into this opaque-origin document, so outcomes are posted out.
+            parent.postMessage({ source: 'report-frame', kind, detail }, '*');
+        }
+
+        // Refuse to run anywhere but an opaque origin. This document executes HTML it fetched, so
+        // the isolation is not a nicety — it is the only thing standing between fetched content
+        // and ag-grid.github.io's storage and same-origin resources.
+        //
+        // The check is on the origin itself rather than on being framed. Sandboxing is applied by
+        // the EMBEDDING page, so this file cannot infer it: opened directly it runs top-level and
+        // unsandboxed, and a `window !== parent` test is no better, since anyone may frame this URL
+        // from their own site without a sandbox and get the same unsandboxed execution. A sandbox
+        // without allow-same-origin is exactly what makes `self.origin` the string 'null', so
+        // testing for that is testing for the property actually being relied on.
+        //
+        // Fails closed if origin is unavailable.
+        if (self.origin !== 'null') {
+            // document.write, not document.body: this script runs while the document is still
+            // parsing, so there is no body element to write into yet. The string is a literal.
+            document.write('This page only runs inside the sandboxed frame in viewer.html.');
+            return;
+        }
+
+        // Params arrive on our own URL, put there by viewer.html, which has already validated them.
+        // Re-validated here anyway: this file is fetchable directly, so it cannot assume a caller.
+        const q = new URLSearchParams(location.search);
+        const repo = q.get('repo') || '';
+        const sha = q.get('sha') || '';
+        const path = q.get('path') || '';
+
+        const bad =
+            !ALLOWED_REPOS.includes(repo) ||
+            !/^[0-9a-f]{40}$/.test(sha) ||
+            !/^[A-Za-z0-9._\-/]+$/.test(path) ||
+            path.includes('..') ||
+            path.startsWith('/');
+
+        if (bad) {
+            report('error', 'Malformed or disallowed parameters.');
+            return;
+        }
+
+        fetch(`https://raw.githubusercontent.com/${repo}/${sha}/${path}`, {
+            credentials: 'omit',
+            referrerPolicy: 'no-referrer',
+        })
+            .then((res) => {
+                if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+                return res.text();
+            })
+            .then((html) => {
+                // document.write, not innerHTML: the report is a whole document whose inline
+                // scripts must execute, and innerHTML never runs injected <script> elements.
+                // Rewriting the document does not disturb this script — document.open() replaces
+                // the document, not the global object, so the closure below keeps running.
+                document.open();
+                document.write(html);
+                document.close();
+                report('ready', html.length);
+
+                // The frame reports its own height so the parent can size it to its content and
+                // let the OUTER page own the scrollbar. Without this the report scrolls inside a
+                // viewport-height frame, which gives two nested scrollbars and hides the report's
+                // own sticky header behind the viewer's.
+                let last = 0;
+                const publishHeight = () => {
+                    // getBoundingClientRect, NOT scrollHeight. scrollHeight on the root is at least
+                    // the viewport height, and the parent sets the frame's viewport to whatever we
+                    // report — so a measurement taken that way can never come back smaller than the
+                    // last one. Expanding a case would grow the frame permanently and collapsing it
+                    // would leave the blank space behind. The root element's layout box is sized to
+                    // its content and is not clamped to the viewport, so it can shrink again.
+                    const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+                    if (h && h !== last) {
+                        last = h;
+                        report('height', h);
+                    }
+                };
+                publishHeight();
+                // Expanding a case changes the height long after load, so watch rather than
+                // measure once.
+                new ResizeObserver(publishHeight).observe(document.documentElement);
+            })
+            .catch((e) => report('error', e && e.status ? `HTTP ${e.status}` : String(e && e.message)));
+    })();
+</script>
