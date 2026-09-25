@@ -473,6 +473,28 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return result;
     }
 
+    /** The column whose cell covers `column` in `rowNode`, stepping spans as `getColsForRow` does. */
+    public getSpanningCol(rowNode: RowNode, column: AgColumn): AgColumn {
+        const lane = column.pinnedLane;
+        let cols = this.centerCols;
+        if (lane === 0) {
+            cols = this.leftCols;
+        } else if (lane === 2) {
+            cols = this.rightCols;
+        }
+
+        const target = cols.indexOf(column);
+        let i = 0;
+        while (i <= target) {
+            const col = cols[i];
+            i += col.getColSpan(rowNode);
+            if (i > target) {
+                return col;
+            }
+        }
+        return column;
+    }
+
     public getColBefore(col: AgColumn): AgColumn | null {
         const idx = col.allColsIndex;
         return idx > 0 ? this.allCols[idx - 1] : null;

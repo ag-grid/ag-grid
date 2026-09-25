@@ -113,4 +113,28 @@ describe('Legacy colSpan rendering', () => {
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
         `);
     });
+
+    test('a colSpan of NaN renders the cell one column wide', () => {
+        const nanColumnDefs = [{ ...columnDefs[0], colSpan: () => Number.NaN }, columnDefs[1], columnDefs[2]];
+        const api = gridsManager.createGrid('myGrid', { columnDefs: nanColumnDefs, rowData });
+
+        const row0 = getGridElement(api)!.querySelector('[row-index="0"]')!;
+        const widths = ['a', 'b', 'c'].map(
+            (colId) => (row0.querySelector(`[col-id="${colId}"]`) as HTMLElement | null)?.style.width
+        );
+
+        expect(widths).toEqual(['100px', '100px', '100px']);
+    });
+
+    test('a fractional colSpan renders the whole columns it covers', () => {
+        const fractionalColumnDefs = [{ ...columnDefs[0], colSpan: () => 2.5 }, columnDefs[1], columnDefs[2]];
+        const api = gridsManager.createGrid('myGrid', { columnDefs: fractionalColumnDefs, rowData });
+
+        const row0 = getGridElement(api)!.querySelector('[row-index="0"]')!;
+        const widths = ['a', 'b', 'c'].map(
+            (colId) => (row0.querySelector(`[col-id="${colId}"]`) as HTMLElement | null)?.style.width
+        );
+
+        expect(widths).toEqual(['200px', undefined, '100px']);
+    });
 });

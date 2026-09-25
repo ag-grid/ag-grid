@@ -785,8 +785,7 @@ export class AgColumn<TValue = any>
             return 1;
         }
         const params: ColSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const colSpan = colSpanFn(params);
-        return colSpan < 1 ? 1 : colSpan; // colSpan must be number equal to or greater than 1
+        return toCellSpan(colSpanFn(params));
     }
 
     public getRowSpan(rowNode: IRowNode): number {
@@ -795,8 +794,7 @@ export class AgColumn<TValue = any>
             return 1;
         }
         const params: RowSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const rowSpanValue = rowSpan(params);
-        return rowSpanValue < 1 ? 1 : rowSpanValue; // rowSpan must be number equal to or greater than 1
+        return toCellSpan(rowSpan(params));
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
@@ -913,6 +911,9 @@ export class AgColumn<TValue = any>
         this.colEventSvc?.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
     }
 }
+
+/** A span counts whole cells, at least one: a fraction rounds down and anything below 2, NaN included, spans one. */
+const toCellSpan = (span: number): number => (span >= 2 ? Math.floor(span) : 1);
 
 /** Convert input into a SortDef: a valid SortDef passes through, otherwise direction and type are normalised. */
 export const getSortDefFromInput = (input?: unknown): SortDef => {

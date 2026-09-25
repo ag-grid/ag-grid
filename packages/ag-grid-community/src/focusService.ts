@@ -7,7 +7,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
-import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
+import { _areCellsEqual, _getFirstRow, _getFocusColumn, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
@@ -634,8 +634,10 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const rowNode = _getRowNode(this.beans, nextRow);
+        const position: CellPosition = { rowIndex: nextRow.rowIndex, rowPinned: nextRow.rowPinned, column };
+        const cellColumn = _getFocusColumn(this.beans, position);
 
-        if (!rowNode || column.isSuppressNavigable(rowNode)) {
+        if (!rowNode || cellColumn.isSuppressNavigable(rowNode)) {
             return null;
         }
 
@@ -646,11 +648,7 @@ export class FocusService extends BeanStub implements NamedBean {
             }
         }
 
-        return {
-            rowIndex: nextRow.rowIndex,
-            rowPinned: nextRow.rowPinned,
-            column,
-        };
+        return { ...position, column: cellColumn };
     }
 
     public focusGridView(params: {
@@ -696,49 +694,47 @@ export class FocusService extends BeanStub implements NamedBean {
                 return false;
             }
 
-            if (column.isSuppressNavigable(rowNode)) {
-                if (_isClientSideLoadingRow(this.gos, rowNode)) {
-                    if (backwards && !_isHeaderFocusSuppressed(this.beans)) {
-                        return this.focusLastHeader();
-                    }
-                    return canFocusOverlay && this.focusOverlay(backwards);
+            const navigation = this.navigation;
+            const position: CellPosition = { rowIndex, column, rowPinned: _makeNull(rowPinned) };
+
+            if (_isClientSideLoadingRow(this.gos, rowNode) && column.isSuppressNavigable(rowNode)) {
+                if (backwards && !_isHeaderFocusSuppressed(this.beans)) {
+                    return this.focusLastHeader();
                 }
+                return canFocusOverlay && this.focusOverlay(backwards);
+            }
+
+            if (_getFocusColumn(this.beans, position).isSuppressNavigable(rowNode)) {
                 const isRtl = this.gos.get('enableRtl');
                 let key: string;
                 if (!event || event.key === KeyCode.TAB) {
-                    key = isRtl ? KeyCode.LEFT : KeyCode.RIGHT;
+                    key = isRtl !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
                 } else {
                     key = event.key;
                 }
 
-                this.beans.navigation?.navigateToNextCell(
-                    null,
-                    key,
-                    { rowIndex, column, rowPinned: rowPinned || null },
-                    true
-                );
+                navigation?.navigateToNextCell(null, key, position, true);
                 return true;
             }
 
-            this.navigation?.ensureCellVisible({ rowIndex, column, rowPinned });
+            navigation?.ensureCellVisible(position);
 
             if (backwards) {
                 // if full width we need to focus into the full width cell in the correct direction
                 const rowCtrl = this.rowRenderer.getRowByPosition(nextRow);
-                if (rowCtrl?.isFullWidth() && this.navigation?.tryToFocusFullWidthRow(nextRow, backwards)) {
+                if (rowCtrl?.isFullWidth() && navigation?.tryToFocusFullWidthRow(nextRow, backwards)) {
                     return true;
                 }
             }
 
-            this.setFocusedCell({
-                rowIndex,
-                column,
-                rowPinned: _makeNull(rowPinned),
-                forceBrowserFocus: true,
-            });
+            if (navigation?.focusCell(position, true)) {
+                return true;
+            }
+
+            this.setFocusedCell({ ...position, forceBrowserFocus: true });
 
             if (!isRowNumberCol(column)) {
-                this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
+                this.beans.rangeSvc?.setRangeToCell(position);
             }
 
             return true;
