@@ -67,6 +67,35 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 {% interfaceDocumentation interfaceName="NewFiltersToolPanelState" config={"description": ""} /%}
 
+### Managing Tool Panel State
+
+The filter cards shown in the tool panel are part of the [Side Bar](./side-bar/) state, which is separate from the filter model. Clearing the filter model with `api.setFilterModel(null)` therefore clears the filter values but leaves the (now inactive) cards in place.
+
+To remove every card, set the Side Bar state again with an empty `filters` array. Note that removing a card also clears that column's filter, so the rows are unfiltered as well:
+
+```
+api.setState({
+    sideBar: {
+        visible: true,
+        position: 'right',
+        openToolPanel: 'filters-new',
+        toolPanels: {
+            'filters-new': { filters: [] },
+        },
+    },
+});
+```
+
+A saved layout can be restored the same way, by passing a previously captured `sideBar` state. Pass the `filter` state alongside it to restore each card's values as well as the cards themselves. See [Grid State](./grid-state/) for the full `getState` and `setState` semantics.
+
+The example below demonstrates these operations:
+
+- **Clear Filter Values** calls `api.setFilterModel(null)`. The rows are unfiltered, but the cards remain.
+- **Clear Tool Panel** sets the Side Bar state with `filters: []`. Every card is removed and the rows are unfiltered.
+- **Restore Initial State** sets the Side Bar state back to the state the grid was created with.
+- **Save State** captures the current grid state with `api.getState()`.
+- **Restore Saved State** applies the saved `filter` and `sideBar` state, restoring both the cards and their values.
+
 {% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
 
 ## Filter Instances
