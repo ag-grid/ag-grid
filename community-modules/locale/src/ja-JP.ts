@@ -736,6 +736,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaFilterList: 'フィルターリスト',
     ariaFilterToValue: '値までフィルター',
     ariaFilterValue: 'フィルター値',
+    ariaNotInCurrentData: '現在のデータにありません',
     ariaFilterMenuOpen: 'フィルターメニューを開く',
     ariaFilteringOperator: 'フィルター演算子',
     ariaHidden: '非表示',

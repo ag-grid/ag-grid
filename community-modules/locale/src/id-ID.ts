@@ -755,6 +755,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaFilterList: 'Daftar Filter',
     ariaFilterToValue: 'Filter ke nilai',
     ariaFilterValue: 'Nilai Filter',
+    ariaNotInCurrentData: 'tidak ada di data saat ini',
     ariaFilterMenuOpen: 'Buka Menu Filter',
     ariaFilteringOperator: 'Operator Pemfilteran',
     ariaHidden: 'tersembunyi',

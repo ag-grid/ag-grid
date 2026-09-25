@@ -736,6 +736,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaFilterList: '필터 목록',
     ariaFilterToValue: '값까지 필터',
     ariaFilterValue: '필터 값',
+    ariaNotInCurrentData: '현재 데이터에 없음',
     ariaFilterMenuOpen: '필터 메뉴 열기',
     ariaFilteringOperator: '필터링 연산자',
     ariaHidden: '숨김',

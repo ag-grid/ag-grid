@@ -754,6 +754,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaFilterList: 'Filtru saraksts',
     ariaFilterToValue: 'Filtrēt līdz vērtībai',
     ariaFilterValue: 'Filtra vērtība',
+    ariaNotInCurrentData: 'nav pašreizējos datos',
     ariaFilterMenuOpen: 'Atvērt filtra izvēlni',
     ariaFilteringOperator: 'Filtrēšanas operators',
     ariaHidden: 'slēpts',

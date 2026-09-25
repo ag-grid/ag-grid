@@ -738,6 +738,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaFilterList: 'Filter Lijst',
     ariaFilterToValue: 'Filter naar waarde',
     ariaFilterValue: 'Filter Waarde',
+    ariaNotInCurrentData: 'niet in de huidige gegevens',
     ariaFilterMenuOpen: 'Open Filtermenu',
     ariaFilteringOperator: 'Filter Operator',
     ariaHidden: 'verborgen',

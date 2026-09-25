@@ -752,6 +752,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaFilterList: 'Lista filtera',
     ariaFilterToValue: 'Filtriraj do vrednosti',
     ariaFilterValue: 'Vrednost filtera',
+    ariaNotInCurrentData: 'nije u trenutnim podacima',
     ariaFilterMenuOpen: 'Otvori meni filtera',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skriveno',

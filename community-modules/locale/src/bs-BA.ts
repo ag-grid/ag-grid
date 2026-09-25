@@ -754,6 +754,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaFilterList: 'Lista filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
+    ariaNotInCurrentData: 'nije u trenutnim podacima',
     ariaFilterMenuOpen: 'Otvori meni filtera',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skriveno',

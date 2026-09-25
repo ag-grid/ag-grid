@@ -751,6 +751,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaFilterList: 'รายการตัวกรอง',
     ariaFilterToValue: 'กรองถึงค่า',
     ariaFilterValue: 'ค่าตัวกรอง',
+    ariaNotInCurrentData: 'ไม่มีในข้อมูลปัจจุบัน',
     ariaFilterMenuOpen: 'เปิดเมนูตัวกรอง',
     ariaFilteringOperator: 'ตัวดำเนินการกรอง',
     ariaHidden: 'ซ่อนอยู่',

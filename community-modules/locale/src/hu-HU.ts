@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaFilterList: 'Szűrő lista',
     ariaFilterToValue: 'Szűrés értékig',
     ariaFilterValue: 'Szűrő érték',
+    ariaNotInCurrentData: 'nem szerepel az aktuális adatokban',
     ariaFilterMenuOpen: 'Szűrő menü megnyitása',
     ariaFilteringOperator: 'Szűrő operátor',
     ariaHidden: 'elrejtve',

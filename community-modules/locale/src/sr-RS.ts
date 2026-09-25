@@ -752,6 +752,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaFilterList: 'Листа филтера',
     ariaFilterToValue: 'Филтрирај до вредности',
     ariaFilterValue: 'Вредност филтера',
+    ariaNotInCurrentData: 'није у тренутним подацима',
     ariaFilterMenuOpen: 'Отвори мени филтера',
     ariaFilteringOperator: 'Оператор филтрирања',
     ariaHidden: 'скривено',

@@ -71,7 +71,10 @@ export interface SetFilterHandler<TValue = string> {
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;
 
-    /** Returns the full list of unique values used by the Set Filter. */
+    /**
+     * Returns the full list of unique values used by the Set Filter.
+     * A model value `preservePreviousValues` keeps without ever seeing it in the data is `null`.
+     */
     getFilterValues(): (TValue | null)[];
 
     /** Sets the values used in the Set Filter on the fly. */
@@ -87,6 +90,12 @@ export interface SetFilterHandler<TValue = string> {
      * provided directly.
      */
     resetFilterValues(): void;
+    /**
+     * Discards the values kept by `preservePreviousValues` that are no longer in the current values, then reconciles
+     * the filter model against the remaining values as it is without the option.
+     * @param onlyUnselected If `true`, only values not in the applied filter model are discarded, and the model is left as it is.
+     */
+    clearPreservedValues(onlyUnselected?: boolean): void;
 }
 
 export interface SetFilterUi<TValue = string> {
@@ -246,12 +255,25 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * By default, if using provided filter values and there is an active filter model,
      * when the filter values are refreshed such that every value is in the filter model,
-     * the filter model will be cleared (reset to `null`).
+     * the filter model will be cleared (reset to `null`), unless `preservePreviousValues` is set.
      *
      * To prevent this behaviour, set this property to `true`.
      * This is useful if using SSRM and updating the filter values based on other column filters.
      */
     suppressClearModelOnRefreshValues?: boolean;
+    /**
+     * If `true`, values that leave the data (or the provided values) stay in the Filter List with their selected
+     * state, so they are filtered the same way when they return. Model values not in the data are kept too.
+     * @default false
+     */
+    preservePreviousValues?: boolean;
+    /**
+     * Requires `preservePreviousValues = true`. The most unselected values to keep once they are no longer in
+     * the data; the first to leave is discarded first. Values in the filter model are always kept and not counted.
+     * Set to `0` to keep only those, or `-1` for no limit.
+     * @default 100
+     */
+    preservePreviousValuesLimit?: number;
 }
 
 /**

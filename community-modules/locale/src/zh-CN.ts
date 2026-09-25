@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaFilterList: '过滤器列表',
     ariaFilterToValue: '过滤至值',
     ariaFilterValue: '过滤值',
+    ariaNotInCurrentData: '不在当前数据中',
     ariaFilterMenuOpen: '打开过滤器菜单',
     ariaFilteringOperator: '过滤运算符',
     ariaHidden: '隐藏',

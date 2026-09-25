@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaFilterList: 'Filtre Listesi',
     ariaFilterToValue: 'Değere filtrele',
     ariaFilterValue: 'Filtre Değeri',
+    ariaNotInCurrentData: 'mevcut verilerde yok',
     ariaFilterMenuOpen: 'Filtre Menüsünü Aç',
     ariaFilteringOperator: 'Filtreleme Operatörü',
     ariaHidden: 'gizli',

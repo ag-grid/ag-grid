@@ -251,12 +251,12 @@ const gridOptions = {
 }
 ```
 
-When you refresh the values, any values that were selected in the filter that still exist in the new values will stay selected, but any other selected values will be discarded.
+When you refresh the values, any values that were selected in the filter that still exist in the new values will stay selected, but any other selected values will be discarded, unless [`preservePreviousValues`](./filter-set-data-updates/#preserving-previous-values) is set.
 
-Additionally, if all the new values are selected (and the filter was previously active), the filter model will be cleared (reset to `null`). This behaviour can be prevented by setting the filter param `suppressClearModelOnRefreshValues = true`. This can be useful if using [Server-Side Row Model Filtering](./server-side-model-filtering/#set-filtering) and updating the filter values based on other column filters
+Additionally, if all the new values are selected (and the filter was previously active), the filter model will be cleared (reset to `null`), unless `preservePreviousValues` is set. This behaviour can be prevented by setting the filter param `suppressClearModelOnRefreshValues = true`. This can be useful if using [Server-Side Row Model Filtering](./server-side-model-filtering/#set-filtering) and updating the filter values based on other column filters
 
 {% note %}
-The same reconciliation applies when a model is set via [`setColumnFilterModel`](./filter-set-api/#set-filter-model). When values are taken from the grid (the default, with no `filterParams.values` supplied), a model selecting values that are not currently present is reduced to the matching subset, or cleared if none match. Those selections are discarded, not retained: if the missing values later appear in the grid data they are not re-selected. Supply `filterParams.values` to keep selections for values that are not currently in the data. This differs from the [Excel Mode](./filter-set-excel-mode/) comparison, which describes behaviour while interacting with the filter UI.
+The same reconciliation applies when a model is set via [`setColumnFilterModel`](./filter-set-api/#set-filter-model). When values are taken from the grid (the default, with no `filterParams.values` supplied), a model selecting values that are not currently present is reduced to the matching subset, or cleared if none match. Those selections are discarded, not retained: if the missing values later appear in the grid data they are not re-selected. Set [`preservePreviousValues`](./filter-set-data-updates/#preserving-previous-values), or supply `filterParams.values`, to keep selections for values that are not currently in the data. This differs from the [Excel Mode](./filter-set-excel-mode/) comparison, which describes behaviour while interacting with the filter UI.
 {% /note %}
 
 The following example demonstrates refreshing values. Note the following:

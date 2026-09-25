@@ -12,7 +12,7 @@ import {
 
 import type { GridApi, ISetFilterParams, SetAdvancedFilterModel } from 'ag-grid-community';
 
-import { DEFAULT_OPTIONS, SET_MODULES } from './advancedFilterSetFixture';
+import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES } from './advancedFilterSetFixture';
 
 describe('Advanced Filter - Set Filter in the Builder', () => {
     const gridsManager = new TestGridsManager({ modules: SET_MODULES });
@@ -398,6 +398,66 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
             .filter((el) => el.querySelector('input[type="checkbox"]:checked'))
             .map((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim());
         expect(checked).toEqual(['Jamaica']);
+    });
+
+    test('with preservePreviousValues the picker keeps a condition value whose rows are gone, muted', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+        });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Jamaica'] });
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica')
+        );
+        await asyncSetTimeout(0);
+        await openPicker(api);
+
+        const items = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item`));
+        const label = (el: HTMLElement) => el.querySelector('.ag-checkbox-label')?.textContent?.trim();
+        expect(items.filter((el) => el.querySelector('input[type="checkbox"]:checked')).map(label)).toEqual([
+            'Jamaica',
+        ]);
+        expect(items.filter((el) => el.classList.contains('ag-set-filter-item-missing')).map(label)).toEqual([
+            'Jamaica',
+        ]);
+        expect(label(items[items.length - 1])).toBe('Jamaica');
+    });
+
+    test('the Advanced Filter caps the values it keeps, as nothing is checked in its own list', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 1 },
+                },
+            ],
+        });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Poland'] });
+        for (const gone of ['Jamaica', 'United Kingdom', 'United States']) {
+            api.setGridOption(
+                'rowData',
+                ROW_DATA.filter((row) => row.country === 'Poland' || row.country === gone)
+            );
+            await asyncSetTimeout(0);
+        }
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country === 'Poland')
+        );
+        await asyncSetTimeout(0);
+        await openPicker(api);
+
+        const missing = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item-missing`));
+        expect(missing.map((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim())).toEqual([
+            'United States',
+        ]);
     });
 
     test('choosing another value in the picker updates the pill, the model and the rows', async () => {

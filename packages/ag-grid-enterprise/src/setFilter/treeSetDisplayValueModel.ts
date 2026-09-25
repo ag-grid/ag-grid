@@ -35,13 +35,11 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     constructor(
         private readonly log: LogService,
         private readonly formatter: TextFormatter,
-        private treeListPathGetter?: (value: V | null) => string[] | null,
-        private treeListFormatter?: (
-            pathKey: string | null,
-            level: number,
-            parentPathKeys: (string | null)[]
-        ) => string,
-        private readonly treeDataOrGrouping?: boolean
+        private treeListPathGetter: ((value: V | null) => string[] | null) | undefined,
+        private treeListFormatter:
+            ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined,
+        private readonly treeDataOrGrouping: boolean,
+        private readonly isKeyOnly: (key: string | null) => boolean
     ) {}
 
     public updateParams(
@@ -101,9 +99,10 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         let groupsExist = false;
 
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
+        const isKeyOnly = this.isKeyOnly;
         for (const key of allKeys) {
-            const value = getValue(key)!;
-            const dataPath = treeListPathGetter(value) ?? [null];
+            // A value known only by its key has no path to ask for, so it is a leaf at the root.
+            const dataPath = isKeyOnly(key) ? [key] : (treeListPathGetter(getValue(key)!) ?? [null]);
             const dataPathLength = dataPath.length;
             if (dataPathLength > 1) {
                 groupsExist = true;
@@ -165,6 +164,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         // infer from data
         let isDate = false;
         for (const availableKey of availableKeys) {
+            if (this.isKeyOnly(availableKey)) {
+                continue;
+            }
             // find the first non-null value
             const value = getValue(availableKey);
             if (value instanceof Date) {

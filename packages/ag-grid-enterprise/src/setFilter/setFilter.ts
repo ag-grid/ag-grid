@@ -56,6 +56,7 @@ export class SetFilter<V = string>
     private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
 
     private hardRefreshVirtualList = false;
+    private keyOnlyResolved = 0;
 
     public handler: SetFilterHandler<V>;
     private handlerDestroyFuncs?: (() => void)[];
@@ -87,19 +88,22 @@ export class SetFilter<V = string>
         this.formatter =
             _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
+        const isKeyOnly = (key: string | null) => this.handler.valueModel.keyOnlyKeys.has(key);
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
                   this.beans.log,
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
-                  handler.isTreeDataOrGrouping()
+                  handler.isTreeDataOrGrouping(),
+                  isKeyOnly
               )
             : (new FlatSetDisplayValueModel<V>(
                   this.beans.valueSvc,
                   () => this.handler.valueFormatter,
                   this.formatter,
-                  column as AgColumn
+                  column as AgColumn,
+                  isKeyOnly
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
@@ -178,7 +182,10 @@ export class SetFilter<V = string>
                             if (this.isAlive()) {
                                 this.updateDisplayedValues('reload', values ?? []);
                                 this.setSelectedModel(this.state.model?.values ?? null);
-                                if (hardRefresh) {
+                                // A row made for a key alone is rebuilt once its value arrives.
+                                const keyOnlyResolved = handler.valueModel.keyOnlyResolved;
+                                if (hardRefresh || keyOnlyResolved !== this.keyOnlyResolved) {
+                                    this.keyOnlyResolved = keyOnlyResolved;
                                     this.hardRefreshVirtualList = true;
                                 }
                                 this.checkAndRefreshVirtualList();
@@ -193,6 +200,7 @@ export class SetFilter<V = string>
                 }),
             ];
             this.handler = handler;
+            this.keyOnlyResolved = handler.valueModel.keyOnlyResolved;
         }
         return handler;
     }
@@ -440,6 +448,8 @@ export class SetFilter<V = string>
             isGroup,
             isExpanded,
             hasIndeterminateExpandState,
+            isMissing: this.isItemMissing(item),
+            isKeyOnly: !this.isSetFilterModelTreeItem(item) && this.handler.valueModel.keyOnlyKeys.has(item),
         };
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
@@ -537,8 +547,12 @@ export class SetFilter<V = string>
         }
 
         // List item
+        const valueModel = this.handler.valueModel;
         return {
-            value: this.handler.valueModel.allValues.get(item) ?? null,
+            // Labelled by its key, never formatted as a value it does not have.
+            value: valueModel.keyOnlyKeys.has(item)
+                ? () => this.handler.getFormattedValue(item)
+                : (valueModel.allValues.get(item) ?? null),
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) =>
                 this.onItemSelected(e.item, e.isSelected),
         };
@@ -549,7 +563,24 @@ export class SetFilter<V = string>
         component: SetFilterListItem<V | string | null>
     ): void {
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
-        component.refresh(item, isSelected, isExpanded);
+        component.refresh(item, isSelected, isExpanded, this.isItemMissing(item));
+    }
+
+    private isItemMissing(item: SetFilterModelTreeItem | string | null): boolean {
+        const missingKeys = this.handler.valueModel.missingKeys;
+        if (!missingKeys.size) {
+            return false;
+        }
+        if (this.isSetFilterModelTreeItem(item)) {
+            const displayValueModel = this.displayValueModel;
+            // The (Select All) row spans the whole list, so it is never muted even when everything is retained.
+            return (
+                item !== displayValueModel.getSelectAllItem() &&
+                item !== displayValueModel.getAddSelectionToFilterItem() &&
+                isTreeItemMissing(item, missingKeys)
+            );
+        }
+        return missingKeys.has(item);
     }
 
     private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): {
@@ -1034,7 +1065,7 @@ export class SetFilter<V = string>
             this.displayValueModel.updateDisplayedValuesToAllAvailable(
                 (key: string | null) => valueModel.allValues.get(key) ?? null,
                 allKeys,
-                valueModel.availableKeys,
+                valueModel.displayableKeys,
                 source
             );
             return;
@@ -1052,7 +1083,7 @@ export class SetFilter<V = string>
         this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
             (key: string | null) => valueModel.allValues.get(key) ?? null,
             allKeys,
-            valueModel.availableKeys,
+            valueModel.displayableKeys,
             matchesFilter,
             nullMatchesFilter,
             source
@@ -1202,6 +1233,25 @@ export class SetFilter<V = string>
 
         super.destroy();
     }
+}
+
+/** Whether every key under the item, its own and its descendants', is missing. */
+function isTreeItemMissing(item: SetFilterModelTreeItem, missingKeys: Set<string | null>): boolean {
+    const keys = item.keys ?? NO_SET_FILTER_KEYS;
+    for (let i = 0, len = keys.length; i < len; ++i) {
+        if (!missingKeys.has(keys[i])) {
+            return false;
+        }
+    }
+    const children = item.children;
+    if (children) {
+        for (const child of children.values()) {
+            if (!isTreeItemMissing(child, missingKeys)) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 class ModelWrapper<V> implements VirtualListModel {

@@ -741,6 +741,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaNotInCurrentData: 'not in current data',
     ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',

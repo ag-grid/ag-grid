@@ -741,6 +741,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaFilterList: 'Suodatinlista',
     ariaFilterToValue: 'Suodata arvoon',
     ariaFilterValue: 'Suodattimen arvo',
+    ariaNotInCurrentData: 'ei ole nykyisissä tiedoissa',
     ariaFilterMenuOpen: 'Avaa suodattimen valikko',
     ariaFilteringOperator: 'Suodatuksen operaattori',
     ariaHidden: 'piilotettu',

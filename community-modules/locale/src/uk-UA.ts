@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaFilterList: 'Список фільтрів',
     ariaFilterToValue: 'Фільтрувати до значення',
     ariaFilterValue: 'Значення фільтру',
+    ariaNotInCurrentData: 'немає в поточних даних',
     ariaFilterMenuOpen: 'Відкрити меню фільтру',
     ariaFilteringOperator: 'Оператор фільтрування',
     ariaHidden: 'приховано',

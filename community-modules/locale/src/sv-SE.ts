@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaFilterList: 'Filterlista',
     ariaFilterToValue: 'Filtrera till värde',
     ariaFilterValue: 'Filtervärde',
+    ariaNotInCurrentData: 'finns inte i aktuella data',
     ariaFilterMenuOpen: 'Öppna filtermeny',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'dold',

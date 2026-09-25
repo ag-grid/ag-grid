@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaFilterList: 'Λίστα Φίλτρων',
     ariaFilterToValue: 'Φίλτρο σε τιμή',
     ariaFilterValue: 'Τιμή Φίλτρου',
+    ariaNotInCurrentData: 'δεν υπάρχει στα τρέχοντα δεδομένα',
     ariaFilterMenuOpen: 'Άνοιγμα Μενού Φίλτρου',
     ariaFilteringOperator: 'Τελεστής Φιλτραρίσματος',
     ariaHidden: 'κρυφό',

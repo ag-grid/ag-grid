@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaFilterList: 'قائمة الفلترة',
     ariaFilterToValue: 'الفلترة إلى القيمة',
     ariaFilterValue: 'قيمة الفلترة',
+    ariaNotInCurrentData: 'غير موجود في البيانات الحالية',
     ariaFilterMenuOpen: 'فتح قائمة الفلترة',
     ariaFilteringOperator: 'مشغل الفلترة',
     ariaHidden: 'مخفي',
