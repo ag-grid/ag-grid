@@ -333,6 +333,50 @@ export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, piv
     return !!node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode);
 }
 
+export type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
+
+export function _isFullWidthCellRow(gos: GridOptionsService, rowNode: RowNode): boolean {
+    if (_isClientSideLoadingRow(gos, rowNode)) {
+        return false;
+    }
+    if (rowNode.detail) {
+        return true;
+    }
+
+    const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
+    return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode }) : false;
+}
+
+/** How a row renders, decided from the node alone so it holds before the row is rendered. */
+export function _getRowType(beans: BeanCollection, rowNode: RowNode): RowType {
+    const { gos, colModel, rowModel } = beans;
+    // groupHideOpenParents implicitly disables full width loading
+    const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow');
+    const groupHideOpenParents = gos.get('groupHideOpenParents');
+    const isServerSide = rowModel.getType() === 'serverSide';
+    const isStub = isServerSide && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
+    const isFullWidthCell = _isFullWidthCellRow(gos, rowNode);
+    const isDetailCell = gos.get('masterDetail') && rowNode.detail;
+    const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, colModel.pivotMode);
+    // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
+    // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
+    const isSuppressedGroupStub = suppressFullWidthLoading && rowNode.stub && isFullWidthGroup && !groupHideOpenParents;
+
+    if (isStub) {
+        return 'FullWidthLoading';
+    }
+    if (isDetailCell) {
+        return 'FullWidthDetail';
+    }
+    if (isFullWidthCell) {
+        return 'FullWidth';
+    }
+    if (isFullWidthGroup && !isSuppressedGroupStub) {
+        return 'FullWidthGroup';
+    }
+    return 'Normal';
+}
+
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowIdCallback<TData = any>(

@@ -30,14 +30,16 @@ import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContai
 import {
     _addGridCommonParams,
     _getRowHeightForNode,
+    _getRowType,
     _isAnimateRows,
     _isClientSideLoadingRow,
     _isDomLayout,
-    _isFullWidthGroupRow,
+    _isFullWidthCellRow,
     _isGetRowHeightFunction,
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
+import type { RowType } from '../../gridOptionsUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
 import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -60,8 +62,6 @@ import { DOM_DATA_KEY_ROW_CTRL } from '../renderUtils';
 import { FullWidthRowFeature } from './fullWidthRowFeature';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import { NormalRowFeature } from './normalRowFeature';
-
-type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
 let instanceIdSequence = 0;
 export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
@@ -111,7 +111,7 @@ type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 
-    private rowType: RowType;
+    private readonly rowType: RowType;
 
     private rowGui: RowGui | undefined;
     private readonly rowModeFeature: IRowModeFeature;
@@ -175,7 +175,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowFocused = beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.rowLevel = calculateRowLevel(this.rowNode);
 
-        this.setRowType();
+        this.rowType = _getRowType(this.beans, this.rowNode);
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
         this.rowModeFeature = this.createRowModeFeature();
@@ -413,51 +413,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             addRenderedRowListener: this.addEventListener.bind(this),
         };
         func(params);
-    }
-
-    private isNodeFullWidthCell(): boolean {
-        if (this.isClientSideLoadingRow()) {
-            return false;
-        }
-        if (this.rowNode.detail) {
-            return true;
-        }
-
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
-        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this.rowNode }) : false;
-    }
-
-    private setRowType(): void {
-        // groupHideOpenParents implicitly disables full width loading
-        const {
-            rowNode,
-            gos,
-            beans: { colModel },
-        } = this;
-        const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow');
-        const groupHideOpenParents = gos.get('groupHideOpenParents');
-        const isServerSide = this.beans.rowModel.getType() === 'serverSide';
-        const isStub = isServerSide && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
-        const isFullWidthCell = this.isNodeFullWidthCell();
-        const isDetailCell = gos.get('masterDetail') && rowNode.detail;
-        const pivotMode = colModel.pivotMode;
-        const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, pivotMode);
-        // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
-        // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
-        const isSuppressedGroupStub =
-            suppressFullWidthLoading && rowNode.stub && isFullWidthGroup && !groupHideOpenParents;
-
-        if (isStub) {
-            this.rowType = 'FullWidthLoading';
-        } else if (isDetailCell) {
-            this.rowType = 'FullWidthDetail';
-        } else if (isFullWidthCell) {
-            this.rowType = 'FullWidth';
-        } else if (isFullWidthGroup && !isSuppressedGroupStub) {
-            this.rowType = 'FullWidthGroup';
-        } else {
-            this.rowType = 'Normal';
-        }
     }
 
     /**
@@ -711,7 +666,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public refreshRow(params?: RefreshRowsParams & { newData?: boolean }): void {
         // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
-        const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
+        const fullWidthChanged = this.isFullWidth() !== _isFullWidthCellRow(this.gos, this.rowNode);
         if (fullWidthChanged) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;

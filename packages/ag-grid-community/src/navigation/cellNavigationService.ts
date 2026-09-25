@@ -4,7 +4,7 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { _getRowAbove, _getRowBelow } from '../entities/positionUtils';
+import { _getFocusColumn, _getRowAbove, _getRowBelow } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideLoadingRow } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -61,7 +61,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     !isRowNumberCol(col) &&
                     this.isCellGoodToFocusOn({
                         rowIndex,
-                        rowPinned: null,
+                        rowPinned,
                         column: col,
                     })
             );
@@ -116,8 +116,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return pointer;
     }
 
-    private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
-        const column = gridCell.column as AgColumn;
+    public isCellGoodToFocusOn(gridCell: CellPosition): boolean {
         let rowNode: RowNode | undefined;
         const { pinnedRowModel, rowModel } = this.beans;
 
@@ -137,8 +136,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const suppressNavigable = this.isSuppressNavigable(column, rowNode);
-        return !suppressNavigable;
+        return !this.isSuppressNavigable(_getFocusColumn(this.beans, gridCell), rowNode);
     }
 
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {

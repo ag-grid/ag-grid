@@ -69,7 +69,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         const rangeServiceShouldHandleShift = !!this.beans.rangeSvc && event.shiftKey;
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
-        const currentCell: CellPosition | null = _getCellPositionForEvent(this.gos, event);
+        const eventCell = _getCellPositionForEvent(this.gos, event);
+        // Ctrl+Left/Right read only the start cell's row, so every key can start where a vertical move would
+        const currentCell = eventCell && this.getVerticalStart(eventCell);
 
         let processed = false;
 
@@ -157,18 +159,10 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollFeature.ensureIndexVisible(focusIndex);
         }
 
-        const { focusSvc } = this.beans;
-
-        // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
-        // highlighted.
-        focusSvc.setFocusedCell({
-            rowIndex: focusIndex,
-            column: focusColumn,
-            rowPinned,
-            forceBrowserFocus: true,
-        });
-
-        this.setRangeToCellIfSupported({ rowIndex: focusIndex, rowPinned, column: focusColumn });
+        const position: CellPosition = { rowIndex: focusIndex, column: focusColumn, rowPinned };
+        if (!this.focusCell(position, !isAsync)) {
+            this.focusPosition(position);
+        }
     }
 
     // this method is throttled, see the `constructor`
@@ -258,22 +252,12 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollType = 'top';
         }
 
-        // focusIndex is always a body-row index (derived from rowModel/pageBounds above),
-        // so the normalisation target is in the body row model regardless of gridCell.rowPinned.
-        const targetPosition: CellPosition = {
-            rowIndex: focusIndex,
-            column: gridCell.column as AgColumn,
-            rowPinned: null,
-        };
-        const normalisedPosition = this.getNormalisedPosition(targetPosition);
-        const { rowIndex: normFocusIndex, column: normFocusColumn } = normalisedPosition ?? targetPosition;
-
         this.navigateTo({
             scrollIndex,
             scrollType,
             scrollColumn: null,
-            focusIndex: normFocusIndex,
-            focusColumn: normFocusColumn as AgColumn,
+            focusIndex,
+            focusColumn: gridCell.column as AgColumn,
         });
     }
 
@@ -367,11 +351,8 @@ export class NavigationService extends BeanStub implements NamedBean {
             return;
         }
 
-        // in case we have col spanning we get the cellComp and use it to get the
-        // position. This was we always focus the first cell inside the spanning.
-        const normalisedPosition = this.getNormalisedPosition(cellToFocus);
-        const { rowIndex, rowPinned, column } = normalisedPosition ?? cellToFocus;
-        const col = column as AgColumn;
+        const { rowIndex, rowPinned } = cellToFocus;
+        const col = cellToFocus.column as AgColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
@@ -396,8 +377,11 @@ export class NavigationService extends BeanStub implements NamedBean {
             return;
         }
 
+        const cellNavigation = this.beans.cellNavigation!;
         const columnToSelect = (homeKey ? allColumns : [...allColumns].reverse()).find(
-            (col) => !col.isSuppressNavigable(rowNode) && !isRowNumberCol(col)
+            (col) =>
+                !isRowNumberCol(col) &&
+                cellNavigation.isCellGoodToFocusOn({ rowIndex: scrollIndex, rowPinned: null, column: col })
         );
 
         if (!columnToSelect) {
@@ -693,10 +677,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         allowUserOverride: boolean
     ) {
         const isVertical = key === KeyCode.UP || key === KeyCode.DOWN;
-        const currentCellWithoutSpan =
-            isVertical && this.currentColumnWithoutSpan
-                ? { ...currentCell, column: this.currentColumnWithoutSpan }
-                : currentCell;
+        const currentCellWithoutSpan = isVertical ? this.getVerticalStart(currentCell) : currentCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         let nextCell: CellPosition | null = currentCellWithoutSpan;
@@ -774,17 +755,32 @@ export class NavigationService extends BeanStub implements NamedBean {
             return;
         }
 
-        // in case we have col spanning we get the cellComp and use it to get the
-        // position. This was we always focus the first cell inside the spanning.
-        const normalisedPosition = this.getNormalisedPosition(nextCell);
-        if (normalisedPosition) {
-            this.focusPosition(normalisedPosition);
-            if (nextCell.column !== normalisedPosition.column) {
-                this.setCurrentColumnWithoutSpan(nextCell.column);
-            }
-        } else {
+        if (!this.focusCell(nextCell, true)) {
             this.tryToFocusFullWidthRow(nextCell);
         }
+    }
+
+    /**
+     * Focuses the cell at `position`, or the cell spanning its column, keeping the covered column for the next
+     * vertical move. False when no cell is rendered there.
+     */
+    public focusCell(position: CellPosition, scroll: boolean): boolean {
+        const normalisedPosition = this.getNormalisedPosition(position, scroll);
+        if (!normalisedPosition) {
+            return false;
+        }
+
+        this.focusPosition(normalisedPosition);
+        if (normalisedPosition.column !== position.column) {
+            this.setCurrentColumnWithoutSpan(position.column);
+        }
+        return true;
+    }
+
+    /** A vertical move from a spanning cell continues in the column it was entered from. */
+    private getVerticalStart(cell: CellPosition): CellPosition {
+        const column = this.currentColumnWithoutSpan;
+        return column ? { ...cell, column } : cell;
     }
 
     private setCurrentColumnWithoutSpan(column: Column): void {
@@ -803,14 +799,16 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.currentColumnWithoutSpan = column;
     }
 
-    private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
+    private getNormalisedPosition(cellPosition: CellPosition, scroll: boolean): CellPosition | null {
         const isSpannedCell = !!this.beans.spannedRowRenderer?.getCellByPosition(cellPosition);
         if (isSpannedCell) {
             return cellPosition;
         }
 
         // ensureCellVisible first, to make sure cell at position is rendered.
-        this.ensureCellVisible(cellPosition);
+        if (scroll) {
+            this.ensureCellVisible(cellPosition);
+        }
 
         const cellCtrl = _getCellByPosition(this.beans, cellPosition);
 
@@ -826,7 +824,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         // last column in the group, however now it's the first column in the group). if we didn't do
         // ensureCellVisible again, then we could only be showing the last portion (last column) of the
         // merged cells.
-        this.ensureCellVisible(cellPosition);
+        if (scroll) {
+            this.ensureCellVisible(cellPosition);
+        }
 
         return cellPosition;
     }

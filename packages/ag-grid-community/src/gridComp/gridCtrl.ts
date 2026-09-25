@@ -216,6 +216,9 @@ export class GridCtrl extends BeanStub {
                     return focusSvc.focusHeaderPosition({ headerPosition: userResult }) || undefined;
                 }
 
+                if (navigation?.focusCell(userResult, true)) {
+                    return true;
+                }
                 navigation?.ensureCellVisible(userResult);
                 focusSvc.setFocusedCell({ ...userResult, forceBrowserFocus: true });
                 return focusSvc.isCellFocused(userResult) || undefined;

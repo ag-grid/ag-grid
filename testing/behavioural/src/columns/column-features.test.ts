@@ -1145,6 +1145,30 @@ describe('Column Features', () => {
             `);
         });
 
+        test('colSpan and rowSpan callbacks returning NaN or a fraction resolve to a whole number of cells', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                suppressRowTransform: true,
+                columnDefs: [
+                    { colId: 'a', colSpan: () => Number.NaN, rowSpan: () => Number.NaN },
+                    { colId: 'b', colSpan: () => 2.5, rowSpan: () => 2.5 },
+                    { colId: 'c', colSpan: () => 1.5, rowSpan: () => 1.5 },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+
+            const node = api.getDisplayedRowAtIndex(0)!;
+            const spans = ['a', 'b', 'c'].map((colId) => {
+                const column = api.getColumn(colId)!;
+                return [column.getColSpan(node), column.getRowSpan(node)];
+            });
+
+            expect(spans).toEqual([
+                [1, 1],
+                [2, 2],
+                [1, 1],
+            ]);
+        });
+
         test('user resize clears flex; event-listener round-trip on widthChanged', async () => {
             // Combined: a resize fires `widthChanged` AND clears the flex flag — same single grid.
             const api = gridsManager.createGrid('myGrid', {

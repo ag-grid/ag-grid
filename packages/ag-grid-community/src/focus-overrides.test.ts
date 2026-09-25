@@ -329,6 +329,7 @@ describe('Focus override callbacks', () => {
                 getPinnedBottomRowCount: () => 0,
             };
             focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
+            focusSvcAny.beans.colModel = { colSpanActive: false };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: true,
@@ -430,6 +431,7 @@ describe('Focus override callbacks', () => {
                 getPinnedBottomRowCount: () => 0,
             };
             focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
+            focusSvcAny.beans.colModel = { colSpanActive: false };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: false,
@@ -776,6 +778,7 @@ describe('Focus override callbacks', () => {
                 eRootDiv: rootDiv,
                 navigation: {
                     ensureCellVisible: vi.fn(),
+                    focusCell: vi.fn(() => false),
                 },
                 focusSvc: {
                     getDefaultTabToNextGridContainerTarget: vi.fn(() => 'pagination'),
@@ -1014,6 +1017,7 @@ describe('Focus override callbacks', () => {
             const { navigation, focusSvc } = gridCtrlAny.beans;
 
             expect(result).toBe(true);
+            expect(navigation.focusCell).toHaveBeenCalledWith(targetCell, true);
             expect(navigation.ensureCellVisible).toHaveBeenCalledWith(targetCell);
             expect(focusSvc.setFocusedCell).toHaveBeenCalledWith({ ...targetCell, forceBrowserFocus: true });
             expect(focusSvc.isCellFocused).toHaveBeenCalledWith(targetCell);
