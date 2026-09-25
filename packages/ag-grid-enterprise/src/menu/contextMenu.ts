@@ -47,16 +47,25 @@ const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>([
 
 type ContextMenuItems = (DefaultMenuItem | MenuItemDef)[];
 
-/** Removes the stock clipboard items, including those nested in a custom item's submenu. */
+/**
+ * Removes the stock clipboard items, including those nested in a custom item's submenu. A submenu the removal
+ * leaves with nothing but separators would open an empty popup, so its parent is dropped - unless it can still
+ * be clicked, through its own `action` or a custom component, in which case it is kept as a plain item.
+ */
 const withoutClipboardItems = (items: ContextMenuItems): ContextMenuItems =>
     items.flatMap((item): ContextMenuItems => {
         if (typeof item === 'string') {
             return CLIPBOARD_MENU_ITEMS.has(item) ? [] : [item];
         }
-        const { subMenu } = item;
-        return Array.isArray(subMenu)
-            ? [{ ...item, subMenu: withoutClipboardItems(subMenu as ContextMenuItems) }]
-            : [item];
+        const { subMenu, ...leaf } = item;
+        if (!Array.isArray(subMenu)) {
+            return [item];
+        }
+        const remaining = withoutClipboardItems(subMenu as ContextMenuItems);
+        if (remaining.length === subMenu.length || remaining.some((child) => child !== 'separator')) {
+            return [{ ...item, subMenu: remaining }];
+        }
+        return leaf.action || leaf.menuItem ? [leaf] : [];
     });
 
 export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {

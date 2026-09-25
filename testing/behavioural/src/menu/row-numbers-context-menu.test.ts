@@ -9,6 +9,8 @@ import {
     fireGridPointerDown,
     menuOption,
     objectUrls,
+    openMenuEntries,
+    openMenuOption,
     polyfillOffsetParent,
 } from 'ag-test-utils';
 
@@ -283,6 +285,85 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(menuOption('Cut')).toBeNull();
         expect(menuOption('Copy')).toBeNull();
         expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
+    });
+
+    // a submenu emptied by the filter would still show a submenu indicator and open an empty popup
+    test('a callback submenu left empty by the clipboard filter is dropped on a row-number cell with nothing to copy', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCallbackEmptySubMenu', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getContextMenuItems: () => [
+                { name: 'Clipboard', subMenu: ['cut', 'copy'] },
+                { name: 'Clipboard With Separator', subMenu: ['cut', 'separator', 'paste'] },
+                { name: 'Foo' },
+            ],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        api.setFocusedCell(0, 'athlete');
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        await waitFor(() => expect(openMenuEntries()).toEqual(['Foo']));
+        api.hidePopupMenu();
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+
+        // a normal cell still gets the submenus
+        rightClick(cell(gridDiv, 0, 'athlete'));
+        await waitFor(() => expect(openMenuEntries()).toEqual(['Clipboard', 'Clipboard With Separator', 'Foo']));
+    });
+
+    test('a callback item with its own action is kept as a plain item when the clipboard filter empties its submenu', async () => {
+        const action = vi.fn();
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCallbackEmptySubMenuAction', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getContextMenuItems: () => [{ name: 'Clipboard', action, subMenu: ['cut', 'copy'] }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        const option = (await openMenuOption('Clipboard')).closest<HTMLElement>('.ag-menu-option')!;
+        expect(option.hasAttribute('aria-haspopup')).toBe(false);
+
+        option.click();
+        await waitFor(() => expect(action).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
+    });
+
+    test('a callback item with a custom component is kept as a plain item when the clipboard filter empties its submenu', async () => {
+        class CustomMenuItem {
+            private eGui!: HTMLElement;
+            init(params: { name: string }): void {
+                this.eGui = document.createElement('div');
+                this.eGui.className = 'custom-clipboard-item';
+                this.eGui.textContent = params.name;
+            }
+            getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCallbackEmptySubMenuComp', {
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            getContextMenuItems: () => [{ name: 'Clipboard', menuItem: CustomMenuItem, subMenu: ['cut', 'copy'] }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        const custom = await waitFor(() => {
+            const el = document.querySelector<HTMLElement>('.custom-clipboard-item');
+            expect(el).not.toBeNull();
+            return el!;
+        });
+        expect(custom.closest('[role="menuitem"]')!.hasAttribute('aria-haspopup')).toBe(false);
     });
 
     test('a row-number cell offers Copy when copySelectedRows is enabled without cell selection', async () => {
