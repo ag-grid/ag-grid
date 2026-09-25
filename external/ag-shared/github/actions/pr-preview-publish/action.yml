@@ -1,5 +1,5 @@
-name: 'PR preview — publish bundles'
-description: Stage caller-supplied bundle files and/or a staged directory under pr-<N>/ and publish them to gh-pages (served at https://<owner>.github.io/<repo>/pr-<N>/…). Skips cleanly when there is nothing to publish. Concurrent publishes (other PRs, or this PR's other publishers) are resolved by a push-retry loop rather than a lock.
+name: 'PR preview — publish files'
+description: Stage caller-supplied files and/or a staged directory under pr-<N>/ on a publish branch (gh-pages by default, so they are served at https://<owner>.github.io/<repo>/pr-<N>/…; any other branch is a plain push, readable immediately via raw.githubusercontent.com at the commit reported by the commit_sha output). Skips cleanly when there is nothing to publish. Concurrent publishes (other PRs, or this PR's other publishers) are resolved by a push-retry loop rather than a lock.
 
 inputs:
     pr_number:
@@ -49,6 +49,14 @@ inputs:
         description: 'Skip publishing when the PR is already closed, so a late publish cannot resurrect a cleaned-up preview.'
         required: false
         default: 'true'
+
+outputs:
+    commit_sha:
+        description: >-
+            Publish-branch commit carrying these files. Empty when nothing was published (PR already
+            closed, or no files found). Needed by callers that link to the published content by
+            immutable commit rather than by branch name.
+        value: ${{ steps.publish.outputs.commit_sha }}
 
 runs:
     using: composite
@@ -140,6 +148,7 @@ runs:
               echo "publish=true" >> "$GITHUB_OUTPUT"
 
         - name: Publish to ${{ inputs.publish_branch }}
+          id: publish
           if: steps.guard.outputs.skip != 'true' && steps.stage.outputs.publish == 'true'
           shell: bash
           env:

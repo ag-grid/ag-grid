@@ -97,7 +97,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/claude-hooks/track-edit.sh"
+            "command": "bash -c 'p=external/ag-shared/scripts/claude-hooks/track-edit.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'"
           }
         ]
       }
@@ -108,7 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/claude-hooks/precommit-check.sh"
+            "command": "bash -c 'p=external/ag-shared/scripts/claude-hooks/precommit-check.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'"
           }
         ]
       }
@@ -118,7 +118,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/claude-hooks/format-tracked.sh"
+            "command": "bash -c 'p=external/ag-shared/scripts/claude-hooks/format-tracked.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'"
           }
         ]
       }
@@ -129,7 +129,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh"
+            "command": "bash -c 'p=external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'"
           },
           {
             "type": "command",
@@ -137,7 +137,7 @@
           },
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/setup-terminal-title.sh"
+            "command": "bash -c 'p=external/ag-shared/scripts/install-for-cloud/setup-terminal-title.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'"
           }
         ]
       }
@@ -147,7 +147,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/setup-worktree/claude-worktree-create.sh",
+            "command": "bash -c 'p=external/ag-shared/scripts/setup-worktree/claude-worktree-create.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'",
             "timeout": 300
           }
         ]
@@ -158,7 +158,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/setup-worktree/claude-worktree-remove.sh"
+            "command": "bash -c 'p=external/ag-shared/scripts/setup-worktree/claude-worktree-remove.sh; for d in \"$CLAUDE_PROJECT_DIR\" \"$PWD\" /home/user/*/ /home/claude/*/; do [ -n \"$d\" ] && [ -x \"$d/$p\" ] && exec \"$d/$p\"; done; echo \"hook: could not locate $p from $PWD\" >&2'"
           }
         ]
       }
@@ -170,6 +170,7 @@
     "ag-eng@ag-dev": true,
     "ag-product@ag-dev": true,
     "${PRODUCT}@ag-dev": true,
+    "ag-website@ag-dev": true,
     "codex@openai-codex": true,
     "skill-creator@claude-plugins-official": true
   },
