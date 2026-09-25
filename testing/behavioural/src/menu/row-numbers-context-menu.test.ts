@@ -336,11 +336,13 @@ describe('Row Numbers context menu (AG-16355)', () => {
     });
 
     test('a callback item with a custom component is kept as a plain item when the clipboard filter empties its submenu', async () => {
+        // a custom component can handle clicks itself, so it is kept; it must be told it has no submenu to open
+        const initParams: { name: string; subMenu?: unknown }[] = [];
         class CustomMenuItem {
             private eGui!: HTMLElement;
-            init(params: { name: string }): void {
+            init(params: { name: string; subMenu?: unknown }): void {
+                initParams.push(params);
                 this.eGui = document.createElement('div');
-                this.eGui.className = 'custom-clipboard-item';
                 this.eGui.textContent = params.name;
             }
             getGui(): HTMLElement {
@@ -358,12 +360,9 @@ describe('Row Numbers context menu (AG-16355)', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
-        const custom = await waitFor(() => {
-            const el = document.querySelector<HTMLElement>('.custom-clipboard-item');
-            expect(el).not.toBeNull();
-            return el!;
-        });
-        expect(custom.closest('[role="menuitem"]')!.hasAttribute('aria-haspopup')).toBe(false);
+        await waitFor(() => expect(initParams).toHaveLength(1));
+        expect(initParams[0].name).toBe('Clipboard');
+        expect(initParams[0].subMenu).toBeUndefined();
     });
 
     test('a row-number cell offers Copy when copySelectedRows is enabled without cell selection', async () => {
