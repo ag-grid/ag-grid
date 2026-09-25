@@ -47,11 +47,7 @@ const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>([
 
 type ContextMenuItems = (DefaultMenuItem | MenuItemDef)[];
 
-/**
- * Removes the stock clipboard items, including those nested in a custom item's submenu. A submenu the removal
- * leaves with nothing but separators would open an empty popup, so its parent is dropped - unless it can still
- * be clicked, through its own `action` or a custom component, in which case it is kept as a plain item.
- */
+/** Remove stock clipboard items recursively, dropping submenu-only parents emptied by the filter. */
 const withoutClipboardItems = (items: ContextMenuItems): ContextMenuItems =>
     items.flatMap((item): ContextMenuItems => {
         if (typeof item === 'string') {
@@ -126,18 +122,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
-        // a row-number cell has no data of its own, so it offers the row-level items only, unless the clipboard
-        // has something else to act on: a cell range (which the right-click may just have selected) or a row
-        // selection. We ask the clipboard itself, because a range is not always a copy target - under the legacy
-        // API `suppressCopySingleCellRanges` rejects a single-cell one. Offering the items otherwise would let
-        // Copy/Cut fall back to the previously focused data cell, copying - and, on Cut, clearing - a cell the
-        // user never right-clicked.
-        const clipboardHasTarget = clipboardSvc?.copiesRangeOrSelectedRows();
-        const isDatalessRowNumberCell = !!column && isRowNumberCol(column) && !clipboardHasTarget;
-        const dataColumn = isDatalessRowNumberCell ? null : column;
+        // Row numbers have no cell value; without a range or selected rows, Cut/Copy would use the last focused cell.
+        const isRowNumberCell = !!column && isRowNumberCol(column);
+        const rowNumberWithoutCopyTarget = isRowNumberCell && !clipboardSvc?.copiesRangeOrSelectedRows();
 
         if (_exists(node) && clipboardSvc) {
-            if (dataColumn) {
+            if (column && !rowNumberWithoutCopyTarget) {
                 // only makes sense if column exists, could have originated from a row
                 if (!gos.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
@@ -150,7 +140,6 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
-        // notes attach to any cell, a row number included
         if (_exists(node) && column && notesSvc?.hasDataSource()) {
             defaultMenuOptions.push('note');
         }
@@ -220,19 +209,19 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         const userFunc = gos.getCallback('getContextMenuItems');
         const userItems = userFunc?.({ column, node, value, defaultItems, event: mouseEvent });
 
+        if (!isRowNumberCell) {
+            return userItems ?? defaultMenuOptions;
+        }
+
+        // The callback may change selection or resolve after the user changes it, so check again on its result.
+        const filterForCopyTarget = (items: ContextMenuItems): ContextMenuItems =>
+            clipboardSvc?.copiesRangeOrSelectedRows() ? items : withoutClipboardItems(items);
         if (!userItems) {
-            return defaultMenuOptions;
+            return filterForCopyTarget(defaultMenuOptions);
         }
-
-        if (!isDatalessRowNumberCell) {
-            return userItems;
-        }
-
-        // the grid-wide callback can still name the clipboard items, which here would act on the previously
-        // focused data cell for the same reason they are left out of the defaults above
         return _isPromise<ContextMenuItems>(userItems)
-            ? userItems.then(withoutClipboardItems)
-            : withoutClipboardItems(userItems);
+            ? userItems.then(filterForCopyTarget)
+            : filterForCopyTarget(userItems);
     }
 
     public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {

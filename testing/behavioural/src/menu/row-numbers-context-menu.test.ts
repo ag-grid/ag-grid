@@ -267,6 +267,37 @@ describe('Row Numbers context menu (AG-16355)', () => {
         expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
     });
 
+    test('an async callback drops clipboard items if the row selection is cleared while the menu loads', async () => {
+        let resolveItems!: (items: ('cut' | 'copy' | { name: string })[]) => void;
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxAsyncSelection', {
+            columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
+            rowData: rowData.map((row) => ({ ...row })),
+            rowNumbers: true,
+            rowSelection: { mode: 'multiRow', copySelectedRows: true, enableClickSelection: true, checkboxes: false },
+            getContextMenuItems: () =>
+                new Promise<('cut' | 'copy' | { name: string })[]>((resolve) => {
+                    resolveItems = resolve;
+                }),
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const athlete = cell(gridDiv, 0, 'athlete');
+        api.setFocusedCell(0, 'athlete');
+        api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(0)!], newValue: true });
+
+        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        fireGridPointerDown(athlete, { ctrlKey: true });
+        athlete.dispatchEvent(new MouseEvent('click', { bubbles: true, ctrlKey: true }));
+        expect(api.getSelectedRows()).toHaveLength(0);
+
+        resolveItems(['cut', 'copy', { name: 'Foo' }]);
+        await waitFor(() => expect(menuOption('Foo')).not.toBeNull());
+        expect(menuOption('Cut')).toBeNull();
+        expect(menuOption('Copy')).toBeNull();
+        expect(api.getDisplayedRowAtIndex(0)!.data.athlete).toBe('Michael Phelps');
+    });
+
     test('clipboard items nested in a getContextMenuItems submenu are dropped on a row-number cell with nothing to copy', async () => {
         const api = await gridMgr.createGridAndWait('rowNumbersCtxCallbackSubMenu', {
             columnDefs: columnDefs.map((colDef) => ({ ...colDef, editable: true })),
