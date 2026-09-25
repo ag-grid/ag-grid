@@ -1,4 +1,4 @@
-import { _exists } from 'ag-stack';
+import { _exists, _isPromise } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -23,7 +23,13 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _attemptToRestoreCellFocus,
+    _getGrandTotalRow,
+    isRowNumberCol,
+} from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
@@ -31,6 +37,32 @@ import type { MenuItemMapper } from './menuItemMapper';
 import type { MenuUtils } from './menuUtils';
 
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
+const CLIPBOARD_MENU_ITEMS = new Set<DefaultMenuItem>([
+    'cut',
+    'copy',
+    'copyWithHeaders',
+    'copyWithGroupHeaders',
+    'paste',
+]);
+
+type ContextMenuItems = (DefaultMenuItem | MenuItemDef)[];
+
+/** Remove stock clipboard items recursively, dropping submenu-only parents emptied by the filter. */
+const withoutClipboardItems = (items: ContextMenuItems): ContextMenuItems =>
+    items.flatMap((item): ContextMenuItems => {
+        if (typeof item === 'string') {
+            return CLIPBOARD_MENU_ITEMS.has(item) ? [] : [item];
+        }
+        const { subMenu, ...leaf } = item;
+        if (!Array.isArray(subMenu)) {
+            return [item];
+        }
+        const remaining = withoutClipboardItems(subMenu as ContextMenuItems);
+        if (remaining.length === subMenu.length || remaining.some((child) => child !== 'separator')) {
+            return [{ ...item, subMenu: remaining }];
+        }
+        return leaf.action || leaf.menuItem ? [leaf] : [];
+    });
 
 export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
     beanName = 'contextMenuSvc' as const;
@@ -90,9 +122,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             this.beans;
 
         const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
+        // Row numbers have no cell value; without a range or selected rows, Cut/Copy would use the last focused cell.
+        const isRowNumberCell = !!column && isRowNumberCol(column);
+        const rowNumberWithoutCopyTarget = isRowNumberCell && !clipboardSvc?.copiesRangeOrSelectedRows();
 
         if (_exists(node) && clipboardSvc) {
-            if (column) {
+            if (column && !rowNumberWithoutCopyTarget) {
                 // only makes sense if column exists, could have originated from a row
                 if (!gos.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
@@ -172,8 +207,21 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         const userFunc = gos.getCallback('getContextMenuItems');
+        const userItems = userFunc?.({ column, node, value, defaultItems, event: mouseEvent });
 
-        return userFunc?.({ column, node, value, defaultItems, event: mouseEvent }) ?? defaultMenuOptions;
+        if (!isRowNumberCell) {
+            return userItems ?? defaultMenuOptions;
+        }
+
+        // The callback may change selection or resolve after the user changes it, so check again on its result.
+        const filterForCopyTarget = (items: ContextMenuItems): ContextMenuItems =>
+            clipboardSvc?.copiesRangeOrSelectedRows() ? items : withoutClipboardItems(items);
+        if (!userItems) {
+            return filterForCopyTarget(defaultMenuOptions);
+        }
+        return _isPromise<ContextMenuItems>(userItems)
+            ? userItems.then(filterForCopyTarget)
+            : filterForCopyTarget(userItems);
     }
 
     public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {
