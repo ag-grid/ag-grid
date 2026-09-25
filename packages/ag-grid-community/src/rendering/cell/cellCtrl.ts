@@ -491,6 +491,15 @@ export class CellCtrl extends BeanStub {
     }
 
     /**
+     * How many control elements this cell renders ahead of its value, each occupying one widget slot
+     * (`--ag-icon-size` wide plus `--ag-cell-widget-spacing`). Callers that need to line something up with
+     * the cell's text — e.g. the row-drag drop indicator — use this to measure past the controls.
+     */
+    public getLeadingWidgetCount(): number {
+        return (this.includeRowDrag ? 1 : 0) + (this.includeSelection ? 1 : 0) + (this.includeDndSource ? 1 : 0);
+    }
+
+    /**
      * Wrapper providing general conditions under which control elements (e.g. checkboxes and drag handles)
      * are rendered for a particular cell.
      * @param value Whether to render the control in the specific context of the caller
