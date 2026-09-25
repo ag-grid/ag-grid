@@ -32,6 +32,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public pivotMode = false;
     public colSpanActive = false;
+    /** Columns with a legacy `rowSpan` callback, whose cells re-read it as their row's data changes; null when none. */
+    public rowSpanCols: AgColumn[] | null = null;
     public ready = false;
     /** Suppresses row model refreshes during batch column state dispatching. */
     public changeEventsDispatching = false;
@@ -520,27 +522,30 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const beans = this.beans;
         beans.showRowGroupCols?.refresh();
         beans.quickFilter?.refreshCols();
-        this.computeColSpanAndAutoHeight();
+        this.computeSpansAndAutoHeight();
         beans.visibleCols.clear();
         beans.colViewport.clear();
     }
 
-    /** Single pass: set `colSpanActive` and `rowAutoHeight.active` from `colsList`. */
-    private computeColSpanAndAutoHeight(): void {
+    /** Single pass: set `colSpanActive`, `rowSpanCols` and `rowAutoHeight.active` from `colsList`. */
+    private computeSpansAndAutoHeight(): void {
         const colsList = this.colsList;
         const rowAutoHeight = this.beans.rowAutoHeight;
         let colSpan = false;
         let autoHeight = false;
+        let rowSpanCols: AgColumn[] | null = null;
         for (let i = 0, len = colsList.length; i < len; ++i) {
             const col = colsList[i];
             const colDef = col.colDef;
             colSpan ||= colDef.colSpan != null;
             autoHeight ||= !!rowAutoHeight && !!colDef.autoHeight && col.visible;
-            if (colSpan && (autoHeight || !rowAutoHeight)) {
-                break;
+            if (colDef.rowSpan != null) {
+                rowSpanCols ??= [];
+                rowSpanCols.push(col);
             }
         }
         this.colSpanActive = colSpan;
+        this.rowSpanCols = rowSpanCols;
         rowAutoHeight?.setAutoHeightActive(autoHeight);
     }
 
