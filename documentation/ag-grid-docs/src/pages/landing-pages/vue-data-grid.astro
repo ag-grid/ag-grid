@@ -3,6 +3,8 @@
  * Vue Data Grid Landing Page
  *
  * Content is defined in: src/content/landing-pages/vue-data-grid.json
+ *
+ * Noindexed: this URL serves ad traffic only, and the same content ranks at /vue-data-grid/.
  */
 
 import LandingPage from '@components/landing-pages/LandingPage.astro';
@@ -15,4 +17,4 @@ const content = contentEntry?.data;
 const versions = versionsEntry?.data;
 ---
 
-{content && <LandingPage content={content} versions={versions} />}
+{content && <LandingPage content={content} versions={versions} hidePageFromSearchEngines />}
