@@ -755,6 +755,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaFilterList: 'Filtrų sąrašas',
     ariaFilterToValue: 'Filtruoti iki reikšmės',
     ariaFilterValue: 'Filtro reikšmė',
+    ariaNotInCurrentData: 'nėra dabartiniuose duomenyse',
     ariaFilterMenuOpen: 'Atidaryti filtro meniu',
     ariaFilteringOperator: 'Filtravimo operatorius',
     ariaHidden: 'paslėpta',

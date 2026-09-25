@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaFilterList: 'Popis filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
+    ariaNotInCurrentData: 'nije u trenutačnim podacima',
     ariaFilterMenuOpen: 'Otvori izbornik filtera',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skriveno',

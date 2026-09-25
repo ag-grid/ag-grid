@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaFilterList: 'רשימת סינון',
     ariaFilterToValue: 'סנן לערך',
     ariaFilterValue: 'ערך סינון',
+    ariaNotInCurrentData: 'לא בנתונים הנוכחיים',
     ariaFilterMenuOpen: 'פתח תפריט סינון',
     ariaFilteringOperator: 'מפעיל סינון',
     ariaHidden: 'נסתר',

@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaFilterList: 'Списък за филтриране',
     ariaFilterToValue: 'Филтър до стойност',
     ariaFilterValue: 'Стойност на филтъра',
+    ariaNotInCurrentData: 'не е в текущите данни',
     ariaFilterMenuOpen: 'Отворете менюто за филтър',
     ariaFilteringOperator: 'Оператор за филтриране',
     ariaHidden: 'скрито',

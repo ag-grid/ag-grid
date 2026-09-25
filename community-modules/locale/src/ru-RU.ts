@@ -755,6 +755,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaFilterList: 'Список фильтра',
     ariaFilterToValue: 'Фильтровать до значения',
     ariaFilterValue: 'Значение фильтра',
+    ariaNotInCurrentData: 'нет в текущих данных',
     ariaFilterMenuOpen: 'Открыть меню фильтра',
     ariaFilteringOperator: 'Оператор фильтрации',
     ariaHidden: 'скрыто',

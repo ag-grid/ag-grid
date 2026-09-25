@@ -750,6 +750,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaFilterList: 'ফিল্টার তালিকা',
     ariaFilterToValue: 'মান পর্যন্ত ফিল্টার করুন',
     ariaFilterValue: 'ফিল্টার মান',
+    ariaNotInCurrentData: 'বর্তমান ডেটায় নেই',
     ariaFilterMenuOpen: 'ফিল্টার মেনু খুলুন',
     ariaFilteringOperator: 'ফিল্টারিং অপারেটর',
     ariaHidden: 'লুকানো',

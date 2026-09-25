@@ -736,6 +736,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaFilterList: 'Zoznam Filtrov',
     ariaFilterToValue: 'Filtrovať do hodnoty',
     ariaFilterValue: 'Hodnota Filtra',
+    ariaNotInCurrentData: 'nie je v aktuálnych údajoch',
     ariaFilterMenuOpen: 'Otvoriť Menu Filtra',
     ariaFilteringOperator: 'Filtračný Operátor',
     ariaHidden: 'skryté',

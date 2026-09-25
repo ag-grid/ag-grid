@@ -158,6 +158,15 @@ function isAggFilter(
     return groupFilterEnabled;
 }
 
+/** Also asked through Multi or selectable filter children, and a selectable filter's defaults. */
+function wantsPreservedValues(filterParams: any): boolean {
+    if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
+        return true;
+    }
+    const filters: { filterParams?: any }[] | undefined = filterParams?.filters;
+    return Array.isArray(filters) && filters.some((def) => wantsPreservedValues(def?.filterParams));
+}
+
 export class ColumnFilterService
     extends BeanStub<
         | 'filterParamsChanged'
@@ -199,9 +208,15 @@ export class ColumnFilterService
     public activeFilterComps: Set<FilterComp> = new Set();
 
     public postConstruct(): void {
+        const createPreservingFilters = this.createPreservingFilters.bind(this);
         this.addManagedEventListeners({
             gridColumnsChanged: this.onColumnsChanged.bind(this),
-            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
+            dataTypesInferred: () => {
+                this.createPreservingFilters();
+                this.processFilterModelUpdateQueue();
+            },
+            newColumnsLoaded: createPreservingFilters,
+            advancedFilterEnabledChanged: createPreservingFilters,
         });
 
         this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
@@ -1053,9 +1068,7 @@ export class ColumnFilterService
               handler: FilterHandler;
               handlerParams: FilterHandlerBaseParams;
               handlerGenerator:
-                  | CreateFilterHandlerFunc
-                  | FilterHandlerName
-                  | ((params: DoesFilterPassParams) => boolean);
+                  CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
           }
         | undefined {
         const handlerFunc = this.createHandlerFunc(column, filterDef, defaultFilter);
@@ -1116,22 +1129,17 @@ export class ColumnFilterService
 
     private onColumnsChanged(): void {
         const columns: AgColumn[] = [];
-        const { colModel, filterManager, groupFilter } = this.beans;
+        const disposals: AgPromise<boolean>[] = [];
+        const { filterManager, groupFilter } = this.beans;
 
         this.allColumnFilters.forEach((wrapper, colId) => {
-            let currentColumn: AgColumn | undefined;
-            if (wrapper.column.primary) {
-                currentColumn = colModel.getNonPivotColById(colId);
-            } else {
-                currentColumn = colModel.colsById[colId];
-            }
             // group columns can be recreated with the same colId
-            if (currentColumn && currentColumn === wrapper.column) {
+            if (this.isCurrentColumn(wrapper.column)) {
                 return;
             }
 
             columns.push(wrapper.column);
-            this.disposeFilterWrapper(wrapper, 'columnChanged');
+            disposals.push(this.disposeFilterWrapper(wrapper, 'columnChanged'));
             this.disposeColumnListener(colId);
         });
 
@@ -1141,6 +1149,40 @@ export class ColumnFilterService
             // When a filter changes as a side effect of a column changes,
             // we report 'api' as the source, so that the client can distinguish
             filterManager?.onFilterChanged({ columns, source: 'api' });
+        }
+
+        // After disposal, which frees the colId a recreated column shares.
+        AgPromise.all(disposals).then(() => {
+            if (this.isAlive()) {
+                this.createPreservingFilters();
+            }
+        });
+    }
+
+    private isCurrentColumn(column: AgColumn): boolean {
+        const { colModel } = this.beans;
+        const colId = column.getColId();
+        return (column.primary ? colModel.getNonPivotColById(colId) : colModel.colsById[colId]) === column;
+    }
+
+    /** A filter keeping values that leave the data has to see them before they leave, not from first use. */
+    private createPreservingFilters(): void {
+        const cols = this.beans.colModel.getColsInStateOrder();
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            this.createPreservingFilter(cols[i]);
+        }
+    }
+
+    private createPreservingFilter(column: AgColumn): void {
+        const { filterManager, dataTypeSvc } = this.beans;
+        // Its keys are made by the inferred data type, which a filter built before inference never picks up.
+        if (
+            !filterManager?.isAdvFilterEnabled() &&
+            !dataTypeSvc?.isPendingInference &&
+            this.isCurrentColumn(column) &&
+            wantsPreservedValues(column.colDef.filterParams)
+        ) {
+            this.getOrCreateFilterWrapper(column, true);
         }
     }
 
@@ -1266,12 +1308,16 @@ export class ColumnFilterService
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source).then((wasActive) => {
-                if (wasActive && this.isAlive()) {
+                if (!this.isAlive()) {
+                    return;
+                }
+                if (wasActive) {
                     this.beans.filterManager?.onFilterChanged({
                         columns: [column],
                         source: 'api',
                     });
                 }
+                this.createPreservingFilter(column);
             });
         }
     }

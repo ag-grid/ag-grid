@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaFilterList: '篩選列表',
     ariaFilterToValue: '篩選到值',
     ariaFilterValue: '篩選值',
+    ariaNotInCurrentData: '不在目前數據中',
     ariaFilterMenuOpen: '打開篩選菜單',
     ariaFilteringOperator: '篩選運算符',
     ariaHidden: '已隱藏',

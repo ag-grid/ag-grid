@@ -736,6 +736,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaFilterList: 'فلٹر فہرست',
     ariaFilterToValue: 'قدر تک فلٹر کریں',
     ariaFilterValue: 'فلٹر قدر',
+    ariaNotInCurrentData: 'موجودہ ڈیٹا میں نہیں',
     ariaFilterMenuOpen: 'فلٹر مینو کھولیں',
     ariaFilteringOperator: 'فلٹرنگ اپریٹر',
     ariaHidden: 'چھپا ہوا',

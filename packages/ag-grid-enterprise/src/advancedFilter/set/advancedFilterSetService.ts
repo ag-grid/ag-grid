@@ -127,8 +127,14 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         // A handler reads the column definitions and the grouping when it is built, so a change to either
         // has to be pushed in. `refresh` is the column filter lifecycle's own way; it is not running here.
         const refresh = () => this.refreshColumns();
+        const createPreservingColumns = this.createPreservingColumns.bind(this);
         this.addManagedEventListeners({
-            newColumnsLoaded: refresh,
+            newColumnsLoaded: () => {
+                this.refreshColumns();
+                this.createPreservingColumns();
+            },
+            advancedFilterEnabledChanged: createPreservingColumns,
+            dataTypesInferred: createPreservingColumns,
             columnRowGroupChanged: refresh,
             columnPivotModeChanged: refresh,
             columnPivotChanged: refresh,
@@ -159,6 +165,22 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         // Once, past the loop, so the text is written from every refreshed column. Said here rather than
         // left to the handlers: a provided value list has no data change of its own to report.
         this.invalidateList();
+    }
+
+    /** A column keeping values that leave the data has to see them before they leave, not from first use. */
+    private createPreservingColumns(): void {
+        const { colModel, filterManager, dataTypeSvc } = this.beans;
+        // Keyed by the inferred data type, so not before it is known.
+        if (!filterManager?.isAdvFilterEnabled() || dataTypeSvc?.isPendingInference) {
+            return;
+        }
+        const cols = colModel.getColsInStateOrder();
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const column = cols[i];
+            if (column.primary && this.getSetColDef(column).filterParams?.preservePreviousValues) {
+                this.getSetColumn(column);
+            }
+        }
     }
 
     private onNewRowsLoaded(): void {
@@ -283,14 +305,17 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const setColumn = this.getSetColumn(column);
         const values = setColumn && this.getValues(setColumn);
         const source = values?.entries ?? NO_ENTRIES;
+        // Values kept by `preservePreviousValues` still resolve when written, but only current ones are offered.
+        const missingKeys = setColumn?.handler.valueModel.missingKeys;
         // The column's own entries, offered as they stand: a value picked or dropped rebuilds this list,
         // so copying each one would allocate per value of the column on every pick.
         let entries: AutocompleteEntry[] = source;
-        if (usedKeys.size) {
+        if (usedKeys.size || missingKeys?.size) {
             entries = [];
             for (let i = 0, len = source.length; i < len; ++i) {
                 const entry = source[i];
-                if (!usedKeys.has(entry.setKey)) {
+                const setKey = entry.setKey;
+                if (!usedKeys.has(setKey) && !missingKeys?.has(setKey)) {
                     entries.push(entry);
                 }
             }

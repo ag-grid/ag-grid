@@ -752,6 +752,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaFilterList: 'Filtriloend',
     ariaFilterToValue: 'Filtreeri väärtuseni',
     ariaFilterValue: 'Filtri väärtus',
+    ariaNotInCurrentData: 'pole praegustes andmetes',
     ariaFilterMenuOpen: 'Ava filtrimenüü',
     ariaFilteringOperator: 'Filtreerimisoperaator',
     ariaHidden: 'peidetud',

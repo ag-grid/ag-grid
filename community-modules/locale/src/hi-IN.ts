@@ -754,6 +754,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaFilterList: 'फ़िल्टर सूची',
     ariaFilterToValue: 'तक मान फ़िल्टर करें',
     ariaFilterValue: 'फ़िल्टर मान',
+    ariaNotInCurrentData: 'वर्तमान डेटा में नहीं',
     ariaFilterMenuOpen: 'फ़िल्टर मेनू खोलें',
     ariaFilteringOperator: 'फ़िल्टरिंग ऑपरेटर',
     ariaHidden: 'छिपा हुआ',

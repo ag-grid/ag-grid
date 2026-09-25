@@ -758,6 +758,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaFilterList: 'Listahan ng Filter',
     ariaFilterToValue: 'I-filter hanggang sa halaga',
     ariaFilterValue: 'Halaga ng Filter',
+    ariaNotInCurrentData: 'wala sa kasalukuyang data',
     ariaFilterMenuOpen: 'Buksan ang Menu ng Filter',
     ariaFilteringOperator: 'Operator ng Pag-filter',
     ariaHidden: 'nakatago',

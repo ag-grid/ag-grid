@@ -649,6 +649,80 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)"]');
         expect(af.getModel().values).toEqual(['Jamaica', null]);
     });
+
+    test('preserved values are not offered but still resolve, and filter once their rows return', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+        });
+        // The value leaves before the Advanced Filter is first used, so only a filter made up front saw it.
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica')
+        );
+        await asyncSetTimeout(0);
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Poland', 'United Kingdom', 'United States']);
+
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+        expect(displayedAthletes(api)).toEqual([]);
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+    });
+
+    test('turned on at runtime, it keeps a preserved value that leaves before it is first used', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            enableAdvancedFilter: false,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+        });
+        api.setGridOption('enableAdvancedFilter', true);
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica')
+        );
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+    });
+
+    test('rows arriving after grid start are offered as without the option, formatted by their data type', async () => {
+        const api = gridsManager.createGrid('grid1', {
+            enableAdvancedFilter: true,
+            columnDefs: [
+                { field: 'kept', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+                { field: 'plain', filter: 'agSetColumnFilter' },
+            ],
+        });
+        await asyncSetTimeout(0);
+        const dates = [new Date(2024, 0, 1), new Date(2024, 0, 2)];
+        api.setGridOption(
+            'rowData',
+            dates.map((date) => ({ kept: date, plain: date }))
+        );
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Plain] is any of [');
+        const plainEntries = af.autocompleteEntries();
+        expect(plainEntries).toHaveLength(2);
+        await af.type('[Kept] is any of [');
+        expect(af.autocompleteEntries()).toEqual(plainEntries);
+    });
 });
 
 describe('Advanced Filter - Set Filter picking values with the mouse', () => {

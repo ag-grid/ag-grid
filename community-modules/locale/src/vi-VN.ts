@@ -737,6 +737,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaFilterList: 'Danh sách Lọc',
     ariaFilterToValue: 'Lọc đến giá trị',
     ariaFilterValue: 'Giá trị Lọc',
+    ariaNotInCurrentData: 'không có trong dữ liệu hiện tại',
     ariaFilterMenuOpen: 'Mở Menu Bộ lọc',
     ariaFilteringOperator: 'Toán tử Lọc',
     ariaHidden: 'ẩn',

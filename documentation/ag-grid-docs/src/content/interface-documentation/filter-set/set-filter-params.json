@@ -1,6 +1,18 @@
 {
     "_config_": {},
     "ISetFilterParams": {
+        "preservePreviousValues": {
+            "more": {
+                "name": "Preserving Previous Values",
+                "url": "./filter-set-data-updates/#preserving-previous-values"
+            }
+        },
+        "preservePreviousValuesLimit": {
+            "more": {
+                "name": "Limiting Preserved Values",
+                "url": "./filter-set-data-updates/#limiting-preserved-values"
+            }
+        },
         "readOnly": {
             "more": {
                 "url": "./filter-api/#read-only-filter-ui",
