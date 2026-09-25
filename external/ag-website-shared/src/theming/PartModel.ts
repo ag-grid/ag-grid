@@ -118,8 +118,8 @@ export const allFeatureModels = memoize(() => featureModelsSource());
 
 // Lazy for the same reason as getQuartzParts: constructing these resolves grid's
 // default part for each feature, which a non-grid host must never trigger.
-const getFeatureModels = memoize(
-    (): Record<string, FeatureModel | undefined> => ({
+const getFeatureModels = memoize((): Record<string, FeatureModel | undefined> => {
+    return {
         colorScheme: new FeatureModel('colorScheme', {
             lightCold: colorSchemeLightCold,
             light: colorSchemeLight,
@@ -146,5 +146,5 @@ const getFeatureModels = memoize(
             bordered: inputStyleBordered,
             underlined: inputStyleUnderlined,
         }),
-    })
-);
+    };
+});
