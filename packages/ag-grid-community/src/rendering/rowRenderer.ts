@@ -263,16 +263,23 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /**
      * Called when a new cell is focused in the grid
-     * - if the focused cell isn't rendered; re-draw rows to dry to render it
+     * - if the focused cell isn't rendered; renders it on its row, or re-draws rows if the row isn't rendered either
      * - subsequently updates all cell and row controls with the new focused cell
      * @param event cell focused event
      */
     private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
         if (event?.rowIndex != null && !event.rowPinned) {
+            const { rowIndex } = event;
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
-            if (!this.isCellBeingRendered(event.rowIndex, col)) {
-                this.redraw();
+            if (!this.isCellBeingRendered(rowIndex, col)) {
+                const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
+                if (rowCtrl) {
+                    // must not redraw: this can run inside redrawAfterModelUpdate while it holds the refresh lock
+                    rowCtrl.renderFocusedCell();
+                } else {
+                    this.redraw();
+                }
             }
         }
         this.updateCellFocus(event);

@@ -104,6 +104,11 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.updateColumnLists(false, true);
     }
 
+    public renderFocusedCell(): void {
+        // synchronous, so the cell exists before the focus change is applied to the cells
+        this.updateColumnLists(true);
+    }
+
     public onColumnMoved(): void {
         this.updateColumnLists();
     }
