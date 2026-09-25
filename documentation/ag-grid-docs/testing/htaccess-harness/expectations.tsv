@@ -97,7 +97,9 @@ www	/react-data-grid/cell-editing/	200
 www	/react-data-grid/	200
 www	/angular-data-grid/	200
 www	/vue-data-grid/	200
-# apex reaches the same hub: host swap only, no forward on to getting-started
+# All three hubs behave the same from the apex: host swap only, no forward on to getting-started.
+apex	/react-data-grid/	301	https://www.ag-grid.com/react-data-grid/
+apex	/angular-data-grid/	301	https://www.ag-grid.com/angular-data-grid/
 apex	/vue-data-grid/	301	https://www.ag-grid.com/vue-data-grid/
 www	/charts/react/bar-series/	200
 
