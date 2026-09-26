@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "repo": "ag-grid/ag-grid",
+  "pr": 15359,
+  "sha": "708cafaed747060f58d7de63963d8193306503a4",
+  "base": "https://ag-grid.github.io/ag-grid/pr-15359/",
+  "umd": {
+    "ag-grid-community": "ag-grid-community.min.js",
+    "ag-grid-enterprise": "ag-grid-enterprise.min.js"
+  },
+  "packages": {
+    "@ag-grid-community/locale": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "dist/package/main.esm.mjs": "@ag-grid-community/locale/dist/package/main.esm.mjs"
+      }
+    },
+    "ag-grid-angular": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "fesm2022/ag-grid-angular.mjs": "ag-grid-angular/fesm2022/ag-grid-angular.mjs"
+      }
+    },
+    "ag-grid-community": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "dist/package/main.esm.mjs": "ag-grid-community/dist/package/main.esm.mjs",
+        "styles/": "ag-grid-community/styles/"
+      }
+    },
+    "ag-grid-enterprise": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "dist/package/main.esm.mjs": "ag-grid-enterprise/dist/package/main.esm.mjs",
+        "styles/": "ag-grid-community/styles/"
+      }
+    },
+    "ag-grid-react": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "dist/package/index.esm.mjs": "ag-grid-react/dist/package/index.esm.mjs"
+      }
+    },
+    "ag-grid-vue3": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "dist/main.mjs": "ag-grid-vue3/dist/main.mjs"
+      }
+    },
+    "ag-stack": {
+      "version": "36.2.0-beta.20260922.1430",
+      "paths": {
+        "dist/package/main.esm.mjs": "ag-stack/dist/package/main.esm.mjs"
+      }
+    }
+  }
+}
