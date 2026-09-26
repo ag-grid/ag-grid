@@ -31,6 +31,61 @@ log_info() {
 log_error() { echo "[install-for-cloud] ERROR: $*" >&2; }
 
 # ---------------------------------------------------------------------------
+# Breadcrumb, written before anything below can fail.
+#
+# A cloud session that comes up without node_modules cannot distinguish three
+# very different failures from the inside: this hook never ran at all, it ran and
+# its notice never reached the model, or it ran and took an early exit. All three
+# present identically — no notice, no dependencies. Diagnosing the difference by
+# inspecting the session cost a full probe cycle and still did not settle it.
+#
+# So record the fact of invocation, plus exactly the variables the branch logic
+# below depends on, somewhere that survives the session. `${VAR-<unset>}` (one
+# dash) is deliberate: it distinguishes unset from set-but-empty, which is the
+# distinction that matters for $CLAUDE_PROJECT_DIR. Note that a hook's
+# environment is not the session's Bash environment, so this is the only
+# trustworthy reading of what the hook actually saw.
+#
+# Best-effort throughout: never fail the hook to write a log about the hook.
+# ---------------------------------------------------------------------------
+
+hook_breadcrumb() {
+    local dir
+    for dir in "${AG_CLOUD_CACHE_DIR:-}" /opt/ag-cloud "${HOME:-}/.cache/ag-cloud" /tmp; do
+        [[ -n "$dir" && "$dir" != "/.cache/ag-cloud" ]] || continue
+        mkdir -p "$dir" 2>/dev/null || continue
+        [[ -w "$dir" ]] || continue
+        {
+            echo "--- $(date -u '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null) install-for-cloud.sh invoked"
+            echo "    source=${BASH_SOURCE[0]}"
+            echo "    pwd=${PWD}"
+            echo "    CLAUDE_PROJECT_DIR=${CLAUDE_PROJECT_DIR-<unset>}"
+            echo "    CLAUDE_CODE_REMOTE=${CLAUDE_CODE_REMOTE-<unset>}"
+            echo "    CLAUDE_ENV_FILE=${CLAUDE_ENV_FILE-<unset>}"
+            echo "    AG_CLOUD_INSTALL=${AG_CLOUD_INSTALL-<unset>}"
+        } >>"$dir/hook.log" 2>/dev/null || continue
+        AG_CLOUD_HOOK_LOG="$dir/hook.log"
+        return 0
+    done
+    return 0
+}
+
+# Records which exit the script took. Without it the breadcrumb proves the hook
+# started but not where it stopped, and the early-exit branches are exactly the
+# ones under suspicion. An EXIT trap does not alter the script's own status
+# unless it calls `exit`, which this deliberately does not.
+hook_breadcrumb_exit() {
+    local rc=$?
+    if [[ -n "${AG_CLOUD_HOOK_LOG:-}" ]]; then
+        echo "    EXIT rc=${rc} repo_root=${REPO_ROOT:-<unresolved>}" >>"$AG_CLOUD_HOOK_LOG" 2>/dev/null || true
+    fi
+    return 0
+}
+
+hook_breadcrumb
+trap hook_breadcrumb_exit EXIT
+
+# ---------------------------------------------------------------------------
 # Work in the repository, not in whatever directory the session happens to start
 # in. Everything below — the node_modules restore, the .claude generation, the
 # readiness report — used relative paths, which silently made this hook a no-op in
@@ -488,18 +543,25 @@ install_nx_if_missing() {
 main() {
     log_info "Bootstrapping cloud environment"
 
+    # The cloud exit comes first, before anything that touches the network.
+    # `npm i -g yarn` and `yarn global add nx` used to run above this point, so a
+    # session whose snapshot had neither — a stale or failed environment build,
+    # which is the case every existing environment hits first — sat through two
+    # global installs inside the SessionStart hook. Claude Code waits for hooks
+    # before the first message, so that is exactly the freeze this hook exists to
+    # avoid. finish-setup.sh bootstraps the toolchain instead: the session waits
+    # on that Bash call, so it can afford the time.
+    if [[ "$IN_CLOUD_SESSION" == "1" ]]; then
+        announce_deps_not_ready
+        exit 0
+    fi
+
     if ! install_yarn_if_missing; then
         exit 2
     fi
 
     if ! install_nx_if_missing; then
         exit 2
-    fi
-
-    # In a cloud session the install must not block the SessionStart hook.
-    if [[ "$IN_CLOUD_SESSION" == "1" ]]; then
-        announce_deps_not_ready
-        exit 0
     fi
 
     # Delegate to yarn install — preinstall-worktree.sh handles COW cloning,

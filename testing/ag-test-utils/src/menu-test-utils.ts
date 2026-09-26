@@ -46,3 +46,12 @@ export function openMenuOption(name: string): Promise<HTMLElement> {
 export async function clickMenuOption(name: string): Promise<void> {
     (await openMenuOption(name)).closest<HTMLElement>('.ag-menu-option')!.click();
 }
+
+/** The entries of the open menu in order: each option's text, or `'separator'`. */
+export function openMenuEntries(): string[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option, .ag-menu-separator')).map((el) =>
+        el.classList.contains('ag-menu-separator')
+            ? 'separator'
+            : (el.querySelector<HTMLElement>('.ag-menu-option-text')?.textContent?.trim() ?? '')
+    );
+}

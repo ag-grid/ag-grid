@@ -12,6 +12,8 @@ export type InputProps = {
     onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
     onKeyPress?: KeyboardEventHandler<HTMLInputElement>;
     isError?: boolean;
+    /** Names the field where nothing visible does - a colour swatch in a row of them. */
+    ariaLabel?: string;
     className?: string;
     additionalPaddingLeft?: number;
 };
@@ -19,6 +21,7 @@ export type InputProps = {
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
     <StyledInput
         placeholder={props.placeholder}
+        aria-label={props.ariaLabel}
         ref={ref}
         type={props.type || 'text'}
         value={props.value}

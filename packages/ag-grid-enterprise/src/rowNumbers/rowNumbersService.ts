@@ -25,7 +25,6 @@ import type {
     CellRange,
     ColDef,
     ColKind,
-    GetContextMenuItems,
     IRangeService,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -45,8 +44,6 @@ import type {
     RangeSelectionExtensionRegistry,
 } from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
-
-const emptyContextMenuItems: GetContextMenuItems = () => [];
 
 export class RowNumbersService
     extends _BaseSingleColService
@@ -344,7 +341,6 @@ export class RowNumbersService
     }
 
     protected createColDef(): ColDef {
-        const contextMenuSvc = this.beans.contextMenuSvc;
         const enableRTL = this.gos.get('enableRtl');
 
         return {
@@ -353,7 +349,6 @@ export class RowNumbersService
             width: 60,
             resizable: false,
             valueGetter: this.boundValueGetter,
-            contextMenuItems: this.isIntegratedWithSelection || !contextMenuSvc ? undefined : emptyContextMenuItems,
             // overrides
             ...this.rowNumberOverrides,
             // non-overridable properties

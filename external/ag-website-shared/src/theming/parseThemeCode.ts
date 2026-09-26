@@ -31,11 +31,20 @@ export type ParseThemeCodeOptions = {
      * can omit this - parts will always be empty.
      */
     extractParts?: (identifiers: string[]) => Part<any>[];
+    /**
+     * What to say when the code holds nothing this host recognises. Defaults to
+     * the grid/Studio builder-chain form.
+     */
+    noParamsError?: string;
 };
 
 export function parseThemeCode(code: string, options: ParseThemeCodeOptions): ParseThemeResult {
     const tokens = tokenizeThemeCode(code);
-    const { isRecognizedParam, extractParts } = options;
+    const {
+        isRecognizedParam,
+        extractParts,
+        noParamsError = 'Could not find any theme parameters. Expected code like: themeQuartz.withParams({ backgroundColor: "#fff" })',
+    } = options;
     const params: Record<string, unknown> = {};
     const variableWarnings: string[] = [];
     let i = 0;
@@ -67,10 +76,7 @@ export function parseThemeCode(code: string, options: ParseThemeCodeOptions): Pa
     if (Object.keys(params).length + parts.length === 0) {
         return {
             success: false,
-            error:
-                variableWarnings.length > 0
-                    ? variableWarnings.join('\n')
-                    : 'Could not find any theme parameters. Expected code like: themeQuartz.withParams({ backgroundColor: "#fff" })',
+            error: variableWarnings.length > 0 ? variableWarnings.join('\n') : noParamsError,
             params: undefined,
             parts: undefined,
             variableWarnings: undefined,
@@ -110,6 +116,12 @@ export function parseThemeCode(code: string, options: ParseThemeCodeOptions): Pa
         for (let j = start; j < end; j++) {
             const token = tokens[j];
             const nextToken = tokens[j + 1];
+            if (token.value === ',' && (nextToken?.value === '}' || nextToken?.value === ']')) {
+                // A trailing comma is valid JS and invalid JSON, and a value
+                // read whole - a charts palette, a border - carries its own
+                // punctuation into the parse, so hand-written code hits this.
+                continue;
+            }
             result += token.whitespaceBefore;
             if (token.type === 'string' || (token.type === 'identifier' && nextToken?.value === ':')) {
                 result += JSON.stringify(token.value);

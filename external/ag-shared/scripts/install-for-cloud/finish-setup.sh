@@ -72,6 +72,51 @@ rm -f "$STATE/ready" "$STATE/failed"
 date +%s >"$STATE/started"
 
 # ---------------------------------------------------------------------------
+# Toolchain — yarn and nx, when the snapshot has neither.
+#
+# This belongs here rather than in the SessionStart hook. Both are network
+# installs, and the hook blocks the session's first message; here the session is
+# already waiting on a Bash call that takes minutes anyway. A snapshot built
+# before the environment's setup script worked arrives with no yarn at all, and
+# the install below cannot run without it.
+# ---------------------------------------------------------------------------
+
+ensure_toolchain() {
+    # Engine checks are noisy in cloud images; the repo pins node itself. Only
+    # written when absent, so a repo that tracks .yarnrc keeps its own copy.
+    if [[ ! -f "$REPO_ROOT/.yarnrc" ]]; then
+        cat >"$REPO_ROOT/.yarnrc" <<'EOF'
+--install.ignore-engines true
+--run.ignore-engines true
+EOF
+    fi
+
+    if ! command -v yarn &>/dev/null; then
+        log "yarn is missing; installing yarn@1 globally"
+        npm i -g --force yarn@1 >/dev/null 2>&1 || {
+            log "yarn@1 global install FAILED — cannot install dependencies"
+            return 1
+        }
+    fi
+
+    if ! command -v nx &>/dev/null; then
+        local nx_version
+        nx_version="$(node -p "require('$REPO_ROOT/package.json').devDependencies.nx" 2>/dev/null)"
+        if [[ -n "$nx_version" && "$nx_version" != "undefined" ]]; then
+            log "nx is missing; installing nx@${nx_version} globally"
+            yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
+                log "nx@${nx_version} global install failed (yarn nx still works)"
+        fi
+    fi
+    return 0
+}
+
+if ! ensure_toolchain; then
+    date +%s >"$STATE/failed"
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
 # Install
 # ---------------------------------------------------------------------------
 
