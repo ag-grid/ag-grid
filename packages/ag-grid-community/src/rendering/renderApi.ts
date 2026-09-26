@@ -22,7 +22,17 @@ export function setGridAriaProperty(beans: BeanCollection, property: string, val
 }
 
 export function refreshCells<TData = any>(beans: BeanCollection, params: RefreshCellsParams<TData> = {}): void {
-    beans.frameworkOverrides.wrapIncoming(() => beans.rowRenderer.refreshCells(params));
+    beans.frameworkOverrides.wrapIncoming(() => {
+        const { colModel, rowRenderer } = beans;
+        // data mutated in place can change what a span callback returns
+        if (colModel.colSpanActive || colModel.rowSpanCols !== null) {
+            const rowCtrls = rowRenderer.getRowCtrls(params.rowNodes);
+            for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+                rowCtrls[i].refreshSpans();
+            }
+        }
+        rowRenderer.refreshCells(params);
+    });
 }
 
 export function refreshHeader(beans: BeanCollection) {

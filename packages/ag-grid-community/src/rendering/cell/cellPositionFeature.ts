@@ -1,39 +1,8 @@
-import { _areEqual, _missing } from 'ag-stack';
-
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../features/horizontalPositionUtils';
 import type { CellCtrl } from './cellCtrl';
-
-/**
- * Wires the listeners that keep a cell's width and left position in sync, including col spanning
- * (which makes width cover many columns). Height is only ever touched for row-spanned cells, and is
- * applied on attach in _initCellPosition (via legacyApplyRowSpan or _applySpanHeight), not here.
- */
-export function _setupCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    // Listener setup runs from the CellCtrl constructor (before the cell component attaches) so that
-    // getColSpanningList() is available as soon as the CellCtrl exists. This is required in
-    // React, where setComp() is called asynchronously, but navigation normalisation may query
-    // the cell position synchronously before the first render completes.
-    //
-    // A row-spanned cell keeps its own height and aria-rowspan in sync (see SpannedCellCtrl's
-    // constructor, which wires the refresh listeners) and must not also run the col/row span setup
-    // below. Gate on isCellSpanning() rather than getCellSpan(): the latter reads cellSpan, a
-    // constructor parameter property still unassigned while this runs inside super(), whereas
-    // isCellSpanning() is a prototype method that resolves correctly during super().
-    if (cellCtrl.isCellSpanning()) {
-        return;
-    }
-    setupColSpan(beans, cellCtrl);
-    setupRowSpan(beans, cellCtrl);
-}
-
-function setupRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    cellCtrl.rowSpan = cellCtrl.column.getRowSpan(cellCtrl.rowNode);
-
-    cellCtrl.addManagedListeners(beans.eventSvc, { newColumnsLoaded: () => onNewColumnsLoaded(beans, cellCtrl) });
-}
 
 // Called each time the cell component attaches (initial mount and any remount).
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -55,7 +24,7 @@ export function _applySpanHeight(cellCtrl: CellCtrl): void {
     }
 }
 
-function onNewColumnsLoaded(beans: BeanCollection, cellCtrl: CellCtrl): void {
+export function _refreshCellRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const rowSpan = cellCtrl.column.getRowSpan(cellCtrl.rowNode);
     if (cellCtrl.rowSpan === rowSpan) {
         return;
@@ -65,33 +34,45 @@ function onNewColumnsLoaded(beans: BeanCollection, cellCtrl: CellCtrl): void {
     legacyApplyRowSpan(beans, cellCtrl, true);
 }
 
-function onDisplayColumnsChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const colsSpanning = _getColSpanningList(beans, cellCtrl);
-
-    if (!_areEqual(cellCtrl.colsSpanning, colsSpanning)) {
-        cellCtrl.colsSpanning = colsSpanning;
-        _onCellWidthChanged(cellCtrl);
-        _onCellLeftChanged(beans, cellCtrl); // left changes when doing RTL
+/** Sizes a cell to `colSpan` columns from its own. The row's layout decides the span, so it is read once. */
+export function _setCellColSpan(beans: BeanCollection, cellCtrl: CellCtrl, colSpan: number): void {
+    const column = cellCtrl.column;
+    let prev = cellCtrl.colsSpanning;
+    if (prev === null) {
+        // a column can gain a colSpan after its cell was built, so tracking starts at the first real span
+        if (colSpan === 1 || cellCtrl.isCellSpanning()) {
+            return;
+        }
+        prev = [column];
+        cellCtrl.colsSpanning = prev;
+        // any displayed col's width can be one this cell spans
+        cellCtrl.addManagedListeners(beans.eventSvc, {
+            displayedColumnsWidthChanged: () => _onCellWidthChanged(cellCtrl),
+        });
     }
-}
-
-function setupColSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-    if (cellCtrl.column.colDef.colSpan == null) {
-        return;
+    const visibleCols = beans.visibleCols;
+    const lane = column.pinnedLane;
+    // the columns covered, never past the pinned lane, allocated only once they differ from `prev`
+    let colsSpanning: AgColumn[] | null = null;
+    let count = 0;
+    let pointer: AgColumn | null = column;
+    while (pointer !== null && count < colSpan && pointer.pinnedLane === lane) {
+        if (colsSpanning === null && prev[count] !== pointer) {
+            colsSpanning = prev.slice(0, count);
+        }
+        colsSpanning?.push(pointer);
+        ++count;
+        pointer = visibleCols.getColAfter(pointer);
     }
-
-    cellCtrl.colsSpanning = _getColSpanningList(beans, cellCtrl);
-
-    cellCtrl.addManagedListeners(beans.eventSvc, {
-        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        displayedColumnsChanged: () => onDisplayColumnsChanged(beans, cellCtrl),
-        // because we are spanning over multiple cols, we check for width any time any cols width changes.
-        // this is expensive - really we should be explicitly checking only the cols we are spanning over
-        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        displayedColumnsWidthChanged: () => _onCellWidthChanged(cellCtrl),
-    });
+    if (colsSpanning === null) {
+        if (count === prev.length) {
+            return;
+        }
+        colsSpanning = prev.slice(0, count);
+    }
+    cellCtrl.colsSpanning = colsSpanning;
+    _onCellWidthChanged(cellCtrl);
+    _onCellLeftChanged(beans, cellCtrl); // left changes when doing RTL
 }
 
 export function _onCellWidthChanged(cellCtrl: CellCtrl): void {
@@ -112,33 +93,6 @@ function getCellWidth(cellCtrl: CellCtrl): number {
         width += colsSpanning[i].actualWidth;
     }
     return width;
-}
-
-export function _getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): AgColumn[] {
-    const { column, rowNode } = cellCtrl;
-    const colSpan = column.getColSpan(rowNode);
-    const colsSpanning: AgColumn[] = [];
-
-    // if just one col, the col span is just the column we are in
-    if (colSpan === 1) {
-        colsSpanning.push(column);
-    } else {
-        let pointer: AgColumn | null = column;
-        const lane = column.pinnedLane;
-        for (let i = 0; pointer && i < colSpan; i++) {
-            colsSpanning.push(pointer);
-            pointer = beans.visibleCols.getColAfter(pointer);
-            if (!pointer || _missing(pointer)) {
-                break;
-            }
-            // we do not allow col spanning to span outside of pinned areas
-            if (lane !== pointer.pinnedLane) {
-                break;
-            }
-        }
-    }
-
-    return colsSpanning;
 }
 
 export function _onCellLeftChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -181,7 +135,8 @@ function setHorizontalPosition(beans: BeanCollection, cellCtrl: CellCtrl, eSetLe
 }
 
 function legacyApplyRowSpan(beans: BeanCollection, cellCtrl: CellCtrl, force?: boolean): void {
-    if (cellCtrl.rowSpan === 1 && !force) {
+    const rowSpan = cellCtrl.rowSpan;
+    if (rowSpan === 1 && !force) {
         return;
     }
 
@@ -189,9 +144,15 @@ function legacyApplyRowSpan(beans: BeanCollection, cellCtrl: CellCtrl, force?: b
     if (!eContent) {
         return;
     }
+    if (rowSpan === 1) {
+        // one row again: size like the neighbouring cells, whatever the row's height
+        eContent.style.height = '';
+        eContent.style.zIndex = '';
+        return;
+    }
 
     const singleRowHeight = _getRowHeightAsNumber(beans);
-    const totalRowHeight = singleRowHeight * cellCtrl.rowSpan;
+    const totalRowHeight = singleRowHeight * rowSpan;
 
     eContent.style.height = `${totalRowHeight}px`;
     // row-spanned cell content must sit above normal cells in the same row.

@@ -100,15 +100,21 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      */
     private setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
         rowNode.__autoHeights ??= {};
+        const autoHeights = rowNode.__autoHeights;
+        const colId = column.getId();
+        const previousCellHeight = autoHeights[colId];
 
         // if the cell comp has been unmounted, delete the auto height
         if (cellHeight == undefined) {
-            delete rowNode.__autoHeights[column.getId()];
+            delete autoHeights[colId];
+            // only column spanning skips a missing measurement, so only then can the row shrink
+            if (previousCellHeight !== undefined && this.beans.colModel.colSpanActive) {
+                this.requestCheckAutoHeight();
+            }
             return;
         }
 
-        const previousCellHeight = rowNode.__autoHeights[column.getId()];
-        rowNode.__autoHeights[column.getId()] = cellHeight;
+        autoHeights[colId] = cellHeight;
         if (previousCellHeight !== cellHeight) {
             this.requestCheckAutoHeight();
         }

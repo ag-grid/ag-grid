@@ -34,7 +34,7 @@ import {
     TextEditorModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../tooltip/legacyTooltipTestUtils';
 
@@ -49,6 +49,7 @@ describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             AlignedGridsModule,
+            BatchEditModule,
             CellStyleModule,
             ClientSideRowModelModule,
             DragAndDropModule,
@@ -1111,7 +1112,7 @@ describe('Column Features', () => {
                 columnDefs: [
                     { colId: 'a' },
                     { colId: 'b', colSpan: () => 3, rowSpan: () => 2 },
-                    { colId: 'c', colSpan: () => 0 },
+                    { colId: 'c', colSpan: () => 0, rowSpan: () => NaN },
                 ],
                 rowData: [{ a: 1, b: 2, c: 3 }],
             });
@@ -1134,8 +1135,9 @@ describe('Column Features', () => {
             expect(api.getColumn('a')!.getRowSpan(node)).toBe(1);
             expect(api.getColumn('b')!.getColSpan(node)).toBe(3);
             expect(api.getColumn('b')!.getRowSpan(node)).toBe(2);
-            // Clamped from 0 → 1
+            // Clamped from 0 and NaN → 1
             expect(api.getColumn('c')!.getColSpan(node)).toBe(1);
+            expect(api.getColumn('c')!.getRowSpan(node)).toBe(1);
             await new GridRows(
                 api,
                 `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback final state`
@@ -1365,6 +1367,29 @@ describe('Column Features', () => {
             }
         });
 
+        test('a focused cell kept after a scroll or a column move takes it out of the viewport is removed once focus moves on', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c0');
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+            expect(cellFor(api, 'c0')).not.toBeNull();
+
+            api.setFocusedCell(0, 'c60');
+            await waitFor(() => expect(cellFor(api, 'c0')).toBeNull());
+
+            api.ensureColumnVisible('c0');
+            api.setFocusedCell(0, 'c0');
+            const order = api.getColumns()!.map((col) => ({ colId: col.getColId() }));
+            api.applyColumnState({ state: [...order.slice(1), order[0]], applyOrder: true });
+            await asyncSetTimeout(0);
+            expect(cellFor(api, 'c0')).not.toBeNull();
+
+            api.setFocusedCell(0, 'c1');
+            await waitFor(() => expect(cellFor(api, 'c0')).toBeNull());
+        });
+
         test('an unfocused cell is removed when its column scrolls out of the viewport', async () => {
             const api = createVirtualisedGrid();
             await asyncSetTimeout(0);
@@ -1394,6 +1419,59 @@ describe('Column Features', () => {
 
             expect(cellFor(api, 'c60')).not.toBeNull();
             expect(api.getEditingCells().map((cell) => cell.column?.getColId())).toEqual(['c60']);
+        });
+
+        test('a cell with a pending batch edit kept out of the viewport is removed once the batch is cancelled or commits', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            const keepPendingEdit = async (step: string) => {
+                api.ensureColumnVisible('c60');
+                await asyncSetTimeout(0);
+                api.startBatchEdit();
+                api.startEditingCell({ rowIndex: 0, colKey: 'c60' });
+                await asyncSetTimeout(0);
+                api.stopEditing();
+                api.ensureColumnVisible('c0');
+                api.setFocusedCell(0, 'c0');
+                await asyncSetTimeout(0);
+                expect({ step, kept: cellFor(api, 'c60') !== null }).toEqual({ step, kept: true });
+            };
+
+            await keepPendingEdit('before cancel');
+            api.cancelBatchEdit();
+            await waitFor(() =>
+                expect({ step: 'cancel', kept: cellFor(api, 'c60') !== null }).toEqual({ step: 'cancel', kept: false })
+            );
+
+            await keepPendingEdit('before commit');
+            api.commitBatchEdit();
+            await waitFor(() =>
+                expect({ step: 'commit', kept: cellFor(api, 'c60') !== null }).toEqual({ step: 'commit', kept: false })
+            );
+        });
+
+        test('a row that moves off the focused index drops the cell it kept for focus', async () => {
+            const rows = [
+                { ...virtualisedRow(120), id: 'r0' },
+                { ...virtualisedRow(120), id: 'r1' },
+            ];
+            const api = gridsManager.createGrid('virtualisedCells', {
+                columnDefs: virtualisedCols(120),
+                rowData: rows,
+                getRowId: (params) => params.data.id,
+                suppressColumnVirtualisation: false,
+            });
+            const keptCell = () => gridRoot(api).querySelector('.ag-row[row-id="r0"] .ag-cell[col-id="c0"]');
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c0');
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+            expect(keptCell()).not.toBeNull();
+
+            api.setGridOption('rowData', [rows[1], rows[0]]);
+            await waitFor(() => expect(keptCell()).toBeNull());
         });
 
         // A short scroll changes the viewport by only a few columns, which is where a row is most likely

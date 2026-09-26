@@ -786,7 +786,7 @@ export class AgColumn<TValue = any>
         }
         const params: ColSpanParams = this.createColumnFunctionCallbackParams(rowNode);
         const colSpan = colSpanFn(params);
-        return colSpan < 1 ? 1 : colSpan; // colSpan must be number equal to or greater than 1
+        return colSpan >= 1 ? Math.floor(colSpan) : 1; // whole columns, at least one, NaN included
     }
 
     public getRowSpan(rowNode: IRowNode): number {
@@ -796,7 +796,7 @@ export class AgColumn<TValue = any>
         }
         const params: RowSpanParams = this.createColumnFunctionCallbackParams(rowNode);
         const rowSpanValue = rowSpan(params);
-        return rowSpanValue < 1 ? 1 : rowSpanValue; // rowSpan must be number equal to or greater than 1
+        return rowSpanValue >= 1 ? rowSpanValue : 1; // below 1, or not a number, spans one row
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {

@@ -170,19 +170,20 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
-    public getColsWithinViewport(rowNode: RowNode): AgColumn[] {
+    public getColsWithinViewport(rowNode: RowNode, spans: number[] | null = null): AgColumn[] {
         if (!this.colModel.colSpanActive) {
             return this.colsWithinViewport;
         }
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const inViewportCallback = this.isColumnVirtualisationSuppressed() ? undefined : this.inRowViewport;
+        const inViewportCallback = this.isColumnVirtualisationSuppressed() ? null : this.inRowViewport;
         const { visibleCols } = this;
         const displayedColumnsCenter = visibleCols.centerCols;
 
         return visibleCols.getColsForRow(
             rowNode,
             displayedColumnsCenter,
+            spans,
             inViewportCallback,
             this.emptySpaceBeforeColumn
         );
