@@ -114,27 +114,39 @@ describe('Legacy colSpan rendering', () => {
         `);
     });
 
-    test('a colSpan of NaN renders the cell one column wide', () => {
-        const nanColumnDefs = [{ ...columnDefs[0], colSpan: () => Number.NaN }, columnDefs[1], columnDefs[2]];
-        const api = gridsManager.createGrid('myGrid', { columnDefs: nanColumnDefs, rowData });
+    test('in print layout a span stops at its pinned lane, as outside print layout', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            domLayout: 'print',
+            columnDefs: [{ ...columnDefs[0], pinned: 'left', colSpan: () => 3 }, columnDefs[1], columnDefs[2]],
+            rowData,
+        });
 
-        const row0 = getGridElement(api)!.querySelector('[row-index="0"]')!;
-        const widths = ['a', 'b', 'c'].map(
-            (colId) => (row0.querySelector(`[col-id="${colId}"]`) as HTMLElement | null)?.style.width
-        );
-
-        expect(widths).toEqual(['100px', '100px', '100px']);
+        const row = getGridElement(api)!.querySelector('.ag-row[row-index="0"]')!;
+        expect(Array.from(row.querySelectorAll('.ag-cell'), (cell) => cell.getAttribute('col-id'))).toEqual([
+            'a',
+            'b',
+            'c',
+        ]);
     });
 
-    test('a fractional colSpan renders the whole columns it covers', () => {
-        const fractionalColumnDefs = [{ ...columnDefs[0], colSpan: () => 2.5 }, columnDefs[1], columnDefs[2]];
-        const api = gridsManager.createGrid('myGrid', { columnDefs: fractionalColumnDefs, rowData });
+    test('a colSpan of NaN renders one column wide, and a fractional one the whole columns it covers', () => {
+        const oddColumnDefs = [
+            { ...columnDefs[0], colSpan: (params) => (params.node!.rowIndex === 0 ? Number.NaN : 2.5) },
+            columnDefs[1],
+            columnDefs[2],
+        ] satisfies ColDef<RowData>[];
+        const api = gridsManager.createGrid('myGrid', { columnDefs: oddColumnDefs, rowData });
 
-        const row0 = getGridElement(api)!.querySelector('[row-index="0"]')!;
-        const widths = ['a', 'b', 'c'].map(
-            (colId) => (row0.querySelector(`[col-id="${colId}"]`) as HTMLElement | null)?.style.width
-        );
+        const widths = (rowIndex: number) => {
+            const row = getGridElement(api)!.querySelector(`[row-index="${rowIndex}"]`)!;
+            return ['a', 'b', 'c'].map(
+                (colId) => (row.querySelector(`[col-id="${colId}"]`) as HTMLElement | null)?.style.width
+            );
+        };
 
-        expect(widths).toEqual(['200px', undefined, '100px']);
+        expect({ nan: widths(0), fractional: widths(1) }).toEqual({
+            nan: ['100px', '100px', '100px'],
+            fractional: ['200px', undefined, '100px'],
+        });
     });
 });

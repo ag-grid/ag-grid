@@ -54,13 +54,7 @@ import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
-import {
-    _getColSpanningList,
-    _initCellPosition,
-    _onCellLeftChanged,
-    _onCellWidthChanged,
-    _setupCellPosition,
-} from './cellPositionFeature';
+import { _initCellPosition, _onCellLeftChanged, _onCellWidthChanged, _setupCellPosition } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -782,10 +776,6 @@ export class CellCtrl extends BeanStub {
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         _onCellMouseEvent(this.beans, this, eventName, mouseEvent);
-    }
-
-    public getColSpanningList(): AgColumn[] {
-        return _getColSpanningList(this.beans, this);
     }
 
     public onLeftChanged(): void {

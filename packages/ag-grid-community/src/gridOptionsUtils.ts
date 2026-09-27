@@ -335,16 +335,11 @@ export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, piv
 
 export type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
-export function _isFullWidthCellRow(gos: GridOptionsService, rowNode: RowNode): boolean {
+function isFullWidthCellRow(gos: GridOptionsService, rowNode: RowNode): boolean {
     if (_isClientSideLoadingRow(gos, rowNode)) {
         return false;
     }
-    if (rowNode.detail) {
-        return true;
-    }
-
-    const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
-    return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode }) : false;
+    return !!rowNode.detail || !!gos.getCallback('isFullWidthRow')?.({ rowNode });
 }
 
 /** How a row renders, decided from the node alone so it holds before the row is rendered. */
@@ -353,28 +348,21 @@ export function _getRowType(beans: BeanCollection, rowNode: RowNode): RowType {
     // groupHideOpenParents implicitly disables full width loading
     const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow');
     const groupHideOpenParents = gos.get('groupHideOpenParents');
-    const isServerSide = rowModel.getType() === 'serverSide';
-    const isStub = isServerSide && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
-    const isFullWidthCell = _isFullWidthCellRow(gos, rowNode);
-    const isDetailCell = gos.get('masterDetail') && rowNode.detail;
-    const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, colModel.pivotMode);
-    // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
-    // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
-    const isSuppressedGroupStub = suppressFullWidthLoading && rowNode.stub && isFullWidthGroup && !groupHideOpenParents;
-
-    if (isStub) {
+    if (rowModel.getType() === 'serverSide' && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents) {
         return 'FullWidthLoading';
     }
-    if (isDetailCell) {
+    if (gos.get('masterDetail') && rowNode.detail) {
         return 'FullWidthDetail';
     }
-    if (isFullWidthCell) {
+    if (isFullWidthCellRow(gos, rowNode)) {
         return 'FullWidth';
     }
-    if (isFullWidthGroup && !isSuppressedGroupStub) {
-        return 'FullWidthGroup';
-    }
-    return 'Normal';
+    // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
+    // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
+    const isSuppressedGroupStub = suppressFullWidthLoading && rowNode.stub && !groupHideOpenParents;
+    return _isFullWidthGroupRow(gos, rowNode, colModel.pivotMode) && !isSuppressedGroupStub
+        ? 'FullWidthGroup'
+        : 'Normal';
 }
 
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug

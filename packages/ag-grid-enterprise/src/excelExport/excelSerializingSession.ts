@@ -478,7 +478,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 node,
             });
             const excelStyleId: string | null = this.getStyleId(styleIds);
-            const colSpan = column.getColSpan(node);
+            // as rendering does, a span stops at the last column
+            const colSpan = Math.min(column.getColSpan(node), this.columnsToExport.length - index);
             const addedImage = this.addImage(rowIndex, column, valueForCellString);
             const note = this.resolveBodyCellNote({
                 accumulatedRowIndex: rowIndex,

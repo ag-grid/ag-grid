@@ -13,7 +13,7 @@ import type { CellCtrl } from './cellCtrl';
  */
 export function _setupCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     // Listener setup runs from the CellCtrl constructor (before the cell component attaches) so that
-    // getColSpanningList() is available as soon as the CellCtrl exists. This is required in
+    // colsSpanning is available as soon as the CellCtrl exists. This is required in
     // React, where setComp() is called asynchronously, but navigation normalisation may query
     // the cell position synchronously before the first render completes.
     //
@@ -66,7 +66,7 @@ function onNewColumnsLoaded(beans: BeanCollection, cellCtrl: CellCtrl): void {
 }
 
 function onDisplayColumnsChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const colsSpanning = _getColSpanningList(beans, cellCtrl);
+    const colsSpanning = getColSpanningList(beans, cellCtrl);
 
     if (!_areEqual(cellCtrl.colsSpanning, colsSpanning)) {
         cellCtrl.colsSpanning = colsSpanning;
@@ -81,7 +81,7 @@ function setupColSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
         return;
     }
 
-    cellCtrl.colsSpanning = _getColSpanningList(beans, cellCtrl);
+    cellCtrl.colsSpanning = getColSpanningList(beans, cellCtrl);
 
     cellCtrl.addManagedListeners(beans.eventSvc, {
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
@@ -114,7 +114,7 @@ function getCellWidth(cellCtrl: CellCtrl): number {
     return width;
 }
 
-export function _getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): AgColumn[] {
+function getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): AgColumn[] {
     const { column, rowNode } = cellCtrl;
     const colSpan = column.getColSpan(rowNode);
     const colsSpanning: AgColumn[] = [];

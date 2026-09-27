@@ -428,6 +428,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.rightCols) : this.rightCols;
     }
 
+    /** Print layout flows every lane through one container. */
+    public getPrintColsForRow(rowNode: RowNode): AgColumn[] {
+        return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.allCols) : this.allCols;
+    }
+
     /** `filterCallback` is only set for the centre (virtualised) area. A col-spanned run is kept if
      *  ANY spanned col passes the filter. */
     public getColsForRow(
@@ -442,7 +447,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         for (let i = 0; i < len; ++i) {
             const col = displayedColumns[i];
-            const colSpan = Math.min(col.getColSpan(rowNode), len - i);
+            let colSpan = Math.min(col.getColSpan(rowNode), len - i);
+            // a span stops at its pinned lane's edge, as the drawn cell does
+            for (let j = 1; j < colSpan; ++j) {
+                if (displayedColumns[i + j].pinnedLane !== col.pinnedLane) {
+                    colSpan = j;
+                }
+            }
 
             let filterPasses: boolean;
             if (filterCallback) {
@@ -484,15 +495,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
 
         const target = cols.indexOf(column);
-        let i = 0;
-        while (i <= target) {
-            const col = cols[i];
-            i += col.getColSpan(rowNode);
-            if (i > target) {
-                return col;
-            }
+        let start = -1;
+        for (let i = 0; i <= target; i += cols[i].getColSpan(rowNode)) {
+            start = i;
         }
-        return column;
+        return start < 0 ? column : cols[start];
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {

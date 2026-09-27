@@ -4,8 +4,7 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { _getFocusColumn, _getRowAbove, _getRowBelow } from '../entities/positionUtils';
-import type { RowNode } from '../entities/rowNode';
+import { _getFocusColumn, _getRowAbove, _getRowBelow, _getRowNode } from '../entities/positionUtils';
 import { _isClientSideLoadingRow } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -117,26 +116,8 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public isCellGoodToFocusOn(gridCell: CellPosition): boolean {
-        let rowNode: RowNode | undefined;
-        const { pinnedRowModel, rowModel } = this.beans;
-
-        switch (gridCell.rowPinned) {
-            case 'top':
-                rowNode = pinnedRowModel?.getPinnedTopRow(gridCell.rowIndex);
-                break;
-            case 'bottom':
-                rowNode = pinnedRowModel?.getPinnedBottomRow(gridCell.rowIndex);
-                break;
-            default:
-                rowNode = rowModel.getRow(gridCell.rowIndex);
-                break;
-        }
-
-        if (!rowNode) {
-            return false;
-        }
-
-        return !this.isSuppressNavigable(_getFocusColumn(this.beans, gridCell), rowNode);
+        const rowNode = _getRowNode(this.beans, gridCell);
+        return !!rowNode && !this.isSuppressNavigable(_getFocusColumn(this.beans, gridCell), rowNode);
     }
 
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
@@ -222,6 +203,15 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         }
 
         return null;
+    }
+
+    /** The next cell in tab order, across rows, that can take focus; null past the last one on the page. */
+    public getNextTabStop(gridCell: CellPosition, backwards: boolean): CellPosition | null {
+        let next = this.getNextTabbedCell(gridCell, backwards);
+        while (next && !this.isCellGoodToFocusOn(next)) {
+            next = this.getNextTabbedCell(next, backwards);
+        }
+        return next;
     }
 
     public getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null {

@@ -34,7 +34,6 @@ import {
     _isAnimateRows,
     _isClientSideLoadingRow,
     _isDomLayout,
-    _isFullWidthCellRow,
     _isGetRowHeightFunction,
     _isRowSelection,
     _setDomData,
@@ -665,9 +664,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public refreshRow(params?: RefreshRowsParams & { newData?: boolean }): void {
-        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
-        const fullWidthChanged = this.isFullWidth() !== _isFullWidthCellRow(this.gos, this.rowNode);
-        if (fullWidthChanged) {
+        // a row that now renders as another type needs its other row mode feature, so it is drawn again
+        if (this.rowType !== _getRowType(this.beans, this.rowNode)) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
         }
@@ -1364,31 +1362,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    /** The column's own cell, else the cell drawn spanning it. */
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
-        // first up, check for cell directly linked to this column
-        let res: CellCtrl | null = null;
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.column == column) {
-                res = cellCtrl;
+        const cellCtrls = this.getAllCellCtrls();
+        let spanningCellCtrl: CellCtrl | null = null;
+        for (let i = 0, len = cellCtrls.length; i < len; ++i) {
+            const cellCtrl = cellCtrls[i];
+            if (cellCtrl.column === column) {
+                return cellCtrl;
+            }
+            if (!skipColSpanSearch && !spanningCellCtrl && cellCtrl.colsSpanning?.includes(column)) {
+                spanningCellCtrl = cellCtrl;
             }
         }
-
-        if (res != null || skipColSpanSearch) {
-            return res;
-        }
-
-        // second up, if not found, then check for spanned cols.
-        // we do this second (and not at the same time) as this is
-        // more expensive, as spanning cols is a
-        // infrequently used feature so we don't need to do this most
-        // of the time
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl?.getColSpanningList().indexOf(column) >= 0) {
-                res = cellCtrl;
-            }
-        }
-
-        return res;
+        return spanningCellCtrl;
     }
 
     protected onRowIndexChanged(): void {

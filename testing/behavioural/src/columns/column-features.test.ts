@@ -1145,28 +1145,20 @@ describe('Column Features', () => {
             `);
         });
 
-        test('colSpan and rowSpan callbacks returning NaN or a fraction resolve to a whole number of cells', () => {
+        test('a rowSpan callback returning NaN or a fraction resolves to a whole number of rows', () => {
             const api = gridsManager.createGrid('myGrid', {
                 suppressRowTransform: true,
                 columnDefs: [
-                    { colId: 'a', colSpan: () => Number.NaN, rowSpan: () => Number.NaN },
-                    { colId: 'b', colSpan: () => 2.5, rowSpan: () => 2.5 },
-                    { colId: 'c', colSpan: () => 1.5, rowSpan: () => 1.5 },
+                    { colId: 'a', rowSpan: () => Number.NaN },
+                    { colId: 'b', rowSpan: () => 2.5 },
+                    { colId: 'c', rowSpan: () => 1.5 },
                 ],
                 rowData: [{ a: 1, b: 2, c: 3 }],
             });
 
             const node = api.getDisplayedRowAtIndex(0)!;
-            const spans = ['a', 'b', 'c'].map((colId) => {
-                const column = api.getColumn(colId)!;
-                return [column.getColSpan(node), column.getRowSpan(node)];
-            });
 
-            expect(spans).toEqual([
-                [1, 1],
-                [2, 2],
-                [1, 1],
-            ]);
+            expect(['a', 'b', 'c'].map((colId) => api.getColumn(colId)!.getRowSpan(node))).toEqual([1, 2, 1]);
         });
 
         test('user resize clears flex; event-listener round-trip on widthChanged', async () => {

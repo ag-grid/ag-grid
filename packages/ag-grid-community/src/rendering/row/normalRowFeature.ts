@@ -165,7 +165,10 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const colViewport = this.beans.colViewport;
         const presentedColsService = this.beans.visibleCols;
         if (rowCtrl.printLayout) {
-            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.allCols);
+            this.centerCellCtrls = this.createCellCtrls(
+                this.centerCellCtrls,
+                presentedColsService.getPrintColsForRow(rowCtrl.rowNode)
+            );
             // Print layout flows every column through the centre, so the pinned ctrls are orphaned.
             this.leftCellCtrls = destroyCellCtrls(this.leftCellCtrls);
             this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);

@@ -7,6 +7,7 @@ import type {
     GridOptions,
     NavigateToNextCellParams,
     TabToNextGridContainerParams,
+    TabToNextGridContainerTarget,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -15,6 +16,7 @@ import {
     PinnedRowModule,
     getGridElement,
 } from 'ag-grid-community';
+import { CellSelectionModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import {
     dispatchKeyDown,
@@ -304,14 +306,8 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(getFocusedColId(api)).toBe('b');
     });
 
-    test('Page Down and Ctrl+Down from a spanning cell continue in the covered column', () => {
-        const api = createNavigationGrid({
-            rowData: [
-                { a: 'a0', b: 'b0', c: 'c0' },
-                { a: 'a1', b: 'b1', c: 'c1' },
-                { a: 'a2', b: 'b2', c: 'c2' },
-            ],
-        });
+    test('Page Up/Down and Ctrl+Up/Down from a spanning cell continue in the covered column', () => {
+        const api = createNavigationGrid();
         const steps: string[] = [];
 
         api.setFocusedCell(0, 'b');
@@ -324,7 +320,18 @@ describe('Column Spanning Keyboard Navigation', () => {
         dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
         steps.push(`Ctrl+Down: ${getFocusedRowIndex(api)} ${getFocusedColId(api)}`);
 
-        expect(steps).toEqual(['PageDown: 2 b', 'Ctrl+Down: 2 b']);
+        api.setFocusedCell(2, 'b');
+        dispatchKeyDown(KeyCode.UP);
+        dispatchKeyDown(KeyCode.PAGE_UP);
+        // jsdom has no viewport height, so Page Up's row is not meaningful here; its column is
+        steps.push(`PageUp: ${getFocusedColId(api)}`);
+
+        api.setFocusedCell(2, 'b');
+        dispatchKeyDown(KeyCode.UP);
+        dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+        steps.push(`Ctrl+Up: ${getFocusedRowIndex(api)} ${getFocusedColId(api)}`);
+
+        expect(steps).toEqual(['PageDown: 2 b', 'Ctrl+Down: 2 b', 'PageUp: b', 'Ctrl+Up: 0 b']);
     });
 
     test('Arrow Down preserves the covered column across consecutive spanning rows', () => {
@@ -393,16 +400,121 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(getFocusedColId(api)).toBe('c');
     });
 
-    /** Where DOM focus is: a header and its column, a cell and the focused cell's row and column, or no cell. */
+    test('the column covered by a spanning cell is dropped once the cell no longer covers it', () => {
+        const afterHidingCovered = (key: string, ctrlKey = false) => {
+            const api = createNavigationGrid();
+            api.setFocusedCell(0, 'b');
+            dispatchKeyDown(KeyCode.DOWN);
+            api.setGridOption(
+                'columnDefs',
+                makeColumnDefs().map((colDef) => (colDef.colId === 'b' ? { ...colDef, hide: true } : colDef))
+            );
+            dispatchKeyDown(key, { ctrlKey });
+            const result = `${focusState(api)}, ${api.getFocusedCell()?.column.isVisible()}`;
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({
+            arrowDown: afterHidingCovered(KeyCode.DOWN),
+            pageDown: afterHidingCovered(KeyCode.PAGE_DOWN),
+            ctrlDown: afterHidingCovered(KeyCode.DOWN, true),
+        }).toEqual({
+            arrowDown: 'cell a, focused cell 2 a, true',
+            pageDown: 'cell a, focused cell 2 a, true',
+            ctrlDown: 'cell a, focused cell 2 a, true',
+        });
+    });
+
+    test('a covered column that is not navigable is not kept for Page or Ctrl+Up/Down, which do not judge navigability', () => {
+        const fromLeftIntoSpan = (key: string, ctrlKey = false) => {
+            // on row 0 'a' spans over 'b', which is never navigable
+            const columnDefs = makeColumnDefs();
+            columnDefs[0].colSpan = (params) => (params.node!.rowIndex === 0 ? 2 : 1);
+            columnDefs[1].suppressNavigable = true;
+            const rowData = Array.from({ length: 4 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+            const api = createNavigationGrid({ columnDefs, rowData });
+            api.setFocusedCell(0, 'c');
+            dispatchKeyDown(KeyCode.LEFT);
+            dispatchKeyDown(key, { ctrlKey });
+            const result = focusState(api);
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({
+            pageDown: fromLeftIntoSpan(KeyCode.PAGE_DOWN),
+            ctrlDown: fromLeftIntoSpan(KeyCode.DOWN, true),
+        }).toEqual({
+            pageDown: 'cell a, focused cell 1 a',
+            ctrlDown: 'cell a, focused cell 3 a',
+        });
+    });
+
+    test('in print layout a covered column is drawn and judged as the cell spanning it', () => {
+        const columnDefs = makeColumnDefs();
+        columnDefs[0].suppressNavigable = true;
+        const api = createNavigationGrid({ columnDefs, domLayout: 'print' });
+        const cellsOfSpanningRow = Array.from(
+            getGridElement(api)!.querySelectorAll('.ag-row[row-index="1"] .ag-cell'),
+            (cell) => cell.getAttribute('col-id')
+        );
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect({ cellsOfSpanningRow, focus: focusState(api) }).toEqual({
+            cellsOfSpanningRow: ['a', 'c'],
+            focus: 'cell b, focused cell 2 b',
+        });
+    });
+
+    /** Where DOM focus is: a header and its column, a full-width row, a cell and the focused cell's row and column. */
     const focusState = (api: GridApi) => {
         const el = document.activeElement;
         const colId = el?.getAttribute('col-id');
         if (el?.classList.contains('ag-header-cell')) {
             return `header ${colId}`;
         }
+        if (el?.classList.contains('ag-full-width-row')) {
+            return `full width row ${el.getAttribute('row-index')}`;
+        }
         return !el?.classList.contains('ag-cell')
             ? 'no cell'
             : `cell ${colId}, focused cell ${api.getFocusedCell()?.rowIndex} ${getFocusedColId(api)}`;
+    };
+
+    const describeTarget = (target: TabToNextGridContainerTarget | null) => {
+        if (target == null || typeof target === 'string') {
+            return String(target);
+        }
+        return 'headerRowIndex' in target
+            ? `header ${target.column.getUniqueId()}`
+            : `${target.rowIndex} ${target.column.getColId()}`;
+    };
+
+    /** Shift+Tab from the paging panel, reporting the default target tabToNextGridContainer was given and the focus. */
+    const shiftTabFromPaging = async (gridOptions: GridOptions<RowData>) => {
+        const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => undefined);
+        const api = await gridsManager.createGridAndWait<RowData>(
+            'myGrid',
+            {
+                columnDefs: makeColumnDefs(),
+                pagination: true,
+                paginationPageSizeSelector: false,
+                tabToNextGridContainer,
+                ...gridOptions,
+            },
+            { modules: [PaginationModule] }
+        );
+        const lastRowIndex = api.getDisplayedRowCount() - 1;
+        const lastRowRendered = !!getGridElement(api)!.querySelector(`[row-index="${lastRowIndex}"]`);
+        getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+        dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+        const { nextContainer, defaultTarget } = tabToNextGridContainer.mock.calls[0][0];
+        const result = `rendered before: ${lastRowRendered}, ${nextContainer} ${describeTarget(defaultTarget)}, ${focusState(api)}`;
+        gridsManager.reset();
+        return result;
     };
 
     /** 'a' spans all three columns on the rows `spanned` returns true for. */
@@ -437,6 +549,41 @@ describe('Column Spanning Keyboard Navigation', () => {
         ]);
     });
 
+    test('with nothing navigable below, Arrow Down from a header stays on it and is handled, and Tab walks on to the next row', async () => {
+        const columnDefs = makeColumnDefs().map((colDef) => ({ ...colDef, colSpan: undefined }));
+        columnDefs[1].suppressNavigable = true;
+        const api = createNavigationGrid({ columnDefs });
+        api.setFocusedHeader('b');
+        const arrowDown = new KeyboardEvent('keydown', { key: KeyCode.DOWN, bubbles: true, cancelable: true });
+        document.activeElement!.dispatchEvent(arrowDown);
+        const arrowDownFromHeader = `${focusState(api)}, handled: ${arrowDown.defaultPrevented}`;
+        gridsManager.reset();
+
+        // on the first row 'a' spans all three columns and is not navigable
+        const firstRowNotNavigable = spanningColumnDefs((rowIndex) => rowIndex === 0);
+        firstRowNotNavigable[0].suppressNavigable = (params) => params.node.rowIndex === 0;
+        const tabApi = await gridsManager.createGridAndWait<RowData>(
+            'myGrid',
+            {
+                columnDefs: firstRowNotNavigable,
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0' },
+                    { a: 'a1', b: 'b1', c: 'c1' },
+                ],
+                pagination: true,
+                paginationPageSizeSelector: false,
+            },
+            { modules: [PaginationModule] }
+        );
+        tabApi.setFocusedHeader('c');
+        dispatchKeyDown(KeyCode.TAB);
+
+        expect({ arrowDownFromHeader, tabFromLastHeader: focusState(tabApi) }).toEqual({
+            arrowDownFromHeader: 'header b, handled: true',
+            tabFromLastHeader: 'cell a, focused cell 1 a',
+        });
+    });
+
     test('Arrow Down from a header skips a spanning cell that is not navigable', () => {
         const columnDefs = spanningColumnDefs((rowIndex) => rowIndex === 0);
         columnDefs[0].suppressNavigable = true;
@@ -448,26 +595,32 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(focusState(api)).toBe('cell c, focused cell 1 c');
     });
 
-    test('Arrow Down skips a spanning cell that is not navigable', () => {
-        const columnDefs = makeColumnDefs();
-        columnDefs[0].suppressNavigable = true;
-        const api = createNavigationGrid({ columnDefs });
+    test('a spanning cell is judged on its own column, and a covered column that is not navigable never traps the next move', () => {
+        const press = (notNavigable: 'a' | 'b', start: [number, string], keys: string[]) => {
+            // on row 1 'a' spans over 'b'; one of the two is never navigable
+            const columnDefs = makeColumnDefs();
+            columnDefs[notNavigable === 'a' ? 0 : 1].suppressNavigable = true;
+            const api = createNavigationGrid({ columnDefs });
+            api.setFocusedCell(start[0], start[1]);
+            const steps = keys.map((key) => {
+                dispatchKeyDown(key);
+                return `${key}: ${focusState(api)}`;
+            });
+            gridsManager.reset();
+            return steps;
+        };
 
-        api.setFocusedCell(0, 'b');
-        dispatchKeyDown(KeyCode.DOWN);
-
-        expect(focusState(api)).toBe('cell b, focused cell 2 b');
-    });
-
-    test('Arrow Down enters a navigable spanning cell over a column that is not navigable', () => {
-        const columnDefs = makeColumnDefs();
-        columnDefs[1].suppressNavigable = true;
-        const api = createNavigationGrid({ columnDefs });
-
-        api.setFocusedCell(0, 'b');
-        dispatchKeyDown(KeyCode.DOWN);
-
-        expect(focusState(api)).toBe('cell a, focused cell 1 a');
+        expect({
+            spanNotNavigable: press('a', [0, 'b'], [KeyCode.DOWN]),
+            downIntoSpan: press('b', [0, 'b'], [KeyCode.DOWN, KeyCode.DOWN]),
+            leftIntoSpanThenDown: press('b', [1, 'c'], [KeyCode.LEFT, KeyCode.DOWN]),
+            leftIntoSpanThenUp: press('b', [1, 'c'], [KeyCode.LEFT, KeyCode.UP]),
+        }).toEqual({
+            spanNotNavigable: ['ArrowDown: cell b, focused cell 2 b'],
+            downIntoSpan: ['ArrowDown: cell a, focused cell 1 a', 'ArrowDown: cell a, focused cell 2 a'],
+            leftIntoSpanThenDown: ['ArrowLeft: cell a, focused cell 1 a', 'ArrowDown: cell a, focused cell 2 a'],
+            leftIntoSpanThenUp: ['ArrowLeft: cell a, focused cell 1 a', 'ArrowUp: cell a, focused cell 0 a'],
+        });
     });
 
     test('End skips a spanning cell that is not navigable on a last row not yet rendered', () => {
@@ -501,7 +654,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('keyboard navigation runs no colSpan callback for rendered rows or full-width rows', () => {
+    test('Arrow Down between rendered rows, or onto a full-width row, runs no colSpan callback', () => {
         const colSpanRows: number[] = [];
         const columnDefs = makeColumnDefs();
         columnDefs[0].colSpan = (params) => {
@@ -602,128 +755,272 @@ describe('Column Spanning Keyboard Navigation', () => {
         );
     });
 
-    test('tabToNextGridContainer returning its default target for a last row not yet rendered enters as the grid would', async () => {
+    test('Shift+Tab into the last row moves back past a spanning cell that is not navigable, rendered or not, also in RTL', async () => {
+        // on the last row 'b' spans over 'c' and is not navigable
         const columnDefs = makeColumnDefs();
         columnDefs[0].colSpan = undefined;
         columnDefs[1].colSpan = (params) => (params.node!.rowIndex === 29 ? 2 : 1);
         columnDefs[1].suppressNavigable = (params) => params.node.rowIndex === 29;
-        const api = await gridsManager.createGridAndWait<RowData>(
-            'myGrid',
-            {
+        const rowData = Array.from({ length: 30 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+
+        expect({
+            rendered: await shiftTabFromPaging({ columnDefs, rowData, suppressRowVirtualisation: true }),
+            notRendered: await shiftTabFromPaging({
                 columnDefs,
-                rowData: Array.from({ length: 30 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
-                pagination: true,
-                paginationPageSizeSelector: false,
+                rowData,
                 suppressRowVirtualisation: false,
                 rowBuffer: 0,
-                tabToNextGridContainer: (params) => params.defaultTarget ?? undefined,
-            },
-            { modules: [PaginationModule] }
-        );
-        const lastRowRendered = !!getGridElement(api)!.querySelector('[row-index="29"]');
-
-        getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
-        dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
-
-        expect({ lastRowRendered, focus: focusState(api) }).toEqual({
-            lastRowRendered: false,
-            focus: 'cell a, focused cell 29 a',
+            }),
+            rtl: await shiftTabFromPaging({ columnDefs, rowData, suppressRowVirtualisation: true, enableRtl: true }),
+        }).toEqual({
+            rendered: 'rendered before: true, gridBody 29 a, cell a, focused cell 29 a',
+            notRendered: 'rendered before: false, gridBody 29 a, cell a, focused cell 29 a',
+            rtl: 'rendered before: true, gridBody 29 a, cell a, focused cell 29 a',
         });
     });
 
-    test('Shift+Tab into the last row moves left past a spanning cell that is not navigable, rendered or not', () => {
-        const shiftTabIntoLastRow = (suppressRowVirtualisation: boolean) => {
-            // on the last row 'b' spans over 'c' and is not navigable
-            const columnDefs = makeColumnDefs();
-            columnDefs[0].colSpan = undefined;
-            columnDefs[1].colSpan = (params) => (params.node!.rowIndex === 29 ? 2 : 1);
-            columnDefs[1].suppressNavigable = (params) => params.node.rowIndex === 29;
-            const rowData = Array.from({ length: 30 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
-            const api = createNavigationGrid({ columnDefs, rowData, suppressRowVirtualisation, rowBuffer: 0 });
-            const lastRowRendered = !!getGridElement(api)!.querySelector('[row-index="29"]');
-            getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
-            const result = `rendered before: ${lastRowRendered}, ${focusState(api)}`;
-            gridsManager.reset();
-            return result;
+    test('Shift+Tab onto a last row with nothing navigable walks back to the row above, or the last header, as its default target says', async () => {
+        const shiftTabOntoLastRowOf = (rowCount: number) => {
+            // on the last row 'a' spans all three columns and is not navigable
+            const columnDefs = spanningColumnDefs((rowIndex) => rowIndex === rowCount - 1);
+            columnDefs[0].suppressNavigable = (params) => params.node.rowIndex === rowCount - 1;
+            const rowData = Array.from({ length: rowCount }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+            return shiftTabFromPaging({ columnDefs, rowData });
         };
 
-        expect([shiftTabIntoLastRow(true), shiftTabIntoLastRow(false)]).toEqual([
-            'rendered before: true, cell a, focused cell 29 a',
-            'rendered before: false, cell a, focused cell 29 a',
-        ]);
+        expect({ rowAbove: await shiftTabOntoLastRowOf(3), noRowAbove: await shiftTabOntoLastRowOf(1) }).toEqual({
+            rowAbove: 'rendered before: true, gridBody 1 c, cell c, focused cell 1 c',
+            noRowAbove: 'rendered before: true, gridBody header c, header c',
+        });
     });
 
-    test('tabToNextGridContainer returning a covered cell focuses the cell spanning it', async () => {
-        const api: GridApi<RowData> = await gridsManager.createGridAndWait<RowData>(
-            'myGrid',
-            {
-                columnDefs: spanningColumnDefs((rowIndex) => rowIndex === 2),
-                rowData: [
-                    { a: 'a0', b: 'b0', c: 'c0' },
-                    { a: 'a1', b: 'b1', c: 'c1' },
-                    { a: 'a2', b: 'b2', c: 'c2' },
-                ],
-                pagination: true,
-                paginationPageSizeSelector: false,
-                tabToNextGridContainer: () => ({ rowIndex: 2, rowPinned: null, column: api.getColumn('b')! }),
+    test('Shift+Tab onto a full-width last row enters it, and its default target is the grid body, rendered or not', async () => {
+        const fullWidthLastRow: GridOptions<RowData> = {
+            rowData: Array.from({ length: 30 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
+            isFullWidthRow: (params) => params.rowNode.rowIndex === 29,
+            fullWidthCellRenderer: class {
+                private readonly eGui = document.createElement('div');
+                public getGui() {
+                    return this.eGui;
+                }
             },
-            { modules: [PaginationModule] }
-        );
+        };
 
-        getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
-        dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+        const lastColumnNotNavigable = makeColumnDefs();
+        lastColumnNotNavigable[2].suppressNavigable = (params) => params.node.rowIndex === 29;
 
-        expect(focusState(api)).toBe('cell a, focused cell 2 a');
+        expect({
+            rendered: await shiftTabFromPaging({ ...fullWidthLastRow, suppressRowVirtualisation: true }),
+            notRendered: await shiftTabFromPaging({
+                ...fullWidthLastRow,
+                suppressRowVirtualisation: false,
+                rowBuffer: 0,
+            }),
+            lastColumnNotNavigable: await shiftTabFromPaging({
+                ...fullWidthLastRow,
+                columnDefs: lastColumnNotNavigable,
+            }),
+        }).toEqual({
+            rendered: 'rendered before: true, gridBody gridBody, full width row 29',
+            notRendered: 'rendered before: false, gridBody gridBody, full width row 29',
+            lastColumnNotNavigable: 'rendered before: true, gridBody gridBody, full width row 29',
+        });
     });
 
-    test('Shift+Tab into the grid from below focuses the cell spanning the last column', () => {
-        const api = createNavigationGrid({ columnDefs: spanningColumnDefs((rowIndex) => rowIndex === 2) });
-
-        getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
-
-        expect(focusState(api)).toBe('cell a, focused cell 2 a');
-    });
-
-    test('End focuses the cell spanning the last column of the last row', () => {
-        const api = createNavigationGrid({ columnDefs: spanningColumnDefs((rowIndex) => rowIndex === 2) });
-
-        api.setFocusedCell(0, 'a');
-        dispatchKeyDown(KeyCode.PAGE_END);
-
-        expect(focusState(api)).toBe('cell a, focused cell 2 a');
-    });
-
-    test('tabToNextGridContainer receives the cell spanning the last column as its default target', async () => {
+    test('tabToNextGridContainer reports the grid body cell Shift+Tab lands on past a spanning cell that is not navigable', async () => {
         const tabToNextGridContainer = vi.fn(
-            (params: TabToNextGridContainerParams<RowData>) => params.defaultTarget ?? undefined
+            (params: TabToNextGridContainerParams) => params.defaultTarget ?? undefined
         );
-        const api = await gridsManager.createGridAndWait<RowData>(
+        const api = await gridsManager.createGridAndWait(
             'myGrid',
             {
-                columnDefs: spanningColumnDefs((rowIndex) => rowIndex === 2),
-                rowData: [
-                    { a: 'a0', b: 'b0', c: 'c0' },
-                    { a: 'a1', b: 'b1', c: 'c1' },
-                    { a: 'a2', b: 'b2', c: 'c2' },
+                columnDefs: [
+                    { field: 'group', rowGroup: true, hide: true },
+                    { field: 'a' },
+                    {
+                        field: 'b',
+                        colSpan: (params) => (params.data?.id === 3 ? 2 : 1),
+                        suppressNavigable: (params) => params.data?.id === 3,
+                    },
+                    { field: 'c' },
                 ],
+                rowData: [
+                    { id: 1, group: 'G', a: 'A1', b: 'B1', c: 'C1' },
+                    { id: 2, group: 'G', a: 'A2', b: 'B2', c: 'C2' },
+                    { id: 3, group: 'G', a: 'A3', b: 'B3', c: 'C3' },
+                ],
+                groupDefaultExpanded: -1,
+                rowGroupPanelShow: 'always',
                 pagination: true,
                 paginationPageSizeSelector: false,
                 tabToNextGridContainer,
             },
-            { modules: [PaginationModule] }
+            { modules: [PaginationModule, RowGroupingModule, RowGroupingPanelModule] }
         );
 
         getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
         dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
 
-        expect(tabToNextGridContainer).toHaveBeenCalledTimes(1);
-        const defaultTarget = tabToNextGridContainer.mock.calls[0][0].defaultTarget as CellPosition;
+        const { nextContainer, defaultTarget } = tabToNextGridContainer.mock.calls[0][0];
+        const target = defaultTarget as CellPosition | string | null;
         expect({
-            target: `${defaultTarget.rowIndex} ${defaultTarget.column.getColId()}`,
+            nextContainer,
+            target: typeof target === 'object' ? `${target?.rowIndex} ${target?.column.getColId()}` : target,
             focus: focusState(api),
+        }).toEqual({ nextContainer: 'gridBody', target: '3 a', focus: 'cell a, focused cell 3 a' });
+    });
+
+    test('Shift+Tab from below, also in RTL, and End focus the cell spanning the last column of the last row', () => {
+        const focusLastCell = (key: 'shiftTab' | 'end', enableRtl = false) => {
+            const api = createNavigationGrid({
+                columnDefs: spanningColumnDefs((rowIndex) => rowIndex === 2),
+                enableRtl,
+            });
+            if (key === 'end') {
+                api.setFocusedCell(0, 'a');
+                dispatchKeyDown(KeyCode.PAGE_END);
+            } else {
+                getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
+            }
+            const result = focusState(api);
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({
+            shiftTab: focusLastCell('shiftTab'),
+            end: focusLastCell('end'),
+            shiftTabRtl: focusLastCell('shiftTab', true),
         }).toEqual({
-            target: '2 a',
-            focus: 'cell a, focused cell 2 a',
+            shiftTab: 'cell a, focused cell 2 a',
+            end: 'cell a, focused cell 2 a',
+            shiftTabRtl: 'cell a, focused cell 2 a',
+        });
+    });
+
+    test('tabToNextGridContainer names the cell spanning the last column, and entering through it continues as the grid would', async () => {
+        type Callback = (
+            params: TabToNextGridContainerParams<RowData>,
+            api: GridApi<RowData>
+        ) => TabToNextGridContainerTarget | undefined;
+        const shiftTabThenUp = async (callback?: Callback) => {
+            const defaultTargets: string[] = [];
+            const api: GridApi<RowData> = await gridsManager.createGridAndWait<RowData>(
+                'myGrid',
+                {
+                    columnDefs: spanningColumnDefs((rowIndex) => rowIndex === 2),
+                    rowData: [
+                        { a: 'a0', b: 'b0', c: 'c0' },
+                        { a: 'a1', b: 'b1', c: 'c1' },
+                        { a: 'a2', b: 'b2', c: 'c2' },
+                    ],
+                    pagination: true,
+                    paginationPageSizeSelector: false,
+                    tabToNextGridContainer: (params) => {
+                        const target = params.defaultTarget as CellPosition;
+                        defaultTargets.push(`${target.rowIndex} ${target.column.getColId()}`);
+                        return callback?.(params, api);
+                    },
+                },
+                { modules: [PaginationModule] }
+            );
+            getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+            dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+            const entered = focusState(api);
+            dispatchKeyDown(KeyCode.UP);
+            const result = [...defaultTargets, entered, focusState(api)];
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({
+            byDefault: await shiftTabThenUp(),
+            defaultTargetReturned: await shiftTabThenUp((params) => params.defaultTarget ?? undefined),
+            defaultTargetCopied: await shiftTabThenUp((params) => ({ ...(params.defaultTarget as CellPosition) })),
+            defaultTargetRebuilt: await shiftTabThenUp((params) => {
+                const { rowIndex, column } = params.defaultTarget as CellPosition;
+                return { rowIndex, column, rowPinned: undefined };
+            }),
+            coveredCellReturned: await shiftTabThenUp((_params, api) => ({
+                rowIndex: 2,
+                rowPinned: null,
+                column: api.getColumn('b')!,
+            })),
+        }).toEqual({
+            byDefault: ['2 a', 'cell a, focused cell 2 a', 'cell c, focused cell 1 c'],
+            defaultTargetReturned: ['2 a', 'cell a, focused cell 2 a', 'cell c, focused cell 1 c'],
+            defaultTargetCopied: ['2 a', 'cell a, focused cell 2 a', 'cell c, focused cell 1 c'],
+            defaultTargetRebuilt: ['2 a', 'cell a, focused cell 2 a', 'cell c, focused cell 1 c'],
+            coveredCellReturned: ['2 a', 'cell a, focused cell 2 a', 'cell b, focused cell 1 b'],
+        });
+    });
+
+    test('cell selection follows the cell that takes focus: Shift+Arrow Down, a tabToNextGridContainer cell and Shift+Tab', async () => {
+        const rangeOf = (api: GridApi) => {
+            const range = api.getCellRanges()?.[0];
+            return range && `${range.startRow?.rowIndex}-${range.endRow?.rowIndex} ${range.columns[0].getColId()}`;
+        };
+        const columnDefs = makeColumnDefs();
+        columnDefs[0].suppressNavigable = true;
+        const extendApi = gridsManager.createGrid<RowData>(
+            'myGrid',
+            {
+                columnDefs,
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0' },
+                    { a: 'a1', b: 'b1', c: 'c1' },
+                    { a: 'a2', b: 'b2', c: 'c2' },
+                ],
+                cellSelection: true,
+            },
+            { modules: [CellSelectionModule] }
+        );
+        extendApi.setFocusedCell(0, 'b');
+        extendApi.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b'] });
+        dispatchKeyDown(KeyCode.DOWN, { shiftKey: true });
+        const extended = rangeOf(extendApi);
+        gridsManager.reset();
+
+        const tabApi: GridApi<RowData> = await gridsManager.createGridAndWait<RowData>(
+            'myGrid',
+            {
+                columnDefs: makeColumnDefs(),
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0' },
+                    { a: 'a1', b: 'b1', c: 'c1' },
+                    { a: 'a2', b: 'b2', c: 'c2' },
+                ],
+                cellSelection: true,
+                pagination: true,
+                paginationPageSizeSelector: false,
+                tabToNextGridContainer: () => ({ rowIndex: 2, rowPinned: null, column: tabApi.getColumn('c')! }),
+            },
+            { modules: [CellSelectionModule, PaginationModule] }
+        );
+        getGridElement(tabApi)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+        dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+        const tabbedInto = rangeOf(tabApi);
+        gridsManager.reset();
+
+        const tabBackApi = gridsManager.createGrid<RowData>(
+            'myGrid',
+            {
+                columnDefs: makeColumnDefs(),
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0' },
+                    { a: 'a1', b: 'b1', c: 'c1' },
+                ],
+                cellSelection: true,
+            },
+            { modules: [CellSelectionModule] }
+        );
+        tabBackApi.setFocusedCell(1, 'c');
+        dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
+
+        expect({ extended, tabbedInto, tabbedBack: `${rangeOf(tabBackApi)}, ${focusState(tabBackApi)}` }).toEqual({
+            extended: '0-2 b',
+            tabbedInto: '2-2 c',
+            tabbedBack: '1-1 a, cell a, focused cell 1 a',
         });
     });
 

@@ -1,7 +1,8 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 // the grid registers row mousedown handling on the first supported event of
 // pointerdown/touchstart/mousedown; dispatch all three so whichever the test
@@ -61,5 +62,37 @@ describe('Full width row form fields', () => {
         await asyncSetTimeout(0);
 
         expect(document.activeElement).toBe(input);
+    });
+
+    test('a forced refresh refreshes a full-width group row whose renderer can refresh, not redraws it', async () => {
+        const refreshed: string[] = [];
+        const api = await gridsManager.createGridAndWait(
+            'grid1',
+            {
+                columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'name' }],
+                rowData: [{ group: 'G', name: 'Alice' }],
+                groupDisplayType: 'groupRows',
+                groupRowRenderer: class implements ICellRendererComp {
+                    private readonly eGui = document.createElement('div');
+                    public init(params: ICellRendererParams): void {
+                        this.eGui.textContent = params.value;
+                    }
+                    public getGui(): HTMLElement {
+                        return this.eGui;
+                    }
+                    public refresh(params: ICellRendererParams): boolean {
+                        refreshed.push(params.value);
+                        return true;
+                    }
+                },
+            },
+            { modules: [RenderApiModule, RowGroupingModule] }
+        );
+        const groupRow = () => TestGridsManager.getHTMLElement(api)!.querySelector('.ag-row[row-index="0"]');
+        const before = groupRow();
+
+        api.refreshCells({ rowNodes: [api.getDisplayedRowAtIndex(0)!], force: true });
+
+        expect({ sameRow: groupRow() === before, refreshed }).toEqual({ sameRow: true, refreshed: ['G'] });
     });
 });

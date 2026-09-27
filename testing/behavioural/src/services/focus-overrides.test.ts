@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
@@ -7,6 +8,7 @@ import type {
     FocusGridInnerElementParams,
     GridApi,
     GridOptions,
+    HeaderPosition,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     TabToNextCellParams,
@@ -173,6 +175,33 @@ describe('Focus Overrides', () => {
                 └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
             `
         );
+    });
+
+    test('tabToNextGridContainer default target backwards over loading rows is the last header, where the grid goes', async () => {
+        const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => undefined);
+        const api = gridsManager.createGrid<RowData>(
+            'myGrid',
+            {
+                columnDefs,
+                rowData,
+                loading: true,
+                loadingRows: { rowCount: 3 },
+                pagination: true,
+                paginationPageSizeSelector: false,
+                tabToNextGridContainer,
+            },
+            { modules: [PaginationModule] }
+        );
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(2)?.stub).toBe(true));
+
+        getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+        dispatchKeyDown('Tab', { shiftKey: true });
+
+        const target = tabToNextGridContainer.mock.calls[0][0].defaultTarget as HeaderPosition | null;
+        expect({
+            target: target && `${target.headerRowIndex} ${target.column.getUniqueId()}`,
+            focus: getFocusedHeaderColId(),
+        }).toEqual({ target: '0 sport', focus: 'sport' });
     });
 
     test('tabToNextCell override reroutes tabbing target', async () => {

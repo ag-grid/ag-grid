@@ -137,8 +137,8 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
 }
 
 /**
- * The column whose cell takes focus at `cellPosition`: the spanning cell's when a colSpan covers it. A pure query,
- * so navigation can judge a destination without rendering it.
+ * The column whose cell takes focus at `cellPosition`: its own cell's, else the cell spanning it. Reads the rendered
+ * cells, else runs the row's colSpan callbacks, so navigation can judge a destination without rendering it.
  */
 export function _getFocusColumn(beans: BeanCollection, cellPosition: CellPosition): AgColumn {
     const column = cellPosition.column as AgColumn;
@@ -147,28 +147,18 @@ export function _getFocusColumn(beans: BeanCollection, cellPosition: CellPositio
     }
 
     const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
-    let rowNode: RowNode | undefined;
-    if (rowCtrl) {
-        // the rendered cells hold the spans the row laid out, read without running colSpan
-        const cellCtrls = rowCtrl.getAllCellCtrls();
-        for (let i = 0, len = cellCtrls.length; i < len; ++i) {
-            const cellCtrl = cellCtrls[i];
-            if (cellCtrl.column === column || cellCtrl.colsSpanning?.includes(column)) {
-                return cellCtrl.column;
-            }
-        }
-        if (!rowCtrl.isFullWidth()) {
-            rowNode = rowCtrl.rowNode;
-        }
-    } else {
-        const node = _getRowNode(beans, cellPosition);
-        if (node && _getRowType(beans, node) === 'Normal') {
-            rowNode = node;
-        }
+    if (!rowCtrl) {
+        const rowNode = _getRowNode(beans, cellPosition);
+        return rowNode && _getRowType(beans, rowNode) === 'Normal'
+            ? beans.visibleCols.getSpanningCol(rowNode, column)
+            : column;
     }
 
-    // no rendered cell covers it: step the row's spans as rendering would, running its colSpan callbacks
-    return rowNode ? beans.visibleCols.getSpanningCol(rowNode, column) : column;
+    const cellCtrl = rowCtrl.getCellCtrl(column);
+    if (cellCtrl) {
+        return cellCtrl.column;
+    }
+    return rowCtrl.isFullWidth() ? column : beans.visibleCols.getSpanningCol(rowCtrl.rowNode, column);
 }
 
 export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {
