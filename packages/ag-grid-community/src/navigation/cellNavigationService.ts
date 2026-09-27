@@ -212,8 +212,11 @@ export class CellNavigationService extends BeanStub implements NamedBean {
      * The next cell in tab order, across rows, that can take focus, or a full-width row, which Tab enters whatever
      * its columns; null past the last one on the page.
      */
-    public getNextTabStop(gridCell: CellPosition, backwards: boolean): CellPosition | null {
-        const resolver = new _RowFocusResolver(this.beans);
+    public getNextTabStop(
+        gridCell: CellPosition,
+        backwards: boolean,
+        resolver: _RowFocusResolver = new _RowFocusResolver(this.beans)
+    ): CellPosition | null {
         let next = this.getNextTabbedCell(gridCell, backwards);
         while (next && !this.isCellGoodToFocusOn(next, resolver) && !resolver.isFullWidth(next)) {
             next = this.getNextTabbedCell(next, backwards);

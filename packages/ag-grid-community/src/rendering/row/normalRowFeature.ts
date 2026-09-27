@@ -232,7 +232,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const spans = presentedColsService.colSpanActive ? this.spans : null;
         this.hasKeptCells = false;
         if (rowCtrl.printLayout) {
-            const printCols = presentedColsService.getPrintColsForRow(rowNode, spans);
+            const printCols = presentedColsService.getAllColsForRow(rowNode, spans);
             this.centerCellCtrls = this.createCellCtrls(prevCenter, printCols, spans, 1);
             // Print layout flows every column through the centre, so the pinned ctrls are orphaned.
             this.leftCellCtrls = destroyCellCtrls(prevLeft);

@@ -371,18 +371,24 @@ describe('Focus override callbacks', () => {
                     focusCellOrRow: vi.fn((_cell: CellPosition, _scroll: boolean, _backwards: boolean) => hasCellCtrl),
                 };
                 focusSvcAny.navigation = navigation;
-                focusSvcAny.beans.visibleCols.colSpanActive = colSpanActive;
+                const visibleCols = focusSvcAny.beans.visibleCols;
+                visibleCols.colSpanActive = colSpanActive;
+                // with nothing rendered, the spans come from the row's colSpan callbacks
+                visibleCols.fillRowSpanEnds = vi.fn();
+                visibleCols.getSpanningCol = (_spanEnds: number[], col: Column) => (col === covered ? spanning : col);
                 focusSvcAny.beans.rowRenderer = {
-                    getRowByPosition: () => ({
-                        getCellCtrl: (col: Column) =>
-                            col === spanning || col === covered ? { column: spanning } : null,
-                    }),
+                    getRowByPosition: () =>
+                        hasCellCtrl
+                            ? {
+                                  getCellCtrl: (col: Column) =>
+                                      col === spanning || col === covered ? { column: spanning } : null,
+                              }
+                            : null,
                 };
                 setFocusedCell.mockClear();
                 setRangeToCell.mockClear();
-                const result = focusSvc.focusGridView({ column: column as any });
+                focusSvc.focusGridView({ column: column as any });
                 return {
-                    result,
                     focusCell: navigation.focusCellOrRow.mock.calls.map(([cell, scroll, backwards]) => [
                         cell.column.getColId(),
                         scroll,
@@ -398,15 +404,13 @@ describe('Focus override callbacks', () => {
                 plainWithoutCellCtrl: enterAt(covered, false, false),
                 spannedWithoutCellCtrl: enterAt(covered, true, false),
             }).toEqual({
-                rendered: { result: true, focusCell: [['country', true, false]], fallback: [], range: [] },
+                rendered: { focusCell: [['country', true, false]], fallback: [], range: [] },
                 plainWithoutCellCtrl: {
-                    result: true,
                     focusCell: [['country', true, false]],
                     fallback: ['country'],
                     range: ['country'],
                 },
                 spannedWithoutCellCtrl: {
-                    result: true,
                     focusCell: [['country', true, false]],
                     fallback: ['athlete'],
                     range: ['athlete'],
@@ -440,9 +444,8 @@ describe('Focus override callbacks', () => {
                 };
                 focusSvcAny.navigation = navigation;
                 setFocusedCell.mockClear();
-                const result = focusSvc.focusGridView({ column: entry as any });
+                focusSvc.focusGridView({ column: entry as any });
                 return {
-                    result,
                     focusCellOrRow: navigation.focusCellOrRow.mock.calls.map(([cell, scroll, backwards]) => [
                         cell.column.getColId(),
                         scroll,
@@ -453,8 +456,8 @@ describe('Focus override callbacks', () => {
             };
 
             expect({ rendered: tabWith(true), notRendered: tabWith(false) }).toEqual({
-                rendered: { result: true, focusCellOrRow: [['country', true, false]], fallback: [] },
-                notRendered: { result: true, focusCellOrRow: [['country', true, false]], fallback: ['country'] },
+                rendered: { focusCellOrRow: [['country', true, false]], fallback: [] },
+                notRendered: { focusCellOrRow: [['country', true, false]], fallback: ['country'] },
             });
         });
 
@@ -655,16 +658,16 @@ describe('Focus override callbacks', () => {
             });
         });
 
-        test('focusCellOrRow scrolls to the cell, again to a spanning cell that takes the focus, and to a row-spanned cell too', () => {
+        test('focusCellOrRow scrolls to the cell, again to a spanning cell that takes the focus, and to a row-spanned cell too, unless the caller has scrolled', () => {
             const ensureCellVisible = vi.spyOn(navigationSvc, 'ensureCellVisible').mockImplementation(() => undefined);
             vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
-            const focusCell = (target: CellPosition, focused: CellPosition, rowSpanned = false) => {
+            const focusCell = (target: CellPosition, focused: CellPosition, rowSpanned = false, scroll = true) => {
                 navigationSvcAny.beans.spannedRowRenderer = { getCellByPosition: () => (rowSpanned ? {} : undefined) };
                 navigationSvcAny.beans.rowRenderer.getRowByPosition.mockReturnValue({
                     getCellCtrl: () => ({ getFocusedCellPosition: () => focused }),
                 });
                 ensureCellVisible.mockClear();
-                navigationSvc.focusCellOrRow(target, true);
+                navigationSvc.focusCellOrRow(target, scroll);
                 return ensureCellVisible.mock.calls.map(([cell]) => cell.column.getColId());
             };
 
@@ -675,7 +678,8 @@ describe('Focus override callbacks', () => {
                 plain: focusCell(covered, covered),
                 spanned: focusCell(covered, spanning),
                 rowSpanned: focusCell(covered, covered, true),
-            }).toEqual({ plain: ['b'], spanned: ['b', 'a'], rowSpanned: ['b'] });
+                spannedScrolled: focusCell(covered, spanning, false, false),
+            }).toEqual({ plain: ['b'], spanned: ['b', 'a'], rowSpanned: ['b'], spannedScrolled: [] });
         });
 
         test('Home and End scroll to the row, and leave scrolling to the cell to the focus', () => {

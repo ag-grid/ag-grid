@@ -148,14 +148,13 @@ export function _getFocusColumn(beans: BeanCollection, cellPosition: CellPositio
 
 /**
  * Judges cells row by row, so a walk runs a row's `isFullWidthRow` and colSpan callbacks once however many of its
- * cells it judges. Holds only the row it is on: one per walk, dropped with it, so nothing outlives a data change.
+ * cells it judges. Holds only the row it is on: one per walk, dropped with it, so nothing carries into the next.
  */
 export class _RowFocusResolver {
     private rowIndex = -1;
     private rowPinned: RowPinnedType = null;
     private rowNode: RowNode | undefined = undefined;
     private fullWidth: boolean | null = null;
-    private rowCtrl: RowCtrl | null | undefined = undefined;
     private spanEndsFilled = false;
     private readonly spanEnds: number[] = [];
 
@@ -168,7 +167,6 @@ export class _RowFocusResolver {
             this.rowPinned = rowPinned;
             this.rowNode = _getRowNode(this.beans, cellPosition);
             this.fullWidth = null;
-            this.rowCtrl = undefined;
             this.spanEndsFilled = false;
         }
         return this.rowNode;
@@ -188,18 +186,14 @@ export class _RowFocusResolver {
     /** The column whose cell takes focus: its own cell's, else the cell spanning it, drawn or from the callbacks. */
     public getFocusColumn(cellPosition: CellPosition): AgColumn {
         const column = cellPosition.column as AgColumn;
-        const { beans } = this;
+        const beans = this.beans;
         const visibleCols = beans.visibleCols;
         if (!visibleCols.colSpanActive) {
             return column;
         }
         const rowNode = this.getRowNode(cellPosition);
-        let rowCtrl = this.rowCtrl;
-        if (rowCtrl === undefined) {
-            rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
-            this.rowCtrl = rowCtrl;
-        }
-        const cellCtrl = rowCtrl?.getCellCtrl(column);
+        // not held per row: a walk that scrolls can render the row it is on
+        const cellCtrl = beans.rowRenderer.getRowByPosition(cellPosition)?.getCellCtrl(column);
         if (cellCtrl) {
             return cellCtrl.column;
         }

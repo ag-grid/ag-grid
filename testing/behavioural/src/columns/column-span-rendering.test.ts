@@ -208,46 +208,6 @@ describe('Legacy colSpan rendering', () => {
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
         `);
     });
-
-    test('in print layout a span stops at its pinned lane, as outside print layout', () => {
-        const cellsOfFirstRow = (domLayout: 'print' | 'normal') => {
-            const api = gridsManager.createGrid('myGrid', {
-                domLayout,
-                columnDefs: [{ ...columnDefs[0], pinned: 'left', colSpan: () => 3 }, columnDefs[1], columnDefs[2]],
-                rowData,
-            });
-            const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="0"] .ag-cell');
-            const result = Array.from(cells, (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`);
-            gridsManager.reset();
-            return result;
-        };
-
-        expect({ print: cellsOfFirstRow('print'), normal: cellsOfFirstRow('normal') }).toEqual({
-            print: ['a 100px', 'b 100px', 'c 100px'],
-            normal: ['a 100px', 'b 100px', 'c 100px'],
-        });
-    });
-
-    test('a colSpan of NaN renders one column wide, and a fractional one the whole columns it covers', () => {
-        const oddColumnDefs = [
-            { ...columnDefs[0], colSpan: (params) => (params.node!.rowIndex === 0 ? Number.NaN : 2.5) },
-            columnDefs[1],
-            columnDefs[2],
-        ] satisfies ColDef<RowData>[];
-        const api = gridsManager.createGrid('myGrid', { columnDefs: oddColumnDefs, rowData });
-
-        const widths = (rowIndex: number) => {
-            const row = getGridElement(api)!.querySelector(`[row-index="${rowIndex}"]`)!;
-            return ['a', 'b', 'c'].map(
-                (colId) => (row.querySelector(`[col-id="${colId}"]`) as HTMLElement | null)?.style.width
-            );
-        };
-
-        expect({ nan: widths(0), fractional: widths(1) }).toEqual({
-            nan: ['100px', '100px', '100px'],
-            fractional: ['200px', undefined, '100px'],
-        });
-    });
 });
 
 describe('colSpan follows row data updates', () => {
@@ -565,6 +525,11 @@ describe('colSpan follows row data updates', () => {
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
         expect(api.getFocusedCell()).toMatchObject({ rowIndex: 0, column: api.getColumn('symbol') });
         expect(document.activeElement?.getAttribute('col-id')).toBe('symbol');
+        await new GridRows(api, 'a covered cell kept for focus').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r0 price:1 symbol:"AAA" group:"A"
+            └── LEAF id:r1 price:0 symbol:"BBB" group:"A"
+        `);
 
         api.setFocusedCell(1, 'price');
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));

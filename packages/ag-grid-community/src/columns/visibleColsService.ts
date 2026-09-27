@@ -5,7 +5,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
-import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -395,8 +394,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
-    /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in
-     *  `autoHeightCols`/`flexActive`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
+    /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in the
+     *  per-column lists and `flexActive`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
     private layoutSection(
         cols: AgColumn[],
         all: AgColumn[],
@@ -444,23 +443,23 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return left;
     }
 
-    public getLeftColsForRow(rowNode: RowNode, spans: number[] | null = null): AgColumn[] {
+    public getLeftColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
         return this.colSpanActive ? this.getColsForRow(rowNode, this.leftCols, spans) : this.leftCols;
     }
 
-    public getRightColsForRow(rowNode: RowNode, spans: number[] | null = null): AgColumn[] {
+    public getRightColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
         return this.colSpanActive ? this.getColsForRow(rowNode, this.rightCols, spans) : this.rightCols;
     }
 
-    /** Print layout flows every lane through one container. */
-    public getPrintColsForRow(rowNode: RowNode, spans: number[] | null = null): AgColumn[] {
+    /** The columns starting a cell in `rowNode`, every lane in one list, as print layout draws them. */
+    public getAllColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
         return this.colSpanActive ? this.getColsForRow(rowNode, this.allCols, spans) : this.allCols;
     }
 
     /** `filterCallback` is only set for the centre (virtualised) area. A col-spanned run is kept if
      *  ANY spanned col passes the filter. Fills `spans` with each returned col's span. */
     public getColsForRow(
-        rowNode: RowNode,
+        rowNode: IRowNode,
         displayedColumns: AgColumn[],
         spans: number[] | null = null,
         filterCallback: ((column: AgColumn) => boolean) | null = null,

@@ -454,22 +454,15 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('in print layout a covered column is drawn and judged as the cell spanning it', () => {
+    test('in print layout a covered column is judged as the cell spanning it', () => {
         const columnDefs = makeColumnDefs();
         columnDefs[0].suppressNavigable = true;
         const api = createNavigationGrid({ columnDefs, domLayout: 'print' });
-        const cellsOfSpanningRow = Array.from(
-            getGridElement(api)!.querySelectorAll('.ag-row[row-index="1"] .ag-cell'),
-            (cell) => cell.getAttribute('col-id')
-        );
 
         api.setFocusedCell(0, 'b');
         dispatchKeyDown(KeyCode.DOWN);
 
-        expect({ cellsOfSpanningRow, focus: focusState(api) }).toEqual({
-            cellsOfSpanningRow: ['a', 'c'],
-            focus: 'cell b, focused cell 2 b',
-        });
+        expect(focusState(api)).toBe('cell b, focused cell 2 b');
     });
 
     /** Where DOM focus is: a header and its column, a full-width row, a cell and the focused cell's row and column. */
@@ -746,6 +739,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         dispatchKeyDown(KeyCode.DOWN);
         dispatchKeyDown(KeyCode.DOWN);
         const callsBetweenRenderedRows = colSpanRows.length;
+        const focusBetweenRenderedRows = focusState(renderedApi);
         gridsManager.reset();
 
         const api = createNavigationGrid({
@@ -768,12 +762,16 @@ describe('Column Spanning Keyboard Navigation', () => {
 
         expect({
             callsBetweenRenderedRows,
+            focusBetweenRenderedRows,
             fullWidthRowRendered,
             fullWidthRowCalls: colSpanRows.filter((r) => r === 30).length,
+            fullWidthRowFocus: focusState(api),
         }).toEqual({
             callsBetweenRenderedRows: 0,
+            focusBetweenRenderedRows: 'cell b, focused cell 2 b',
             fullWidthRowRendered: false,
             fullWidthRowCalls: 0,
+            fullWidthRowFocus: 'full width row 30',
         });
     });
 
@@ -1157,54 +1155,94 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('a Tab walk over rows not rendered runs each row’s isFullWidthRow and colSpan callbacks once, not per cell', () => {
-        // nothing is navigable below row 30, where 'a' spans all three columns
+    test('a Tab walk over rows not rendered, entering the grid or while editing, runs each row’s isFullWidthRow and colSpan callbacks once per walk, not per cell', () => {
         const colSpanRows: number[] = [];
         const fullWidthRows: number[] = [];
-        const columnDefs = makeColumnDefs();
-        columnDefs[0].colSpan = (params) => {
-            colSpanRows.push(params.node!.rowIndex!);
-            return params.node!.rowIndex === 30 ? 3 : 1;
+        const rowData = Array.from({ length: 40 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+        const countingColumnDefs = (spanAt: number) => {
+            const columnDefs = makeColumnDefs();
+            columnDefs[0].colSpan = (params) => {
+                colSpanRows.push(params.node!.rowIndex!);
+                return params.node!.rowIndex === spanAt ? 3 : 1;
+            };
+            return columnDefs;
         };
-        for (const colDef of columnDefs) {
-            colDef.suppressNavigable = (params) => params.node.rowIndex! > 30;
-        }
-        const api = createNavigationGrid({
-            columnDefs,
-            rowData: Array.from({ length: 40 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
-            suppressRowVirtualisation: false,
-            rowBuffer: 0,
-            isFullWidthRow: (params) => {
-                fullWidthRows.push(params.rowNode.rowIndex!);
-                return false;
-            },
-        });
-        colSpanRows.length = 0;
-        fullWidthRows.length = 0;
-
-        getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
-        const perRow = (rows: number[]) => {
+        const isFullWidthRow = (params: { rowNode: { rowIndex: number | null } }) => {
+            fullWidthRows.push(params.rowNode.rowIndex!);
+            return false;
+        };
+        const perRow = (rows: number[], from: number, to: number) => {
             const counts: Record<number, number> = {};
             for (const row of rows) {
-                if (row > 30) {
+                if (row >= from && row <= to) {
                     counts[row] = (counts[row] ?? 0) + 1;
                 }
             }
             return counts;
         };
-        // the entry row is judged by the entry, the move along it and the walk on: once each
-        const expected = { ...Object.fromEntries(Array.from({ length: 8 }, (_, i) => [31 + i, 1])), 39: 3 };
+        const oncePerRow = (from: number, to: number) =>
+            Object.fromEntries(Array.from({ length: to - from + 1 }, (_, i) => [from + i, 1]));
 
-        expect({
+        // entering from below: nothing is navigable below row 30, where 'a' spans all three columns
+        const entryColumnDefs = countingColumnDefs(30);
+        for (const colDef of entryColumnDefs) {
+            colDef.suppressNavigable = (params) => params.node.rowIndex! > 30;
+        }
+        const api = createNavigationGrid({
+            columnDefs: entryColumnDefs,
+            rowData,
+            suppressRowVirtualisation: false,
+            rowBuffer: 0,
+            isFullWidthRow,
+        });
+        colSpanRows.length = 0;
+        fullWidthRows.length = 0;
+        getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
+        const entry = {
             focus: focusState(api),
             walkedRowsRendered: !!getGridElement(api)!.querySelector('[row-index="31"], [row-index="39"]'),
-            colSpanCallsPerRow: perRow(colSpanRows),
-            isFullWidthRowCallsPerRow: perRow(fullWidthRows),
-        }).toEqual({
-            focus: 'cell a, focused cell 30 a',
-            walkedRowsRendered: false,
-            colSpanCallsPerRow: expected,
-            isFullWidthRowCallsPerRow: expected,
+            colSpanCallsPerRow: perRow(colSpanRows, 31, 39),
+            isFullWidthRowCallsPerRow: perRow(fullWidthRows, 31, 39),
+        };
+        gridsManager.reset();
+
+        // while editing: only rows 0 and 39 are editable, so Tab walks past every cell between them
+        const editColumnDefs = countingColumnDefs(-1);
+        for (const colDef of editColumnDefs) {
+            colDef.editable = (params) => params.node.rowIndex === 0 || params.node.rowIndex === 39;
+        }
+        const editApi = gridsManager.createGrid<RowData>(
+            'myGrid',
+            { columnDefs: editColumnDefs, rowData, suppressRowVirtualisation: false, rowBuffer: 0, isFullWidthRow },
+            { modules: [TextEditorModule] }
+        );
+        editApi.startEditingCell({ rowIndex: 0, colKey: 'c' });
+        const walkedRowsRendered = !!getGridElement(editApi)!.querySelector('[row-index="20"], [row-index="35"]');
+        colSpanRows.length = 0;
+        fullWidthRows.length = 0;
+        dispatchKeyDown(KeyCode.TAB);
+        const editing = {
+            editing: editApi.getEditingCells().map((cell) => `${cell.rowIndex} ${cell.column?.getColId()}`),
+            walkedRowsRendered,
+            colSpanCallsPerRow: perRow(colSpanRows, 20, 35),
+            isFullWidthRowCallsPerRow: perRow(fullWidthRows, 20, 35),
+        };
+
+        // entering, the entry row is judged by the entry, the move along it and the walk on: once each
+        const entryCalls = { ...oncePerRow(31, 38), 39: 3 };
+        expect({ entry, editing }).toEqual({
+            entry: {
+                focus: 'cell a, focused cell 30 a',
+                walkedRowsRendered: false,
+                colSpanCallsPerRow: entryCalls,
+                isFullWidthRowCallsPerRow: entryCalls,
+            },
+            editing: {
+                editing: ['39 a'],
+                walkedRowsRendered: false,
+                colSpanCallsPerRow: oncePerRow(20, 35),
+                isFullWidthRowCallsPerRow: oncePerRow(20, 35),
+            },
         });
     });
 

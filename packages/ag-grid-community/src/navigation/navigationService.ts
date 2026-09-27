@@ -5,7 +5,13 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _getCellByPosition, _getFocusColumn, _getRowNode, _isRowBefore } from '../entities/positionUtils';
+import {
+    _RowFocusResolver,
+    _getCellByPosition,
+    _getFocusColumn,
+    _getRowNode,
+    _isRowBefore,
+} from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _getCellPositionForEvent } from '../gridBodyComp/mouseEventUtils';
@@ -68,8 +74,6 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
         const eventCell = _getCellPositionForEvent(this.gos, event);
-        // Ctrl+Left/Right read only the row, so the covered column is a safe start for every key
-        const currentCell = eventCell && this.getVerticalStart(eventCell);
 
         let processed = false;
 
@@ -86,13 +90,14 @@ export class NavigationService extends BeanStub implements NamedBean {
             case KeyCode.RIGHT:
             case KeyCode.UP:
             case KeyCode.DOWN:
-                if (!currentCell) {
+                if (!eventCell) {
                     return false;
                 }
                 // handle when ctrl is pressed only, if shift is pressed
                 // it will be handled by the rangeService
                 if (ctrl && !alt && !rangeServiceShouldHandleShift) {
-                    this.onCtrlUpDownLeftRight(key, currentCell);
+                    // Ctrl+Left/Right read only the row, so the covered column is a safe start for every arrow
+                    this.onCtrlUpDownLeftRight(key, this.getVerticalStart(eventCell));
                     processed = true;
                 }
                 break;
@@ -100,7 +105,11 @@ export class NavigationService extends BeanStub implements NamedBean {
             case KeyCode.PAGE_UP:
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
-                    processed = this.handlePageUpDown(key, currentCell, fromFullWidth);
+                    processed = this.handlePageUpDown(
+                        key,
+                        eventCell && this.getVerticalStart(eventCell),
+                        fromFullWidth
+                    );
                 }
                 break;
         }
@@ -496,6 +505,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         let nextPosition: CellPosition | null | undefined = previousPosition;
         const beans = this.beans;
         const { cellNavigation, gos, focusSvc, rowRenderer } = beans;
+        const resolver = new _RowFocusResolver(beans);
 
         while (true) {
             if (previousPosition !== nextPosition) {
@@ -558,7 +568,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             // note - for full row edit, we do focus non-editable cells, as the row stays in edit mode.
             const fullRowEdit = gos.get('editType') === 'fullRow';
             if (startEditing && (!fullRowEdit || skipToNextEditableCell)) {
-                const cellIsEditable = this.isCellEditable(nextPosition);
+                const cellIsEditable = this.isCellEditable(nextPosition, resolver);
                 if (!cellIsEditable) {
                     continue;
                 }
@@ -598,9 +608,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
     }
 
-    private isCellEditable(cell: CellPosition): boolean {
-        const rowNode = _getRowNode(this.beans, cell);
-        return !!rowNode && _getFocusColumn(this.beans, cell).isCellEditable(rowNode);
+    private isCellEditable(cell: CellPosition, resolver: _RowFocusResolver): boolean {
+        const rowNode = resolver.getRowNode(cell);
+        return !!rowNode && resolver.getFocusColumn(cell).isCellEditable(rowNode);
     }
 
     // we use index for rows, but column object for columns, as the next column (by index) might not

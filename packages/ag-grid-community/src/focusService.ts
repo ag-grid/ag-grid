@@ -640,7 +640,7 @@ export class FocusService extends BeanStub implements NamedBean {
         const target =
             resolver.isFullWidth(position) || !resolver.getFocusColumn(position).isSuppressNavigable(rowNode)
                 ? position
-                : this.beans.cellNavigation?.getNextTabStop(position, backwards);
+                : this.beans.cellNavigation?.getNextTabStop(position, backwards, resolver);
         if (!target) {
             return this.getLastHeaderTarget(backwards);
         }

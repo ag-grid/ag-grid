@@ -58,6 +58,21 @@ export class GridRowDomCellValidator {
                 : null;
     }
 
+    /** The grid keeps a covered cell drawn while it is focused or edited. */
+    private isKeptForFocusOrEdit(row: RowNode<any>, columnId: string): boolean {
+        const api = this.api;
+        const isModuleRegistered = api.isModuleRegistered as (n: string) => boolean;
+        const isRowCell = (cell: { rowIndex: number; rowPinned?: string | null; column?: Column }) =>
+            cell.rowIndex === row.rowIndex &&
+            (cell.rowPinned ?? null) === (row.rowPinned ?? null) &&
+            cell.column?.getColId() === columnId;
+        const focused = isModuleRegistered('KeyboardNavigation') ? api.getFocusedCell() : null;
+        return (
+            (!!focused && isRowCell(focused)) ||
+            (isModuleRegistered('EditCore') && api.getEditingCells().some(isRowCell))
+        );
+    }
+
     private collectRowSpanCoverage(): Map<string, Set<string>> {
         const result = new Map<string, Set<string>>();
         const rootEl = getGridHTMLElement(this.api);
@@ -175,7 +190,10 @@ export class GridRowDomCellValidator {
                 `Missing cell element for column id:"${columnId}"`
         );
         rowErrors.add(
-            cellElement && isCovered && `Cell present for column id:"${columnId}" but column is covered by a span`
+            cellElement &&
+                isCovered &&
+                !this.isKeptForFocusOrEdit(row, columnId) &&
+                `Cell present for column id:"${columnId}" but column is covered by a span`
         );
         rowErrors.add(
             cellElement &&

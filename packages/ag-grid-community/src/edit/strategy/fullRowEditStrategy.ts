@@ -63,21 +63,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        const visibleCols = beans.visibleCols;
-        const columns = visibleCols.allCols;
-        let spanEnds: number[] | null = null;
-        if (visibleCols.colSpanActive) {
-            spanEnds = [];
-            visibleCols.fillRowSpanEnds(rowNode, spanEnds);
-        }
+        // a column a span covers draws no cell to edit
+        const columns = beans.visibleCols.getAllColsForRow(rowNode);
         const cells: Required<EditPosition>[] = [];
 
         const editableColumns: AgColumn[] = [];
 
         for (const column of columns) {
-            // a column a span covers draws no cell to edit
-            const drawn = spanEnds === null || visibleCols.getSpanningCol(spanEnds, column) === column;
-            if (drawn && column.isCellEditable(rowNode)) {
+            if (column.isCellEditable(rowNode)) {
                 editableColumns.push(column);
             }
         }

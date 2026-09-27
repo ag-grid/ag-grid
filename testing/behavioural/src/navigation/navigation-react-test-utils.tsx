@@ -9,7 +9,7 @@ export async function renderNavGrid(opts: {
     rowData: any[];
     columnDefs: ColDef[];
     /** `onGridReady` is the helper's own, to resolve the api. */
-    gridOptions?: Omit<GridOptions, 'onGridReady'>;
+    gridOptions?: Omit<GridOptions, 'onGridReady' | 'rowData' | 'columnDefs'>;
 }): Promise<GridApi> {
     let resolveReady!: (api: GridApi) => void;
     const readyPromise = new Promise<GridApi>((resolve) => {
