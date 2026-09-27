@@ -54,7 +54,7 @@ import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
-import { _initCellPosition, _onCellLeftChanged, _onCellWidthChanged, _setupCellPosition } from './cellPositionFeature';
+import { _initCellPosition, _onCellLeftChanged, _onCellWidthChanged, _refreshCellRowSpan } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -117,8 +117,8 @@ export class CellCtrl extends BeanStub {
 
     public lastIPadMouseClickEvent = 0;
 
-    // per-cell positioning state, owned by the cell position functions (rendering/cell/cellPositionFeature)
-    public colsSpanning?: AgColumn[];
+    /** The columns this cell covers, kept by `cellPositionFeature`; null until it first spans past its own. */
+    public colsSpanning: AgColumn[] | null = null;
     public rowSpan = 1;
 
     public rangeFeature: ICellRangeFeature | undefined = undefined;
@@ -175,8 +175,13 @@ export class CellCtrl extends BeanStub {
         if (!this.isClientSideLoadingCell()) {
             this.updateAndFormatValue(false);
         }
-        // must stay in the constructor, not setComp — see _setupCellPosition
-        _setupCellPosition(beans, this);
+        // a row-spanned cell syncs its own height; see SpannedCellCtrl.isCellSpanning for why not getCellSpan()
+        if (this.isCellSpanning()) {
+            return;
+        }
+        // read at construction: a data change can re-read and compare it before the cell mounts
+        this.rowSpan = column.getRowSpan(rowNode);
+        this.addManagedListeners(beans.eventSvc, { newColumnsLoaded: () => _refreshCellRowSpan(beans, this) });
     }
 
     private isClientSideLoadingCell(): boolean {

@@ -25,7 +25,7 @@ export class SpannedCellCtrl extends CellCtrl {
 
         // A reused CellSpan keeps its ctrl across rowData changes but its coverage can change, so the
         // rendered height and aria-rowspan (both applied once on mount) must be re-derived on the
-        // cache-rebuild events. _setupCellPosition cannot wire this up because cellSpan is a
+        // cache-rebuild events. CellCtrl's constructor cannot wire this up because cellSpan is a
         // parameter property still unassigned during super().
         const refreshSpan = () => {
             _applySpanHeight(this);
@@ -54,7 +54,7 @@ export class SpannedCellCtrl extends CellCtrl {
         this.setAriaRowSpan();
     }
 
-    // Must stay a plain literal, independent of getCellSpan(): _setupCellPosition runs during super()
+    // Must stay a plain literal, independent of getCellSpan(): CellCtrl's constructor reads it during super()
     // where the cellSpan parameter property is still unassigned, so getCellSpan() cannot be relied on.
     public override isCellSpanning(): boolean {
         return true;
