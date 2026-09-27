@@ -114,19 +114,35 @@ describe('Legacy colSpan rendering', () => {
         `);
     });
 
-    test('in print layout a span stops at its pinned lane, as outside print layout', () => {
-        const api = gridsManager.createGrid('myGrid', {
-            domLayout: 'print',
-            columnDefs: [{ ...columnDefs[0], pinned: 'left', colSpan: () => 3 }, columnDefs[1], columnDefs[2]],
-            rowData,
-        });
+    test('hiding a spanning column draws the columns it covered at their own width', () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
 
-        const row = getGridElement(api)!.querySelector('.ag-row[row-index="0"]')!;
-        expect(Array.from(row.querySelectorAll('.ag-cell'), (cell) => cell.getAttribute('col-id'))).toEqual([
-            'a',
-            'b',
-            'c',
+        api.setColumnsVisible(['a'], false);
+
+        const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="1"] .ag-cell');
+        expect(Array.from(cells, (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`)).toEqual([
+            'b 100px',
+            'c 100px',
         ]);
+    });
+
+    test('in print layout a span stops at its pinned lane, as outside print layout', () => {
+        const cellsOfFirstRow = (domLayout: 'print' | 'normal') => {
+            const api = gridsManager.createGrid('myGrid', {
+                domLayout,
+                columnDefs: [{ ...columnDefs[0], pinned: 'left', colSpan: () => 3 }, columnDefs[1], columnDefs[2]],
+                rowData,
+            });
+            const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="0"] .ag-cell');
+            const result = Array.from(cells, (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`);
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({ print: cellsOfFirstRow('print'), normal: cellsOfFirstRow('normal') }).toEqual({
+            print: ['a 100px', 'b 100px', 'c 100px'],
+            normal: ['a 100px', 'b 100px', 'c 100px'],
+        });
     });
 
     test('a colSpan of NaN renders one column wide, and a fractional one the whole columns it covers', () => {

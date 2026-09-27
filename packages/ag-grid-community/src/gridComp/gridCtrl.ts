@@ -5,13 +5,12 @@ import {
     _focusIntoTabbableFirst,
     _getActiveDomElement,
     _last,
-    _makeNull,
     _observeIntersection,
     _observeResize,
 } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
-import { _getFocusColumn } from '../entities/positionUtils';
+import { _createCellId } from '../entities/positionUtils';
 import { isHeaderPosition } from '../headerRendering/headerUtils';
 import type { GridContainerName, TabToNextGridContainerTarget } from '../interfaces/iCallbackParams';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -66,9 +65,7 @@ const isDefaultCell = (
     defaultTarget !== null &&
     !isHeaderPosition(target) &&
     !isHeaderPosition(defaultTarget) &&
-    target.rowIndex === defaultTarget.rowIndex &&
-    target.column === defaultTarget.column &&
-    _makeNull(target.rowPinned) === _makeNull(defaultTarget.rowPinned);
+    _createCellId(target) === _createCellId(defaultTarget);
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCtrl extends BeanStub {
@@ -183,7 +180,7 @@ export class GridCtrl extends BeanStub {
         const resolvedNextIndex = indexWithFocus === -1 ? (backwards ? focusableContainers.length - 1 : 0) : nextIndex;
         const {
             gos,
-            beans: { focusSvc, navigation },
+            beans: { focusSvc },
         } = this;
         const userCallbackFunction = gos.getCallback('tabToNextGridContainer');
 
@@ -232,9 +229,7 @@ export class GridCtrl extends BeanStub {
                     return focusSvc.focusHeaderPosition({ headerPosition: userResult }) || undefined;
                 }
 
-                // as focusGridView: scroll once to the cell that takes focus, row-spanned cells included
-                navigation?.ensureCellVisible({ ...userResult, column: _getFocusColumn(this.beans, userResult) });
-                return focusSvc.focusCellAt(userResult, false) || undefined;
+                return focusSvc.focusCellAt(userResult, true, backwards) || undefined;
             }
         }
 

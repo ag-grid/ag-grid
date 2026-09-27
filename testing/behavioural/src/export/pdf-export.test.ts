@@ -144,6 +144,29 @@ describe('PDF export', () => {
         expect(compactPdf).not.toMatch(/236 -?\d+(?:\.\d+)? 200 60 re S/);
         expect(compactPdf).toMatch(/236 -?\d+(?:\.\d+)? 200 40 re S/);
     });
+
+    test('a pinned span merges only up to its pinned lane, so the cells past the lane are exported', async () => {
+        const api = await gridsManager.createGridAndWait('pdf-col-span-pinned', {
+            columnDefs: [
+                { field: 'a', pinned: 'left', colSpan: () => 3 },
+                { field: 'b', pinned: 'left' },
+                { field: 'c' },
+                { field: 'd' },
+            ],
+            rowData: [{ a: 'a0', b: 'b0', c: 'c0', d: 'd0' }],
+        });
+        const exportedCells: string[] = [];
+
+        const pdf = api.getDataAsPdf({
+            processCellCallback: (params) => {
+                exportedCells.push(String(params.value));
+                return String(params.value);
+            },
+        });
+
+        expect(exportedCells).toEqual(['a0', 'c0', 'd0']);
+        await expectPdf(pdf);
+    });
 });
 
 async function expectPdf(pdf: Blob | undefined): Promise<void> {

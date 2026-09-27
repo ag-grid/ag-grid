@@ -335,13 +335,6 @@ export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, piv
 
 export type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
-function isFullWidthCellRow(gos: GridOptionsService, rowNode: RowNode): boolean {
-    if (_isClientSideLoadingRow(gos, rowNode)) {
-        return false;
-    }
-    return !!rowNode.detail || !!gos.getCallback('isFullWidthRow')?.({ rowNode });
-}
-
 /** How a row renders, decided from the node alone so it holds before the row is rendered. */
 export function _getRowType(beans: BeanCollection, rowNode: RowNode): RowType {
     const { gos, colModel, rowModel } = beans;
@@ -354,7 +347,10 @@ export function _getRowType(beans: BeanCollection, rowNode: RowNode): RowType {
     if (gos.get('masterDetail') && rowNode.detail) {
         return 'FullWidthDetail';
     }
-    if (isFullWidthCellRow(gos, rowNode)) {
+    if (
+        !_isClientSideLoadingRow(gos, rowNode) &&
+        (rowNode.detail || gos.getCallback('isFullWidthRow')?.({ rowNode }))
+    ) {
         return 'FullWidth';
     }
     // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')

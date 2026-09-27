@@ -664,7 +664,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public refreshRow(params?: RefreshRowsParams & { newData?: boolean }): void {
-        // a row that now renders as another type needs its other row mode feature, so it is drawn again
+        // another row type needs another row mode feature, so the row is drawn again
         if (this.rowType !== _getRowType(this.beans, this.rowNode)) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;

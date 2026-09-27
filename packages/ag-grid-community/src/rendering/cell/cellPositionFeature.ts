@@ -1,5 +1,6 @@
-import { _areEqual, _missing } from 'ag-stack';
+import { _areEqual } from 'ag-stack';
 
+import { _getDrawnColSpan } from '../../columns/columnUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
@@ -114,31 +115,13 @@ function getCellWidth(cellCtrl: CellCtrl): number {
     return width;
 }
 
-function getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): AgColumn[] {
+/** The columns the cell spans, or undefined when it covers only its own, as for a column without colSpan. */
+function getColSpanningList(beans: BeanCollection, cellCtrl: CellCtrl): AgColumn[] | undefined {
     const { column, rowNode } = cellCtrl;
-    const colSpan = column.getColSpan(rowNode);
-    const colsSpanning: AgColumn[] = [];
-
-    // if just one col, the col span is just the column we are in
-    if (colSpan === 1) {
-        colsSpanning.push(column);
-    } else {
-        let pointer: AgColumn | null = column;
-        const lane = column.pinnedLane;
-        for (let i = 0; pointer && i < colSpan; i++) {
-            colsSpanning.push(pointer);
-            pointer = beans.visibleCols.getColAfter(pointer);
-            if (!pointer || _missing(pointer)) {
-                break;
-            }
-            // we do not allow col spanning to span outside of pinned areas
-            if (lane !== pointer.pinnedLane) {
-                break;
-            }
-        }
-    }
-
-    return colsSpanning;
+    const allCols = beans.visibleCols.allCols;
+    const index = column.allColsIndex;
+    const colSpan = index < 0 ? 1 : _getDrawnColSpan(allCols, index, rowNode);
+    return colSpan > 1 ? allCols.slice(index, index + colSpan) : undefined;
 }
 
 export function _onCellLeftChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {

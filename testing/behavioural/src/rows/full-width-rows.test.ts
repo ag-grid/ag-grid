@@ -33,7 +33,7 @@ class FullWidthInputRenderer implements ICellRendererComp {
     }
 }
 
-describe('Full width row form fields', () => {
+describe('Full width rows', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule],
     });
@@ -94,5 +94,26 @@ describe('Full width row form fields', () => {
         api.refreshCells({ rowNodes: [api.getDisplayedRowAtIndex(0)!], force: true });
 
         expect({ sameRow: groupRow() === before, refreshed }).toEqual({ sameRow: true, refreshed: ['G'] });
+    });
+
+    test('new data refreshes a row in place while its row type holds, and redraws it as full width once isFullWidthRow says so', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ id: '1', name: 'Alice', fullWidth: false }],
+            getRowId: (params) => params.data.id,
+            isFullWidthRow: (params) => params.rowNode.data?.fullWidth,
+            fullWidthCellRenderer: FullWidthInputRenderer,
+        });
+        const row = () => TestGridsManager.getHTMLElement(api)!.querySelector('.ag-row[row-index="0"]')!;
+        const before = row();
+
+        api.getRowNode('1')!.setData({ id: '1', name: 'Bob', fullWidth: false });
+        const sameType = { sameRow: row() === before, text: row().textContent };
+        api.getRowNode('1')!.setData({ id: '1', name: 'Bob', fullWidth: true });
+
+        expect({ sameType, fullWidth: row().classList.contains('ag-full-width-row') }).toEqual({
+            sameType: { sameRow: true, text: 'Bob' },
+            fullWidth: true,
+        });
     });
 });

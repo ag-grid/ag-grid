@@ -7,6 +7,7 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { ColumnState } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
@@ -35,6 +36,22 @@ export function isColumnSelectionCol(col: Column): boolean {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isRowNumberCol(col: Column): boolean {
     return (col as AgColumn).colKind === 'row-number';
+}
+
+/**
+ * The columns the cell at `index` spans, as the grid draws it: its colSpan, stopped at the last column and at its
+ * pinned lane's edge.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getDrawnColSpan(cols: AgColumn[], index: number, rowNode: IRowNode): number {
+    const col = cols[index];
+    const colSpan = Math.min(col.getColSpan(rowNode), cols.length - index);
+    for (let i = 1; i < colSpan; ++i) {
+        if (cols[index + i].pinnedLane !== col.pinnedLane) {
+            return i;
+        }
+    }
+    return colSpan;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

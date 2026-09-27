@@ -7,7 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { _getFocusColumn, _getRowAbove, _getRowBelow, _getRowNode } from '../entities/positionUtils';
 import { _isClientSideLoadingRow } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellNavigationService extends BeanStub implements NamedBean {
@@ -34,7 +34,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         let column: AgColumn | undefined;
         let rowIndex: number;
 
-        const { pageBounds, gos, visibleCols, pinnedRowModel } = this.beans;
+        const { pageBounds, gos, pinnedRowModel } = this.beans;
         const { rowPinned } = focusedCell;
         if (upKey || downKey) {
             if (rowPinned && pinnedRowModel) {
@@ -51,19 +51,8 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             }
             column = focusedCell.column as AgColumn;
         } else {
-            const isRtl = gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
-            const allColumns = leftKey !== isRtl ? visibleCols.allCols : [...visibleCols.allCols].reverse();
-
-            column = allColumns.find(
-                (col) =>
-                    !isRowNumberCol(col) &&
-                    this.isCellGoodToFocusOn({
-                        rowIndex,
-                        rowPinned,
-                        column: col,
-                    })
-            );
+            column = this.getRowEdgeCol(rowIndex, rowPinned, leftKey === gos.get('enableRtl'));
         }
 
         return column
@@ -113,6 +102,18 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         }
 
         return pointer;
+    }
+
+    /** The first column from one end of the row, row numbers aside, whose cell can take focus. */
+    public getRowEdgeCol(rowIndex: number, rowPinned: RowPinnedType, fromEnd: boolean): AgColumn | undefined {
+        const allCols = this.beans.visibleCols.allCols;
+        for (let i = 0, len = allCols.length; i < len; ++i) {
+            const column = allCols[fromEnd ? len - 1 - i : i];
+            if (!isRowNumberCol(column) && this.isCellGoodToFocusOn({ rowIndex, rowPinned, column })) {
+                return column;
+            }
+        }
+        return undefined;
     }
 
     public isCellGoodToFocusOn(gridCell: CellPosition): boolean {

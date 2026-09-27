@@ -912,7 +912,7 @@ export class AgColumn<TValue = any>
     }
 }
 
-/** Whole cells, at least one; NaN fails `>= 2`, so it spans one. Consumers clamp a span to the columns left. */
+/** Whole cells, at least one; NaN counts as one. */
 const toCellSpan = (span: number): number => (span >= 2 ? Math.floor(span) : 1);
 
 /** Convert input into a SortDef: a valid SortDef passes through, otherwise direction and type are normalised. */

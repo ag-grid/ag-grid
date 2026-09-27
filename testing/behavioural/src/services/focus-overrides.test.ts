@@ -177,31 +177,42 @@ describe('Focus Overrides', () => {
         );
     });
 
-    test('tabToNextGridContainer default target backwards over loading rows is the last header, where the grid goes', async () => {
-        const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => undefined);
-        const api = gridsManager.createGrid<RowData>(
-            'myGrid',
-            {
-                columnDefs,
-                rowData,
-                loading: true,
-                loadingRows: { rowCount: 3 },
-                pagination: true,
-                paginationPageSizeSelector: false,
-                tabToNextGridContainer,
-            },
-            { modules: [PaginationModule] }
-        );
-        await waitFor(() => expect(api.getDisplayedRowAtIndex(2)?.stub).toBe(true));
+    test('tabToNextGridContainer default target backwards over loading rows, or no rows and no overlay, is the last header, where the grid goes', async () => {
+        const shiftTabFromPaging = async (
+            gridOptions: GridOptions<RowData>,
+            ready: (api: GridApi<RowData>) => void
+        ) => {
+            const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => undefined);
+            const api = gridsManager.createGrid<RowData>(
+                'myGrid',
+                {
+                    columnDefs,
+                    pagination: true,
+                    paginationPageSizeSelector: false,
+                    tabToNextGridContainer,
+                    ...gridOptions,
+                },
+                { modules: [PaginationModule] }
+            );
+            await waitFor(() => ready(api));
 
-        getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
-        dispatchKeyDown('Tab', { shiftKey: true });
+            getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+            dispatchKeyDown('Tab', { shiftKey: true });
 
-        const target = tabToNextGridContainer.mock.calls[0][0].defaultTarget as HeaderPosition | null;
+            const target = tabToNextGridContainer.mock.calls[0][0].defaultTarget as HeaderPosition | null;
+            const result = `${target && `${target.headerRowIndex} ${target.column.getUniqueId()}`}, focus ${getFocusedHeaderColId()}`;
+            gridsManager.reset();
+            return result;
+        };
+
         expect({
-            target: target && `${target.headerRowIndex} ${target.column.getUniqueId()}`,
-            focus: getFocusedHeaderColId(),
-        }).toEqual({ target: '0 sport', focus: 'sport' });
+            loadingRows: await shiftTabFromPaging({ rowData, loading: true, loadingRows: { rowCount: 3 } }, (api) =>
+                expect(api.getDisplayedRowAtIndex(2)?.stub).toBe(true)
+            ),
+            noRows: await shiftTabFromPaging({ rowData: [], suppressNoRowsOverlay: true }, (api) =>
+                expect(api.getDisplayedRowCount()).toBe(0)
+            ),
+        }).toEqual({ loadingRows: '0 sport, focus sport', noRows: '0 sport, focus sport' });
     });
 
     test('tabToNextCell override reroutes tabbing target', async () => {

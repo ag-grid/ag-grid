@@ -8,6 +8,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import { _areCellsEqual, _getFirstRow, _getFocusColumn, _getLastRow, _getRowNode } from './entities/positionUtils';
+import type { RowNode } from './entities/rowNode';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _getRowType, _isClientSideLoadingRow } from './gridOptionsUtils';
@@ -37,6 +38,10 @@ import {
 } from './utils/gridFocus';
 
 type FocusDirection = 'Before' | 'After' | null;
+
+/** A full-width row has no cell to name as a tab target; the grid body's default enters it. */
+const isFullWidthRow = (beans: BeanCollection, rowNode: RowNode | undefined): boolean =>
+    !!rowNode && _getRowType(beans, rowNode) !== 'Normal';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FocusService extends BeanStub implements NamedBean {
@@ -633,8 +638,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return this.getLastHeaderTarget(backwards);
         }
 
-        // a full width row has no cell to name; the grid body's default enters it
-        if (backwards && _getRowType(this.beans, rowNode) !== 'Normal') {
+        if (isFullWidthRow(this.beans, rowNode)) {
             return 'gridBody';
         }
 
@@ -644,13 +648,13 @@ export class FocusService extends BeanStub implements NamedBean {
             return { ...position, column: focusColumn };
         }
 
-        const cellNavigation = this.beans.cellNavigation;
-        const nextCell =
-            cellNavigation?.getNextCellToFocus(this.getTabStepKey(backwards), position) ??
-            cellNavigation?.getNextTabStop(position, backwards);
-        return nextCell
-            ? { ...nextCell, column: _getFocusColumn(this.beans, nextCell) }
-            : this.getLastHeaderTarget(backwards);
+        const tabStop = this.beans.cellNavigation?.getNextTabStop(position, backwards);
+        if (!tabStop) {
+            return this.getLastHeaderTarget(backwards);
+        }
+        return isFullWidthRow(this.beans, _getRowNode(this.beans, tabStop))
+            ? 'gridBody'
+            : { ...tabStop, column: _getFocusColumn(this.beans, tabStop) };
     }
 
     /** Where Shift+Tab goes when no cell can take focus: the last header, unless headers cannot be focused. */
@@ -659,11 +663,6 @@ export class FocusService extends BeanStub implements NamedBean {
         return backwards && column && !_isHeaderFocusSuppressed(this.beans)
             ? { headerRowIndex: getFocusHeaderRowCount(this.beans) - 1, column }
             : null;
-    }
-
-    /** The arrow key Tab moves along when it enters on a cell that is not navigable. */
-    private getTabStepKey(backwards: boolean): string {
-        return this.gos.get('enableRtl') !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
     }
 
     public focusGridView(params: {
@@ -719,39 +718,24 @@ export class FocusService extends BeanStub implements NamedBean {
                 return canFocusOverlay && this.focusOverlay(backwards);
             }
 
-            const focusColumn = _getFocusColumn(this.beans, position);
-            if (focusColumn.isSuppressNavigable(rowNode)) {
-                const isTab = !event || event.key === KeyCode.TAB;
-                if (
-                    navigation?.navigateToNextCell(
-                        null,
-                        isTab ? this.getTabStepKey(backwards) : event.key,
-                        position,
-                        true
-                    )
-                ) {
-                    return true;
-                }
-                if (!isTab) {
+            const isTab = !event || event.key === KeyCode.TAB;
+            // Tab enters a full-width row whatever its column, as its default target says; Arrow Down judges it
+            const entersRow = isTab && isFullWidthRow(this.beans, rowNode);
+            if (!entersRow && _getFocusColumn(this.beans, position).isSuppressNavigable(rowNode)) {
+                const tabKey = this.gos.get('enableRtl') !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
+                if (navigation?.navigateToNextCell(null, isTab ? tabKey : event.key, position, true) || !isTab) {
                     return true;
                 }
                 // nothing on the row can take focus: Tab walks on in tab order, as it does between cells
                 const tabStop = this.beans.cellNavigation?.getNextTabStop(position, backwards);
                 if (tabStop) {
-                    this.focusCellAt(tabStop, true);
+                    this.focusCellAt(tabStop, true, backwards);
                     return true;
                 }
                 return backwards && !_isHeaderFocusSuppressed(this.beans) ? this.focusLastHeader() : false;
             }
 
-            navigation?.ensureCellVisible({ ...position, column: focusColumn });
-
-            // a full width row is entered in the direction of travel
-            if (backwards && navigation?.tryToFocusFullWidthRow(nextRow, backwards)) {
-                return true;
-            }
-
-            this.focusCellAt(position, false);
+            this.focusCellAt(position, true, backwards);
             return true;
         }
 
@@ -767,11 +751,11 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Focuses the cell that takes focus at `position`, or, with none rendered yet, marks it to claim focus once rendered.
-     * Without `scroll`, the caller has already scrolled to that cell.
+     * Focuses the cell that takes focus at `position`, entering a full-width row in the direction of travel, or, with
+     * neither rendered yet, marks it to claim focus once rendered. Without `scroll`, the caller has already scrolled.
      */
-    public focusCellAt(position: CellPosition, scroll: boolean): boolean {
-        if (this.navigation?.focusCellOrSpanning(position, scroll)) {
+    public focusCellAt(position: CellPosition, scroll: boolean, backwards?: boolean): boolean {
+        if (this.navigation?.focusCellOrRow(position, scroll, backwards)) {
             return true;
         }
         const focusPosition: CellPosition = { ...position, column: _getFocusColumn(this.beans, position) };

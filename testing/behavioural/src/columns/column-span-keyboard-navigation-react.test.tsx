@@ -1,6 +1,6 @@
 import { cleanup, waitFor } from '@testing-library/react';
 
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -32,6 +32,13 @@ function makeColumnDefs(): ColDef<RowData>[] {
     ];
 }
 
+/** The focused cell as the grid reports it and as browser focus holds it; the next key goes to the latter. */
+const focused = (api: GridApi) => {
+    const el = document.activeElement;
+    const domCell = `${el?.closest('[row-index]')?.getAttribute('row-index')} ${el?.getAttribute('col-id')}`;
+    return [`${getFocusedRowIndex(api)} ${getFocusedColId(api)}`, domCell];
+};
+
 describe('Column Spanning Keyboard Navigation (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnApiModule, PaginationModule, ValidationModule]);
@@ -55,17 +62,11 @@ describe('Column Spanning Keyboard Navigation (React)', () => {
 
         dispatchKeyDown(KeyCode.PAGE_DOWN);
 
-        await waitFor(() => {
-            expect(getFocusedRowIndex(api)).toBe(1);
-            expect(getFocusedColId(api)).toBe('a');
-        });
+        await waitFor(() => expect(focused(api)).toEqual(['1 a', '1 a']));
 
         dispatchKeyDown(KeyCode.UP);
 
-        await waitFor(() => {
-            expect(getFocusedRowIndex(api)).toBe(0);
-            expect(getFocusedColId(api)).toBe('b');
-        });
+        await waitFor(() => expect(focused(api)).toEqual(['0 b', '0 b']));
     });
 
     test('Ctrl+Down normalises focus onto spanning cell on last row, and Arrow Up continues in the covered column (TC2)', async () => {
@@ -84,17 +85,11 @@ describe('Column Spanning Keyboard Navigation (React)', () => {
 
         dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
 
-        await waitFor(() => {
-            expect(getFocusedRowIndex(api)).toBe(3);
-            expect(getFocusedColId(api)).toBe('a');
-        });
+        await waitFor(() => expect(focused(api)).toEqual(['3 a', '3 a']));
 
         dispatchKeyDown(KeyCode.UP);
 
-        await waitFor(() => {
-            expect(getFocusedRowIndex(api)).toBe(2);
-            expect(getFocusedColId(api)).toBe('b');
-        });
+        await waitFor(() => expect(focused(api)).toEqual(['2 b', '2 b']));
     });
 
     test('entry from a header and through a tabToNextGridContainer cell focuses the cell spanning its column, and Arrow continues in the column', async () => {
@@ -115,10 +110,9 @@ describe('Column Spanning Keyboard Navigation (React)', () => {
                     params.backwards ? { rowIndex: 2, rowPinned: null, column: params.api.getColumn('b')! } : undefined,
             },
         });
-        const focused = () => `${getFocusedRowIndex(api)} ${getFocusedColId(api)}`;
         const pressThenExpect = async (key: string, expected: string) => {
             dispatchKeyDown(key);
-            await waitFor(() => expect(focused()).toBe(expected));
+            await waitFor(() => expect(focused(api)).toEqual([expected, expected]));
         };
 
         api.setFocusedHeader('c');
@@ -127,7 +121,7 @@ describe('Column Spanning Keyboard Navigation (React)', () => {
 
         getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
         dispatchKeyDown(KeyCode.TAB, { shiftKey: true });
-        await waitFor(() => expect(focused()).toBe('2 a'));
+        await waitFor(() => expect(focused(api)).toEqual(['2 a', '2 a']));
         await pressThenExpect(KeyCode.UP, '1 b');
     });
 });

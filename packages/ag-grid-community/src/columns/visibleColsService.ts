@@ -11,7 +11,7 @@ import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsU
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { getWidthOfColsInList } from './columnUtils';
+import { _getDrawnColSpan, getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
@@ -447,13 +447,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         for (let i = 0; i < len; ++i) {
             const col = displayedColumns[i];
-            let colSpan = Math.min(col.getColSpan(rowNode), len - i);
-            // a span stops at its pinned lane's edge, as the drawn cell does
-            for (let j = 1; j < colSpan; ++j) {
-                if (displayedColumns[i + j].pinnedLane !== col.pinnedLane) {
-                    colSpan = j;
-                }
-            }
+            const colSpan = _getDrawnColSpan(displayedColumns, i, rowNode);
 
             let filterPasses: boolean;
             if (filterCallback) {

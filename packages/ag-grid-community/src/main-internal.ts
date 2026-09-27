@@ -50,6 +50,7 @@ export {
     _destroyColumnTreeAll,
     _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
+    _getDrawnColSpan,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,

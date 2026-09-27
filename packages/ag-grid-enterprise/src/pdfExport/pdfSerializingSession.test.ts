@@ -61,7 +61,7 @@ const addColumnHeader = (row: ReturnType<PdfSerializingSession['onNewHeaderRow']
     row.onCell({ type: 'column', column, columnIndex: index, columnSpan: 1, rowSpan: 1 });
 
 describe('PdfSerializingSession', () => {
-    it('clamps cell spans to the remaining exported columns', () => {
+    it('clamps cell spans to the remaining exported columns and to their pinned lane', () => {
         const session = createSession();
         const columns = [createColumn('A', 10), createColumn('B', 1), createColumn('C', 1)];
         const node = { data: {}, group: false, level: 2, rowIndex: 0, rowPinned: 'top' } as RowNode;
@@ -80,12 +80,31 @@ describe('PdfSerializingSession', () => {
         expect(rows[0].cells).toHaveLength(1);
         expect(rows[0].cells[0].mergeAcross).toBe(2);
         expect(rows[0]).toMatchObject({ sourceNode: node, rowPinned: 'top', groupLevel: 2 });
+
         expect(rows[0].cells[0]).toMatchObject({
             elementType: 'cell',
             sourceColumn: columns[0],
             sourceNode: node,
             groupLevel: 2,
         });
+
+        const pinnedSession = createSession();
+        const pinnedColumns = [
+            { ...createColumn('A', 10), pinnedLane: 0 },
+            { ...createColumn('B', 1), pinnedLane: 0 },
+            { ...createColumn('C', 1), pinnedLane: 1 },
+        ] as AgColumn[];
+        pinnedSession.prepare(pinnedColumns);
+        const pinnedRow = pinnedSession.onNewBodyRow(node);
+        for (let i = 0; i < pinnedColumns.length; ++i) {
+            pinnedRow.onColumn(pinnedColumns[i], i, node);
+        }
+
+        // as the grid draws it, a span stops at its pinned lane and the next lane's cells are exported
+        expect(getRows(pinnedSession)[0].cells.map((cell) => [cell.value, cell.mergeAcross])).toEqual([
+            ['A', 1],
+            ['C', undefined],
+        ]);
     });
 
     it('clamps custom content spans and cells to the exported table width', () => {
