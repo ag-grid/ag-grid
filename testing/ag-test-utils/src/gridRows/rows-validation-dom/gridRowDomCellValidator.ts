@@ -89,13 +89,13 @@ export class GridRowDomCellValidator {
     private computeColSpanCoveredIds(row: RowNode<any>): Set<string> {
         const covered = new Set<string>();
         for (const section of this.displayedSections) {
-            for (let i = 0, len = section.length; i < len; ++i) {
-                const span = section[i].getColSpan(row);
-                if (span > 1) {
-                    for (let j = 1; j < span && i + j < len; ++j) {
-                        covered.add(section[i + j].getColId());
-                    }
+            // a covered column starts no cell, so its own colSpan is never read
+            for (let i = 0, len = section.length; i < len;) {
+                const span = Math.min(section[i].getColSpan(row), len - i);
+                for (let j = 1; j < span; ++j) {
+                    covered.add(section[i + j].getColId());
                 }
+                i += span;
             }
         }
         return covered;

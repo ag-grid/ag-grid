@@ -701,38 +701,25 @@ describe('Column Features', () => {
                 `);
         });
 
-        test('colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags', async () => {
+        test('colDef.colSpan + colDef.autoHeight on same grid draws the span and measures the auto-height cell', () => {
             const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', autoHeight: true },
-                    { colId: 'b', colSpan: () => 2 },
-                ],
-                rowData: [{ a: 1, b: 2 }],
+                columnDefs: [{ colId: 'a', autoHeight: true }, { colId: 'b', colSpan: () => 2 }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
             });
-            await new GridColumns(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
-            ).checkColumns(`
-                CENTER
-                ├── a width:200
-                └── b width:200
-            `);
-            await new GridRows(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
-            `);
 
-            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
-            await new GridRows(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags final state`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
-            `);
+            const cells = TestGridsManager.getHTMLElement(api)!.querySelectorAll<HTMLElement>(
+                '.ag-row[row-index="0"] .ag-cell'
+            );
+            expect(
+                Array.from(cells, (cell) => ({
+                    colId: cell.getAttribute('col-id'),
+                    width: cell.style.width,
+                    autoHeight: cell.classList.contains('ag-cell-auto-height'),
+                }))
+            ).toEqual([
+                { colId: 'a', width: '200px', autoHeight: true },
+                { colId: 'b', width: '400px', autoHeight: false },
+            ]);
         });
     });
 

@@ -1061,10 +1061,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Spanning *** //
 
-    /** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */
+    /**
+     * By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns.
+     * The result is rounded down to whole columns, at least one.
+     */
     colSpan?: ColSpanFunc<TData, TValue>;
     /**
      * By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows.
+     * The result is rounded down to whole rows, at least one.
      */
     rowSpan?: RowSpanFunc<TData, TValue>;
 

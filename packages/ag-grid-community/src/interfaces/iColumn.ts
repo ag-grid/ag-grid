@@ -128,7 +128,10 @@ export interface Column<TValue = any>
     /** Remove event listener from the column. */
     removeEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
 
-    /** Returns `true` if navigation is suppressed for the given column and rowNode. */
+    /**
+     * Returns `true` if navigation is suppressed for the given column and rowNode.
+     * Where a `colSpan` covers this column, keyboard navigation judges the column the spanning cell starts in.
+     */
     isSuppressNavigable(rowNode: IRowNode): boolean;
 
     /**
@@ -250,10 +253,10 @@ export interface Column<TValue = any>
     /** Returns the auto header height. */
     getAutoHeaderHeight(): number | null;
 
-    /** Returns the column span for this column and row node. */
+    /** Returns the column span for this column and row node, in whole columns, at least one. */
     getColSpan(rowNode: IRowNode): number;
 
-    /** Returns the row span for this column and row node. */
+    /** Returns the row span for this column and row node, in whole rows, at least one. */
     getRowSpan(rowNode: IRowNode): number;
 
     /** @deprecated v32 Internal method no longer to be exposed on Column interface. */

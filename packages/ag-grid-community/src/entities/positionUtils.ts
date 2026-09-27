@@ -1,7 +1,7 @@
 import { _exists } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
-import { _getRowType, _isGroupRowsSticky } from '../gridOptionsUtils';
+import { _isFullWidthRowNode, _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
@@ -142,23 +142,16 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
  */
 export function _getFocusColumn(beans: BeanCollection, cellPosition: CellPosition): AgColumn {
     const column = cellPosition.column as AgColumn;
-    if (!beans.colModel.colSpanActive) {
+    if (!beans.visibleCols.colSpanActive) {
         return column;
     }
 
-    const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
-    if (!rowCtrl) {
-        const rowNode = _getRowNode(beans, cellPosition);
-        return rowNode && _getRowType(beans, rowNode) === 'Normal'
-            ? beans.visibleCols.getSpanningCol(rowNode, column)
-            : column;
-    }
-
-    const cellCtrl = rowCtrl.getCellCtrl(column);
+    const cellCtrl = beans.rowRenderer.getRowByPosition(cellPosition)?.getCellCtrl(column);
     if (cellCtrl) {
         return cellCtrl.column;
     }
-    return rowCtrl.isFullWidth() ? column : beans.visibleCols.getSpanningCol(rowCtrl.rowNode, column);
+    const rowNode = _getRowNode(beans, cellPosition);
+    return rowNode && !_isFullWidthRowNode(beans, rowNode) ? beans.visibleCols.getSpanningCol(rowNode, column) : column;
 }
 
 export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {

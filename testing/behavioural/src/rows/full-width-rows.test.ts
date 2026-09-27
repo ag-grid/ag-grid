@@ -51,7 +51,7 @@ describe('Full width rows', () => {
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-full-width-row input')!;
         expect(input).not.toBeNull();
-        // jsdom has no layout, so give the input the offsetParent the visibility check reads
+        // happy-dom has no layout, so give the input the offsetParent the visibility check reads
         Object.defineProperty(input, 'offsetParent', { configurable: true, get: () => document.body });
 
         input.focus();
@@ -64,36 +64,46 @@ describe('Full width rows', () => {
         expect(document.activeElement).toBe(input);
     });
 
-    test('a forced refresh refreshes a full-width group row whose renderer can refresh, not redraws it', async () => {
-        const refreshed: string[] = [];
-        const api = await gridsManager.createGridAndWait(
-            'grid1',
-            {
-                columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'name' }],
-                rowData: [{ group: 'G', name: 'Alice' }],
-                groupDisplayType: 'groupRows',
-                groupRowRenderer: class implements ICellRendererComp {
-                    private readonly eGui = document.createElement('div');
-                    public init(params: ICellRendererParams): void {
-                        this.eGui.textContent = params.value;
-                    }
-                    public getGui(): HTMLElement {
-                        return this.eGui;
-                    }
-                    public refresh(params: ICellRendererParams): boolean {
-                        refreshed.push(params.value);
-                        return true;
-                    }
+    test('a forced refresh refreshes a full-width group row whose renderer can refresh, and redraws one whose renderer cannot', async () => {
+        const forceRefresh = async (canRefresh: boolean) => {
+            const calls: string[] = [];
+            const api = await gridsManager.createGridAndWait(
+                'grid1',
+                {
+                    columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'name' }],
+                    rowData: [{ group: 'G', name: 'Alice' }],
+                    groupDisplayType: 'groupRows',
+                    groupRowRenderer: class implements ICellRendererComp {
+                        private readonly eGui = document.createElement('div');
+                        public init(params: ICellRendererParams): void {
+                            calls.push(`init ${params.value}`);
+                            this.eGui.textContent = params.value;
+                        }
+                        public getGui(): HTMLElement {
+                            return this.eGui;
+                        }
+                        public refresh(params: ICellRendererParams): boolean {
+                            calls.push(`refresh ${params.value}`);
+                            return canRefresh;
+                        }
+                    },
                 },
-            },
-            { modules: [RenderApiModule, RowGroupingModule] }
-        );
-        const groupRow = () => TestGridsManager.getHTMLElement(api)!.querySelector('.ag-row[row-index="0"]');
-        const before = groupRow();
+                { modules: [RenderApiModule, RowGroupingModule] }
+            );
+            const groupRow = () => TestGridsManager.getHTMLElement(api)!.querySelector('.ag-row[row-index="0"]');
+            const before = groupRow();
 
-        api.refreshCells({ rowNodes: [api.getDisplayedRowAtIndex(0)!], force: true });
+            api.refreshCells({ rowNodes: [api.getDisplayedRowAtIndex(0)!], force: true });
 
-        expect({ sameRow: groupRow() === before, refreshed }).toEqual({ sameRow: true, refreshed: ['G'] });
+            const result = { sameRow: groupRow() === before, calls };
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({ refreshes: await forceRefresh(true), redraws: await forceRefresh(false) }).toEqual({
+            refreshes: { sameRow: true, calls: ['init G', 'refresh G'] },
+            redraws: { sameRow: false, calls: ['init G', 'refresh G', 'init G'] },
+        });
     });
 
     test('new data refreshes a row in place while its row type holds, and redraws it as full width once isFullWidthRow says so', async () => {

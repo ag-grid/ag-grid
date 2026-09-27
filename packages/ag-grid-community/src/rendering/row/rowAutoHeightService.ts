@@ -121,8 +121,8 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      * @returns whether the row needs auto height value for that column
      */
     private colSpanSkipCell(col: AgColumn, node: RowNode): boolean {
-        const { colModel, colViewport, visibleCols } = this.beans;
-        if (!colModel.colSpanActive) {
+        const { colViewport, visibleCols } = this.beans;
+        if (!visibleCols.colSpanActive) {
             return false;
         }
 
@@ -222,7 +222,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         for (const { rowNode } of rowCtrls) {
             // if colSpanActive is false, then all rows will have the same cols, so shortcut
             // and avoid filtering the cols for each row
-            if (!renderedAutoHeightCols || this.beans.colModel.colSpanActive) {
+            if (!renderedAutoHeightCols || this.beans.visibleCols.colSpanActive) {
                 const renderedCols = this.beans.colViewport.getColsWithinViewport(rowNode);
                 renderedAutoHeightCols = renderedCols.filter((col) => col.isAutoHeight());
             }

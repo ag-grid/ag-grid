@@ -8,6 +8,7 @@ import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
@@ -43,6 +44,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** `allCols` with `colDef.autoHeight`. Reused across refreshes to stay warm. */
     public readonly autoHeightCols: AgColumn[] = [];
+
+    /** `allCols` with `colDef.colSpan`, the only cells that can span; reused across refreshes. */
+    private readonly colSpanCols: AgColumn[] = [];
+
+    /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
+    public colSpanActive = false;
 
     /** Number of header rows to render, accounting for group depth + padding rules. */
     public headerGroupRowCount: number = 0;
@@ -322,6 +329,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightCols = [];
         this.centerCols = [];
         this.allCols = [];
+        this.colSpanCols.length = 0;
+        this.colSpanActive = false;
     }
 
     private stampAriaColIndexes(leftCount: number, centerCount: number): void {
@@ -356,6 +365,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
+        this.colSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
         this.flexActive = false;
         const hidePaddedHeaderRows = !!this.gos.get('hidePaddedHeaderRows');
@@ -375,6 +385,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
 
         this.allCols = all;
+        this.colSpanActive = this.colSpanCols.length > 0;
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
@@ -386,7 +397,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         hidePaddedHeaderRows: boolean,
         source: ColumnEventType
     ): number {
-        const autoHeightCols = this.autoHeightCols;
+        const { autoHeightCols, colSpanCols } = this;
         let left = 0;
         // Leaves under one group are contiguous; skip the parent-chain walk for same-parent runs.
         let lastParent: AgColumnGroup | null = null;
@@ -398,6 +409,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             all.push(col);
             if (col.colDef.autoHeight) {
                 autoHeightCols.push(col);
+            }
+            if (col.colDef.colSpan != null) {
+                colSpanCols.push(col);
             }
             if (!this.flexActive && col.pinned == null) {
                 const flex = col.flex;
@@ -421,16 +435,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
-        return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.leftCols) : this.leftCols;
+        return this.colSpanActive ? this.getColsForRow(rowNode, this.leftCols) : this.leftCols;
     }
 
     public getRightColsForRow(rowNode: RowNode): AgColumn[] {
-        return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.rightCols) : this.rightCols;
+        return this.colSpanActive ? this.getColsForRow(rowNode, this.rightCols) : this.rightCols;
     }
 
     /** Print layout flows every lane through one container. */
     public getPrintColsForRow(rowNode: RowNode): AgColumn[] {
-        return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.allCols) : this.allCols;
+        return this.colSpanActive ? this.getColsForRow(rowNode, this.allCols) : this.allCols;
     }
 
     /** `filterCallback` is only set for the centre (virtualised) area. A col-spanned run is kept if
@@ -479,21 +493,24 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     /** The column whose cell covers `column` in `rowNode`, stepping spans as `getColsForRow` does. */
-    public getSpanningCol(rowNode: RowNode, column: AgColumn): AgColumn {
-        const lane = column.pinnedLane;
-        let cols = this.centerCols;
-        if (lane === 0) {
-            cols = this.leftCols;
-        } else if (lane === 2) {
-            cols = this.rightCols;
+    public getSpanningCol(rowNode: IRowNode, column: AgColumn): AgColumn {
+        const { allCols, colSpanCols } = this;
+        const target = column.allColsIndex;
+        // OPTIMISATION: a column without colSpan is one cell, so only colSpan columns are stepped
+        let coveredTo = -1;
+        for (let i = 0, len = colSpanCols.length; i < len; ++i) {
+            const start = colSpanCols[i].allColsIndex;
+            if (start > target) {
+                break;
+            }
+            if (start > coveredTo) {
+                coveredTo = start + _getDrawnColSpan(allCols, start, rowNode) - 1;
+                if (coveredTo >= target) {
+                    return allCols[start];
+                }
+            }
         }
-
-        const target = cols.indexOf(column);
-        let start = -1;
-        for (let i = 0; i <= target; i += cols[i].getColSpan(rowNode)) {
-            start = i;
-        }
-        return start < 0 ? column : cols[start];
+        return column;
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {

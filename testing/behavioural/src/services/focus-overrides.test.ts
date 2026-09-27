@@ -8,7 +8,6 @@ import type {
     FocusGridInnerElementParams,
     GridApi,
     GridOptions,
-    HeaderPosition,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     TabToNextCellParams,
@@ -177,7 +176,7 @@ describe('Focus Overrides', () => {
         );
     });
 
-    test('tabToNextGridContainer default target backwards over loading rows, or no rows and no overlay, is the last header, where the grid goes', async () => {
+    test('Shift+Tab from paging over only loading rows, no rows and no overlay, or with cell focus suppressed, targets and focuses the last header row', async () => {
         const shiftTabFromPaging = async (
             gridOptions: GridOptions<RowData>,
             ready: (api: GridApi<RowData>) => void
@@ -186,7 +185,8 @@ describe('Focus Overrides', () => {
             const api = gridsManager.createGrid<RowData>(
                 'myGrid',
                 {
-                    columnDefs,
+                    // a group row above the columns, so the last header row is not the first
+                    columnDefs: [{ headerName: 'Group', children: columnDefs }],
                     pagination: true,
                     paginationPageSizeSelector: false,
                     tabToNextGridContainer,
@@ -199,8 +199,13 @@ describe('Focus Overrides', () => {
             getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
             dispatchKeyDown('Tab', { shiftKey: true });
 
-            const target = tabToNextGridContainer.mock.calls[0][0].defaultTarget as HeaderPosition | null;
-            const result = `${target && `${target.headerRowIndex} ${target.column.getUniqueId()}`}, focus ${getFocusedHeaderColId()}`;
+            expect(tabToNextGridContainer).toHaveBeenCalledTimes(1);
+            const target = tabToNextGridContainer.mock.calls[0][0].defaultTarget;
+            const header =
+                target && typeof target === 'object' && 'headerRowIndex' in target
+                    ? `${target.headerRowIndex} ${target.column.getUniqueId()}`
+                    : String(target);
+            const result = `${header}, focus ${getFocusedHeaderColId()}`;
             gridsManager.reset();
             return result;
         };
@@ -212,7 +217,14 @@ describe('Focus Overrides', () => {
             noRows: await shiftTabFromPaging({ rowData: [], suppressNoRowsOverlay: true }, (api) =>
                 expect(api.getDisplayedRowCount()).toBe(0)
             ),
-        }).toEqual({ loadingRows: '0 sport, focus sport', noRows: '0 sport, focus sport' });
+            cellFocusSuppressed: await shiftTabFromPaging({ rowData, suppressCellFocus: true }, (api) =>
+                expect(api.getDisplayedRowCount()).toBe(3)
+            ),
+        }).toEqual({
+            loadingRows: '1 sport, focus sport',
+            noRows: '1 sport, focus sport',
+            cellFocusSuppressed: '1 sport, focus sport',
+        });
     });
 
     test('tabToNextCell override reroutes tabbing target', async () => {

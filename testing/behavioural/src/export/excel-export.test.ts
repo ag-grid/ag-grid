@@ -1,7 +1,7 @@
 import { TestGridsManager, objectUrls } from 'ag-test-utils';
 import * as XLSX from 'xlsx';
 
-import type { GridApi } from 'ag-grid-community';
+import type { ExcelExportParams, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 
@@ -17,8 +17,8 @@ describe('Excel export', () => {
         gridsManager.reset();
     });
 
-    const exportSheet = async (api: GridApi) => {
-        api.exportDataAsExcel();
+    const exportSheet = async (api: GridApi, params?: ExcelExportParams) => {
+        api.exportDataAsExcel(params);
         const workbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
             type: 'array',
         });
@@ -45,6 +45,38 @@ describe('Excel export', () => {
         expect(await exportSheet(api)).toEqual({
             merges: ['A2:C2', 'B3:C3'],
             rows: [['A', 'B', 'C'], ['a0'], ['a1', 'b1']],
+        });
+    });
+
+    test('a span over a column left out of the export, or from a hidden column, merges no exported column', async () => {
+        const api = gridsManager.createGrid('excel-col-span-column-keys', {
+            columnDefs: [
+                { field: 'h', hide: true, colSpan: () => 2 },
+                { field: 'a', colSpan: () => 2 },
+                { field: 'b' },
+                { field: 'c' },
+            ],
+            rowData: [{ h: 'h0', a: 'a0', b: 'b0', c: 'c0' }],
+        });
+
+        expect({
+            columnKeys: await exportSheet(api, { columnKeys: ['a', 'c'] }),
+            hidden: await exportSheet(api, { columnKeys: ['h', 'a', 'b', 'c'] }),
+        }).toEqual({
+            columnKeys: {
+                merges: [],
+                rows: [
+                    ['A', 'C'],
+                    ['a0', 'c0'],
+                ],
+            },
+            hidden: {
+                merges: ['B2:C2'],
+                rows: [
+                    ['H', 'A', 'B', 'C'],
+                    ['h0', 'a0', undefined, 'c0'],
+                ],
+            },
         });
     });
 

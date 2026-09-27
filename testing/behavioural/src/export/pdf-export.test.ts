@@ -145,27 +145,39 @@ describe('PDF export', () => {
         expect(compactPdf).toMatch(/236 -?\d+(?:\.\d+)? 200 40 re S/);
     });
 
-    test('a pinned span merges only up to its pinned lane, so the cells past the lane are exported', async () => {
-        const api = await gridsManager.createGridAndWait('pdf-col-span-pinned', {
-            columnDefs: [
-                { field: 'a', pinned: 'left', colSpan: () => 3 },
-                { field: 'b', pinned: 'left' },
-                { field: 'c' },
-                { field: 'd' },
-            ],
-            rowData: [{ a: 'a0', b: 'b0', c: 'c0', d: 'd0' }],
-        });
-        const exportedCells: string[] = [];
+    test('a span merges only as the grid draws it: up to its pinned lane, and over no column left out of the export', async () => {
+        const exportSpan = async (pinned: 'left' | null, columnKeys?: string[]) => {
+            const api = await gridsManager.createGridAndWait('pdf-col-span', {
+                columnDefs: [
+                    { field: 'a', pinned, colSpan: () => 3 },
+                    { field: 'b', pinned },
+                    { field: 'c' },
+                    { field: 'd' },
+                ],
+                rowData: [{ a: 'a0', b: 'b0', c: 'c0', d: 'd0' }],
+            });
+            const cells: string[] = [];
+            const pdf = api.getDataAsPdf({
+                columnKeys,
+                processCellCallback: (params) => {
+                    cells.push(String(params.value));
+                    return String(params.value);
+                },
+            });
+            await expectPdf(pdf);
+            // body rows are 18 high, so this reads the drawn width of each body cell
+            const widths = Array.from((await readBlobAsText(pdf!)).matchAll(/([\d.]+) 18 re S/g), (match) => match[1]);
+            gridsManager.reset();
+            return { cells, widths };
+        };
 
-        const pdf = api.getDataAsPdf({
-            processCellCallback: (params) => {
-                exportedCells.push(String(params.value));
-                return String(params.value);
-            },
+        expect({
+            pinned: await exportSpan('left'),
+            columnKeys: await exportSpan(null, ['a', 'c', 'd']),
+        }).toEqual({
+            pinned: { cells: ['a0', 'c0', 'd0'], widths: ['384.94', '192.47', '192.47'] },
+            columnKeys: { cells: ['a0', 'c0', 'd0'], widths: ['200', '200', '200'] },
         });
-
-        expect(exportedCells).toEqual(['a0', 'c0', 'd0']);
-        await expectPdf(pdf);
     });
 });
 

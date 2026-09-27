@@ -178,11 +178,8 @@ export class GridCtrl extends BeanStub {
         const focusableContainers = this.getFocusableContainers();
         const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
         const resolvedNextIndex = indexWithFocus === -1 ? (backwards ? focusableContainers.length - 1 : 0) : nextIndex;
-        const {
-            gos,
-            beans: { focusSvc },
-        } = this;
-        const userCallbackFunction = gos.getCallback('tabToNextGridContainer');
+        const focusSvc = this.beans.focusSvc;
+        const userCallbackFunction = this.gos.getCallback('tabToNextGridContainer');
 
         if (userCallbackFunction) {
             const defaultTarget = focusSvc.getDefaultTabToNextGridContainerTarget({

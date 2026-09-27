@@ -31,7 +31,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 
     public pivotMode = false;
-    public colSpanActive = false;
     public ready = false;
     /** Suppresses row model refreshes during batch column state dispatching. */
     public changeEventsDispatching = false;
@@ -513,35 +512,34 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return !!this.beans.pivotColsSvc?.hasInteractivePivotSort() || this.prevPivotStrict;
     }
 
-    /** Refresh state derived from `colsList` (group + quick-filter cols, colSpan/autoHeight flags) and
+    /** Refresh state derived from `colsList` (group + quick-filter cols, the autoHeight flag) and
      *  reset displayed-col + viewport caches, ahead of `visibleCols.refresh`. Shared by full refreshCols
      *  and by a visibility-only change (which leaves `colsList` unchanged, so skips the rebuild). */
     public refreshColsDerivedState(): void {
         const beans = this.beans;
         beans.showRowGroupCols?.refresh();
         beans.quickFilter?.refreshCols();
-        this.computeColSpanAndAutoHeight();
+        this.computeAutoHeight();
         beans.visibleCols.clear();
         beans.colViewport.clear();
     }
 
-    /** Single pass: set `colSpanActive` and `rowAutoHeight.active` from `colsList`. */
-    private computeColSpanAndAutoHeight(): void {
-        const colsList = this.colsList;
+    /** Set `rowAutoHeight.active` from `colsList`. */
+    private computeAutoHeight(): void {
         const rowAutoHeight = this.beans.rowAutoHeight;
-        let colSpan = false;
+        if (!rowAutoHeight) {
+            return;
+        }
+        const colsList = this.colsList;
         let autoHeight = false;
         for (let i = 0, len = colsList.length; i < len; ++i) {
             const col = colsList[i];
-            const colDef = col.colDef;
-            colSpan ||= colDef.colSpan != null;
-            autoHeight ||= !!rowAutoHeight && !!colDef.autoHeight && col.visible;
-            if (colSpan && (autoHeight || !rowAutoHeight)) {
+            if (col.colDef.autoHeight && col.visible) {
+                autoHeight = true;
                 break;
             }
         }
-        this.colSpanActive = colSpan;
-        rowAutoHeight?.setAutoHeightActive(autoHeight);
+        rowAutoHeight.setAutoHeightActive(autoHeight);
     }
 
     /** Full refresh (rebuild cols + recompute visible); immediate, or deferred to {@link endColBatch} when batched. */

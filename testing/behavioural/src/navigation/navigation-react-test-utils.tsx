@@ -8,7 +8,8 @@ import { AgGridReact } from 'ag-grid-react';
 export async function renderNavGrid(opts: {
     rowData: any[];
     columnDefs: ColDef[];
-    gridOptions?: GridOptions;
+    /** `onGridReady` is the helper's own, to resolve the api. */
+    gridOptions?: Omit<GridOptions, 'onGridReady'>;
 }): Promise<GridApi> {
     let resolveReady!: (api: GridApi) => void;
     const readyPromise = new Promise<GridApi>((resolve) => {

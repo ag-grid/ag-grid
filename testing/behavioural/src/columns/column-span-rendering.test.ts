@@ -114,16 +114,45 @@ describe('Legacy colSpan rendering', () => {
         `);
     });
 
-    test('hiding a spanning column draws the columns it covered at their own width', () => {
-        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
+    test('hiding a spanning column draws the columns it covered at their own width, and showing it draws the span again', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ ...columnDefs[0], hide: true }, columnDefs[1], columnDefs[2]],
+            rowData,
+        });
+        const drawnCells = () =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="1"] .ag-cell'),
+                (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`
+            );
 
+        const hiddenAtStart = drawnCells();
+        api.setColumnsVisible(['a'], true);
+        const shown = drawnCells();
         api.setColumnsVisible(['a'], false);
 
-        const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="1"] .ag-cell');
+        expect({ hiddenAtStart, shown, hiddenAgain: drawnCells() }).toEqual({
+            hiddenAtStart: ['b 100px', 'c 100px'],
+            shown: ['a 200px', 'c 100px'],
+            hiddenAgain: ['b 100px', 'c 100px'],
+        });
+    });
+
+    test('a column a span covers starts no cell, so its own colSpan is ignored', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ ...columnDefs[0], colSpan: () => 2 }, { ...columnDefs[1], colSpan: () => 2 }, columnDefs[2]],
+            rowData,
+        });
+
+        const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="0"] .ag-cell');
         expect(Array.from(cells, (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`)).toEqual([
-            'b 100px',
+            'a 200px',
             'c 100px',
         ]);
+        await new GridRows(api, 'a column a span covers starts no cell').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
+            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
+        `);
     });
 
     test('in print layout a span stops at its pinned lane, as outside print layout', () => {

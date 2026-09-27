@@ -5,7 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _getFocusColumn, _getRowAbove, _getRowBelow, _getRowNode } from '../entities/positionUtils';
-import { _isClientSideLoadingRow } from '../gridOptionsUtils';
+import { _isClientSideLoadingRow, _isFullWidthRowNode } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 
@@ -116,7 +116,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return undefined;
     }
 
-    public isCellGoodToFocusOn(gridCell: CellPosition): boolean {
+    private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
         const rowNode = _getRowNode(this.beans, gridCell);
         return !!rowNode && !this.isSuppressNavigable(_getFocusColumn(this.beans, gridCell), rowNode);
     }
@@ -206,10 +206,17 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return null;
     }
 
-    /** The next cell in tab order, across rows, that can take focus; null past the last one on the page. */
+    /**
+     * The next cell in tab order, across rows, that can take focus, or a full-width row, which Tab enters whatever
+     * its columns; null past the last one on the page.
+     */
     public getNextTabStop(gridCell: CellPosition, backwards: boolean): CellPosition | null {
         let next = this.getNextTabbedCell(gridCell, backwards);
-        while (next && !this.isCellGoodToFocusOn(next)) {
+        while (
+            next &&
+            !this.isCellGoodToFocusOn(next) &&
+            !_isFullWidthRowNode(this.beans, _getRowNode(this.beans, next))
+        ) {
             next = this.getNextTabbedCell(next, backwards);
         }
         return next;

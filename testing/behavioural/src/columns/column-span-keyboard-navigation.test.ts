@@ -326,7 +326,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         api.setFocusedCell(2, 'b');
         dispatchKeyDown(KeyCode.UP);
         dispatchKeyDown(KeyCode.PAGE_UP);
-        // jsdom has no viewport height, so Page Up's row is not meaningful here; its column is
+        // happy-dom has no viewport height, so Page Up's row is not meaningful here; its column is
         steps.push(`PageUp: ${getFocusedColId(api)}`);
 
         api.setFocusedCell(2, 'b');
@@ -833,22 +833,34 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('Arrow Down into a row not rendered yet steps a colSpan of NaN as one column', () => {
-        // on row 30 'a' spans NaN columns and 'b' spans over 'c', which is not navigable there
-        const columnDefs = makeColumnDefs();
-        columnDefs[0].colSpan = (params) => (params.node!.rowIndex === 30 ? Number.NaN : 1);
-        columnDefs[1].colSpan = (params) => (params.node!.rowIndex === 30 ? 2 : 1);
-        columnDefs[1].suppressNavigable = (params) => params.node.rowIndex === 30;
-        const rowData = Array.from({ length: 40 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
-        const api = createNavigationGrid({ columnDefs, rowData, suppressRowVirtualisation: false, rowBuffer: 0 });
+    test('Arrow Down into a row not rendered yet steps a colSpan of NaN as one column, and ignores the colSpan of a column another span covers', () => {
+        const arrowDownFrom29 = (aSpan: number, notNavigable: 'b' | 'c') => {
+            // on row 30 'b' would span over 'c'; the column not navigable there tells which cell covers 'c'
+            const columnDefs = makeColumnDefs();
+            columnDefs[0].colSpan = (params) => (params.node!.rowIndex === 30 ? aSpan : 1);
+            columnDefs[1].colSpan = (params) => (params.node!.rowIndex === 30 ? 2 : 1);
+            const notNavigableIndex = notNavigable === 'b' ? 1 : 2;
+            columnDefs[notNavigableIndex].suppressNavigable = (params) => params.node.rowIndex === 30;
+            const rowData = Array.from({ length: 40 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+            const api = createNavigationGrid({ columnDefs, rowData, suppressRowVirtualisation: false, rowBuffer: 0 });
 
-        api.setFocusedCell(29, 'c');
-        const rowRendered = !!getGridElement(api)!.querySelector('[row-index="30"]');
-        dispatchKeyDown(KeyCode.DOWN);
+            api.setFocusedCell(29, 'c');
+            const rowRendered = !!getGridElement(api)!.querySelector('[row-index="30"]');
+            dispatchKeyDown(KeyCode.DOWN);
+            const result = `row 30 rendered before: ${rowRendered}, ${focusState(api)}`;
+            gridsManager.reset();
+            return result;
+        };
 
-        expect(`row 30 rendered before: ${rowRendered}, ${focusState(api)}`).toBe(
-            'row 30 rendered before: false, cell c, focused cell 31 c'
-        );
+        expect({
+            // 'a' spans NaN, one column, so 'b' spans over 'c' and is not navigable
+            nanSpan: arrowDownFrom29(Number.NaN, 'b'),
+            // 'a' spans over 'b', so 'b' starts no cell and 'c' is its own cell, not navigable
+            coveredSpanStart: arrowDownFrom29(2, 'c'),
+        }).toEqual({
+            nanSpan: 'row 30 rendered before: false, cell c, focused cell 31 c',
+            coveredSpanStart: 'row 30 rendered before: false, cell c, focused cell 31 c',
+        });
     });
 
     test('Shift+Tab into the last row moves back past a spanning cell that is not navigable, rendered or not, also in RTL', async () => {
@@ -1159,12 +1171,12 @@ describe('Column Spanning Keyboard Navigation', () => {
         };
         const enterDetailRow = async (entry: Entry) => {
             const defaultTargets: string[] = [];
-            // row 0 is the master of detail row 1; a Tab walk starts from row 2, where nothing is navigable
+            // row 0 is the master of detail row 1; a Tab walk starts from row 2 and stops on the detail row, which
+            // Tab enters whatever its columns, as it does between cells
             const columnDefs = makeColumnDefs().map((colDef) => ({
                 ...colDef,
                 colSpan: undefined,
-                suppressNavigable: (params: { data?: RowData }) =>
-                    entry === 'shiftTabNothingNavigable' || params.data?.a === 'a1',
+                suppressNavigable: entry === 'tabWalk' || entry === 'shiftTabNothingNavigable',
             }));
             const api: GridApi<RowData> = await gridsManager.createGridAndWait<RowData>(
                 'myGrid',
@@ -1229,7 +1241,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('Tab while editing skips a spanning cell that is not editable, whatever the columns it covers', () => {
+    test('Tab and Shift+Tab while editing skip a spanning cell that is not editable, whatever the columns it covers', () => {
         const api = gridsManager.createGrid(
             'myGrid',
             {
@@ -1243,14 +1255,51 @@ describe('Column Spanning Keyboard Navigation', () => {
             },
             { modules: [TextEditorModule] }
         );
+        const tabWhileEditing = (from: string, shiftKey: boolean) => {
+            api.startEditingCell({ rowIndex: 0, colKey: from });
+            dispatchKeyDown(KeyCode.TAB, { shiftKey });
+            const result = {
+                editing: api.getEditingCells().map((cell) => `${cell.rowIndex} ${cell.column?.getColId()}`),
+                focused: `${getFocusedRowIndex(api)} ${getFocusedColId(api)}`,
+            };
+            api.stopEditing(true);
+            return result;
+        };
 
-        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        dispatchKeyDown(KeyCode.TAB);
+        expect({ tab: tabWhileEditing('a', false), shiftTab: tabWhileEditing('d', true) }).toEqual({
+            tab: { editing: ['0 d'], focused: '0 d' },
+            shiftTab: { editing: ['0 a'], focused: '0 a' },
+        });
+    });
 
-        expect({
-            editing: api.getEditingCells().map((cell) => `${cell.rowIndex} ${cell.column?.getColId()}`),
-            focused: `${getFocusedRowIndex(api)} ${getFocusedColId(api)}`,
-        }).toEqual({ editing: ['0 d'], focused: '0 d' });
+    test('full-row editing starts editors on the cells drawn, not on the columns a span covers', () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'a', editable: true, colSpan: (params) => (params.node!.rowIndex === 0 ? 2 : 1) },
+                    { field: 'b', editable: true },
+                    { field: 'c', editable: true },
+                ],
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0' },
+                    { a: 'a1', b: 'b1', c: 'c1' },
+                ],
+                editType: 'fullRow',
+            },
+            { modules: [TextEditorModule] }
+        );
+        const editRow = (rowIndex: number) => {
+            api.startEditingCell({ rowIndex, colKey: 'a' });
+            const editing = api.getEditingCells().map((cell) => `${cell.rowIndex} ${cell.column?.getColId()}`);
+            api.stopEditing(true);
+            return editing;
+        };
+
+        expect({ spanning: editRow(0), plain: editRow(1) }).toEqual({
+            spanning: ['0 a', '0 c'],
+            plain: ['1 a', '1 b', '1 c'],
+        });
     });
 
     test('Page Down from pinned top row lands on body row and normalises spanning cell', async () => {
