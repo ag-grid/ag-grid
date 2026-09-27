@@ -5,13 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import {
-    _RowFocusResolver,
-    _getCellByPosition,
-    _getFocusColumn,
-    _getRowNode,
-    _isRowBefore,
-} from '../entities/positionUtils';
+import { _RowFocusResolver, _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _getCellPositionForEvent } from '../gridBodyComp/mouseEventUtils';
@@ -21,24 +15,12 @@ import type { NavigateToNextCellParams, TabToNextCellParams } from '../interface
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { RowPinnedType, VerticalScrollPosition } from '../interfaces/iRowNode';
+import type { VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
 import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/gridFocus';
 import { _clamp } from '../utils/number';
-
-interface NavigateParams {
-    /** The rowIndex to vertically scroll to. */
-    scrollIndex: number;
-    /** The position to put scroll index. */
-    scrollType: 'top' | 'bottom' | null;
-    /** For page up/down, we want to scroll to one row but focus another (ie. scrollRow could be stub). */
-    focusIndex: number;
-    focusColumn: AgColumn;
-    isAsync?: boolean;
-    rowPinned?: RowPinnedType;
-}
 
 type FindNextCellToFocusOnParams = {
     backwards: boolean;
@@ -139,12 +121,11 @@ export class NavigationService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private navigateTo({ scrollIndex, scrollType, focusIndex, focusColumn, isAsync, rowPinned }: NavigateParams): void {
+    /** Page up/down scroll to one row but focus another, as the row scrolled to can be a stub. */
+    private navigateTo(scrollIndex: number, scrollType: 'top' | 'bottom' | null, focus: CellPosition): void {
         this.gridBodyCon.scrollFeature.ensureIndexVisible(scrollIndex, scrollType);
-
-        // the cell is scrolled in before focus, as the browser's focus scroll cuts off its border or leaves it under
-        // sticky rows; the async pass follows a scroll already made
-        this.beans.focusSvc.focusCellAt({ rowIndex: focusIndex, column: focusColumn, rowPinned }, !isAsync);
+        // scrolled in first: the browser's focus scroll cuts off the cell's border or leaves it under sticky rows
+        this.beans.focusSvc.focusCellAt(focus, true);
     }
 
     // this method is throttled, see the `constructor`
@@ -234,11 +215,10 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollType = 'top';
         }
 
-        this.navigateTo({
-            scrollIndex,
-            scrollType,
-            focusIndex,
-            focusColumn: gridCell.column as AgColumn,
+        this.navigateTo(scrollIndex, scrollType, {
+            rowIndex: focusIndex,
+            column: gridCell.column,
+            rowPinned: undefined,
         });
     }
 
@@ -250,22 +230,14 @@ export class NavigationService extends BeanStub implements NamedBean {
         // TODO: we should probably have an event fired once to scrollbar has
         // settled and all rowHeights have been calculated instead of relying
         // on a setTimeout of 50ms.
-        this.navigateTo({
-            scrollIndex: scrollIndex,
-            scrollType: up ? 'bottom' : 'top',
-            focusIndex: scrollIndex,
-            focusColumn: gridCell.column as AgColumn,
-        });
+        const scrollType = up ? 'bottom' : 'top';
+        const column = gridCell.column;
+        this.navigateTo(scrollIndex, scrollType, { rowIndex: scrollIndex, column, rowPinned: undefined });
         setTimeout(() => {
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
-
-            this.navigateTo({
-                scrollIndex: scrollIndex,
-                scrollType: up ? 'bottom' : 'top',
-                focusIndex: focusIndex,
-                focusColumn: gridCell.column as AgColumn,
-                isAsync: true,
-            });
+            this.gridBodyCon.scrollFeature.ensureIndexVisible(scrollIndex, scrollType);
+            // follows the scroll already made
+            this.beans.focusSvc.focusCellAt({ rowIndex: focusIndex, column, rowPinned: undefined }, false);
         }, 50);
     }
 
@@ -330,13 +302,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.navigateTo({
-            scrollIndex: cellToFocus.rowIndex,
-            scrollType: null,
-            focusIndex: cellToFocus.rowIndex,
-            focusColumn: cellToFocus.column as AgColumn,
-            rowPinned: cellToFocus.rowPinned,
-        });
+        this.navigateTo(cellToFocus.rowIndex, null, cellToFocus);
     }
 
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
@@ -351,12 +317,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.navigateTo({
-            scrollIndex: scrollIndex,
-            scrollType: null,
-            focusIndex: scrollIndex,
-            focusColumn: columnToSelect,
-        });
+        this.navigateTo(scrollIndex, null, { rowIndex: scrollIndex, column: columnToSelect, rowPinned: undefined });
     }
 
     // result of keyboard event
@@ -601,7 +562,9 @@ export class NavigationService extends BeanStub implements NamedBean {
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
-            this.setRangeToCellIfSupported({ ...nextPosition, column: nextCell.column });
+            if (!isRowNumberCol(nextCell.column)) {
+                beans.rangeSvc?.setRangeToCell({ ...nextPosition, column: nextCell.column });
+            }
 
             // we successfully tabbed onto a grid cell, so return true
             return nextCell;
@@ -695,7 +658,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return this.tryToFocusFullWidthRow(position, backwards);
         }
 
-        this.focusPosition(normalisedPosition);
+        this.beans.focusSvc.focusPosition(normalisedPosition);
         const column = position.column as AgColumn;
         const rowNode = normalisedPosition.column !== column ? _getRowNode(this.beans, position) : undefined;
         // only a column the user can stop on is kept: Page and Ctrl+Up/Down move to it without judging it
@@ -728,7 +691,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
         const start = { ...cell, column };
         // hiding, moving or sorting can leave focus on a cell that no longer covers it
-        return _getFocusColumn(this.beans, start) === cell.column ? start : cell;
+        return new _RowFocusResolver(this.beans).getFocusColumn(start) === cell.column ? start : cell;
     }
 
     private setCurrentColumnWithoutSpan(column: Column): void {
@@ -791,7 +754,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             column: (position as CellPosition).column || (backwards ? _last(displayedColumns) : displayedColumns[0]),
         };
 
-        this.focusPosition(cellPosition);
+        focusSvc.focusPosition(cellPosition);
 
         const fromBelow =
             backwards == null
@@ -808,26 +771,6 @@ export class NavigationService extends BeanStub implements NamedBean {
         });
 
         return true;
-    }
-
-    private focusPosition(cellPosition: CellPosition) {
-        const { focusSvc } = this.beans;
-        focusSvc.setFocusedCell({
-            rowIndex: cellPosition.rowIndex,
-            column: cellPosition.column,
-            rowPinned: cellPosition.rowPinned,
-            forceBrowserFocus: true,
-        });
-
-        this.setRangeToCellIfSupported(cellPosition);
-    }
-
-    private setRangeToCellIfSupported(cellPosition: CellPosition): void {
-        if (isRowNumberCol(cellPosition.column)) {
-            return;
-        }
-
-        this.beans.rangeSvc?.setRangeToCell(cellPosition);
     }
 
     private isValidNavigateCell(cell: CellPosition): boolean {

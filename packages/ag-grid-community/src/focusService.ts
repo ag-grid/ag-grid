@@ -7,14 +7,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
-import {
-    _RowFocusResolver,
-    _areCellsEqual,
-    _getFirstRow,
-    _getFocusColumn,
-    _getLastRow,
-    _getRowNode,
-} from './entities/positionUtils';
+import { _RowFocusResolver, _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
@@ -749,12 +742,17 @@ export class FocusService extends BeanStub implements NamedBean {
         if (this.navigation?.focusCellOrRow(position, scroll, backwards)) {
             return true;
         }
-        const focusPosition: CellPosition = { ...position, column: _getFocusColumn(this.beans, position) };
-        this.setFocusedCell({ ...focusPosition, forceBrowserFocus: true });
-        if (!isRowNumberCol(focusPosition.column)) {
-            this.beans.rangeSvc?.setRangeToCell(focusPosition);
+        const cell = { ...position, column: new _RowFocusResolver(this.beans).getFocusColumn(position) };
+        this.focusPosition(cell);
+        return this.isCellFocused(cell);
+    }
+
+    /** Focuses the cell at `position` and selects it as a range, as a click does. */
+    public focusPosition(position: CellPosition): void {
+        this.setFocusedCell({ ...position, forceBrowserFocus: true });
+        if (!isRowNumberCol(position.column)) {
+            this.beans.rangeSvc?.setRangeToCell(position);
         }
-        return this.isCellFocused(focusPosition);
     }
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {

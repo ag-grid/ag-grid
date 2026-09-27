@@ -598,6 +598,7 @@ describe('Focus override callbacks', () => {
                 },
                 focusSvc: {
                     focusHeaderPosition: vi.fn(),
+                    focusPosition: vi.fn(),
                 },
                 rowRenderer: {
                     getRowByPosition: vi.fn(),
@@ -660,7 +661,6 @@ describe('Focus override callbacks', () => {
 
         test('focusCellOrRow scrolls to the cell, again to a spanning cell that takes the focus, and to a row-spanned cell too, unless the caller has scrolled', () => {
             const ensureCellVisible = vi.spyOn(navigationSvc, 'ensureCellVisible').mockImplementation(() => undefined);
-            vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
             const focusCell = (target: CellPosition, focused: CellPosition, rowSpanned = false, scroll = true) => {
                 navigationSvcAny.beans.spannedRowRenderer = { getCellByPosition: () => (rowSpanned ? {} : undefined) };
                 navigationSvcAny.beans.rowRenderer.getRowByPosition.mockReturnValue({
@@ -723,7 +723,7 @@ describe('Focus override callbacks', () => {
             const navigateToNextCell = vi.fn(() => null);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
             vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockImplementation(() => null);
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -749,7 +749,7 @@ describe('Focus override callbacks', () => {
 
             const normalised = { ...userResult };
             vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             const defaultNext: CellPosition = { rowIndex: 0, rowPinned: null, column: colB };
@@ -815,7 +815,7 @@ describe('Focus override callbacks', () => {
 
             const normalised = { ...defaultNext };
             vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
 
             navigationSvc.navigateToNextCell(null, 'ArrowRight', current, false);
 
@@ -854,7 +854,7 @@ describe('Focus override callbacks', () => {
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             navigationSvcAny.beans.cellNavigation.getNextCellToFocus.mockReturnValue(null);
 
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
             navigationSvc.navigateToNextCell(null, 'ArrowRight', current, true);
 
             expect(navigateToNextCell).toHaveBeenCalledWith({

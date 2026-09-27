@@ -137,16 +137,6 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
 }
 
 /**
- * The column whose cell takes focus at `cellPosition`: its own cell's, else the cell spanning it. Reads the rendered
- * cells, else runs the row's colSpan callbacks, so navigation can judge a destination without rendering it.
- */
-export function _getFocusColumn(beans: BeanCollection, cellPosition: CellPosition): AgColumn {
-    return beans.visibleCols.colSpanActive
-        ? new _RowFocusResolver(beans).getFocusColumn(cellPosition)
-        : (cellPosition.column as AgColumn);
-}
-
-/**
  * Judges cells row by row, so a walk runs a row's `isFullWidthRow` and colSpan callbacks once however many of its
  * cells it judges. Holds only the row it is on: one per walk, dropped with it, so nothing carries into the next.
  */

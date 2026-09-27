@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, mockGridLayout } from 'ag-test-utils';
 
 import type {
     CellPosition,
@@ -16,6 +16,7 @@ import {
     KeyCode,
     PaginationModule,
     PinnedRowModule,
+    RowAutoHeightModule,
     TextEditorModule,
     getGridElement,
 } from 'ag-grid-community';
@@ -307,6 +308,37 @@ describe('Column Spanning Keyboard Navigation', () => {
 
         expect(getFocusedRowIndex(api)).toBe(0);
         expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('Page Down with an auto-height column focuses the row it scrolls to, then the row a page on once heights settle', async () => {
+        const columnDefs = makeColumnDefs();
+        columnDefs[2].autoHeight = true;
+        mockGridLayout.useRealOffsetDimensions = true;
+        onTestFinished(() => mockGridLayout.resetOptions());
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs,
+                rowData: Array.from({ length: 60 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
+                cellSelection: true,
+            },
+            { modules: [CellSelectionModule, RowAutoHeightModule] }
+        );
+        const focused: string[] = [];
+        api.addEventListener('cellFocused', ({ rowIndex, rowPinned, column }) => {
+            focused.push(`${rowIndex} ${rowPinned} ${typeof column === 'string' ? column : column?.getColId()}`);
+        });
+
+        api.setFocusedCell(4, 'b');
+        dispatchKeyDown(KeyCode.PAGE_DOWN);
+
+        // the page ends at row 17, where the grid scrolls; row 21 is a page on from row 4 once heights are known
+        await waitFor(() => expect(focused).toEqual(['4 null b', '17 null a', '21 null a']));
+        const range = api.getCellRanges()![0];
+        expect([range.startRow, range.startColumn.getColId()]).toEqual([{ rowIndex: 21, rowPinned: null }, 'a']);
+
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(`${getFocusedRowIndex(api)} ${getFocusedColId(api)}`).toBe('22 b');
     });
 
     test('Page Up/Down and Ctrl+Up/Down from a spanning cell continue in the covered column', () => {
