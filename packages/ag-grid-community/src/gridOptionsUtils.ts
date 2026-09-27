@@ -361,10 +361,6 @@ export function _getRowType(beans: BeanCollection, rowNode: RowNode): RowType {
         : 'Normal';
 }
 
-/** Whether the row renders as one full-width cell, decided from the node alone. */
-export const _isFullWidthRowNode = (beans: BeanCollection, rowNode: RowNode | undefined): boolean =>
-    !!rowNode && _getRowType(beans, rowNode) !== 'Normal';
-
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowIdCallback<TData = any>(

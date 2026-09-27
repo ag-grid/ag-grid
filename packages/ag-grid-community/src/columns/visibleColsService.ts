@@ -391,6 +391,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         this.allCols = all;
         this.colSpanActive = this.colSpanCols.length > 0;
+        this.beans.rowAutoHeight?.setAutoHeightActive(this.autoHeightCols.length > 0);
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
@@ -514,25 +515,38 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return result;
     }
 
-    /** The column whose cell covers `column` in `rowNode`, stepping spans as `getColsForRow` does. */
-    public getSpanningCol(rowNode: IRowNode, column: AgColumn): AgColumn {
+    /** Fills `spanEnds` with, per colSpan column, the `allColsIndex` of the last column of the cell covering it in
+     *  `rowNode`, stepping spans as `getColsForRow` does, so each colSpan callback of the row runs once. */
+    public fillRowSpanEnds(rowNode: IRowNode, spanEnds: number[]): void {
         const { allCols, colSpanCols } = this;
-        const target = column.allColsIndex;
+        spanEnds.length = 0;
         // OPTIMISATION: a column without colSpan is one cell, so only colSpan columns are stepped
         let coveredTo = -1;
         for (let i = 0, len = colSpanCols.length; i < len; ++i) {
             const start = colSpanCols[i].allColsIndex;
-            if (start > target) {
-                break;
-            }
             if (start > coveredTo) {
                 coveredTo = start + _getDrawnColSpan(allCols, start, rowNode) - 1;
-                if (coveredTo >= target) {
-                    return allCols[start];
-                }
+            }
+            spanEnds.push(coveredTo);
+        }
+    }
+
+    /** The column whose cell covers `column`, in the row `fillRowSpanEnds` filled `spanEnds` for. */
+    public getSpanningCol(spanEnds: number[], column: AgColumn): AgColumn {
+        const target = column.allColsIndex;
+        // cells never overlap, so the ends only grow and the first to reach `target` is the cell spanning it, if any
+        let low = 0;
+        let high = spanEnds.length;
+        while (low < high) {
+            const mid = (low + high) >>> 1;
+            if (spanEnds[mid] < target) {
+                low = mid + 1;
+            } else {
+                high = mid;
             }
         }
-        return column;
+        const spanning = this.colSpanCols[low];
+        return spanning !== undefined && spanning.allColsIndex <= target ? spanning : column;
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {

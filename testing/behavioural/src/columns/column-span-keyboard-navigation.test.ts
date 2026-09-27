@@ -1157,6 +1157,57 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
+    test('a Tab walk over rows not rendered runs each row’s isFullWidthRow and colSpan callbacks once, not per cell', () => {
+        // nothing is navigable below row 30, where 'a' spans all three columns
+        const colSpanRows: number[] = [];
+        const fullWidthRows: number[] = [];
+        const columnDefs = makeColumnDefs();
+        columnDefs[0].colSpan = (params) => {
+            colSpanRows.push(params.node!.rowIndex!);
+            return params.node!.rowIndex === 30 ? 3 : 1;
+        };
+        for (const colDef of columnDefs) {
+            colDef.suppressNavigable = (params) => params.node.rowIndex! > 30;
+        }
+        const api = createNavigationGrid({
+            columnDefs,
+            rowData: Array.from({ length: 40 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
+            suppressRowVirtualisation: false,
+            rowBuffer: 0,
+            isFullWidthRow: (params) => {
+                fullWidthRows.push(params.rowNode.rowIndex!);
+                return false;
+            },
+        });
+        colSpanRows.length = 0;
+        fullWidthRows.length = 0;
+
+        getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
+        const perRow = (rows: number[]) => {
+            const counts: Record<number, number> = {};
+            for (const row of rows) {
+                if (row > 30) {
+                    counts[row] = (counts[row] ?? 0) + 1;
+                }
+            }
+            return counts;
+        };
+        // the entry row is judged by the entry, the move along it and the walk on: once each
+        const expected = { ...Object.fromEntries(Array.from({ length: 8 }, (_, i) => [31 + i, 1])), 39: 3 };
+
+        expect({
+            focus: focusState(api),
+            walkedRowsRendered: !!getGridElement(api)!.querySelector('[row-index="31"], [row-index="39"]'),
+            colSpanCallsPerRow: perRow(colSpanRows),
+            isFullWidthRowCallsPerRow: perRow(fullWidthRows),
+        }).toEqual({
+            focus: 'cell a, focused cell 30 a',
+            walkedRowsRendered: false,
+            colSpanCallsPerRow: expected,
+            isFullWidthRowCallsPerRow: expected,
+        });
+    });
+
     test('focus arriving on a detail row enters its grid from the side it came from, by Page Down, Ctrl+Down, a tabToNextGridContainer cell, a Tab walk or Shift+Tab whatever its columns, with the grid body as default target', async () => {
         type Entry = 'pageDown' | 'ctrlDown' | 'callbackCell' | 'tabWalk' | 'shiftTabNothingNavigable';
         const focusInDetailGrid = () => {

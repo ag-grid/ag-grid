@@ -2,9 +2,14 @@
  * Split from column-mutations.test.ts — see sibling files for related coverage.
  * Tests instantiate the full grid via TestGridsManager and exercise public APIs.
  */
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, RowAutoHeightModule, RowSelectionModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    RowAutoHeightModule,
+    RowSelectionModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('Column Mutations', () => {
@@ -614,6 +619,38 @@ describe('Column Mutations', () => {
                 ├── short width:200
                 └── flexCol width:600 flex:1
             `);
+        });
+
+        test('auto row height follows the displayed columns: an autoHeight col in a collapsed group leaves it off', async () => {
+            // resetRowHeights warns and does nothing while auto row height is on
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [3] });
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            // a warning logs once, so each case gets its own grid
+            const warnsAboutAutoHeight = (openGroup: boolean) => {
+                const api = gridsManager.createGrid('autoHeightInGroup', {
+                    columnDefs: [
+                        {
+                            groupId: 'g',
+                            children: [{ colId: 'a' }, { colId: 'tall', autoHeight: true, columnGroupShow: 'open' }],
+                        },
+                    ],
+                });
+                if (openGroup) {
+                    api.setColumnGroupOpened('g', true);
+                }
+                consoleWarnSpy.mockClear();
+                api.resetRowHeights();
+                gridsManager.reset();
+                return consoleWarnSpy.mock.calls.some((args) =>
+                    args.some((arg) => typeof arg === 'string' && arg.includes('Auto Row Height'))
+                );
+            };
+
+            const collapsed = warnsAboutAutoHeight(false);
+            const opened = warnsAboutAutoHeight(true);
+            consoleWarnSpy.mockRestore();
+
+            expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
         });
 
         test('flex col pinned does NOT trigger flexActive (joinCols `col.pinned == null` guard)', async () => {

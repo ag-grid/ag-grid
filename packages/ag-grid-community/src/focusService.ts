@@ -7,10 +7,17 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
-import { _areCellsEqual, _getFirstRow, _getFocusColumn, _getLastRow, _getRowNode } from './entities/positionUtils';
+import {
+    _RowFocusResolver,
+    _areCellsEqual,
+    _getFirstRow,
+    _getFocusColumn,
+    _getLastRow,
+    _getRowNode,
+} from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
-import { _getDomData, _isClientSideLoadingRow, _isFullWidthRowNode } from './gridOptionsUtils';
+import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount, isHeaderPositionEqual } from './headerRendering/headerUtils';
@@ -629,18 +636,16 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const position: CellPosition = { rowIndex: nextRow.rowIndex, rowPinned: nextRow.rowPinned, column };
+        const resolver = new _RowFocusResolver(this.beans);
         const target =
-            _isFullWidthRowNode(this.beans, rowNode) ||
-            !_getFocusColumn(this.beans, position).isSuppressNavigable(rowNode)
+            resolver.isFullWidth(position) || !resolver.getFocusColumn(position).isSuppressNavigable(rowNode)
                 ? position
                 : this.beans.cellNavigation?.getNextTabStop(position, backwards);
         if (!target) {
             return this.getLastHeaderTarget(backwards);
         }
         // a full-width row has no cell to name; the grid body's default enters it
-        return _isFullWidthRowNode(this.beans, _getRowNode(this.beans, target))
-            ? 'gridBody'
-            : { ...target, column: _getFocusColumn(this.beans, target) };
+        return resolver.isFullWidth(target) ? 'gridBody' : { ...target, column: resolver.getFocusColumn(target) };
     }
 
     /** Where Shift+Tab goes when no cell can take focus: the last header, unless headers cannot be focused. */
@@ -705,8 +710,9 @@ export class FocusService extends BeanStub implements NamedBean {
 
             const isTab = !event || event.key === KeyCode.TAB;
             // Tab enters a full-width row whatever its column, as its default target says; Arrow Down judges it
-            const entersRow = isTab && _isFullWidthRowNode(this.beans, rowNode);
-            if (!entersRow && _getFocusColumn(this.beans, position).isSuppressNavigable(rowNode)) {
+            const resolver = new _RowFocusResolver(this.beans);
+            const entersRow = isTab && resolver.isFullWidth(position);
+            if (!entersRow && resolver.getFocusColumn(position).isSuppressNavigable(rowNode)) {
                 const tabKey = this.gos.get('enableRtl') !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
                 if (this.navigation?.navigateToNextCell(null, isTab ? tabKey : event.key, position, true) || !isTab) {
                     return true;

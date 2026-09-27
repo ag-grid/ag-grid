@@ -512,34 +512,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return !!this.beans.pivotColsSvc?.hasInteractivePivotSort() || this.prevPivotStrict;
     }
 
-    /** Refresh state derived from `colsList` (group + quick-filter cols, the autoHeight flag) and
+    /** Refresh state derived from `colsList` (group + quick-filter cols) and
      *  reset displayed-col + viewport caches, ahead of `visibleCols.refresh`. Shared by full refreshCols
      *  and by a visibility-only change (which leaves `colsList` unchanged, so skips the rebuild). */
     public refreshColsDerivedState(): void {
         const beans = this.beans;
         beans.showRowGroupCols?.refresh();
         beans.quickFilter?.refreshCols();
-        this.computeAutoHeight();
         beans.visibleCols.clear();
         beans.colViewport.clear();
-    }
-
-    /** Set `rowAutoHeight.active` from `colsList`. */
-    private computeAutoHeight(): void {
-        const rowAutoHeight = this.beans.rowAutoHeight;
-        if (!rowAutoHeight) {
-            return;
-        }
-        const colsList = this.colsList;
-        let autoHeight = false;
-        for (let i = 0, len = colsList.length; i < len; ++i) {
-            const col = colsList[i];
-            if (col.colDef.autoHeight && col.visible) {
-                autoHeight = true;
-                break;
-            }
-        }
-        rowAutoHeight.setAutoHeightActive(autoHeight);
     }
 
     /** Full refresh (rebuild cols + recompute visible); immediate, or deferred to {@link endColBatch} when batched. */
