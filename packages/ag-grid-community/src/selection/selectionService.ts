@@ -308,19 +308,20 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let selectionChanged = false;
         const selectedNodes = this.selectedNodes;
         const treeData = this.gos.get('treeData');
-        const masterSelectsDetail = this.masterSelectsDetail;
+        const detailSelection = this.detailSelection;
 
         const nodeCallback = (rowNode: RowNode): void => {
             if (treeData) {
-                // A leaf missing from the map carries the computed state of a group it was demoted from;
-                // master rows are exempt as their indeterminate state mirrors the detail grid.
+                // A leaf missing from the map carries the computed state of a group it was demoted from,
+                // unless it is a master row whose indeterminate state is tracked from its detail grid.
                 const children = rowNode.childrenAfterGroup!;
                 for (let i = 0, len = children.length; i < len; ++i) {
                     const child = children[i];
+                    const selected = child.__selected;
                     if (
-                        child.__selected !== false &&
+                        selected !== false &&
                         !child.group &&
-                        !(masterSelectsDetail && child.master) &&
+                        !(selected === undefined && detailSelection.has(child.id!)) &&
                         selectedNodes.get(child.id!) !== child
                     ) {
                         selectionChanged = this.selectRowNode(child, false, event, source) || selectionChanged;
