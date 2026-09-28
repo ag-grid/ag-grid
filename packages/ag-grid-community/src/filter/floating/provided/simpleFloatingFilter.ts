@@ -24,6 +24,8 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     protected abstract readonly defaultOptions: string[];
     protected abstract setEditable(editable: boolean): void;
 
+    protected abstract refreshAriaLabel(): void;
+
     protected filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected params: TParams;
@@ -90,6 +92,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         const reactive = this.gos.get('enableFilterHandlers');
         this.reactive = reactive;
         this.setParams(params);
+        this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
 
         if (reactive) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;

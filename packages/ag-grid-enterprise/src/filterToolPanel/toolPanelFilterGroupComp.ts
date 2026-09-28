@@ -108,6 +108,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.refreshFilterClass();
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
+        this.addHeaderNameChangedListener();
         this.setupTooltip();
         this.addInIcon('filterActive');
     }
@@ -210,6 +211,28 @@ export class ToolPanelFilterGroupComp extends Component {
         if (!isProvidedColumnGroup(this.columnGroup)) {
             this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         }
+    }
+
+    private addHeaderNameChangedListener(): void {
+        const { columnGroup } = this;
+        const onRenamed = () => {
+            this.setGroupTitle();
+            this.tooltipFeature?.refreshTooltip();
+        };
+
+        if (!isProvidedColumnGroup(columnGroup)) {
+            this.addManagedListeners(columnGroup, { headerNameChanged: onRenamed });
+            return;
+        }
+
+        // Group renames only fire the grid-level event; a null columnGroup means a bulk change.
+        this.addManagedEventListeners({
+            columnHeaderNameChanged: ({ column, columnGroup: renamedGroup }) => {
+                if (!column && (!renamedGroup || renamedGroup.getGroupId() === columnGroup.getGroupId())) {
+                    onRenamed();
+                }
+            },
+        });
     }
 
     private refreshFilterClass(): void {

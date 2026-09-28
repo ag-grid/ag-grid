@@ -75,11 +75,15 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         placeholder?: string;
     }): void {
         const { eInput } = this;
-        eInput.setInputAriaLabel(ariaLabel);
+        this.setAriaLabel(ariaLabel);
 
         eInput.setAutoComplete(autoComplete);
 
         eInput.setSearchIcon(!!placeholder);
         eInput.setInputPlaceholder(placeholder);
+    }
+
+    public setAriaLabel(ariaLabel: string): void {
+        this.eInput.setInputAriaLabel(ariaLabel);
     }
 }

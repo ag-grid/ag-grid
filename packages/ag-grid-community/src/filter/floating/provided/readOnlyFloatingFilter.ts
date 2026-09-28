@@ -38,11 +38,13 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     }
 
     public init(params: IFloatingFilterParams): void {
+        // refresh() re-runs init, so only subscribe the first time.
+        if (!this.params) {
+            this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
+        }
         this.params = params;
-        const displayName = this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
-        this.eFloatingFilterText
-            .setDisabled(true)
-            .setInputAriaLabel(`${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`);
+        this.eFloatingFilterText.setDisabled(true);
+        this.refreshAriaLabel();
         if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
             const handler = reactiveParams.getHandler();
@@ -51,6 +53,13 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
                 this.eFloatingFilterText.setValue(modelAsString);
             }
         }
+    }
+
+    private refreshAriaLabel(): void {
+        const displayName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true);
+        this.eFloatingFilterText.setInputAriaLabel(
+            `${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`
+        );
     }
 
     public onParentModelChanged(parentModel: any): void {

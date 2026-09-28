@@ -128,7 +128,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         input.setInputPlaceholder(placeholder);
     }
 
-    private setAriaLabel(ariaLabel: string): void {
+    public setAriaLabel(ariaLabel: string): void {
         this.eNumberInput.setInputAriaLabel(ariaLabel);
         this.eTextInput.setInputAriaLabel(ariaLabel);
     }

@@ -71,6 +71,14 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     public init(legacyParams: IFilterParams): AgPromise<void> {
         this.params = legacyParams as unknown as FilterDisplayParams;
+        this.addManagedEventListeners({
+            columnHeaderNameChanged: ({ column }) => {
+                // Only the select's option labels change, so leave the underlying filters in place.
+                if (column && this.getHandler()?.sourceColumns?.includes(column as AgColumn)) {
+                    this.updateGroupField();
+                }
+            },
+        });
         return this.updateParams().then(() => {
             this.addHandlerListeners(this.updateGroups.bind(this));
         });

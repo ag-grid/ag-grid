@@ -40,18 +40,22 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.eFloatingFilterText.setDisabled(true).addGuiEventListener('click', () => this.params.showParentFilter());
 
         this.setParams(params);
+        this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
     }
 
     private setParams(params: IFloatingFilterParams): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
-        const translate = this.getLocaleTextFunc();
-
-        this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
+        this.refreshAriaLabel();
 
         if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
             this.updateFloatingFilterText(reactiveParams.model);
         }
+    }
+
+    private refreshAriaLabel(): void {
+        const displayName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true);
+        const translate = this.getLocaleTextFunc();
+        this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 
     public refresh(params: IFloatingFilterParams): void {
