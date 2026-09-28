@@ -1131,6 +1131,7 @@ describe('htaccessRules', () => {
         const negotiablePaths = [
             '/react-data-grid/cell-editing/',
             '/javascript-data-grid/getting-started/',
+            '/react-data-grid/',
             '/about/',
             '/changelog/',
             '/documentation-archive/',
@@ -1167,7 +1168,7 @@ describe('htaccessRules', () => {
         // either 404 or (for the `.md` itself) loop into `.md.md`.
         const nonNegotiablePaths = [
             '/react-data-grid/cell-editing.md', // the twin itself — final segments exclude dots
-            '/react-data-grid/', // framework landing page, redirect stub
+            '/javascript-data-grid/', // the one framework root without a hub, so no twin
             '/react-data-grid/errors/123/', // sitemap-excluded
             '/data-grid/cell-editing/', // framework-agnostic redirect stub
             '/contact/success/', // form result, sitemap-excluded

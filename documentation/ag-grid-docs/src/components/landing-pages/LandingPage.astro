@@ -57,9 +57,11 @@ interface Props {
         version: string;
         landingPageHighlight?: string;
     }>;
+    /** Keep this rendering out of search, where the same content is also served at a URL that should rank. */
+    hidePageFromSearchEngines?: boolean;
 }
 
-const { content, versions } = Astro.props;
+const { content, versions, hidePageFromSearchEngines } = Astro.props;
 const latestVersion = versions?.find((v) => v.landingPageHighlight);
 
 // Determine if this is an enterprise page based on hero variant
@@ -82,7 +84,13 @@ const themeBuilderVideo = isEnterprise
     : null;
 ---
 
-<Layout title={content.meta.title} description={content.meta.description} showDocsNav={false} showSearchBar={true}>
+<Layout
+    title={content.meta.title}
+    description={content.meta.description}
+    showDocsNav={false}
+    showSearchBar={true}
+    hidePageFromSearchEngines={hidePageFromSearchEngines}
+>
     {
         content.sections.map((section) => {
             switch (section.type) {
