@@ -6,7 +6,11 @@ const russia = 'row-group-country-Russia';
 test.agExample(import.meta, () => {
     test.eachFramework(
         'clicking a group row whose subtree is the whole selection deselects it',
-        async ({ agIdFor, page }) => {
+        async ({ agFramework, agIdFor, page }) => {
+            test.skip(
+                agFramework === 'vanilla',
+                'Vanilla does not support module registration, so the feature flag cannot be set'
+            );
             await ensureGridReady(page);
 
             await agIdFor.autoGroupCell(usa).first().click();
@@ -19,7 +23,11 @@ test.agExample(import.meta, () => {
 
     test.eachFramework(
         'clicking a group row reduces the selection while another branch is selected',
-        async ({ agIdFor, page }) => {
+        async ({ agFramework, agIdFor, page }) => {
+            test.skip(
+                agFramework === 'vanilla',
+                'Vanilla does not support module registration, so the feature flag cannot be set'
+            );
             await ensureGridReady(page);
 
             await agIdFor.autoGroupCell(usa).first().click();

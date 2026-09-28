@@ -1,7 +1,7 @@
 // Type-only import: erased at runtime, so this module stays loadable under plain node (the
 // htaccess test harness runs it through `tsx`, where the shared subrepo resolves as CJS).
 import type { MarkdownPageGroup } from '../../../../external/ag-website-shared/src/markdown-pages/markdownPageRegistry';
-import { FRAMEWORKS } from '../constants';
+import { FRAMEWORKS, FRAMEWORK_LANDING_HUBS } from '../constants';
 
 /**
  * SE-80: every AG Grid page that ships a markdown (`.md`) twin, declared once.
@@ -26,6 +26,10 @@ export const GRID_MARKDOWN_PAGE_GROUPS: MarkdownPageGroup[] = [
     {
         describes: 'Every docs page, once per framework — the bulk of the twins (~365 pages x 4).',
         pattern: `(?:${FRAMEWORKS.join('|')})-data-grid/[^/.]+`,
+    },
+    {
+        describes: 'The framework landing hubs at the bare framework roots (the docs group needs a subpage).',
+        pattern: `(?:${FRAMEWORK_LANDING_HUBS.join('|')})-data-grid`,
     },
     {
         describes: 'Top-level content pages.',

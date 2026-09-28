@@ -460,7 +460,7 @@ export class RowNumbersService
             if (!rowNode) {
                 return;
             }
-            columns = beans.colViewport.getColsWithinViewport(rowNode);
+            columns = beans.colViewport.getColsWithinViewport(rowNode, null);
         } else {
             columns = pinnedCols;
         }

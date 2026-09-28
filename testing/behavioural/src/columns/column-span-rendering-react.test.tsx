@@ -92,6 +92,28 @@ describe('colSpan follows row data updates (React)', () => {
         await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:200px group:100px'));
     });
 
+    test('a row whose data changes before React mounts it spans by the new data', async () => {
+        let api: GridApi | undefined;
+        render(
+            <AgGridReact
+                rowData={[{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }]}
+                columnDefs={columnDefs}
+                getRowId={(params) => params.data.id}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:100px symbol:100px group:100px'));
+
+        act(() => {
+            api!.applyTransaction({ add: [{ id: 'r1', price: 0, symbol: 'BBB', group: 'A' }] });
+            expect(document.querySelector('.ag-row[row-index="1"]')).toBeNull();
+            api!.getRowNode('r1')!.setDataValue('price', 2);
+        });
+        await waitFor(() => expect(renderedRow(api!, 1)).toBe('price:300px'));
+    });
+
     test('a data update that moves no span and changes no value or business key re-renders nothing, colSpan or not', async () => {
         const noSpanColumnDefs: ColDef<PriceRow>[] = [{ ...columnDefs[0], colSpan: undefined }, ...columnDefs.slice(1)];
         const cases = [

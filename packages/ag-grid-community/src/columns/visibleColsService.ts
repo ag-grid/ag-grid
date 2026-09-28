@@ -6,12 +6,13 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
-import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { _getDrawnColSpan, getWidthOfColsInList } from './columnUtils';
+import { _getDrawnColSpan } from './columnSpanUtils';
+import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
@@ -44,11 +45,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** `allCols` with `colDef.autoHeight`. Reused across refreshes to stay warm. */
     public readonly autoHeightCols: AgColumn[] = [];
 
-    /** `allCols` with `colDef.colSpan`, the only cells that can span; reused across refreshes. */
-    private readonly colSpanCols: AgColumn[] = [];
-
     /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
     public colSpanActive = false;
+    /** `allCols` with `colDef.colSpan`, the only cells that can span; reused across refreshes. */
+    private readonly colSpanCols: AgColumn[] = [];
 
     /** `allCols` with a legacy `colDef.rowSpan`, whose cells re-read it as their row's data changes. */
     public readonly rowSpanCols: AgColumn[] = [];
@@ -65,6 +65,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** Bumped once per pass that restamps the column lefts, so anything derived from where the columns
      *  are can tell whether it is looking at the same layout without re-deriving it. */
     public layoutVersion = 0;
+
+    /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
+    public displayedColsVersion = 0;
 
     /** Prev refresh's pinned-edge cols — drive an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
     private prevLastLeftPinned: AgColumn | null = null;
@@ -331,8 +334,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightCols = [];
         this.centerCols = [];
         this.allCols = [];
-        this.colSpanCols.length = 0;
+        ++this.displayedColsVersion;
+        this.autoHeightCols.length = 0;
         this.colSpanActive = false;
+        this.colSpanCols.length = 0;
         this.rowSpanCols.length = 0;
     }
 
@@ -368,6 +373,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
+        this.colSpanActive = false;
         this.colSpanCols.length = 0;
         this.rowSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
@@ -389,8 +395,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
 
         this.allCols = all;
-        this.colSpanActive = this.colSpanCols.length > 0;
-        this.beans.rowAutoHeight?.setAutoHeightActive(this.autoHeightCols.length > 0);
+        ++this.displayedColsVersion;
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
@@ -412,14 +417,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             col.displayed = true;
             col.setLeft(left, source);
             all.push(col);
-            const colDef = col.colDef;
-            if (colDef.autoHeight) {
+            if (col.colDef.autoHeight) {
                 autoHeightCols.push(col);
             }
-            if (colDef.colSpan != null) {
+            if (col.colSpan != null) {
+                this.colSpanActive = true;
                 colSpanCols.push(col);
             }
-            if (colDef.rowSpan != null) {
+            if (col.rowSpan != null) {
                 rowSpanCols.push(col);
             }
             if (!this.flexActive && col.pinned == null) {
@@ -443,79 +448,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return left;
     }
 
-    public getLeftColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? this.getColsForRow(rowNode, this.leftCols, spans) : this.leftCols;
-    }
-
-    public getRightColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? this.getColsForRow(rowNode, this.rightCols, spans) : this.rightCols;
-    }
-
-    /** The columns starting a cell in `rowNode`, every lane in one list, as print layout draws them. */
-    public getAllColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? this.getColsForRow(rowNode, this.allCols, spans) : this.allCols;
-    }
-
-    /** `filterCallback` is only set for the centre (virtualised) area. A col-spanned run is kept if
-     *  ANY spanned col passes the filter. Fills `spans` with each returned col's span. */
-    public getColsForRow(
-        rowNode: IRowNode,
-        displayedColumns: AgColumn[],
-        spans: number[] | null = null,
-        filterCallback: ((column: AgColumn) => boolean) | null = null,
-        emptySpaceBeforeColumn: ((column: AgColumn) => boolean) | null = null
-    ): AgColumn[] {
-        if (spans !== null) {
-            spans.length = 0;
-        }
-        const result: AgColumn[] = [];
-        let lastConsideredCol: AgColumn | null = null;
-        let lastConsideredSpan = 1;
-        const len = displayedColumns.length;
-        // spans never reach backwards, so nothing after the last col the filter passes can render
-        let end = len;
-        while (filterCallback !== null && end > 0 && !filterCallback(displayedColumns[end - 1])) {
-            --end;
-        }
-
-        for (let i = 0; i < end; ++i) {
-            const col = displayedColumns[i];
-            const colSpan = _getDrawnColSpan(displayedColumns, i, rowNode);
-
-            let filterPasses: boolean;
-            if (filterCallback) {
-                filterPasses = filterCallback(col);
-                for (let j = 1; !filterPasses && j < colSpan; ++j) {
-                    if (filterCallback(displayedColumns[i + j])) {
-                        filterPasses = true;
-                    }
-                }
-            } else {
-                filterPasses = true;
-            }
-
-            if (colSpan > 1) {
-                i += colSpan - 1;
-            }
-
-            if (filterPasses) {
-                if (result.length === 0 && lastConsideredCol && emptySpaceBeforeColumn?.(col)) {
-                    result.push(lastConsideredCol);
-                    spans?.push(lastConsideredSpan);
-                }
-                result.push(col);
-                spans?.push(colSpan);
-            }
-
-            lastConsideredCol = col;
-            lastConsideredSpan = colSpan;
-        }
-
-        return result;
-    }
-
     /** Fills `spanEnds` with, per colSpan column, the `allColsIndex` of the last column of the cell covering it in
-     *  `rowNode`, stepping spans as `getColsForRow` does, so each colSpan callback of the row runs once. */
+     *  `rowNode`, stepping spans as `_getColsForRow` does, so each colSpan callback of the row runs once. */
     public fillRowSpanEnds(rowNode: IRowNode, spanEnds: number[]): void {
         const { allCols, colSpanCols } = this;
         spanEnds.length = 0;

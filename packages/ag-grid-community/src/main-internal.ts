@@ -45,12 +45,13 @@ export { BaseSingleColService as _BaseSingleColService } from './columns/baseSin
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';
+export { _getDrawnColSpan } from './columns/columnSpanUtils';
 export {
     _convertColumnEventSourceType,
     _destroyColumnTreeAll,
     _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
-    _getDrawnColSpan,
+    _isHeaderNameChangeForGroup,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,
@@ -155,6 +156,7 @@ export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
+export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     _ADVANCED_FILTER_ONLY_OPTIONS,

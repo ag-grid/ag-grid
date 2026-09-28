@@ -8,7 +8,6 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellComp } from '../cell/cellCtrl';
 import { CellCtrl } from '../cell/cellCtrl';
-import { _applySpanHeight } from '../cell/cellPositionFeature';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from './rowSpanCache';
 
@@ -16,21 +15,14 @@ export class SpannedCellCtrl extends CellCtrl {
     private readonly SPANNED_CELL_CSS_CLASS = 'ag-spanned-cell';
     private eWrapper: HTMLElement;
 
-    constructor(
-        private readonly cellSpan: CellSpan,
-        rowCtrl: RowCtrl,
-        beans: BeanCollection
-    ) {
-        super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl);
+    declare public readonly cellSpan: CellSpan;
+
+    constructor(cellSpan: CellSpan, rowCtrl: RowCtrl, beans: BeanCollection) {
+        super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl, cellSpan);
 
         // A reused CellSpan keeps its ctrl across rowData changes but its coverage can change, so the
-        // rendered height and aria-rowspan (both applied once on mount) must be re-derived on the
-        // cache-rebuild events. CellCtrl's constructor cannot wire this up because cellSpan is a
-        // parameter property still unassigned during super().
-        const refreshSpan = () => {
-            _applySpanHeight(this);
-            this.setAriaRowSpan();
-        };
+        // rendered height and aria-rowspan must be re-derived on the cache-rebuild events.
+        const refreshSpan = this.refreshSpan.bind(this);
         this.addManagedListeners(beans.eventSvc, {
             paginationChanged: refreshSpan,
             recalculateRowBounds: refreshSpan,
@@ -51,17 +43,7 @@ export class SpannedCellCtrl extends CellCtrl {
     ): void {
         this.eWrapper = eWrapper!;
         super.setComp(comp, eCell, eWrapper, eCellWrapper, printLayout, startEditing, compBean);
-        this.setAriaRowSpan();
-    }
-
-    // Must stay a plain literal, independent of getCellSpan(): CellCtrl's constructor reads it during super()
-    // where the cellSpan parameter property is still unassigned, so getCellSpan() cannot be relied on.
-    public override isCellSpanning(): boolean {
-        return true;
-    }
-
-    public override getCellSpan(): CellSpan | undefined {
-        return this.cellSpan;
+        this.refreshSpan();
     }
 
     /**
@@ -76,14 +58,15 @@ export class SpannedCellCtrl extends CellCtrl {
         _setAriaRowIndex(eGui, ariaRowIndex);
     }
 
-    /**
-     * When cell is spanning, ensure row index is also available on the cell
-     */
-    private setAriaRowSpan(): void {
-        if (!this.eGui) {
+    /** Sizes the cell over its spanned rows, and tells assistive tech how many it covers. */
+    private refreshSpan(): void {
+        const eGui = this.eGui;
+        if (!eGui) {
             return;
         }
-        _setAriaRowSpan(this.eGui, this.cellSpan.spannedNodes.size);
+        const cellSpan = this.cellSpan;
+        eGui.style.height = `${cellSpan.getCellHeight()}px`;
+        _setAriaRowSpan(eGui, cellSpan.spannedNodes.size);
     }
 
     // not ideal, for tabbing need to force the focused position

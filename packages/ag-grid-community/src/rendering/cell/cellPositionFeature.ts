@@ -1,5 +1,4 @@
 import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../features/horizontalPositionUtils';
 import type { CellCtrl } from './cellCtrl';
@@ -8,69 +7,43 @@ import type { CellCtrl } from './cellCtrl';
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     _onCellLeftChanged(beans, cellCtrl);
     _onCellWidthChanged(cellCtrl);
-    if (cellCtrl.getCellSpan()) {
-        _applySpanHeight(cellCtrl);
-    } else {
-        legacyApplyRowSpan(beans, cellCtrl);
-    }
-}
-
-/** Sets a row-spanned cell's rendered height to cover its spanned rows. No-op when not spanning. */
-export function _applySpanHeight(cellCtrl: CellCtrl): void {
-    const spanHeight = cellCtrl.getCellSpan()?.getCellHeight();
-    const eContent = cellCtrl.eGui;
-    if (spanHeight != null && eContent) {
-        eContent.style.height = `${spanHeight}px`;
-    }
+    legacyApplyRowSpan(beans, cellCtrl);
 }
 
 export function _refreshCellRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    if (cellCtrl.cellSpan !== null) {
+        return;
+    }
     const rowSpan = cellCtrl.column.getRowSpan(cellCtrl.rowNode);
-    if (cellCtrl.rowSpan === rowSpan) {
+    if (cellCtrl.legacyRowSpan === rowSpan) {
         return;
     }
 
-    cellCtrl.rowSpan = rowSpan;
+    cellCtrl.legacyRowSpan = rowSpan;
     legacyApplyRowSpan(beans, cellCtrl, true);
 }
 
-/** Sizes a cell to `colSpan` columns from its own. The row's layout decides the span, so it is read once. */
+/** Sizes a cell to `colSpan` columns from its own; `colSpan` is a drawn span, already stopped at the lane edge. */
 export function _setCellColSpan(beans: BeanCollection, cellCtrl: CellCtrl, colSpan: number): void {
-    const column = cellCtrl.column;
-    let prev = cellCtrl.colsSpanning;
+    const prev = cellCtrl.colsSpanning;
+    const visibleCols = beans.visibleCols;
+    const version = visibleCols.displayedColsVersion;
     if (prev === null) {
         // a column can gain a colSpan after its cell was built, so tracking starts at the first real span
-        if (colSpan === 1 || cellCtrl.isCellSpanning()) {
+        if (colSpan === 1 || cellCtrl.cellSpan !== null) {
             return;
         }
-        prev = [column];
-        cellCtrl.colsSpanning = prev;
         // any displayed col's width can be one this cell spans
         cellCtrl.addManagedListeners(beans.eventSvc, {
             displayedColumnsWidthChanged: () => _onCellWidthChanged(cellCtrl),
         });
+    } else if (prev.length === colSpan && cellCtrl.colsSpanningVersion === version) {
+        // the same displayed columns give the same run
+        return;
     }
-    const visibleCols = beans.visibleCols;
-    const lane = column.pinnedLane;
-    // the columns covered, never past the pinned lane, allocated only once they differ from `prev`
-    let colsSpanning: AgColumn[] | null = null;
-    let count = 0;
-    let pointer: AgColumn | null = column;
-    while (pointer !== null && count < colSpan && pointer.pinnedLane === lane) {
-        if (colsSpanning === null && prev[count] !== pointer) {
-            colsSpanning = prev.slice(0, count);
-        }
-        colsSpanning?.push(pointer);
-        ++count;
-        pointer = visibleCols.getColAfter(pointer);
-    }
-    if (colsSpanning === null) {
-        if (count === prev.length) {
-            return;
-        }
-        colsSpanning = prev.slice(0, count);
-    }
-    cellCtrl.colsSpanning = colsSpanning;
+    const start = cellCtrl.column.allColsIndex;
+    cellCtrl.colsSpanning = visibleCols.allCols.slice(start, start + colSpan);
+    cellCtrl.colsSpanningVersion = version;
     _onCellWidthChanged(cellCtrl);
     _onCellLeftChanged(beans, cellCtrl); // left changes when doing RTL
 }
@@ -135,7 +108,7 @@ function setHorizontalPosition(beans: BeanCollection, cellCtrl: CellCtrl, eSetLe
 }
 
 function legacyApplyRowSpan(beans: BeanCollection, cellCtrl: CellCtrl, force?: boolean): void {
-    const rowSpan = cellCtrl.rowSpan;
+    const rowSpan = cellCtrl.legacyRowSpan;
     if (rowSpan === 1 && !force) {
         return;
     }

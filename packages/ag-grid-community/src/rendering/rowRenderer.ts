@@ -970,12 +970,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (sticky && sticky !== indexed) {
             sticky.refreshRow();
         }
-        const spannedRowRenderer = this.beans.spannedRowRenderer;
-        if (spannedRowRenderer) {
-            refreshSpannedForNode(spannedRowRenderer.getCtrls('top'), node, indexed, sticky);
-            refreshSpannedForNode(spannedRowRenderer.getCtrls('bottom'), node, indexed, sticky);
-            refreshSpannedForNode(spannedRowRenderer.getCtrls('center'), node, indexed, sticky);
-        }
+        this.beans.spannedRowRenderer?.refreshRowsOf(node as RowNode);
     }
 
     /**
@@ -1787,18 +1782,3 @@ export function isRowInMap(
             return rowIdsMap.normal[id] != null;
     }
 }
-
-/** Refreshes any spanned ctrl rendering `node` that the caller has not refreshed already. */
-const refreshSpannedForNode = (
-    ctrls: RowCtrl[],
-    node: IRowNode,
-    indexed: RowCtrl | undefined,
-    sticky: RowCtrl | undefined
-): void => {
-    for (let i = 0, len = ctrls.length; i < len; ++i) {
-        const ctrl = ctrls[i];
-        if (ctrl.rowNode === node && ctrl !== indexed && ctrl !== sticky) {
-            ctrl.refreshRow();
-        }
-    }
-};

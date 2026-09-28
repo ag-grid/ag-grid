@@ -22,8 +22,24 @@ export type ConsumedSitemapRecord = {
 };
 
 const RECORD_FILE_NAME = 'consumed-sitemap.json';
+const GENERATED_SITEMAP_FILE_NAME = 'generated-sitemap.xml';
 
 export const getConsumedSitemapRecordPath = (recordDir: string) => path.join(path.resolve(recordDir), RECORD_FILE_NAME);
+
+export const getGeneratedSitemapPath = (recordDir: string) =>
+    path.join(path.resolve(recordDir), GENERATED_SITEMAP_FILE_NAME);
+
+const readFileOrNull = (filePath: string) => {
+    try {
+        return readFileSync(filePath, 'utf8');
+    } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+            return null;
+        }
+
+        throw error;
+    }
+};
 
 // Every page that renders the sitemap writes the same record, and Astro builds pages concurrently,
 // so write to a private path and rename it into place — a plain write can interleave into a torn
@@ -52,15 +68,9 @@ export const writeConsumedSitemapRecord = async ({
 
 /** Null when no usable record was written, which is treated as "assume the pages are out of date". */
 export const readConsumedSitemapRecord = (recordDir: string): ConsumedSitemapRecord | null => {
-    let raw: string;
-    try {
-        raw = readFileSync(getConsumedSitemapRecordPath(recordDir), 'utf8');
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-            return null;
-        }
-
-        throw error;
+    const raw = readFileOrNull(getConsumedSitemapRecordPath(recordDir));
+    if (raw == null) {
+        return null;
     }
 
     try {
@@ -70,6 +80,20 @@ export const readConsumedSitemapRecord = (recordDir: string): ConsumedSitemapRec
         return null;
     }
 };
+
+/**
+ * A copy of the sitemap this build generated, written by `agCacheSitemap` from the output folder
+ * Astro reports, so `buildWithSitemapCache` need not know each website's `outDir`.
+ */
+export const writeGeneratedSitemap = async (recordDir: string, xmlSitemap: string) => {
+    const generatedPath = getGeneratedSitemapPath(recordDir);
+
+    await fs.mkdir(path.dirname(generatedPath), { recursive: true });
+    await fs.writeFile(generatedPath, xmlSitemap, 'utf8');
+};
+
+/** Null when this build generated no sitemap at all, as archive builds do. */
+export const readGeneratedSitemap = (recordDir: string) => readFileOrNull(getGeneratedSitemapPath(recordDir));
 
 export type SecondBuildDecision = {
     needed: boolean;

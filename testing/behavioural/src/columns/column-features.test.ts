@@ -21,7 +21,7 @@ import {
     mockGridLayout,
 } from 'ag-test-utils';
 
-import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, Module } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
@@ -49,7 +49,6 @@ describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             AlignedGridsModule,
-            BatchEditModule,
             CellStyleModule,
             ClientSideRowModelModule,
             DragAndDropModule,
@@ -701,9 +700,14 @@ describe('Column Features', () => {
                 );
             };
 
-            const collapsed = warnsAboutAutoHeight(false);
-            const opened = warnsAboutAutoHeight(true);
-            consoleWarnSpy.mockRestore();
+            let collapsed: boolean;
+            let opened: boolean;
+            try {
+                collapsed = warnsAboutAutoHeight(false);
+                opened = warnsAboutAutoHeight(true);
+            } finally {
+                consoleWarnSpy.mockRestore();
+            }
 
             expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
         });
@@ -1096,7 +1100,7 @@ describe('Column Features', () => {
             `);
         });
 
-        test('colSpan and rowSpan callbacks clamped min 1; default 1 when no callback', async () => {
+        test('colSpan and rowSpan callbacks clamped min 1 and rounded down; default 1 when no callback', async () => {
             // rowSpan without suppressRowTransform legitimately warns (#319); this test only checks
             // callback clamping, not row-span rendering. Suppress that id and silence the console noise.
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
@@ -1104,17 +1108,19 @@ describe('Column Features', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a' },
-                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2 },
+                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2.5 },
                     { colId: 'c', colSpan: () => 0, rowSpan: () => NaN },
+                    { colId: 'd', rowSpan: () => 1.5 },
                 ],
-                rowData: [{ a: 1, b: 2, c: 3 }],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
             });
             await new GridColumns(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
                 .checkColumns(`
                     CENTER
                     ├── a width:200
                     ├── b width:200
-                    └── c width:200
+                    ├── c width:200
+                    └── d width:200
                 `);
             await new GridRows(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
                 .check(`
@@ -1131,6 +1137,7 @@ describe('Column Features', () => {
             // Clamped from 0 and NaN → 1
             expect(api.getColumn('c')!.getColSpan(node)).toBe(1);
             expect(api.getColumn('c')!.getRowSpan(node)).toBe(1);
+            expect(api.getColumn('d')!.getRowSpan(node)).toBe(1);
             await new GridRows(
                 api,
                 `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback final state`
@@ -1138,21 +1145,6 @@ describe('Column Features', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0
             `);
-        });
-
-        test('a rowSpan callback returning a fraction resolves to whole rows, rounded down', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                suppressRowTransform: true,
-                columnDefs: [
-                    { colId: 'a', rowSpan: () => 2.5 },
-                    { colId: 'b', rowSpan: () => 1.5 },
-                ],
-                rowData: [{ a: 1, b: 2 }],
-            });
-
-            const node = api.getDisplayedRowAtIndex(0)!;
-
-            expect(['a', 'b'].map((colId) => api.getColumn(colId)!.getRowSpan(node))).toEqual([2, 1]);
         });
 
         test('user resize clears flex; event-listener round-trip on widthChanged', async () => {
@@ -1312,12 +1304,16 @@ describe('Column Features', () => {
         const cellsFor = (api: GridApi, colId: string): HTMLElement[] =>
             Array.from(gridRoot(api).querySelectorAll<HTMLElement>(`.ag-cell[col-id="${colId}"]`));
 
-        const createVirtualisedGrid = (): GridApi =>
-            gridsManager.createGrid('virtualisedCells', {
-                columnDefs: virtualisedCols(120),
-                rowData: [virtualisedRow(120)],
-                suppressColumnVirtualisation: false,
-            });
+        const createVirtualisedGrid = (modules: Module[] = []): GridApi =>
+            gridsManager.createGrid(
+                'virtualisedCells',
+                {
+                    columnDefs: virtualisedCols(120),
+                    rowData: [virtualisedRow(120)],
+                    suppressColumnVirtualisation: false,
+                },
+                { modules }
+            );
 
         const renderedColIds = (api: GridApi): string[] =>
             renderedCells(api).map((cell) => cell.getAttribute('col-id')!);
@@ -1430,7 +1426,7 @@ describe('Column Features', () => {
         });
 
         test('a cell with a pending batch edit kept out of the viewport is removed once the batch is cancelled or commits', async () => {
-            const api = createVirtualisedGrid();
+            const api = createVirtualisedGrid([BatchEditModule]);
             await asyncSetTimeout(0);
 
             const keepPendingEdit = async (step: string) => {

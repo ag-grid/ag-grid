@@ -82,6 +82,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         }
     }
 
+    protected refreshAriaLabel(): void {
+        this.dateComp.setInputAriaLabel(this.getAriaLabel(this.params.column as AgColumn));
+    }
+
     protected setEditable(editable: boolean): void {
         _setDisplayed(this.eDateWrapper, editable);
         _setDisplayed(this.eReadOnlyText.getGui(), !editable);

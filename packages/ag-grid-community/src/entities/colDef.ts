@@ -430,7 +430,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.
-     * A cell spanning several columns with `colSpan` is navigable as set on the column it starts in.
      * @default false
      */
     suppressNavigable?: boolean | SuppressNavigableCallback<TData, TValue>;
@@ -1063,12 +1062,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns.
-     * The result is rounded down to whole columns, at least one.
+     * The grid draws the row from the last result until the row's data or index changes, the row is refreshed, the displayed columns change, or `api.refreshCells()` is called.
      */
     colSpan?: ColSpanFunc<TData, TValue>;
     /**
      * By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows.
-     * The result is rounded down to whole rows, at least one.
+     * The grid draws the cell from the last result until the row's data or index changes, the row is refreshed, the column definitions change, or `api.refreshCells()` is called.
      */
     rowSpan?: RowSpanFunc<TData, TValue>;
 

@@ -78,7 +78,8 @@ export const SITEMAP_CACHE_DIR = '.astro/cache/sitemap';
 
 /**
  * Scratch folder for the sitemap bookkeeping `buildWithSitemapCache` needs across the two builds it
- * may run — currently the record of which sitemap the first build's sitemap pages rendered from.
+ * may run: the record of which sitemap the first build's sitemap pages rendered from, and a copy of the
+ * sitemap that build generated.
  *
  * Deliberately outside `SITEMAP_CACHE_DIR`: the cached sitemap is a declared nx input for the docs
  * `build` target (a change to it has to re-run the build), and this bookkeeping changes on every

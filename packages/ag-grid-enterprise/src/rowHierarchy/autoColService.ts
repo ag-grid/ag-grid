@@ -1,6 +1,7 @@
 import type {
     ColDef,
     ColumnEventType,
+    ColumnHeaderNameChangedEvent,
     IAutoColService,
     ITooltipParams,
     NamedBean,
@@ -44,8 +45,24 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
+        this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
         this.setupGroupHideColumnsUntilExpanded();
+    }
+
+    /** A multi auto col copies its row-group column's name into its colDef, so re-derive it on a rename. */
+    private onHeaderNameChanged({ column, source }: ColumnHeaderNameChangedEvent): void {
+        if (!column) {
+            return;
+        }
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            if (col.colDef.showRowGroup === column.getColId()) {
+                // setColDef alone, as refreshCols does: re-applying colDef state would reset width and sort.
+                col.setColDef(this.createAutoColDef(col.colId, column as AgColumn, i), null, source);
+            }
+        }
     }
 
     private setupGroupHideColumnsUntilExpanded() {

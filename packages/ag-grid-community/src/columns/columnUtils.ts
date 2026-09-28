@@ -5,9 +5,8 @@ import type { AgColumn } from '../entities/agColumn';
 import { _isSortDefValid, getSortDefFromInput, isSortDirectionValid } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
+import type { ColumnEventType, ColumnHeaderNameChangedEvent } from '../events';
 import type { Column } from '../interfaces/iColumn';
-import type { IRowNode } from '../interfaces/iRowNode';
 import type { ColumnState } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
@@ -38,23 +37,6 @@ export function isRowNumberCol(col: Column): boolean {
     return (col as AgColumn).colKind === 'row-number';
 }
 
-/**
- * The columns the cell at `index` spans, as the grid draws it: its colSpan, stopped at the last column, at its
- * pinned lane's edge and at a column not displayed next to it; a column not displayed spans only itself.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _getDrawnColSpan(cols: AgColumn[], index: number, rowNode: IRowNode): number {
-    const col = cols[index];
-    const colSpan = col.allColsIndex < 0 ? 1 : Math.min(col.getColSpan(rowNode), cols.length - index);
-    for (let i = 1; i < colSpan; ++i) {
-        const next = cols[index + i];
-        if (next.pinnedLane !== col.pinnedLane || next.allColsIndex !== col.allColsIndex + i) {
-            return i;
-        }
-    }
-    return colSpan;
-}
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isSpecialCol(col: Column): boolean {
     const colKind = (col as AgColumn).colKind;
@@ -72,6 +54,15 @@ export function convertColumnTypes(type: string | string[]): string[] {
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // The two enums don't match, so convert.
     return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
+}
+
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Group header names are keyed by groupId in a shared store, so group renames only fire the grid-level
+ * event. A missing columnGroup means a column rename or bulk change, so treat it as affecting every group.
+ */
+export function _isHeaderNameChangeForGroup(event: ColumnHeaderNameChangedEvent, groupId: string): boolean {
+    return !event.columnGroup || event.columnGroup.getGroupId() === groupId;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
