@@ -1395,18 +1395,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     /** The column's own cell, else the cell drawn spanning it. */
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
+        const cellCtrl = this.rowModeFeature.getCellCtrl?.(column);
+        if (cellCtrl || skipColSpanSearch) {
+            return cellCtrl ?? null;
+        }
         const cellCtrls = this.getAllCellCtrls();
-        let spanningCellCtrl: CellCtrl | null = null;
         for (let i = 0, len = cellCtrls.length; i < len; ++i) {
-            const cellCtrl = cellCtrls[i];
-            if (cellCtrl.column === column) {
-                return cellCtrl;
-            }
-            if (!skipColSpanSearch && !spanningCellCtrl && cellCtrl.colsSpanning?.includes(column)) {
-                spanningCellCtrl = cellCtrl;
+            if (cellCtrls[i].colsSpanning?.includes(column)) {
+                return cellCtrls[i];
             }
         }
-        return spanningCellCtrl;
+        return null;
     }
 
     protected onRowIndexChanged(): void {

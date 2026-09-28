@@ -55,7 +55,10 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
         return cellCtrl;
     }
 
-    const actualColumn = beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!;
+    const actualColumn = beans.colModel.getCol(colId ?? columnId ?? _getColId(column));
+    if (!actualColumn) {
+        return undefined;
+    }
 
     const rowCtrl = inputs.rowCtrl ?? _getRowCtrl(beans, inputs);
     const result = rowCtrl?.getCellCtrl(actualColumn) ?? undefined;

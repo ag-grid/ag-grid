@@ -374,16 +374,13 @@ describe('Focus override callbacks', () => {
                 focusSvcAny.navigation = navigation;
                 const visibleCols = focusSvcAny.beans.visibleCols;
                 visibleCols.colSpanActive = colSpanActive;
-                // with nothing rendered, the spans come from the row's colSpan callbacks
+                // the spans come from those the row drew, or from its colSpan callbacks with nothing rendered
                 visibleCols.fillRowSpanEnds = vi.fn();
                 visibleCols.getSpanningCol = (_spanEnds: number[], col: Column) => (col === covered ? spanning : col);
                 focusSvcAny.beans.rowRenderer = {
                     getRowByPosition: () =>
                         hasCellCtrl
-                            ? {
-                                  getCellCtrl: (col: Column) =>
-                                      col === spanning || col === covered ? { column: spanning } : null,
-                              }
+                            ? { getCellCtrl: (col: Column) => (col === spanning ? {} : null), getColSpans: () => [] }
                             : null,
                 };
                 setFocusedCell.mockClear();

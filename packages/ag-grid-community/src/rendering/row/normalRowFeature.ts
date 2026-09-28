@@ -280,6 +280,11 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return changed;
     }
 
+    public getCellCtrl(column: AgColumn): CellCtrl | undefined {
+        const id = column.instanceId;
+        return this.centerCellCtrls.map[id] ?? this.leftCellCtrls.map[id] ?? this.rightCellCtrls.map[id];
+    }
+
     /** Emptied when the displayed columns change, which every colDef change also does. */
     public getColSpans(): number[] {
         const visibleCols = this.beans.visibleCols;

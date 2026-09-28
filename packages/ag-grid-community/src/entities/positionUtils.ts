@@ -173,7 +173,7 @@ export class RowFocusResolver {
         return fullWidth;
     }
 
-    /** The column whose cell takes focus: its own cell's, else the cell spanning it, drawn or from the callbacks. */
+    /** The column whose cell takes focus: its own, else the one spanning it, from the spans the row drew or would draw. */
     public getFocusColumn(cellPosition: CellPosition): AgColumn {
         const column = cellPosition.column as AgColumn;
         const beans = this.beans;
@@ -184,11 +184,7 @@ export class RowFocusResolver {
         const rowNode = this.getRowNode(cellPosition);
         // not held per row: a walk that scrolls can render the row it is on
         const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
-        const cellCtrl = rowCtrl?.getCellCtrl(column);
-        if (cellCtrl) {
-            return cellCtrl.column;
-        }
-        if (!rowNode || this.isFullWidth(cellPosition)) {
+        if (!rowNode || rowCtrl?.getCellCtrl(column, true) || this.isFullWidth(cellPosition)) {
             return column;
         }
         const spanEnds = this.spanEnds;

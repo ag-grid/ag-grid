@@ -1,5 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
+import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { VerticalSection } from '../../interfaces/iGridSection';
@@ -113,7 +114,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
             return undefined;
         }
 
-        return ctrl.getAllCellCtrls().find((cellCtrl) => cellCtrl.column === cellPosition.column);
+        return ctrl.getCellCtrl(cellPosition.column as AgColumn, true) ?? undefined;
     }
 
     /** Refreshes the rows rendering the spans `node` starts, which the row renderer does not hold. */
