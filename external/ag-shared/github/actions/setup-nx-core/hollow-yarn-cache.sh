@@ -27,7 +27,8 @@ fi
 # npm cpu names match the package-name suffixes native packages use (x64, arm64, ...).
 arch="$(node -p process.arch)"
 platform_suffix='-(darwin|win32|android|freebsd|openbsd|netbsd|sunos|aix|openharmony)-|-linux-(arm|arm64|x64|ia32|ppc64|ppc64le|s390x|riscv64|loong64|mips64el|loongarch64)-|-linuxmusl-|-musl-'
-own_platform="-linux-${arch}-(gnu-)?[0-9]"
+# glibc builds are suffixed -gnu (rollup, swc, nx, ...) or -glibc (@parcel/watcher).
+own_platform="-linux-${arch}-(gnu-|glibc-)?[0-9]"
 
 before="$(du -sh "${cache}" | cut -f1)"
 hollowed=0
