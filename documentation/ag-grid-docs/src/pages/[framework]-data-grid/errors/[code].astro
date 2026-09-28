@@ -216,6 +216,7 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive') +
         type ErrorId,
     } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
     import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
+    import { replaceLocation } from '@ag-website-shared/utils/replaceLocation';
     import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
     import { pathJoin } from '@utils/pathJoin';
 
@@ -238,7 +239,7 @@ const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive') +
         if (errorRedirectBaseUrl) {
             // `replace` does not halt this script, so everything below has to be an explicit `else`.
             const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
-            window.location.replace(redirectUrl);
+            replaceLocation(redirectUrl);
         } else if (errorCode in AG_GRID_ERRORS) {
             const typedErrorCode = errorCode as ErrorId;
 
