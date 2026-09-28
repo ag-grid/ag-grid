@@ -59,6 +59,60 @@ describe('buildApiReferenceSection fed by the reference models', () => {
         );
     });
 
+    it('narrows a multi-module badge to the module the property or page restricts it to', () => {
+        const model = getApiDocumentationModel({
+            framework: 'javascript',
+            sources: ['grid-options/properties.json'],
+            section: 'infiniteRowModel',
+            names: [],
+            config: { restrictModule: 'InfiniteRowModelModule' } as any,
+            propertiesFromFiles: [
+                {
+                    infiniteRowModel: {
+                        cacheBlockSize: { type: 'number' },
+                        groupTotalRow: { type: 'string', restrictModule: ['RowGroupingModule'] },
+                    },
+                },
+            ],
+            propertyConfigs: [{ codeSrc: 'grid-options.AUTO.json' }],
+            codeConfigs: {
+                'grid-options.AUTO.json': {
+                    cacheBlockSize: {
+                        meta: {
+                            comment: 'How many rows for each block in the store.',
+                            tags: [
+                                { name: 'agModule', comment: '`ServerSideRowModelModule` / `InfiniteRowModelModule`' },
+                            ],
+                        },
+                    },
+                    groupTotalRow: {
+                        meta: {
+                            comment: 'When provided, an extra row group total row will be inserted.',
+                            tags: [{ name: 'agModule', comment: '`RowGroupingModule` / `ServerSideRowModelModule`' }],
+                        },
+                    },
+                },
+            },
+            interfaceLookup: {},
+            allModules: [],
+            resolveProperty: toRawPropertyEntry,
+        });
+
+        expect(model?.type).toBe('single');
+        const output = buildApiReferenceSection(
+            { title: 'infiniteRowModel', config: { isSubset: true }, properties: model!.properties },
+            links
+        );
+
+        expect(output).toContain(
+            'How many rows for each block in the store. Module: [`InfiniteRowModelModule`](https://www.ag-grid.com/javascript-data-grid/modules/).'
+        );
+        expect(output).toContain(
+            'When provided, an extra row group total row will be inserted. Module: [`RowGroupingModule`](https://www.ag-grid.com/javascript-data-grid/modules/).'
+        );
+        expect(output).not.toContain('ServerSideRowModelModule');
+    });
+
     it('keeps the description of an interfaceDocumentation property', () => {
         const model = getInterfaceDocumentationModel({
             framework: 'javascript',

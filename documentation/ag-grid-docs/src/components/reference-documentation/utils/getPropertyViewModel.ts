@@ -107,6 +107,27 @@ function getTagsData({
           ']'
         : defaultValue;
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
+    const modules = getPropertyModules({ definition, gridOpProp, config, allModules });
+
+    return { formattedDefaultValue, isInitial, modules };
+}
+
+/**
+ * The modules a property's badges list, from its `@agModule` tag, narrowed to the restricted
+ * module where the property or page sets one. Shared with the markdown twin so both list the same.
+ */
+export function getPropertyModules({
+    definition,
+    gridOpProp,
+    config,
+    allModules,
+}: {
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    config: Config;
+    allModules?: GridModule[];
+}): PropertyViewModel['modules'] {
+    const tags = gridOpProp?.meta?.tags ?? definition?.tags ?? [];
 
     // Module badges are an apiDocumentation concern: interfaceDocumentation passes no module
     // data and has never shown them.
@@ -129,7 +150,7 @@ function getTagsData({
         }
     }
 
-    return { formattedDefaultValue, isInitial, modules };
+    return modules;
 }
 
 export interface PropertyViewModelParams {

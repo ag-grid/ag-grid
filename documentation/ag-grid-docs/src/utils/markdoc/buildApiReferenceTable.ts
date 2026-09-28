@@ -1,8 +1,10 @@
 import type { Framework } from '@ag-grid-types';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
-import { AG_MODULE_TAG_NAME } from '@components/reference-documentation/constants';
 import { getTypeUrl } from '@components/reference-documentation/utils/documentation-helpers';
-import type { PropertyResolver } from '@components/reference-documentation/utils/getPropertyViewModel';
+import {
+    type PropertyResolver,
+    getPropertyModules,
+} from '@components/reference-documentation/utils/getPropertyViewModel';
 import { formatJson, getInterfaceName } from '@components/reference-documentation/utils/interface-helpers';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
@@ -29,13 +31,22 @@ export interface RawPropertyEntry {
     definition: Record<string, any>;
     gridOpProp?: Record<string, any>;
     propertyType: string;
+    /** Resolved as the page resolves its badges, so restricted modules stay restricted. */
+    modules?: { name: string }[];
 }
 
 /** Resolver the markdown twin hands to the reference models in place of getPropertyViewModel. */
-export const toRawPropertyEntry: PropertyResolver<RawPropertyEntry> = ({ definition, gridOpProp, propertyType }) => ({
+export const toRawPropertyEntry: PropertyResolver<RawPropertyEntry> = ({
     definition,
     gridOpProp,
     propertyType,
+    config,
+    allModules,
+}) => ({
+    definition,
+    gridOpProp,
+    propertyType,
+    modules: getPropertyModules({ definition, gridOpProp, config, allModules }),
 });
 
 interface PropertyRow {
@@ -104,7 +115,7 @@ function buildRows(properties: Record<string, any>, config: Record<string, any>,
             continue;
         }
         const definition = prop.definition ?? {};
-        const { gridOpProp, propertyType } = prop;
+        const { gridOpProp, propertyType, modules } = prop;
         const comment = gridOpProp?.meta?.comment;
         const definitionType = typeof definition.type === 'string' ? definition.type : undefined;
         const type = propertyType || definitionType || getInterfaceName(name);
@@ -129,7 +140,7 @@ function buildRows(properties: Record<string, any>, config: Record<string, any>,
                 toCellText(rawDescription, links),
                 buildOptions(definition),
                 buildMoreLink(definition, config, links),
-                buildModuleLinks(tags, links),
+                buildModuleLinks(modules, links),
                 buildInitialLink(tags, config, links),
             ]
                 .filter(Boolean)
@@ -216,25 +227,14 @@ function buildInitialLink(tags: Record<string, any>[], config: Record<string, an
     return `[Initial](${resolveDocUrl(config.initialLink ?? INITIAL_URL, links)}).`;
 }
 
-/**
- * The `@agModule` tag as a link to the module registry, matching the PropertyModules
- * badges on the page. The tag comment lists the modules as `` `A` / `B` ``.
- */
-function buildModuleLinks(tags: Record<string, any>[], links: LinkContext): string {
-    const tag = tags.find((entry) => entry.name === AG_MODULE_TAG_NAME);
-    if (!tag) {
-        return '';
-    }
-    const names = String(tag.comment ?? '')
-        .split('/')
-        .map((name) => name.trim().replace(/`/g, ''));
-    const present = names.filter(Boolean);
-    if (present.length === 0) {
+/** The property's modules as links to the module registry, matching the PropertyModules badges on the page. */
+function buildModuleLinks(modules: { name: string }[] | undefined, links: LinkContext): string {
+    if (!modules?.length) {
         return '';
     }
     const url = resolveDocUrl(MODULES_URL, links);
-    const moduleLinks = present.map((name) => `[\`${name}\`](${url})`).join(', ');
-    return present.length > 1 ? `Modules (any of): ${moduleLinks}.` : `Module: ${moduleLinks}.`;
+    const moduleLinks = modules.map(({ name }) => `[\`${name}\`](${url})`).join(', ');
+    return modules.length > 1 ? `Modules (any of): ${moduleLinks}.` : `Module: ${moduleLinks}.`;
 }
 
 function buildTable(rows: PropertyRow[]): string {

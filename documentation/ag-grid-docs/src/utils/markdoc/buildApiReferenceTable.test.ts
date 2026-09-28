@@ -73,7 +73,7 @@ describe('buildApiReferenceSection', () => {
         );
     });
 
-    it('keeps the @agModule badge as a link to the module registry', () => {
+    it('links the module badge to the module registry', () => {
         const output = buildApiReferenceSection(
             {
                 config: {},
@@ -81,12 +81,8 @@ describe('buildApiReferenceSection', () => {
                     createRangeChart: {
                         definition: {},
                         propertyType: 'Function',
-                        gridOpProp: {
-                            meta: {
-                                comment: 'Used to programmatically create charts from a range.',
-                                tags: [{ name: 'agModule', comment: '`IntegratedChartsModule`' }],
-                            },
-                        },
+                        gridOpProp: { meta: { comment: 'Used to programmatically create charts from a range.' } },
+                        modules: [{ name: 'IntegratedChartsModule' }],
                     },
                 },
             },
@@ -106,9 +102,7 @@ describe('buildApiReferenceSection', () => {
                     getRowId: {
                         definition: { description: 'Row id callback.' },
                         propertyType: 'Function',
-                        gridOpProp: {
-                            meta: { tags: [{ name: 'agModule', comment: '`RowApiModule` / `RowSelectionModule`' }] },
-                        },
+                        modules: [{ name: 'RowApiModule' }, { name: 'RowSelectionModule' }],
                     },
                 },
             },
@@ -229,11 +223,8 @@ describe('buildApiReferenceSection', () => {
                             },
                         },
                         propertyType: 'boolean',
-                        gridOpProp: {
-                            meta: {
-                                tags: [{ name: 'initial' }, { name: 'agModule', comment: '`IntegratedChartsModule`' }],
-                            },
-                        },
+                        gridOpProp: { meta: { tags: [{ name: 'initial' }] } },
+                        modules: [{ name: 'IntegratedChartsModule' }],
                     },
                     chartThemeName: {
                         definition: {
