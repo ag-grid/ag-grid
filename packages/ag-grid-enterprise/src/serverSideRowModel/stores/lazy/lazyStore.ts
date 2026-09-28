@@ -82,15 +82,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     public postConstruct() {
-        let numberOfRows = 1;
         if (this.level === 0) {
-            numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
-
             this.eventSvc.dispatchEventOnce({
                 type: 'rowCountReady',
             });
         }
-        this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
+        this.cache = this.createInitialCache();
 
         const usingTreeData = this.gos.get('treeData');
 
@@ -99,6 +96,18 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             this.groupField = groupColVo.field!;
             this.rowGroupColumn = this.rowGroupColsSvc.columns[this.level];
         }
+    }
+
+    /**
+     * With a datasource, the store starts with a stub row which triggers the first load. Without one, rows only
+     * arrive through transactions, so the store starts empty with its size known, which lets adds append to it.
+     */
+    private createInitialCache(): LazyCache {
+        if (!this.ssrmParams.datasource) {
+            return this.createManagedBean(new LazyCache(this, 0, true, this.storeParams));
+        }
+        const numberOfRows = this.level === 0 ? (this.storeUtils.getServerSideInitialRowCount() ?? 1) : 1;
+        return this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
     }
 
     public override destroy(): void {
@@ -734,6 +743,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param purge whether to remove all nodes and data in favour of stub nodes
      */
     refreshStore(purge: boolean) {
+        if (!this.ssrmParams.datasource) {
+            // rows only arrive through transactions, so there is nothing to reload them from
+            return;
+        }
+
         if (purge) {
             this.grandTotalData = undefined;
             this.destroyGrandTotalRow();
