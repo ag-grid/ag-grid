@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
@@ -24,6 +24,14 @@ interface RowData {
     b: string;
     c: string;
 }
+
+/** The row's drawn cells, as `colId:width`. */
+const renderedRow = (api: GridApi, rowIndex: number | string) => {
+    const cells = Array.from(
+        getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-row[row-index="${rowIndex}"] .ag-cell`)
+    );
+    return cells.map((cell) => `${cell.getAttribute('col-id')}:${cell.style.width}`).join(' ');
+};
 
 describe('Legacy colSpan rendering', () => {
     const gridsManager = new TestGridsManager({
@@ -51,25 +59,10 @@ describe('Legacy colSpan rendering', () => {
         { a: 'a1', b: 'b1', c: 'c1' },
     ];
 
-    test('spanning cell width equals sum of spanned column widths', async () => {
+    test('a spanning cell is as wide as the columns it covers, which draw no cell', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
-        await new GridColumns(api, `spanning cell width equals sum of spanned column widths setup`).checkColumns(`
-            CENTER
-            ├── a "A" width:100
-            ├── b "B" width:100
-            └── c "C" width:100
-        `);
-        await new GridRows(api, `spanning cell width equals sum of spanned column widths setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
-            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
-        `);
-        const gridEl = getGridElement(api)!;
-        const spanningCell = gridEl.querySelector('[row-index="1"] [col-id="a"]') as HTMLElement | null;
-        expect(spanningCell).not.toBeNull();
-        // col 'a' (100px) + col 'b' (100px) = 200px
-        expect(spanningCell!.style.width).toBe('200px');
-        await new GridRows(api, `spanning cell width equals sum of spanned column widths final state`).check(`
+        expect([renderedRow(api, 0), renderedRow(api, 1)]).toEqual(['a:100px b:100px c:100px', 'a:200px c:100px']);
+        await new GridRows(api, 'a spanning cell').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
@@ -78,16 +71,11 @@ describe('Legacy colSpan rendering', () => {
 
     test('print layout drops the covered cell, and stops a span at the pinned lane edge', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, domLayout: 'print' });
-        const gridEl = getGridElement(api)!;
-        const cell = (rowIndex: number, colId: string) =>
-            gridEl.querySelector<HTMLElement>(`[row-index="${rowIndex}"] [col-id="${colId}"]`);
-        await waitFor(() => expect(cell(1, 'a')?.style.width).toBe('200px'));
-        expect(cell(1, 'b')).toBeNull();
-        expect(cell(0, 'b')).not.toBeNull();
+        await waitFor(() => expect(renderedRow(api, 1)).toBe('a:200px c:100px'));
+        expect(renderedRow(api, 0)).toBe('a:100px b:100px c:100px');
 
         api.setGridOption('columnDefs', [{ ...columnDefs[0], pinned: 'left' }, columnDefs[1], columnDefs[2]]);
-        await waitFor(() => expect(cell(1, 'b')).not.toBeNull());
-        expect(cell(1, 'a')!.style.width).toBe('100px');
+        await waitFor(() => expect(renderedRow(api, 1)).toBe('a:100px b:100px c:100px'));
     });
 
     test('a span keyed on the row index follows rows reordered by rowData, then by a header click sort', async () => {
@@ -115,80 +103,20 @@ describe('Legacy colSpan rendering', () => {
         expect(rowById('a0')).toBe('a:100px b:100px c:100px');
     });
 
-    test('covered cell is absent from DOM on spanning row', async () => {
-        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
-        await new GridColumns(api, `covered cell is absent from DOM on spanning row setup`).checkColumns(`
-            CENTER
-            ├── a "A" width:100
-            ├── b "B" width:100
-            └── c "C" width:100
-        `);
-        await new GridRows(api, `covered cell is absent from DOM on spanning row setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
-            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
-        `);
-        const gridEl = getGridElement(api)!;
-        const coveredCell = gridEl.querySelector('[row-index="1"] [col-id="b"]');
-        expect(coveredCell).toBeNull();
-        await new GridRows(api, `covered cell is absent from DOM on spanning row final state`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
-            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
-        `);
-    });
-
-    test('non-spanning row renders all cells at their own width', async () => {
-        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
-        await new GridColumns(api, `non-spanning row renders all cells at their own width setup`).checkColumns(`
-            CENTER
-            ├── a "A" width:100
-            ├── b "B" width:100
-            └── c "C" width:100
-        `);
-        await new GridRows(api, `non-spanning row renders all cells at their own width setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
-            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
-        `);
-        const gridEl = getGridElement(api)!;
-        const row0 = gridEl.querySelector('[row-index="0"]')!;
-        const cellA = row0.querySelector('[col-id="a"]') as HTMLElement | null;
-        const cellB = row0.querySelector('[col-id="b"]') as HTMLElement | null;
-        const cellC = row0.querySelector('[col-id="c"]') as HTMLElement | null;
-        expect(cellA).not.toBeNull();
-        expect(cellB).not.toBeNull();
-        expect(cellC).not.toBeNull();
-        expect(cellA!.style.width).toBe('100px');
-        expect(cellB!.style.width).toBe('100px');
-        expect(cellC!.style.width).toBe('100px');
-        await new GridRows(api, `non-spanning row renders all cells at their own width final state`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
-            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
-        `);
-    });
-
     test('hiding a spanning column draws the columns it covered at their own width, and showing it draws the span again', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ ...columnDefs[0], hide: true }, columnDefs[1], columnDefs[2]],
             rowData,
         });
-        const drawnCells = () =>
-            Array.from(
-                getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="1"] .ag-cell'),
-                (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`
-            );
-
-        const hiddenAtStart = drawnCells();
+        const hiddenAtStart = renderedRow(api, 1);
         api.setColumnsVisible(['a'], true);
-        const shown = drawnCells();
+        const shown = renderedRow(api, 1);
         api.setColumnsVisible(['a'], false);
 
-        expect({ hiddenAtStart, shown, hiddenAgain: drawnCells() }).toEqual({
-            hiddenAtStart: ['b 100px', 'c 100px'],
-            shown: ['a 200px', 'c 100px'],
-            hiddenAgain: ['b 100px', 'c 100px'],
+        expect({ hiddenAtStart, shown, hiddenAgain: renderedRow(api, 1) }).toEqual({
+            hiddenAtStart: 'b:100px c:100px',
+            shown: 'a:200px c:100px',
+            hiddenAgain: 'b:100px c:100px',
         });
     });
 
@@ -198,11 +126,7 @@ describe('Legacy colSpan rendering', () => {
             rowData,
         });
 
-        const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="0"] .ag-cell');
-        expect(Array.from(cells, (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`)).toEqual([
-            'a 200px',
-            'c 100px',
-        ]);
+        expect(renderedRow(api, 0)).toBe('a:200px c:100px');
         await new GridRows(api, 'a column a span covers starts no cell').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
@@ -248,13 +172,6 @@ describe('colSpan follows row data updates', () => {
         { field: 'symbol', width: 100 },
         { field: 'group', width: 100 },
     ];
-
-    const renderedRow = (api: GridApi, rowIndex: number | string) => {
-        const cells = Array.from(
-            getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-row[row-index="${rowIndex}"] .ag-cell`)
-        );
-        return cells.map((cell) => `${cell.getAttribute('col-id')}:${cell.style.width}`).join(' ');
-    };
 
     const priceStyle = (api: GridApi, rowIndex: number) =>
         getGridElement(api)!.querySelector<HTMLElement>(`[row-index="${rowIndex}"] [col-id="price"]`)!.style
@@ -644,16 +561,21 @@ describe('colSpan follows row data updates', () => {
         expect(calls.filter((id) => id === 'r0')).toEqual(['r0']);
     });
 
-    test('a span growing over the edited cell, alone or in a full-row edit, keeps it until editing stops, after focus has moved on', async () => {
-        const editAndGrowSpan = async (editType: 'fullRow' | undefined) => {
-            const api = gridsManager.createGrid(editType ?? 'cellEdit', {
-                columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
+    test('a span growing over the edited cell, alone, in a full-row edit or pinned in print layout, keeps it until editing stops, after focus has moved on', async () => {
+        const editAndGrowSpan = async (editType: 'fullRow' | undefined, pinned: 'left' | null = null) => {
+            const api = gridsManager.createGrid(pinned ? 'printPinned' : (editType ?? 'cellEdit'), {
+                columnDefs: [
+                    { ...priceColumnDefs[0], pinned },
+                    { ...priceColumnDefs[1], pinned, editable: true },
+                    priceColumnDefs[2],
+                ],
                 rowData: [
                     { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
                     { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
                 ],
                 getRowId: (params) => params.data.id,
                 editType,
+                domLayout: pinned ? 'print' : undefined,
                 // rebuilds run synchronously, so the check after the focus move sees the rebuild it causes
                 suppressAnimationFrame: true,
             });
@@ -673,9 +595,14 @@ describe('colSpan follows row data updates', () => {
             return { keptWhileEditing, keptAfterFocusMoved };
         };
 
-        expect({ cell: await editAndGrowSpan(undefined), fullRow: await editAndGrowSpan('fullRow') }).toEqual({
+        expect({
+            cell: await editAndGrowSpan(undefined),
+            fullRow: await editAndGrowSpan('fullRow'),
+            printPinned: await editAndGrowSpan(undefined, 'left'),
+        }).toEqual({
             cell: { keptWhileEditing: true, keptAfterFocusMoved: true },
             fullRow: { keptWhileEditing: true, keptAfterFocusMoved: true },
+            printPinned: { keptWhileEditing: true, keptAfterFocusMoved: true },
         });
     });
 
@@ -789,35 +716,6 @@ describe('colSpan follows row data updates', () => {
 
         await waitFor(() => expect(renderedRow(api, 1)).toBe('symbol:200px price:100px'));
         expect(renderedRow(api, 0)).toBe('symbol:200px price:100px');
-    });
-
-    test('print layout keeps an edited pinned cell a span grows over until editing stops, after focus has moved on', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { ...priceColumnDefs[0], pinned: 'left' },
-                { ...priceColumnDefs[1], pinned: 'left', editable: true },
-                priceColumnDefs[2],
-            ],
-            rowData: [
-                { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
-                { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
-            ],
-            getRowId: (params) => params.data.id,
-            domLayout: 'print',
-        });
-        const editor = () => getGridElement(api)!.querySelector('[row-index="0"] [col-id="symbol"] input');
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
-
-        api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
-        await waitFor(() => expect(editor()).not.toBeNull());
-        api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
-        expect(editor()).not.toBeNull();
-
-        api.setFocusedCell(1, 'price');
-        await waitFor(() => expect(editor()).not.toBeNull());
-        api.stopEditing();
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
     });
 
     test('RTL print layout keeps the lane order and follows the data in the right-pinned lane', async () => {
@@ -1141,29 +1039,6 @@ describe('colSpan follows row data updates', () => {
             uninstallResizeObserver();
         });
 
-        test('a row sheds the height of an auto-height cell a span grows over, and regains it when the span shrinks', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { field: 'price', width: 100, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
-                    { field: 'symbol', width: 100, autoHeight: true, wrapText: true },
-                    { field: 'group', width: 100 },
-                ],
-                rowData: [{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }],
-                getRowId: (params) => params.data.id,
-                rowHeight: ROW_HEIGHT,
-            });
-            const row0 = api.getRowNode('r0')!;
-
-            await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
-
-            row0.setDataValue('price', 1);
-            await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
-            await waitFor(() => expect(row0.rowHeight).toBe(ROW_HEIGHT));
-
-            row0.setDataValue('price', 0);
-            await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
-        });
-
         test('a row a span grows over while not rendered keeps its height until it renders, then sheds the covered cell', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -1191,7 +1066,7 @@ describe('colSpan follows row data updates', () => {
             await waitFor(() => expect(row0.rowHeight).toBe(ROW_HEIGHT));
         });
 
-        test('a focused auto-height cell a span grows over holds the row open until focus moves on', async () => {
+        test('a row sheds the height of an auto-height cell a span grows over and regains it as the span shrinks, but a focused one holds it until focus moves on', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'price', width: 100, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
@@ -1206,6 +1081,12 @@ describe('colSpan follows row data updates', () => {
                 rowHeight: ROW_HEIGHT,
             });
             const row0 = api.getRowNode('r0')!;
+            await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
+
+            row0.setDataValue('price', 1);
+            await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+            await waitFor(() => expect(row0.rowHeight).toBe(ROW_HEIGHT));
+            row0.setDataValue('price', 0);
             await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
 
             api.setFocusedCell(0, 'symbol');

@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
-import type { GridOptions, IServerSideGetRowsRequest } from 'ag-grid-community';
+import type { ColDef, GridOptions, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { PaginationModule, RowAutoHeightModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -155,47 +155,57 @@ describe('SSRM block loading', () => {
         expect(block0RequestsAfter).toBe(block0RequestsBefore + 1);
     });
 
-    test('an auto-height column in a collapsed group turns maxBlocksInCache off, with warning 204', async () => {
+    test('an auto-height column in a collapsed group turns maxBlocksInCache off, with warning 204, and a hidden one leaves it on', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [204] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         const totalRows = 500;
         const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
-        const api = gridsManager.createGrid(
-            null,
-            {
-                columnDefs: [
-                    {
-                        headerName: 'G',
-                        children: [{ field: 'id' }, { field: 'value', autoHeight: true, columnGroupShow: 'open' }],
-                    },
-                ],
-                rowModelType: 'serverSide',
-                cacheBlockSize: 100,
-                maxBlocksInCache: 2,
-                rowBuffer: 0,
-                suppressRowVirtualisation: false,
-                getRowId: (params) => String(params.data.id),
-                serverSideDatasource: {
-                    getRows: (params) => {
-                        const slice = rowData.slice(params.request.startRow, params.request.endRow);
-                        params.success({ rowData: slice, rowCount: totalRows });
+        const scrollToFarBlocks = async (valueColDef: ColDef) => {
+            const api = gridsManager.createGrid(
+                null,
+                {
+                    columnDefs: [{ headerName: 'G', children: [{ field: 'id' }, valueColDef] }],
+                    rowModelType: 'serverSide',
+                    cacheBlockSize: 100,
+                    maxBlocksInCache: 2,
+                    rowBuffer: 0,
+                    suppressRowVirtualisation: false,
+                    getRowId: (params) => String(params.data.id),
+                    serverSideDatasource: {
+                        getRows: (params) => {
+                            const slice = rowData.slice(params.request.startRow, params.request.endRow);
+                            params.success({ rowData: slice, rowCount: totalRows });
+                        },
                     },
                 },
-            },
-            { modules: [RowAutoHeightModule] }
-        );
-        await waitForEvent('firstDataRendered', api);
+                { modules: [RowAutoHeightModule] }
+            );
+            await waitForEvent('firstDataRendered', api);
+            api.ensureIndexVisible(250);
+            await waitForEvent('modelUpdated', api);
+            api.ensureIndexVisible(450);
+            await waitForEvent('modelUpdated', api);
 
-        api.ensureIndexVisible(250);
-        await waitForEvent('modelUpdated', api);
-        api.ensureIndexVisible(450);
-        await waitForEvent('modelUpdated', api);
+            const warnings = consoleWarnSpy.mock.calls.map((call) => String(call[0]));
+            consoleWarnSpy.mockClear();
+            return { farBlockLoaded: !!api.getRowNode('450'), firstBlockKept: !!api.getRowNode('0'), warnings };
+        };
 
-        expect(!!api.getRowNode('0')).toBe(true);
-        expect(consoleWarnSpy.mock.calls.map((call) => String(call[0]))).toEqual([
-            expect.stringContaining('warning #204'),
-        ]);
-        consoleWarnSpy.mockRestore();
+        try {
+            expect({
+                collapsedGroup: await scrollToFarBlocks({ field: 'value', autoHeight: true, columnGroupShow: 'open' }),
+                hidden: await scrollToFarBlocks({ field: 'value', autoHeight: true, hide: true }),
+            }).toEqual({
+                collapsedGroup: {
+                    farBlockLoaded: true,
+                    firstBlockKept: true,
+                    warnings: [expect.stringContaining('warning #204')],
+                },
+                hidden: { farBlockLoaded: true, firstBlockKept: false, warnings: [] },
+            });
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
     });
 
     test('row model shows a single filler before load and leaf rows after', async () => {

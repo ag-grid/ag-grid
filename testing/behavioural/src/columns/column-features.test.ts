@@ -700,9 +700,14 @@ describe('Column Features', () => {
                 );
             };
 
-            const collapsed = warnsAboutAutoHeight(false);
-            const opened = warnsAboutAutoHeight(true);
-            consoleWarnSpy.mockRestore();
+            let collapsed: boolean;
+            let opened: boolean;
+            try {
+                collapsed = warnsAboutAutoHeight(false);
+                opened = warnsAboutAutoHeight(true);
+            } finally {
+                consoleWarnSpy.mockRestore();
+            }
 
             expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
         });

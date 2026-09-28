@@ -175,11 +175,11 @@ describe('PDF export', () => {
         expect({
             pinned: await exportSpan('left'),
             columnKeys: await exportSpan(null, ['a', 'c', 'd']),
-            hidden: (await exportSpan(null, ['h', 'a', 'b', 'c', 'd'])).cells,
+            hidden: await exportSpan(null, ['h', 'a', 'b', 'c', 'd']),
         }).toEqual({
             pinned: { cells: ['a0', 'c0', 'd0'], widths: ['384.94', '192.47', '192.47'] },
             columnKeys: { cells: ['a0', 'c0', 'd0'], widths: ['200', '200', '200'] },
-            hidden: ['h0', 'a0', 'd0'],
+            hidden: { cells: ['h0', 'a0', 'd0'], widths: ['153.98', '461.93', '153.98'] },
         });
     });
 });

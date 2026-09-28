@@ -331,6 +331,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.centerCols = [];
         this.allCols = [];
         ++this.displayedColsVersion;
+        this.autoHeightCols.length = 0;
         this.colSpanActive = false;
         this.rowSpanCols.length = 0;
     }
@@ -389,7 +390,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         this.allCols = all;
         ++this.displayedColsVersion;
-        this.beans.rowAutoHeight?.setAutoHeightActive(this.autoHeightCols.length > 0);
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
@@ -411,14 +411,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             col.displayed = true;
             col.setLeft(left, source);
             all.push(col);
-            const colDef = col.colDef;
-            if (colDef.autoHeight) {
+            if (col.colDef.autoHeight) {
                 autoHeightCols.push(col);
             }
-            if (colDef.colSpan != null) {
+            if (col.colSpan != null) {
                 this.colSpanActive = true;
             }
-            if (colDef.rowSpan != null) {
+            if (col.rowSpan != null) {
                 rowSpanCols.push(col);
             }
             if (!this.flexActive && col.pinned == null) {

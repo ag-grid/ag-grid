@@ -15,8 +15,10 @@ import type { RowCtrl } from './rowCtrl';
 export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeight' as const;
 
-    /** grid columns have colDef.autoHeight set */
-    public active: boolean;
+    /** A displayed column has `colDef.autoHeight`. */
+    public get active(): boolean {
+        return this.beans.visibleCols.autoHeightCols.length !== 0;
+    }
     private wasEverActive = false;
 
     /**
@@ -62,7 +64,8 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     private getRowAutoHeight(row: RowNode, displayedAutoHeightCols: AgColumn[]): number | undefined {
         let rowHeight = _getRowHeightForNode(this.beans, row).height;
 
-        for (const col of displayedAutoHeightCols) {
+        for (let i = 0, len = displayedAutoHeightCols.length; i < len; ++i) {
+            const col = displayedAutoHeightCols[i];
             const cellHeight = getCellAutoHeight(this.beans, col, row);
             if (cellHeight === null) {
                 continue;
@@ -93,7 +96,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     private setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
         rowNode.__autoHeights ??= {};
         const autoHeights = rowNode.__autoHeights;
-        const colId = column.getId();
+        const colId = column.colId;
         const previousCellHeight = autoHeights[colId];
 
         // if the cell comp has been unmounted, delete the auto height
@@ -176,10 +179,6 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             this.setRowAutoHeight(rowNode, undefined, column);
         });
         return true;
-    }
-
-    public setAutoHeightActive(active: boolean): void {
-        this.active = active;
     }
 
     /**

@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
-import type { GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule, RowAutoHeightModule, ScrollApiModule } from 'ag-grid-community';
 
 describe('scroll API', () => {
@@ -38,53 +38,34 @@ describe('scroll API', () => {
             expect(viewport.scrollTop).toBe(top);
         });
 
-        test('with auto-height rows still unmeasured, a scroll to a row follows the row when it moves', async () => {
-            const api = gridsManager.createGrid(
-                'myGrid',
-                {
-                    columnDefs: [{ field: 'a', autoHeight: true }],
-                    rowData: Array.from({ length: 200 }, (_, i) => ({ a: i })),
-                },
-                { modules: [RowAutoHeightModule] }
-            );
-            const viewport = getViewport(api);
-            api.ensureIndexVisible(100, 'top');
-            const top = viewport.scrollTop;
-            expect(top).toBe(api.getDisplayedRowAtIndex(100)!.rowTop);
-            await asyncSetTimeout(0);
+        test('with auto-height rows still unmeasured, with or without a colSpan column, a scroll to a row follows the row when it moves', async () => {
+            const scrollAndMoveRows = async (id: string, columnDefs: ColDef[]) => {
+                const api = gridsManager.createGrid(
+                    id,
+                    { columnDefs, rowData: Array.from({ length: 200 }, (_, i) => ({ a: i, b: i })) },
+                    { modules: [RowAutoHeightModule] }
+                );
+                const viewport = getViewport(api);
+                api.ensureIndexVisible(100, 'top');
+                const top = viewport.scrollTop;
+                expect(top).toBe(api.getDisplayedRowAtIndex(100)!.rowTop);
+                await asyncSetTimeout(0);
 
-            api.setGridOption('rowHeight', 80);
-            await asyncSetTimeout(0);
+                api.setGridOption('rowHeight', 80);
+                await asyncSetTimeout(0);
 
-            const movedTop = api.getDisplayedRowAtIndex(100)!.rowTop!;
-            expect(movedTop).toBeGreaterThan(top);
-            expect(viewport.scrollTop).toBe(movedTop);
-        });
+                const movedTop = api.getDisplayedRowAtIndex(100)!.rowTop!;
+                expect(movedTop).toBeGreaterThan(top);
+                return viewport.scrollTop - movedTop;
+            };
 
-        test('with a colSpan column and auto-height rows still unmeasured, a scroll to a row follows the row when it moves', async () => {
-            const api = gridsManager.createGrid(
-                'myGrid',
-                {
-                    columnDefs: [
-                        { field: 'a', autoHeight: true },
-                        { field: 'b', colSpan: () => 1 },
-                    ],
-                    rowData: Array.from({ length: 200 }, (_, i) => ({ a: i, b: i })),
-                },
-                { modules: [RowAutoHeightModule] }
-            );
-            const viewport = getViewport(api);
-            api.ensureIndexVisible(100, 'top');
-            const top = viewport.scrollTop;
-            expect(top).toBe(api.getDisplayedRowAtIndex(100)!.rowTop);
-            await asyncSetTimeout(0);
-
-            api.setGridOption('rowHeight', 80);
-            await asyncSetTimeout(0);
-
-            const movedTop = api.getDisplayedRowAtIndex(100)!.rowTop!;
-            expect(movedTop).toBeGreaterThan(top);
-            expect(viewport.scrollTop).toBe(movedTop);
+            expect({
+                autoHeight: await scrollAndMoveRows('autoHeight', [{ field: 'a', autoHeight: true }]),
+                withColSpan: await scrollAndMoveRows('withColSpan', [
+                    { field: 'a', autoHeight: true },
+                    { field: 'b', colSpan: () => 1 },
+                ]),
+            }).toEqual({ autoHeight: 0, withColSpan: 0 });
         });
 
         // A covered auto-height column has no cell to measure, so it must not count as unmeasured.
@@ -97,7 +78,7 @@ describe('scroll API', () => {
                     'myGrid',
                     {
                         columnDefs: [
-                            { field: 'a', colSpan: () => 2 },
+                            { field: 'a', colSpan: (params) => (params.node!.rowIndex! % 2 === 1 ? 2 : 1) },
                             { field: 'b', autoHeight: true },
                             { field: 'c', autoHeight: true },
                         ],
@@ -109,6 +90,9 @@ describe('scroll API', () => {
                 api.ensureIndexVisible(103, 'top');
                 await waitFor(() => expect(api.getDisplayedRowAtIndex(103)!.rowHeight).toBe(60));
                 await asyncSetTimeout(0);
+                const hasCellB = (rowIndex: number) =>
+                    !!TestGridsManager.getHTMLElement(api)!.querySelector(`.ag-row[row-index="${rowIndex}"] [col-id="b"]`);
+                expect([hasCellB(103), hasCellB(104)]).toEqual([false, true]);
 
                 api.ensureIndexVisible(103, 'top');
                 const top = viewport.scrollTop;
