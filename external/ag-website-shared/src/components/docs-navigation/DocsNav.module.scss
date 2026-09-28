@@ -3,16 +3,27 @@
 @use '../site-header/breakpoints' as site-header;
 
 @media screen and (min-width: $breakpoint-docs-nav-medium) {
+    // Descendant, not child: a hydrated nav is wrapped in a `display: contents` <astro-island>.
+    :global(.layout-grid:has(#docs-mobile-nav-collapser)) {
+        flex: 1 0 auto;
+    }
+
     :global(#docs-mobile-nav-collapser) {
         --right-margin: #{$spacing-size-16};
 
         height: unset !important;
         width: calc(var(--layout-width-3-12));
         overflow: unset !important;
+
+        // Keeps the nav out of the flex row's cross-size measurement, so the row is sized by the
+        // content column. Depends on the explicit width above: `contain: size` zeroes both axes.
+        contain: size;
     }
 
     :global(#docs-mobile-nav-collapser > div) {
-        display: unset !important;
+        display: flex !important;
+        flex-direction: column;
+        height: 100%;
     }
 }
 
@@ -46,10 +57,14 @@
     overflow-y: auto;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        height: 100vh;
+        // Fill the column, capped at the sticky nav's slot in the viewport. `height` here instead
+        // of `max-height` forces every page to a viewport tall, stranding space above the footer.
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: 100vh;
 
         @media screen and (min-width: site-header.$sticky-at) {
-            height: calc(100vh - var(--layout-site-header-height));
+            max-height: calc(100vh - var(--layout-site-header-height));
         }
     }
 
