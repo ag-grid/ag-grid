@@ -5,7 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _RowFocusResolver, _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
+import { RowFocusResolver, _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _getCellPositionForEvent } from '../gridBodyComp/mouseEventUtils';
@@ -475,7 +475,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         let nextPosition: CellPosition | null | undefined = previousPosition;
         const beans = this.beans;
         const { cellNavigation, gos, focusSvc, rowRenderer } = beans;
-        const resolver = new _RowFocusResolver(beans);
+        const resolver = new RowFocusResolver(beans);
 
         while (true) {
             if (previousPosition !== nextPosition) {
@@ -580,7 +580,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
     }
 
-    private isCellEditable(cell: CellPosition, resolver: _RowFocusResolver): boolean {
+    private isCellEditable(cell: CellPosition, resolver: RowFocusResolver): boolean {
         const rowNode = resolver.getRowNode(cell);
         return !!rowNode && resolver.getFocusColumn(cell).isCellEditable(rowNode);
     }
@@ -700,7 +700,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
         const start = { ...cell, column };
         // hiding, moving or sorting can leave focus on a cell that no longer covers it
-        return new _RowFocusResolver(this.beans).getFocusColumn(start) === cell.column ? start : cell;
+        return new RowFocusResolver(this.beans).getFocusColumn(start) === cell.column ? start : cell;
     }
 
     private setCurrentColumnWithoutSpan(column: Column): void {

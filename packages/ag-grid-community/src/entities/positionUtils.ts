@@ -140,7 +140,7 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
  * Judges cells row by row, so a walk runs a row's `isFullWidthRow` and colSpan callbacks once however many of its
  * cells it judges. Holds only the row it is on: one per walk, dropped with it, so nothing carries into the next.
  */
-export class _RowFocusResolver {
+export class RowFocusResolver {
     private rowIndex = -1;
     private rowPinned: RowPinnedType = null;
     private rowNode: RowNode | undefined = undefined;

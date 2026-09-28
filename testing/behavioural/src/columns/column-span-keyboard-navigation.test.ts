@@ -704,6 +704,29 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
+    test('Tab from the header onto a column that is not navigable steps on, unless navigateToNextCell returns null to stay', () => {
+        const tabFromLastHeader = (navigateToNextCell?: () => null) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a', suppressNavigable: true }, { field: 'b', colSpan: () => 2 }, { field: 'c' }],
+                rowData: [{ a: 'a0', b: 'b0', c: 'c0' }],
+                navigateToNextCell,
+            });
+            api.setFocusedHeader('c');
+            dispatchKeyDown(KeyCode.TAB);
+            const active = document.activeElement;
+            const focused = active?.classList.contains('ag-header-cell')
+                ? `header ${active.getAttribute('col-id')}`
+                : `cell ${getFocusedRowIndex(api)} ${getFocusedColId(api)}`;
+            gridsManager.reset();
+            return focused;
+        };
+
+        expect({ default: tabFromLastHeader(), vetoed: tabFromLastHeader(() => null) }).toEqual({
+            default: 'cell 0 b',
+            vetoed: 'header c',
+        });
+    });
+
     test('a spanning cell is judged on its own column, and a covered column that is not navigable never traps the next move', () => {
         const press = (notNavigable: 'a' | 'b', start: [number, string], keys: string[]) => {
             // on row 1 'a' spans over 'b'; one of the two is never navigable

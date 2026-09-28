@@ -7,7 +7,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
-import { _RowFocusResolver, _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
+import { RowFocusResolver, _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
@@ -629,7 +629,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const position: CellPosition = { rowIndex: nextRow.rowIndex, rowPinned: nextRow.rowPinned, column };
-        const resolver = new _RowFocusResolver(this.beans);
+        const resolver = new RowFocusResolver(this.beans);
         const target =
             resolver.isFullWidth(position) || !resolver.getFocusColumn(position).isSuppressNavigable(rowNode)
                 ? position
@@ -703,11 +703,13 @@ export class FocusService extends BeanStub implements NamedBean {
 
             const isTab = !event || event.key === KeyCode.TAB;
             // Tab enters a full-width row whatever its column, as its default target says; Arrow Down judges it
-            const resolver = new _RowFocusResolver(this.beans);
+            const resolver = new RowFocusResolver(this.beans);
             const entersRow = isTab && resolver.isFullWidth(position);
             if (!entersRow && resolver.getFocusColumn(position).isSuppressNavigable(rowNode)) {
                 const tabKey = this.gos.get('enableRtl') !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
-                if (this.navigation?.navigateToNextCell(null, isTab ? tabKey : event.key, position, true) || !isTab) {
+                const navigated = this.navigation?.navigateToNextCell(null, isTab ? tabKey : event.key, position, true);
+                // a navigateToNextCell override has the last word: its null means stay
+                if (navigated || !isTab || this.gos.getCallback('navigateToNextCell')) {
                     return true;
                 }
                 // nothing on the row can take focus: Tab walks on in tab order to a cell or full-width row that can
@@ -742,7 +744,7 @@ export class FocusService extends BeanStub implements NamedBean {
         if (this.navigation?.focusCellOrRow(position, scroll, backwards)) {
             return true;
         }
-        const cell = { ...position, column: new _RowFocusResolver(this.beans).getFocusColumn(position) };
+        const cell = { ...position, column: new RowFocusResolver(this.beans).getFocusColumn(position) };
         this.focusPosition(cell);
         return this.isCellFocused(cell);
     }
