@@ -132,6 +132,25 @@ function getTagsData({
     return { formattedDefaultValue, isInitial, modules };
 }
 
+export interface PropertyViewModelParams {
+    name: string;
+    framework: Framework;
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    type: PropertyType | string;
+    propertyType: string;
+    config: Config;
+    allModules?: GridModule[];
+    detailsKey?: string;
+    detailsCode?: string;
+}
+
+/**
+ * Turns a resolved property into whatever the consumer of a reference model needs. The page
+ * uses getPropertyViewModel; the markdown twin needs the raw entries instead.
+ */
+export type PropertyResolver<P> = (params: PropertyViewModelParams) => P;
+
 /**
  * Resolve everything a property row renders, so the island receives display strings rather than
  * the generated TypeScript metadata they are derived from (SE-115).
@@ -147,18 +166,7 @@ export function getPropertyViewModel({
     allModules,
     detailsKey,
     detailsCode,
-}: {
-    name: string;
-    framework: Framework;
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    type: PropertyType | string;
-    propertyType: string;
-    config: Config;
-    allModules?: GridModule[];
-    detailsKey?: string;
-    detailsCode?: string;
-}): PropertyViewModel {
+}: PropertyViewModelParams): PropertyViewModel {
     const { isObject, description } = getDescription({ definition, gridOpProp, framework });
     const { formattedDefaultValue, isInitial, modules } = getTagsData({
         definition,

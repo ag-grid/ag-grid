@@ -84,13 +84,7 @@ describe('buildApiReferenceSection', () => {
                         gridOpProp: {
                             meta: {
                                 comment: 'Used to programmatically create charts from a range.',
-                                tags: [
-                                    {
-                                        name: 'agModule',
-                                        comment: '`IntegratedChartsModule`',
-                                        modules: [{ name: 'IntegratedChartsModule', isEnterprise: true }],
-                                    },
-                                ],
+                                tags: [{ name: 'agModule', comment: '`IntegratedChartsModule`' }],
                             },
                         },
                     },
@@ -237,14 +231,7 @@ describe('buildApiReferenceSection', () => {
                         propertyType: 'boolean',
                         gridOpProp: {
                             meta: {
-                                tags: [
-                                    { name: 'initial' },
-                                    {
-                                        name: 'agModule',
-                                        comment: '`IntegratedChartsModule`',
-                                        modules: [{ name: 'IntegratedChartsModule', isEnterprise: true }],
-                                    },
-                                ],
+                                tags: [{ name: 'initial' }, { name: 'agModule', comment: '`IntegratedChartsModule`' }],
                             },
                         },
                     },

@@ -2,6 +2,7 @@ import type { Framework } from '@ag-grid-types';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { AG_MODULE_TAG_NAME } from '@components/reference-documentation/constants';
 import { getTypeUrl } from '@components/reference-documentation/utils/documentation-helpers';
+import type { PropertyResolver } from '@components/reference-documentation/utils/getPropertyViewModel';
 import { formatJson, getInterfaceName } from '@components/reference-documentation/utils/interface-helpers';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
@@ -18,6 +19,24 @@ export interface LinkContext {
     framework: Framework;
     siteRoot?: string;
 }
+
+/**
+ * The raw entries a reference model resolves each property from. The page's view model
+ * pre-renders these into HTML, which cannot be turned back into markdown, so the markdown
+ * twin asks the model for them instead.
+ */
+export interface RawPropertyEntry {
+    definition: Record<string, any>;
+    gridOpProp?: Record<string, any>;
+    propertyType: string;
+}
+
+/** Resolver the markdown twin hands to the reference models in place of getPropertyViewModel. */
+export const toRawPropertyEntry: PropertyResolver<RawPropertyEntry> = ({ definition, gridOpProp, propertyType }) => ({
+    definition,
+    gridOpProp,
+    propertyType,
+});
 
 interface PropertyRow {
     name: string;
@@ -199,19 +218,16 @@ function buildInitialLink(tags: Record<string, any>[], config: Record<string, an
 
 /**
  * The `@agModule` tag as a link to the module registry, matching the PropertyModules
- * badges on the page. `modules` is resolved by getApiDocumentationModel; the interface
- * path has no such enrichment, so fall back to the raw tag comment.
+ * badges on the page. The tag comment lists the modules as `` `A` / `B` ``.
  */
 function buildModuleLinks(tags: Record<string, any>[], links: LinkContext): string {
     const tag = tags.find((entry) => entry.name === AG_MODULE_TAG_NAME);
     if (!tag) {
         return '';
     }
-    const names: string[] = tag.modules
-        ? tag.modules.map((module: { name: string }) => module.name)
-        : String(tag.comment ?? '')
-              .split('/')
-              .map((name) => name.trim().replace(/`/g, ''));
+    const names = String(tag.comment ?? '')
+        .split('/')
+        .map((name) => name.trim().replace(/`/g, ''));
     const present = names.filter(Boolean);
     if (present.length === 0) {
         return '';
