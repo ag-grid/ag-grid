@@ -41,27 +41,8 @@ export function _getColsForRow(
 
     for (let i = 0; i < end; ++i) {
         const col = displayedColumns[i];
-        // a walk only lands where a cell starts, so a stored 0 always means not read yet
-        let colSpan = colSpans === null ? 0 : colSpans[col.allColsIndex];
-        if (colSpan === 0) {
-            colSpan = _getDrawnColSpan(displayedColumns, i, rowNode);
-            if (colSpans !== null) {
-                colSpans[col.allColsIndex] = colSpan;
-            }
-        }
-
-        let filterPasses: boolean;
-        if (filterCallback) {
-            filterPasses = filterCallback(col);
-            for (let j = 1; !filterPasses && j < colSpan; ++j) {
-                if (filterCallback(displayedColumns[i + j])) {
-                    filterPasses = true;
-                }
-            }
-        } else {
-            filterPasses = true;
-        }
-
+        const colSpan = _getRowColSpan(rowNode, displayedColumns, i, colSpans);
+        const filterPasses = filterCallback === null || anyColPasses(displayedColumns, i, colSpan, filterCallback);
         i += colSpan - 1;
 
         if (filterPasses) {
@@ -76,3 +57,33 @@ export function _getColsForRow(
 
     return result;
 }
+
+/** The drawn colSpan of the cell at `index`, read once per row when `colSpans` keeps the row's colSpans. */
+export function _getRowColSpan(rowNode: IRowNode, cols: AgColumn[], index: number, colSpans: number[] | null): number {
+    if (colSpans === null) {
+        return _getDrawnColSpan(cols, index, rowNode);
+    }
+    const allColsIndex = cols[index].allColsIndex;
+    // a walk only lands where a cell starts, so a stored 0 always means not read yet
+    let colSpan = colSpans[allColsIndex];
+    if (colSpan === 0) {
+        colSpan = _getDrawnColSpan(cols, index, rowNode);
+        colSpans[allColsIndex] = colSpan;
+    }
+    return colSpan;
+}
+
+/** Whether any of the `count` columns from `start` passes `filter`. */
+const anyColPasses = (
+    cols: AgColumn[],
+    start: number,
+    count: number,
+    filter: (column: AgColumn) => boolean
+): boolean => {
+    for (let i = start, end = start + count; i < end; ++i) {
+        if (filter(cols[i])) {
+            return true;
+        }
+    }
+    return false;
+};

@@ -606,6 +606,38 @@ describe('colSpan follows row data updates', () => {
         });
     });
 
+    test('cells a span grows over in a full-row edit each stop short of the next cell, kept or not', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                priceColumnDefs[0],
+                {
+                    ...priceColumnDefs[1],
+                    editable: true,
+                    colSpan: (params) => (params.data && params.data.price > 0 ? 2 : 1),
+                },
+                { ...priceColumnDefs[2], editable: true },
+                { colId: 'tail', width: 100 },
+            ],
+            rowData: [
+                { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
+                { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
+            ],
+            getRowId: (params) => params.data.id,
+            editType: 'fullRow',
+            suppressAnimationFrame: true,
+        });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px tail:100px'));
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(2));
+        api.applyTransaction({ update: [{ id: 'r0', price: 2, symbol: 'AAA', group: 'A' }] });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:300px symbol:100px group:100px tail:100px'));
+
+        api.setFocusedCell(1, 'price');
+        api.stopEditing();
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:300px tail:100px'));
+    });
+
     test('a span growing over a cell with a pending batch edit keeps it until its value is set back or the batch commits', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
@@ -1037,6 +1069,33 @@ describe('colSpan follows row data updates', () => {
 
         afterEach(() => {
             uninstallResizeObserver();
+        });
+
+        test('a re-measure asks getRowHeight only for the rows whose auto-height cells are all measured', async () => {
+            let getRowHeightCalls = 0;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'price', width: 100, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
+                    { field: 'symbol', width: 100, autoHeight: true, wrapText: true },
+                    { field: 'group', width: 100 },
+                ],
+                rowData: Array.from({ length: 200 }, (_, i) => ({ id: `r${i}`, price: 0, symbol: 'AAA', group: 'A' })),
+                getRowId: (params) => params.data.id,
+                getRowHeight: () => {
+                    ++getRowHeightCalls;
+                    return ROW_HEIGHT;
+                },
+                rowBuffer: 0,
+                suppressRowVirtualisation: false,
+            });
+            const row0 = api.getRowNode('r0')!;
+            await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
+            await asyncSetTimeout(0);
+
+            getRowHeightCalls = 0;
+            row0.setDataValue('price', 1);
+            await waitFor(() => expect(row0.rowHeight).toBe(ROW_HEIGHT));
+            expect(getRowHeightCalls).toBeLessThan(100);
         });
 
         test('a row a span grows over while not rendered keeps its height until it renders, then sheds the covered cell', async () => {

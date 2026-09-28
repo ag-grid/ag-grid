@@ -62,29 +62,27 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     }
 
     private getRowAutoHeight(row: RowNode, displayedAutoHeightCols: AgColumn[]): number | undefined {
-        let rowHeight = _getRowHeightForNode(this.beans, row).height;
-
+        const beans = this.beans;
+        let cellsHeight = 0;
         for (let i = 0, len = displayedAutoHeightCols.length; i < len; ++i) {
             const col = displayedAutoHeightCols[i];
-            const cellHeight = getCellAutoHeight(this.beans, col, row);
+            const cellHeight = getCellAutoHeight(beans, col, row);
             if (cellHeight === null) {
                 continue;
             }
 
             if (cellHeight === undefined) {
-                if (
-                    this.beans.visibleCols.colSpanActive &&
-                    isColCovered(this.beans.rowRenderer.getRowCtrlByNode(row), col)
-                ) {
+                if (beans.visibleCols.colSpanActive && isColCovered(beans.rowRenderer.getRowCtrlByNode(row), col)) {
                     continue;
                 }
                 return;
             }
 
-            rowHeight = Math.max(cellHeight, rowHeight);
+            cellsHeight = Math.max(cellHeight, cellsHeight);
         }
 
-        return rowHeight;
+        // last, so a row still to be measured (most of them) never asks `getRowHeight`
+        return Math.max(cellsHeight, _getRowHeightForNode(beans, row).height);
     }
 
     /**
@@ -191,35 +189,39 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         }
 
         const beans = this.beans;
-        const { rowRenderer, visibleCols } = beans;
-        const { autoHeightCols, colSpanActive } = visibleCols;
-        const rowCtrls = rowRenderer.getAllRowCtrls();
-        for (let r = 0, rowCount = rowCtrls.length; r < rowCount; ++r) {
-            const rowCtrl = rowCtrls[r];
-            if (rowCtrl.spannedRow) {
-                continue;
-            }
-            const rowNode = rowCtrl.rowNode;
-            const rowHeight = rowNode.rowHeight!;
-            for (let c = 0, colCount = autoHeightCols.length; c < colCount; ++c) {
-                const col = autoHeightCols[c];
-                if (col.pinnedLane !== 1) {
-                    continue;
-                }
-                const cellHeight = getCellAutoHeight(beans, col, rowNode);
-                if (cellHeight === undefined) {
-                    if (!colSpanActive || !isColCovered(rowCtrl, col)) {
-                        return false;
-                    }
-                } else if (cellHeight !== null && rowHeight < cellHeight) {
-                    return false;
-                }
+        const rowCtrls = beans.rowRenderer.getAllRowCtrls();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const rowCtrl = rowCtrls[i];
+            if (!rowCtrl.spannedRow && !isRowMeasured(beans, rowCtrl)) {
+                return false;
             }
         }
 
         return true;
     }
 }
+
+/** Whether `rowCtrl`'s row is at least as tall as each of its centre auto-height cells. */
+const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
+    const { autoHeightCols, colSpanActive } = beans.visibleCols;
+    const rowNode = rowCtrl.rowNode;
+    const rowHeight = rowNode.rowHeight!;
+    for (let i = 0, len = autoHeightCols.length; i < len; ++i) {
+        const col = autoHeightCols[i];
+        if (col.pinnedLane !== 1) {
+            continue;
+        }
+        const cellHeight = getCellAutoHeight(beans, col, rowNode);
+        if (cellHeight === undefined) {
+            if (!colSpanActive || !isColCovered(rowCtrl, col)) {
+                return false;
+            }
+        } else if (cellHeight !== null && rowHeight < cellHeight) {
+            return false;
+        }
+    }
+    return true;
+};
 
 /** Whether another cell's colSpan covers `col` in the rendered row, so `col` has no cell of its own to measure. */
 const isColCovered = (rowCtrl: RowCtrl | undefined, col: AgColumn): boolean => {

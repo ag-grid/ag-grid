@@ -1,6 +1,6 @@
 import { _areEqual, _batchCall } from 'ag-stack';
 
-import { _getColsForRow, _getDrawnColSpan } from '../../columns/columnSpanUtils';
+import { _getColsForRow, _getRowColSpan } from '../../columns/columnSpanUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
@@ -341,6 +341,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             _setCellColSpan(beans, cellCtrl, colSpans === null ? 1 : colSpans[col.allColsIndex]);
         }
 
+        let keptCells: CellCtrl[] | null = null;
         for (const prevCellCtrl of prev.list) {
             const colInstanceId = prevCellCtrl.column.instanceId;
             const cellInResult = res.map[colInstanceId] != null;
@@ -352,7 +353,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, lane);
 
             if (keepCell) {
-                this.addKeptCell(res, colInstanceId, prevCellCtrl, colSpans);
+                this.addKeptCell(res, colInstanceId, prevCellCtrl);
+                (keptCells ??= []).push(prevCellCtrl);
             } else {
                 prevCellCtrl.destroy();
             }
@@ -369,20 +371,23 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             if (!focusedCellCtrl && focusedCol.displayed) {
                 const cellCtrl = this.createFocusedCellCtrl();
                 if (cellCtrl) {
-                    this.addKeptCell(res, focusedColInstanceId, cellCtrl, colSpans);
+                    this.addKeptCell(res, focusedColInstanceId, cellCtrl);
+                    (keptCells ??= []).push(cellCtrl);
                 }
+            }
+        }
+
+        if (keptCells !== null) {
+            // sized once all are placed, so each stops short of the next cell, kept or not
+            for (let i = 0, len = keptCells.length; i < len; ++i) {
+                this.setKeptCellColSpan(res.list, keptCells[i], colSpans);
             }
         }
 
         return _areEqual(prev.list, res.list) ? prev : res;
     }
 
-    private addKeptCell(
-        res: CellCtrlListAndMap,
-        colInstanceId: ColumnInstanceId,
-        cellCtrl: CellCtrl,
-        colSpans: number[] | null
-    ): void {
+    private addKeptCell(res: CellCtrlListAndMap, colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl): void {
         this.hasKeptCells = true;
         const list = res.list;
         // `allColsIndex` is display order in every layout, and the list is already in that order
@@ -399,18 +404,14 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         }
         list.splice(low, 0, cellCtrl);
         res.map[colInstanceId] = cellCtrl;
-        if (colSpans === null) {
-            _setCellColSpan(this.beans, cellCtrl, 1);
-            return;
-        }
+    }
+
+    private setKeptCellColSpan(list: CellCtrl[], cellCtrl: CellCtrl, colSpans: number[] | null): void {
         // a kept cell is outside the lane walk; its lane is a slice of `allCols`, so the drawn colSpan is the same
-        let colSpan = colSpans[colIndex];
-        if (colSpan === 0) {
-            colSpan = _getDrawnColSpan(this.beans.visibleCols.allCols, colIndex, this.rowCtrl.rowNode);
-            colSpans[colIndex] = colSpan;
-        }
+        const colIndex = cellCtrl.column.allColsIndex;
+        let colSpan = _getRowColSpan(this.rowCtrl.rowNode, this.beans.visibleCols.allCols, colIndex, colSpans);
         // a cell a span covers must not also cover the cell after that span
-        const next = list[low + 1];
+        const next = list[list.indexOf(cellCtrl) + 1];
         if (next !== undefined) {
             colSpan = Math.min(colSpan, next.column.allColsIndex - colIndex);
         }
