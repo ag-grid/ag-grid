@@ -14,6 +14,7 @@ import { OptionsFactory } from '../../provided/optionsFactory';
 import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
 import { getNumberOfInputs } from '../../provided/simpleFilterUtils';
 import type { FloatingFilterDisplayParams, IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
 
 export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams<ISimpleFilter>>
     extends Component
@@ -177,7 +178,6 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     protected getAriaLabel(column: AgColumn): string {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header', true);
-        return `${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`;
+        return _getFloatingFilterAriaLabel(this.beans, column, this.getLocaleTextFunc());
     }
 }

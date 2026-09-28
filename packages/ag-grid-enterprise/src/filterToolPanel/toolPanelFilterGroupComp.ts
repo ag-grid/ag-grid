@@ -14,6 +14,7 @@ import {
     _createIconNoSpan,
     _getHeaderTooltipComponentDefinition,
     _getShouldDisplayTooltip,
+    _isHeaderNameChangeForGroup,
     _resolveHeaderTooltipValue,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
@@ -225,10 +226,10 @@ export class ToolPanelFilterGroupComp extends Component {
             return;
         }
 
-        // Group renames only fire the grid-level event; a null columnGroup means a bulk change.
+        const groupId = columnGroup.getGroupId();
         this.addManagedEventListeners({
-            columnHeaderNameChanged: ({ column, columnGroup: renamedGroup }) => {
-                if (!column && (!renamedGroup || renamedGroup.getGroupId() === columnGroup.getGroupId())) {
+            columnHeaderNameChanged: (event) => {
+                if (_isHeaderNameChangeForGroup(event, groupId)) {
                     onRenamed();
                 }
             },

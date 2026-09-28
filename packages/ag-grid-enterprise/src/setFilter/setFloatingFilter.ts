@@ -9,7 +9,7 @@ import type {
     IFloatingFilterParams,
     SetFilterModel,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, Component } from 'ag-grid-community';
+import { AgInputTextFieldSelector, Component, _getFloatingFilterAriaLabel } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
 
@@ -53,9 +53,9 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private refreshAriaLabel(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true);
-        const translate = this.getLocaleTextFunc();
-        this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
+        this.eFloatingFilterText.setInputAriaLabel(
+            _getFloatingFilterAriaLabel(this.beans, this.params.column as AgColumn, this.getLocaleTextFunc())
+        );
     }
 
     public refresh(params: IFloatingFilterParams): void {

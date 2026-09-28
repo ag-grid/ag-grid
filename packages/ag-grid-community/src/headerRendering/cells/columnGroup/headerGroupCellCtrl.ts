@@ -2,6 +2,7 @@ import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
+import { _isHeaderNameChangeForGroup } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -351,12 +352,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             expandedChanged: listener,
             expandableChanged: listener,
         });
-        // Group header names are keyed by groupId in a shared store, so refresh on the grid-level event
-        // rather than a per-instance one. A missing groupId means a bulk change, so refresh unconditionally.
         const groupId = providedColGroup.groupId;
         compBean.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
-                if (!event.columnGroup || event.columnGroup.getGroupId() === groupId) {
+                if (_isHeaderNameChangeForGroup(event, groupId)) {
                     this.refreshDisplayName();
                 }
             },

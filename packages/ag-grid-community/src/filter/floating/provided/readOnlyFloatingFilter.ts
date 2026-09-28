@@ -12,6 +12,7 @@ import type {
     IFloatingFilterParams,
     IFloatingFilterParent,
 } from '../floatingFilter';
+import { _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
 
 const ReadOnlyFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -56,9 +57,8 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     }
 
     private refreshAriaLabel(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true);
         this.eFloatingFilterText.setInputAriaLabel(
-            `${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`
+            _getFloatingFilterAriaLabel(this.beans, this.params.column as AgColumn, this.getLocaleTextFunc())
         );
     }
 
