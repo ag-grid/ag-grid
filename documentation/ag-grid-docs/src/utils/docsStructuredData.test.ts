@@ -1,6 +1,6 @@
 import type { JsonLdObject } from '@ag-website-shared/utils/structuredData';
 
-import { buildDocsPageStructuredData, getDocsPageUrl } from './docsStructuredData';
+import { buildDocsPageStructuredData, getDocsPageUrl, getExampleSourceCodeProperties } from './docsStructuredData';
 
 const CANONICAL_URL_BASE = 'https://www.ag-grid.com';
 
@@ -152,5 +152,18 @@ describe('getDocsPageUrl', () => {
         expect(
             getDocsPageUrl({ canonicalUrlBase: CANONICAL_URL_BASE, framework: 'react', pageName: 'filtering' })
         ).toBe(`${CANONICAL_URL_BASE}/react-data-grid/filtering/`);
+    });
+});
+
+describe('getExampleSourceCodeProperties', () => {
+    test.each([
+        ['typescript', 'TypeScript', 'JavaScript'],
+        ['vanilla', 'JavaScript', 'JavaScript'],
+        ['reactFunctionalTs', 'TypeScript', 'React'],
+        ['reactFunctional', 'JavaScript', 'React'],
+        ['angular', 'TypeScript', 'Angular'],
+        ['vue3', 'TypeScript', 'Vue'],
+    ] as const)('%s source is %s on %s', (internalFramework, programmingLanguage, runtimePlatform) => {
+        expect(getExampleSourceCodeProperties(internalFramework)).toEqual({ programmingLanguage, runtimePlatform });
     });
 });
