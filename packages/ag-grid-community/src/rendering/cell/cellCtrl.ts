@@ -50,6 +50,7 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import type { DndSourceComp } from '../dndSourceComp';
 import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
+import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
@@ -118,7 +119,10 @@ export class CellCtrl extends BeanStub {
 
     /** The columns this cell covers, kept by `cellPositionFeature`; null until it first spans past its own. */
     public colsSpanning: AgColumn[] | null = null;
-    public rowSpan = 1;
+    /** The `displayedColsVersion` `colsSpanning` was taken at. */
+    public colsSpanningVersion = -1;
+    /** The rows the legacy `colDef.rowSpan` spans; a `spanRows` cell has a `cellSpan` instead. */
+    public legacyRowSpan = 1;
 
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
@@ -159,7 +163,9 @@ export class CellCtrl extends BeanStub {
         public readonly column: AgColumn,
         public readonly rowNode: RowNode,
         beans: BeanCollection,
-        public readonly rowCtrl: RowCtrl
+        public readonly rowCtrl: RowCtrl,
+        /** The `colDef.spanRows` span this cell draws, with `enableCellSpan`; such a cell sizes itself. */
+        public readonly cellSpan: CellSpan | null
     ) {
         super();
         this.beans = beans;
@@ -174,10 +180,9 @@ export class CellCtrl extends BeanStub {
         if (!this.isClientSideLoadingCell()) {
             this.updateAndFormatValue(false);
         }
-        // read at construction: a data change can re-read and compare it before the cell mounts. A row-spanned
-        // cell syncs its own height; see SpannedCellCtrl.isCellSpanning for why not getCellSpan()
-        if (!this.isCellSpanning()) {
-            this.rowSpan = column.getRowSpan(rowNode);
+        // read before mount so a data change can compare against it
+        if (cellSpan === null) {
+            this.legacyRowSpan = column.getRowSpan(rowNode);
         }
     }
 
@@ -201,10 +206,6 @@ export class CellCtrl extends BeanStub {
         }
 
         this.notesFeature = this.beans.notesSvc?.createNotesFeature(this);
-    }
-
-    public isCellSpanning(): boolean {
-        return false;
     }
 
     private removeFeatures(): void {

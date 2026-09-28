@@ -1095,7 +1095,7 @@ describe('Column Features', () => {
             `);
         });
 
-        test('colSpan and rowSpan callbacks clamped min 1; default 1 when no callback', async () => {
+        test('colSpan and rowSpan callbacks clamped min 1 and rounded down; default 1 when no callback', async () => {
             // rowSpan without suppressRowTransform legitimately warns (#319); this test only checks
             // callback clamping, not row-span rendering. Suppress that id and silence the console noise.
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
@@ -1103,17 +1103,19 @@ describe('Column Features', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a' },
-                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2 },
+                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2.5 },
                     { colId: 'c', colSpan: () => 0, rowSpan: () => NaN },
+                    { colId: 'd', rowSpan: () => 1.5 },
                 ],
-                rowData: [{ a: 1, b: 2, c: 3 }],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
             });
             await new GridColumns(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
                 .checkColumns(`
                     CENTER
                     ├── a width:200
                     ├── b width:200
-                    └── c width:200
+                    ├── c width:200
+                    └── d width:200
                 `);
             await new GridRows(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
                 .check(`
@@ -1130,6 +1132,7 @@ describe('Column Features', () => {
             // Clamped from 0 and NaN → 1
             expect(api.getColumn('c')!.getColSpan(node)).toBe(1);
             expect(api.getColumn('c')!.getRowSpan(node)).toBe(1);
+            expect(api.getColumn('d')!.getRowSpan(node)).toBe(1);
             await new GridRows(
                 api,
                 `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback final state`
@@ -1137,21 +1140,6 @@ describe('Column Features', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0
             `);
-        });
-
-        test('a rowSpan callback returning a fraction resolves to whole rows, rounded down', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                suppressRowTransform: true,
-                columnDefs: [
-                    { colId: 'a', rowSpan: () => 2.5 },
-                    { colId: 'b', rowSpan: () => 1.5 },
-                ],
-                rowData: [{ a: 1, b: 2 }],
-            });
-
-            const node = api.getDisplayedRowAtIndex(0)!;
-
-            expect(['a', 'b'].map((colId) => api.getColumn(colId)!.getRowSpan(node))).toEqual([2, 1]);
         });
 
         test('user resize clears flex; event-listener round-trip on widthChanged', async () => {

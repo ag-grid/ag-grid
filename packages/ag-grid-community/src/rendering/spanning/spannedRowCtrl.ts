@@ -50,7 +50,7 @@ export class SpannedRowCtrl extends RowCtrl {
             return false;
         }
 
-        return (cell as SpannedCellCtrl).getCellSpan() === cellSpan;
+        return cell.cellSpan === cellSpan;
     }
 
     /**

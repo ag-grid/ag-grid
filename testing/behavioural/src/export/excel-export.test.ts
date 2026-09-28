@@ -48,7 +48,7 @@ describe('Excel export', () => {
         });
     });
 
-    test('a span over a column left out of the export, or from a hidden column, merges no exported column', async () => {
+    test('a span over a column left out of the export merges nothing, and an exported hidden column spans only itself', async () => {
         const api = gridsManager.createGrid('excel-col-span-column-keys', {
             columnDefs: [
                 { field: 'h', hide: true, colSpan: () => 2 },

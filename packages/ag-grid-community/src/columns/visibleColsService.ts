@@ -7,11 +7,9 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
-import type { IRowNode } from '../interfaces/iRowNode';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { _getColsForRow } from './columnSpanUtils';
 import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
@@ -45,9 +43,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** `allCols` with `colDef.autoHeight`. Reused across refreshes to stay warm. */
     public readonly autoHeightCols: AgColumn[] = [];
 
-    /** `allCols` with `colDef.colSpan`, the only cells that can span; reused across refreshes. */
-    private readonly colSpanCols: AgColumn[] = [];
-
     /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
     public colSpanActive = false;
 
@@ -66,6 +61,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** Bumped once per pass that restamps the column lefts, so anything derived from where the columns
      *  are can tell whether it is looking at the same layout without re-deriving it. */
     public layoutVersion = 0;
+
+    /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
+    public displayedColsVersion = 0;
 
     /** Prev refresh's pinned-edge cols — drive an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
     private prevLastLeftPinned: AgColumn | null = null;
@@ -332,7 +330,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightCols = [];
         this.centerCols = [];
         this.allCols = [];
-        this.colSpanCols.length = 0;
+        ++this.displayedColsVersion;
         this.colSpanActive = false;
         this.rowSpanCols.length = 0;
     }
@@ -369,7 +367,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
-        this.colSpanCols.length = 0;
+        this.colSpanActive = false;
         this.rowSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
         this.flexActive = false;
@@ -390,7 +388,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
 
         this.allCols = all;
-        this.colSpanActive = this.colSpanCols.length > 0;
+        ++this.displayedColsVersion;
         this.beans.rowAutoHeight?.setAutoHeightActive(this.autoHeightCols.length > 0);
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
@@ -403,7 +401,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         hidePaddedHeaderRows: boolean,
         source: ColumnEventType
     ): number {
-        const { autoHeightCols, colSpanCols, rowSpanCols } = this;
+        const { autoHeightCols, rowSpanCols } = this;
         let left = 0;
         // Leaves under one group are contiguous; skip the parent-chain walk for same-parent runs.
         let lastParent: AgColumnGroup | null = null;
@@ -418,7 +416,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 autoHeightCols.push(col);
             }
             if (colDef.colSpan != null) {
-                colSpanCols.push(col);
+                this.colSpanActive = true;
             }
             if (colDef.rowSpan != null) {
                 rowSpanCols.push(col);
@@ -442,19 +440,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             left += col.actualWidth;
         }
         return left;
-    }
-
-    public getLeftColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? _getColsForRow(rowNode, this.leftCols, spans) : this.leftCols;
-    }
-
-    public getRightColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? _getColsForRow(rowNode, this.rightCols, spans) : this.rightCols;
-    }
-
-    /** The columns starting a cell in `rowNode`, every lane in one list, as print layout draws them. */
-    public getAllColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? _getColsForRow(rowNode, this.allCols, spans) : this.allCols;
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {

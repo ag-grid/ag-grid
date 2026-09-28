@@ -145,16 +145,17 @@ describe('PDF export', () => {
         expect(compactPdf).toMatch(/236 -?\d+(?:\.\d+)? 200 40 re S/);
     });
 
-    test('a span merges only as the grid draws it: up to its pinned lane, and over no column left out of the export', async () => {
+    test('a span merges only as the grid draws it: up to its pinned lane, over no column left out of the export, and not from a hidden column', async () => {
         const exportSpan = async (pinned: 'left' | null, columnKeys?: string[]) => {
             const api = await gridsManager.createGridAndWait('pdf-col-span', {
                 columnDefs: [
+                    { field: 'h', hide: true, colSpan: () => 2 },
                     { field: 'a', pinned, colSpan: () => 3 },
                     { field: 'b', pinned },
                     { field: 'c' },
                     { field: 'd' },
                 ],
-                rowData: [{ a: 'a0', b: 'b0', c: 'c0', d: 'd0' }],
+                rowData: [{ h: 'h0', a: 'a0', b: 'b0', c: 'c0', d: 'd0' }],
             });
             const cells: string[] = [];
             const pdf = api.getDataAsPdf({
@@ -174,9 +175,11 @@ describe('PDF export', () => {
         expect({
             pinned: await exportSpan('left'),
             columnKeys: await exportSpan(null, ['a', 'c', 'd']),
+            hidden: (await exportSpan(null, ['h', 'a', 'b', 'c', 'd'])).cells,
         }).toEqual({
             pinned: { cells: ['a0', 'c0', 'd0'], widths: ['384.94', '192.47', '192.47'] },
             columnKeys: { cells: ['a0', 'c0', 'd0'], widths: ['200', '200', '200'] },
+            hidden: ['h0', 'a0', 'd0'],
         });
     });
 });

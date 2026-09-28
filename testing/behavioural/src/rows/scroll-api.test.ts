@@ -61,6 +61,71 @@ describe('scroll API', () => {
             expect(viewport.scrollTop).toBe(movedTop);
         });
 
+        test('with a colSpan column and auto-height rows still unmeasured, a scroll to a row follows the row when it moves', async () => {
+            const api = gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: [
+                        { field: 'a', autoHeight: true },
+                        { field: 'b', colSpan: () => 1 },
+                    ],
+                    rowData: Array.from({ length: 200 }, (_, i) => ({ a: i, b: i })),
+                },
+                { modules: [RowAutoHeightModule] }
+            );
+            const viewport = getViewport(api);
+            api.ensureIndexVisible(100, 'top');
+            const top = viewport.scrollTop;
+            expect(top).toBe(api.getDisplayedRowAtIndex(100)!.rowTop);
+            await asyncSetTimeout(0);
+
+            api.setGridOption('rowHeight', 80);
+            await asyncSetTimeout(0);
+
+            const movedTop = api.getDisplayedRowAtIndex(100)!.rowTop!;
+            expect(movedTop).toBeGreaterThan(top);
+            expect(viewport.scrollTop).toBe(movedTop);
+        });
+
+        // A covered auto-height column has no cell to measure, so it must not count as unmeasured.
+        test('with auto-height cells a colSpan covers and the rest all measured, a scroll to a row is not repeated', async () => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) =>
+                el.isConnected && el.classList.contains('ag-cell-wrapper') ? 60 : undefined;
+            try {
+                const api = gridsManager.createGrid(
+                    'myGrid',
+                    {
+                        columnDefs: [
+                            { field: 'a', colSpan: () => 2 },
+                            { field: 'b', autoHeight: true },
+                            { field: 'c', autoHeight: true },
+                        ],
+                        rowData: Array.from({ length: 200 }, (_, i) => ({ a: i, b: i, c: i })),
+                    },
+                    { modules: [RowAutoHeightModule] }
+                );
+                const viewport = getViewport(api);
+                api.ensureIndexVisible(103, 'top');
+                await waitFor(() => expect(api.getDisplayedRowAtIndex(103)!.rowHeight).toBe(60));
+                await asyncSetTimeout(0);
+
+                api.ensureIndexVisible(103, 'top');
+                const top = viewport.scrollTop;
+                expect(top).toBe(api.getDisplayedRowAtIndex(103)!.rowTop);
+                await asyncSetTimeout(0);
+
+                api.setGridOption('rowHeight', 80);
+                await asyncSetTimeout(0);
+
+                expect(api.getDisplayedRowAtIndex(103)!.rowTop).toBeGreaterThan(top);
+                expect(viewport.scrollTop).toBe(top);
+            } finally {
+                mockGridLayout.useRealOffsetDimensions = false;
+                mockGridLayout.elementHeightOverride = undefined;
+            }
+        });
+
         // A span measures into its first row, taller than that row, and the rows it covers have no `a` cell.
         test('with row-spanned auto-height cells all measured, a scroll to a row is not repeated', async () => {
             mockGridLayout.useRealOffsetDimensions = true;

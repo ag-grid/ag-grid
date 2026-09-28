@@ -471,7 +471,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (isCellSpan) {
             return undefined;
         }
-        return new CellCtrl(col, this.rowNode, this.beans, this);
+        return new CellCtrl(col, this.rowNode, this.beans, this, null);
     }
 
     /**

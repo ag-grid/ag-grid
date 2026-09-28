@@ -8,6 +8,7 @@ import type { ColDef, GridApi } from 'ag-grid-community';
 import {
     CellStyleModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     InfiniteRowModelModule,
     PinnedRowModule,
     RenderApiModule,
@@ -357,6 +358,52 @@ describe('colSpan follows row data updates', () => {
         await waitFor(() => expect(groupAndFooter()).toEqual([spanned, spanned]));
     });
 
+    test('a sticky group row spans by its aggregates, like the row it stands in for', async () => {
+        mockGridLayout.useRealOffsetDimensions = true;
+        try {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    {
+                        field: 'gold',
+                        width: 100,
+                        aggFunc: 'sum',
+                        colSpan: (params) => (params.node?.group && params.node.aggData?.gold > 5 ? 2 : 1),
+                    },
+                    { field: 'silver', width: 100 },
+                    { field: 'bronze', width: 100 },
+                ],
+                autoGroupColumnDef: { width: 100 },
+                groupDefaultExpanded: -1,
+                rowData: Array.from({ length: 40 }, (_, i) => ({
+                    id: `l${i}`,
+                    country: 'X',
+                    gold: 0,
+                    silver: 1,
+                    bronze: 1,
+                })),
+                getRowId: (params) => params.data.id,
+            });
+            const gridElement = getGridElement(api)!;
+            const stickyRow = () =>
+                Array.from(
+                    gridElement.querySelectorAll<HTMLElement>('.ag-grid-sticky-top-rows-container .ag-row .ag-cell')
+                )
+                    .map((cell) => `${cell.getAttribute('col-id')}:${cell.style.width}`)
+                    .join(' ');
+            await waitFor(() => expect(renderedRow(api, 0)).not.toBe(''));
+            gridElement.querySelector<HTMLElement>('.ag-grid-viewport')!.scrollTop = 600;
+            await waitFor(() =>
+                expect(stickyRow()).toBe('ag-Grid-AutoColumn:100px gold:100px silver:100px bronze:100px')
+            );
+
+            api.applyTransaction({ update: [{ id: 'l0', country: 'X', gold: 10, silver: 1, bronze: 1 }] });
+            await waitFor(() => expect(stickyRow()).toBe('ag-Grid-AutoColumn:100px gold:200px bronze:100px'));
+        } finally {
+            mockGridLayout.useRealOffsetDimensions = false;
+        }
+    });
+
     test('a legacy rowSpan grows and shrinks with the data', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -536,16 +583,16 @@ describe('colSpan follows row data updates', () => {
         expect(calls).toEqual(['r0']);
     });
 
-    test('a span growing over the focused cell keeps it rendered until focus moves on', async () => {
+    test('a span growing over the focused cell keeps it rendered, short of the next cell, until focus moves on', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: priceColumnDefs,
+            columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], colSpan: () => 2 }, priceColumnDefs[2]],
             rowData: [
                 { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
                 { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
             ],
             getRowId: (params) => params.data.id,
         });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:200px'));
 
         api.setFocusedCell(0, 'symbol');
         await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe('symbol'));
@@ -632,7 +679,7 @@ describe('colSpan follows row data updates', () => {
         });
     });
 
-    test('a span growing over a cell with a pending batch edit keeps it until the batch commits', async () => {
+    test('a span growing over a cell with a pending batch edit keeps it until its value is set back or the batch commits', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
             rowData: [
@@ -641,42 +688,32 @@ describe('colSpan follows row data updates', () => {
             ],
             getRowId: (params) => params.data.id,
         });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
-
-        api.startBatchEdit();
-        api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
-        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
-        api.stopEditing();
-        api.setFocusedCell(1, 'price');
-        api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
-
-        api.commitBatchEdit();
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
-    });
-
-    test('a covered cell kept for a pending batch edit is dropped once its value is set back to the original', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
-            rowData: [
-                { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
-                { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
-            ],
-            getRowId: (params) => params.data.id,
-        });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
+        const unspanned = 'price:100px symbol:100px group:100px';
+        const kept = 'price:200px symbol:100px group:100px';
+        const spanned = 'price:200px group:100px';
+        await waitFor(() => expect(renderedRow(api, 0)).toBe(unspanned));
 
         api.startBatchEdit();
         api.getRowNode('r0')!.setDataValue('symbol', 'ZZZ');
         api.setFocusedCell(1, 'price');
         api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
-
+        await waitFor(() => expect(renderedRow(api, 0)).toBe(kept));
         api.getRowNode('r0')!.setDataValue('symbol', 'AAA');
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+        await waitFor(() => expect(renderedRow(api, 0)).toBe(spanned));
+
+        api.applyTransaction({ update: [{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }] });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe(unspanned));
+        api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
+        await waitFor(() => expect(api.getCellEditorInstances()).toHaveLength(1));
+        api.stopEditing();
+        api.setFocusedCell(1, 'price');
+        api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe(kept));
+        api.commitBatchEdit();
+        await waitFor(() => expect(renderedRow(api, 0)).toBe(spanned));
     });
 
-    test('staged batch edits lay a row holding a kept cell out once, not once per edit', async () => {
+    test('staged batch edits ask no colSpan callback for a row holding a kept cell', async () => {
         const calls: string[] = [];
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -712,7 +749,8 @@ describe('colSpan follows row data updates', () => {
             row0.setDataValue('group', `G${i}`);
         }
         await asyncSetTimeout(0);
-        expect(calls.filter((id) => id === 'r0')).toEqual(['r0']);
+        // a staged edit leaves the data as it was, so the row's colSpans stand
+        expect(calls).toEqual([]);
     });
 
     test('a bulk edit growing a span over the other edited cells drops them once it ends', async () => {
@@ -830,8 +868,13 @@ describe('colSpan follows row data updates', () => {
         api.getRowNode('r0')!.setDataValue('price', 2);
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
 
-        api.getPinnedTopRow(0)!.setDataValue('price', 1);
+        const pinnedRow = api.getPinnedTopRow(0)!;
+        pinnedRow.setDataValue('price', 1);
         await waitFor(() => expect(renderedRow(api, 't-0')).toBe('price:200px group:100px'));
+
+        pinnedRow.data!.price = 0;
+        api.refreshCells({ rowNodes: [pinnedRow] });
+        await waitFor(() => expect(renderedRow(api, 't-0')).toBe('price:100px symbol:100px group:100px'));
     });
 
     test('infinite rows refreshed from the datasource span by the new data', async () => {
@@ -853,30 +896,7 @@ describe('colSpan follows row data updates', () => {
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:300px'));
     });
 
-    test('a span entering the viewport from a column scrolled out of it follows the data', async () => {
-        const columnDefs: ColDef<PriceRow>[] = [
-            { field: 'price', width: 120, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
-        ];
-        for (let i = 1; i < 120; ++i) {
-            columnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
-        }
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs,
-            rowData: [{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }],
-            getRowId: (params) => params.data.id,
-            suppressColumnVirtualisation: false,
-        });
-        const priceCell = () => getGridElement(api)!.querySelector<HTMLElement>('[row-index="0"] [col-id="price"]');
-        await waitFor(() => expect(priceCell()).not.toBeNull());
-
-        api.ensureColumnVisible('c60');
-        await waitFor(() => expect(priceCell()).toBeNull());
-
-        api.getRowNode('r0')!.setDataValue('price', 70);
-        await waitFor(() => expect(priceCell()?.style.width).toBe(`${71 * 120}px`));
-    });
-
-    test('a focused spanning cell kept out of the viewport follows the data', async () => {
+    test('a span kept out of the viewport for focus, then entering it from a column scrolled out, follows the data', async () => {
         const columnDefs: ColDef<PriceRow>[] = [
             { field: 'price', width: 120, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
         ];
@@ -898,9 +918,13 @@ describe('colSpan follows row data updates', () => {
             expect(getGridElement(api)!.querySelector('[row-index="0"] [col-id="c60"]')).not.toBeNull()
         );
         expect(priceCell()?.style.width).toBe('120px');
-
         api.getRowNode('r0')!.setDataValue('price', 1);
         await waitFor(() => expect(priceCell()?.style.width).toBe('240px'));
+
+        api.setFocusedCell(0, 'c60');
+        await waitFor(() => expect(priceCell()).toBeNull());
+        api.getRowNode('r0')!.setDataValue('price', 70);
+        await waitFor(() => expect(priceCell()?.style.width).toBe(`${71 * 120}px`));
     });
 
     test('a colSpan column right of the viewport is not asked for its span until it scrolls in', async () => {
@@ -932,6 +956,163 @@ describe('colSpan follows row data updates', () => {
         api.ensureColumnVisible('c100');
         await waitFor(() => expect(cell('c100')?.style.width).toBe('240px'));
         expect(farRightCalls).toBeGreaterThan(0);
+    });
+
+    test('a horizontal scroll lays the rows out again without asking a colSpan callback again', async () => {
+        const calls: string[] = [];
+        const columnDefs: ColDef<PriceRow>[] = [
+            {
+                field: 'price',
+                width: 120,
+                colSpan: (params) => {
+                    calls.push(params.node!.id!);
+                    return params.data ? params.data.price + 1 : 1;
+                },
+            },
+        ];
+        for (let i = 1; i < 120; ++i) {
+            columnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [
+                { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
+                { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
+            ],
+            getRowId: (params) => params.data.id,
+            suppressColumnVirtualisation: false,
+        });
+        const cell = (colId: string) =>
+            getGridElement(api)!.querySelector<HTMLElement>(`[row-index="0"] [col-id="${colId}"]`);
+        await waitFor(() => expect(cell('price')).not.toBeNull());
+
+        calls.length = 0;
+        api.ensureColumnVisible('c60');
+        await waitFor(() => expect(cell('c60')).not.toBeNull());
+        api.ensureColumnVisible('price');
+        await waitFor(() => expect(cell('price')).not.toBeNull());
+        expect(calls).toEqual([]);
+
+        // a data change reads the edited row's span again, which the next scroll reuses
+        api.getRowNode('r0')!.setDataValue('price', 1);
+        await waitFor(() => expect(cell('price')?.style.width).toBe('240px'));
+        expect(calls).toEqual(['r0']);
+        calls.length = 0;
+        api.ensureColumnVisible('c60');
+        await waitFor(() => expect(cell('c60')).not.toBeNull());
+        expect(calls).toEqual([]);
+    });
+
+    test('moving a column reads the colSpans again in the new order', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ ...priceColumnDefs[0], colSpan: () => 2 }, priceColumnDefs[1], priceColumnDefs[2]],
+            rowData: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }],
+            getRowId: (params) => params.data.id,
+        });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+
+        api.moveColumns(['price'], 2);
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('symbol:100px group:100px price:100px'));
+        api.moveColumns(['price'], 1);
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('symbol:100px price:200px'));
+    });
+
+    test('a colSpan callback replaced through autoGroupColumnDef spans the group rows already rendered', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'gold', width: 100 },
+                { field: 'silver', width: 100 },
+            ],
+            autoGroupColumnDef: { width: 100, colSpan: () => 1 },
+            groupDefaultExpanded: -1,
+            rowData: [{ id: 'l0', country: 'X', gold: 3, silver: 1 }],
+            getRowId: (params) => params.data.id,
+        });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('ag-Grid-AutoColumn:100px gold:100px silver:100px'));
+
+        api.setGridOption('autoGroupColumnDef', { width: 100, colSpan: (params) => (params.node?.group ? 2 : 1) });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('ag-Grid-AutoColumn:200px silver:100px'));
+        expect(renderedRow(api, 1)).toBe('ag-Grid-AutoColumn:100px gold:100px silver:100px');
+    });
+
+    test('a focused cell a span grows over asks its colSpan callback once, not again as the grid scrolls', async () => {
+        const calls: string[] = [];
+        const columnDefs: ColDef<PriceRow>[] = [
+            { field: 'price', width: 120, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
+            {
+                field: 'symbol',
+                width: 120,
+                colSpan: (params) => {
+                    calls.push(params.node!.id!);
+                    return 1;
+                },
+            },
+        ];
+        for (let i = 2; i < 120; ++i) {
+            columnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }],
+            getRowId: (params) => params.data.id,
+            suppressColumnVirtualisation: false,
+        });
+        const cell = (colId: string) =>
+            getGridElement(api)!.querySelector<HTMLElement>(`[row-index="0"] [col-id="${colId}"]`);
+        await waitFor(() => expect(cell('symbol')).not.toBeNull());
+
+        api.setFocusedCell(0, 'symbol');
+        calls.length = 0;
+        api.getRowNode('r0')!.setDataValue('price', 1);
+        await waitFor(() => expect(cell('price')?.style.width).toBe('240px'));
+        expect(cell('symbol')).not.toBeNull();
+        expect(calls).toEqual(['r0']);
+
+        api.ensureColumnVisible('c60');
+        await waitFor(() => expect(cell('c60')).not.toBeNull());
+        expect(cell('symbol')).not.toBeNull();
+        expect(calls).toEqual(['r0']);
+    });
+
+    test('RTL spans in the right-pinned and centre lanes each keep their own colSpan', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { ...priceColumnDefs[0], pinned: 'right' },
+                { ...priceColumnDefs[1], pinned: 'right' },
+                { ...priceColumnDefs[2], colSpan: () => 2 },
+                { colId: 'extra', valueGetter: () => 0, width: 100 },
+            ],
+            rowData: [{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }],
+            getRowId: (params) => params.data.id,
+            enableRtl: true,
+        });
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('group:200px price:100px symbol:100px'));
+
+        api.getRowNode('r0')!.setDataValue('price', 1);
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('group:200px price:200px'));
+    });
+
+    test('pinning and unpinning a column reads the colSpans again for the new lanes', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { ...priceColumnDefs[0], colSpan: (params) => (params.column.isPinned() ? 2 : 1) },
+                    priceColumnDefs[1],
+                    priceColumnDefs[2],
+                ],
+                rowData: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }],
+                getRowId: (params) => params.data.id,
+            },
+            { modules: [ColumnApiModule] }
+        );
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
+
+        api.setColumnsPinned(['price', 'symbol'], 'left');
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+        api.setColumnsPinned(['price', 'symbol'], null);
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
     });
 
     describe('with an auto-height column', () => {
@@ -981,6 +1162,33 @@ describe('colSpan follows row data updates', () => {
 
             row0.setDataValue('price', 0);
             await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
+        });
+
+        test('a row a span grows over while not rendered keeps its height until it renders, then sheds the covered cell', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'price', width: 100, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
+                    { field: 'symbol', width: 100, autoHeight: true, wrapText: true },
+                    { field: 'group', width: 100 },
+                ],
+                rowData: Array.from({ length: 40 }, (_, i) => ({ id: `r${i}`, price: 0, symbol: 'AAA', group: 'A' })),
+                getRowId: (params) => params.data.id,
+                rowHeight: ROW_HEIGHT,
+                rowBuffer: 0,
+                suppressRowVirtualisation: false,
+            });
+            const row0 = api.getRowNode('r0')!;
+            await waitFor(() => expect(row0.rowHeight).toBe(SYMBOL_HEIGHT));
+
+            api.ensureIndexVisible(39);
+            await waitFor(() => expect(getGridElement(api)!.querySelector('.ag-row[row-index="0"]')).toBeNull());
+            row0.setDataValue('price', 1);
+            await asyncSetTimeout(0);
+            expect(row0.rowHeight).toBe(SYMBOL_HEIGHT);
+
+            api.ensureIndexVisible(0);
+            await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+            await waitFor(() => expect(row0.rowHeight).toBe(ROW_HEIGHT));
         });
 
         test('a focused auto-height cell a span grows over holds the row open until focus moves on', async () => {

@@ -15,12 +15,10 @@ export class SpannedCellCtrl extends CellCtrl {
     private readonly SPANNED_CELL_CSS_CLASS = 'ag-spanned-cell';
     private eWrapper: HTMLElement;
 
-    constructor(
-        private readonly cellSpan: CellSpan,
-        rowCtrl: RowCtrl,
-        beans: BeanCollection
-    ) {
-        super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl);
+    declare public readonly cellSpan: CellSpan;
+
+    constructor(cellSpan: CellSpan, rowCtrl: RowCtrl, beans: BeanCollection) {
+        super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl, cellSpan);
 
         // A reused CellSpan keeps its ctrl across rowData changes but its coverage can change, so the
         // rendered height and aria-rowspan must be re-derived on the cache-rebuild events.
@@ -46,16 +44,6 @@ export class SpannedCellCtrl extends CellCtrl {
         this.eWrapper = eWrapper!;
         super.setComp(comp, eCell, eWrapper, eCellWrapper, printLayout, startEditing, compBean);
         this.refreshSpan();
-    }
-
-    // Must stay a plain literal, independent of getCellSpan(): CellCtrl's constructor reads it during super()
-    // where the cellSpan parameter property is still unassigned, so getCellSpan() cannot be relied on.
-    public override isCellSpanning(): boolean {
-        return true;
-    }
-
-    public getCellSpan(): CellSpan {
-        return this.cellSpan;
     }
 
     /**

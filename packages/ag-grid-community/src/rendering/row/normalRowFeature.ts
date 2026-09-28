@@ -1,7 +1,9 @@
 import { _areEqual, _batchCall } from 'ag-stack';
 
+import { _getColsForRow, _getDrawnColSpan } from '../../columns/columnSpanUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
@@ -26,7 +28,12 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     private updateColumnListsPending = false;
     private setCellCtrlsPending = false;
-    private readonly spans: number[] = [];
+    /** A change reached the row after its cells were last laid out, so mounting must lay them out again. */
+    private cellsStale = true;
+    /** The drawn colSpans by `allColsIndex`, 0 where not read yet, so a horizontal scroll asks no `colSpan` callback. */
+    private colSpans: number[] | null = null;
+    /** The `displayedColsVersion` `colSpans` was read at; -1 to read it again. */
+    private colSpansColsVersion = -1;
     private releaseKeptCellsPending = false;
     /** The last layout kept a cell only because it is focused or editing, outside the columns its lane renders. */
     private hasKeptCells = false;
@@ -42,6 +49,11 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public initialiseComp(): void {
+        // cells laid out since the last change the row heard of need no second layout on mount
+        if (!this.cellsStale) {
+            this.setCellCtrls(false);
+            return;
+        }
         this.updateColumnLists(!this.rowCtrl.useAnimationFrameForCreate);
     }
 
@@ -68,6 +80,9 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     public getInitialCellCtrls(_containerType: RowContainerType): CellCtrl[] | null {
         if (this.rowCtrl.useAnimationFrameForCreate) {
             return null;
+        }
+        if (this.cellsStale) {
+            this.createAllCellCtrls();
         }
         return this.getAllCellCtrls();
     }
@@ -126,6 +141,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     /** A span callback can read any of the row's data, so a data change can move the row's spans. */
     public refreshSpans(): void {
+        this.colSpansColsVersion = -1;
         const visibleCols = this.beans.visibleCols;
         const rowSpanCols = visibleCols.rowSpanCols;
         if (rowSpanCols.length !== 0) {
@@ -135,13 +151,17 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             for (let i = 0, len = rowSpanCols.length; i < len; ++i) {
                 const id = rowSpanCols[i].instanceId;
                 const cellCtrl = center[id] ?? left[id] ?? right[id];
-                if (cellCtrl !== undefined && !cellCtrl.isCellSpanning()) {
+                if (cellCtrl !== undefined) {
                     _refreshCellRowSpan(this.beans, cellCtrl);
                 }
             }
         }
-        // a row not yet mounted builds from the new data when it mounts
-        if (!visibleCols.colSpanActive || !this.rowCtrl.getGui()) {
+        if (!visibleCols.colSpanActive) {
+            return;
+        }
+        // a row not yet mounted lays its cells out from the new data when it mounts
+        if (!this.rowCtrl.getGui()) {
+            this.cellsStale = true;
             return;
         }
         this.updateCellsIfChanged();
@@ -170,7 +190,6 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         });
     }
 
-    /** Lays the row's cells out again, telling the row comp only if they changed: nothing else it renders can move. */
     private updateCellsIfChanged(): void {
         this.updateColumnLists(false, false, true);
     }
@@ -190,6 +209,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         if (this.updateColumnListsPending) {
             return;
         }
+        this.cellsStale = true;
         animationFrameSvc.createTask(
             () => {
                 if (!rowCtrl.isAlive()) {
@@ -227,30 +247,30 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     /** @returns whether any lane's cells changed */
     private createAllCellCtrls(): boolean {
+        this.cellsStale = false;
         const { rowCtrl, beans } = this;
         const rowNode = rowCtrl.rowNode;
-        const presentedColsService = beans.visibleCols;
+        const visibleCols = beans.visibleCols;
         const prevCenter = this.centerCellCtrls;
         const prevLeft = this.leftCellCtrls;
         const prevRight = this.rightCellCtrls;
-        // each walk refills `spans`, which `createCellCtrls` reads before the next walk
-        const spans = presentedColsService.colSpanActive ? this.spans : null;
+        const colSpans = visibleCols.colSpanActive ? this.getColSpans() : null;
         this.hasKeptCells = false;
         if (rowCtrl.printLayout) {
-            const printCols = presentedColsService.getAllColsForRow(rowNode, spans);
-            this.centerCellCtrls = this.createCellCtrls(prevCenter, printCols, spans, 1);
+            const printCols = getColsForRow(rowNode, visibleCols.allCols, colSpans);
+            this.centerCellCtrls = this.createCellCtrls(prevCenter, printCols, colSpans, 1);
             // Print layout flows every column through the centre, so the pinned ctrls are orphaned.
             this.leftCellCtrls = destroyCellCtrls(prevLeft);
             this.rightCellCtrls = destroyCellCtrls(prevRight);
         } else {
-            const centerCols = beans.colViewport.getColsWithinViewport(rowNode, spans);
-            this.centerCellCtrls = this.createCellCtrls(prevCenter, centerCols, spans, 1);
+            const centerCols = beans.colViewport.getColsWithinViewport(rowNode, colSpans);
+            this.centerCellCtrls = this.createCellCtrls(prevCenter, centerCols, colSpans, 1);
 
-            const leftCols = presentedColsService.getLeftColsForRow(rowNode, spans);
-            this.leftCellCtrls = this.createCellCtrls(prevLeft, leftCols, spans, 0);
+            const leftCols = getColsForRow(rowNode, visibleCols.leftCols, colSpans);
+            this.leftCellCtrls = this.createCellCtrls(prevLeft, leftCols, colSpans, 0);
 
-            const rightCols = presentedColsService.getRightColsForRow(rowNode, spans);
-            this.rightCellCtrls = this.createCellCtrls(prevRight, rightCols, spans, 2);
+            const rightCols = getColsForRow(rowNode, visibleCols.rightCols, colSpans);
+            this.rightCellCtrls = this.createCellCtrls(prevRight, rightCols, colSpans, 2);
         }
         const changed =
             this.centerCellCtrls !== prevCenter || this.leftCellCtrls !== prevLeft || this.rightCellCtrls !== prevRight;
@@ -260,12 +280,30 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return changed;
     }
 
-    /** Keeps `prev` when the rebuild produced the same cells, so an unchanged lane is not re-rendered.
-     *  @param spans the span of each of `cols`, or null when no column spans */
+    /** Emptied when the displayed columns change, which every colDef change also does. */
+    private getColSpans(): number[] {
+        const visibleCols = this.beans.visibleCols;
+        const colsVersion = visibleCols.displayedColsVersion;
+        let colSpans = this.colSpans;
+        if (colSpans !== null && this.colSpansColsVersion === colsVersion) {
+            return colSpans;
+        }
+        this.colSpansColsVersion = colsVersion;
+        const len = visibleCols.allCols.length;
+        if (colSpans?.length !== len) {
+            colSpans = new Array(len).fill(0);
+            this.colSpans = colSpans;
+        } else {
+            colSpans.fill(0);
+        }
+        return colSpans;
+    }
+
+    /** Keeps `prev` when the rebuild produced the same cells, so an unchanged lane is not re-rendered. */
     private createCellCtrls(
         prev: CellCtrlListAndMap,
         cols: AgColumn[],
-        spans: number[] | null,
+        colSpans: number[] | null,
         lane: ColumnLane
     ): CellCtrlListAndMap {
         const { rowCtrl, beans } = this;
@@ -296,11 +334,11 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
             res.list.push(cellCtrl);
             res.map[colInstanceId] = cellCtrl;
-            if (spans === null && cellCtrl.colsSpanning === null) {
+            if (colSpans === null && cellCtrl.colsSpanning === null) {
                 continue;
             }
-            // with no column spanning left the row walks no spans, so a cell that spanned covers its own column
-            _setCellColSpan(beans, cellCtrl, spans === null ? 1 : spans[i]);
+            // with no column spanning left the row walks no colSpans, so a cell that spanned covers its own column
+            _setCellColSpan(beans, cellCtrl, colSpans === null ? 1 : colSpans[col.allColsIndex]);
         }
 
         for (const prevCellCtrl of prev.list) {
@@ -314,7 +352,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, lane);
 
             if (keepCell) {
-                this.addKeptCell(res, colInstanceId, prevCellCtrl);
+                this.addKeptCell(res, colInstanceId, prevCellCtrl, colSpans);
             } else {
                 prevCellCtrl.destroy();
             }
@@ -331,7 +369,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             if (!focusedCellCtrl && focusedCol.displayed) {
                 const cellCtrl = this.createFocusedCellCtrl();
                 if (cellCtrl) {
-                    this.addKeptCell(res, focusedColInstanceId, cellCtrl);
+                    this.addKeptCell(res, focusedColInstanceId, cellCtrl, colSpans);
                 }
             }
         }
@@ -339,7 +377,12 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return _areEqual(prev.list, res.list) ? prev : res;
     }
 
-    private addKeptCell(res: CellCtrlListAndMap, colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl): void {
+    private addKeptCell(
+        res: CellCtrlListAndMap,
+        colInstanceId: ColumnInstanceId,
+        cellCtrl: CellCtrl,
+        colSpans: number[] | null
+    ): void {
         this.hasKeptCells = true;
         const list = res.list;
         // `allColsIndex` is display order in every layout, and the list is already in that order
@@ -356,8 +399,22 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         }
         list.splice(low, 0, cellCtrl);
         res.map[colInstanceId] = cellCtrl;
-        // outside the lane walk, so the cell reads its own span
-        _setCellColSpan(this.beans, cellCtrl, cellCtrl.column.getColSpan(this.rowCtrl.rowNode));
+        if (colSpans === null) {
+            _setCellColSpan(this.beans, cellCtrl, 1);
+            return;
+        }
+        // a kept cell is outside the lane walk; its lane is a slice of `allCols`, so the drawn colSpan is the same
+        let colSpan = colSpans[colIndex];
+        if (colSpan === 0) {
+            colSpan = _getDrawnColSpan(this.beans.visibleCols.allCols, colIndex, this.rowCtrl.rowNode);
+            colSpans[colIndex] = colSpan;
+        }
+        // a cell a span covers must not also cover the cell after that span
+        const next = list[low + 1];
+        if (next !== undefined) {
+            colSpan = Math.min(colSpan, next.column.allColsIndex - colIndex);
+        }
+        _setCellColSpan(this.beans, cellCtrl, colSpan);
     }
 
     private createFocusedCellCtrl(): CellCtrl | undefined {
@@ -450,15 +507,18 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 const beans = this.beans;
-                for (const cellCtrl of this.getAllCellCtrls()) {
-                    if (!cellCtrl.isCellSpanning()) {
-                        _refreshCellRowSpan(beans, cellCtrl);
-                    }
+                const cellCtrls = this.getAllCellCtrls();
+                for (let i = 0, len = cellCtrls.length; i < len; ++i) {
+                    _refreshCellRowSpan(beans, cellCtrls[i]);
                 }
             },
         });
     }
 }
+
+/** The columns of a pinned lane (or every lane, in print layout) starting a cell in `rowNode`. */
+const getColsForRow = (rowNode: RowNode, cols: AgColumn[], colSpans: number[] | null): AgColumn[] =>
+    colSpans === null ? cols : _getColsForRow(rowNode, cols, colSpans, null, null);
 
 /** Destroys every ctrl in a lane and returns the empty replacement. */
 const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {

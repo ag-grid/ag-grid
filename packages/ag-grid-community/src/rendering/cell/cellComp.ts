@@ -96,7 +96,7 @@ export class CellComp extends Component {
 
         // if doing a cell span, need to wrap the cell in a container with background-color to avoid
         // transparent cells displaying row lines
-        if (cellCtrl.isCellSpanning()) {
+        if (cellCtrl.cellSpan !== null) {
             wrapperDiv = _createElement({
                 tag: 'div',
                 cls: 'ag-spanned-cell-wrapper',

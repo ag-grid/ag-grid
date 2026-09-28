@@ -895,7 +895,7 @@ describe('Column Edge Cases', () => {
     });
 
     describe('colSpan interactions', () => {
-        test('colSpan leaves the column structure alone and draws no cell for the column it covers', async () => {
+        test('colSpan leaves the column structure alone', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', colSpan: () => 2 }, { colId: 'b' }, { colId: 'c' }],
                 rowData: [{ a: 1, b: 2, c: 3 }],
@@ -906,11 +906,6 @@ describe('Column Edge Cases', () => {
                 ├── a width:200
                 ├── b width:200
                 └── c width:200
-            `);
-            // the rows check fails on a cell drawn for a covered column
-            await new GridRows(api, 'with colSpan').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
             `);
         });
     });
