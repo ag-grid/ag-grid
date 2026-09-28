@@ -354,7 +354,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
             if (keepCell) {
                 this.addKeptCell(res, colInstanceId, prevCellCtrl);
-                (keptCells ??= []).push(prevCellCtrl);
+                keptCells ??= [];
+                keptCells.push(prevCellCtrl);
             } else {
                 prevCellCtrl.destroy();
             }
@@ -372,7 +373,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
                 const cellCtrl = this.createFocusedCellCtrl();
                 if (cellCtrl) {
                     this.addKeptCell(res, focusedColInstanceId, cellCtrl);
-                    (keptCells ??= []).push(cellCtrl);
+                    keptCells ??= [];
+                    keptCells.push(cellCtrl);
                 }
             }
         }
