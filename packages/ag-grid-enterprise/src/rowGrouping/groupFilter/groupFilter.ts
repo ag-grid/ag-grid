@@ -53,7 +53,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private groupColumn: AgColumn;
     private selectedFilter: IFilterComp | undefined;
     private filterColumnPairs: FilterColumnPair[] | undefined;
-    private eGroupFieldSelect: GridSelect;
+    private eGroupFieldSelect: GridSelect | undefined;
     private afterGuiAttachedParams: IAfterGuiAttachedParams | undefined;
     private filterComp?: FilterComp;
 
@@ -143,21 +143,20 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         const { sourceColumns, hasMultipleColumns, selectedColumn } = handler;
         const eGroupField = this.eGroupField;
         _clearElement(eGroupField);
-        if (this.eGroupFieldSelect) {
-            this.destroyBean(this.eGroupFieldSelect);
-        }
+        this.eGroupFieldSelect = this.destroyBean(this.eGroupFieldSelect);
         if (hasMultipleColumns && sourceColumns) {
-            this.createGroupFieldSelectElement(sourceColumns, selectedColumn!);
-            eGroupField.appendChild(this.eGroupFieldSelect.getGui());
+            const eGroupFieldSelect = this.createGroupFieldSelectElement(sourceColumns, selectedColumn!);
+            this.eGroupFieldSelect = eGroupFieldSelect;
+            eGroupField.appendChild(eGroupFieldSelect.getGui());
             eGroupField.appendChild(_createElement({ tag: 'div', cls: 'ag-filter-separator' }));
         }
         _setDisplayed(eGroupField, hasMultipleColumns);
         return { sourceColumns, selectedColumn };
     }
 
-    private createGroupFieldSelectElement(sourceColumns: AgColumn[], selectedColumn: AgColumn): void {
-        const eGroupFieldSelect = this.createManagedBean<GridSelect>(new AgSelect());
-        this.eGroupFieldSelect = eGroupFieldSelect;
+    private createGroupFieldSelectElement(sourceColumns: AgColumn[], selectedColumn: AgColumn): GridSelect {
+        // Not managed: replaced whenever its options change, and a managed child can't be unregistered early.
+        const eGroupFieldSelect = this.createBean<GridSelect>(new AgSelect());
         const localeTextFunc = this.getLocaleTextFunc();
         eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));
         eGroupFieldSelect.setLabelAlignment('top');
@@ -173,6 +172,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         if (sourceColumns.length === 1) {
             eGroupFieldSelect.setDisabled(true);
         }
+        return eGroupFieldSelect;
     }
 
     private getUnderlyingFilters(
@@ -285,6 +285,11 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     private getHandler(): GroupFilterHandler {
         return this.params.getHandler() as GroupFilterHandler;
+    }
+
+    public override destroy(): void {
+        this.eGroupFieldSelect = this.destroyBean(this.eGroupFieldSelect);
+        super.destroy();
     }
 
     private getFilterColumnPair(columnId: string | undefined): FilterColumnPair | undefined {
