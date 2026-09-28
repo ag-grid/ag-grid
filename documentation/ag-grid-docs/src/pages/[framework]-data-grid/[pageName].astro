@@ -8,6 +8,8 @@ import { getDocsPages } from '@components/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getPageDescription } from '@ag-website-shared/utils/getPageDescription';
 import { buildTechArticle, siteRootUrl } from '@ag-website-shared/utils/structuredData';
+import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
+import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
@@ -28,7 +30,15 @@ const { page } = Astro.props;
 const currentFramework = Astro.params.framework as Framework;
 const pageName = Astro.params.pageName;
 const path = Astro.url.pathname;
-const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings, migrationVersion } = page.data;
+const {
+    title,
+    enterprise,
+    hideSideMenu,
+    hidePageMenu,
+    headings: pageHeadings,
+    migrationVersion,
+    technicalReviewer,
+} = page.data;
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
@@ -60,6 +70,7 @@ const pageStructuredData = [
         title,
         description: description || descriptionWithSeoTagline,
     }),
+    ...(technicalReviewer ? buildTechnicalReviewStructuredData({ pageUrl, reviewer: technicalReviewer }) : []),
 ];
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
@@ -134,6 +145,8 @@ const headings = await getHeadings({
                 version={version}
                 markdownHref={markdownUrl}
             />
+
+            {technicalReviewer && <TechnicalReviewCredit reviewer={technicalReviewer} />}
 
             {
                 /*
