@@ -50,11 +50,10 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import type { DndSourceComp } from '../dndSourceComp';
 import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
-import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
-import { _initCellPosition, _onCellLeftChanged, _onCellWidthChanged, _refreshCellRowSpan } from './cellPositionFeature';
+import { _initCellPosition, _onCellLeftChanged, _onCellWidthChanged } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -175,13 +174,11 @@ export class CellCtrl extends BeanStub {
         if (!this.isClientSideLoadingCell()) {
             this.updateAndFormatValue(false);
         }
-        // a row-spanned cell syncs its own height; see SpannedCellCtrl.isCellSpanning for why not getCellSpan()
-        if (this.isCellSpanning()) {
-            return;
+        // read at construction: a data change can re-read and compare it before the cell mounts. A row-spanned
+        // cell syncs its own height; see SpannedCellCtrl.isCellSpanning for why not getCellSpan()
+        if (!this.isCellSpanning()) {
+            this.rowSpan = column.getRowSpan(rowNode);
         }
-        // read at construction: a data change can re-read and compare it before the cell mounts
-        this.rowSpan = column.getRowSpan(rowNode);
-        this.addManagedListeners(beans.eventSvc, { newColumnsLoaded: () => _refreshCellRowSpan(beans, this) });
     }
 
     private isClientSideLoadingCell(): boolean {
@@ -208,10 +205,6 @@ export class CellCtrl extends BeanStub {
 
     public isCellSpanning(): boolean {
         return false;
-    }
-
-    public getCellSpan(): CellSpan | undefined {
-        return undefined;
     }
 
     private removeFeatures(): void {

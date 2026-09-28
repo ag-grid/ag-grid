@@ -8,6 +8,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
+import { _getColsForRow } from './columnSpanUtils';
 import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnViewportService extends BeanStub implements NamedBean {
@@ -177,12 +178,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
         // if doing column virtualisation, then we filter based on the viewport.
         const inViewportCallback = this.isColumnVirtualisationSuppressed() ? null : this.inRowViewport;
-        const { visibleCols } = this;
-        const displayedColumnsCenter = visibleCols.centerCols;
-
-        return visibleCols.getColsForRow(
+        return _getColsForRow(
             rowNode,
-            displayedColumnsCenter,
+            this.visibleCols.centerCols,
             spans,
             inViewportCallback,
             this.emptySpaceBeforeColumn

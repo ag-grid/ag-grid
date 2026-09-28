@@ -446,6 +446,17 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
                 }
             },
         });
+        // a colDef update can add, change or drop a legacy `rowSpan`
+        this.addManagedEventListeners({
+            newColumnsLoaded: () => {
+                const beans = this.beans;
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    if (!cellCtrl.isCellSpanning()) {
+                        _refreshCellRowSpan(beans, cellCtrl);
+                    }
+                }
+            },
+        });
     }
 }
 

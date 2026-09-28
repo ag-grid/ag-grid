@@ -45,12 +45,12 @@ export { BaseSingleColService as _BaseSingleColService } from './columns/baseSin
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';
+export { _getDrawnColSpan } from './columns/columnSpanUtils';
 export {
     _convertColumnEventSourceType,
     _destroyColumnTreeAll,
     _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
-    _getDrawnColSpan,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,

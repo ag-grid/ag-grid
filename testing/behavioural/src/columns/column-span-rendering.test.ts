@@ -417,6 +417,34 @@ describe('colSpan follows row data updates', () => {
         expect(priceHeight('r0')).toBe('');
     });
 
+    test('adding and removing a legacy rowSpan through columnDefs resizes cells that are already rendered', async () => {
+        const noSpan: ColDef[] = [
+            { field: 'price', width: 100 },
+            { field: 'symbol', width: 100 },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: noSpan,
+            rowData: [
+                { id: 'r0', price: 1, symbol: 'AAA', group: 'A' },
+                { id: 'r1', price: 2, symbol: 'BBB', group: 'A' },
+            ],
+            getRowId: (params) => params.data.id,
+            rowHeight: 30,
+            suppressRowTransform: true,
+        });
+        const priceCell = () => getGridElement(api)!.querySelector<HTMLElement>('[row-id="r0"] [col-id="price"]');
+        await waitFor(() => expect(priceCell()!.style.height).toBe(''));
+        const renderedCell = priceCell();
+
+        api.setGridOption('columnDefs', [{ ...noSpan[0], rowSpan: () => 2 }, noSpan[1]]);
+        await waitFor(() => expect(priceCell()!.style.height).toBe('60px'));
+        expect(priceCell()).toBe(renderedCell);
+
+        api.setGridOption('columnDefs', noSpan);
+        await waitFor(() => expect(priceCell()!.style.height).toBe(''));
+        expect(priceCell()).toBe(renderedCell);
+    });
+
     test('adding and removing colSpan through columnDefs resizes cells that are already rendered', async () => {
         const noSpan: ColDef<PriceRow>[] = [
             { field: 'price', width: 100 },

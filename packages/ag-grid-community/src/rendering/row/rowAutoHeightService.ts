@@ -241,14 +241,8 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     }
 }
 
-/**
- * The height `row` needs for `col`: its own cell's, or its share of a row span, which only the span's last row
- * carries (0 or less once the rows above cover it). Null for the span's other rows, undefined until measured.
- */
+/** The height `row` needs for `col`, or its share of a row span; null when another row carries it. */
 const getCellAutoHeight = (beans: BeanCollection, col: AgColumn, row: RowNode): number | null | undefined => {
-    const spannedCell = beans.rowSpanSvc?.getCellSpan(col, row);
-    if (!spannedCell) {
-        return row.__autoHeights?.[col.colId];
-    }
-    return spannedCell.getLastNode() === row ? spannedCell.getLastNodeAutoHeight() : null;
+    const cellSpan = beans.rowSpanSvc?.getCellSpan(col, row);
+    return cellSpan ? cellSpan.getRowAutoHeight(row) : row.__autoHeights?.[col.colId];
 };

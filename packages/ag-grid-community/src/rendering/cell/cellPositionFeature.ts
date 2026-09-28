@@ -8,20 +8,7 @@ import type { CellCtrl } from './cellCtrl';
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     _onCellLeftChanged(beans, cellCtrl);
     _onCellWidthChanged(cellCtrl);
-    if (cellCtrl.getCellSpan()) {
-        _applySpanHeight(cellCtrl);
-    } else {
-        legacyApplyRowSpan(beans, cellCtrl);
-    }
-}
-
-/** Sets a row-spanned cell's rendered height to cover its spanned rows. No-op when not spanning. */
-export function _applySpanHeight(cellCtrl: CellCtrl): void {
-    const spanHeight = cellCtrl.getCellSpan()?.getCellHeight();
-    const eContent = cellCtrl.eGui;
-    if (spanHeight != null && eContent) {
-        eContent.style.height = `${spanHeight}px`;
-    }
+    legacyApplyRowSpan(beans, cellCtrl);
 }
 
 export function _refreshCellRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {

@@ -11,7 +11,8 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { _getDrawnColSpan, getWidthOfColsInList } from './columnUtils';
+import { _getColsForRow } from './columnSpanUtils';
+import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
@@ -444,74 +445,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getLeftColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? this.getColsForRow(rowNode, this.leftCols, spans) : this.leftCols;
+        return this.colSpanActive ? _getColsForRow(rowNode, this.leftCols, spans) : this.leftCols;
     }
 
     public getRightColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? this.getColsForRow(rowNode, this.rightCols, spans) : this.rightCols;
+        return this.colSpanActive ? _getColsForRow(rowNode, this.rightCols, spans) : this.rightCols;
     }
 
     /** The columns starting a cell in `rowNode`, every lane in one list, as print layout draws them. */
     public getAllColsForRow(rowNode: IRowNode, spans: number[] | null = null): AgColumn[] {
-        return this.colSpanActive ? this.getColsForRow(rowNode, this.allCols, spans) : this.allCols;
-    }
-
-    /** `filterCallback` is only set for the centre (virtualised) area. A col-spanned run is kept if
-     *  ANY spanned col passes the filter. Fills `spans` with each returned col's span. */
-    public getColsForRow(
-        rowNode: IRowNode,
-        displayedColumns: AgColumn[],
-        spans: number[] | null = null,
-        filterCallback: ((column: AgColumn) => boolean) | null = null,
-        emptySpaceBeforeColumn: ((column: AgColumn) => boolean) | null = null
-    ): AgColumn[] {
-        if (spans !== null) {
-            spans.length = 0;
-        }
-        const result: AgColumn[] = [];
-        let lastConsideredCol: AgColumn | null = null;
-        let lastConsideredSpan = 1;
-        const len = displayedColumns.length;
-        // spans never reach backwards, so nothing after the last col the filter passes can render
-        let end = len;
-        while (filterCallback !== null && end > 0 && !filterCallback(displayedColumns[end - 1])) {
-            --end;
-        }
-
-        for (let i = 0; i < end; ++i) {
-            const col = displayedColumns[i];
-            const colSpan = _getDrawnColSpan(displayedColumns, i, rowNode);
-
-            let filterPasses: boolean;
-            if (filterCallback) {
-                filterPasses = filterCallback(col);
-                for (let j = 1; !filterPasses && j < colSpan; ++j) {
-                    if (filterCallback(displayedColumns[i + j])) {
-                        filterPasses = true;
-                    }
-                }
-            } else {
-                filterPasses = true;
-            }
-
-            if (colSpan > 1) {
-                i += colSpan - 1;
-            }
-
-            if (filterPasses) {
-                if (result.length === 0 && lastConsideredCol && emptySpaceBeforeColumn?.(col)) {
-                    result.push(lastConsideredCol);
-                    spans?.push(lastConsideredSpan);
-                }
-                result.push(col);
-                spans?.push(colSpan);
-            }
-
-            lastConsideredCol = col;
-            lastConsideredSpan = colSpan;
-        }
-
-        return result;
+        return this.colSpanActive ? _getColsForRow(rowNode, this.allCols, spans) : this.allCols;
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {
