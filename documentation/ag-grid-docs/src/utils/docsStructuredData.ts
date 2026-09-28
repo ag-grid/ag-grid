@@ -1,4 +1,4 @@
-import type { Framework } from '@ag-grid-types';
+import type { Framework, InternalFramework } from '@ag-grid-types';
 import {
     type BreadcrumbItem,
     type JsonLdObject,
@@ -10,8 +10,9 @@ import {
     siteRootUrl,
 } from '@ag-website-shared/utils/structuredData';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@components/docs/constants';
+import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '@components/example-generator/types';
 import { FRAMEWORKS, isFrameworkLandingHub } from '@constants';
-import { getFrameworkDisplayText } from '@utils/framework';
+import { getFrameworkDisplayText, getFrameworkFromInternalFramework } from '@utils/framework';
 
 const FRAMEWORK_PACKAGES: Record<Framework, string> = {
     javascript: 'ag-grid-community',
@@ -114,4 +115,21 @@ function getBreadcrumbItems({
             : [{ name: `${getFrameworkDisplayText(framework)} Data Grid`, url: frameworkRootUrl }];
 
     return [{ name: 'AG Grid', url: siteRoot }, ...frameworkItems, { name: title, url: pageUrl }];
+}
+
+/**
+ * `programmingLanguage` and `runtimePlatform` for an embedded example's `SoftwareSourceCode` node.
+ * Takes the example's resolved internal framework rather than the page's: an example that does not
+ * support the page's framework falls back to TypeScript or vanilla JavaScript source.
+ */
+export function getExampleSourceCodeProperties(internalFramework: InternalFramework): {
+    programmingLanguage: string;
+    runtimePlatform: string;
+} {
+    // Vue examples are written in TypeScript too, though `TYPESCRIPT_INTERNAL_FRAMEWORKS` leaves them out
+    const isTypeScript = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) || internalFramework === 'vue3';
+    return {
+        programmingLanguage: isTypeScript ? 'TypeScript' : 'JavaScript',
+        runtimePlatform: getFrameworkDisplayText(getFrameworkFromInternalFramework(internalFramework)),
+    };
 }
