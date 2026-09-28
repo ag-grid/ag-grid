@@ -21,7 +21,7 @@ import {
     mockGridLayout,
 } from 'ag-test-utils';
 
-import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, Module } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
@@ -49,7 +49,6 @@ describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             AlignedGridsModule,
-            BatchEditModule,
             CellStyleModule,
             ClientSideRowModelModule,
             DragAndDropModule,
@@ -1304,12 +1303,16 @@ describe('Column Features', () => {
         const cellsFor = (api: GridApi, colId: string): HTMLElement[] =>
             Array.from(gridRoot(api).querySelectorAll<HTMLElement>(`.ag-cell[col-id="${colId}"]`));
 
-        const createVirtualisedGrid = (): GridApi =>
-            gridsManager.createGrid('virtualisedCells', {
-                columnDefs: virtualisedCols(120),
-                rowData: [virtualisedRow(120)],
-                suppressColumnVirtualisation: false,
-            });
+        const createVirtualisedGrid = (modules: Module[] = []): GridApi =>
+            gridsManager.createGrid(
+                'virtualisedCells',
+                {
+                    columnDefs: virtualisedCols(120),
+                    rowData: [virtualisedRow(120)],
+                    suppressColumnVirtualisation: false,
+                },
+                { modules }
+            );
 
         const renderedColIds = (api: GridApi): string[] =>
             renderedCells(api).map((cell) => cell.getAttribute('col-id')!);
@@ -1422,7 +1425,7 @@ describe('Column Features', () => {
         });
 
         test('a cell with a pending batch edit kept out of the viewport is removed once the batch is cancelled or commits', async () => {
-            const api = createVirtualisedGrid();
+            const api = createVirtualisedGrid([BatchEditModule]);
             await asyncSetTimeout(0);
 
             const keepPendingEdit = async (step: string) => {

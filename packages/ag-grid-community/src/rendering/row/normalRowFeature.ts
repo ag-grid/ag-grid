@@ -144,7 +144,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         if (!colModel.colSpanActive || !this.rowCtrl.getGui()) {
             return;
         }
-        this.updateColumnLists(false, false, true);
+        this.updateCellsIfChanged();
     }
 
     /** @param afterEdit the edit stays in the edit model until its stop event has been dispatched, so wait for it */
@@ -153,7 +153,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
         if (!afterEdit) {
-            this.updateColumnLists(false, false, true);
+            this.updateCellsIfChanged();
             return;
         }
         // a batch stages one edit event per cell, so one scheduled release serves them all
@@ -168,6 +168,11 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             }
             this.releaseKeptCells(false);
         });
+    }
+
+    /** Lays the row's cells out again, telling the row comp only if they changed: nothing else it renders can move. */
+    private updateCellsIfChanged(): void {
+        this.updateColumnLists(false, false, true);
     }
 
     /** @param ifChanged tell the row comp only when the cells changed: nothing else it renders can have moved */

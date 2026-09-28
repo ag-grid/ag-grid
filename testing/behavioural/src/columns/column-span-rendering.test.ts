@@ -523,55 +523,39 @@ describe('colSpan follows row data updates', () => {
         expect(calls.filter((id) => id === 'r0')).toEqual(['r0']);
     });
 
-    test('a span growing over the edited cell keeps it until editing stops, after focus has moved on', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
-            rowData: [
-                { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
-                { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
-            ],
-            getRowId: (params) => params.data.id,
-            // rebuilds run synchronously, so the check after the focus move sees the rebuild it causes
-            suppressAnimationFrame: true,
+    test('a span growing over the edited cell, alone or in a full-row edit, keeps it until editing stops, after focus has moved on', async () => {
+        const editAndGrowSpan = async (editType: 'fullRow' | undefined) => {
+            const api = gridsManager.createGrid(editType ?? 'cellEdit', {
+                columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
+                rowData: [
+                    { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
+                    { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
+                ],
+                getRowId: (params) => params.data.id,
+                editType,
+                // rebuilds run synchronously, so the check after the focus move sees the rebuild it causes
+                suppressAnimationFrame: true,
+            });
+            const editor = () => getGridElement(api)!.querySelector('[row-index="0"] [col-id="symbol"] input');
+            await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
+            await waitFor(() => expect(editor()).not.toBeNull());
+            api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
+            await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
+            const keptWhileEditing = editor() !== null;
+
+            api.setFocusedCell(1, 'price');
+            const keptAfterFocusMoved = editor() !== null;
+            api.stopEditing();
+            await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+            return { keptWhileEditing, keptAfterFocusMoved };
+        };
+
+        expect({ cell: await editAndGrowSpan(undefined), fullRow: await editAndGrowSpan('fullRow') }).toEqual({
+            cell: { keptWhileEditing: true, keptAfterFocusMoved: true },
+            fullRow: { keptWhileEditing: true, keptAfterFocusMoved: true },
         });
-        const editor = () => getGridElement(api)!.querySelector('[row-index="0"] [col-id="symbol"] input');
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
-
-        api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
-        await waitFor(() => expect(editor()).not.toBeNull());
-        api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
-        expect(editor()).not.toBeNull();
-
-        api.setFocusedCell(1, 'price');
-        await waitFor(() => expect(editor()).not.toBeNull());
-        api.stopEditing();
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
-    });
-
-    test('a span growing over a cell of a full-row edit keeps it until editing stops, after focus has moved on', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [priceColumnDefs[0], { ...priceColumnDefs[1], editable: true }, priceColumnDefs[2]],
-            rowData: [
-                { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
-                { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
-            ],
-            getRowId: (params) => params.data.id,
-            editType: 'fullRow',
-            suppressAnimationFrame: true,
-        });
-        const editor = () => getGridElement(api)!.querySelector('[row-index="0"] [col-id="symbol"] input');
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:100px symbol:100px group:100px'));
-
-        api.startEditingCell({ rowIndex: 0, colKey: 'symbol' });
-        await waitFor(() => expect(editor()).not.toBeNull());
-        api.applyTransaction({ update: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }] });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
-
-        api.setFocusedCell(1, 'price');
-        expect(editor()).not.toBeNull();
-        api.stopEditing();
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
     });
 
     test('a span growing over a cell with a pending batch edit keeps it until the batch commits', async () => {
