@@ -3,14 +3,11 @@ import { _getActiveDomElement, _setAriaSelected } from 'ag-stack';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { CheckboxSelectionCallbackParams } from '../entities/colDef';
 import type { IsRowSelectable } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
-    _addGridCommonParams,
-    _getCheckboxLocation,
     _getCheckboxes,
     _getEnableDeselection,
     _getEnableSelection,
@@ -36,6 +33,8 @@ import { SelectAllFeature, isCheckboxSelection } from './selectAllFeature';
 export abstract class BaseSelectionService extends BeanStub {
     protected isRowSelectable?: IsRowSelectable;
     protected selectionCtx: RowRangeSelectionContext;
+    /** Rendered selection checkboxes, so Space can tell where it acts as a checkbox click. */
+    private readonly checkboxes = new Map<RowNode, Set<CheckboxSelectionComponent>>();
 
     public postConstruct(): void {
         const { gos, beans } = this;
@@ -65,10 +64,31 @@ export abstract class BaseSelectionService extends BeanStub {
     public override destroy(): void {
         super.destroy();
         this.selectionCtx.reset();
+        this.checkboxes.clear();
     }
 
     public createCheckboxSelectionComponent(): CheckboxSelectionComponent {
         return new CheckboxSelectionComponent();
+    }
+
+    public registerCheckbox(rowNode: RowNode, checkbox: CheckboxSelectionComponent): void {
+        if (!_isInternalFeatureFlagEnabled(this.beans, 'spaceKeyFollowsClickSelection')) {
+            return;
+        }
+        const checkboxes = this.checkboxes;
+        let rowCheckboxes = checkboxes.get(rowNode);
+        if (!rowCheckboxes) {
+            rowCheckboxes = new Set();
+            checkboxes.set(rowNode, rowCheckboxes);
+        }
+        rowCheckboxes.add(checkbox);
+    }
+
+    public unregisterCheckbox(rowNode: RowNode, checkbox: CheckboxSelectionComponent): void {
+        const rowCheckboxes = this.checkboxes.get(rowNode);
+        if (rowCheckboxes?.delete(checkbox) && rowCheckboxes.size === 0) {
+            this.checkboxes.delete(rowNode);
+        }
     }
 
     public createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined {
@@ -439,31 +459,14 @@ export abstract class BaseSelectionService extends BeanStub {
         );
     }
 
-    /** Whether `rowNode` shows a selection checkbox in `column`, or in its full-width row when there is no `column`. */
+    /** Whether `rowNode` shows an enabled selection checkbox in `column`, or in its full-width row when there is no `column`. */
     private isSelectionCheckboxShown(rowNode: RowNode, column: AgColumn | undefined): boolean {
-        if (column && this.isCellCheckboxSelection(column, rowNode)) {
-            return true;
+        for (const checkbox of this.checkboxes.get(rowNode) ?? []) {
+            if (checkbox.isEnabledIn(column)) {
+                return true;
+            }
         }
-
-        // mirrors `GroupCellRendererCtrl.addCheckbox`
-        const rowSelection = this.gos.get('rowSelection');
-        if (typeof rowSelection !== 'object' || _getCheckboxLocation(rowSelection) !== 'autoGroupColumn') {
-            return false;
-        }
-
-        const checkboxes = _getCheckboxes(rowSelection);
-        if (column) {
-            return column.colDef.showRowGroup != null && column.isColumnFunc(rowNode, checkboxes);
-        }
-        if (!rowNode.group) {
-            return false;
-        }
-        if (typeof checkboxes !== 'function') {
-            return checkboxes;
-        }
-        // full-width rows have no column, as in `CheckboxSelectionComponent`
-        const params = _addGridCommonParams(this.gos, { node: rowNode as IRowNode, data: rowNode.data });
-        return checkboxes(params as CheckboxSelectionCallbackParams);
+        return false;
     }
 }
 

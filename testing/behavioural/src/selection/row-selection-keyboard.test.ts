@@ -693,6 +693,58 @@ describe('Row Selection with Keyboard', () => {
                 pressSpaceKey(groupRow);
                 assertSelectedRowsByIndex([0], api);
             });
+
+            describe('in multiple group columns', () => {
+                const multiColumnDefs = [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                    { field: 'sport' },
+                ];
+                const multiRowData = [
+                    { country: 'Ireland', year: 2000, sport: 'football' },
+                    { country: 'Ireland', year: 2000, sport: 'rugby' },
+                ];
+
+                function createMultiColumnGrid() {
+                    return createGrid(
+                        {
+                            columnDefs: multiColumnDefs,
+                            rowData: multiRowData,
+                            groupDisplayType: 'multipleColumns',
+                            groupDefaultExpanded: -1,
+                            rowSelection: {
+                                mode: 'multiRow',
+                                enableClickSelection: false,
+                                checkboxLocation: 'autoGroupColumn',
+                            },
+                        },
+                        spaceKeyFollowsClickSelection
+                    );
+                }
+
+                test('Space on a group column cell without a checkbox obeys click selection', async () => {
+                    const [api, actions] = createMultiColumnGrid();
+
+                    const yearGroupCell = actions.getCellByPosition(1, 'ag-Grid-AutoColumn-year')!;
+                    await waitFor(() => expect(yearGroupCell.querySelector('.ag-selection-checkbox')).not.toBeNull());
+
+                    // a leaf row, and a year group seen from the country column
+                    pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-AutoColumn-country')!);
+                    pressSpaceKey(actions.getCellByPosition(2, 'ag-Grid-AutoColumn-year')!);
+                    pressSpaceKey(actions.getCellByPosition(1, 'ag-Grid-AutoColumn-country')!);
+                    assertSelectedRowsByIndex([], api);
+                });
+
+                test('Space on the group column showing the checkbox still toggles the group', async () => {
+                    const [api, actions] = createMultiColumnGrid();
+
+                    const yearGroupCell = actions.getCellByPosition(1, 'ag-Grid-AutoColumn-year')!;
+                    await waitFor(() => expect(yearGroupCell.querySelector('.ag-selection-checkbox')).not.toBeNull());
+
+                    pressSpaceKey(yearGroupCell);
+                    assertSelectedRowsByIndex([1], api);
+                });
+            });
         });
 
         test('Space on a row can select but not deselect with enableSelection', async () => {

@@ -48,6 +48,8 @@ export interface ISelectionService {
     selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
+    registerCheckbox(rowNode: RowNode, checkbox: CheckboxSelectionComponent): void;
+    unregisterCheckbox(rowNode: RowNode, checkbox: CheckboxSelectionComponent): void;
     createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined;
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: () => void): void;
     /** `column` is `undefined` on a full-width row. */
