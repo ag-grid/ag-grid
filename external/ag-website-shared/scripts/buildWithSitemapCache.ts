@@ -21,18 +21,17 @@
  * - All other params are passed through to Astro
  */
 import { spawnSync } from 'node:child_process';
-import { readFileSync, rmSync } from 'node:fs';
+import { rmSync } from 'node:fs';
 import path from 'node:path';
 
 import { SITEMAP_BUILD_DIR, SITEMAP_CACHE_DIR } from '../src/constants';
 import {
     decideSecondBuild,
     getConsumedSitemapRecordPath,
+    getGeneratedSitemapPath,
     readConsumedSitemapRecord,
+    readGeneratedSitemap,
 } from '../src/utils/consumedSitemapRecord';
-
-// Astro's default `outDir`, which none of the websites override.
-const ASTRO_OUT_DIR = 'dist';
 
 const rawArgs = process.argv.slice(2);
 const normaliseFlag = (flag: string) => flag.replace(/^--/, '');
@@ -64,19 +63,6 @@ const runSecondBuild = hasFlag('--run-second-build');
 const cleanCache = hasFlag('--clean-cache');
 const astroArgs = ['build', ...rawArgs.filter((arg) => !OWN_FLAGS.some((flag) => arg.startsWith(flag)))];
 
-/** Null when this build generated no sitemap at all, as archive builds do. */
-const readGeneratedSitemap = () => {
-    try {
-        return readFileSync(path.join(ASTRO_OUT_DIR, 'sitemap-0.xml'), 'utf8');
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-            return null;
-        }
-
-        throw error;
-    }
-};
-
 const runBuild = () => {
     const result = spawnSync('astro', astroArgs, { stdio: 'inherit', shell: true });
     if (result.status !== 0) {
@@ -89,14 +75,15 @@ if (cleanCache) {
     rmSync(path.resolve(SITEMAP_CACHE_DIR), { recursive: true, force: true });
 }
 
-// A record left by an earlier build would otherwise be read as this build's.
+// Files left by an earlier build would otherwise be read as this build's.
 rmSync(getConsumedSitemapRecordPath(SITEMAP_BUILD_DIR), { force: true });
+rmSync(getGeneratedSitemapPath(SITEMAP_BUILD_DIR), { force: true });
 
 runBuild();
 
 if (runSecondBuild) {
     const { needed, reason } = decideSecondBuild({
-        generatedXml: readGeneratedSitemap(),
+        generatedXml: readGeneratedSitemap(SITEMAP_BUILD_DIR),
         record: readConsumedSitemapRecord(SITEMAP_BUILD_DIR),
     });
 
