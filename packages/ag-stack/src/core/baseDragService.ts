@@ -63,7 +63,7 @@ export class BaseDragService<
     private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
-        return this.drag?.start.target ?? null;
+        return this.drag?.startTarget ?? null;
     }
 
     /** True if there is at least one active pointer drag in any BaseDragService instance in the page */
@@ -534,6 +534,7 @@ const destroyDragSourceEntry = (dragSource: DragSourceEntry): void => {
 
 class Dragging {
     public readonly eElement: Element & Partial<HTMLElement>;
+    public readonly startTarget: EventTarget | null;
     public readonly handlers: TempEventHandler[] = [];
     public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
     public pointerCapture: PointerCapture | null = null;
@@ -545,6 +546,8 @@ class Dragging {
         public readonly pointerId: number | null = null
     ) {
         this.eElement = params.eElement;
+        // a saved event target can be retargeted after it leaves a shadow root.
+        this.startTarget = start.target;
     }
 }
 
