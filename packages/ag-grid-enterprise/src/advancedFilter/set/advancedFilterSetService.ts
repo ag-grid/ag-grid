@@ -1,6 +1,7 @@
 import { _areEqual, _last, _pushToMapArray } from 'ag-stack';
 
 import type {
+    AdvancedFilterModel,
     AgColumn,
     AgPromise,
     BaseFilterParams,
@@ -31,7 +32,7 @@ import {
 
 import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
-import { translateForSetFilter } from '../../setFilter/setFilterUtils';
+import { isKeyOnlyTreeLeaf, translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { getMultiFilterChild } from '../customFilterOptions';
@@ -127,14 +128,21 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         // A handler reads the column definitions and the grouping when it is built, so a change to either
         // has to be pushed in. `refresh` is the column filter lifecycle's own way; it is not running here.
         const refresh = () => this.refreshColumns();
-        const createPreservingColumns = this.createPreservingColumns.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 this.refreshColumns();
                 this.createPreservingColumns();
             },
-            advancedFilterEnabledChanged: createPreservingColumns,
-            dataTypesInferred: createPreservingColumns,
+            advancedFilterEnabledChanged: ({ enabled }) => {
+                // Turning it off discards the applied expression, the one thing holding these handlers.
+                if (enabled) {
+                    this.createPreservingColumns();
+                } else {
+                    this.reset();
+                }
+            },
+            dataTypesInferred: () => this.createPreservingColumns(),
+            filterChanged: () => this.refreshAppliedValues(),
             columnRowGroupChanged: refresh,
             columnPivotModeChanged: refresh,
             columnPivotChanged: refresh,
@@ -179,6 +187,20 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             const column = cols[i];
             if (column.primary && this.getSetColDef(column).filterParams?.preservePreviousValues) {
                 this.getSetColumn(column);
+            }
+        }
+    }
+
+    /** The values an applied expression names are its handlers' model, so `preservePreviousValuesLimit` spares them. */
+    private refreshAppliedValues(): void {
+        const appliedModel = this.beans.advancedFilter?.getModel() ?? null;
+        for (const [colId, setColumn] of this.columns) {
+            const handler = setColumn?.handler;
+            if (handler?.valueModel.isPreserving()) {
+                const model = getAppliedSetModel(appliedModel, colId);
+                if (!_areEqual(handler.params.model?.values, model?.values)) {
+                    handler.refresh({ ...handler.params, model, source: 'api' });
+                }
             }
         }
     }
@@ -556,6 +578,10 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             colDef,
             params
         ) as ISetFilterParams;
+        // Only a handler keeping values reads its model, as what eviction spares.
+        if (params.filterParams.preservePreviousValues) {
+            params.model = getAppliedSetModel(this.beans.advancedFilter?.getModel() ?? null, column.getColId());
+        }
         return params;
     }
 
@@ -585,6 +611,27 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 }
 
 const joinPath = (segments: readonly string[]): string => segments.join(PATH_JOINER);
+
+/** Every value a set condition on the column names, whether it keeps rows or drops them. */
+const getAppliedSetModel = (model: AdvancedFilterModel | null, colId: string): SetFilterModel | null => {
+    const values: SetFilterModelValue = [];
+    collectSetValues(model, colId, values);
+    return values.length ? { filterType: 'set', values } : null;
+};
+
+const collectSetValues = (model: AdvancedFilterModel | null, colId: string, values: SetFilterModelValue): void => {
+    if (model?.filterType === 'join') {
+        const conditions = model.conditions;
+        for (let i = 0, len = conditions.length; i < len; ++i) {
+            collectSetValues(conditions[i], colId, values);
+        }
+    } else if (model?.filterType === 'set' && model.colId === colId) {
+        const modelValues = model.values;
+        for (let i = 0, len = modelValues.length; i < len; ++i) {
+            values.push(modelValues[i]);
+        }
+    }
+};
 
 const createValues = (): Omit<SetColumnValues, 'entries'> => ({
     keysByPath: new Map(),
@@ -644,7 +691,7 @@ const buildFlatValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
     const values = createValues();
     for (let i = 0, len = allKeys.length; i < len; ++i) {
         const key = allKeys[i];
-        addLeaf(handler, values, [handler.getFormattedValue(key) ?? ''], [key], entries, false);
+        addLeaf(handler, values, [handler.getFormattedValue(key)], [key], entries, false);
     }
     return { entries, ...values };
 };
@@ -653,6 +700,7 @@ const buildFlatValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
 const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): SetColumnValues => {
     const handler = setColumn.handler;
     const treeListFormatter = handler.params.filterParams.treeListFormatter;
+    const keyOnlyKeys = handler.valueModel.keyOnlyKeys;
 
     const entries: SetValueEntry[] = [];
     const values = createValues();
@@ -660,8 +708,9 @@ const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
         for (const item of items.values()) {
             // A blank names itself the way the Set Filter's own list names it, so the two offer one label.
             const formatted =
-                (treeListFormatter ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys) : item.treeKey) ??
-                translateForSetFilter(handler, 'blanks');
+                (treeListFormatter && !isKeyOnlyTreeLeaf(item, keyOnlyKeys)
+                    ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
+                    : item.treeKey) ?? translateForSetFilter(handler, 'blanks');
             const itemPath = [...path, formatted];
             const children = item.children;
             const keys = item.keys;

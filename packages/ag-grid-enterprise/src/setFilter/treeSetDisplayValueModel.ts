@@ -4,6 +4,7 @@ import type { LogService, TextFormatter } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { NO_SET_FILTER_KEYS, SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
+import { isKeyOnlyTreeLeaf } from './setFilterUtils';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** all displayed items in a tree structure */
@@ -39,7 +40,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private treeListFormatter:
             ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined,
         private readonly treeDataOrGrouping: boolean,
-        private readonly isKeyOnly: (key: string | null) => boolean
+        private readonly getKeyOnlyKeys: () => ReadonlySet<string | null>
     ) {}
 
     public updateParams(
@@ -99,10 +100,10 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         let groupsExist = false;
 
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
-        const isKeyOnly = this.isKeyOnly;
+        const keyOnlyKeys = this.getKeyOnlyKeys();
         for (const key of allKeys) {
             // A value known only by its key has no path to ask for, so it is a leaf at the root.
-            const dataPath = isKeyOnly(key) ? [key] : (treeListPathGetter(getValue(key)!) ?? [null]);
+            const dataPath = keyOnlyKeys.has(key) ? [key] : (treeListPathGetter(getValue(key)!) ?? [null]);
             const dataPathLength = dataPath.length;
             if (dataPathLength > 1) {
                 groupsExist = true;
@@ -163,8 +164,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         }
         // infer from data
         let isDate = false;
+        const keyOnlyKeys = this.getKeyOnlyKeys();
         for (const availableKey of availableKeys) {
-            if (this.isKeyOnly(availableKey)) {
+            if (keyOnlyKeys.has(availableKey)) {
                 continue;
             }
             // find the first non-null value
@@ -217,19 +219,22 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
 
     private updateFilter(matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean): void {
+        const treeListFormatter = this.treeListFormatter;
+        const keyOnlyKeys = this.getKeyOnlyKeys();
         const passesFilter = (item: SetFilterModelTreeItem) => {
             if (!item.available) {
                 return false;
             }
-            if (item.treeKey == null) {
+            const treeKey = item.treeKey;
+            if (treeKey == null) {
                 return nullMatchesFilter;
             }
 
             return matchesFilter(
                 this.formatter(
-                    this.treeListFormatter
-                        ? this.treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
-                        : item.treeKey
+                    treeListFormatter && !isKeyOnlyTreeLeaf(item, keyOnlyKeys)
+                        ? treeListFormatter(treeKey, item.depth, item.parentTreeKeys)
+                        : treeKey
                 )
             );
         };

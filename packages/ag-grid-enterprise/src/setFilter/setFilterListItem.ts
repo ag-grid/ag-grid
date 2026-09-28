@@ -348,15 +348,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
     }
 
-    /** The class and the label; the default tooltip reads `isMissing` as it is built. */
+    /** The default tooltip reads `isMissing` when it is built, so only the class and the label change here. */
     private applyMissing(): void {
         const isMissing = this.isMissing;
         this.toggleCss('ag-set-filter-item-missing', isMissing);
-        if (this.isTree) {
+        const ariaEl = this.getAriaElement();
+        if (this.isTree && (isMissing || !this.cellRendererComponent)) {
             this.setupFixedAriaLabels(this.formattedValue);
+        } else if (this.isTree) {
+            // A tree item drawn by a renderer has no fixed label of its own, only the one saying it is missing.
+            _setAriaLabel(ariaEl, null);
+            _setAriaDescribedBy(ariaEl);
         } else {
             _setAriaLabel(
-                this.getAriaElement(),
+                ariaEl,
                 isMissing ? this.getDefaultTooltipText(this.cellRendererParams.value, this.formattedValue) : null
             );
         }

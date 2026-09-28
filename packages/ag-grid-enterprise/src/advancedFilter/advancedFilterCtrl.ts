@@ -184,6 +184,10 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
     private onEnabledChanged(enabled: boolean): void {
         this.enabled = enabled;
+        if (!enabled) {
+            // Its value lists belong to the Advanced Filter, which lets them go when turned off.
+            this.toggleFilterBuilder({ source: 'api', force: false });
+        }
         this.updateComps();
     }
 

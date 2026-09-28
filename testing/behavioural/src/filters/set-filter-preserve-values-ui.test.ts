@@ -46,10 +46,9 @@ describe('Set Filter preservePreviousValues - filter list', () => {
     function createGrid(
         rowData: Row[],
         filterParams: ISetFilterParams = {},
-        colDef: Partial<ColDef<Row>> = {},
-        gridId = 'grid'
+        colDef: Partial<ColDef<Row>> = {}
     ): GridApi<Row> {
-        return gridsManager.createGrid<Row>(gridId, {
+        return gridsManager.createGrid<Row>('grid', {
             columnDefs: [
                 {
                     field: 'value',
@@ -266,6 +265,56 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'Z', '(Blanks)']);
     });
 
+    test('in Excel Mode a blank in the data is listed after the retained values', async () => {
+        const api = createGrid(rows('A', null, 'B'), { excelMode: 'windows' });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A', null));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', '(Blanks)']);
+        expect(missingItems()).toEqual(['B']);
+    });
+
+    test('in Excel Mode with suppressSorting a blank keeps its first-seen place', async () => {
+        const api = createGrid(rows('A', null, 'B'), { excelMode: 'windows', suppressSorting: true });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A', null));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', '(Blanks)', 'B']);
+    });
+
+    test("a data change keeps the open list's rows while a model value never seen is listed", async () => {
+        const api = createGrid(rows('A', 'B'));
+        await asyncSetTimeout(0);
+        await setModel(api, ['A', 'Z']);
+        await ColumnFilterHarness.open(api, 'value');
+        const rowOf = (label: string) =>
+            Array.from(popup().querySelectorAll<HTMLElement>('.ag-set-filter-item')).find(
+                (el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim() === label
+            );
+        const before = rowOf('A');
+        expect(before).toBeDefined();
+
+        api.applyTransaction({ add: rows('C') });
+        await asyncSetTimeout(0);
+        expect(rowOf('A')).toBe(before);
+    });
+
+    test('in Excel Mode applying the mini filter selects the retained values it matches', async () => {
+        const api = createGrid(rows('Apple', 'Avocado', 'Pear'), { excelMode: 'windows' });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('Avocado', 'Pear'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        await filter.miniFilterSearch('p');
+        await filter.apply();
+        expect(modelOf(api)?.values).toEqual(['Pear', 'Apple']);
+
+        await setRowData(api, rows('Apple', 'Avocado', 'Pear'));
+        expect(shown(api)).toEqual(['Apple', 'Pear']);
+    });
+
     test('unchecking with no model keeps every retained value selected', async () => {
         const api = createGrid(rows('A', 'B', 'C'));
         await asyncSetTimeout(0);
@@ -370,6 +419,50 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(labels.filter((label) => label?.endsWith('not in current data'))).toEqual([
             '01 Filter Value, not in current data',
         ]);
+    });
+
+    test('a tree list item drawn by a cell renderer loses its label once its value returns', async () => {
+        const api = createGrid(rows('A', 'B'), {
+            treeList: true,
+            treeListPathGetter: (value: string | null) => [value ?? ''],
+            cellRenderer: (params: { value: unknown }) => String(params.value),
+        });
+        await asyncSetTimeout(0);
+        await ColumnFilterHarness.open(api, 'value');
+        const labels = () =>
+            Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
+                el.getAttribute('aria-label')
+            );
+
+        await setRowData(api, rows('A'));
+        expect(labels()).toContain('B Filter Value, not in current data');
+
+        // Its row is reused in place, and labelled as its siblings are: by its renderer alone.
+        await setRowData(api, rows('A', 'B'));
+        expect(labels().filter((label) => label != null)).toEqual([]);
+        const describedBy = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map(
+            (el) => el.getAttribute('aria-describedby')
+        );
+        expect(describedBy.filter((id) => id != null)).toEqual([]);
+    });
+
+    test('a tree list model value never seen in the data is a root leaf, not handed to the formatter or renderer', async () => {
+        const treeListFormatter = vi.fn((pathKey: string | null) => `#${pathKey}`);
+        const cellRenderer = vi.fn((params: { value: unknown }) => String(params.value));
+        const api = createGrid(
+            rows('2024-01-01'),
+            { treeList: true, treeListFormatter, cellRenderer },
+            { cellDataType: 'dateString' }
+        );
+        await asyncSetTimeout(0);
+        await setModel(api, ['2024-01-01', 'Z']);
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toContain('Z');
+        await filter.miniFilterSearch('Z');
+        expect(filter.setFilterItemLabels()).toContain('Z');
+        expect(treeListFormatter.mock.calls.map(([pathKey]) => pathKey)).not.toContain('Z');
+        expect(cellRenderer.mock.calls.map(([params]) => params.value)).not.toContain('Z');
     });
 
     test('grid state restores selected retained values', async () => {

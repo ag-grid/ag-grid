@@ -72,7 +72,6 @@ export class SetFilterHandler<TValue = string>
     private groupingTreeList = false;
     private caseSensitive: boolean = false;
     private keyShape = '';
-    private keyCaseSensitive = false;
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
 
@@ -115,7 +114,6 @@ export class SetFilterHandler<TValue = string>
         });
         this.valueModel = valueModel;
         this.keyShape = this.getKeyShape();
-        this.keyCaseSensitive = this.caseSensitive;
 
         this.validateModel();
 
@@ -125,10 +123,15 @@ export class SetFilterHandler<TValue = string>
     public refresh(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         const valueModel = this.valueModel;
         const wasPreserving = valueModel.isPreserving();
+        const wasCaseSensitive = this.caseSensitive;
         this.updateParams(params);
         // Before the values, whose reload may evict by what the model checks.
         this.appliedModel.update(params.model);
-        const dropUnknownKeys = this.checkKeyRules(wasPreserving, !!params.filterParams.preservePreviousValues);
+        const dropUnknownKeys = this.checkKeyRules(
+            wasPreserving,
+            !!params.filterParams.preservePreviousValues,
+            this.caseSensitive !== wasCaseSensitive
+        );
         const rekey = dropUnknownKeys !== undefined;
         const reloaded = valueModel.refresh(
             {
@@ -160,13 +163,11 @@ export class SetFilterHandler<TValue = string>
      * Kept keys cannot be compared with keys made by other rules, or kept at all once the option is off.
      * Returns `undefined` when the kept keys stand, else whether model keys the next load lacks must go.
      */
-    private checkKeyRules(wasPreserving: boolean, preserving: boolean): boolean | undefined {
+    private checkKeyRules(wasPreserving: boolean, preserving: boolean, refolded: boolean): boolean | undefined {
         const keyShape = this.getKeyShape();
         // Provided values are keyed by the values alone, whatever the grouping.
         const reshaped = keyShape !== this.keyShape && this.isValuesTakenFromGrid();
-        const refolded = this.caseSensitive !== this.keyCaseSensitive;
         this.keyShape = keyShape;
-        this.keyCaseSensitive = this.caseSensitive;
         if (wasPreserving && !preserving) {
             this.clearMissing(false);
             return undefined;
@@ -195,7 +196,7 @@ export class SetFilterHandler<TValue = string>
             return false;
         }
         this.updateParams(this.params);
-        const dropUnknownKeys = this.checkKeyRules(true, true);
+        const dropUnknownKeys = this.checkKeyRules(true, true, false);
         if (dropUnknownKeys === undefined) {
             return false;
         }
@@ -291,7 +292,7 @@ export class SetFilterHandler<TValue = string>
             filterParams.treeListPathGetter,
             filterParams.treeListFormatter,
             this.isTreeDataOrGrouping(),
-            (key) => this.valueModel.keyOnlyKeys.has(key)
+            () => this.valueModel.keyOnlyKeys
         );
         model.updateDisplayedValuesToAllAvailable(
             (key) => this.valueModel.getValueForFormatter(key),
@@ -367,7 +368,8 @@ export class SetFilterHandler<TValue = string>
 
     public onNewRowsLoaded(): void {
         // Tree Data toggling reloads the rows before its property event, so the rekey has to happen here.
-        if (!this.rekeyIfGroupingChanged()) {
+        // A first load still waiting for the rows reads these ones when they arrive.
+        if (!this.rekeyIfGroupingChanged() && this.valueModel.isInitialised()) {
             this.syncAfterDataChange();
         }
     }
@@ -436,11 +438,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     private addEventListenersForDataChanges(): void {
-        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => {
-            if (!this.rekeyIfGroupingChanged()) {
-                this.syncAfterDataChange();
-            }
-        });
+        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
 
         const syncAfterDataChangeDebounced = _debounce(this, this.syncAfterDataChange.bind(this), 0);
         this.addManagedEventListeners({

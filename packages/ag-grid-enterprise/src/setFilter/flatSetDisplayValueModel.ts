@@ -12,7 +12,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private readonly getValueFormatter: () => ((params: ValueFormatterParams) => string) | undefined,
         private readonly formatter: TextFormatter,
         private readonly column: AgColumn,
-        private readonly isKeyOnly: (key: string | null) => boolean
+        private readonly getKeyOnlyKeys: () => ReadonlySet<string | null>
     ) {}
 
     public updateDisplayedValuesToAllAvailable(
@@ -33,6 +33,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.displayedKeys = [];
 
         const valueFormatter = this.getValueFormatter();
+        const keyOnlyKeys = this.getKeyOnlyKeys();
 
         for (const key of availableKeys) {
             if (key == null) {
@@ -40,7 +41,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                     this.displayedKeys.push(key);
                 }
             } else {
-                const valueFormatterValue = this.isKeyOnly(key)
+                const valueFormatterValue = keyOnlyKeys.has(key)
                     ? key
                     : this.valueSvc.formatValue(this.column, null, getValue(key), valueFormatter, false);
 

@@ -158,12 +158,18 @@ function isAggFilter(
     return groupFilterEnabled;
 }
 
+interface PreservingFilterParams {
+    preservePreviousValues?: boolean;
+    defaultFilterParams?: { preservePreviousValues?: boolean };
+    filters?: { filterParams?: PreservingFilterParams }[];
+}
+
 /** Also asked through Multi or selectable filter children, and a selectable filter's defaults. */
-function wantsPreservedValues(filterParams: any): boolean {
+function wantsPreservedValues(filterParams: PreservingFilterParams | undefined): boolean {
     if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
         return true;
     }
-    const filters: { filterParams?: any }[] | undefined = filterParams?.filters;
+    const filters = filterParams?.filters;
     return Array.isArray(filters) && filters.some((def) => wantsPreservedValues(def?.filterParams));
 }
 
@@ -1167,21 +1173,24 @@ export class ColumnFilterService
 
     /** A filter keeping values that leave the data has to see them before they leave, not from first use. */
     private createPreservingFilters(): void {
+        if (!this.canCreatePreservingFilters()) {
+            return;
+        }
         const cols = this.beans.colModel.getColsInStateOrder();
         for (let i = 0, len = cols.length; i < len; ++i) {
             this.createPreservingFilter(cols[i]);
         }
     }
 
-    private createPreservingFilter(column: AgColumn): void {
+    /** Its keys are made by the inferred data type, which a filter built before inference never picks up. */
+    private canCreatePreservingFilters(): boolean {
         const { filterManager, dataTypeSvc } = this.beans;
-        // Its keys are made by the inferred data type, which a filter built before inference never picks up.
-        if (
-            !filterManager?.isAdvFilterEnabled() &&
-            !dataTypeSvc?.isPendingInference &&
-            this.isCurrentColumn(column) &&
-            wantsPreservedValues(column.colDef.filterParams)
-        ) {
+        return !filterManager?.isAdvFilterEnabled() && !dataTypeSvc?.isPendingInference;
+    }
+
+    /** Not for pivot result columns, which copy their value column's params and are rebuilt by every pivot change. */
+    private createPreservingFilter(column: AgColumn): void {
+        if (column.primary && this.isCurrentColumn(column) && wantsPreservedValues(column.colDef.filterParams)) {
             this.getOrCreateFilterWrapper(column, true);
         }
     }
@@ -1297,7 +1306,7 @@ export class ColumnFilterService
         }
     }
 
-    // destroys the filter, so it no longer takes part
+    // destroys the filter, so it no longer takes part; one preserving values is recreated empty, to keep seeing them
     public destroyFilter(column: AgColumn, source: 'api' | 'paramsUpdated' = 'api'): void {
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
@@ -1317,7 +1326,9 @@ export class ColumnFilterService
                         source: 'api',
                     });
                 }
-                this.createPreservingFilter(column);
+                if (this.canCreatePreservingFilters()) {
+                    this.createPreservingFilter(column);
+                }
             });
         }
     }

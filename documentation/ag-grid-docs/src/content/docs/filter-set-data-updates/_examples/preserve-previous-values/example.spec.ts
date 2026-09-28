@@ -10,6 +10,8 @@ test.agExample(import.meta, () => {
     };
     const filterItemCheckbox = (page: any, label: string) => filterItem(page, label).locator('input[type="checkbox"]');
     const rows = (page: any) => page.locator('.ag-grid-scrolling-container .ag-row[row-id]');
+    const sideButton = (page: any, label: string) =>
+        page.locator('.ag-side-button', { hasText: new RegExp(`^\\s*${label}\\s*$`) });
 
     test.eachFramework('values that leave the data keep their selected state', async ({ page }) => {
         await ensureGridReady(page);
@@ -26,6 +28,9 @@ test.agExample(import.meta, () => {
         await expect(filterItemCheckbox(page, 'C')).not.toBeChecked();
         await expect(page.locator('.ag-floating-filter input')).toHaveValue('(1) B');
         await expect(rows(page)).toHaveCount(0);
+        await sideButton(page, 'Filter Summaries').click();
+        await expect(page.locator('.ag-filter-card-summary')).toContainText('B');
+        await sideButton(page, 'Filters').click();
 
         // Apply Data Update 2 -> 'B' and 'C' return: 'B' rows show again, 'C' stays filtered out.
         await page.getByRole('button', { name: 'Apply Data Update 2' }).click();
@@ -41,7 +46,8 @@ test.agExample(import.meta, () => {
 
         await filterItemCheckbox(page, 'C').uncheck();
         await page.getByRole('button', { name: 'Apply Data Update 1' }).click();
-        await expect(filterItem(page, 'C')).toHaveCount(1);
+        await expect(filterItem(page, 'B')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItem(page, 'C')).toHaveClass(/ag-set-filter-item-missing/);
 
         await page.getByRole('button', { name: 'Clear Preserved Values' }).click();
         await expect(filterItem(page, 'B')).toHaveCount(0);

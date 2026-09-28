@@ -41,7 +41,10 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;
 
-    /** Returns the full list of unique values used by the Set Filter. */
+    /**
+     * Returns the full list of unique values used by the Set Filter.
+     * With `preservePreviousValues`, a model value never seen in the data is `null`.
+     */
     getFilterValues(): (V | null)[];
 
     /** Sets the values used in the Set Filter on the fly. */
@@ -73,7 +76,7 @@ export interface SetFilterHandler<TValue = string> {
 
     /**
      * Returns the full list of unique values used by the Set Filter.
-     * A model value `preservePreviousValues` keeps without ever seeing it in the data is `null`.
+     * With `preservePreviousValues`, a model value never seen in the data is `null`.
      */
     getFilterValues(): (TValue | null)[];
 
@@ -92,7 +95,7 @@ export interface SetFilterHandler<TValue = string> {
     resetFilterValues(): void;
     /**
      * Discards the values kept by `preservePreviousValues` that are no longer in the current values, then reconciles
-     * the filter model against the remaining values as it is without the option.
+     * the filter model with the remaining values, as when `preservePreviousValues` is off.
      * @param onlyUnselected If `true`, only values not in the applied filter model are discarded, and the model is left as it is.
      */
     clearPreservedValues(onlyUnselected?: boolean): void;

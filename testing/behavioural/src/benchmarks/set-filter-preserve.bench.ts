@@ -75,34 +75,32 @@ suite('set filter preservePreviousValues under churn', () => {
 
 const WIDE_COLUMNS = 100;
 const WIDE_ROWS = 20_000;
+const WIDE_FIELDS = Array.from({ length: WIDE_COLUMNS }, (_, c) => `c${c}`);
+let wideRowData: Record<string, string>[] | undefined;
+const getWideRowData = () => {
+    if (!wideRowData) {
+        wideRowData = [];
+        for (let r = 0; r < WIDE_ROWS; ++r) {
+            const row: Record<string, string> = { id: String(r) };
+            for (let c = 0; c < WIDE_COLUMNS; ++c) {
+                row[WIDE_FIELDS[c]] = `v${(r * 7 + c) % 1000}`;
+            }
+            wideRowData.push(row);
+        }
+    }
+    return wideRowData;
+};
+const wideColumnDefs = (preservePreviousValues: boolean) =>
+    WIDE_FIELDS.map((field) => ({ field, filter: 'agSetColumnFilter', filterParams: { preservePreviousValues } }));
 
 /** Grid start with every column opted in, so each filter is created and reads its values up front. */
 suite('set filter preservePreviousValues at grid start', () => {
     const gridsManager = new BenchGridsManager({ modules: [ClientSideRowModelModule, RowApiModule, SetFilterModule] });
-    const fields = Array.from({ length: WIDE_COLUMNS }, (_, c) => `c${c}`);
-    let rowData: Record<string, string>[] | undefined;
-    const getRowData = () => {
-        if (!rowData) {
-            rowData = [];
-            for (let r = 0; r < WIDE_ROWS; ++r) {
-                const row: Record<string, string> = {};
-                for (let c = 0; c < WIDE_COLUMNS; ++c) {
-                    row[fields[c]] = `v${(r * 7 + c) % 1000}`;
-                }
-                rowData.push(row);
-            }
-        }
-        return rowData;
-    };
     const start = (preservePreviousValues: boolean) => () => {
         gridsManager.destroyAll();
         const api = gridsManager.createGrid('wide', {
-            columnDefs: fields.map((field) => ({
-                field,
-                filter: 'agSetColumnFilter',
-                filterParams: { preservePreviousValues },
-            })),
-            rowData: getRowData(),
+            columnDefs: wideColumnDefs(preservePreviousValues),
+            rowData: getWideRowData(),
         });
         if (api.getDisplayedRowCount() !== WIDE_ROWS) {
             throw new Error('set filter preserve bench: rows did not load');
@@ -117,5 +115,50 @@ suite('set filter preservePreviousValues at grid start', () => {
     bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows: option on`, start(true), {
         ...benchDefaults(),
         setup: () => gridsManager.reset(),
+    });
+});
+
+/** One row changing with every column opted in: each filter that exists re-reads every row, and up front that is all of them. */
+suite('set filter preservePreviousValues, one-row transaction on a wide grid', () => {
+    const gridsManager = new BenchGridsManager({
+        modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowApiModule, SetFilterModule],
+    });
+
+    const createSetUp = (preservePreviousValues: boolean) => {
+        let api: GridApi | undefined;
+        let generation = 0;
+        const update = () => {
+            ++generation;
+            api!.applyTransaction({ update: [{ ...getWideRowData()[0], c0: `u${generation}` }] });
+        };
+        const setUp = async () => {
+            await benchCooldown();
+            if (api) {
+                return;
+            }
+            api = gridsManager.createGrid(`wide-update-${preservePreviousValues}`, {
+                columnDefs: wideColumnDefs(preservePreviousValues),
+                getRowId: ({ data }) => data.id,
+                rowData: getWideRowData(),
+            });
+            update();
+            if (api.getRowNode('0')?.data?.c0 !== `u${generation}`) {
+                throw new Error('set filter preserve bench: transaction did not apply');
+            }
+        };
+        return { update, setUp };
+    };
+
+    const off = createSetUp(false);
+    const on = createSetUp(true);
+
+    bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows, one row updated: option off`, off.update, {
+        ...benchDefaults(),
+        setup: off.setUp,
+    });
+
+    bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows, one row updated: option on`, on.update, {
+        ...benchDefaults(),
+        setup: on.setUp,
     });
 });

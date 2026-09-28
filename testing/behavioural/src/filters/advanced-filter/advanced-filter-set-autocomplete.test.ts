@@ -8,6 +8,8 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
+import { MultiFilterModule } from 'ag-grid-enterprise';
+
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
 
 describe('Advanced Filter - Set Filter value sources', () => {
@@ -482,7 +484,7 @@ describe('Advanced Filter - Set Filter editing a written list', () => {
 });
 
 describe('Advanced Filter - Set Filter value list', () => {
-    const gridsManager = new TestGridsManager({ modules: SET_MODULES });
+    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, MultiFilterModule] });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -700,6 +702,100 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(af.getModel().values).toEqual(['Jamaica']);
     });
 
+    test('a value named by is none of inside a join is kept, and evicted once no expression names it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 0 },
+                },
+            ],
+        });
+        const withoutJamaica = ROW_DATA.filter((row) => row.country !== 'Jamaica');
+        api.setAdvancedFilterModel({
+            filterType: 'join',
+            type: 'AND',
+            conditions: [
+                { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'a' },
+                { filterType: 'set', colId: 'country', type: 'isNoneOf', values: ['Jamaica'] },
+            ],
+        });
+        await asyncSetTimeout(0);
+        api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        api.setGridOption('rowData', [...withoutJamaica]);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(api.getAdvancedFilterModel()).toBeNull();
+    });
+
+    test('a tree list value known only from the applied expression is never handed to the formatter', async () => {
+        const treeListFormatter = vi.fn((pathKey: string | null) => `#${pathKey}`);
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        preservePreviousValues: true,
+                        treeList: true,
+                        treeListPathGetter: (value: string | null) => [value ?? ''],
+                        treeListFormatter,
+                    },
+                },
+            ],
+        });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Atlantis'] });
+        await asyncSetTimeout(0);
+
+        await AdvancedFilterHarness.get(api).type('[Country] is any of [');
+        const formatted = treeListFormatter.mock.calls.map(([pathKey]) => pathKey);
+        expect(formatted).toContain('Poland');
+        expect(formatted).not.toContain('Atlantis');
+    });
+
+    test("a Multi Filter's Set Filter child asking to preserve values is made up front", async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter' },
+                            { filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+                        ],
+                    },
+                },
+            ],
+        });
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica')
+        );
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+    });
+
     test('an applied value outlives the limit: it filters again when it returns, and can be applied while away', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
@@ -724,6 +820,9 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
 
         api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+        // Cleared first, as re-typing the applied text leaves Apply disabled and proves nothing.
+        api.setAdvancedFilterModel(null);
         await asyncSetTimeout(0);
         await af.applyExpression('[Country] is any of ["Jamaica"]');
         expect(af.getModel().values).toEqual(['Jamaica']);

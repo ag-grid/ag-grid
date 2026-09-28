@@ -427,7 +427,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(label(items[items.length - 1])).toBe('Jamaica');
     });
 
-    test('the Advanced Filter caps the values it keeps, as nothing is checked in its own list', async () => {
+    test('the Advanced Filter caps the values it keeps, sparing those its applied expression names', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -439,7 +439,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
                 },
             ],
         });
-        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Poland'] });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Jamaica'] });
         for (const gone of ['Jamaica', 'United Kingdom', 'United States']) {
             api.setGridOption(
                 'rowData',
@@ -456,8 +456,20 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
 
         const missing = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item-missing`));
         expect(missing.map((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim())).toEqual([
+            'Jamaica',
             'United States',
         ]);
+    });
+
+    test('turning the Advanced Filter off closes an open Builder', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        api.showAdvancedFilterBuilder();
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder')).not.toBeNull();
+
+        api.setGridOption('enableAdvancedFilter', false);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder')).toBeNull();
     });
 
     test('choosing another value in the picker updates the pill, the model and the rows', async () => {

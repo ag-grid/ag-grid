@@ -14,9 +14,13 @@ import type {
     GridApi,
     GridOptions,
     IFilterComp,
+    IMultiFilter,
     ISetFilterParams,
     KeyCreatorParams,
+    MultiFilterHandler,
     SetFilterHandler,
+    SetFilterUi,
+    SetFilterValuesFuncParams,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -145,6 +149,43 @@ describe('Set Filter preservePreviousValues - integration', () => {
             await expectCRetained(api);
         });
 
+        test('by the column filter alone once the Advanced Filter, which made its own, is turned off', async () => {
+            const createCounted = (id: string, enableAdvancedFilter: boolean) => {
+                const reads = { count: 0 };
+                const initial = rows('A', 'B', 'C');
+                const api = gridsManager.createGrid<Row>(id, {
+                    columnDefs: [
+                        {
+                            field: 'value',
+                            ...setFilter(),
+                            valueGetter: ({ data }) => {
+                                ++reads.count;
+                                return data!.value;
+                            },
+                        },
+                    ],
+                    getRowId: ({ data }) => data.id,
+                    rowData: initial,
+                    enableAdvancedFilter,
+                });
+                const update = async () => {
+                    reads.count = 0;
+                    api.applyTransaction({ update: [{ ...initial[0], value: 'A2' }] });
+                    await asyncSetTimeout(0);
+                    return reads.count;
+                };
+                return { api, update };
+            };
+            const turnedOff = createCounted('turnedOff', true);
+            await asyncSetTimeout(0);
+            turnedOff.api.setGridOption('enableAdvancedFilter', false);
+            await asyncSetTimeout(0);
+            const never = createCounted('never', false);
+            await asyncSetTimeout(0);
+
+            expect(await turnedOff.update()).toBe(await never.update());
+        });
+
         test('for a primary column while pivoting', async () => {
             const api = gridsManager.createGrid<Row>('grid', {
                 columnDefs: [
@@ -158,6 +199,51 @@ describe('Set Filter preservePreviousValues - integration', () => {
             });
             await asyncSetTimeout(0);
             await expectCRetained(api);
+        });
+
+        test("but not for the pivot result columns that copy a value column's params", async () => {
+            const values = vi.fn((params: SetFilterValuesFuncParams<Row, string>) => params.success(['1']));
+            gridsManager.createGrid<Row>('grid', {
+                columnDefs: [
+                    { field: 'value', pivot: true },
+                    { colId: 'count', valueGetter: () => 1, aggFunc: 'sum', ...setFilter({ values }) },
+                ],
+                getRowId: ({ data }) => data.id,
+                rowData: rows('A', 'B', 'C', 'D'),
+                pivotMode: true,
+            });
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            expect(values).toHaveBeenCalledTimes(1);
+        });
+
+        test('loading its values once at grid start, as a filter created after it would', async () => {
+            const createCounted = (id: string, colDef: ColDef<Row>) => {
+                const reads = { count: 0 };
+                const api = gridsManager.createGrid<Row>(id, {
+                    columnDefs: [
+                        {
+                            field: 'value',
+                            valueGetter: ({ data }) => {
+                                ++reads.count;
+                                return data!.value;
+                            },
+                            ...colDef,
+                        },
+                    ],
+                    getRowId: ({ data }) => data.id,
+                    rowData: rows('A', 'B', 'C'),
+                });
+                return { api, reads };
+            };
+            const upFront = createCounted('upFront', setFilter());
+            await asyncSetTimeout(0);
+            const later = createCounted('later', { filter: 'agSetColumnFilter' });
+            await asyncSetTimeout(0);
+            later.api.getColumnFilterHandler('value');
+            await asyncSetTimeout(0);
+
+            expect(upFront.reads.count).toBe(later.reads.count);
         });
 
         test('for a selectable filter whose default params ask for it', async () => {
@@ -269,6 +355,31 @@ describe('Set Filter preservePreviousValues - integration', () => {
             expect(modelOf(api)?.filterModels[1].values).toEqual(['A', 'C']);
             await setRowData(api, rows('A', 'B', 'C'));
             expect(shown(api)).toEqual(['A', 'C']);
+        });
+
+        test('clearPreservedValues is reached through the child instance, or the handler with filter handlers', async () => {
+            const expectCleared = async (api: GridApi<Row>, child: SetFilterHandler) => {
+                await setRowData(api, rows('A', 'B'));
+                expect(child.getFilterKeys().sort()).toEqual(['A', 'B', 'C']);
+                child.clearPreservedValues();
+                await asyncSetTimeout(0);
+                expect(child.getFilterKeys().sort()).toEqual(['A', 'B']);
+            };
+
+            const api = createGrid(rows('A', 'B', 'C'), multiFilter);
+            await asyncSetTimeout(0);
+            const multi = (await api.getColumnFilterInstance<IMultiFilter>('value'))!;
+            await expectCleared(api, multi.getChildFilterInstance<SetFilterUi>(1)!.getFilterHandler());
+
+            const withHandlers = gridsManager.createGrid<Row>('handlers', {
+                columnDefs: [{ field: 'value', ...multiFilter }],
+                getRowId: ({ data }) => data.id,
+                rowData: rows('A', 'B', 'C'),
+                enableFilterHandlers: true,
+            });
+            await asyncSetTimeout(0);
+            const handler = withHandlers.getColumnFilterHandler('value') as MultiFilterHandler;
+            await expectCleared(withHandlers, handler.getHandler<SetFilterHandler>(1)!);
         });
 
         test('a Set Filter child is created up front, so it retains values that leave before first use', async () => {
@@ -461,7 +572,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
         api.setGridOption('columnDefs', [{ field: 'value', ...setFilter({ caseSensitive: false }) }]);
         await asyncSetTimeout(0);
         await setRowData(api, rows('pear'));
-        expect(handlerOf(api).getFilterKeys()).toHaveLength(2);
+        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['apple', 'pear']);
     });
 
     test('changing the row group columns discards keys made from the old grouping', async () => {

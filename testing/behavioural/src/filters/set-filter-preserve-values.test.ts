@@ -1,7 +1,7 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, GridApi, ISetFilterParams, SetFilterHandler } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, ISetFilterParams, SetFilterHandler, SetFilterValuesFuncParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 interface Row {
@@ -11,7 +11,7 @@ interface Row {
 
 describe('Set Filter preservePreviousValues', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, SetFilterModule],
+        modules: [ClientSideRowModelModule, SetFilterModule, GridStateModule],
     });
 
     afterEach(() => {
@@ -146,6 +146,65 @@ describe('Set Filter preservePreviousValues', () => {
         await setRowData(api, rows('A', 'C'));
         expect(modelOf(api)).toEqual({ filterType: 'set', values: [] });
         expect(handlerOf(api).getFilterKeys()).toEqual(['A', 'C']);
+    });
+
+    test('a model from initial state, applied before any rows load, is kept until its rows arrive', async () => {
+        const api = gridsManager.createGrid<Row>('grid', {
+            columnDefs: [
+                { field: 'value', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+            getRowId: ({ data }) => data.id,
+            initialState: { filter: { filterModel: { value: { filterType: 'set', values: ['B'] } } } },
+        });
+        await asyncSetTimeout(0);
+
+        await setRowData(api, rows('A', 'C'));
+        expect(modelOf(api)?.values).toEqual(['B']);
+        expect(shown(api)).toEqual([]);
+
+        await setRowData(api, rows('A', 'B', 'C'));
+        expect(shown(api)).toEqual(['B']);
+    });
+
+    test('a selected blank that leaves the data stays selected, and its rows pass again on return', async () => {
+        const api = createGrid(rows('A', null, ''));
+        await asyncSetTimeout(0);
+        await setModel(api, [null]);
+
+        await setRowData(api, rows('A'));
+        expect(modelOf(api)?.values).toEqual([null]);
+        expect(handlerOf(api).getFilterKeys()).toEqual(['A', null]);
+
+        await setRowData(api, rows('A', null, ''));
+        expect(shown(api)).toEqual([null, '']);
+    });
+
+    test('without the option, a model set while the values load is not overwritten by an earlier one', async () => {
+        let respond = () => {};
+        const api = gridsManager.createGrid<Row>('grid', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        values: (params: SetFilterValuesFuncParams<Row, string>) => {
+                            respond = () => params.success(['A', 'B', 'C']);
+                        },
+                    },
+                },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: rows('A', 'B', 'C'),
+        });
+        await asyncSetTimeout(0);
+        // Folded to 'A' once the values arrive, which must not replace the model set after it.
+        await setModel(api, ['a']);
+        await setModel(api, ['B']);
+
+        respond();
+        await asyncSetTimeout(0);
+        expect(modelOf(api)?.values).toEqual(['B']);
+        expect(shown(api)).toEqual(['B']);
     });
 
     test('a model naming every value is kept as set, so a new value arrives unchecked', async () => {
@@ -349,21 +408,12 @@ describe('Set Filter preservePreviousValues', () => {
             expect(shown(api)).toEqual(['K', 'C1']);
         });
 
-        test('a value that returns and leaves again becomes the newest', async () => {
+        test('with no model every retained value is evictable, and a value that returns and leaves again is the newest', async () => {
             const api = createGrid(rows('K', 'u1'), { preservePreviousValuesLimit: 1 });
             await asyncSetTimeout(0);
-            await setModel(api, ['K']);
 
             await churn(api, 'u2', 'u1', 'u3');
             expect(handlerOf(api).getFilterKeys().sort()).toEqual(['K', 'u1', 'u3']);
-        });
-
-        test('with no model every retained value is evictable, so an inactive filter is bounded too', async () => {
-            const api = createGrid(rows('K', 'u1'), { preservePreviousValuesLimit: 1 });
-            await asyncSetTimeout(0);
-
-            await churn(api, 'u2', 'u3', 'u4');
-            expect(handlerOf(api).getFilterKeys().sort()).toEqual(['K', 'u3', 'u4']);
         });
 
         test('a limit of zero keeps only selected values', async () => {

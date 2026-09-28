@@ -10,8 +10,35 @@ import type {
 } from 'ag-grid-community';
 import { _isBlank } from 'ag-grid-community';
 
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
+
+/** Whether every key under the item, its own and its descendants', is in `keys`. */
+export function areAllTreeKeysIn(item: SetFilterModelTreeItem, keys: ReadonlySet<string | null>): boolean {
+    const itemKeys = item.keys;
+    if (itemKeys) {
+        for (let i = 0, len = itemKeys.length; i < len; ++i) {
+            if (!keys.has(itemKeys[i])) {
+                return false;
+            }
+        }
+    }
+    const children = item.children;
+    if (children) {
+        for (const child of children.values()) {
+            if (!areAllTreeKeysIn(child, keys)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** A leaf standing only for keys known from a model, whose values have no path to format or render. */
+export function isKeyOnlyTreeLeaf(item: SetFilterModelTreeItem, keyOnlyKeys: ReadonlySet<string | null>): boolean {
+    return !item.children && keyOnlyKeys.size > 0 && areAllTreeKeysIn(item, keyOnlyKeys);
+}
 
 /** What the Mini Filter searches when the column configures no `textFormatter`. */
 export const unformattedSetFilterText: TextFormatter = (value) => value ?? null;

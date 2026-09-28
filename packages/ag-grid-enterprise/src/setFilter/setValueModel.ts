@@ -49,8 +49,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** Missing keys known only from a model, whose values are unknown. */
     public readonly keyOnlyKeys = new Set<string | null>();
 
-    /** Counts key-only keys whose values have arrived, so a list can rebuild the rows it made for them. */
-    public keyOnlyResolved = 0;
+    /** Bumped whenever `keyOnlyKeys` changes, so a list rebuilds the rows it drew for a key alone. */
+    public keyOnlyVersion = 0;
 
     /** The keys the list shows: the available keys, then the missing keys. */
     public displayableKeys = this.availableKeys;
@@ -296,6 +296,9 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             missingKeys.add(key);
             index.set(caseFormat(key), key);
         }
+        if (keys.length) {
+            ++this.keyOnlyVersion;
+        }
         this.allKeys = this.allKeys.then(() => {
             const sortedKeys = this.sortKeys(this.allValues);
             this.updateDisplayableKeys(sortedKeys);
@@ -305,18 +308,15 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     /** Cleared at once, so a load still in flight merges into what remains; only the sorted keys wait for it. */
     public clearMissing(onlyUnselected: boolean): AgPromise<(string | null)[]> {
-        const { allValues, missingKeys, keyOnlyKeys, isKeyChecked } = this;
-        for (const key of missingKeys) {
+        const isKeyChecked = this.isKeyChecked;
+        for (const key of this.missingKeys) {
             if (!onlyUnselected || !isKeyChecked(key)) {
-                allValues.delete(key);
-                missingKeys.delete(key);
-                keyOnlyKeys.delete(key);
+                this.dropKey(key);
             }
         }
-        this.formattedKeyIndex = undefined;
         this.allKeys = this.allKeys.then((keys) => {
             const remainingKeys = (keys ?? []).filter((key) => this.allValues.has(key));
-            this.updateAvailableKeys(remainingKeys);
+            this.updateDisplayableKeys(remainingKeys);
             return remainingKeys;
         });
         return this.allKeys;
@@ -359,7 +359,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             allValues = this.mergeValues(freshValues);
         } else {
             if (this.keyOnlyKeys.size) {
-                ++this.keyOnlyResolved;
+                ++this.keyOnlyVersion;
             }
             this.missingKeys.clear();
             this.keyOnlyKeys.clear();
@@ -401,14 +401,14 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             }
         });
         if (keyOnlyKeys.size !== keyOnlyCount) {
-            ++this.keyOnlyResolved;
+            ++this.keyOnlyVersion;
         }
         allValues.forEach(function markMissing(_value, key) {
             if (!freshValues.has(key) && !remappedKeys?.has(key)) {
                 missingKeys.add(key);
             }
         });
-        this.evictMissing(allValues, index);
+        this.evictMissing();
         return allValues;
     }
 
@@ -416,7 +416,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return this.getFormattedKeyIndex().get(this.caseFormat(key));
     }
 
-    /** Kept across merges, which update it in place; every other change to the keys drops it. */
+    /** Kept across merges and removals, which update it in place; a replacing load drops it. */
     private getFormattedKeyIndex(): Map<string | null, string | null> {
         const cached = this.formattedKeyIndex;
         if (cached) {
@@ -430,20 +430,25 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     /** Only unchecked keys are evicted, so which rows pass never changes. */
-    private evictMissing(values: Map<string | null, TValue | null>, index: Map<string | null, string | null>): void {
+    private evictMissing(): void {
         const max = this.params.handlerParams.filterParams.preservePreviousValuesLimit ?? DEFAULT_MAX_PRESERVED_VALUES;
-        const { missingKeys, keyOnlyKeys, isKeyChecked, caseFormat } = this;
+        const { missingKeys, isKeyChecked } = this;
         if (max < 0 || missingKeys.size <= max) {
             return;
         }
         const evictable = Array.from(missingKeys).filter((key) => !isKeyChecked(key));
         for (let i = 0, len = evictable.length - max; i < len; ++i) {
-            const key = evictable[i];
-            missingKeys.delete(key);
-            keyOnlyKeys.delete(key);
-            values.delete(key);
-            index.delete(caseFormat(key));
+            this.dropKey(evictable[i]);
         }
+    }
+
+    private dropKey(key: string | null): void {
+        this.allValues.delete(key);
+        this.missingKeys.delete(key);
+        if (this.keyOnlyKeys.delete(key)) {
+            ++this.keyOnlyVersion;
+        }
+        this.formattedKeyIndex?.delete(this.caseFormat(key));
     }
 
     private uniqueValues(values: (TValue | null)[] | null): Map<string | null, TValue | null> {
@@ -534,6 +539,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             if (missingKeys.has(key)) {
                 displayableKeys.add(key);
             }
+        }
+        // Excel Mode lists the blank last when sorting, after the retained values too.
+        const { excelMode, suppressSorting } = this.params.handlerParams.filterParams;
+        if (excelMode && !suppressSorting && displayableKeys.has(null)) {
+            displayableKeys.delete(null);
+            displayableKeys.add(null);
         }
         this.displayableKeys = displayableKeys;
     }
