@@ -341,6 +341,60 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(`${getFocusedRowIndex(api)} ${getFocusedColId(api)}`).toBe('22 b');
     });
 
+    test('Page Down with an auto-height column does nothing once the grid is destroyed before heights settle', () => {
+        const columnDefs = makeColumnDefs();
+        columnDefs[2].autoHeight = true;
+        const api = gridsManager.createGrid(
+            'myGrid',
+            { columnDefs, rowData: [{ a: 'a0', b: 'b0', c: 'c0' }] },
+            { modules: [RowAutoHeightModule] }
+        );
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        onTestFinished(() => {
+            vi.useRealTimers();
+            warn.mockRestore();
+        });
+
+        api.setFocusedCell(0, 'b');
+        vi.useFakeTimers();
+        dispatchKeyDown(KeyCode.PAGE_DOWN);
+        api.destroy();
+        vi.advanceTimersByTime(100);
+
+        expect(warn).not.toHaveBeenCalled();
+    });
+
+    test('Page Down then Page Up with an auto-height column settle once, for the last key', async () => {
+        const columnDefs = makeColumnDefs();
+        columnDefs[2].autoHeight = true;
+        mockGridLayout.useRealOffsetDimensions = true;
+        onTestFinished(() => {
+            vi.useRealTimers();
+            mockGridLayout.resetOptions();
+        });
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs,
+                rowData: Array.from({ length: 60 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
+            },
+            { modules: [RowAutoHeightModule] }
+        );
+        api.setFocusedCell(4, 'b');
+        const focused: string[] = [];
+        api.addEventListener('cellFocused', ({ rowIndex, column }) => {
+            focused.push(`${rowIndex} ${typeof column === 'string' ? column : column?.getColId()}`);
+        });
+
+        vi.useFakeTimers();
+        dispatchKeyDown(KeyCode.PAGE_DOWN);
+        dispatchKeyDown(KeyCode.PAGE_UP);
+        await vi.advanceTimersByTimeAsync(200);
+
+        // Page Down's settling pass (row 21) never runs: Page Up superseded it
+        expect(focused).toEqual(['17 a', '17 a', '0 b']);
+    });
+
     test('Page Up/Down and Ctrl+Up/Down from a spanning cell continue in the covered column', () => {
         const api = createNavigationGrid();
         const steps: string[] = [];

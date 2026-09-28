@@ -35,6 +35,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private gridBodyCon: GridBodyCtrl;
     private currentColumnWithoutSpan: Column | null = null;
     private hasColumnWithoutSpanListener = false;
+    private autoHeightFocusTimer = 0;
 
     constructor() {
         super();
@@ -46,6 +47,11 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
+    }
+
+    public override destroy(): void {
+        window.clearTimeout(this.autoHeightFocusTimer);
+        super.destroy();
     }
 
     public handlePageScrollingKey(event: KeyboardEvent, fromFullWidth = false): boolean {
@@ -233,7 +239,10 @@ export class NavigationService extends BeanStub implements NamedBean {
         const scrollType = up ? 'bottom' : 'top';
         const column = gridCell.column;
         this.navigateTo(scrollIndex, scrollType, { rowIndex: scrollIndex, column, rowPinned: undefined });
-        setTimeout(() => {
+        // a later page key supersedes this one's settling pass
+        window.clearTimeout(this.autoHeightFocusTimer);
+        this.autoHeightFocusTimer = window.setTimeout(() => {
+            this.autoHeightFocusTimer = 0;
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
             this.gridBodyCon.scrollFeature.ensureIndexVisible(scrollIndex, scrollType);
             // follows the scroll already made

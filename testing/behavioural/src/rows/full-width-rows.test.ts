@@ -121,9 +121,15 @@ describe('Full width rows', () => {
         const sameType = { sameRow: row() === before, text: row().textContent };
         api.getRowNode('1')!.setData({ id: '1', name: 'Bob', fullWidth: true });
 
-        expect({ sameType, fullWidth: row().classList.contains('ag-full-width-row') }).toEqual({
+        const redrawn = {
+            sameRow: row() === before,
+            fullWidth: row().classList.contains('ag-full-width-row'),
+            rendered: !!row().querySelector('input'),
+        };
+
+        expect({ sameType, redrawn }).toEqual({
             sameType: { sameRow: true, text: 'Bob' },
-            fullWidth: true,
+            redrawn: { sameRow: false, fullWidth: true, rendered: true },
         });
     });
 });
