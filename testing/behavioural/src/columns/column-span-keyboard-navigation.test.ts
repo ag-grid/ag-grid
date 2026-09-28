@@ -16,6 +16,7 @@ import {
     KeyCode,
     PaginationModule,
     PinnedRowModule,
+    RenderApiModule,
     RowAutoHeightModule,
     TextEditorModule,
     getGridElement,
@@ -364,7 +365,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(warn).not.toHaveBeenCalled();
     });
 
-    test('Page Down then Page Up with an auto-height column settle once, for the last key', async () => {
+    test('Page Down then Page Up with an auto-height column settle once, for the last key, and not after focus moved on', async () => {
         const columnDefs = makeColumnDefs();
         columnDefs[2].autoHeight = true;
         mockGridLayout.useRealOffsetDimensions = true;
@@ -391,8 +392,18 @@ describe('Column Spanning Keyboard Navigation', () => {
         dispatchKeyDown(KeyCode.PAGE_UP);
         await vi.advanceTimersByTimeAsync(200);
 
-        // Page Down's settling pass (row 21) never runs: Page Up superseded it
-        expect(focused).toEqual(['17 a', '17 a', '0 b']);
+        const superseded = [...focused];
+
+        focused.length = 0;
+        dispatchKeyDown(KeyCode.PAGE_DOWN);
+        api.setFocusedCell(30, 'c');
+        await vi.advanceTimersByTimeAsync(200);
+
+        // Page Down's settling pass (row 21) never runs: Page Up superseded it, and then focus moved to 30 c
+        expect({ superseded, focusMoved: focused }).toEqual({
+            superseded: ['17 a', '17 a', '0 b'],
+            focusMoved: ['18 b', '30 c'],
+        });
     });
 
     test('Page Up/Down and Ctrl+Up/Down from a spanning cell continue in the covered column', () => {
@@ -995,22 +1006,28 @@ describe('Column Spanning Keyboard Navigation', () => {
     });
 
     test('Shift+Tab onto a last row with nothing navigable walks back to the row above, or the last header, as its default target says', async () => {
-        const shiftTabOntoLastRowOf = (rowCount: number, suppressHeaderFocus = false) => {
+        const shiftTabOntoLastRowOf = (rowCount: number, gridOptions: GridOptions<RowData> = {}) => {
             // on the last row 'a' spans all three columns and is not navigable
             const columnDefs = spanningColumnDefs((rowIndex) => rowIndex === rowCount - 1);
             columnDefs[0].suppressNavigable = (params) => params.node.rowIndex === rowCount - 1;
             const rowData = Array.from({ length: rowCount }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
-            return shiftTabFromPaging({ columnDefs, rowData, suppressHeaderFocus });
+            return shiftTabFromPaging({ columnDefs, rowData, ...gridOptions });
         };
 
         expect({
             rowAbove: await shiftTabOntoLastRowOf(3),
             noRowAbove: await shiftTabOntoLastRowOf(1),
-            noRowAboveNorHeader: await shiftTabOntoLastRowOf(1, true),
+            noRowAboveNorHeader: await shiftTabOntoLastRowOf(1, { suppressHeaderFocus: true }),
+            navigateToNextCellPassedThrough: await shiftTabOntoLastRowOf(3, {
+                navigateToNextCell: (params) => params.nextCellPosition,
+            }),
+            navigateToNextCellStays: await shiftTabOntoLastRowOf(3, { navigateToNextCell: () => null }),
         }).toEqual({
             rowAbove: 'rendered before: true, gridBody 1 c, cell c, focused cell 1 c',
             noRowAbove: 'rendered before: true, gridBody header c, header c',
             noRowAboveNorHeader: 'rendered before: true, gridBody null, no cell',
+            navigateToNextCellPassedThrough: 'rendered before: true, gridBody 1 c, cell c, focused cell 1 c',
+            navigateToNextCellStays: 'rendered before: true, gridBody 1 c, no cell',
         });
     });
 
@@ -1341,14 +1358,12 @@ describe('Column Spanning Keyboard Navigation', () => {
             isFullWidthRowCallsPerRow: perRow(fullWidthRows, 20, 35),
         };
 
-        // entering, the entry row is judged by the entry, the move along it and the walk on: once each
-        const entryCalls = { ...oncePerRow(31, 38), 39: 3 };
         expect({ entry, editing }).toEqual({
             entry: {
                 focus: 'cell a, focused cell 30 a',
                 walkedRowsRendered: false,
-                colSpanCallsPerRow: entryCalls,
-                isFullWidthRowCallsPerRow: entryCalls,
+                colSpanCallsPerRow: oncePerRow(31, 39),
+                isFullWidthRowCallsPerRow: oncePerRow(31, 39),
             },
             editing: {
                 editing: ['39 a'],
@@ -1474,12 +1489,20 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('full-row editing starts editors on the cells drawn, not on the columns a span covers', () => {
+    test('full-row editing starts editors on the cells drawn, not on the columns a span covers, reading the spans the row drew', () => {
+        let colSpanCalls = 0;
         const api = gridsManager.createGrid(
             'myGrid',
             {
                 columnDefs: [
-                    { field: 'a', editable: true, colSpan: (params) => (params.node!.rowIndex === 0 ? 2 : 1) },
+                    {
+                        field: 'a',
+                        editable: true,
+                        colSpan: (params) => {
+                            ++colSpanCalls;
+                            return params.node!.rowIndex === 0 ? 2 : 1;
+                        },
+                    },
                     { field: 'b', editable: true },
                     { field: 'c', editable: true },
                 ],
@@ -1489,18 +1512,58 @@ describe('Column Spanning Keyboard Navigation', () => {
                 ],
                 editType: 'fullRow',
             },
-            { modules: [TextEditorModule] }
+            { modules: [RenderApiModule, TextEditorModule] }
         );
         const editRow = (rowIndex: number) => {
+            // a row laid out again by the last edit asks its callbacks as it draws, outside the edit's reads
+            api.flushAllAnimationFrames();
+            const callsBefore = colSpanCalls;
             api.startEditingCell({ rowIndex, colKey: 'a' });
             const editing = api.getEditingCells().map((cell) => `${cell.rowIndex} ${cell.column?.getColId()}`);
+            editing.push(`colSpan calls: ${colSpanCalls - callsBefore}`);
             api.stopEditing(true);
             return editing;
         };
 
         expect({ spanning: editRow(0), plain: editRow(1) }).toEqual({
-            spanning: ['0 a', '0 c'],
-            plain: ['1 a', '1 b', '1 c'],
+            spanning: ['0 a', '0 c', 'colSpan calls: 0'],
+            plain: ['1 a', '1 b', '1 c', 'colSpan calls: 0'],
+        });
+    });
+
+    test('End on a rendered row judges the columns scrolled out of view from the spans the row drew', async () => {
+        let colSpanCalls = 0;
+        const columnDefs: ColDef<RowData>[] = [
+            {
+                field: 'a',
+                width: 120,
+                colSpan: () => {
+                    ++colSpanCalls;
+                    return 2;
+                },
+            },
+        ];
+        for (let i = 1; i < 60; ++i) {
+            columnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ a: 'a0', b: 'b0', c: 'c0' }],
+            suppressColumnVirtualisation: false,
+        });
+        const cell = (colId: string) =>
+            getGridElement(api)!.querySelector<HTMLElement>(`[row-index="0"] [col-id="${colId}"]`);
+        await waitFor(() => expect(cell('a')?.style.width).toBe('240px'));
+        const lastColumnRendered = !!cell('c59');
+
+        api.setFocusedCell(0, 'a');
+        colSpanCalls = 0;
+        dispatchKeyDown(KeyCode.PAGE_END);
+
+        expect({ lastColumnRendered, focused: getFocusedColId(api), colSpanCalls }).toEqual({
+            lastColumnRendered: false,
+            focused: 'c59',
+            colSpanCalls: 0,
         });
     });
 

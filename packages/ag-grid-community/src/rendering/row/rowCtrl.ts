@@ -1388,6 +1388,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    /** The drawn colSpans by `allColsIndex`, 0 where not read yet; undefined for a row that draws no cells. */
+    public getColSpans(): number[] | undefined {
+        return this.rowModeFeature.getColSpans?.();
+    }
+
     /** The column's own cell, else the cell drawn spanning it. */
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
         const cellCtrls = this.getAllCellCtrls();

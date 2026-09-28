@@ -1,4 +1,12 @@
-import { KeyCode, _focusInto, _getActiveDomElement, _last, _makeNull, _registerKeyboardFocusEvents } from 'ag-stack';
+import {
+    KeyCode,
+    _findFocusableElements,
+    _focusInto,
+    _getActiveDomElement,
+    _last,
+    _makeNull,
+    _registerKeyboardFocusEvents,
+} from 'ag-stack';
 
 import type { ColumnModel } from './columns/columnModel';
 import { isRowNumberCol } from './columns/columnUtils';
@@ -8,6 +16,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import { RowFocusResolver, _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
+import type { RowNode } from './entities/rowNode';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
@@ -611,11 +620,9 @@ export class FocusService extends BeanStub implements NamedBean {
 
         const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
         if (nextRow?.rowIndex == null) {
-            if (this.overlays?.isVisible()) {
-                return null;
-            }
-
-            return this.getLastHeaderTarget(backwards);
+            // focusGridView moves into a visible overlay only when something there can take focus
+            const overlayGui = this.overlays?.isVisible() && this.overlays.eWrapper?.getGui();
+            return overlayGui && _findFocusableElements(overlayGui).length ? null : this.getLastHeaderTarget(backwards);
         }
 
         const rowNode = _getRowNode(this.beans, nextRow);
@@ -630,15 +637,25 @@ export class FocusService extends BeanStub implements NamedBean {
 
         const position: CellPosition = { rowIndex: nextRow.rowIndex, rowPinned: nextRow.rowPinned, column };
         const resolver = new RowFocusResolver(this.beans);
-        const target =
-            resolver.isFullWidth(position) || !resolver.getFocusColumn(position).isSuppressNavigable(rowNode)
-                ? position
-                : this.beans.cellNavigation?.getNextTabStop(position, backwards, resolver);
+        const target = this.getTabEntry(position, rowNode, backwards, resolver);
         if (!target) {
             return this.getLastHeaderTarget(backwards);
         }
         // a full-width row has no cell to name; the grid body's default enters it
         return resolver.isFullWidth(target) ? 'gridBody' : { ...target, column: resolver.getFocusColumn(target) };
+    }
+
+    /** Where Tab entering at `position` lands: there, else the next tab stop when no cell there can take focus. */
+    private getTabEntry(
+        position: CellPosition,
+        rowNode: RowNode,
+        backwards: boolean,
+        resolver: RowFocusResolver
+    ): CellPosition | null {
+        if (resolver.isFullWidth(position) || !resolver.getFocusColumn(position).isSuppressNavigable(rowNode)) {
+            return position;
+        }
+        return this.beans.cellNavigation?.getNextTabStop(position, backwards, resolver) ?? null;
     }
 
     /** Where Shift+Tab goes when no cell can take focus: the last header, unless headers cannot be focused. */
@@ -701,28 +718,29 @@ export class FocusService extends BeanStub implements NamedBean {
                 return canFocusOverlay && this.focusOverlay(backwards);
             }
 
-            const isTab = !event || event.key === KeyCode.TAB;
-            // Tab enters a full-width row whatever its column, as its default target says; Arrow Down judges it
             const resolver = new RowFocusResolver(this.beans);
-            const entersRow = isTab && resolver.isFullWidth(position);
-            if (!entersRow && resolver.getFocusColumn(position).isSuppressNavigable(rowNode)) {
-                const tabKey = this.gos.get('enableRtl') !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
-                const navigated = this.navigation?.navigateToNextCell(null, isTab ? tabKey : event.key, position, true);
-                // a navigateToNextCell override has the last word: its null means stay
-                if (navigated || !isTab || this.gos.getCallback('navigateToNextCell')) {
-                    return true;
+            if (event && event.key !== KeyCode.TAB) {
+                // Arrow Down judges a full-width row like any other, where Tab enters it whatever its column
+                if (resolver.getFocusColumn(position).isSuppressNavigable(rowNode)) {
+                    this.navigation?.navigateToNextCell(null, event.key, position, true);
+                } else {
+                    this.focusCellAt(position, true, backwards);
                 }
-                // nothing on the row can take focus: Tab walks on in tab order to a cell or full-width row that can
-                const tabStop = this.beans.cellNavigation?.getNextTabStop(position, backwards);
-                if (tabStop) {
-                    this.focusCellAt(tabStop, true, backwards);
-                    return true;
-                }
-                return backwards && !_isHeaderFocusSuppressed(this.beans) ? this.focusLastHeader() : false;
+                return true;
             }
 
-            this.focusCellAt(position, true, backwards);
-            return true;
+            const target = this.getTabEntry(position, rowNode, backwards, resolver);
+            if (target !== position && this.gos.getCallback('navigateToNextCell')) {
+                // the override sees the tab stop the default target names, and its null means stay
+                const tabKey = this.gos.get('enableRtl') !== backwards ? KeyCode.LEFT : KeyCode.RIGHT;
+                this.navigation?.navigateToCell(null, tabKey, position, target, true);
+                return true;
+            }
+            if (target) {
+                this.focusCellAt(target, true, backwards);
+                return true;
+            }
+            return backwards && !_isHeaderFocusSuppressed(this.beans) ? this.focusLastHeader() : false;
         }
 
         if (canFocusOverlay && this.focusOverlay(backwards)) {

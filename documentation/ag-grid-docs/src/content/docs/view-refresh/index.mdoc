@@ -22,6 +22,8 @@ To get the grid to refresh the cells, call `api.refreshCells()`. The interface i
 
 Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](./change-detection/) (change detection means it will only refresh cells whose values have changed).
 
+A [full-width row](./full-width-rows/) has no cell values to compare, so it is refreshed only when it is listed in `rowNodes`, whether or not `force` is set: the grid calls its renderer's `refresh` method, and redraws the row if that returns `false`.
+
 ### Example Refresh Cells
 
 Below shows calling `api.refreshCells()` with different scenarios using a mixture of the `rowNodes`, `columns` and `force` parameters. From the example, the following can be noted:

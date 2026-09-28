@@ -65,9 +65,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         const visibleCols = beans.visibleCols;
-        // a column a span covers draws no cell to edit
+        // a column a span covers draws no cell to edit; a rendered row's spans are read as it drew them
         const columns = visibleCols.colSpanActive
-            ? _getColsForRow(rowNode, visibleCols.allCols, null, null, null)
+            ? _getColsForRow(rowNode, visibleCols.allCols, _getRowCtrl(beans, { rowNode })?.getColSpans(), null, null)
             : visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 

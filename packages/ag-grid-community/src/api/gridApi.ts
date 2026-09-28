@@ -1344,6 +1344,7 @@ export interface _RenderGridApi<TData> {
 
     /**
      * Performs change detection on all cells, refreshing cells where required.
+     * A full-width row has no values to compare, so it is refreshed only when listed in `rowNodes`, whatever `force`.
      * @agModule `RenderApiModule`
      */
     refreshCells(params?: RefreshCellsParams<TData>): void;

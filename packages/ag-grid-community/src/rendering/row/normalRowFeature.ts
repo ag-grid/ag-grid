@@ -281,7 +281,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     /** Emptied when the displayed columns change, which every colDef change also does. */
-    private getColSpans(): number[] {
+    public getColSpans(): number[] {
         const visibleCols = this.beans.visibleCols;
         const colsVersion = visibleCols.displayedColsVersion;
         let colSpans = this.colSpans;

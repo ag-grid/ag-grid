@@ -176,7 +176,7 @@ describe('Focus Overrides', () => {
         );
     });
 
-    test('Shift+Tab from paging over only loading rows, no rows and no overlay, or with cell focus suppressed, targets and focuses the last header row', async () => {
+    test('Shift+Tab from paging over only loading rows, no rows, or with cell focus suppressed, targets and focuses the last header row, unless the no-rows overlay has something to focus', async () => {
         const shiftTabFromPaging = async (
             gridOptions: GridOptions<RowData>,
             ready: (api: GridApi<RowData>) => void
@@ -217,12 +217,29 @@ describe('Focus Overrides', () => {
             noRows: await shiftTabFromPaging({ rowData: [], suppressNoRowsOverlay: true }, (api) =>
                 expect(api.getDisplayedRowCount()).toBe(0)
             ),
+            noRowsOverlay: await shiftTabFromPaging({ rowData: [] }, (api) =>
+                expect(getGridElement(api)!.querySelector('.ag-overlay-no-rows-wrapper')).not.toBeNull()
+            ),
+            focusableNoRowsOverlay: await shiftTabFromPaging(
+                {
+                    rowData: [],
+                    noRowsOverlayComponent: class {
+                        private readonly eGui = document.createElement('button');
+                        public getGui(): HTMLElement {
+                            return this.eGui;
+                        }
+                    },
+                },
+                (api) => expect(getGridElement(api)!.querySelector('.ag-overlay button')).not.toBeNull()
+            ),
             cellFocusSuppressed: await shiftTabFromPaging({ rowData, suppressCellFocus: true }, (api) =>
                 expect(api.getDisplayedRowCount()).toBe(3)
             ),
         }).toEqual({
             loadingRows: '1 sport, focus sport',
             noRows: '1 sport, focus sport',
+            noRowsOverlay: '1 sport, focus sport',
+            focusableNoRowsOverlay: 'null, focus null',
             cellFocusSuppressed: '1 sport, focus sport',
         });
     });

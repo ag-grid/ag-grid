@@ -728,6 +728,24 @@ describe('Focus override callbacks', () => {
             });
         });
 
+        test('Ctrl+Arrow leaves scrolling to the focus, so a pinned row does not scroll the body', () => {
+            const ensureIndexVisible = vi.fn();
+            const focusCellAt = vi.fn((_cell: CellPosition, _scroll: boolean) => true);
+            navigationSvcAny.gridBodyCon = { scrollFeature: { ensureIndexVisible, ensureColumnVisible: vi.fn() } };
+            navigationSvcAny.beans.focusSvc.focusCellAt = focusCellAt;
+            navigationSvcAny.beans.cellNavigation.getNextCellToFocus = (_key: string, cell: CellPosition) => ({
+                ...cell,
+                rowIndex: 1,
+            });
+
+            navigationSvcAny.onCtrlUpDownLeftRight('ArrowDown', { rowIndex: 0, rowPinned: 'top', column: colA });
+
+            expect({
+                rowScrolls: ensureIndexVisible.mock.calls,
+                focused: focusCellAt.mock.calls.map(([cell, scroll]) => [cell.rowIndex, cell.rowPinned, scroll]),
+            }).toEqual({ rowScrolls: [], focused: [[1, 'top', true]] });
+        });
+
         test('navigateToNextCell: null result from callback stops navigation', () => {
             const navigateToNextCell = vi.fn(() => null);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));

@@ -5,7 +5,13 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { RowFocusResolver, _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
+import {
+    RowFocusResolver,
+    _areCellsEqual,
+    _getCellByPosition,
+    _getRowNode,
+    _isRowBefore,
+} from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _getCellPositionForEvent } from '../gridBodyComp/mouseEventUtils';
@@ -127,7 +133,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         return true;
     }
 
-    /** Page up/down scroll to one row but focus another, as the row scrolled to can be a stub. */
+    /** Scrolls `scrollIndex` into view, then focuses `focus`, which page keys pick apart as that row can be a stub. */
     private navigateTo(scrollIndex: number, scrollType: 'top' | 'bottom' | null, focus: CellPosition): void {
         this.gridBodyCon.scrollFeature.ensureIndexVisible(scrollIndex, scrollType);
         // scrolled in first: the browser's focus scroll cuts off the cell's border or leaves it under sticky rows
@@ -239,14 +245,21 @@ export class NavigationService extends BeanStub implements NamedBean {
         const scrollType = up ? 'bottom' : 'top';
         const column = gridCell.column;
         this.navigateTo(scrollIndex, scrollType, { rowIndex: scrollIndex, column, rowPinned: undefined });
+        const focusSvc = this.beans.focusSvc;
+        const pageCell = focusSvc.getFocusedCell();
         // a later page key supersedes this one's settling pass
         window.clearTimeout(this.autoHeightFocusTimer);
         this.autoHeightFocusTimer = window.setTimeout(() => {
             this.autoHeightFocusTimer = 0;
+            const focusedCell = focusSvc.getFocusedCell();
+            // focus moved on meanwhile, by a key or a click, so it is not this page key's to settle
+            if (!pageCell || !focusedCell || !_areCellsEqual(pageCell, focusedCell)) {
+                return;
+            }
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
             this.gridBodyCon.scrollFeature.ensureIndexVisible(scrollIndex, scrollType);
             // follows the scroll already made
-            this.beans.focusSvc.focusCellAt({ rowIndex: focusIndex, column, rowPinned: undefined }, false);
+            focusSvc.focusCellAt({ rowIndex: focusIndex, column, rowPinned: undefined }, false);
         }, 50);
     }
 
@@ -311,7 +324,8 @@ export class NavigationService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.navigateTo(cellToFocus.rowIndex, null, cellToFocus);
+        // the focus scrolls to the cell, which leaves the body alone for a pinned row
+        this.beans.focusSvc.focusCellAt(cellToFocus, true);
     }
 
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
@@ -595,8 +609,6 @@ export class NavigationService extends BeanStub implements NamedBean {
     ): boolean {
         const isVertical = key === KeyCode.UP || key === KeyCode.DOWN;
         const currentCellWithoutSpan = isVertical ? this.getVerticalStart(currentCell) : currentCell;
-        const beans = this.beans;
-        const { focusSvc, gos } = beans;
 
         let nextCell = this.findNextCell(key, currentCellWithoutSpan);
         if (!nextCell && currentCellWithoutSpan !== currentCell) {
@@ -612,6 +624,19 @@ export class NavigationService extends BeanStub implements NamedBean {
             };
         }
 
+        return this.navigateToCell(event, key, currentCell, nextCell, allowUserOverride);
+    }
+
+    /** Moves focus from `currentCell` to `nextCell`, the grid's choice for `key`, unless a user override redirects it. */
+    public navigateToCell(
+        event: KeyboardEvent | null,
+        key: string,
+        currentCell: CellPosition,
+        nextCell: CellPosition | null,
+        allowUserOverride: boolean
+    ): boolean {
+        const beans = this.beans;
+        const { focusSvc, gos } = beans;
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {

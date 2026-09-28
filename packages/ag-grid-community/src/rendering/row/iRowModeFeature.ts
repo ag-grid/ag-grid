@@ -41,6 +41,7 @@ export interface IRowModeFeature {
     setupDetailRowAutoHeight?(eGui: HTMLElement): void;
     prepareInitialCellCtrls?(): void;
     refreshSpans?(): void;
+    getColSpans?(): number[];
     releaseKeptCells?(afterEdit: boolean): void;
     getInitialCellCtrls?(containerType: RowContainerType): CellCtrl[] | null;
 

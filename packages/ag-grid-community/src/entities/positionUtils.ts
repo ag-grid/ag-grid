@@ -183,7 +183,8 @@ export class RowFocusResolver {
         }
         const rowNode = this.getRowNode(cellPosition);
         // not held per row: a walk that scrolls can render the row it is on
-        const cellCtrl = beans.rowRenderer.getRowByPosition(cellPosition)?.getCellCtrl(column);
+        const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
+        const cellCtrl = rowCtrl?.getCellCtrl(column);
         if (cellCtrl) {
             return cellCtrl.column;
         }
@@ -192,7 +193,7 @@ export class RowFocusResolver {
         }
         const spanEnds = this.spanEnds;
         if (!this.spanEndsFilled) {
-            visibleCols.fillRowSpanEnds(rowNode, spanEnds);
+            visibleCols.fillRowSpanEnds(rowNode, spanEnds, rowCtrl?.getColSpans());
             this.spanEndsFilled = true;
         }
         return visibleCols.getSpanningCol(spanEnds, column);

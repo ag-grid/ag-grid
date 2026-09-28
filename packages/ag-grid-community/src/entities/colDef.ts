@@ -430,6 +430,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.
+     * Where a `colSpan` covers this column, keyboard navigation judges the column the spanning cell starts in.
      * @default false
      */
     suppressNavigable?: boolean | SuppressNavigableCallback<TData, TValue>;
