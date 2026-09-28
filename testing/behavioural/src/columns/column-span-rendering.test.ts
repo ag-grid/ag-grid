@@ -167,6 +167,47 @@ describe('Legacy colSpan rendering', () => {
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
         `);
     });
+
+    test('hiding a spanning column draws the columns it covered at their own width, and showing it draws the span again', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ ...columnDefs[0], hide: true }, columnDefs[1], columnDefs[2]],
+            rowData,
+        });
+        const drawnCells = () =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="1"] .ag-cell'),
+                (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`
+            );
+
+        const hiddenAtStart = drawnCells();
+        api.setColumnsVisible(['a'], true);
+        const shown = drawnCells();
+        api.setColumnsVisible(['a'], false);
+
+        expect({ hiddenAtStart, shown, hiddenAgain: drawnCells() }).toEqual({
+            hiddenAtStart: ['b 100px', 'c 100px'],
+            shown: ['a 200px', 'c 100px'],
+            hiddenAgain: ['b 100px', 'c 100px'],
+        });
+    });
+
+    test('a column a span covers starts no cell, so its own colSpan is ignored', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ ...columnDefs[0], colSpan: () => 2 }, { ...columnDefs[1], colSpan: () => 2 }, columnDefs[2]],
+            rowData,
+        });
+
+        const cells = getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="0"] .ag-cell');
+        expect(Array.from(cells, (cell) => `${cell.getAttribute('col-id')} ${cell.style.width}`)).toEqual([
+            'a 200px',
+            'c 100px',
+        ]);
+        await new GridRows(api, 'a column a span covers starts no cell').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
+            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
+        `);
+    });
 });
 
 describe('colSpan follows row data updates', () => {
@@ -484,6 +525,11 @@ describe('colSpan follows row data updates', () => {
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px symbol:100px group:100px'));
         expect(api.getFocusedCell()).toMatchObject({ rowIndex: 0, column: api.getColumn('symbol') });
         expect(document.activeElement?.getAttribute('col-id')).toBe('symbol');
+        await new GridRows(api, 'a covered cell kept for focus').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r0 price:1 symbol:"AAA" group:"A"
+            └── LEAF id:r1 price:0 symbol:"BBB" group:"A"
+        `);
 
         api.setFocusedCell(1, 'price');
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));

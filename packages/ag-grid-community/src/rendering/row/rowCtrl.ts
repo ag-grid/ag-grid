@@ -1469,7 +1469,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.postProcessCss();
             // a span callback can read the row index, and a new index can move focus off a kept cell
             this.refreshSpans();
-            if (!this.beans.colModel.colSpanActive) {
+            if (!this.beans.visibleCols.colSpanActive) {
                 // with colSpan active, the layout above releases a kept cell, or the row rebuilds on mount
                 this.rowModeFeature.releaseKeptCells?.(false);
             }

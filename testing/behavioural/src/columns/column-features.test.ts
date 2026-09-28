@@ -675,64 +675,57 @@ describe('Column Features', () => {
     });
 
     describe('autoHeight', () => {
-        test('colDef.autoHeight on a visible col activates rowAutoHeight tracking', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ colId: 'a', autoHeight: true }, { colId: 'b' }],
-                rowData: [{ a: 1, b: 2 }],
-            });
-            await new GridColumns(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── a width:200
-                    └── b width:200
-                `);
-            await new GridRows(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0
-                `
-            );
+        test('auto row height follows the displayed columns: an autoHeight col in a collapsed group leaves it off', async () => {
+            // resetRowHeights warns and does nothing while auto row height is on
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [3] });
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            // a warning logs once, so each case gets its own grid
+            const warnsAboutAutoHeight = (openGroup: boolean) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        {
+                            groupId: 'g',
+                            children: [{ colId: 'a' }, { colId: 'tall', autoHeight: true, columnGroupShow: 'open' }],
+                        },
+                    ],
+                });
+                if (openGroup) {
+                    api.setColumnGroupOpened('g', true);
+                }
+                consoleWarnSpy.mockClear();
+                api.resetRowHeights();
+                gridsManager.reset();
+                return consoleWarnSpy.mock.calls.some((args) =>
+                    args.some((arg) => typeof arg === 'string' && arg.includes('Auto Row Height'))
+                );
+            };
 
-            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
-            await new GridRows(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking final state`)
-                .check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0
-                `);
+            const collapsed = warnsAboutAutoHeight(false);
+            const opened = warnsAboutAutoHeight(true);
+            consoleWarnSpy.mockRestore();
+
+            expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
         });
 
-        test('colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags', async () => {
+        test('colDef.colSpan + colDef.autoHeight on same grid draws the span and sets the auto-height cell up', () => {
             const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', autoHeight: true },
-                    { colId: 'b', colSpan: () => 2 },
-                ],
-                rowData: [{ a: 1, b: 2 }],
+                columnDefs: [{ colId: 'a', autoHeight: true }, { colId: 'b', colSpan: () => 2 }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
             });
-            await new GridColumns(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
-            ).checkColumns(`
-                CENTER
-                ├── a width:200
-                └── b width:200
-            `);
-            await new GridRows(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
-            `);
 
-            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
-            await new GridRows(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags final state`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
-            `);
+            const cells = TestGridsManager.getHTMLElement(api)!.querySelectorAll<HTMLElement>(
+                '.ag-row[row-index="0"] .ag-cell'
+            );
+            expect(
+                Array.from(cells, (cell) => ({
+                    colId: cell.getAttribute('col-id'),
+                    width: cell.style.width,
+                    autoHeight: cell.classList.contains('ag-cell-auto-height'),
+                }))
+            ).toEqual([
+                { colId: 'a', width: '200px', autoHeight: true },
+                { colId: 'b', width: '400px', autoHeight: false },
+            ]);
         });
     });
 
@@ -1144,6 +1137,21 @@ describe('Column Features', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0
             `);
+        });
+
+        test('a rowSpan callback returning a fraction resolves to whole rows, rounded down', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                suppressRowTransform: true,
+                columnDefs: [
+                    { colId: 'a', rowSpan: () => 2.5 },
+                    { colId: 'b', rowSpan: () => 1.5 },
+                ],
+                rowData: [{ a: 1, b: 2 }],
+            });
+
+            const node = api.getDisplayedRowAtIndex(0)!;
+
+            expect(['a', 'b'].map((colId) => api.getColumn(colId)!.getRowSpan(node))).toEqual([2, 1]);
         });
 
         test('user resize clears flex; event-listener round-trip on widthChanged', async () => {

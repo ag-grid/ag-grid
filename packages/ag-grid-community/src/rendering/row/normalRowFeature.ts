@@ -126,9 +126,9 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     /** A span callback can read any of the row's data, so a data change can move the row's spans. */
     public refreshSpans(): void {
-        const colModel = this.beans.colModel;
-        const rowSpanCols = colModel.rowSpanCols;
-        if (rowSpanCols !== null) {
+        const visibleCols = this.beans.visibleCols;
+        const rowSpanCols = visibleCols.rowSpanCols;
+        if (rowSpanCols.length !== 0) {
             const center = this.centerCellCtrls.map;
             const left = this.leftCellCtrls.map;
             const right = this.rightCellCtrls.map;
@@ -141,7 +141,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             }
         }
         // a row not yet mounted builds from the new data when it mounts
-        if (!colModel.colSpanActive || !this.rowCtrl.getGui()) {
+        if (!visibleCols.colSpanActive || !this.rowCtrl.getGui()) {
             return;
         }
         this.updateCellsIfChanged();
@@ -234,11 +234,10 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const prevLeft = this.leftCellCtrls;
         const prevRight = this.rightCellCtrls;
         // each walk refills `spans`, which `createCellCtrls` reads before the next walk
-        const spans = beans.colModel.colSpanActive ? this.spans : null;
+        const spans = presentedColsService.colSpanActive ? this.spans : null;
         this.hasKeptCells = false;
         if (rowCtrl.printLayout) {
-            const allCols = presentedColsService.allCols;
-            const printCols = spans ? presentedColsService.getColsForRow(rowNode, allCols, spans) : allCols;
+            const printCols = presentedColsService.getAllColsForRow(rowNode, spans);
             this.centerCellCtrls = this.createCellCtrls(prevCenter, printCols, spans, 1);
             // Print layout flows every column through the centre, so the pinned ctrls are orphaned.
             this.leftCellCtrls = destroyCellCtrls(prevLeft);

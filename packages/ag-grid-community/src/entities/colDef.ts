@@ -258,18 +258,14 @@ export interface HeaderClassParams<TData = any, TValue = any, TContext = any> ex
     floatingFilter: boolean;
 }
 export type HeaderClass<TData = any, TValue = any, TContext = any> =
-    | string
-    | string[]
-    | ((params: HeaderClassParams<TData, TValue, TContext>) => string | string[] | undefined);
+    string | string[] | ((params: HeaderClassParams<TData, TValue, TContext>) => string | string[] | undefined);
 export interface ToolPanelClassParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     colDef: AbstractColDef<TData, TValue>;
     column?: Column<TValue> | null;
     columnGroup?: ProvidedColumnGroup | null;
 }
 export type ToolPanelClass<TData = any, TValue = any, TContext = any> =
-    | string
-    | string[]
-    | ((params: ToolPanelClassParams<TData, TValue, TContext>) => string | string[] | undefined);
+    string | string[] | ((params: ToolPanelClassParams<TData, TValue, TContext>) => string | string[] | undefined);
 
 /** @knipIgnore Used in tests */
 export type StringOrNumKeys<TObj> = keyof TObj & (string | number);
@@ -302,8 +298,7 @@ type NestedOnlyPaths<TData, TValue, TDepth extends any[]> = {
  * Returns a union of all possible paths to nested fields in `TData`.
  */
 export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> =
-    | OwnFieldPaths<TData, TValue>
-    | NestedOnlyPaths<TData, TValue, TDepth>;
+    OwnFieldPaths<TData, TValue> | NestedOnlyPaths<TData, TValue, TDepth>;
 
 export type SortComparatorFn<TData = any, TValue = any> = (
     valueA: TValue | null | undefined,
@@ -1065,10 +1060,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Spanning *** //
 
-    /** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */
+    /**
+     * By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns.
+     * The result is rounded down to whole columns, at least one.
+     */
     colSpan?: ColSpanFunc<TData, TValue>;
     /**
      * By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows.
+     * The result is rounded down to whole rows, at least one.
      */
     rowSpan?: RowSpanFunc<TData, TValue>;
 
@@ -1532,14 +1531,7 @@ export interface CellEditorSelectorResult {
 }
 
 export type GroupHierarchyParts =
-    | 'year'
-    | 'quarter'
-    | 'month'
-    | 'formattedMonth'
-    | 'day'
-    | 'hour'
-    | 'minute'
-    | 'second';
+    'year' | 'quarter' | 'month' | 'formattedMonth' | 'day' | 'hour' | 'minute' | 'second';
 
 export type GroupHierarchyConfig = { [k: string]: ColDef };
 

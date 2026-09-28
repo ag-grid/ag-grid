@@ -250,10 +250,10 @@ export interface Column<TValue = any>
     /** Returns the auto header height. */
     getAutoHeaderHeight(): number | null;
 
-    /** Returns the column span for this column and row node. */
+    /** Returns the column span for this column and row node, in whole columns, at least one. */
     getColSpan(rowNode: IRowNode): number;
 
-    /** Returns the row span for this column and row node. */
+    /** Returns the row span for this column and row node, in whole rows, at least one. */
     getRowSpan(rowNode: IRowNode): number;
 
     /** @deprecated v32 Internal method no longer to be exposed on Column interface. */

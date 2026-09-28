@@ -23,9 +23,9 @@ export function setGridAriaProperty(beans: BeanCollection, property: string, val
 
 export function refreshCells<TData = any>(beans: BeanCollection, params: RefreshCellsParams<TData> = {}): void {
     beans.frameworkOverrides.wrapIncoming(() => {
-        const { colModel, rowRenderer } = beans;
+        const { visibleCols, rowRenderer } = beans;
         // data mutated in place can change what a span callback returns
-        if (colModel.colSpanActive || colModel.rowSpanCols !== null) {
+        if (visibleCols.colSpanActive || visibleCols.rowSpanCols.length !== 0) {
             const rowCtrls = rowRenderer.getRowCtrls(params.rowNodes);
             for (let i = 0, len = rowCtrls.length; i < len; ++i) {
                 rowCtrls[i].refreshSpans();
