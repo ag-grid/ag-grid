@@ -28,6 +28,7 @@ import type {
 import {
     BaseGridSerializingSession,
     _addGridCommonParams,
+    _getDrawnColSpan,
     _isHiddenSingleChildGroup,
     _mergeDeep,
 } from 'ag-grid-community';
@@ -478,7 +479,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 node,
             });
             const excelStyleId: string | null = this.getStyleId(styleIds);
-            const colSpan = column.getColSpan(node);
+            const colSpan = _getDrawnColSpan(this.columnsToExport, index, node);
             const addedImage = this.addImage(rowIndex, column, valueForCellString);
             const note = this.resolveBodyCellNote({
                 accumulatedRowIndex: rowIndex,

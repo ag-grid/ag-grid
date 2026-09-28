@@ -40,6 +40,8 @@ export interface IRowModeFeature {
     onRowMouseDown?(mouseEvent: MouseEvent): void;
     setupDetailRowAutoHeight?(eGui: HTMLElement): void;
     prepareInitialCellCtrls?(): void;
+    refreshSpans?(): void;
+    releaseKeptCells?(afterEdit: boolean): void;
     getInitialCellCtrls?(containerType: RowContainerType): CellCtrl[] | null;
 
     // Target resolution
