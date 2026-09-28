@@ -91,7 +91,9 @@ describe('scroll API', () => {
                 await waitFor(() => expect(api.getDisplayedRowAtIndex(103)!.rowHeight).toBe(60));
                 await asyncSetTimeout(0);
                 const hasCellB = (rowIndex: number) =>
-                    !!TestGridsManager.getHTMLElement(api)!.querySelector(`.ag-row[row-index="${rowIndex}"] [col-id="b"]`);
+                    !!TestGridsManager.getHTMLElement(api)!.querySelector(
+                        `.ag-row[row-index="${rowIndex}"] [col-id="b"]`
+                    );
                 expect([hasCellB(103), hasCellB(104)]).toEqual([false, true]);
 
                 api.ensureIndexVisible(103, 'top');
