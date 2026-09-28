@@ -1,7 +1,11 @@
 import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('clicking the selected row deselects it', async ({ agIdFor, page }) => {
+    test.eachFramework('clicking the selected row deselects it', async ({ agFramework, agIdFor, page }) => {
+        test.skip(
+            agFramework === 'vanilla',
+            'Vanilla does not support module registration, so the feature flag cannot be set'
+        );
         await ensureGridReady(page);
 
         await agIdFor.cell('0', 'athlete').first().click();
