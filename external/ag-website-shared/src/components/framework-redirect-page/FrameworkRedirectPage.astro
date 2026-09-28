@@ -37,6 +37,7 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
 -->
 <div id="redirectUrl" data-framework-override={frameworkOverride} data-redirect-url={redirectUrl}></div>
 <script>
+    import { replaceLocation } from '@ag-website-shared/utils/replaceLocation';
     import { $internalFramework } from '@stores/frameworkStore';
     import { getFrameworkFromInternalFramework } from '@utils/framework';
     import { urlWithPrefix } from '@utils/urlWithPrefix';
@@ -60,6 +61,6 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
     if (debugSearchParam === 'true') {
         console.log(`Debug: Redirect to '${redirectUrl}'`);
     } else {
-        window.location.replace(redirectUrl);
+        replaceLocation(redirectUrl);
     }
 </script>

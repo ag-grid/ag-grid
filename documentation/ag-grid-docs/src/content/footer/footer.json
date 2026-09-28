@@ -56,6 +56,10 @@
             {
                 "name": "Security",
                 "url": "/data-grid/security/"
+            },
+            {
+                "name": "Accessibility",
+                "url": "/data-grid/accessibility/"
             }
         ]
     },
