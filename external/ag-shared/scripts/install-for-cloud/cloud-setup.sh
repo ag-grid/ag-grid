@@ -20,9 +20,13 @@
 #   2. registers the plugin marketplaces and installs the declared plugins, which
 #      only works here: Claude Code enumerates plugin skills at launch, so a
 #      marketplace registered mid-session installs files that nothing surfaces
-#   3. runs `yarn install --ignore-scripts` (the slow, cacheable part)
-#   4. seeds $AG_CLOUD_CACHE_DIR with node_modules and the resolved node path, so
-#      per-session SessionStart can restore in seconds if the repo is re-cloned
+#   3. restores a prebuilt, fully-scripted node_modules published by CI as a
+#      release asset keyed by sha256(yarn.lock) — the fast path, and the only one
+#      that lets a session start ready rather than owing a finish-setup.sh run
+#   4. failing that, runs `yarn install --ignore-scripts` (the slow, cacheable
+#      part) and seeds $AG_CLOUD_CACHE_DIR from the result
+#   5. records the resolved node path, so per-session SessionStart can restore in
+#      seconds if the repo is re-cloned
 #
 # Nothing here may block indefinitely: a step that hangs does not just fail, it
 # costs the snapshot, and every later session then starts from cold.
@@ -93,6 +97,26 @@ with_timeout() {
     else
         "$@"
     fi
+}
+
+# budgeted <wanted> — the largest timeout the deadline still allows a step that
+# wants <wanted> seconds. Non-zero exit means the budget is gone and the caller
+# should skip the step rather than start it.
+#
+# Every long step goes through this. With fixed constants the individual
+# timeouts summed to more than the cap they were meant to respect: node pinning
+# (180s) plus the two toolchain installs (120s each) could reach 420s against a
+# 270s budget and a ~300s platform cap, all before the install was considered.
+# Overrunning does not just fail a step, it loses the snapshot for everyone.
+budgeted() {
+    local wanted="$1" avail
+    avail="$(remaining)"
+    ((avail > 0)) || return 1
+    ((wanted < avail)) && {
+        echo "$wanted"
+        return 0
+    }
+    echo "$avail"
 }
 
 # sha256_of <file> — coreutils on the cloud image, BSD tooling on a developer Mac.
@@ -173,7 +197,13 @@ pin_node() {
     # function, and `timeout` can only exec a real command, so that form failed
     # instantly with 127 and left node unpinned. The install writes to $NVM_DIR on
     # disk, so doing it in a subshell and then `nvm use` here works fine.
-    if with_timeout 180 bash -c 'set +u; . "$1" && nvm install "$2"' _ "$NVM_SH" "$wanted" >/dev/null 2>&1; then
+    local slice
+    if ! slice="$(budgeted 180)"; then
+        log_warn "no budget left to install node v${wanted}; using $(node -v 2>/dev/null || echo 'none')"
+        record_node_path
+        return 0
+    fi
+    if with_timeout "$slice" bash -c 'set +u; . "$1" && nvm install "$2"' _ "$NVM_SH" "$wanted" >/dev/null 2>&1; then
         nvm alias default "$wanted" >/dev/null 2>&1 || true
         nvm use "$wanted" >/dev/null 2>&1 || true
         log_info "node pinned to $(node -v)"
@@ -235,8 +265,13 @@ align_default_node() {
 }
 
 install_yarn_and_nx() {
+    local slice
     if ! command -v yarn &>/dev/null; then
-        with_timeout 120 npm i -g --force yarn@1 >/dev/null 2>&1 || {
+        if ! slice="$(budgeted 120)"; then
+            log_warn "no budget left to install yarn"
+            return 1
+        fi
+        with_timeout "$slice" npm i -g --force yarn@1 >/dev/null 2>&1 || {
             log_warn "yarn@1 global install failed"
             return 1
         }
@@ -255,22 +290,171 @@ EOF
         local nx_version
         nx_version="$(node -p "require('$REPO_ROOT/package.json').devDependencies.nx" 2>/dev/null)"
         if [[ -n "$nx_version" && "$nx_version" != "undefined" ]]; then
-            with_timeout 120 yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
-                log_warn "nx@${nx_version} global install failed (yarn nx still works)"
+            if slice="$(budgeted 120)"; then
+                with_timeout "$slice" yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
+                    log_warn "nx@${nx_version} global install failed (yarn nx still works)"
+            else
+                log_warn "no budget left to install nx (yarn nx still works)"
+            fi
         fi
     fi
     log_info "node $(node -v 2>/dev/null), yarn $(yarn -v 2>/dev/null), nx $(nx --version 2>/dev/null | tail -1)"
 }
 
 # ---------------------------------------------------------------------------
+# prebuilt dependency tree
+#
+# The fast path, and the only one that lets a session start ready. CI bakes a
+# fully-installed node_modules — patches applied, allow-scripts run, nx plugins
+# built — and publishes it as a release asset keyed by the lockfile hash. See
+# external/ag-shared/github/actions/cloud-cache-bake/action.yml.
+#
+# Restoring that is strictly better than install_dependencies() below, on two
+# counts. It is faster (measured on a cloud VM: ~14-25s to fetch a 400-700MB
+# asset at 28MB/s, plus ~20s to extract 184k files, against a 144-202s install).
+# And it is *scripted*, so no `unscripted` marker is written and the session's
+# SessionStart hook takes its ready path instead of demanding a ~150s
+# finish-setup.sh run.
+#
+# It is best-effort throughout: a miss, a network failure or a missing zstd all
+# fall through to the local install, which is the behaviour that shipped before.
+# ---------------------------------------------------------------------------
+
+CACHE_RELEASE_TAG="${AG_CLOUD_CACHE_TAG:-cloud-cache}"
+
+# owner/repo carrying the baked asset, derived from the clone rather than
+# hardcoded: this script is shared by ag-charts, ag-grid and ag-studio through the
+# ag-shared subrepo, and each publishes its own.
+cache_repo_slug() {
+    if [[ -n "${AG_CLOUD_CACHE_REPO:-}" ]]; then
+        echo "$AG_CLOUD_CACHE_REPO"
+        return 0
+    fi
+    local url
+    url="$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null)" || return 1
+    url="${url%.git}"
+    case "$url" in
+        *github.com*) sed 's#.*github\.com[:/]##' <<<"$url" ;;
+        *) return 1 ;;
+    esac
+}
+
+# zstd is not in the cloud base image (verified: `command -v zstd` is empty on a
+# fresh VM). apt has it, and the apt hosts are reachable on the default Trusted
+# allowlist. Bounded, and a failure just means the prebuilt path is skipped.
+ensure_zstd() {
+    command -v zstd &>/dev/null && return 0
+    local slice
+    # Re-budgeted per attempt, not computed once and reused: two `with_timeout
+    # "$slice"` calls sharing one 60s slice can spend 120s, which is precisely the
+    # summed-timeouts overrun `budgeted` exists to prevent.
+    slice="$(budgeted 45)" || return 1
+    with_timeout "$slice" apt-get install -y -qq zstd >/dev/null 2>&1 && {
+        command -v zstd &>/dev/null && return 0
+    }
+    slice="$(budgeted 60)" || return 1
+    with_timeout "$slice" bash -c 'apt-get update -qq && apt-get install -y -qq zstd' >/dev/null 2>&1 || return 1
+    command -v zstd &>/dev/null
+}
+
+restore_prebuilt_node_modules() {
+    [[ -f "$REPO_ROOT/yarn.lock" ]] || return 1
+
+    local slug
+    if ! slug="$(cache_repo_slug)"; then
+        log_info "cannot derive the GitHub slug from origin; skipping the prebuilt cache"
+        return 1
+    fi
+
+    local hash asset url
+    hash="$(sha256_of "$REPO_ROOT/yarn.lock")"
+    asset="node-modules-${hash:0:16}.tar.zst"
+    url="https://github.com/${slug}/releases/download/${CACHE_RELEASE_TAG}/${asset}"
+
+    if ! ensure_zstd; then
+        log_info "zstd unavailable and not installable; skipping the prebuilt cache"
+        return 1
+    fi
+
+    local slice
+    slice="$(budgeted 150)" || return 1
+
+    mkdir -p "$AG_CLOUD_CACHE_DIR"
+    local tarball="${AG_CLOUD_CACHE_DIR}/${asset}"
+    rm -f "$tarball"
+
+    log_info "fetching prebuilt node_modules: ${url}"
+    # Anonymous GET. There are no GitHub credentials during setup — GITHUB_TOKEN
+    # reads as the literal string "proxy-injected" here — so this only works
+    # because release assets are public. --retry covers a flaky redirect to the
+    # asset CDN; -f turns a 404 (no bake for this lockfile) into a clean failure.
+    if ! with_timeout "$slice" curl -fsSL --retry 2 --retry-delay 2 -o "$tarball" "$url"; then
+        rm -f "$tarball"
+        log_info "no prebuilt tree for this lockfile (${asset}); falling back to a local install"
+        return 1
+    fi
+    log_info "downloaded ${asset} ($(du -sh "$tarball" 2>/dev/null | awk '{print $1}'))"
+
+    local staging="${AG_CLOUD_CACHE_DIR}/node_modules.prebuilt.$$"
+    rm -rf "$staging"
+    mkdir -p "$staging"
+
+    if ! slice="$(budgeted 120)"; then
+        rm -rf "$staging" "$tarball"
+        return 1
+    fi
+    if ! with_timeout "$slice" tar -I zstd -xf "$tarball" -C "$staging" 2>/dev/null; then
+        rm -rf "$staging" "$tarball"
+        log_warn "prebuilt tarball failed to extract; falling back to a local install"
+        return 1
+    fi
+    rm -f "$tarball"
+
+    if [[ ! -d "$staging/node_modules" ]]; then
+        rm -rf "$staging"
+        log_warn "prebuilt tarball has an unexpected layout (no top-level node_modules); falling back"
+        return 1
+    fi
+
+    rm -rf "${AG_CLOUD_CACHE_DIR}/node_modules"
+    mv "$staging/node_modules" "${AG_CLOUD_CACHE_DIR}/node_modules"
+    rm -rf "$staging"
+
+    printf '%s\n' "$hash" >"${AG_CLOUD_CACHE_DIR}/yarn.lock.sha256"
+    # Provenance, so cloud-doctor.sh and a human reading the cache can tell a baked
+    # tree from a locally-installed one.
+    printf '%s\n' "$url" >"${AG_CLOUD_CACHE_DIR}/prebuilt"
+    # The load-bearing line. This tree came from a full install, so patches and
+    # plugin builds are already applied and the session must NOT be told to run
+    # finish-setup.sh. Clearing a marker left by an earlier build matters too:
+    # environments rebuild in place, and a stale `unscripted` would send every
+    # session down the slow path against a tree that does not need it.
+    rm -f "${AG_CLOUD_CACHE_DIR}/unscripted"
+
+    # Name the destination explicitly. "restored prebuilt node_modules" read as
+    # "into the repo", which sent a reader looking for a repo tree that is not
+    # there by design and made this log look self-contradictory: the setup script
+    # only ever populates the cache, and the SessionStart hook is what links it
+    # into the working tree.
+    log_info "cached prebuilt node_modules at ${AG_CLOUD_CACHE_DIR}/node_modules ($(du -sh "${AG_CLOUD_CACHE_DIR}/node_modules" 2>/dev/null | awk '{print $1}'), $(find "${AG_CLOUD_CACHE_DIR}/node_modules" -maxdepth 1 -mindepth 1 2>/dev/null | wc -l | tr -d ' ') entries); the session hook links it into the repo"
+}
+
+# ---------------------------------------------------------------------------
 # dependencies
 # ---------------------------------------------------------------------------
+
+# Seconds held back from the install for seed_node_modules_cache. The seed used
+# to run on an unbudgeted 180s after an install that had already claimed every
+# remaining second, so the two together could overshoot the cap and cost the
+# snapshot. An install that leaves nothing to cache is the worse outcome of the
+# two — the cache is what makes later sessions cheap — so the reserve is small.
+SEED_RESERVE_SECONDS=45
 
 install_dependencies() {
     cd "$REPO_ROOT" || return 1
 
     local budget
-    budget="$(remaining)"
+    budget=$(($(remaining) - SEED_RESERVE_SECONDS))
     ((budget > 30)) || {
         log_warn "no time left for yarn install (budget ${TOTAL_BUDGET_SECONDS}s exhausted)"
         return 1
@@ -320,10 +504,17 @@ seed_node_modules_cache() {
     local dest="$AG_CLOUD_CACHE_DIR/node_modules"
     local staging="${dest}.staging.$$"
 
+    local slice
+    if ! slice="$(budgeted 180)"; then
+        log_warn "no budget left to seed the cache"
+        return 1
+    fi
+
     rm -rf "$staging"
-    if ! with_timeout 180 cp -al "$REPO_ROOT/node_modules" "$staging" 2>/dev/null; then
+    if ! with_timeout "$slice" cp -al "$REPO_ROOT/node_modules" "$staging" 2>/dev/null; then
         rm -rf "$staging"
-        with_timeout 180 cp -a "$REPO_ROOT/node_modules" "$staging" 2>/dev/null || {
+        slice="$(budgeted 180)" || return 1
+        with_timeout "$slice" cp -a "$REPO_ROOT/node_modules" "$staging" 2>/dev/null || {
             rm -rf "$staging"
             return 1
         }
@@ -531,10 +722,16 @@ main() {
     # and an earlier revision let a budget-hogging install starve them.
     step "register plugin marketplaces" register_marketplaces || true
 
-    # Only a complete tree is worth caching. A tree cut off mid-fetch still passes
-    # the lockfile-hash check the hook uses, so caching one costs a session the
-    # restore time and then makes it install anyway.
-    if step "yarn install" install_dependencies; then
+    # Prefer the baked tree. Not wrapped in `step`: a miss is an ordinary outcome
+    # (no bake yet for this lockfile, e.g. a branch that changed dependencies), not
+    # a failure worth logging as one. It logs its own reason either way.
+    #
+    # Only a complete tree is worth caching by the fallback below. A tree cut off
+    # mid-fetch still passes the lockfile-hash check the hook uses, so caching one
+    # costs a session the restore time and then makes it install anyway.
+    if restore_prebuilt_node_modules; then
+        log_info "✓ prebuilt node_modules cached — sessions start ready, no finish-setup.sh needed"
+    elif step "yarn install" install_dependencies; then
         step "seed node_modules cache" seed_node_modules_cache
     else
         log_warn "no complete node_modules to cache; the first session must run finish-setup.sh, which caches its result for later sessions"

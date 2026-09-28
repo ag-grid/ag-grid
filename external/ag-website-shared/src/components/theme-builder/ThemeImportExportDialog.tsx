@@ -6,14 +6,34 @@ import { useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme'
 import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
-import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
+import type { ChangeEvent, KeyboardEvent, ReactNode, RefObject } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { type ValidationResult, applyValidatedTheme, renderThemeCodeSample, validateThemeCode } from './themeImport';
+import { type ValidationResult, renderThemeCodeSample, validateThemeCode } from './themeImport';
+
+const DEFAULT_PLACEHOLDER = 'Paste your theme code here:\n\nconst myTheme = ...withParams({...});';
 
 export type ThemeImportExportDialogProps = {
     close: () => void;
     initialTab?: string;
+    /**
+     * The code to show in the Export tab. Defaults to the theme param chain
+     * rendered from the live theme, which suits any host whose theme *is* a
+     * param bag; a host with a different shape renders its own.
+     */
+    exportCode?: string;
+    downloadFileName?: string;
+    /** How to read pasted code back. Defaults to the same param chain. */
+    validateImport?: (code: string) => ValidationResult;
+    importPlaceholder?: string;
+    /** Shown above both tabs. Defaults to a link to the host's docs page. */
+    helpText?: ReactNode;
+    /**
+     * Overrides the dialog's height ceiling. The default measures the viewport,
+     * which is right whenever the popup can grow into it; a host whose builder
+     * clips its own overflow wants `--popup-available-height` instead.
+     */
+    maxHeight?: string;
 };
 
 let themeBuilderDocsUrl = '#';
@@ -25,7 +45,16 @@ export const setThemeBuilderDocsUrl = (url: string) => {
     themeBuilderDocsUrl = url;
 };
 
-export const ThemeImportExportDialog = ({ close, initialTab = 'Export' }: ThemeImportExportDialogProps) => {
+export const ThemeImportExportDialog = ({
+    close,
+    initialTab = 'Export',
+    exportCode,
+    downloadFileName = 'theme-builder.js',
+    validateImport = validateThemeCode,
+    importPlaceholder = DEFAULT_PLACEHOLDER,
+    helpText = <DocsHelpText />,
+    maxHeight = 'calc(100vh - 100px)',
+}: ThemeImportExportDialogProps) => {
     const [activeTab, setActiveTab] = useState(initialTab);
     const [isDraggingFile, setIsDraggingFile] = useState(false);
     const [importCode, setImportCode] = useState('');
@@ -57,26 +86,44 @@ export const ThemeImportExportDialog = ({ close, initialTab = 'Export' }: ThemeI
     });
 
     return (
-        <DialogWrapper ref={dialogRef} tabIndex={0} onKeyDown={handleKeyDown}>
+        <DialogWrapper ref={dialogRef} tabIndex={0} onKeyDown={handleKeyDown} maxHeight={maxHeight}>
             {isDraggingFile && (
                 <DropOverlay>
                     <DropOverlayText>Drop file to import</DropOverlayText>
                 </DropOverlay>
             )}
             <StyledTabs selectedTab={activeTab} onTabChange={setActiveTab}>
-                <ExportTabContent tab-label="Export" codeRef={codeRef} />
+                {exportCode == null ? (
+                    <RenderedThemeExportTab
+                        tab-label="Export"
+                        codeRef={codeRef}
+                        downloadFileName={downloadFileName}
+                        helpText={helpText}
+                    />
+                ) : (
+                    <ExportTabContent
+                        tab-label="Export"
+                        codeRef={codeRef}
+                        code={exportCode}
+                        downloadFileName={downloadFileName}
+                        helpText={helpText}
+                    />
+                )}
                 <ImportTabContentWrapper
                     tab-label="Import"
                     code={importCode}
                     onCodeChange={setImportCode}
                     close={close}
+                    validate={validateImport}
+                    placeholder={importPlaceholder}
+                    helpText={helpText}
                 />
             </StyledTabs>
         </DialogWrapper>
     );
 };
 
-const HelpText = () => (
+const DocsHelpText = () => (
     <Paragraph>
         View our{' '}
         <a href={themeBuilderDocsUrl} target="_blank">
@@ -86,9 +133,25 @@ const HelpText = () => (
     </Paragraph>
 );
 
-const ExportTabContent = ({ codeRef }: { codeRef: RefObject<HTMLDivElement> }) => {
+type ExportTabContentProps = {
+    codeRef: RefObject<HTMLDivElement>;
+    code: string;
+    downloadFileName: string;
+    helpText: ReactNode;
+};
+
+/**
+ * The default Export tab, for hosts that have not rendered their own code. Kept
+ * apart from ExportTabContent so that rendering the param chain - and reading
+ * the live theme to do it - is work only those hosts pay for.
+ */
+const RenderedThemeExportTab = (props: Omit<ExportTabContentProps, 'code'>) => {
     const theme = useRenderedThemeInfo();
-    const codeSample = useMemo(() => renderThemeCodeSample(theme), [theme]);
+    const code = useMemo(() => renderThemeCodeSample(theme), [theme]);
+    return <ExportTabContent {...props} code={code} />;
+};
+
+const ExportTabContent = ({ codeRef, code: codeSample, downloadFileName, helpText }: ExportTabContentProps) => {
     const downloadLink = `data:text/javascript;charset=utf-8,${encodeURIComponent(codeSample)}`;
 
     const [copyButtonClicked, setCopyButtonClicked] = useState(false);
@@ -102,12 +165,12 @@ const ExportTabContent = ({ codeRef }: { codeRef: RefObject<HTMLDivElement> }) =
 
     return (
         <TabContentInner>
-            <HelpText />
+            {helpText}
             <CodeWrapper ref={codeRef} onClick={selectAllCode}>
                 <Code code={codeSample} language="js" />
             </CodeWrapper>
             <ButtonRow>
-                <DownloadLink className="button-tertiary" href={downloadLink} download="theme-builder.js">
+                <DownloadLink className="button-tertiary" href={downloadLink} download={downloadFileName}>
                     <LinkContent>{downloadIcon} Download</LinkContent>
                 </DownloadLink>
                 <CopyLink
@@ -143,9 +206,19 @@ type ImportTabContentWrapperProps = {
     code: string;
     onCodeChange: (code: string) => void;
     close: () => void;
+    validate: (code: string) => ValidationResult;
+    placeholder: string;
+    helpText: ReactNode;
 };
 
-const ImportTabContentWrapper = ({ code, onCodeChange, close }: ImportTabContentWrapperProps) => {
+const ImportTabContentWrapper = ({
+    code,
+    onCodeChange,
+    close,
+    validate,
+    placeholder,
+    helpText,
+}: ImportTabContentWrapperProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const store = useStore();
     const [validationResult, setValidationResult] = useState<ValidationResult>({ status: 'empty', validParamCount: 0 });
@@ -153,15 +226,17 @@ const ImportTabContentWrapper = ({ code, onCodeChange, close }: ImportTabContent
     // Debounced validation to avoid delay on keystrokes
     useEffect(() => {
         const timer = setTimeout(() => {
-            setValidationResult(validateThemeCode(code));
+            setValidationResult(validate(code));
         }, 300);
         return () => clearTimeout(timer);
-    }, [code]);
+    }, [code, validate]);
 
     const handleApply = () => {
-        const currentResult = validateThemeCode(code);
-        if (currentResult.validParamCount > 0 && 'preset' in currentResult) {
-            applyValidatedTheme(store, currentResult.preset);
+        // Re-validate rather than trusting the debounced result, which can be
+        // one keystroke behind the box.
+        const currentResult = validate(code);
+        if ('apply' in currentResult) {
+            currentResult.apply(store);
             close();
         }
     };
@@ -180,13 +255,13 @@ const ImportTabContentWrapper = ({ code, onCodeChange, close }: ImportTabContent
 
     return (
         <TabContentInner>
-            <HelpText />
+            {helpText}
             <Textarea
                 id="theme-import-code"
                 className="code"
                 value={code}
                 onChange={(e) => onCodeChange(e.target.value)}
-                placeholder={'Paste your theme code here:\n\nconst myTheme = ...withParams({...});'}
+                placeholder={placeholder}
                 spellCheck={false}
             />
             <ValidationFeedback result={validationResult} />
@@ -203,7 +278,7 @@ const ImportTabContentWrapper = ({ code, onCodeChange, close }: ImportTabContent
                         <Upload /> Upload
                     </LinkContent>
                 </button>
-                <button onClick={handleApply} disabled={validationResult.validParamCount === 0}>
+                <button onClick={handleApply} disabled={!('apply' in validationResult)}>
                     <LinkContent>Apply</LinkContent>
                 </button>
             </ButtonRow>
@@ -226,13 +301,12 @@ const ValidationFeedback = ({ result }: { result: ValidationResult }) => {
 
     const { validParamCount } = result;
     const warnings = result.status === 'warning' ? result.warnings : [];
+    const summary = result.summary ?? `Found ${validParamCount} theme parameter${validParamCount !== 1 ? 's' : ''}`;
 
     if (warnings.length === 0) {
         return (
             <FeedbackWrapper>
-                <StyledAlert type="success">
-                    Found {validParamCount} theme parameter{validParamCount !== 1 ? 's' : ''}
-                </StyledAlert>
+                <StyledAlert type="success">{summary}</StyledAlert>
             </FeedbackWrapper>
         );
     }
@@ -245,8 +319,7 @@ const ValidationFeedback = ({ result }: { result: ValidationResult }) => {
     return (
         <FeedbackWrapper>
             <StyledAlert type="warning">
-                Found {validParamCount} theme parameter{validParamCount !== 1 ? 's' : ''}, with
-                {displayedWarnings.length === 1 ? ' this warning' : ` these warnings`}:
+                {summary}, with{displayedWarnings.length === 1 ? ' this warning' : ` these warnings`}:
                 <WarningList>
                     {displayedWarnings.map((warning, i) => (
                         <li key={i}>{warning}</li>
@@ -258,13 +331,15 @@ const ValidationFeedback = ({ result }: { result: ValidationResult }) => {
     );
 };
 
-const DialogWrapper = styled('div')`
+const DialogWrapper = styled('div', { shouldForwardProp: (prop) => prop !== 'maxHeight' })<{
+    maxHeight: string;
+}>`
     position: relative;
     display: flex;
     flex-direction: column;
     width: min(800px, var(--popup-available-width) - 40px);
     height: 600px;
-    max-height: calc(100vh - 100px);
+    max-height: ${({ maxHeight }) => maxHeight};
     outline: none;
 `;
 

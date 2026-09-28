@@ -48,10 +48,22 @@ function extractParts(identifiers: string[]): Part<any>[] {
     return Array.from(selectedPartByFeature.values());
 }
 
+/**
+ * The outcome of reading pasted theme code, ready for the dialog to render and
+ * to apply. A host's parser decides both halves - `summary` is what the dialog
+ * says it found, `apply` is how the theme reaches the store - so a host whose
+ * themes are not param bags, a charts options object say, needs no change here.
+ */
 export type ValidationResult =
     | { status: 'empty'; validParamCount: 0 }
-    | { status: 'success'; validParamCount: number; preset: Preset }
-    | { status: 'warning'; validParamCount: number; preset: Preset; warnings: string[] }
+    | { status: 'success'; validParamCount: number; summary?: string; apply: (store: Store) => void }
+    | {
+          status: 'warning';
+          validParamCount: number;
+          summary?: string;
+          apply: (store: Store) => void;
+          warnings: string[];
+      }
     | { status: 'error'; validParamCount: 0; error: string };
 
 export function validateThemeCode(code: string): ValidationResult {
@@ -86,16 +98,13 @@ export function validateThemeCode(code: string): ValidationResult {
     // theming engine, so its params bag is a plain Record rather than the
     // stricter Partial<ThemeParams> - safe to widen here.
     const preset = parsedPreset as Preset;
+    const apply = (store: Store) => applyPreset(store, preset);
 
     if (warnings.length === 0) {
-        return { status: 'success', validParamCount, preset };
+        return { status: 'success', validParamCount, apply };
     }
 
-    return { status: 'warning', validParamCount, preset, warnings };
-}
-
-export function applyValidatedTheme(store: Store, preset: Preset): void {
-    applyPreset(store, preset);
+    return { status: 'warning', validParamCount, apply, warnings };
 }
 
 export function renderThemeCodeSample({ overriddenParams, usedParts }: RenderedThemeInfo): string {

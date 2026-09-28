@@ -11,10 +11,12 @@ export type ColorPickerProps = {
     preventTransparency: boolean;
     value: string;
     onChange: (newValue: string | null) => void;
+    /** Names the swatch for a screen reader, where a column heading cannot. */
+    ariaLabel?: string;
     className?: string;
 };
 
-export const ColorPicker = ({ preventTransparency, value, onChange, className }: ColorPickerProps) => {
+export const ColorPicker = ({ preventTransparency, value, onChange, ariaLabel, className }: ColorPickerProps) => {
     const hexValue = coerceToValidValue(value, preventTransparency);
     const [editorValue, setEditorValue] = useState(hexValue || value);
     const [valid, setValid] = useState(() => colorIsValid(editorValue));
@@ -65,6 +67,7 @@ export const ColorPicker = ({ preventTransparency, value, onChange, className }:
             <Wrapper ref={wrapperRef} className={className}>
                 <StyledInput
                     ref={refs.setReference}
+                    ariaLabel={ariaLabel}
                     className={valid ? undefined : 'is-error'}
                     value={editorValue}
                     onChange={handleInput}
