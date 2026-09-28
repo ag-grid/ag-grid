@@ -126,7 +126,7 @@ The following example demonstrates preserving previous values. Try the following
 
 {% gridExampleRunner title="Preserving Previous Values" name="preserve-previous-values"  exampleHeight=500 /%}
 
-The [Advanced Filter](./filter-advanced/) only suggests current values, but still accepts a value that is out of the data. In the following example, click **Apply Data Update 1**, then type `[Set Filter Column] is any of ["B"]` and apply it: `'B'` is no longer in the data and is not suggested, but it is accepted and no rows are shown. Click **Apply Data Update 2** and the `'B'` rows are shown again. The Advanced Filter has no filter model per column, so `preservePreviousValuesLimit` applies to every value it keeps, including values used in the applied expression.
+The [Advanced Filter](./filter-advanced/) only suggests current values, but still accepts a value that is out of the data. In the following example, click **Apply Data Update 1**, then type `[Set Filter Column] is any of ["B"]` and apply it: `'B'` is no longer in the data and is not suggested, but it is accepted and no rows are shown. Click **Apply Data Update 2** and the `'B'` rows are shown again.
 
 {% gridExampleRunner title="Preserving Previous Values with the Advanced Filter" name="preserve-previous-values-advanced-filter"  exampleHeight=400 /%}
 

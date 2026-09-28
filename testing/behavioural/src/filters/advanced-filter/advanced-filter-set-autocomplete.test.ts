@@ -700,6 +700,38 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(af.getModel().values).toEqual(['Jamaica']);
     });
 
+    test('an applied value outlives the limit: it filters again when it returns, and can be applied while away', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 0 },
+                },
+            ],
+        });
+        const withoutJamaica = ROW_DATA.filter((row) => row.country !== 'Jamaica');
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual([]);
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+
+        api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+    });
+
     test('rows arriving after grid start are offered as without the option, formatted by their data type', async () => {
         const api = gridsManager.createGrid('grid1', {
             enableAdvancedFilter: true,
