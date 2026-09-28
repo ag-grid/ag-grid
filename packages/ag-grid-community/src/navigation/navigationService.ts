@@ -668,13 +668,18 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         this.beans.focusSvc.focusPosition(normalisedPosition);
+        this.keepCoveredColumn(position, normalisedPosition.column);
+        return true;
+    }
+
+    /** After a cell spanning `position`'s column took focus, keeps that column for the next vertical move. */
+    public keepCoveredColumn(position: CellPosition, focusedColumn: Column): void {
         const column = position.column as AgColumn;
-        const rowNode = normalisedPosition.column !== column ? _getRowNode(this.beans, position) : undefined;
+        const rowNode = focusedColumn !== column ? _getRowNode(this.beans, position) : undefined;
         // only a column the user can stop on is kept: Page and Ctrl+Up/Down move to it without judging it
         if (rowNode && !column.isSuppressNavigable(rowNode)) {
             this.setCurrentColumnWithoutSpan(column);
         }
-        return true;
     }
 
     /** The next navigable cell from `start` in the direction of `key`, skipping rows that do not exist; null if none. */

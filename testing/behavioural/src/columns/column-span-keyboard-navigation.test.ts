@@ -1231,7 +1231,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
-    test('Shift+Tab walking back past rows with nothing navigable onto a covered column of a row not rendered yet focuses the cell spanning it, with its range', () => {
+    test('Shift+Tab walking back past rows with nothing navigable onto a covered column of a row not rendered yet focuses the cell spanning it, with its range, and Arrow Up continues in the covered column', () => {
         // nothing is navigable below row 30, where 'a' spans all three columns
         const columnDefs = spanningColumnDefs((rowIndex) => rowIndex === 30);
         for (const colDef of columnDefs) {
@@ -1252,15 +1252,19 @@ describe('Column Spanning Keyboard Navigation', () => {
 
         getGridElement(api)!.querySelector<HTMLElement>('.ag-tab-guard-bottom')!.focus();
         const range = api.getCellRanges()?.[0];
+        const focus = focusState(api);
+        dispatchKeyDown(KeyCode.UP);
 
         expect({
             rendered,
-            focus: focusState(api),
+            focus,
             range: range && `${range.startRow?.rowIndex}-${range.endRow?.rowIndex} ${range.columns[0].getColId()}`,
+            arrowUp: `${getFocusedRowIndex(api)} ${getFocusedColId(api)}`,
         }).toEqual({
             rendered: false,
             focus: 'cell a, focused cell 30 a',
             range: '30-30 a',
+            arrowUp: '29 c',
         });
     });
 

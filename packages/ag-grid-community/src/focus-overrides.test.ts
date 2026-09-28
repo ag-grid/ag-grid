@@ -369,6 +369,7 @@ describe('Focus override callbacks', () => {
             const enterAt = (column: Column, colSpanActive: boolean, hasCellCtrl = true) => {
                 const navigation = {
                     focusCellOrRow: vi.fn((_cell: CellPosition, _scroll: boolean, _backwards: boolean) => hasCellCtrl),
+                    keepCoveredColumn: vi.fn((_cell: CellPosition, _focusedColumn: Column) => undefined),
                 };
                 focusSvcAny.navigation = navigation;
                 const visibleCols = focusSvcAny.beans.visibleCols;
@@ -396,6 +397,10 @@ describe('Focus override callbacks', () => {
                     ]),
                     fallback: setFocusedCell.mock.calls.map(([cell]) => (cell.column as Column).getColId()),
                     range: setRangeToCell.mock.calls.map(([cell]) => cell.column.getColId()),
+                    kept: navigation.keepCoveredColumn.mock.calls.map(([cell, focusedColumn]) => [
+                        cell.column.getColId(),
+                        focusedColumn.getColId(),
+                    ]),
                 };
             };
 
@@ -404,16 +409,19 @@ describe('Focus override callbacks', () => {
                 plainWithoutCellCtrl: enterAt(covered, false, false),
                 spannedWithoutCellCtrl: enterAt(covered, true, false),
             }).toEqual({
-                rendered: { focusCell: [['country', true, false]], fallback: [], range: [] },
+                rendered: { focusCell: [['country', true, false]], fallback: [], range: [], kept: [] },
                 plainWithoutCellCtrl: {
                     focusCell: [['country', true, false]],
                     fallback: ['country'],
                     range: ['country'],
+                    kept: [['country', 'country']],
                 },
+                // the entry column is kept for the next vertical move, as when the cell is rendered
                 spannedWithoutCellCtrl: {
                     focusCell: [['country', true, false]],
                     fallback: ['athlete'],
                     range: ['athlete'],
+                    kept: [['country', 'athlete']],
                 },
             });
         });
@@ -441,6 +449,7 @@ describe('Focus override callbacks', () => {
                     focusCellOrRow: vi.fn(
                         (_cell: CellPosition, _scroll: boolean, _backwards: boolean) => tabStopRendered
                     ),
+                    keepCoveredColumn: vi.fn(),
                 };
                 focusSvcAny.navigation = navigation;
                 setFocusedCell.mockClear();

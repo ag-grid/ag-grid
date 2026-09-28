@@ -746,6 +746,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
         const cell = { ...position, column: new RowFocusResolver(this.beans).getFocusColumn(position) };
         this.focusPosition(cell);
+        this.navigation?.keepCoveredColumn(position, cell.column);
         return this.isCellFocused(cell);
     }
 
