@@ -41,7 +41,7 @@ type DataForCellRangesType = { data: string; cellsToFlash: CellsToFlashType };
 type ClipboardWithUnsanitizedRead = Clipboard & {
     read(options: { unsanitized: string[] }): Promise<ClipboardItems>;
 };
-type ClipboardReadResult = { data: string; html?: string; htmlReadFailed?: boolean };
+type ClipboardReadResult = { data?: string; html?: string; htmlReadFailed?: boolean };
 
 // Matches value in changeDetectionService
 const SOURCE_PASTE = 'paste';
@@ -173,38 +173,29 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private async pasteFromClipboardApi(clipboard: Clipboard): Promise<void> {
-        let result: ClipboardReadResult | undefined;
+        let result: ClipboardReadResult | null = null;
         if (!this.gos.get('suppressLastEmptyLineOnPaste') && typeof clipboard.read === 'function') {
-            let retrySanitisedRead: boolean;
-            try {
-                // The HTML table shape can distinguish selected blank cells from an extra plain-text line.
-                const items = await (clipboard as ClipboardWithUnsanitizedRead).read({ unsanitized: ['text/html'] });
-                result = await this.readClipboardItems(items);
-                retrySanitisedRead = !!result.htmlReadFailed;
-            } catch {
+            // The HTML table shape can distinguish selected blank cells from an extra plain-text line.
+            result = await this.tryReadItems(clipboard, true);
+            if (!this.isAlive()) {
+                return;
+            }
+            if (!result || result.htmlReadFailed) {
+                // A sanitised read may still retain the table when unsanitised HTML is unavailable.
+                const sanitisedResult = await this.tryReadItems(clipboard, false);
                 if (!this.isAlive()) {
                     return;
                 }
-                retrySanitisedRead = true;
-            }
-            if (retrySanitisedRead) {
-                try {
-                    // A sanitised read may still retain the table when unsanitised HTML is unavailable.
-                    const sanitisedResult = await this.readClipboardItems(await clipboard.read());
-                    if (!result || sanitisedResult.html) {
-                        result = sanitisedResult;
-                    }
-                } catch {
-                    if (!this.isAlive()) {
-                        return;
-                    }
+                if (!result || sanitisedResult?.html) {
+                    result = sanitisedResult;
                 }
             }
         }
 
-        if (!result) {
+        let data = result?.data;
+        if (data == null) {
             try {
-                result = { data: await clipboard.readText() };
+                data = await clipboard.readText();
             } catch (error) {
                 if (this.isAlive()) {
                     this.warn(40, { error, method: 'readText' });
@@ -216,14 +207,26 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         if (this.isAlive()) {
-            this.processClipboardData(result.data, result.html);
+            this.processClipboardData(data, result?.html);
+        }
+    }
+
+    private async tryReadItems(clipboard: Clipboard, unsanitised: boolean): Promise<ClipboardReadResult | null> {
+        try {
+            const items = await (unsanitised
+                ? (clipboard as ClipboardWithUnsanitizedRead).read({ unsanitized: ['text/html'] })
+                : clipboard.read());
+            return await this.readClipboardItems(items);
+        } catch {
+            return null;
         }
     }
 
     private async readClipboardItems(items: ClipboardItems): Promise<ClipboardReadResult> {
         const item = items.find((item) => item.types.includes('text/plain'));
         if (!item) {
-            throw new Error('No plain text clipboard item');
+            // readText is the preferred source when the items carry no plain text.
+            return {};
         }
 
         const data = await (await item.getType('text/plain')).text();
@@ -418,9 +421,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         let plainCellCount = 0;
         let hasNonEmptyMissingCell = false;
         const tagPattern = /<\/?[a-z][\w:-]*(?:[^>"']|"[^"]*"|'[^']*')*>/gi;
-        let match: RegExpExecArray | null;
         let endOfPreviousTag = 0;
-        while ((match = tagPattern.exec(tableContent))) {
+        for (let match = tagPattern.exec(tableContent); match; match = tagPattern.exec(tableContent)) {
             const strayTag = tableContent.indexOf('<', endOfPreviousTag);
             if (strayTag >= 0 && strayTag < match.index) {
                 return null;

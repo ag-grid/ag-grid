@@ -98,6 +98,9 @@ export const clipboardUtils = {
             },
         ]);
     },
+    setItems(text: string, items: { types: string[]; getType: (type: string) => Promise<Blob> }[]): void {
+        setClipboardState(text, items);
+    },
     getText() {
         return clipboardState.text;
     },

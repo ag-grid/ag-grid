@@ -1038,6 +1038,30 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         }
     });
 
+    test('prefers readText over a second read when the clipboard has no plain text item', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardNoPlainTextItem', {
+            columnDefs: [{ field: 'value', editable: true }],
+            rowData: [{ value: 'old' }],
+        });
+        clipboardUtils.setItems('new', [{ types: ['image/png'], getType: async (type) => new Blob([''], { type }) }]);
+        const read = vi.spyOn(navigator.clipboard, 'read');
+        const readText = vi.spyOn(navigator.clipboard, 'readText');
+
+        try {
+            api.setFocusedCell(0, 'value');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            expect(read).toHaveBeenCalledTimes(1);
+            expect(readText).toHaveBeenCalledTimes(1);
+            expect(api.getDisplayedRowAtIndex(0)?.data.value).toBe('new');
+        } finally {
+            read.mockRestore();
+            readText.mockRestore();
+        }
+    });
+
     test('uses a sanitised read when unsanitised HTML is unavailable', async () => {
         const api = await gridMgr.createGridAndWait('clipboardSanitisedReadFallback', {
             columnDefs: [
