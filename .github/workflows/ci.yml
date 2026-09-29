@@ -367,7 +367,8 @@ jobs:
     timeout-minutes: 30
     name: Lint & Format Check
     needs: [ detect-changes, init ]
-    if: ${{ always() && needs.detect-changes.result == 'success' }}
+    if: ${{ always() && needs.detect-changes.result == 'success' &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
@@ -864,7 +865,8 @@ jobs:
     name: SonarQube Community
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -889,7 +891,8 @@ jobs:
     name: SonarQube Enterprise
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

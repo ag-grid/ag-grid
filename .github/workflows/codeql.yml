@@ -27,6 +27,7 @@ jobs:
     analyze:
         name: Analyze (${{ matrix.language }})
         runs-on: 'ubuntu-latest'
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         permissions:
             # required for all workflows
             security-events: write
