@@ -55,7 +55,7 @@ describe('buildApiReferenceSection fed by the reference models', () => {
         );
 
         expect(output).toContain(
-            '| `rowHeight` | `number` |  | `25` | Default row height in pixels. Module: [`RowAutoHeightModule`](https://www.ag-grid.com/javascript-data-grid/modules/). [Initial](https://www.ag-grid.com/javascript-data-grid/grid-interface/#initial-grid-options). |'
+            '| `rowHeight` | `number` |  | `25` | Default row height in pixels. [Module](https://www.ag-grid.com/javascript-data-grid/modules/): `RowAutoHeightModule`. [Initial](https://www.ag-grid.com/javascript-data-grid/grid-interface/#initial-grid-options). |'
         );
     });
 
@@ -105,10 +105,10 @@ describe('buildApiReferenceSection fed by the reference models', () => {
         );
 
         expect(output).toContain(
-            'How many rows for each block in the store. Module: [`InfiniteRowModelModule`](https://www.ag-grid.com/javascript-data-grid/modules/).'
+            'How many rows for each block in the store. [Module](https://www.ag-grid.com/javascript-data-grid/modules/): `InfiniteRowModelModule`.'
         );
         expect(output).toContain(
-            'When provided, an extra row group total row will be inserted. Module: [`RowGroupingModule`](https://www.ag-grid.com/javascript-data-grid/modules/).'
+            'When provided, an extra row group total row will be inserted. [Module](https://www.ag-grid.com/javascript-data-grid/modules/): `RowGroupingModule`.'
         );
         expect(output).not.toContain('ServerSideRowModelModule');
     });

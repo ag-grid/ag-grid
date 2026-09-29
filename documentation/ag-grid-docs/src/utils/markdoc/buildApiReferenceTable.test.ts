@@ -90,11 +90,11 @@ describe('buildApiReferenceSection', () => {
         );
 
         expect(bodyRows(output)[0][4]).toBe(
-            'Used to programmatically create charts from a range. Module: [`IntegratedChartsModule`](https://www.ag-grid.com/javascript-data-grid/modules/).'
+            'Used to programmatically create charts from a range. [Module](https://www.ag-grid.com/javascript-data-grid/modules/): `IntegratedChartsModule`.'
         );
     });
 
-    it('lists every module when a property is available in more than one', () => {
+    it('lists every module under one link when a property is available in more than one', () => {
         const output = buildApiReferenceSection(
             {
                 config: {},
@@ -109,8 +109,9 @@ describe('buildApiReferenceSection', () => {
             links
         );
 
-        expect(bodyRows(output)[0][4]).toContain('Modules (any of): [`RowApiModule`]');
-        expect(bodyRows(output)[0][4]).toContain('[`RowSelectionModule`]');
+        expect(bodyRows(output)[0][4]).toBe(
+            'Row id callback. [Modules](https://www.ag-grid.com/javascript-data-grid/modules/) (any of): `RowApiModule`, `RowSelectionModule`.'
+        );
     });
 
     it('links the type to its reference page, as the page does', () => {
@@ -243,7 +244,7 @@ describe('buildApiReferenceSection', () => {
         expect(unlinkChart[4]).toBe(
             'When enabled the chart will be unlinked from the grid after creation. ' +
                 'See [Unlinking Charts](https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/#default-chart-menu-items) for more information. ' +
-                'Module: [`IntegratedChartsModule`](https://www.ag-grid.com/javascript-data-grid/modules/). ' +
+                '[Module](https://www.ag-grid.com/javascript-data-grid/modules/): `IntegratedChartsModule`. ' +
                 '[Initial](https://www.ag-grid.com/javascript-data-grid/grid-interface/#initial-grid-options).'
         );
         expect(chartThemeName[4]).toBe(

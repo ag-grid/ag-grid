@@ -227,14 +227,17 @@ function buildInitialLink(tags: Record<string, any>[], config: Record<string, an
     return `[Initial](${resolveDocUrl(config.initialLink ?? INITIAL_URL, links)}).`;
 }
 
-/** The property's modules as links to the module registry, matching the PropertyModules badges on the page. */
+/**
+ * The property's modules, matching the PropertyModules badges on the page. Every badge links
+ * to the same module registry, so link the label once rather than repeating it per module.
+ */
 function buildModuleLinks(modules: { name: string }[] | undefined, links: LinkContext): string {
     if (!modules?.length) {
         return '';
     }
     const url = resolveDocUrl(MODULES_URL, links);
-    const moduleLinks = modules.map(({ name }) => `[\`${name}\`](${url})`).join(', ');
-    return modules.length > 1 ? `Modules (any of): ${moduleLinks}.` : `Module: ${moduleLinks}.`;
+    const names = modules.map(({ name }) => `\`${name}\``).join(', ');
+    return modules.length > 1 ? `[Modules](${url}) (any of): ${names}.` : `[Module](${url}): ${names}.`;
 }
 
 function buildTable(rows: PropertyRow[]): string {
