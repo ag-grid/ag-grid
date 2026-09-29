@@ -60,7 +60,7 @@ jobs:
 
       - name: Yarn
         run: |
-          yarn install --ci
+          yarn install --immutable
 
       - name: Build
         run: |

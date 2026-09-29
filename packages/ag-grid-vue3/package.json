@@ -47,8 +47,6 @@
     "ag-grid-community": "36.2.0-beta.20260928.1315"
   },
   "devDependencies": {
-    "vue": "^3.5.43",
-    "replace-in-file": "9.0.0",
     "@tsconfig/node20": "^20.1.10",
     "@types/node": "^22.15.3",
     "@vitejs/plugin-vue": "^5.0.5",
@@ -56,9 +54,11 @@
     "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.9.1",
     "npm-run-all2": "^9.0.3",
+    "replace-in-file": "9.0.0",
     "typescript": "~5.8.3",
     "vite": "~5.4.19",
     "vite-plugin-vue-devtools": "^8.2.1",
+    "vue": "^3.5.43",
     "vue-tsc": "^3.3.11"
   },
   "peerDependencies": {

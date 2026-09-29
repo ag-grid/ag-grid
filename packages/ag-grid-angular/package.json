@@ -4,36 +4,36 @@
   "description": "AG Grid Angular Component",
   "scripts": {
     "clean": "rimraf dist",
-    "ng": "./node_modules/.bin/ng",
-    "start": "./node_modules/.bin/ng serve",
-    "build": "./node_modules/.bin/ng build",
-    "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
-    "test:watch": "./node_modules/.bin/ng test --watch true --browsers ChromeHeadless",
-    "lint": "./node_modules/.bin/ng lint"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test:e2e": "ng test --watch false --browsers ChromeHeadless",
+    "test:watch": "ng test --watch true --browsers ChromeHeadless",
+    "lint": "ng lint"
   },
   "license": "MIT",
   "module": "./dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
   "dependencies": {
-    "ag-grid-community": "36.2.0-beta.20260928.1315",
     "@angular/animations": "^20.3.27",
     "@angular/common": "^20.3.27",
     "@angular/compiler": "^20.3.27",
     "@angular/core": "^20.3.27",
     "@angular/platform-browser": "^20.3.27",
     "@angular/platform-browser-dynamic": "^20.3.27",
+    "ag-grid-community": "36.2.0-beta.20260928.1315",
     "rxjs": "~7.8.2",
     "tslib": "^2.8.1",
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "ag-grid-community": "36.2.0-beta.20260928.1315",
     "@angular/build": "^20.3.27",
     "@angular/cli": "^20.3.27",
-    "@angular/forms": "^20.3.27",
     "@angular/compiler-cli": "^20.3.27",
+    "@angular/forms": "^20.3.27",
     "@types/jasmine": "~6.0.0",
     "@types/node": "^22.15.3",
+    "ag-grid-community": "36.2.0-beta.20260928.1315",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
@@ -41,8 +41,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.3.0",
     "ng-packagr": "^20.3.2",
-    "typescript": "~5.8.3",
     "replace-in-file": "9.0.0",
-    "rimraf": "6.1.3"
+    "rimraf": "6.1.3",
+    "typescript": "~5.8.3"
   }
 }
