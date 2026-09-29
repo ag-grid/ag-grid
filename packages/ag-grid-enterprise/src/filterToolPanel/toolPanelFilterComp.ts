@@ -66,9 +66,9 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
 
     public setColumn(column: AgColumn): void {
         this.column = column;
-        const { beans, eFilterToolPanelHeader, eFilterIcon, eExpandChecked, hideHeader } = this;
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eFilterName.innerText = beans.colNames.getDisplayNameForColumn(column, 'filterToolPanel', false) || '';
+        const { eFilterToolPanelHeader, eFilterIcon, eExpandChecked, hideHeader } = this;
+        this.refreshFilterName();
+        this.addManagedListeners(column, { headerNameChanged: this.refreshFilterName.bind(this) });
         this.addManagedListeners(eFilterToolPanelHeader, {
             click: this.toggleExpanded.bind(this),
             keydown: this.onKeyDown.bind(this),
@@ -87,6 +87,11 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         }
 
         this.addManagedListeners(column, { filterChanged: this.onFilterChanged.bind(this) });
+    }
+
+    private refreshFilterName(): void {
+        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
+        this.eFilterName.innerText = this.getColumnFilterName() || '';
     }
 
     private onKeyDown(e: KeyboardEvent): void {

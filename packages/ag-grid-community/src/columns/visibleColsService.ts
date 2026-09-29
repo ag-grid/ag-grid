@@ -5,7 +5,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
-import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
 import type { ColumnFlexService } from './columnFlexService';
@@ -44,6 +43,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** `allCols` with `colDef.autoHeight`. Reused across refreshes to stay warm. */
     public readonly autoHeightCols: AgColumn[] = [];
 
+    /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
+    public colSpanActive = false;
+
+    /** `allCols` with a legacy `colDef.rowSpan`, whose cells re-read it as their row's data changes. */
+    public readonly rowSpanCols: AgColumn[] = [];
+
     /** Number of header rows to render, accounting for group depth + padding rules. */
     public headerGroupRowCount: number = 0;
 
@@ -56,6 +61,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** Bumped once per pass that restamps the column lefts, so anything derived from where the columns
      *  are can tell whether it is looking at the same layout without re-deriving it. */
     public layoutVersion = 0;
+
+    /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
+    public displayedColsVersion = 0;
 
     /** Prev refresh's pinned-edge cols — drive an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
     private prevLastLeftPinned: AgColumn | null = null;
@@ -322,6 +330,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightCols = [];
         this.centerCols = [];
         this.allCols = [];
+        ++this.displayedColsVersion;
+        this.autoHeightCols.length = 0;
+        this.colSpanActive = false;
+        this.rowSpanCols.length = 0;
     }
 
     private stampAriaColIndexes(leftCount: number, centerCount: number): void {
@@ -356,6 +368,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
+        this.colSpanActive = false;
+        this.rowSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
         this.flexActive = false;
         const hidePaddedHeaderRows = !!this.gos.get('hidePaddedHeaderRows');
@@ -375,18 +389,19 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
 
         this.allCols = all;
+        ++this.displayedColsVersion;
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
-    /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in
-     *  `autoHeightCols`/`flexActive`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
+    /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in the
+     *  per-column lists and `flexActive`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
     private layoutSection(
         cols: AgColumn[],
         all: AgColumn[],
         hidePaddedHeaderRows: boolean,
         source: ColumnEventType
     ): number {
-        const autoHeightCols = this.autoHeightCols;
+        const { autoHeightCols, rowSpanCols } = this;
         let left = 0;
         // Leaves under one group are contiguous; skip the parent-chain walk for same-parent runs.
         let lastParent: AgColumnGroup | null = null;
@@ -398,6 +413,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             all.push(col);
             if (col.colDef.autoHeight) {
                 autoHeightCols.push(col);
+            }
+            if (col.colSpan != null) {
+                this.colSpanActive = true;
+            }
+            if (col.rowSpan != null) {
+                rowSpanCols.push(col);
             }
             if (!this.flexActive && col.pinned == null) {
                 const flex = col.flex;
@@ -418,59 +439,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             left += col.actualWidth;
         }
         return left;
-    }
-
-    public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
-        return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.leftCols) : this.leftCols;
-    }
-
-    public getRightColsForRow(rowNode: RowNode): AgColumn[] {
-        return this.colModel.colSpanActive ? this.getColsForRow(rowNode, this.rightCols) : this.rightCols;
-    }
-
-    /** `filterCallback` is only set for the centre (virtualised) area. A col-spanned run is kept if
-     *  ANY spanned col passes the filter. */
-    public getColsForRow(
-        rowNode: RowNode,
-        displayedColumns: AgColumn[],
-        filterCallback?: (column: AgColumn) => boolean,
-        emptySpaceBeforeColumn?: (column: AgColumn) => boolean
-    ): AgColumn[] {
-        const result: AgColumn[] = [];
-        let lastConsideredCol: AgColumn | null = null;
-        const len = displayedColumns.length;
-
-        for (let i = 0; i < len; ++i) {
-            const col = displayedColumns[i];
-            const colSpan = Math.min(col.getColSpan(rowNode), len - i);
-
-            let filterPasses: boolean;
-            if (filterCallback) {
-                filterPasses = filterCallback(col);
-                for (let j = 1; !filterPasses && j < colSpan; ++j) {
-                    if (filterCallback(displayedColumns[i + j])) {
-                        filterPasses = true;
-                    }
-                }
-            } else {
-                filterPasses = true;
-            }
-
-            if (colSpan > 1) {
-                i += colSpan - 1;
-            }
-
-            if (filterPasses) {
-                if (result.length === 0 && lastConsideredCol && emptySpaceBeforeColumn?.(col)) {
-                    result.push(lastConsideredCol);
-                }
-                result.push(col);
-            }
-
-            lastConsideredCol = col;
-        }
-
-        return result;
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {

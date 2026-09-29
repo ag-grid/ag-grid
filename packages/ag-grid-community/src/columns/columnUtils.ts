@@ -5,7 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { _isSortDefValid, getSortDefFromInput, isSortDirectionValid } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
+import type { ColumnEventType, ColumnHeaderNameChangedEvent } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import type { ColumnState } from './columnStateUtils';
 
@@ -54,6 +54,15 @@ export function convertColumnTypes(type: string | string[]): string[] {
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // The two enums don't match, so convert.
     return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
+}
+
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Group header names are keyed by groupId in a shared store, so group renames only fire the grid-level
+ * event. A missing columnGroup means a column rename or bulk change, so treat it as affecting every group.
+ */
+export function _isHeaderNameChangeForGroup(event: ColumnHeaderNameChangedEvent, groupId: string): boolean {
+    return !event.columnGroup || event.columnGroup.getGroupId() === groupId;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -1,4 +1,13 @@
-import { type ConsumedSitemapRecord, decideSecondBuild } from './consumedSitemapRecord';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+
+import {
+    type ConsumedSitemapRecord,
+    decideSecondBuild,
+    readGeneratedSitemap,
+    writeGeneratedSitemap,
+} from './consumedSitemapRecord';
 
 const HOME = 'https://www.ag-grid.com/';
 const ABOUT = 'https://www.ag-grid.com/about/';
@@ -57,5 +66,29 @@ describe('decideSecondBuild', () => {
         const decision = decideSecondBuild({ generatedXml: null, record: null });
 
         expect(decision.needed).toBe(false);
+    });
+});
+
+describe('generated sitemap', () => {
+    let recordDir: string;
+
+    beforeEach(() => {
+        recordDir = path.join(mkdtempSync(path.join(tmpdir(), 'generated-sitemap-')), 'sitemap-build');
+    });
+
+    afterEach(() => {
+        rmSync(path.dirname(recordDir), { recursive: true, force: true });
+    });
+
+    test('reads back the sitemap the build wrote', async () => {
+        const xml = sitemapXml(HOME, ABOUT);
+
+        await writeGeneratedSitemap(recordDir, xml);
+
+        expect(readGeneratedSitemap(recordDir)).toBe(xml);
+    });
+
+    test('reads as null when the build wrote no sitemap', () => {
+        expect(readGeneratedSitemap(recordDir)).toBeNull();
     });
 });

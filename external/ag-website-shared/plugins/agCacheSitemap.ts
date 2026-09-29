@@ -3,10 +3,13 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { SITEMAP_BUILD_DIR } from '../src/constants';
+import { writeGeneratedSitemap } from '../src/utils/consumedSitemapRecord';
 import { diffSitemapLocs, getSitemapLocs } from '../src/utils/sitemapLocs';
 
 type Options = {
     cacheFolder: string;
+    buildFolder?: string;
 };
 
 const readFileOrNull = async (filePath: string) => {
@@ -21,7 +24,7 @@ const readFileOrNull = async (filePath: string) => {
     }
 };
 
-export default function createPlugin({ cacheFolder }: Options): AstroIntegration {
+export default function createPlugin({ cacheFolder, buildFolder = SITEMAP_BUILD_DIR }: Options): AstroIntegration {
     return {
         name: 'ag-cache-sitemap',
         hooks: {
@@ -39,6 +42,8 @@ export default function createPlugin({ cacheFolder }: Options): AstroIntegration
                     logger.warn('sitemap-0.xml not found — nothing to cache.');
                     return;
                 }
+
+                await writeGeneratedSitemap(buildFolder, generatedXml);
 
                 // Cached on the page list rather than the git hash: a commit that touches no page
                 // leaves the sitemap identical, and a rebuild at the same commit can still change it

@@ -1127,5 +1127,33 @@ describe('row spanning', () => {
             expect(row2NameCell).not.toBeNull();
             expect(row2NameCell!.classList.contains('ag-spanned-cell')).toBe(false);
         });
+
+        test('a spanned cell derived from another column shows its first row edit before the spans rebuild', async () => {
+            const api = createGrid({
+                columnDefs: [
+                    {
+                        colId: 'label',
+                        valueGetter: ({ data }) => data.name.toUpperCase(),
+                        spanRows: ({ nodeA, nodeB }) => nodeA?.data.group === nodeB?.data.group,
+                    },
+                    { field: 'name', colId: 'name' },
+                ],
+                rowData: [
+                    { id: 'r0', group: 'g', name: 'a' },
+                    { id: 'r1', group: 'g', name: 'b' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+            await settle();
+            const spannedCellText = () =>
+                getGridElement(api)!.querySelector('.ag-spanned-row [col-id="label"]')?.textContent;
+            expect(spannedCellText()).toBe('A');
+
+            // `cellChanged` names the edited column, so only refreshing the row reaches the derived cell
+            api.getRowNode('r0')!.setDataValue('name', 'z');
+            expect(spannedCellText()).toBe('Z');
+            await settle();
+            expect(spannedCellText()).toBe('Z');
+        });
     });
 });
