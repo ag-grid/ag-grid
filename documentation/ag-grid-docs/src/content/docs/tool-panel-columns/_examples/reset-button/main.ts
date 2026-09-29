@@ -1,12 +1,6 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ContextMenuModule,
-    PivotModule,
-    RowGroupingPanelModule,
-} from 'ag-grid-enterprise';
+import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -18,20 +12,18 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
-    PivotModule,
-    RowGroupingPanelModule,
+    RowGroupingModule,
 ]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', minWidth: 200, enableRowGroup: true, enablePivot: true },
+    { field: 'athlete', minWidth: 200 },
     { field: 'age', enableValue: true },
-    { field: 'country', minWidth: 200, enableRowGroup: true, enablePivot: true, rowGroup: true },
-    { field: 'year', enableRowGroup: true, enablePivot: true },
-    { field: 'date', minWidth: 180, enableRowGroup: true, enablePivot: true },
-    { field: 'sport', minWidth: 200, enableRowGroup: true, enablePivot: true },
+    { field: 'country', minWidth: 200, enableRowGroup: true, rowGroup: true },
+    { field: 'year', enableRowGroup: true },
+    { field: 'sport', minWidth: 200, enableRowGroup: true },
     { field: 'gold', hide: true, enableValue: true },
-    { field: 'silver', hide: true, enableValue: true, aggFunc: 'sum' },
-    { field: 'bronze', hide: true, enableValue: true, aggFunc: 'sum' },
+    { field: 'silver', hide: true, enableValue: true },
+    { field: 'bronze', hide: true, enableValue: true },
     { headerName: 'Total', field: 'total', enableValue: true },
 ];
 
@@ -46,8 +38,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 250,
     },
-    rowGroupPanelShow: 'always',
-    pivotPanelShow: 'always',
     sideBar: {
         toolPanels: [
             {
@@ -57,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    buttons: ['reset', 'cancel', 'apply'],
+                    buttons: ['reset'],
                 },
             },
         ],

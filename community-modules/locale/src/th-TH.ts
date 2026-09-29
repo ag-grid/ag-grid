@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     clearFilter: 'ล้าง',
     cancelFilter: 'ยกเลิก',
     cancelColumnToolPanel: 'ยกเลิก',
+    resetColumnToolPanel: 'รีเซ็ต',
 
     // Filter Titles
     textFilter: 'ตัวกรองข้อความ',

@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     clearFilter: 'Tühjenda',
     cancelFilter: 'Loobu',
     cancelColumnToolPanel: 'Loobu',
+    resetColumnToolPanel: 'Lähtesta',
 
     // Filter Titles
     textFilter: 'Tekstifilter',

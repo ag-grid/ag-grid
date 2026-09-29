@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     clearFilter: 'Очистить',
     cancelFilter: 'Отмена',
     cancelColumnToolPanel: 'Отмена',
+    resetColumnToolPanel: 'Сбросить',
 
     // Filter Titles
     textFilter: 'Текстовый фильтр',

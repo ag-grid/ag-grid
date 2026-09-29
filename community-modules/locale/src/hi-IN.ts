@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     clearFilter: 'साफ़ करें',
     cancelFilter: 'रद्द करें',
     cancelColumnToolPanel: 'रद्द करें',
+    resetColumnToolPanel: 'रीसेट करें',
 
     // Filter Titles
     textFilter: 'टेक्स्ट फ़िल्टर',
