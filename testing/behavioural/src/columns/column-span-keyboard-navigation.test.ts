@@ -1,7 +1,17 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import type { ColDef, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, KeyCode, PinnedRowModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    KeyCode,
+    PinnedRowModule,
+    RenderApiModule,
+    ScrollApiModule,
+    TextEditorModule,
+    getGridElement,
+} from 'ag-grid-community';
 
 import {
     dispatchKeyDown,
@@ -37,7 +47,14 @@ function makeColumnDefs(): ColDef<RowData>[] {
 
 describe('Column Spanning Keyboard Navigation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, PinnedRowModule],
+        modules: [
+            ClientSideRowModelModule,
+            GridStateModule,
+            PinnedRowModule,
+            RenderApiModule,
+            ScrollApiModule,
+            TextEditorModule,
+        ],
     });
 
     const createNavigationGrid = (gridOptions: GridOptions<RowData> = {}) =>
@@ -265,6 +282,27 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(getFocusedColId(api)).toBe('b');
     });
 
+    test('Arrow Down onto a span in a pinned lane focuses the spanning cell', () => {
+        const spanOddRows: ColDef<RowData>['colSpan'] = (params) => (params.node!.rowIndex! % 2 === 1 ? 2 : 1);
+        const api = createNavigationGrid({
+            columnDefs: [
+                { field: 'a', colId: 'a', pinned: 'left', colSpan: spanOddRows },
+                { field: 'b', colId: 'b', pinned: 'left' },
+                { field: 'c', colId: 'c' },
+                { colId: 'd', valueGetter: () => 'd', pinned: 'right', colSpan: spanOddRows },
+                { colId: 'e', valueGetter: () => 'e', pinned: 'right' },
+            ],
+        });
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(getFocusedColId(api)).toBe('a');
+
+        api.setFocusedCell(0, 'e');
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(getFocusedColId(api)).toBe('d');
+    });
+
     test('Arrow Up preserves the column covered by a spanning cell', () => {
         const api = createNavigationGrid();
 
@@ -332,6 +370,181 @@ describe('Column Spanning Keyboard Navigation', () => {
 
         expect(getFocusedRowIndex(api)).toBe(2);
         expect(getFocusedColId(api)).toBe('a');
+    });
+
+    test('setFocusedCell on a column a span covers focuses the spanning cell and keeps the column for vertical moves', () => {
+        const api = createNavigationGrid();
+        const activeColId = () => document.activeElement?.closest('.ag-cell')?.getAttribute('col-id');
+        const drawnColIds = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-index="1"] .ag-cell'), (cell) =>
+                cell.getAttribute('col-id')
+            );
+
+        api.setFocusedCell(1, 'b');
+        expect(getFocusedColId(api)).toBe('a');
+        expect(activeColId()).toBe('a');
+
+        api.redrawRows();
+        expect(drawnColIds()).toEqual(['a', 'c']);
+
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(getFocusedRowIndex(api)).toBe(2);
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('setState restoring focus onto a column a span covers focuses the spanning cell', async () => {
+        const api = createNavigationGrid();
+
+        api.setState({ focusedCell: { colId: 'b', rowIndex: 1, rowPinned: null } });
+        await waitFor(() => expect(api.getFocusedCell()).toBeTruthy());
+
+        expect(getFocusedColId(api)).toBe('a');
+        expect(document.activeElement?.closest('.ag-cell')?.getAttribute('col-id')).toBe('a');
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('setFocusedCell on a column covered by a span that was shown over the focused cell focuses the spanning cell', () => {
+        const api = createNavigationGrid({
+            columnDefs: [
+                { field: 'a', colId: 'a', hide: true, colSpan: () => 3 },
+                { field: 'b', colId: 'b' },
+                { field: 'c', colId: 'c' },
+            ],
+        });
+
+        api.setFocusedCell(0, 'b');
+        api.setColumnsVisible(['a'], true);
+        api.setFocusedCell(0, 'c');
+
+        expect(getFocusedColId(api)).toBe('a');
+    });
+
+    describe('straight after a data change moves the span', () => {
+        interface SpanRow {
+            id: string;
+            span: number;
+            b: string;
+            c: string;
+        }
+
+        const createSpanGrid = (span: number) => {
+            const api = gridsManager.createGrid<SpanRow>('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'span',
+                        editable: true,
+                        valueParser: (params) => Number(params.newValue),
+                        colSpan: (params) => params.data!.span,
+                    },
+                    { field: 'b', editable: true },
+                    { field: 'c', editable: true },
+                ],
+                rowData: [{ id: 'r0', span, b: 'b0', c: 'c0' }],
+                getRowId: (params) => params.data.id,
+            });
+            api.flushAllAnimationFrames();
+            api.setFocusedCell(0, 'span');
+            return api;
+        };
+
+        const setSpan = (api: GridApi<SpanRow>, span: number) => {
+            api.setFocusedCell(0, 'span');
+            api.getRowNode('r0')!.setDataValue('span', span);
+        };
+
+        const editSpanThenTab = (api: GridApi<SpanRow>, span: number) => {
+            api.setFocusedCell(0, 'span');
+            api.startEditingCell({ rowIndex: 0, colKey: 'span' });
+            const input = getGridElement(api)!.querySelector<HTMLInputElement>('.ag-cell-inline-editing input')!;
+            input.focus();
+            input.value = String(span);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            dispatchKeyDown(KeyCode.TAB);
+            const editing = api.getEditingCells().map((cell) => cell.colId);
+            api.stopEditing(true);
+            return { focused: getFocusedColId(api), editing };
+        };
+
+        test('Tab and Arrow Right go past a span that grew and onto the column one that shrank uncovered', () => {
+            const api = createSpanGrid(1);
+
+            setSpan(api, 2);
+            api.tabToNextCell();
+            expect(getFocusedColId(api)).toBe('c');
+
+            setSpan(api, 1);
+            api.tabToNextCell();
+            expect(getFocusedColId(api)).toBe('b');
+
+            setSpan(api, 2);
+            dispatchKeyDown(KeyCode.RIGHT);
+            expect(getFocusedColId(api)).toBe('c');
+        });
+
+        test('Tab out of an edit that grows or shrinks the span edits the column after it', () => {
+            const api = createSpanGrid(1);
+
+            expect(editSpanThenTab(api, 2)).toEqual({ focused: 'c', editing: ['c'] });
+            expect(editSpanThenTab(api, 1)).toEqual({ focused: 'b', editing: ['b'] });
+        });
+
+        test('setFocusedCell on the column a grown span covers focuses the spanning cell', () => {
+            const api = createSpanGrid(1);
+            api.getRowNode('r0')!.setDataValue('span', 2);
+
+            api.setFocusedCell(0, 'b');
+
+            expect(getFocusedColId(api)).toBe('span');
+        });
+    });
+
+    test('setFocusedCell on a column a span covers in a pinned row focuses the spanning cell', () => {
+        const api = createNavigationGrid({
+            columnDefs: [
+                { field: 'a', colId: 'a', colSpan: (params) => (params.node!.rowPinned ? 2 : 1) },
+                { field: 'b', colId: 'b' },
+                { field: 'c', colId: 'c' },
+            ],
+            pinnedTopRowData: [{ a: 'tp', b: 'tpb', c: 'tpc' }],
+        });
+
+        api.setFocusedCell(0, 'b', 'top');
+
+        expect({ col: getFocusedColId(api), pinned: getFocusedRowPinned(api) }).toEqual({ col: 'a', pinned: 'top' });
+    });
+
+    test('setFocusedCell on a hidden column, with a span in the row, focuses that column', () => {
+        const api = createNavigationGrid({
+            columnDefs: [
+                { ...makeColumnDefs()[0] },
+                { field: 'b', colId: 'b', hide: true },
+                { field: 'c', colId: 'c' },
+            ],
+        });
+
+        api.setFocusedCell(1, 'b');
+
+        expect(getFocusedColId(api)).toBe('b');
+    });
+
+    test('setFocusedCell on a covered column whose span is scrolled out of view to the left records that column', () => {
+        const api = createNavigationGrid({
+            columnDefs: Array.from({ length: 40 }, (_, i) => ({
+                colId: `c${i}`,
+                width: 200,
+                colSpan: i % 2 === 0 ? () => 2 : undefined,
+            })),
+            rowData: [{ a: 'a0', b: 'b0', c: 'c0' }],
+            suppressColumnVirtualisation: false,
+        });
+        api.ensureColumnVisible('c38');
+        expect(getGridElement(api)!.querySelector('.ag-row[row-index="0"] .ag-cell[col-id="c0"]')).toBeNull();
+
+        // c0 spans c1, but the spanning cell is not drawn, so no drawn cell answers for c1
+        api.setFocusedCell(0, 'c1');
+
+        expect(getFocusedColId(api)).toBe('c1');
     });
 
     test('horizontal navigation clears the column covered by a spanning cell', () => {

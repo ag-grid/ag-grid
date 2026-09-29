@@ -1,3 +1,4 @@
+import { _areEqual } from 'ag-stack';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -115,76 +116,128 @@ export function agUseSyncExternalStore<T>(
  * The aim of this function is to maintain references to prev or next values where possible.
  * If there are not real changes then return the prev value to avoid unnecessary renders.
  * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
+ * @param placeNewInOrder Put each new value before the kept value that follows it in `next`, not last
  * @returns
  */
 export function getNextValueIfDifferent<T extends { instanceId: string }>(
     prev: T[] | null,
     next: T[] | null,
-    maintainOrder: boolean
+    maintainOrder: boolean,
+    placeNewInOrder = false
 ): T[] | null {
     if (next == null || prev == null) {
         return next;
     }
+    const prevLen = prev.length;
+    const nextLen = next.length;
 
     // If same array instance nothing to do.
     // If both empty arrays maintain reference of prev.
-    if (prev === next || (next.length === 0 && prev.length === 0)) {
+    if (prev === next || (nextLen === 0 && prevLen === 0)) {
         return prev;
     }
 
     // If maintaining dom order just return next
-    // If prev is empty just return next immediately as no previous order to maintain
-    // If prev was not empty but next is empty return next immediately
-    if (maintainOrder || (prev.length === 0 && next.length > 0) || (prev.length > 0 && next.length === 0)) {
+    // If either side is empty there is no previous order to maintain
+    if (maintainOrder || prevLen === 0 || nextLen === 0) {
         return next;
+    }
+
+    if (_areEqual(prev, next)) {
+        return prev;
     }
 
     // if dom order not important, we don't want to change the order
     // of the elements in the dom, as this would break transition styles
+    const prevIndexes = new Map<string, number>();
+    for (let i = 0; i < prevLen; ++i) {
+        prevIndexes.set(prev[i].instanceId, i);
+    }
+
     const oldValues: T[] = [];
     const newValues: T[] = [];
-    const prevMap: Map<string, T> = new Map();
-    const nextMap: Map<string, T> = new Map();
-
-    for (let i = 0; i < next.length; i++) {
-        const c = next[i];
-        nextMap.set(c.instanceId, c);
-    }
-
-    for (let i = 0; i < prev.length; i++) {
-        const c = prev[i];
-        prevMap.set(c.instanceId, c);
-        if (nextMap.has(c.instanceId)) {
-            oldValues.push(c);
+    let lastPrevIndex = -1;
+    let oldInOrder = true;
+    for (let i = 0; i < nextLen; ++i) {
+        const value = next[i];
+        const prevIndex = prevIndexes.get(value.instanceId);
+        if (prevIndex === undefined) {
+            newValues.push(value);
+            continue;
         }
-    }
-
-    for (let i = 0; i < next.length; i++) {
-        const c = next[i];
-        const instanceId = c.instanceId;
-
-        if (!prevMap.has(instanceId)) {
-            newValues.push(c);
+        if (prevIndex < lastPrevIndex) {
+            oldInOrder = false;
         }
+        lastPrevIndex = prevIndex;
+        oldValues.push(prev[prevIndex]);
     }
 
-    // All the same values exist just maybe in a different order so maintain the existing reference
-    if (oldValues.length === prev.length && newValues.length === 0) {
+    // All the same values exist just in a different order so maintain the existing reference
+    if (oldValues.length === prevLen && newValues.length === 0) {
         return prev;
     }
 
-    // All new values so avoid spreading the new array to maintain the reference
-    if (oldValues.length === 0 && newValues.length === next.length) {
+    // All new values so maintain the reference of next
+    if (oldValues.length === 0) {
         return next;
     }
-    // Spread as required to combine the old and new values
-    if (oldValues.length === 0) {
-        return newValues;
+
+    // with the old values in `next`'s order, `next` already holds them, and places each new one before the old one
+    // after it; appending new values instead needs there to be none
+    if (oldInOrder && (placeNewInOrder || newValues.length === 0)) {
+        return next;
     }
 
-    if (newValues.length === 0) {
-        return oldValues;
+    if (placeNewInOrder && newValues.length !== 0) {
+        // old values keep their place, so each run of new values goes before the old value after it in `next`;
+        // by position in `prev`, the run before each old value, undefined where `next` drops it
+        const runsBefore: (T[] | undefined)[] = new Array(prevLen);
+        let run: T[] = [];
+        for (let i = 0; i < nextLen; ++i) {
+            const value = next[i];
+            const prevIndex = prevIndexes.get(value.instanceId);
+            if (prevIndex === undefined) {
+                run.push(value);
+            } else if (run.length === 0) {
+                runsBefore[prevIndex] = NO_NEW_VALUES;
+            } else {
+                runsBefore[prevIndex] = run;
+                run = [];
+            }
+        }
+        const result: T[] = [];
+        for (let i = 0; i < prevLen; ++i) {
+            const runBefore = runsBefore[i];
+            if (runBefore !== undefined) {
+                pushAll(result, runBefore);
+                result.push(prev[i]);
+            }
+        }
+        pushAll(result, run);
+        return result;
     }
 
-    return [...oldValues, ...newValues];
+    if (!oldInOrder) {
+        // back in their previous order, reusing the array
+        const kept = new Uint8Array(prevLen);
+        for (let i = 0, len = oldValues.length; i < len; ++i) {
+            kept[prevIndexes.get(oldValues[i].instanceId)!] = 1;
+        }
+        oldValues.length = 0;
+        for (let i = 0; i < prevLen; ++i) {
+            if (kept[i] === 1) {
+                oldValues.push(prev[i]);
+            }
+        }
+    }
+    pushAll(oldValues, newValues);
+    return oldValues;
 }
+
+const NO_NEW_VALUES: never[] = [];
+
+const pushAll = <T,>(target: T[], values: T[]): void => {
+    for (let i = 0, len = values.length; i < len; ++i) {
+        target.push(values[i]);
+    }
+};

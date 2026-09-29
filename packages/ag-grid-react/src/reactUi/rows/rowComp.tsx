@@ -152,7 +152,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
                 const prevCellCtrls = cellCtrlsRef.current;
-                const nextCells = getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current);
+                // a new cell goes before the next kept one, so a span drawn over a kept cell paints beneath it
+                const nextCells = getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current, true);
                 if (nextCells !== prevCellCtrls) {
                     cellCtrlsRef.current = nextCells;
                     if (enableUses) {

@@ -1440,31 +1440,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
-        // first up, check for cell directly linked to this column
-        let res: CellCtrl | null = null;
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.column == column) {
-                res = cellCtrl;
-            }
-        }
-
-        if (res != null || skipColSpanSearch) {
-            return res;
-        }
-
-        // second up, if not found, then check for spanned cols.
-        // we do this second (and not at the same time) as this is
-        // more expensive, as spanning cols is a
-        // infrequently used feature so we don't need to do this most
-        // of the time
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.colsSpanning?.includes(column)) {
-                res = cellCtrl;
-            }
-        }
-
-        return res;
+    /** The column's own cell, else the drawn cell spanning it; a span layout waiting for its frame runs first. */
+    public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | undefined {
+        return this.rowModeFeature.getCellCtrl?.(column, skipColSpanSearch);
     }
 
     protected onRowIndexChanged(): void {
