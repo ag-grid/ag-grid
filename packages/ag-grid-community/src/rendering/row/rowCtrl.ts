@@ -70,7 +70,7 @@ export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     toggleCss(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean, colsVersion: number): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;

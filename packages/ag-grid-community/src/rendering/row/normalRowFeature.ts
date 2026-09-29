@@ -238,7 +238,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
-        rowGui.rowComp.setCellCtrls(this.getAllCellCtrls(), useFlushSync);
+        rowGui.rowComp.setCellCtrls(this.getAllCellCtrls(), useFlushSync, this.cellCtrlsColsVersion);
         this.rowCtrl.refreshPinnedCellGroupWidths();
     }
 
