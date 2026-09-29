@@ -50,7 +50,7 @@ const rows50k = memo(() => buildRows(50_000));
 
 const getRowId = (params: { data: Row }): string => String(params.data.id);
 
-/** Every tenth column, the set a hide/show toggle flips; offset from the spanning columns, so the spans stay. */
+/** Every tenth column, the set a hide/show toggle flips, offset from the sparse spanning columns. */
 const everyTenth = (count: number): string[] => {
     const ids: string[] = [];
     for (let i = 5; i < count; i += 10) {

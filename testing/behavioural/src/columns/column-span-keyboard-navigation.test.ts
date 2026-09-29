@@ -3,6 +3,7 @@ import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     GridStateModule,
     KeyCode,
@@ -10,11 +11,14 @@ import {
     RenderApiModule,
     ScrollApiModule,
     TextEditorModule,
+    UndoRedoEditModule,
     getGridElement,
 } from 'ag-grid-community';
+import { CellSelectionModule } from 'ag-grid-enterprise';
 
 import {
     dispatchKeyDown,
+    getActiveCellColId,
     getFocusedColId,
     getFocusedRowIndex,
     getFocusedRowPinned,
@@ -48,12 +52,15 @@ function makeColumnDefs(): ColDef<RowData>[] {
 describe('Column Spanning Keyboard Navigation', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            ClientSideRowModelApiModule,
             ClientSideRowModelModule,
             GridStateModule,
             PinnedRowModule,
             RenderApiModule,
             ScrollApiModule,
             TextEditorModule,
+            UndoRedoEditModule,
+            CellSelectionModule,
         ],
     });
 
@@ -374,7 +381,6 @@ describe('Column Spanning Keyboard Navigation', () => {
 
     test('setFocusedCell on a column a span covers focuses the spanning cell and keeps the column for vertical moves', () => {
         const api = createNavigationGrid();
-        const activeColId = () => document.activeElement?.closest('.ag-cell')?.getAttribute('col-id');
         const drawnColIds = () =>
             Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-index="1"] .ag-cell'), (cell) =>
                 cell.getAttribute('col-id')
@@ -382,7 +388,7 @@ describe('Column Spanning Keyboard Navigation', () => {
 
         api.setFocusedCell(1, 'b');
         expect(getFocusedColId(api)).toBe('a');
-        expect(activeColId()).toBe('a');
+        expect(getActiveCellColId()).toBe('a');
 
         api.redrawRows();
         expect(drawnColIds()).toEqual(['a', 'c']);
@@ -392,6 +398,77 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(getFocusedColId(api)).toBe('b');
     });
 
+    test('redo restoring focus onto a column its value makes a span cover, from another cell, focuses the spanning cell', () => {
+        const api = gridsManager.createGrid<RowData>('myGrid', {
+            columnDefs: [
+                { field: 'a', colSpan: (params) => (params.data!.b == null ? 2 : 1) },
+                { field: 'b', editable: true },
+                { field: 'c' },
+            ],
+            rowData: [{ a: 'a0', b: 'b0', c: 'c0' }],
+            undoRedoCellEditing: true,
+            cellSelection: true,
+        });
+
+        api.setFocusedCell(0, 'b');
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        const input = getGridElement(api)!.querySelector<HTMLInputElement>('.ag-cell-inline-editing input')!;
+        input.value = '';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        api.stopEditing();
+        api.undoCellEditing();
+        api.setFocusedCell(0, 'c');
+
+        api.redoCellEditing();
+
+        expect(getFocusedColId(api)).toBe('a');
+        expect(getActiveCellColId()).toBe('a');
+        expect(api.getCellRanges()!.map((range) => range.columns.map((col) => col.getColId()))).toEqual([['a']]);
+    });
+
+    test('redo of a range delete whose start a span then covers focuses the spanning cell and restores the range', () => {
+        const api = gridsManager.createGrid<RowData>('myGrid', {
+            columnDefs: [
+                { field: 'a', colSpan: (params) => (params.data!.b == null ? 2 : 1) },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true },
+            ],
+            rowData: [{ a: 'a0', b: 'b0', c: 'c0' }],
+            undoRedoCellEditing: true,
+            cellSelection: true,
+        });
+
+        api.setFocusedCell(0, 'b');
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columnStart: 'b', columnEnd: 'c' });
+        dispatchKeyDown(KeyCode.DELETE);
+        api.undoCellEditing();
+        api.setFocusedCell(0, 'c');
+
+        api.redoCellEditing();
+
+        expect(getFocusedColId(api)).toBe('a');
+        expect(getActiveCellColId()).toBe('a');
+        expect(api.getCellRanges()!.map((range) => range.columns.map((col) => col.getColId()))).toEqual([['b', 'c']]);
+    });
+
+    test('removing the focused row moves focus to the cell spanning its column in the row above', () => {
+        const api = gridsManager.createGrid<RowData>('myGrid', {
+            columnDefs: [{ field: 'a', colSpan: (params) => (params.data!.b == null ? 2 : 1) }, { field: 'b' }],
+            rowData: [
+                { a: 'a0', b: null!, c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+            getRowId: (params) => params.data.a,
+        });
+
+        api.setFocusedCell(1, 'b');
+        api.applyTransaction({ remove: [{ a: 'a1' } as RowData] });
+
+        expect(getFocusedRowIndex(api)).toBe(0);
+        expect(getFocusedColId(api)).toBe('a');
+        expect(getActiveCellColId()).toBe('a');
+    });
+
     test('setState restoring focus onto a column a span covers focuses the spanning cell', async () => {
         const api = createNavigationGrid();
 
@@ -399,7 +476,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         await waitFor(() => expect(api.getFocusedCell()).toBeTruthy());
 
         expect(getFocusedColId(api)).toBe('a');
-        expect(document.activeElement?.closest('.ag-cell')?.getAttribute('col-id')).toBe('a');
+        expect(getActiveCellColId()).toBe('a');
         dispatchKeyDown(KeyCode.DOWN);
         expect(getFocusedColId(api)).toBe('b');
     });
@@ -516,11 +593,7 @@ describe('Column Spanning Keyboard Navigation', () => {
 
     test('setFocusedCell on a hidden column, with a span in the row, focuses that column', () => {
         const api = createNavigationGrid({
-            columnDefs: [
-                { ...makeColumnDefs()[0] },
-                { field: 'b', colId: 'b', hide: true },
-                { field: 'c', colId: 'c' },
-            ],
+            columnDefs: [makeColumnDefs()[0], { field: 'b', colId: 'b', hide: true }, { field: 'c', colId: 'c' }],
         });
 
         api.setFocusedCell(1, 'b');
@@ -535,7 +608,6 @@ describe('Column Spanning Keyboard Navigation', () => {
                 width: 200,
                 colSpan: i % 2 === 0 ? () => 2 : undefined,
             })),
-            rowData: [{ a: 'a0', b: 'b0', c: 'c0' }],
             suppressColumnVirtualisation: false,
         });
         api.ensureColumnVisible('c38');

@@ -607,10 +607,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
             };
 
             switch (rowNode.rowPinned) {
+                // replaced, not written into, as a React row container keeps the array it was given
                 case 'top':
+                    this.topRowCtrls = this.topRowCtrls.slice();
                     destroyAndRecreateCtrl(this.topRowCtrls);
                     break;
                 case 'bottom':
+                    this.bottomRowCtrls = this.bottomRowCtrls.slice();
                     destroyAndRecreateCtrl(this.bottomRowCtrls);
                     break;
                 default:
@@ -777,7 +780,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // if focus has changed (e.g, if row has been removed, so focus moved up) focus new cell
         if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
-            focusSvc.setFocusedCell({
+            focusSvc.setFocusedCellOrSpan({
                 ...cellToFocus,
                 preventScrollOnBrowserFocus: true,
                 forceBrowserFocus: true,

@@ -249,8 +249,8 @@ export class FocusService extends BeanStub implements NamedBean {
         });
     }
 
-    /** For a position from the user: as keyboard navigation does, a column a drawn colSpan covers focuses the cell
-     *  spanning it, and vertical moves go on from the column asked for. */
+    /** As keyboard navigation does, a column a drawn colSpan covers focuses the spanning cell, and vertical moves go
+     *  on from the column asked for. */
     public setFocusedCellOrSpan(params: CellFocusedParams): void {
         const { rowIndex, rowPinned } = params;
         // only a drawn colSpan can cover a column

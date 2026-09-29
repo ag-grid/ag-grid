@@ -155,8 +155,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync, colsVersion) => {
                 const prevCellCtrls = cellCtrlsRef.current;
-                // laid out against the same columns, a list taken as given keeps its cells in `next`'s order; otherwise
-                // a new cell goes before the next kept one, so a span drawn over a kept cell paints beneath it
+                // showing the row's own list, laid out at the same columns: `next` already keeps its cells in order
                 const nextCells =
                     prevCellCtrls === givenCellCtrlsRef.current && colsVersion === givenColsVersionRef.current
                         ? next

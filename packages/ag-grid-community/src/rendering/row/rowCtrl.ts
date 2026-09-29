@@ -110,6 +110,8 @@ type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     private rowType: RowType;
 
@@ -1440,7 +1442,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    /** The column's own cell, else the drawn cell spanning it; a span layout waiting for its frame runs first. */
+    /** The column's own cell, else the drawn cell spanning it; a span search runs a pending layout first. */
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | undefined {
         return this.rowModeFeature.getCellCtrl?.(column, skipColSpanSearch);
     }

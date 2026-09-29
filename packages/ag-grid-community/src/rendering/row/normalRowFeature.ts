@@ -283,8 +283,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         if (skipColSpanSearch || !visibleCols.colSpanActive) {
             return this.getOwnCellCtrl(column);
         }
-        if (this.updateColumnListsPending) {
-            // a data change lays the spans out a frame later, and whoever reads the drawn cells needs them now
+        if (this.updateColumnListsPending && this.rowCtrl.isAlive()) {
+            // a pending layout runs a frame later, and whoever reads the drawn cells needs it now
             this.updateColumnListsImpl(false);
         }
         const cellCtrl = this.getOwnCellCtrl(column);

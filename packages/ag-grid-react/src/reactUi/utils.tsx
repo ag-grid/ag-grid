@@ -113,13 +113,14 @@ export function agUseSyncExternalStore<T>(
 }
 
 /**
- * The aim of this function is to maintain references to prev or next values where possible.
- * If there are not real changes then return the prev value to avoid unnecessary renders.
- * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
+ * The list to render for `next`, keeping values already rendered in their previous order, so React moves no DOM node
+ * and CSS transitions survive. Returns `prev` when nothing changed and `next` when it already has that order, so an
+ * unchanged reference skips a render; otherwise builds the kept values in `prev` order with the new ones added.
+ * Each list must hold distinct values.
+ * @param maintainOrder Follow `next`'s order, as the DOM must for accessibility
  * @param placeNewInOrder Put each new value before the kept value that follows it in `next`, not last
- * @returns
  */
-export function getNextValueIfDifferent<T extends { instanceId: string }>(
+export function getNextValueIfDifferent<T extends { diffIndex: number }>(
     prev: T[] | null,
     next: T[] | null,
     maintainOrder: boolean,
@@ -147,97 +148,89 @@ export function getNextValueIfDifferent<T extends { instanceId: string }>(
         return prev;
     }
 
-    // if dom order not important, we don't want to change the order
-    // of the elements in the dom, as this would break transition styles
-    const prevIndexes = new Map<string, number>();
+    // Values are matched by a `diffIndex` stamp instead of a map: each `prev` value is stamped with its index, and a
+    // value is kept exactly when `prev[value.diffIndex] === value`, so a stamp left by another list never matches. One
+    // pass over `next` counts the kept values and notes whether they are in `prev` order and whether a new one precedes
+    // a kept one. Only a result that has to be built restamps `next` and walks `prev`.
     for (let i = 0; i < prevLen; ++i) {
-        prevIndexes.set(prev[i].instanceId, i);
+        prev[i].diffIndex = i;
     }
 
-    const oldValues: T[] = [];
-    const newValues: T[] = [];
+    let kept = 0;
     let lastPrevIndex = -1;
-    let oldInOrder = true;
+    let keptInOrder = true;
+    let newBeforeKept = false;
     for (let i = 0; i < nextLen; ++i) {
         const value = next[i];
-        const prevIndex = prevIndexes.get(value.instanceId);
-        if (prevIndex === undefined) {
-            newValues.push(value);
+        const prevIndex = value.diffIndex;
+        if (prevIndex >= prevLen || prev[prevIndex] !== value) {
             continue;
         }
         if (prevIndex < lastPrevIndex) {
-            oldInOrder = false;
+            keptInOrder = false;
         }
         lastPrevIndex = prevIndex;
-        oldValues.push(prev[prevIndex]);
+        if (kept !== i) {
+            newBeforeKept = true;
+        }
+        ++kept;
     }
 
     // All the same values exist just in a different order so maintain the existing reference
-    if (oldValues.length === prevLen && newValues.length === 0) {
+    if (kept === prevLen && kept === nextLen) {
         return prev;
     }
 
-    // All new values so maintain the reference of next
-    if (oldValues.length === 0) {
+    // kept values in their previous order: `next` is the result, unless new values must go last and one doesn't
+    if (kept === 0 || (keptInOrder && (placeNewInOrder || !newBeforeKept))) {
         return next;
     }
 
-    // with the old values in `next`'s order, `next` already holds them, and places each new one before the old one
-    // after it; appending new values instead needs there to be none
-    if (oldInOrder && (placeNewInOrder || newValues.length === 0)) {
-        return next;
+    // restamped by index in `next`, a kept value moved past `nextLen` to tell it from a new one
+    for (let i = 0; i < nextLen; ++i) {
+        next[i].diffIndex = i;
+    }
+    for (let i = 0; i < prevLen; ++i) {
+        const value = prev[i];
+        const nextIndex = value.diffIndex;
+        if (nextIndex < nextLen && next[nextIndex] === value) {
+            value.diffIndex = nextLen + nextIndex;
+        }
     }
 
-    if (placeNewInOrder && newValues.length !== 0) {
-        // old values keep their place, so each run of new values goes before the old value after it in `next`;
-        // by position in `prev`, the run before each old value, undefined where `next` drops it
-        const runsBefore: (T[] | undefined)[] = new Array(prevLen);
-        let run: T[] = [];
-        for (let i = 0; i < nextLen; ++i) {
-            const value = next[i];
-            const prevIndex = prevIndexes.get(value.instanceId);
-            if (prevIndex === undefined) {
-                run.push(value);
-            } else if (run.length === 0) {
-                runsBefore[prevIndex] = NO_NEW_VALUES;
-            } else {
-                runsBefore[prevIndex] = run;
-                run = [];
-            }
+    const result: T[] = [];
+    for (let i = 0; i < prevLen; ++i) {
+        const value = prev[i];
+        const nextIndex = value.diffIndex - nextLen;
+        if (nextIndex < 0 || nextIndex >= nextLen || next[nextIndex] !== value) {
+            continue;
         }
-        const result: T[] = [];
-        for (let i = 0; i < prevLen; ++i) {
-            const runBefore = runsBefore[i];
-            if (runBefore !== undefined) {
-                pushAll(result, runBefore);
-                result.push(prev[i]);
-            }
+        if (placeNewInOrder) {
+            // each kept value brings the new values between it and the kept value before it in `next`
+            pushNewBefore(result, next, nextIndex);
         }
-        pushAll(result, run);
+        result.push(value);
+    }
+    if (placeNewInOrder) {
+        pushNewBefore(result, next, nextLen);
         return result;
     }
-
-    if (!oldInOrder) {
-        // back in their previous order, reusing the array
-        const kept = new Uint8Array(prevLen);
-        for (let i = 0, len = oldValues.length; i < len; ++i) {
-            kept[prevIndexes.get(oldValues[i].instanceId)!] = 1;
-        }
-        oldValues.length = 0;
-        for (let i = 0; i < prevLen; ++i) {
-            if (kept[i] === 1) {
-                oldValues.push(prev[i]);
-            }
+    for (let i = 0; i < nextLen; ++i) {
+        const value = next[i];
+        if (value.diffIndex === i) {
+            result.push(value);
         }
     }
-    pushAll(oldValues, newValues);
-    return oldValues;
+    return result;
 }
 
-const NO_NEW_VALUES: never[] = [];
-
-const pushAll = <T,>(target: T[], values: T[]): void => {
-    for (let i = 0, len = values.length; i < len; ++i) {
-        target.push(values[i]);
+/** Pushes the new values `next` has straight before `end`, a new value being one still stamped with its own index. */
+const pushNewBefore = <T extends { diffIndex: number }>(result: T[], next: T[], end: number): void => {
+    let lastKept = end - 1;
+    while (lastKept >= 0 && next[lastKept].diffIndex === lastKept) {
+        --lastKept;
+    }
+    for (let i = lastKept + 1; i < end; ++i) {
+        result.push(next[i]);
     }
 };
