@@ -277,7 +277,8 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const colModel = this.beans.colModel;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
@@ -288,7 +289,12 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             this.beans.rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
+        const colDefChangedInBuild = colModel.colDefChangedInBuild;
+        if (colDefChangedInBuild) {
+            colDefChangedInBuild.push(this);
+        } else {
+            this.dispatchColEvent('colDefChanged', source);
+        }
         this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
