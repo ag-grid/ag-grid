@@ -14,7 +14,13 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
+import type {
+    ColDef,
+    SuppressKeyboardEventParams,
+    ValueFormatterFunc,
+    ValueFormatterParams,
+    ValueGetterFunc,
+} from '../entities/colDef';
 import type {
     BaseCellDataType,
     CoreDataTypeDefinition,
@@ -89,6 +95,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private dataTypeDefinitions: DataTypeDefinitionMap = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
     private formatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc };
+    /**
+     * Makes an `object` column's filter, when it is not a Set Filter, filter by the value's formatted text. It is one
+     * function for the whole grid, so the grid can tell it apart from a `filterValueGetter` the user gave.
+     */
+    public readonly objectFilterValueGetter: ValueGetterFunc = ({ column, node }) => {
+        const col = column as AgColumn;
+        const formatValueFuncs = this.formatValueFuncs;
+        const value = node ? this.beans.valueSvc.getValueFromData(col, node) : undefined;
+        // a definition from `getColumnDefs()` set again with no `cellDataType` still carries this getter
+        const formatValue = formatValueFuncs[col.colDef.cellDataType as string] ?? formatValueFuncs.object;
+        return formatValue({ column, node, value });
+    };
     public isPendingInference: boolean = false;
     private hasObjectValueParser: boolean;
     private hasObjectValueFormatter: boolean;
@@ -557,6 +575,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // noinspection JSUnusedGlobalSymbols
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
+    }
+
+    /** Whether the column definitions are being updated with the data types inferred from the first row data. */
+    public isInferring(): boolean {
+        return this.initialData != null;
     }
 
     public isDataTypeRegistered(cellDataType: string): boolean {

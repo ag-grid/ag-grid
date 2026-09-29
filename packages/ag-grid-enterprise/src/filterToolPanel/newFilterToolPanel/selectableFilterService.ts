@@ -38,6 +38,7 @@ export class SelectableFilterService
         for (const colId of Object.keys(initialState)) {
             selectedFilters.set(colId, initialState[colId]);
         }
+        this.addManagedEventListeners({ newColumnsLoaded: () => this.refreshValueGetters() });
     }
 
     public getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined {
@@ -78,11 +79,14 @@ export class SelectableFilterService
         const { filters, defaultFilterParams, defaultFilterIndex } = (filterParams as SelectableFilterParams) ?? {};
 
         const updateDef = (def: SelectableFilterDef) => {
-            const { filter, filterParams: defFilterParams, name, filterValueGetter = colDef.filterValueGetter } = def;
+            const { filter, filterParams: defFilterParams, name } = def;
+            const filterName =
+                typeof filter === 'boolean' ? colFilter?.getDefaultFilterFromDataType(() => cellDataType) : filter;
+            const filterValueGetter = colFilter!.resolveFilterValueGetter(column, def, colDef.filterValueGetter);
             const userParams = defaultFilterParams ? { ...defaultFilterParams, ...defFilterParams } : defFilterParams;
             let updatedParams: { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } | undefined;
             if (dataTypeDefinition && formatValue) {
-                if (filter === 'agMultiColumnFilter') {
+                if (filterName === 'agMultiColumnFilter') {
                     updatedParams = beans.multiFilter?.getParamsForDataType(
                         userParams,
                         filterValueGetter,
@@ -91,7 +95,7 @@ export class SelectableFilterService
                     );
                 } else {
                     updatedParams = _getFilterParamsForDataType(
-                        filter,
+                        filterName,
                         userParams,
                         filterValueGetter,
                         dataTypeDefinition,
@@ -103,12 +107,8 @@ export class SelectableFilterService
             }
             let updatedName: string | undefined;
             if (!name) {
-                let filterString = filter;
-                if (typeof filter === 'boolean') {
-                    filterString = colFilter?.getDefaultFilterFromDataType(() => cellDataType);
-                }
-                if (typeof filterString === 'string') {
-                    updatedName = translateForFilterPanel(this, `${filterString as ProvidedFilterType}DisplayName`);
+                if (typeof filterName === 'string') {
+                    updatedName = translateForFilterPanel(this, `${filterName as ProvidedFilterType}DisplayName`);
                 } else {
                     this.warn(280, { colId: column.colId });
                     updatedName = '';
@@ -201,6 +201,22 @@ export class SelectableFilterService
         const { selectedFilters, valueGetters } = this;
         selectedFilters.clear();
         valueGetters.clear();
+    }
+
+    /** The column-level readers read a chosen definition's getter, so it follows the column definitions. */
+    private refreshValueGetters(): void {
+        const { selectedFilters, valueGetters, beans } = this;
+        // the choice itself is kept, for when the column or its definition comes back
+        for (const [colId, index] of selectedFilters) {
+            const column = beans.colModel.getNonPivotColById(colId);
+            const defs = column && this.getDefs(column, column.colDef, index);
+            const filterValueGetter = defs?.activeFilterDef.filterValueGetter;
+            if (filterValueGetter) {
+                valueGetters.set(colId, filterValueGetter);
+            } else {
+                valueGetters.delete(colId);
+            }
+        }
     }
 
     private onChange(): void {

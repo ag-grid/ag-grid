@@ -2,13 +2,13 @@ import { _areEqual, _last, _pushToMapArray } from 'ag-stack';
 
 import type {
     AgColumn,
+    AgFilterHandlerParams,
     AgPromise,
     BaseFilterParams,
     BeanCollection,
     ColDef,
     FilterDisplayParams,
     FilterDisplayState,
-    FilterHandlerParams,
     IFilterParams,
     IRowNode,
     ISetFilterParams,
@@ -66,7 +66,7 @@ interface SetColumnValues {
 }
 
 /** Handler params that are also a complete `IFilterParams`, which is what the `filterParams` merge is handed. */
-type SetHandlerParams = FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams> & IFilterParams;
+type SetHandlerParams = AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams> & IFilterParams;
 
 /** What the Set Filter UI is handed: its display params, plus the callbacks a filter component expects. */
 type SetFilterUiParams = FilterDisplayParams<any, any, SetFilterModel> &
@@ -147,7 +147,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
                 const handler = setColumn.handler;
                 handler.refresh(this.createHandlerParams(column, 'colDef'));
                 // `refresh` re-reads the definitions; the grouping reaches the keys through the values.
-                handler.onNewRowsLoaded();
+                handler.onNewRowsLoadedForColDef();
                 setColumn.values = null;
                 continue;
             }
@@ -514,8 +514,18 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
         const colDef = this.getSetColDef(column);
+        const colFilter = this.beans.colFilter!;
+        // its value list reads the column like a Set Filter of the column's own
+        const filterValueGetter = colFilter.resolveFilterValueGetter(
+            column,
+            {},
+            column.colDef.filterValueGetter,
+            'agSetColumnFilter'
+        );
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),
+            filterValueGetter,
+            getValue: colFilter.createHandlerGetValue(column, filterValueGetter),
             model: null,
             source,
             onModelChange: () => {},

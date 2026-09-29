@@ -16,12 +16,7 @@ import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } fro
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
-import {
-    getFilterModelForIndex,
-    getMultiFilterDefs,
-    getUpdatedMultiFilterModel,
-    updateGetValue,
-} from './multiFilterUtil';
+import { getFilterModelForIndex, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 // This version of multi filter is only used when `enableFilterHandlers = true`
 export class MultiFilterUi
@@ -226,7 +221,7 @@ export class MultiFilterUi
             },
             onUiChange,
             source,
-            getValue: updateGetValue(this.beans, column as AgColumn, filterDef, getValue),
+            getValue: this.getHandler().getChildGetValue(index) ?? getValue,
         };
     }
 

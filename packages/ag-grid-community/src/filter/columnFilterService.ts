@@ -27,6 +27,7 @@ import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type {
+    AgFilterHandlerBaseParams,
     BaseFilterParams,
     ColumnFilterState,
     CreateFilterHandlerFunc,
@@ -81,10 +82,15 @@ interface HandlerDoesFilterPassWrapper {
     isHandler: true;
     colId: string;
     handler: FilterHandler;
-    handlerParams: FilterHandlerBaseParams;
+    handlerParams: AgFilterHandlerBaseParams;
 }
 
 type DoesFilterPassWrapper = CompDoesFilterPassWrapper | HandlerDoesFilterPassWrapper;
+
+type FilterValueGetter = string | ValueGetterFunc;
+
+/** A column, Multi Filter or Selectable Filter definition, each of which can name its own filter value getter. */
+type FilterDefWithGetter = IFilterDef & { filterValueGetter?: FilterValueGetter };
 
 interface HandlerFunc {
     filterHandler: CreateFilterHandlerFunc;
@@ -586,27 +592,35 @@ export class ColumnFilterService
 
         const colId = column?.getColId();
         return this.updateActiveFilters().then(() =>
-            this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
-                this.allColumnFilters.forEach((filterWrapper) => {
-                    const { column: filterColumn, isHandler } = filterWrapper;
-                    if (colId === filterColumn.getColId()) {
-                        return;
-                    }
-                    if (isHandler) {
-                        filterWrapper.handler.onAnyFilterChanged?.();
-                    }
-                    getFilterUiFromWrapper(filterWrapper, isHandler)?.then((filter) => {
-                        if (typeof filter?.onAnyFilterChanged === 'function') {
-                            filter.onAnyFilterChanged();
-                        }
-                    });
-                });
-
-                // because internal events are not async in ag-grid, when the dispatchEvent
-                // method comes back, we know all listeners have finished executing.
-                this.processingFilterChange = true;
-            })
+            this.notifyOtherFilters(colId, additionalEventAttributes)
         ) as AgPromise<void>;
+    }
+
+    private notifyOtherFilters(colId: string | undefined, additionalEventAttributes: any): AgPromise<void> {
+        return this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
+            this.allColumnFilters.forEach((filterWrapper) => {
+                const { column: filterColumn, isHandler } = filterWrapper;
+                if (colId === filterColumn.getColId()) {
+                    return;
+                }
+                if (isHandler) {
+                    filterWrapper.handler.onAnyFilterChanged?.();
+                }
+                const filterUi = getFilterUiFromWrapper(filterWrapper, isHandler);
+                if (!filterUi) {
+                    return;
+                }
+                void filterUi.then((filter) => {
+                    if (typeof filter?.onAnyFilterChanged === 'function') {
+                        filter.onAnyFilterChanged();
+                    }
+                });
+            });
+
+            // because internal events are not async in ag-grid, when the dispatchEvent
+            // method comes back, we know all listeners have finished executing.
+            this.processingFilterChange = true;
+        });
     }
 
     public updateAfterFilterChanged(): void {
@@ -643,14 +657,44 @@ export class ColumnFilterService
         this.updateFilterFlagInColumns(source, additionalEventAttributes).then(() => this.updateActiveFilters());
     }
 
-    public createGetValue(
+    public createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
+        const { filterValueSvc, colModel } = this.beans;
+        return (rowNode, column) => {
+            const columnToUse = column ? colModel.getCol(column) : filterColumn;
+            return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode) : undefined;
+        };
+    }
+
+    /**
+     * The filter value getter a handler for this definition reads with: the definition's own, else the inherited one.
+     * `filter` is the filter it builds, as a Multi Filter child's `true` is the text filter.
+     */
+    public resolveFilterValueGetter(
+        column: AgColumn,
+        filterDef: FilterDefWithGetter,
+        inherited: FilterValueGetter | undefined,
+        filter: IFilterDef['filter'] = filterDef.filter
+    ): FilterValueGetter | undefined {
+        const getter = filterDef.filterValueGetter ?? inherited;
+        if (getter === undefined || getter !== this.beans.dataTypeSvc?.objectFilterValueGetter) {
+            return getter;
+        }
+        // the grid's `object` getter reads formatted text; a Set Filter keys by the formatter instead
+        return (filter === true ? this.getDefaultFilter(column) : filter) === 'agSetColumnFilter' ? undefined : getter;
+    }
+
+    /** Reads the filter column through `filterValueGetter` alone, and another column as the quick filter reads it. */
+    public createHandlerGetValue(
         filterColumn: AgColumn,
-        filterValueGetterOverride?: string | ValueGetterFunc
+        filterValueGetter: FilterValueGetter | undefined
     ): IFilterParams['getValue'] {
         const { filterValueSvc, colModel } = this.beans;
         return (rowNode, column) => {
             const columnToUse = column ? colModel.getCol(column) : filterColumn;
-            return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode, filterValueGetterOverride) : undefined;
+            if (columnToUse === filterColumn) {
+                return filterValueSvc!.getValueWithGetter(filterColumn, rowNode, filterValueGetter);
+            }
+            return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode) : undefined;
         };
     }
 
@@ -741,7 +785,7 @@ export class ColumnFilterService
         return this.getDefaultFilter(column, true);
     }
 
-    private createFilterComp(
+    public createFilterComp(
         column: AgColumn,
         filterDef: IFilterDef,
         defaultFilter: string,
@@ -781,7 +825,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null;
         handler?: FilterHandler;
         handlerGenerator?: CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
-        handlerParams?: FilterHandlerBaseParams;
+        handlerParams?: AgFilterHandlerBaseParams;
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null;
     } {
         const selectableFilter = this.beans.selectableFilter;
@@ -1051,24 +1095,18 @@ export class ColumnFilterService
     ):
         | {
               handler: FilterHandler;
-              handlerParams: FilterHandlerBaseParams;
+              handlerParams: AgFilterHandlerBaseParams;
               handlerGenerator:
-                  | CreateFilterHandlerFunc
-                  | FilterHandlerName
-                  | ((params: DoesFilterPassParams) => boolean);
+                  CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
           }
         | undefined {
         const handlerFunc = this.createHandlerFunc(column, filterDef, defaultFilter);
         if (!handlerFunc) {
             return undefined;
         }
-        const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
-            this.beans.userCompFactory,
-            filterDef,
-            this.createFilterCompParams(column, true, 'init') as IFilterParams
-        );
+        const filterParams = this.createHandlerFilterParams(column, filterDef);
         const { handlerNameOrCallback, filterHandler } = handlerFunc;
-        const { handler, handlerParams } = this.createHandlerFromFunc(column, filterHandler, filterParams);
+        const { handler, handlerParams } = this.createHandlerFromFunc(column, filterDef, filterHandler, filterParams);
         return {
             handler,
             handlerParams,
@@ -1076,25 +1114,45 @@ export class ColumnFilterService
         };
     }
 
+    /** The params the column's filter would build a handler for this definition with. */
+    public createHandlerParamsForDef(column: AgColumn, filterDef: FilterDefWithGetter): AgFilterHandlerBaseParams {
+        return this.createHandlerParams(column, filterDef, this.createHandlerFilterParams(column, filterDef));
+    }
+
+    private createHandlerFilterParams(column: AgColumn, filterDef: IFilterDef): IFilterParams {
+        return _mergeFilterParamsWithApplicationProvidedParams(
+            this.beans.userCompFactory,
+            filterDef,
+            this.createFilterCompParams(column, true, 'init') as IFilterParams
+        );
+    }
+
     private createHandlerFromFunc(
         column: AgColumn,
+        filterDef: FilterDefWithGetter,
         filterHandler: CreateFilterHandlerFunc,
         filterParams: any
-    ): { handler: FilterHandler; handlerParams: FilterHandlerBaseParams } {
+    ): { handler: FilterHandler; handlerParams: AgFilterHandlerBaseParams } {
         const colDef = column.getColDef();
         const handler = filterHandler(_addGridCommonParams(this.gos, { column, colDef }));
-        const handlerParams = this.createHandlerParams(column, filterParams);
+        const handlerParams = this.createHandlerParams(column, filterDef, filterParams);
         return { handler, handlerParams };
     }
 
-    private createHandlerParams(column: AgColumn, filterParams: any): FilterHandlerBaseParams {
+    private createHandlerParams(
+        column: AgColumn,
+        filterDef: FilterDefWithGetter,
+        filterParams: any
+    ): AgFilterHandlerBaseParams {
         const colDef = column.getColDef();
         const colId = column.getColId();
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
+        const filterValueGetter = this.resolveFilterValueGetter(column, filterDef, colDef.filterValueGetter);
         return _addGridCommonParams(this.gos, {
             colDef,
             column,
-            getValue: this.createGetValue(column),
+            filterValueGetter,
+            getValue: this.createHandlerGetValue(column, filterValueGetter),
             doesRowPassOtherFilter: (node) =>
                 this.beans.filterManager?.doesRowPassFilter(node as RowNode, colId) ?? true,
             onModelChange: (newModel, additionalEventAttributes) => {
@@ -1338,9 +1396,10 @@ export class ColumnFilterService
         };
     }
 
-    /** Returns whether the model was cleared, which happens only when the handler could not take the new params. */
+    /** Returns whether the handler was recreated, which drops the model. */
     private refreshOrRecreateHandler(
         filterWrapper: HandlerFilterWrapper,
+        filterDef: FilterDefWithGetter,
         handlerFunc: HandlerFunc,
         compDetails: UserCompDetails | null,
         newFilterParams: any,
@@ -1353,7 +1412,7 @@ export class ColumnFilterService
         let recreateHandler = filterWrapper.handlerGenerator != handlerGenerator;
         if (!recreateHandler) {
             // `false` means the handler cannot take the new params
-            const handlerParams = this.createHandlerParams(column, compDetails?.params);
+            const handlerParams = this.createHandlerParams(column, filterDef, compDetails?.params);
             filterWrapper.handlerParams = handlerParams;
             recreateHandler =
                 filterWrapper.handler.refresh?.({
@@ -1369,6 +1428,7 @@ export class ColumnFilterService
         const oldHandler = filterWrapper.handler;
         const { handler, handlerParams } = this.createHandlerFromFunc(
             column,
+            filterDef,
             handlerFunc.filterHandler,
             newFilterParams
         );
@@ -1431,10 +1491,11 @@ export class ColumnFilterService
             );
 
         // a cleared model makes the params derived above stale, so the ui must re-derive them
-        let modelCleared = false;
+        let handlerRecreated = false;
         if (wasHandler) {
-            modelCleared = this.refreshOrRecreateHandler(
+            handlerRecreated = this.refreshOrRecreateHandler(
                 filterWrapper,
+                filterDef,
                 handlerFunc!,
                 compDetails,
                 newFilterParams,
@@ -1445,13 +1506,21 @@ export class ColumnFilterService
         const filterUi = filterWrapper.filterUi;
         if (wasHandler && filterUi && compDetails && !filterUi.created) {
             // nothing has been built from the old col def yet, so swap the plan instead of destroying
-            filterWrapper.filterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any, modelCleared);
+            filterWrapper.filterUi = this.createFilterUiForHandler(
+                compDetails,
+                createFilterUi as any,
+                handlerRecreated
+            );
             return;
         }
 
-        // Case when filter component changes
-        // or when filter wrapper does not have promise to retrieve FilterComp, destroy
-        if (this.areFilterCompsDifferent(filterUi?.compDetails ?? null, compDetails) || !filterUi || !compDetails) {
+        // the ui is bound to its handler and its component, so replacing either, or losing the component, destroys it
+        if (
+            handlerRecreated ||
+            this.areFilterCompsDifferent(filterUi?.compDetails ?? null, compDetails) ||
+            !filterUi ||
+            !compDetails
+        ) {
             this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);
             return;
         }
@@ -1579,7 +1648,7 @@ export class ColumnFilterService
         this.modelUpdates.forEach(({ model, source }) => this.setModel(model, source));
         this.modelUpdates = [];
         this.columnModelUpdates.forEach(({ key, model, resolve }) => {
-            this.setModelForColumn(key, model).then(() => resolve());
+            void this.setModelForColumn(key, model).then(resolve);
         });
         this.columnModelUpdates = [];
     }
@@ -1704,21 +1773,23 @@ export class ColumnFilterService
 
             const uiPromise = getFilterUiFromWrapper<IFilterComp>(filterWrapper);
             if (uiPromise) {
-                uiPromise.then((filter) => {
-                    if (typeof filter?.setModel !== 'function') {
-                        this.warn(65);
-                        resolve();
-                        return;
-                    }
-
-                    (filter.setModel(newModel) || AgPromise.resolve()).then(() => resolve());
-                });
+                void uiPromise.then((filter) => this.setFilterUiModel(filter, newModel, () => resolve()));
                 return;
             }
 
             // no handler and no filter comp
             resolve();
         });
+    }
+
+    private setFilterUiModel(filter: IFilterComp | null, newModel: any, done: () => void): void {
+        if (typeof filter?.setModel !== 'function') {
+            this.warn(65);
+            done();
+            return;
+        }
+
+        void (filter.setModel(newModel) ?? AgPromise.resolve()).then(done);
     }
 
     /** for handlers only */

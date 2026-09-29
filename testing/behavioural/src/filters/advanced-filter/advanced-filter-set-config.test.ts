@@ -376,6 +376,11 @@ describe('Advanced Filter - Set Filter configuration', () => {
         await new GridRows(api, 'one character keys').check(`
             ROOT id:ROOT_NODE_ID
         `);
+
+        // the value list the handler holds is keyed again in place: eight characters tell the two United apart
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, countryCol(8)]);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland', 'United K', 'United S', 'null']);
     });
 
     test('a provided value list widened by the column definitions clears the fault its absence reported', async () => {
@@ -1136,7 +1141,11 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
 
     test('an opted-in column keeps its own filterParams to itself, so the value list is built without them', async () => {
         const seen: unknown[][] = [];
@@ -1250,5 +1259,54 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
         await af.type('[Country] ');
         expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+    });
+
+    test("a column's new key creator reads the rows once for its value list", async () => {
+        const col = (keyCreator: (params: { value: string }) => string) => ({
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            keyCreator,
+            filterParams: { valueFormatter: ({ value }: { value: string }) => value } as ISetFilterParams,
+        });
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [{ field: 'athlete' }, col(({ value }) => value)],
+        });
+        await AdvancedFilterHarness.get(api).type('[Country] is any of [');
+
+        const keyCreator = vi.fn(({ value }: { value: string }) => value);
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, col(keyCreator)]);
+        await asyncSetTimeout(0);
+
+        // one load keys every row for all the values and again for the available ones
+        expect(keyCreator).toHaveBeenCalledTimes(2 * ROW_DATA.length);
+    });
+
+    test("an object column's set operator matches by its formatter, not by the text its own filter reads", async () => {
+        // the synthesised set definition gets no data type set params, so its key creator lacks a display formatter
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [249] });
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const byName = ({ value }: { value: { name: string } | null }) => value?.name ?? '';
+        const api = await gridsManager.createGridAndWait('grid1', {
+            enableAdvancedFilter: true,
+            columnDefs: [
+                {
+                    colId: 'person',
+                    field: 'winner',
+                    cellDataType: 'object',
+                    valueFormatter: byName,
+                    filter: 'agTextColumnFilter',
+                    filterParams: { filterOptions: ['contains', 'isAnyOf'] },
+                },
+            ],
+            rowData: [{ winner: { name: 'bob' } }, { winner: { name: 'cat' } }],
+        });
+
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'person', type: 'isAnyOf', values: ['bob'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowCount()).toBe(1);
+        expect(error.mock.calls.flat().join(' ')).toContain('error #249');
     });
 });

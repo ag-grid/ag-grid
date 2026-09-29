@@ -55,21 +55,27 @@ Since the column is then no longer a Set Filter, it also stops offering `is any 
 
 ## Set Filter Parameters
 
-Set Filters are configured though the `filterParams` attribute of the column definition (`ISetFilterParams` interface):
+Set Filters are configured through the `filterParams` attribute of the column definition (`ISetFilterParams` interface):
 
 {% interfaceDocumentation interfaceName="ISetFilterParams" overrideSrc="filter-set/set-filter-params.json" config={"description":"", "sortAlphabetically":true} /%}
 
 ### Updating Set Filter Parameters
 
-When new column definitions are set with updated Set Filter parameters, the Set Filter will update to reflect these. For certain filter parameters, changing the parameter will invalidate the filter model. This will cause the filter to be reset.
+When new column definitions are set, the Set Filter updates to reflect them and keeps the selected values that are still among its values.
 
-The following filter parameters will reset the Set Filter - `treeList`, `treeListPathGetter`, `caseSensitive`, `comparator`, and `excelMode`.
+The Set Filter is reset instead, clearing its filter model, when the update changes how its values are identified:
 
-Additionally, a few column definition properties will also reset the Set Filter - `filterValueGetter`, `keyCreator` (unless specified in both the old and new filter parameters), and `valueFormatter` (if no `keyCreator` and the [Cell Data Type](./cell-data-types/#pre-defined-cell-data-types) is not `'number'` or `'text'`).
+- `caseSensitive` is changed.
+- `keyCreator` is changed.
+- `treeList` is changed on a group column.
+- The source of the values, such as `field`, `valueGetter` or `filterValueGetter`, is changed, unless the Set Filter lists [Supplied Values](./filter-set-filter-list/#supplying-filter-values).
+- The column's `valueFormatter` is changed, including the one its [Cell Data Type](./cell-data-types/#pre-defined-cell-data-types) provides, which is rebuilt whenever new `dataTypeDefinitions` are set, where the data type identifies values by their formatted text, such as `date` or `object`, and the column has no `keyCreator` of its own.
+
+Functions are compared by reference, so a new function resets the Set Filter even when it returns the same result. When a Set Filter inside a [Multi Filter](./filter-multi/) is reset, the whole Multi Filter is reset.
 
 {% if isFramework("javascript", "angular", "vue") %}
-For the parameters above which are functions, define them as constants outside of the column definition to avoid resetting the Set Filter when passing new column definitions.
+For the properties above which are functions, define them as constants outside of the column definition to avoid resetting the Set Filter when passing new column definitions.
 {% /if %}
 {% if isFramework("react") %}
-For the parameters above which are functions, memoize the individual functions (e.g. define them via `useCallback` outside of the column definition) to avoid resetting the Set Filter when passing new column definitions.
+For the properties above which are functions, memoise the individual functions (e.g. define them via `useCallback` outside of the column definition) to avoid resetting the Set Filter when passing new column definitions.
 {% /if %}

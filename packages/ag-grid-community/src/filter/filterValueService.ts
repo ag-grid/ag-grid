@@ -11,14 +11,22 @@ import type { IRowNode } from '../interfaces/iRowNode';
 export class FilterValueService extends BeanStub implements NamedBean {
     beanName: BeanName = 'filterValueSvc';
 
-    public getValue(column: AgColumn, rowNode: IRowNode, filterValueGetterOverride?: string | ValueGetterFunc) {
+    public getValue(column: AgColumn, rowNode: IRowNode) {
+        return this.getValueWithGetter(
+            column,
+            rowNode,
+            this.beans.selectableFilter?.getFilterValueGetter(column.colId) ?? column.colDef.filterValueGetter
+        );
+    }
+
+    /** Reads through this filter value getter alone, or the column's own value without one. */
+    public getValueWithGetter(
+        column: AgColumn,
+        rowNode: IRowNode,
+        filterValueGetter: string | ValueGetterFunc | undefined
+    ) {
         const colDef = column.colDef;
         const beans = this.beans;
-        const filterValueGetter =
-            filterValueGetterOverride ??
-            beans.selectableFilter?.getFilterValueGetter(column.colId) ??
-            colDef.filterValueGetter;
-
         const valueSvc = beans.valueSvc;
         if (filterValueGetter) {
             const isFunction = typeof filterValueGetter === 'function';

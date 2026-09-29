@@ -1,6 +1,6 @@
 import type { AgPromise, IComponent } from 'ag-stack';
 
-import type { ColDef, ColKey } from '../entities/colDef';
+import type { ColDef, ColKey, ValueGetterFunc } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
@@ -42,6 +42,17 @@ export interface FilterHandlerBaseParams<
     onModelAsStringChange: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgFilterHandlerBaseParams<
+    TData = any,
+    TContext = any,
+    TModel = any,
+    TCustomParams = any,
+> extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
+    /** What `getValue` reads the filter's column through, which a Multi Filter passes on to its children. */
+    filterValueGetter: string | ValueGetterFunc<TData> | undefined;
+}
+
 export type QuickFilterParser = (quickFilter: string) => string[];
 export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolean;
@@ -62,6 +73,12 @@ export interface FilterHandlerParams<
      */
     additionalEventAttributes?: any;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgFilterHandlerParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends
+        FilterHandlerParams<TData, TContext, TModel, TCustomParams>,
+        AgFilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {}
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilter, ReadOnlyFloatingFilterParent<TModel> {
