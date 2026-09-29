@@ -94,7 +94,7 @@
     "tsx": "4.23.15",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.70.1",
-    "vite": "~5.4.19",
+    "vite": "^7.3.6",
     "vitest": "4.1.11"
   },
   "workspaces": {

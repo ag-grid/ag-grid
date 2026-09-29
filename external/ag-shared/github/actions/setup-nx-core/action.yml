@@ -231,6 +231,15 @@ runs:
           with:
               node-version-file: package.json
 
+        - name: Enable corepack
+          # GitHub-hosted runners ship corepack but not enabled, so a bare `yarn`
+          # resolves to the runner image's preinstalled Yarn Classic, silently
+          # ignoring this repo's "packageManager" pin (Yarn 4). Must run after
+          # Setup Node.js (corepack is installed alongside Node) and before any
+          # `yarn` invocation below.
+          shell: bash
+          run: corepack enable
+
         - name: Tidy Nx Cache
           uses: ./external/ag-shared/github/actions/tidy-nx-cache
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false' && inputs.tidy_nx_cache != 'false'

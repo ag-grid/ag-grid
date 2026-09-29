@@ -58,6 +58,11 @@ jobs:
           node-version-file: package.json
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Enable corepack
+        # Without this, the runner's preinstalled Yarn Classic silently ignores
+        # this repo's "packageManager" pin (Yarn 4).
+        run: corepack enable
+
       - name: Yarn
         run: |
           yarn install --immutable

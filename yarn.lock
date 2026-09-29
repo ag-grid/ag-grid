@@ -14594,7 +14594,7 @@ __metadata:
     tsx: "npm:4.23.15"
     typescript: "npm:~5.8.3"
     typescript-eslint: "npm:^8.70.1"
-    vite: "npm:~5.4.19"
+    vite: "npm:^7.3.6"
     vitest: "npm:4.1.11"
   languageName: unknown
   linkType: soft
@@ -34993,7 +34993,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.3.6":
+"vite@npm:7.3.6, vite@npm:^7.3.6":
   version: 7.3.6
   resolution: "vite@npm:7.3.6"
   dependencies:

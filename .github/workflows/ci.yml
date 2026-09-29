@@ -709,6 +709,11 @@ jobs:
         with:
           node-version-file: package.json
 
+      - name: Enable corepack
+        # This job's own `yarn dlx` call below needs Yarn 4, not the runner's
+        # preinstalled Yarn Classic (which has no `dlx` command at all).
+        run: corepack enable
+
       - name: Fetch Refs
         run: |
           git fetch origin --depth 1 latest
