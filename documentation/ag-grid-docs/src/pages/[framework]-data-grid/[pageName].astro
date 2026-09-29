@@ -123,15 +123,17 @@ const headings = await getHeadings({
     pageStructuredData={pageStructuredData}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
-        {!hidePageMenu && (
-            <DocsNav
-                client:load
-                menuData={menuData}
-                framework={currentFramework}
-                pageName={pageName}
-                showWhatsNew={!isApiPage}
-            />
-        )}
+        {
+            !hidePageMenu && (
+                <DocsNav
+                    client:load
+                    menuData={menuData}
+                    framework={currentFramework}
+                    pageName={pageName}
+                    showWhatsNew={!isApiPage}
+                />
+            )
+        }
 
         <div
             id="doc-content"
@@ -155,10 +157,12 @@ const headings = await getHeadings({
 
             {technicalReviewer && <TechnicalReviewCredit reviewer={technicalReviewer} />}
 
-            {/*
+            {
+                /*
               Unconditional: a reference table can arrive through a markdoc partial, so the page
               body alone does not say whether one is coming.
-            */}
+            */
+            }
             <ReferenceIconSprite />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
