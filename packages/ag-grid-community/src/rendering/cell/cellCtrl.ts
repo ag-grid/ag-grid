@@ -190,7 +190,7 @@ export class CellCtrl extends BeanStub {
         return _isClientSideLoadingRow(this.gos, this.rowNode);
     }
 
-    private addFeatures(): void {
+    private addFeatures(compBean: BeanStub): void {
         const { beans } = this;
 
         this.enableTooltipFeature();
@@ -205,7 +205,7 @@ export class CellCtrl extends BeanStub {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
 
-        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this);
+        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this, compBean);
     }
 
     private removeFeatures(): void {
@@ -272,7 +272,7 @@ export class CellCtrl extends BeanStub {
         this.addDomData(compBean);
         const isClientSideLoadingCell = this.isClientSideLoadingCell();
         if (!isClientSideLoadingCell) {
-            this.addFeatures();
+            this.addFeatures(compBean);
             compBean.addDestroyFunc(() => this.removeFeatures());
         }
 

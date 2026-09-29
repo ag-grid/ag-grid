@@ -78,9 +78,12 @@ const useJsCellRenderer = (
         }
 
         const promise = compDetails!.newAgStackInstance();
+        let stale = false;
 
         promise.then((comp) => {
-            if (!comp) {
+            // a newer request or the unmount came first, so this renderer has no cell to go in
+            if (!comp || stale) {
+                context.destroyBean(comp);
                 return;
             }
 
@@ -94,7 +97,10 @@ const useJsCellRenderer = (
 
             jsCellRendererRef.current = comp;
         });
-        // We do not return the destroy here as we want to keep the comp alive for our custom refresh approach above
+        // only marks a pending renderer stale: the live one stays for the custom refresh approach above
+        return () => {
+            stale = true;
+        };
     }, [showDetails, showTools, cellValueVersion, suppressInlineEditRenderer]);
 
     // this effect makes sure destroyCellRenderer gets called when the

@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    BeanStub,
     CellCtrl,
     FullWidthTarget,
     GetNoteParams,
@@ -269,6 +270,7 @@ export class AgNotesFeature extends BaseNotesFeature {
     constructor(
         beans: BeanCollection,
         private readonly ctrl: CellCtrl,
+        private readonly compBean: BeanStub,
         notesSvc: INotesFeatureSupport
     ) {
         super(beans, notesSvc);
@@ -283,7 +285,7 @@ export class AgNotesFeature extends BaseNotesFeature {
     }
 
     public initialise(): void {
-        this.ctrl.addManagedElementListeners(this.ctrl.eGui, {
+        this.compBean.addManagedElementListeners(this.ctrl.eGui, {
             pointerenter: (event: PointerEvent) => {
                 if (this.ctrl.isNoteHoverSuppressed()) {
                     return;
