@@ -10,6 +10,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import type { ColumnTreeBuild } from './buildColumnTree';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
@@ -50,6 +51,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefList: AgColumn[] = [];
     /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
     public colDefsVersion = 0;
+    /** Columns redefined by the tree build in progress, told once every column holds its new definition. */
+    public colDefChangedInBuild: AgColumn[] | null = null;
     public colDefTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colDefTreeDepth = 0;
     private colDefHasMarryChildren = false;
@@ -200,21 +203,28 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldTree = this.colDefTree;
         const oldAllGroups = this.colDefAllGroups;
 
-        const builder = _buildColumnTree(
-            beans,
-            /* defs */ colDefs,
-            /* primaryColumns */ true,
-            /* existingGroupsById */ this.colDefGroupsById,
-            /* existingColsByKey */ this.colDefColsByKey,
-            /* existingColsById */ this.colsById,
-            /* source */ source,
-            /* newColDefs */ newColDefs,
-            /* buildToken */ this.nextBuildToken(),
-            /* wrapperCache */ this.hierarchyWrapperCache
-        );
-        groupHierarchyColSvc?.contributeTo(builder);
-        calculatedColsSvc?.contributeTo(builder);
-        finalizeColumnTree(builder);
+        const colDefChanged: AgColumn[] = [];
+        this.colDefChangedInBuild = colDefChanged;
+        let builder: ColumnTreeBuild;
+        try {
+            builder = _buildColumnTree(
+                beans,
+                /* defs */ colDefs,
+                /* primaryColumns */ true,
+                /* existingGroupsById */ this.colDefGroupsById,
+                /* existingColsByKey */ this.colDefColsByKey,
+                /* existingColsById */ this.colsById,
+                /* source */ source,
+                /* newColDefs */ newColDefs,
+                /* buildToken */ this.nextBuildToken(),
+                /* wrapperCache */ this.hierarchyWrapperCache
+            );
+            groupHierarchyColSvc?.contributeTo(builder);
+            calculatedColsSvc?.contributeTo(builder);
+            finalizeColumnTree(builder);
+        } finally {
+            this.colDefChangedInBuild = null;
+        }
 
         const tree = builder.columnTree;
         const cols = builder.columns;
@@ -260,6 +270,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.refreshCols(newColDefs, source);
         } finally {
             this.changeEventsDispatching = false;
+        }
+        // after refreshCols, so the listeners can look up the pivot result and service columns too
+        for (let i = 0, len = colDefChanged.length; i < len; ++i) {
+            colDefChanged[i].dispatchColEvent('colDefChanged', source);
         }
 
         visibleCols.refresh(source, false);
