@@ -133,7 +133,7 @@
     "rulesync/js-yaml": "^4.3.1",
     "undici@^7.0.0": "^7.29.0"
   },
-  "packageManager": "yarn@4.10.0+sha512.8dd111dbb1658cf17089636e5bf490795958158755f36cb75c5a2db0bda6be4d84b95447753627f3330d1457cb6f7e8c1e466eaed959073c82be0242c2cd41e7",
+  "packageManager": "yarn@4.10.1+sha512.45bcc0f26c64f59bbfff2a721fbc8226f7a0fe5da70c116cecb09bdfed2514a4d5a22484b75103070175cee5d7d4ad3719cd4be029c94ae5848b44346aefe2a8",
   "lavamoat": {
     "allowScripts": {
       "eslint-plugin-import-x>unrs-resolver#1.11.1": true,
