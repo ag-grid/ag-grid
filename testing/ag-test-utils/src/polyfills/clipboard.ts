@@ -90,6 +90,14 @@ export const clipboardUtils = {
     setText(value: string): void {
         setClipboardState(value);
     },
+    setTextAndHtml(text: string, html: string): void {
+        setClipboardState(text, [
+            {
+                types: ['text/plain', 'text/html'],
+                getType: async (type: string) => new Blob([type === 'text/html' ? html : text], { type }),
+            },
+        ]);
+    },
     getText() {
         return clipboardState.text;
     },
