@@ -883,6 +883,33 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data.c).toBe('keep');
     });
 
+    test('skips HTML reconciliation when clipboardDelimiter is not tab', async () => {
+        const api = await gridMgr.createGridAndWait('htmlCustomDelimiterPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [{ a: 'old0', b: 'keep' }],
+            clipboardDelimiter: ',',
+        });
+        clipboardUtils.setTextAndHtml('a\t', '<table><tr><td>a</td><td></td></tr></table>');
+        const read = vi.spyOn(navigator.clipboard, 'read');
+
+        try {
+            api.setFocusedCell(0, 'a');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            // the tab is a literal character under a comma delimiter, so the HTML cells cannot
+            // correspond to the plain-text columns and must not clear the adjacent cell
+            expect(read).not.toHaveBeenCalled();
+            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a\t', b: 'keep' });
+        } finally {
+            read.mockRestore();
+        }
+    });
+
     test.each([false, true])(
         'restores blank rows and columns missing from single-cell plain text (range: %s)',
         async (activeRange) => {

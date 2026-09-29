@@ -174,7 +174,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private async pasteFromClipboardApi(clipboard: Clipboard): Promise<void> {
         let result: ClipboardReadResult | null = null;
-        if (!this.gos.get('suppressLastEmptyLineOnPaste') && typeof clipboard.read === 'function') {
+        if (this.isHtmlReconciliationEnabled() && typeof clipboard.read === 'function') {
             // The HTML table shape can distinguish selected blank cells from an extra plain-text line.
             result = await this.tryReadItems(clipboard, true);
             if (!this.isAlive()) {
@@ -253,7 +253,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
             this.lastPasteOperationTime = currentPastOperationTime;
             const clipboardData = e.clipboardData;
-            if (!defaultPrevented && !this.gos.get('suppressLastEmptyLineOnPaste') && clipboardData) {
+            if (!defaultPrevented && clipboardData && this.isHtmlReconciliationEnabled()) {
                 html = clipboardData.getData('text/html');
             }
         };
@@ -294,6 +294,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         return _exists(delimiter) ? delimiter : '\t';
     }
 
+    private isHtmlReconciliationEnabled(): boolean {
+        // Excel writes tab-delimited plain text; any other delimiter breaks the column correspondence with the HTML table.
+        return !this.gos.get('suppressLastEmptyLineOnPaste') && this.getClipboardDelimiter() === '\t';
+    }
+
     private processClipboardData(data: string, html?: string): void {
         if (data == null) {
             return;
@@ -301,7 +306,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         let parsedData: string[][] | null = stringToArray(data, this.getClipboardDelimiter());
 
-        if (html && !this.gos.get('suppressLastEmptyLineOnPaste')) {
+        if (html && this.isHtmlReconciliationEnabled()) {
             this.reconcileClipboardDataWithHtml(parsedData, html);
         }
 
