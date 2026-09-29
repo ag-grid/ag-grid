@@ -4,12 +4,17 @@ import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/con
 import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import {
+    reportMonitoringError,
+    trackMonitoringEvent,
+} from '@ag-website-shared/components/website-monitoring/websiteMonitoring';
 import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { ChangeEvent, FunctionComponent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FieldErrors } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
@@ -84,10 +89,10 @@ function loadRecaptcha(): Promise<void> {
         script.src = `${RECAPTCHA_URL}?render=explicit&onload=${RECAPTCHA_READY_CALLBACK}`;
         script.async = true;
         script.defer = true;
-        script.onerror = (error) => {
+        script.onerror = () => {
             // Drop the cached promise so a later mount retries the load.
             globals[RECAPTCHA_READY_PROMISE] = undefined;
-            reject(error);
+            reject(new Error(`Failed to load reCAPTCHA from ${RECAPTCHA_URL}`));
         };
         document.head.appendChild(script);
     });
@@ -159,19 +164,23 @@ export const ContactForm: FunctionComponent<Props> = ({
         let unmounted = false;
         let captcha: CaptchaTicker | undefined;
 
-        loadRecaptcha().then(() => {
-            const container = captchaRef.current;
-            if (unmounted || container == null) {
-                return;
-            }
-            captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
-                sitekey: captchaSiteKey,
+        loadRecaptcha()
+            .then(() => {
+                const container = captchaRef.current;
+                if (unmounted || container == null) {
+                    return;
+                }
+                captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
+                    sitekey: captchaSiteKey,
+                });
+                captcha = initCaptcha(container, (ts) => {
+                    captchaTimestamp.current = ts;
+                });
+                reapplyCaptchaTimestamp.current = captcha.reapply;
+            })
+            .catch((error) => {
+                reportMonitoringError(error, { formLocation });
             });
-            captcha = initCaptcha(container, (ts) => {
-                captchaTimestamp.current = ts;
-            });
-            reapplyCaptchaTimestamp.current = captcha.reapply;
-        });
 
         return () => {
             unmounted = true;
@@ -188,13 +197,30 @@ export const ContactForm: FunctionComponent<Props> = ({
         const widgetId = captchaWidgetId.current;
         const captchaPassed = widgetId != null && (globalThis as any).grecaptcha.getResponse(widgetId);
         if (captchaPassed) {
+            trackMonitoringEvent('contact_form_submit', { formLocation });
             reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
+            // A widget that never rendered points at reCAPTCHA failing, rather than the visitor
+            trackMonitoringEvent('contact_form_captcha_incomplete', {
+                formLocation,
+                isCaptchaRendered: widgetId != null,
+            });
             setCaptchaError(true);
             setIsDisabled(false);
         }
-    }, []);
+    }, [formLocation]);
+
+    // Field names only: the values are the visitor's personal details
+    const onInvalidSubmit = useCallback(
+        (fieldErrors: FieldErrors<FormValues>) => {
+            trackMonitoringEvent('contact_form_invalid', {
+                formLocation,
+                invalidFields: Object.keys(fieldErrors).join(','),
+            });
+        },
+        [formLocation]
+    );
 
     return (
         <form
@@ -203,7 +229,7 @@ export const ContactForm: FunctionComponent<Props> = ({
             className={styles.contactForm}
             action={actionUrl}
             method="POST"
-            onSubmit={handleSubmit(onValidSubmit)}
+            onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}
             noValidate
         >
             <input

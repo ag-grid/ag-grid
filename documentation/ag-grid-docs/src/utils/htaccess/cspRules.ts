@@ -305,6 +305,15 @@ const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
 // this changes if the automation is recreated in another zone.
 const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 
+// Dash0 website monitoring (real user monitoring), started by
+// @ag-website-shared/components/website-monitoring once the visitor grants analytics consent. The
+// SDK is bundled from npm and served from our own origin, so it needs no script-src entry; this is
+// where it sends its OTLP traces and logs, with fetch() and sendBeacon.
+//
+// Regional host — this changes if the Dash0 organisation moves region, along with
+// PUBLIC_DASH0_ENDPOINT_URL in the .env.build.* files.
+const DASH0_INGRESS_HOST = 'https://ingress.eu-west-1.aws.dash0.com';
+
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
 // bryntum.com. Allowed only in the 'campaigns' scope so the rest of the site does
@@ -574,6 +583,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
             MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)
+            DASH0_INGRESS_HOST, // Dash0 website monitoring telemetry
             'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
             'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,

@@ -424,6 +424,23 @@ describe('cspRules', () => {
         });
     });
 
+    describe('Dash0 website monitoring (AG-18692)', () => {
+        it('allows the Dash0 ingress in connect-src in every environment', () => {
+            const envs = ['dev', 'staging', 'production'] as const;
+            for (let i = 0, len = envs.length; i < len; ++i) {
+                expect(getCspDirectives({ env: envs[i], scope: 'site' })['connect-src']).toContain(
+                    'https://ingress.eu-west-1.aws.dash0.com'
+                );
+            }
+        });
+
+        it('does not grant the ingress script-src (the SDK is served from our own origin)', () => {
+            expect(getCspDirectives({ env: 'production', scope: 'site' })['script-src']).not.toContain(
+                'https://ingress.eu-west-1.aws.dash0.com'
+            );
+        });
+    });
+
     describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
         // The live campaign page and its archived snapshots both embed the Bryntum
         // demo, so both must resolve to the campaigns scope. An archived campaign path
