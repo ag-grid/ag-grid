@@ -679,8 +679,9 @@ export class ColumnFilterService
         if (getter === undefined || getter !== this.beans.dataTypeSvc?.objectFilterValueGetter) {
             return getter;
         }
+        const resolvedFilter = filter === true ? this.getDefaultFilter(column) : filter;
         // the grid's `object` getter reads formatted text; a Set Filter keys by the formatter instead
-        return (filter === true ? this.getDefaultFilter(column) : filter) === 'agSetColumnFilter' ? undefined : getter;
+        return resolvedFilter === 'agSetColumnFilter' ? undefined : getter;
     }
 
     /** Reads the filter column through `filterValueGetter` alone, and another column as the quick filter reads it. */
