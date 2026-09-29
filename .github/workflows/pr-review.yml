@@ -87,6 +87,12 @@ jobs:
                   registry-url: https://npm.pkg.github.com
                   scope: '@ag-grid'
 
+            - name: Enable corepack
+              # Without this, the runner's preinstalled Yarn Classic hard-errors on
+              # this repo's "packageManager" pin (Yarn 4) instead of silently
+              # ignoring it.
+              run: corepack enable
+
             - name: Install @ag-grid/dev-prompts
               env:
                   NODE_AUTH_TOKEN: ${{ github.token }}
