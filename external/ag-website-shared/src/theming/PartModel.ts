@@ -118,33 +118,31 @@ export const allFeatureModels = memoize(() => featureModelsSource());
 
 // Lazy for the same reason as getQuartzParts: constructing these resolves grid's
 // default part for each feature, which a non-grid host must never trigger.
-const getFeatureModels = memoize((): Record<string, FeatureModel | undefined> => {
-    return {
-        colorScheme: new FeatureModel('colorScheme', {
-            lightCold: colorSchemeLightCold,
-            light: colorSchemeLight,
-            lightWarm: colorSchemeLightWarm,
-            darkBlue: colorSchemeDarkBlue,
-            dark: colorSchemeDark,
-            darkWarm: colorSchemeDarkWarm,
-            variable: colorSchemeVariable,
-        }),
-        iconSet: new FeatureModel('iconSet', {
-            alpine: iconSetAlpine,
-            material: iconSetMaterial,
-            quartzLight: iconSetQuartzLight,
-            quartzRegular: iconSetQuartzRegular,
-            quartzBold: iconSetQuartzBold,
-        }),
-        tabStyle: new FeatureModel('tabStyle', {
-            quartz: tabStyleQuartz,
-            alpine: tabStyleAlpine,
-            material: tabStyleMaterial,
-            rolodex: tabStyleRolodex,
-        }),
-        inputStyle: new FeatureModel('inputStyle', {
-            bordered: inputStyleBordered,
-            underlined: inputStyleUnderlined,
-        }),
-    };
-});
+const getFeatureModels = memoize((): Record<string, FeatureModel | undefined> => ({
+    colorScheme: new FeatureModel('colorScheme', {
+        lightCold: colorSchemeLightCold,
+        light: colorSchemeLight,
+        lightWarm: colorSchemeLightWarm,
+        darkBlue: colorSchemeDarkBlue,
+        dark: colorSchemeDark,
+        darkWarm: colorSchemeDarkWarm,
+        variable: colorSchemeVariable,
+    }),
+    iconSet: new FeatureModel('iconSet', {
+        alpine: iconSetAlpine,
+        material: iconSetMaterial,
+        quartzLight: iconSetQuartzLight,
+        quartzRegular: iconSetQuartzRegular,
+        quartzBold: iconSetQuartzBold,
+    }),
+    tabStyle: new FeatureModel('tabStyle', {
+        quartz: tabStyleQuartz,
+        alpine: tabStyleAlpine,
+        material: tabStyleMaterial,
+        rolodex: tabStyleRolodex,
+    }),
+    inputStyle: new FeatureModel('inputStyle', {
+        bordered: inputStyleBordered,
+        underlined: inputStyleUnderlined,
+    }),
+}));

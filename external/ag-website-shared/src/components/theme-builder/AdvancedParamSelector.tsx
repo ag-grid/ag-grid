@@ -6,7 +6,7 @@ import { ParamSearchSelector } from './ParamSearchSelector';
 /**
  * Search every theme param by name or documentation, and pin the ones you pick
  * into the section below the box. The catalogue comes from whichever theme the
- * host registered with `setThemeParamSource`, so grid and charts share this.
+ * host registered with `setThemeParamSource`.
  */
 export const AdvancedParamSelector = () => {
     const advancedParamIsEnabled = useAdvancedParamIsEnabled();

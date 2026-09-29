@@ -15,12 +15,11 @@ const WEBSITE_PATH_PREFIX = {
 // An unrecognised container is treated as ag-charts, so the aliases below still resolve.
 const CONTAINER_REPO = packageJson.name in WEBSITE_PATH_PREFIX ? packageJson.name : 'ag-charts';
 
-// The subrepo syncs whole, so every container receives all three theme builders. A foreign host's
-// tests assert against a product this repo may not install, or pins at its own version, so a
-// release of one product could redden an unrelated repository's CI. Run only our own host.
+// The subrepo syncs whole, so every container receives each theme builder host that lives here. A
+// foreign host's tests assert against a product this repo may not install, or pins at its own
+// version, so a release of one product could redden an unrelated repository's CI. Run only our own.
 const THEME_BUILDER_HOSTS = {
     'ag-grid': 'theme-builder-grid',
-    'ag-charts': 'theme-builder-charts',
     'ag-studio': 'theme-builder-studio',
 };
 
