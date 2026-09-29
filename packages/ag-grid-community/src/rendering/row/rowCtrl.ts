@@ -785,12 +785,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /**
      * How many widget slots sit between the group cell's left padding and its label: one for the expander
      * — or, on a leaf row, the `ag-row-group-leaf-indent` that stands in for it — plus every control the
-     * cell renders ahead of its value. The drop indicator lines up with that label, so it needs the same
-     * count. Returns undefined when the group cell is not rendered, leaving the CSS default in place.
+     * cell renders ahead of its value, plus the group renderer's own selection checkbox (or the spacing it
+     * reserves for one). The drop indicator lines up with that label, so it needs the same count.
+     * Returns undefined when the group cell is not rendered, leaving the CSS default in place.
      */
     private getGroupCellWidgetCount(groupCol: AgColumn | null): number | undefined {
         const cellCtrl = groupCol && this.getCellCtrl(groupCol);
-        return cellCtrl ? 1 + cellCtrl.getLeadingWidgetCount() : undefined;
+        if (!cellCtrl) {
+            return undefined;
+        }
+        // The group renderer owns this checkbox (`checkboxLocation: 'autoGroupColumn'`), so the cell's own
+        // control flags do not see it; its rendered state is the only signal shared by every renderer.
+        const rendererCheckbox = cellCtrl.eGui?.querySelector(
+            '.ag-group-checkbox-spacing, .ag-group-checkbox > .ag-selection-checkbox:not(.ag-hidden)'
+        );
+        return 1 + cellCtrl.getLeadingWidgetCount() + (rendererCheckbox ? 1 : 0);
     }
 
     private postProcessRowDragging(): void {

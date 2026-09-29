@@ -1,7 +1,8 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, RowDragModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid row highlight', () => {
@@ -252,7 +253,7 @@ describe('ag-grid row highlight indent is suppressed in the centre section when 
 
 describe('ag-grid row highlight indent measures past the group cell’s own widgets', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowDragModule, TreeDataModule],
+        modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, TreeDataModule],
     });
 
     beforeEach(() => {
@@ -271,8 +272,13 @@ describe('ag-grid row highlight indent measures past the group cell’s own widg
         },
     ];
 
-    const createGrid = (id: string, autoGroupColumnDef: GridOptions['autoGroupColumnDef']) =>
+    const createGrid = (
+        id: string,
+        autoGroupColumnDef: GridOptions['autoGroupColumnDef'],
+        rowSelection?: GridOptions['rowSelection']
+    ) =>
         gridsManager.createGrid(id, {
+            rowSelection,
             columnDefs: [{ field: 'type' }],
             autoGroupColumnDef: { headerName: 'Name', field: 'name', ...autoGroupColumnDef },
             treeData: true,
@@ -305,6 +311,44 @@ describe('ag-grid row highlight indent measures past the group cell’s own widg
 
         api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
         expect(getIndentWidgets(api, 'a1')).toBe('1');
+    });
+
+    /** The group renderer draws asynchronously, and the multiplier reads what it rendered. */
+    const waitForGroupRenderer = (api: GridApi, rowId: string) =>
+        waitFor(() =>
+            expect(
+                TestGridsManager.getHTMLElement(api)!.querySelector(`.ag-row[row-id="${rowId}"] .ag-group-checkbox`)
+            ).not.toBeNull()
+        );
+
+    test('a selection checkbox the group renderer draws takes a slot of its own', async () => {
+        const api = createGrid('rendererCheckbox', {}, { mode: 'multiRow', checkboxLocation: 'autoGroupColumn' });
+        await waitForGroupRenderer(api, 'a');
+        await waitForGroupRenderer(api, 'a1');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentWidgets(api, 'a')).toBe('2');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
+        expect(getIndentWidgets(api, 'a1')).toBe('2');
+    });
+
+    test('a group renderer checkbox the row does not display takes no slot', async () => {
+        // An unselectable row whose checkboxes callback returns false has its checkbox removed from layout.
+        const api = createGrid(
+            'hiddenRendererCheckbox',
+            {},
+            {
+                mode: 'multiRow',
+                checkboxLocation: 'autoGroupColumn',
+                isRowSelectable: (node) => node.id !== 'a',
+                checkboxes: ({ node }) => node.id !== 'a',
+            }
+        );
+        await waitForGroupRenderer(api, 'a');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentWidgets(api, 'a')).toBe('1');
     });
 
     test('clearing the indicator removes the multiplier', () => {
