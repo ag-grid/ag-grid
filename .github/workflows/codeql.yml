@@ -8,6 +8,7 @@ on:
         types: [opened, synchronize, reopened, ready_for_review]
 
 env:
+    YARN_NPM_REGISTRY_SERVER: 'https://registry.ag-grid.com'
     # Disable git's post-fetch background gc/maintenance for every git invocation in this
     # workflow (via git's GIT_CONFIG_* protocol); otherwise it rewrites .git/shallow
     # concurrently with the next chained `git fetch --depth 1`, intermittently failing job
