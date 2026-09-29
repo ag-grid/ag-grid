@@ -7,7 +7,6 @@ import type { Framework } from '@ag-grid-types';
 import { getDocsPages } from '@components/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getPageDescription } from '@ag-website-shared/utils/getPageDescription';
-import { buildTechArticle, siteRootUrl } from '@ag-website-shared/utils/structuredData';
 import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
 import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
@@ -20,6 +19,7 @@ import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { agLibraryVersion, DISABLE_MARKDOWN_DOCS } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { buildDocsPageStructuredData, getDocsPageUrl } from '@utils/docsStructuredData';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -60,17 +60,26 @@ const description = getPageDescription({
 });
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
 
-// Same pageUrl shape DocsExampleRunner.astro uses to key its SoftwareSourceCode nodes' `about`
-// reference, so the TechArticle it points at is actually emitted here with a matching @id.
-const pageUrl = `${siteRootUrl(metadata.canonicalUrlBase)}${currentFramework}-data-grid/${pageName}/`;
 const pageStructuredData = [
-    buildTechArticle({
+    ...buildDocsPageStructuredData({
         canonicalUrlBase: metadata.canonicalUrlBase,
-        pageUrl,
+        framework: currentFramework,
+        pageName,
         title,
         description: description || descriptionWithSeoTagline,
+        isEnterprise: enterprise,
+        frameworks: page.data.frameworks,
     }),
-    ...(technicalReviewer ? buildTechnicalReviewStructuredData({ pageUrl, reviewer: technicalReviewer }) : []),
+    ...(technicalReviewer
+        ? buildTechnicalReviewStructuredData({
+              pageUrl: getDocsPageUrl({
+                  canonicalUrlBase: metadata.canonicalUrlBase,
+                  framework: currentFramework,
+                  pageName,
+              }),
+              reviewer: technicalReviewer,
+          })
+        : []),
 ];
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
@@ -114,17 +123,15 @@ const headings = await getHeadings({
     pageStructuredData={pageStructuredData}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
-        {
-            !hidePageMenu && (
-                <DocsNav
-                    client:load
-                    menuData={menuData}
-                    framework={currentFramework}
-                    pageName={pageName}
-                    showWhatsNew={!isApiPage}
-                />
-            )
-        }
+        {!hidePageMenu && (
+            <DocsNav
+                client:load
+                menuData={menuData}
+                framework={currentFramework}
+                pageName={pageName}
+                showWhatsNew={!isApiPage}
+            />
+        )}
 
         <div
             id="doc-content"
@@ -148,12 +155,10 @@ const headings = await getHeadings({
 
             {technicalReviewer && <TechnicalReviewCredit reviewer={technicalReviewer} />}
 
-            {
-                /*
+            {/*
               Unconditional: a reference table can arrive through a markdoc partial, so the page
               body alone does not say whether one is coming.
-            */
-            }
+            */}
             <ReferenceIconSprite />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
