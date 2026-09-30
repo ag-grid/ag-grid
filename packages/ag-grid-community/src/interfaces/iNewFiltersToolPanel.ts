@@ -70,6 +70,10 @@ export interface FilterPanelDetailState extends FilterPanelBaseState {
 export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetailState;
 
 export interface INewFiltersToolPanel extends IToolPanel {
+    /** Expands the filter cards with the supplied `colIds`, or all filter cards if not supplied. */
+    expandFilters(colIds?: string[]): void;
+    /** Collapses the filter cards with the supplied `colIds`, or all filter cards if not supplied. */
+    collapseFilters(colIds?: string[]): void;
     getState(): NewFiltersToolPanelState;
 }
 
@@ -81,6 +85,7 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     remove(id: string): void;
     getState(id: string): FilterPanelFilterState | undefined;
     expand(id: string, expanded: boolean): void;
+    setFiltersExpanded(expanded: boolean, ids?: string[]): void;
     updateType(id: string, filterDef: SelectableFilterDef): void;
     getActions(): { actions: FilterAction[]; canApply: boolean } | undefined;
     doAction(action: FilterAction): void;

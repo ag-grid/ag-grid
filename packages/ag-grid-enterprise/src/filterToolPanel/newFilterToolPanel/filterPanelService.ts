@@ -190,6 +190,20 @@ export class FilterPanelService
         });
     }
 
+    public setFiltersExpanded(expanded: boolean, ids?: string[]): void {
+        const states = this.states;
+        for (const id of ids ?? this.getIds()) {
+            const state = states.get(id)?.state;
+            if (state && state.expanded !== expanded) {
+                this.expand(id, expanded);
+            }
+        }
+        const unrecognisedColIds = ids?.filter((id) => !states.has(id));
+        if (unrecognisedColIds?.length) {
+            this.beans.log.warn(167, { unrecognisedColIds });
+        }
+    }
+
     public updateType(id: string, filterDef: SelectableFilterDef): void {
         const stateWrapper = this.states.get(id);
         if (!stateWrapper) {

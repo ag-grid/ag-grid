@@ -69,6 +69,49 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 {% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
 
+## Expand / Collapse Filters
+
+The filter cards in the tool panel can be expanded and collapsed by invoking methods on the Filters Tool Panel instance:
+
+```ts
+interface INewFiltersToolPanel {
+    expandFilters(colIds?: string[]): void;
+    collapseFilters(colIds?: string[]): void;
+    ... // other methods
+}
+```
+
+The code snippet below shows how to expand and collapse filter cards using the Filters Tool Panel instance:
+
+```{% frameworkTransform=true %}
+// lookup Filters Tool Panel instance by id, in this case using the default new filters tool panel id
+const filtersToolPanel = api.getToolPanelInstance('filters-new');
+
+// expands all filter cards in the Filters Tool Panel
+filtersToolPanel.expandFilters();
+
+// collapses all filter cards in the Filters Tool Panel
+filtersToolPanel.collapseFilters();
+
+// expands the 'age' and 'country' filter cards in the Filters Tool Panel
+filtersToolPanel.expandFilters(['age', 'country']);
+
+// collapses the 'age' filter card in the Filters Tool Panel
+filtersToolPanel.collapseFilters(['age']);
+```
+
+Only filters which currently have a card in the tool panel are affected. Supplying a `colId` for a filter which has not been added to the tool panel will not add it.
+
+The example below demonstrates these methods in action. Note the following:
+
+- When the grid is initialised, the **Athlete**, **Age** and **Country** filter cards are shown collapsed via [Filters Tool Panel State](#filters-tool-panel-state).
+- Clicking **Expand Age & Country** just expands the 'age' and 'country' filter cards using: `expandFilters(['age', 'country'])`.
+- Clicking **Collapse Age** just collapses the 'age' filter card using: `collapseFilters(['age'])`.
+- Clicking **Expand All** expands all filter cards using: `expandFilters()`.
+- Clicking **Collapse All** collapses all filter cards using: `collapseFilters()`.
+
+{% gridExampleRunner title="Expand / Collapse Filters" name="expand-collapse-filters" /%}
+
 ## Filter Instances
 
 The filters provided in the tool panel are the same instances as the filter in the column menu. This has the following implications:

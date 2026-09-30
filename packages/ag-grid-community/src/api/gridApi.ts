@@ -66,6 +66,7 @@ import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFi
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
+import type { INewFiltersToolPanel } from '../interfaces/iNewFiltersToolPanel';
 import type { PdfExportParams } from '../interfaces/iPdfCreator';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -1441,6 +1442,7 @@ export interface _SideBarGridApi<TData> {
 
     getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
     getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    getToolPanelInstance(id: 'filters-new'): INewFiltersToolPanel | undefined;
     // This override is a duplicate but is required to make the general override public
     getToolPanelInstance<TToolPanel = IToolPanel<TData>>(id: string): TToolPanel | undefined;
     /**
