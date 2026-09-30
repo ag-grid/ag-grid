@@ -127,6 +127,12 @@ describe('dev validations guard', () => {
         expect(extractDevValidationsArgs(code)).toBe('{ showOverlayOn: [] }');
     });
 
+    it('keeps multi-line args containing a commented-out option', () => {
+        const code = guarded('enableDevValidations({\n        // debug: true\n    })');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('{\n        // debug: true\n    }');
+    });
+
     it('returns empty args when there is no guard', () => {
         expect(extractDevValidationsArgs('const x = 1;')).toBe('');
     });
