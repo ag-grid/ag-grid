@@ -1,7 +1,26 @@
-import type { AbstractColDef, AgColumn, BeanCollection, ColDef, ColumnModel } from 'ag-grid-community';
+import type { AbstractColDef, AgColumn, BeanCollection, ColDef, ColumnModel, HeaderLocation } from 'ag-grid-community';
 import { AgProvidedColumnGroup, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { isColGroupDef, mergeLeafPathTrees } from './sideBarUtils';
+
+/** Tool panels build their own copy of each group; user callbacks get the grid's group where one exists. */
+export function getGridColumnGroup(beans: BeanCollection, group: AgProvidedColumnGroup): AgProvidedColumnGroup {
+    return beans.colModel.colDefGroupsById.get(group.groupId) ?? group;
+}
+
+/** Names come from the copy's definition, which a custom layout may set, while `headerValueGetter` gets the grid's group. */
+export function getToolPanelGroupName(
+    beans: BeanCollection,
+    group: AgProvidedColumnGroup,
+    location: HeaderLocation
+): string | null {
+    return beans.colNames.getDisplayNameForProvidedColumnGroup(
+        null,
+        getGridColumnGroup(beans, group),
+        location,
+        group.colGroupDef
+    );
+}
 
 export function toolPanelCreateColumnTree(
     beans: BeanCollection,

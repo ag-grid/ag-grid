@@ -20,6 +20,7 @@ import {
 } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
+import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
 import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
@@ -72,6 +73,10 @@ export class ToolPanelFilterGroupComp extends Component {
 
         const column = this.showingColumn ? (this.columnGroup as AgColumn) : undefined;
         const getColDef = () => column?.colDef ?? (this.columnGroup as AgProvidedColumnGroup).getColGroupDef();
+        const getTooltipColumn = () => {
+            const { columnGroup } = this;
+            return isProvidedColumnGroup(columnGroup) ? getGridColumnGroup(this.beans, columnGroup) : columnGroup;
+        };
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => filterGroupComp.getTitleBarGui(),
@@ -85,7 +90,7 @@ export class ToolPanelFilterGroupComp extends Component {
                         _addGridCommonParams<TooltipCallbackParams>(gos, {
                             location: 'filterToolPanelColumnGroup',
                             colDef,
-                            column: this.columnGroup,
+                            column: getTooltipColumn(),
                             value: displayName,
                             valueFormatted: displayName,
                         })
@@ -99,7 +104,7 @@ export class ToolPanelFilterGroupComp extends Component {
                     const colDef = getColDef();
                     return {
                         ...(colDef ? { colDef } : {}),
-                        column: this.columnGroup,
+                        column: getTooltipColumn(),
                         valueFormatted: this.filterGroupName,
                     };
                 },
@@ -279,7 +284,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: AgProvidedColumnGroup): string | null {
-        return this.beans.colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
+        return getToolPanelGroupName(this.beans, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: AgColumn): string | null {
