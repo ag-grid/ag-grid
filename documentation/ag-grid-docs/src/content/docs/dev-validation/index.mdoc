@@ -173,5 +173,5 @@ Defaults to `false`. As with the other options, `debug` is global and applies to
 `debug` replaces the `debug` grid option, which is deprecated. The grid option still works for now, but only enables debug logging for the grid it is set on.
 
 {% note %}
-Debug logging needs the `ValidationModule`, which `enableDevValidations` registers. To log debug information in a production build, call `enableDevValidations({ debug: true })` there too, bearing in mind that this adds the `ValidationModule` to your bundle.
+Debug logging needs the `ValidationModule`, which `enableDevValidations` registers. It is intended for development builds; calling it in a production build adds the `ValidationModule` to your bundle and, unless you pass `showOverlayOn: []`, shows the diagnostics overlay to your users.
 {% /note %}

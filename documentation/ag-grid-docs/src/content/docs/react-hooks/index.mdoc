@@ -187,7 +187,9 @@ A good way to diagnose if you are causing the grid to update on each render is t
 ```jsx
 import { enableDevValidations } from 'ag-grid-community';
 
-enableDevValidations({ debug: true });
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations({ debug: true });
+}
 
 const App = () => {
     return <AgGridReact />;

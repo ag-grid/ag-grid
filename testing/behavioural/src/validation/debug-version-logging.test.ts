@@ -2,7 +2,6 @@ import { TestGridsManager } from 'ag-test-utils';
 import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -102,14 +101,14 @@ describe('debug version logging', () => {
         });
 
         test('still logs debug output', () => {
-            gridsManager.createGrid('myGrid', { ...gridOptions, debug: true } as GridOptions);
+            gridsManager.createGrid('myGrid', { ...gridOptions, debug: true });
 
             expect(hasInitialisedLine()).toBe(true);
             expect(hasVersionLine()).toBe(true);
         });
 
         test('raises a deprecation naming enableDevValidations({ debug: true }) as the replacement', () => {
-            gridsManager.createGrid('myGrid', { ...gridOptions, debug: true } as GridOptions);
+            gridsManager.createGrid('myGrid', { ...gridOptions, debug: true });
 
             const debugDeprecations = consoleWarnSpy.mock.calls.filter((args) => {
                 const text = args.join(' ');

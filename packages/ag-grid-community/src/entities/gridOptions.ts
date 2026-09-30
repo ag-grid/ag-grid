@@ -1025,7 +1025,7 @@ export interface GridOptions<TData = any> {
      * Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
      * @default false
      * @initial
-     * @deprecated v36.2 use `enableDevValidations({ debug: true })` instead.
+     * @deprecated v36.2 Use `enableDevValidations({ debug: true })` instead.
      */
     debug?: boolean;
 
@@ -3204,8 +3204,7 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
 }
 
 type MenuCallbackReturn<TMenuItem extends string, TData = any, TContext = any> = (
-    | TMenuItem
-    | MenuItemDef<TData, TContext>
+    TMenuItem | MenuItemDef<TData, TContext>
 )[];
 
 export type GetContextMenuItems<TData = any, TContext = any> = (
@@ -3343,8 +3342,7 @@ export interface FillHandleOptions<TData = any, TContext = any> {
 }
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
-    | SingleRowSelectionOptions<TData, TValue, TContext>
-    | MultiRowSelectionOptions<TData, TValue, TContext>;
+    SingleRowSelectionOptions<TData, TValue, TContext> | MultiRowSelectionOptions<TData, TValue, TContext>;
 
 interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
@@ -3594,10 +3592,7 @@ export interface PageNumbersPanelParams {
 }
 
 export type PaginationPanelParams =
-    | PageSummaryPanelParams
-    | PageSizePanelParams
-    | RowSummaryPanelParams
-    | PageNumbersPanelParams;
+    PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams | PageNumbersPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | 'pageNumbers' | PaginationPanelParams;
 
