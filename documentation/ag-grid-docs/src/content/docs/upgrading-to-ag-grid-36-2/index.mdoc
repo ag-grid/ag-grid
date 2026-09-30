@@ -42,4 +42,12 @@ The following column definition (`ColDef`) properties remain supported, but the 
 
 Use `tooltip: true` when the tooltip should show the formatted value displayed in the cell.
 
+The following grid option (`GridOptions`) remains supported, but the replacement below is recommended:
+
+| Deprecated | Replacement                             |
+| ---------- | --------------------------------------- |
+| `debug`    | `enableDevValidations({ debug: true })` |
+
+The replacement applies to all grids on the page rather than a single grid, and requires the `ValidationModule`, which `enableDevValidations` registers. See [Debug Logging](./dev-validation/#debug-logging).
+
 {% changelogSection version=$migrationVersion /%}

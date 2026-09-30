@@ -1,9 +1,10 @@
 import { AgChartsCommunityModule } from 'ag-charts-community';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { IntegratedChartsModule, SparklinesModule } from 'ag-grid-enterprise';
 
 import { VERSION } from '../version';
@@ -23,6 +24,7 @@ describe('debug version logging with differently configured charts modules', () 
     let consoleLogSpy: MockInstance;
 
     beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, debug: true });
         consoleLogSpy = vitest.spyOn(console, 'log').mockImplementation(() => {});
     });
 
@@ -32,7 +34,7 @@ describe('debug version logging with differently configured charts modules', () 
         consoleLogSpy.mockRestore();
     });
 
-    const gridOptions = { columnDefs: [{ field: 'a' }], rowData: [], debug: true };
+    const gridOptions = { columnDefs: [{ field: 'a' }], rowData: [] };
 
     test('reports only the build the registered module was given', () => {
         integratedChartsOnlyGrids.reset();

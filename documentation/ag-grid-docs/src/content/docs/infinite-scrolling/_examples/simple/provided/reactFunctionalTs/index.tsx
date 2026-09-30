@@ -8,7 +8,7 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations();
+    enableDevValidations({ debug: true });
 }
 
 const modules = [InfiniteRowModelModule];

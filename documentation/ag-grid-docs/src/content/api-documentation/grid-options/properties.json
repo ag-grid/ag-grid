@@ -963,8 +963,7 @@
                 "name": "Triggering Value Change Detection",
                 "url": "./change-detection/#triggering-value-change-detection"
             }
-        },
-        "debug": {}
+        }
     },
     "overlays": {
         "meta": {
