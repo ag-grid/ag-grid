@@ -42,6 +42,7 @@ export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUt
 export { UserColumnService as _UserColumnService } from './columns/userColumns/userColumnService';
 export { _isCalculatedColumnsEnabled, _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
 export { BaseSingleColService as _BaseSingleColService } from './columns/baseSingleColService';
+export { _setColGroupHeaderNameOverride } from './columns/columnGroups/columnGroupState';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';

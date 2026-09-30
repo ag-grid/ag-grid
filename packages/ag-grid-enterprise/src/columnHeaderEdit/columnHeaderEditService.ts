@@ -6,7 +6,7 @@ import type {
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _setColGroupHeaderNameOverride, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
 
@@ -81,16 +81,8 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            const overrides = this.beans.colModel.groupHeaderNameOverrides;
-            const { groupId } = target;
-            const current = overrides.get(groupId) ?? null;
-            if (current === headerName) {
+            if (!_setColGroupHeaderNameOverride(this.beans, target.groupId, headerName)) {
                 return;
-            }
-            if (headerName == null) {
-                overrides.delete(groupId);
-            } else {
-                overrides.set(groupId, headerName);
             }
             this.beans.eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',

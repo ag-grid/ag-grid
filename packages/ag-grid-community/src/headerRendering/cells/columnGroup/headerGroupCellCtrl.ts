@@ -2,7 +2,6 @@ import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
-import { _isHeaderNameChangeForGroup } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -351,14 +350,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addManagedListeners(providedColGroup, {
             expandedChanged: listener,
             expandableChanged: listener,
+            headerNameChanged: () => this.refreshDisplayName(),
         });
         const groupId = providedColGroup.groupId;
         compBean.addManagedEventListeners({
-            columnHeaderNameChanged: (event) => {
-                if (_isHeaderNameChangeForGroup(event, groupId)) {
-                    this.refreshDisplayName();
-                }
-            },
             // Toggle the edit highlight in place (no header component recreation).
             columnHeaderEditHighlightChanged: (event) => {
                 if (!event.groupId || event.groupId === groupId) {

@@ -32,11 +32,20 @@ export const _setColGroupOpen = (
     _setColGroupState(beans, [{ groupId, open: newValue }], source);
 };
 
-const applyHeaderNameOverride = (overrides: Map<string, string>, stateItem: ColGroupState): boolean => {
-    const { groupId } = stateItem;
-    const headerName = stateItem.headerName ?? null;
-    const current = overrides.get(groupId) ?? null;
-    if (current === headerName) {
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Sets (or with `null`, clears) a group's header name override and fires `headerNameChanged` on the grid's group.
+ * Callers dispatch the grid-level `columnHeaderNameChanged` event, so a batch of renames can share one.
+ * Returns whether the name changed.
+ */
+export const _setColGroupHeaderNameOverride = (
+    beans: BeanCollection,
+    groupId: string,
+    headerName: string | null
+): boolean => {
+    const { colModel } = beans;
+    const overrides = colModel.groupHeaderNameOverrides;
+    if ((overrides.get(groupId) ?? null) === headerName) {
         return false;
     }
     if (headerName == null) {
@@ -44,6 +53,8 @@ const applyHeaderNameOverride = (overrides: Map<string, string>, stateItem: ColG
     } else {
         overrides.set(groupId, headerName);
     }
+    // Resolved by id: callers such as the tool panels hold their own copies of the group.
+    colModel.getColGroup(groupId)?.dispatchLocalEvent({ type: 'headerNameChanged' });
     return true;
 };
 
@@ -61,7 +72,6 @@ export const _setColGroupState = (
 
     colAnimation?.start();
     try {
-        const overrides = colModel.groupHeaderNameOverrides;
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
         let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
@@ -74,7 +84,10 @@ export const _setColGroupState = (
                 impactedGroups ??= [];
                 impactedGroups.push(group);
             }
-            if ('headerName' in stateItem && applyHeaderNameOverride(overrides, stateItem)) {
+            if (
+                'headerName' in stateItem &&
+                _setColGroupHeaderNameOverride(beans, group.groupId, stateItem.headerName ?? null)
+            ) {
                 renamedGroups ??= [];
                 renamedGroups.push(group);
             }
