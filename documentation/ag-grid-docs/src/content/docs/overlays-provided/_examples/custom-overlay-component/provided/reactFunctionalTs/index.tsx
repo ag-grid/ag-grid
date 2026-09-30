@@ -42,7 +42,7 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <div className="example-controls">
                     <div className="controls-row">
-                        <label className="checkbox">
+                        <label>
                             <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
                             loading
                         </label>
