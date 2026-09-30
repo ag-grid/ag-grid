@@ -13,7 +13,31 @@ const dash0 = vi.hoisted(() => ({
     reportError: vi.fn(),
     terminateSession: vi.fn(),
 }));
-vi.mock('@dash0/sdk-web', () => dash0);
+// Lets a test hold the SDK import open, or fail it, to reproduce what can happen while it loads
+const sdkLoader = vi.hoisted(() => ({
+    pending: undefined as Promise<void> | undefined,
+    failuresLeft: 0,
+}));
+const loadSdk = async () => {
+    await sdkLoader.pending;
+    if (sdkLoader.failuresLeft > 0) {
+        sdkLoader.failuresLeft--;
+        throw new Error('Failed to fetch dynamically imported module');
+    }
+    return dash0;
+};
+
+function holdSdkImport() {
+    let release!: () => void;
+    sdkLoader.pending = new Promise<void>((resolve) => {
+        release = resolve;
+    });
+    return async () => {
+        release();
+        sdkLoader.pending = undefined;
+        await vi.dynamicImportSettled();
+    };
+}
 
 const CONFIG = {
     serviceName: 'test-website',
@@ -41,7 +65,17 @@ async function initWebsiteMonitoring() {
 beforeEach(() => {
     vi.clearAllMocks();
     delete (window as any)[WEBSITE_MONITORING_QUEUE];
+    sdkLoader.pending = undefined;
+    sdkLoader.failuresLeft = 0;
+    // Registered per test, since a vi.mock factory's result outlives vi.resetModules
+    vi.doMock('@dash0/sdk-web', loadSdk);
 });
+
+function stubReload() {
+    const reload = vi.fn();
+    vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, reload });
+    return reload;
+}
 
 afterEach(() => {
     vi.restoreAllMocks();
@@ -85,8 +119,7 @@ describe('initWebsiteMonitoring', () => {
     });
 
     test('ends the session and reloads when GTM sends stop', async () => {
-        const reload = vi.fn();
-        vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, reload });
+        const reload = stubReload();
         await initWebsiteMonitoring();
         await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
 
@@ -97,8 +130,7 @@ describe('initWebsiteMonitoring', () => {
     });
 
     test('ignores stop when monitoring never started', async () => {
-        const reload = vi.fn();
-        vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, reload });
+        const reload = stubReload();
         await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
         await initWebsiteMonitoring();
         await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
@@ -106,6 +138,65 @@ describe('initWebsiteMonitoring', () => {
         expect(dash0.init).not.toHaveBeenCalled();
         expect(dash0.terminateSession).not.toHaveBeenCalled();
         expect(reload).not.toHaveBeenCalled();
+    });
+
+    describe('while the SDK is loading', () => {
+        // Commands are pushed without awaiting the import, which is being held open
+        const pushCommand = (script: string) => new Function(script)();
+
+        test('cancels the start when GTM sends stop, without initialising the SDK', async () => {
+            const reload = stubReload();
+            const releaseSdkImport = holdSdkImport();
+            vi.resetModules();
+            const { initWebsiteMonitoring } = await import('./websiteMonitoring');
+            initWebsiteMonitoring(CONFIG);
+
+            pushCommand(WEBSITE_MONITORING_GTM_START_SCRIPT);
+            pushCommand(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
+            await releaseSdkImport();
+
+            expect(dash0.init).not.toHaveBeenCalled();
+            expect(dash0.terminateSession).not.toHaveBeenCalled();
+            expect(reload).not.toHaveBeenCalled();
+        });
+
+        test('cancels a start queued before monitoring loaded when a stop is queued after it', async () => {
+            const releaseSdkImport = holdSdkImport();
+            pushCommand(WEBSITE_MONITORING_GTM_START_SCRIPT);
+            pushCommand(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
+            vi.resetModules();
+            const { initWebsiteMonitoring } = await import('./websiteMonitoring');
+            initWebsiteMonitoring(CONFIG);
+            await releaseSdkImport();
+
+            expect(dash0.init).not.toHaveBeenCalled();
+        });
+
+        test('starts once when consent is withdrawn and granted again', async () => {
+            const releaseSdkImport = holdSdkImport();
+            vi.resetModules();
+            const { initWebsiteMonitoring } = await import('./websiteMonitoring');
+            initWebsiteMonitoring(CONFIG);
+
+            pushCommand(WEBSITE_MONITORING_GTM_START_SCRIPT);
+            pushCommand(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
+            pushCommand(WEBSITE_MONITORING_GTM_START_SCRIPT);
+            await releaseSdkImport();
+
+            expect(dash0.init).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    test('retries on the next start when the SDK fails to load', async () => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        sdkLoader.failuresLeft = 1;
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+        expect(dash0.init).not.toHaveBeenCalled();
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledTimes(1);
     });
 });
 

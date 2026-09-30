@@ -14,7 +14,8 @@ export interface WebsiteMonitoringConfig {
 const SESSION_INACTIVITY_TIMEOUT_MILLIS = 30 * 60 * 1000;
 const SESSION_TERMINATION_TIMEOUT_MILLIS = 4 * 60 * 60 * 1000;
 
-let hasStarted = false;
+// 'starting' covers the SDK import, which a stop can overtake
+let state: 'stopped' | 'starting' | 'running' = 'stopped';
 let sdk: typeof Dash0 | undefined;
 
 /**
@@ -24,9 +25,9 @@ let sdk: typeof Dash0 | undefined;
  * That decision is made in Google Tag Manager, whose tags send `start` and `stop` commands (see
  * ./gtmTags). This takes over the command queue and runs whatever was sent to it before it loaded.
  *
- * The SDK is imported on start, so a visitor without consent is never sent it. It has no way to
- * stop once initialised, so `stop` ends the session and reloads the page, which leaves it
- * uninitialised.
+ * The SDK is imported on start, so a visitor without consent is never sent it. A stop that arrives
+ * while it is still loading cancels the start. Once initialised it has no way to stop, so `stop`
+ * then ends the session and reloads the page, which leaves it uninitialised.
  */
 export function initWebsiteMonitoring(config: WebsiteMonitoringConfig) {
     const globals = window as any;
@@ -38,9 +39,8 @@ export function initWebsiteMonitoring(config: WebsiteMonitoringConfig) {
 function runCommand(command: unknown, config: WebsiteMonitoringConfig) {
     if (command === 'start') {
         startMonitoring(config);
-    } else if (command === 'stop' && hasStarted) {
-        sdk?.terminateSession();
-        window.location.reload();
+    } else if (command === 'stop') {
+        stopMonitoring();
     }
 }
 
@@ -51,13 +51,17 @@ async function startMonitoring({
     endpointUrl,
     authToken,
 }: WebsiteMonitoringConfig) {
-    if (hasStarted) {
+    if (state !== 'stopped') {
         return;
     }
-    hasStarted = true;
+    state = 'starting';
 
     try {
         const dash0 = await import('@dash0/sdk-web');
+        if (state !== 'starting') {
+            // Stopped while the SDK was loading, so there is nothing to undo
+            return;
+        }
         dash0.init({
             serviceName,
             serviceVersion,
@@ -67,9 +71,23 @@ async function startMonitoring({
             sessionTerminationTimeoutMillis: SESSION_TERMINATION_TIMEOUT_MILLIS,
         });
         sdk = dash0;
+        state = 'running';
     } catch (error) {
+        // Let the next start retry, e.g. after a transient network failure loading the SDK
+        if (state === 'starting') {
+            state = 'stopped';
+        }
         // eslint-disable-next-line no-console
         console.warn('Website monitoring failed to start', error);
+    }
+}
+
+function stopMonitoring() {
+    if (state === 'starting') {
+        state = 'stopped';
+    } else if (state === 'running') {
+        sdk?.terminateSession();
+        window.location.reload();
     }
 }
 
