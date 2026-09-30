@@ -333,6 +333,34 @@ export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, piv
     return !!node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode);
 }
 
+export type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
+
+/** How a row renders, decided from the node alone so it holds before the row is rendered. */
+export function _getRowType(beans: BeanCollection, rowNode: RowNode): RowType {
+    const { gos, colModel, rowModel } = beans;
+    // groupHideOpenParents implicitly disables full width loading
+    const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow');
+    const groupHideOpenParents = gos.get('groupHideOpenParents');
+    if (rowModel.getType() === 'serverSide' && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents) {
+        return 'FullWidthLoading';
+    }
+    if (gos.get('masterDetail') && rowNode.detail) {
+        return 'FullWidthDetail';
+    }
+    if (
+        !_isClientSideLoadingRow(gos, rowNode) &&
+        (rowNode.detail || gos.getCallback('isFullWidthRow')?.({ rowNode }))
+    ) {
+        return 'FullWidth';
+    }
+    // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
+    // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
+    const isSuppressedGroupStub = suppressFullWidthLoading && rowNode.stub && !groupHideOpenParents;
+    return _isFullWidthGroupRow(gos, rowNode, colModel.pivotMode) && !isSuppressedGroupStub
+        ? 'FullWidthGroup'
+        : 'Normal';
+}
+
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowIdCallback<TData = any>(

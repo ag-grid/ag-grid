@@ -128,7 +128,10 @@ export interface Column<TValue = any>
     /** Remove event listener from the column. */
     removeEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
 
-    /** Returns `true` if navigation is suppressed for the given column and rowNode. */
+    /**
+     * Returns `true` if navigation is suppressed for the given column and rowNode.
+     * Where a `colSpan` covers this column, keyboard navigation judges the column the spanning cell starts in.
+     */
     isSuppressNavigable(rowNode: IRowNode): boolean;
 
     /**

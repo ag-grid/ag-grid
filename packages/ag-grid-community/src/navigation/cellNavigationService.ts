@@ -4,11 +4,10 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { _getRowAbove, _getRowBelow } from '../entities/positionUtils';
-import type { RowNode } from '../entities/rowNode';
+import { RowFocusResolver, _getRowAbove, _getRowBelow } from '../entities/positionUtils';
 import { _isClientSideLoadingRow } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellNavigationService extends BeanStub implements NamedBean {
@@ -35,7 +34,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         let column: AgColumn | undefined;
         let rowIndex: number;
 
-        const { pageBounds, gos, visibleCols, pinnedRowModel } = this.beans;
+        const { pageBounds, gos, pinnedRowModel } = this.beans;
         const { rowPinned } = focusedCell;
         if (upKey || downKey) {
             if (rowPinned && pinnedRowModel) {
@@ -52,19 +51,8 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             }
             column = focusedCell.column as AgColumn;
         } else {
-            const isRtl = gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
-            const allColumns = leftKey !== isRtl ? visibleCols.allCols : [...visibleCols.allCols].reverse();
-
-            column = allColumns.find(
-                (col) =>
-                    !isRowNumberCol(col) &&
-                    this.isCellGoodToFocusOn({
-                        rowIndex,
-                        rowPinned: null,
-                        column: col,
-                    })
-            );
+            column = this.getRowEdgeCol(rowIndex, rowPinned, leftKey === gos.get('enableRtl'));
         }
 
         return column
@@ -81,6 +69,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         // focus on.
         let pointer: CellPosition | null = focusedCell;
         let finished = false;
+        const resolver = new RowFocusResolver(this.beans);
 
         // finished will be true when either:
         // a) cell found that we can focus on
@@ -107,7 +96,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             }
 
             if (pointer) {
-                finished = this.isCellGoodToFocusOn(pointer);
+                finished = this.isCellGoodToFocusOn(pointer, resolver);
             } else {
                 finished = true;
             }
@@ -116,29 +105,22 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return pointer;
     }
 
-    private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
-        const column = gridCell.column as AgColumn;
-        let rowNode: RowNode | undefined;
-        const { pinnedRowModel, rowModel } = this.beans;
-
-        switch (gridCell.rowPinned) {
-            case 'top':
-                rowNode = pinnedRowModel?.getPinnedTopRow(gridCell.rowIndex);
-                break;
-            case 'bottom':
-                rowNode = pinnedRowModel?.getPinnedBottomRow(gridCell.rowIndex);
-                break;
-            default:
-                rowNode = rowModel.getRow(gridCell.rowIndex);
-                break;
+    /** The first column from one end of the row, row numbers aside, whose cell can take focus. */
+    public getRowEdgeCol(rowIndex: number, rowPinned: RowPinnedType, fromEnd: boolean): AgColumn | undefined {
+        const allCols = this.beans.visibleCols.allCols;
+        const resolver = new RowFocusResolver(this.beans);
+        for (let i = 0, len = allCols.length; i < len; ++i) {
+            const column = allCols[fromEnd ? len - 1 - i : i];
+            if (!isRowNumberCol(column) && this.isCellGoodToFocusOn({ rowIndex, rowPinned, column }, resolver)) {
+                return column;
+            }
         }
+        return undefined;
+    }
 
-        if (!rowNode) {
-            return false;
-        }
-
-        const suppressNavigable = this.isSuppressNavigable(column, rowNode);
-        return !suppressNavigable;
+    private isCellGoodToFocusOn(gridCell: CellPosition, resolver: RowFocusResolver): boolean {
+        const rowNode = resolver.getRowNode(gridCell);
+        return !!rowNode && !this.isSuppressNavigable(resolver.getFocusColumn(gridCell), rowNode);
     }
 
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
@@ -224,6 +206,22 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         }
 
         return null;
+    }
+
+    /**
+     * The next cell in tab order, across rows, that can take focus, or a full-width row, which Tab enters whatever
+     * its columns; null past the last one on the page.
+     */
+    public getNextTabStop(
+        gridCell: CellPosition,
+        backwards: boolean,
+        resolver: RowFocusResolver = new RowFocusResolver(this.beans)
+    ): CellPosition | null {
+        let next = this.getNextTabbedCell(gridCell, backwards);
+        while (next && !this.isCellGoodToFocusOn(next, resolver) && !resolver.isFullWidth(next)) {
+            next = this.getNextTabbedCell(next, backwards);
+        }
+        return next;
     }
 
     public getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null {

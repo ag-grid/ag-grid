@@ -7,9 +7,11 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
+import { _getRowColSpan } from './columnSpanUtils';
 import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
@@ -45,6 +47,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
     public colSpanActive = false;
+    /** `allCols` with `colDef.colSpan`, the only cells that can span; reused across refreshes. */
+    private readonly colSpanCols: AgColumn[] = [];
 
     /** `allCols` with a legacy `colDef.rowSpan`, whose cells re-read it as their row's data changes. */
     public readonly rowSpanCols: AgColumn[] = [];
@@ -333,6 +337,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         ++this.displayedColsVersion;
         this.autoHeightCols.length = 0;
         this.colSpanActive = false;
+        this.colSpanCols.length = 0;
         this.rowSpanCols.length = 0;
     }
 
@@ -369,6 +374,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
         this.colSpanActive = false;
+        this.colSpanCols.length = 0;
         this.rowSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
         this.flexActive = false;
@@ -401,7 +407,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         hidePaddedHeaderRows: boolean,
         source: ColumnEventType
     ): number {
-        const { autoHeightCols, rowSpanCols } = this;
+        const { autoHeightCols, colSpanCols, rowSpanCols } = this;
         let left = 0;
         // Leaves under one group are contiguous; skip the parent-chain walk for same-parent runs.
         let lastParent: AgColumnGroup | null = null;
@@ -416,6 +422,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             }
             if (col.colSpan != null) {
                 this.colSpanActive = true;
+                colSpanCols.push(col);
             }
             if (col.rowSpan != null) {
                 rowSpanCols.push(col);
@@ -439,6 +446,40 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             left += col.actualWidth;
         }
         return left;
+    }
+
+    /** Fills `spanEnds` with, per colSpan column, the `allColsIndex` of the last column of the cell covering it in
+     *  `rowNode`, stepping spans as `_getColsForRow` does, reading and filling the rendered row's `colSpans`. */
+    public fillRowSpanEnds(rowNode: IRowNode, spanEnds: number[], colSpans: number[] | undefined): void {
+        const { allCols, colSpanCols } = this;
+        spanEnds.length = 0;
+        // OPTIMISATION: a column without colSpan is one cell, so only colSpan columns are stepped
+        let coveredTo = -1;
+        for (let i = 0, len = colSpanCols.length; i < len; ++i) {
+            const start = colSpanCols[i].allColsIndex;
+            if (start > coveredTo) {
+                coveredTo = start + _getRowColSpan(rowNode, allCols, start, colSpans) - 1;
+            }
+            spanEnds.push(coveredTo);
+        }
+    }
+
+    /** The column whose cell covers `column`, in the row `fillRowSpanEnds` filled `spanEnds` for. */
+    public getSpanningCol(spanEnds: number[], column: AgColumn): AgColumn {
+        const target = column.allColsIndex;
+        // cells never overlap, so the ends only grow and the first to reach `target` is the cell spanning it, if any
+        let low = 0;
+        let high = spanEnds.length;
+        while (low < high) {
+            const mid = (low + high) >>> 1;
+            if (spanEnds[mid] < target) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        const spanning = this.colSpanCols[low];
+        return spanning !== undefined && spanning.allColsIndex <= target ? spanning : column;
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {

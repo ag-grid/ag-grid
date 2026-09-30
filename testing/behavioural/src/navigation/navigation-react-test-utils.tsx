@@ -2,10 +2,15 @@ import { render } from '@testing-library/react';
 import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-export async function renderNavGrid(opts: { rowData: any[]; columnDefs: ColDef[] }): Promise<GridApi> {
+export async function renderNavGrid(opts: {
+    rowData: any[];
+    columnDefs: ColDef[];
+    /** `onGridReady` is the helper's own, to resolve the api. */
+    gridOptions?: Omit<GridOptions, 'onGridReady' | 'rowData' | 'columnDefs'>;
+}): Promise<GridApi> {
     let resolveReady!: (api: GridApi) => void;
     const readyPromise = new Promise<GridApi>((resolve) => {
         resolveReady = resolve;
@@ -19,6 +24,7 @@ export async function renderNavGrid(opts: { rowData: any[]; columnDefs: ColDef[]
             suppressColumnVirtualisation
             animateRows={false}
             ensureDomOrder
+            {...opts.gridOptions}
             onGridReady={(e) => resolveReady(e.api)}
         />
     );

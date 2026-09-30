@@ -92,8 +92,10 @@ describe('Focus override callbacks', () => {
             focusSvcAny.beans = {
                 gos,
                 eRootDiv: rootDiv,
+                colModel: { pivotMode: false },
                 visibleCols: {
                     headerGroupRowCount: 0,
+                    colSpanActive: false,
                 },
                 ctrlsSvc: {
                     getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
@@ -306,7 +308,7 @@ describe('Focus override callbacks', () => {
             }
         });
 
-        test('tabToNextGridContainer default target: backwards into gridBody returns a real cell target', () => {
+        test('tabToNextGridContainer default target: backwards into gridBody is null when the last row has no node, else a real cell target', () => {
             const column = createColumn('athlete');
             const columnAny = column as any;
             columnAny.isSuppressNavigable = vi.fn(() => false);
@@ -316,9 +318,42 @@ describe('Focus override callbacks', () => {
             gui.appendChild(focusable);
 
             focusSvcAny.visibleCols = { allCols: [column] };
+            const getRow = vi.fn((_index: number): { id: string } | undefined => ({ id: 'row-0' }));
+            focusSvcAny.beans.rowModel = { getRowCount: () => 1, getRow, getType: () => 'clientSide' };
+            focusSvcAny.beans.pageBounds = {
+                getFirstRow: () => 0,
+                getLastRow: () => 0,
+            };
+            focusSvcAny.beans.pinnedRowModel = {
+                getPinnedTopRowCount: () => 0,
+                getPinnedBottomRowCount: () => 0,
+            };
+            const backwardsTarget = () =>
+                focusSvc.getDefaultTabToNextGridContainerTarget({
+                    backwards: true,
+                    focusableContainers: [container],
+                    nextIndex: 0,
+                });
+
+            getRow.mockReturnValueOnce(undefined);
+            const noNode = backwardsTarget();
+
+            expect({ noNode, node: backwardsTarget() }).toEqual({
+                noNode: null,
+                node: { rowIndex: 0, rowPinned: null, column },
+            });
+        });
+
+        test('focusGridView focuses the entry cell through navigation, scrolling to it, and with nothing rendered there marks the cell that takes focus, with its range', () => {
+            const spanning = createColumn('athlete');
+            const covered = createColumn('country');
+            (spanning as any).isSuppressNavigable = vi.fn(() => false);
+            (covered as any).isSuppressNavigable = vi.fn(() => false);
+
             focusSvcAny.beans.rowModel = {
                 getRowCount: () => 1,
                 getRow: vi.fn(() => ({ id: 'row-0' })),
+                getType: () => 'clientSide',
             };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
@@ -328,18 +363,107 @@ describe('Focus override callbacks', () => {
                 getPinnedTopRowCount: () => 0,
                 getPinnedBottomRowCount: () => 0,
             };
-            focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
+            const setFocusedCell = vi.spyOn(focusSvc, 'setFocusedCell').mockImplementation(() => undefined);
+            const setRangeToCell = vi.fn((_cell: CellPosition) => undefined);
+            focusSvcAny.beans.rangeSvc = { setRangeToCell };
+            const enterAt = (column: Column, colSpanActive: boolean, hasCellCtrl = true) => {
+                const navigation = {
+                    focusCellOrRow: vi.fn((_cell: CellPosition, _scroll: boolean, _backwards: boolean) => hasCellCtrl),
+                    keepCoveredColumn: vi.fn((_cell: CellPosition, _focusedColumn: Column) => undefined),
+                };
+                focusSvcAny.navigation = navigation;
+                const visibleCols = focusSvcAny.beans.visibleCols;
+                visibleCols.colSpanActive = colSpanActive;
+                // the spans come from those the row drew, or from its colSpan callbacks with nothing rendered
+                visibleCols.fillRowSpanEnds = vi.fn();
+                visibleCols.getSpanningCol = (_spanEnds: number[], col: Column) => (col === covered ? spanning : col);
+                focusSvcAny.beans.rowRenderer = {
+                    getRowByPosition: () =>
+                        hasCellCtrl
+                            ? { getCellCtrl: (col: Column) => (col === spanning ? {} : null), getColSpans: () => [] }
+                            : null,
+                };
+                setFocusedCell.mockClear();
+                setRangeToCell.mockClear();
+                focusSvc.focusGridView({ column: column as any });
+                return {
+                    focusCell: navigation.focusCellOrRow.mock.calls.map(([cell, scroll, backwards]) => [
+                        cell.column.getColId(),
+                        scroll,
+                        backwards,
+                    ]),
+                    fallback: setFocusedCell.mock.calls.map(([cell]) => (cell.column as Column).getColId()),
+                    range: setRangeToCell.mock.calls.map(([cell]) => cell.column.getColId()),
+                    kept: navigation.keepCoveredColumn.mock.calls.map(([cell, focusedColumn]) => [
+                        cell.column.getColId(),
+                        focusedColumn.getColId(),
+                    ]),
+                };
+            };
 
-            const target = focusSvc.getDefaultTabToNextGridContainerTarget({
-                backwards: true,
-                focusableContainers: [container],
-                nextIndex: 0,
+            expect({
+                rendered: enterAt(covered, true),
+                plainWithoutCellCtrl: enterAt(covered, false, false),
+                spannedWithoutCellCtrl: enterAt(covered, true, false),
+            }).toEqual({
+                rendered: { focusCell: [['country', true, false]], fallback: [], range: [], kept: [] },
+                plainWithoutCellCtrl: {
+                    focusCell: [['country', true, false]],
+                    fallback: ['country'],
+                    range: ['country'],
+                    kept: [['country', 'country']],
+                },
+                // the entry column is kept for the next vertical move, as when the cell is rendered
+                spannedWithoutCellCtrl: {
+                    focusCell: [['country', true, false]],
+                    fallback: ['athlete'],
+                    range: ['athlete'],
+                    kept: [['country', 'athlete']],
+                },
             });
+        });
 
-            expect(target).toEqual({
-                rowIndex: 0,
-                rowPinned: null,
-                column,
+        test('focusGridView Tab walks on past an entry row with nothing navigable, and marks the tab stop focused when neither a cell nor a full-width row is rendered there', () => {
+            const entry = createColumn('athlete');
+            const next = createColumn('country');
+            (entry as any).isSuppressNavigable = vi.fn(() => true);
+            focusSvcAny.beans.rowModel = {
+                getRowCount: () => 2,
+                getRow: vi.fn(() => ({ id: 'row' })),
+                getType: () => 'clientSide',
+            };
+            focusSvcAny.beans.pageBounds = { getFirstRow: () => 0, getLastRow: () => 1 };
+            focusSvcAny.beans.pinnedRowModel = { getPinnedTopRowCount: () => 0, getPinnedBottomRowCount: () => 0 };
+            focusSvcAny.beans.cellNavigation = {
+                getNextTabStop: vi.fn(() => ({ rowIndex: 1, rowPinned: null, column: next })),
+            };
+            focusSvcAny.beans.rangeSvc = { setRangeToCell: vi.fn() };
+            const setFocusedCell = vi.spyOn(focusSvc, 'setFocusedCell').mockImplementation(() => undefined);
+            vi.spyOn(focusSvc, 'isCellFocused').mockReturnValue(true);
+            const tabWith = (tabStopRendered: boolean) => {
+                const navigation = {
+                    navigateToNextCell: vi.fn(() => false),
+                    focusCellOrRow: vi.fn(
+                        (_cell: CellPosition, _scroll: boolean, _backwards: boolean) => tabStopRendered
+                    ),
+                    keepCoveredColumn: vi.fn(),
+                };
+                focusSvcAny.navigation = navigation;
+                setFocusedCell.mockClear();
+                focusSvc.focusGridView({ column: entry as any });
+                return {
+                    focusCellOrRow: navigation.focusCellOrRow.mock.calls.map(([cell, scroll, backwards]) => [
+                        cell.column.getColId(),
+                        scroll,
+                        backwards,
+                    ]),
+                    fallback: setFocusedCell.mock.calls.map(([cell]) => (cell.column as Column).getColId()),
+                };
+            };
+
+            expect({ rendered: tabWith(true), notRendered: tabWith(false) }).toEqual({
+                rendered: { focusCellOrRow: [['country', true, false]], fallback: [] },
+                notRendered: { focusCellOrRow: [['country', true, false]], fallback: ['country'] },
             });
         });
 
@@ -380,6 +504,7 @@ describe('Focus override callbacks', () => {
             focusSvcAny.beans.rowModel = {
                 getRowCount: () => 1,
                 getRow: vi.fn(() => ({ id: 'row-0' })),
+                getType: () => 'clientSide',
             };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
@@ -389,7 +514,6 @@ describe('Focus override callbacks', () => {
                 getPinnedTopRowCount: () => 0,
                 getPinnedBottomRowCount: () => 0,
             };
-            focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: false,
@@ -420,6 +544,7 @@ describe('Focus override callbacks', () => {
             focusSvcAny.beans.rowModel = {
                 getRowCount: () => 1,
                 getRow: vi.fn(() => ({ id: 'row-0' })),
+                getType: () => 'clientSide',
             };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
@@ -429,7 +554,6 @@ describe('Focus override callbacks', () => {
                 getPinnedTopRowCount: () => 0,
                 getPinnedBottomRowCount: () => 0,
             };
-            focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: false,
@@ -480,9 +604,13 @@ describe('Focus override callbacks', () => {
                 },
                 focusSvc: {
                     focusHeaderPosition: vi.fn(),
+                    focusPosition: vi.fn(),
                 },
                 rowRenderer: {
                     getRowByPosition: vi.fn(),
+                },
+                rowModel: {
+                    getRow: vi.fn(),
                 },
                 ctrlsSvc: {
                     getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
@@ -537,11 +665,89 @@ describe('Focus override callbacks', () => {
             });
         });
 
+        test('focusCellOrRow scrolls to the cell, again to a spanning cell that takes the focus, and to a row-spanned cell too, unless the caller has scrolled', () => {
+            const ensureCellVisible = vi.spyOn(navigationSvc, 'ensureCellVisible').mockImplementation(() => undefined);
+            const focusCell = (target: CellPosition, focused: CellPosition, rowSpanned = false, scroll = true) => {
+                navigationSvcAny.beans.spannedRowRenderer = { getCellByPosition: () => (rowSpanned ? {} : undefined) };
+                navigationSvcAny.beans.rowRenderer.getRowByPosition.mockReturnValue({
+                    getCellCtrl: () => ({ getFocusedCellPosition: () => focused }),
+                });
+                ensureCellVisible.mockClear();
+                navigationSvc.focusCellOrRow(target, scroll);
+                return ensureCellVisible.mock.calls.map(([cell]) => cell.column.getColId());
+            };
+
+            const covered: CellPosition = { rowIndex: 0, rowPinned: null, column: colB };
+            const spanning: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
+
+            expect({
+                plain: focusCell(covered, covered),
+                spanned: focusCell(covered, spanning),
+                rowSpanned: focusCell(covered, covered, true),
+                spannedScrolled: focusCell(covered, spanning, false, false),
+            }).toEqual({ plain: ['b'], spanned: ['b', 'a'], rowSpanned: ['b'], spannedScrolled: [] });
+        });
+
+        test('Home and End scroll to the row, and leave scrolling to the cell to the focus', () => {
+            const ensureIndexVisible = vi.fn();
+            const ensureColumnVisible = vi.fn();
+            const focusCellAt = vi.fn((_cell: CellPosition, _scroll: boolean) => true);
+            navigationSvcAny.gridBodyCon = { scrollFeature: { ensureIndexVisible, ensureColumnVisible } };
+            navigationSvcAny.beans.focusSvc.focusCellAt = focusCellAt;
+            navigationSvcAny.beans.pageBounds = { getFirstRow: () => 0, getLastRow: () => 9 };
+            navigationSvcAny.beans.cellNavigation.getRowEdgeCol = (
+                _rowIndex: number,
+                _pinned: null,
+                fromEnd: boolean
+            ) => (fromEnd ? colB : colA);
+
+            navigationSvcAny.onHomeOrEndKey('Home');
+            navigationSvcAny.onHomeOrEndKey('End');
+
+            expect({
+                rowScrolls: ensureIndexVisible.mock.calls,
+                columnScrolls: ensureColumnVisible.mock.calls.length,
+                focused: focusCellAt.mock.calls.map(([cell, scroll]) => [
+                    cell.rowIndex,
+                    cell.column.getColId(),
+                    scroll,
+                ]),
+            }).toEqual({
+                rowScrolls: [
+                    [0, null],
+                    [9, null],
+                ],
+                columnScrolls: 0,
+                focused: [
+                    [0, 'a', true],
+                    [9, 'b', true],
+                ],
+            });
+        });
+
+        test('Ctrl+Arrow leaves scrolling to the focus, so a pinned row does not scroll the body', () => {
+            const ensureIndexVisible = vi.fn();
+            const focusCellAt = vi.fn((_cell: CellPosition, _scroll: boolean) => true);
+            navigationSvcAny.gridBodyCon = { scrollFeature: { ensureIndexVisible, ensureColumnVisible: vi.fn() } };
+            navigationSvcAny.beans.focusSvc.focusCellAt = focusCellAt;
+            navigationSvcAny.beans.cellNavigation.getNextCellToFocus = (_key: string, cell: CellPosition) => ({
+                ...cell,
+                rowIndex: 1,
+            });
+
+            navigationSvcAny.onCtrlUpDownLeftRight('ArrowDown', { rowIndex: 0, rowPinned: 'top', column: colA });
+
+            expect({
+                rowScrolls: ensureIndexVisible.mock.calls,
+                focused: focusCellAt.mock.calls.map(([cell, scroll]) => [cell.rowIndex, cell.rowPinned, scroll]),
+            }).toEqual({ rowScrolls: [], focused: [[1, 'top', true]] });
+        });
+
         test('navigateToNextCell: null result from callback stops navigation', () => {
             const navigateToNextCell = vi.fn(() => null);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
             vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockImplementation(() => null);
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -567,7 +773,7 @@ describe('Focus override callbacks', () => {
 
             const normalised = { ...userResult };
             vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             const defaultNext: CellPosition = { rowIndex: 0, rowPinned: null, column: colB };
@@ -633,7 +839,7 @@ describe('Focus override callbacks', () => {
 
             const normalised = { ...defaultNext };
             vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
 
             navigationSvc.navigateToNextCell(null, 'ArrowRight', current, false);
 
@@ -672,7 +878,7 @@ describe('Focus override callbacks', () => {
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             navigationSvcAny.beans.cellNavigation.getNextCellToFocus.mockReturnValue(null);
 
-            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = navigationSvcAny.beans.focusSvc.focusPosition;
             navigationSvc.navigateToNextCell(null, 'ArrowRight', current, true);
 
             expect(navigateToNextCell).toHaveBeenCalledWith({
@@ -779,8 +985,7 @@ describe('Focus override callbacks', () => {
                 },
                 focusSvc: {
                     getDefaultTabToNextGridContainerTarget: vi.fn(() => 'pagination'),
-                    setFocusedCell: vi.fn(),
-                    isCellFocused: vi.fn(() => true),
+                    focusCellAt: vi.fn(() => true),
                     focusHeaderPosition: vi.fn(),
                     focusFirstHeader: vi.fn(() => true),
                     focusGridView: vi.fn(() => true),
@@ -999,7 +1204,7 @@ describe('Focus override callbacks', () => {
             expect(gridCtrlAny.beans.navigation.ensureCellVisible).not.toHaveBeenCalled();
         });
 
-        test('tabToNextGridContainer: callback cell position is applied through focus service', () => {
+        test('tabToNextGridContainer: callback cell position is scrolled to and focused through focus service, undefined when focus is not achieved', () => {
             const targetCell: CellPosition = {
                 rowIndex: 2,
                 rowPinned: null,
@@ -1009,34 +1214,26 @@ describe('Focus override callbacks', () => {
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
-
-            const result = gridCtrl.focusNextInnerContainer(false);
             const { navigation, focusSvc } = gridCtrlAny.beans;
 
-            expect(result).toBe(true);
-            expect(navigation.ensureCellVisible).toHaveBeenCalledWith(targetCell);
-            expect(focusSvc.setFocusedCell).toHaveBeenCalledWith({ ...targetCell, forceBrowserFocus: true });
-            expect(focusSvc.isCellFocused).toHaveBeenCalledWith(targetCell);
-        });
+            const focused = gridCtrl.focusNextInnerContainer(false);
+            focusSvc.focusCellAt.mockReturnValue(false);
+            const notFocused = gridCtrl.focusNextInnerContainer(false);
 
-        test('tabToNextGridContainer: callback cell position returns undefined when focus is not achieved', () => {
-            const targetCell: CellPosition = {
-                rowIndex: 2,
-                rowPinned: null,
-                column: createColumn('country'),
-            };
-            const tabToNextGridContainer = vi.fn(() => targetCell);
-            getCallback.mockImplementation((key) =>
-                key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
-            );
-            const focusSvc = gridCtrlAny.beans.focusSvc;
-            focusSvc.isCellFocused.mockReturnValue(false);
-
-            const result = gridCtrl.focusNextInnerContainer(false);
-
-            expect(result).toBeUndefined();
-            expect(gridCtrlAny.beans.navigation.ensureCellVisible).toHaveBeenCalledWith(targetCell);
-            expect(focusSvc.setFocusedCell).toHaveBeenCalledWith({ ...targetCell, forceBrowserFocus: true });
+            expect({
+                focused,
+                notFocused,
+                focusCellAt: focusSvc.focusCellAt.mock.calls,
+                ownScrolls: navigation.ensureCellVisible.mock.calls.length,
+            }).toEqual({
+                focused: true,
+                notFocused: undefined,
+                focusCellAt: [
+                    [targetCell, true, false],
+                    [targetCell, true, false],
+                ],
+                ownScrolls: 0,
+            });
         });
 
         test('tabToNextGridContainer: callback header position routes through focus service', () => {

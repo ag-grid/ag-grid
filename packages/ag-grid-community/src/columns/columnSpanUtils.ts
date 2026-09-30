@@ -26,7 +26,7 @@ export function _getDrawnColSpan(cols: AgColumn[], index: number, rowNode: IRowN
 export function _getColsForRow(
     rowNode: IRowNode,
     displayedColumns: AgColumn[],
-    colSpans: number[] | null,
+    colSpans: number[] | null | undefined,
     filterCallback: ((column: AgColumn) => boolean) | null,
     emptySpaceBeforeColumn: ((column: AgColumn) => boolean) | null
 ): AgColumn[] {
@@ -59,8 +59,13 @@ export function _getColsForRow(
 }
 
 /** The drawn colSpan of the cell at `index`, read once per row when `colSpans` keeps the row's colSpans. */
-export function _getRowColSpan(rowNode: IRowNode, cols: AgColumn[], index: number, colSpans: number[] | null): number {
-    if (colSpans === null) {
+export function _getRowColSpan(
+    rowNode: IRowNode,
+    cols: AgColumn[],
+    index: number,
+    colSpans: number[] | null | undefined
+): number {
+    if (!colSpans) {
         return _getDrawnColSpan(cols, index, rowNode);
     }
     const allColsIndex = cols[index].allColsIndex;

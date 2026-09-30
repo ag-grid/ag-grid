@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
@@ -173,6 +174,74 @@ describe('Focus Overrides', () => {
                 └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
             `
         );
+    });
+
+    test('Shift+Tab from paging over only loading rows, no rows, or with cell focus suppressed, targets and focuses the last header row, unless the no-rows overlay has something to focus', async () => {
+        const shiftTabFromPaging = async (
+            gridOptions: GridOptions<RowData>,
+            ready: (api: GridApi<RowData>) => void
+        ) => {
+            const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => undefined);
+            const api = gridsManager.createGrid<RowData>(
+                'myGrid',
+                {
+                    // a group row above the columns, so the last header row is not the first
+                    columnDefs: [{ headerName: 'Group', children: columnDefs }],
+                    pagination: true,
+                    paginationPageSizeSelector: false,
+                    tabToNextGridContainer,
+                    ...gridOptions,
+                },
+                { modules: [PaginationModule] }
+            );
+            await waitFor(() => ready(api));
+
+            getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+            dispatchKeyDown('Tab', { shiftKey: true });
+
+            expect(tabToNextGridContainer).toHaveBeenCalledTimes(1);
+            const target = tabToNextGridContainer.mock.calls[0][0].defaultTarget;
+            const header =
+                target && typeof target === 'object' && 'headerRowIndex' in target
+                    ? `${target.headerRowIndex} ${target.column.getUniqueId()}`
+                    : String(target);
+            const result = `${header}, focus ${getFocusedHeaderColId()}`;
+            gridsManager.reset();
+            return result;
+        };
+
+        expect({
+            loadingRows: await shiftTabFromPaging({ rowData, loading: true, loadingRows: { rowCount: 3 } }, (api) =>
+                expect(api.getDisplayedRowAtIndex(2)?.stub).toBe(true)
+            ),
+            noRows: await shiftTabFromPaging({ rowData: [], suppressNoRowsOverlay: true }, (api) =>
+                expect(api.getDisplayedRowCount()).toBe(0)
+            ),
+            noRowsOverlay: await shiftTabFromPaging({ rowData: [] }, (api) =>
+                expect(getGridElement(api)!.querySelector('.ag-overlay-no-rows-wrapper')).not.toBeNull()
+            ),
+            focusableNoRowsOverlay: await shiftTabFromPaging(
+                {
+                    rowData: [],
+                    noRowsOverlayComponent: class {
+                        private readonly eGui = document.createElement('button');
+                        public getGui(): HTMLElement {
+                            return this.eGui;
+                        }
+                    },
+                },
+                (api) => expect(getGridElement(api)!.querySelector('.ag-overlay button')).not.toBeNull()
+            ),
+            cellFocusSuppressed: await shiftTabFromPaging({ rowData, suppressCellFocus: true }, (api) =>
+                expect(api.getDisplayedRowCount()).toBe(3)
+            ),
+        }).toEqual({
+            loadingRows: '1 sport, focus sport',
+            noRows: '1 sport, focus sport',
+            noRowsOverlay: '1 sport, focus sport',
+            focusableNoRowsOverlay: 'null, focus null',
+            cellFocusSuppressed: '1 sport, focus sport',
+        });
     });
 
     test('tabToNextCell override reroutes tabbing target', async () => {

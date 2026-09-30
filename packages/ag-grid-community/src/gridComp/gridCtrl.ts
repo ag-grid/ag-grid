@@ -10,6 +10,7 @@ import {
 } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
+import { _createCellId } from '../entities/positionUtils';
 import { isHeaderPosition } from '../headerRendering/headerUtils';
 import type { GridContainerName, TabToNextGridContainerTarget } from '../interfaces/iCallbackParams';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -53,6 +54,18 @@ const getDefaultTabToNextGridContainerTargetName = (target: TabToNextGridContain
 
     return typeof target === 'string' ? target : 'gridBody';
 };
+
+/** A cell equal to the default target takes the default path, which also keeps the column the grid enters on. */
+const isDefaultCell = (
+    target: TabToNextGridContainerTarget | boolean,
+    defaultTarget: TabToNextGridContainerTarget | null
+): boolean =>
+    typeof target === 'object' &&
+    typeof defaultTarget === 'object' &&
+    defaultTarget !== null &&
+    !isHeaderPosition(target) &&
+    !isHeaderPosition(defaultTarget) &&
+    _createCellId(target) === _createCellId(defaultTarget);
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCtrl extends BeanStub {
@@ -165,11 +178,8 @@ export class GridCtrl extends BeanStub {
         const focusableContainers = this.getFocusableContainers();
         const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
         const resolvedNextIndex = indexWithFocus === -1 ? (backwards ? focusableContainers.length - 1 : 0) : nextIndex;
-        const {
-            gos,
-            beans: { focusSvc, navigation },
-        } = this;
-        const userCallbackFunction = gos.getCallback('tabToNextGridContainer');
+        const focusSvc = this.beans.focusSvc;
+        const userCallbackFunction = this.gos.getCallback('tabToNextGridContainer');
 
         if (userCallbackFunction) {
             const defaultTarget = focusSvc.getDefaultTabToNextGridContainerTarget({
@@ -191,7 +201,7 @@ export class GridCtrl extends BeanStub {
                 defaultTarget,
             });
 
-            if (userResult !== undefined) {
+            if (userResult !== undefined && !isDefaultCell(userResult, defaultTarget)) {
                 if (typeof userResult === 'boolean') {
                     return userResult;
                 }
@@ -216,9 +226,7 @@ export class GridCtrl extends BeanStub {
                     return focusSvc.focusHeaderPosition({ headerPosition: userResult }) || undefined;
                 }
 
-                navigation?.ensureCellVisible(userResult);
-                focusSvc.setFocusedCell({ ...userResult, forceBrowserFocus: true });
-                return focusSvc.isCellFocused(userResult) || undefined;
+                return focusSvc.focusCellAt(userResult, true, backwards) || undefined;
             }
         }
 

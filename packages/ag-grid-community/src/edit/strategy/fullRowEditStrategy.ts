@@ -1,3 +1,4 @@
+import { _getColsForRow } from '../../columns/columnSpanUtils';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
@@ -63,7 +64,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        const columns = beans.visibleCols.allCols;
+        const visibleCols = beans.visibleCols;
+        // a column a span covers draws no cell to edit; a rendered row's spans are read as it drew them
+        const columns = visibleCols.colSpanActive
+            ? _getColsForRow(rowNode, visibleCols.allCols, _getRowCtrl(beans, { rowNode })?.getColSpans(), null, null)
+            : visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
         const editableColumns: AgColumn[] = [];

@@ -30,14 +30,15 @@ import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContai
 import {
     _addGridCommonParams,
     _getRowHeightForNode,
+    _getRowType,
     _isAnimateRows,
     _isClientSideLoadingRow,
     _isDomLayout,
-    _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
+import type { RowType } from '../../gridOptionsUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
 import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -60,8 +61,6 @@ import { DOM_DATA_KEY_ROW_CTRL } from '../renderUtils';
 import { FullWidthRowFeature } from './fullWidthRowFeature';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import { NormalRowFeature } from './normalRowFeature';
-
-type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
 let instanceIdSequence = 0;
 export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
@@ -111,7 +110,7 @@ type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 
-    private rowType: RowType;
+    private readonly rowType: RowType;
 
     private rowGui: RowGui | undefined;
     private readonly rowModeFeature: IRowModeFeature;
@@ -178,7 +177,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowFocused = beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.rowLevel = calculateRowLevel(this.rowNode);
 
-        this.setRowType();
+        this.rowType = _getRowType(this.beans, this.rowNode);
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
         this.rowModeFeature = this.createRowModeFeature();
@@ -416,51 +415,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             addRenderedRowListener: this.addEventListener.bind(this),
         };
         func(params);
-    }
-
-    private isNodeFullWidthCell(): boolean {
-        if (this.isClientSideLoadingRow()) {
-            return false;
-        }
-        if (this.rowNode.detail) {
-            return true;
-        }
-
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
-        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this.rowNode }) : false;
-    }
-
-    private setRowType(): void {
-        // groupHideOpenParents implicitly disables full width loading
-        const {
-            rowNode,
-            gos,
-            beans: { colModel },
-        } = this;
-        const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow');
-        const groupHideOpenParents = gos.get('groupHideOpenParents');
-        const isServerSide = this.beans.rowModel.getType() === 'serverSide';
-        const isStub = isServerSide && rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
-        const isFullWidthCell = this.isNodeFullWidthCell();
-        const isDetailCell = gos.get('masterDetail') && rowNode.detail;
-        const pivotMode = colModel.pivotMode;
-        const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, pivotMode);
-        // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
-        // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
-        const isSuppressedGroupStub =
-            suppressFullWidthLoading && rowNode.stub && isFullWidthGroup && !groupHideOpenParents;
-
-        if (isStub) {
-            this.rowType = 'FullWidthLoading';
-        } else if (isDetailCell) {
-            this.rowType = 'FullWidthDetail';
-        } else if (isFullWidthCell) {
-            this.rowType = 'FullWidth';
-        } else if (isFullWidthGroup && !isSuppressedGroupStub) {
-            this.rowType = 'FullWidthGroup';
-        } else {
-            this.rowType = 'Normal';
-        }
     }
 
     /**
@@ -724,9 +678,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public refreshRow(params?: RefreshRowsParams & { newData?: boolean }): void {
-        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
-        const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
-        if (fullWidthChanged) {
+        // another row type needs another row mode feature, so the row is drawn again
+        if (this.rowType !== _getRowType(this.beans, this.rowNode)) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
         }
@@ -1440,31 +1393,24 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    /** The drawn colSpans by `allColsIndex`, 0 where not read yet; undefined for a row that draws no cells. */
+    public getColSpans(): number[] | undefined {
+        return this.rowModeFeature.getColSpans?.();
+    }
+
+    /** The column's own cell, else the cell drawn spanning it. */
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
-        // first up, check for cell directly linked to this column
-        let res: CellCtrl | null = null;
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.column == column) {
-                res = cellCtrl;
+        const cellCtrl = this.rowModeFeature.getCellCtrl?.(column);
+        if (cellCtrl || skipColSpanSearch) {
+            return cellCtrl ?? null;
+        }
+        const cellCtrls = this.getAllCellCtrls();
+        for (let i = 0, len = cellCtrls.length; i < len; ++i) {
+            if (cellCtrls[i].colsSpanning?.includes(column)) {
+                return cellCtrls[i];
             }
         }
-
-        if (res != null || skipColSpanSearch) {
-            return res;
-        }
-
-        // second up, if not found, then check for spanned cols.
-        // we do this second (and not at the same time) as this is
-        // more expensive, as spanning cols is a
-        // infrequently used feature so we don't need to do this most
-        // of the time
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.colsSpanning?.includes(column)) {
-                res = cellCtrl;
-            }
-        }
-
-        return res;
+        return null;
     }
 
     protected onRowIndexChanged(): void {

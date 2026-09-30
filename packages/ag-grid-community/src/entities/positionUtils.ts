@@ -1,7 +1,7 @@
 import { _exists } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
-import { _isGroupRowsSticky } from '../gridOptionsUtils';
+import { _getRowType, _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
@@ -134,6 +134,66 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
     }
 
     return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
+}
+
+/**
+ * Judges cells row by row, so a walk runs a row's `isFullWidthRow` and colSpan callbacks once however many of its
+ * cells it judges. Holds only the row it is on: one per walk, dropped with it, so nothing carries into the next.
+ */
+export class RowFocusResolver {
+    private rowIndex = -1;
+    private rowPinned: RowPinnedType = null;
+    private rowNode: RowNode | undefined = undefined;
+    private fullWidth: boolean | null = null;
+    private spanEndsFilled = false;
+    private readonly spanEnds: number[] = [];
+
+    public constructor(private readonly beans: BeanCollection) {}
+
+    public getRowNode(cellPosition: CellPosition): RowNode | undefined {
+        const rowPinned = cellPosition.rowPinned ?? null;
+        if (cellPosition.rowIndex !== this.rowIndex || rowPinned !== this.rowPinned) {
+            this.rowIndex = cellPosition.rowIndex;
+            this.rowPinned = rowPinned;
+            this.rowNode = _getRowNode(this.beans, cellPosition);
+            this.fullWidth = null;
+            this.spanEndsFilled = false;
+        }
+        return this.rowNode;
+    }
+
+    public isFullWidth(cellPosition: CellPosition): boolean {
+        const rowNode = this.getRowNode(cellPosition);
+        let fullWidth = this.fullWidth;
+        if (fullWidth === null) {
+            // renders as one full-width cell, decided from the node alone
+            fullWidth = !!rowNode && _getRowType(this.beans, rowNode) !== 'Normal';
+            this.fullWidth = fullWidth;
+        }
+        return fullWidth;
+    }
+
+    /** The column whose cell takes focus: its own, else the one spanning it, from the spans the row drew or would draw. */
+    public getFocusColumn(cellPosition: CellPosition): AgColumn {
+        const column = cellPosition.column as AgColumn;
+        const beans = this.beans;
+        const visibleCols = beans.visibleCols;
+        if (!visibleCols.colSpanActive) {
+            return column;
+        }
+        const rowNode = this.getRowNode(cellPosition);
+        // not held per row: a walk that scrolls can render the row it is on
+        const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
+        if (!rowNode || rowCtrl?.getCellCtrl(column, true) || this.isFullWidth(cellPosition)) {
+            return column;
+        }
+        const spanEnds = this.spanEnds;
+        if (!this.spanEndsFilled) {
+            visibleCols.fillRowSpanEnds(rowNode, spanEnds, rowCtrl?.getColSpans());
+            this.spanEndsFilled = true;
+        }
+        return visibleCols.getSpanningCol(spanEnds, column);
+    }
 }
 
 export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {
