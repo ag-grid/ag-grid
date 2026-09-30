@@ -13,11 +13,23 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
     readonly beanName = 'multiFilter' as const;
 
     public getParamsForDataType(
-        existingFilterParams: IMultiFilterParams | undefined,
+        existingFilterParams: IMultiFilterParams | ((params: any) => IMultiFilterParams | undefined) | undefined,
         existingFilterValueGetter: string | ValueGetterFunc | undefined,
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc<any, any> } {
+        if (typeof existingFilterParams === 'function') {
+            // Its children are only known once the column's own function has run with the filter.
+            return {
+                filterParams: (params: any) =>
+                    this.getParamsForDataType(
+                        existingFilterParams(params),
+                        existingFilterValueGetter,
+                        dataTypeDefinition,
+                        formatValue
+                    ).filterParams,
+            };
+        }
         let filters = existingFilterParams?.filters;
         const beans = this.beans;
         if (!filters) {

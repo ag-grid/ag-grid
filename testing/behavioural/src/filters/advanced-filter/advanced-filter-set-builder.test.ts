@@ -432,13 +432,22 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
             ...DEFAULT_OPTIONS,
             columnDefs: [
                 { field: 'athlete', filter: 'agTextColumnFilter' },
-                { field: 'country', filter: 'agSetColumnFilter', filterParams: () => ({ preservePreviousValues: true }) },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: () => ({ preservePreviousValues: true }),
+                },
             ],
         });
         const remaining = ROW_DATA.filter((row) => row.country !== 'Jamaica');
         api.setGridOption('rowData', remaining);
         await asyncSetTimeout(0);
-        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: [remaining[0].country] });
+        api.setAdvancedFilterModel({
+            filterType: 'set',
+            colId: 'country',
+            type: 'isAnyOf',
+            values: [remaining[0].country],
+        });
         await openPicker(api);
 
         const items = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item-missing`));

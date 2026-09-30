@@ -2919,3 +2919,50 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getColumnFilterHandler<SetFilterHandler>('colour')!.getFilterKeys()).toEqual(['Red', 'Blue']);
     });
 });
+
+describe('Set Filter — filterParams given as a function on a column with a cell data type', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [SetFilterModule, ClientSideRowModelModule, MultiFilterModule, NumberFilterModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = [{ value: 10 }, { value: 9 }];
+
+    test("its params apply over the data type's own, whose comparator still sorts the list", async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'value', filter: 'agSetColumnFilter', filterParams: () => ({ values: [10, 9, 100] }) },
+            ],
+            rowData,
+        });
+        await asyncSetTimeout(0);
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '9', '10', '100']);
+    });
+
+    test("a Multi Filter's apply too, its Set Filter child keeping the data type's comparator", async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: () => ({
+                        filters: [{ filter: 'agSetColumnFilter', filterParams: () => ({ values: [10, 9, 100] }) }],
+                    }),
+                },
+            ],
+            rowData,
+        });
+        await asyncSetTimeout(0);
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '9', '10', '100']);
+    });
+});

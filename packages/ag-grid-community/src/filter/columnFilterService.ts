@@ -1234,6 +1234,10 @@ export class ColumnFilterService
         }
     }
 
+    public hasFilter(column: AgColumn): boolean {
+        return this.allColumnFilters.has(column.getColId());
+    }
+
     public isCurrentColumn(column: AgColumn): boolean {
         const colModel = this.beans.colModel;
         const colId = column.getColId();

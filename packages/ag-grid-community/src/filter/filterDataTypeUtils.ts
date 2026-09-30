@@ -268,13 +268,13 @@ export function _getFilterParamsForDataType(
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
     const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
-    const filterParams =
-        typeof existingFilterParams === 'object'
-            ? {
-                  ...newFilterParams,
-                  ...existingFilterParams,
-              }
-            : newFilterParams;
+    let filterParams: any = newFilterParams;
+    if (typeof existingFilterParams === 'function') {
+        // The column's own function still runs with the filter, its params laid over the data type's.
+        filterParams = (params: any) => ({ ...newFilterParams, ...existingFilterParams(params) });
+    } else if (typeof existingFilterParams === 'object') {
+        filterParams = { ...newFilterParams, ...existingFilterParams };
+    }
     return { filterParams, filterValueGetter };
 }
 

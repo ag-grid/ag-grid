@@ -245,7 +245,9 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     private getSetFilterParams(column: AgColumn): ISetFilterParams | undefined {
         const filterParams = this.getSetColDef(column).filterParams;
         // `filterParams` may be a function of the grid params, so it is resolved the way the handler's own are.
-        return typeof filterParams === 'function' ? this.createHandlerParams(column, 'init').filterParams : filterParams;
+        return typeof filterParams === 'function'
+            ? this.createHandlerParams(column, 'init').filterParams
+            : filterParams;
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */

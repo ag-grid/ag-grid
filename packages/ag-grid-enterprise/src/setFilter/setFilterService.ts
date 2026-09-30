@@ -93,8 +93,10 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
 
 /** Not for pivot result columns, which copy their value column's params and are rebuilt by every pivot change. */
 const createPreservingFilter = (gos: GridOptionsService, colFilter: ColumnFilterService, column: AgColumn): void => {
+    // A column that has its filter is skipped before its params are read, as reading may call the app's function.
     if (
         column.primary &&
+        !colFilter.hasFilter(column) &&
         colFilter.isCurrentColumn(column) &&
         wantsPreservedValues(gos, column, column.colDef.filterParams)
     ) {
@@ -108,8 +110,11 @@ const wantsPreservedValues = (
     column: AgColumn,
     def: PreservingFilterParamsDef | undefined
 ): boolean => {
-    // Called with the grid's common params, as the Filters Tool Panel resolves them before any filter exists.
-    const filterParams = typeof def === 'function' ? def(_addGridCommonParams(gos, { column, colDef: column.colDef })) : def;
+    // Called as for the filter about to be created, as the Filters Tool Panel resolves them before one exists.
+    const filterParams =
+        typeof def === 'function'
+            ? def(_addGridCommonParams(gos, { column, colDef: column.colDef, source: 'init' }))
+            : def;
     if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
         return true;
     }
