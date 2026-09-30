@@ -611,6 +611,9 @@ AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
 
+# Apache has no built-in .webp type, so without this the images are served with no Content-Type.
+AddType image/webp .webp
+
 # serve the per-page LLM markdown files as markdown
 AddType text/markdown md
 # ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
