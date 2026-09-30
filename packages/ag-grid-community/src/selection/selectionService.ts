@@ -317,6 +317,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         changedPath?: ChangedPath,
         event?: Event
     ): boolean {
+        return this.rollUpGroupSelection(source, changedPath, event, false);
+    }
+
+    /**
+     * @param regrouped true when the hierarchy may have changed since the last roll-up. Only then can a tree
+     * row have turned from a leaf into a group or back, so only then are the children of each group checked.
+     */
+    private rollUpGroupSelection(
+        source: SelectionEventSourceType,
+        changedPath: ChangedPath | undefined,
+        event: Event | undefined,
+        regrouped: boolean
+    ): boolean {
         // we only do this when group selection state depends on selected children
         if (!this.groupSelectsDescendants) {
             return false;
@@ -333,9 +346,35 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         let selectionChanged = false;
+        const selectedNodes = this.selectedNodes;
+        const checkChildren = regrouped && this.gos.get('treeData');
+        const detailSelection = this.detailSelection;
 
         const nodeCallback = (rowNode: RowNode): void => {
+            if (checkChildren) {
+                // A leaf missing from the map carries the computed state of a group it was demoted from,
+                // unless it is a master row whose indeterminate state is tracked from its detail grid.
+                const children = rowNode.childrenAfterGroup!;
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    const child = children[i];
+                    const selected = child.__selected;
+                    if (
+                        selected !== false &&
+                        !child.group &&
+                        !(selected === undefined && detailSelection.has(child.id!)) &&
+                        selectedNodes.get(child.id!) !== child
+                    ) {
+                        selectionChanged = this.selectRowNode(child, false, event, source) || selectionChanged;
+                    }
+                }
+            }
             if (rowNode !== rootNode) {
+                // Groups under descendants are computed, never stored, so a leaf promoted to a group leaves the map.
+                const id = rowNode.id!;
+                if (regrouped && selectedNodes.get(id) === rowNode) {
+                    selectedNodes.delete(id);
+                    selectionChanged = true;
+                }
                 const selected = this.calculateSelectedFromChildren(rowNode);
                 selectionChanged =
                     this.selectRowNode(rowNode, selected === null ? false : selected, event, source) ||
@@ -807,7 +846,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
             if (
                 this.groupSelectsDescendants &&
-                this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath)
+                this.rollUpGroupSelection('rowGroupChanged', changedPath, undefined, true)
             ) {
                 this.dispatchSelectionChanged('rowGroupChanged');
             }
