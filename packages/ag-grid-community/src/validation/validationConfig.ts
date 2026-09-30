@@ -41,12 +41,21 @@ export interface DevValidationOptions {
      * Defaults to none.
      */
     suppress?: ErrorId[];
+    /**
+     * Set to `true` to log debug information from the grid to the console, prefixed `AG Grid:` — for
+     * example the grid and module versions, initialisation, row loading and grid option updates. Useful
+     * when investigating problems. Applies to every grid on the page.
+     *
+     * Replaces the deprecated `debug` grid option. Defaults to `false`.
+     */
+    debug?: boolean;
 }
 
 const DEV_VALIDATION_DEFAULTS: Required<DevValidationOptions> = {
     throwOn: [],
     showOverlayOn: [...ALL_SEVERITIES],
     suppress: [],
+    debug: false,
 };
 
 // Read per grid by ErrorOverlayService. Kept here (not in logging.ts) because the logging hot path
@@ -61,7 +70,7 @@ export function _getDevOverlaySeverities(): readonly Severity[] {
 /**
  * Resolves the supplied options against the defaults and pushes the resulting diagnostic configuration
  * into the logging layer. Each call fully replaces the previous configuration — options left out reset
- * to their defaults, so registering without options does not inherit an earlier `throwOn`/`showOverlayOn`.
+ * to their defaults, so registering without options does not inherit an earlier `throwOn`/`showOverlayOn`/`debug`.
  * Always enables capture, since reaching here means the ValidationModule is active.
  */
 export function _applyDevValidationConfig(options?: DevValidationOptions): void {
@@ -69,6 +78,7 @@ export function _applyDevValidationConfig(options?: DevValidationOptions): void 
         capture: true,
         throwOn: options?.throwOn ?? DEV_VALIDATION_DEFAULTS.throwOn,
         suppress: options?.suppress ?? DEV_VALIDATION_DEFAULTS.suppress,
+        debug: options?.debug ?? DEV_VALIDATION_DEFAULTS.debug,
     });
     overlaySeverities = options?.showOverlayOn ?? DEV_VALIDATION_DEFAULTS.showOverlayOn;
 }
