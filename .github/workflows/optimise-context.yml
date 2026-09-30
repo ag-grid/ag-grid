@@ -1,0 +1,59 @@
+name: Optimise agentic context
+
+# Runs /ag-eng:optimise-context over this repo's agentic tooling config and
+# opens a PR when it finds provable fixes. All behaviour lives in the shared
+# `optimise-context` action from @ag-grid/dev-prompts.
+# See ag-dev-prompts docs/ai-workflow-optimise-context.md.
+#
+#   Schedule: weekly (see `schedule:`); scheduled runs open a PR
+#   Run now:  Actions → "Optimise agentic context" → Run workflow
+#             (a dispatch defaults to dry_run — no PR)
+#   Pause:    disable this workflow in the Actions UI
+
+on:
+    schedule:
+        # Mondays 05:00 UTC.
+        - cron: '0 5 * * 1'
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: 'Audit only; never push or open a PR.'
+                type: boolean
+                default: true
+
+env:
+    DEV_PROMPTS_CHANNEL: latest
+
+concurrency:
+    group: optimise-context
+    cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+    audit:
+        runs-on: ubuntu-latest
+        timeout-minutes: 90
+        permissions:
+            contents: read
+            packages: read
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+                  persist-credentials: false
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - name: Audit + PR
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/optimise-context
+              with:
+                  dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+                  setup_command: ''
+                  dev_prompts_channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  github_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  github_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
