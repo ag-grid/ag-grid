@@ -26,11 +26,12 @@ enum SetFilterModelValuesType {
 }
 export default SetFilterModelValuesType;
 
-interface SetValueModelParams<TValue> {
+export interface SetValueModelParams<TValue> {
     handlerParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
-    usingComplexObjects?: boolean;
+    createKey: (value: TValue | null | undefined, node?: RowNode | null) => string | null;
+    usingComplexObjects: boolean;
     /** Only a user's key creator claims the values are complex objects; the data type's own says nothing. */
-    userKeyCreator?: boolean;
+    userKeyCreator: boolean;
 }
 
 export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
@@ -67,10 +68,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     private initialised: boolean = false;
 
+    /** The load for the latest column definition, so however many ask for it, it loads once. */
+    private colDefLoad: AgPromise<unknown> | undefined;
+
     constructor(
         private readonly csrmValuesExtractor: CsrmValuesExtractor<TValue> | undefined,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => T,
-        private readonly createKey: (value: TValue | null | undefined, node?: RowNode) => string | null,
         private readonly isTreeDataOrGrouping: () => boolean,
         private readonly isKeyChecked: (key: string | null) => boolean,
         private params: SetValueModelParams<TValue>
@@ -80,24 +83,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     public postConstruct(): void {
         const params = this.params;
-        const values = params.handlerParams.filterParams.values;
-
         this.updateParams(params);
-
-        if (values == null) {
-            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        } else {
-            this.valuesType = Array.isArray(values)
-                ? SetFilterModelValuesType.PROVIDED_LIST
-                : SetFilterModelValuesType.PROVIDED_CALLBACK;
-
-            this.providedValues = values;
-        }
-
+        this.setProvidedValues(params.handlerParams.filterParams.values);
         this.updateAllValues();
     }
 
-    /** Returns whether the values reload; `replace` has that reload drop the kept keys rather than merge with them. */
+    /** Returns whether the values reload; `replace` reloads them without the kept keys, made by rules no longer in force. */
     public refresh(params: SetValueModelParams<TValue>, replace: boolean): boolean {
         const handlerParams = params.handlerParams;
 
@@ -106,42 +97,65 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             // also don't want to override provided values set via api.
             return false;
         }
+        this.colDefLoad = undefined;
 
         const { values, suppressSorting } = handlerParams.filterParams;
 
         const currentProvidedValues = this.providedValues;
         const currentSuppressSorting = this.params.handlerParams.filterParams.suppressSorting;
 
-        this.params = params;
         this.updateParams(params);
 
-        this.providedValues = values ?? null;
-
         // Rebuild values when values or their sort order changes
-        if (this.providedValues !== currentProvidedValues || suppressSorting !== currentSuppressSorting) {
-            if (!values || values.length === 0) {
-                this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-                this.providedValues = null;
-            } else {
-                this.valuesType = Array.isArray(values)
-                    ? SetFilterModelValuesType.PROVIDED_LIST
-                    : SetFilterModelValuesType.PROVIDED_CALLBACK;
-            }
-
-            this.updateAllValues(replace);
+        if ((values ?? null) !== currentProvidedValues || suppressSorting !== currentSuppressSorting) {
+            this.setProvidedValues(values);
+            this.colDefLoad = this.updateAllValues(replace);
+            return true;
+        }
+        if (replace) {
+            this.colDefLoad = this.refreshAll(true);
             return true;
         }
         return false;
     }
 
-    private updateParams(params: SetValueModelParams<TValue>): void {
+    private setProvidedValues(values: SetFilterValues<any, TValue> | undefined): void {
+        this.providedValues = values ?? null;
+        if (!isProvidedValues(values)) {
+            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        } else if (Array.isArray(values)) {
+            this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+        } else {
+            this.valuesType = SetFilterModelValuesType.PROVIDED_CALLBACK;
+        }
+    }
+
+    public refreshValues(forColDef: boolean): AgPromise<unknown> {
+        if (!forColDef) {
+            return this.refreshAll();
+        }
+        this.colDefLoad ??= this.refreshAll();
+        return this.colDefLoad;
+    }
+
+    /** Takes the key function and sort rules without reloading, which `refresh` does only for a column definition. */
+    public updateParams(params: SetValueModelParams<TValue>): void {
+        this.params = params;
         const {
             handlerParams: {
                 colDef,
+                getValue,
                 filterParams: { comparator, treeList, treeListPathGetter },
             },
+            createKey,
             usingComplexObjects,
         } = params;
+
+        const csrmValuesExtractor = this.csrmValuesExtractor;
+        if (csrmValuesExtractor) {
+            csrmValuesExtractor.createKey = createKey;
+            csrmValuesExtractor.getValue = getValue;
+        }
 
         const keyComparator = comparator ?? (colDef.comparator as (a: any, b: any) => number);
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
@@ -454,7 +468,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private uniqueValues(values: (TValue | null)[] | null): Map<string | null, TValue | null> {
         const uniqueValues: Map<string | null, TValue | null> = new Map();
         const formattedKeys: Set<string | null> = new Set();
-        const { caseFormat, createKey } = this;
+        const caseFormat = this.caseFormat;
+        const createKey = this.params.createKey;
         for (const value of values ?? []) {
             const valueToUse = setFilterNullIfBlank(value);
             const unformattedKey = createKey(valueToUse);
@@ -472,7 +487,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         if (this.params.userKeyCreator && values?.length) {
             const firstValue = values[0];
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
-                const firstKey = this.createKey(firstValue);
+                const firstKey = this.params.createKey(firstValue);
                 if (firstKey == null) {
                     this.warn(209);
                 } else {
@@ -574,3 +589,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         });
     }
 }
+
+/** Whether the Set Filter lists these values rather than the ones in the rows; an empty list is still a list. */
+export const isProvidedValues = <V>(values: SetFilterValues<any, V> | undefined): values is SetFilterValues<any, V> =>
+    values != null;

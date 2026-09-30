@@ -196,7 +196,7 @@ A filter only sees values while it exists, so a column with `preservePreviousVal
 
 Values are kept for the life of the filter. They are discarded if the filter is destroyed, for example with `api.destroyFilter`, after which the filter starts again from the current data. They are also discarded when the rules that make their keys change:
 
-- `caseSensitive`: unselected values are discarded, and selected ones stay in the model and are listed by their key until their rows return.
+- A column definition update that changes how values are identified, such as `caseSensitive`, as listed in [Updating Set Filter Parameters](./filter-set/#updating-set-filter-parameters). With a filter applied, this resets the Set Filter.
 - For a [Tree List](./filter-set-tree-list/) on a group column that takes its values from the grid, the row group columns, `groupAllowUnbalanced` or Tree Data. These change the keys themselves, so model values that no longer match any value leave the model.
 
 Preserved values are not saved with [Grid State](./grid-state/): a saved model restores the selected values, and unselected values stay filtered out because they are not in the model.

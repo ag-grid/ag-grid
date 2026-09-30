@@ -376,6 +376,11 @@ describe('Advanced Filter - Set Filter configuration', () => {
         await new GridRows(api, 'one character keys').check(`
             ROOT id:ROOT_NODE_ID
         `);
+
+        // the value list the handler holds is keyed again in place: eight characters tell the two United apart
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, countryCol(8)]);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland', 'United K', 'United S', 'null']);
     });
 
     test('a provided value list widened by the column definitions clears the fault its absence reported', async () => {
@@ -1250,5 +1255,96 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
         await af.type('[Country] ');
         expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+    });
+
+    test("a column's new key creator reads the rows once for its value list", async () => {
+        const col = (keyCreator: (params: { value: string }) => string) => ({
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            keyCreator,
+            filterParams: { valueFormatter: ({ value }: { value: string }) => value } as ISetFilterParams,
+        });
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [{ field: 'athlete' }, col(({ value }) => value)],
+        });
+        await AdvancedFilterHarness.get(api).type('[Country] is any of [');
+
+        const keyCreator = vi.fn(({ value }: { value: string }) => value);
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, col(keyCreator)]);
+        await asyncSetTimeout(0);
+
+        // one load keys every row for all the values and again for the available ones
+        expect(keyCreator).toHaveBeenCalledTimes(2 * ROW_DATA.length);
+    });
+
+    test("an object or date column's set operator lists and matches by its data type's formatter", async () => {
+        const byName = ({ value }: { value: { name: string } | null }) => value?.name ?? '';
+        const api = await gridsManager.createGridAndWait('grid1', {
+            enableAdvancedFilter: true,
+            columnDefs: [
+                {
+                    colId: 'person',
+                    field: 'winner',
+                    cellDataType: 'object',
+                    valueFormatter: byName,
+                    filter: 'agTextColumnFilter',
+                    filterParams: { filterOptions: ['contains', 'isAnyOf'] },
+                },
+                {
+                    field: 'day',
+                    cellDataType: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: { filterOptions: ['equals', 'isAnyOf'] },
+                },
+                // a Multi Filter's own Set child carries the data type's formatter; one without it gets it here
+                {
+                    colId: 'multiDay',
+                    headerName: 'Multi Day',
+                    field: 'day',
+                    cellDataType: 'date',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agDateColumnFilter' }, { filter: 'agSetColumnFilter' }] },
+                },
+                {
+                    colId: 'textDay',
+                    headerName: 'Text Day',
+                    field: 'day',
+                    cellDataType: 'date',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [
+                            { filter: 'agDateColumnFilter', filterParams: { filterOptions: ['equals', 'isAnyOf'] } },
+                        ],
+                    },
+                },
+            ],
+            rowData: [
+                { winner: { name: 'bob' }, day: new Date(2024, 0, 2) },
+                { winner: { name: 'cat' }, day: new Date(2024, 0, 3) },
+            ],
+        });
+
+        const af = await AdvancedFilterHarness.get(api).type('[Winner] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['bob', 'cat']);
+        const byDataType = ['2024-01-02', '2024-01-03'];
+        const expected: Record<string, string[]> = {
+            Day: byDataType,
+            // the Set child's own configuration, a tree list for dates
+            'Multi Day': ['2024 › January › 02', '2024 › January › 03'],
+            'Text Day': byDataType,
+        };
+        const listed: Record<string, string[]> = {};
+        for (const name of Object.keys(expected)) {
+            await af.type(`[${name}] is any of [`);
+            listed[name] = af.autocompleteEntries();
+        }
+        expect(listed).toEqual(expected);
+
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'person', type: 'isAnyOf', values: ['bob'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowCount()).toBe(1);
     });
 });

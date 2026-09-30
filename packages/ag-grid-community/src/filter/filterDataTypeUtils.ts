@@ -2,8 +2,7 @@ import type { LocaleTextFunc } from 'ag-stack';
 import { _getDateParts, _parseBigIntOrNull } from 'ag-stack';
 
 import type { BeanCollection, UserComponentName } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
+import type { ValueFormatterParams, ValueGetterFunc } from '../entities/colDef';
 import type {
     BaseCellDataType,
     CheckDataTypes,
@@ -264,12 +263,7 @@ export function _getFilterParamsForDataType(
     let filterValueGetter: string | ValueGetterFunc | undefined = existingFilterValueGetter;
     const usingSetFilter = filter === 'agSetColumnFilter';
     if (!filterValueGetter && dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
-        filterValueGetter = ({ column, node }: ValueGetterParams) =>
-            formatValue({
-                column,
-                node,
-                value: node ? beans.valueSvc.getValueFromData(column as AgColumn, node) : undefined,
-            });
+        filterValueGetter = beans.dataTypeSvc?.objectFilterValueGetter;
     }
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];

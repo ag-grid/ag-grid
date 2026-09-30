@@ -8,6 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
+import type { ColDef } from 'ag-grid-community';
 import { MultiFilterModule } from 'ag-grid-enterprise';
 
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
@@ -829,6 +830,37 @@ describe('Advanced Filter - Set Filter value list', () => {
         api.setGridOption('rowData', ROW_DATA);
         await asyncSetTimeout(0);
         expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+    });
+
+    test('a key change drops the retained values, except those the applied expression names', async () => {
+        const columnDefs = (caseSensitive: boolean): ColDef[] => [
+            { field: 'athlete' },
+            {
+                field: 'country',
+                filter: 'agSetColumnFilter',
+                filterParams: { preservePreviousValues: true, caseSensitive },
+            },
+        ];
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: columnDefs(false),
+        });
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica' && row.country !== 'Poland')
+        );
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', columnDefs(true));
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Poland"]');
+        expect(api.getAdvancedFilterModel()).toBeNull();
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
     });
 
     test('rows arriving after grid start are offered as without the option, formatted by their data type', async () => {

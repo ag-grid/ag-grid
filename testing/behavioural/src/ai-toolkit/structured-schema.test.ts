@@ -1030,6 +1030,20 @@ describe('getStructuredSchema - filter feature', () => {
                 └── LEAF id:0 name:"Alice"
             `);
         });
+
+        test("a multi filter child using the default filter is described as a text filter, not as the column's default", async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'age', filter: 'agMultiColumnFilter', filterParams: { filters: [{ filter: true }] } },
+                ],
+                rowData: [{ age: 30 }],
+            });
+
+            const schema = toJSON(api.getStructuredSchema());
+            const ageFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.age);
+            const [child] = ageFilter.properties.filterModels.items.anyOf.map(resolveNullable);
+            expect(child.properties.filterType.enum).toEqual(['text']);
+        });
     });
 });
 

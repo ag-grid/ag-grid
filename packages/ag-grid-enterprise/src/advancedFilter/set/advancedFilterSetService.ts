@@ -3,13 +3,14 @@ import { _areEqual, _last, _pushToMapArray } from 'ag-stack';
 import type {
     AdvancedFilterModel,
     AgColumn,
+    AgFilterHandlerParams,
     AgPromise,
     BaseFilterParams,
     BeanCollection,
     ColDef,
     FilterDisplayParams,
     FilterDisplayState,
-    FilterHandlerParams,
+    IFilterDef,
     IFilterParams,
     IRowNode,
     ISetFilterParams,
@@ -32,7 +33,7 @@ import {
 
 import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
-import { isKeyOnlyTreeLeaf, translateForSetFilter } from '../../setFilter/setFilterUtils';
+import { getDataTypeKeyCreator, isKeyOnlyTreeLeaf, translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { getMultiFilterChild } from '../customFilterOptions';
@@ -54,6 +55,9 @@ interface SetValueEntry extends AutocompleteEntry {
 /** The list offers these objects themselves, so one chosen from it comes back carrying its own path. */
 const isSetValueEntry = (entry: AutocompleteEntry): entry is SetValueEntry => 'path' in entry;
 
+/** The value list reads the column like a Set Filter of the column's own. */
+const SET_FILTER_DEF: IFilterDef = { filter: 'agSetColumnFilter' };
+
 /** A column's Set Filter values, rebuilt whenever the underlying value model reloads. */
 interface SetColumnValues {
     /** Every value the column offers, in the Set Filter's own order. */
@@ -67,7 +71,7 @@ interface SetColumnValues {
 }
 
 /** Handler params that are also a complete `IFilterParams`, which is what the `filterParams` merge is handed. */
-type SetHandlerParams = FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams> & IFilterParams;
+type SetHandlerParams = AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams> & IFilterParams;
 
 /** What the Set Filter UI is handed: its display params, plus the callbacks a filter component expects. */
 type SetFilterUiParams = FilterDisplayParams<any, any, SetFilterModel> &
@@ -161,7 +165,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
                 const handler = setColumn.handler;
                 handler.refresh(this.createHandlerParams(column, 'colDef'));
                 // `refresh` re-reads the definitions; the grouping reaches the keys through the values.
-                handler.onNewRowsLoaded();
+                handler.onNewRowsLoadedForColDef();
                 setColumn.values = null;
                 continue;
             }
@@ -191,17 +195,11 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         }
     }
 
-    /** The values an applied expression names are its handlers' model, so `preservePreviousValuesLimit` spares them. */
+    /** The handlers hold the values an applied expression names, so `preservePreviousValuesLimit` spares them. */
     private refreshAppliedValues(): void {
         const appliedModel = this.beans.advancedFilter?.getModel() ?? null;
         for (const [colId, setColumn] of this.columns) {
-            const handler = setColumn?.handler;
-            if (handler?.valueModel.isPreserving()) {
-                const model = getAppliedSetModel(appliedModel, colId);
-                if (!_areEqual(handler.params.model?.values, model?.values)) {
-                    handler.refresh({ ...handler.params, model, source: 'api' });
-                }
-            }
+            setColumn?.handler.holdKeys(getAppliedSetValues(appliedModel, colId));
         }
     }
 
@@ -487,6 +485,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const created = this.createBean(handler);
         created.init(this.createHandlerParams(column, 'init'));
         const colId = column.getColId();
+        created.holdKeys(getAppliedSetValues(this.beans.advancedFilter?.getModel() ?? null, colId));
         // Held, not left to the service's own teardown: a column dropped from the definitions takes its
         // listener with it rather than leaving one per rebuild for the life of the grid.
         const [removeListener] = this.addManagedListeners(created, {
@@ -555,14 +554,33 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             colDef.filter === 'agMultiColumnFilter'
                 ? getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter')
                 : undefined;
-        return { ...colDef, filter: 'agSetColumnFilter', filterParams: child?.filterParams };
+        const filterParams = child ? child.filterParams : this.getKeyFormatterParams(colDef);
+        return { ...colDef, filter: 'agSetColumnFilter', filterParams };
+    }
+
+    /** A data type's key creator names each value by its formatted text, so the list shows that text. */
+    private getKeyFormatterParams(colDef: ColDef): ISetFilterParams | undefined {
+        const formatValue = getDataTypeKeyCreator(this.beans, colDef);
+        if (!formatValue || colDef.keyCreator !== formatValue) {
+            return undefined;
+        }
+        return { valueFormatter: (params) => formatValue(params) || translateForSetFilter(this, 'blanks') };
     }
 
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
         const colDef = this.getSetColDef(column);
+        const colFilter = this.beans.colFilter!;
+        const filterValueGetter = colFilter.resolveFilterValueGetter(
+            column,
+            SET_FILTER_DEF,
+            column.colDef.filterValueGetter,
+            undefined
+        );
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),
+            filterValueGetter,
+            getValue: colFilter.createHandlerGetValue(column, filterValueGetter),
             model: null,
             source,
             onModelChange: () => {},
@@ -578,10 +596,6 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             colDef,
             params
         ) as ISetFilterParams;
-        // Only a handler keeping values reads its model, as what eviction spares.
-        if (params.filterParams.preservePreviousValues) {
-            params.model = getAppliedSetModel(this.beans.advancedFilter?.getModel() ?? null, column.getColId());
-        }
         return params;
     }
 
@@ -613,10 +627,10 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 const joinPath = (segments: readonly string[]): string => segments.join(PATH_JOINER);
 
 /** Every value a set condition on the column names, whether it keeps rows or drops them. */
-const getAppliedSetModel = (model: AdvancedFilterModel | null, colId: string): SetFilterModel | null => {
+const getAppliedSetValues = (model: AdvancedFilterModel | null, colId: string): SetFilterModelValue => {
     const values: SetFilterModelValue = [];
     collectSetValues(model, colId, values);
-    return values.length ? { filterType: 'set', values } : null;
+    return values;
 };
 
 const collectSetValues = (model: AdvancedFilterModel | null, colId: string, values: SetFilterModelValue): void => {

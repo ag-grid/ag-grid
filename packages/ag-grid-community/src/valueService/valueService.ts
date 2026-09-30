@@ -278,7 +278,7 @@ export class ValueService extends BeanStub implements NamedBean {
     // Reads committed data for `column` exactly as given — NO pivot-result-column redirection and no
     // pending-edit lookup. Callers that may hold a pivot result column (pivot edit, API reads, pivot
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
-    // This does NOT resolve pending edit values (edit or batch)
+    // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
     public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).

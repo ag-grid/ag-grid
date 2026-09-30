@@ -519,7 +519,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(missingLabels(popup())).toEqual(['D']);
     });
 
-    test('changing caseSensitive discards retained values, as their keys fold differently', async () => {
+    test('changing caseSensitive discards retained values, with the filter when one is applied', async () => {
         const colDef = (caseSensitive: boolean): ColDef<Row> => ({
             field: 'value',
             ...setFilter({ caseSensitive }),
@@ -532,25 +532,16 @@ describe('Set Filter preservePreviousValues - integration', () => {
 
         api.setGridOption('columnDefs', [colDef(true)]);
         await asyncSetTimeout(0);
+        expect(modelOf(api)).toBeNull();
         expect(handlerOf(api).getFilterKeys()).toEqual(['pear']);
-        expect(modelOf(api)?.values).toEqual(['pear']);
 
-        // A selected value out of the data names the same rows under either rule, so it stays.
-        await setModel(api, 'value', { filterType: 'set', values: ['pear', 'fig'] });
+        // Without a model the filter is kept, and its values reload without the retained ones.
+        await setRowData(api, rows('pear', 'fig'));
+        await setRowData(api, rows('pear'));
+        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['fig', 'pear']);
         api.setGridOption('columnDefs', [colDef(false)]);
         await asyncSetTimeout(0);
-        expect(modelOf(api)?.values).toEqual(['pear', 'fig']);
-        await setRowData(api, rows('fig', 'pear'));
-        expect(shown(api)).toEqual(['fig', 'pear']);
-        api.setGridOption('columnDefs', [colDef(true)]);
-        await asyncSetTimeout(0);
-
-        // Keys that only differed by case fold into one, as without the option.
-        await setRowData(api, rows('apple', 'APPLE', 'pear'));
-        api.setGridOption('columnDefs', [colDef(false)]);
-        await setRowData(api, rows('apple', 'APPLE', 'pear'));
-        // 'fig' is still selected, so it stays once its rows leave.
-        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['apple', 'fig', 'pear']);
+        expect(handlerOf(api).getFilterKeys()).toEqual(['pear']);
     });
 
     test('a case sensitive filter keeps its retained values when its model is set', async () => {
@@ -772,16 +763,12 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(values).toHaveBeenCalledTimes(3);
     });
 
-    test('keys that fold into one are kept once when caseSensitive is turned off', async () => {
-        const colDef = (caseSensitive: boolean): ColDef<Row> => ({ field: 'value', ...setFilter({ caseSensitive }) });
-        const api = createGrid(rows('pear', 'Pear', 'fig'), colDef(true));
+    test('a model naming a key twice, in two cases, keeps it once', async () => {
+        const api = createGrid(rows('pear', 'fig'), setFilter());
         await asyncSetTimeout(0);
-        await setModel(api, 'value', { filterType: 'set', values: ['pear', 'Pear'] });
-
-        api.setGridOption('columnDefs', [colDef(false)]);
-        await asyncSetTimeout(0);
+        await setModel(api, 'value', { filterType: 'set', values: ['pear', 'PEAR'] });
         expect(modelOf(api)?.values).toEqual(['pear']);
-        expect(shown(api)).toEqual(['pear', 'Pear']);
+        expect(shown(api)).toEqual(['pear']);
     });
 
     test('tree data: a retained path stays in its group, and a model key never seen is a root leaf', async () => {
