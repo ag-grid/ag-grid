@@ -3,7 +3,7 @@ import { getEntry, type CollectionEntry } from 'astro:content';
 import { getFrameworkFromPath, getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import ExampleRunnerContainer from '@components/example-runner/components/ExampleRunnerContainer.astro';
 import ExampleRunnerSourceCode from '@components/example-runner/components/ExampleRunnerSourceCode.astro';
-import { getExampleViewerFiles, type ExampleViewerFiles } from '@components/example-runner/utils/exampleViewerFiles';
+import { getExampleViewerFiles } from '@components/example-runner/utils/exampleViewerFiles';
 import { resolveInternalFramework } from '@components/example-runner/utils/resolveInternalFramework';
 import { getIsArchive, getIsDev } from '@utils/env';
 import { getInternalFramework } from '@utils/framework';
@@ -48,7 +48,7 @@ const generatedExampleParams: GeneratedExampleParams = {
 };
 
 let hasExampleConsoleLog = false;
-let sourceCode: ExampleViewerFiles | undefined;
+let sourceCode: { fileName: string; code: string } | undefined;
 try {
     const contents = await getGeneratedContents(generatedExampleParams);
     // Get whether example has console log component at build time, so that we
@@ -57,9 +57,13 @@ try {
 
     // NOTE: The island still fetches the contents at runtime rather than taking them as props,
     // so the page only carries the source once: in the crawlable panel below, which the island
-    // removes once it has mounted.
+    // removes once it has mounted. Only the main file is embedded; see ExampleRunnerSourceCode.
     if (contents && !DISABLE_EXAMPLE_SOURCE_EMBED) {
-        sourceCode = getExampleViewerFiles(contents, internalFramework);
+        const { files, mainFileName } = getExampleViewerFiles(contents, internalFramework);
+        const code = files[mainFileName];
+        if (code !== undefined) {
+            sourceCode = { fileName: mainFileName, code };
+        }
     }
 } catch (error) {
     console.error('Error generating contents for:', generatedExampleParams);
@@ -104,8 +108,8 @@ if (sourceCode && !getIsArchive()) {
             {sourceCode && (
                 <ExampleRunnerSourceCode
                     internalFramework={internalFramework}
-                    files={sourceCode.files}
-                    mainFileName={sourceCode.mainFileName}
+                    fileName={sourceCode.fileName}
+                    code={sourceCode.code}
                 />
             )}
             {sourceCodeStructuredData && <JsonLd data={sourceCodeStructuredData} />}
