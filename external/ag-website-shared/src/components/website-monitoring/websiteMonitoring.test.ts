@@ -32,14 +32,20 @@ async function initWebsiteMonitoring() {
     return websiteMonitoring;
 }
 
+beforeEach(() => {
+    // jsdom has no Cookie Store API, so consent changes are found by polling
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+});
+
 afterEach(() => {
     stopListening?.();
     stopListening = undefined;
     vi.restoreAllMocks();
+    vi.useRealTimers();
 });
 
-async function navigate() {
-    document.dispatchEvent(new Event('astro:page-load'));
+async function waitForConsentCheck() {
+    vi.advanceTimersByTime(1000);
     await vi.dynamicImportSettled();
 }
 
@@ -77,23 +83,23 @@ describe('initWebsiteMonitoring', () => {
         );
     });
 
-    test('starts on the next navigation once consent is granted', async () => {
+    test('starts once consent is granted, without the visitor navigating', async () => {
         await initWebsiteMonitoring();
         setAnalyticsConsent('true');
-        await navigate();
-        await navigate();
+        await waitForConsentCheck();
+        await waitForConsentCheck();
 
         expect(dash0.init).toHaveBeenCalledTimes(1);
     });
 
-    test('ends the session and reloads when consent is withdrawn', async () => {
+    test('ends the session and reloads when consent is withdrawn, without the visitor navigating', async () => {
         const reload = vi.fn();
         vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, reload });
         setAnalyticsConsent('true');
         await initWebsiteMonitoring();
 
         setAnalyticsConsent('false');
-        await navigate();
+        await waitForConsentCheck();
 
         expect(dash0.terminateSession).toHaveBeenCalledTimes(1);
         expect(reload).toHaveBeenCalledTimes(1);

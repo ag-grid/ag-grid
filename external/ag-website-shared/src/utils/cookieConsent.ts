@@ -8,6 +8,9 @@
  */
 export type CookieConsentCategory = 'analytics' | 'functional' | 'marketing' | 'preferences';
 
+// How often the cookies are re-read where the Cookie Store API cannot report changes
+const POLL_INTERVAL_MILLIS = 1000;
+
 function getCookie(name: string, cookies: string): string | undefined {
     for (const cookie of cookies.split(';')) {
         const separatorIndex = cookie.indexOf('=');
@@ -30,7 +33,7 @@ export function hasCookieConsent(category: CookieConsentCategory, cookies: strin
  * Calls `listener` whenever consent for `category` changes, with the new state.
  *
  * Changes are picked up as soon as the banner writes its cookie where the Cookie Store API is
- * available, and otherwise on the next client-side navigation.
+ * available, and otherwise by polling, so a change is never left waiting for the visitor to navigate.
  *
  * @returns a function that stops listening
  */
@@ -48,11 +51,11 @@ export function onCookieConsentChange(
     };
 
     const cookieStore: EventTarget | undefined = (window as any).cookieStore;
-    cookieStore?.addEventListener('change', checkForChange);
-    document.addEventListener('astro:page-load', checkForChange);
+    if (cookieStore) {
+        cookieStore.addEventListener('change', checkForChange);
+        return () => cookieStore.removeEventListener('change', checkForChange);
+    }
 
-    return () => {
-        cookieStore?.removeEventListener('change', checkForChange);
-        document.removeEventListener('astro:page-load', checkForChange);
-    };
+    const intervalId = window.setInterval(checkForChange, POLL_INTERVAL_MILLIS);
+    return () => window.clearInterval(intervalId);
 }
