@@ -480,6 +480,25 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(cellRenderer.mock.calls.map(([params]) => params.value)).not.toContain('Z');
     });
 
+    test('a tree list model value never seen in the data keeps its own row beside a group with its label', async () => {
+        const treeListFormatter = vi.fn((pathKey: string | null) => `#${pathKey}`);
+        const api = createGrid(
+            rows('2024-01-01'),
+            { treeList: true, treeListFormatter },
+            { cellDataType: 'dateString' }
+        );
+        await asyncSetTimeout(0);
+        await setModel(api, ['2024-01-01', '2024']);
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '#2024', '2024']);
+        expect(missingItems()).toEqual(['2024']);
+
+        await filter.toggleSetItem('2024');
+        await asyncSetTimeout(0);
+        expect(modelOf(api)?.values).toEqual(['2024-01-01']);
+    });
+
     test('grid state restores selected retained values', async () => {
         const api = createGrid(rows('A', 'B', 'C'));
         await asyncSetTimeout(0);

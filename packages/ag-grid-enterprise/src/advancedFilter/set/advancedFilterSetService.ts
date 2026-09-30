@@ -31,7 +31,7 @@ import {
     _mergeFilterParamsWithApplicationProvidedParams,
 } from 'ag-grid-community';
 
-import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
+import type { SetFilterTreeItems } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import { formatTreeKey, getDataTypeKeyCreator, translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
@@ -717,7 +717,7 @@ const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
 
     const entries: SetValueEntry[] = [];
     const values = createValues();
-    const walk = (items: Map<string | null, SetFilterModelTreeItem>, path: string[]): void => {
+    const walk = (items: SetFilterTreeItems, path: string[]): void => {
         for (const item of items.values()) {
             // A blank names itself the way the Set Filter's own list names it, so the two offer one label.
             const formatted =

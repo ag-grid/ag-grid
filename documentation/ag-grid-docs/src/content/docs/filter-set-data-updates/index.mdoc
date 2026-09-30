@@ -131,7 +131,7 @@ The [Advanced Filter](./filter-advanced/) only suggests current values as you ty
 
 {% gridExampleRunner title="Preserving Previous Values with the Advanced Filter" name="preserve-previous-values-advanced-filter"  exampleHeight=400 /%}
 
-In a [Tree List](./filter-set-tree-list/) on a group column, a value no longer in the data stays in its group, muted, and a group is muted once every value under it is gone. A model value that was never in the data is listed at the root by its key. The following examples show this with [Row Grouping](./grouping/) and [Tree Data](./tree-data/). Open the filter from the floating filter's button, then try the following:
+In a [Tree List](./filter-set-tree-list/) on a group column, a value no longer in the data stays in its group, muted, and a group is muted once every value under it is gone. A model value that was never in the data is listed at the root by its key, in its own row even beside a group with the same label. The following examples show this with [Row Grouping](./grouping/) and [Tree Data](./tree-data/). Open the filter from the floating filter's button, then try the following:
 
 - Click **Select Paris and Madrid** (or **Select report.pdf and old.zip**). Madrid (or old.zip) is not in the data, so it is listed at the root by its key, `'Spain#Madrid'` (or `'Archive/old.zip'`).
 - Click **Remove Rome** (or **Remove beach.jpg**). The value stays in its group, muted and unselected.

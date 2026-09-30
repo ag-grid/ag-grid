@@ -2,13 +2,13 @@ import { _getDateParts } from 'ag-stack';
 
 import type { LogService, TextFormatter } from 'ag-grid-community';
 
-import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { ISetDisplayValueModel, SetFilterModelTreeItem, SetFilterTreeItems } from './iSetDisplayValueModel';
 import { NO_SET_FILTER_KEYS, SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
 import { formatTreeKey } from './setFilterUtils';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** all displayed items in a tree structure */
-    private allDisplayedItemsTree: Map<string | null, SetFilterModelTreeItem> = new Map();
+    private allDisplayedItemsTree: SetFilterTreeItems = new Map();
     /** all displayed items flattened and filtered */
     private activeDisplayedItemsFlat: SetFilterModelTreeItem[] = [];
 
@@ -95,21 +95,34 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         allKeys: Iterable<string | null>,
         availableKeys: Set<string | null>
     ): void {
-        const allDisplayedItemsTree = new Map<string | null, SetFilterModelTreeItem>();
+        const allDisplayedItemsTree: SetFilterTreeItems = new Map();
         this.allDisplayedItemsTree = allDisplayedItemsTree;
         let groupsExist = false;
 
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
         const keyOnlyKeys = this.getKeyOnlyKeys();
         for (const key of allKeys) {
-            // A value known only by its key has no path to ask for, so it is a leaf at the root.
-            const dataPath = keyOnlyKeys.has(key) ? [key] : (treeListPathGetter(getValue(key)!) ?? [null]);
+            const available = availableKeys.has(key);
+            if (keyOnlyKeys.has(key)) {
+                // A value known only by its key has no path to ask for, so it is its own leaf at the root.
+                const leaf: SetFilterModelTreeItem = {
+                    treeKey: key,
+                    depth: 0,
+                    filterPasses: true,
+                    expanded: false,
+                    available,
+                    parentTreeKeys: [],
+                    keys: [key],
+                };
+                allDisplayedItemsTree.set(leaf, leaf);
+                continue;
+            }
+            const dataPath = treeListPathGetter(getValue(key)!) ?? [null];
             const dataPathLength = dataPath.length;
             if (dataPathLength > 1) {
                 groupsExist = true;
             }
-            const available = availableKeys.has(key);
-            let children: Map<string | null, SetFilterModelTreeItem> | undefined = allDisplayedItemsTree;
+            let children: SetFilterTreeItems | undefined = allDisplayedItemsTree;
             let item: SetFilterModelTreeItem | undefined;
             let parentTreeKeys: (string | null)[] = [];
             for (let depth = 0; depth < dataPathLength; depth++) {
@@ -187,7 +200,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private flattenItems(): void {
         this.activeDisplayedItemsFlat = [];
-        const recursivelyFlattenDisplayedItems = (items: Map<string | null, SetFilterModelTreeItem>) => {
+        const recursivelyFlattenDisplayedItems = (items: SetFilterTreeItems) => {
             for (const item of items.values()) {
                 if (!item.filterPasses || !item.available) {
                     continue;
@@ -315,7 +328,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private updateExpandAll(): void {
         const recursiveExpansionCheck = (
-            items: Map<string | null, SetFilterModelTreeItem>,
+            items: SetFilterTreeItems,
             someTrue: boolean,
             someFalse: boolean
         ): boolean | undefined => {

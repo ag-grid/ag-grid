@@ -26,7 +26,7 @@ import {
 } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
-import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { SetFilterTreeItems } from './iSetDisplayValueModel';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import type { SetFilterService } from './setFilterService';
 import {
@@ -288,7 +288,7 @@ export class SetFilterHandler<TValue = string>
      * there is no path getter and every value flattens to `String(value)` with a warning. Built fresh rather
      * than shared with the UI's own model, whose contents track what the list is currently showing.
      */
-    public createDisplayValueTree(keys: SetFilterModelValue): Map<string | null, SetFilterModelTreeItem> {
+    public createDisplayValueTree(keys: SetFilterModelValue): SetFilterTreeItems {
         const filterParams = this.params.filterParams;
         const model = new TreeSetDisplayValueModel<any>(
             this.beans.log,
