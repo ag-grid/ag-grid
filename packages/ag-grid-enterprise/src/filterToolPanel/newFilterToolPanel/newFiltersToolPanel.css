@@ -148,7 +148,7 @@
 
     /* stylelint-disable-next-line selector-max-specificity */
     .ag-text-field-input {
-        padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important;
+        padding-inline-start: calc(var(--ag-icon-size) + var(--ag-spacing) * 2) !important;
     }
 
     /* stylelint-disable-next-line selector-max-specificity */
