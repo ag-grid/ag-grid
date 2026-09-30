@@ -48,6 +48,23 @@ const SOURCE_PASTE = 'paste';
 const EXPORT_TYPE_DRAG_COPY = 'dragCopy';
 const EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
+// Skips a tag's attributes, including quoted values that contain `>`.
+const HTML_TAG_ATTRIBUTES = `(?:[^>"']|"[^"]*"|'[^']*')*`;
+const HTML_TAG_SOURCE = `<(\\/?)([a-z][\\w:-]*)${HTML_TAG_ATTRIBUTES}>`;
+
+function htmlElementRegex(name: string): RegExp {
+    return new RegExp(`<${name}\\b${HTML_TAG_ATTRIBUTES}>([\\s\\S]*?)<\\/${name}\\s*>`, 'i');
+}
+
+const HTML_BODY_REGEX = htmlElementRegex('body');
+const HTML_TABLE_REGEX = htmlElementRegex('table');
+// An empty table cell may contain a paragraph with only a line break.
+const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(`^<p\\b${HTML_TAG_ATTRIBUTES}>\\s*<br\\s*\\/?>\\s*<\\/p\\s*>$`, 'i');
+
+function isBlankLine(line: string[] | undefined): boolean {
+    return line?.length === 1 && line[0] === '';
+}
+
 enum CellClearType {
     CellRange,
     SelectedRows,
@@ -310,8 +327,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (htmlToReconcile && delimiter !== '\t' && /[\r\n]$/.test(data)) {
             // Excel's plain text uses tabs even when the grid is configured with another delimiter.
             // Use its table shape only to identify a synthetic final row, not to add HTML columns.
-            const lastLine = _last(parsedData);
-            if (lastLine?.length === 1 && lastLine[0] === '') {
+            if (isBlankLine(_last(parsedData))) {
                 const tabularData = stringToArray(data, '\t');
                 if (this.reconcileClipboardDataWithHtml(tabularData, htmlToReconcile)) {
                     parsedData.pop();
@@ -366,8 +382,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return false;
         }
 
-        const lastLine = _last(parsedData);
-        const removeLastLine = parsedData.length === table.rowCount + 1 && lastLine?.length === 1 && lastLine[0] === '';
+        const removeLastLine = parsedData.length === table.rowCount + 1 && isBlankLine(_last(parsedData));
         if (parsedData.length > table.rowCount && !removeLastLine) {
             return false;
         }
@@ -412,12 +427,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         rowCount: number;
         boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[];
     } | null {
-        const body = /<body\b(?:[^>"']|"[^"]*"|'[^']*')*>([\s\S]*?)<\/body\s*>/i.exec(html)?.[1] ?? html;
+        const body = HTML_BODY_REGEX.exec(html)?.[1] ?? html;
         const uncommentedBody = body.replace(/<!--[\s\S]*?-->/g, '');
         if (uncommentedBody.includes('<!--')) {
             return null;
         }
-        const table = /<table\b(?:[^>"']|"[^"]*"|'[^']*')*>([\s\S]*?)<\/table\s*>/i.exec(uncommentedBody);
+        const table = HTML_TABLE_REGEX.exec(uncommentedBody);
         if (!table) {
             return null;
         }
@@ -439,7 +454,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         let cellCount = 0;
         let plainCellCount = 0;
         let hasNonEmptyMissingCell = false;
-        const tagPattern = /<\/?[a-z][\w:-]*(?:[^>"']|"[^"]*"|'[^']*')*>/gi;
+        const tagPattern = new RegExp(HTML_TAG_SOURCE, 'gi');
         let endOfPreviousTag = 0;
         for (let match = tagPattern.exec(tableContent); match; match = tagPattern.exec(tableContent)) {
             const strayTag = tableContent.indexOf('<', endOfPreviousTag);
@@ -451,8 +466,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
             endOfPreviousTag = tagPattern.lastIndex;
 
-            const tag = match[0];
-            const name = /^<\/?([a-z][\w:-]*)/i.exec(tag)?.[1].toLowerCase();
+            const [tag, closingSlash, tagName] = match;
+            const isClosingTag = closingSlash === '/';
+            const name = tagName.toLowerCase();
             if (
                 name === 'table' ||
                 name === 'script' ||
@@ -463,7 +479,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 return null;
             }
             if (name === 'td' || name === 'th') {
-                if (tag[1] === '/') {
+                if (isClosingTag) {
                     if (cellName !== name) {
                         return null;
                     }
@@ -488,7 +504,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             if (name !== 'tr') {
                 continue;
             }
-            if (tag[1] === '/') {
+            if (isClosingTag) {
                 if (!inRow || cellName || !cellCount) {
                     return null;
                 }
@@ -515,8 +531,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private isEmptyHtmlCell(content: string): boolean {
         const trimmed = content.trim();
-        // An empty table cell may contain a paragraph with only a line break.
-        return !trimmed || /^<p\b(?:[^>"']|"[^"]*"|'[^']*')*>\s*<br\s*\/?>\s*<\/p\s*>$/i.test(trimmed);
+        return !trimmed || HTML_EMPTY_PARAGRAPH_REGEX.test(trimmed);
     }
 
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
@@ -853,9 +868,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private removeLastLineIfBlank(parsedData: string[][]): void {
         // remove last row if empty, excel puts empty last row in
         const lastLine = _last(parsedData);
-        const lastLineIsBlank = lastLine?.length === 1 && lastLine[0] === '';
 
-        if (lastLineIsBlank) {
+        if (isBlankLine(lastLine)) {
             // do not remove the last empty line when that is the only line pasted
             if (parsedData.length === 1) {
                 return;
