@@ -1056,9 +1056,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressChangeDetection: boolean | undefined = undefined;
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
-     * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
      * @default false
      * @initial
+     * @deprecated v36.2 use `enableDevValidations({ debug: true })` instead.
      */
     @Input({ transform: booleanAttribute }) public debug: boolean | undefined = undefined;
     /** Show or hide the loading UI.
