@@ -1,14 +1,14 @@
 <div class="example-wrapper">
-    <div class="example-header">
-        <div class="example-controls">
-            <span>Find:</span>
+    <div class="example-header example-controls">
+        <div class="controls-row">
+            <label for="find-text-box">Find:</label>
             <input type="text" id="find-text-box" />
             <button onclick="previous()">Previous</button>
             <button onclick="next()">Next</button>
             <span id="activeMatchNum"></span>
         </div>
-        <div class="example-controls">
-            <span>Go to match:</span>
+        <div class="controls-row">
+            <label for="find-goto">Go to match:</label>
             <input type="number" id="find-goto" min="1" />
             <button onclick="goToFind()">Go To</button>
         </div>

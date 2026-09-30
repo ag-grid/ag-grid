@@ -22,17 +22,17 @@ const VueExample = defineComponent({
     template: `
 <div style="height: 100%">
     <div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" @input="onInput" @keydown="onKeyDown" />
+        <div class="example-header example-controls">
+            <div class="controls-row">
+                <label for="find-text-box">Find:</label>
+                <input type="text" id="find-text-box" @input="onInput" @keydown="onKeyDown" />
                 <button @click="previous()">Previous</button>
                 <button @click="next()">Next</button>
                 <span>{{activeMatchNum}}</span>
             </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input type="number" min="1" v-model="goTo" />
+            <div class="controls-row">
+                <label for="find-goto">Go to match:</label>
+                <input type="number" id="find-goto" min="1" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
             </div>
         </div>

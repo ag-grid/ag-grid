@@ -25,17 +25,17 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule]);
     standalone: true,
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
+        <div class="example-header example-controls">
+            <div class="controls-row">
+                <label for="find-text-box">Find:</label>
+                <input type="text" id="find-text-box" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
                 <button (click)="previous()">Previous</button>
                 <button (click)="next()">Next</button>
                 <span>{{ activeMatchNum }}</span>
             </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input #goToInput type="number" min="1" />
+            <div class="controls-row">
+                <label for="find-goto">Go to match:</label>
+                <input #goToInput type="number" id="find-goto" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>
         </div>
