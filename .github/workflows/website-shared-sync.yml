@@ -1,7 +1,8 @@
 name: Website shared sync
 
 # Posts to #website-sync when a merge to `latest` leaves external/ag-website-shared
-# changes unsynced. Read-only. See ag-dev-prompts docs/website-shared-sync.md.
+# changes unsynced, and when a sync PR opens. Read-only. See ag-dev-prompts
+# docs/website-shared-sync.md.
 #
 # Prerequisites:
 #   secrets: SLACK_BOT_OAUTH_TOKEN
@@ -12,6 +13,9 @@ on:
     workflow_run:
         workflows: ['CI']
         types: [completed]
+        branches: [latest]
+    pull_request:
+        types: [opened]
         branches: [latest]
     workflow_dispatch:
         inputs:
@@ -35,6 +39,9 @@ jobs:
     notify:
         if: >-
             github.event_name == 'workflow_dispatch' ||
+            (github.event_name == 'pull_request' &&
+             contains(github.head_ref, '-website-shared-') &&
+             github.event.pull_request.head.repo.full_name == github.repository) ||
             (github.event.workflow_run.run_attempt == 1 &&
              github.event.workflow_run.event == 'push' &&
              github.event.workflow_run.head_repository.full_name == github.repository)
