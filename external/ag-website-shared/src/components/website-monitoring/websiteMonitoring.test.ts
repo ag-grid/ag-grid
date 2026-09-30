@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
 import { vi } from 'vitest';
 
+import {
+    WEBSITE_MONITORING_GTM_START_SCRIPT,
+    WEBSITE_MONITORING_GTM_STOP_SCRIPT,
+    WEBSITE_MONITORING_QUEUE,
+} from './gtmTags';
+
 const dash0 = vi.hoisted(() => ({
     init: vi.fn(),
     sendEvent: vi.fn(),
@@ -17,60 +23,40 @@ const CONFIG = {
     authToken: 'auth_test',
 };
 
-function setAnalyticsConsent(value: 'true' | 'false') {
-    document.cookie = `cookies-analytics=${value}; path=/`;
+// Runs a GTM tag's script exactly as the tag injects it
+async function fireGtmTag(script: string) {
+    new Function(script)();
+    await vi.dynamicImportSettled();
 }
-
-let stopListening: (() => void) | undefined;
 
 // Each test gets a fresh module, as a page load would, since monitoring starts at most once
 async function initWebsiteMonitoring() {
     vi.resetModules();
     const websiteMonitoring = await import('./websiteMonitoring');
-    stopListening = websiteMonitoring.initWebsiteMonitoring(CONFIG);
+    websiteMonitoring.initWebsiteMonitoring(CONFIG);
     await vi.dynamicImportSettled();
     return websiteMonitoring;
 }
 
 beforeEach(() => {
-    // jsdom has no Cookie Store API, so consent changes are found by polling
-    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+    vi.clearAllMocks();
+    delete (window as any)[WEBSITE_MONITORING_QUEUE];
 });
 
 afterEach(() => {
-    stopListening?.();
-    stopListening = undefined;
     vi.restoreAllMocks();
-    vi.useRealTimers();
 });
 
-async function waitForConsentCheck() {
-    vi.advanceTimersByTime(1000);
-    await vi.dynamicImportSettled();
-}
-
 describe('initWebsiteMonitoring', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-        document.cookie = 'cookies-analytics=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    });
-
-    test('does not start before the visitor has answered the consent banner', async () => {
+    test('does not start until GTM sends start', async () => {
         await initWebsiteMonitoring();
 
         expect(dash0.init).not.toHaveBeenCalled();
     });
 
-    test('does not start when analytics consent is declined', async () => {
-        setAnalyticsConsent('false');
+    test('starts with the given config when GTM sends start', async () => {
         await initWebsiteMonitoring();
-
-        expect(dash0.init).not.toHaveBeenCalled();
-    });
-
-    test('starts with the given config when analytics consent is granted', async () => {
-        setAnalyticsConsent('true');
-        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
 
         expect(dash0.init).toHaveBeenCalledTimes(1);
         expect(dash0.init).toHaveBeenCalledWith(
@@ -83,36 +69,48 @@ describe('initWebsiteMonitoring', () => {
         );
     });
 
-    test('starts once consent is granted, without the visitor navigating', async () => {
+    test('runs a start that GTM sent before monitoring loaded', async () => {
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
         await initWebsiteMonitoring();
-        setAnalyticsConsent('true');
-        await waitForConsentCheck();
-        await waitForConsentCheck();
 
         expect(dash0.init).toHaveBeenCalledTimes(1);
     });
 
-    test('ends the session and reloads when consent is withdrawn, without the visitor navigating', async () => {
+    test('starts only once when GTM sends start repeatedly', async () => {
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledTimes(1);
+    });
+
+    test('ends the session and reloads when GTM sends stop', async () => {
         const reload = vi.fn();
         vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, reload });
-        setAnalyticsConsent('true');
         await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
 
-        setAnalyticsConsent('false');
-        await waitForConsentCheck();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
 
         expect(dash0.terminateSession).toHaveBeenCalledTimes(1);
         expect(reload).toHaveBeenCalledTimes(1);
     });
+
+    test('ignores stop when monitoring never started', async () => {
+        const reload = vi.fn();
+        vi.spyOn(window, 'location', 'get').mockReturnValue({ ...window.location, reload });
+        await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
+
+        expect(dash0.init).not.toHaveBeenCalled();
+        expect(dash0.terminateSession).not.toHaveBeenCalled();
+        expect(reload).not.toHaveBeenCalled();
+    });
 });
 
 describe('trackMonitoringEvent and reportMonitoringError', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
-
     test('do nothing when monitoring has not started', async () => {
-        setAnalyticsConsent('false');
         const { trackMonitoringEvent, reportMonitoringError } = await initWebsiteMonitoring();
 
         trackMonitoringEvent('contact_form_submit', { formLocation: 'Contact page' });
@@ -123,8 +121,8 @@ describe('trackMonitoringEvent and reportMonitoringError', () => {
     });
 
     test('send to Dash0 once monitoring has started', async () => {
-        setAnalyticsConsent('true');
         const { trackMonitoringEvent, reportMonitoringError } = await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
         const error = new Error('reCAPTCHA failed');
 
         trackMonitoringEvent('contact_form_submit', { formLocation: 'Contact page' });

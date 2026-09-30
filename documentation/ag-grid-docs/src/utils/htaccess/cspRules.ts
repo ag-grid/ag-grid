@@ -13,6 +13,10 @@
  */
 import { createHash } from 'node:crypto';
 
+import {
+    WEBSITE_MONITORING_GTM_START_SCRIPT,
+    WEBSITE_MONITORING_GTM_STOP_SCRIPT,
+} from '../../../../../external/ag-website-shared/src/components/website-monitoring/gtmTags';
 import type { AcceptedCspViolation } from '../csp/cspViolationReport';
 import {
     DARK_MODE_INIT_SCRIPT,
@@ -168,6 +172,12 @@ const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m
 // container (not this repo); hash captured from the browser's CSP violation report.
 const GTM_PROMO_TRACKING_HASH = "'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='";
 
+// GTM tags that start and stop Dash0 website monitoring once Enzuzo consent is granted or
+// withdrawn (see DASH0_INGRESS_HOST). Unlike the tags above, their source lives in this repo, in
+// the website-monitoring gtmTags module, so they are hashed from that rather than pinned; the GTM
+// tags must be copied from it byte for byte.
+const WEBSITE_MONITORING_GTM_SCRIPTS = [WEBSITE_MONITORING_GTM_START_SCRIPT, WEBSITE_MONITORING_GTM_STOP_SCRIPT];
+
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
@@ -181,6 +191,7 @@ const SITE_SCRIPT_HASHES = [
     GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH,
     CONTACT_FORM_SCRIPT_HASH,
     GTM_PROMO_TRACKING_HASH,
+    ...WEBSITE_MONITORING_GTM_SCRIPTS.map(hashInlineScript),
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
@@ -305,10 +316,11 @@ const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
 // this changes if the automation is recreated in another zone.
 const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 
-// Dash0 website monitoring (real user monitoring), started by
-// @ag-website-shared/components/website-monitoring once the visitor grants analytics consent. The
-// SDK is bundled from npm and served from our own origin, so it needs no script-src entry; this is
-// where it sends its OTLP traces and logs, with fetch() and sendBeacon.
+// Dash0 website monitoring (real user monitoring), run by
+// @ag-website-shared/components/website-monitoring once GTM reports analytics consent (see
+// WEBSITE_MONITORING_GTM_SCRIPTS). The SDK is bundled from npm and served from our own origin, so
+// it needs no script-src origin; this is where it sends its OTLP traces and logs, with fetch() and
+// sendBeacon.
 //
 // Regional host — this changes if the Dash0 organisation moves region, along with
 // PUBLIC_DASH0_ENDPOINT_URL in the .env.build.* files.

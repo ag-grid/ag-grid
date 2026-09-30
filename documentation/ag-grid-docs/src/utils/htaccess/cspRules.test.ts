@@ -439,6 +439,14 @@ describe('cspRules', () => {
                 'https://ingress.eu-west-1.aws.dash0.com'
             );
         });
+
+        it('authorises the GTM start and stop tags by hash in the site scope', () => {
+            // Pinned so a change to the tag source in gtmTags is a deliberate one: the tags in the
+            // shared GTM container must then be updated to match, byte for byte.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-mEEBV2lFpiAmDNE5KUyh96GfbHxzY6fQyivqgFN8qok='"); // start
+            expect(site).toContain("'sha256-I3QGV+JbPLDPH/LSfCc18uFddKqpiYEYRrrBUdnCC2Q='"); // stop
+        });
     });
 
     describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
