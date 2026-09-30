@@ -597,35 +597,27 @@ export class ColumnFilterService
 
         const colId = column?.getColId();
         return this.updateActiveFilters().then(() =>
-            this.notifyOtherFilters(colId, additionalEventAttributes)
-        ) as AgPromise<void>;
-    }
-
-    private notifyOtherFilters(colId: string | undefined, additionalEventAttributes: any): AgPromise<void> {
-        return this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
-            this.allColumnFilters.forEach((filterWrapper) => {
-                const { column: filterColumn, isHandler } = filterWrapper;
-                if (colId === filterColumn.getColId()) {
-                    return;
-                }
-                if (isHandler) {
-                    filterWrapper.handler.onAnyFilterChanged?.();
-                }
-                const filterUi = getFilterUiFromWrapper(filterWrapper, isHandler);
-                if (!filterUi) {
-                    return;
-                }
-                void filterUi.then((filter) => {
-                    if (typeof filter?.onAnyFilterChanged === 'function') {
-                        filter.onAnyFilterChanged();
+            this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
+                this.allColumnFilters.forEach((filterWrapper) => {
+                    const { column: filterColumn, isHandler } = filterWrapper;
+                    if (colId === filterColumn.getColId()) {
+                        return;
                     }
+                    if (isHandler) {
+                        filterWrapper.handler.onAnyFilterChanged?.();
+                    }
+                    getFilterUiFromWrapper(filterWrapper, isHandler)?.then((filter) => {
+                        if (typeof filter?.onAnyFilterChanged === 'function') {
+                            filter.onAnyFilterChanged();
+                        }
+                    });
                 });
-            });
 
-            // because internal events are not async in ag-grid, when the dispatchEvent
-            // method comes back, we know all listeners have finished executing.
-            this.processingFilterChange = true;
-        });
+                // because internal events are not async in ag-grid, when the dispatchEvent
+                // method comes back, we know all listeners have finished executing.
+                this.processingFilterChange = true;
+            })
+        ) as AgPromise<void>;
     }
 
     public updateAfterFilterChanged(): void {
@@ -1427,7 +1419,7 @@ export class ColumnFilterService
         };
     }
 
-    /** Returns whether the handler was recreated, which drops the model. */
+    /** Returns whether the model was cleared, which happens only when the handler could not take the new params. */
     private refreshOrRecreateHandler(
         filterWrapper: HandlerFilterWrapper,
         filterDef: FilterDefWithGetter,
@@ -1523,9 +1515,9 @@ export class ColumnFilterService
             );
 
         // a cleared model makes the params derived above stale, so the ui must re-derive them
-        let handlerRecreated = false;
+        let modelCleared = false;
         if (wasHandler) {
-            handlerRecreated = this.refreshOrRecreateHandler(
+            modelCleared = this.refreshOrRecreateHandler(
                 filterWrapper,
                 filterDef,
                 handlerFunc!,
@@ -1537,17 +1529,13 @@ export class ColumnFilterService
         const filterUi = filterWrapper.filterUi;
         if (wasHandler && filterUi && compDetails && !filterUi.created) {
             // nothing has been built from the old col def yet, so swap the plan instead of destroying
-            filterWrapper.filterUi = this.createFilterUiForHandler(
-                compDetails,
-                createFilterUi as any,
-                handlerRecreated
-            );
+            filterWrapper.filterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any, modelCleared);
             return;
         }
 
         // the ui is bound to its handler and its component, so replacing either, or losing the component, destroys it
         if (
-            handlerRecreated ||
+            modelCleared ||
             this.areFilterCompsDifferent(filterUi?.compDetails ?? null, compDetails) ||
             !filterUi ||
             !compDetails
@@ -1804,23 +1792,21 @@ export class ColumnFilterService
 
             const uiPromise = getFilterUiFromWrapper<IFilterComp>(filterWrapper);
             if (uiPromise) {
-                void uiPromise.then((filter) => this.setFilterUiModel(filter, newModel, () => resolve()));
+                uiPromise.then((filter) => {
+                    if (typeof filter?.setModel !== 'function') {
+                        this.warn(65);
+                        resolve();
+                        return;
+                    }
+
+                    (filter.setModel(newModel) || AgPromise.resolve()).then(() => resolve());
+                });
                 return;
             }
 
             // no handler and no filter comp
             resolve();
         });
-    }
-
-    private setFilterUiModel(filter: IFilterComp | null, newModel: any, done: () => void): void {
-        if (typeof filter?.setModel !== 'function') {
-            this.warn(65);
-            done();
-            return;
-        }
-
-        void (filter.setModel(newModel) ?? AgPromise.resolve()).then(done);
     }
 
     /** for handlers only */

@@ -374,8 +374,7 @@ export class SetFilterHandler<TValue = string>
         if (!this.isValuesTakenFromGrid()) {
             return;
         }
-        const valueModel = this.valueModel;
-        valueModel.refreshValues(forColDef).then(() => {
+        this.valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged' });
             this.validateModel(this.params, { afterDataChange: true });
         });

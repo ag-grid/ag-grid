@@ -56,11 +56,6 @@ interface MultiFilterWrapper {
     pendingUi: AgPromise<IFilterComp> | undefined;
 }
 
-interface ChildGetter {
-    filterValueGetter: FilterValueGetter | undefined;
-    getValue: FilterGetValueFunc;
-}
-
 /** temporary type until `MultiFilterParams` is updated as breaking change */
 type MultiFilterDisplayParams = IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
 
@@ -441,32 +436,34 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             });
         };
 
-        const childGetter = this.createChildGetter(filterDef, inherited);
+        const colFilter = beans.colFilter!;
+        const filterValueGetter = colFilter.resolveFilterValueGetter(
+            column,
+            filterDef,
+            inherited,
+            DEFAULT_CHILD_FILTER
+        );
+        const getValue = colFilter.createHandlerGetValue(column, filterValueGetter);
         const {
             compDetails,
             handler,
             handlerParams: originalHandlerParams,
             createFilterUi,
-        } = beans.colFilter!.createFilterInstance(
-            column,
-            filterDef,
-            DEFAULT_CHILD_FILTER,
-            (defaultParams, isHandler) => {
-                const updatedParams = this.createChildParams(defaultParams, isHandler, childGetter.getValue, index);
-                if (isHandler) {
-                    initialModelForFilter = getFilterModelForIndex(initialModel, index);
-                    createWrapperComp = this.updateDisplayParams(
-                        updatedParams as unknown as FilterDisplayParams,
-                        index,
-                        initialModelForFilter,
-                        () => compDetails,
-                        () => handler!,
-                        onModelChange
-                    );
-                }
-                return updatedParams;
+        } = colFilter.createFilterInstance(column, filterDef, DEFAULT_CHILD_FILTER, (defaultParams, isHandler) => {
+            const updatedParams = this.createChildParams(defaultParams, isHandler, getValue, index);
+            if (isHandler) {
+                initialModelForFilter = getFilterModelForIndex(initialModel, index);
+                createWrapperComp = this.updateDisplayParams(
+                    updatedParams as unknown as FilterDisplayParams,
+                    index,
+                    initialModelForFilter,
+                    () => compDetails,
+                    () => handler!,
+                    onModelChange
+                );
             }
-        );
+            return updatedParams;
+        });
 
         if (!createFilterUi) {
             return AgPromise.resolve(null);
@@ -477,7 +474,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             const doesRowPassOtherFilter = originalHandlerParams!.doesRowPassOtherFilter;
             handlerParams = {
                 ...originalHandlerParams!,
-                ...childGetter,
+                filterValueGetter,
+                getValue,
                 onModelChange,
                 doesRowPassOtherFilter: (node) =>
                     doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
@@ -513,18 +511,6 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             ? selectableFilter.getFilterDef(column, colDef)
             : colDef;
         return colFilter!.resolveFilterValueGetter(column, multiDef, colDef.filterValueGetter, undefined);
-    }
-
-    private createChildGetter(filterDef: IMultiFilterDef, inherited: FilterValueGetter | undefined): ChildGetter {
-        const colFilter = this.beans.colFilter!;
-        const column = this.params.column as AgColumn;
-        const filterValueGetter = colFilter.resolveFilterValueGetter(
-            column,
-            filterDef,
-            inherited,
-            DEFAULT_CHILD_FILTER
-        );
-        return { filterValueGetter, getValue: colFilter.createHandlerGetValue(column, filterValueGetter) };
     }
 
     private createChildParams(
