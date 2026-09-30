@@ -153,7 +153,8 @@ export {
     presetDateFilterTypeRelativeFromToMap as _PRESET_DATE_FILTER_RANGES,
 } from './filter/provided/date/relativeDateRanges';
 export type { FilterManager } from './filter/filterManager';
-export type { FilterValueService } from './filter/filterValueService';
+export type { FilterValueService, FilterValueSource } from './filter/filterValueService';
+export { _getFilterValueSource } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
@@ -301,6 +302,12 @@ export type {
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
+export type {
+    AgFilterHandlerBaseParams,
+    AgFilterHandlerParams,
+    FilterGetValueFunc,
+    FilterValueGetter,
+} from './interfaces/iFilter';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
 export type { IFooterService } from './interfaces/iFooterService';
 export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';

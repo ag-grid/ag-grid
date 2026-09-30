@@ -2,13 +2,14 @@ import { _areEqual, _last, _pushToMapArray } from 'ag-stack';
 
 import type {
     AgColumn,
+    AgFilterHandlerParams,
     AgPromise,
     BaseFilterParams,
     BeanCollection,
     ColDef,
     FilterDisplayParams,
     FilterDisplayState,
-    FilterHandlerParams,
+    IFilterDef,
     IFilterParams,
     IRowNode,
     ISetFilterParams,
@@ -31,7 +32,7 @@ import {
 
 import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
-import { translateForSetFilter } from '../../setFilter/setFilterUtils';
+import { getDataTypeKeyCreator, translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { getMultiFilterChild } from '../customFilterOptions';
@@ -53,6 +54,9 @@ interface SetValueEntry extends AutocompleteEntry {
 /** The list offers these objects themselves, so one chosen from it comes back carrying its own path. */
 const isSetValueEntry = (entry: AutocompleteEntry): entry is SetValueEntry => 'path' in entry;
 
+/** The value list reads the column like a Set Filter of the column's own. */
+const SET_FILTER_DEF: IFilterDef = { filter: 'agSetColumnFilter' };
+
 /** A column's Set Filter values, rebuilt whenever the underlying value model reloads. */
 interface SetColumnValues {
     /** Every value the column offers, in the Set Filter's own order. */
@@ -66,7 +70,7 @@ interface SetColumnValues {
 }
 
 /** Handler params that are also a complete `IFilterParams`, which is what the `filterParams` merge is handed. */
-type SetHandlerParams = FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams> & IFilterParams;
+type SetHandlerParams = AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams> & IFilterParams;
 
 /** What the Set Filter UI is handed: its display params, plus the callbacks a filter component expects. */
 type SetFilterUiParams = FilterDisplayParams<any, any, SetFilterModel> &
@@ -147,7 +151,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
                 const handler = setColumn.handler;
                 handler.refresh(this.createHandlerParams(column, 'colDef'));
                 // `refresh` re-reads the definitions; the grouping reaches the keys through the values.
-                handler.onNewRowsLoaded();
+                handler.onNewRowsLoadedForColDef();
                 setColumn.values = null;
                 continue;
             }
@@ -508,14 +512,33 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             colDef.filter === 'agMultiColumnFilter'
                 ? getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter')
                 : undefined;
-        return { ...colDef, filter: 'agSetColumnFilter', filterParams: child?.filterParams };
+        const filterParams = child ? child.filterParams : this.getKeyFormatterParams(colDef);
+        return { ...colDef, filter: 'agSetColumnFilter', filterParams };
+    }
+
+    /** A data type's key creator names each value by its formatted text, so the list shows that text. */
+    private getKeyFormatterParams(colDef: ColDef): ISetFilterParams | undefined {
+        const formatValue = getDataTypeKeyCreator(this.beans, colDef);
+        if (!formatValue || colDef.keyCreator !== formatValue) {
+            return undefined;
+        }
+        return { valueFormatter: (params) => formatValue(params) || translateForSetFilter(this, 'blanks') };
     }
 
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
         const colDef = this.getSetColDef(column);
+        const colFilter = this.beans.colFilter!;
+        const filterValueGetter = colFilter.resolveFilterValueGetter(
+            column,
+            SET_FILTER_DEF,
+            column.colDef.filterValueGetter,
+            undefined
+        );
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),
+            filterValueGetter,
+            getValue: colFilter.createHandlerGetValue(column, filterValueGetter),
             model: null,
             source,
             onModelChange: () => {},
