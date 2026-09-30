@@ -298,7 +298,7 @@ Use `toolPanelParams.buttons` to display buttons at the bottom of the Columns To
 
 - `'apply'`: Enables [Deferred Updates](#deferred-updates) and commits all pending changes.
 - `'cancel'`: Discards all pending changes. Only has an effect alongside `'apply'`.
-- `'reset'`: Resets the columns to the state defined in the Column Definitions, the same as the **Reset Columns** item in the [Column Menu](./column-menu/). The reset is applied immediately, even when Deferred Updates are enabled.
+- `'reset'`: Resets the columns to the state defined in the Column Definitions, as [`api.resetColumnState()`](./column-state/#reference-state-resetColumnState) does. It is applied immediately, even when Deferred Updates are enabled.
 
 Only the **Apply** button enables Deferred Updates, so **Reset** can be used with or without it.
 
@@ -340,7 +340,6 @@ Note that in the example below:
 - Changes made in the Columns Tool Panel are staged as pending changes.
 - **Apply** commits all pending changes in a single operation.
 - **Cancel** discards all pending changes and restores the last applied state.
-- **Reset** discards all pending changes and immediately resets the columns to the state defined in the Column Definitions.
 
 {% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
 
@@ -355,7 +354,7 @@ const gridOptions = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    buttons: ['reset', 'cancel', 'apply'],
+                    buttons: ['cancel', 'apply'],
                 },
             },
         ],
