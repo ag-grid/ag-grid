@@ -66,16 +66,16 @@ When new column definitions are set, the Set Filter updates to reflect them and 
 The Set Filter is reset instead, clearing its filter model, when the update changes how its values are identified:
 
 - `caseSensitive` is changed.
-- `keyCreator` is changed.
+- A `keyCreator` you supply is changed, `filterParams.keyCreator` taking precedence over the column's.
 - `treeList` is changed on a group column.
-- The source of the values, such as `field`, `valueGetter` or `filterValueGetter`, is changed, unless the Set Filter lists [Supplied Values](./filter-set-filter-list/#supplying-filter-values).
-- The column's `valueFormatter` is changed, including the one its [Cell Data Type](./cell-data-types/#pre-defined-cell-data-types) provides, which is rebuilt whenever new `dataTypeDefinitions` are set, where the data type identifies values by their formatted text, such as `date` or `object`, and the column has no `keyCreator` of its own.
+- The source of the values, such as `field`, `valueGetter` or `filterValueGetter`, is changed, unless the Set Filter lists [Supplied Values](./filter-set-filter-list/#supplying-filter-values) both before and after the update.
+- The column's `valueFormatter` is changed, where its [Cell Data Type](./cell-data-types/#pre-defined-cell-data-types) identifies values by their formatted text, such as `date` or `object`, and no `keyCreator` is supplied. This includes the formatter the data type provides, which is rebuilt whenever new `dataTypeDefinitions` are set.
 
 Functions are compared by reference, so a new function resets the Set Filter even when it returns the same result. When a Set Filter inside a [Multi Filter](./filter-multi/) is reset, the whole Multi Filter is reset.
 
 {% if isFramework("javascript", "angular", "vue") %}
-For the properties above which are functions, define them as constants outside of the column definition to avoid resetting the Set Filter when passing new column definitions.
+For the function-valued properties above, define them as constants outside of the column definition, and keep `dataTypeDefinitions` the same object, to avoid resetting the Set Filter when passing new column definitions.
 {% /if %}
 {% if isFramework("react") %}
-For the properties above which are functions, memoise the individual functions (e.g. define them via `useCallback` outside of the column definition) to avoid resetting the Set Filter when passing new column definitions.
+For the function-valued properties above, memoise the individual functions (e.g. define them via `useCallback` outside of the column definition), and memoise `dataTypeDefinitions`, to avoid resetting the Set Filter when passing new column definitions.
 {% /if %}

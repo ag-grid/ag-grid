@@ -12,9 +12,10 @@ import type { IRowNode } from '../interfaces/iRowNode';
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface FilterValueSource {
-    kind: number;
-    source: unknown;
-    readsFormula: boolean;
+    /** In read order: filter value getter, calculated expression, value getter, field; `-1` for none. */
+    readonly kind: number;
+    readonly source: unknown;
+    readonly readsFormula: boolean;
 }
 
 /**
@@ -25,14 +26,16 @@ export function _getFilterValueSource(
     colDef: ColDef,
     filterValueGetter: string | ValueGetterFunc | undefined
 ): FilterValueSource {
-    const calculatedExpression = colDef.calculatedExpression;
-    const sources = [filterValueGetter, calculatedExpression, colDef.valueGetter, colDef.field];
-    const kind = sources.findIndex((source) => source != null);
-    return {
-        kind,
-        source: sources[kind],
-        readsFormula: !filterValueGetter && calculatedExpression === undefined && !!colDef.allowFormula,
-    };
+    // the getters and the field count when truthy, as the reads test them; a calculated expression when defined
+    const sources = [
+        filterValueGetter || undefined,
+        colDef.calculatedExpression,
+        colDef.valueGetter || undefined,
+        colDef.field || undefined,
+    ];
+    const kind = sources.findIndex((source) => source !== undefined);
+    // formulas are read wherever neither a filter value getter nor a calculated expression supplies the value
+    return { kind, source: sources[kind], readsFormula: kind !== 0 && kind !== 1 && !!colDef.allowFormula };
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -47,7 +50,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
         );
     }
 
-    /** Reads through this filter value getter alone, or the column's own value without one. */
+    /** Reads through this filter value getter alone, or the column's own value without one; see `_getFilterValueSource`. */
     public getValueWithGetter(
         column: AgColumn,
         rowNode: IRowNode,

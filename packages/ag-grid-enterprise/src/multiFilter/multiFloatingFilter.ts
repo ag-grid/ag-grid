@@ -1,7 +1,6 @@
 import { _clearElement, _setDisplayed } from 'ag-stack';
 
 import type {
-    AgColumn,
     ElementParams,
     FilterChangedEvent,
     FloatingFilterDisplayParams,
@@ -24,7 +23,7 @@ import {
 import { MultiFilter } from './multiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
 import { MultiFilterUi } from './multiFilterUi';
-import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import { getChildFilter, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 const MultiFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -211,10 +210,13 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
-        const { colFilter, frameworkOverrides, userCompFactory } = this.beans;
+        const { frameworkOverrides, userCompFactory } = this.beans;
+        // a child's `true` is the Text Filter, whatever the column's own default is
         const defaultComponentName =
-            _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () =>
-                colFilter!.getDefaultFloatingFilter(this.params.column as AgColumn)
+            _getDefaultFloatingFilterType(
+                frameworkOverrides,
+                { ...filterDef, filter: getChildFilter(filterDef) },
+                () => 'agReadOnlyFloatingFilter'
             ) ?? 'agReadOnlyFloatingFilter';
 
         return _getFloatingFilterCompDetails(userCompFactory, filterDef, params, defaultComponentName);

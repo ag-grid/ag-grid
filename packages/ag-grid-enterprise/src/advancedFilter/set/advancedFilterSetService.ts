@@ -508,7 +508,19 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             colDef.filter === 'agMultiColumnFilter'
                 ? getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter')
                 : undefined;
-        return { ...colDef, filter: 'agSetColumnFilter', filterParams: child?.filterParams };
+        const filterParams = child ? child.filterParams : this.getKeyFormatterParams(colDef);
+        return { ...colDef, filter: 'agSetColumnFilter', filterParams };
+    }
+
+    /** A data type's key creator names each value by its formatted text, so the list shows that text. */
+    private getKeyFormatterParams(colDef: ColDef): ISetFilterParams | undefined {
+        const cellDataType = colDef.cellDataType;
+        const formatValue =
+            typeof cellDataType === 'string' ? this.beans.dataTypeSvc?.getFormatValue(cellDataType) : undefined;
+        if (!formatValue || colDef.keyCreator !== formatValue) {
+            return undefined;
+        }
+        return { valueFormatter: (params) => formatValue(params) || translateForSetFilter(this, 'blanks') };
     }
 
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */

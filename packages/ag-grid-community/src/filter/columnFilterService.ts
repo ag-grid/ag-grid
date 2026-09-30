@@ -675,7 +675,7 @@ export class ColumnFilterService
         inherited: FilterValueGetter | undefined,
         filter: IFilterDef['filter'] = filterDef.filter
     ): FilterValueGetter | undefined {
-        const getter = filterDef.filterValueGetter ?? inherited;
+        const getter = filterDef.filterValueGetter || inherited;
         if (getter === undefined || getter !== this.beans.dataTypeSvc?.objectFilterValueGetter) {
             return getter;
         }
@@ -1105,7 +1105,7 @@ export class ColumnFilterService
         if (!handlerFunc) {
             return undefined;
         }
-        const filterParams = this.createHandlerFilterParams(column, filterDef);
+        const filterParams = this.createHandlerFilterParams(column, filterDef, 'init');
         const { handlerNameOrCallback, filterHandler } = handlerFunc;
         const { handler, handlerParams } = this.createHandlerFromFunc(column, filterDef, filterHandler, filterParams);
         return {
@@ -1115,16 +1115,20 @@ export class ColumnFilterService
         };
     }
 
-    /** The params the column's filter would build a handler for this definition with. */
+    /** The params the column's filter would build a handler for this definition with, on a colDef refresh. */
     public createHandlerParamsForDef(column: AgColumn, filterDef: FilterDefWithGetter): AgFilterHandlerBaseParams {
-        return this.createHandlerParams(column, filterDef, this.createHandlerFilterParams(column, filterDef));
+        return this.createHandlerParams(column, filterDef, this.createHandlerFilterParams(column, filterDef, 'colDef'));
     }
 
-    private createHandlerFilterParams(column: AgColumn, filterDef: IFilterDef): IFilterParams {
+    private createHandlerFilterParams(
+        column: AgColumn,
+        filterDef: IFilterDef,
+        source: 'init' | 'colDef'
+    ): IFilterParams {
         return _mergeFilterParamsWithApplicationProvidedParams(
             this.beans.userCompFactory,
             filterDef,
-            this.createFilterCompParams(column, true, 'init') as IFilterParams
+            this.createFilterCompParams(column, true, source) as IFilterParams
         );
     }
 

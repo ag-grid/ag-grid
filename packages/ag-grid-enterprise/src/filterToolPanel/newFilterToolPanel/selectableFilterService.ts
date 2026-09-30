@@ -152,23 +152,17 @@ export class SelectableFilterService
         if (index < 0) {
             return;
         }
-        const { selectedFilters, valueGetters } = this;
-        selectedFilters.set(colId, index);
-        const filterValueGetter = activeFilterDef.filterValueGetter;
-        if (filterValueGetter) {
-            valueGetters.set(colId, filterValueGetter);
-        } else {
-            valueGetters.delete(colId);
-        }
+        this.selectedFilters.set(colId, index);
+        this.setValueGetter(colId, activeFilterDef.filterValueGetter);
         if (!silent) {
             this.onChange();
         }
     }
 
     public clearActive(colId: string): void {
-        const { selectedFilters, valueGetters } = this;
-        selectedFilters.delete(colId);
-        valueGetters.delete(colId);
+        this.selectedFilters.delete(colId);
+        const column = this.beans.colModel.getNonPivotColById(colId);
+        this.setValueGetter(colId, column && this.getActiveValueGetter(column));
         this.onChange();
     }
 
@@ -190,6 +184,7 @@ export class SelectableFilterService
                 }
             }
         }
+        this.refreshValueGetters();
     }
 
     public override destroy(): void {
@@ -203,19 +198,24 @@ export class SelectableFilterService
         valueGetters.clear();
     }
 
-    /** The column-level readers read a chosen definition's getter, so it follows the column definitions. */
+    /** The column-level readers read the active definition's getter, chosen or default, as its filter does. */
     private refreshValueGetters(): void {
-        const { selectedFilters, valueGetters, beans } = this;
-        // the choice itself is kept, for when the column or its definition comes back
-        for (const [colId, index] of selectedFilters) {
-            const column = beans.colModel.getNonPivotColById(colId);
-            const defs = column && this.getDefs(column, column.colDef, index);
-            const filterValueGetter = defs?.activeFilterDef.filterValueGetter;
-            if (filterValueGetter) {
-                valueGetters.set(colId, filterValueGetter);
-            } else {
-                valueGetters.delete(colId);
-            }
+        // a choice whose column is missing is kept, for when the column or its definition comes back
+        this.valueGetters.clear();
+        for (const column of this.beans.colModel.getAllCols()) {
+            this.setValueGetter(column.colId, this.getActiveValueGetter(column));
+        }
+    }
+
+    private getActiveValueGetter(column: AgColumn): string | ValueGetterFunc | undefined {
+        return this.getDefs(column, column.colDef)?.activeFilterDef.filterValueGetter;
+    }
+
+    private setValueGetter(colId: string, filterValueGetter: string | ValueGetterFunc | undefined): void {
+        if (filterValueGetter) {
+            this.valueGetters.set(colId, filterValueGetter);
+        } else {
+            this.valueGetters.delete(colId);
         }
     }
 

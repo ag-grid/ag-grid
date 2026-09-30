@@ -51,6 +51,8 @@ interface MultiFilterWrapper {
     /** only set for handlers */
     model?: any;
     state?: FilterDisplayState;
+    /** A ui rebuilt for new params, installed only if nothing newer took its place while it loaded. */
+    pendingUi?: AgPromise<IFilterComp>;
 }
 
 /** temporary type until `MultiFilterParams` is updated as breaking change */
@@ -116,9 +118,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             }
             const filterDef = newDefs[i];
             const { onModelChange, doesRowPassOtherFilter } = wrapper.handlerParams!;
+            const childGetter = this.createChildGetter(filterDef);
             const handlerParams: AgFilterHandlerBaseParams = {
                 ...colFilter.createHandlerParamsForDef(column, filterDef),
-                ...this.createChildGetter(filterDef),
+                ...childGetter,
                 onModelChange,
                 doesRowPassOtherFilter,
             };
@@ -129,7 +132,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 filterDef,
                 DEFAULT_CHILD_FILTER,
                 (defaultParams) => ({
-                    ...this.createChildParams(defaultParams, true, filterDef, i),
+                    ...this.createChildParams(defaultParams, true, childGetter.getValue, i),
                     onModelChange,
                     getHandler,
                     onStateChange,
@@ -147,11 +150,62 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             }
             const model = wrapper.model ?? null;
             const state = wrapper.state ?? { model };
+            // a ui taking these params supersedes a rebuild still loading from older ones
+            wrapper.pendingUi = undefined;
             if (wrapper.filter.refresh?.({ ...filterParams, model, state, source: 'colDef' }) === false) {
-                return false;
+                this.recreateChildUi(wrapper, i, filterDef);
             }
         }
         return true;
+    }
+
+    /** A child ui that cannot take new params is rebuilt around its handler, which keeps the model. */
+    private recreateChildUi(wrapper: MultiFilterWrapper, index: number, filterDef: IMultiFilterDef): void {
+        const { handler, handlerParams } = wrapper;
+        const model = wrapper.model ?? null;
+        let createWrapperComp: ((filter: IFilterComp<any> | null) => FilterWrapperComp) | undefined;
+        const { compDetails, createFilterUi } = this.beans.colFilter!.createFilterComp(
+            this.params.column as AgColumn,
+            filterDef,
+            DEFAULT_CHILD_FILTER,
+            (defaultParams) => {
+                const params = this.createChildParams(defaultParams, true, handlerParams!.getValue, index);
+                createWrapperComp = this.updateDisplayParams(
+                    params as unknown as FilterDisplayParams,
+                    index,
+                    model,
+                    () => compDetails,
+                    () => handler!,
+                    handlerParams!.onModelChange
+                );
+                return params;
+            },
+            true,
+            'colDef'
+        )!;
+        const pendingUi = createFilterUi();
+        wrapper.pendingUi = pendingUi;
+        void pendingUi.then((filter) => {
+            if (wrapper.pendingUi !== pendingUi || this.wrappers[index] !== wrapper || !this.isAlive()) {
+                this.destroyBean(filter);
+                return;
+            }
+            wrapper.pendingUi = undefined;
+            const oldFilter = wrapper.filter;
+            const filterParams = compDetails.params;
+            wrapper.filter = filter!;
+            wrapper.comp = createWrapperComp!(filter);
+            wrapper.filterParams = filterParams;
+            wrapper.state = { model };
+            this.destroyBean(oldFilter);
+            // a framework ui can resolve after the model moved on
+            const currentModel = wrapper.model ?? null;
+            if (currentModel !== model) {
+                wrapper.state = { model: currentModel };
+                _refreshFilterUi(filter as any, filterParams, currentModel, wrapper.state, 'api');
+            }
+            this.refreshChildGui();
+        });
     }
 
     public isFilterActive(): boolean {
@@ -380,6 +434,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             });
         };
 
+        const childGetter = this.createChildGetter(filterDef);
         const {
             compDetails,
             handler,
@@ -390,7 +445,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             filterDef,
             DEFAULT_CHILD_FILTER,
             (defaultParams, isHandler) => {
-                const updatedParams = this.createChildParams(defaultParams, isHandler, filterDef, index);
+                const updatedParams = this.createChildParams(defaultParams, isHandler, childGetter.getValue, index);
                 if (isHandler) {
                     initialModelForFilter = getFilterModelForIndex(initialModel, index);
                     createWrapperComp = this.updateDisplayParams(
@@ -415,7 +470,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             const doesRowPassOtherFilter = originalHandlerParams!.doesRowPassOtherFilter;
             handlerParams = {
                 ...originalHandlerParams!,
-                ...this.createChildGetter(filterDef),
+                ...childGetter,
                 onModelChange,
                 doesRowPassOtherFilter: (node) =>
                     doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
@@ -464,7 +519,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private createChildParams(
         defaultParams: BaseFilterParams,
         isHandler: boolean,
-        filterDef: IMultiFilterDef,
+        getValue: BaseFilterParams['getValue'],
         index: number
     ) {
         return {
@@ -478,7 +533,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                   },
             doesRowPassOtherFilter: (node: RowNode) =>
                 defaultParams.doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
-            getValue: this.createChildGetter(filterDef).getValue,
+            getValue,
         };
     }
 

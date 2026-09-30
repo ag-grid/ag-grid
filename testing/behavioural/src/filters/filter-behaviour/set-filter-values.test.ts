@@ -1589,7 +1589,6 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         await asyncSetTimeout(0);
         expect(api.getDisplayedRowAtIndex(0)!.data.winner.name).toBe('bob');
         expect(api.getDisplayedRowCount()).toBe(1);
-        expect(api.getDisplayedRowAtIndex(0)!.data.winner.name).toBe('bob');
     }
 
     test("a selectable filter's set filter, named or as the default filter, keys an object column by its formatter, like the column's own", async () => {
@@ -1766,32 +1765,25 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getDisplayedRowCount()).toBe(1);
     });
 
-    test("a new field resets a selectable filter's set filter", async () => {
+    test("a new formatter it is keyed by, or a new field, resets a selectable filter's set filter", async () => {
+        const col = (colDef: ColDef) => [selectablePersonCol(colDef)];
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             enableFilterHandlers: true,
-            columnDefs: [selectablePersonCol({ field: 'winner', valueFormatter: byName })],
+            columnDefs: col({ field: 'winner', valueFormatter: byName }),
             rowData: PEOPLE_ROWS,
         });
         await filterPeople(api);
 
-        api.setGridOption('columnDefs', [selectablePersonCol({ field: 'loser', valueFormatter: byName })]);
+        api.setGridOption('columnDefs', col({ field: 'winner', valueFormatter: byInitial }));
         await asyncSetTimeout(0);
-
         expect(api.getColumnFilterModel('person')).toBeNull();
         expect(api.getDisplayedRowCount()).toBe(2);
-    });
 
-    test("a new formatter resets a selectable filter's set filter keyed by it", async () => {
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            enableFilterHandlers: true,
-            columnDefs: [selectablePersonCol({ field: 'winner', valueFormatter: byName })],
-            rowData: PEOPLE_ROWS,
-        });
-        await filterPeople(api);
-
-        api.setGridOption('columnDefs', [selectablePersonCol({ field: 'winner', valueFormatter: byInitial })]);
+        api.setGridOption('columnDefs', col({ field: 'winner', valueFormatter: byName }));
         await asyncSetTimeout(0);
-
+        await filterPeople(api);
+        api.setGridOption('columnDefs', col({ field: 'loser', valueFormatter: byName }));
+        await asyncSetTimeout(0);
         expect(api.getColumnFilterModel('person')).toBeNull();
         expect(api.getDisplayedRowCount()).toBe(2);
     });
@@ -1903,7 +1895,17 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getDisplayedRowCount()).toBe(1);
     });
 
-    test("an object column's multi filter read back with a child switched to the default filter, a text filter, filters by formatted text with and without filter handlers", async () => {
+    test("an object column's multi filter with a child using the default filter, a text filter, filters by formatted text, as built and read back, with and without filter handlers", async () => {
+        const filterBob = async (api: GridApi) => {
+            await api.setColumnFilterModel('person', {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'contains', filter: 'bob' }],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowAtIndex(0)!.data.winner.name).toBe('bob');
+            expect(api.getDisplayedRowCount()).toBe(1);
+        };
         for (const enableFilterHandlers of [true, false]) {
             const api: GridApi = await gridsManager.createGridAndWait(`grid-${enableFilterHandlers}`, {
                 enableFilterHandlers,
@@ -1914,27 +1916,19 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
                         cellDataType: 'object',
                         valueFormatter: byName,
                         filter: 'agMultiColumnFilter',
-                        filterParams: { filters: [{ filter: 'agTextColumnFilter' }] },
+                        filterParams: { filters: [{ filter: true }] },
                     },
                 ],
                 rowData: PEOPLE_ROWS,
             });
+            await filterBob(api);
+
             // the child read back carries the filter value getter the grid gave its text filter
             const [personCol] = api.getColumnDefs() as ColDef[];
-            const [child] = personCol.filterParams.filters;
-            api.setGridOption('columnDefs', [
-                { ...personCol, filterParams: { filters: [{ ...child, filter: true }] } },
-            ]);
+            api.setFilterModel(null);
+            api.setGridOption('columnDefs', [{ ...personCol, headerName: 'Winner' }]);
             await asyncSetTimeout(0);
-
-            await api.setColumnFilterModel('person', {
-                filterType: 'multi',
-                filterModels: [{ filterType: 'text', type: 'contains', filter: 'bob' }],
-            });
-            api.onFilterChanged();
-            await asyncSetTimeout(0);
-            expect(api.getDisplayedRowAtIndex(0)!.data.winner.name).toBe('bob');
-            expect(api.getDisplayedRowCount()).toBe(1);
+            await filterBob(api);
         }
     });
 
@@ -2003,24 +1997,50 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getDisplayedRowCount()).toBe(2);
     });
 
-    test("the quick filter reads a selectable filter's chosen definition as the column definitions now give it", async () => {
-        const col = (filterValueGetter: (params: { data: (typeof PEOPLE_ROWS)[number] }) => string) =>
+    test("the quick filter reads a selectable filter's active definition, chosen or by default, as the column definitions now give it", async () => {
+        type Getter = (params: { data: (typeof PEOPLE_ROWS)[number] }) => string;
+        const byLoser: Getter = ({ data }) => data.loser.name;
+        const byWinner: Getter = ({ data }) => data.winner.name;
+        const col = (first: Getter, second: Getter) =>
             selectablePersonCol({ field: 'winner', cellDataType: false }, [
-                { filter: 'agTextColumnFilter', filterValueGetter },
+                { filter: 'agTextColumnFilter', filterValueGetter: first },
+                { filter: 'agTextColumnFilter', filterValueGetter: second },
             ]);
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             enableFilterHandlers: true,
-            columnDefs: [col(({ data }) => data.winner.name)],
+            sideBar: 'filters-new',
+            columnDefs: [col(byLoser, byWinner)],
             rowData: PEOPLE_ROWS,
+            initialState: {
+                sideBar: {
+                    visible: true,
+                    position: 'right',
+                    openToolPanel: 'filters-new',
+                    toolPanels: { 'filters-new': { filters: [{ colId: 'person' }] } },
+                },
+            },
         });
-        api.setState({ filter: { selectableFilters: { person: 0 } } });
         api.setGridOption('quickFilterText', 'ann');
+        await asyncSetTimeout(0);
+        // by default the first definition, which reads the loser
+        expect(api.getDisplayedRowCount()).toBe(1);
+
+        api.setState({ filter: { selectableFilters: { person: 1 } } });
+        api.setGridOption('columnDefs', [col(byLoser, byWinner)]);
         await asyncSetTimeout(0);
         expect(api.getDisplayedRowCount()).toBe(0);
 
-        api.setGridOption('columnDefs', [col(({ data }) => data.loser.name)]);
+        api.setGridOption('columnDefs', [col(byLoser, byLoser)]);
         await asyncSetTimeout(0);
+        expect(api.getDisplayedRowCount()).toBe(1);
 
+        // removing the filter from the tool panel goes back to the default definition
+        api.setGridOption('columnDefs', [col(byLoser, byWinner)]);
+        await asyncSetTimeout(0);
+        expect(api.getDisplayedRowCount()).toBe(0);
+        document.querySelector<HTMLElement>('.ag-filter-card-delete')!.click();
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
         expect(api.getDisplayedRowCount()).toBe(1);
     });
 
@@ -2095,6 +2115,32 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
 
         expect(api.getColumnFilterModel('country')).toBeNull();
         expect(api.getDisplayedRowCount()).toBe(2);
+    });
+
+    test('an empty filter value getter, which the grid does not read, leaves the field as the source of the values', async () => {
+        const col = (field: string, filterValueGetter?: string): ColDef => ({
+            colId: 'country',
+            field,
+            filterValueGetter,
+            filter: 'agSetColumnFilter',
+        });
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [col('home', '')],
+            rowData: [
+                { home: 'France', away: 'Ireland' },
+                { home: 'Spain', away: 'Italy' },
+            ],
+        });
+        await filterCountries(api, ['France']);
+
+        api.setGridOption('columnDefs', [col('away', '')]);
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toBeNull();
+
+        await filterCountries(api, ['Ireland']);
+        api.setGridOption('columnDefs', [col('away')]);
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['Ireland'] });
     });
 
     test('a new calculated expression resets the filter, and an unchanged one or allowFormula keeps it', async () => {
@@ -2412,13 +2458,12 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(displayed(api, 'athlete')).toEqual(['Ben']);
     });
 
-    test('a new value getter keeps a filter over an empty supplied list, which lists no values', async () => {
-        const values: string[] = [];
+    test('a new value getter and a new empty supplied list keep a filter over it, which lists no values', async () => {
         const countryCol = (): ColDef => ({
             field: 'country',
             filter: 'agSetColumnFilter',
             valueGetter: ({ data }) => data.country,
-            filterParams: { values, defaultToNothingSelected: true } as ISetFilterParams,
+            filterParams: { values: [], defaultToNothingSelected: true } as ISetFilterParams,
         });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'athlete' }, countryCol()],
@@ -2434,15 +2479,16 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(displayed(api, 'athlete')).toEqual([]);
     });
 
-    test('a new value getter keeps a filter over values a callback supplies, whatever its declared parameters', async () => {
-        // a rest parameter declares none, so the callback's length is 0
-        const supplyCountries = (...args: [SetFilterValuesFuncParams]) =>
-            args[0].success(['France', 'Ireland', 'Italy', 'Spain']);
+    test('a new value getter and a new values callback keep a filter over the values it supplies, whatever its declared parameters', async () => {
+        const supplied = ['France', 'Germany', 'Ireland', 'Italy', 'Spain'];
         const countryCol = (): ColDef => ({
             field: 'country',
             filter: 'agSetColumnFilter',
             valueGetter: ({ data }) => data.country,
-            filterParams: { values: supplyCountries } as ISetFilterParams,
+            // a rest parameter declares none, so the callback's length is 0
+            filterParams: {
+                values: (...args: [SetFilterValuesFuncParams]) => args[0].success(supplied),
+            } as ISetFilterParams,
         });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'athlete' }, countryCol()],
@@ -2454,6 +2500,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         await asyncSetTimeout(0);
 
         expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['France'] });
+        expect(api.getColumnFilterHandler<SetFilterHandler>('country')!.getFilterKeys()).toEqual(supplied);
         expect(displayed(api, 'athlete')).toEqual(['Ben']);
     });
 

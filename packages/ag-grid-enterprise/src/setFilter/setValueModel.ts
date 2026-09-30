@@ -66,10 +66,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     public postConstruct(): void {
         const params = this.params;
-        const values = params.handlerParams.filterParams.values;
-
         this.updateParams(params);
-        this.setProvidedValues(values);
+        this.setProvidedValues(params.handlerParams.filterParams.values);
         this.updateAllValues();
     }
 

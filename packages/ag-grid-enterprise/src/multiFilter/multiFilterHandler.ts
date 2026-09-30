@@ -6,7 +6,6 @@ import type {
     AgFilterHandlerParams,
     DoesFilterPassParams,
     FilterHandler,
-    FilterHandlerBaseParams,
     IMultiFilterDef,
     MultiFilterHandler as IMultiFilterHandler,
     IMultiFilterModel,
@@ -86,9 +85,8 @@ export class MultiFilterHandler
             }
             // only a column definition gives a child new params, so a later one keeps its own until its turn
             if (isColDef) {
-                const filterDef = this.filterDefs[i];
                 wrapper.handlerParams = this.updateHandlerParams(
-                    colFilter.createHandlerParamsForDef(column, filterDef),
+                    colFilter.createHandlerParamsForDef(column, this.filterDefs[i]),
                     i
                 );
             }
@@ -211,7 +209,7 @@ export class MultiFilterHandler
     }
 
     /** A child's ui reads the rows as its handler does. */
-    public getChildGetValue(index: number): FilterHandlerBaseParams['getValue'] | undefined {
+    public getChildGetValue(index: number): AgFilterHandlerBaseParams['getValue'] | undefined {
         return this.handlerWrappers[index]?.handlerParams.getValue;
     }
 
