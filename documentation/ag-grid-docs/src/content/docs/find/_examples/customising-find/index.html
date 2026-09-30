@@ -1,21 +1,17 @@
 <div class="example-wrapper">
-    <div class="example-header">
-        <div class="example-controls">
-            <label>
-                <span>caseSensitive:</span>
-                <input id="caseSensitive" type="checkbox" onchange="toggleCaseSensitive()" checked />
-            </label>
-            <label>
-                <span>currentPageOnly:</span>
-                <input id="currentPageOnly" type="checkbox" onchange="toggleCurrentPageOnly()" checked />
-            </label>
+    <div class="example-header example-controls">
+        <div class="controls-row">
+            <label for="caseSensitive">caseSensitive:</label>
+            <input id="caseSensitive" type="checkbox" onchange="toggleCaseSensitive()" checked />
+            <label for="currentPageOnly" class="gap-left">currentPageOnly:</label>
+            <input id="currentPageOnly" type="checkbox" onchange="toggleCurrentPageOnly()" checked />
         </div>
-        <div class="example-controls">
-            <span>Go to match:</span>
+        <div class="controls-row">
+            <label for="find-goto">Go to match:</label>
             <input type="number" id="find-goto" min="1" />
             <button onclick="goToFind()">Go To</button>
         </div>
-        <div id="activeMatch"></div>
+        <div class="controls-row" id="activeMatch"></div>
     </div>
     <div id="myGrid"></div>
 </div>

@@ -36,23 +36,19 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <label>
-                    <span>caseSensitive:</span>
-                    <input id="caseSensitive" type="checkbox" (change)="toggleCaseSensitive($event)" checked="" />
-                </label>
-                <label>
-                    <span>currentPageOnly:</span>
-                    <input id="currentPageOnly" type="checkbox" (change)="toggleCurrentPageOnly($event)" checked="" />
-                </label>
+        <div class="example-header example-controls">
+            <div class="controls-row">
+                <label for="caseSensitive">caseSensitive:</label>
+                <input id="caseSensitive" type="checkbox" (change)="toggleCaseSensitive($event)" checked="" />
+                <label for="currentPageOnly" class="gap-left">currentPageOnly:</label>
+                <input id="currentPageOnly" type="checkbox" (change)="toggleCurrentPageOnly($event)" checked="" />
             </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input #goToInput type="number" min="1" />
+            <div class="controls-row">
+                <label for="find-goto">Go to match:</label>
+                <input #goToInput type="number" id="find-goto" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>
-            <div>{{ activeMatch }}</div>
+            <div class="controls-row">{{ activeMatch }}</div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
