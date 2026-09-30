@@ -131,6 +131,7 @@ export { _GET_ALL_EVENTS, _PUBLIC_EVENTS, ALWAYS_SYNC_GLOBAL_EVENTS } from './ev
 export { BaseCreator } from './export/baseCreator';
 export { BaseGridSerializingSession } from './export/baseGridSerializingSession';
 
+export type { ColumnFilterService } from './filter/columnFilterService';
 export {
     _getFilterModel,
     _refreshFilterUi,

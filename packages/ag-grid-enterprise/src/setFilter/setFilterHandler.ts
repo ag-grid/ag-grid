@@ -424,7 +424,7 @@ export class SetFilterHandler<TValue = string>
     public clearOwnPreservedValues(onlyUnselected: boolean): void {
         this.clearMissing(onlyUnselected).then(() => {
             if (!onlyUnselected) {
-                this.reconcileModel();
+                this.reconcileModel(undefined, false, !this.beans.dataTypeSvc?.isPendingInference);
             }
         });
     }
@@ -504,7 +504,11 @@ export class SetFilterHandler<TValue = string>
     }
 
     /** Narrows the model to the keys the values hold, clearing it once it selects them all. */
-    private reconcileModel(additionalEventAttributes?: any, restrictToAvailableValues?: boolean): void {
+    private reconcileModel(
+        additionalEventAttributes?: any,
+        restrictToAvailableValues?: boolean,
+        valuesKnown?: boolean
+    ): void {
         const params = this.params;
         const model = params.model;
         if (model == null) {
@@ -523,7 +527,7 @@ export class SetFilterHandler<TValue = string>
         // No grid values yet means they are not known (cellDataType inference pending), not that all are selected:
         // keep the model until they arrive and are reconciled then.
         const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        if (takenFromGrid && existingFormattedKeys.size === 0 && model.values.length > 0) {
+        if (takenFromGrid && !valuesKnown && existingFormattedKeys.size === 0 && model.values.length > 0) {
             return;
         }
         const newValues: SetFilterModelValue = [];

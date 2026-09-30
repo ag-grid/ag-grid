@@ -352,6 +352,23 @@ describe('Set Filter preservePreviousValues', () => {
         expect(modelOf(api)).toBeNull();
     });
 
+    test('clearPreservedValues discards a selected value when no rows are left', async () => {
+        const api = createGrid(rows('A', 'B'));
+        await asyncSetTimeout(0);
+        await setModel(api, ['A']);
+        await setRowData(api, []);
+        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B']);
+
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
+        await asyncSetTimeout(0);
+        expect(handlerOf(api).getFilterKeys()).toEqual([]);
+        expect(modelOf(api)).toBeNull();
+
+        await setRowData(api, rows('B'));
+        expect(handlerOf(api).getFilterKeys()).toEqual(['B']);
+        expect(shown(api)).toEqual(['B']);
+    });
+
     test('clearUnselectedPreservedValues discards only unselected retained values, leaving the model as set', async () => {
         const api = createGrid(rows('A', 'B', 'C', 'X'));
         await asyncSetTimeout(0);

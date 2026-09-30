@@ -169,21 +169,7 @@ function isAggFilter(
     return groupFilterEnabled;
 }
 
-interface PreservingFilterParams {
-    preservePreviousValues?: boolean;
-    defaultFilterParams?: { preservePreviousValues?: boolean };
-    filters?: { filterParams?: PreservingFilterParams }[];
-}
-
-/** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
-function wantsPreservedValues(filterParams: PreservingFilterParams | undefined): boolean {
-    if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
-        return true;
-    }
-    const filters = filterParams?.filters;
-    return Array.isArray(filters) && filters.some((def) => wantsPreservedValues(def?.filterParams));
-}
-
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnFilterService
     extends BeanStub<
         | 'filterParamsChanged'
@@ -225,15 +211,12 @@ export class ColumnFilterService
     public activeFilterComps: Set<FilterComp> = new Set();
 
     public postConstruct(): void {
-        const createPreservingFilters = this.createPreservingFilters.bind(this);
         this.addManagedEventListeners({
             gridColumnsChanged: this.onColumnsChanged.bind(this),
             dataTypesInferred: () => {
-                this.createPreservingFilters();
+                this.beans.setFilterSvc?.createPreservingFilters();
                 this.processFilterModelUpdateQueue();
             },
-            newColumnsLoaded: createPreservingFilters,
-            advancedFilterEnabledChanged: createPreservingFilters,
         });
 
         this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
@@ -1240,42 +1223,21 @@ export class ColumnFilterService
             filterManager?.onFilterChanged({ columns, source: 'api' });
         }
 
-        // After disposal, which frees the colId a recreated column shares.
-        AgPromise.all(disposals).then(() => {
-            if (this.isAlive()) {
-                this.createPreservingFilters();
-            }
-        });
+        const setFilterSvc = this.beans.setFilterSvc;
+        if (setFilterSvc) {
+            // After disposal, which frees the colId a recreated column shares.
+            AgPromise.all(disposals).then(() => {
+                if (this.isAlive()) {
+                    setFilterSvc.createPreservingFilters();
+                }
+            });
+        }
     }
 
-    private isCurrentColumn(column: AgColumn): boolean {
+    public isCurrentColumn(column: AgColumn): boolean {
         const colModel = this.beans.colModel;
         const colId = column.getColId();
         return (column.primary ? colModel.getNonPivotColById(colId) : colModel.colsById[colId]) === column;
-    }
-
-    /** A filter keeping values that leave the data has to see them before they leave, not from first use. */
-    private createPreservingFilters(): void {
-        if (!this.canCreatePreservingFilters()) {
-            return;
-        }
-        const cols = this.beans.colModel.getColsInStateOrder();
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            this.createPreservingFilter(cols[i]);
-        }
-    }
-
-    /** Its keys are made by the inferred data type, which a filter built before inference never picks up. */
-    private canCreatePreservingFilters(): boolean {
-        const { filterManager, dataTypeSvc } = this.beans;
-        return !filterManager?.isAdvFilterEnabled() && !dataTypeSvc?.isPendingInference;
-    }
-
-    /** Not for pivot result columns, which copy their value column's params and are rebuilt by every pivot change. */
-    private createPreservingFilter(column: AgColumn): void {
-        if (column.primary && this.isCurrentColumn(column) && wantsPreservedValues(column.colDef.filterParams)) {
-            this.getOrCreateFilterWrapper(column, true);
-        }
     }
 
     public isFilterAllowed(column: AgColumn): boolean {
@@ -1409,9 +1371,7 @@ export class ColumnFilterService
                         source: 'api',
                     });
                 }
-                if (this.canCreatePreservingFilters()) {
-                    this.createPreservingFilter(column);
-                }
+                this.beans.setFilterSvc?.createPreservingFilters(column);
             });
         }
     }
