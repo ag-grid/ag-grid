@@ -9,6 +9,7 @@ import type {
     ColDef,
     FilterDisplayParams,
     FilterDisplayState,
+    IFilterDef,
     IFilterParams,
     IRowNode,
     ISetFilterParams,
@@ -31,7 +32,7 @@ import {
 
 import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
-import { translateForSetFilter } from '../../setFilter/setFilterUtils';
+import { getDataTypeKeyCreator, translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { getMultiFilterChild } from '../customFilterOptions';
@@ -52,6 +53,9 @@ interface SetValueEntry extends AutocompleteEntry {
 
 /** The list offers these objects themselves, so one chosen from it comes back carrying its own path. */
 const isSetValueEntry = (entry: AutocompleteEntry): entry is SetValueEntry => 'path' in entry;
+
+/** The value list reads the column like a Set Filter of the column's own. */
+const SET_FILTER_DEF: IFilterDef = { filter: 'agSetColumnFilter' };
 
 /** A column's Set Filter values, rebuilt whenever the underlying value model reloads. */
 interface SetColumnValues {
@@ -514,9 +518,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     /** A data type's key creator names each value by its formatted text, so the list shows that text. */
     private getKeyFormatterParams(colDef: ColDef): ISetFilterParams | undefined {
-        const cellDataType = colDef.cellDataType;
-        const formatValue =
-            typeof cellDataType === 'string' ? this.beans.dataTypeSvc?.getFormatValue(cellDataType) : undefined;
+        const formatValue = getDataTypeKeyCreator(this.beans, colDef);
         if (!formatValue || colDef.keyCreator !== formatValue) {
             return undefined;
         }
@@ -527,12 +529,11 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
         const colDef = this.getSetColDef(column);
         const colFilter = this.beans.colFilter!;
-        // its value list reads the column like a Set Filter of the column's own
         const filterValueGetter = colFilter.resolveFilterValueGetter(
             column,
-            {},
+            SET_FILTER_DEF,
             column.colDef.filterValueGetter,
-            'agSetColumnFilter'
+            undefined
         );
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),

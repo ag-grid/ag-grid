@@ -58,6 +58,21 @@ export class SelectableFilterService
         filterDef: IFilterDef,
         overrideIndex?: number
     ): { filterDefs: SelectableFilterDef[]; activeFilterDef: SelectableFilterDef } | undefined {
+        const resolved = this.resolveDefs(column, filterDef, overrideIndex);
+        if (!resolved) {
+            return undefined;
+        }
+        const filterDefs = resolved.defs.map(resolved.updateDef);
+        return { filterDefs, activeFilterDef: filterDefs[resolved.index] };
+    }
+
+    private resolveDefs(
+        column: AgColumn,
+        filterDef: IFilterDef,
+        overrideIndex: number | undefined
+    ):
+        | { defs: SelectableFilterDef[]; index: number; updateDef: (def: SelectableFilterDef) => SelectableFilterDef }
+        | undefined {
         if (!this.isSelectable(filterDef)) {
             return undefined;
         }
@@ -82,7 +97,12 @@ export class SelectableFilterService
             const { filter, filterParams: defFilterParams, name } = def;
             const filterName =
                 typeof filter === 'boolean' ? colFilter?.getDefaultFilterFromDataType(() => cellDataType) : filter;
-            const filterValueGetter = colFilter!.resolveFilterValueGetter(column, def, colDef.filterValueGetter);
+            const filterValueGetter = colFilter!.resolveFilterValueGetter(
+                column,
+                def,
+                colDef.filterValueGetter,
+                undefined
+            );
             const userParams = defaultFilterParams ? { ...defaultFilterParams, ...defFilterParams } : defFilterParams;
             let updatedParams: { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } | undefined;
             if (dataTypeDefinition && formatValue) {
@@ -125,21 +145,21 @@ export class SelectableFilterService
             return def;
         };
 
-        const filterDefs = (filters ?? this.getDefaultFilters(column)).map(updateDef);
+        // an empty list provides no filters, so it takes the defaults
+        const defs = filters?.length ? filters : this.getDefaultFilters(column);
+        const usingDefaults = defs !== filters;
 
         let index =
             overrideIndex ?? // provided override
             this.selectedFilters.get(column.colId) ?? // UI selected value
             defaultFilterIndex ?? // col def value
-            (!filters && _isSetFilterByDefault(gos) ? 1 : 0); // if using defaults, then respect set filter by default setting, else choose first
+            (usingDefaults && _isSetFilterByDefault(gos) ? 1 : 0); // if using defaults, then respect set filter by default setting, else choose first
 
-        if (index >= filterDefs.length) {
+        if (index >= defs.length) {
             index = 0;
         }
 
-        const activeFilterDef = filterDefs[index];
-
-        return { filterDefs, activeFilterDef };
+        return { defs, index, updateDef };
     }
 
     public setActive(
@@ -208,7 +228,9 @@ export class SelectableFilterService
     }
 
     private getActiveValueGetter(column: AgColumn): string | ValueGetterFunc | undefined {
-        return this.getDefs(column, column.colDef)?.activeFilterDef.filterValueGetter;
+        // the active definition alone, as this runs whenever new column definitions load
+        const resolved = this.resolveDefs(column, column.colDef, undefined);
+        return resolved?.updateDef(resolved.defs[resolved.index]).filterValueGetter;
     }
 
     private setValueGetter(colId: string, filterValueGetter: string | ValueGetterFunc | undefined): void {

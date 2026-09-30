@@ -5,6 +5,7 @@ import type {
     AgFilterHandlerBaseParams,
     AgFilterHandlerParams,
     DoesFilterPassParams,
+    FilterGetValueFunc,
     FilterHandler,
     IMultiFilterDef,
     MultiFilterHandler as IMultiFilterHandler,
@@ -16,7 +17,6 @@ import { BeanStub } from 'ag-grid-community';
 import {
     DEFAULT_CHILD_FILTER,
     forEachReverse,
-    getChildFilter,
     getFilterModelForIndex,
     getMultiFilterDefs,
     getUpdatedMultiFilterModel,
@@ -47,7 +47,12 @@ export class MultiFilterHandler
         const filterDefs = getMultiFilterDefs(params.filterParams);
         this.filterDefs = filterDefs;
         filterDefs.forEach((def, index) => {
-            const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, DEFAULT_CHILD_FILTER);
+            const wrapper = this.beans.colFilter!.createHandler(
+                params.column as AgColumn,
+                def,
+                DEFAULT_CHILD_FILTER,
+                params
+            );
             this.handlerWrappers.push(wrapper);
             if (!wrapper) {
                 this.warn(278, { colId: params.column.getColId() });
@@ -86,7 +91,7 @@ export class MultiFilterHandler
             // only a column definition gives a child new params, so a later one keeps its own until its turn
             if (isColDef) {
                 wrapper.handlerParams = this.updateHandlerParams(
-                    colFilter.createHandlerParamsForDef(column, this.filterDefs[i]),
+                    colFilter.createHandlerParamsForDef(column, this.filterDefs[i], DEFAULT_CHILD_FILTER, params),
                     i
                 );
             }
@@ -120,18 +125,8 @@ export class MultiFilterHandler
         const { onModelChange, doesRowPassOtherFilter } = params;
         // the Multi Filter applies its children, so a child's own buttons do not
         const { buttons: _, ...filterParams } = params.filterParams;
-        const column = params.column as AgColumn;
-        const colFilter = this.beans.colFilter!;
-        const filterDef = this.filterDefs[index];
-        const filterValueGetter = colFilter.resolveFilterValueGetter(
-            column,
-            filterDef,
-            this.params.filterValueGetter,
-            getChildFilter(filterDef)
-        );
         const handlerParams: AgFilterHandlerBaseParams = {
             ...params,
-            filterValueGetter,
             onModelChange: (newModel, additionalEventAttributes) =>
                 onModelChange(
                     getUpdatedMultiFilterModel(this.params.model, this.handlerWrappers.length, newModel, index),
@@ -140,7 +135,6 @@ export class MultiFilterHandler
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
                 this.doesFilterPass({ node, data: node.data, model: this.params.model, handlerParams }, index),
-            getValue: colFilter.createHandlerGetValue(column, filterValueGetter),
             filterParams,
         };
         return handlerParams;
@@ -209,7 +203,7 @@ export class MultiFilterHandler
     }
 
     /** A child's ui reads the rows as its handler does. */
-    public getChildGetValue(index: number): AgFilterHandlerBaseParams['getValue'] | undefined {
+    public getChildGetValue(index: number): FilterGetValueFunc | undefined {
         return this.handlerWrappers[index]?.handlerParams.getValue;
     }
 

@@ -103,7 +103,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const col = column as AgColumn;
         const formatValueFuncs = this.formatValueFuncs;
         const value = node ? this.beans.valueSvc.getValueFromData(col, node) : undefined;
-        // a definition from `getColumnDefs()` set again with no `cellDataType` still carries this getter
+        // a definition from `getColumnDefs()` set again with another data type, or none, still carries this getter
+        const baseDataType = this.getBaseDataType(col);
+        if (baseDataType && baseDataType !== 'object') {
+            return value;
+        }
         const formatValue = formatValueFuncs[col.colDef.cellDataType as string] ?? formatValueFuncs.object;
         return formatValue({ column, node, value });
     };

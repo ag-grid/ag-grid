@@ -302,7 +302,12 @@ export type {
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
-export type { AgFilterHandlerBaseParams, AgFilterHandlerParams } from './interfaces/iFilter';
+export type {
+    AgFilterHandlerBaseParams,
+    AgFilterHandlerParams,
+    FilterGetValueFunc,
+    FilterValueGetter,
+} from './interfaces/iFilter';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
 export type { IFooterService } from './interfaces/iFooterService';
 export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';

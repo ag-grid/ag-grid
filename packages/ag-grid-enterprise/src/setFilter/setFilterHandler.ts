@@ -28,6 +28,7 @@ import { CsrmValuesExtractor } from './csrmValueExtractor';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import {
+    getDataTypeKeyCreator,
     processDataPath,
     setFilterFormattedValue,
     setFilterNullIfBlank,
@@ -140,11 +141,7 @@ export class SetFilterHandler<TValue = string>
         this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
-        const cellDataType = colDef.cellDataType;
-        const gridKeyCreator =
-            !!resolvedKeyCreator &&
-            typeof cellDataType === 'string' &&
-            resolvedKeyCreator === this.beans.dataTypeSvc?.getFormatValue(cellDataType);
+        const gridKeyCreator = !!resolvedKeyCreator && resolvedKeyCreator === getDataTypeKeyCreator(this.beans, colDef);
         // a data type's key creator keys by the column's formatter; the type's own is rebuilt with the definitions
         this.keysFormedBy = gridKeyCreator ? colDef.valueFormatter : resolvedKeyCreator;
         this.valueSource = _getFilterValueSource(colDef, filterValueGetter);
@@ -296,7 +293,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     public onNewRowsLoaded(): void {
-        this.syncAfterDataChange();
+        this.syncAfterDataChange(false);
     }
 
     /** As `onNewRowsLoaded`, sharing the load a column definition refresh already started. */
@@ -312,7 +309,7 @@ export class SetFilterHandler<TValue = string>
 
     public resetFilterValues(): void {
         this.valueModel.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        this.syncAfterDataChange();
+        this.syncAfterDataChange(false);
     }
 
     public refreshFilterValues(): void {
@@ -331,8 +328,7 @@ export class SetFilterHandler<TValue = string>
         if (!valueModel.isInitialised()) {
             return;
         }
-        const load = forColDef ? valueModel.refreshForColDef() : valueModel.refreshAll();
-        load.then(() => {
+        valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
             this.validateModel(this.params, undefined, !forColDef);
         });
@@ -358,9 +354,9 @@ export class SetFilterHandler<TValue = string>
     }
 
     private addEventListenersForDataChanges(): void {
-        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.syncAfterDataChange());
+        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.syncAfterDataChange(false));
 
-        const syncAfterDataChangeDebounced = _debounce(this, this.syncAfterDataChange.bind(this), 0);
+        const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);
         this.addManagedEventListeners({
             cellValueChanged: (event) => {
                 // only interested in changes to do with this column
@@ -374,12 +370,12 @@ export class SetFilterHandler<TValue = string>
         });
     }
 
-    private syncAfterDataChange(forColDef?: boolean): void {
+    private syncAfterDataChange(forColDef: boolean): void {
         if (!this.isValuesTakenFromGrid()) {
             return;
         }
         const valueModel = this.valueModel;
-        (forColDef ? valueModel.refreshForColDef() : valueModel.refreshAll()).then(() => {
+        valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged' });
             this.validateModel(this.params, { afterDataChange: true });
         });
@@ -435,12 +431,10 @@ export class SetFilterHandler<TValue = string>
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
-            // each value named has been taken out of the map
-            const everyValueNamed = existingFormattedKeys.size === 0;
             const clearOnAllSelected =
                 !filterParams.defaultToNothingSelected &&
                 (takenFromGrid || !filterParams.suppressClearModelOnRefreshValues);
-            const allSelected = clearOnAllSelected && everyValueNamed;
+            const allSelected = clearOnAllSelected && existingFormattedKeys.size === 0;
 
             if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model

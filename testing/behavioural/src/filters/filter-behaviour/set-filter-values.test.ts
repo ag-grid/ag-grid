@@ -25,6 +25,7 @@ import type {
 import {
     ClientSideRowModelModule,
     GridStateModule,
+    NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
     ValueCacheModule,
@@ -442,7 +443,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
         warnSpy.mockRestore();
     });
 
-    test('replacing dataTypeDefinitions keeps a data type key creator recognised as the grid’s', async () => {
+    test("replacing dataTypeDefinitions keeps a data type key creator recognised as the grid's", async () => {
         // The check is an identity comparison against the data type's own formatter, and `updateDataTypes`
         // rebuilds those, so the user-keyCreator column is the control that proves #210 still fires at all.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [210] });
@@ -1163,6 +1164,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
             FormulaModule,
             MultiFilterModule,
             NewFiltersToolPanelModule,
+            NumberFilterModule,
             QuickFilterModule,
             TextFilterModule,
             ValueCacheModule,
@@ -1231,6 +1233,42 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(displayed(api, 'athlete')).toEqual(['Ben']);
     });
 
+    test('filterParams.keyCreator takes precedence, so a new column keyCreator under it keeps the filter and a new one of its own resets it', async () => {
+        const byCode = (params: KeyCreatorParams) => CODES[params.value];
+        const valueFormatter = (params: ValueFormatterParams) => params.value;
+        const countryCol = (
+            keyCreator: (params: KeyCreatorParams) => string,
+            filterKeyCreator: (params: KeyCreatorParams) => string
+        ) => ({
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            keyCreator,
+            filterParams: { keyCreator: filterKeyCreator, valueFormatter } as ISetFilterParams,
+        });
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, countryCol((params) => params.value.toUpperCase(), byCode)],
+            rowData: COUNTRY_ROWS,
+        });
+        await filterCountries(api, ['FR', 'IE']);
+        expect(displayed(api, 'athlete')).toEqual(['Anna', 'Ben']);
+
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, countryCol((params) => params.value, byCode)]);
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['FR', 'IE'] });
+        expect(displayed(api, 'athlete')).toEqual(['Anna', 'Ben']);
+
+        api.setGridOption('columnDefs', [
+            { field: 'athlete' },
+            countryCol(
+                (params) => params.value,
+                (params) => CODES[params.value]
+            ),
+        ]);
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toBeNull();
+        expect(displayed(api, 'athlete')).toEqual(['Anna', 'Ben', 'Carla', 'Dan']);
+    });
+
     test('TC1: a filter open when the key creator changes shows the reset selection', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'athlete' }, { field: 'country', filter: 'agSetColumnFilter' }],
@@ -1243,6 +1281,16 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         await asyncSetTimeout(0);
 
         const filter = await ColumnFilterHarness.open(api, 'country');
+        await new FilterDom(api, 'reset selection', { colId: 'country' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ☑ (Select All)
+            ☑ Spain
+            ☑ France
+            ☑ Ireland
+            ☑ Italy
+            model: null
+        `);
         await filter.toggleSetItem('Italy');
         await asyncSetTimeout(0);
         expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['ES', 'FR', 'IE'] });
@@ -1414,8 +1462,20 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
 
         api.setGridOption('columnDefs', [{ field: 'athlete' }, col('Nation')]);
         await asyncSetTimeout(0);
-
         expect(filterValueGetter).not.toHaveBeenCalled();
+
+        // with a model held the update filters the rows again, and reads no more than that pass does
+        await filterCountries(api, ['France', 'Spain']);
+        filterValueGetter.mockClear();
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        const filterPass = filterValueGetter.mock.calls.length;
+        filterValueGetter.mockClear();
+
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, col('Country')]);
+        await asyncSetTimeout(0);
+        expect(filterValueGetter.mock.calls.length).toBeLessThanOrEqual(filterPass);
+        expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['France', 'Spain'] });
     });
 
     test('turning a column from no data type to a date type resets the filter', async () => {
@@ -1628,6 +1688,19 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getDisplayedRowCount()).toBe(1);
     });
 
+    test('a selectable filter with an empty list of filters offers the default filters', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: [selectablePersonCol({ field: 'winner', valueFormatter: byName }, [])],
+            rowData: PEOPLE_ROWS,
+        });
+        api.setGridOption('columnDefs', [
+            selectablePersonCol({ field: 'winner', valueFormatter: byName, headerName: 'Winner' }, []),
+        ]);
+        expect(await api.getColumnFilterInstance('person')).toBeTruthy();
+        await filterPeople(api);
+    });
+
     test("a selectable filter's multi filter hands the grid's text getter to a child using the default filter, a text filter, with and without filter handlers", async () => {
         for (const enableFilterHandlers of [true, false]) {
             const api: GridApi = await gridsManager.createGridAndWait(`grid-${enableFilterHandlers}`, {
@@ -1681,8 +1754,10 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         type Person = { data: (typeof PEOPLE_ROWS)[number] };
         const byWinner = ({ data }: Person) => data.winner.name;
         const byLoser = ({ data }: Person) => data.loser.name;
+        // the multi filter is the second definition, so only the state's choice makes it active
         const col = (headerName: string, filterValueGetter = byWinner) =>
             selectablePersonCol({ field: 'winner', headerName, cellDataType: false }, [
+                { filter: 'agTextColumnFilter' },
                 {
                     filter: 'agMultiColumnFilter',
                     filterValueGetter,
@@ -1694,7 +1769,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
             enableFilterHandlers: false,
             columnDefs: [col('Person')],
             rowData: PEOPLE_ROWS,
-            initialState: { filter: { selectableFilters: { person: 0 } } },
+            initialState: { filter: { selectableFilters: { person: 1 } } },
         });
         await api.setColumnFilterModel('person', model);
         api.onFilterChanged();
@@ -1832,6 +1907,38 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
 
         expect(api.getDisplayedRowAtIndex(0)!.data.winner.name).toBe('bob');
         expect(api.getDisplayedRowCount()).toBe(1);
+    });
+
+    test("an object column's definition read back and given another data type filters its values, not their formatted text", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'score',
+                    cellDataType: 'object',
+                    valueFormatter: ({ value }: ValueFormatterParams) => `#${value}`,
+                    filter: 'agTextColumnFilter',
+                },
+            ],
+            rowData: [{ score: 5 }, { score: 20 }],
+        });
+        const [scoreCol] = api.getColumnDefs() as ColDef[];
+        api.setGridOption('columnDefs', [{ ...scoreCol, cellDataType: 'number', filter: 'agNumberColumnFilter' }]);
+        await asyncSetTimeout(0);
+
+        await api.setColumnFilterModel('score', { filterType: 'number', type: 'greaterThan', filter: 10 });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowAtIndex(0)!.data.score).toBe(20);
+        expect(api.getDisplayedRowCount()).toBe(1);
+
+        api.setGridOption('columnDefs', [{ ...scoreCol, cellDataType: 'text', filter: 'agTextColumnFilter' }]);
+        await asyncSetTimeout(0);
+        await api.setColumnFilterModel('score', { filterType: 'text', type: 'contains', filter: '#' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(api.getDisplayedRowCount()).toBe(0);
     });
 
     test("an object column's definition read back and switched to a set filter, named or as the default filter, keys by its formatter", async () => {
@@ -2352,7 +2459,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getColumnFilterHandler<SetFilterHandler>('date')!.getFilterKeys()).toEqual(['2024-01', '2024-02']);
     });
 
-    test('a new definition of a type the column’s data type extends resets the filter and keys by its formatter', async () => {
+    test("a new definition of a type the column's data type extends resets the filter and keys by its formatter", async () => {
         const myDate = { baseDataType: 'dateString' as const, extendsDataType: 'myBase' };
         const definitions = (valueFormatter: (params: ValueFormatterParams) => string) => ({
             myBase: { baseDataType: 'dateString' as const, extendsDataType: 'dateString' as const, valueFormatter },
@@ -2629,7 +2736,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(leafAthletes()).toEqual(['Anna', 'Ben']);
     });
 
-    test('removing the grouping, which no column definition names, keeps a tree list filter over a header rename', async () => {
+    test('grouping removed through the API stays removed across a header rename, and keeps the tree list filter', async () => {
         // any refresh re-reads the grouping, so no stale state resets the filter on an unrelated update
         const keyCreator = ({ value }: KeyCreatorParams) => (Array.isArray(value) ? value.join('#') : value);
         const valueFormatter = ({ value }: ValueFormatterParams) => `${value}`;

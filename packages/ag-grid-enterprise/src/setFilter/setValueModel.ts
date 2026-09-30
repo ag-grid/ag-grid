@@ -110,7 +110,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         }
     }
 
-    public refreshForColDef(): AgPromise<unknown> {
+    public refreshValues(forColDef: boolean): AgPromise<unknown> {
+        if (!forColDef) {
+            return this.refreshAll();
+        }
         this.colDefLoad ??= this.refreshAll();
         return this.colDefLoad;
     }

@@ -50,8 +50,17 @@ export interface AgFilterHandlerBaseParams<
     TCustomParams = any,
 > extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
     /** What `getValue` reads the filter's column through, which a Multi Filter passes on to its children. */
-    filterValueGetter: string | ValueGetterFunc<TData> | undefined;
+    filterValueGetter: FilterValueGetter<TData> | undefined;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FilterValueGetter<TData = any> = string | ValueGetterFunc<TData>;
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FilterGetValueFunc<TData = any> = <TValue = any>(
+    node: IRowNode<TData>,
+    column?: ColKey<TData, TValue>
+) => TValue | null | undefined;
 
 export type QuickFilterParser = (quickFilter: string) => string[];
 export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;

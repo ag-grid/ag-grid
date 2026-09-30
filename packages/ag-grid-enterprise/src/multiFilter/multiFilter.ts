@@ -7,7 +7,9 @@ import type {
     FilterAction,
     FilterDisplayParams,
     FilterDisplayState,
+    FilterGetValueFunc,
     FilterHandler,
+    FilterValueGetter,
     FilterWrapperParams,
     IDoesFilterPassParams,
     IFilter,
@@ -35,7 +37,6 @@ import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import {
     DEFAULT_CHILD_FILTER,
-    getChildFilter,
     getFilterModelForIndex,
     getMultiFilterDefs,
     multiFilterChildrenChanged,
@@ -52,7 +53,12 @@ interface MultiFilterWrapper {
     model?: any;
     state?: FilterDisplayState;
     /** A ui rebuilt for new params, installed only if nothing newer took its place while it loaded. */
-    pendingUi?: AgPromise<IFilterComp>;
+    pendingUi: AgPromise<IFilterComp> | undefined;
+}
+
+interface ChildGetter {
+    filterValueGetter: FilterValueGetter | undefined;
+    getValue: FilterGetValueFunc;
 }
 
 /** temporary type until `MultiFilterParams` is updated as breaking change */
@@ -79,8 +85,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         this.filterChangedCallback = filterChangedCallback;
 
+        const inherited = this.getInheritedGetter();
         const filterPromises = this.filterDefs.map((filterDef, index) =>
-            this.createFilter(filterDef, index, initialModel)
+            this.createFilter(filterDef, index, initialModel, inherited)
         );
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
@@ -110,6 +117,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         const { beans, wrappers } = this;
         const colFilter = beans.colFilter!;
         const column = params.column as AgColumn;
+        const parent = { filterValueGetter: this.getInheritedGetter() };
         for (let i = 0, len = wrappers.length; i < len; ++i) {
             const wrapper = wrappers[i];
             const handler = wrapper?.handler;
@@ -118,10 +126,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             }
             const filterDef = newDefs[i];
             const { onModelChange, doesRowPassOtherFilter } = wrapper.handlerParams!;
-            const childGetter = this.createChildGetter(filterDef);
             const handlerParams: AgFilterHandlerBaseParams = {
-                ...colFilter.createHandlerParamsForDef(column, filterDef),
-                ...childGetter,
+                ...colFilter.createHandlerParamsForDef(column, filterDef, DEFAULT_CHILD_FILTER, parent),
                 onModelChange,
                 doesRowPassOtherFilter,
             };
@@ -132,7 +138,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 filterDef,
                 DEFAULT_CHILD_FILTER,
                 (defaultParams) => ({
-                    ...this.createChildParams(defaultParams, true, childGetter.getValue, i),
+                    ...this.createChildParams(defaultParams, true, handlerParams.getValue, i),
                     onModelChange,
                     getHandler,
                     onStateChange,
@@ -398,7 +404,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private createFilter(
         filterDef: IMultiFilterDef,
         index: number,
-        initialModel: IMultiFilterModel | null
+        initialModel: IMultiFilterModel | null,
+        inherited: FilterValueGetter | undefined
     ): AgPromise<MultiFilterWrapper | null> {
         const column = this.params.column as AgColumn;
 
@@ -434,7 +441,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             });
         };
 
-        const childGetter = this.createChildGetter(filterDef);
+        const childGetter = this.createChildGetter(filterDef, inherited);
         const {
             compDetails,
             handler,
@@ -480,7 +487,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         return createFilterUi().then((filter) => {
             if (!handler) {
-                return { filter: filter!, comp: filter! };
+                return { filter: filter!, comp: filter!, pendingUi: undefined };
             }
             const filterParams = compDetails?.params;
             const comp = createWrapperComp!(filter);
@@ -491,14 +498,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 handler,
                 handlerParams,
                 model: initialModelForFilter,
+                pendingUi: undefined,
             };
         });
     }
 
-    /** A child reads through its own getter, else the one this filter reads with. */
-    private createChildGetter(
-        filterDef: IMultiFilterDef
-    ): Pick<AgFilterHandlerBaseParams, 'filterValueGetter' | 'getValue'> {
+    /** The getter this filter reads with, which a child without its own reads through. */
+    private getInheritedGetter(): FilterValueGetter | undefined {
         const { colFilter, selectableFilter } = this.beans;
         const column = this.params.column as AgColumn;
         const colDef = column.colDef;
@@ -506,20 +512,25 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         const multiDef = selectableFilter?.isSelectable(colDef)
             ? selectableFilter.getFilterDef(column, colDef)
             : colDef;
-        const inherited = colFilter!.resolveFilterValueGetter(column, multiDef, colDef.filterValueGetter);
-        const filterValueGetter = colFilter!.resolveFilterValueGetter(
+        return colFilter!.resolveFilterValueGetter(column, multiDef, colDef.filterValueGetter, undefined);
+    }
+
+    private createChildGetter(filterDef: IMultiFilterDef, inherited: FilterValueGetter | undefined): ChildGetter {
+        const colFilter = this.beans.colFilter!;
+        const column = this.params.column as AgColumn;
+        const filterValueGetter = colFilter.resolveFilterValueGetter(
             column,
             filterDef,
             inherited,
-            getChildFilter(filterDef)
+            DEFAULT_CHILD_FILTER
         );
-        return { filterValueGetter, getValue: colFilter!.createHandlerGetValue(column, filterValueGetter) };
+        return { filterValueGetter, getValue: colFilter.createHandlerGetValue(column, filterValueGetter) };
     }
 
     private createChildParams(
         defaultParams: BaseFilterParams,
         isHandler: boolean,
-        getValue: BaseFilterParams['getValue'],
+        getValue: FilterGetValueFunc,
         index: number
     ) {
         return {

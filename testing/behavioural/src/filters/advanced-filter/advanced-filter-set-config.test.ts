@@ -1141,11 +1141,7 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => {
-        gridsManager.reset();
-        vi.restoreAllMocks();
-        enableDevValidations({ throwOn: ALL_SEVERITIES });
-    });
+    afterEach(() => gridsManager.reset());
 
     test('an opted-in column keeps its own filterParams to itself, so the value list is built without them', async () => {
         const seen: unknown[][] = [];

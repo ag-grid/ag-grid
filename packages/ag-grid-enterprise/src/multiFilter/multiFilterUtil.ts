@@ -13,6 +13,7 @@ export function getMultiFilterDefs(params: IMultiFilterParams | undefined): IMul
 
 /** What a child's `filter: true` resolves to, whatever the column's data type. */
 export const DEFAULT_CHILD_FILTER = 'agTextColumnFilter';
+export const DEFAULT_CHILD_FLOATING_FILTER = 'agTextColumnFloatingFilter';
 
 /** `undefined` is deliberately not folded in: the handler path gives it no filter at all rather than the default. */
 export function getChildFilter(def: IMultiFilterDef): IMultiFilterDef['filter'] {

@@ -23,7 +23,7 @@ import {
 import { MultiFilter } from './multiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
 import { MultiFilterUi } from './multiFilterUi';
-import { getChildFilter, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import { DEFAULT_CHILD_FLOATING_FILTER, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 const MultiFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -213,11 +213,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const { frameworkOverrides, userCompFactory } = this.beans;
         // a child's `true` is the Text Filter, whatever the column's own default is
         const defaultComponentName =
-            _getDefaultFloatingFilterType(
-                frameworkOverrides,
-                { ...filterDef, filter: getChildFilter(filterDef) },
-                () => 'agReadOnlyFloatingFilter'
-            ) ?? 'agReadOnlyFloatingFilter';
+            _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => DEFAULT_CHILD_FLOATING_FILTER) ??
+            'agReadOnlyFloatingFilter';
 
         return _getFloatingFilterCompDetails(userCompFactory, filterDef, params, defaultComponentName);
     }

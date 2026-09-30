@@ -543,7 +543,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
                         rowData: ROWS,
                     }
                 );
-                const filterBy = async (filterModels: object[]) => {
+                const filterBy = async (filterModels: (object | null)[]) => {
                     await api.setColumnFilterModel('name', { filterType: 'multi', filterModels });
                     api.onFilterChanged();
                     await asyncSetTimeout(0);
@@ -631,6 +631,12 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         });
         api.onFilterChanged();
         await asyncSetTimeout(0);
+
+        // the recorder does see a column definition the set child accepts
+        api.setGridOption('columnDefs', cols(false));
+        await asyncSetTimeout(0);
+        expect(refreshSources).toContain('colDef');
+        refreshSources.length = 0;
 
         api.setGridOption('columnDefs', cols(true));
         await asyncSetTimeout(0);
