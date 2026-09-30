@@ -883,7 +883,7 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data.c).toBe('keep');
     });
 
-    test('skips HTML reconciliation when clipboardDelimiter is not tab', async () => {
+    test('does not restore HTML columns when clipboardDelimiter is not tab', async () => {
         const api = await gridMgr.createGridAndWait('htmlCustomDelimiterPaste', {
             columnDefs: [
                 { field: 'a', editable: true },
@@ -893,21 +893,129 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             clipboardDelimiter: ',',
         });
         clipboardUtils.setTextAndHtml('a\t', '<table><tr><td>a</td><td></td></tr></table>');
-        const read = vi.spyOn(navigator.clipboard, 'read');
 
-        try {
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        // The tab is a literal character under a comma delimiter, so the HTML cells cannot
+        // correspond to the plain-text columns and must not clear the adjacent cell.
+        expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a\t', b: 'keep' });
+    });
+
+    test.each([
+        { name: 'async clipboard, extra newline', legacy: false, selectedBlankRow: false },
+        { name: 'async clipboard, selected blank row', legacy: false, selectedBlankRow: true },
+        { name: 'legacy paste, extra newline', legacy: true, selectedBlankRow: false },
+        { name: 'legacy paste, selected blank row', legacy: true, selectedBlankRow: true },
+    ])(
+        'uses HTML to distinguish a selected row from a Windows Excel newline with F delimiter: $name',
+        async ({ legacy, selectedBlankRow }) => {
+            let callbackData: string[][] | undefined;
+            const api = await gridMgr.createGridAndWait('htmlCustomDelimiterTerminalRowPaste', {
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { a: 'old0', b: 'keep0' },
+                    { a: 'old1', b: 'keep1' },
+                    { a: 'keep2', b: 'keep2' },
+                ],
+                clipboardDelimiter: 'F',
+                suppressClipboardApi: legacy,
+                processDataFromClipboard: ({ data }) => {
+                    callbackData = data.map((row) => [...row]);
+                    return data;
+                },
+            });
+            const plain = 'a1\tb1\r\na2\tb2\r\n';
+            const html =
+                '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr>' +
+                (selectedBlankRow ? '<tr><td></td><td></td></tr>' : '') +
+                '</table>';
+            clipboardUtils.setTextAndHtml(plain, html);
+
             api.setFocusedCell(0, 'a');
             const pasted = waitForEvent('pasteEnd', api);
             api.pasteFromClipboard();
+            if (legacy) {
+                const textArea = document.activeElement;
+                if (!(textArea instanceof HTMLTextAreaElement)) {
+                    throw new Error('Expected the temporary paste textarea');
+                }
+                const clipboardData = new DataTransfer();
+                clipboardData.setData('text/plain', plain);
+                clipboardData.setData('text/html', html);
+                textArea.value = plain;
+                textArea.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData }));
+            }
             await pasted;
 
-            // the tab is a literal character under a comma delimiter, so the HTML cells cannot
-            // correspond to the plain-text columns and must not clear the adjacent cell
-            expect(read).not.toHaveBeenCalled();
-            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a\t', b: 'keep' });
-        } finally {
-            read.mockRestore();
+            expect(callbackData).toEqual(selectedBlankRow ? [['a1\tb1'], ['a2\tb2'], ['']] : [['a1\tb1'], ['a2\tb2']]);
+            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1\tb1', b: 'keep0' });
+            expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'a2\tb2', b: 'keep1' });
+            expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject({
+                a: selectedBlankRow ? null : 'keep2',
+                b: 'keep2',
+            });
         }
+    );
+
+    test('uses Excel TSV row count when a quoted multiline cell splits into extra F-delimited rows', async () => {
+        let callbackData: string[][] | undefined;
+        const api = await gridMgr.createGridAndWait('htmlCustomDelimiterMultilinePaste', {
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ a: 'old0' }, { a: 'old1' }, { a: 'old2' }, { a: 'keep3' }],
+            clipboardDelimiter: 'F',
+            processDataFromClipboard: ({ data }) => {
+                callbackData = data.map((row) => [...row]);
+                return data;
+            },
+        });
+        clipboardUtils.setTextAndHtml(
+            'a1\t"b1\nline"\r\na2\tb2\r\n',
+            '<table><tr><td>a1</td><td>b1<br>line</td></tr><tr><td>a2</td><td>b2</td></tr></table>'
+        );
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(callbackData).toEqual([['a1\t"b1'], ['line"'], ['a2\tb2']]);
+        expect(api.getDisplayedRowAtIndex(2)?.data.a).toBe('a2\tb2');
+        expect(api.getDisplayedRowAtIndex(3)?.data.a).toBe('keep3');
+    });
+
+    test('preserves a terminal custom-delimiter cell when the delimiter is a newline', async () => {
+        let callbackData: string[][] | undefined;
+        const api = await gridMgr.createGridAndWait('htmlNewlineDelimiterPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [
+                { a: 'old', b: 'old' },
+                { a: 'keep', b: 'keep' },
+            ],
+            clipboardDelimiter: '\n',
+            processDataFromClipboard: ({ data }) => {
+                callbackData = data.map((row) => [...row]);
+                return data;
+            },
+        });
+        clipboardUtils.setTextAndHtml('a\n', '<table><tr><td>a</td></tr></table>');
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(callbackData).toEqual([['a', '']]);
+        expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a', b: null });
+        expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'keep', b: 'keep' });
     });
 
     test.each([false, true])(

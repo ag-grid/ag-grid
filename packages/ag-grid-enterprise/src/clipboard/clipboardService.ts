@@ -295,8 +295,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private isHtmlReconciliationEnabled(): boolean {
-        // Excel writes tab-delimited plain text; any other delimiter breaks the column correspondence with the HTML table.
-        return !this.gos.get('suppressLastEmptyLineOnPaste') && this.getClipboardDelimiter() === '\t';
+        return !this.gos.get('suppressLastEmptyLineOnPaste');
     }
 
     private processClipboardData(data: string, html?: string): void {
@@ -304,10 +303,24 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        let parsedData: string[][] | null = stringToArray(data, this.getClipboardDelimiter());
+        const delimiter = this.getClipboardDelimiter();
+        const htmlToReconcile = this.isHtmlReconciliationEnabled() ? html : undefined;
+        let parsedData: string[][] | null = stringToArray(data, delimiter);
 
-        if (html && this.isHtmlReconciliationEnabled()) {
-            this.reconcileClipboardDataWithHtml(parsedData, html);
+        if (htmlToReconcile && delimiter !== '\t' && /[\r\n]$/.test(data)) {
+            // Excel's plain text uses tabs even when the grid is configured with another delimiter.
+            // Use its table shape only to identify a synthetic final row, not to add HTML columns.
+            const lastLine = _last(parsedData);
+            if (lastLine?.length === 1 && lastLine[0] === '') {
+                const tabularData = stringToArray(data, '\t');
+                if (this.reconcileClipboardDataWithHtml(tabularData, htmlToReconcile)) {
+                    parsedData.pop();
+                }
+            }
+        }
+
+        if (htmlToReconcile && delimiter === '\t') {
+            this.reconcileClipboardDataWithHtml(parsedData, htmlToReconcile);
         }
 
         const userFunc = this.gos.getCallback('processDataFromClipboard');
@@ -347,16 +360,16 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.doPasteOperation(pasteOperation);
     }
 
-    private reconcileClipboardDataWithHtml(parsedData: string[][], html: string): void {
+    private reconcileClipboardDataWithHtml(parsedData: string[][], html: string): boolean {
         const table = this.getHtmlTableShape(html, parsedData);
         if (!table) {
-            return;
+            return false;
         }
 
         const lastLine = _last(parsedData);
         const removeLastLine = parsedData.length === table.rowCount + 1 && lastLine?.length === 1 && lastLine[0] === '';
         if (parsedData.length > table.rowCount && !removeLastLine) {
-            return;
+            return false;
         }
 
         const finalPlainRow = parsedData.length - (removeLastLine ? 2 : 1);
@@ -367,7 +380,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 continue;
             }
             if (cellCount < (parsedData[row]?.length ?? 0) || hasNonEmptyMissingCell) {
-                return;
+                return false;
             }
         }
 
@@ -389,6 +402,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 parsedData.push(Array(count).fill(''));
             }
         }
+        return removeLastLine;
     }
 
     private getHtmlTableShape(

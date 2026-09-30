@@ -192,11 +192,9 @@ By default, the grid will use `\t` (tab) as the field delimiter. This is to keep
 
 ## Trailing Empty Lines
 
-Excel for Windows adds a line break after the last copied row, which would clear the cell below the pasted range. Other applications, such as Excel for Mac and Google Sheets, do not add this line.
+Some applications, such as Excel for Windows, add an extra line break after the last copied row, which would clear the cell below the pasted range. The grid detects this automatically and removes the extra line when pasting, while keeping blank rows that were part of the copied range. This detection may not be possible for every application the data is copied from.
 
-When the clipboard also contains an HTML table, the grid uses it to remove this extra line while keeping any blank rows that were part of the copied range. This requires the default tab [delimiter](#changing-the-delimiter-for-copy--paste).
-
-Whether the HTML table is available depends on the browser and the application the data was copied from. If pasting still clears the cell below the pasted range, set `suppressLastEmptyLineOnPaste=true` to always remove a trailing empty line. This also removes a blank last row that was part of the copied range.
+If pasting still clears the cell below the pasted range, set `suppressLastEmptyLineOnPaste=true` to always remove a trailing empty line. Note this also removes a blank last row that was part of the copied range.
 
 ## Using the Browser's Text Selection
 

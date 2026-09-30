@@ -369,8 +369,8 @@ export interface GridOptions<TData = any> {
     suppressCopySingleCellRanges?: boolean;
     /**
      * Set to `true` to always remove a trailing empty line from pasted data.
-     * By default, when the clipboard contains an HTML table (e.g. copied from Excel), the grid uses it to tell an extra trailing line apart from selected blank rows.
-     * Enabling this skips that check, so a selected blank last row is also removed.
+     * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+     * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
      * @default false
      * @agModule `ClipboardModule`
      */
@@ -3206,8 +3206,7 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
 }
 
 type MenuCallbackReturn<TMenuItem extends string, TData = any, TContext = any> = (
-    | TMenuItem
-    | MenuItemDef<TData, TContext>
+    TMenuItem | MenuItemDef<TData, TContext>
 )[];
 
 export type GetContextMenuItems<TData = any, TContext = any> = (
@@ -3345,8 +3344,7 @@ export interface FillHandleOptions<TData = any, TContext = any> {
 }
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
-    | SingleRowSelectionOptions<TData, TValue, TContext>
-    | MultiRowSelectionOptions<TData, TValue, TContext>;
+    SingleRowSelectionOptions<TData, TValue, TContext> | MultiRowSelectionOptions<TData, TValue, TContext>;
 
 interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
@@ -3596,10 +3594,7 @@ export interface PageNumbersPanelParams {
 }
 
 export type PaginationPanelParams =
-    | PageSummaryPanelParams
-    | PageSizePanelParams
-    | RowSummaryPanelParams
-    | PageNumbersPanelParams;
+    PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams | PageNumbersPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | 'pageNumbers' | PaginationPanelParams;
 
