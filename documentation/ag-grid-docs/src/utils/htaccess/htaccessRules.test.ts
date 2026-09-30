@@ -1269,6 +1269,11 @@ describe('htaccessRules', () => {
             expect(productionContent).toContain('AddCharset utf-8 .md');
             expect(stagingContent).toContain('AddCharset utf-8 .md');
         });
+
+        it('registers the webp MIME type so the images are not served without a Content-Type', () => {
+            expect(productionContent).toContain('AddType image/webp .webp');
+            expect(stagingContent).toContain('AddType image/webp .webp');
+        });
     });
 
     describe('basic structure', () => {
