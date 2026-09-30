@@ -1,8 +1,8 @@
-import { waitFor } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, GridApi, IToolPanelColumnCompParams, SideBarDef } from 'ag-grid-community';
-import { enableDevValidations, setupAgTestIds } from 'ag-grid-community';
+import { agTestIdFor, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('column tool panel reset button', () => {
@@ -74,14 +74,13 @@ describe('column tool panel reset button', () => {
 
     /** The column list renders asynchronously, so wait for the item to appear. */
     function getColumnCheckbox(toolPanelGui: HTMLElement, label: string): Promise<HTMLInputElement> {
-        return waitFor(() => {
-            const item = Array.from(
-                toolPanelGui.querySelectorAll<HTMLElement>('.ag-column-select-virtual-list-item')
-            ).find((el) => el.querySelector('.ag-column-select-column-label')?.textContent === label);
-            const checkbox = item?.querySelector<HTMLInputElement>('.ag-column-select-checkbox input[type=checkbox]');
-            expect(checkbox).toBeDefined();
-            return checkbox!;
-        });
+        return waitFor(
+            () =>
+                getByTestId(
+                    toolPanelGui,
+                    agTestIdFor.columnSelectListItemCheckbox(`${label} Column`)
+                ) as HTMLInputElement
+        );
     }
 
     test('renders the buttons in the configured order', async () => {

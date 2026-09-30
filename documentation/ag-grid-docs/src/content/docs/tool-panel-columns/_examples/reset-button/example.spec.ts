@@ -6,18 +6,17 @@ test.agExample(import.meta, () => {
         async ({ agIdFor, page }) => {
             await waitForGridContent(page);
 
-            const toolPanel = page.locator('.ag-column-select');
             const ageHeader = agIdFor.headerCell('age');
             const goldHeader = agIdFor.headerCell('gold');
-            const columnCheckbox = (label: string) =>
-                toolPanel.locator('.ag-column-select-column').filter({ hasText: label }).locator('.ag-checkbox-input');
+            const ageCheckbox = agIdFor.columnSelectListItemCheckbox('Age Column');
+            const goldCheckbox = agIdFor.columnSelectListItemCheckbox('Gold Column');
 
             await expect(ageHeader).toBeVisible();
             await expect(goldHeader).toBeHidden();
 
             // With no Apply button, changes in the tool panel are applied straight away.
-            await columnCheckbox('Age').click();
-            await columnCheckbox('Gold').click();
+            await ageCheckbox.click();
+            await goldCheckbox.click();
             await expect(ageHeader).toBeHidden();
             await expect(goldHeader).toBeVisible();
 
@@ -25,8 +24,8 @@ test.agExample(import.meta, () => {
             await page.getByRole('button', { name: 'Reset' }).click();
             await expect(ageHeader).toBeVisible();
             await expect(goldHeader).toBeHidden();
-            await expect(columnCheckbox('Age')).toBeChecked();
-            await expect(columnCheckbox('Gold')).not.toBeChecked();
+            await expect(ageCheckbox).toBeChecked();
+            await expect(goldCheckbox).not.toBeChecked();
         }
     );
 });

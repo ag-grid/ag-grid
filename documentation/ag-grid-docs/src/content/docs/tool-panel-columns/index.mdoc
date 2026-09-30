@@ -309,26 +309,6 @@ Note that in the example below:
 
 {% gridExampleRunner title="Reset Button" name="reset-button" exampleHeight=630 /%}
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    sideBar: {
-        toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel',
-                toolPanelParams: {
-                    buttons: ['reset'],
-                },
-            },
-        ],
-        defaultToolPanel: 'columns',
-    },
-};
-```
-
 ## Deferred Updates
 
 You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
