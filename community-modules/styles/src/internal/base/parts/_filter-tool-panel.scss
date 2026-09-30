@@ -273,6 +273,11 @@
     .ag-filter-add-select {
         border: 0;
 
+        // `!important` to beat the structural rich-select rule that zeroes the input's padding
+        .ag-text-field-input {
+            padding-inline-start: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2) !important;
+        }
+
         .ag-rich-select-value {
             padding: calc(((1.5 * var(--ag-font-size) + 4 * var(--ag-grid-size)) - var(--ag-input-height)) / 2)
                 var(--ag-grid-size);
