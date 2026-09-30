@@ -313,6 +313,15 @@ body > #highlighter {
         inset 0 0 0 2px var(--main-bg);
 }
 
+/* A label may wrap its control (implicit association) rather than sit beside it. Lay it out as a
+   row so the control and its text centre and space themselves the same way sibling controls in a
+   `.controls-row` do — without it the restyled control sits on the text baseline with no gap. */
+.example-controls label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--row-gap);
+}
+
 /* Groups controls (e.g. a label, input and value) so they can be enabled/disabled together
    without affecting the row layout. */
 .example-controls fieldset.control-group {

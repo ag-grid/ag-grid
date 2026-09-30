@@ -110,26 +110,24 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <div className="example-controls">
-                            <label>
-                                <span>caseSensitive:</span>
-                                <input
-                                    id="caseSensitive"
-                                    type="checkbox"
-                                    onChange={toggleCaseSensitive}
-                                    checked={findOptions.caseSensitive}
-                                />
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <label htmlFor="caseSensitive">caseSensitive:</label>
+                            <input
+                                id="caseSensitive"
+                                type="checkbox"
+                                onChange={toggleCaseSensitive}
+                                checked={findOptions.caseSensitive}
+                            />
+                            <label htmlFor="currentPageOnly" className="gap-left">
+                                currentPageOnly:
                             </label>
-                            <label>
-                                <span>currentPageOnly:</span>
-                                <input
-                                    id="currentPageOnly"
-                                    type="checkbox"
-                                    onChange={toggleCurrentPageOnly}
-                                    checked={findOptions.currentPageOnly}
-                                />
-                            </label>
+                            <input
+                                id="currentPageOnly"
+                                type="checkbox"
+                                onChange={toggleCurrentPageOnly}
+                                checked={findOptions.currentPageOnly}
+                            />
                         </div>
                         <div className="example-controls">
                             <span>Go to match:</span>
