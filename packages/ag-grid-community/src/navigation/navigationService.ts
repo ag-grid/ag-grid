@@ -894,15 +894,9 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
-        const cellCtrl = _getCellByPosition(this.beans, cell);
+        const colSpanningList = _getCellByPosition(this.beans, cell)?.colsSpanning;
 
-        if (!cellCtrl) {
-            return cell;
-        }
-
-        const colSpanningList = cellCtrl.getColSpanningList();
-
-        if (colSpanningList.length === 1) {
+        if (!colSpanningList || colSpanningList.length === 1) {
             return cell;
         }
 

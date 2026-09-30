@@ -116,6 +116,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private rowGui: RowGui | undefined;
     private readonly rowModeFeature: IRowModeFeature;
 
+    /** A spanned row's cell height belongs to the rows it covers, so auto height reaches it via the span. */
+    public readonly spannedRow: boolean = false;
+
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
 
@@ -468,7 +471,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (isCellSpan) {
             return undefined;
         }
-        return new CellCtrl(col, this.rowNode, this.beans, this);
+        return new CellCtrl(col, this.rowNode, this.beans, this, null);
     }
 
     /**
@@ -568,9 +571,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     /** Called by NormalRowFeature after refreshing cells */
     public onNormalRowRefreshed(): void {
-        this.setRowCompRowId();
+        // push only what changed: an unchanged value still re-renders a React row
+        if (_escapeString(this.rowNode.id) !== this.rowId) {
+            this.setRowCompRowId();
+        }
+        const businessKey = this.businessKey;
         this.updateRowBusinessKey();
-        this.setRowCompRowBusinessKey();
+        if (this.businessKey !== businessKey) {
+            this.setRowCompRowBusinessKey();
+        }
 
         this.onRowSelected();
         this.postProcessCss();
@@ -638,6 +647,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowPinned: this.onRowPinned.bind(this),
         });
 
+        // a cell kept for its edit can go once the edit ends or its pending value is reverted
+        const releaseAfterEdit = () => this.rowModeFeature.releaseKeptCells?.(true);
         this.addManagedListeners(eventSvc, {
             paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
             heightScaleChanged: this.onTopChanged.bind(this),
@@ -656,6 +667,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
             cellFocused: this.onCellFocusChanged.bind(this),
             cellFocusCleared: this.onCellFocusChanged.bind(this),
+            cellEditingStopped: releaseAfterEdit,
+            batchEditingStopped: releaseAfterEdit,
+            cellEditValuesChanged: releaseAfterEdit,
             paginationChanged: this.onPaginationChanged.bind(this),
             modelUpdated: () => {
                 // Pinned bottom rows depend on displayed row count for absolute aria row index.
@@ -718,6 +732,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         this.rowModeFeature.refreshRow(params ?? {});
+    }
+
+    public refreshSpans(): void {
+        this.rowModeFeature.refreshSpans?.();
     }
 
     private postProcessCss(): void {
@@ -1004,7 +1022,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private setStylesFromGridOptions(updateStyles: boolean): void {
         if (updateStyles) {
-            this.rowStyles = this.processStylesFromGridOptions();
+            const rowStyles = this.processStylesFromGridOptions();
+            if (rowStyles === this.rowStyles) {
+                return; // the comp already holds it
+            }
+            this.rowStyles = rowStyles;
         }
         this.rowGui?.rowComp.setUserStyles(this.rowStyles);
     }
@@ -1089,7 +1111,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public announceDescription(cellCtrl?: CellCtrl): void {
-        this.beans.selectionSvc?.announceAriaRowSelection(this.rowNode);
+        const { selectionSvc, focusSvc } = this.beans;
+        // selection changes announce without a cell, so use the focused one
+        const column =
+            cellCtrl?.column ??
+            (this.isFullWidth() ? undefined : (focusSvc.getFocusedCell()?.column as AgColumn | undefined));
+        selectionSvc?.announceAriaRowSelection(this.rowNode, column);
         this.announceNoteDescription(cellCtrl);
     }
 
@@ -1268,8 +1295,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onCellFocusChanged(): void {
-        const { focusSvc } = this.beans;
-        const rowFocused = focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
+        this.updateRowFocused();
+        this.rowModeFeature.releaseKeptCells?.(false);
+    }
+
+    private updateRowFocused(): void {
+        const rowFocused = this.beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.rowFocused = rowFocused;
@@ -1428,7 +1459,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // infrequently used feature so we don't need to do this most
         // of the time
         for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl?.getColSpanningList().indexOf(column) >= 0) {
+            if (cellCtrl.colsSpanning?.includes(column)) {
                 res = cellCtrl;
             }
         }
@@ -1441,9 +1472,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // is child of a group node, and the group node was closed, it's the only way to have no row index.
         // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!
         if (this.rowNode.rowIndex != null) {
-            this.onCellFocusChanged();
+            this.updateRowFocused();
             this.updateRowIndexes();
             this.postProcessCss();
+            // a span callback can read the row index, and a new index can move focus off a kept cell
+            this.refreshSpans();
+            if (!this.beans.visibleCols.colSpanActive) {
+                // with colSpan active, the layout above releases a kept cell, or the row rebuilds on mount
+                this.rowModeFeature.releaseKeptCells?.(false);
+            }
         }
     }
 

@@ -2,8 +2,10 @@ import type { Framework, MenuItem } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { MarkdownActions } from '@ag-website-shared/components/markdown-actions/MarkdownActions';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
+import { isFrameworkLandingHub } from '@constants';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import type { FunctionComponent } from 'react';
 
 import styles from './Header.module.scss';
@@ -33,6 +35,10 @@ export const Header: FunctionComponent<Props> = ({
     // Done here, because it's run on all docs pages
     useSyncFrameworkStoreState(framework);
 
+    // The framework name doubles as every docs page's link back to the framework's landing hub.
+    const frameworkName = `${getFrameworkDisplayText(framework)} Data Grid`;
+    const hubUrl = isFrameworkLandingHub(framework) ? urlWithBaseUrl(`/${framework}-data-grid/`) : undefined;
+
     return (
         <header className={styles.docsPageHeader}>
             <div id="top" className={styles.docsPageTitle}>
@@ -45,7 +51,13 @@ export const Header: FunctionComponent<Props> = ({
                     <h1 className={styles.pageTitle}>
                         {!suppressFrameworkHeader && (
                             <span className={styles.headerFramework}>
-                                {`${getFrameworkDisplayText(framework)} Data Grid`}
+                                {hubUrl ? (
+                                    <a className={styles.headerFrameworkLink} href={hubUrl}>
+                                        {frameworkName}
+                                    </a>
+                                ) : (
+                                    frameworkName
+                                )}
                             </span>
                         )}
                         <span className={styles.titleText} data-page-title>

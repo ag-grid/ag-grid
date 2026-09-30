@@ -10,6 +10,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import type { ColumnTreeBuild } from './buildColumnTree';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
@@ -31,7 +32,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 
     public pivotMode = false;
-    public colSpanActive = false;
     public ready = false;
     /** Suppresses row model refreshes during batch column state dispatching. */
     public changeEventsDispatching = false;
@@ -51,6 +51,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefList: AgColumn[] = [];
     /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
     public colDefsVersion = 0;
+    /** Columns redefined by the tree build in progress, told once every column holds its new definition. */
+    public colDefChangedInBuild: AgColumn[] | null = null;
     public colDefTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colDefTreeDepth = 0;
     private colDefHasMarryChildren = false;
@@ -201,21 +203,28 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldTree = this.colDefTree;
         const oldAllGroups = this.colDefAllGroups;
 
-        const builder = _buildColumnTree(
-            beans,
-            /* defs */ colDefs,
-            /* primaryColumns */ true,
-            /* existingGroupsById */ this.colDefGroupsById,
-            /* existingColsByKey */ this.colDefColsByKey,
-            /* existingColsById */ this.colsById,
-            /* source */ source,
-            /* newColDefs */ newColDefs,
-            /* buildToken */ this.nextBuildToken(),
-            /* wrapperCache */ this.hierarchyWrapperCache
-        );
-        groupHierarchyColSvc?.contributeTo(builder);
-        calculatedColsSvc?.contributeTo(builder);
-        finalizeColumnTree(builder);
+        const colDefChanged: AgColumn[] = [];
+        this.colDefChangedInBuild = colDefChanged;
+        let builder: ColumnTreeBuild;
+        try {
+            builder = _buildColumnTree(
+                beans,
+                /* defs */ colDefs,
+                /* primaryColumns */ true,
+                /* existingGroupsById */ this.colDefGroupsById,
+                /* existingColsByKey */ this.colDefColsByKey,
+                /* existingColsById */ this.colsById,
+                /* source */ source,
+                /* newColDefs */ newColDefs,
+                /* buildToken */ this.nextBuildToken(),
+                /* wrapperCache */ this.hierarchyWrapperCache
+            );
+            groupHierarchyColSvc?.contributeTo(builder);
+            calculatedColsSvc?.contributeTo(builder);
+            finalizeColumnTree(builder);
+        } finally {
+            this.colDefChangedInBuild = null;
+        }
 
         const tree = builder.columnTree;
         const cols = builder.columns;
@@ -261,6 +270,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.refreshCols(newColDefs, source);
         } finally {
             this.changeEventsDispatching = false;
+        }
+        // after refreshCols, so the listeners can look up the pivot result and service columns too
+        for (let i = 0, len = colDefChanged.length; i < len; ++i) {
+            colDefChanged[i].dispatchColEvent('colDefChanged', source);
         }
 
         visibleCols.refresh(source, false);
@@ -513,35 +526,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return !!this.beans.pivotColsSvc?.hasInteractivePivotSort() || this.prevPivotStrict;
     }
 
-    /** Refresh state derived from `colsList` (group + quick-filter cols, colSpan/autoHeight flags) and
+    /** Refresh state derived from `colsList` (group + quick-filter cols) and
      *  reset displayed-col + viewport caches, ahead of `visibleCols.refresh`. Shared by full refreshCols
      *  and by a visibility-only change (which leaves `colsList` unchanged, so skips the rebuild). */
     public refreshColsDerivedState(): void {
         const beans = this.beans;
         beans.showRowGroupCols?.refresh();
         beans.quickFilter?.refreshCols();
-        this.computeColSpanAndAutoHeight();
         beans.visibleCols.clear();
         beans.colViewport.clear();
-    }
-
-    /** Single pass: set `colSpanActive` and `rowAutoHeight.active` from `colsList`. */
-    private computeColSpanAndAutoHeight(): void {
-        const colsList = this.colsList;
-        const rowAutoHeight = this.beans.rowAutoHeight;
-        let colSpan = false;
-        let autoHeight = false;
-        for (let i = 0, len = colsList.length; i < len; ++i) {
-            const col = colsList[i];
-            const colDef = col.colDef;
-            colSpan ||= colDef.colSpan != null;
-            autoHeight ||= !!rowAutoHeight && !!colDef.autoHeight && col.visible;
-            if (colSpan && (autoHeight || !rowAutoHeight)) {
-                break;
-            }
-        }
-        this.colSpanActive = colSpan;
-        rowAutoHeight?.setAutoHeightActive(autoHeight);
     }
 
     /** Full refresh (rebuild cols + recompute visible); immediate, or deferred to {@link endColBatch} when batched. */

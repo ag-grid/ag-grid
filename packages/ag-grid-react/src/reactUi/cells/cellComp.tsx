@@ -269,7 +269,7 @@ const CellComp = ({
     );
 
     const init = useCallback(() => {
-        const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
+        const spanReady = cellCtrl.cellSpan === null || eWrapper.current;
         const eRef = eGui.current;
         if (!eRef || !spanReady || !cellCtrl?.isAlive() || context.isDestroyed()) {
             compBean.current = context.destroyBean(compBean.current);
@@ -505,7 +505,7 @@ const CellComp = ({
         </div>
     );
 
-    if (cellCtrl.isCellSpanning()) {
+    if (cellCtrl.cellSpan !== null) {
         return (
             <div ref={setWrapperRef} className="ag-spanned-cell-wrapper" role="presentation">
                 {renderCell()}

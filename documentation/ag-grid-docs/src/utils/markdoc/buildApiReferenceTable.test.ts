@@ -73,7 +73,7 @@ describe('buildApiReferenceSection', () => {
         );
     });
 
-    it('keeps the @agModule badge as a link to the module registry', () => {
+    it('links the module badge to the module registry', () => {
         const output = buildApiReferenceSection(
             {
                 config: {},
@@ -81,18 +81,8 @@ describe('buildApiReferenceSection', () => {
                     createRangeChart: {
                         definition: {},
                         propertyType: 'Function',
-                        gridOpProp: {
-                            meta: {
-                                comment: 'Used to programmatically create charts from a range.',
-                                tags: [
-                                    {
-                                        name: 'agModule',
-                                        comment: '`IntegratedChartsModule`',
-                                        modules: [{ name: 'IntegratedChartsModule', isEnterprise: true }],
-                                    },
-                                ],
-                            },
-                        },
+                        gridOpProp: { meta: { comment: 'Used to programmatically create charts from a range.' } },
+                        modules: [{ name: 'IntegratedChartsModule' }],
                     },
                 },
             },
@@ -100,11 +90,11 @@ describe('buildApiReferenceSection', () => {
         );
 
         expect(bodyRows(output)[0][4]).toBe(
-            'Used to programmatically create charts from a range. Module: [`IntegratedChartsModule`](https://www.ag-grid.com/javascript-data-grid/modules/).'
+            'Used to programmatically create charts from a range. [Module](https://www.ag-grid.com/javascript-data-grid/modules/): `IntegratedChartsModule`.'
         );
     });
 
-    it('lists every module when a property is available in more than one', () => {
+    it('lists every module under one link when a property is available in more than one', () => {
         const output = buildApiReferenceSection(
             {
                 config: {},
@@ -112,17 +102,16 @@ describe('buildApiReferenceSection', () => {
                     getRowId: {
                         definition: { description: 'Row id callback.' },
                         propertyType: 'Function',
-                        gridOpProp: {
-                            meta: { tags: [{ name: 'agModule', comment: '`RowApiModule` / `RowSelectionModule`' }] },
-                        },
+                        modules: [{ name: 'RowApiModule' }, { name: 'RowSelectionModule' }],
                     },
                 },
             },
             links
         );
 
-        expect(bodyRows(output)[0][4]).toContain('Modules (any of): [`RowApiModule`]');
-        expect(bodyRows(output)[0][4]).toContain('[`RowSelectionModule`]');
+        expect(bodyRows(output)[0][4]).toBe(
+            'Row id callback. [Modules](https://www.ag-grid.com/javascript-data-grid/modules/) (any of): `RowApiModule`, `RowSelectionModule`.'
+        );
     });
 
     it('links the type to its reference page, as the page does', () => {
@@ -235,18 +224,8 @@ describe('buildApiReferenceSection', () => {
                             },
                         },
                         propertyType: 'boolean',
-                        gridOpProp: {
-                            meta: {
-                                tags: [
-                                    { name: 'initial' },
-                                    {
-                                        name: 'agModule',
-                                        comment: '`IntegratedChartsModule`',
-                                        modules: [{ name: 'IntegratedChartsModule', isEnterprise: true }],
-                                    },
-                                ],
-                            },
-                        },
+                        gridOpProp: { meta: { tags: [{ name: 'initial' }] } },
+                        modules: [{ name: 'IntegratedChartsModule' }],
                     },
                     chartThemeName: {
                         definition: {
@@ -265,7 +244,7 @@ describe('buildApiReferenceSection', () => {
         expect(unlinkChart[4]).toBe(
             'When enabled the chart will be unlinked from the grid after creation. ' +
                 'See [Unlinking Charts](https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/#default-chart-menu-items) for more information. ' +
-                'Module: [`IntegratedChartsModule`](https://www.ag-grid.com/javascript-data-grid/modules/). ' +
+                '[Module](https://www.ag-grid.com/javascript-data-grid/modules/): `IntegratedChartsModule`. ' +
                 '[Initial](https://www.ag-grid.com/javascript-data-grid/grid-interface/#initial-grid-options).'
         );
         expect(chartThemeName[4]).toBe(

@@ -27,6 +27,7 @@ import {
     _getHeaderTooltipComponentDefinition,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
+    _isHeaderNameChangeForGroup,
     _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
@@ -383,8 +384,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onHeaderNameChanged(event: ColumnHeaderNameChangedEvent): void {
-        // A missing columnGroup means a column rename or bulk change, so refresh unconditionally.
-        if (event.columnGroup && event.columnGroup.getGroupId() !== this.columnGroup.groupId) {
+        if (!_isHeaderNameChangeForGroup(event, this.columnGroup.groupId)) {
             return;
         }
         if (this.labelRendererFeature) {

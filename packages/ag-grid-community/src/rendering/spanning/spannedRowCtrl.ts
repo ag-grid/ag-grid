@@ -4,6 +4,8 @@ import { RowCtrl } from '../row/rowCtrl';
 import { SpannedCellCtrl } from './spannedCellCtrl';
 
 export class SpannedRowCtrl extends RowCtrl {
+    public override readonly spannedRow: boolean = true;
+
     protected override getInitialRowClasses(): string[] {
         const { rowNode, beans } = this;
         const classes = ['ag-spanned-row', this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute'];
@@ -48,7 +50,7 @@ export class SpannedRowCtrl extends RowCtrl {
             return false;
         }
 
-        return (cell as SpannedCellCtrl).getCellSpan() === cellSpan;
+        return cell.cellSpan === cellSpan;
     }
 
     /**

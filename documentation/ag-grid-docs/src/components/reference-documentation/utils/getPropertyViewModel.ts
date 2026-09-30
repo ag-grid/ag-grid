@@ -107,6 +107,27 @@ function getTagsData({
           ']'
         : defaultValue;
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
+    const modules = getPropertyModules({ definition, gridOpProp, config, allModules });
+
+    return { formattedDefaultValue, isInitial, modules };
+}
+
+/**
+ * The modules a property's badges list, from its `@agModule` tag, narrowed to the restricted
+ * module where the property or page sets one. Shared with the markdown twin so both list the same.
+ */
+export function getPropertyModules({
+    definition,
+    gridOpProp,
+    config,
+    allModules,
+}: {
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    config: Config;
+    allModules?: GridModule[];
+}): PropertyViewModel['modules'] {
+    const tags = gridOpProp?.meta?.tags ?? definition?.tags ?? [];
 
     // Module badges are an apiDocumentation concern: interfaceDocumentation passes no module
     // data and has never shown them.
@@ -129,8 +150,27 @@ function getTagsData({
         }
     }
 
-    return { formattedDefaultValue, isInitial, modules };
+    return modules;
 }
+
+export interface PropertyViewModelParams {
+    name: string;
+    framework: Framework;
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    type: PropertyType | string;
+    propertyType: string;
+    config: Config;
+    allModules?: GridModule[];
+    detailsKey?: string;
+    detailsCode?: string;
+}
+
+/**
+ * Turns a resolved property into whatever the consumer of a reference model needs. The page
+ * uses getPropertyViewModel; the markdown twin needs the raw entries instead.
+ */
+export type PropertyResolver<P> = (params: PropertyViewModelParams) => P;
 
 /**
  * Resolve everything a property row renders, so the island receives display strings rather than
@@ -147,18 +187,7 @@ export function getPropertyViewModel({
     allModules,
     detailsKey,
     detailsCode,
-}: {
-    name: string;
-    framework: Framework;
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    type: PropertyType | string;
-    propertyType: string;
-    config: Config;
-    allModules?: GridModule[];
-    detailsKey?: string;
-    detailsCode?: string;
-}): PropertyViewModel {
+}: PropertyViewModelParams): PropertyViewModel {
     const { isObject, description } = getDescription({ definition, gridOpProp, framework });
     const { formattedDefaultValue, isInitial, modules } = getTagsData({
         definition,
