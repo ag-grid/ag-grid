@@ -320,6 +320,8 @@ body > #highlighter {
     display: inline-flex;
     align-items: center;
     gap: var(--row-gap);
+    /* A label toggles its control on click, so repeated clicks would otherwise select its text. */
+    user-select: none;
 }
 
 /* Groups controls (e.g. a label, input and value) so they can be enabled/disabled together
