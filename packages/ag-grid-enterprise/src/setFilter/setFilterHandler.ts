@@ -136,7 +136,10 @@ export class SetFilterHandler<TValue = string>
         // Before the values, whose reload may evict by what the model checks.
         this.appliedModel.update(params.model);
         this.heldKeyIndex.update({ filterType: 'set', values: this.heldKeys });
+        let valuesKnown = false;
         if (wasPreserving && !params.filterParams.preservePreviousValues) {
+            // Values it saw have left the data, so their model entries go even with no rows left, as with a clear.
+            valuesKnown = valueModel.missingKeys.size > valueModel.keyOnlyKeys.size;
             this.clearMissing(false);
         }
         // the rows are read again once the types are inferred, provided values are keyed again here
@@ -148,7 +151,7 @@ export class SetFilterHandler<TValue = string>
             this.refreshFilterValuesForColDef();
         }
 
-        this.validateModel();
+        this.validateModel(undefined, undefined, valuesKnown);
         return true;
     }
 
@@ -424,6 +427,7 @@ export class SetFilterHandler<TValue = string>
     public clearOwnPreservedValues(onlyUnselected: boolean): void {
         this.clearMissing(onlyUnselected).then(() => {
             if (!onlyUnselected) {
+                // Asked for: whatever the data lacks now goes, model values never seen in it included.
                 this.reconcileModel(undefined, false, true);
             }
         });
@@ -492,13 +496,17 @@ export class SetFilterHandler<TValue = string>
     }
 
     /** Reads the params once the values load, as a refresh in the meantime supersedes the model. */
-    private validateModel(additionalEventAttributes?: any, restrictToAvailableValues?: boolean): void {
+    private validateModel(
+        additionalEventAttributes?: any,
+        restrictToAvailableValues?: boolean,
+        valuesKnown?: boolean
+    ): void {
         const valueModel = this.valueModel;
         valueModel.allKeys.then(() => {
             if (valueModel.isPreserving()) {
                 this.keepModelKeys(additionalEventAttributes);
             } else {
-                this.reconcileModel(additionalEventAttributes, restrictToAvailableValues);
+                this.reconcileModel(additionalEventAttributes, restrictToAvailableValues, valuesKnown);
             }
         });
     }
@@ -525,7 +533,7 @@ export class SetFilterHandler<TValue = string>
             valueModel.allValues.forEach((_value, key) => addKey(key));
         }
         // No grid values means they are not known yet (cellDataType inference pending), not that all are selected,
-        // so the model waits for them; a clear discards what is not in the data as it stands.
+        // so the model waits for them, unless the caller knows the data is empty.
         const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         if (takenFromGrid && !valuesKnown && existingFormattedKeys.size === 0 && model.values.length > 0) {
             return;

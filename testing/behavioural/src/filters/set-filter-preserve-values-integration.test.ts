@@ -133,6 +133,15 @@ describe('Set Filter preservePreviousValues - integration', () => {
             await expectCRetained(api);
         });
 
+        test('from filterParams given as a function', async () => {
+            const api = createGrid(rows('A', 'B', 'C'), {
+                filter: 'agSetColumnFilter',
+                filterParams: () => ({ preservePreviousValues: true }),
+            });
+            await asyncSetTimeout(0);
+            await expectCRetained(api);
+        });
+
         test('when a column definition update turns the option on', async () => {
             const api = createGrid(rows('A', 'B', 'C'), { filter: 'agSetColumnFilter' });
             await asyncSetTimeout(0);
@@ -382,6 +391,23 @@ describe('Set Filter preservePreviousValues - integration', () => {
             await asyncSetTimeout(0);
             const handler = withHandlers.getColumnFilterHandler('value') as MultiFilterHandler;
             await expectCleared(withHandlers, handler.getHandler<SetFilterHandler>(1)!);
+        });
+
+        test('a Set Filter child is created up front from params given as functions', async () => {
+            const api = createGrid(rows('A', 'B', 'C'), {
+                filter: 'agMultiColumnFilter',
+                filterParams: () => ({
+                    filters: [
+                        { filter: 'agTextColumnFilter' },
+                        { filter: 'agSetColumnFilter', filterParams: () => ({ preservePreviousValues: true }) },
+                    ],
+                }),
+            });
+            await asyncSetTimeout(0);
+            await setRowData(api, rows('A', 'B'));
+
+            await ColumnFilterHarness.open(api, 'value');
+            await waitFor(() => expect(missingLabels(popup())).toEqual(['C']));
         });
 
         test('a Set Filter child is created up front, so it retains values that leave before first use', async () => {

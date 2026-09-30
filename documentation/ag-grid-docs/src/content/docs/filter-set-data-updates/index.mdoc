@@ -182,7 +182,6 @@ api.doFilterAction({ colId: 'col1', action: 'clearUnselectedPreservedValues' });
 A filter only sees values while it exists, so a column with `preservePreviousValues` creates its filter up front rather than when it is first used:
 
 - Its filter is created once the grid knows the column's data type. While the [Advanced Filter](./filter-advanced/) is enabled, the Advanced Filter creates its own instead. Pivot result columns, which copy their value column's params, do not create one.
-- The option is read from `filterParams` given as an object. When `filterParams` is a function, the filter is created when it is first used, so it only keeps values from then on.
 - A `values` callback is therefore called when the grid starts.
 - A Set Filter inside a [Multi Filter](./filter-multi/) is created up front with the whole Multi Filter, including its other filters. A selectable filter only creates the filter that is selected, so a Set Filter there keeps values only while it is selected.
 

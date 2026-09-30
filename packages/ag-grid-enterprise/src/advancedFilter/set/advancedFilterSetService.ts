@@ -189,7 +189,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const cols = colModel.getColsInStateOrder();
         for (let i = 0, len = cols.length; i < len; ++i) {
             const column = cols[i];
-            if (column.primary && this.getSetColDef(column).filterParams?.preservePreviousValues) {
+            if (column.primary && this.getSetFilterParams(column)?.preservePreviousValues) {
                 this.getSetColumn(column);
             }
         }
@@ -239,11 +239,13 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         if (_isClientSideRowModel(this.gos)) {
             return true;
         }
+        return !!this.getSetFilterParams(column)?.values;
+    }
+
+    private getSetFilterParams(column: AgColumn): ISetFilterParams | undefined {
         const filterParams = this.getSetColDef(column).filterParams;
         // `filterParams` may be a function of the grid params, so it is resolved the way the handler's own are.
-        const resolved: ISetFilterParams | undefined =
-            typeof filterParams === 'function' ? this.createHandlerParams(column, 'init').filterParams : filterParams;
-        return !!resolved?.values;
+        return typeof filterParams === 'function' ? this.createHandlerParams(column, 'init').filterParams : filterParams;
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */

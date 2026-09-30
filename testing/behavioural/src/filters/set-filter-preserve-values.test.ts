@@ -420,7 +420,7 @@ describe('Set Filter preservePreviousValues', () => {
         expect(modelOf(api)?.values).toEqual(['A']);
     });
 
-    test('turning the option off with no rows left keeps the model for the rows, as without the option', async () => {
+    test('turning the option off with no rows left drops the values that left from the model, as a clear does', async () => {
         const api = createGrid(rows('A', 'B'));
         await asyncSetTimeout(0);
         await setModel(api, ['A']);
@@ -431,6 +431,28 @@ describe('Set Filter preservePreviousValues', () => {
         ]);
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys()).toEqual([]);
+        expect(modelOf(api)).toBeNull();
+
+        await setRowData(api, rows('A', 'B'));
+        expect(shown(api)).toEqual(['A', 'B']);
+    });
+
+    test('turning the option off before any rows arrive keeps the model waiting for them', async () => {
+        // No type to infer, so the model reaches the filter before the rows do.
+        const api = createGrid([], {}, { cellDataType: 'text' });
+        await asyncSetTimeout(0);
+        await setModel(api, ['A']);
+        expect(handlerOf(api).getFilterKeys()).toEqual(['A']);
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'value',
+                cellDataType: 'text',
+                filter: 'agSetColumnFilter',
+                filterParams: { preservePreviousValues: false },
+            },
+        ]);
+        await asyncSetTimeout(0);
         expect(modelOf(api)?.values).toEqual(['A']);
 
         await setRowData(api, rows('A', 'B'));
