@@ -100,6 +100,8 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     public eGui: HTMLElement;
 

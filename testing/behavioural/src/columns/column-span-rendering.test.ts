@@ -120,6 +120,21 @@ describe('Legacy colSpan rendering', () => {
         });
     });
 
+    test('showing a spanning column over the focused cell draws the span beneath it', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ ...columnDefs[0], hide: true }, columnDefs[1], columnDefs[2]],
+            rowData,
+            ensureDomOrder: false,
+        });
+        await waitFor(() => expect(renderedRow(api, 1)).toBe('b:100px c:100px'));
+        api.setFocusedCell(1, 'b');
+        await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe('b'));
+        api.setColumnsVisible(['a'], true);
+
+        expect(renderedRow(api, 1)).toBe('a:200px b:100px c:100px');
+        expect(document.activeElement?.getAttribute('col-id')).toBe('b');
+    });
+
     test('a column a span covers starts no cell, so its own colSpan is ignored', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ ...columnDefs[0], colSpan: () => 2 }, { ...columnDefs[1], colSpan: () => 2 }, columnDefs[2]],
@@ -855,6 +870,34 @@ describe('colSpan follows row data updates', () => {
         await waitFor(() => expect(priceCell()).toBeNull());
         api.getRowNode('r0')!.setDataValue('price', 70);
         await waitFor(() => expect(priceCell()?.style.width).toBe(`${71 * 120}px`));
+    });
+
+    test('cells a scroll to the left adds go in before the cells already drawn, in column order', async () => {
+        const columnDefs: ColDef[] = [];
+        for (let i = 0; i < 40; ++i) {
+            columnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ id: 'r0' }],
+            suppressColumnVirtualisation: false,
+            ensureDomOrder: false,
+        });
+        const drawn = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-index="0"] .ag-cell'), (cell) =>
+                Number(cell.getAttribute('col-id')!.slice(1))
+            );
+        api.ensureColumnVisible('c38');
+        await waitFor(() => expect(drawn()).toContain(38));
+        const keptFirst = Math.min(...drawn());
+
+        api.ensureColumnVisible('c24');
+        await waitFor(() => expect(drawn()).toContain(24));
+
+        const cols = drawn();
+        expect(cols).toContain(keptFirst);
+        expect(cols[0]).toBeLessThan(keptFirst);
+        expect(cols).toEqual([...cols].sort((a, b) => a - b));
     });
 
     test('a colSpan column right of the viewport is not asked for its span until it scrolls in', async () => {

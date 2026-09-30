@@ -70,7 +70,7 @@ export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     toggleCss(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean, colsVersion: number): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
@@ -110,6 +110,8 @@ type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     private rowType: RowType;
 
@@ -1440,31 +1442,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
-        // first up, check for cell directly linked to this column
-        let res: CellCtrl | null = null;
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.column == column) {
-                res = cellCtrl;
-            }
-        }
-
-        if (res != null || skipColSpanSearch) {
-            return res;
-        }
-
-        // second up, if not found, then check for spanned cols.
-        // we do this second (and not at the same time) as this is
-        // more expensive, as spanning cols is a
-        // infrequently used feature so we don't need to do this most
-        // of the time
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.colsSpanning?.includes(column)) {
-                res = cellCtrl;
-            }
-        }
-
-        return res;
+    /** The column's own cell, else the drawn cell spanning it; a span search runs a pending layout first. */
+    public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | undefined {
+        return this.rowModeFeature.getCellCtrl?.(column, skipColSpanSearch);
     }
 
     protected onRowIndexChanged(): void {
