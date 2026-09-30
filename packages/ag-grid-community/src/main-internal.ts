@@ -321,6 +321,7 @@ export type { ColumnTreeBuild, ColumnTreeEdit } from './columns/buildColumnTree'
 
 export type { IMenuFactory, ShowMenuAfterButtonClickOptions } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
+export type { ISetFilterService } from './interfaces/iSetFilterService';
 export type {
     HorizontalSection,
     HorizontalSectionMap,

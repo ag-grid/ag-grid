@@ -42,6 +42,18 @@ export function isKeyOnlyTreeLeaf(item: SetFilterModelTreeItem, keyOnlyKeys: Rea
     return !item.children && keyOnlyKeys.size > 0 && areAllTreeKeysIn(item, keyOnlyKeys);
 }
 
+/** A tree item's label; a key-only leaf is labelled by its key, having no value for the formatter to describe. */
+export function formatTreeKey(
+    item: SetFilterModelTreeItem,
+    treeListFormatter:
+        ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined,
+    keyOnlyKeys: ReadonlySet<string | null>
+): string | null {
+    return treeListFormatter && !isKeyOnlyTreeLeaf(item, keyOnlyKeys)
+        ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
+        : item.treeKey;
+}
+
 /** What the Mini Filter searches when the column configures no `textFormatter`. */
 export const unformattedSetFilterText: TextFormatter = (value) => value ?? null;
 

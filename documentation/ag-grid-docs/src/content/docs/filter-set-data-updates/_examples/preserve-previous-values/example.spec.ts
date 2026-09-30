@@ -29,7 +29,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-floating-filter input')).toHaveValue('(1) B');
         await expect(rows(page)).toHaveCount(0);
         await sideButton(page, 'Filter Summaries').click();
-        await expect(page.locator('.ag-filter-card-summary')).toContainText('B');
+        await expect(page.locator('.ag-filter-card-summary')).toHaveText('is (B)');
         await sideButton(page, 'Filters').click();
 
         // Apply Data Update 2 -> 'B' and 'C' return: 'B' rows show again, 'C' stays filtered out.

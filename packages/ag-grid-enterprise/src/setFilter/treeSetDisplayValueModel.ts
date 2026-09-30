@@ -4,7 +4,7 @@ import type { LogService, TextFormatter } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { NO_SET_FILTER_KEYS, SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
-import { isKeyOnlyTreeLeaf } from './setFilterUtils';
+import { formatTreeKey } from './setFilterUtils';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** all displayed items in a tree structure */
@@ -225,18 +225,11 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             if (!item.available) {
                 return false;
             }
-            const treeKey = item.treeKey;
-            if (treeKey == null) {
+            if (item.treeKey == null) {
                 return nullMatchesFilter;
             }
 
-            return matchesFilter(
-                this.formatter(
-                    treeListFormatter && !isKeyOnlyTreeLeaf(item, keyOnlyKeys)
-                        ? treeListFormatter(treeKey, item.depth, item.parentTreeKeys)
-                        : treeKey
-                )
-            );
+            return matchesFilter(this.formatter(formatTreeKey(item, treeListFormatter, keyOnlyKeys)));
         };
 
         for (const item of this.allDisplayedItemsTree.values()) {

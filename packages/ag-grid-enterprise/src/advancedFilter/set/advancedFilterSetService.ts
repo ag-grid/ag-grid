@@ -33,7 +33,7 @@ import {
 
 import type { SetFilterModelTreeItem } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
-import { getDataTypeKeyCreator, isKeyOnlyTreeLeaf, translateForSetFilter } from '../../setFilter/setFilterUtils';
+import { formatTreeKey, getDataTypeKeyCreator, translateForSetFilter } from '../../setFilter/setFilterUtils';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { getMultiFilterChild } from '../customFilterOptions';
@@ -137,9 +137,9 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
                 this.refreshColumns();
                 this.createPreservingColumns();
             },
-            advancedFilterEnabledChanged: ({ enabled }) => {
+            advancedFilterEnabledChanged: (event) => {
                 // Turning it off discards the applied expression, the one thing holding these handlers.
-                if (enabled) {
+                if (event.enabled) {
                     this.createPreservingColumns();
                 } else {
                     this.reset();
@@ -197,7 +197,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     /** The handlers hold the values an applied expression names, so `preservePreviousValuesLimit` spares them. */
     private refreshAppliedValues(): void {
-        const appliedModel = this.beans.advancedFilter?.getModel() ?? null;
+        const appliedModel = this.beans.advancedFilter?.getModel();
         for (const [colId, setColumn] of this.columns) {
             setColumn?.handler.holdKeys(getAppliedSetValues(appliedModel, colId));
         }
@@ -485,7 +485,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const created = this.createBean(handler);
         created.init(this.createHandlerParams(column, 'init'));
         const colId = column.getColId();
-        created.holdKeys(getAppliedSetValues(this.beans.advancedFilter?.getModel() ?? null, colId));
+        created.holdKeys(getAppliedSetValues(this.beans.advancedFilter?.getModel(), colId));
         // Held, not left to the service's own teardown: a column dropped from the definitions takes its
         // listener with it rather than leaving one per rebuild for the life of the grid.
         const [removeListener] = this.addManagedListeners(created, {
@@ -627,17 +627,15 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 const joinPath = (segments: readonly string[]): string => segments.join(PATH_JOINER);
 
 /** Every value a set condition on the column names, whether it keeps rows or drops them. */
-const getAppliedSetValues = (model: AdvancedFilterModel | null, colId: string): SetFilterModelValue => {
-    const values: SetFilterModelValue = [];
-    collectSetValues(model, colId, values);
-    return values;
-};
-
-const collectSetValues = (model: AdvancedFilterModel | null, colId: string, values: SetFilterModelValue): void => {
+const getAppliedSetValues = (
+    model: AdvancedFilterModel | null | undefined,
+    colId: string,
+    values: SetFilterModelValue = []
+): SetFilterModelValue => {
     if (model?.filterType === 'join') {
         const conditions = model.conditions;
         for (let i = 0, len = conditions.length; i < len; ++i) {
-            collectSetValues(conditions[i], colId, values);
+            getAppliedSetValues(conditions[i], colId, values);
         }
     } else if (model?.filterType === 'set' && model.colId === colId) {
         const modelValues = model.values;
@@ -645,6 +643,7 @@ const collectSetValues = (model: AdvancedFilterModel | null, colId: string, valu
             values.push(modelValues[i]);
         }
     }
+    return values;
 };
 
 const createValues = (): Omit<SetColumnValues, 'entries'> => ({
@@ -722,9 +721,7 @@ const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
         for (const item of items.values()) {
             // A blank names itself the way the Set Filter's own list names it, so the two offer one label.
             const formatted =
-                (treeListFormatter && !isKeyOnlyTreeLeaf(item, keyOnlyKeys)
-                    ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
-                    : item.treeKey) ?? translateForSetFilter(handler, 'blanks');
+                formatTreeKey(item, treeListFormatter, keyOnlyKeys) ?? translateForSetFilter(handler, 'blanks');
             const itemPath = [...path, formatted];
             const children = item.children;
             const keys = item.keys;

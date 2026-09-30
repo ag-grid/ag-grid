@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { FilterActionParams, FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterAction, FilterActionParams, FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     const filterManager = beans.filterManager;
@@ -83,18 +83,30 @@ export function getColumnFilterHandler(beans: BeanCollection, colKey: string | C
 }
 
 export function doFilterAction(beans: BeanCollection, params: FilterActionParams): void {
-    const { colModel, colFilter, gos } = beans;
-    if (!gos.get('enableFilterHandlers')) {
+    const { colId, action } = params;
+    if (action === 'clearPreservedValues' || action === 'clearUnselectedPreservedValues') {
+        // Set Filters keep these with or without filter handlers, the Advanced Filter's included.
+        beans.setFilterSvc?.clearPreservedValues(colId, action === 'clearUnselectedPreservedValues');
+        return;
+    }
+    if (!beans.gos.get('enableFilterHandlers')) {
         beans.log.warn(287);
         return;
     }
-    const { colId, action } = params;
-    if (colId) {
-        const column = colModel.colsById[colId];
-        if (column) {
-            colFilter?.updateModel(column, action);
-        }
+    if (!colId) {
+        beans.colFilter?.updateAllModels(action);
+    } else if (typeof colId === 'string') {
+        updateColumnModel(beans, colId, action);
     } else {
-        colFilter?.updateAllModels(action);
+        for (let i = 0, len = colId.length; i < len; ++i) {
+            updateColumnModel(beans, colId[i], action);
+        }
+    }
+}
+
+function updateColumnModel(beans: BeanCollection, colId: string, action: FilterAction): void {
+    const column = beans.colModel.colsById[colId];
+    if (column) {
+        beans.colFilter?.updateModel(column, action);
     }
 }

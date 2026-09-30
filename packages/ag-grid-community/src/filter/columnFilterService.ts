@@ -175,7 +175,7 @@ interface PreservingFilterParams {
     filters?: { filterParams?: PreservingFilterParams }[];
 }
 
-/** Also asked through Multi or selectable filter children, and a selectable filter's defaults. */
+/** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
 function wantsPreservedValues(filterParams: PreservingFilterParams | undefined): boolean {
     if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
         return true;
@@ -1249,7 +1249,7 @@ export class ColumnFilterService
     }
 
     private isCurrentColumn(column: AgColumn): boolean {
-        const { colModel } = this.beans;
+        const colModel = this.beans.colModel;
         const colId = column.getColId();
         return (column.primary ? colModel.getNonPivotColById(colId) : colModel.colsById[colId]) === column;
     }

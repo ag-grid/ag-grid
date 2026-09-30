@@ -334,21 +334,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
-    private setMissing(isMissing: boolean): void {
-        if (this.isMissing === isMissing) {
-            return;
-        }
-        this.isMissing = isMissing;
-        this.applyMissing();
-        // Without a renderer the refresh resets the default tooltip itself.
-        if (this.cellRendererComponent && !this.rendererSetTooltip && this.hasDefaultTooltip()) {
-            this.tooltipFeature?.setTooltipAndRefresh(
-                this.getDefaultTooltipText(this.cellRendererParams.value, this.formattedValue)
-            );
-        }
-    }
-
-    /** The default tooltip reads `isMissing` when it is built, so only the class and the label change here. */
+    /** The class and the label; the default tooltip reads `isMissing` when it is reset. */
     private applyMissing(): void {
         const isMissing = this.isMissing;
         this.toggleCss('ag-set-filter-item-missing', isMissing);
@@ -388,7 +374,11 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         isMissing: boolean
     ): void {
         this.item = item;
-        this.setMissing(isMissing);
+        const missingChanged = isMissing !== this.isMissing;
+        if (missingChanged) {
+            this.isMissing = isMissing;
+            this.applyMissing();
+        }
         // setExpanded checks if value has changed, setSelected does not
         if (isSelected !== this.isSelected) {
             this.setSelected(isSelected, true);
@@ -406,7 +396,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
         const hasActiveRenderer = !!this.cellRendererComponent;
         const hadPendingRenderer = this.pendingCellRendererClaim != null;
-        this.setTooltipAndCellRendererParams(rendererValue, formattedValue, !hasActiveRenderer);
+        // A tooltip a renderer set is its own, whatever the value's state.
+        this.setTooltipAndCellRendererParams(
+            rendererValue,
+            formattedValue,
+            !hasActiveRenderer || (missingChanged && !this.rendererSetTooltip)
+        );
         if (hadPendingRenderer) {
             this.renderCell();
         }

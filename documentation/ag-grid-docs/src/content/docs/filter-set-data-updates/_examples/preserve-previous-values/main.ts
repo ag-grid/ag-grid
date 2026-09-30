@@ -1,4 +1,4 @@
-import type { FirstDataRenderedEvent, GridApi, GridOptions, SetFilterHandler } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -70,7 +70,7 @@ function updateTwo() {
 }
 
 function clearPreservedValues() {
-    gridApi!.getColumnFilterHandler<SetFilterHandler>('col1')!.clearPreservedValues();
+    gridApi!.doFilterAction({ colId: 'col1', action: 'clearPreservedValues' });
 }
 
 function reset() {

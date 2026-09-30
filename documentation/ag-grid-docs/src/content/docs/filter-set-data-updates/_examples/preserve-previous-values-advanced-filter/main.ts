@@ -42,6 +42,7 @@ function updateTwo() {
 function reset() {
     gridApi!.setAdvancedFilterModel(null);
     gridApi!.setGridOption('rowData', getRowData());
+    gridApi!.doFilterAction({ action: 'clearPreservedValues' });
 }
 
 // setup the grid after the page has finished loading

@@ -93,12 +93,6 @@ export interface SetFilterHandler<TValue = string> {
      * provided directly.
      */
     resetFilterValues(): void;
-    /**
-     * Discards the values kept by `preservePreviousValues` that are no longer in the current values, then reconciles
-     * the filter model with the remaining values, as when `preservePreviousValues` is off.
-     * @param onlyUnselected If `true`, only values not in the applied filter model are discarded, and the model is left as it is.
-     */
-    clearPreservedValues(onlyUnselected?: boolean): void;
 }
 
 export interface SetFilterUi<TValue = string> {
@@ -271,9 +265,9 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      */
     preservePreviousValues?: boolean;
     /**
-     * Requires `preservePreviousValues = true`. The most unselected values to keep once they are no longer in
-     * the data; the first to leave is discarded first. Values in the filter model are always kept and not counted.
-     * Set to `0` to keep only those, or `-1` for no limit.
+     * Requires `preservePreviousValues = true`. The most values not in the filter model to keep once they are no
+     * longer in the data; the first to leave is discarded first. Values in the filter model, or named by an applied
+     * Advanced Filter expression, are always kept and not counted. Set to `0` to keep only those, or `-1` for no limit.
      * @default 100
      */
     preservePreviousValuesLimit?: number;

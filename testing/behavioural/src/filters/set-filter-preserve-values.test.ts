@@ -325,21 +325,21 @@ describe('Set Filter preservePreviousValues', () => {
 
         const filterChanged = vi.fn();
         api.addEventListener('filterChanged', filterChanged);
-        handlerOf(api).clearPreservedValues();
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'C']);
         expect(modelOf(api)?.values).toEqual(['A']);
         expect(filterChanged).toHaveBeenCalledTimes(1);
 
         filterChanged.mockClear();
-        handlerOf(api).clearPreservedValues();
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(filterChanged).not.toHaveBeenCalled();
 
         // A model value never seen in the data is discarded too, and a fully checked remainder nulls the model.
         await setModel(api, ['A', 'C', 'X']);
         expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'C', 'X']);
-        handlerOf(api).clearPreservedValues();
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'C']);
         expect(modelOf(api)).toBeNull();
@@ -347,12 +347,12 @@ describe('Set Filter preservePreviousValues', () => {
         // With nothing retained, a model naming every value is still reconciled.
         await setModel(api, ['A', 'C']);
         expect(modelOf(api)?.values).toEqual(['A', 'C']);
-        handlerOf(api).clearPreservedValues();
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(modelOf(api)).toBeNull();
     });
 
-    test('clearPreservedValues(true) discards only unselected retained values, leaving the model as set', async () => {
+    test('clearUnselectedPreservedValues discards only unselected retained values, leaving the model as set', async () => {
         const api = createGrid(rows('A', 'B', 'C', 'X'));
         await asyncSetTimeout(0);
         await setModel(api, ['A', 'B', 'Y']);
@@ -361,13 +361,13 @@ describe('Set Filter preservePreviousValues', () => {
 
         const filterChanged = vi.fn();
         api.addEventListener('filterChanged', filterChanged);
-        handlerOf(api).clearPreservedValues(true);
+        api.doFilterAction({ colId: 'value', action: 'clearUnselectedPreservedValues' });
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B', 'Y']);
         expect(modelOf(api)?.values).toEqual(['A', 'B', 'Y']);
         expect(filterChanged).not.toHaveBeenCalled();
 
-        handlerOf(api).clearPreservedValues();
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys()).toEqual(['A']);
         expect(modelOf(api)).toBeNull();
@@ -447,6 +447,18 @@ describe('Set Filter preservePreviousValues', () => {
             await asyncSetTimeout(0);
             await churnMany('v');
             expect(handlerOf(api).getFilterKeys()).toHaveLength(206);
+
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'value',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 10 },
+                },
+            ]);
+            await asyncSetTimeout(0);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(206);
+            await setRowData(api, rows('K'));
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(11);
         });
     });
 });

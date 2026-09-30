@@ -28,6 +28,7 @@ import {
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
+import type { SetFilterService } from './setFilterService';
 import {
     getDataTypeKeyCreator,
     processDataPath,
@@ -68,6 +69,7 @@ export class SetFilterHandler<TValue = string>
     private groupingTreeList = false;
     private caseSensitive: boolean = false;
     private keyShape = '';
+    private colId: string;
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
 
@@ -76,6 +78,8 @@ export class SetFilterHandler<TValue = string>
         // before any user callback, so `destroy` works after one throws
         this.appliedModel = new SetFilterAppliedModel(caseFormat);
         this.heldKeyIndex = new SetFilterAppliedModel(caseFormat);
+        this.colId = params.column.getColId();
+        (this.beans.setFilterSvc as SetFilterService).addHandler(this.colId, this);
         const valueModelParams = this.updateParams(params);
         // Before the value model, whose first load evicts by what the model checks.
         this.appliedModel.update(params.model);
@@ -135,14 +139,12 @@ export class SetFilterHandler<TValue = string>
         if (wasPreserving && !params.filterParams.preservePreviousValues) {
             this.clearMissing(false);
         }
-        // Kept keys cannot be compared with keys made by the new rules.
-        const replace = keysChanged && !inferring;
-        if (replace) {
+        // the rows are read again once the types are inferred, provided values are keyed again here
+        const rekeyed = keysChanged && !(inferring && this.isValuesTakenFromGrid());
+        if (rekeyed) {
             this.keyShape = this.getKeyShape();
         }
-        const reloading = valueModel.refresh(valueModelParams, replace);
-        // the rows are read again once the types are inferred, provided values are keyed again here
-        if (reloading || (keysChanged && !(inferring && this.isValuesTakenFromGrid()))) {
+        if (valueModel.refresh(valueModelParams, rekeyed)) {
             this.refreshFilterValuesForColDef();
         }
 
@@ -419,7 +421,7 @@ export class SetFilterHandler<TValue = string>
         });
     }
 
-    public clearPreservedValues(onlyUnselected = false): void {
+    public clearOwnPreservedValues(onlyUnselected: boolean): void {
         this.clearMissing(onlyUnselected).then(() => {
             if (!onlyUnselected) {
                 this.reconcileModel();
@@ -428,9 +430,12 @@ export class SetFilterHandler<TValue = string>
     }
 
     private clearMissing(onlyUnselected: boolean): AgPromise<unknown> {
-        const valueModel = this.valueModel;
+        const { valueModel, appliedModel, heldKeyIndex } = this;
         const missingCount = valueModel.missingKeys.size;
-        const cleared = valueModel.clearMissing(onlyUnselected);
+        // Values an applied Advanced Filter expression names are still in use, so they are always kept.
+        const cleared = valueModel.clearMissing(
+            onlyUnselected ? (key) => appliedModel.has(key) || heldKeyIndex.has(key) : (key) => heldKeyIndex.has(key)
+        );
         if (valueModel.missingKeys.size === missingCount) {
             return cleared;
         }
@@ -714,6 +719,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     public override destroy(): void {
+        (this.beans.setFilterSvc as SetFilterService).removeHandler(this.colId, this);
         this.appliedModel.destroy();
         super.destroy();
         (this.valueModel as any) = undefined;

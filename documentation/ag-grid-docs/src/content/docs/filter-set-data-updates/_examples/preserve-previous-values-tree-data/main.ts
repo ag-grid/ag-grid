@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, KeyCreatorParams, SetFilterHandler } from 'ag-grid-community';
+import type { GridApi, GridOptions, KeyCreatorParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -48,17 +48,17 @@ function selectReportAndArchive() {
     });
 }
 
-function removeDocuments() {
-    gridApi!.setGridOption(
-        'rowData',
-        getRowData().filter((row) => row.path[0] !== 'Documents')
-    );
-}
-
 function removeBeach() {
     gridApi!.setGridOption(
         'rowData',
-        getRowData().filter((row) => row.path[1] !== 'beach.jpg')
+        gridApi!.getGridOption('rowData')!.filter((row) => row.path[1] !== 'beach.jpg')
+    );
+}
+
+function removeDocuments() {
+    gridApi!.setGridOption(
+        'rowData',
+        gridApi!.getGridOption('rowData')!.filter((row) => row.path[0] !== 'Documents')
     );
 }
 
@@ -67,7 +67,7 @@ function restoreData() {
 }
 
 function clearPreservedValues() {
-    gridApi!.getColumnFilterHandler<SetFilterHandler>('ag-Grid-AutoColumn')!.clearPreservedValues();
+    gridApi!.doFilterAction({ colId: 'ag-Grid-AutoColumn', action: 'clearPreservedValues' });
 }
 
 function reset() {

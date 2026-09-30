@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, KeyCreatorParams, SetFilterHandler } from 'ag-grid-community';
+import type { GridApi, GridOptions, KeyCreatorParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
@@ -42,17 +42,17 @@ function selectParisAndMadrid() {
     gridApi!.setFilterModel({ 'ag-Grid-AutoColumn': { filterType: 'set', values: ['France#Paris', 'Spain#Madrid'] } });
 }
 
-function removeFrance() {
-    gridApi!.setGridOption(
-        'rowData',
-        getRowData().filter((row) => row.country !== 'France')
-    );
-}
-
 function removeRome() {
     gridApi!.setGridOption(
         'rowData',
-        getRowData().filter((row) => row.city !== 'Rome')
+        gridApi!.getGridOption('rowData')!.filter((row) => row.city !== 'Rome')
+    );
+}
+
+function removeFrance() {
+    gridApi!.setGridOption(
+        'rowData',
+        gridApi!.getGridOption('rowData')!.filter((row) => row.country !== 'France')
     );
 }
 
@@ -61,7 +61,7 @@ function restoreData() {
 }
 
 function clearPreservedValues() {
-    gridApi!.getColumnFilterHandler<SetFilterHandler>('ag-Grid-AutoColumn')!.clearPreservedValues();
+    gridApi!.doFilterAction({ colId: 'ag-Grid-AutoColumn', action: 'clearPreservedValues' });
 }
 
 function reset() {

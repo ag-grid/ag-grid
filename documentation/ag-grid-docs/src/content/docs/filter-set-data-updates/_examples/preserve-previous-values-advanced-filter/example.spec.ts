@@ -1,9 +1,8 @@
-import type { Page } from '@playwright/test';
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
-const rows = (page: Page) => page.locator('.ag-grid-scrolling-container .ag-row[row-id]');
-
 test.agExample(import.meta, () => {
+    const rows = (page: any) => page.locator('.ag-grid-scrolling-container .ag-row[row-id]');
+
     test.eachFramework('a value typed after it has left the data still filters when it returns', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);

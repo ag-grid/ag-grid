@@ -1,12 +1,12 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    const filterItem = (page: any, label: string) =>
-        page.locator('.ag-filter-menu .ag-set-filter-item').filter({
-            has: page.locator('.ag-checkbox-label', {
-                hasText: new RegExp(`^${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`),
-            }),
-        });
+    const filterItem = (page: any, label: string) => {
+        const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return page
+            .locator('.ag-filter-menu .ag-set-filter-item')
+            .filter({ has: page.locator('.ag-checkbox-label', { hasText: new RegExp(`^${escaped}$`) }) });
+    };
     const openFilterExpanded = async (page: any) => {
         await page.locator('[col-id="ag-Grid-AutoColumn"] .ag-floating-filter-button button').click();
         await expect(page.locator('.ag-filter-menu .ag-set-filter-item').first()).toBeVisible();
@@ -26,9 +26,11 @@ test.agExample(import.meta, () => {
         await openFilterExpanded(page);
 
         await expect(filterItem(page, 'beach.jpg')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItem(page, 'beach.jpg')).toHaveClass(/ag-set-filter-indent-1/);
         await expect(filterItem(page, 'beach.jpg').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Pictures')).not.toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-indent-0/);
         await expect(filterItem(page, 'Archive/old.zip').locator('input')).toBeChecked();
     });
 
@@ -59,5 +61,20 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'beach.jpg')).toHaveCount(0);
         await expect(filterItem(page, 'Archive/old.zip')).toHaveCount(0);
         await expect(page.locator('.ag-filter-menu .ag-set-filter-item-missing')).toHaveCount(0);
+    });
+
+    test.eachFramework('clearing preserved values drops the selected ones with them', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await page.getByRole('button', { name: 'Select report.pdf and old.zip' }).click();
+        await page.getByRole('button', { name: 'Remove beach.jpg' }).click();
+        await page.getByRole('button', { name: 'Remove Documents' }).click();
+        await page.getByRole('button', { name: 'Clear Preserved Values' }).click();
+
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
+        await openFilterExpanded(page);
+        await expect(filterItem(page, 'report.pdf')).toHaveCount(0);
+        await expect(filterItem(page, 'city.jpg').locator('input')).not.toBeChecked();
     });
 });

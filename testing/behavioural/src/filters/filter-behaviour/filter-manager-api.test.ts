@@ -341,6 +341,29 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         `);
     });
 
+    test('doFilterAction resets only the columns it names, given as an array or a single id', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+            enableFilterHandlers: true,
+        });
+        await api.setFilterModel({
+            athlete: { filterType: 'text', type: 'contains', filter: 'a' },
+            age: { filterType: 'number', type: 'greaterThan', filter: 20 },
+            country: { filterType: 'set', values: ['United States'] },
+        });
+        await asyncSetTimeout(0);
+
+        api.doFilterAction({ colId: ['athlete', 'country'], action: 'reset' });
+        await asyncSetTimeout(0);
+
+        expect(api.getFilterModel()).toEqual({ age: { filterType: 'number', type: 'greaterThan', filter: 20 } });
+
+        api.doFilterAction({ colId: 'age', action: 'reset' });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual({});
+    });
+
     test('setColumnFilterModel / getColumnFilterModel drive one column and round-trip', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: threeFilterCols,

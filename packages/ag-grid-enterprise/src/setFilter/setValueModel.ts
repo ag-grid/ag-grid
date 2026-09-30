@@ -68,6 +68,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     private initialised: boolean = false;
 
+    /** Counts the loads started, so an answer overtaken by a newer load is not taken. */
+    private loadCount = 0;
+
+    /** A replacing load overtaken before it answers hands its replacing on to the load that overtook it. */
+    private replacePending = false;
+
     /** The load for the latest column definition, so however many ask for it, it loads once. */
     private colDefLoad: AgPromise<unknown> | undefined;
 
@@ -88,7 +94,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         this.updateAllValues();
     }
 
-    /** Returns whether the values reload; `replace` reloads them without the kept keys, made by rules no longer in force. */
+    /**
+     * Returns whether the values reload; `replace` reloads them without the kept keys, made by rules no longer in force.
+     * A first load still pending needs no reload, as it reads by the new rules.
+     */
     public refresh(params: SetValueModelParams<TValue>, replace: boolean): boolean {
         const handlerParams = params.handlerParams;
 
@@ -112,7 +121,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             this.colDefLoad = this.updateAllValues(replace);
             return true;
         }
-        if (replace) {
+        if (replace && this.initialised) {
             this.colDefLoad = this.refreshAll(true);
             return true;
         }
@@ -185,22 +194,30 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public updateAllValues(replace = false): AgPromise<(string | null)[]> {
+        const load = ++this.loadCount;
+        const replaceKept = replace || this.replacePending;
+        this.replacePending = replaceKept;
         this.allKeys = new AgPromise<(string | null)[]>((resolve) => {
+            const resolveLoaded = (values: Map<string | null, TValue | null> | null) => {
+                if (load === this.loadCount) {
+                    this.replacePending = false;
+                    resolve(this.processAllValues(values, replaceKept));
+                } else {
+                    this.allKeys.then(resolve);
+                }
+            };
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                     this.getValuesFromRowsAsync().then((values) => {
                         if (this.isAlive()) {
-                            resolve(this.processAllValues(values, replace));
+                            resolveLoaded(values);
                         }
                     });
 
                     break;
                 case SetFilterModelValuesType.PROVIDED_LIST: {
-                    resolve(
-                        this.processAllValues(
-                            this.uniqueValues(this.validateProvidedValues(this.providedValues as (TValue | null)[])),
-                            replace
-                        )
+                    resolveLoaded(
+                        this.uniqueValues(this.validateProvidedValues(this.providedValues as (TValue | null)[]))
                     );
 
                     break;
@@ -215,13 +232,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                         success: (values) => {
                             if (this.isAlive()) {
                                 this.dispatchLocalEvent({ type: 'loadingEnd' });
-
-                                resolve(
-                                    this.processAllValues(
-                                        this.uniqueValues(this.validateProvidedValues(values)),
-                                        replace
-                                    )
-                                );
+                                resolveLoaded(this.uniqueValues(this.validateProvidedValues(values)));
                             }
                         },
                         colDef,
@@ -313,25 +324,25 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         if (keys.length) {
             ++this.keyOnlyVersion;
         }
+        this.resortKeys();
+    }
+
+    /** Cleared at once, so a load still in flight merges into what remains; only the sorted keys wait for it. */
+    public clearMissing(isKept: (key: string | null) => boolean): AgPromise<(string | null)[]> {
+        for (const key of this.missingKeys) {
+            if (!isKept(key)) {
+                this.dropKey(key);
+            }
+        }
+        return this.resortKeys();
+    }
+
+    /** Sorts once any load in flight has merged, as the kept keys changed ahead of it. */
+    private resortKeys(): AgPromise<(string | null)[]> {
         this.allKeys = this.allKeys.then(() => {
             const sortedKeys = this.sortKeys(this.allValues);
             this.updateDisplayableKeys(sortedKeys);
             return sortedKeys;
-        });
-    }
-
-    /** Cleared at once, so a load still in flight merges into what remains; only the sorted keys wait for it. */
-    public clearMissing(onlyUnselected: boolean): AgPromise<(string | null)[]> {
-        const isKeyChecked = this.isKeyChecked;
-        for (const key of this.missingKeys) {
-            if (!onlyUnselected || !isKeyChecked(key)) {
-                this.dropKey(key);
-            }
-        }
-        this.allKeys = this.allKeys.then((keys) => {
-            const remainingKeys = (keys ?? []).filter((key) => this.allValues.has(key));
-            this.updateDisplayableKeys(remainingKeys);
-            return remainingKeys;
         });
         return this.allKeys;
     }
@@ -368,9 +379,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     private processAllValues(values: Map<string | null, TValue | null> | null, replace: boolean): (string | null)[] {
         const freshValues = values ?? new Map();
-        let allValues = freshValues;
         if (this.isPreserving() && !replace) {
-            allValues = this.mergeValues(freshValues);
+            this.mergeValues(freshValues);
         } else {
             if (this.keyOnlyKeys.size) {
                 ++this.keyOnlyVersion;
@@ -378,13 +388,13 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             this.missingKeys.clear();
             this.keyOnlyKeys.clear();
             this.formattedKeyIndex = undefined;
+            this.allValues = freshValues;
         }
-        this.allValues = allValues;
-        return this.sortKeys(allValues);
+        return this.sortKeys(this.allValues);
     }
 
     /** Folds the fresh values into the kept ones in place; a key in another case is the kept key when not case sensitive. */
-    private mergeValues(freshValues: Map<string | null, TValue | null>): Map<string | null, TValue | null> {
+    private mergeValues(freshValues: Map<string | null, TValue | null>): void {
         const { caseFormat, missingKeys, keyOnlyKeys } = this;
         const allValues = this.allValues;
         const index = this.getFormattedKeyIndex();
@@ -423,7 +433,6 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             }
         });
         this.evictMissing();
-        return allValues;
     }
 
     public findKey(key: string | null): string | null | undefined {

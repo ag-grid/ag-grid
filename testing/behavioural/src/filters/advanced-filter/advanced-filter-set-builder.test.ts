@@ -10,7 +10,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, ISetFilterParams, SetAdvancedFilterModel } from 'ag-grid-community';
+import type { ColDef, GridApi, ISetFilterParams, SetAdvancedFilterModel } from 'ag-grid-community';
 
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES } from './advancedFilterSetFixture';
 
@@ -427,19 +427,23 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(label(items[items.length - 1])).toBe('Jamaica');
     });
 
-    test('the Advanced Filter caps the values it keeps, sparing those its applied expression names', async () => {
+    test('the Advanced Filter caps the values it keeps, sparing those its applied expression names in either case rule', async () => {
+        const columnDefs = (caseSensitive: boolean): ColDef[] => [
+            { field: 'athlete', filter: 'agTextColumnFilter' },
+            {
+                field: 'country',
+                filter: 'agSetColumnFilter',
+                filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 1, caseSensitive },
+            },
+        ];
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
-            columnDefs: [
-                { field: 'athlete', filter: 'agTextColumnFilter' },
-                {
-                    field: 'country',
-                    filter: 'agSetColumnFilter',
-                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 1 },
-                },
-            ],
+            columnDefs: columnDefs(false),
         });
         api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Jamaica'] });
+        // an evicted value would come back known only by its key, listed last
+        api.setGridOption('columnDefs', columnDefs(true));
+        await asyncSetTimeout(0);
         for (const gone of ['Jamaica', 'United Kingdom', 'United States']) {
             api.setGridOption(
                 'rowData',
@@ -459,6 +463,43 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
             'Jamaica',
             'United States',
         ]);
+    });
+
+    test('clearPreservedValues, for the column or every column, clears the values it keeps but those its expression names', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+        });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Jamaica'] });
+        const removeCountries = async (...countries: string[]) => {
+            api.setGridOption(
+                'rowData',
+                ROW_DATA.filter((row) => !countries.some((country) => country === row.country))
+            );
+            await asyncSetTimeout(0);
+        };
+        const missingInPicker = async () => {
+            const { builder } = await openPicker(api);
+            const missing = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item-missing`));
+            const labels = missing.map((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim());
+            await builder.close();
+            return labels;
+        };
+
+        await removeCountries('Jamaica', 'Poland');
+        expect(await missingInPicker()).toEqual(['Jamaica', 'Poland']);
+        api.doFilterAction({ colId: 'country', action: 'clearPreservedValues' });
+        await asyncSetTimeout(0);
+        expect(await missingInPicker()).toEqual(['Jamaica']);
+
+        await removeCountries('Jamaica', 'United Kingdom');
+        expect(await missingInPicker()).toEqual(['Jamaica', 'United Kingdom']);
+        api.doFilterAction({ action: 'clearPreservedValues' });
+        await asyncSetTimeout(0);
+        expect(await missingInPicker()).toEqual(['Jamaica']);
     });
 
     test('turning the Advanced Filter off closes an open Builder', async () => {

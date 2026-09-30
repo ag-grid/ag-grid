@@ -2863,4 +2863,59 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(api.getColumnFilterModel('colour')).toEqual({ filterType: 'set', values: ['Red', 'Blue'] });
         expect(displayed(api, 'item')).toEqual(['Apple', 'Cherry', 'Sky', 'Sea']);
     });
+
+    test('a values callback answering after a newer one does not replace its values', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const colourCol = (): ColDef => ({
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: { values: (params: SetFilterValuesFuncParams) => pending.push(params.success) },
+        });
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [{ field: 'item' }, colourCol()],
+            rowData: COLOUR_ROWS,
+        });
+        const handler = api.getColumnFilterHandler<SetFilterHandler>('colour')!;
+        await asyncSetTimeout(0);
+        pending[0](['Red']);
+
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        await asyncSetTimeout(0);
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        await asyncSetTimeout(0);
+        expect(pending.length).toBe(3);
+        pending[2](['Blue']);
+        pending[1](['Green']);
+        await asyncSetTimeout(0);
+
+        expect(handler.getFilterKeys()).toEqual(['Blue']);
+    });
+
+    test('a values callback overtaken by a values list still ends its loading', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const colourCol = (values: ISetFilterParams['values']): ColDef => ({
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: { values },
+        });
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'item' },
+                colourCol((params: SetFilterValuesFuncParams) => pending.push(params.success)),
+            ],
+            rowData: COLOUR_ROWS,
+        });
+        await asyncSetTimeout(0);
+        await ColumnFilterHarness.open(api, 'colour');
+        const loading = () => !document.querySelector('.ag-filter-loading')!.classList.contains('ag-hidden');
+        expect(loading()).toBe(true);
+
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol(['Red', 'Blue'])]);
+        await asyncSetTimeout(0);
+        pending[0](['Green']);
+        await asyncSetTimeout(0);
+
+        expect(loading()).toBe(false);
+        expect(api.getColumnFilterHandler<SetFilterHandler>('colour')!.getFilterKeys()).toEqual(['Red', 'Blue']);
+    });
 });

@@ -39,6 +39,7 @@ import type {
 import { SetFilterListItem } from './setFilterListItem';
 import {
     areAllTreeKeysIn,
+    formatTreeKey,
     isKeyOnlyTreeLeaf,
     setFilterNullIfBlank,
     translateForSetFilter,
@@ -500,14 +501,12 @@ export class SetFilter<V = string>
 
         // A group additionally expands; both act for every key their row stands for.
         const children = item.children;
-        const isKeyOnly = isKeyOnlyTreeLeaf(item, this.handler.valueModel.keyOnlyKeys);
+        const keyOnlyKeys = this.handler.valueModel.keyOnlyKeys;
         return {
-            value: isKeyOnly
-                ? item.treeKey
-                : (this.params.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey),
+            value: formatTreeKey(item, this.params.treeListFormatter, keyOnlyKeys) ?? item.treeKey,
             depth: item.depth,
             isGroup: !!children,
-            isKeyOnly,
+            isKeyOnly: isKeyOnlyTreeLeaf(item, keyOnlyKeys),
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
                 this.onTreeItemSelected(e.item, e.isSelected),
             expandedListener: children
@@ -569,7 +568,7 @@ export class SetFilter<V = string>
         }
         if (this.isSetFilterModelTreeItem(item)) {
             const displayValueModel = this.displayValueModel;
-            // The (Select All) row spans the whole list, so it is never muted even when everything is retained.
+            // The (Select All) and Add Selection rows span the list, so they are never muted.
             return (
                 item !== displayValueModel.getSelectAllItem() &&
                 item !== displayValueModel.getAddSelectionToFilterItem() &&

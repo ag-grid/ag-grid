@@ -1,6 +1,7 @@
 import { userEvent } from '@testing-library/user-event';
 import {
     ColumnFilterHarness,
+    FilterDom,
     TestGridsManager,
     asyncSetTimeout,
     getVisibleTooltips,
@@ -93,6 +94,20 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const filter = await ColumnFilterHarness.open(api, 'value');
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'C', 'D', 'A', 'B']);
         expect(missingItems()).toEqual(['A', 'B']);
+        await new FilterDom(api, 'retained values', { colId: 'value' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: ""
+            ▪ (Select All)
+            ☐ C
+            ☐ D
+            ☑ A
+            ☑ B
+            model:
+              filterType: "set"
+              values:
+                - "A"
+                - "B"
+        `);
 
         const labels = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
             el.getAttribute('aria-label')
@@ -458,9 +473,9 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         await setModel(api, ['2024-01-01', 'Z']);
 
         const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toContain('Z');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '#2024', 'Z']);
         await filter.miniFilterSearch('Z');
-        expect(filter.setFilterItemLabels()).toContain('Z');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Z']);
         expect(treeListFormatter.mock.calls.map(([pathKey]) => pathKey)).not.toContain('Z');
         expect(cellRenderer.mock.calls.map(([params]) => params.value)).not.toContain('Z');
     });

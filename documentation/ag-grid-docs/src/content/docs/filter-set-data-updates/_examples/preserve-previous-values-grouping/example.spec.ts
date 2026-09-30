@@ -26,9 +26,11 @@ test.agExample(import.meta, () => {
         await openFilterExpanded(page);
 
         await expect(filterItem(page, 'Rome')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItem(page, 'Rome')).toHaveClass(/ag-set-filter-indent-1/);
         await expect(filterItem(page, 'Rome').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Italy')).not.toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-indent-0/);
         await expect(filterItem(page, 'Spain#Madrid').locator('input')).toBeChecked();
     });
 
@@ -59,5 +61,20 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'Rome')).toHaveCount(0);
         await expect(filterItem(page, 'Spain#Madrid')).toHaveCount(0);
         await expect(page.locator('.ag-filter-menu .ag-set-filter-item-missing')).toHaveCount(0);
+    });
+
+    test.eachFramework('clearing preserved values drops the selected ones with them', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await page.getByRole('button', { name: 'Select Paris and Madrid' }).click();
+        await page.getByRole('button', { name: 'Remove Rome' }).click();
+        await page.getByRole('button', { name: 'Remove France' }).click();
+        await page.getByRole('button', { name: 'Clear Preserved Values' }).click();
+
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
+        await openFilterExpanded(page);
+        await expect(filterItem(page, 'Paris')).toHaveCount(0);
+        await expect(filterItem(page, 'Milan').locator('input')).not.toBeChecked();
     });
 });
