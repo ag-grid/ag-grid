@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     clearFilter: 'Tøm',
     cancelFilter: 'Avbryt',
     cancelColumnToolPanel: 'Avbryt',
+    resetColumnToolPanel: 'Tilbakestill',
 
     // Filter Titles
     textFilter: 'Tekstfilter',

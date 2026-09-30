@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     clearFilter: 'Ryd',
     cancelFilter: 'Annuller',
     cancelColumnToolPanel: 'Annuller',
+    resetColumnToolPanel: 'Nulstil',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
