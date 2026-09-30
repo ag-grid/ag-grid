@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _createIconNoSpan, _setColGroupHeaderNameOverride, isProvidedColumnGroup } from 'ag-grid-community';
 
-import { getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
+import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
 
 type EditTarget = AgColumn | AgProvidedColumnGroup;
@@ -82,14 +82,15 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            if (!_setColGroupHeaderNameOverride(this.beans, target.groupId, headerName)) {
+            const group = getGridColumnGroup(this.beans, target);
+            if (!_setColGroupHeaderNameOverride(this.beans, group, headerName)) {
                 return;
             }
             this.beans.eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',
                 column: null,
                 columns: null,
-                columnGroup: target,
+                columnGroup: group,
                 source: 'uiColumnHeaderEdit',
             });
         } else {

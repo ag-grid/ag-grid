@@ -354,6 +354,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
         const groupId = providedColGroup.groupId;
         compBean.addManagedEventListeners({
+            // A group's headerValueGetter may read its columns' names, so column renames refresh it too.
+            columnHeaderNameChanged: (event) => {
+                if (event.column) {
+                    this.refreshDisplayName();
+                }
+            },
             // Toggle the edit highlight in place (no header component recreation).
             columnHeaderEditHighlightChanged: (event) => {
                 if (!event.groupId || event.groupId === groupId) {

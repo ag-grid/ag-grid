@@ -1,4 +1,5 @@
-import { waitFor } from '@testing-library/dom';
+import { findByText, waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { TestGridsManager } from 'ag-test-utils';
 
 import type {
@@ -195,5 +196,38 @@ describe('Tool panel column group callbacks', () => {
             (element) => element.textContent
         );
         expect(labels).toEqual(expect.arrayContaining(['Layout Results', 'Layout Only']));
+    });
+    test('renaming a group that exists only in a custom layout fires headerNameChanged on its callback group', async () => {
+        const api = await createGrid({
+            columnDefs: [{ field: 'gold' }],
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
+        const toolPanel = api.getToolPanelInstance('panel') as any;
+        toolPanel.setColumnLayout([
+            {
+                groupId: 'layoutOnly',
+                headerName: 'Layout Only',
+                headerNameEditable: true,
+                children: [{ field: 'gold' }],
+            },
+        ]);
+        await waitForLabels(api, 1);
+        const layoutOnly = receivedGroups.find((group) => group?.getGroupId() === 'layoutOnly')!;
+        const onRenamed = vi.fn();
+        layoutOnly.addEventListener('headerNameChanged', onRenamed);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openToolPanelContextMenu(toolPanel, gridDiv, 'Layout Only');
+        await userEvent.click(await findByText(gridDiv, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector('.ag-column-header-edit-popup-editor input') as HTMLInputElement | null;
+            expect(el).toBeTruthy();
+            return el!;
+        });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+
+        await waitFor(() => expect(onRenamed).toHaveBeenCalledTimes(1));
     });
 });

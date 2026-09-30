@@ -2,7 +2,7 @@ import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -812,6 +812,23 @@ describe('Editable group header name', () => {
 
             expect(renamed.count).toBe(0);
         });
+    });
+
+    test('a group header built from a child column name refreshes when the child is renamed', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs({
+                headerValueGetter: (params: HeaderValueGetterParams) =>
+                    `${params.api.getDisplayNameForColumn(params.api.getColumn('athlete')!, 'header')} Group`,
+            }),
+            rowData,
+        });
+        const groupHeaderText = () =>
+            getGridElement(api)!.querySelector('.ag-header-group-cell .ag-header-group-text')?.textContent;
+        await waitFor(() => expect(groupHeaderText()).toBe('Athlete Group'));
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Swimmer' }] });
+
+        await waitFor(() => expect(groupHeaderText()).toBe('Swimmer Group'));
     });
 
     test('a group header name from grid state overrides the colGroupDef name', async () => {
