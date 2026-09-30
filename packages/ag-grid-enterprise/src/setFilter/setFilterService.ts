@@ -89,7 +89,10 @@ const createPreservingFilter = (colFilter: ColumnFilterService, column: AgColumn
     }
 };
 
-/** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
+/**
+ * Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in.
+ * Function-form params are not called here: they run with the filter, so such a filter is created on first use.
+ */
 const wantsPreservedValues = (filterParams: PreservingFilterParams | undefined): boolean => {
     if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
         return true;

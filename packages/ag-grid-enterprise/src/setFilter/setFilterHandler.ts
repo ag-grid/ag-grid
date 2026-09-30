@@ -424,7 +424,7 @@ export class SetFilterHandler<TValue = string>
     public clearOwnPreservedValues(onlyUnselected: boolean): void {
         this.clearMissing(onlyUnselected).then(() => {
             if (!onlyUnselected) {
-                this.reconcileModel(undefined, false, !this.beans.dataTypeSvc?.isPendingInference);
+                this.reconcileModel(undefined, false, true);
             }
         });
     }
@@ -524,8 +524,8 @@ export class SetFilterHandler<TValue = string>
         } else {
             valueModel.allValues.forEach((_value, key) => addKey(key));
         }
-        // No grid values yet means they are not known (cellDataType inference pending), not that all are selected:
-        // keep the model until they arrive and are reconciled then.
+        // No grid values means they are not known yet (cellDataType inference pending), not that all are selected,
+        // so the model waits for them; a clear discards what is not in the data as it stands.
         const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         if (takenFromGrid && !valuesKnown && existingFormattedKeys.size === 0 && model.values.length > 0) {
             return;

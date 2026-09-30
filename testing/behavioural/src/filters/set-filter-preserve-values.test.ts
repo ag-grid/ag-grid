@@ -367,6 +367,22 @@ describe('Set Filter preservePreviousValues', () => {
         await setRowData(api, rows('B'));
         expect(handlerOf(api).getFilterKeys()).toEqual(['B']);
         expect(shown(api)).toEqual(['B']);
+
+        // Also while a column definition update waits for rows to infer the type from.
+        await setModel(api, ['B']);
+        await setRowData(api, []);
+        api.setGridOption('columnDefs', [
+            {
+                field: 'value',
+                headerName: 'V',
+                filter: 'agSetColumnFilter',
+                filterParams: { preservePreviousValues: true },
+            },
+        ]);
+        await asyncSetTimeout(0);
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
+        await asyncSetTimeout(0);
+        expect(modelOf(api)).toBeNull();
     });
 
     test('clearUnselectedPreservedValues discards only unselected retained values, leaving the model as set', async () => {
@@ -390,7 +406,7 @@ describe('Set Filter preservePreviousValues', () => {
         expect(modelOf(api)).toBeNull();
     });
 
-    test('turning the option off at runtime behaves like clearPreservedValues', async () => {
+    test('turning the option off at runtime discards retained values and reconciles the model', async () => {
         const api = createGrid(rows('A', 'B', 'C'));
         await asyncSetTimeout(0);
         await setModel(api, ['A', 'B']);
@@ -402,6 +418,23 @@ describe('Set Filter preservePreviousValues', () => {
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'C']);
         expect(modelOf(api)?.values).toEqual(['A']);
+    });
+
+    test('turning the option off with no rows left keeps the model for the rows, as without the option', async () => {
+        const api = createGrid(rows('A', 'B'));
+        await asyncSetTimeout(0);
+        await setModel(api, ['A']);
+        await setRowData(api, []);
+
+        api.setGridOption('columnDefs', [
+            { field: 'value', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: false } },
+        ]);
+        await asyncSetTimeout(0);
+        expect(handlerOf(api).getFilterKeys()).toEqual([]);
+        expect(modelOf(api)?.values).toEqual(['A']);
+
+        await setRowData(api, rows('A', 'B'));
+        expect(shown(api)).toEqual(['A']);
     });
 
     describe('preservePreviousValuesLimit', () => {
