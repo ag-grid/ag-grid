@@ -3,12 +3,12 @@ import type {
     ColAggFunc,
     ColumnEventType,
     ColumnState,
-    ColumnToolPanelAction,
+    IToolPanelColumnCompParams,
     SortDef,
     SortDirection,
 } from 'ag-grid-community';
 
-export type ColumnStateUpdateParams = { buttons?: ColumnToolPanelAction[] };
+export type ColumnStateUpdateParams = Pick<IToolPanelColumnCompParams, 'buttons'>;
 
 export interface ColumnStateConcreteUpdateStrategy {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;

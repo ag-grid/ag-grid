@@ -1,11 +1,18 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
 
-import type { ColDef, GridApi, IToolPanelColumnCompParams, SideBarDef } from 'ag-grid-community';
+import type {
+    ColDef,
+    ColumnToolPanelButtonActionParams,
+    GridApi,
+    GridOptions,
+    IToolPanelColumnCompParams,
+    SideBarDef,
+} from 'ag-grid-community';
 import { agTestIdFor, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-describe('column tool panel reset button', () => {
+describe('column tool panel buttons', () => {
     const gridMgr = new TestGridsManager({
         modules: [AllEnterpriseModule],
     });
@@ -28,7 +35,7 @@ describe('column tool panel reset button', () => {
 
     async function createGrid(
         buttons: IToolPanelColumnCompParams['buttons'],
-        localeText?: Record<string, string>
+        gridOptions?: Pick<GridOptions, 'context' | 'localeText'>
     ): Promise<{ api: GridApi; toolPanel: any; toolPanelGui: HTMLElement }> {
         const sideBar: SideBarDef = {
             toolPanels: [
@@ -47,7 +54,7 @@ describe('column tool panel reset button', () => {
             columnDefs,
             rowData: [{ athlete: 'Michael Phelps', age: 23, country: 'United States' }],
             sideBar,
-            localeText,
+            ...gridOptions,
         });
         const toolPanel = await waitFor(() => {
             const panel = api.getToolPanelInstance('columns') as any;
@@ -94,7 +101,7 @@ describe('column tool panel reset button', () => {
     });
 
     test('uses the resetColumnToolPanel locale key for the label', async () => {
-        const { toolPanelGui } = await createGrid(['reset'], { resetColumnToolPanel: 'Zurücksetzen' });
+        const { toolPanelGui } = await createGrid(['reset'], { localeText: { resetColumnToolPanel: 'Zurücksetzen' } });
 
         expect(getButtons(toolPanelGui).map((button) => button.textContent!.trim())).toEqual(['Zurücksetzen']);
     });
@@ -169,6 +176,48 @@ describe('column tool panel reset button', () => {
         expect(getButton(toolPanelGui, 'Apply').disabled).toBe(true);
     });
 
+    test('renders a custom button with its label and calls its action with api and context on click', async () => {
+        const action = vi.fn();
+        const context = { name: 'test context' };
+        const { api, toolPanelGui } = await createGrid([{ label: 'Do Something', action }, 'reset'], { context });
+
+        expect(getButtons(toolPanelGui).map((button) => button.textContent!.trim())).toEqual(['Do Something', 'Reset']);
+
+        getButton(toolPanelGui, 'Do Something').click();
+
+        expect(action).toHaveBeenCalledTimes(1);
+        const params: ColumnToolPanelButtonActionParams = action.mock.calls[0][0];
+        expect(params.api).toBe(api);
+        expect(params.context).toBe(context);
+    });
+
+    test('custom buttons alone do not enable deferred updates', async () => {
+        const { toolPanel, toolPanelGui } = await createGrid([{ label: 'Do Something', action: () => {} }]);
+
+        expect(toolPanel['isDeferModeEnabled']).toBe(false);
+        expect(toolPanelGui.classList.contains('ag-column-panel-deferred')).toBe(false);
+    });
+
+    test('with apply, a custom action applies immediately and clears pending changes', async () => {
+        const { api, toolPanel, toolPanelGui } = await createGrid([
+            { label: 'Hide Age', action: ({ api }) => api.setColumnsVisible(['age'], false) },
+            'cancel',
+            'apply',
+        ]);
+        const strategy = toolPanel['beans'].columnStateUpdateStrategy;
+
+        (await getColumnCheckbox(toolPanelGui, 'Athlete')).click();
+        expect(strategy.hasPendingChanges(true)).toBe(true);
+
+        getButton(toolPanelGui, 'Hide Age').click();
+
+        expect(api.getColumn('age')!.isVisible()).toBe(false);
+        expect(strategy.hasPendingChanges(true)).toBe(false);
+        expect(api.getColumn('athlete')!.isVisible()).toBe(true);
+        expect((await getColumnCheckbox(toolPanelGui, 'Athlete')).checked).toBe(true);
+        expect(getButton(toolPanelGui, 'Apply').disabled).toBe(true);
+    });
+
     test('warns when cancel is configured without apply', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [298] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -178,8 +227,8 @@ describe('column tool panel reset button', () => {
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #298');
     });
 
-    test('does not warn when reset is configured without apply', async () => {
+    test('does not warn when reset or custom buttons are configured without apply', async () => {
         // Any diagnostic throws under the default dev validations, so creating the grid is the assertion.
-        await createGrid(['reset']);
+        await createGrid(['reset', { label: 'Do Something', action: () => {} }]);
     });
 });
