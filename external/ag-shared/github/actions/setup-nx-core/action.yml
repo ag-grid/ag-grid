@@ -267,25 +267,26 @@ runs:
           # install a cold fetch). The cache is content-addressed by package version, so a
           # restore-keys fallback is safe: stale entries are inert and simply ignored.
           #
-          # Only restored when a tarball-fetching `yarn install` will actually run — i.e.
-          # NOT when node_modules was an exact hit (the common warm path: only `yarn
-          # postinstall` or an integrity check runs, no tarballs). This avoids downloading/
-          # extracting the cache on the majority of jobs that never install. `no-install` jobs
-          # are included: on an inexact node_modules restore they install to reconcile the
-          # tree (see "yarn install (skipping postinstall)"), and without this cache that
-          # install downloads everything. This is what lets jobs that deliberately start
-          # before init (e.g. a website build) take the stale path cheaply. (The rare
-          # exact-hit-but-integrity-fails recovery path installs cold — an accepted
-          # trade-off vs restoring on every warm job.) Saved only in rw (below).
+          # Restored whenever any install step below might run `yarn install --immutable` —
+          # which, under Yarn 4's node-modules linker, is every one of them, including on an
+          # exact node_modules cache hit. Measured directly: even with node_modules fully
+          # populated and unchanged, `--immutable` still redoes a full Resolution -> Fetch ->
+          # Link pass (observed: "2963 packages were added to the project (+ 1.58 GiB)",
+          # ~30s) when this dir is empty, because Yarn 4 doesn't skip Fetch/Link just because
+          # node_modules looks right - the previous exclusion here was written for a
+          # lighter-weight "integrity check" assumption that doesn't hold for Yarn 4's
+          # --immutable semantics. Confirmed causally: reproducing an empty cache dir locally
+          # (node_modules and Yarn's own install-state.gz both left untouched) reproduces the
+          # ~30-35s cost exactly; restoring this dir removes it.
           #
-          # Also skipped for `yarn_postinstall: false` in ro mode: the only install step for
+          # Still skipped for `yarn_postinstall: false` in ro mode: the only install step for
           # `false` is gated on rw, so an ro+false job never installs and a restore would be
-          # wasted (matters only on an inexact node_modules restore — a degraded path).
+          # wasted.
           #
           # The key carries runner.arch because saved caches are hollowed for the saving
           # runner's architecture (see "Hollow yarn cache"): a runner on another arch would
           # find its native packages present-but-empty and never re-download them.
-          if: inputs.cache_mode != 'off' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw') && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
+          if: inputs.cache_mode != 'off' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw')
           id: yarn_cache
           uses: actions/cache/restore@v6
           with:
