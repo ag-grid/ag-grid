@@ -368,7 +368,9 @@ export interface GridOptions<TData = any> {
      */
     suppressCopySingleCellRanges?: boolean;
     /**
-     * Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+     * Set to `true` to always remove a trailing empty line from pasted data.
+     * By default, when the clipboard contains an HTML table (e.g. copied from Excel), the grid uses it to tell an extra trailing line apart from selected blank rows.
+     * Enabling this skips that check, so a selected blank last row is also removed.
      * @default false
      * @agModule `ClipboardModule`
      */
