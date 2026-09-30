@@ -44,9 +44,7 @@ export interface DevValidationOptions {
     /**
      * Set to `true` to log debug information from the grid to the console, prefixed `AG Grid:` — for
      * example the grid and module versions, initialisation, row loading and grid option updates. Useful
-     * when investigating problems. Applies to every grid on the page.
-     *
-     * Replaces the deprecated `debug` grid option. Defaults to `false`.
+     * when investigating problems. Applies to every grid on the page. Defaults to `false`.
      */
     debug?: boolean;
 }

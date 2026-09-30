@@ -1,0 +1,36 @@
+---
+title: "Upgrading to AG Grid 36.3"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v36.3."
+migrationVersion: "36.3.0"
+---
+
+<!--
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+There are no breaking changes in AG Grid version {% migrationVersion() %}.
+
+## Behaviour Changes
+
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+
+## Removal of Deprecated APIs
+
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+The following grid option (`GridOptions`) remains supported, but the replacement below is recommended:
+
+| Deprecated | Replacement                             |
+| ---------- | --------------------------------------- |
+| `debug`    | `enableDevValidations({ debug: true })` |
+
+The replacement applies to all grids on the page rather than a single grid. See [Debug Logging](./dev-validation/#debug-logging).
+
+{% changelogSection version=$migrationVersion /%}

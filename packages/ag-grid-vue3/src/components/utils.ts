@@ -888,7 +888,7 @@ export interface Props<TData> {
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
          * @default false
          * @initial
-         * @deprecated v36.2 Use `enableDevValidations({ debug: true })` instead.
+         * @deprecated v36.3 Use `enableDevValidations({ debug: true })` instead.
          */
     debug?: boolean,
     /** Show or hide the loading UI.

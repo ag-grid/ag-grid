@@ -164,14 +164,8 @@ Debug logging includes:
 
 - the versions of the AG packages in use when a grid is created
 - a message when each grid has initialised
-- row loading details for the [Infinite Row Model](./infinite-scrolling/)
 - each grid option update, with its previous and new values (see [React Hooks](./react-hooks/#debug-mode))
-- the maximum div height the grid has determined for the browser (see [Massive Row Count](./massive-row-count/))
 
 Defaults to `false`. As with the other options, `debug` is global and applies to every grid on the page.
 
 `debug` replaces the `debug` grid option, which is deprecated. The grid option still works for now, but only enables debug logging for the grid it is set on.
-
-{% note %}
-Debug logging needs the `ValidationModule`, which `enableDevValidations` registers. It is intended for development builds; calling it in a production build adds the `ValidationModule` to your bundle and, unless you pass `showOverlayOn: []`, shows the diagnostics overlay to your users.
-{% /note %}
