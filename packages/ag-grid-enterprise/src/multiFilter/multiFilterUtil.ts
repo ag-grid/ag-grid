@@ -11,11 +11,13 @@ export function getMultiFilterDefs(params: IMultiFilterParams | undefined): IMul
         : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
 }
 
-/** `true` means "use the default", which for a Multi Filter child is always the text filter. `undefined` is
- *  deliberately not folded in: the handler path gives it no filter at all rather than the default. */
+/** What a child's `filter: true` resolves to, whatever the column's data type. */
+export const DEFAULT_CHILD_FILTER = 'agTextColumnFilter';
+
+/** `undefined` is deliberately not folded in: the handler path gives it no filter at all rather than the default. */
 export function getChildFilter(def: IMultiFilterDef): IMultiFilterDef['filter'] {
     const filter = def.filter;
-    return filter === true ? 'agTextColumnFilter' : filter;
+    return filter === true ? DEFAULT_CHILD_FILTER : filter;
 }
 
 /** The `{ component, handler, doesFilterPass }` form is rebuilt inline with the col def, so the wrapper's

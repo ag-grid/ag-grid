@@ -16,7 +16,12 @@ import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } fro
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
-import { getFilterModelForIndex, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import {
+    DEFAULT_CHILD_FILTER,
+    getFilterModelForIndex,
+    getMultiFilterDefs,
+    getUpdatedMultiFilterModel,
+} from './multiFilterUtil';
 
 // This version of multi filter is only used when `enableFilterHandlers = true`
 export class MultiFilterUi
@@ -137,7 +142,7 @@ export class MultiFilterUi
             userCompFactory,
             filterDef,
             filterParams,
-            'agTextColumnFilter'
+            DEFAULT_CHILD_FILTER
         );
         if (!compDetails) {
             return AgPromise.resolve(null);

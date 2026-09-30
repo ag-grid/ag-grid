@@ -34,6 +34,7 @@ import {
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import {
+    DEFAULT_CHILD_FILTER,
     getChildFilter,
     getFilterModelForIndex,
     getMultiFilterDefs,
@@ -126,7 +127,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             const filterParams = colFilter.createFilterComp(
                 column,
                 filterDef,
-                'agTextColumnFilter',
+                DEFAULT_CHILD_FILTER,
                 (defaultParams) => ({
                     ...this.createChildParams(defaultParams, true, filterDef, i),
                     onModelChange,
@@ -387,7 +388,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         } = beans.colFilter!.createFilterInstance(
             column,
             filterDef,
-            'agTextColumnFilter',
+            DEFAULT_CHILD_FILTER,
             (defaultParams, isHandler) => {
                 const updatedParams = this.createChildParams(defaultParams, isHandler, filterDef, index);
                 if (isHandler) {

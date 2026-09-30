@@ -15,6 +15,7 @@ import type {
 import { BeanStub } from 'ag-grid-community';
 
 import {
+    DEFAULT_CHILD_FILTER,
     forEachReverse,
     getChildFilter,
     getFilterModelForIndex,
@@ -47,7 +48,7 @@ export class MultiFilterHandler
         const filterDefs = getMultiFilterDefs(params.filterParams);
         this.filterDefs = filterDefs;
         filterDefs.forEach((def, index) => {
-            const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, 'agTextColumnFilter');
+            const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, DEFAULT_CHILD_FILTER);
             this.handlerWrappers.push(wrapper);
             if (!wrapper) {
                 this.warn(278, { colId: params.column.getColId() });

@@ -5,6 +5,7 @@ import type {
     AgFilterHandlerParams,
     DoesFilterPassParams,
     FilterHandler,
+    FilterValueSource,
     IRowNode,
     SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
@@ -18,6 +19,7 @@ import {
     BeanStub,
     _addGridCommonParams,
     _bindFilterCallback,
+    _getFilterValueSource,
     _isBlank,
     _isClientSideRowModel,
 } from 'ag-grid-community';
@@ -56,10 +58,7 @@ export class SetFilterHandler<TValue = string>
     private createKey: (value: TValue | null | undefined, node?: IRowNode | null) => string | null;
     /** The definition inputs the keys are formed from, compared by identity when the definition changes. */
     private keysFormedBy: unknown;
-    private valueSource: unknown;
-    /** Which input `valueSource` came from, as a field path and a getter expression can be spelled alike. */
-    private valueSourceKind = -1;
-    private readsFormula = false;
+    private valueSource: FilterValueSource;
     private treeDataTreeList = false;
     private groupingTreeList = false;
     private caseSensitive: boolean = false;
@@ -93,11 +92,12 @@ export class SetFilterHandler<TValue = string>
     }
 
     public refresh(params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): boolean {
-        const { keysFormedBy, valueSource, valueSourceKind, readsFormula, caseSensitive, valueModel } = this;
+        const { keysFormedBy, valueSource, caseSensitive, valueModel } = this;
         // a model over provided values names them, however the rows are read, while they stay provided
         const keyedFromRows = this.isValuesTakenFromGrid() || !isProvidedValues(params.filterParams.values);
         const wasTreeDataOrGrouping = this.isTreeDataOrGrouping();
         const valueModelParams = this.updateParams(params);
+        const newValueSource = this.valueSource;
         // identity, as the rows cannot be read under the old definition once the column holds the new one
         const keysChanged =
             params.source === 'colDef' &&
@@ -105,9 +105,9 @@ export class SetFilterHandler<TValue = string>
                 this.caseSensitive !== caseSensitive ||
                 this.isTreeDataOrGrouping() !== wasTreeDataOrGrouping ||
                 (keyedFromRows &&
-                    (this.valueSource !== valueSource ||
-                        this.valueSourceKind !== valueSourceKind ||
-                        this.readsFormula !== readsFormula)));
+                    (newValueSource.source !== valueSource.source ||
+                        newValueSource.kind !== valueSource.kind ||
+                        newValueSource.readsFormula !== valueSource.readsFormula)));
         // a type inferred from the first rows is the one the model was written for
         const inferring = keysChanged && !!this.beans.dataTypeSvc?.isInferring();
         if (keysChanged && !inferring && params.model != null) {
@@ -147,12 +147,7 @@ export class SetFilterHandler<TValue = string>
             resolvedKeyCreator === this.beans.dataTypeSvc?.getFormatValue(cellDataType);
         // a data type's key creator keys by the column's formatter; the type's own is rebuilt with the definitions
         this.keysFormedBy = gridKeyCreator ? colDef.valueFormatter : resolvedKeyCreator;
-        const calculatedExpression = colDef.calculatedExpression;
-        const valueSources = [filterValueGetter, calculatedExpression, colDef.valueGetter, colDef.field];
-        const valueSourceKind = valueSources.findIndex((source) => source != null);
-        this.valueSourceKind = valueSourceKind;
-        this.valueSource = valueSources[valueSourceKind];
-        this.readsFormula = !filterValueGetter && calculatedExpression === undefined && !!colDef.allowFormula;
+        this.valueSource = _getFilterValueSource(colDef, filterValueGetter);
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
         this.setValueFormatter(valueFormatter, resolvedKeyCreator, !!treeList, !!colDef.refData);
         return {

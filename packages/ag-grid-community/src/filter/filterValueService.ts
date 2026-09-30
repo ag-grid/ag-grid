@@ -3,9 +3,37 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
-import type { ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
+import type { ColDef, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from '../interfaces/iRowNode';
+
+/**
+ * The input a filter's value is read from, by kind as a field path and a getter expression can be spelled alike.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface FilterValueSource {
+    kind: number;
+    source: unknown;
+    readsFormula: boolean;
+}
+
+/**
+ * Mirrors the precedence of `getValueWithGetter` and `ValueService.getValueFromData`, which must stay in step.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getFilterValueSource(
+    colDef: ColDef,
+    filterValueGetter: string | ValueGetterFunc | undefined
+): FilterValueSource {
+    const calculatedExpression = colDef.calculatedExpression;
+    const sources = [filterValueGetter, calculatedExpression, colDef.valueGetter, colDef.field];
+    const kind = sources.findIndex((source) => source != null);
+    return {
+        kind,
+        source: sources[kind],
+        readsFormula: !filterValueGetter && calculatedExpression === undefined && !!colDef.allowFormula,
+    };
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterValueService extends BeanStub implements NamedBean {
