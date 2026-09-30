@@ -181,7 +181,7 @@ export interface TabToNextGridContainerParams<TData = any, TContext = any> exten
     nextContainer: GridContainerName;
     /**
      * The target the grid would normally focus when moving to `nextContainer`, or `null` if it can't be represented.
-     * Returning a cell position equal to it is handled as returning `undefined`.
+     * Returning a cell position equal to `defaultTarget` is handled the same as returning `undefined` from `tabToNextGridContainer`.
      */
     defaultTarget: TabToNextGridContainerTarget | null;
 }
