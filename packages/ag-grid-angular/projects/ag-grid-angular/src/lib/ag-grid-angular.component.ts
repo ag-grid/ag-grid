@@ -546,7 +546,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
      */
     @Input({ transform: booleanAttribute }) public suppressCopySingleCellRanges: boolean | undefined = undefined;
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+    /** Set to `true` to always remove a trailing empty line from pasted data.
+     * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+     * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
      * @default false
      * @agModule `ClipboardModule`
      */
