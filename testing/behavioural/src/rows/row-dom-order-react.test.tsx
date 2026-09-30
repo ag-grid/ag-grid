@@ -87,6 +87,17 @@ describe('row DOM order (React)', () => {
         await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'b', 'd']));
     });
 
+    test('without ensureDomOrder, a row list rendered as given still keeps its rows in place on the next update', async () => {
+        const api = renderGrid(false);
+        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'b', 'c']));
+        act(() => api().setGridOption('rowData', [{ id: 'c' }]));
+        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['c']));
+
+        act(() => api().setGridOption('rowData', [{ id: 'x' }, { id: 'c' }]));
+
+        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['c', 'x']));
+    });
+
     test('setting empty rowData on a grid that is already empty commits nothing', async () => {
         let api: GridApi<Row> | undefined;
         let commits = 0;
