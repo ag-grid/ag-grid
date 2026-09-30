@@ -1,3 +1,4 @@
+import { AdvancedParamSelector } from '@ag-website-shared/components/theme-builder/AdvancedParamSelector';
 import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/CollapsibleSection';
 import { ParamEditor } from '@ag-website-shared/components/theme-builder/ParamEditor';
 import {
@@ -9,7 +10,6 @@ import { useApplicationConfigAtom } from '@ag-website-shared/theming/application
 import styled from '@emotion/styled';
 import type { ReactNode } from 'react';
 
-import { AdvancedParamSelector } from './AdvancedParamSelector';
 import { type LengthIcon, PARAM_GROUPS, type StudioParamConfig } from './params';
 
 const ADVANCED_SECTION = 'All Parameters';

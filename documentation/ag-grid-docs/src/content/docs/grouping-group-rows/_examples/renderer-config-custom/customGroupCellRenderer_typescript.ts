@@ -21,6 +21,7 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.node = params.node;
         this.eGui = document.createElement('div');
+        this.eGui.setAttribute('class', 'custom-group-row');
 
         const paddingLeft = params.node.level * 15;
         this.eGui.setAttribute('style', `padding-left: ${paddingLeft}px`);
@@ -40,8 +41,6 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
 
             this.node.addEventListener('expandedChanged', this.onExpandedChanged);
         }
-
-        this.eGui.append(' ');
 
         this.eValueContainer = document.createElement('span');
         this.eValueContainer.textContent = params.value == null ? '' : params.value;
