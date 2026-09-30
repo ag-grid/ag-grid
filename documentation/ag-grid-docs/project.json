@@ -235,6 +235,7 @@
         "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.spec.*",
         "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.test.*",
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*",
+        "{workspaceRoot}/external/ag-website-shared/src/components/example-runner/styles/**/*",
         { "dependentTasksOutputFiles": "**/gridOptionsTypes.json", "transitive": false },
         "{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**",
         { "env": "AG_EXAMPLE_FORMAT" },
