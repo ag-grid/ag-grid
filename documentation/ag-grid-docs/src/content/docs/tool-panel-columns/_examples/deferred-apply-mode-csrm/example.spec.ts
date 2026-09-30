@@ -37,6 +37,35 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework(
+        'Reset applies immediately, restoring the column definitions and discarding pending changes',
+        async ({ agIdFor, page }) => {
+            await waitForGridContent(page);
+
+            const ageHeader = agIdFor.headerCell('age');
+            const athleteHeader = agIdFor.headerCell('athlete');
+            const ageCheckbox = agIdFor.columnSelectListItemCheckbox('Age Column');
+            const athleteCheckbox = agIdFor.columnSelectListItemCheckbox('Athlete Column');
+
+            // Hide 'Age' and apply it, so the grid differs from the column definitions.
+            await ageCheckbox.click();
+            await page.getByRole('button', { name: 'Apply' }).click();
+            await expect(ageHeader).toBeHidden();
+
+            // Stage hiding 'Athlete' - the grid is unaffected so far.
+            await athleteCheckbox.click();
+            await expect(athleteCheckbox).not.toBeChecked();
+            await expect(athleteHeader).toBeVisible();
+
+            // Reset takes effect without Apply: 'Age' is shown again and the staged change is discarded.
+            await page.getByRole('button', { name: 'Reset' }).click();
+            await expect(ageHeader).toBeVisible();
+            await expect(ageCheckbox).toBeChecked();
+            await expect(athleteHeader).toBeVisible();
+            await expect(athleteCheckbox).toBeChecked();
+        }
+    );
+
+    test.eachFramework(
         'a change made outside the tool panel applies immediately and clears pending changes',
         async ({ agIdFor, page }) => {
             await waitForGridContent(page);
