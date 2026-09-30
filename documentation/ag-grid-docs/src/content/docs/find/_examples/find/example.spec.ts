@@ -5,8 +5,8 @@ import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 // "current/total", and the Go To input + button call findGoTo(matchNumber).
 // Matched text is wrapped in <mark class="ag-find-match">; active match adds ag-find-active-match.
 //
-// The control `id`s are dropped by the framework example transforms, so target the controls by
-// structure (their position within .example-controls) so the selectors hold across every framework.
+// The match counter has no label to reach it by, so it is targeted by structure (its position
+// within .example-controls) — that holds across every framework variant.
 
 test.agExample(import.meta, () => {
     const findInput = (page: any) => page.locator('.example-controls input[type="text"]');
