@@ -92,12 +92,17 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
     checks.push({
         id: `${id}.backup-not-served`,
         area: 'migration',
-        title: `${base}/${BACKUP_NAME} is not served (403 or 404)`,
+        title: `${base}/${BACKUP_NAME} is not served (403; a 404 is inconclusive)`,
         ...lifecycle,
         refs: ['grid#15430'],
         async run({ http }) {
             const res = await http.head(`${WWW}${base}/${BACKUP_NAME}`);
-            return res.status === 403 || res.status === 404
+            // A .ht* denial answers 403 whether or not the file exists; a 404 may only mean no
+            // backup has this synthetic timestamp, so it says nothing about real backups.
+            if (res.status === 404) {
+                return skip(`inconclusive: 404, ${BACKUP_NAME} may not exist, so its protection is unproven`);
+            }
+            return res.status === 403
                 ? pass(String(res.status))
                 : fail(`${res.status} (${header(res, 'content-type') ?? 'no content-type'})`);
         },
@@ -130,6 +135,7 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
                 );
                 p.check(headerTokens(md, 'vary').includes('accept'), `markdown Vary ${headerTokens(md, 'vary')}`);
                 const html = await http.get(pageUrl);
+                p.eq('HTML status', html.status, 200);
                 p.check(/^text\/html/.test(header(html, 'content-type') ?? ''), 'HTML variant is not text/html');
                 p.check(headerTokens(html, 'vary').includes('accept'), `HTML Vary ${headerTokens(html, 'vary')}`);
                 return p.outcome(`guard: ${verdict.reason}`);
