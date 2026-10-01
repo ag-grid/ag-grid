@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { FRAMEWORKS, FRAMEWORK_LANDING_HUBS } from '../../constants';
 import { getHtaccessContent } from './htaccessRules';
-import { compileHtaccess, followRedirects, route } from './htaccessSimulator';
+import { compileHtaccess, followRedirects, route, samplePath } from './htaccessSimulator';
 import type { Redirect } from './redirects';
 import { IGNORE_PAGES, SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
@@ -89,24 +89,6 @@ const handledByDocroot = (url: URL) =>
     !isOwnedElsewhere(url.pathname);
 
 const fromOf = (redirect: Redirect) => ('from' in redirect ? redirect.from : redirect.fromPattern);
-
-/**
- * A concrete path a fromPattern matches, so a pattern rule can be probed like an exact one. Throws
- * if the synthesised sample does not actually match, so no pattern is silently left untested.
- */
-function samplePath(fromPattern: string): string {
-    const sample = fromPattern
-        .replace(/^\^/, '')
-        .replace(/\$$/, '')
-        .replace(/\((?:\?:)?([^()|]+)\|[^()]*\)/g, '$1')
-        .replace(/\(\/\.\*\)\?/g, '/sample/')
-        .replace(/\(\.\*\)|\.\*|\.\+/g, 'sample')
-        .replace(/\[a-z-\]\+/g, 'sample');
-    if (!new RegExp(fromPattern).test(sample)) {
-        throw new Error(`Could not synthesise a path for ${fromPattern} (got ${sample})`);
-    }
-    return sample;
-}
 
 describe('redirects', () => {
     const files = [compileHtaccess(getHtaccessContent({ env: 'production' }))];

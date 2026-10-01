@@ -1,4 +1,12 @@
-import { compileHtaccess, evaluateExpr, followRedirects, responseHeaders, route, tokenize } from './htaccessSimulator';
+import {
+    compileHtaccess,
+    evaluateExpr,
+    followRedirects,
+    responseHeaders,
+    route,
+    samplePath,
+    tokenize,
+} from './htaccessSimulator';
 
 // The simulator is what the htaccess behaviour tests trust, so its Apache semantics are pinned
 // here against small hand-written files rather than inferred from the generated output.
@@ -131,6 +139,15 @@ RewriteRule ^ /%1.md [L]`);
             const file = compileHtaccess('Redirect 410 /gone\nRedirectMatch 410 "^/gone-too/.+"');
             expect(route([file], { url: 'https://h.example/gone' })).toMatchObject({ type: 'status', status: 410 });
             expect(route([file], { url: 'https://h.example/gone-too/x' })).toMatchObject({ status: 410 });
+        });
+    });
+
+    describe('samplePath', () => {
+        it('produces a path each RedirectMatch pattern shape matches, and refuses one it cannot', () => {
+            for (const pattern of ['^/forum/.+', '^/a(/.*)?', '^/(react|vue)/(.*)', '^/x-(b|c)-[a-z-]+$', '^/d/$']) {
+                expect(new RegExp(pattern).test(samplePath(pattern)), pattern).toBe(true);
+            }
+            expect(() => samplePath('^/[0-9]{4}/$')).toThrow(/Could not synthesise/);
         });
     });
 

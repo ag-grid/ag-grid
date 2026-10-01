@@ -565,7 +565,7 @@ function tokenizeExpr(expr: string): ExprToken[] {
             }
             tokens.push({ kind: 'regex', regex: new RegExp(body, flags) });
             i = j;
-        } else if ((m = rest.match(/^(=~|!~|==|!=|&&|\|\||<=|>=|[!()<>])/))) {
+        } else if ((m = rest.match(/^(-(?:eq|ne|lt|le|gt|ge)\b|=~|!~|==|!=|&&|\|\||<=|>=|[!()<>])/))) {
             tokens.push({ kind: 'op', value: m[1] });
             i += m[0].length;
         } else if ((m = rest.match(/^-?\d+/))) {
@@ -620,6 +620,19 @@ export function evaluateExpr(expr: string, vars: Record<string, string | number 
                 return String(left) === String(right);
             case '!=':
                 return String(left) !== String(right);
+            // Integer comparisons: ap_expr converts both sides to numbers.
+            case '-eq':
+                return Number(left) === Number(right);
+            case '-ne':
+                return Number(left) !== Number(right);
+            case '-lt':
+                return Number(left) < Number(right);
+            case '-le':
+                return Number(left) <= Number(right);
+            case '-gt':
+                return Number(left) > Number(right);
+            case '-ge':
+                return Number(left) >= Number(right);
             default:
                 throw new Error(`Unsupported ap_expr operator ${op.value}`);
         }
@@ -740,4 +753,23 @@ export function responseHeaders(files: CompiledHtaccess[], response: ResponseCon
     }
     emit(tables.always);
     return result;
+}
+
+/**
+ * A concrete URL path a mod_alias RedirectMatch pattern matches, so a pattern rule can be probed
+ * like an exact one: the first alternative of each group, and a sample segment for each wildcard.
+ * Throws if the sample does not actually match, so no pattern is silently left untested.
+ */
+export function samplePath(pattern: string): string {
+    const sample = pattern
+        .replace(/^\^/, '')
+        .replace(/\$$/, '')
+        .replace(/\((?:\?:)?([^()|]+)\|[^()]*\)/g, '$1')
+        .replace(/\(\/\.\*\)\?/g, '/sample/')
+        .replace(/\(\.\*\)|\.\*|\.\+/g, 'sample')
+        .replace(/\[a-z-\]\+/g, 'sample');
+    if (!new RegExp(pattern).test(sample)) {
+        throw new Error(`Could not synthesise a path for ${pattern} (got ${sample})`);
+    }
+    return sample;
 }
