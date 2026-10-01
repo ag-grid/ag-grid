@@ -20,20 +20,24 @@ Prerequisites: the AWS CLI on `PATH` with a working `ddos-report-readonly` profi
 machine outside a datacenter IP range (the WAF behaviour rows assume Bot Control does not label the
 caller as a datacenter). A full run takes a few minutes and makes about 300-400 HTTP requests.
 
-| Flag                 | Effect                                                                                        |
-| -------------------- | --------------------------------------------------------------------------------------------- |
-| `--only <list>`      | Comma-separated areas (below) or check-id prefixes, e.g. `--only redirects,headers.markdown`  |
-| `--pending`          | Also evaluate expectations that are not deployed yet. They never fail the run                 |
-| `--strict`           | Known issues and warnings also fail the run                                                   |
-| `--list`             | List the selected checks (with their lifecycle marker) without running anything               |
-| `--verbose`          | Show detail for passing checks, and log every HTTP request                                    |
-| `--full-links`       | Check every llms.txt index link (~850, slow and over the default cap: raise `--max-requests`) |
-| `--days <n>`         | CloudTrail window for the edge-write summary (default 7)                                      |
-| `--max-requests <n>` | HTTP request cap (default 400)                                                                |
-| `--concurrency <n>`  | Requests in flight (default 4, max 8)                                                         |
-| `--delay <ms>`       | Minimum gap between request starts (default 120)                                              |
-| `--user-agent <ua>`  | Override the default browser User-Agent                                                       |
-| `--json <file>`      | Also write the results and the request log as JSON (redacted)                                 |
+| Flag                   | Effect                                                                                        |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| `--only <list>`        | Comma-separated areas (below) or check-id prefixes, e.g. `--only redirects,headers.markdown`  |
+| `--pending`            | Also evaluate expectations that are not deployed yet. They never fail the run                 |
+| `--strict`             | Known issues and warnings also fail the run                                                   |
+| `--list`               | List the selected checks (with their lifecycle marker) without running anything               |
+| `--verbose`            | Show detail for passing checks, and log every HTTP request                                    |
+| `--full-links`         | Check every llms.txt index link (~850, slow and over the default cap: raise `--max-requests`) |
+| `--days <n>`           | CloudTrail window for the edge-write summary (default 7)                                      |
+| `--max-requests <n>`   | HTTP request cap (default 400)                                                                |
+| `--concurrency <n>`    | Requests in flight (default 4, max 8)                                                         |
+| `--delay <ms>`         | Minimum gap between request starts (default 120)                                              |
+| `--user-agent <ua>`    | Override the default browser User-Agent                                                       |
+| `--json <file>`        | Also write the results and the request log as JSON (redacted)                                 |
+| `--bot-window <dur>`   | `bot-outcomes`: WAF log window, e.g. `30m` or `2h` (default 2h)                               |
+| `--bot-threshold <%>`  | `bot-outcomes`: highest acceptable non-ALLOW share, in percent (default 1)                    |
+| `--bot-min-volume <n>` | `bot-outcomes`: smaller populations are reported, not judged (default 100)                    |
+| `--bot-max-gb <n>`     | `bot-outcomes`: refuse the query when its estimated scan is larger (default 4)                |
 
 Exit code: 0 when nothing failed, 1 on any failure (with `--strict`, also on a known issue or a
 warning), 2 when the run aborted.
@@ -64,7 +68,16 @@ These are enforced in code, not by convention:
 - **AWS is read-only.** Every call goes through `core/aws.ts`, which runs the AWS CLI with
   `--profile ddos-report-readonly` and refuses, before executing anything, any operation that is
   not `get-*`, `list-*`, `describe-*` or `lookup-*`, and any `--profile`, `--endpoint-url` or
-  `--no-sign-request` argument. Credential environment variables are stripped.
+  `--no-sign-request` argument. The one exception is `logs start-query` (a Logs Insights query reads
+  log events; its results come back through `get-query-results`), allowed for the `logs` service only.
+  Credential environment variables are stripped.
+- **WAF log queries are capped.** `bot-outcomes` runs one Logs Insights query per run over
+  `aws-waf-logs-cloudfront` (default window 2h). Before starting it, the suite reads the group's
+  `IncomingBytes` for the window (doubled: Insights scanned twice what was ingested on 2026-10-01)
+  and refuses the query if that is over `--bot-max-gb`. The query filters on the UA tokens before it
+  parses (a parse over the whole group silently under-counts), matches the user agent inside
+  `@message` rather than by header index, and the report prints the bytes actually scanned.
+  `logs:StopQuery` is not granted, so a query that has started always runs to completion.
 - **HTTP is GET/HEAD only**, under a hard request cap (400 per run by default), at most 4 requests
   in flight and at least 120 ms between request starts, with a current desktop Chrome User-Agent by
   default. Responses are memoised, and a document asked for by HEAD is fetched once as a GET that
@@ -86,7 +99,9 @@ These are enforced in code, not by convention:
 
 ## Offline tests
 
-The guard, the AWS error classification and the WAF structure checks have offline tests that use
+The guard, the AWS error classification, the WAF structure checks (including the rules two scripts
+insert after p11, in either order) and the WAF log query (its text, result parsing, thresholds and
+byte cap) have offline tests that use
 a fake AWS client and no network (`src/**/*.test.ts`, fixtures in `src/testing/fakes.ts`). They are
 not part of the repo's Vitest workspace or `./behave.sh`; run them with:
 
@@ -100,19 +115,21 @@ node --import tsx --test "src/**/*.test.ts"
 
 Areas, in report order (the `--only` names). Counts are checks per area (pending / known issue).
 
-| Area             | Checks       | What it verifies                                                                                                                                                                                                                                                                                                                   |
-| ---------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cloudfront`     | 31 (5 / 0)   | Distribution settings, the single ALB origin, every cache behaviour in order, cache and origin request policies, real-time log fields (SE-116/117), that markdown-negotiated pages never land on a caching behaviour without a key split, and the archive cache behaviours and function (pending `add-archive-cache-behaviors.sh`) |
-| `waf-config`     | 27 (6 / 3)   | Rule order, actions and metric names on both web ACLs, the shared-secret Allow rules, the `build-server` IP set, Bot Control, AntiDDoS, the credential-scanner regex (SE-185), the non-browser rule and its allowlists (SE-78/184), rate rules, logging, redaction and retention                                                   |
-| `infra`          | 19 (1 / 1)   | Alarms and their SNS wiring, the viewer certificate, Shield Advanced, the ALB security group and attributes, recent CloudTrail edge writes, 24h 5xx rate, origin share and healthy hosts                                                                                                                                           |
-| `redirects`      | 137 (3 / 18) | First status, Location (query string included) and hop count for every host alias and legacy URL in the SE ticket QA tables                                                                                                                                                                                                        |
-| `headers`        | 46 (15 / 1)  | Response headers per content class: Link, security headers sent once, Cache-Control, Vary, X-Robots-Tag, markdown content types, 304 revalidation, internal hosts                                                                                                                                                                  |
-| `caching`        | 25 (3 / 0)   | A repeat request is a hit on every caching behaviour, never-cached pages never hit, Host in the cache key, and HTML-markdown-HTML poisoning probes                                                                                                                                                                                 |
-| `waf-behaviour`  | 24 (0 / 2)   | WAF decisions from this machine: the agent 403 guidance, safe paths, scanner blocks, AI crawler UAs and the automated-browser challenge                                                                                                                                                                                            |
-| `crawler-policy` | 40 (2 / 5)   | robots.txt groups, the AI group mirroring `*`, a URL verdict matrix for search and AI crawlers, and agreement with the live WAF UA allowlist                                                                                                                                                                                       |
-| `agent-files`    | 18 (0 / 2)   | llms.txt, AGENTS.md, advertised `.md` twins and links, the MCP server card                                                                                                                                                                                                                                                         |
-| `seo-content`    | 26 (1 / 5)   | H1s, empty headings, JSON-LD graph, Organization, offers, canonicals, footer headings, social images, landmarks, viewport, links to redirecting URLs                                                                                                                                                                               |
-| `blog`           | 9 (0 / 0)    | The /blog/ migration: headers, posts, tag noindex, pagination, RSS and sitemaps                                                                                                                                                                                                                                                    |
+| Area             | Checks        | What it verifies                                                                                                                                                                                                                                                                                                                   |
+| ---------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cloudfront`     | 31 (5 / 0)    | Distribution settings, the single ALB origin, every cache behaviour in order, cache and origin request policies, real-time log fields (SE-116/117), that markdown-negotiated pages never land on a caching behaviour without a key split, and the archive cache behaviours and function (pending `add-archive-cache-behaviors.sh`) |
+| `waf-config`     | 29 (8 / 3)    | Rule order, actions and metric names on both web ACLs, the shared-secret Allow rules, the `build-server` IP set, Bot Control, AntiDDoS, the credential-scanner regex (SE-185), the non-browser rule and its allowlists (SE-78/184), rate rules, logging, redaction and retention                                                   |
+| `infra`          | 19 (1 / 1)    | Alarms and their SNS wiring, the viewer certificate, Shield Advanced, the ALB security group and attributes, recent CloudTrail edge writes, 24h 5xx rate, origin share and healthy hosts                                                                                                                                           |
+| `redirects`      | 170 (34 / 17) | First status, Location (query string included) and hop count for every host alias and legacy URL in the SE ticket QA tables                                                                                                                                                                                                        |
+| `migration`      | 15 (9 / 0)    | The grid#15430 archive `.htaccess` migration: alias hosts one hop to the same archive URL on www, the grid rules that left the archive, markdown negotiation on 36.1.0/36.2.0, backups never served. Samples the lowest and highest version per site; `--only migration` checks all 14 (35 checks)                                 |
+| `headers`        | 49 (18 / 1)   | Response headers per content class: Link, security headers sent once, Cache-Control, Vary, X-Robots-Tag, markdown content types, 304 revalidation, internal hosts                                                                                                                                                                  |
+| `caching`        | 25 (3 / 0)    | A repeat request is a hit on every caching behaviour, never-cached pages never hit, Host in the cache key, and HTML-markdown-HTML poisoning probes                                                                                                                                                                                 |
+| `waf-behaviour`  | 24 (0 / 2)    | WAF decisions from this machine: the agent 403 guidance, safe paths, scanner blocks, AI crawler UAs and the automated-browser challenge                                                                                                                                                                                            |
+| `crawler-policy` | 46 (3 / 8)    | robots.txt groups, the AI group mirroring `*`, a URL verdict matrix for search and AI crawlers, and agreement with the live WAF UA allowlist                                                                                                                                                                                       |
+| `agent-files`    | 21 (3 / 2)    | llms.txt, AGENTS.md, advertised `.md` twins and links, the MCP server card                                                                                                                                                                                                                                                         |
+| `seo-content`    | 28 (1 / 7)    | H1s, empty headings, JSON-LD graph, Organization, offers, canonicals, footer headings, social images, landmarks, viewport, links to redirecting URLs                                                                                                                                                                               |
+| `blog`           | 9 (0 / 0)     | The /blog/ migration: headers, posts, tag noindex, pagination, RSS and sitemaps                                                                                                                                                                                                                                                    |
+| `bot-outcomes`   | 61 (18 / 1)   | From the WAF logs (no HTTP): per crawler and agent family, whether Bot Control-verified requests were allowed, and whether families the live p11 allowlist admits were (payload-rule blocks excluded), above a 1% share and a 100-request floor                                                                                    |
 
 ### SE tickets
 
@@ -155,6 +172,95 @@ says so on every run (parents SE-8 and SE-181 are covered through their children
 | Origin bypass                                  | `waf-config.alb.*`, `infra.alb.security-group`                                                                                                            |
 | Secrets in WAF logs                            | `waf-config.*.logging.redaction`, `waf-config.*.log-retention`, `waf-config.cf.verify-secrets-distinct`                                                   |
 | Bot and agent policy                           | `waf-config.cf.nonbrowser-rule*`, `waf-config.cf.bot-control*`, `waf-behaviour.*`, `crawler-policy.robots-vs-waf*`                                        |
+| What real bots and agents received             | `bot-outcomes.*` (WAF logs, the last `--bot-window`)                                                                                                      |
+
+## Post-deploy runbook
+
+Run these from the repo root after each deploy step, on a machine outside a datacenter range. Each
+command evaluates the pending expectations of the areas that step touches, so it stays well under
+the request cap; the full default run (`yarn nx run ag-grid-edge-verification:test:edge-live`)
+afterwards must still show no `FAIL`.
+
+What passing looks like is the same for every step: the step's own `PENDING` rows turn `NOW LIVE`
+and its known issues turn `FIXED?`, while nothing else changes. Then, in the same change, delete those
+`pending` markers (and the `knownIssue` markers that show `FIXED?`) so the expectations start
+guarding the deployed state. A `PENDING` row that cites the step but still fails is the step not
+working; a `FAIL` anywhere is a regression. On either, keep the output (`--json <file>`), and roll
+the step back as it says below before investigating.
+
+```sh
+EV="npx tsx testing/edge-verification/src/main.ts"
+```
+
+### grid#15424 (the docs release that carries seo-edge-unit-tests-v2)
+
+```sh
+$EV --pending --only redirects,crawler-policy,agent-files,seo-content
+```
+
+- `NOW LIVE`: the ACME rows (`/.well-known/acme-challenge/...` answered 404 on www and the apex,
+  never add-slashed), the slash-less `/react-data-grid/getting-started` rows on each alias host, the
+  server-side and `/documentation/<fw>/charts*` samples, `crawler-policy.robots.md-twins`,
+  `crawler-policy.robots.url./archive/` and `./charts/archive/`, `agent-files.link.grid-data-grid`.
+- `FIXED?`: `redirects.www.ag-grid.com/javascript-grid/` and the `.md` twin rows of
+  `crawler-policy.robots.url.*`.
+- Stays `KNOWN`: `crawler-policy.robots.md-twins-query`. The PR's twin rules end in `.md$`, so
+  `<page>.md?<query>` stays crawlable. That needs a follow-up; the release does not fix it.
+- The `angulargrid.com` and `www.angulargrid.com` rows `SKIP` while those hosts are not in DNS.
+- On failure: the release's `.htaccess` and `robots.txt` come from the docs build; redeploy the
+  previous docs release (`switchReleaseRemote.sh`) if a deployed row fails.
+
+### ag-charts#8422 / #8432 (charts release), ag-studio#3084 / #3087 (studio release)
+
+```sh
+$EV --pending --only redirects,seo-content,agent-files,crawler-policy
+```
+
+- Charts: `NOW LIVE` on the `/charts/...` alias-host and legacy-prefix rows (renamed slugs in one hop,
+  `index.html` and `.md` files keeping their path) and `agent-files.link.charts-options.*`;
+  `FIXED?` on `seo-content.h1.charts-home`, `.landmark.main-charts`, `.social-images.absolute-charts`,
+  `agent-files.known./charts/javascript/options/` and the charts rows citing waf-finding.md §2.
+- Studio: `NOW LIVE` on the `/studio/...` alias-host rows and `seo-content.json-ld.studio-no-offers`;
+  `FIXED?` on `.landmark.main-studio`, `.social-images.absolute-studio`, `.viewport-studio`.
+- On failure: redeploy the previous charts or studio release.
+
+### grid#15430 archive migration (`migrateDeployedArchiveHtaccess.sh`, once per web host)
+
+Both web hosts serve every archive and CloudFront spreads requests across them, so do not verify
+after the first host: the results would be a mix of migrated and unmigrated responses.
+
+```sh
+# after --apply on the SECOND host
+$EV --pending --only migration
+$EV --pending --only redirects.ag-grid.com/archive,redirects.blog.ag-grid.com/archive
+```
+
+- `NOW LIVE` on every `migration.*.alias-host`, `.leaks` and `.markdown` row (all 14 versions);
+  `migration.*.backup-not-served` passes before and after. `FIXED?` on the apex 36.2.0 redirect row.
+- `migration.grid.*.markdown` `SKIP`s (with the twin's status) if the markdown guard refuses the
+  probe, which it does once `add-archive-cache-behaviors.sh` caches archives without a verified key split.
+- If `add-archive-cache-behaviors.sh` has already run, a cached pre-migration response can show the
+  old behaviour until it expires: invalidate `/archive/*`, `/charts/archive/*` and
+  `/studio/archive/*` or wait before judging.
+- On failure: the script printed one `cp -p <dir>/.htaccess.bak-<ts> <dir>/.htaccess` restore
+  command per file it changed; run them on both hosts.
+
+### AWS scripts (repo root)
+
+Take `./backup-waf-acl.sh` before any WAF script; `./restore-waf-acl.sh` undoes one.
+
+| Script                                            | Then run                                                                      | Passing                                                                                                                                                        |
+| ------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add-archive-cache-behaviors.sh`                  | `$EV --pending --only cloudfront,caching,headers`                             | `NOW LIVE` on `cloudfront.behaviour./archive/*`, `/charts/archive/*`, the function and `caching.hit./archive/*`; no `caching.markdown-does-not-poison` failure |
+| `redact-waf-log-secrets.sh`                       | `$EV --pending --only waf-config`                                             | `NOW LIVE` on `waf-config.*.logging.redaction`                                                                                                                 |
+| `move-datacenter-block-after-agent-exemptions.sh` | `$EV --pending --only waf-config,waf-behaviour`                               | `NOW LIVE` on `waf-config.cf.rule.block-datacenter-except-agent-paths` and the SignalKnownBotDataCenter Count override                                         |
+| `extend-p11-agent-allowlist.sh`                   | `$EV --pending --only waf-config,crawler-policy`                              | `NOW LIVE` on `waf-config.cf.nonbrowser-rule.agent-allowlist` and `waf-config.cf.rule.count-allowlisted-agents-rate`; `FIXED?` on the Perplexity-User rows     |
+| either WAF script, 2h+ later                      | `$EV --pending --only bot-outcomes --bot-window <time since apply minus 10m>` | `NOW LIVE` on the `bot-outcomes.*.all` / `.unverified` rows citing the script, and no family `FAIL`                                                            |
+
+The two WAF scripts each insert one rule straight after p11; the checks accept either order. When
+both are live and their markers are removed, list the two rules in `CF_ACL.rules` in their live order.
+The `bot-outcomes` window must cover only traffic after the change, or old blocks dilute the result.
+On failure, restore the snapshot with `./restore-waf-acl.sh` and re-run the same command to confirm.
 
 ## Updating the expected state
 
