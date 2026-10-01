@@ -22,9 +22,10 @@ async function runAgree(respond: (n: number) => FakeResponse) {
 }
 
 describe('headers.archive-validators-agree', () => {
-    it('passes when every origin response is a 200 with the same ETag and Last-Modified', async () => {
+    it('is inconclusive, not a pass, when every origin response agrees (nothing shows two hosts answered)', async () => {
         const outcome = await runAgree(() => ({ status: 200, headers: { ...MISS, ...VALIDATORS } }));
-        assert.equal(outcome.status, 'pass', outcome.detail);
+        assert.equal(outcome.status, 'skip', outcome.detail);
+        assert.match(outcome.detail ?? '', /inconclusive/);
     });
 
     const BROKEN: Array<[string, (n: number) => FakeResponse, RegExp]> = [
