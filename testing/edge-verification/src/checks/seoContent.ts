@@ -10,7 +10,7 @@ import {
     stripTags,
 } from '../core/html';
 import type { Http } from '../core/http';
-import { type CheckDef, Problems, fail, info, pass } from '../core/types';
+import { type CheckDef, Problems, budgeted, fail, info, pass } from '../core/types';
 import { FIRST_RUN, NEW_FINDING, PENDING, finding } from '../expected/lifecycle';
 import { WWW } from '../expected/redirects';
 import {
@@ -51,15 +51,14 @@ function perPage(
         title: `${title} (${keys.map((k) => PAGES[k]).join(', ')})`,
         refs,
         ...lifecycle,
-        async run({ http }) {
-            const p = new Problems();
+        run: budgeted(async ({ http }, p) => {
             for (const key of keys) {
                 const own = new Problems();
                 assert(await page(http, key), own, key);
                 p.merge(PAGES[key], own);
             }
             return p.outcome();
-        },
+        }),
     };
 }
 
@@ -173,15 +172,14 @@ export function seoContentChecks(): CheckDef[] {
             area: 'seo-content',
             title: 'Every SiteNavigationElement URL answers 200 directly',
             refs: ['SE-43', 'SE-166'],
-            async run({ http }) {
+            run: budgeted(async ({ http }, p) => {
                 const nav = nodesOfType(jsonLdNodes(await page(http, 'home')), 'SiteNavigationElement')[0] as any;
-                const p = new Problems();
                 for (const url of nav?.url ?? []) {
                     const res = await http.head(url);
                     p.check(res.status === 200, `${url}: ${res.status}`);
                 }
                 return p.outcome(`${(nav?.url ?? []).length} URLs`);
-            },
+            }),
         },
         perPage(
             'json-ld.faq',

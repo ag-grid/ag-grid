@@ -55,7 +55,7 @@ Every expectation is deployed, `pending` or a `knownIssue`; the report shows one
 | `FIXED?`        | A known issue passed: if the fix is intended, remove the `knownIssue` marker                                                                                                                                                                                                                                                                                             |
 | `WARN`          | A health signal (5xx rate, origin share, healthy hosts) outside its threshold                                                                                                                                                                                                                                                                                            |
 | `INFO`          | Informational output (CloudTrail writes, shadowed behaviours, browser-only tickets)                                                                                                                                                                                                                                                                                      |
-| `SKIP`          | Could not be verified: an IAM action is missing ("unverifiable - needs IAM action X"), AWS credentials are unusable, AWS throttled or could not be reached, the request cap was reached, or the markdown guard refused the probe. A declared resource AWS reports missing (`NoSuch*`, `*NotFound`, `WAFNonexistentItemException`) is a `FAIL`, as is any other AWS error |
+| `SKIP`          | Could not be verified: an IAM action is missing ("unverifiable - needs IAM action X"), AWS credentials are unusable, AWS throttled or could not be reached, the request cap was reached before the check found anything (a check that loops over many URLs and has already found failures when the cap is reached reports them as a `FAIL`, noting the rest went untested), or the markdown guard refused the probe. A declared resource AWS reports missing (`NoSuch*`, `*NotFound`, `WAFNonexistentItemException`) is a `FAIL`, as is any other AWS error |
 
 The report ends with a per-area summary table, the request count against the cap, the markdown
 guard's source (live config, or the declared fallback that refuses every markdown probe), any IAM actions the profile was denied, and the
@@ -104,8 +104,9 @@ These are enforced in code, not by convention:
 
 The guard, the AWS error classification, the WAF structure checks (including the rules two scripts
 insert after p11, in either order) and the WAF log query (its text, result parsing, thresholds and
-byte cap) have offline tests that use
-a fake AWS client and no network (`src/**/*.test.ts`, fixtures in `src/testing/fakes.ts`). They are
+byte cap), and the HTTP checks most exposed to a wrong verdict (the archive cache split, and the
+link checks under the request cap) have offline tests that use
+a fake AWS client, a fake HTTP transport behind the real client, and no network (`src/**/*.test.ts`, fixtures in `src/testing/fakes.ts`). They are
 not part of the repo's Vitest workspace or `./behave.sh`; run them with:
 
 ```bash

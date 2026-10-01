@@ -1,5 +1,5 @@
 import type { Aws } from './aws';
-import type { Http } from './http';
+import { BudgetExceeded, type Http } from './http';
 import type { Live } from './live';
 
 /** Check areas, in report order. `--only` takes these names. */
@@ -136,4 +136,24 @@ export class Problems {
     outcome(passDetail?: string): Outcome {
         return this.items.length ? fail(this.items.join('; ')) : pass(passDetail);
     }
+}
+
+/**
+ * Wraps a check that collects problems over many requests. If the request budget runs out
+ * part-way, the problems already found still fail the check, with a note that the rest went
+ * untested; only a check that found none is left to the runner, which reports SKIP.
+ */
+export function budgeted(run: (ctx: Ctx, p: Problems) => Promise<Outcome>): (ctx: Ctx) => Promise<Outcome> {
+    return async (ctx) => {
+        const p = new Problems();
+        try {
+            return await run(ctx, p);
+        } catch (e) {
+            if (e instanceof BudgetExceeded && p.count) {
+                p.add(`stopped early (${e.message}): the rest went untested, raise --max-requests`);
+                return p.outcome();
+            }
+            throw e;
+        }
+    };
 }
