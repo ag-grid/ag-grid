@@ -484,6 +484,19 @@ export const CF_ACL = {
      * Accept: text/markdown condition (move-datacenter-block-after-agent-exemptions.sh).
      */
     dataCentreLabel: 'awswaf:managed:aws:bot-control:signal:known_bot_data_center',
+    /**
+     * The paths on which block-datacenter-except-agent-paths honours Accept: text/markdown: the
+     * origin's own negotiation conditions (grid docs and hubs; other grid pages; charts; studio),
+     * live or archived, matched on the raw UriPath with NONE. Verbatim from
+     * move-datacenter-block-after-agent-exemptions.sh (NEGOTIABLE_PATHS); the grid two are held to
+     * the docs page registry by wafNegotiablePaths.test.ts.
+     */
+    dataCentreMarkdownPaths: [
+        String.raw`^/(archive/[0-9]+\.[0-9]+\.[0-9]+/)?(((react|angular|vue|javascript)-data-grid/[^/.]+|(react|angular|vue)-data-grid)/?)?$`,
+        String.raw`^/(archive/[0-9]+\.[0-9]+\.[0-9]+/)?(about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(/(beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(commercial|community)|modern-slavery|privacy|terms-of-use|example-(finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$`,
+        String.raw`^/charts(/archive/[0-9]+\.[0-9]+\.[0-9]+)?(/((react|angular|vue|javascript)/[^/.]+|(react|angular|vue)|changelog|contact|documentation-archive|license-pricing|pipeline|roadmap|sitemap|whats-new|community(/(beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|examples(-[^/.]+)?|gallery(/[^/.]+)?|(angular|enterprise|javascript|react|vue)-charts|options(/(axes|series|initialState/annotations|navigator/miniChart/series)/[^/.]+)?|themes-api(/overrides/[^/.]+)?))?/?$`,
+        String.raw`^/studio(/archive/[0-9]+\.[0-9]+\.[0-9]+)?(/((react|angular|vue|javascript)/[^/.]+|documentation-archive|example|license-pricing|roadmap|community(/(beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|example-(embedded-analytics|widget-library)|licensing|sitemap|theme-builder|campaigns/launch-week))?/?$`,
+    ],
     dataCentreVerifiedLabels: [
         'awswaf:managed:aws:bot-control:bot:verified',
         'awswaf:managed:aws:bot-control:bot:user_triggered:verified',
