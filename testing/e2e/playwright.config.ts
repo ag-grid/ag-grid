@@ -11,7 +11,7 @@ export default defineConfig({
         [
             'html',
             {
-                open: process.env.CI ? 'never' : 'on-failure',
+                open: 'never',
                 outputFolder: '../../reports/ag-e2e-testing-html/',
             },
         ],

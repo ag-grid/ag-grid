@@ -4,6 +4,9 @@
   "sourceRoot": "testing/e2e",
   "projectType": "application",
   "targets": {
+    "build:test": {
+      "dependsOn": ["^build:types"]
+    },
     "lint": {
       "command": "eslint",
       "options": {

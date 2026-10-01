@@ -9,5 +9,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["playwright.config.ts", "src/**/*.ts", "e2e/**/*.ts"]
+  "include": ["playwright.config.ts", "src/**/*.ts", "e2e/**/*.ts", "../../packages/ag-grid-community/src/typings.ts"]
 }
