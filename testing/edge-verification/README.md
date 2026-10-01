@@ -245,7 +245,7 @@ $EV --pending --only redirects.ag-grid.com/archive,redirects.blog.ag-grid.com/ar
 ```
 
 - `NOW LIVE` on every `migration.*.alias-host`, `.leaks` and `.markdown` row (all 14 versions);
-  `migration.*.backup-not-served` passes before and after. `FIXED?` on the apex 36.2.0 redirect row.
+  `migration.*.backup-not-served` passes (403) before and after, or `SKIP`s as inconclusive on a 404. `FIXED?` on the apex 36.2.0 redirect row.
 - `migration.grid.*.markdown` `SKIP`s (with the twin's status) if the markdown guard refuses the
   probe, which it does once `add-archive-cache-behaviors.sh` caches archives without a verified key split.
 - If `add-archive-cache-behaviors.sh` has already run, a cached pre-migration response can show the
