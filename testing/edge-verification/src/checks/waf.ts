@@ -848,9 +848,14 @@ export function wafChecks(): CheckDef[] {
                     })),
                     ALB_ACL.ipReputationOverrides
                 );
-                const crs = noneOfLeaves(
-                    byName('AWS-AWSManagedRulesCommonRuleSet')?.Statement.ManagedRuleGroupStatement.ScopeDownStatement
+                const crsGroup = byName('AWS-AWSManagedRulesCommonRuleSet')?.Statement.ManagedRuleGroupStatement;
+                // The outer rule name says nothing about the group it runs.
+                p.eq(
+                    'CRS managed group',
+                    `${crsGroup?.VendorName}/${crsGroup?.Name}`,
+                    'AWS/AWSManagedRulesCommonRuleSet'
                 );
+                const crs = noneOfLeaves(crsGroup?.ScopeDownStatement);
                 // The whole leaf, alone: the prefix on another field, matched anywhere or after a
                 // transformation, or beside another exemption lets callers skip CRS.
                 p.eq('CRS scope-down', crs?.map(leafKey), [
