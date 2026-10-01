@@ -741,65 +741,45 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const highlightActive = highlighted !== 'none';
         const dropEdge = aboveOn || belowOn;
         const uiLevel = this.rowNode.uiLevel;
-        const shouldIndent = dropEdge && uiLevel > 0;
+        const shouldIndent = dropEdge && uiLevel > 0 && !this.isGroupColumnPinned();
         const highlightLevel = shouldIndent ? uiLevel.toString() : '0';
-        const groupCol = shouldIndent ? this.getGroupDisplayCol() : null;
-        const indentWidgets = this.getGroupCellWidgetCount(groupCol);
 
         rowGui?.rowComp.toggleCss('ag-row-highlight-above', aboveOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-inside', insideOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-below', belowOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-indent', shouldIndent);
-        rowGui?.rowComp.toggleCss('ag-row-highlight-indent-pinned', shouldIndent && this.isGroupColPinned(groupCol));
         const style = rowGui?.element.style;
         if (highlightActive) {
             style?.setProperty('--ag-row-highlight-level', highlightLevel);
         } else {
             style?.removeProperty('--ag-row-highlight-level');
         }
-        if (indentWidgets === undefined) {
-            style?.removeProperty('--ag-internal-row-highlight-widgets');
+        const labelOffset = shouldIndent ? this.getGroupLabelOffset() : undefined;
+        if (labelOffset === undefined) {
+            style?.removeProperty('--ag-internal-row-highlight-indent');
         } else {
-            style?.setProperty('--ag-internal-row-highlight-widgets', indentWidgets.toString());
+            style?.setProperty('--ag-internal-row-highlight-indent', `${labelOffset}px`);
         }
     }
 
-    /** The column the auto group cell renders into, or null when row grouping displays no such column. */
-    private getGroupDisplayCol(): AgColumn | null {
-        const groupCols = this.beans.showRowGroupCols?.columns;
-        if (!groupCols?.length) {
-            return null;
-        }
-        return groupCols.find((col) => col.colDef.showRowGroup === true) ?? groupCols[0];
-    }
-
-    private isGroupColPinned(groupCol: AgColumn | null): boolean {
-        // In print layout every column renders into the centre section although it still reports a pinned side.
-        if (this.printLayout || !groupCol) {
-            return false;
-        }
-        const { visibleCols } = this.beans;
-        return visibleCols.leftCols.includes(groupCol) || visibleCols.rightCols.includes(groupCol);
+    /** The drop indicator's level indent belongs to the centre section only while it holds the group column. */
+    private isGroupColumnPinned(): boolean {
+        // In print layout every column renders into the centre section, whatever side it is pinned to.
+        return !this.printLayout && !!this.beans.showRowGroupCols?.columns.some((col) => col.isPinned());
     }
 
     /**
-     * How many widget slots sit between the group cell's left padding and its label: one for the expander
-     * — or, on a leaf row, the `ag-row-group-leaf-indent` that stands in for it — plus every control the
-     * cell renders ahead of its value, plus the group renderer's own selection checkbox (or the spacing it
-     * reserves for one). The drop indicator lines up with that label, so it needs the same count.
-     * Returns undefined when the group cell is not rendered, leaving the CSS default in place.
+     * Where the group cell's label starts within the centre section, so the drop indicator lines up with it
+     * whatever controls the cell renders ahead of it. Undefined while no label is rendered there, which leaves
+     * the stylesheet's default offset in place.
      */
-    private getGroupCellWidgetCount(groupCol: AgColumn | null): number | undefined {
-        const cellCtrl = groupCol && this.getCellCtrl(groupCol);
-        if (!cellCtrl) {
+    private getGroupLabelOffset(): number | undefined {
+        const section = this.rowGui?.rowComp.getScrollingRowElement();
+        const label = section?.querySelector('.ag-group-value');
+        if (!section || !label) {
             return undefined;
         }
-        // The group renderer owns this checkbox (`checkboxLocation: 'autoGroupColumn'`), so the cell's own
-        // control flags do not see it; its rendered state is the only signal shared by every renderer.
-        const rendererCheckbox = cellCtrl.eGui?.querySelector(
-            '.ag-group-checkbox-spacing, .ag-group-checkbox > .ag-selection-checkbox:not(.ag-hidden)'
-        );
-        return 1 + cellCtrl.getLeadingWidgetCount() + (rendererCheckbox ? 1 : 0);
+        return label.getBoundingClientRect().left - section.getBoundingClientRect().left;
     }
 
     private postProcessRowDragging(): void {
@@ -810,8 +790,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onDisplayedColumnsChanged(): void {
         this.rowModeFeature.onDisplayedColumnsChanged();
-        // RowDropHighlightService only dispatches on a node / position / uiLevel change, so a pinning
-        // change while the indicator is shown would otherwise leave the indent classes stale.
+        // Pinning or moving the group column while the indicator is shown moves its indent.
         if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
             this.onRowNodeHighlightChanged();
         }
