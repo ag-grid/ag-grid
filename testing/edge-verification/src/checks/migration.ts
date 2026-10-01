@@ -1,5 +1,5 @@
-import { MARKDOWN_ACCEPT, type Response, describeChain, header, headerTokens } from '../core/http';
-import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/types';
+import { type Http, MARKDOWN_ACCEPT, type Response, describeChain, header, headerTokens } from '../core/http';
+import { type CheckDef, type Outcome, Problems, budgeted, fail, pass, skip } from '../core/types';
 import {
     BACKUP_NAME,
     MIGRATED_SITES,
@@ -8,6 +8,7 @@ import {
     MIGRATION_QUERY,
     MIGRATION_REFS,
     type MigratedSite,
+    SLASHLESS_PENDING,
 } from '../expected/migration';
 import { WWW } from '../expected/redirects';
 
@@ -32,6 +33,23 @@ function insideArchive(location: string, base: string): boolean {
     return url.origin === WWW && (url.pathname === base || url.pathname.startsWith(`${base}/`));
 }
 
+/** `from` answers one 301 straight to `to`, which answers 200. */
+async function oneHop(http: Http, from: string, to: string): Promise<Outcome> {
+    const first = await http.head(from);
+    const location = header(first, 'location');
+    const resolved = location ? new URL(location, from).href : undefined;
+    const p = new Problems();
+    p.eq('first status', first.status, 301);
+    p.eq('Location', resolved, to);
+    const chain: Response[] = [first];
+    if (!p.count && resolved) {
+        const final = await http.head(resolved);
+        chain.push(final);
+        p.eq('final status (one hop)', final.status, 200);
+    }
+    return p.outcome(describeChain(chain));
+}
+
 function versionChecks(site: MigratedSite, version: string, i: number): CheckDef[] {
     const base = site.base(version);
     const id = `migration.${site.site}.${version}`;
@@ -46,23 +64,25 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
         title: `https://${host}${path} -> one hop to the same archive URL on www`,
         pending: MIGRATION_PENDING,
         ...lifecycle,
-        async run({ http }) {
-            const from = `https://${host}${path}`;
-            const first = await http.head(from);
-            const location = header(first, 'location');
-            const resolved = location ? new URL(location, from).href : undefined;
-            const p = new Problems();
-            p.eq('first status', first.status, 301);
-            p.eq('Location', resolved, `${WWW}${path}`);
-            const chain: Response[] = [first];
-            if (!p.count && resolved) {
-                const final = await http.head(resolved);
-                chain.push(final);
-                p.eq('final status (one hop)', final.status, 200);
-            }
-            return p.outcome(describeChain(chain));
-        },
+        run: ({ http }) => oneHop(http, `https://${host}${path}`, `${WWW}${path}`),
     });
+
+    // A slash-less directory URL, on the alias host and on http www: one hop to the slashed www URL.
+    const directory = `${base}/${(site.directoryPage ?? site.page).replace(/\/$/, '')}`;
+    for (const [kind, from] of [
+        ['alias-host', `https://${host}${directory}${MIGRATION_QUERY}`],
+        ['http-www', `http://www.ag-grid.com${directory}${MIGRATION_QUERY}`],
+    ]) {
+        checks.push({
+            id: `${id}.slashless.${kind}`,
+            area: 'migration',
+            title: `${from} -> one hop to the slashed archive URL on www`,
+            ...lifecycle,
+            refs: [...MIGRATION_REFS, 'grid#15434', 'grid#15435'],
+            pending: SLASHLESS_PENDING,
+            run: ({ http }) => oneHop(http, from, `${WWW}${directory}/${MIGRATION_QUERY}`),
+        });
+    }
 
     const leaks = [...(site.leaks?.['*'] ?? []), ...(site.leaks?.[version] ?? [])];
     if (leaks.length) {
