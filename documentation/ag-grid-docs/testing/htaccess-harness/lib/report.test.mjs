@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
-import { classifyRow, coverageErrors } from './report.mjs';
+import { EXPECTATION_FILES, classifyRow, coverageErrors, expectationFileErrors } from './report.mjs';
 import { parseFile } from './rows.mjs';
 
 const fail = (key) => ({ key, message: `${key} failed` });
@@ -131,6 +131,25 @@ describe('coverageErrors', () => {
         assert.deepEqual(coverageErrors({ declared, minRows, executed: rows.slice(3), siteSkipped: [] }), [
             'cases.tsv: 1 rows executed, @min-rows 2',
             'cases.tsv:2: category redirects executed no rows',
+        ]);
+    });
+});
+
+describe('expectationFileErrors', () => {
+    it('passes when exactly the required files are present', () => {
+        assert.deepEqual(expectationFileErrors([...EXPECTATION_FILES]), []);
+    });
+
+    it('fails when a required file is deleted, so its coverage requirements cannot vanish with it', () => {
+        const present = EXPECTATION_FILES.filter((f) => f !== 'generated-grid.tsv');
+        assert.deepEqual(expectationFileErrors(present), ['generated-grid.tsv: required expectation file is missing']);
+    });
+
+    it('fails when a file is renamed away from its expected name', () => {
+        const present = [...EXPECTATION_FILES.filter((f) => f !== 'edge.tsv'), 'edge.tsv.bak'];
+        assert.deepEqual(expectationFileErrors(present), [
+            'edge.tsv: required expectation file is missing',
+            'edge.tsv.bak: not a known expectation file (add it to EXPECTATION_FILES, or remove it)',
         ]);
     });
 });

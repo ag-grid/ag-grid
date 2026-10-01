@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { detectApache, findMimeTypes, startHttpd, stopHttpd, writeHttpdConf } from './lib/apache.mjs';
 import { buildScaffold, placeRowFiles } from './lib/docroot.mjs';
 import { request, runRow } from './lib/probe.mjs';
-import { classifyRow, coverageErrors } from './lib/report.mjs';
+import { EXPECTATION_FILES, classifyRow, coverageErrors, expectationFileErrors } from './lib/report.mjs';
 import { parseFile, siteOf } from './lib/rows.mjs';
 import { LAYOUT, emitLayout, resolveSources, tsxEval } from './lib/sources.mjs';
 
@@ -114,9 +114,14 @@ if (siteHost !== 'www.ag-grid.com') {
 
 // ---------------------------------------------------------------- rows
 const EXPECTATIONS = join(HARNESS_DIR, 'expectations');
-const files = readdirSync(EXPECTATIONS)
-    .filter((f) => f.endsWith('.tsv'))
-    .sort();
+// Every entry in the directory, not just *.tsv: a file renamed away from .tsv must still be caught.
+const present = readdirSync(EXPECTATIONS).sort();
+const fileErrors = expectationFileErrors(present);
+if (fileErrors.length) {
+    console.error(`FAIL: expectation files:\n  ${fileErrors.join('\n  ')}`);
+    process.exit(1);
+}
+const files = EXPECTATION_FILES;
 const all = [];
 const minRows = {};
 const declared = [];

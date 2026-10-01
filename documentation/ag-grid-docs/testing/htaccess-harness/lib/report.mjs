@@ -56,3 +56,31 @@ export function coverageErrors({ declared, minRows, executed, siteSkipped }) {
     }
     return errors;
 }
+
+/**
+ * Every expectation file the harness must load. Coverage requirements (@min-rows, @category) live
+ * inside the files they protect, so a deleted or renamed file would take its requirements with it;
+ * this list is kept apart from them so that loss fails the run instead of shrinking it.
+ */
+export const EXPECTATION_FILES = [
+    'curated.tsv',
+    'edge.tsv',
+    'generated-charts-archive.tsv',
+    'generated-charts.tsv',
+    'generated-grid-archive.tsv',
+    'generated-grid.tsv',
+    'generated-markdown.tsv',
+    'generated-studio-archive.tsv',
+    'generated-studio.tsv',
+];
+
+/** Errors for required expectation files that are missing, and for files in the directory that aren't on the list. */
+export function expectationFileErrors(present) {
+    const missing = EXPECTATION_FILES.filter((f) => !present.includes(f)).map(
+        (f) => `${f}: required expectation file is missing`
+    );
+    const unknown = present
+        .filter((f) => !EXPECTATION_FILES.includes(f))
+        .map((f) => `${f}: not a known expectation file (add it to EXPECTATION_FILES, or remove it)`);
+    return [...missing, ...unknown];
+}
