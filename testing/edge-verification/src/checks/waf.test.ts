@@ -150,6 +150,17 @@ describe('WAF statement structure', () => {
                 return s;
             },
         ],
+        [
+            'browser challenge exemption without LOWERCASE',
+            CHECKS.browserChallenge,
+            'challenge-automated-browser-documents',
+            (s) => {
+                s.AndStatement.Statements[1].NotStatement.Statement.RegexMatchStatement.TextTransformations = [
+                    { Priority: 0, Type: 'NONE' },
+                ];
+                return s;
+            },
+        ],
     ];
 
     for (const [what, id, rule, edit] of MUTATIONS) {
@@ -778,6 +789,24 @@ describe('managed groups carry no legacy ExcludedRules', () => {
             const outcome = await check(id).run(offlineCtx(new FakeAws(handlers)));
             assert.equal(outcome.status, 'fail', outcome.detail);
             assert.match(outcome.detail ?? '', /ExcludedRules/);
+        });
+    }
+});
+
+describe('a rule named for an AWS managed group runs that group', () => {
+    for (const [acl, name, other] of [
+        ['cf', 'AWS-AWSManagedRulesCommonRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet'],
+        ['alb', 'AWS-AWSManagedRulesAmazonIpReputationList', 'AWSManagedRulesKnownBadInputsRuleSet'],
+        ['alb', 'AWS-AWSManagedRulesKnownBadInputsRuleSet', 'AWSManagedRulesAmazonIpReputationList'],
+    ] as const) {
+        it(`fails when ${acl} ${name} runs ${other}`, async () => {
+            const rules = acl === 'cf' ? cfAclRules() : albAclRules();
+            rules.find((r: any) => r.Name === name).Statement.ManagedRuleGroupStatement.Name = other;
+            const id = acl === 'cf' ? 'waf-config.cf.rules' : 'waf-config.alb.rules';
+            const handlers = acl === 'cf' ? cfAclHandlers(rules) : albAclHandlers(rules);
+            const outcome = await check(id).run(offlineCtx(new FakeAws(handlers)));
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /managed group/);
         });
     }
 });

@@ -511,6 +511,8 @@ export const CF_ACL = {
         label: 'awswaf:managed:aws:bot-control:signal:automated_browser',
         exemptRegex:
             '\\/api\\/|^\\/blog\\/(rss|feed)|\\.(acc|avi|css|gif|ico|jpe?g|js|json|md|mp[34]|ogg|otf|pdf|png|svg|tiff?|ttf|txt|webm|webp|woff2?|xml)$',
+        // The regex is lowercase-only, so without it /image.PNG would be challenged.
+        exemptTransforms: ['LOWERCASE'],
         immunity: 3600,
     },
 
