@@ -161,6 +161,13 @@ describe('redirects', () => {
         ).toEqual([`${WWW}/javascript-data-grid/server-side-model-updating-transactions/`]);
     });
 
+    // The retired build guide is the installation page for every framework, as it is for JavaScript.
+    it.each(['angular', 'react', 'vue'])('/%s-data-grid/building/ lands on installation in one hop', (framework) => {
+        expect(followFromWww(`/${framework}-data-grid/building/`).hops.map((hop) => hop.location)).toEqual([
+            `${WWW}/${framework}-data-grid/installation/`,
+        ]);
+    });
+
     // SE-28 / SE-29: destinations name the canonical host, never the bare apex or http.
     it('every absolute target is https on www.ag-grid.com (or another site entirely)', () => {
         const nonCanonical = allRedirects
