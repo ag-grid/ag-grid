@@ -30,8 +30,11 @@
 //                    is skipped, and reported as such, otherwise
 //   page=<path>      extra placeholder file to create in the docroot
 //   twin=no          do not auto-create the .md twin for an accept=md row
-//   known-fail=<ref> approved desired behaviour, not implemented yet: the row is EXPECTED to fail;
-//                    an unexpected pass fails the run so the row gets promoted.
+//   known-fail=<assertion>[,<assertion>...]:<ref>
+//                    approved desired behaviour, not implemented yet: the named assertions (status,
+//                    location, or one of the row's own keys such as cc or h:ETag) are EXPECTED to
+//                    fail. Any other failure, or a transport error, still fails the run, and so does
+//                    a named assertion that passes, so the row gets promoted.
 //
 // Directives (comment lines): `# @category <name>` sets the category of the rows that follow;
 // `# @min-rows <n>` fails the run if the file yields fewer executed rows (guards a generator
@@ -53,6 +56,24 @@ export const ACCEPT_ALIASES = {
 };
 
 const ASSERTION = /^(?<key>[a-z][a-z-]*|(?:h|req):[A-Za-z0-9-]+)(?<op>=|~|\+|-)(?<value>.*)$/;
+
+// known-fail=cc:<ref>, known-fail=status,location:<ref>, known-fail=h:ETag:<ref>
+const KNOWN_FAIL = /^(?<assertions>(?:h:[A-Za-z0-9-]+|[a-z][a-z-]*)(?:,(?:h:[A-Za-z0-9-]+|[a-z][a-z-]*))*):(?<ref>.+)$/;
+
+/** Parses a known-fail marker; every assertion it names must be one the row makes. */
+export function parseKnownFail(value, row) {
+    const m = value.match(KNOWN_FAIL);
+    if (!m) {
+        throw new Error(`known-fail must name the assertions expected to fail: known-fail=<assertion>[,...]:<ref>`);
+    }
+    const assertions = m.groups.assertions.split(',');
+    const made = new Set(['status', 'location', ...row.checks.map((check) => check.key)]);
+    const unknown = assertions.filter((assertion) => !made.has(assertion));
+    if (unknown.length) {
+        throw new Error(`known-fail names ${unknown.join(', ')}, which the row does not assert`);
+    }
+    return { assertions, ref: m.groups.ref };
+}
 
 export function parseFile(file) {
     const rows = [];
@@ -93,6 +114,7 @@ export function parseFile(file) {
             needs: [],
             knownFail: null,
         };
+        let knownFail;
         for (const raw of rest) {
             const tok = raw.trim();
             if (!tok) {
@@ -114,9 +136,16 @@ export function parseFile(file) {
             } else if (key === 'needs') {
                 row.needs.push(value);
             } else if (key === 'known-fail') {
-                row.knownFail = value;
+                knownFail = value;
             } else {
                 row.checks.push({ key, op, value });
+            }
+        }
+        if (knownFail !== undefined) {
+            try {
+                row.knownFail = parseKnownFail(knownFail, row);
+            } catch (e) {
+                throw new Error(`${file}:${i + 1}: ${e.message}`, { cause: e });
             }
         }
         rows.push(row);

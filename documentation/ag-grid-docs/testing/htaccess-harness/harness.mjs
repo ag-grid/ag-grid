@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { detectApache, findMimeTypes, startHttpd, stopHttpd, writeHttpdConf } from './lib/apache.mjs';
 import { buildScaffold, placeRowFiles } from './lib/docroot.mjs';
 import { request, runRow } from './lib/probe.mjs';
+import { classifyRow } from './lib/report.mjs';
 import { parseFile, siteOf } from './lib/rows.mjs';
 import { LAYOUT, emitLayout, resolveSources, tsxEval } from './lib/sources.mjs';
 
@@ -186,7 +187,8 @@ async function worker() {
         try {
             results[i] = await runRow(row, ctx);
         } catch (e) {
-            results[i] = { fails: [`error: ${e.message}`] };
+            // A transport error is never an expected failure: no known-fail can name it.
+            results[i] = { fails: [{ key: 'error', message: `error: ${e.message}` }] };
         }
     }
 }
@@ -200,24 +202,26 @@ const knownFailed = [];
 const unexpectedPass = [];
 const executedPerFile = {};
 let formOnlyFails = 0;
+const messages = (fails) => fails.map((fail) => fail.message).join('\n        ');
 active.forEach((row, i) => {
-    const { fails } = results[i];
     const t = (tally[row.category] ??= { sites: new Set(), pass: 0, fail: 0, known: 0, unexpected: 0 });
     t.sites.add(siteOf(row));
     executedPerFile[row.file] = (executedPerFile[row.file] ?? 0) + 1;
     const where = `${row.file}:${row.line} ${row.hostAlias} ${row.path}${row.accept === 'text/markdown' ? ' [md]' : ''}`;
-    if (row.knownFail) {
-        if (fails.length) {
-            t.known++;
-            knownFailed.push(`${where}\n        ref: ${row.knownFail}\n        ${fails.join('\n        ')}`);
-        } else {
-            t.unexpected++;
-            unexpectedPass.push(`${where}  (known-fail: ${row.knownFail})`);
-        }
-    } else if (fails.length) {
+    const result = classifyRow(row, results[i].fails);
+    const named = row.knownFail && `known-fail ${row.knownFail.assertions.join(',')}: ${row.knownFail.ref}`;
+    if (result.kind === 'known') {
+        t.known++;
+        knownFailed.push(`${where}\n        ref: ${row.knownFail.ref}\n        ${messages(result.fails)}`);
+    } else if (result.kind === 'unexpected') {
+        t.unexpected++;
+        unexpectedPass.push(`${where}  (${named}; passed: ${result.passing.join(', ')})`);
+    } else if (result.kind === 'fail') {
         t.fail++;
-        formOnlyFails += results[i].formOnly ? 1 : 0;
-        failed.push(`${where}\n        ${fails.join('\n        ')}`);
+        formOnlyFails += results[i].formOnly && !row.knownFail ? 1 : 0;
+        failed.push(
+            `${where}${named ? `  (${named}, but other assertions failed)` : ''}\n        ${messages(result.fails)}`
+        );
     } else {
         t.pass++;
         if (verbose) {
