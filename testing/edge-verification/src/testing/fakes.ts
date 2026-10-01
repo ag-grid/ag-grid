@@ -224,7 +224,7 @@ export function cfAclRules(): any[] {
                         ),
                         // Live shape: the saliencebot UA only counts from its IP set.
                         and(regex('header:user-agent', 'saliencebot'), ipset(nb.saliencebotIpSet)),
-                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption)
+                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption, nb.markdownAcceptTransforms[0])
                     )
                 ),
                 not(or(...p11Safe()))
@@ -238,7 +238,7 @@ export function cfAclRules(): any[] {
                 not(
                     or(
                         ...CF_ACL.dataCentreVerifiedLabels.map(label),
-                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption)
+                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption, nb.markdownAcceptTransforms[0])
                     )
                 ),
                 not(or(...p11Safe()))
