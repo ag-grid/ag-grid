@@ -962,7 +962,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/angular/status-bar/ /angular-data-grid/status-bar/
     Redirect 301 /documentation/angular/supported-browsers/ /angular-data-grid/supported-browsers/
     Redirect 301 /documentation/angular/systemjs/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/systemjs/ /angular-data-grid/
     Redirect 301 /documentation/angular/testing/ /angular-data-grid/testing/
     Redirect 301 /documentation/angular/themes-customising/ /angular-data-grid/themes/
     Redirect 301 /documentation/angular/themes-provided/ /angular-data-grid/themes/
@@ -980,11 +979,8 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/angular/view-refresh/ /angular-data-grid/view-refresh/
     Redirect 301 /documentation/angular/viewport/ /angular-data-grid/viewport/
     Redirect 301 /documentation/angular/webpack-2/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/
     Redirect 301 /documentation/angular/webpack-3/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack-3/ /angular-data-grid/
     Redirect 301 /documentation/angular/webpack/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /documentation/angular/ /angular-data-grid/
     Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/getting-started/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-data-grid/accessibility/
@@ -1134,7 +1130,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/javascript/scrolling-scenarios/ /javascript-data-grid/scrolling-performance/
     Redirect 301 /documentation/javascript/security/ /javascript-data-grid/security/
     Redirect 301 /documentation/javascript/selection-overview/ /javascript-data-grid/row-selection/
-    Redirect 301 /documentation/javascript/selection/ /javascript-data-grid/row-selection/
     Redirect 301 /documentation/javascript/selection/ /javascript-data-grid/row-selection/
     Redirect 301 /documentation/javascript/server-side-model-changing-columns/ /javascript-data-grid/server-side-model-changing-columns/
     Redirect 301 /documentation/javascript/server-side-model-datasource/ /javascript-data-grid/server-side-model-datasource/
@@ -1670,7 +1665,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid-model/ /javascript-data-grid/row-models/
     Redirect 301 /javascript-grid-modules-building/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-modules-more-details/ /javascript-data-grid/modules/
-    Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-npm/ /javascript-data-grid/installation/
     Redirect 301 /javascript-grid-openfin-dashboard/ https://www.ag-grid.com/
@@ -1850,7 +1844,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid/group-cell-renderer/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid/grouping/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /javascript-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid/index.html /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /javascript-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
@@ -1876,7 +1869,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid/modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/modules-building/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/modules-more-details/ /javascript-data-grid/modules/
-    Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/overlays/ /javascript-data-grid/overlays/
     Redirect 301 /javascript-grid/packages/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/packages-modules/ /javascript-data-grid/modules/
@@ -1913,18 +1905,15 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid/server-side-model-filtering/ /javascript-data-grid/server-side-model-filtering/
     Redirect 301 /javascript-grid/server-side-model-grouping/ /javascript-data-grid/server-side-model-grouping/
     Redirect 301 /javascript-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /javascript-data-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /javascript-grid/server-side-model-master-detail/ /javascript-data-grid/server-side-model-master-detail/
     Redirect 301 /javascript-grid/server-side-model-pagination/ /javascript-data-grid/server-side-model-pagination/
     Redirect 301 /javascript-grid/server-side-model-pivoting/ /javascript-data-grid/server-side-model-pivoting/
     Redirect 301 /javascript-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /javascript-data-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /javascript-grid/server-side-model-retry/ /javascript-data-grid/server-side-model-retry/
     Redirect 301 /javascript-grid/server-side-model-row-height/ /javascript-data-grid/server-side-model-row-height/
     Redirect 301 /javascript-grid/server-side-model-selection/ /javascript-data-grid/server-side-model-selection/
     Redirect 301 /javascript-grid/server-side-model-sorting/ /javascript-data-grid/server-side-model-sorting/
     Redirect 301 /javascript-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /javascript-data-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
     Redirect 301 /javascript-grid/server-side-model-tree-data/ /javascript-data-grid/server-side-model-tree-data/
     Redirect 301 /javascript-grid/server-side-model-updating/ /javascript-data-grid/server-side-model-updating/
     Redirect 301 /javascript-grid/server-side-operations-graphql/ /javascript-data-grid/server-side-model/
@@ -2047,7 +2036,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid/group-cell-renderer/ /angular-data-grid/grouping/
     Redirect 301 /angular-grid/grouping/ /angular-data-grid/grouping/
     Redirect 301 /angular-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /angular-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /angular-grid/index.html /angular-data-grid/getting-started/
     Redirect 301 /angular-grid/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
     Redirect 301 /angular-grid/integrated-charts/ /angular-data-grid/integrated-charts/
@@ -2072,9 +2060,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid/master-detail-refresh/ /angular-data-grid/master-detail-refresh/
     Redirect 301 /angular-grid/modules/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/modules-building/ /angular-data-grid/modules/
-    Redirect 301 /angular-data-grid/modules-building/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/modules-more-details/ /angular-data-grid/modules/
-    Redirect 301 /angular-data-grid/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/overlays/ /angular-data-grid/overlays/
     Redirect 301 /angular-grid/packages/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/packages-modules/ /angular-data-grid/modules/
@@ -2112,18 +2098,15 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid/server-side-model-filtering/ /angular-data-grid/server-side-model-filtering/
     Redirect 301 /angular-grid/server-side-model-grouping/ /angular-data-grid/server-side-model-grouping/
     Redirect 301 /angular-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /angular-data-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-master-detail/ /angular-data-grid/server-side-model-master-detail/
     Redirect 301 /angular-grid/server-side-model-pagination/ /angular-data-grid/server-side-model-pagination/
     Redirect 301 /angular-grid/server-side-model-pivoting/ /angular-data-grid/server-side-model-pivoting/
     Redirect 301 /angular-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /angular-data-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
     Redirect 301 /angular-grid/server-side-model-retry/ /angular-data-grid/server-side-model-retry/
     Redirect 301 /angular-grid/server-side-model-row-height/ /angular-data-grid/server-side-model-row-height/
     Redirect 301 /angular-grid/server-side-model-selection/ /angular-data-grid/server-side-model-selection/
     Redirect 301 /angular-grid/server-side-model-sorting/ /angular-data-grid/server-side-model-sorting/
     Redirect 301 /angular-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /angular-data-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-tree-data/ /angular-data-grid/server-side-model-tree-data/
     Redirect 301 /angular-grid/server-side-model-updating/ /angular-data-grid/server-side-model-updating/
     Redirect 301 /angular-grid/server-side-operations-graphql/ /angular-data-grid/server-side-model/
@@ -2249,7 +2232,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-grid/group-cell-renderer/ /react-data-grid/grouping/
     Redirect 301 /react-grid/grouping/ /react-data-grid/grouping/
     Redirect 301 /react-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /react-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /react-grid/index.html /react-data-grid/getting-started/
     Redirect 301 /react-grid/infinite-scrolling/ /react-data-grid/infinite-scrolling/
     Redirect 301 /react-grid/integrated-charts/ /react-data-grid/integrated-charts/
@@ -2274,9 +2256,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-grid/master-detail-refresh/ /react-data-grid/master-detail-refresh/
     Redirect 301 /react-grid/modules/ /react-data-grid/modules/
     Redirect 301 /react-grid/modules-building/ /react-data-grid/modules/
-    Redirect 301 /react-data-grid/modules-building/ /react-data-grid/modules/
     Redirect 301 /react-grid/modules-more-details/ /react-data-grid/modules/
-    Redirect 301 /react-data-grid/modules-more-details/ /react-data-grid/modules/
     Redirect 301 /react-grid/overlays/ /react-data-grid/overlays/
     Redirect 301 /react-grid/packages/ /react-data-grid/modules/
     Redirect 301 /react-grid/packages-modules/ /react-data-grid/modules/
@@ -2317,18 +2297,15 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-grid/server-side-model-filtering/ /react-data-grid/server-side-model-filtering/
     Redirect 301 /react-grid/server-side-model-grouping/ /react-data-grid/server-side-model-grouping/
     Redirect 301 /react-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /react-data-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-master-detail/ /react-data-grid/server-side-model-master-detail/
     Redirect 301 /react-grid/server-side-model-pagination/ /react-data-grid/server-side-model-pagination/
     Redirect 301 /react-grid/server-side-model-pivoting/ /react-data-grid/server-side-model-pivoting/
     Redirect 301 /react-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /react-data-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
     Redirect 301 /react-grid/server-side-model-retry/ /react-data-grid/server-side-model-retry/
     Redirect 301 /react-grid/server-side-model-row-height/ /react-data-grid/server-side-model-row-height/
     Redirect 301 /react-grid/server-side-model-selection/ /react-data-grid/server-side-model-selection/
     Redirect 301 /react-grid/server-side-model-sorting/ /react-data-grid/server-side-model-sorting/
     Redirect 301 /react-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /react-data-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-tree-data/ /react-data-grid/server-side-model-tree-data/
     Redirect 301 /react-grid/server-side-model-updating/ /react-data-grid/server-side-model-updating/
     Redirect 301 /react-grid/server-side-operations-graphql/ /react-data-grid/server-side-model/
@@ -2451,7 +2428,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /vue-grid/group-cell-renderer/ /vue-data-grid/grouping/
     Redirect 301 /vue-grid/grouping/ /vue-data-grid/grouping/
     Redirect 301 /vue-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /vue-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /vue-grid/index.html /vue-data-grid/getting-started/
     Redirect 301 /vue-grid/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
     Redirect 301 /vue-grid/integrated-charts/ /vue-data-grid/integrated-charts/
@@ -2476,9 +2452,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /vue-grid/master-detail-refresh/ /vue-data-grid/master-detail-refresh/
     Redirect 301 /vue-grid/modules/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/modules-building/ /vue-data-grid/modules/
-    Redirect 301 /vue-data-grid/modules-building/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/modules-more-details/ /vue-data-grid/modules/
-    Redirect 301 /vue-data-grid/modules-more-details/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/overlays/ /vue-data-grid/overlays/
     Redirect 301 /vue-grid/packages/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/packages-modules/ /vue-data-grid/modules/
@@ -2516,18 +2490,15 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /vue-grid/server-side-model-filtering/ /vue-data-grid/server-side-model-filtering/
     Redirect 301 /vue-grid/server-side-model-grouping/ /vue-data-grid/server-side-model-grouping/
     Redirect 301 /vue-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /vue-data-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-master-detail/ /vue-data-grid/server-side-model-master-detail/
     Redirect 301 /vue-grid/server-side-model-pagination/ /vue-data-grid/server-side-model-pagination/
     Redirect 301 /vue-grid/server-side-model-pivoting/ /vue-data-grid/server-side-model-pivoting/
     Redirect 301 /vue-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /vue-data-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
     Redirect 301 /vue-grid/server-side-model-retry/ /vue-data-grid/server-side-model-retry/
     Redirect 301 /vue-grid/server-side-model-row-height/ /vue-data-grid/server-side-model-row-height/
     Redirect 301 /vue-grid/server-side-model-selection/ /vue-data-grid/server-side-model-selection/
     Redirect 301 /vue-grid/server-side-model-sorting/ /vue-data-grid/server-side-model-sorting/
     Redirect 301 /vue-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /vue-data-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-tree-data/ /vue-data-grid/server-side-model-tree-data/
     Redirect 301 /vue-grid/server-side-model-updating/ /vue-data-grid/server-side-model-updating/
     Redirect 301 /vue-grid/server-side-operations-graphql/ /vue-data-grid/server-side-model/
@@ -2680,7 +2651,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/integrated-charts-toolbar/ /angular-data-grid/integrated-charts-menu/
     Redirect 301 /react-data-grid/integrated-charts-toolbar/ /react-data-grid/integrated-charts-menu/
     Redirect 301 /vue-data-grid/integrated-charts-toolbar/ /vue-data-grid/integrated-charts-menu/
-    Redirect 301 /javascript-data-grid/building/ /javascript-data-grid/modules/
     Redirect 301 /angular-data-grid/building/ /angular-data-grid/modules/
     Redirect 301 /react-data-grid/building/ /react-data-grid/modules/
     Redirect 301 /vue-data-grid/building/ /vue-data-grid/modules/
@@ -2693,9 +2663,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-data-grid/packages/ /react-data-grid/modules/
     Redirect 301 /vue-data-grid/packages/ /vue-data-grid/modules/
     Redirect 301 /javascript-data-grid/modules-building/ /javascript-data-grid/modules/
-    Redirect 301 /angular-data-grid/modules-building/ /angular-data-grid/modules/
-    Redirect 301 /react-data-grid/modules-building/ /react-data-grid/modules/
-    Redirect 301 /vue-data-grid/modules-building/ /vue-data-grid/modules/
     Redirect 301 /javascript-data-grid/client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /angular-data-grid/client-side-model/ /angular-data-grid/row-models/
     Redirect 301 /react-data-grid/client-side-model/ /react-data-grid/row-models/
