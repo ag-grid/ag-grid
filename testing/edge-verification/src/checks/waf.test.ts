@@ -298,6 +298,23 @@ describe('p11 exemptions are exactly the declared set', () => {
         });
     }
 
+    for (const type of ['NONE', 'URL_DECODE']) {
+        it(`fails when the Accept: text/markdown exemption uses ${type} instead of the live transform`, async () => {
+            const outcome = await run(CHECKS.nonBrowser, {
+                rule: 'block-nonbrowser-except-ai-assistants',
+                edit: (s) => {
+                    const accept = exemptionAlts(s).find(
+                        (a: any) => a.ByteMatchStatement?.FieldToMatch?.SingleHeader?.Name === 'accept'
+                    );
+                    accept.ByteMatchStatement.TextTransformations = [{ Priority: 0, Type: type }];
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /Accept: text\/markdown exemption missing|undeclared exemptions/);
+        });
+    }
+
     it('fails when the AI UA allowlist regex stops lowercasing the header', async () => {
         const outcome = await run(CHECKS.nonBrowser, {
             rule: 'block-nonbrowser-except-ai-assistants',

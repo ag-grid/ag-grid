@@ -462,6 +462,11 @@ export const CF_ACL = {
         },
         saliencebotIpSet: 'salience-bot',
         markdownAcceptExemption: 'text/markdown',
+        /**
+         * Live 2026-10-01: the Accept match lowercases first, so `TEXT/MARKDOWN` is exempt too, although
+         * the origin's negotiation is case-sensitive and serves those requests HTML. Declared as-is.
+         */
+        markdownAcceptTransforms: ['LOWERCASE'],
         safePathRegexes: ['/robots\\.txt$', '/llms\\.txt$', '/sitemap[^/]*\\.xml$', '\\.md$'],
         safePathPrefixes: ['/blog/rss', '/blog/feed'],
         customBody: 'automated-access-blocked',
