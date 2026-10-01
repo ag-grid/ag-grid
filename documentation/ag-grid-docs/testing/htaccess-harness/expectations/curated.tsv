@@ -67,7 +67,7 @@ charts	/angular-grid-api	301	/angular-grid-api/
 charts	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
 
 # --- Regression: pre-existing redirects must still work unchanged ---
-www	/javascript-grid/	301	/javascript-data-grid/
+www	/javascript-grid/	301	https://www.ag-grid.com/javascript-data-grid/getting-started/	hops=1
 www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/
 www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 

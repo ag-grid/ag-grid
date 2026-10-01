@@ -9,11 +9,12 @@
 //   browser Accept        -> 200 text/html (served via DirectoryIndex), Vary: Accept, the agent
 //                            Link header, exactly one CSP, the security headers
 // with the Cache-Control of its content class:
-//   live HTML                         no-cache
+//   live site                         no-cache (HTML and .md: the twin changes with its page)
 //   released grid/charts archive      public, max-age=604800, s-maxage=31536000 (HTML and .md)
 //   in-flight grid/charts archive     no-cache (HTML and .md)
 //   studio archive                    no-cache (HTML and .md)
-// Live .md Cache-Control is left unasserted: the target is an open decision (waf-finding.md §11).
+// and X-Robots-Tag: absent on the live site, while every archive's .md twin is noindexed - its
+// HTML is noindexed by a robots meta tag, which markdown has no <head> to carry (waf-finding.md §11).
 //
 // Usage: node gen-markdown-expectations.mjs <config.json>
 //   config: [{ "base": "/charts", "kind": "live|released|in-flight|studio-archive",
@@ -29,7 +30,7 @@ if (!configFile) {
 }
 const LONG = 'public, max-age=604800, s-maxage=31536000';
 const CACHE = {
-    live: { html: 'no-cache', md: null },
+    live: { html: 'no-cache', md: 'no-cache' },
     released: { html: LONG, md: LONG },
     'in-flight': { html: 'no-cache', md: 'no-cache' },
     'studio-archive': { html: 'no-cache', md: 'no-cache' },
@@ -55,10 +56,14 @@ for (const { base, kind, slug, groups, category } of JSON.parse(readFileSync(con
             'ct~^text/markdown',
             'vary+Accept',
             'link-describedby',
-            ...(cache.md ? [`cc=${cache.md}`] : []),
-            // live pages must never be noindexed at the edge (archives: open decision, §11)
+            `cc=${cache.md}`,
+            // live pages must never be noindexed at the edge
             ...(live ? ['xrt=absent'] : []),
         ]);
+        if (!live) {
+            // A row of its own, so a missing noindex is reported apart from the twin's other headers.
+            rows.add('www', page, 200, '', ['accept=md', 'xrt=noindex'], 'noindex');
+        }
         rows.add('www', page, 200, '', [
             'accept=html',
             'ct~^text/html',

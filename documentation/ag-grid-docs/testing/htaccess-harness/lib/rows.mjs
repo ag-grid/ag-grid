@@ -11,6 +11,7 @@
 //
 // Optional assertions, one per extra column:
 //   accept=html|md|none|<literal>   Accept header to send (default */*, as curl)
+//   req:<Name>=<value>   a further request header to send, e.g. req:If-None-Match=* for a 304
 //   cc=<exact>|absent   cc~<regex>   Cache-Control
 //   ct=<exact>|absent   ct~<regex>   Content-Type
 //   xrt=<exact>|absent  xrt~<regex>  X-Robots-Tag
@@ -47,7 +48,7 @@ export const ACCEPT_ALIASES = {
     none: null,
 };
 
-const ASSERTION = /^(?<key>[a-z][a-z-]*|h:[A-Za-z0-9-]+)(?<op>=|~|\+|-)(?<value>.*)$/;
+const ASSERTION = /^(?<key>[a-z][a-z-]*|(?:h|req):[A-Za-z0-9-]+)(?<op>=|~|\+|-)(?<value>.*)$/;
 
 export function parseFile(file) {
     const rows = [];
@@ -81,6 +82,7 @@ export function parseFile(file) {
             status: Number(status),
             location,
             accept: '*/*',
+            requestHeaders: {},
             checks: [],
             pages: [],
             twin: true,
@@ -98,6 +100,8 @@ export function parseFile(file) {
             const { key, op, value } = m.groups;
             if (key === 'accept') {
                 row.accept = value in ACCEPT_ALIASES ? ACCEPT_ALIASES[value] : value;
+            } else if (key.startsWith('req:') && op === '=') {
+                row.requestHeaders[key.slice(4)] = value;
             } else if (key === 'page') {
                 row.pages.push(value);
             } else if (key === 'twin') {
