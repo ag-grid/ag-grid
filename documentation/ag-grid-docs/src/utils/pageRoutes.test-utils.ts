@@ -25,7 +25,7 @@ const DOCS_ENTRIES = readdirSync(DOCS_CONTENT_DIR)
     .filter((pageName) => existsSync(join(DOCS_CONTENT_DIR, pageName, 'index.mdoc')))
     .map((pageName) => {
         const source = readFileSync(join(DOCS_CONTENT_DIR, pageName, 'index.mdoc'), 'utf8');
-        const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1];
+        const frontmatter = /^---[ \t]*\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1];
         return { id: pageName, data: (frontmatter && load(frontmatter)) || {} } as DocsPage;
     });
 
