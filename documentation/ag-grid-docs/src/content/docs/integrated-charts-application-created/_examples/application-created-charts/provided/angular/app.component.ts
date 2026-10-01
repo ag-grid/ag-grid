@@ -66,7 +66,7 @@ function numberCellFormatter(params: ValueFormatterParams) {
                     <button (click)="onStopMessages()">&#9632; Stop</button>
                     <button (click)="onStartLoad()">&#9658; Start</button>
                 </span>
-                <span style="margin-left: 30px">
+                <span class="gap-left">
                     <button (click)="updateChart('stackedColumn')">Stacked Column Chart</button>
                     <button (click)="updateChart('groupedColumn')">Grouped Column Chart</button>
                     <button (click)="updateChart('line')">Line Chart</button>

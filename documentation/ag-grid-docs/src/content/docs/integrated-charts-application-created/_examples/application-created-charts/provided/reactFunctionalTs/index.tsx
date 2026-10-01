@@ -166,7 +166,7 @@ const GridExample = () => {
                             <button onClick={onStopMessages}>&#9632; Stop</button>
                             <button onClick={onStartLoad}>&#9658; Start</button>
                         </span>
-                        <span style={{ marginLeft: '30px' }}>
+                        <span className="gap-left">
                             <button onClick={() => updateChart('stackedColumn')}>Stacked Column Chart</button>
                             <button onClick={() => updateChart('groupedColumn')}>Grouped Column Chart</button>
                             <button onClick={() => updateChart('line')}>Line Chart</button>

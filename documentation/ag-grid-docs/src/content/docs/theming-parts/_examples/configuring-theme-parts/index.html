@@ -2,14 +2,14 @@
     <div class="example-controls" style="flex: 0 1 0%">
         <div class="controls-row">
             Theme:
-            <select style="margin-right: 16px" onchange="setBaseTheme(this.value)">
+            <select class="gap-right" onchange="setBaseTheme(this.value)">
                 <option value="quartz">themeQuartz</option>
                 <option value="balham">themeBalham</option>
                 <option value="alpine">themeAlpine</option>
                 <option value="material">themeMaterial</option>
             </select>
             Icons:
-            <select style="margin-right: 16px" onchange="setIconSet(this.value)">
+            <select class="gap-right" onchange="setIconSet(this.value)">
                 <option>(unchanged)</option>
                 <option value="quartzLight">iconSetQuartzLight</option>
                 <option value="quartzRegular">iconSetQuartzRegular</option>
@@ -18,7 +18,7 @@
                 <option value="material">iconSetMaterial</option>
             </select>
             Color scheme:
-            <select style="margin-right: 16px" onchange="setColorScheme(this.value)">
+            <select onchange="setColorScheme(this.value)">
                 <option>(unchanged)</option>
                 <option value="light">colorSchemeLight</option>
                 <option value="lightCold">colorSchemeLightCold</option>

@@ -48,11 +48,7 @@ const PartSelector = <T extends { id: string; variant?: string } | null>({
     value,
     setValue,
 }: PartSelectorProps<T>) => (
-    <select
-        onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value)! || null)}
-        style={{ marginRight: 16 }}
-        value={value?.id}
-    >
+    <select onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value)! || null)} value={value?.id}>
         {options.map((option, i) => (
             <option key={i} value={option?.id}>
                 {option?.variant || option?.id || '(unchanged)'}

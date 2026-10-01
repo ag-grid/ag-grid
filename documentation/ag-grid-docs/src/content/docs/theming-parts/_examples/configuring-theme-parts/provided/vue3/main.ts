@@ -64,15 +64,15 @@ const VueExample = defineComponent({
             <div class="example-controls" style="flex: 0 1 0%">
                 <div class="controls-row">
                     Theme:
-                    <select style="margin-right: 16px" v-model="baseTheme">
+                    <select class="gap-right" v-model="baseTheme">
                         <option v-for="t in baseThemes" :value="t">{{ t.id }}</option>
                     </select>
                     Icons:
-                    <select style="margin-right: 16px" v-model="iconSet">
+                    <select class="gap-right" v-model="iconSet">
                         <option v-for="iconSet in iconSets" :value="iconSet">{{ iconSet.id }}</option>
                     </select>
                     Color scheme:
-                    <select style="margin-right: 16px" v-model="colorScheme">
+                    <select v-model="colorScheme">
                         <option v-for="colorScheme in colorSchemes" :value="colorScheme">{{ colorScheme.id }}</option>
                     </select>
                 </div>
