@@ -80,6 +80,45 @@ describe('WAF statement structure', () => {
             },
         ],
         ['data-centre rule as an OR', CHECKS.dataCentre, 'block-datacenter-except-agent-paths', and2or],
+        [
+            'data-centre rule without its verified-bot exemptions',
+            CHECKS.dataCentre,
+            'block-datacenter-except-agent-paths',
+            (s) => {
+                const or = s.AndStatement.Statements[1].NotStatement.Statement.OrStatement;
+                or.Statements = or.Statements.filter((x: any) => !x.LabelMatchStatement);
+                return s;
+            },
+        ],
+        [
+            'data-centre rule missing one verified-bot label',
+            CHECKS.dataCentre,
+            'block-datacenter-except-agent-paths',
+            (s) => {
+                s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements.splice(1, 1);
+                return s;
+            },
+        ],
+        [
+            'data-centre rule verified-bot label matched as a namespace',
+            CHECKS.dataCentre,
+            'block-datacenter-except-agent-paths',
+            (s) => {
+                s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements[0].LabelMatchStatement.Scope =
+                    'NAMESPACE';
+                return s;
+            },
+        ],
+        [
+            'data-centre rule markdown exemption as EXACTLY',
+            CHECKS.dataCentre,
+            'block-datacenter-except-agent-paths',
+            (s) => {
+                const stmts = s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements;
+                stmts[stmts.length - 1].ByteMatchStatement.PositionalConstraint = 'EXACTLY';
+                return s;
+            },
+        ],
         ['browser challenge as an OR', CHECKS.browserChallenge, 'challenge-automated-browser-documents', and2or],
         [
             'browser challenge exemption without its negation',

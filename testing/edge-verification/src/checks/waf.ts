@@ -190,7 +190,8 @@ const PENDING_RULE_SHAPES: Record<
             const label = parts?.length === 3 ? leafOf(parts[0]) : undefined;
             const exempt = parts?.length === 3 ? noneOfLeaves(parts[1]) : undefined;
             const safe = parts?.length === 3 ? noneOfLeaves(parts[2]) : undefined;
-            const p11Safe = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'))?.safe;
+            const p11 = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'));
+            const p11Safe = p11?.safe;
             if (!label || !exempt || !safe || !p11Safe) {
                 p.add(`statement is not AND(label, NOT(exemptions), NOT(safe paths))${p11Safe ? '' : ' (nor is p11)'}`);
                 return;
@@ -201,9 +202,27 @@ const PENDING_RULE_SHAPES: Record<
                 label.kind === 'label' && label.value.endsWith('signal:known_bot_data_center'),
                 'does not match the known_bot_data_center label'
             );
+            // Exactly the verified-bot labels (matched as labels, not namespaces) and p11's own
+            // Accept: text/markdown condition: losing a label blocks verified crawlers on data-centre IPs.
+            const labels = exempt.filter((l) => l.kind === 'label');
+            p.eq(
+                'verified-bot exemption statement labels',
+                sorted(labels.map((l) => l.value)),
+                sorted(CF_ACL.dataCentreVerifiedLabels)
+            );
             p.check(
-                exempt.some((l) => l.kind === 'byte' && l.field === 'header:accept' && l.value === 'text/markdown'),
-                'no Accept: text/markdown exemption'
+                labels.every((l) => l.scope === 'LABEL'),
+                'verified-bot exemption statement matches a namespace, not the label'
+            );
+            const p11Accept = p11?.exemptions.filter((l) => l.kind === 'byte' && l.field === 'header:accept');
+            const accept = exempt.filter((l) => l.kind !== 'label');
+            p.check(
+                p11Accept?.length === 1 &&
+                    accept.length === 1 &&
+                    JSON.stringify(accept[0]) === JSON.stringify(p11Accept[0]) &&
+                    accept[0].kind === 'byte' &&
+                    accept[0].value === CF_ACL.nonBrowser.markdownAcceptExemption,
+                `exemption statement's non-label part is not p11's Accept: ${CF_ACL.nonBrowser.markdownAcceptExemption} condition alone`
             );
             p.eq('custom body', rule.Action?.Block?.CustomResponse?.CustomResponseBodyKey, 'automated-access-blocked');
         },

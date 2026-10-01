@@ -367,6 +367,16 @@ export const CF_ACL = {
         pendingCountOverrides: [{ name: 'SignalKnownBotDataCenter', pending: PENDING.datacenterAfterAgents }],
     },
 
+    /**
+     * The verified-bot labels block-datacenter-except-agent-paths exempts, alongside p11's own
+     * Accept: text/markdown condition (move-datacenter-block-after-agent-exemptions.sh).
+     */
+    dataCentreVerifiedLabels: [
+        'awswaf:managed:aws:bot-control:bot:verified',
+        'awswaf:managed:aws:bot-control:bot:user_triggered:verified',
+        'awswaf:managed:aws:bot-control:bot:developer_platform:verified',
+    ],
+
     credentialScanner: {
         regex: '\\.git/|\\.env(\\.|_|[0-9]|$)|id_rsa|\\.ssh/|\\.aws/credentials',
         /** SE-185: must match. */

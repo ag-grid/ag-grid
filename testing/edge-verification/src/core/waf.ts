@@ -5,7 +5,7 @@ import { decodeSearchString } from './live';
 export type Leaf =
     | { kind: 'byte'; field: string; value: string; positional: string; transforms: string[] }
     | { kind: 'regex'; field: string; value: string; transforms: string[] }
-    | { kind: 'label'; value: string }
+    | { kind: 'label'; value: string; scope: string }
     | { kind: 'ipset'; value: string };
 
 function fieldName(ftm: any): string {
@@ -146,7 +146,7 @@ export function leaves(node: unknown): Leaf[] {
                 transforms: transforms(s),
             });
         } else if (o.LabelMatchStatement) {
-            out.push({ kind: 'label', value: o.LabelMatchStatement.Key });
+            out.push({ kind: 'label', value: o.LabelMatchStatement.Key, scope: o.LabelMatchStatement.Scope });
         } else if (o.IPSetReferenceStatement) {
             out.push({ kind: 'ipset', value: o.IPSetReferenceStatement.ARN });
         } else {
