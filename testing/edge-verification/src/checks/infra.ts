@@ -95,10 +95,15 @@ export function infraChecks(): CheckDef[] {
                     p.eq('metric', a.MetricName, exp.metric);
                 }
                 if (exp.dimensions) {
-                    const dims = Object.fromEntries((a.Dimensions ?? []).map((d: any) => [d.Name, d.Value]));
-                    for (const [k, v] of Object.entries(exp.dimensions)) {
-                        p.eq(`dimension ${k}`, dims[k], v);
-                    }
+                    // The complete set: CloudWatch names a metric by all its dimensions, so an extra one
+                    // watches a different (possibly empty) metric.
+                    const byName = (d: Array<[string, unknown]>) =>
+                        Object.fromEntries(d.sort(([x], [y]) => x.localeCompare(y)));
+                    p.eq(
+                        'dimensions',
+                        byName((a.Dimensions ?? []).map((d: any) => [d.Name, d.Value])),
+                        byName(Object.entries(exp.dimensions))
+                    );
                 }
                 if (exp.comparison) {
                     p.eq('comparison', a.ComparisonOperator, exp.comparison);
