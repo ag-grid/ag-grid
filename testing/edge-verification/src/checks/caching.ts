@@ -121,6 +121,11 @@ export function cachingChecks(): CheckDef[] {
                 const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT } });
                 const after = await http.request({ url, fresh: true });
                 const p = new Problems();
+                // Only successful responses show a markdown request leaving the page intact; an
+                // error page or a blocked markdown request proves nothing either way.
+                p.eq('first status', before.status, 200);
+                p.eq('markdown status', md.status, 200);
+                p.eq('status after a markdown request', after.status, 200);
                 p.eq('first response', contentType(before), 'text/html');
                 p.eq('after a markdown request', contentType(after), 'text/html');
                 p.check(!HIT.test(xCache(after)), `HTML came from cache after a markdown request (${xCache(after)})`);
