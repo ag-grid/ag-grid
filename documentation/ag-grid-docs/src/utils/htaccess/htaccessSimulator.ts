@@ -114,7 +114,8 @@ export interface ResponseContext {
     status: number;
     contentType?: string;
     /**
-     * Whether the onsuccess (non-`always`) table is sent. True for 2xx, and for a local ErrorDocument,
+     * Whether the onsuccess (non-`always`) table is sent. True for 2xx and for a 304 revalidation of a
+     * static file (verified on Apache 2.4.52, the production version), and for a local ErrorDocument,
      * which Apache serves through an internal redirect (verified on staging for the Link header).
      */
     onSuccess?: boolean;
@@ -883,7 +884,8 @@ export function responseHeaders(files: CompiledHtaccess[], response: ResponseCon
         CONTENT_TYPE: response.contentType ?? '',
         REQUEST_STATUS: String(response.status),
     };
-    const onSuccess = response.onSuccess ?? (response.status >= 200 && response.status < 300);
+    const onSuccess =
+        response.onSuccess ?? ((response.status >= 200 && response.status < 300) || response.status === 304);
     const tables = { always: new Map<string, string[]>(), onsuccess: new Map<string, string[]>() };
     if (response.varyFromRewrite?.length) {
         tables.onsuccess.set('vary', [response.varyFromRewrite.join(', ')]);

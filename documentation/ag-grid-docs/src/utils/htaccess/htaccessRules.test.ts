@@ -481,20 +481,14 @@ describe('htaccessRules', () => {
         });
 
         it('leaves a 304 to the long cache of the copy it revalidates', () => {
-            // A 304 refreshes the stored headers, so a no-cache there would undo the long cache. Whichever
-            // header table Apache sends with it, the redirect rule adds nothing.
+            // A 304 refreshes the stored headers, so a no-cache there would undo the long cache. Apache
+            // sends the normal header table with a static-file 304 (verified on 2.4.52), and the
+            // redirect rule adds nothing to it.
             const files = [compileHtaccess(productionContent)];
             const uri = '/_astro/DocsExampleRunner.CiSTQ4_g.css';
-            expect(
-                responseHeaders(files, { uri, status: 304, contentType: 'text/css', onSuccess: true }).get(
-                    'cache-control'
-                )
-            ).toEqual(responseHeaders(files, { uri, status: 200, contentType: 'text/css' }).get('cache-control'));
-            expect(
-                responseHeaders(files, { uri, status: 304, contentType: 'text/css', onSuccess: false }).get(
-                    'cache-control'
-                )
-            ).toBeUndefined();
+            expect(responseHeaders(files, { uri, status: 304, contentType: 'text/css' }).get('cache-control')).toEqual(
+                responseHeaders(files, { uri, status: 200, contentType: 'text/css' }).get('cache-control')
+            );
         });
     });
 
