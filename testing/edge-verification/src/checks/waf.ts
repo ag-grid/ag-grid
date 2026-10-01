@@ -48,6 +48,12 @@ function compareRuleList(p: Problems, liveRules: any[], expected: RuleExpectatio
         // ExcludedRules is the legacy form of a Count override: one there disables a blocking rule
         // without appearing in RuleActionOverrides. None are declared, and none exist live.
         const mrg = r.Statement?.ManagedRuleGroupStatement;
+        // The rule name says nothing about the group it runs: a rule named for one AWS group
+        // could run another and quietly ignore overrides naming rules that group lacks.
+        const group = /^AWS-(AWSManagedRules\w+)$/.exec(e.name)?.[1];
+        if (group) {
+            p.eq(`${e.name} managed group`, `${mrg?.VendorName}/${mrg?.Name}`, `AWS/${group}`);
+        }
         if (mrg) {
             p.eq(
                 `${e.name} ExcludedRules`,
@@ -906,8 +912,9 @@ export function wafChecks(): CheckDef[] {
                         exempt.length === 1 &&
                             exempt[0].kind === 'regex' &&
                             exempt[0].field === 'UriPath' &&
-                            exempt[0].value === exp.exemptRegex,
-                        'exempt statement is not the declared UriPath regex'
+                            exempt[0].value === exp.exemptRegex &&
+                            JSON.stringify(exempt[0].transforms) === JSON.stringify(exp.exemptTransforms),
+                        'exempt statement is not the declared UriPath regex and transformations'
                     );
                 }
                 p.eq('immunity', rule.ChallengeConfig?.ImmunityTimeProperty?.ImmunityTime, exp.immunity);
