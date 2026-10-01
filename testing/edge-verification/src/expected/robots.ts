@@ -1,4 +1,4 @@
-import { type Lifecycle, NEW_FINDING, PENDING, finding } from './lifecycle';
+import { type Lifecycle, PENDING, finding } from './lifecycle';
 
 /** SE-78 / SE-184: the named AI-crawler group, exactly. */
 export const AI_GROUP = [
@@ -148,8 +148,6 @@ export const MD_TWIN_POLICY = {
     wildcardSample: 'edge-check',
     query: '?utm_source=edge-check',
     pending: PENDING.gridRobotsTwins,
-    /** The `$` on `<page>.md$` means a query string reopens the twin. */
-    queryKnownIssue: NEW_FINDING(
-        'grid#15424 emits <page>.md$ twin rules; the $ anchor leaves <page>.md?<query> crawlable for every disallowed page'
-    ),
+    /** grid#15424 2ed1049f81e adds a `<page>.md?` rule beside each `<page>.md$`, so a query string does not reopen it. */
+    queryPending: PENDING.gridRobotsTwinsQuery,
 };

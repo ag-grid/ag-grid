@@ -220,9 +220,11 @@ export const REDIRECTS: RedirectRow[] = [
         finding(20),
         'grid#15424',
     ]),
-    r(`${WWW}/react-data-grid/building/`, `${WWW}/react-data-grid/modules/`, [finding(20), 'grid#15424'], {
-        note: 'only the JavaScript building page maps to installation',
-    }),
+    ...['angular', 'react', 'vue'].map((fw) =>
+        r(`${WWW}/${fw}-data-grid/building/`, `${WWW}/${fw}-data-grid/installation/`, [finding(20), 'grid#15424'], {
+            pending: PENDING.gridBuilding,
+        })
+    ),
     r(
         `${WWW}/javascript-data-grid/server-side-model-high-frequency/`,
         `${WWW}/javascript-data-grid/server-side-model-updating-transactions/`,

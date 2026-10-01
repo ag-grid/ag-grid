@@ -67,11 +67,11 @@ export interface AdvertisedLink extends Lifecycle {
 export const ADVERTISED_LINKS: AdvertisedLink[] = [
     {
         // §20.3: /javascript-data-grid/ only forwards in the browser (no sitemap entry, no .md twin).
-        // grid#15424 ec123914161 points the link at the homepage (siteRoot), the Data Grid landing page.
+        // grid#15424 points the link at the JavaScript getting-started page (user decision 2026-10-01).
         id: 'grid-data-grid',
         file: 'https://www.ag-grid.com/llms.txt',
         label: 'Data Grid',
-        url: 'https://www.ag-grid.com/',
+        url: 'https://www.ag-grid.com/javascript-data-grid/getting-started/',
         notUrl: 'https://www.ag-grid.com/javascript-data-grid/',
         refs: [finding(20), 'grid#15424', 'SE-77'],
         pending: PENDING.gridLlmsDataGrid,
