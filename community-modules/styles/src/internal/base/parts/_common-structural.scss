@@ -1781,18 +1781,26 @@
     .ag-rich-select-field-input {
         flex: 1 1 auto;
         .ag-input-field-input {
-            padding-block: 0 !important;
-            padding-inline-end: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
             text-overflow: ellipsis;
             &::placeholder {
                 opacity: 0.8;
             }
         }
-        // with a search icon, the input keeps the start padding that the search input style gives it
-        &:not(.ag-input-field-search) .ag-input-field-input {
-            padding-inline-start: 0 !important;
+        // the extra classes lift these above each theme's `ag.text-input` rules, which reach
+        // `.ag-theme-x .ag-ltr input[class^='ag-'][type='text']` and are emitted after this file
+        &.ag-input-field input[class^='ag-'][type='text'].ag-input-field-input {
+            padding-block: 0;
+            padding-inline-end: 0;
+            border: none;
+            box-shadow: none;
+            &:focus {
+                border: none;
+                box-shadow: none;
+            }
+        }
+        // a search input keeps the start padding that the search input style gives it
+        &:not(.ag-input-field-search) input[class^='ag-'][type='text'].ag-input-field-input {
+            padding-inline-start: 0;
         }
     }
 
