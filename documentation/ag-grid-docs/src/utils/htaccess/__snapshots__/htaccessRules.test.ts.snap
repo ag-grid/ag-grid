@@ -2665,9 +2665,9 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/integrated-charts-toolbar/ /angular-data-grid/integrated-charts-menu/
     Redirect 301 /react-data-grid/integrated-charts-toolbar/ /react-data-grid/integrated-charts-menu/
     Redirect 301 /vue-data-grid/integrated-charts-toolbar/ /vue-data-grid/integrated-charts-menu/
-    Redirect 301 /angular-data-grid/building/ /angular-data-grid/modules/
-    Redirect 301 /react-data-grid/building/ /react-data-grid/modules/
-    Redirect 301 /vue-data-grid/building/ /vue-data-grid/modules/
+    Redirect 301 /angular-data-grid/building/ /angular-data-grid/installation/
+    Redirect 301 /react-data-grid/building/ /react-data-grid/installation/
+    Redirect 301 /vue-data-grid/building/ /vue-data-grid/installation/
     Redirect 301 /javascript-data-grid/packages-modules/ /javascript-data-grid/modules/
     Redirect 301 /angular-data-grid/packages-modules/ /angular-data-grid/modules/
     Redirect 301 /react-data-grid/packages-modules/ /react-data-grid/modules/

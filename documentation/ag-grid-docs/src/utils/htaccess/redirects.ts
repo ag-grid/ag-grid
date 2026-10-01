@@ -3102,9 +3102,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/integrated-charts-toolbar/', to: '/react-data-grid/integrated-charts-menu/' },
     { from: '/vue-data-grid/integrated-charts-toolbar/', to: '/vue-data-grid/integrated-charts-menu/' },
 
-    { from: '/angular-data-grid/building/', to: '/angular-data-grid/modules/' },
-    { from: '/react-data-grid/building/', to: '/react-data-grid/modules/' },
-    { from: '/vue-data-grid/building/', to: '/vue-data-grid/modules/' },
+    { from: '/angular-data-grid/building/', to: '/angular-data-grid/installation/' },
+    { from: '/react-data-grid/building/', to: '/react-data-grid/installation/' },
+    { from: '/vue-data-grid/building/', to: '/vue-data-grid/installation/' },
 
     { from: '/javascript-data-grid/packages-modules/', to: '/javascript-data-grid/modules/' },
     { from: '/angular-data-grid/packages-modules/', to: '/angular-data-grid/modules/' },
