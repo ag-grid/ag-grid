@@ -201,6 +201,30 @@ function p11SafeLeaves(): Leaf[] {
     ];
 }
 
+/** The tokens of a `(a|b|…)` alternation with no nested groups, or undefined for any other regex shape. */
+function alternationTokens(value: string): string[] | undefined {
+    const m = /^\(([^()]*)\)$/.exec(value);
+    return m ? m[1].split('|') : undefined;
+}
+
+/**
+ * Whether a UA regex is the AI allowlist with exactly the declared tokens: the deployed set, or that
+ * plus extend-p11-agent-allowlist.sh's additions. Compared as a complete token set, so an appended
+ * `|bytespider` (or any other extra or missing token) is drift.
+ */
+function isDeclaredAllowlist(value: string): boolean {
+    const nb = CF_ACL.nonBrowser;
+    const tokens = alternationTokens(value);
+    if (!tokens) {
+        return false;
+    }
+    const got = JSON.stringify(sorted(tokens));
+    return (
+        got === JSON.stringify(sorted(nb.uaAllowTokens)) ||
+        got === JSON.stringify(sorted([...nb.uaAllowTokens, ...nb.pendingUaAllowTokens.tokens]))
+    );
+}
+
 /** Whether a single-leaf p11 exemption is one the expectations declare (see the nonbrowser-rule check). */
 function isDeclaredP11Exemption(l: Leaf): boolean {
     const nb = CF_ACL.nonBrowser;
@@ -215,10 +239,13 @@ function isDeclaredP11Exemption(l: Leaf): boolean {
                 JSON.stringify(l.transforms) === JSON.stringify(nb.markdownAcceptTransforms)
             );
         case 'regex':
+            // The complete regex, not sample membership: the allowlist by its full token set, the
+            // other UA regexes by their exact live strings, and always lower-casing first.
             return (
                 l.field === 'header:user-agent' &&
-                !nb.undeclaredUas.some((ua) => regexLeafMatches(l, ua)) &&
-                [...nb.uaAllowTokens, ...nb.otherUaExemptions].some((ua) => regexLeafMatches(l, ua))
+                JSON.stringify(l.transforms) === JSON.stringify(['LOWERCASE']) &&
+                (isDeclaredAllowlist(l.value) || nb.otherUaRegexes.includes(l.value)) &&
+                !nb.undeclaredUas.some((ua) => regexLeafMatches(l, ua))
             );
         default:
             return false;
@@ -716,7 +743,8 @@ export function wafChecks(): CheckDef[] {
                 // admitting all but saliencebot) exempts traffic nothing above declared.
                 const undeclared = e.filter((l) => !isDeclaredP11Exemption(l));
                 p.check(!undeclared.length, `undeclared exemptions: ${undeclared.map(leafKey).join(', ')}`);
-                p.eq('exemption count', e.length, 2 + nb.exemptLabels.length + 1);
+                // The allowlist, each other UA regex, the labels and the Accept match (the saliencebot AND is counted apart).
+                p.eq('exemption count', e.length, 1 + nb.otherUaRegexes.length + nb.exemptLabels.length + 1);
                 p.eq('AND exemption count', ands.length, 1);
                 // Every property, not just the value: a safe path matched on another field, as an
                 // exact match, or after another transform no longer exempts what it names.

@@ -705,3 +705,60 @@ describe('safe-path exemptions keep their matching semantics', () => {
         }
     }
 });
+
+describe('p11 UA regexes are compared in full', () => {
+    const exemptionAlts = (s: any): any[] => s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements;
+    const allowlist = (alts: any[]): any =>
+        alts.find((a: any) => a.RegexMatchStatement?.RegexString.includes('chatgpt-user'));
+    for (const [what, mutate] of [
+        [
+            'bytespider is appended to the allowlist',
+            (alts: any[]) => {
+                const r = allowlist(alts).RegexMatchStatement;
+                r.RegexString = r.RegexString.replace(/\)$/, '|bytespider)');
+            },
+        ],
+        [
+            'a declared token is dropped from the allowlist',
+            (alts: any[]) => {
+                const r = allowlist(alts).RegexMatchStatement;
+                r.RegexString = r.RegexString.replace('|gptbot', '');
+            },
+        ],
+        [
+            'the in-app browser regex gains a token',
+            (alts: any[]) => {
+                const fb = alts.find((a: any) =>
+                    a.RegexMatchStatement?.RegexString.includes('fban/')
+                ).RegexMatchStatement;
+                fb.RegexString = fb.RegexString.replace(/\)$/, '|okhttp)');
+            },
+        ],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await run(CHECKS.nonBrowser, {
+                rule: 'block-nonbrowser-except-ai-assistants',
+                edit: (s) => {
+                    mutate(exemptionAlts(s));
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+        });
+    }
+
+    it('passes with the allowlist extended by exactly the pending script tokens', async () => {
+        const outcome = await run(CHECKS.nonBrowser, {
+            rule: 'block-nonbrowser-except-ai-assistants',
+            edit: (s) => {
+                const r = allowlist(exemptionAlts(s)).RegexMatchStatement;
+                r.RegexString = r.RegexString.replace(
+                    /\)$/,
+                    `|${CF_ACL.nonBrowser.pendingUaAllowTokens.tokens.join('|')})`
+                );
+                return s;
+            },
+        });
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+});

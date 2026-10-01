@@ -218,10 +218,8 @@ export function cfAclRules(): any[] {
                     or(
                         regex('header:user-agent', `(${nb.uaAllowTokens.join('|')})`),
                         ...nb.exemptLabels.map(label),
-                        regex(
-                            'header:user-agent',
-                            `(${nb.otherUaExemptions.map((u) => u.replace(/\./g, '\\.')).join('|')})`
-                        ),
+                        // Live shape: the Apple link-preview and in-app-browser UAs are two separate regexes.
+                        ...nb.otherUaRegexes.map((r) => regex('header:user-agent', r)),
                         // Live shape: the saliencebot UA only counts from its IP set.
                         and(regex('header:user-agent', 'saliencebot'), ipset(nb.saliencebotIpSet)),
                         byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption, nb.markdownAcceptTransforms[0])
