@@ -432,6 +432,45 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('Compressed responses revalidate', () => {
+        const getEditRules = (content: string) =>
+            content.split('\n').filter((l) => l.startsWith('RequestHeader edit* If-None-Match '));
+
+        // Applies the rule the way mod_headers' edit* does: a global regex replace of the header value.
+        const applyRule = (rule: string, value: string) => {
+            const [, pattern, replacement] = rule.match(/^RequestHeader edit\* If-None-Match '([^']*)' '([^']*)'$/)!;
+            return value.replace(new RegExp(pattern, 'g'), replacement);
+        };
+
+        it('strips the mod_deflate ETag suffix from If-None-Match once, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                expect(getEditRules(content)).toHaveLength(1);
+            });
+        });
+
+        it('turns a compressed ETag back into the one Apache compares against', () => {
+            const [rule] = getEditRules(productionContent);
+            expect(applyRule(rule, '"8aea4-65cb43860ca80-gzip"')).toBe('"8aea4-65cb43860ca80"');
+            expect(applyRule(rule, 'W/"8aea4-65cb43860ca80-gzip"')).toBe('W/"8aea4-65cb43860ca80"');
+            expect(applyRule(rule, '"a-1-gzip", W/"b-2-gzip","c-3"')).toBe('"a-1", W/"b-2","c-3"');
+        });
+
+        it('leaves uncompressed, brotli and wildcard validators alone', () => {
+            const [rule] = getEditRules(productionContent);
+            for (const value of ['"8aea4-65cb43860ca80"', '"8aea4-65cb43860ca80-br"', '*']) {
+                expect(applyRule(rule, value)).toBe(value);
+            }
+        });
+
+        it('is not guarded by <IfModule>, so it cannot silently stop applying', () => {
+            const lines = productionContent.split('\n');
+            const index = lines.findIndex((l) => l.startsWith('RequestHeader edit* If-None-Match '));
+            const opened = lines.slice(0, index).filter((l) => l.startsWith('<IfModule')).length;
+            const closed = lines.slice(0, index).filter((l) => l.startsWith('</IfModule>')).length;
+            expect(opened).toBe(closed);
+        });
+    });
+
     describe('Archived markdown variants are noindexed', () => {
         const getNoindexRules = (content: string) => content.split('\n').filter((l) => l.includes('X-Robots-Tag'));
 
@@ -483,6 +522,10 @@ describe('htaccessRules', () => {
             expect(archiveContent).not.toContain('X-Robots-Tag');
             expect(archiveContent).not.toContain('Header always set Cache-Control');
             expect(archiveContent).not.toContain('REQUEST_STATUS} -ge 300');
+        });
+
+        it('leaves the If-None-Match suffix strip to the root, which mod_headers merges into archives', () => {
+            expect(archiveContent).not.toContain('RequestHeader');
         });
     });
 
