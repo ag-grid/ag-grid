@@ -17,6 +17,13 @@ import type { Aws } from './aws';
 export const WAF_LOG_GROUP = 'aws-waf-logs-cloudfront';
 export const WAF_LOG_REGION = 'us-east-1';
 
+/**
+ * Insights scanned more than the group ingested over the same window: 0.10 GB for a 5-minute
+ * window when IncomingBytes was 0.6 GB/h (2026-10-01). The estimate is scaled by this so the cap
+ * errs on the safe side.
+ */
+export const SCAN_TO_INGEST_FACTOR = 2;
+
 /** Used only when IncomingBytes cannot be read: ~15 GB/day at the top of the measured range, rounded up. */
 export const DECLARED_INGEST_BYTES_PER_HOUR = 0.7e9;
 
@@ -230,9 +237,10 @@ async function estimateBytes(aws: Aws, start: Date, end: Date): Promise<{ bytes:
         );
         const points: any[] = r.Datapoints ?? [];
         if (points.length) {
+            const ingested = points.reduce((a, p) => a + Number(p.Sum ?? 0), 0);
             return {
-                bytes: points.reduce((a, p) => a + Number(p.Sum ?? 0), 0),
-                source: `IncomingBytes, ${points.length} x 5 min`,
+                bytes: ingested * SCAN_TO_INGEST_FACTOR,
+                source: `${SCAN_TO_INGEST_FACTOR} x IncomingBytes ${gb(ingested)} over ${points.length} x 5 min`,
             };
         }
     } catch {
@@ -240,8 +248,8 @@ async function estimateBytes(aws: Aws, start: Date, end: Date): Promise<{ bytes:
     }
     const hours = (end.getTime() - start.getTime()) / 3_600_000;
     return {
-        bytes: hours * DECLARED_INGEST_BYTES_PER_HOUR,
-        source: `declared ${DECLARED_INGEST_BYTES_PER_HOUR / 1e9} GB/h (IncomingBytes unavailable)`,
+        bytes: hours * DECLARED_INGEST_BYTES_PER_HOUR * SCAN_TO_INGEST_FACTOR,
+        source: `${SCAN_TO_INGEST_FACTOR} x declared ${DECLARED_INGEST_BYTES_PER_HOUR / 1e9} GB/h (IncomingBytes unavailable)`,
     };
 }
 
