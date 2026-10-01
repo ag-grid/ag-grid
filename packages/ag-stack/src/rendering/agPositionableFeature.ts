@@ -17,14 +17,7 @@ import {
 } from '../utils/dom';
 
 type ResizerRefPrefix =
-    | 'eTopLeft'
-    | 'eTop'
-    | 'eTopRight'
-    | 'eRight'
-    | 'eBottomRight'
-    | 'eBottom'
-    | 'eBottomLeft'
-    | 'eLeft';
+    'eTopLeft' | 'eTop' | 'eTopRight' | 'eRight' | 'eBottomRight' | 'eBottom' | 'eBottomLeft' | 'eLeft';
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 const makeDiv = <TSelectorType extends string>(
     dataRefPrefix: ResizerRefPrefix,
@@ -70,14 +63,7 @@ export interface PositionableOptions {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ResizableSides =
-    | 'topLeft'
-    | 'top'
-    | 'topRight'
-    | 'right'
-    | 'bottomRight'
-    | 'bottom'
-    | 'bottomLeft'
-    | 'left';
+    'topLeft' | 'top' | 'topRight' | 'right' | 'bottomRight' | 'bottom' | 'bottomLeft' | 'left';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ResizableStructure = {
@@ -440,7 +426,9 @@ export class AgPositionableFeature<
         } else if (this.positioned) {
             width = Math.max(this.minWidth, width as number);
             const { clientWidth } = this.offsetParent;
-            const xPosition = popup ? this.position.x : this.element.getBoundingClientRect().left;
+            const xPosition = popup
+                ? this.position.x
+                : this.element.getBoundingClientRect().left - this.offsetParent.getBoundingClientRect().left;
 
             if (clientWidth && width + xPosition > clientWidth) {
                 width = clientWidth - xPosition;
@@ -539,7 +527,7 @@ export class AgPositionableFeature<
         const elRect = this.element.getBoundingClientRect();
         const parentRect = this.offsetParent.getBoundingClientRect();
         const boundaryElRect = this.boundaryEl!.getBoundingClientRect();
-        const xPosition = this.config.popup ? this.position.x : elRect.left;
+        const xPosition = this.config.popup ? this.position.x : elRect.left - parentRect.left;
         // skip if cursor is outside of popupParent horizontally
         let skipX =
             (xPosition <= 0 && parentRect.left >= e.clientX) ||
