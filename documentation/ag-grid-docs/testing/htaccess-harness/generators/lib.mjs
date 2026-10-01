@@ -1,7 +1,14 @@
-// Shared pieces of the expectation generators: sample-path synthesis from a rule's regex, and
-// TSV output. The generators PREDICT behaviour from the rules' own semantics; the harness then
-// checks every prediction against real Apache, so a disagreement surfaces as a failure to review
-// (either the model is wrong, or Apache does something the rule author did not intend).
+/* eslint-disable no-console -- generator diagnostics: status to stderr, as the generators that use it */
+// Shared pieces of the expectation generators: sample-path synthesis from a rule's regex, the
+// check that every parsed rule got a sample, and TSV output. The generators PREDICT behaviour from
+// the rules' own semantics; the harness then checks every prediction against real Apache, so a
+// disagreement surfaces as a failure to review (either the model is wrong, or Apache does
+// something the rule author did not intend).
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { parseFile } from '../lib/rows.mjs';
 
 /** A concrete path that matches a (simple, anchored) Apache regex. First alternative wins. */
 export function synthFromPattern(pat, { slug = 'sample' } = {}) {
@@ -153,6 +160,52 @@ export const substitute = (target, match) => target.replace(/\$(\d)/g, (_, n) =>
 /** Collapse a doubled slash in the path part of a URL (the intended form of a prefix append). */
 export const collapseSlashes = (url) =>
     url.replace(/^(https?:\/\/[^/]+)?(.*)$/, (_, origin = '', path) => origin + path.replace(/\/{2,}/g, '/'));
+
+// The hand-written expectations (every file but the generated ones). CURATED_DIR overrides it, for
+// the generators' own tests.
+const CURATED_DIR = process.env.CURATED_DIR || fileURLToPath(new URL('../expectations', import.meta.url));
+
+/**
+ * The rules a generator parsed but could make no sample for. A rule without a sample would silently
+ * lose all its coverage (and lower the @min-rows meant to catch lost rows), so regeneration fails
+ * unless a hand-written row in curated.tsv or edge.tsv requests a path the rule matches instead.
+ */
+export class SampleGaps {
+    constructor(label) {
+        this.label = label;
+        this.gaps = [];
+    }
+    get curated() {
+        this._curated ??= readdirSync(CURATED_DIR)
+            .filter((name) => name.endsWith('.tsv') && !name.startsWith('generated-'))
+            .sort()
+            .flatMap((name) => parseFile(join(CURATED_DIR, name)).rows);
+        return this._curated;
+    }
+    /** Records rule `text`, unless a curated row's path (query dropped) satisfies `matches`. */
+    add(text, matches) {
+        const row = this.curated.find((r) => matches(r.path.split('?')[0]));
+        if (row) {
+            console.error(`# no sample generated for ${text}; covered by ${row.file}:${row.line}`);
+        } else {
+            this.gaps.push(text);
+        }
+    }
+    /** Exits 1, naming each rule, if any rule is left with neither a sample nor a curated row. */
+    exitIfAny() {
+        if (!this.gaps.length) {
+            return;
+        }
+        console.error(
+            `ERROR: ${this.label}: no sample could be generated for ${this.gaps.length} rule(s), and no curated row covers them.`
+        );
+        console.error('Add a row exercising each to curated.tsv or edge.tsv, or teach synthFromPattern the pattern:');
+        for (const text of this.gaps) {
+            console.error(`  ${text}`);
+        }
+        process.exit(1);
+    }
+}
 
 const isRedirect = (status) => status >= 300 && status < 400 && status !== 304;
 

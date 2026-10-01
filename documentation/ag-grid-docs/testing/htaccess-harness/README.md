@@ -269,6 +269,11 @@ intended target and marks the row `known-fail`, naming only the assertions whose
 - a doubled slash from a prefix append;
 - a rule shadowed by an earlier, broader one.
 
+**A rule the generator parsed but could make no sample for fails the regeneration**, naming the
+rule, unless a hand-written row in `curated.tsv` or `edge.tsv` requests a path the rule matches. A
+dropped rule would otherwise lose all its coverage silently. Each generated file's `@min-rows` is
+its full row count, so any row lost later fails the run too.
+
 ### Regenerating
 
 Regenerate only after an **intentional** rule change, then review the diff like a snapshot update.
