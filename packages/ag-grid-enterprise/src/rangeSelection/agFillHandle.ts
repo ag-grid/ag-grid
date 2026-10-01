@@ -313,7 +313,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {
         const { beans } = this;
-        const { rangeSvc, gos, valueSvc } = beans;
+        const { rangeSvc, gos, valueSvc, dataTypeSvc } = beans;
         const initialRangeEndRow = rangeSvc!.getRangeEndRow(initialRange);
         const initialRangeStartRow = rangeSvc!.getRangeStartRow(initialRange);
         const finalRangeEndRow = rangeSvc!.getRangeEndRow(finalRange);
@@ -457,7 +457,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                 }
                             }
                         }
-                        if (col.colDef.useValueParserForImport !== false) {
+                        if (
+                            col.colDef.useValueParserForImport !== false &&
+                            !(sourceCol && dataTypeSvc?.skipParseForCopiedValue(col, value, currentValue))
+                        ) {
                             currentValue = valueSvc.parseValue(
                                 col,
                                 rowNode,

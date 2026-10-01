@@ -1344,4 +1344,23 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             parseFromString.mockRestore();
         }
     });
+
+    test('pasting an empty clipboard cell into an inferred text column still stores null', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardPasteEmptyCell', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [{ id: '0', a: 'p', b: 'q' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        clipboardUtils.setText('\tx');
+        api.setFocusedCell(0, 'a');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+
+        expect(api.getRowNode('0')!.data).toEqual({ id: '0', a: null, b: 'x' });
+    });
 });
