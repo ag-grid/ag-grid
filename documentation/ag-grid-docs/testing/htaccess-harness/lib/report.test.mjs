@@ -5,6 +5,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { EXPECTATION_FILES, classifyRow, coverageErrors, expectationFileErrors } from './report.mjs';
 import { parseFile } from './rows.mjs';
@@ -131,6 +132,45 @@ describe('coverageErrors', () => {
         assert.deepEqual(coverageErrors({ declared, minRows, executed: rows.slice(3), siteSkipped: [] }), [
             'cases.tsv: 1 rows executed, @min-rows 2',
             'cases.tsv:2: category redirects executed no rows',
+        ]);
+    });
+});
+
+describe('the hand-written expectation files', () => {
+    const DIR = fileURLToPath(new URL('../expectations/', import.meta.url));
+
+    for (const file of ['curated.tsv', 'edge.tsv']) {
+        it(`${file} declares an @min-rows covering every row it holds`, () => {
+            const { rows, directives } = parseFile(join(DIR, file));
+            assert.equal(directives.minRows, rows.length);
+        });
+
+        it(`${file} fails coverage when rows are deleted but every category keeps one`, () => {
+            const { rows, directives } = parseFile(join(DIR, file));
+            const firstOfEach = rows.filter((r, i) => rows.findIndex((o) => o.category === r.category) === i);
+            const errors = coverageErrors({
+                declared: directives.categories,
+                minRows: { [file]: directives.minRows },
+                executed: firstOfEach,
+                siteSkipped: [],
+            });
+            assert.deepEqual(errors, [`${file}: ${firstOfEach.length} rows executed, @min-rows ${rows.length}`]);
+        });
+    }
+
+    it('lowers a minimum by the rows skipped for an unavailable optional feature', () => {
+        const { rows, directives } = parseFile(join(DIR, 'edge.tsv'));
+        const featureSkipped = rows.filter((r) => r.needs.length);
+        assert.ok(featureSkipped.length > 0);
+        const args = {
+            declared: directives.categories,
+            minRows: { 'edge.tsv': directives.minRows },
+            executed: rows.filter((r) => !r.needs.length),
+            siteSkipped: [],
+        };
+        assert.deepEqual(coverageErrors({ ...args, featureSkipped }), []);
+        assert.deepEqual(coverageErrors({ ...args, executed: args.executed.slice(1), featureSkipped }), [
+            `edge.tsv: ${args.executed.length - 1} rows executed, @min-rows ${rows.length} less ${featureSkipped.length} feature-skipped`,
         ]);
     });
 });

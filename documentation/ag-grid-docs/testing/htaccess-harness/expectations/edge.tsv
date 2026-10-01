@@ -3,6 +3,8 @@
 # Format: see lib/rows.mjs. Hand-curated; rows marked known-fail= are approved behaviour that is not
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
+# Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
+# @min-rows 275
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).

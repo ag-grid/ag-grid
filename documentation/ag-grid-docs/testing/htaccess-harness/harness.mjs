@@ -249,7 +249,8 @@ for (const row of siteSkipped) {
     skippedBySite[siteOf(row)] = (skippedBySite[siteOf(row)] ?? 0) + 1;
 }
 
-const coverageGaps = coverageErrors({ declared, minRows, executed: active, siteSkipped });
+const featureSkipped = skipped.filter((r) => !sites[siteOf(r)].off);
+const coverageGaps = coverageErrors({ declared, minRows, executed: active, siteSkipped, featureSkipped });
 
 if (failed.length) {
     console.log(`\n==> FAILURES (${failed.length})`);

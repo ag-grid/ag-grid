@@ -145,7 +145,7 @@ GRID_REF=origin/latest ./testing/htaccess-harness/run.sh
 
 - a failing row;
 - a known-fail row that unexpectedly passes;
-- a file executing fewer rows than its `@min-rows`, less the rows of any site that was skipped (so skipping charts lowers a mixed file's minimum by its charts rows only);
+- a file executing fewer rows than its `@min-rows`, less the rows of any site that was skipped (so skipping charts lowers a mixed file's minimum by its charts rows only) and the `needs=` rows of an unavailable optional feature;
 - a declared `@category` executing no rows, unless all of its rows belong to a site that was skipped (`SKIP_CHARTS=1`, `SKIP_STUDIO=1`, or outside the `--env` topology).
 
 The summary prints:
@@ -232,7 +232,9 @@ implemented yet, e.g. `known-fail=cc:waf-finding.md §4`.
 
 **Directives:** `# @category <name>` groups the rows that follow it in the summary; every declared
 category must execute at least one row, so deleting a category's rows fails the run even when its
-file is still above its minimum. `# @min-rows <n>` guards against a generator silently dropping rows.
+file is still above its minimum. `# @min-rows <n>` guards against a generator silently dropping rows,
+and against rows deleted by hand from `curated.tsv` and `edge.tsv` (whose minimum is their full row
+count, checked by a self-test).
 
 ### Files
 
