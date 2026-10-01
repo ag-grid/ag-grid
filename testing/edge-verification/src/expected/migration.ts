@@ -101,5 +101,32 @@ export const BACKUP_NAME = '.htaccess.bak-20261001000000';
 
 export const MIGRATION_REFS = ['grid#15430', finding(3), finding(20)];
 export const MIGRATION_PENDING = PENDING.archiveMigration;
-/** The slash-less one-hop case needs the migration run with the grid#15434 / #15435 block. */
-export const SLASHLESS_PENDING = `${PENDING.archiveMigration}, with the grid#15434 / #15435 block (canonicalising trailing-slash rule)`;
+/**
+ * The slash-less directory rule the migration block now starts with, for every site
+ * (canonicalSlashRule in scripts/migrate-archive-htaccess.mjs, grid 1ed479efba5 on
+ * seo-edge-hardening and 91087c97fd9 on seo-edge-hardening-b36.2.0):
+ *
+ *   RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\.ag-grid\.com:80|(?:<hosts>):[0-9]+)$ [NC]
+ *   RewriteCond %{REQUEST_URI} /+[^\.]+$
+ *   RewriteCond <the four .well-known DCV exclusions>
+ *   RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
+ *
+ * No [QSD], so the query string is kept after the added slash.
+ */
+export const SLASHLESS_RULE = {
+    /** CANONICAL_SLASH_HOSTS, on any port; www itself only on port 80. */
+    hosts: [
+        'ag-grid.com',
+        'angulargrid.ag-grid.com',
+        'angular-grid.ag-grid.com',
+        'javascript-grid.ag-grid.com',
+        'react-grid.ag-grid.com',
+        'angulargrid.com',
+        'www.angulargrid.com',
+        'blog.ag-grid.com',
+    ],
+    /** DIRECTORY_COND: a last segment with no dot, so files and the dotted archive root are left alone. */
+    directory: /\/+[^.]+$/,
+};
+
+export const SLASHLESS_PENDING = `${PENDING.archiveMigration}, re-run with the slash-less rule (grid 1ed479efba5 / 91087c97fd9, grid#15434 / #15435)`;
