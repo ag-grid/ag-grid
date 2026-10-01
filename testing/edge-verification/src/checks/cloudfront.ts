@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { AwsError } from '../core/aws';
 import { selectBehaviour } from '../core/cfPattern';
-import { toPolicyView } from '../core/live';
+import { markdownKeyFunctionProblems, toPolicyView } from '../core/live';
 import type { Live } from '../core/live';
 import { type CheckDef, Problems, info, pass, skip } from '../core/types';
 import {
@@ -15,7 +15,6 @@ import {
     DEFAULT_BEHAVIOUR,
     DISTRIBUTION,
     MARKDOWN_KEY_FUNCTION,
-    MARKDOWN_KEY_HEADER,
     ORIGIN_REQUEST_POLICIES,
     REALTIME_LOG_CONFIG,
 } from '../expected/edge';
@@ -177,6 +176,8 @@ export function cloudfrontChecks(): CheckDef[] {
             refs: ['SE-80', '2026-09-18 /example/ incident'],
             async run({ live }) {
                 await live.prepareGuard();
+                // Judged on the live config only: the declared fallback is what this check compares against.
+                live.requireLiveGuard();
                 // Pages that answer both HTML and markdown on the same URL.
                 const negotiated = [
                     '/',
@@ -195,8 +196,9 @@ export function cloudfrontChecks(): CheckDef[] {
                 const p = new Problems();
                 for (const path of negotiated) {
                     const { behaviour, caches } = live.behaviourFor(path);
-                    if (caches && !live.markdownKeySplit(path)) {
-                        p.add(`${path} is served by caching behaviour ${behaviour.pattern}`);
+                    const split = live.markdownSplit(path);
+                    if (caches && !split.split) {
+                        p.add(`${path} is served by caching behaviour ${behaviour.pattern} (${split.reason})`);
                     }
                 }
                 return p.outcome(`${negotiated.length} negotiated paths resolve to non-caching behaviours`);
@@ -327,12 +329,10 @@ export function cloudfrontChecks(): CheckDef[] {
                         'LIVE',
                         out,
                     ]);
-                    const code = readFileSync(out, 'utf8');
-                    p.check(/text\/markdown/.test(code), 'code does not test for text/markdown');
-                    p.check(
-                        code.toLowerCase().includes(MARKDOWN_KEY_HEADER),
-                        `code does not set ${MARKDOWN_KEY_HEADER}`
-                    );
+                    // The same static check that gates the markdown guard's cache-key split.
+                    for (const problem of markdownKeyFunctionProblems(readFileSync(out, 'utf8'))) {
+                        p.add(`code ${problem}`);
+                    }
                 });
                 if (p.count) {
                     return p.outcome();

@@ -130,9 +130,10 @@ export function cachingChecks(): CheckDef[] {
             pending: PENDING.archiveCache,
             async run({ http, live }) {
                 await live.prepareGuard();
-                if (!live.markdownKeySplit(ARCHIVE_POISON_PROBE)) {
+                const split = live.markdownSplit(ARCHIVE_POISON_PROBE);
+                if (!split.split) {
                     return skip(
-                        `${ARCHIVE_POISON_PROBE} has no ${MARKDOWN_KEY_FUNCTION} cache-key split yet: markdown probe not sent`
+                        `${ARCHIVE_POISON_PROBE} has no verified ${MARKDOWN_KEY_FUNCTION} cache-key split (${split.reason}): markdown probe not sent`
                     );
                 }
                 const url = `${WWW}${ARCHIVE_POISON_PROBE}`;

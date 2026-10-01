@@ -54,7 +54,7 @@ Every expectation is deployed, `pending` or a `knownIssue`; the report shows one
 | `SKIP`          | Could not be verified: an IAM action is missing ("unverifiable - needs IAM action X"), AWS credentials are unusable, AWS throttled or could not be reached, the request cap was reached, or the markdown guard refused the probe. A declared resource AWS reports missing (`NoSuch*`, `*NotFound`, `WAFNonexistentItemException`) is a `FAIL`, as is any other AWS error |
 
 The report ends with a per-area summary table, the request count against the cap, the markdown
-guard's source (live config or declared fallback), any IAM actions the profile was denied, and the
+guard's source (live config, or the declared fallback that refuses every markdown probe), any IAM actions the profile was denied, and the
 SE tickets with no check citing them.
 
 ## Safety guarantees
@@ -71,9 +71,13 @@ These are enforced in code, not by convention:
   every check reading that URL shares; only the cache probes that must see a new response bypass it.
 - **The markdown guard.** A request with `Accept: text/markdown` is refused unless the live
   distribution config shows the path's behaviour either does not cache, or keys its cache on
-  `x-ag-accept-markdown` and runs the `archive-markdown-cache-key` viewer-request function. Without
-  the live config it falls back to the declared behaviours and refuses every caching one. This is
-  what prevents a repeat of the 2026-09 `/example/` markdown cache poisoning.
+  `x-ag-accept-markdown`, runs the `archive-markdown-cache-key` viewer-request function, and that
+  function's LIVE code (read with `cloudfront:GetFunction`) sets `x-ag-accept-markdown` from a
+  `text/markdown` test of the Accept header. If the live config cannot be read, every markdown
+  probe is refused, whatever the declared behaviours say; if the function code cannot be read (the
+  profile lacks `cloudfront:GetFunction` today) or does not pass that static check, every probe on a
+  caching behaviour is refused. This is what prevents a repeat of the 2026-09 `/example/` markdown
+  cache poisoning.
 - **Secrets never print.** WAF verify-header values and the origin custom header are registered with
   the redactor as soon as they are parsed, and every printed line and the JSON output pass through
   it. Checks compare secrets in memory and describe them by header name and length only.
