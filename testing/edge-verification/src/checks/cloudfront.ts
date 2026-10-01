@@ -4,14 +4,24 @@ import { join } from 'node:path';
 
 import { AwsError } from '../core/aws';
 import { selectBehaviour } from '../core/cfPattern';
-import { markdownKeyFunctionProblems, toPolicyView } from '../core/live';
+import { markdownKeyFunctionProblems } from '../core/live';
 import type { Live } from '../core/live';
+import { omit } from '../core/projection';
+import { SECRET, SECRET_HEADER_PATTERN } from '../core/redact';
 import { type CheckDef, Problems, info, pass, skip } from '../core/types';
 import {
+    DISTRIBUTION_UNPINNED,
+    declaredBehaviour,
+    declaredCachePolicy,
+    declaredDistributionSettings,
+    declaredOrigins,
+    declaredRealtimeLogConfig,
+} from '../expected/distribution';
+import {
+    ALL_VIEWER_CONFIG,
     BEHAVIOURS,
     type BehaviourExpectation,
     CACHE_POLICIES,
-    CF_ACL,
     DEFAULT_BEHAVIOUR,
     DISTRIBUTION,
     MARKDOWN_KEY_FUNCTION,
@@ -19,9 +29,6 @@ import {
     REALTIME_LOG_CONFIG,
 } from '../expected/edge';
 import { PENDING } from '../expected/lifecycle';
-
-const sorted = (xs: string[]): string[] => [...xs].sort();
-const functionName = (arn: string): string => arn.split(':function/')[1] ?? arn;
 
 /** Cache-policy id -> name, for the policies the distribution uses. */
 async function policyNames(live: Live): Promise<Map<string, string>> {
@@ -39,24 +46,50 @@ async function policyNames(live: Live): Promise<Map<string, string>> {
 
 const orpNames = new Map(Object.entries(ORIGIN_REQUEST_POLICIES).map(([name, id]) => [id as string, name]));
 
+/**
+ * A CloudFront object in a form two of them can be compared in: {Quantity, Items} lists as plain
+ * lists (Quantity is their length), lists of names in name order, and secret header values
+ * replaced by SECRET. Not for the real-time log fields, whose order is the contract.
+ */
+function cloudFrontProjection(node: unknown): any {
+    if (Array.isArray(node)) {
+        const items = node.map(cloudFrontProjection);
+        return items.every((x) => typeof x === 'string') ? [...items].sort() : items;
+    }
+    if (!node || typeof node !== 'object') {
+        return node;
+    }
+    const o = node as Record<string, unknown>;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(o)) {
+        if (k !== 'Quantity') {
+            out[k] = cloudFrontProjection(v);
+        }
+    }
+    if (typeof out.HeaderName === 'string' && 'HeaderValue' in out && SECRET_HEADER_PATTERN.test(out.HeaderName)) {
+        out.HeaderValue = SECRET;
+    }
+    const keys = Object.keys(out);
+    return 'Quantity' in o && keys.every((k) => k === 'Items') ? (out.Items ?? []) : out;
+}
+
+/**
+ * Every field of a live behaviour against its declaration, path pattern included. The policies are
+ * compared by name: a custom policy's id is not declared, and the policy checks pin its contents.
+ */
 function compareBehaviour(
     p: Problems,
     live: any,
-    exp: BehaviourExpectation | typeof DEFAULT_BEHAVIOUR,
+    exp: Omit<BehaviourExpectation, 'pattern' | 'why'> & { pattern?: string },
     names: Map<string, string>
 ): void {
-    p.eq('cache policy', names.get(live.CachePolicyId) ?? live.CachePolicyId, exp.cachePolicy);
-    p.eq(
-        'origin request policy',
-        orpNames.get(live.OriginRequestPolicyId) ?? live.OriginRequestPolicyId,
-        exp.originRequestPolicy
-    );
-    const fns = (live.FunctionAssociations?.Items ?? [])
-        .filter((f: any) => f.EventType === 'viewer-request')
-        .map((f: any) => functionName(f.FunctionARN));
-    p.eq('viewer-request functions', sorted(fns), sorted(exp.viewerRequestFunctions));
-    p.eq('allowed methods', sorted(live.AllowedMethods?.Items ?? []), sorted(exp.allowedMethods));
-    p.eq('lambda@edge associations', live.LambdaFunctionAssociations?.Quantity ?? 0, 0);
+    const byName = {
+        ...live,
+        CachePolicyId: names.get(live.CachePolicyId) ?? live.CachePolicyId,
+        OriginRequestPolicyId: orpNames.get(live.OriginRequestPolicyId) ?? live.OriginRequestPolicyId,
+    };
+    const asIs = (name: string): string => name;
+    p.diff('behaviour', cloudFrontProjection(byName), cloudFrontProjection(declaredBehaviour(exp, asIs, asIs)));
 }
 
 export function cloudfrontChecks(): CheckDef[] {
@@ -75,42 +108,32 @@ export function cloudfrontChecks(): CheckDef[] {
         {
             id: 'cloudfront.distribution.settings',
             area: 'cloudfront',
-            title: 'Aliases, web ACL, TLS, HTTP version, IPv6, logging',
+            title: 'Every distribution setting: aliases, web ACL, certificate and TLS, HTTP version, IPv6, logging, price class, geo restriction',
             refs: ['SE-4', 'SE-26', 'SE-187'],
             async run({ live }) {
                 const c = await live.distributionConfig();
                 const p = new Problems();
-                p.eq('aliases', sorted(c.Aliases?.Items ?? []), sorted(DISTRIBUTION.aliases));
-                p.check(
-                    String(c.WebACLId).endsWith(`/webacl/${CF_ACL.name}/${CF_ACL.id}`),
-                    `web ACL is ${c.WebACLId}, expected ${CF_ACL.name}`
+                p.diff(
+                    'distribution',
+                    cloudFrontProjection(omit(c, DISTRIBUTION_UNPINNED)),
+                    cloudFrontProjection(declaredDistributionSettings())
                 );
-                p.eq('HTTP version', c.HttpVersion, DISTRIBUTION.httpVersion);
-                p.eq('IPv6', c.IsIPV6Enabled, DISTRIBUTION.ipv6);
-                p.eq('minimum TLS', c.ViewerCertificate?.MinimumProtocolVersion, DISTRIBUTION.minimumProtocolVersion);
-                p.eq('SSL support', c.ViewerCertificate?.SSLSupportMethod, DISTRIBUTION.sslSupportMethod);
-                p.eq('standard logging', c.Logging?.Enabled ?? false, DISTRIBUTION.standardLogging);
-                p.eq('enabled', c.Enabled, true);
                 return p.outcome();
             },
         },
         {
             id: 'cloudfront.origin',
             area: 'cloudfront',
-            title: 'Single ALB origin, HTTPS only, origin-verify header configured',
+            title: 'Single ALB origin: HTTPS only (TLS 1.2), timeouts, origin-verify header, every other field as declared',
             refs: ['waf-finding.md §14'],
             async run({ live }) {
                 const c = await live.distributionConfig();
-                const origins = c.Origins?.Items ?? [];
                 const p = new Problems();
-                p.eq('origin count', origins.length, 1);
-                const o = origins[0] ?? {};
-                p.eq('domain', o.DomainName, DISTRIBUTION.origin.domain);
-                p.eq('protocol policy', o.CustomOriginConfig?.OriginProtocolPolicy, DISTRIBUTION.origin.protocolPolicy);
-                p.eq('read timeout', o.CustomOriginConfig?.OriginReadTimeout, DISTRIBUTION.origin.readTimeout);
-                p.eq('connection attempts', o.ConnectionAttempts, DISTRIBUTION.origin.connectionAttempts);
-                const headers = (o.CustomHeaders?.Items ?? []).map((h: any) => h.HeaderName.toLowerCase());
-                p.eq('custom header names', sorted(headers), sorted(DISTRIBUTION.origin.customHeaderNames));
+                // Origin Shield either way: its own pending check reports which.
+                p.oneOf('origins', cloudFrontProjection(c.Origins), [
+                    cloudFrontProjection(declaredOrigins(false)),
+                    cloudFrontProjection(declaredOrigins(true)),
+                ]);
                 return p.outcome();
             },
         },
@@ -132,19 +155,12 @@ export function cloudfrontChecks(): CheckDef[] {
         {
             id: 'cloudfront.behaviour.default',
             area: 'cloudfront',
-            title: 'Default (*) behaviour: CachingDisabled, AllViewer, HTTPS redirect, real-time logs',
+            title: 'Default (*) behaviour: CachingDisabled, AllViewer, HTTPS redirect, real-time logs, every field as declared',
             refs: ['SE-117', 'waf-finding.md §8'],
             async run({ live }) {
                 const c = await live.distributionConfig();
-                const d = c.DefaultCacheBehavior;
                 const p = new Problems();
-                compareBehaviour(p, d, DEFAULT_BEHAVIOUR, await policyNames(live));
-                p.eq('viewer protocol policy', d.ViewerProtocolPolicy, DEFAULT_BEHAVIOUR.viewerProtocolPolicy);
-                p.eq('compress', d.Compress, DEFAULT_BEHAVIOUR.compress);
-                p.check(
-                    String(d.RealtimeLogConfigArn ?? '').endsWith(`/${DEFAULT_BEHAVIOUR.realtimeLogConfig}`),
-                    `real-time log config is ${d.RealtimeLogConfigArn}`
-                );
+                compareBehaviour(p, c.DefaultCacheBehavior, DEFAULT_BEHAVIOUR, await policyNames(live));
                 return p.outcome();
             },
         },
@@ -237,20 +253,18 @@ export function cloudfrontChecks(): CheckDef[] {
                     }
                     raw = await live.cachePolicy(found.Id);
                 }
-                const v = toPolicyView(raw);
-                const params = raw.CachePolicyConfig.ParametersInCacheKeyAndForwardedToOrigin;
                 const p = new Problems();
-                p.eq('name', v.name, exp.name);
-                p.eq(
-                    'TTL min/default/max',
-                    [v.minTtl, v.defaultTtl, v.maxTtl],
-                    [exp.minTtl, exp.defaultTtl, exp.maxTtl]
+                // Header names are case-insensitive; the Comment is prose.
+                const config = structuredClone(raw.CachePolicyConfig);
+                const headers = config.ParametersInCacheKeyAndForwardedToOrigin?.HeadersConfig?.Headers;
+                if (headers?.Items) {
+                    headers.Items = headers.Items.map((h: string) => h.toLowerCase());
+                }
+                p.diff(
+                    'policy',
+                    cloudFrontProjection(omit(config, ['Comment'])),
+                    cloudFrontProjection(declaredCachePolicy(exp))
                 );
-                p.eq('key headers', sorted(v.keyHeaders), sorted(exp.keyHeaders));
-                p.eq('cookies', params.CookiesConfig.CookieBehavior, exp.cookies);
-                p.eq('query strings', params.QueryStringsConfig.QueryStringBehavior, exp.queryStrings);
-                p.eq('gzip', params.EnableAcceptEncodingGzip, exp.gzip);
-                p.eq('brotli', params.EnableAcceptEncodingBrotli, exp.brotli);
                 return p.outcome();
             },
         })),
@@ -260,26 +274,25 @@ export function cloudfrontChecks(): CheckDef[] {
             title: 'Origin request policy Managed-AllViewer forwards every viewer header, cookie and query string',
             async run({ live }) {
                 const o = await live.originRequestPolicy(ORIGIN_REQUEST_POLICIES['Managed-AllViewer']);
-                const c = o.OriginRequestPolicyConfig;
                 const p = new Problems();
-                p.eq('name', c.Name, 'Managed-AllViewer');
-                p.eq('headers', c.HeadersConfig.HeaderBehavior, 'allViewer');
-                p.eq('cookies', c.CookiesConfig.CookieBehavior, 'all');
-                p.eq('query strings', c.QueryStringsConfig.QueryStringBehavior, 'all');
+                p.diff(
+                    'policy',
+                    cloudFrontProjection(omit(o.OriginRequestPolicyConfig, ['Comment'])),
+                    cloudFrontProjection(ALL_VIEWER_CONFIG)
+                );
                 return p.outcome();
             },
         },
         {
             id: 'cloudfront.realtime-log-config',
             area: 'cloudfront',
-            title: 'Real-time log fields: the 23 LogLens expects, in order, 100% sampled',
+            title: 'Real-time logs: the 23 fields LogLens expects, in order, 100% sampled, to the LogLens stream',
             refs: ['SE-116', 'SE-117'],
             async run({ live }) {
                 const r = await live.realtimeLogConfig(REALTIME_LOG_CONFIG.name);
                 const p = new Problems();
-                p.eq('fields', r.Fields, REALTIME_LOG_CONFIG.fields);
-                p.eq('sampling rate', r.SamplingRate, REALTIME_LOG_CONFIG.samplingRate);
-                p.check((r.EndPoints ?? []).length > 0, 'no endpoint');
+                // Not through cloudFrontProjection: the field order is the contract.
+                p.diff('config', omit(r, ['ARN']), declaredRealtimeLogConfig());
                 return p.outcome(`${r.Fields.length} fields`);
             },
         },

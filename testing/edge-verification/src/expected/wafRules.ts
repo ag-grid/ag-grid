@@ -1,3 +1,4 @@
+import { SECRET } from '../core/redact';
 import {
     ACCOUNT_ID,
     ALB_ACL,
@@ -15,8 +16,6 @@ import {
  * Verify-header secrets are never declared: their SearchString is SECRET, and the live one is
  * replaced by SECRET before comparing (the secret checks compare the values in memory).
  */
-
-export const SECRET = '<secret>';
 
 // ---- statement builders (the CLI's wire format: SearchString base64-encoded) ---------------
 

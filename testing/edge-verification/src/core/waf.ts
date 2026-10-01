@@ -1,5 +1,5 @@
 import { decodeSearchString } from './live';
-import { SECRET_HEADER_PATTERN } from './redact';
+import { SECRET, SECRET_HEADER_PATTERN } from './redact';
 
 /** Helpers for reading WAFv2 rule statements. */
 
@@ -230,20 +230,20 @@ const byJsonOrder = (xs: unknown[]): unknown[] => [...xs].sort((a, b) => (json(a
 
 /**
  * A rule, statement or ACL in a form two of them can be compared in field by field: SearchStrings
- * decoded (a verify-header secret replaced by `secret`, so it is never printed), header names
+ * decoded (a verify-header secret replaced by SECRET, so it is never printed), header names
  * lower-cased, and the lists whose order means nothing (AND/OR children, overrides, excluded
  * rules) put in a fixed order, with an empty one the same as none.
  */
-export function canonicalWaf(node: unknown, secret: string): unknown {
+export function canonicalWaf(node: unknown): unknown {
     if (Array.isArray(node)) {
-        return node.map((n) => canonicalWaf(n, secret));
+        return node.map(canonicalWaf);
     }
     if (!node || typeof node !== 'object') {
         return node;
     }
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
-        out[k] = canonicalWaf(v, secret);
+        out[k] = canonicalWaf(v);
     }
     const single = out.SingleHeader as { Name?: string } | undefined;
     if (single?.Name) {
@@ -251,7 +251,7 @@ export function canonicalWaf(node: unknown, secret: string): unknown {
     }
     if (typeof out.SearchString === 'string') {
         const header = (out.FieldToMatch as any)?.SingleHeader?.Name ?? '';
-        out.SearchString = SECRET_HEADER_PATTERN.test(header) ? secret : decodeSearchString(out.SearchString);
+        out.SearchString = SECRET_HEADER_PATTERN.test(header) ? SECRET : decodeSearchString(out.SearchString);
     }
     if (Array.isArray(out.Statements)) {
         out.Statements = byJsonOrder(out.Statements);
