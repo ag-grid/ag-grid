@@ -80,8 +80,14 @@ function siteChecks(site: AgentSite): CheckDef[] {
                     `content-type ${header(res, 'content-type')}`
                 );
                 p.check(res.body.startsWith('# '), 'does not start with an H1');
+                // Each section present and populated: a heading the index generator left empty is a
+                // broken index, not a pass over zero links.
                 for (const s of [...site.curated, ...site.index].filter(Boolean)) {
                     p.check(sections.has(s), `missing section "## ${s}"`);
+                    p.check(
+                        !sections.has(s) || markdownLinks(sections.get(s)!).length > 0,
+                        `section "## ${s}" has no links`
+                    );
                 }
                 p.check(/Accept: text\/markdown/.test(res.body), 'does not mention Accept: text/markdown');
                 return p.outcome(`${markdownLinks(res.body).length} links`);
@@ -93,7 +99,10 @@ function siteChecks(site: AgentSite): CheckDef[] {
             title: `Every curated link in ${site.id} llms.txt and AGENTS.md resolves (200, at most 1 redirect)`,
             refs: ['SE-77', 'SE-79', 'waf-finding.md §13 T8'],
             run: budgeted(async ({ http }, p) => {
-                const curated = linksIn(await fetchSections(http, site), site.curated);
+                const sections = await fetchSections(http, site);
+                const empty = site.curated.filter((n) => n && !markdownLinks(sections.get(n) ?? '').length);
+                p.check(!empty.length, `curated sections with no links: ${empty.join(', ')}`);
+                const curated = linksIn(sections, site.curated);
                 const agents = markdownLinks((await http.get(site.agents)).body);
                 const checked = await checkAll(http, [...new Set([...curated, ...agents])], p);
                 return p.outcome(`${checked} links`);
@@ -140,7 +149,10 @@ function siteChecks(site: AgentSite): CheckDef[] {
             title: `${site.id} llms.txt index links resolve (sample of ${INDEX_SAMPLE_SIZE}, all with --full-links)`,
             refs: ['SE-77', 'waf-finding.md §13 T8'],
             run: budgeted(async ({ http, opts }, p) => {
-                const all = linksIn(await fetchSections(http, site), site.index);
+                const sections = await fetchSections(http, site);
+                const empty = site.index.filter((n) => !markdownLinks(sections.get(n) ?? '').length);
+                p.check(!empty.length, `index sections with no links: ${empty.join(', ')}`);
+                const all = linksIn(sections, site.index);
                 const chosen = opts.fullLinks ? all : sample(all, INDEX_SAMPLE_SIZE);
                 const checked = await checkAll(http, chosen, p);
                 if (!opts.fullLinks) {

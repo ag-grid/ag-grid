@@ -19,10 +19,26 @@ export function jsonLdNodes(html: string): JsonLdNode[] {
                 nodes.push(...(Array.isArray(item['@graph']) ? item['@graph'] : [item]));
             }
         } catch {
-            nodes.push({ '@type': 'INVALID_JSON' });
+            nodes.push({ '@type': INVALID_JSON_LD });
         }
     }
     return nodes;
+}
+
+/** A JSON-LD block that does not parse: jsonLdNodes reports it as a node of this type. */
+export const INVALID_JSON_LD = 'INVALID_JSON';
+
+/**
+ * The JSON-LD nodes of a page, reporting through `problem` any block that does not parse: a
+ * malformed block is broken structured data, never a node to count.
+ */
+export function validJsonLdNodes(html: string, problem: (message: string) => void): JsonLdNode[] {
+    const nodes = jsonLdNodes(html);
+    const invalid = nodes.filter((n) => n['@type'] === INVALID_JSON_LD).length;
+    if (invalid) {
+        problem(`${invalid} JSON-LD block${invalid === 1 ? ' does' : 's do'} not parse`);
+    }
+    return nodes.filter((n) => n['@type'] !== INVALID_JSON_LD);
 }
 
 export function nodesOfType(nodes: JsonLdNode[], type: string): JsonLdNode[] {

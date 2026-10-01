@@ -1,4 +1,4 @@
-import { jsonLdNodes, linkHrefs, metaContents } from '../core/html';
+import { linkHrefs, metaContents, validJsonLdNodes } from '../core/html';
 import { headerAll } from '../core/http';
 import { type CheckDef, Problems, budgeted } from '../core/types';
 import { expectHeader, expectSecurityHeaders, isNoindexed } from './headers';
@@ -49,7 +49,7 @@ export function blogChecks(): CheckDef[] {
                 const p = new Problems();
                 p.eq('status', res.status, 200);
                 p.eq('canonical', linkHrefs(res.body, 'canonical'), [url]);
-                p.check(jsonLdNodes(res.body).length > 0, 'no JSON-LD');
+                p.check(validJsonLdNodes(res.body, (m) => p.add(m)).length > 0, 'no valid JSON-LD');
                 p.check(!isNoindexed(res), 'post is noindexed');
                 expectSecurityHeaders(p, res);
                 return p.outcome();
