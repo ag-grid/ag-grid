@@ -57,6 +57,17 @@ if (apache.skip) {
 }
 const mimeTypes = findMimeTypes();
 console.log(`==> httpd: ${apache.httpd} ; modules: ${apache.modsDir} ; mime: ${mimeTypes}`);
+// An optional module is the one other gap allowed, and only for the rows that need it: reported
+// in COVERAGE, and an error under HTTPD_REQUIRED=1.
+for (const [feature, state] of Object.entries(apache.features)) {
+    if (state !== true) {
+        if (flag('HTTPD_REQUIRED')) {
+            console.error(`ERROR: optional feature ${feature} unavailable: ${state} (HTTPD_REQUIRED=1)`);
+            process.exit(1);
+        }
+        console.log(`==> WARNING: ${feature} unavailable (${state}); rows with needs=${feature} are skipped`);
+    }
+}
 
 rmSync(WORK, { recursive: true, force: true });
 mkdirSync(join(WORK, 'logs'), { recursive: true });
@@ -112,10 +123,20 @@ for (const f of files) {
 }
 const active = [];
 const skipped = [];
+const skippedByFeature = {};
 for (const row of all) {
     const site = siteOf(row);
+    const unknown = row.needs.find((f) => !(f in apache.features));
+    if (unknown) {
+        console.error(`${row.file}:${row.line}: unknown needs=${unknown}`);
+        process.exit(1);
+    }
+    const unmet = row.needs.find((f) => apache.features[f] !== true);
     if (sites[site].off) {
         skipped.push(row);
+    } else if (unmet) {
+        skipped.push(row);
+        skippedByFeature[unmet] = (skippedByFeature[unmet] ?? 0) + 1;
     } else {
         active.push(row);
     }
@@ -205,7 +226,7 @@ active.forEach((row, i) => {
     }
 });
 const skippedBySite = {};
-for (const row of skipped) {
+for (const row of skipped.filter((r) => sites[siteOf(r)].off)) {
     skippedBySite[siteOf(row)] = (skippedBySite[siteOf(row)] ?? 0) + 1;
 }
 
@@ -242,6 +263,12 @@ for (const site of ['grid', 'charts', 'studio']) {
         `  ${site.padEnd(6)} ${coverage[site]}${skippedBySite[site] ? ` - ${skippedBySite[site]} rows skipped` : ''}`
     );
 }
+for (const [feature, state] of Object.entries(apache.features)) {
+    const n = skippedByFeature[feature];
+    console.log(
+        `  ${feature.padEnd(6)} ${state === true ? 'tested' : `NOT TESTED (${state})`}${n ? ` - ${n} rows skipped` : ''}`
+    );
+}
 console.log('  .htaccess files emitted from source:');
 for (const e of emitted) {
     console.log(`    ${e.site.padEnd(6)} ${e.base.padEnd(24)} ${e.bytes} bytes`);
@@ -274,8 +301,11 @@ if (formOnlyFails) {
     );
 }
 const anyChildOff = Object.values(sites).some((s) => s.off);
-if (anyChildOff && htaccessEnv === 'production') {
-    console.log('==> WARNING: PARTIAL COVERAGE - see COVERAGE above. This run does not vouch for the skipped sites.');
+const anyFeatureOff = Object.values(apache.features).some((state) => state !== true);
+if ((anyChildOff && htaccessEnv === 'production') || anyFeatureOff) {
+    console.log(
+        '==> WARNING: PARTIAL COVERAGE - see COVERAGE above. This run does not vouch for the skipped sites or features.'
+    );
 }
 if (flag('KEEP_RUNNING')) {
     console.log(`httpd left running on :${PORT} (stop: ${apache.httpd} -f ${conf} -k stop)`);

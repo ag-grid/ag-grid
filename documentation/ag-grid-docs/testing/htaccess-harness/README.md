@@ -62,7 +62,9 @@ deployed one.
 
 - the system `mime.types` (`/private/etc/apache2/mime.types` on macOS, `/etc/mime.types` on Linux, or `MIME_TYPES=`);
 - `DirectoryIndex index.html`;
-- `AllowOverride All` on the docroot.
+- `AllowOverride All` on the docroot;
+- `mod_deflate` (with `mod_filter`) when present, so compressed responses carry the `-gzip` ETag
+  suffix that the root's `If-None-Match` rule exists for.
 
 **Placeholder files are tiny, but they have real names and extensions,** so mod_dir, mod_mime and the `-f`/`-d` checks behave as in production:
 
@@ -106,6 +108,10 @@ staging host from `URL_CONFIG`.
 
 **The only clean skip (exit 0) is when Apache itself is absent.** `HTTPD_REQUIRED=1` turns that into
 a failure, and CI sets it.
+
+**A missing optional module skips only the rows that need it.** Without `mod_deflate` the
+`needs=deflate` rows are skipped, `COVERAGE` reports `deflate NOT TESTED`, and the run prints a
+`PARTIAL COVERAGE` warning. Under `HTTPD_REQUIRED=1` it is an error.
 
 ## Run
 
@@ -152,7 +158,8 @@ The summary prints:
 **Apache 2.4** with these modules:
 
 - `mod_rewrite`, `mod_alias`, `mod_headers`, `mod_mime`, `mod_dir`;
-- `mpm_prefork`, `unixd`, `authz_core`, `log_config`.
+- `mpm_prefork`, `unixd`, `authz_core`, `log_config`;
+- optionally `mod_deflate` and `mod_filter`, for the compressed-revalidation rows.
 
 **On the PATH:** Node and `git`.
 
@@ -194,6 +201,8 @@ It runs as the invoking user on a high port.
 | `sec+`                                          | `Referrer-Policy` and `Permissions-Policy` are present    |
 | `body~<regex>`                                  | which file or ErrorDocument answered                      |
 | `hops=N` / `final=<status>` / `final-url=<url>` | the redirect chain                                        |
+| `revalidate=<status>`                           | the status when repeated with `If-None-Match: <its ETag>` |
+| `revalidate-lm=<status>`                        | the same with `If-Modified-Since: <its Last-Modified>`    |
 
 **How a chain is followed:**
 
@@ -201,7 +210,8 @@ It runs as the invoking user on a high port.
 - An off-site target ends the chain.
 - A row expecting `final=200` gets its end page created automatically.
 
-**Other keys:** `page=<path>` creates an extra placeholder file; `twin=no` skips the `.md` twin.
+**Other keys:** `page=<path>` creates an extra placeholder file; `twin=no` skips the `.md` twin;
+`needs=deflate` runs the row only when the harness Apache has `mod_deflate`.
 
 **`known-fail=<ref>`** marks approved desired behaviour that is not implemented yet.
 
