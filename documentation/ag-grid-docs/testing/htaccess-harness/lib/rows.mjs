@@ -3,7 +3,7 @@
 // A row is tab-separated:   host  path  status  location  [assertion]...
 //
 //   host      www | apex | blog | charts | any literal hostname (sent as the Host header)
-//   path      request path (+ query)
+//   path      request path (+ query), sent as it is: percent-escapes stay escaped
 //   status    expected status of the FIRST response
 //   location  expected Location of the first response, EXACT. A Location on the harness server
 //             itself (http://localhost:<port>/x) is normalised to the host-relative "/x"; an
@@ -11,6 +11,8 @@
 //
 // Optional assertions, one per extra column:
 //   accept=html|md|none|<literal>   Accept header to send (default */*, as curl)
+//   scheme=http      send the request to the plain-http listener (%{SERVER_PORT} 80) instead of the
+//                    https stand-in
 //   req:<Name>=<value>   a further request header to send, e.g. req:If-None-Match=* for a 304
 //   cc=<exact>|absent   cc~<regex>   Cache-Control
 //   ct=<exact>|absent   ct~<regex>   Content-Type
@@ -110,6 +112,7 @@ export function parseFile(file) {
             status: Number(status),
             location,
             accept: '*/*',
+            scheme: 'https',
             requestHeaders: {},
             checks: [],
             pages: [],
@@ -128,7 +131,12 @@ export function parseFile(file) {
                 throw new Error(`${file}:${i + 1}: bad assertion '${tok}'`);
             }
             const { key, op, value } = m.groups;
-            if (key === 'accept') {
+            if (key === 'scheme') {
+                if (!['http', 'https'].includes(value)) {
+                    throw new Error(`${file}:${i + 1}: scheme must be http or https, not '${value}'`);
+                }
+                row.scheme = value;
+            } else if (key === 'accept') {
                 row.accept = value in ACCEPT_ALIASES ? ACCEPT_ALIASES[value] : value;
             } else if (key.startsWith('req:') && op === '=') {
                 row.requestHeaders[key.slice(4)] = value;

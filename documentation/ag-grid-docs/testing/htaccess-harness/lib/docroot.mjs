@@ -54,7 +54,8 @@ export function filesForPath(path, { md = false } = {}) {
         return files;
     }
     const last = p.slice(p.lastIndexOf('/') + 1);
-    if (last.includes('.')) {
+    // a certificate-validation token (/.well-known/acme-challenge/<token>) is a file with no extension
+    if (last.includes('.') || p.startsWith('/.well-known/')) {
         return [p];
     }
     // a slash-less directory URL: the directory must exist for the slash redirect to target it

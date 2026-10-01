@@ -7,6 +7,9 @@ const agent = new http.Agent({ keepAlive: true, maxSockets: 16 });
 export const isHarnessHost = (host, extraHosts) =>
     /(^|\.)ag-grid\.com$/i.test(host) || /^(www\.)?angulargrid\.com$/i.test(host) || extraHosts.includes(host);
 
+/** The listener a request goes to: the https stand-in, or the plain-http one. */
+const portFor = (scheme, ctx) => (scheme === 'http' ? ctx.httpPort : ctx.port);
+
 export function request({ port, host, path, accept, requestHeaders = {} }) {
     return new Promise((resolvePromise, reject) => {
         const headers = { ...requestHeaders, Host: host, 'User-Agent': 'ag-htaccess-harness' };
@@ -54,7 +57,10 @@ export function normaliseLocation(loc, port) {
         return '';
     }
     const m = loc.match(/^https?:\/\/([^/]+)(\/.*)?$/i);
-    if (m && (m[1] === `localhost:${port}` || m[1] === `127.0.0.1:${port}` || m[1].endsWith(`:${port}`))) {
+    // the plain-http listener's ServerName is localhost:80, which a Location spells without the port
+    const harness = (h) =>
+        h === 'localhost' || h === `localhost:${port}` || h === `127.0.0.1:${port}` || h.endsWith(`:${port}`);
+    if (m && harness(m[1])) {
         return m[2] ?? '/';
     }
     return loc;
@@ -64,8 +70,9 @@ export function normaliseLocation(loc, port) {
 async function follow(first, row, ctx) {
     let res = first;
     let host = row.host;
+    let scheme = row.scheme;
     let hops = 0;
-    let url = `https://${host}${row.path}`;
+    let url = `${scheme}://${host}${row.path}`;
     const seen = new Set([url]);
     while (res.status >= 300 && res.status < 400) {
         hops++;
@@ -79,15 +86,16 @@ async function follow(first, row, ctx) {
                 return { hops, finalStatus: null, finalUrl: loc.split('#')[0] };
             }
             host = u.hostname;
+            scheme = u.protocol.slice(0, -1);
             path = u.pathname + u.search;
         }
         path = path.split('#')[0];
-        url = `https://${host}${path}`;
+        url = `${scheme}://${host}${path}`;
         if (seen.has(url) || hops > 10) {
             return { hops, finalStatus: 'LOOP', finalUrl: url };
         }
         seen.add(url);
-        res = await request({ port: ctx.port, host, path, accept: row.accept });
+        res = await request({ port: portFor(scheme, ctx), host, path, accept: row.accept });
     }
     return { hops, finalStatus: res.status, finalUrl: url };
 }
@@ -115,7 +123,7 @@ const REVALIDATORS = {
 export async function runRow(row, ctx) {
     const mapHost = (s) => (ctx.siteHost === 'www.ag-grid.com' ? s : s.replaceAll('www.ag-grid.com', ctx.siteHost));
     const res = await request({
-        port: ctx.port,
+        port: portFor(row.scheme, ctx),
         host: row.host,
         path: row.path,
         accept: row.accept,
@@ -182,7 +190,7 @@ export async function runRow(row, ctx) {
                 continue;
             }
             const again = await request({
-                port: ctx.port,
+                port: portFor(row.scheme, ctx),
                 host: row.host,
                 path: row.path,
                 accept: row.accept,
