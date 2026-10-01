@@ -8,6 +8,7 @@ import {
     type Handler,
     MARKDOWN_KEY_FUNCTION_CODE,
     NO_CREDENTIALS,
+    distributionConfig,
     functionCode,
     healthyCloudFront,
     options,
@@ -42,7 +43,11 @@ describe('markdown guard', () => {
         ['the config read is denied', DENIED('cloudfront:GetDistributionConfig')],
     ] as const) {
         it(`refuses every markdown probe when ${why}, even on paths declared uncached`, async () => {
-            const { live } = await guardWith({ ...healthyCloudFront(), 'cloudfront get-distribution-config': failure });
+            const { live } = await guardWith({
+                ...healthyCloudFront(),
+                'cloudfront get-distribution': failure,
+                'cloudfront get-distribution-config': failure,
+            });
             for (const path of [...UNCACHED, ARCHIVE_POISON_PROBE]) {
                 assert.equal(allowed(live, path), false, path);
             }
@@ -52,7 +57,20 @@ describe('markdown guard', () => {
 
     const distribution =
         (status: string): Handler =>
-        () => ({ Distribution: { Id: 'fixture', Status: status } });
+        () => ({ Distribution: { Id: 'fixture', Status: status, ...distributionConfig() } });
+
+    it("authorises probes from the Deployed snapshot's own config, never a separate config read", async () => {
+        const { live, aws } = await guardWith({
+            ...healthyCloudFront(),
+            'cloudfront get-distribution-config': () => {
+                throw new Error('a separate config read may describe another version');
+            },
+        });
+        assert.ok(allowed(live, '/example/'));
+        assert.ok(allowed(live, ARCHIVE_POISON_PROBE));
+        assert.ok(!aws.calls.includes('cloudfront get-distribution-config'));
+        assert.match(live.guardSource, /^live/);
+    });
 
     it('reads the deployment status before anything else, and allows probes only once Deployed', async () => {
         const { live, aws } = await guardWith(healthyCloudFront());

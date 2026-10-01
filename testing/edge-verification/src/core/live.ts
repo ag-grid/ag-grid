@@ -44,18 +44,17 @@ export class Live {
     constructor(readonly aws: Aws) {}
 
     distributionConfig(): Promise<any> {
-        return this.aws.call('cloudfront', 'get-distribution-config', ['--id', DISTRIBUTION_ID]).then((r) => {
-            for (const origin of r.DistributionConfig?.Origins?.Items ?? []) {
-                for (const h of origin.CustomHeaders?.Items ?? []) {
-                    registerSecret(h.HeaderValue);
-                }
-            }
-            return r.DistributionConfig;
-        });
+        return this.aws
+            .call('cloudfront', 'get-distribution-config', ['--id', DISTRIBUTION_ID])
+            .then((r) => registerOriginSecrets(r.DistributionConfig));
     }
 
+    /** The distribution's status together with the config it describes, in one snapshot. */
     distribution(): Promise<any> {
-        return this.aws.call('cloudfront', 'get-distribution', ['--id', DISTRIBUTION_ID]).then((r) => r.Distribution);
+        return this.aws.call('cloudfront', 'get-distribution', ['--id', DISTRIBUTION_ID]).then((r) => {
+            registerOriginSecrets(r.Distribution?.DistributionConfig);
+            return r.Distribution;
+        });
     }
 
     cachePolicy(id: string): Promise<any> {
@@ -165,10 +164,13 @@ export class Live {
     private guardReady?: Promise<void>;
 
     private async loadGuard(): Promise<void> {
-        // Read first, so nothing is authorised on a config that may not have reached the edges yet.
-        const deployment = await this.deploymentStatus();
+        // The status and the config come from the same get-distribution snapshot, so a change that
+        // starts between two reads cannot pair a Deployed status with a still-propagating config.
+        const { deployment, config } = await this.deploymentSnapshot();
         try {
-            const cfg = await this.distributionConfig();
+            // Without a snapshot config the probes are already refused; this read only serves the
+            // structural checks.
+            const cfg = config ?? (await this.distributionConfig());
             const behaviours: BehaviourView[] = (cfg.CacheBehaviors?.Items ?? []).map((b: any) =>
                 toView(b, b.PathPattern)
             );
@@ -225,17 +227,29 @@ export class Live {
         }
     }
 
-    /** Whether the distribution is Deployed; anything else, a failed read included, is not. */
-    private async deploymentStatus(): Promise<{ deployed: boolean; reason: string }> {
+    /**
+     * Whether the distribution is Deployed, with the config that status describes. Anything else,
+     * a failed read or a snapshot without its config included, is not Deployed.
+     */
+    private async deploymentSnapshot(): Promise<{ deployment: { deployed: boolean; reason: string }; config?: any }> {
         try {
-            const status = (await this.distribution())?.Status;
-            return status === 'Deployed'
-                ? { deployed: true, reason: 'distribution status Deployed' }
-                : { deployed: false, reason: `distribution status ${status || '(not reported)'}` };
+            const d = await this.distribution();
+            const config = d?.DistributionConfig;
+            if (!config) {
+                return { deployment: { deployed: false, reason: 'distribution snapshot has no config' } };
+            }
+            const status = d.Status;
+            return {
+                config,
+                deployment:
+                    status === 'Deployed'
+                        ? { deployed: true, reason: 'distribution status Deployed' }
+                        : { deployed: false, reason: `distribution status ${status || '(not reported)'}` },
+            };
         } catch (e) {
             const why =
                 e instanceof AwsError && e.deniedAction ? `needs IAM action ${e.deniedAction}` : (e as Error).message;
-            return { deployed: false, reason: `distribution status unreadable (${why})` };
+            return { deployment: { deployed: false, reason: `distribution status unreadable (${why})` } };
         }
     }
 
@@ -458,6 +472,16 @@ export function toPolicyView(p: any): PolicyView {
         maxTtl: c.MaxTTL,
         keyHeaders: (headers?.Headers?.Items ?? []).map((h: string) => h.toLowerCase()),
     };
+}
+
+/** Registers every origin custom header value in a distribution config as a secret. */
+function registerOriginSecrets(cfg: any): any {
+    for (const origin of cfg?.Origins?.Items ?? []) {
+        for (const h of origin.CustomHeaders?.Items ?? []) {
+            registerSecret(h.HeaderValue);
+        }
+    }
+    return cfg;
 }
 
 /** Walks an ACL and registers every verify-header ByteMatch search string as a secret. */
