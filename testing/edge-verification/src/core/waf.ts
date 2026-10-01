@@ -75,6 +75,39 @@ export function noneOfLeaves(stmt: any): Leaf[] | undefined {
     return inner === undefined ? undefined : anyOfLeaves(inner);
 }
 
+/**
+ * NOT(any of: a leaf, or an AND of leaves): p11's exemption shape, where one alternative needs two
+ * conditions at once (the saliencebot UA from the salience-bot IP set). Single-leaf alternatives
+ * come back in `leaves`, AND alternatives in `ands`. Undefined for any other shape.
+ */
+export function noneOfAlternatives(stmt: any): { leaves: Leaf[]; ands: Leaf[][] } | undefined {
+    const inner = notOf(stmt);
+    if (inner === undefined) {
+        return undefined;
+    }
+    const single = leafOf(inner);
+    if (single) {
+        return { leaves: [single], ands: [] };
+    }
+    const alternatives: any[] | undefined = inner?.OrStatement?.Statements;
+    if (!Array.isArray(alternatives)) {
+        return undefined;
+    }
+    const out = { leaves: [] as Leaf[], ands: [] as Leaf[][] };
+    for (const alt of alternatives) {
+        const leaf = leafOf(alt);
+        const and = leaf ? undefined : andOfLeaves(alt);
+        if (leaf) {
+            out.leaves.push(leaf);
+        } else if (and) {
+            out.ands.push(and);
+        } else {
+            return undefined;
+        }
+    }
+    return out;
+}
+
 function leavesOfEach(list: any[] | undefined): Leaf[] | undefined {
     if (!list) {
         return undefined;

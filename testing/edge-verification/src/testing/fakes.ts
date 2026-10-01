@@ -214,7 +214,8 @@ export function cfAclRules(): any[] {
                             'header:user-agent',
                             `(${nb.otherUaExemptions.map((u) => u.replace(/\./g, '\\.')).join('|')})`
                         ),
-                        ipset(nb.saliencebotIpSet),
+                        // Live shape: the saliencebot UA only counts from its IP set.
+                        and(regex('header:user-agent', 'saliencebot'), ipset(nb.saliencebotIpSet)),
                         byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption)
                     )
                 ),
