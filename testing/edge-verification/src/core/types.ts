@@ -1,6 +1,7 @@
 import type { Aws } from './aws';
 import { BudgetExceeded, type Http } from './http';
 import type { Live } from './live';
+import { differences } from './projection';
 
 /** Check areas, in report order. `--only` takes these names. */
 export const AREAS = {
@@ -113,6 +114,26 @@ export class Problems {
         const e = JSON.stringify(expected);
         if (a !== e) {
             this.items.push(`${label}: got ${a}, expected ${e}`);
+        }
+    }
+
+    /**
+     * Every field at which a live projection differs from the declared one, each as
+     * `label path: got X, expected Y`. See core/projection.ts.
+     */
+    diff(label: string, actual: unknown, expected: unknown): void {
+        for (const d of differences(actual, expected)) {
+            this.items.push(`${label} ${d}`);
+        }
+    }
+
+    /**
+     * Like diff, but the live projection may match any of several declared forms (the deployed one
+     * first, then those a pending change leaves). Differences are reported against the first.
+     */
+    oneOf(label: string, actual: unknown, alternatives: unknown[]): void {
+        if (!alternatives.some((alt) => !differences(actual, alt).length)) {
+            this.diff(label, actual, alternatives[0]);
         }
     }
 

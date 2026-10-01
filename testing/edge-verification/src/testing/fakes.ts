@@ -15,6 +15,7 @@ import {
     DISTRIBUTION_ID,
     MARKDOWN_KEY_FUNCTION,
 } from '../expected/edge';
+import { albAclSettings, albDeclaredRules, cfAclSettings, cfDeclaredRules, ipSetArn } from '../expected/wafRules';
 
 /**
  * Offline stand-ins for the AWS CLI, for the package's own tests (`*.test.ts`, run with
@@ -156,210 +157,109 @@ export const healthyCloudFront = (): Record<string, Handler> => ({
 });
 
 const b64 = (s: string): string => Buffer.from(s).toString('base64');
-const byte = (field: string, positional: string, value: string, transform = 'NONE'): any => ({
-    ByteMatchStatement: {
-        FieldToMatch: field.startsWith('header:') ? { SingleHeader: { Name: field.slice(7) } } : { [field]: {} },
-        PositionalConstraint: positional,
-        SearchString: b64(value),
-        TextTransformations: [{ Priority: 0, Type: transform }],
-    },
-});
-const regex = (field: string, value: string, transform = 'LOWERCASE'): any => ({
-    RegexMatchStatement: {
-        FieldToMatch: field.startsWith('header:') ? { SingleHeader: { Name: field.slice(7) } } : { [field]: {} },
-        RegexString: value,
-        TextTransformations: [{ Priority: 0, Type: transform }],
-    },
-});
-const label = (key: string): any => ({ LabelMatchStatement: { Scope: 'LABEL', Key: key } });
-const ipset = (name: string): any => ({
-    IPSetReferenceStatement: { ARN: `arn:aws:wafv2:us-east-1:${ACCOUNT_ID}:global/ipset/${name}/0000` },
-});
-const or = (...statements: any[]): any => ({ OrStatement: { Statements: statements } });
-const and = (...statements: any[]): any => ({ AndStatement: { Statements: statements } });
-const not = (statement: any): any => ({ NotStatement: { Statement: statement } });
-const rule = (Name: string, Statement: any, extra: any = {}): any => ({ Name, Statement, ...extra });
+const SHIELD_RULE = { Name: 'ShieldMitigationRuleGroup_fixture', Priority: 10000000, OverrideAction: { None: {} } };
 
-const nb = CF_ACL.nonBrowser;
-const p11Safe = (): any[] => [
-    // The live shape add-waf-safe-path-exemptions.sh builds: no transform on either kind.
-    ...nb.safePathRegexes.map((r) => regex('UriPath', r, 'NONE')),
-    ...nb.safePathPrefixes.map((p) => byte('UriPath', 'STARTS_WITH', p)),
-];
-
-/** The rules the structural WAF checks read, in the shapes the live ACL has them. */
-export function cfAclRules(): any[] {
-    const secret = (n: number): string => `fixture-secret-${n}-`.padEnd(40, 'x');
-    return [
-        rule('allow-trusted-mcp-lambda', byte('header:x-lambda-verify', 'EXACTLY', secret(1))),
-        rule(
-            'allow-trusted-ci-archive-tests',
-            and(byte('header:x-ag-ci-verify', 'EXACTLY', secret(2)), byte('UriPath', 'STARTS_WITH', '/archive/'))
-        ),
-        rule('allow-seo-bot', byte('header:x-aud-bot-verify', 'EXACTLY', secret(3))),
-        rule(
-            'allow-mta-sts-policy',
-            and(byte('header:host', 'EXACTLY', CF_ACL.mtaSts.host), byte('UriPath', 'EXACTLY', CF_ACL.mtaSts.path))
-        ),
-        rule('AWS-AWSManagedRulesCommonRuleSet', {
-            ManagedRuleGroupStatement: {
-                VendorName: 'AWS',
-                Name: 'AWSManagedRulesCommonRuleSet',
-                ScopeDownStatement: not(
-                    or(...CF_ACL.commonRuleSetExemptPrefixes.map((p) => byte('UriPath', 'STARTS_WITH', p)))
-                ),
-            },
-        }),
-        rule(
-            'block-nonbrowser-except-ai-assistants',
-            and(
-                or(...nb.triggerLabels.map(label)),
-                not(
-                    or(
-                        regex('header:user-agent', `(${nb.uaAllowTokens.join('|')})`),
-                        ...nb.exemptLabels.map(label),
-                        // Live shape: the Apple link-preview and in-app-browser UAs are two separate regexes.
-                        ...nb.otherUaRegexes.map((r) => regex('header:user-agent', r)),
-                        // Live shape: the saliencebot UA only counts from its IP set.
-                        and(regex('header:user-agent', 'saliencebot'), ipset(nb.saliencebotIpSet)),
-                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption, nb.markdownAcceptTransforms[0])
-                    )
-                ),
-                not(or(...p11Safe()))
-            ),
-            { Action: { Block: { CustomResponse: { ResponseCode: 403, CustomResponseBodyKey: nb.customBody } } } }
-        ),
-        rule(
-            'block-datacenter-except-agent-paths',
-            and(
-                label('awswaf:managed:aws:bot-control:signal:known_bot_data_center'),
-                not(
-                    or(
-                        ...CF_ACL.dataCentreVerifiedLabels.map(label),
-                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption, nb.markdownAcceptTransforms[0])
-                    )
-                ),
-                not(or(...p11Safe()))
-            ),
-            {
-                Action: {
-                    Block: { CustomResponse: { ResponseCode: 403, CustomResponseBodyKey: 'automated-access-blocked' } },
-                },
-                VisibilityConfig: { MetricName: 'blockDataCenterExceptAgentPaths' },
-            }
-        ),
-        ...CF_ACL.rateRules.map((exp) =>
-            rule(
-                exp.name,
-                {
-                    RateBasedStatement: {
-                        Limit: exp.limit,
-                        EvaluationWindowSec: exp.window,
-                        AggregateKeyType: 'IP',
-                        // The live shape (2026-09-24 ACL backup): UriPath, LOWERCASE, prefixes STARTS_WITH.
-                        ...(exp.assetScopeDown
-                            ? {
-                                  ScopeDownStatement: not(
-                                      or(
-                                          ...CF_ACL.assetScopeDownPrefixes.map((p) =>
-                                              byte('UriPath', 'STARTS_WITH', p, 'LOWERCASE')
-                                          ),
-                                          regex('UriPath', CF_ACL.assetScopeDownRegex)
-                                      )
-                                  ),
-                              }
-                            : (exp as any).scopeDown === 'nonbrowser-safe-paths'
-                              ? {
-                                    // Live 2026-10-01: AND(any trigger label, any of the four safe-path regexes).
-                                    ScopeDownStatement: and(
-                                        or(...CF_ACL.nonBrowser.triggerLabels.map(label)),
-                                        or(...CF_ACL.nonBrowser.safePathRegexes.map((r) => regex('UriPath', r, 'NONE')))
-                                    ),
-                                }
-                              : {}),
-                    },
-                },
-                {
-                    ...(exp.immunity
-                        ? { CaptchaConfig: { ImmunityTimeProperty: { ImmunityTime: exp.immunity } } }
-                        : {}),
-                    ...(exp.customBody
-                        ? {
-                              Action: {
-                                  Block: {
-                                      CustomResponse: { ResponseCode: 403, CustomResponseBodyKey: exp.customBody },
-                                  },
-                              },
-                          }
-                        : {}),
-                }
-            )
-        ),
-        rule(
-            'challenge-automated-browser-documents',
-            and(
-                label(CF_ACL.automatedBrowserChallenge.label),
-                not(regex('UriPath', CF_ACL.automatedBrowserChallenge.exemptRegex))
-            ),
-            {
-                Action: { Challenge: {} },
-                ChallengeConfig: {
-                    ImmunityTimeProperty: { ImmunityTime: CF_ACL.automatedBrowserChallenge.immunity },
-                },
-            }
-        ),
-    ].map((r, i) => ({ Priority: i, ...r }));
+/** A declared rule as the CLI returns it, each verify-header secret replaced by a distinct fixture value. */
+function wire(rule: any, n: number): any {
+    const out = structuredClone(rule);
+    const walk = (node: any): void => {
+        if (!node || typeof node !== 'object') {
+            return;
+        }
+        const bm = node.ByteMatchStatement;
+        if (bm && /verify/i.test(bm.FieldToMatch?.SingleHeader?.Name ?? '')) {
+            bm.SearchString = b64(`fixture-secret-${n}-`.padEnd(40, 'x'));
+        }
+        Object.values(node).forEach(walk);
+    };
+    walk(out);
+    return out;
 }
 
-export const cfAclHandlers = (rules = cfAclRules()): Record<string, Handler> => ({
-    'wafv2 get-web-acl': () => ({ WebACL: { Name: CF_ACL.name, ARN: 'arn:fixture', Rules: rules } }),
+const managedGroup = (rules: any[], name: string): any =>
+    rules.find((r) => r.Name === name).Statement.ManagedRuleGroupStatement;
+
+/**
+ * The CloudFront ACL's rules as get-web-acl returns them: every declared rule in its deployed form,
+ * plus the state after move-datacenter-block-after-agent-exemptions.sh (its rule straight after p11,
+ * and the Count override it adds to Bot Control), so the pending markers are exercised too.
+ */
+export function cfAclRules(): any[] {
+    const declared = cfDeclaredRules();
+    const rules = CF_ACL.rules
+        .filter((r) => !r.pending || r.name === 'block-datacenter-except-agent-paths')
+        .map((r, i) => wire(declared.get(r.name)!.variants[0].rule, i));
+    const bot = managedGroup(rules, 'AWS-AWSManagedRulesBotControlRuleSet');
+    for (const o of CF_ACL.managedGroups['AWS-AWSManagedRulesBotControlRuleSet'].pendingOverrides ?? []) {
+        bot.RuleActionOverrides.push({ Name: o.name, ActionToUse: { [o.action]: {} } });
+    }
+    return [...rules.map((r, i) => ({ Priority: i, ...r })), SHIELD_RULE];
+}
+
+/** get-web-acl's WebACL: the declared settings around `rules`. */
+const webAcl = (acl: typeof CF_ACL | typeof ALB_ACL, settings: any, rules: any[]): any => ({
+    WebACL: {
+        Name: acl.name,
+        Id: acl.id,
+        ARN: `arn:fixture-${acl.name}`,
+        Capacity: 1000,
+        LabelNamespace: `awswaf:${ACCOUNT_ID}:webacl:${acl.name}:`,
+        // A copy: a test that edits the fixture must not edit the declarations it is compared with.
+        ...structuredClone(settings),
+        Rules: rules,
+    },
 });
 
-/** The ALB ACL in the shape waf-config.alb.rules expects, CRS scoped down by NOT(UriPath STARTS_WITH the exempt prefix). */
+export const cfAclHandlers = (rules = cfAclRules()): Record<string, Handler> => ({
+    'wafv2 get-web-acl': () => webAcl(CF_ACL, cfAclSettings(), rules),
+});
+
+/** The ALB ACL's rules as get-web-acl returns them: every declared rule, then the Shield group. */
 export function albAclRules(): any[] {
-    const managed = (Name: string, extra: any = {}): any => ({
-        ManagedRuleGroupStatement: { VendorName: 'AWS', Name: Name.replace(/^AWS-/, ''), ...extra },
-    });
-    const statements: Record<string, any> = {
-        'block-non-cloudfront-origin': not(byte(`header:${ALB_ACL.originVerifyHeader}`, 'EXACTLY', 'x'.repeat(40))),
-        'AWS-AWSManagedRulesAmazonIpReputationList': managed('AWS-AWSManagedRulesAmazonIpReputationList', {
-            RuleActionOverrides: ALB_ACL.ipReputationOverrides.map((o) => ({
-                Name: o.name,
-                ActionToUse: { [o.action]: {} },
-            })),
-        }),
-        'AWS-AWSManagedRulesKnownBadInputsRuleSet': managed('AWS-AWSManagedRulesKnownBadInputsRuleSet'),
-        'AWS-AWSManagedRulesCommonRuleSet': managed('AWS-AWSManagedRulesCommonRuleSet', {
-            ScopeDownStatement: not(byte('UriPath', 'STARTS_WITH', ALB_ACL.commonRuleSetExemptPrefix)),
-        }),
-    };
-    const rateLimits: Record<string, number> = ALB_ACL.rateLimits;
+    const declared = albDeclaredRules();
     return [
-        ...ALB_ACL.rules.map((exp, i) => ({
-            Name: exp.name,
-            Priority: i,
-            Statement: statements[exp.name] ?? {
-                RateBasedStatement: {
-                    Limit: rateLimits[exp.name],
-                    AggregateKeyType: ALB_ACL.rateRuleShape.aggregateKeyType,
-                    EvaluationWindowSec: ALB_ACL.rateRuleShape.evaluationWindowSec,
-                    ScopeDownStatement: not(
-                        byte('UriPath', 'STARTS_WITH', ALB_ACL.rateRuleShape.scopeDownExemptPrefix)
-                    ),
-                },
-            },
-            ...(exp.action === 'None' ? { OverrideAction: { None: {} } } : { Action: { [exp.action]: {} } }),
-            VisibilityConfig: { MetricName: exp.metricName ?? exp.name },
-        })),
-        { Name: 'ShieldMitigationRuleGroup_fixture', Priority: 10000000, OverrideAction: { None: {} } },
+        ...ALB_ACL.rules.map((r, i) => ({ Priority: i, ...wire(declared.get(r.name)!.variants[0].rule, i) })),
+        SHIELD_RULE,
     ];
 }
 
 export const albAclHandlers = (rules = albAclRules()): Record<string, Handler> => ({
-    'wafv2 get-web-acl': () => ({
-        WebACL: { Name: ALB_ACL.name, ARN: 'arn:fixture-alb', DefaultAction: { Allow: {} }, Rules: rules },
-    }),
+    'wafv2 get-web-acl': () => webAcl(ALB_ACL, albAclSettings(), rules),
 });
+
+/** get-logging-configuration as both ACLs have it (live 2026-10-01): their declared log group, nothing redacted. */
+export const loggingHandler: Handler = (args) => {
+    const arn = args[args.indexOf('--resource-arn') + 1];
+    const acl = arn.includes(ALB_ACL.name) ? ALB_ACL : CF_ACL;
+    return {
+        LoggingConfiguration: {
+            ResourceArn: arn,
+            LogDestinationConfigs: [acl.logging.destination],
+            ManagedByFirewallManager: false,
+            LogType: 'WAF_LOGS',
+            LogScope: 'CUSTOMER',
+        },
+    };
+};
+
+/** get-ip-set for every declared IP set, by --name. */
+export const ipSetHandler: Handler = (args) => {
+    const name = args[args.indexOf('--name') + 1];
+    const set = [CF_ACL.buildServerIpSet, CF_ACL.nonBrowser.saliencebotIpSet].find((x) => x.name === name);
+    if (!set) {
+        throw new Error(`unmocked IP set ${name}`);
+    }
+    return {
+        IPSet: {
+            Name: set.name,
+            Id: set.id,
+            ARN: ipSetArn(set),
+            Description: 'fixture',
+            IPAddressVersion: 'IPV4',
+            Addresses: [...set.addresses].reverse(),
+        },
+    };
+};
 
 export function options(overrides: Partial<Options> = {}): Options {
     return {
@@ -397,22 +297,10 @@ export function offlineCtx(aws: Aws, opts: Partial<Options> = {}): Ctx {
  * then lands next to p11, ahead of the data-centre rule); otherwise it follows the data-centre rule.
  */
 export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRules()): any[] {
-    const extended = `(${[...nb.uaAllowTokens, ...nb.pendingUaAllowTokens.tokens].join('|')})`;
+    const declared = cfDeclaredRules();
     const p11 = structuredClone(rules.find((r) => r.Name === 'block-nonbrowser-except-ai-assistants'));
-    const ua = p11.Statement.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements[0];
-    ua.RegexMatchStatement.RegexString = extended;
-    const rate = rule(
-        nb.allowlistedAgentsRate.rule,
-        {
-            RateBasedStatement: {
-                Limit: nb.allowlistedAgentsRate.limit,
-                EvaluationWindowSec: nb.allowlistedAgentsRate.window,
-                AggregateKeyType: 'IP',
-                ScopeDownStatement: structuredClone(ua),
-            },
-        },
-        { Action: { Count: {} }, VisibilityConfig: { MetricName: 'countAllowlistedAgentsRate' } }
-    );
+    p11.Statement = structuredClone(declared.get(p11.Name)!.variants[1].rule.Statement);
+    const rate = structuredClone(declared.get(CF_ACL.nonBrowser.allowlistedAgentsRate.rule)!.variants[0].rule);
     const out: any[] = [];
     for (const r of rules) {
         if (r.Name === p11.Name) {
@@ -423,7 +311,7 @@ export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRu
             out.push(r);
         }
     }
-    return out.map((r, i) => ({ ...r, Priority: i }));
+    return out.map((r, i) => ({ ...r, Priority: r.Priority === 10000000 ? r.Priority : i }));
 }
 
 /** What a FakeHttp answers one request with. */

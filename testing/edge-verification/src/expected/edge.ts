@@ -245,6 +245,22 @@ export const REALTIME_LOG_CONFIG = {
 
 export type WafAction = 'Allow' | 'Block' | 'Count' | 'Captcha' | 'Challenge' | 'None';
 
+/** One RuleActionOverride on a managed group: the group rule it names and the action it uses instead. */
+export interface OverrideExpectation {
+    name: string;
+    action: WafAction;
+}
+
+/**
+ * A managed rule group's complete override set. Compared exactly: a missing override re-enables a
+ * rule, an extra one quietly disables (Count) or changes it.
+ */
+export interface ManagedGroupExpectation {
+    overrides: OverrideExpectation[];
+    /** Overrides a pending script adds. Present or absent, the group passes; the pending check reports which. */
+    pendingOverrides?: Array<OverrideExpectation & { pending: string }>;
+}
+
 export interface RuleExpectation extends Lifecycle {
     name: string;
     /** Action, or the OverrideAction for rule groups ('None'). */
@@ -257,6 +273,26 @@ export interface RuleExpectation extends Lifecycle {
     after?: string;
 }
 
+export interface IpSetExpectation {
+    name: string;
+    id: string;
+    /** Exactly these, IPv4. */
+    addresses: string[];
+}
+
+/**
+ * The headers redact-waf-log-secrets.sh redacts on both ACLs' logs, in its order: the four verify
+ * secrets, and the viewer's own cookie and authorization.
+ */
+const REDACTED_HEADERS = [
+    'x-lambda-verify',
+    'x-ag-ci-verify',
+    'x-aud-bot-verify',
+    'x-ag-origin-verify',
+    'cookie',
+    'authorization',
+];
+
 export const CF_ACL = {
     name: 'cloudfront-web-acl',
     id: '11c3c216-4b6c-4b17-9ea2-8d3183d00104',
@@ -265,15 +301,26 @@ export const CF_ACL = {
     defaultAction: 'Allow',
     tokenDomains: ['ag-grid.com'],
     captchaImmunity: 3600,
+    /** The whole ACL apart from its rules (live 2026-10-01): see aclSettings in wafRules.ts. */
+    visibilityMetric: 'cloudfront-web-acl',
+    onSourceDDoSProtection: { ALBLowReputationMode: 'ACTIVE_UNDER_DDOS' },
     customBodies: {
         'automated-access-blocked': {
             contentType: 'TEXT_PLAIN',
-            mustContain: [
-                'automated access to this URL is blocked',
-                'Accept: text/markdown',
-                '/llms.txt',
-                'mcp-server',
-            ],
+            // The body agents read when p11 blocks them: it points them at the routes they may use.
+            content: [
+                '403 - automated access to this URL is blocked.',
+                '',
+                'AG Grid content is available to agents and scripts without restriction:',
+                '  - Append .md to any page URL       https://www.ag-grid.com/javascript-data-grid/getting-started.md',
+                '  - Or send the header               Accept: text/markdown',
+                '  - Index of everything              https://www.ag-grid.com/llms.txt',
+                '  - MCP server for coding assistants https://www.ag-grid.com/javascript-data-grid/mcp-server/',
+                '',
+                'If you believe this block is wrong, contact https://ag-grid.zendesk.com/ quoting the',
+                'x-amz-cf-id response header.',
+                '',
+            ].join('\n'),
         },
     },
     /** In priority order. The Shield group (priority 10000000) is checked separately. */
@@ -338,10 +385,44 @@ export const CF_ACL = {
     ],
     // 63.35.81.33/32 was added by hand on 2026-09-30 (CloudTrail UpdateIPSet, seanlandsman) and
     // is intended (confirmed 2026-10-01): both entries are the expected state.
-    buildServerIpSet: { name: 'build-server', addresses: ['52.50.158.57/32', '63.35.81.33/32'] },
-    mtaSts: { host: 'mta-sts.ag-grid.com', path: '/.well-known/mta-sts.txt' },
+    buildServerIpSet: {
+        name: 'build-server',
+        id: '11c2b109-7a3d-4252-8ccd-0eee28fbb8c5',
+        addresses: ['52.50.158.57/32', '63.35.81.33/32'],
+    } as IpSetExpectation,
+    /** Live 2026-10-01: both matches lowercase first. */
+    mtaSts: { host: 'mta-sts.ag-grid.com', path: '/.well-known/mta-sts.txt', transforms: ['LOWERCASE'] },
 
-    commonRuleSetExemptPrefixes: ['/blog/ghost/api/', '/rss/', '/_astro/favicon-'],
+    /** Live 2026-10-01: the first prefix is matched as-is, the other two after LOWERCASE. */
+    commonRuleSetExemptions: [
+        { prefix: '/blog/ghost/api/', transforms: ['NONE'] },
+        { prefix: '/rss/', transforms: ['LOWERCASE'] },
+        { prefix: '/_astro/favicon-', transforms: ['LOWERCASE'] },
+    ],
+
+    /** Every managed group on the ACL, by rule name (live 2026-10-01). */
+    managedGroups: {
+        'AWS-AWSManagedRulesAmazonIpReputationList': { overrides: [] },
+        'AWS-AWSManagedRulesCommonRuleSet': { overrides: [] },
+        'AWS-AWSManagedRulesKnownBadInputsRuleSet': { overrides: [] },
+        'AWS-AWSManagedRulesAntiDDoSRuleSet': { overrides: [] },
+        // Count keeps each rule's label for p11 and the later rules while it stops blocking.
+        'AWS-AWSManagedRulesBotControlRuleSet': {
+            overrides: [
+                'CategoryAI',
+                'SignalNonBrowserUserAgent',
+                'CategorySocialMedia',
+                'CategoryContentFetcher',
+                'CategoryMiscellaneous',
+                'CategoryHttpLibrary',
+                'SignalAutomatedBrowser',
+            ].map((name) => ({ name, action: 'Count' as const })),
+            // The data-centre block moves after p11's exemptions; the label stays for it to match.
+            pendingOverrides: [
+                { name: 'SignalKnownBotDataCenter', action: 'Count', pending: PENDING.datacenterAfterAgents },
+            ],
+        },
+    } as Record<string, ManagedGroupExpectation>,
 
     antiDdos: {
         challenge: 'ENABLED',
@@ -353,24 +434,13 @@ export const CF_ACL = {
         shouldExempt: ['/llms.txt', '/react-data-grid/getting-started.md', '/images/moon.svg', '/blog/rss/'],
     },
 
-    botControl: {
-        inspectionLevel: 'COMMON',
-        countOverrides: [
-            'CategoryAI',
-            'SignalNonBrowserUserAgent',
-            'CategorySocialMedia',
-            'CategoryContentFetcher',
-            'CategoryMiscellaneous',
-            'CategoryHttpLibrary',
-            'SignalAutomatedBrowser',
-        ],
-        pendingCountOverrides: [{ name: 'SignalKnownBotDataCenter', pending: PENDING.datacenterAfterAgents }],
-    },
+    botControl: { inspectionLevel: 'COMMON' },
 
     /**
      * The verified-bot labels block-datacenter-except-agent-paths exempts, alongside p11's own
      * Accept: text/markdown condition (move-datacenter-block-after-agent-exemptions.sh).
      */
+    dataCentreLabel: 'awswaf:managed:aws:bot-control:signal:known_bot_data_center',
     dataCentreVerifiedLabels: [
         'awswaf:managed:aws:bot-control:bot:verified',
         'awswaf:managed:aws:bot-control:bot:user_triggered:verified',
@@ -379,6 +449,8 @@ export const CF_ACL = {
 
     credentialScanner: {
         regex: '\\.git/|\\.env(\\.|_|[0-9]|$)|id_rsa|\\.ssh/|\\.aws/credentials',
+        /** Lowercased, then URL-decoded, so /.ENV and /%2Eenv are caught too. */
+        transforms: ['LOWERCASE', 'URL_DECODE'],
         /** SE-185: must match. */
         blocked: ['/.env', '/.env.local', '/.git/config', '/id_rsa', '/.ssh/id_rsa', '/.aws/credentials', '/%2Eenv'],
         /** Must not match: real content. */
@@ -462,7 +534,13 @@ export const CF_ACL = {
             window: 300,
             pending: PENDING.p11AgentAllowlist,
         },
-        saliencebotIpSet: 'salience-bot',
+        /** The saliencebot exemption: this UA regex AND this IP set, never either alone. */
+        saliencebotUaRegex: 'saliencebot',
+        saliencebotIpSet: {
+            name: 'salience-bot',
+            id: 'e46761ae-d7fe-4207-881e-7297230874a9',
+            addresses: ['18.132.26.88/32'],
+        } as IpSetExpectation,
         markdownAcceptExemption: 'text/markdown',
         /**
          * Live 2026-10-01: the Accept match lowercases first, so `TEXT/MARKDOWN` is exempt too, although
@@ -519,7 +597,7 @@ export const CF_ACL = {
     logging: {
         destination: `arn:aws:logs:us-east-1:${ACCOUNT_ID}:log-group:aws-waf-logs-cloudfront`,
         logGroup: 'aws-waf-logs-cloudfront',
-        redactedHeaders: ['x-lambda-verify', 'x-ag-ci-verify', 'x-aud-bot-verify', 'x-ag-origin-verify'],
+        redactedHeaders: REDACTED_HEADERS,
         redactionPending: PENDING.redactLogs,
     },
 };
@@ -542,8 +620,17 @@ export const ALB_ACL = {
             metricName: 'hard-rate-limit-rule-with-blocking',
         },
     ] as RuleExpectation[],
+    visibilityMetric: 'ag-grid-lb1-waf',
+    onSourceDDoSProtection: { ALBLowReputationMode: 'ACTIVE_UNDER_DDOS' },
     originVerifyHeader: 'x-ag-origin-verify',
-    ipReputationOverrides: [{ name: 'AWSManagedIPDDoSList', action: 'Block' }],
+    /** Every managed group on the ACL, by rule name (live 2026-10-01). */
+    managedGroups: {
+        'AWS-AWSManagedRulesAmazonIpReputationList': {
+            overrides: [{ name: 'AWSManagedIPDDoSList', action: 'Block' }],
+        },
+        'AWS-AWSManagedRulesKnownBadInputsRuleSet': { overrides: [] },
+        'AWS-AWSManagedRulesCommonRuleSet': { overrides: [] },
+    } as Record<string, ManagedGroupExpectation>,
     commonRuleSetExemptPrefix: '/blog/ghost/api/',
     rateLimits: { 'soft-rate-limit-rule-with-captcha': 1000000, 'hard-rate-limit-rule-with-blocking': 100000 },
     /**
@@ -557,12 +644,10 @@ export const ALB_ACL = {
         evaluationWindowSec: 300,
         scopeDownExemptPrefix: '/example-assets/',
     },
-    /** The ALB CRS group runs with no rule-action overrides (live 2026-10-01). */
-    commonRuleSetOverrides: [] as Array<{ name: string; action: string }>,
     logging: {
         destination: `arn:aws:logs:us-west-1:${ACCOUNT_ID}:log-group:aws-waf-logs-prod`,
         logGroup: 'aws-waf-logs-prod',
-        redactedHeaders: ['x-lambda-verify', 'x-ag-ci-verify', 'x-aud-bot-verify', 'x-ag-origin-verify'],
+        redactedHeaders: REDACTED_HEADERS,
         redactionPending: PENDING.redactLogs,
     },
 };
