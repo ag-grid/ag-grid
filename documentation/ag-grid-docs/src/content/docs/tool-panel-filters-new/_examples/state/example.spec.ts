@@ -22,7 +22,7 @@ test.agExample(import.meta, () => {
 
         // the buttons only change the filter panel state, so the sort must survive every one of them
         const athleteHeader = agIdFor.headerCell('athlete');
-        await gridApi.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await athleteHeader.getByText('Athlete').click();
         await expect(athleteHeader).toHaveAttribute('aria-sort', 'ascending');
 
         // the card summary renders the filter value, so it is the handle for "this filter is active"

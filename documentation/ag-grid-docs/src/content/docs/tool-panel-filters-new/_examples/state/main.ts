@@ -76,14 +76,14 @@ function clearFilterValues() {
     gridApi.setFilterModel(null);
 }
 
-// `setState` resets any section of the grid state it is not given,
-// so spread the current state to keep everything else (e.g. sorting) unchanged
-function setFilterPanelState({ sideBar, filter }: Pick<GridState, 'sideBar' | 'filter'>) {
-    gridApi.setState({ ...gridApi.getState(), sideBar, filter });
-}
+// `setState` resets any section of the grid state it is not given, so the handlers below
+// spread the current state to keep everything else (e.g. sorting) unchanged
 
 function clearToolPanel() {
-    setFilterPanelState({
+    gridApi.setState({
+        ...gridApi.getState(),
+        // removing a card also clears its filter
+        filter: undefined,
         sideBar: {
             visible: true,
             position: 'right',
@@ -98,7 +98,7 @@ function clearToolPanel() {
 }
 
 function restoreInitialState() {
-    setFilterPanelState({ sideBar: initialSideBarState });
+    gridApi.setState({ ...gridApi.getState(), filter: undefined, sideBar: initialSideBarState });
 }
 
 function saveState() {
@@ -108,7 +108,7 @@ function saveState() {
 
 function restoreSavedState() {
     if (savedState) {
-        setFilterPanelState({ filter: savedState.filter, sideBar: savedState.sideBar });
+        gridApi.setState({ ...gridApi.getState(), filter: savedState.filter, sideBar: savedState.sideBar });
         console.log('Restored state', savedState);
     }
 }
