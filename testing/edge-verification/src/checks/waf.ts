@@ -644,6 +644,11 @@ export function wafChecks(): CheckDef[] {
                         `UA allowlist does not admit "${token}"`
                     );
                 }
+                // The allowlist tokens are lowercase, so each UA regex must lowercase the header
+                // first; without it a real "GPTBot" or "ClaudeBot" no longer matches.
+                for (const l of uaRegexes) {
+                    p.eq(`UA regex /${l.value.slice(0, 40)}/ transforms`, l.transforms, ['LOWERCASE']);
+                }
                 for (const ua of nb.otherUaExemptions) {
                     p.check(
                         uaRegexes.some((l) => regexLeafMatches(l, ua)),
@@ -867,8 +872,30 @@ export function wafChecks(): CheckDef[] {
                         transforms: ['NONE'],
                     }),
                 ]);
+                p.eq(
+                    'CRS overrides',
+                    (crsGroup?.RuleActionOverrides ?? []).map(
+                        (o: any) => `${o.Name}:${Object.keys(o.ActionToUse ?? {})[0]}`
+                    ),
+                    ALB_ACL.commonRuleSetOverrides.map((o) => `${o.name}:${o.action}`)
+                );
+                const shape = ALB_ACL.rateRuleShape;
                 for (const [name, limit] of Object.entries(ALB_ACL.rateLimits)) {
-                    p.eq(`${name} limit`, byName(name)?.Statement.RateBasedStatement.Limit, limit);
+                    const rb = byName(name)?.Statement.RateBasedStatement;
+                    p.eq(`${name} limit`, rb?.Limit, limit);
+                    p.eq(`${name} aggregate key`, rb?.AggregateKeyType, shape.aggregateKeyType);
+                    p.eq(`${name} forwarded-IP config`, rb?.ForwardedIPConfig ?? null, shape.forwardedIpConfig);
+                    p.eq(`${name} window`, rb?.EvaluationWindowSec, shape.evaluationWindowSec);
+                    const sd = noneOfLeaves(rb?.ScopeDownStatement);
+                    p.eq(`${name} scope-down`, sd?.map(leafKey), [
+                        leafKey({
+                            kind: 'byte',
+                            field: 'UriPath',
+                            value: shape.scopeDownExemptPrefix,
+                            positional: 'STARTS_WITH',
+                            transforms: ['NONE'],
+                        }),
+                    ]);
                 }
                 return p.outcome();
             },

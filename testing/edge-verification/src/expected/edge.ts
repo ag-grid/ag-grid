@@ -523,6 +523,19 @@ export const ALB_ACL = {
     ipReputationOverrides: [{ name: 'AWSManagedIPDDoSList', action: 'Block' }],
     commonRuleSetExemptPrefix: '/blog/ghost/api/',
     rateLimits: { 'soft-rate-limit-rule-with-captcha': 1000000, 'hard-rate-limit-rule-with-blocking': 100000 },
+    /**
+     * Both ALB rate rules, as live on 2026-10-01 (read-only get-web-acl). They key on the connection
+     * IP with no ForwardedIPConfig, so behind CloudFront they count per edge IP, not per viewer
+     * (waf-finding.md §14) - declared as-is, so a change in either direction is drift.
+     */
+    rateRuleShape: {
+        aggregateKeyType: 'IP',
+        forwardedIpConfig: null,
+        evaluationWindowSec: 300,
+        scopeDownExemptPrefix: '/example-assets/',
+    },
+    /** The ALB CRS group runs with no rule-action overrides (live 2026-10-01). */
+    commonRuleSetOverrides: [] as Array<{ name: string; action: string }>,
     logging: {
         destination: `arn:aws:logs:us-west-1:${ACCOUNT_ID}:log-group:aws-waf-logs-prod`,
         logGroup: 'aws-waf-logs-prod',
