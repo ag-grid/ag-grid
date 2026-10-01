@@ -3020,7 +3020,7 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>
 
@@ -3129,7 +3129,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>
 
