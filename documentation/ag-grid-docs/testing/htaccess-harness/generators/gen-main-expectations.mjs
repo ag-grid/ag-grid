@@ -202,7 +202,8 @@ for (const d of alias) {
 // archive, on the archive's own copy of the target.
 rows.section(base ? 'grid-archive-single-hop' : 'grid-single-hop');
 for (const [from, to] of singleHop) {
-    rows.add('www', `${base}${from}`, 301, to, ['hops=1']);
+    // its own variant: an alias row for the same request (emitted above) must not swallow the hop check
+    rows.add('www', `${base}${from}`, 301, to, ['hops=1'], 'single-hop');
     rows.add('apex', `${base}${from}`, 301, to);
 }
 

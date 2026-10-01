@@ -132,3 +132,28 @@ describe('a redirect that catches a protected live page', () => {
         assert.match(result.stdout, /^www\t\/angular-data-grid\/grid-api\/\t200\b/m);
     });
 });
+
+describe('a single-hop request that an alias rule also generates', () => {
+    const GEN_DIR = fileURLToPath(new URL('.', import.meta.url));
+    const FIXTURE = [
+        'RewriteRule "^/?javascript-grid/$" "https://www.ag-grid.com/javascript-data-grid/getting-started/" [R=301,L]',
+        'Redirect 301 /javascript-grid/ /javascript-data-grid/getting-started/',
+    ].join('\n');
+
+    it('keeps the hops=1 assertion for the www request', () => {
+        const dir = mkdtempSync(join(tmpdir(), 'htaccess-gen-'));
+        const input = join(dir, 'input');
+        writeFileSync(input, FIXTURE);
+        mkdirSync(join(dir, 'curated'));
+        const result = spawnSync('node', [join(GEN_DIR, 'gen-main-expectations.mjs'), input], {
+            encoding: 'utf8',
+            env: { ...process.env, CURATED_DIR: join(dir, 'curated') },
+        });
+        assert.equal(result.status, 0, result.stderr);
+        const www = result.stdout.split('\n').filter((line) => line.startsWith('www\t/javascript-grid/\t'));
+        assert.ok(
+            www.some((line) => line.split('\t').includes('hops=1')),
+            www.join('\n')
+        );
+    });
+});
