@@ -2,7 +2,7 @@ import { promises as dns } from 'node:dns';
 
 import { metaContents } from '../core/html';
 import { type Response, header, headerAll, headerTokens } from '../core/http';
-import { type CheckDef, Problems, fail, pass, skip } from '../core/types';
+import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/types';
 import {
     ARCHIVE_VALIDATOR_PROBE,
     ARCHIVE_VALIDATOR_REQUESTS,
@@ -178,17 +178,16 @@ export function headerChecks(): CheckDef[] {
             area: 'headers',
             title: 'Every /charts/_astro/ stylesheet the charts home references exists',
             refs: ['SE-190'],
-            async run({ http }) {
+            run: budgeted(async ({ http }, p) => {
                 const html = (await http.get('https://www.ag-grid.com/charts/')).body;
                 const assets = [...new Set([...html.matchAll(/\/charts\/_astro\/[\w.-]+\.css/g)].map((m) => m[0]))];
-                const p = new Problems();
                 p.check(assets.length > 0, 'no stylesheets found');
                 for (const a of assets) {
                     const res = await http.head(`https://www.ag-grid.com${a}`);
                     p.check(res.status === 200, `${a}: ${res.status}`);
                 }
                 return p.outcome(`${assets.length} stylesheets`);
-            },
+            }),
         },
         {
             id: 'headers.not-modified-keeps-cache',
