@@ -4,9 +4,7 @@ import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations({
-        // debug: true
-    });
+    enableDevValidations({ debug: true });
 }
 
 ModuleRegistry.registerModules([ViewportRowModelModule]);

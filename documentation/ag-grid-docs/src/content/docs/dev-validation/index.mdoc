@@ -154,7 +154,7 @@ The id is the number shown in the console message and the overlay, for example `
 
 ### Debug Logging
 
-Set `debug` to `true` to log extra debug information from the grid to the console, prefixed with `AG Grid:`. This is useful when diagnosing why the grid is behaving unexpectedly.
+Set `debug` to `true` to log extra debug information from the grid to the console, prefixed with `AG Grid:`. This may be useful when diagnosing why the grid is behaving unexpectedly.
 
 ```js
 enableDevValidations({ debug: true });
@@ -167,5 +167,3 @@ Debug logging includes:
 - each grid option update, with its previous and new values (see [React Hooks](./react-hooks/#debug-mode))
 
 Defaults to `false`. As with the other options, `debug` is global and applies to every grid on the page.
-
-`debug` replaces the `debug` grid option, which is deprecated. The grid option still works for now, but only enables debug logging for the grid it is set on.
