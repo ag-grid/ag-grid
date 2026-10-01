@@ -297,6 +297,21 @@ describe('p11 exemptions are exactly the declared set', () => {
             assert.match(outcome.detail ?? '', /exemption/);
         });
     }
+
+    it('fails when the AI UA allowlist regex stops lowercasing the header', async () => {
+        const outcome = await run(CHECKS.nonBrowser, {
+            rule: 'block-nonbrowser-except-ai-assistants',
+            edit: (s) => {
+                const ua = exemptionAlts(s).find((a: any) =>
+                    a.RegexMatchStatement?.RegexString.includes('chatgpt-user')
+                );
+                ua.RegexMatchStatement.TextTransformations = [{ Priority: 0, Type: 'NONE' }];
+                return s;
+            },
+        });
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /transforms/);
+    });
 });
 
 describe('shared-secret Allow rules match the secret without transformation', () => {
@@ -385,6 +400,47 @@ describe('waf-config.alb.rules CRS scope-down', () => {
             const outcome = await runAlb(edit);
             assert.equal(outcome.status, 'fail', outcome.detail);
             assert.match(outcome.detail ?? '', /CRS scope-down/);
+        });
+    }
+});
+
+describe('waf-config.alb.rules rate rules and CRS overrides', () => {
+    const albRules = check('waf-config.alb.rules');
+    const runWith = (edit: (rules: any[]) => void): Promise<Outcome> => {
+        const rules = albAclRules();
+        edit(rules);
+        return albRules.run(offlineCtx(new FakeAws(albAclHandlers(rules))));
+    };
+    const rate = (rules: any[]) =>
+        rules.find((r) => r.Name === 'hard-rate-limit-rule-with-blocking').Statement.RateBasedStatement;
+
+    for (const [what, edit, pattern] of [
+        [
+            'a rate rule aggregates on a forwarded header',
+            (rules: any[]) => {
+                rate(rules).AggregateKeyType = 'FORWARDED_IP';
+                rate(rules).ForwardedIPConfig = { HeaderName: 'X-Forwarded-For', FallbackBehavior: 'MATCH' };
+            },
+            /aggregate key|forwarded-IP/,
+        ],
+        ['a rate rule window changes', (rules: any[]) => (rate(rules).EvaluationWindowSec = 60), /window/],
+        ['a rate rule loses its scope-down', (rules: any[]) => delete rate(rules).ScopeDownStatement, /scope-down/],
+        [
+            'the CRS group gains an override',
+            (rules: any[]) => {
+                rules.find(
+                    (r) => r.Name === 'AWS-AWSManagedRulesCommonRuleSet'
+                ).Statement.ManagedRuleGroupStatement.RuleActionOverrides = [
+                    { Name: 'SizeRestrictions_BODY', ActionToUse: { Count: {} } },
+                ];
+            },
+            /CRS overrides/,
+        ],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await runWith(edit);
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', pattern);
         });
     }
 });
