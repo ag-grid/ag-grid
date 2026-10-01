@@ -36,9 +36,10 @@
 //                    fail. Any other failure, or a transport error, still fails the run, and so does
 //                    a named assertion that passes, so the row gets promoted.
 //
-// Directives (comment lines): `# @category <name>` sets the category of the rows that follow;
-// `# @min-rows <n>` fails the run if the file yields fewer executed rows (guards a generator
-// silently dropping rows).
+// Directives (comment lines): `# @category <name>` sets the category of the rows that follow, and a
+// declared category that executes no rows fails the run (unless its site was skipped); `# @min-rows
+// <n>` fails the run if the file yields fewer executed rows (guards a generator silently dropping
+// rows).
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
@@ -77,7 +78,8 @@ export function parseKnownFail(value, row) {
 
 export function parseFile(file) {
     const rows = [];
-    const directives = { minRows: 0 };
+    // Every declared category, with or without rows, so one left empty can be reported.
+    const directives = { minRows: 0, categories: [] };
     let category = basename(file, '.tsv');
     const lines = readFileSync(file, 'utf8').split('\n');
     lines.forEach((line, i) => {
@@ -88,6 +90,7 @@ export function parseFile(file) {
             const d = line.match(/^#\s*@(category|min-rows)\s+(.+?)\s*$/);
             if (d?.[1] === 'category') {
                 category = d[2];
+                directives.categories.push({ file: basename(file), category, line: i + 1 });
             } else if (d?.[1] === 'min-rows') {
                 directives.minRows = Number(d[2]);
             }
