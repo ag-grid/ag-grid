@@ -15,6 +15,7 @@ import {
     leaves,
     noneOfAlternatives,
     noneOfLeaves,
+    noneOfStatements,
     regexLeafMatches,
     ruleAction,
 } from '../core/waf';
@@ -354,45 +355,67 @@ function p11UaAllowlist(p11: any): Extract<Leaf, { kind: 'regex' }> | undefined 
 const RULE_SHAPES: Record<string, { refs: string[]; check: (rule: any, live: Live, p: Problems) => Promise<void> }> = {
     'block-datacenter-except-agent-paths': {
         refs: [finding(5)],
-        // AND(data-centre label, NOT(any verified bot or Accept: text/markdown), NOT(any p11 safe
-        // path)): the shape move-datacenter-block-after-agent-exemptions.sh builds.
+        // AND(data-centre label, NOT(any verified bot, or Accept: text/markdown on a negotiable path),
+        // NOT(any p11 safe path)): the shape move-datacenter-block-after-agent-exemptions.sh builds.
         async check(rule, live, p) {
             const parts = andOf(rule.Statement);
             const label = parts?.length === 3 ? leafOf(parts[0]) : undefined;
-            const exempt = parts?.length === 3 ? noneOfLeaves(parts[1]) : undefined;
+            const alternatives = parts?.length === 3 ? noneOfStatements(parts[1]) : undefined;
             const safe = parts?.length === 3 ? noneOfLeaves(parts[2]) : undefined;
             const p11 = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'));
             const p11Safe = p11?.safe;
-            if (!label || !exempt || !safe || !p11Safe) {
+            if (!label || !alternatives || !safe || !p11Safe) {
                 p.add(`statement is not AND(label, NOT(exemptions), NOT(safe paths))${p11Safe ? '' : ' (nor is p11)'}`);
                 return;
             }
             p.eq('safe paths (same as p11)', sorted(safe.map(leafKey)), sorted(p11Safe.map(leafKey)));
             p.check(
-                label.kind === 'label' && label.value.endsWith('signal:known_bot_data_center'),
+                label.kind === 'label' &&
+                    label.scope === 'LABEL' &&
+                    label.value.endsWith('signal:known_bot_data_center'),
                 'does not match the known_bot_data_center label'
             );
-            // Exactly the verified-bot labels (matched as labels, not namespaces) and p11's own
-            // Accept: text/markdown condition: losing a label blocks verified crawlers on data-centre IPs.
-            const labels = exempt.filter((l) => l.kind === 'label');
+            p.eq('exemption alternatives', alternatives.length, CF_ACL.dataCentreVerifiedLabels.length + 1);
+            // Exactly the verified-bot labels (matched as labels, not namespaces): losing one blocks
+            // verified crawlers on data-centre IPs.
+            const labels = alternatives.map(leafOf).filter((l): l is Leaf => l?.kind === 'label');
             p.eq(
                 'verified-bot exemption statement labels',
                 sorted(labels.map((l) => l.value)),
                 sorted(CF_ACL.dataCentreVerifiedLabels)
             );
             p.check(
-                labels.every((l) => l.scope === 'LABEL'),
+                labels.every((l) => l.kind === 'label' && l.scope === 'LABEL'),
                 'verified-bot exemption statement matches a namespace, not the label'
             );
+            // Accept: text/markdown alone would let any data-centre client fetch anything by sending
+            // it; it must be ANDed with the paths the origin actually negotiates.
+            const bareAccept = alternatives
+                .map(leafOf)
+                .filter((l) => l?.kind === 'byte' && l.field === 'header:accept');
+            p.check(!bareAccept.length, 'Accept: text/markdown is exempt on every path, not only negotiable ones');
+            const ands = alternatives.map(andOf).filter((a): a is any[] => !!a);
             const p11Accept = p11?.exemptions.filter((l) => l.kind === 'byte' && l.field === 'header:accept');
-            const accept = exempt.filter((l) => l.kind !== 'label');
+            const accept = ands.length === 1 && ands[0].length === 2 ? leafOf(ands[0][0]) : undefined;
+            const paths = ands.length === 1 && ands[0].length === 2 ? anyOfLeaves(ands[0][1]) : undefined;
+            if (!accept || !paths) {
+                p.add('markdown exemption is not one AND(Accept leaf, OR(negotiable path regexes))');
+                return;
+            }
             p.check(
                 p11Accept?.length === 1 &&
-                    accept.length === 1 &&
-                    JSON.stringify(accept[0]) === JSON.stringify(p11Accept[0]) &&
-                    accept[0].kind === 'byte' &&
-                    accept[0].value === CF_ACL.nonBrowser.markdownAcceptExemption,
-                `exemption statement's non-label part is not p11's Accept: ${CF_ACL.nonBrowser.markdownAcceptExemption} condition alone`
+                    JSON.stringify(accept) === JSON.stringify(p11Accept[0]) &&
+                    accept.kind === 'byte' &&
+                    accept.value === CF_ACL.nonBrowser.markdownAcceptExemption,
+                `markdown exemption statement's Accept test is not p11's Accept: ${CF_ACL.nonBrowser.markdownAcceptExemption} condition`
+            );
+            // Raw path, no transformation: the origin's conditions are case-sensitive.
+            p.eq(
+                'negotiable path regexes',
+                paths.map(leafKey),
+                CF_ACL.dataCentreMarkdownPaths.map((value) =>
+                    leafKey({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })
+                )
             );
             p.eq('custom body', rule.Action?.Block?.CustomResponse?.CustomResponseBodyKey, 'automated-access-blocked');
         },

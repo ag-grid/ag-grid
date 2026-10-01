@@ -126,7 +126,8 @@ describe('WAF statement structure', () => {
             'block-datacenter-except-agent-paths',
             (s) => {
                 const stmts = s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements;
-                stmts[stmts.length - 1].ByteMatchStatement.PositionalConstraint = 'EXACTLY';
+                const md = stmts.find((x: any) => x.AndStatement).AndStatement.Statements[0];
+                md.ByteMatchStatement.PositionalConstraint = 'EXACTLY';
                 return s;
             },
         ],
