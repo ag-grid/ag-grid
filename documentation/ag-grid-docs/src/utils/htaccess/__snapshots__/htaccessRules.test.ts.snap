@@ -95,6 +95,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 </IfModule>
 
 
+# Let compressed responses revalidate: drop mod_deflate's "-gzip" ETag suffix from If-None-Match.
+RequestHeader edit* If-None-Match '-gzip"' '"'
+
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -3120,6 +3124,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 
 # BEGIN in-flight release archives - patched in place, do not edit by hand
 # END in-flight release archives
+
+
+# Let compressed responses revalidate: drop mod_deflate's "-gzip" ETag suffix from If-None-Match.
+RequestHeader edit* If-None-Match '-gzip"' '"'
 
 
 <IfModule mod_rewrite.c>
