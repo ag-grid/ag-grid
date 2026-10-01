@@ -8,10 +8,6 @@
     margin-bottom: 12px;
 }
 
-.controls > button {
-    font-weight: 600;
-}
-
 .grid-wrapper {
     display: flex;
     flex: 1 1 0;
