@@ -183,7 +183,8 @@ export class Http {
         }
     }
 
-    private raw(method: 'GET' | 'HEAD', url: URL, headers: Record<string, string>): Promise<Response> {
+    /** The network call itself; the offline tests' FakeHttp replaces only this. */
+    protected raw(method: 'GET' | 'HEAD', url: URL, headers: Record<string, string>): Promise<Response> {
         const isHttps = url.protocol === 'https:';
         const lib = isHttps ? https : http;
         return new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 
 import { Aws, awsErrorFromStderr, isReadOnlyOperation } from '../core/aws';
-import type { Http } from '../core/http';
+import { Http, type Response } from '../core/http';
 import { Live } from '../core/live';
 import type { Ctx, Options } from '../core/types';
 import {
@@ -314,4 +314,54 @@ export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRu
         }
     }
     return out.map((r, i) => ({ ...r, Priority: i }));
+}
+
+/** What a FakeHttp answers one request with. */
+export interface FakeResponse {
+    status: number;
+    headers?: Record<string, string>;
+    body?: string;
+}
+
+export interface SentRequest {
+    method: 'GET' | 'HEAD';
+    url: string;
+    headers: Record<string, string>;
+}
+
+/**
+ * The real Http client (budget, markdown guard, memo) with the network replaced by a responder.
+ * `sent` records every request that reached the network, in order.
+ */
+export class FakeHttp extends Http {
+    readonly sent: SentRequest[] = [];
+
+    constructor(
+        private readonly respond: (req: SentRequest) => FakeResponse,
+        opts: Partial<Options> = {}
+    ) {
+        super(options({ maxRequests: 100, ...opts }));
+    }
+
+    protected override raw(method: 'GET' | 'HEAD', url: URL, headers: Record<string, string>): Promise<Response> {
+        const req = { method, url: url.href, headers };
+        this.sent.push(req);
+        const r = this.respond(req);
+        return Promise.resolve({
+            url: url.href,
+            method,
+            status: r.status,
+            headers: new Map(Object.entries(r.headers ?? {}).map(([k, v]) => [k.toLowerCase(), [v]])),
+            body: method === 'HEAD' ? '' : (r.body ?? ''),
+            ms: 0,
+        });
+    }
+}
+
+/** A check context over a FakeAws and a FakeHttp, with the markdown guard prepared and installed. */
+export async function fakeCtx(aws: Aws, http: FakeHttp, opts: Partial<Options> = {}): Promise<Ctx> {
+    const live = new Live(aws);
+    await live.prepareGuard();
+    http.setMarkdownGuard(live.markdownGuard);
+    return { aws, http, live, opts: options(opts) };
 }
