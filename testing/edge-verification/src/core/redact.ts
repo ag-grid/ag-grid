@@ -6,6 +6,9 @@
  */
 const secrets = new Set<string>();
 
+/** What a secret value is replaced by wherever live configuration is compared with the declared one. */
+export const SECRET = '<secret>';
+
 /** Header names whose values are bypass secrets. Matched case-insensitively. */
 export const SECRET_HEADER_PATTERN = /verify/i;
 

@@ -32,7 +32,6 @@ import { finding } from '../expected/lifecycle';
 import {
     ACL_UNPINNED,
     type DeclaredRule,
-    SECRET,
     albAclSettings,
     albDeclaredRules,
     cfAclSettings,
@@ -51,7 +50,7 @@ async function cfRule(live: Live, name: string): Promise<any> {
     return rule;
 }
 
-const canonical = (node: unknown): any => canonicalWaf(node, SECRET);
+const canonical = (node: unknown): any => canonicalWaf(node);
 
 /** An override as `Name:Action`, or `Name:{...}` when the action carries settings (a custom response, say). */
 function overrideKey(name: string, actionToUse: any): string {
