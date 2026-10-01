@@ -1,6 +1,8 @@
 # Hand-curated rows per ticket. Format: see lib/rows.mjs (host, path, status, EXACT Location,
 # optional assertions). A first response whose Location is already the final target proves a
 # single hop; rows can also follow the chain locally with hops=/final=.
+# Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
+# @min-rows 285
 # @category curated-tickets
 
 # --- SE-30 ---
