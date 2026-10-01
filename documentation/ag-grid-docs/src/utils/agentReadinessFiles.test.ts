@@ -1,4 +1,6 @@
 import { buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
+import { resolveRoute } from './pageRoutes.test-utils';
+import { getSitemapConfig } from './sitemap';
 
 const INPUT = {
     siteRoot: 'https://www.ag-grid.com/',
@@ -134,5 +136,60 @@ describe('buildAgentsMd', () => {
         const disabled = buildAgentsMd({ ...INPUT, includeMarkdownDocs: false });
         expect(disabled).not.toContain('.md');
         expect(disabled).not.toContain('Markdown for LLMs');
+    });
+});
+
+// SE-77 / SE-80: an agent follows these links verbatim, so each one must be a URL the grid build
+// emits (waf-finding.md §16 T8). Resolved against the route files and docs content, not a dist.
+describe('curated links in llms.txt and AGENTS.md', () => {
+    const SITE_ROOT = 'https://www.ag-grid.com';
+    // Written by @astrojs/sitemap rather than a route file.
+    const INTEGRATION_OUTPUTS = ['/sitemap-index.xml'];
+    // Charts and studio are separate repos deployed under the same host, so their routes are not
+    // visible here; their own broken agent-facing links are tracked in waf-finding.md §13.
+    const isOtherSite = (pathname: string) => /^\/(charts|studio)(\/|$)/.test(pathname);
+
+    const linkedPaths = (body: string) =>
+        [...new Set(body.match(/https:\/\/www\.ag-grid\.com\/[^\s)\]`]*/g) ?? [])].map(
+            (url) => new URL(url.replace(/[.,]$/, '')).pathname
+        );
+
+    const gridPaths = (body: string) => linkedPaths(body).filter((pathname) => !isOtherSite(pathname));
+    const unindexedPages = (body: string) => {
+        const { filter } = getSitemapConfig({});
+        return gridPaths(body)
+            .filter((pathname) => pathname.endsWith('/') && pathname !== '/')
+            .filter((pathname) => !filter(`${SITE_ROOT}${pathname}`));
+    };
+    const LLMS_TXT = buildLlmsTxt(INPUT);
+    const AGENTS_MD = buildAgentsMd(INPUT);
+
+    test('the route oracle rejects pages the build does not emit', () => {
+        expect(resolveRoute('/javascript-data-grid/getting-started/')).toBeDefined();
+        expect(resolveRoute('/javascript-data-grid/no-such-page/')).toBeUndefined();
+        expect(resolveRoute('/svelte-data-grid/getting-started/')).toBeUndefined();
+        expect(resolveRoute('/no-such-page/')).toBeUndefined();
+        // The JavaScript root has no landing hub, so no markdown twin.
+        expect(resolveRoute('/react-data-grid.md')).toBeDefined();
+        expect(resolveRoute('/javascript-data-grid.md')).toBeUndefined();
+    });
+
+    describe.each([
+        ['llms.txt', LLMS_TXT],
+        ['AGENTS.md', AGENTS_MD],
+    ])('%s', (_name, body) => {
+        const paths = gridPaths(body);
+
+        test('links into the grid site, so the checks below are not vacuous', () => {
+            expect(paths.length).toBeGreaterThan(5);
+        });
+
+        test.each(paths)('%s is emitted by the grid build', (pathname) => {
+            expect(INTEGRATION_OUTPUTS.includes(pathname) || resolveRoute(pathname) !== undefined).toBe(true);
+        });
+    });
+
+    test('AGENTS.md links only indexable pages, not redirect stubs', () => {
+        expect(unindexedPages(AGENTS_MD)).toEqual([]);
     });
 });
