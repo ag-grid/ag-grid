@@ -210,4 +210,86 @@ describe('p11 saliencebot exemption', () => {
         assert.equal(outcome.status, 'fail');
         assert.match(outcome.detail ?? '', /saliencebot/);
     });
+
+    const salienceAnd = (s: any): any[] =>
+        s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements.find((a: any) => a.AndStatement)
+            .AndStatement.Statements;
+
+    for (const [what, mutate] of [
+        [
+            'its UA regex no longer matches saliencebot',
+            (and: any[]) => {
+                and[0].RegexMatchStatement.RegexString = 'a-different-bot';
+            },
+        ],
+        [
+            'an extra condition narrows it',
+            (and: any[]) => {
+                and.push({
+                    ByteMatchStatement: {
+                        FieldToMatch: { SingleHeader: { Name: 'host' } },
+                        PositionalConstraint: 'EXACTLY',
+                        SearchString: Buffer.from('nowhere.invalid').toString('base64'),
+                        TextTransformations: [{ Priority: 0, Type: 'NONE' }],
+                    },
+                });
+            },
+        ],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await run(CHECKS.nonBrowser, {
+                rule: 'block-nonbrowser-except-ai-assistants',
+                edit: (s) => {
+                    mutate(salienceAnd(s));
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail');
+            assert.match(outcome.detail ?? '', /saliencebot/);
+        });
+    }
+});
+
+describe('safe-path exemptions keep their matching semantics', () => {
+    const safeLeaves = (s: any): any[] => s.AndStatement.Statements[2].NotStatement.Statement.OrStatement.Statements;
+    const MUTATIONS: Array<[string, (leaf: any) => void]> = [
+        [
+            'matched on the user-agent instead of the path',
+            (l) => {
+                Object.values<any>(l)[0].FieldToMatch = { SingleHeader: { Name: 'user-agent' } };
+            },
+        ],
+        [
+            'a prefix matched EXACTLY instead of STARTS_WITH',
+            (l) => {
+                if (l.ByteMatchStatement) {
+                    l.ByteMatchStatement.PositionalConstraint = 'EXACTLY';
+                }
+            },
+        ],
+        [
+            'a different text transformation',
+            (l) => {
+                Object.values<any>(l)[0].TextTransformations = [{ Priority: 0, Type: 'URL_DECODE' }];
+            },
+        ],
+    ];
+    for (const [what, mutate] of MUTATIONS) {
+        for (const [id, rule] of [
+            [CHECKS.nonBrowser, 'block-nonbrowser-except-ai-assistants'],
+            [CHECKS.dataCentre, 'block-datacenter-except-agent-paths'],
+        ] as const) {
+            it(`${id} fails when every safe path is ${what}`, async () => {
+                const outcome = await run(id, {
+                    rule,
+                    edit: (s) => {
+                        safeLeaves(s).forEach(mutate);
+                        return s;
+                    },
+                });
+                assert.equal(outcome.status, 'fail');
+                assert.match(outcome.detail ?? '', /safe path/);
+            });
+        }
+    }
 });

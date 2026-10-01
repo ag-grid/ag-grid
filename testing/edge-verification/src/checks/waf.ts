@@ -8,6 +8,7 @@ import {
     andOfLeaves,
     anyOfLeaves,
     anyPathLeafMatches,
+    leafKey,
     leafOf,
     leaves,
     noneOfAlternatives,
@@ -167,6 +168,21 @@ export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): s
     return others.length ? `between ${exp.after} and ${exp.name}: ${others.join(', ')}` : undefined;
 }
 
+/** p11's safe-path leaves as add-waf-safe-path-exemptions.sh builds them: UriPath, no transform. */
+function p11SafeLeaves(): Leaf[] {
+    const nb = CF_ACL.nonBrowser;
+    return [
+        ...nb.safePathRegexes.map((value): Leaf => ({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })),
+        ...nb.safePathPrefixes.map((value): Leaf => ({
+            kind: 'byte',
+            field: 'UriPath',
+            value,
+            positional: 'STARTS_WITH',
+            transforms: ['NONE'],
+        })),
+    ];
+}
+
 /** The p11 user-agent allowlist regex (the UA regex that admits chatgpt-user), or undefined. */
 function p11UaAllowlist(p11: any): Extract<Leaf, { kind: 'regex' }> | undefined {
     const e = p11Parts(p11)?.exemptions ?? [];
@@ -196,8 +212,7 @@ const PENDING_RULE_SHAPES: Record<
                 p.add(`statement is not AND(label, NOT(exemptions), NOT(safe paths))${p11Safe ? '' : ' (nor is p11)'}`);
                 return;
             }
-            const pathValues = (ls: Leaf[]) => ls.map((l) => ('field' in l ? `${l.field} ${l.value}` : l.value));
-            p.eq('safe paths (same as p11)', sorted(pathValues(safe)), sorted(pathValues(p11Safe)));
+            p.eq('safe paths (same as p11)', sorted(safe.map(leafKey)), sorted(p11Safe.map(leafKey)));
             p.check(
                 label.kind === 'label' && label.value.endsWith('signal:known_bot_data_center'),
                 'does not match the known_bot_data_center label'
@@ -600,14 +615,21 @@ export function wafChecks(): CheckDef[] {
                 for (const label of nb.exemptLabels) {
                     p.check(labels.includes(label), `exemption label missing: ${label}`);
                 }
-                // The saliencebot exemption needs both its UA and its IP set (an AND), never the UA alone.
+                // The saliencebot exemption needs both its UA and its IP set (an AND of exactly those
+                // two), never the UA alone, and its UA regex must still match saliencebot.
                 p.check(
                     ands.some(
                         (and) =>
+                            and.length === 2 &&
                             and.some((l) => l.kind === 'ipset' && l.value.includes(`/ipset/${nb.saliencebotIpSet}/`)) &&
-                            and.some((l) => l.kind === 'regex' && l.field === 'header:user-agent')
+                            and.some(
+                                (l) =>
+                                    l.kind === 'regex' &&
+                                    l.field === 'header:user-agent' &&
+                                    regexLeafMatches(l, 'saliencebot')
+                            )
                     ),
-                    'saliencebot exemption is not AND(saliencebot UA, salience-bot IP set)'
+                    'saliencebot exemption is not AND(a UA regex matching saliencebot, salience-bot IP set)'
                 );
                 p.check(
                     !e.some(
@@ -626,16 +648,9 @@ export function wafChecks(): CheckDef[] {
                     ),
                     'Accept: text/markdown exemption missing'
                 );
-                p.eq(
-                    'safe-path regexes',
-                    sorted(s.filter((l) => l.kind === 'regex').map((l) => l.value)),
-                    sorted(nb.safePathRegexes)
-                );
-                p.eq(
-                    'safe-path prefixes',
-                    sorted(s.filter((l) => l.kind === 'byte').map((l) => l.value)),
-                    sorted(nb.safePathPrefixes)
-                );
+                // Every property, not just the value: a safe path matched on another field, as an
+                // exact match, or after another transform no longer exempts what it names.
+                p.eq('safe paths', sorted(s.map(leafKey)), sorted(p11SafeLeaves().map(leafKey)));
                 p.eq('response', rule.Action?.Block?.CustomResponse, {
                     ResponseCode: 403,
                     CustomResponseBodyKey: nb.customBody,
