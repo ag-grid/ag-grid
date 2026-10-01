@@ -149,8 +149,8 @@ export const BOT_OUTCOME_DEFAULTS = {
     /** 1% */
     maxNonAllowShare: 0.01,
     minVolume: 100,
-    /** Insights bills per byte scanned; 2h is ~1.0-1.3 GB. */
-    maxBytes: 3e9,
+    /** Insights bills per byte scanned; 2h ingests ~1.2 GB and the estimate doubles it (SCAN_TO_INGEST_FACTOR). */
+    maxBytes: 4e9,
 };
 
 export const BOT_OUTCOME_REFS = ['SE-78', 'SE-184', finding(5), finding(6)];

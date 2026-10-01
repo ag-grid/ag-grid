@@ -137,7 +137,7 @@ describe('running the query', () => {
 
     it('refuses before starting when IncomingBytes says the scan is over the cap', async () => {
         const aws = new FakeAws({
-            'cloudwatch get-metric-statistics': () => incoming(0.2),
+            'cloudwatch get-metric-statistics': () => incoming(0.1),
             'logs start-query': () => assert.fail('must not start'),
         });
         await assert.rejects(
@@ -240,7 +240,7 @@ describe('bot-outcomes checks', () => {
         const c = offlineCtx(
             new FakeAws({
                 ...cfAclHandlers(cfAclRules()),
-                'cloudwatch get-metric-statistics': () => ({ Datapoints: [{ Sum: 9e9 }] }),
+                'cloudwatch get-metric-statistics': () => ({ Datapoints: [{ Sum: 3e9 }] }),
             })
         );
         const o = await runCheck('bot-outcomes.query', c);
