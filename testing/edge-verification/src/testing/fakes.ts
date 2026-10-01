@@ -270,7 +270,15 @@ export function cfAclRules(): any[] {
                                       )
                                   ),
                               }
-                            : {}),
+                            : (exp as any).scopeDown === 'nonbrowser-safe-paths'
+                              ? {
+                                    // Live 2026-10-01: AND(any trigger label, any of the four safe-path regexes).
+                                    ScopeDownStatement: and(
+                                        or(...CF_ACL.nonBrowser.triggerLabels.map(label)),
+                                        or(...CF_ACL.nonBrowser.safePathRegexes.map((r) => regex('UriPath', r, 'NONE')))
+                                    ),
+                                }
+                              : {}),
                     },
                 },
                 {
