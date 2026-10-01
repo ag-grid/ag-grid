@@ -185,6 +185,13 @@ describe('redirects', () => {
         expect(wrong).toEqual([]);
     });
 
+    // SE-186: Bing still probes the conventional /sitemap.xml; the real index is /sitemap-index.xml.
+    it('sends /sitemap.xml to the sitemap index in one hop, which is then served', () => {
+        const chain = followFromWww('/sitemap.xml');
+        expect(chain.hops.map((hop) => [hop.status, hop.location])).toEqual([[301, `${WWW}/sitemap-index.xml`]]);
+        expect(chain.final.outcome).toMatchObject({ type: 'serve', path: '/sitemap-index.xml' });
+    });
+
     // SE-64 / SE-66: the single-hop rewrites run before the https upgrade and host swap, so a
     // legacy path lands on its final www URL in ONE hop from the apex or over http too, keeping
     // any inbound query string.
