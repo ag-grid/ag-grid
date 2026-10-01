@@ -41,3 +41,35 @@ The following example demonstrates how to refresh specified groups on the server
 - When a refresh is finished, note the `storeRefreshed` event is fired, and logged in the console.
 
 {% gridExampleRunner title="Refreshing Groups" name="refreshing-the-groups"  exampleHeight=615 /%}
+
+## Level Consistency
+
+Each block of a level is loaded by a separate `getRows` request. If the data on the server changes between these requests, for example rows are inserted, deleted or reordered by a sort on a frequently updated column, rows can be duplicated or dropped across a block boundary.
+
+Enable `serverSideCheckLevelConsistency` to have the grid detect this. Note the following:
+
+- Each block request asks for one extra row, i.e. `endRow` is one past the end of the block. The extra row is compared with the first row of the next block and is never displayed. The datasource must therefore return rows up to `endRow`.
+- [Row IDs](./server-side-model-configuration/#providing-row-ids) are required, as rows are compared by their ID.
+- When the grid finishes loading a level and finds blocks that disagree, it fires `serverSideLevelInconsistent` at most once for that level. The event contains the `route` of the level and an `inconsistencies` entry for each affected block boundary, with its `type` (`duplicated` or `dropped`), `boundaryIndex` and the `rowIds` involved.
+- The grid does not repair the data. It is up to the application to decide how to respond.
+
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["serverSideCheckLevelConsistency"] config={"overrideBottomMargin":"0rem"} /%}
+
+The following snippet reloads the affected level when an inconsistency is reported:
+
+```js
+const gridOptions = {
+    rowModelType: 'serverSide',
+    getRowId: (params) => params.data.id,
+    serverSideCheckLevelConsistency: true,
+    onServerSideLevelInconsistent: (event) => {
+        // purge and reload the level that was loaded inconsistently
+        event.api.refreshServerSide({ route: event.route, purge: true });
+    },
+};
+```
+
+Reloading may not produce a consistent level if the data keeps changing while the blocks are loaded, so avoid repeating the refresh indefinitely. To reduce the chance of inconsistencies:
+
+- Use a larger `cacheBlockSize`, so that a level is read in a single request.
+- Avoid server-side sorting on a column that is updated frequently.

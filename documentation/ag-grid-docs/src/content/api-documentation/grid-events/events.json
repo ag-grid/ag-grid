@@ -578,6 +578,12 @@
                 "name": "SSRM Refresh",
                 "url": "./server-side-model-updating-refresh/"
             }
+        },
+        "serverSideLevelInconsistent": {
+            "more": {
+                "name": "Level Consistency",
+                "url": "./server-side-model-updating-refresh/#level-consistency"
+            }
         }
     },
     "navigation": {

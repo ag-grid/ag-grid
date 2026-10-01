@@ -229,6 +229,7 @@ import type {
     SelectionChangedEvent,
     SelectionColumnDef,
     SendToClipboard,
+    ServerSideLevelInconsistentEvent,
     SideBarDef,
     SortChangedEvent,
     SortDirection,
@@ -1724,6 +1725,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideEnableClientSideSort: boolean | undefined = undefined;
+    /** When enabled, checks that the blocks loaded for each level are consistent with each other and fires `serverSideLevelInconsistent` when rows were duplicated or dropped across a block boundary, because the data changed on the server between block requests.
+     * Each block request asks for one extra row (`endRow` is one past the end of the block), which is compared with the first row of the next block and is not displayed. The datasource must return rows up to `endRow`.
+     * Requires `getRowId`.
+     * @default false
+     * @agModule `ServerSideRowModelModule`
+     */
+    @Input({ transform: booleanAttribute }) public serverSideCheckLevelConsistency: boolean | undefined = undefined;
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial
@@ -2719,6 +2727,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public storeRefreshed: EventEmitter<StoreRefreshedEvent<TData>> = new EventEmitter<
         StoreRefreshedEvent<TData>
     >();
+    /** The blocks loaded for a level are not consistent with each other, because the data changed on the server between the block requests: rows were duplicated or dropped across a block boundary.
+     * Only fired when `serverSideCheckLevelConsistency` is enabled. Fired at most once per level each time the grid finishes loading blocks.
+     */
+    @Output() public serverSideLevelInconsistent: EventEmitter<ServerSideLevelInconsistentEvent<TData>> =
+        new EventEmitter<ServerSideLevelInconsistentEvent<TData>>();
     /** Header is focused.
      */
     @Output() public headerFocused: EventEmitter<HeaderFocusedEvent<TData>> = new EventEmitter<

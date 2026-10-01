@@ -35,6 +35,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     // a map of caches to loading nodes
     private readonly cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
 
+    // caches with level inconsistencies to report once loading goes idle
+    private readonly inconsistentCaches: Set<LazyCache> = new Set();
+
     // if a check is queued to happen this cycle
     private isCheckQueued = false;
 
@@ -52,6 +55,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     public unsubscribe(cache: LazyCache) {
         this.cacheLoadingNodesMap.delete(cache);
+        this.inconsistentCaches.delete(cache);
+    }
+
+    public addInconsistentCache(cache: LazyCache) {
+        this.inconsistentCaches.add(cache);
     }
 
     /**
@@ -83,6 +91,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private queueLoadAction() {
         const nextBlockToLoad = this.getBlockToLoad();
         if (!nextBlockToLoad) {
+            if (this.outboundRequests === 0) {
+                this.dispatchLevelInconsistentEvents();
+            }
             return;
         }
 
@@ -113,6 +124,18 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         }
     }
 
+    private dispatchLevelInconsistentEvents() {
+        const caches = this.inconsistentCaches;
+        if (caches.size === 0) {
+            return;
+        }
+        const toDispatch = [...caches];
+        caches.clear();
+        for (let i = 0, len = toDispatch.length; i < len; ++i) {
+            toDispatch[i].dispatchLevelInconsistentEvent();
+        }
+    }
+
     private attemptLoad(cache: LazyCache, start: number, end: number) {
         const hasBandwidth = this.hasAvailableLoadBandwidth();
         // too many loads already, ignore the request as a successful request will requeue itself anyway
@@ -132,7 +155,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         const parentNode = cache.store.getParentNode() as RowNode;
         const request: IServerSideGetRowsRequest = {
             startRow,
-            endRow,
+            // one row past the block is compared with the next block's first row
+            endRow: cache.checksLevelConsistency() ? endRow + 1 : endRow,
             rowGroupCols: ssrmParams.rowGroupCols,
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,

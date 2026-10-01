@@ -1888,6 +1888,12 @@
                 "url": "./server-side-model-sorting/#client-side-sorting"
             }
         },
+        "serverSideCheckLevelConsistency": {
+            "more": {
+                "name": "Level Consistency",
+                "url": "./server-side-model-updating-refresh/#level-consistency"
+            }
+        },
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",

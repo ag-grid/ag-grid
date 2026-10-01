@@ -109,6 +109,7 @@ import type {
     RowSelectedEvent,
     RowValueChangedEvent,
     SelectionChangedEvent,
+    ServerSideLevelInconsistentEvent,
     SortChangedEvent,
     StateUpdatedEvent,
     StoreRefreshedEvent,
@@ -1870,6 +1871,14 @@ export interface GridOptions<TData = any> {
      */
     serverSideEnableClientSideSort?: boolean;
     /**
+     * When enabled, checks that the blocks loaded for each level are consistent with each other and fires `serverSideLevelInconsistent` when rows were duplicated or dropped across a block boundary, because the data changed on the server between block requests.
+     * Each block request asks for one extra row (`endRow` is one past the end of the block), which is compared with the first row of the next block and is not displayed. The datasource must return rows up to `endRow`.
+     * Requires `getRowId`.
+     * @default false
+     * @agModule `ServerSideRowModelModule`
+     */
+    serverSideCheckLevelConsistency?: boolean;
+    /**
      * When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial
@@ -3055,6 +3064,11 @@ export interface GridOptions<TData = any> {
      * A server side store has finished refreshing.
      */
     onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
+    /**
+     * The blocks loaded for a level are not consistent with each other, because the data changed on the server between the block requests: rows were duplicated or dropped across a block boundary.
+     * Only fired when `serverSideCheckLevelConsistency` is enabled. Fired at most once per level each time the grid finishes loading blocks.
+     */
+    onServerSideLevelInconsistent?(event: ServerSideLevelInconsistentEvent<TData>): void;
 
     // *** Selection *** //
     /**
@@ -3204,8 +3218,7 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
 }
 
 type MenuCallbackReturn<TMenuItem extends string, TData = any, TContext = any> = (
-    | TMenuItem
-    | MenuItemDef<TData, TContext>
+    TMenuItem | MenuItemDef<TData, TContext>
 )[];
 
 export type GetContextMenuItems<TData = any, TContext = any> = (
@@ -3343,8 +3356,7 @@ export interface FillHandleOptions<TData = any, TContext = any> {
 }
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
-    | SingleRowSelectionOptions<TData, TValue, TContext>
-    | MultiRowSelectionOptions<TData, TValue, TContext>;
+    SingleRowSelectionOptions<TData, TValue, TContext> | MultiRowSelectionOptions<TData, TValue, TContext>;
 
 interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
@@ -3594,10 +3606,7 @@ export interface PageNumbersPanelParams {
 }
 
 export type PaginationPanelParams =
-    | PageSummaryPanelParams
-    | PageSizePanelParams
-    | RowSummaryPanelParams
-    | PageNumbersPanelParams;
+    PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams | PageNumbersPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | 'pageNumbers' | PaginationPanelParams;
 
