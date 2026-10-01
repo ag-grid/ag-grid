@@ -155,12 +155,12 @@ export const healthyCloudFront = (): Record<string, Handler> => ({
 });
 
 const b64 = (s: string): string => Buffer.from(s).toString('base64');
-const byte = (field: string, positional: string, value: string): any => ({
+const byte = (field: string, positional: string, value: string, transform = 'NONE'): any => ({
     ByteMatchStatement: {
         FieldToMatch: field.startsWith('header:') ? { SingleHeader: { Name: field.slice(7) } } : { [field]: {} },
         PositionalConstraint: positional,
         SearchString: b64(value),
-        TextTransformations: [{ Priority: 0, Type: 'NONE' }],
+        TextTransformations: [{ Priority: 0, Type: transform }],
     },
 });
 const regex = (field: string, value: string, transform = 'LOWERCASE'): any => ({
@@ -247,6 +247,45 @@ export function cfAclRules(): any[] {
                 },
                 VisibilityConfig: { MetricName: 'blockDataCenterExceptAgentPaths' },
             }
+        ),
+        ...CF_ACL.rateRules.map((exp) =>
+            rule(
+                exp.name,
+                {
+                    RateBasedStatement: {
+                        Limit: exp.limit,
+                        EvaluationWindowSec: exp.window,
+                        AggregateKeyType: 'IP',
+                        // The live shape (2026-09-24 ACL backup): UriPath, LOWERCASE, prefixes STARTS_WITH.
+                        ...(exp.assetScopeDown
+                            ? {
+                                  ScopeDownStatement: not(
+                                      or(
+                                          ...CF_ACL.assetScopeDownPrefixes.map((p) =>
+                                              byte('UriPath', 'STARTS_WITH', p, 'LOWERCASE')
+                                          ),
+                                          regex('UriPath', CF_ACL.assetScopeDownRegex)
+                                      )
+                                  ),
+                              }
+                            : {}),
+                    },
+                },
+                {
+                    ...(exp.immunity
+                        ? { CaptchaConfig: { ImmunityTimeProperty: { ImmunityTime: exp.immunity } } }
+                        : {}),
+                    ...(exp.customBody
+                        ? {
+                              Action: {
+                                  Block: {
+                                      CustomResponse: { ResponseCode: 403, CustomResponseBodyKey: exp.customBody },
+                                  },
+                              },
+                          }
+                        : {}),
+                }
+            )
         ),
         rule(
             'challenge-automated-browser-documents',
