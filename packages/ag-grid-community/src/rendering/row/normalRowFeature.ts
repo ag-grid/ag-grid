@@ -30,8 +30,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     private setCellCtrlsPending = false;
     /** A change reached the row after its cells were last laid out, so mounting must lay them out again. */
     private cellsStale = true;
-    /** The drawn colSpans by `allColsIndex`, 0 where not read yet, so a horizontal scroll asks no `colSpan` callback. */
-    private colSpans: number[] | null = null;
+    /** The drawn colSpans by `colSpanIndex`, 0 where not read yet, so a horizontal scroll asks no `colSpan` callback. */
+    private colSpans: number[] | undefined = undefined;
     /** The `displayedColsVersion` `colSpans` was read at; -1 to read it again. */
     private colSpansColsVersion = -1;
     /** The `displayedColsVersion` the cells were laid out at. */
@@ -157,7 +157,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
                 _refreshCellRowSpan(this.beans, cellCtrl);
             }
         }
-        if (!visibleCols.colSpanActive) {
+        if (visibleCols.colSpanColCount === 0) {
             return;
         }
         // a row not yet mounted lays its cells out from the new data when it mounts
@@ -256,7 +256,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const prevCenter = this.centerCellCtrls;
         const prevLeft = this.leftCellCtrls;
         const prevRight = this.rightCellCtrls;
-        const colSpans = visibleCols.colSpanActive ? this.getColSpans() : null;
+        const colSpans = this.getColSpans();
         this.cellCtrlsColsVersion = visibleCols.displayedColsVersion;
         this.hasKeptCells = false;
         if (rowCtrl.printLayout) {
@@ -285,7 +285,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     public getCellCtrl(column: AgColumn, skipColSpanSearch: boolean): CellCtrl | undefined {
         const visibleCols = this.beans.visibleCols;
-        if (skipColSpanSearch || !visibleCols.colSpanActive) {
+        if (skipColSpanSearch || visibleCols.colSpanColCount === 0) {
             return this.getOwnCellCtrl(column);
         }
         if (this.updateColumnListsPending && this.rowCtrl.isAlive()) {
@@ -320,16 +320,21 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return this.centerCellCtrls.map[id] ?? this.leftCellCtrls.map[id] ?? this.rightCellCtrls.map[id];
     }
 
-    /** Emptied when the displayed columns change, which every colDef change also does. */
-    private getColSpans(): number[] {
+    /** Emptied when the displayed columns change, as every colDef change does, and when the row's data changes;
+     *  `undefined`, and released, while no column spans. */
+    public getColSpans(): number[] | undefined {
         const visibleCols = this.beans.visibleCols;
+        if (visibleCols.colSpanColCount === 0) {
+            this.colSpans = undefined;
+            return undefined;
+        }
         const colsVersion = visibleCols.displayedColsVersion;
         let colSpans = this.colSpans;
-        if (colSpans !== null && this.colSpansColsVersion === colsVersion) {
+        if (colSpans !== undefined && this.colSpansColsVersion === colsVersion) {
             return colSpans;
         }
         this.colSpansColsVersion = colsVersion;
-        const len = visibleCols.allCols.length;
+        const len = visibleCols.colSpanColCount;
         if (colSpans?.length !== len) {
             colSpans = new Array(len).fill(0);
             this.colSpans = colSpans;
@@ -343,7 +348,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     private createCellCtrls(
         prev: CellCtrlListAndMap,
         cols: AgColumn[],
-        colSpans: number[] | null,
+        colSpans: number[] | undefined,
         lane: ColumnLane
     ): CellCtrlListAndMap {
         const { rowCtrl, beans } = this;
@@ -374,11 +379,12 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
             res.list.push(cellCtrl);
             res.map[colInstanceId] = cellCtrl;
-            if (colSpans === null && cellCtrl.colsSpanning === null) {
+            if (colSpans === undefined && cellCtrl.colsSpanning === null) {
                 continue;
             }
             // with no column spanning left the row walks no colSpans, so a cell that spanned covers its own column
-            _setCellColSpan(beans, cellCtrl, colSpans === null ? 1 : colSpans[col.allColsIndex]);
+            const colSpanIndex = col.colSpanIndex;
+            _setCellColSpan(beans, cellCtrl, colSpans === undefined || colSpanIndex < 0 ? 1 : colSpans[colSpanIndex]);
         }
 
         let keptCells: CellCtrl[] | null = null;
@@ -436,7 +442,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         res.map[colInstanceId] = cellCtrl;
     }
 
-    private setKeptCellColSpan(list: CellCtrl[], cellCtrl: CellCtrl, colSpans: number[] | null): void {
+    private setKeptCellColSpan(list: CellCtrl[], cellCtrl: CellCtrl, colSpans: number[] | undefined): void {
         // a kept cell is outside the lane walk; its lane is a slice of `allCols`, so the drawn colSpan is the same
         const colIndex = cellCtrl.column.allColsIndex;
         let colSpan = _getRowColSpan(this.rowCtrl.rowNode, this.beans.visibleCols.allCols, colIndex, colSpans);
@@ -548,8 +554,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 }
 
 /** The columns of a pinned lane (or every lane, in print layout) starting a cell in `rowNode`. */
-const getColsForRow = (rowNode: RowNode, cols: AgColumn[], colSpans: number[] | null): AgColumn[] =>
-    colSpans === null ? cols : _getColsForRow(rowNode, cols, colSpans, null, null);
+const getColsForRow = (rowNode: RowNode, cols: AgColumn[], colSpans: number[] | undefined): AgColumn[] =>
+    colSpans === undefined ? cols : _getColsForRow(rowNode, cols, colSpans, null, null);
 
 /** Destroys every ctrl in a lane and returns the empty replacement. */
 const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {

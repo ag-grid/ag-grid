@@ -2,6 +2,8 @@ import type { IEventListener } from 'ag-stack';
 import { _exists, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
+import { _getRowColSpan } from '../columns/columnSpanUtils';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -32,7 +34,7 @@ import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { CellCtrl } from './cell/cellCtrl';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
-import { RowCtrl } from './row/rowCtrl';
+import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
@@ -57,6 +59,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
     private editSvc?: EditService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;
@@ -67,6 +70,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.editSvc = beans.editSvc;
+        this.visibleCols = beans.visibleCols;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -1261,7 +1265,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const { visibleCols } = this.beans;
+        const visibleCols = this.visibleCols;
         const pinningLeft = visibleCols.leftCols.length > 0;
         const pinningRight = visibleCols.rightCols.length > 0;
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
@@ -1620,6 +1624,39 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const stickyTopRows = this.getStickyTopRowCtrls().map((rowCtrl) => rowCtrl.rowNode);
         const stickyBottomRows = this.getStickyBottomRowCtrls().map((rowCtrl) => rowCtrl.rowNode);
         return [...stickyTopRows, ...viewportRows, ...stickyBottomRows];
+    }
+
+    /** The column starting the cell that covers `column` in `rowNode`'s row, rendered or not. */
+    public getSpanningCol(column: AgColumn, rowNode: RowNode): AgColumn {
+        if (column.allColsIndex < 0) {
+            return column;
+        }
+        const rowCtrl = this.getRowCtrlByNode(rowNode);
+        const isFullWidth = rowCtrl ? rowCtrl.isFullWidth() : getRowTypeForNode(this.beans, rowNode) !== 'Normal';
+        if (isFullWidth) {
+            return column;
+        }
+        const visibleCols = this.visibleCols;
+        const lane = column.pinnedLane;
+        let cols: AgColumn[];
+        if (lane === 1) {
+            cols = visibleCols.centerCols;
+        } else if (lane === 0) {
+            cols = visibleCols.leftCols;
+        } else {
+            cols = visibleCols.rightCols;
+        }
+        const index = column.allColsIndex - cols[0].allColsIndex;
+        // the rendered row's spans, so the walk asks no `colSpan` its layout already asked
+        const colSpans = rowCtrl?.getColSpans();
+        for (let i = 0; i < index;) {
+            const next = i + _getRowColSpan(rowNode, cols, i, colSpans);
+            if (next > index) {
+                return cols[i];
+            }
+            i = next;
+        }
+        return column;
     }
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {

@@ -168,6 +168,8 @@ export class AgColumn<TValue = any>
     public buildToken: number = 0;
     /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
     public allColsIndex: number = -1;
+    /** Slot in a row's colSpans cache, stamped with `allColsIndex`; `-1` without `colDef.colSpan` or not displayed. */
+    public colSpanIndex: number = -1;
     /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
      *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
     public inColsList: boolean = false;
@@ -236,6 +238,7 @@ export class AgColumn<TValue = any>
     public override destroy() {
         super.destroy();
         this.allColsIndex = -1;
+        this.colSpanIndex = -1;
         this.displayed = false;
         this.colsListIndex = -1;
         this.inColsList = false;
