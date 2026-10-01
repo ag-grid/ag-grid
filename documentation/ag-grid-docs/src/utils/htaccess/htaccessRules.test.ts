@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type * as Constants from '../../constants';
+import { FRAMEWORKS } from '../../constants';
 import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
@@ -868,44 +869,24 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('AG-17152: /charts/ framework overview redirects', () => {
-        const chartsFrameworkRedirects = [
-            { from: '^/javascript-charts', to: 'charts/javascript/quick-start/' },
-            { from: '^/angular-charts', to: 'charts/angular/quick-start/' },
-            { from: '^/react-charts', to: 'charts/react/quick-start/' },
-            { from: '^/vue-charts', to: 'charts/vue/quick-start/' },
-        ];
+    // The old per-framework charts URLs moved to the charts site. mod_alias is first-match, so the
+    // /documentation/<framework>/charts* rules once sat behind the broad /documentation/<framework>/
+    // prefix and never ran; requesting the URLs, not finding the rules, is what proves they work.
+    describe('AG-17152: legacy charts overview URLs reach the charts quick start in one hop', () => {
+        const cases = FRAMEWORKS.flatMap((framework) => [
+            [`/${framework}-charts/`, framework],
+            [`/${framework}-charts/overview/`, framework],
+            [`/documentation/${framework}/charts/`, framework],
+            [`/documentation/${framework}/charts-overview/`, framework],
+        ]);
 
-        for (const { from, to } of chartsFrameworkRedirects) {
-            it(`should have a server-side 301 for ${from} -> ${to}`, () => {
-                const matchingRedirect = SITE_301_REDIRECTS.find(
-                    (r) => 'fromPattern' in r && (r as any).fromPattern.includes(from.replace('^', ''))
-                );
-                expect(matchingRedirect).toBeDefined();
-                expect((matchingRedirect as any).to).toContain(to);
+        it.each(cases)('%s', (path, framework) => {
+            const files = [compileHtaccess(productionContent)];
+            expect(route(files, { url: `https://www.ag-grid.com${path}` })).toMatchObject({
+                type: 'redirect',
+                status: 301,
+                location: `https://www.ag-grid.com/charts/${framework}/quick-start/`,
             });
-        }
-
-        const docChartsRedirects = [
-            { from: '^/documentation/javascript/charts', to: 'charts/javascript/quick-start/' },
-            { from: '^/documentation/angular/charts', to: 'charts/angular/quick-start/' },
-            { from: '^/documentation/react/charts', to: 'charts/react/quick-start/' },
-            { from: '^/documentation/vue/charts', to: 'charts/vue/quick-start/' },
-        ];
-
-        for (const { from, to } of docChartsRedirects) {
-            it(`should have a server-side 301 for ${from} -> ${to}`, () => {
-                const matchingRedirect = SITE_301_REDIRECTS.find(
-                    (r) => 'fromPattern' in r && (r as any).fromPattern.includes(from.replace('^', ''))
-                );
-                expect(matchingRedirect).toBeDefined();
-                expect((matchingRedirect as any).to).toContain(to);
-            });
-        }
-
-        it('should render charts redirects as RedirectMatch 301 in the generated htaccess', () => {
-            expect(productionContent).toContain('RedirectMatch 301');
-            expect(productionContent).toContain('javascript-charts');
         });
     });
 

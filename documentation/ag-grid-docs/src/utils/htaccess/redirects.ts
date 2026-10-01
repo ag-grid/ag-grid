@@ -263,6 +263,106 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/javascript-grid/server-side-model-high-frequency/',
         to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/',
     },
+    // The bare roots of two prefix redirects. The prefix rule must keep its /javascript-data-grid/
+    // target so sub-pages map across, but for the root itself that target only forwards on to
+    // getting-started in the browser - a second hop. These anchored rewrites match the root alone.
+    { from: '/javascript-grid/', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    { from: '/documentation/javascript/', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    // The same prefix shadowing for the server-side pages renamed after the /{framework}-grid/ move:
+    // the broad prefix sent these to the renamed /{framework}-data-grid/ URL, which redirects again.
+    {
+        from: '/javascript-grid/server-side-model-refresh/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/',
+    },
+    {
+        from: '/javascript-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-spark/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/angular-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-spark/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/react-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/react-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-operations-spark/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/vue-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/vue-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/vue-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/',
+    },
+    {
+        from: '/vue-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/',
+    },
+    {
+        from: '/vue-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/',
+    },
+    { from: '/vue-grid/server-side-operations-spark/', to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/' },
 
     {
         from: '/react-data-grid/grouping-footers',
@@ -384,6 +484,17 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // /sitemap-index.xml, already registered via the Sitemap: line in robots.txt.
     { from: '/sitemap.xml', to: 'https://www.ag-grid.com/sitemap-index.xml' },
 
+    // AG-17152: the old /documentation/<framework>/charts* pages moved to the charts site. mod_alias
+    // is first-match, so these must precede the broad /documentation/<framework>/ prefix rules
+    // below, which otherwise sent them to a non-existent /<framework>-data-grid/charts*/ page.
+    {
+        fromPattern: '^/documentation/javascript/charts.*',
+        to: 'https://www.ag-grid.com/charts/javascript/quick-start/',
+    },
+    { fromPattern: '^/documentation/angular/charts.*', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },
+    { fromPattern: '^/documentation/react/charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
+    { fromPattern: '^/documentation/vue/charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
+
     // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
     // announcement actually lives, preserving the content for external links / historical index entries.
     // SE-91: retargeted from blog.ag-grid.com to the self-hosted /blog/ path. Left pointing at the old
@@ -435,7 +546,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/', to: '/react-data-grid/' },
     { from: '/angular-grid/', to: '/angular-data-grid/' },
     { from: '/vue-grid/', to: '/vue-data-grid/' },
-    { from: '/ag-grid-8-performance-hacks-for-javascript/', to: '/javascript-data-grid/' },
+    { from: '/ag-grid-8-performance-hacks-for-javascript/', to: '/javascript-data-grid/getting-started/' },
     {
         from: '/ag-grid-angular-aot-dynamic-components/',
         to: 'https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845',
@@ -480,7 +591,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/ag-grid-building/', to: '/javascript-data-grid/installation/' },
     { from: '/javascript-data-grid/building/', to: '/javascript-data-grid/installation/' },
     { from: '/javascript-data-grid/npm/', to: '/javascript-data-grid/installation/' },
-    { from: '/javascript-data-grid/download/', to: '/javascript-data-grid/installation' },
+    { from: '/javascript-data-grid/download/', to: '/javascript-data-grid/installation/' },
     {
         from: '/ag-grid-datagrid-crud-part-1/',
         to: 'https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e',
@@ -898,7 +1009,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/webpack/', to: '/angular-data-grid/' },
     { from: '/angular-data-grid/webpack/', to: '/angular-data-grid/' },
     { from: '/documentation/angular/', to: '/angular-data-grid/' },
-    { from: '/documentation/javascript/8-performance-hacks-for-javascript/', to: '/javascript-data-grid/' },
+    {
+        from: '/documentation/javascript/8-performance-hacks-for-javascript/',
+        to: '/javascript-data-grid/getting-started/',
+    },
     { from: '/documentation/javascript/accessibility/', to: '/javascript-data-grid/accessibility/' },
     { from: '/documentation/javascript/accessing-data/', to: '/javascript-data-grid/accessing-data/' },
     { from: '/documentation/javascript/aggregation/', to: '/javascript-data-grid/aggregation/' },
@@ -2962,14 +3076,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/react-charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/vue-charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
 
-    {
-        fromPattern: '^/documentation/javascript/charts.*',
-        to: 'https://www.ag-grid.com/charts/javascript/quick-start/',
-    },
-    { fromPattern: '^/documentation/angular/charts.*', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },
-    { fromPattern: '^/documentation/react/charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
-    { fromPattern: '^/documentation/vue/charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
-
     // Anchored at `^`: an unanchored `/archive/$` also matches sub-site paths that end in
     // `/archive/` (e.g. `/charts/archive/`) and, because the root .htaccess is evaluated before the
     // /charts sub-directory one, hijacks them to the grid's own documentation-archive. Keep it
@@ -3116,7 +3222,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-data-grid/whats-new', to: '/whats-new' },
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
     { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
-    { from: '/vue-data-grid/framework-data-flow', to: '/vue-data-grid/getting-started/' },
+    { from: '/vue-data-grid/framework-data-flow/', to: '/vue-data-grid/getting-started/' },
 
     { from: '/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
     { from: '/vue-data-grid/licensing/', to: '/vue-data-grid/community-vs-enterprise/' },
@@ -3163,7 +3269,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('global-style-customisation-sass-legacy', 'theming-v32-customisation-sass-legacy'),
     ...pageForAllFrameworks('tree-data-hierarchy', 'tree-data-paths'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-32-2', 'upgrading-to-ag-grid-32-2-1'),
-    ...pageForAllFrameworks('accented-sort', '#locale-specific-sort'),
+    // Slashed source: a prefix match would otherwise append the request's trailing slash after the anchor.
+    ...pageForAllFrameworks('accented-sort/', 'row-sorting/#locale-specific-sort'),
     ...pageForAllFrameworks('server-side-operations-nodejs', 'server-side-model'),
     ...pageForAllFrameworks('server-side-operations-graphql', 'server-side-model'),
     ...pageForAllFrameworks('server-side-operations-oracle', 'server-side-model'),
