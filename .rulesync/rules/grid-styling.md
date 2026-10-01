@@ -34,4 +34,4 @@ DO NOT USE `!important`. In review, use of !important should be flagged as a P0 
 
 Some old code in our repo incorrectly uses !important. If you find yourself unable to override styles elsewhere because they are declared as important, a better fix is to remove the !important from previous code. Often this was added by a developer who is simply unaware that you can reorder CSS or increase specificity by doubling up a classname (.ag-my-component.ag-my-component - bad as 0,2,0 but better as a last resort than !important).
 
-Very occasionally it may be necessary to break these rules. This is a declaration that you have tried and failed every other way of adhering to them. When breaking these rules, you must add a comment explaining why. Reviewers should reject any code that adds a lint disable, but does not explain why.
+Very occasionally it may be necessary to break these rules. This is a declaration that you have tried and failed at every other way of adhering to them. When breaking these rules, you must add a comment explaining why. Reviewers should reject any code that adds a lint disable, but does not explain why.
