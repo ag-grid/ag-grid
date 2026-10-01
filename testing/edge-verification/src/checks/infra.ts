@@ -70,62 +70,64 @@ const DRIFT_EVENTS: Record<string, RegExp> = {
 
 export function infraChecks(): CheckDef[] {
     return [
-        ...ALARMS.map((exp): CheckDef => ({
-            id: `infra.alarm.${exp.name}`,
-            area: 'infra',
-            title: `Alarm ${exp.name} exists, is wired to ${exp.topic} and watches the declared metric`,
-            refs: ['waf-finding.md §14'],
-            pending: exp.pending,
-            async run({ aws }) {
-                const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
-                const a = r.MetricAlarms?.[0];
-                if (!a) {
-                    return fail('alarm not found');
-                }
-                const p = new Problems();
-                p.eq('actions enabled', a.ActionsEnabled, true);
-                p.check(
-                    (a.AlarmActions ?? []).some((arn: string) => arn.endsWith(`:${exp.topic}`)),
-                    `AlarmActions ${JSON.stringify(a.AlarmActions)} do not include ${exp.topic}`
-                );
-                if (exp.namespace) {
-                    p.eq('namespace', a.Namespace, exp.namespace);
-                }
-                if (exp.metric) {
-                    p.eq('metric', a.MetricName, exp.metric);
-                }
-                if (exp.dimensions) {
-                    // The complete set: CloudWatch names a metric by all its dimensions, so an extra one
-                    // watches a different (possibly empty) metric.
-                    const byName = (d: Array<[string, unknown]>) =>
-                        Object.fromEntries(d.sort(([x], [y]) => x.localeCompare(y)));
-                    p.eq(
-                        'dimensions',
-                        byName((a.Dimensions ?? []).map((d: any) => [d.Name, d.Value])),
-                        byName(Object.entries(exp.dimensions))
-                    );
-                }
-                if (exp.comparison) {
-                    p.eq('comparison', a.ComparisonOperator, exp.comparison);
-                }
-                if (exp.threshold !== undefined) {
-                    p.eq('threshold', a.Threshold, exp.threshold);
-                }
-                if (exp.name === 'www-traffic-floor') {
-                    const m = (a.Metrics ?? []).find((x: any) => x.MetricStat);
-                    const dims = Object.fromEntries(
-                        (m?.MetricStat?.Metric?.Dimensions ?? []).map((d: any) => [d.Name, d.Value])
-                    );
-                    p.eq('watched metric', m?.MetricStat?.Metric?.MetricName, 'Requests');
-                    p.eq('distribution', dims.DistributionId, DISTRIBUTION_ID);
+        ...ALARMS.map(
+            (exp): CheckDef => ({
+                id: `infra.alarm.${exp.name}`,
+                area: 'infra',
+                title: `Alarm ${exp.name} exists, is wired to ${exp.topic} and watches the declared metric`,
+                refs: ['waf-finding.md §14'],
+                pending: exp.pending,
+                async run({ aws }) {
+                    const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
+                    const a = r.MetricAlarms?.[0];
+                    if (!a) {
+                        return fail('alarm not found');
+                    }
+                    const p = new Problems();
+                    p.eq('actions enabled', a.ActionsEnabled, true);
                     p.check(
-                        (a.Metrics ?? []).some((x: any) => /ANOMALY_DETECTION_BAND/.test(x.Expression ?? '')),
-                        'no anomaly detection band'
+                        (a.AlarmActions ?? []).some((arn: string) => arn.endsWith(`:${exp.topic}`)),
+                        `AlarmActions ${JSON.stringify(a.AlarmActions)} do not include ${exp.topic}`
                     );
-                }
-                return p.outcome(`state ${a.StateValue}`);
-            },
-        })),
+                    if (exp.namespace) {
+                        p.eq('namespace', a.Namespace, exp.namespace);
+                    }
+                    if (exp.metric) {
+                        p.eq('metric', a.MetricName, exp.metric);
+                    }
+                    if (exp.dimensions) {
+                        // The complete set: CloudWatch names a metric by all its dimensions, so an extra one
+                        // watches a different (possibly empty) metric.
+                        const byName = (d: Array<[string, unknown]>) =>
+                            Object.fromEntries(d.sort(([x], [y]) => x.localeCompare(y)));
+                        p.eq(
+                            'dimensions',
+                            byName((a.Dimensions ?? []).map((d: any) => [d.Name, d.Value])),
+                            byName(Object.entries(exp.dimensions))
+                        );
+                    }
+                    if (exp.comparison) {
+                        p.eq('comparison', a.ComparisonOperator, exp.comparison);
+                    }
+                    if (exp.threshold !== undefined) {
+                        p.eq('threshold', a.Threshold, exp.threshold);
+                    }
+                    if (exp.name === 'www-traffic-floor') {
+                        const m = (a.Metrics ?? []).find((x: any) => x.MetricStat);
+                        const dims = Object.fromEntries(
+                            (m?.MetricStat?.Metric?.Dimensions ?? []).map((d: any) => [d.Name, d.Value])
+                        );
+                        p.eq('watched metric', m?.MetricStat?.Metric?.MetricName, 'Requests');
+                        p.eq('distribution', dims.DistributionId, DISTRIBUTION_ID);
+                        p.check(
+                            (a.Metrics ?? []).some((x: any) => /ANOMALY_DETECTION_BAND/.test(x.Expression ?? '')),
+                            'no anomaly detection band'
+                        );
+                    }
+                    return p.outcome(`state ${a.StateValue}`);
+                },
+            })
+        ),
         {
             id: 'infra.alarm.captcha-alarms-track-live-rule',
             area: 'infra',

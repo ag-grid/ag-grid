@@ -22,55 +22,61 @@ async function resolveProbe(http: Http, probe: CacheProbe): Promise<string | und
 
 export function cachingChecks(): CheckDef[] {
     return [
-        ...CACHE_PROBES.map((probe): CheckDef => ({
-            id: `caching.hit.${probe.pattern}`,
-            area: 'caching',
-            title: `Behaviour ${probe.pattern} caches: a repeat request is a CloudFront hit`,
-            refs: ['waf-finding.md §8', '2026-09-18 Twitter storm'],
-            pending: probe.pending,
-            async run({ http, live }) {
-                const path = await resolveProbe(http, probe);
-                if (!path) {
-                    return fail(`no probe URL found on ${probe.discover?.page}`);
-                }
-                await live.prepareGuard();
-                const { behaviour } = live.behaviourFor(path);
-                if (behaviour.pattern !== probe.pattern) {
-                    return fail(`${path} is served by ${behaviour.pattern}, not ${probe.pattern}`);
-                }
-                const url = `${WWW}${path}`;
-                // The first request only has to warm the cache, so it may be one another check
-                // already made; the second must be new to show what the cache does now.
-                const first = await http.request({ method: 'HEAD', url });
-                const second = await http.request({ method: 'HEAD', url, fresh: true });
-                const p = new Problems();
-                p.eq('status', second.status, 200);
-                p.check(
-                    HIT.test(xCache(second)),
-                    `second request x-cache: ${xCache(second)} (first: ${xCache(first)})`
-                );
-                return p.outcome(`${path}: ${xCache(first)} -> ${xCache(second)}, age ${header(second, 'age') ?? '-'}`);
-            },
-        })),
-        ...NEVER_CACHED.map((path): CheckDef => ({
-            id: `caching.never-hit.${path}`,
-            area: 'caching',
-            title: `${path} is never served from the CloudFront cache`,
-            refs: ['SE-80', '2026-09-18 /example/ incident'],
-            async run({ http }) {
-                const url = `${WWW}${path}`;
-                // Either response coming from cache fails it, so only the repeat must be new.
-                const a = await http.request({ method: 'HEAD', url });
-                const b = await http.request({ method: 'HEAD', url, fresh: true });
-                // Only a successful response says what the cache does: an error (503 "Error from
-                // cloudfront") is not a hit, but it is not a page served uncached either.
-                const p = new Problems();
-                p.eq('first status', a.status, 200);
-                p.eq('second status', b.status, 200);
-                p.check(![a, b].some((r) => HIT.test(xCache(r))), `x-cache: ${xCache(a)}, ${xCache(b)}`);
-                return p.outcome(`${xCache(a)}, ${xCache(b)}`);
-            },
-        })),
+        ...CACHE_PROBES.map(
+            (probe): CheckDef => ({
+                id: `caching.hit.${probe.pattern}`,
+                area: 'caching',
+                title: `Behaviour ${probe.pattern} caches: a repeat request is a CloudFront hit`,
+                refs: ['waf-finding.md §8', '2026-09-18 Twitter storm'],
+                pending: probe.pending,
+                async run({ http, live }) {
+                    const path = await resolveProbe(http, probe);
+                    if (!path) {
+                        return fail(`no probe URL found on ${probe.discover?.page}`);
+                    }
+                    await live.prepareGuard();
+                    const { behaviour } = live.behaviourFor(path);
+                    if (behaviour.pattern !== probe.pattern) {
+                        return fail(`${path} is served by ${behaviour.pattern}, not ${probe.pattern}`);
+                    }
+                    const url = `${WWW}${path}`;
+                    // The first request only has to warm the cache, so it may be one another check
+                    // already made; the second must be new to show what the cache does now.
+                    const first = await http.request({ method: 'HEAD', url });
+                    const second = await http.request({ method: 'HEAD', url, fresh: true });
+                    const p = new Problems();
+                    p.eq('status', second.status, 200);
+                    p.check(
+                        HIT.test(xCache(second)),
+                        `second request x-cache: ${xCache(second)} (first: ${xCache(first)})`
+                    );
+                    return p.outcome(
+                        `${path}: ${xCache(first)} -> ${xCache(second)}, age ${header(second, 'age') ?? '-'}`
+                    );
+                },
+            })
+        ),
+        ...NEVER_CACHED.map(
+            (path): CheckDef => ({
+                id: `caching.never-hit.${path}`,
+                area: 'caching',
+                title: `${path} is never served from the CloudFront cache`,
+                refs: ['SE-80', '2026-09-18 /example/ incident'],
+                async run({ http }) {
+                    const url = `${WWW}${path}`;
+                    // Either response coming from cache fails it, so only the repeat must be new.
+                    const a = await http.request({ method: 'HEAD', url });
+                    const b = await http.request({ method: 'HEAD', url, fresh: true });
+                    // Only a successful response says what the cache does: an error (503 "Error from
+                    // cloudfront") is not a hit, but it is not a page served uncached either.
+                    const p = new Problems();
+                    p.eq('first status', a.status, 200);
+                    p.eq('second status', b.status, 200);
+                    p.check(![a, b].some((r) => HIT.test(xCache(r))), `x-cache: ${xCache(a)}, ${xCache(b)}`);
+                    return p.outcome(`${xCache(a)}, ${xCache(b)}`);
+                },
+            })
+        ),
         {
             id: 'caching.host-in-cache-key',
             area: 'caching',
@@ -108,30 +114,35 @@ export function cachingChecks(): CheckDef[] {
                 return p.outcome();
             },
         },
-        ...POISON_PROBES.map((path): CheckDef => ({
-            id: `caching.markdown-does-not-poison.${path}`,
-            area: 'caching',
-            title: `${path}: HTML, then markdown, then HTML again is still HTML`,
-            refs: ['SE-80', '2026-09-18 /example/ incident'],
-            async run({ http }) {
-                const url = `${WWW}${path}`;
-                // Only the last request must be new: it has to follow a markdown request, and a
-                // shared one (made earlier by another check) still came first.
-                const before = await http.request({ url });
-                const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT } });
-                const after = await http.request({ url, fresh: true });
-                const p = new Problems();
-                // Only successful responses show a markdown request leaving the page intact; an
-                // error page or a blocked markdown request proves nothing either way.
-                p.eq('first status', before.status, 200);
-                p.eq('markdown status', md.status, 200);
-                p.eq('status after a markdown request', after.status, 200);
-                p.eq('first response', contentType(before), 'text/html');
-                p.eq('after a markdown request', contentType(after), 'text/html');
-                p.check(!HIT.test(xCache(after)), `HTML came from cache after a markdown request (${xCache(after)})`);
-                return p.outcome(`markdown request got ${md.status} ${contentType(md)}`);
-            },
-        })),
+        ...POISON_PROBES.map(
+            (path): CheckDef => ({
+                id: `caching.markdown-does-not-poison.${path}`,
+                area: 'caching',
+                title: `${path}: HTML, then markdown, then HTML again is still HTML`,
+                refs: ['SE-80', '2026-09-18 /example/ incident'],
+                async run({ http }) {
+                    const url = `${WWW}${path}`;
+                    // Only the last request must be new: it has to follow a markdown request, and a
+                    // shared one (made earlier by another check) still came first.
+                    const before = await http.request({ url });
+                    const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT } });
+                    const after = await http.request({ url, fresh: true });
+                    const p = new Problems();
+                    // Only successful responses show a markdown request leaving the page intact; an
+                    // error page or a blocked markdown request proves nothing either way.
+                    p.eq('first status', before.status, 200);
+                    p.eq('markdown status', md.status, 200);
+                    p.eq('status after a markdown request', after.status, 200);
+                    p.eq('first response', contentType(before), 'text/html');
+                    p.eq('after a markdown request', contentType(after), 'text/html');
+                    p.check(
+                        !HIT.test(xCache(after)),
+                        `HTML came from cache after a markdown request (${xCache(after)})`
+                    );
+                    return p.outcome(`markdown request got ${md.status} ${contentType(md)}`);
+                },
+            })
+        ),
         {
             id: 'caching.archive-markdown-split',
             area: 'caching',

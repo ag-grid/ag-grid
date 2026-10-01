@@ -93,29 +93,33 @@ const GZIP = { 'accept-encoding': 'gzip' };
 export function headerChecks(): CheckDef[] {
     return [
         ...HEADER_ROWS.map(headerCheck),
-        ...GZIP_REVALIDATION_PROBES.map((probe): CheckDef => ({
-            id: `headers.revalidate-gzip.${probe.id}`,
-            area: 'headers',
-            title: `A gzip ${probe.id} page revalidated with its -gzip ETag (If-None-Match) is a 304`,
-            refs: [finding(19)],
-            pending: probe.pending,
-            async run({ http }) {
-                const full = await http.request({ url: probe.url, headers: GZIP, fresh: true });
-                const etag = header(full, 'etag');
-                const encoding = header(full, 'content-encoding');
-                if (full.status !== 200 || !etag || encoding !== 'gzip') {
-                    return fail(`${full.status}, Content-Encoding ${encoding}, ETag ${etag}: nothing to revalidate`);
-                }
-                const res = await http.request({
-                    url: probe.url,
-                    headers: { ...GZIP, 'if-none-match': etag },
-                    fresh: true,
-                });
-                const p = new Problems();
-                p.eq(`status for If-None-Match ${etag}`, res.status, 304);
-                return p.outcome(`If-None-Match ${etag}: ${res.status}`);
-            },
-        })),
+        ...GZIP_REVALIDATION_PROBES.map(
+            (probe): CheckDef => ({
+                id: `headers.revalidate-gzip.${probe.id}`,
+                area: 'headers',
+                title: `A gzip ${probe.id} page revalidated with its -gzip ETag (If-None-Match) is a 304`,
+                refs: [finding(19)],
+                pending: probe.pending,
+                async run({ http }) {
+                    const full = await http.request({ url: probe.url, headers: GZIP, fresh: true });
+                    const etag = header(full, 'etag');
+                    const encoding = header(full, 'content-encoding');
+                    if (full.status !== 200 || !etag || encoding !== 'gzip') {
+                        return fail(
+                            `${full.status}, Content-Encoding ${encoding}, ETag ${etag}: nothing to revalidate`
+                        );
+                    }
+                    const res = await http.request({
+                        url: probe.url,
+                        headers: { ...GZIP, 'if-none-match': etag },
+                        fresh: true,
+                    });
+                    const p = new Problems();
+                    p.eq(`status for If-None-Match ${etag}`, res.status, 304);
+                    return p.outcome(`If-None-Match ${etag}: ${res.status}`);
+                },
+            })
+        ),
         {
             id: 'headers.archive-validators-agree',
             area: 'headers',

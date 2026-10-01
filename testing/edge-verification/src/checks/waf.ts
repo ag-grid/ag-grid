@@ -172,13 +172,15 @@ export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): s
 function assetScopeDownLeaves(): Leaf[] {
     return [
         { kind: 'regex', field: 'UriPath', value: CF_ACL.assetScopeDownRegex, transforms: ['LOWERCASE'] },
-        ...CF_ACL.assetScopeDownPrefixes.map((value): Leaf => ({
-            kind: 'byte',
-            field: 'UriPath',
-            value,
-            positional: 'STARTS_WITH',
-            transforms: ['LOWERCASE'],
-        })),
+        ...CF_ACL.assetScopeDownPrefixes.map(
+            (value): Leaf => ({
+                kind: 'byte',
+                field: 'UriPath',
+                value,
+                positional: 'STARTS_WITH',
+                transforms: ['LOWERCASE'],
+            })
+        ),
     ];
 }
 
@@ -187,13 +189,15 @@ function p11SafeLeaves(): Leaf[] {
     const nb = CF_ACL.nonBrowser;
     return [
         ...nb.safePathRegexes.map((value): Leaf => ({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })),
-        ...nb.safePathPrefixes.map((value): Leaf => ({
-            kind: 'byte',
-            field: 'UriPath',
-            value,
-            positional: 'STARTS_WITH',
-            transforms: ['NONE'],
-        })),
+        ...nb.safePathPrefixes.map(
+            (value): Leaf => ({
+                kind: 'byte',
+                field: 'UriPath',
+                value,
+                positional: 'STARTS_WITH',
+                transforms: ['NONE'],
+            })
+        ),
     ];
 }
 
@@ -342,34 +346,36 @@ export function wafChecks(): CheckDef[] {
         },
         ...CF_ACL.rules
             .filter((r) => r.pending)
-            .map((exp): CheckDef => ({
-                id: `waf-config.cf.rule.${exp.name}`,
-                area: 'waf-config',
-                title: `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`,
-                refs: PENDING_RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
-                pending: exp.pending,
-                async run({ live }) {
-                    const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
-                    const i = rules.findIndex((r: any) => r.Name === exp.name);
-                    if (i < 0) {
-                        return fail('rule not present');
-                    }
-                    const p = new Problems();
-                    const between = pendingSiblingOrder(rules, exp);
-                    if (between) {
-                        p.add(between);
-                    }
-                    p.eq('action', ruleAction(rules[i]), exp.action);
-                    p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
-                    const shape = PENDING_RULE_SHAPES[exp.name];
-                    if (!shape) {
-                        p.add(`no statement check declared for ${exp.name}`);
-                    } else {
-                        await shape.check(rules[i], live, p);
-                    }
-                    return p.outcome(`priority ${rules[i].Priority}`);
-                },
-            })),
+            .map(
+                (exp): CheckDef => ({
+                    id: `waf-config.cf.rule.${exp.name}`,
+                    area: 'waf-config',
+                    title: `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`,
+                    refs: PENDING_RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
+                    pending: exp.pending,
+                    async run({ live }) {
+                        const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
+                        const i = rules.findIndex((r: any) => r.Name === exp.name);
+                        if (i < 0) {
+                            return fail('rule not present');
+                        }
+                        const p = new Problems();
+                        const between = pendingSiblingOrder(rules, exp);
+                        if (between) {
+                            p.add(between);
+                        }
+                        p.eq('action', ruleAction(rules[i]), exp.action);
+                        p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
+                        const shape = PENDING_RULE_SHAPES[exp.name];
+                        if (!shape) {
+                            p.add(`no statement check declared for ${exp.name}`);
+                        } else {
+                            await shape.check(rules[i], live, p);
+                        }
+                        return p.outcome(`priority ${rules[i].Priority}`);
+                    },
+                })
+            ),
         {
             id: 'waf-config.cf.verify-header-rules',
             area: 'waf-config',
@@ -582,19 +588,21 @@ export function wafChecks(): CheckDef[] {
                 return p.outcome();
             },
         },
-        ...CF_ACL.botControl.pendingCountOverrides.map((o): CheckDef => ({
-            id: `waf-config.cf.bot-control.${o.name}`,
-            area: 'waf-config',
-            title: `Bot Control ${o.name} overridden to Count (label kept, blocking moved after p11)`,
-            refs: [finding(5)],
-            pending: o.pending,
-            async run({ live }) {
-                const s = (await cfRule(live, 'AWS-AWSManagedRulesBotControlRuleSet')).Statement
-                    .ManagedRuleGroupStatement;
-                const found = (s.RuleActionOverrides ?? []).find((x: any) => x.Name === o.name);
-                return found && 'Count' in found.ActionToUse ? pass() : fail('no Count override');
-            },
-        })),
+        ...CF_ACL.botControl.pendingCountOverrides.map(
+            (o): CheckDef => ({
+                id: `waf-config.cf.bot-control.${o.name}`,
+                area: 'waf-config',
+                title: `Bot Control ${o.name} overridden to Count (label kept, blocking moved after p11)`,
+                refs: [finding(5)],
+                pending: o.pending,
+                async run({ live }) {
+                    const s = (await cfRule(live, 'AWS-AWSManagedRulesBotControlRuleSet')).Statement
+                        .ManagedRuleGroupStatement;
+                    const found = (s.RuleActionOverrides ?? []).find((x: any) => x.Name === o.name);
+                    return found && 'Count' in found.ActionToUse ? pass() : fail('no Count override');
+                },
+            })
+        ),
         {
             id: 'waf-config.cf.credential-scanner',
             area: 'waf-config',
