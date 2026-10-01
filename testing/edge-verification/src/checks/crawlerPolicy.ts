@@ -175,7 +175,7 @@ export function crawlerPolicyChecks(): CheckDef[] {
             area: 'crawler-policy',
             title: 'robots.txt: a query string does not reopen the .md twin of a disallowed page',
             refs: ['grid#15424', 'waf-finding.md §11'],
-            knownIssue: MD_TWIN_POLICY.queryKnownIssue,
+            pending: MD_TWIN_POLICY.queryPending,
             async run({ http }) {
                 const { open, checked } = crawlableTwins(await wwwRobots(http), MD_TWIN_POLICY.query);
                 return open.length
