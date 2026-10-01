@@ -148,7 +148,8 @@ export const BOT_OUTCOME_DEFAULTS = {
     windowMs: 2 * 3_600_000,
     /** 1% */
     maxNonAllowShare: 0.01,
-    minVolume: 100,
+    /** Below this a population is reported, not judged: 2h of a small agent is often under 100 requests. */
+    minVolume: 20,
     /** Insights bills per byte scanned; 2h ingests ~1.2 GB and the estimate doubles it (SCAN_TO_INGEST_FACTOR). */
     maxBytes: 4e9,
 };

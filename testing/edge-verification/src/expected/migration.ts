@@ -67,19 +67,16 @@ export const MIGRATED_SITES: MigratedSite[] = [
 
 /**
  * The alias hosts the migration block canonicalises that CloudFront serves (angulargrid.com and
- * www.angulargrid.com are in the block but not in DNS). The lowest version is asked on the apex and
- * the highest on blog.: some charts 14.2.0 rules already send the apex to www, but no archive sends
- * blog. anywhere today, so the highest version cannot pass before the migration.
+ * www.angulargrid.com are in the block but not in DNS). Neither host the samples use is sent to www
+ * by anything today, so the samples cannot pass before the migration: the apex is not used for
+ * them, because a charts archive with no rewrite block of its own (14.0.x) inherits the live
+ * /charts/.htaccess, whose apex rule already keeps the path (measured 2026-10-01). Once ag-charts#8422
+ * is live that file canonicalises every alias host, so 14.0.x passes from then on regardless.
  */
 export const MIGRATION_HOSTS = {
-    lowest: 'ag-grid.com',
+    lowest: 'react-grid.ag-grid.com',
     highest: 'blog.ag-grid.com',
-    others: [
-        'angular-grid.ag-grid.com',
-        'javascript-grid.ag-grid.com',
-        'react-grid.ag-grid.com',
-        'angulargrid.ag-grid.com',
-    ],
+    others: ['ag-grid.com', 'angular-grid.ag-grid.com', 'javascript-grid.ag-grid.com', 'angulargrid.ag-grid.com'],
 };
 
 export const MIGRATION_QUERY = '?utm_source=edge-check';
