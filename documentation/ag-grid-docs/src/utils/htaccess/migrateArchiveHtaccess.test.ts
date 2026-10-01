@@ -360,6 +360,35 @@ describe('migrate-archive-htaccess', () => {
             );
             expect([...generated].sort()).toEqual([...ALIAS_HOSTS].sort());
         });
+
+        // The canonicalising trailing-slash rule is only kept as the generator writes it: for
+        // exactly the alias hosts, and with every certificate-token exemption.
+        it.each([
+            ['an alias host missing', (rule: string) => rule.replace(String.raw`|blog\.ag-grid\.com`, '')],
+            [
+                'an extra host',
+                (rule: string) =>
+                    rule.replace(String.raw`|blog\.ag-grid\.com`, String.raw`|blog\.ag-grid\.com|example\.com`),
+            ],
+            [
+                'a certificate exemption missing',
+                (rule: string) =>
+                    rule.replace(/^\s*RewriteCond %\{REQUEST_URI\} !\^\/\\\.well-known\/acme-challenge\/.*\n/m, ''),
+            ],
+        ])('refuses the canonicalising trailing-slash rule with %s', (_, edit) => {
+            const rule = archiveContent.match(
+                /^ {4}RewriteCond %\{HTTP_HOST\}:%\{SERVER_PORT\}.*\n(?: {4}RewriteCond .*\n)* {4}RewriteRule \^\(\.\+\[\^\/\]\)\$ https:.*\n/m
+            )?.[0];
+            expect(rule).toBeDefined();
+            const edited = edit(rule!);
+            expect(edited).not.toBe(rule);
+            const result = migrateArchiveHtaccess(archiveContent.replace(rule!, edited), {
+                site: 'grid',
+                base: '/archive/36.3.0',
+            });
+            expect(result.status).toBe('refused');
+            expect(result.reasons).toEqual([expect.stringContaining('https://www.ag-grid.com%{REQUEST_URI}/')]);
+        });
     });
 
     describe('refuses, leaving the file alone', () => {
