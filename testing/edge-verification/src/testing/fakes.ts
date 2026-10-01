@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs';
 
-import { Aws, awsErrorFromStderr } from '../core/aws';
+import { Aws, awsErrorFromStderr, isReadOnlyOperation } from '../core/aws';
 import type { Http } from '../core/http';
 import { Live } from '../core/live';
 import type { Ctx, Options } from '../core/types';
@@ -30,6 +30,10 @@ export class FakeAws extends Aws {
 
     override call<T = any>(service: string, operation: string, args: string[] = []): Promise<T> {
         const key = `${service} ${operation}`;
+        if (!isReadOnlyOperation(service, operation)) {
+            // The same guard as the real client, before any handler runs.
+            throw new Error(`Refusing non-read-only AWS operation: ${service} ${operation}`);
+        }
         this.calls.push(key);
         const handler = this.handlers[key];
         if (!handler) {
@@ -256,6 +260,10 @@ export function options(overrides: Partial<Options> = {}): Options {
         concurrency: 1,
         delayMs: 0,
         userAgent: 'offline-test',
+        botWindowMs: 2 * 3_600_000,
+        botThreshold: 0.01,
+        botMinVolume: 100,
+        botMaxBytes: 3e9,
         ...overrides,
     };
 }

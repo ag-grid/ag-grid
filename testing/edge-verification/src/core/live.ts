@@ -17,6 +17,8 @@ import { Aws, AwsError } from './aws';
 import { selectBehaviour } from './cfPattern';
 import type { MarkdownGuard } from './http';
 import { SECRET_HEADER_PATTERN, registerSecret } from './redact';
+import type { Options } from './types';
+import { type BotQueryResult, runBotQuery } from './wafLogs';
 
 /** The parts of a cache behaviour the guard and the checks need, live or declared. */
 export interface BehaviourView {
@@ -112,6 +114,18 @@ export class Live {
         return this.aws
             .call('wafv2', 'get-ip-set', ['--name', name, '--scope', scope, '--id', id], region)
             .then((r) => r.IPSet);
+    }
+
+    private botQuery?: Promise<BotQueryResult>;
+
+    /** The WAF-log bot query, run once per run however many checks read it. */
+    botOutcomes(opts: Options, tokens: string[]): Promise<BotQueryResult> {
+        this.botQuery ??= runBotQuery(this.aws, {
+            windowMs: opts.botWindowMs,
+            maxBytes: opts.botMaxBytes,
+            tokens,
+        });
+        return this.botQuery;
     }
 
     // ---- the markdown guard -----------------------------------------------------------------

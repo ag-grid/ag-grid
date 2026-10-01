@@ -7,6 +7,7 @@ import { writeFileSync } from 'node:fs';
 
 import { agentFileChecks } from './checks/agentFiles';
 import { blogChecks } from './checks/blog';
+import { botOutcomeChecks } from './checks/botOutcomes';
 import { cachingChecks } from './checks/caching';
 import { cloudfrontChecks } from './checks/cloudfront';
 import { crawlerPolicyChecks } from './checks/crawlerPolicy';
@@ -25,6 +26,8 @@ import { printCoverage, printResults, printSummary } from './core/report';
 import { exitCode, runAll } from './core/runner';
 import { selfTest } from './core/selftest';
 import { AREAS, type CheckDef, type Options } from './core/types';
+import { parseWindow } from './core/wafLogs';
+import { BOT_OUTCOME_DEFAULTS } from './expected/botOutcomes';
 import { HEALTH } from './expected/edge';
 
 const HELP = `Usage: yarn nx run ag-grid-edge-verification:test:edge-live -- [options]
@@ -46,6 +49,10 @@ and live HTTP behaviour (GET/HEAD only, low volume). Exit code 1 on any failure.
   --delay <ms>          Minimum gap between request starts (default 120)
   --user-agent <ua>     Override the default browser User-Agent
   --json <file>         Also write the results as JSON
+  --bot-window <dur>    bot-outcomes: WAF log window, e.g. 30m or 2h (default 2h)
+  --bot-threshold <%>   bot-outcomes: highest acceptable non-ALLOW share in percent (default 1)
+  --bot-min-volume <n>  bot-outcomes: smaller populations are reported, not judged (default ${BOT_OUTCOME_DEFAULTS.minVolume})
+  --bot-max-gb <n>      bot-outcomes: refuse the query if it would scan more (default ${BOT_OUTCOME_DEFAULTS.maxBytes / 1e9})
   --help`;
 
 function parseArgs(argv: string[]): Options {
@@ -60,6 +67,10 @@ function parseArgs(argv: string[]): Options {
         concurrency: 4,
         delayMs: 120,
         userAgent: BROWSER_UA,
+        botWindowMs: BOT_OUTCOME_DEFAULTS.windowMs,
+        botThreshold: BOT_OUTCOME_DEFAULTS.maxNonAllowShare,
+        botMinVolume: BOT_OUTCOME_DEFAULTS.minVolume,
+        botMaxBytes: BOT_OUTCOME_DEFAULTS.maxBytes,
     };
     const value = (i: number, flag: string): string => {
         const v = argv[i + 1];
@@ -117,6 +128,18 @@ function parseArgs(argv: string[]): Options {
             case '--json':
                 opts.jsonOut = value(i++, a);
                 break;
+            case '--bot-window':
+                opts.botWindowMs = parseWindow(value(i++, a));
+                break;
+            case '--bot-threshold':
+                opts.botThreshold = num(i++, a) / 100;
+                break;
+            case '--bot-min-volume':
+                opts.botMinVolume = num(i++, a);
+                break;
+            case '--bot-max-gb':
+                opts.botMaxBytes = num(i++, a) * 1e9;
+                break;
             case '--help':
             case '-h':
                 console.log(HELP);
@@ -145,6 +168,7 @@ export function allChecks(): CheckDef[] {
         ...agentFileChecks(),
         ...seoContentChecks(),
         ...blogChecks(),
+        ...botOutcomeChecks(),
     ];
 }
 
