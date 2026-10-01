@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { MIGRATED_SITES } from '../expected/migration';
+import { MIGRATED_SITES, SLASHLESS_RULE } from '../expected/migration';
 import { FakeAws, FakeHttp, type FakeResponse, fakeCtx, healthyCloudFront } from '../testing/fakes';
 import { migrationChecks } from './migration';
 
@@ -68,6 +68,23 @@ describe('migration slash-less directory URLs (pending grid#15434 / #15435)', ()
         const studio = checks.find((c) => c.id === 'migration.studio.2.1.1.slashless.alias-host')!;
         assert.ok(studio, 'no studio 2.1.1 slash-less check');
         assert.match(studio.title, /\/studio\/archive\/2\.1\.1\/react\/quick-start\?/);
+    });
+
+    it('every probe is one the committed rule matches: a listed host or http www, and a directory path', () => {
+        for (const c of checks) {
+            const from = new URL(c.title.split(' -> ')[0]);
+            assert.ok(
+                SLASHLESS_RULE.hosts.includes(from.hostname) ||
+                    (from.hostname === 'www.ag-grid.com' && from.protocol === 'http:'),
+                `${c.id}: ${from.hostname} over ${from.protocol} is not covered by the rule`
+            );
+            assert.match(
+                from.pathname,
+                SLASHLESS_RULE.directory,
+                `${c.id}: ${from.pathname} is not a directory URL to the rule`
+            );
+            assert.ok(!from.pathname.endsWith('/'), `${c.id}: ${from.pathname} already has its slash`);
+        }
     });
 
     const slashed = (url: string): string => url.replace(/\?/, '/?');
