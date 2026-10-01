@@ -1,5 +1,5 @@
 import { type Http, MARKDOWN_ACCEPT, type Response, header } from '../core/http';
-import { type CheckDef, Problems, fail, pass, skip } from '../core/types';
+import { type CheckDef, Problems, fail, skip } from '../core/types';
 import { ARCHIVE_POISON_PROBE, CACHE_PROBES, type CacheProbe, NEVER_CACHED, POISON_PROBES } from '../expected/caching';
 import { MARKDOWN_KEY_FUNCTION } from '../expected/edge';
 import { PENDING } from '../expected/lifecycle';
@@ -62,8 +62,13 @@ export function cachingChecks(): CheckDef[] {
                 // Either response coming from cache fails it, so only the repeat must be new.
                 const a = await http.request({ method: 'HEAD', url });
                 const b = await http.request({ method: 'HEAD', url, fresh: true });
-                const hits = [a, b].filter((r) => HIT.test(xCache(r)));
-                return hits.length ? fail(`x-cache: ${xCache(a)}, ${xCache(b)}`) : pass(`${xCache(a)}, ${xCache(b)}`);
+                // Only a successful response says what the cache does: an error (503 "Error from
+                // cloudfront") is not a hit, but it is not a page served uncached either.
+                const p = new Problems();
+                p.eq('first status', a.status, 200);
+                p.eq('second status', b.status, 200);
+                p.check(![a, b].some((r) => HIT.test(xCache(r))), `x-cache: ${xCache(a)}, ${xCache(b)}`);
+                return p.outcome(`${xCache(a)}, ${xCache(b)}`);
             },
         })),
         {
