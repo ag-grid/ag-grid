@@ -31,17 +31,22 @@ export function classifyRow(row, fails) {
  * Coverage gaps that fail the run. `declared` lists every `# @category` a file declares (whether or
  * not any row follows it), `minRows` each file's `@min-rows`, `executed` the rows that ran, and
  * `siteSkipped` the rows deliberately not run because their site was switched off (SKIP_CHARTS=1,
- * SKIP_STUDIO=1, or a site outside the --env topology). A declared category that executed no rows is
- * an error unless every one of its rows was such a site skip.
+ * SKIP_STUDIO=1, or a site outside the --env topology). A file must execute its `@min-rows` less its
+ * site-skipped rows, and a declared category that executed no rows is an error unless every one of
+ * its rows was such a site skip.
  */
 export function coverageErrors({ declared, minRows, executed, siteSkipped }) {
     const errors = [];
     const count = (rows, file, category) =>
         rows.filter((row) => row.file === file && (category === undefined || row.category === category)).length;
     for (const [file, min] of Object.entries(minRows)) {
+        // A skipped site lowers the minimum by its own rows only, so the rows of the sites that
+        // did run are still held to it (a file such as generated-markdown.tsv mixes all three).
         const ran = count(executed, file);
-        if (min && ran < min && !count(siteSkipped, file)) {
-            errors.push(`${file}: ${ran} rows executed, @min-rows ${min}`);
+        const skipped = count(siteSkipped, file);
+        if (min && ran < min - skipped) {
+            const less = skipped ? ` less ${skipped} site-skipped` : '';
+            errors.push(`${file}: ${ran} rows executed, @min-rows ${min}${less}`);
         }
     }
     for (const { file, category, line } of declared) {
