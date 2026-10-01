@@ -1,5 +1,15 @@
+import { defined, omit } from '../core/projection';
 import { type CheckDef, Problems, fail, info, pass, warn } from '../core/types';
-import { ACCOUNT_ID, ALARMS, ALB, CF_ACL, DISTRIBUTION_ID, HEALTH, SHIELD } from '../expected/edge';
+import {
+    ACCOUNT_ID,
+    ALARMS,
+    ALB,
+    type AlarmExpectation,
+    CF_ACL,
+    DISTRIBUTION_ID,
+    HEALTH,
+    SHIELD,
+} from '../expected/edge';
 
 const sorted = (xs: string[]): string[] => [...xs].sort();
 
@@ -68,66 +78,87 @@ const DRIFT_EVENTS: Record<string, RegExp> = {
     'monitoring.amazonaws.com': /Alarm/,
 };
 
+/** Dimensions as a record: CloudWatch identifies a metric by the whole set, in any order. */
+const dimensions = (list: any[] | undefined): Record<string, string> =>
+    Object.fromEntries((list ?? []).map((d) => [d.Name, d.Value]));
+
+/**
+ * Not compared: the name and ARN identify the alarm fetched, the description is prose, and the
+ * state and timestamps change on their own.
+ */
+const ALARM_UNPINNED = [
+    'AlarmName',
+    'AlarmArn',
+    'AlarmDescription',
+    'AlarmConfigurationUpdatedTimestamp',
+    'StateValue',
+    'StateReason',
+    'StateReasonData',
+    'StateUpdatedTimestamp',
+    'StateTransitionedTimestamp',
+    'EvaluationState',
+];
+
+/** A live alarm: every field that decides what it watches, when it fires and whom it notifies. */
+function projectAlarm(a: any): any {
+    const metricDims = (m: any): any =>
+        m.MetricStat
+            ? {
+                  ...m,
+                  MetricStat: {
+                      ...m.MetricStat,
+                      Metric: { ...m.MetricStat.Metric, Dimensions: dimensions(m.MetricStat.Metric?.Dimensions) },
+                  },
+              }
+            : m;
+    return {
+        ...omit(a, ALARM_UNPINNED),
+        Dimensions: dimensions(a.Dimensions),
+        ...(a.Metrics ? { Metrics: a.Metrics.map(metricDims) } : {}),
+    };
+}
+
+function declaredAlarm(exp: AlarmExpectation): any {
+    const topic = `arn:aws:sns:${exp.region}:${ACCOUNT_ID}:${exp.topic}`;
+    return defined({
+        ActionsEnabled: true,
+        OKActions: exp.notifyOk ? [topic] : [],
+        AlarmActions: [topic],
+        InsufficientDataActions: [],
+        MetricName: exp.metric,
+        Namespace: exp.namespace,
+        Statistic: exp.statistic,
+        Dimensions: exp.dimensions ?? {},
+        Period: exp.period,
+        EvaluationPeriods: exp.evaluationPeriods,
+        DatapointsToAlarm: exp.datapointsToAlarm,
+        Threshold: exp.threshold,
+        ComparisonOperator: exp.comparison,
+        TreatMissingData: exp.treatMissingData,
+        Metrics: exp.metrics,
+        ThresholdMetricId: exp.thresholdMetricId,
+    });
+}
+
 export function infraChecks(): CheckDef[] {
     return [
-        ...ALARMS.map(
-            (exp): CheckDef => ({
-                id: `infra.alarm.${exp.name}`,
-                area: 'infra',
-                title: `Alarm ${exp.name} exists, is wired to ${exp.topic} and watches the declared metric`,
-                refs: ['waf-finding.md §14'],
-                pending: exp.pending,
-                async run({ aws }) {
-                    const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
-                    const a = r.MetricAlarms?.[0];
-                    if (!a) {
-                        return fail('alarm not found');
-                    }
-                    const p = new Problems();
-                    p.eq('actions enabled', a.ActionsEnabled, true);
-                    p.check(
-                        (a.AlarmActions ?? []).some((arn: string) => arn.endsWith(`:${exp.topic}`)),
-                        `AlarmActions ${JSON.stringify(a.AlarmActions)} do not include ${exp.topic}`
-                    );
-                    if (exp.namespace) {
-                        p.eq('namespace', a.Namespace, exp.namespace);
-                    }
-                    if (exp.metric) {
-                        p.eq('metric', a.MetricName, exp.metric);
-                    }
-                    if (exp.dimensions) {
-                        // The complete set: CloudWatch names a metric by all its dimensions, so an extra one
-                        // watches a different (possibly empty) metric.
-                        const byName = (d: Array<[string, unknown]>) =>
-                            Object.fromEntries(d.sort(([x], [y]) => x.localeCompare(y)));
-                        p.eq(
-                            'dimensions',
-                            byName((a.Dimensions ?? []).map((d: any) => [d.Name, d.Value])),
-                            byName(Object.entries(exp.dimensions))
-                        );
-                    }
-                    if (exp.comparison) {
-                        p.eq('comparison', a.ComparisonOperator, exp.comparison);
-                    }
-                    if (exp.threshold !== undefined) {
-                        p.eq('threshold', a.Threshold, exp.threshold);
-                    }
-                    if (exp.name === 'www-traffic-floor') {
-                        const m = (a.Metrics ?? []).find((x: any) => x.MetricStat);
-                        const dims = Object.fromEntries(
-                            (m?.MetricStat?.Metric?.Dimensions ?? []).map((d: any) => [d.Name, d.Value])
-                        );
-                        p.eq('watched metric', m?.MetricStat?.Metric?.MetricName, 'Requests');
-                        p.eq('distribution', dims.DistributionId, DISTRIBUTION_ID);
-                        p.check(
-                            (a.Metrics ?? []).some((x: any) => /ANOMALY_DETECTION_BAND/.test(x.Expression ?? '')),
-                            'no anomaly detection band'
-                        );
-                    }
-                    return p.outcome(`state ${a.StateValue}`);
-                },
-            })
-        ),
+        ...ALARMS.map((exp): CheckDef => ({
+            id: `infra.alarm.${exp.name}`,
+            area: 'infra',
+            title: `Alarm ${exp.name}: exists, notifies ${exp.topic}, and watches the declared metric, statistic and threshold`,
+            refs: ['waf-finding.md §14'],
+            pending: exp.pending,
+            async run({ aws }) {
+                const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
+                const a = r.MetricAlarms?.[0];
+                if (!a) {
+                    return fail('alarm not found');
+                }
+                const p = new Problems();
+                p.diff('alarm', projectAlarm(a), declaredAlarm(exp));
+                return p.outcome(`state ${a.StateValue}`);
+            },
+        })),
         {
             id: 'infra.alarm.captcha-alarms-track-live-rule',
             area: 'infra',
@@ -207,16 +238,19 @@ export function infraChecks(): CheckDef[] {
                         p.add(`no protection for ${exp.resource}`);
                         continue;
                     }
-                    const auto = prot.ApplicationLayerAutomaticResponseConfiguration;
-                    p.eq(
-                        `${prot.Name} auto response`,
-                        auto?.Status === 'ENABLED' ? Object.keys(auto.Action ?? {})[0] : 'DISABLED',
-                        exp.autoResponse
-                    );
+                    // Id, Name and ProtectionArn identify the protection; a health check, say, would not.
+                    p.diff(prot.Name, omit(prot, ['Id', 'Name', 'ProtectionArn']), {
+                        ResourceArn: exp.resource,
+                        ApplicationLayerAutomaticResponseConfiguration: {
+                            Status: 'ENABLED',
+                            Action: { [exp.autoResponse]: {} },
+                        },
+                    });
                 }
                 const sub = await aws.call('shield', 'describe-subscription');
                 const end = Date.parse(sub.Subscription?.EndTime ?? '');
                 p.check(end > Date.now(), `subscription ended ${sub.Subscription?.EndTime}`);
+                p.eq('subscription auto-renew', sub.Subscription?.AutoRenew, SHIELD.autoRenew);
                 return p.outcome(
                     `subscription until ${sub.Subscription?.EndTime}, auto-renew ${sub.Subscription?.AutoRenew}`
                 );
@@ -272,15 +306,54 @@ export function infraChecks(): CheckDef[] {
         {
             id: 'infra.alb.attached',
             area: 'infra',
-            title: `${ALB.name} is internet-facing behind ${ALB.securityGroup} only`,
+            title: `${ALB.name} is internet-facing behind ${ALB.securityGroup} only, in its declared subnets`,
             async run({ aws }) {
                 const lb = (
                     await aws.call('elbv2', 'describe-load-balancers', ['--load-balancer-arns', ALB.arn], ALB.region)
                 ).LoadBalancers?.[0];
+                if (!lb) {
+                    return fail('load balancer not found');
+                }
                 const p = new Problems();
-                p.eq('security groups', lb?.SecurityGroups, [ALB.securityGroup]);
-                p.eq('state', lb?.State?.Code, 'active');
+                // The name, ARN, DNS name, hosted zone and creation time identify it; the rest is pinned.
+                const byZone = (zones: any[]) => [...zones].sort((a, b) => a.ZoneName.localeCompare(b.ZoneName));
+                p.diff(
+                    'load balancer',
+                    {
+                        ...omit(lb, [
+                            'LoadBalancerArn',
+                            'LoadBalancerName',
+                            'DNSName',
+                            'CanonicalHostedZoneId',
+                            'CreatedTime',
+                        ]),
+                        AvailabilityZones: byZone(lb.AvailabilityZones ?? []),
+                    },
+                    { ...ALB.loadBalancer, AvailabilityZones: byZone(ALB.loadBalancer.AvailabilityZones) }
+                );
                 return p.outcome();
+            },
+        },
+        {
+            id: 'infra.alb.attributes',
+            area: 'infra',
+            title: `${ALB.name} attributes as declared (WAF fail-closed, access logs, desync mitigation, timeouts)`,
+            refs: ['waf-finding.md §14'],
+            async run({ aws }) {
+                const r = await aws.call(
+                    'elbv2',
+                    'describe-load-balancer-attributes',
+                    ['--load-balancer-arn', ALB.arn],
+                    ALB.region
+                );
+                const live = Object.fromEntries(
+                    (r.Attributes ?? [])
+                        .filter((a: any) => a.Key !== 'routing.http.drop_invalid_header_fields.enabled')
+                        .map((a: any) => [a.Key, a.Value])
+                );
+                const p = new Problems();
+                p.diff('attribute', live, ALB.attributes);
+                return p.outcome(`${Object.keys(live).length} attributes`);
             },
         },
         {

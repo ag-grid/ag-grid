@@ -190,6 +190,7 @@ export const DISTRIBUTION = {
     httpVersion: 'http2',
     ipv6: true,
     minimumProtocolVersion: 'TLSv1.2_2021',
+    certificateArn: `arn:aws:acm:us-east-1:${ACCOUNT_ID}:certificate/aa94ddce-6f9e-4072-a887-3f75de1a3fcc`,
     sslSupportMethod: 'sni-only',
     origin: {
         domain: 'ag-grid-lb1-585556639.us-west-1.elb.amazonaws.com',
@@ -676,91 +677,211 @@ export const ALB = {
         },
     ],
     dropInvalidHeaderFields: { expected: 'true', knownIssue: finding(14) },
+    /** describe-load-balancers, live 2026-10-01 (name, ARN, DNS name and creation time aside). */
+    loadBalancer: {
+        Scheme: 'internet-facing',
+        VpcId: 'vpc-37efa553',
+        State: { Code: 'active' },
+        Type: 'application',
+        AvailabilityZones: [
+            { ZoneName: 'us-west-1a', SubnetId: 'subnet-cf141197', LoadBalancerAddresses: [] },
+            { ZoneName: 'us-west-1b', SubnetId: 'subnet-8e12e7e9', LoadBalancerAddresses: [] },
+        ],
+        SecurityGroups: ['sg-0e00b20ddc86d5a33'],
+        IpAddressType: 'ipv4',
+        EnablePrefixForIpv6SourceNat: 'off',
+    },
+    /**
+     * Every load-balancer attribute, live 2026-10-01, except drop_invalid_header_fields (a known
+     * issue with its own check). waf.fail_open in particular: true would pass traffic the WAF
+     * cannot evaluate.
+     */
+    attributes: {
+        'access_logs.s3.enabled': 'true',
+        'access_logs.s3.bucket': 'ag-grid-logs',
+        'access_logs.s3.prefix': '',
+        'health_check_logs.s3.enabled': 'false',
+        'health_check_logs.s3.bucket': '',
+        'health_check_logs.s3.prefix': '',
+        'idle_timeout.timeout_seconds': '60',
+        'deletion_protection.enabled': 'true',
+        'routing.http2.enabled': 'true',
+        'routing.http.xff_client_port.enabled': 'false',
+        'routing.http.preserve_host_header.enabled': 'false',
+        'routing.http.xff_header_processing.mode': 'append',
+        'load_balancing.cross_zone.enabled': 'true',
+        'routing.http.desync_mitigation_mode': 'defensive',
+        'client_keep_alive.seconds': '3600',
+        'waf.fail_open.enabled': 'false',
+        'routing.http.x_amzn_tls_version_and_cipher_suite.enabled': 'false',
+        'ddos_protection.syn_cookie.mode': 'reactive',
+        'zonal_shift.config.enabled': 'false',
+        'connection_logs.s3.enabled': 'false',
+        'connection_logs.s3.bucket': '',
+        'connection_logs.s3.prefix': '',
+    } as Record<string, string>,
 };
 
 export interface AlarmExpectation extends Lifecycle {
     name: string;
     region: string;
+    /** A single-metric alarm's metric. A metric-math alarm declares `metrics` instead. */
     namespace?: string;
     metric?: string;
+    statistic?: string;
+    /** The complete set: CloudWatch names a metric by all its dimensions. */
     dimensions?: Record<string, string>;
-    comparison?: string;
+    period?: number;
+    /** A metric-math alarm's queries, dimensions as a record, and the id of the one it compares with. */
+    metrics?: unknown[];
+    thresholdMetricId?: string;
+    evaluationPeriods: number;
+    /** Left out where the alarm has none (it then alarms on every evaluation period). */
+    datapointsToAlarm?: number;
+    comparison: string;
     threshold?: number;
+    treatMissingData: 'breaching' | 'notBreaching' | 'ignore' | 'missing';
     /** SNS topic name every alarm must notify. */
     topic: string;
+    /** Whether the return to OK notifies the topic as well. */
+    notifyOk: boolean;
 }
 
+/** Every alarm as describe-alarms returns it, live 2026-10-01 (descriptions and state aside). */
 export const ALARMS: AlarmExpectation[] = [
     {
         name: 'www-traffic-floor',
         region: 'us-east-1',
+        // An anomaly band, 3 standard deviations wide, over the distribution's 5-minute request count.
+        metrics: [
+            {
+                Id: 'm1',
+                MetricStat: {
+                    Metric: {
+                        Namespace: 'AWS/CloudFront',
+                        MetricName: 'Requests',
+                        Dimensions: { DistributionId: DISTRIBUTION_ID, Region: 'Global' },
+                    },
+                    Period: 300,
+                    Stat: 'Sum',
+                },
+                ReturnData: true,
+            },
+            { Id: 'ad1', Expression: 'ANOMALY_DETECTION_BAND(m1, 3)', ReturnData: true },
+        ],
+        thresholdMetricId: 'ad1',
+        evaluationPeriods: 3,
+        datapointsToAlarm: 3,
         comparison: 'LessThanLowerThreshold',
-        // Metric-math alarm: anomaly band over CloudFront Requests, checked separately.
+        // A total outage produces no datapoints at all.
+        treatMissingData: 'breaching',
         topic: 'aws-global-sns-topic',
+        notifyOk: true,
     },
     {
         name: 'www-5xx-rate',
         region: 'us-east-1',
         namespace: 'AWS/CloudFront',
         metric: '5xxErrorRate',
+        statistic: 'Average',
         dimensions: { DistributionId: DISTRIBUTION_ID, Region: 'Global' },
+        period: 300,
+        evaluationPeriods: 2,
+        datapointsToAlarm: 2,
         comparison: 'GreaterThanThreshold',
         threshold: 5,
+        treatMissingData: 'notBreaching',
         topic: 'aws-global-sns-topic',
+        notifyOk: true,
     },
     {
         name: 'www-cert-expiry',
         region: 'us-east-1',
         namespace: 'AWS/CertificateManager',
         metric: 'DaysToExpiry',
+        statistic: 'Minimum',
+        dimensions: { CertificateArn: DISTRIBUTION.certificateArn },
+        period: 21600,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
         comparison: 'LessThanThreshold',
         threshold: 21,
+        treatMissingData: 'breaching',
         topic: 'aws-global-sns-topic',
+        notifyOk: true,
     },
     {
         name: 'waf-p11-captcha-served',
         region: 'us-east-1',
         namespace: 'AWS/WAFV2',
         metric: 'CaptchaRequests',
+        statistic: 'Sum',
         dimensions: { WebACL: 'cloudfront-web-acl', Rule: 'soft-rate-limit-rule-with-captcha' },
+        period: 300,
+        evaluationPeriods: 1,
         comparison: 'GreaterThanThreshold',
         threshold: 15000,
+        treatMissingData: 'notBreaching',
         topic: 'aws-global-sns-topic',
+        notifyOk: false,
     },
     {
         name: 'waf-p11-captcha-solved',
         region: 'us-east-1',
         namespace: 'AWS/WAFV2',
         metric: 'RequestsWithValidCaptchaToken',
+        statistic: 'Sum',
         dimensions: { WebACL: 'cloudfront-web-acl', Rule: 'soft-rate-limit-rule-with-captcha' },
+        period: 300,
+        evaluationPeriods: 1,
         comparison: 'GreaterThanThreshold',
         threshold: 0,
+        treatMissingData: 'notBreaching',
         topic: 'aws-global-sns-topic',
+        notifyOk: false,
     },
     {
         name: 'ag-grid-lb1-unhealthy-host',
         region: 'us-west-1',
         namespace: 'AWS/ApplicationELB',
         metric: 'UnHealthyHostCount',
+        statistic: 'Maximum',
         dimensions: {
             TargetGroup: 'targetgroup/target-group1/023f2bedf8911b95',
             LoadBalancer: 'app/ag-grid-lb1/ddcbf270e7b776cf',
         },
+        period: 60,
+        evaluationPeriods: 3,
+        datapointsToAlarm: 3,
         comparison: 'GreaterThanOrEqualToThreshold',
         threshold: 1,
+        treatMissingData: 'notBreaching',
         topic: 'ag-website-status',
+        notifyOk: true,
     },
     {
+        // Declared as Shield Advanced created it for the other four protected distributions (live 2026-10-01).
         name: `DDoSDetectedAlarmForProtection_${DISTRIBUTION_ID}`,
         region: 'us-east-1',
         namespace: 'AWS/DDoSProtection',
         metric: 'DDoSDetected',
+        statistic: 'Sum',
+        dimensions: { ResourceArn: `arn:aws:cloudfront::${ACCOUNT_ID}:distribution/${DISTRIBUTION_ID}` },
+        period: 60,
+        evaluationPeriods: 20,
+        datapointsToAlarm: 1,
+        comparison: 'GreaterThanOrEqualToThreshold',
+        threshold: 1,
+        treatMissingData: 'notBreaching',
         topic: 'aws-global-sns-topic',
+        notifyOk: false,
         pending: `${finding(14)} (no DDoSDetected alarm on ${DISTRIBUTION_ID}; the other four protected distributions have one) - no script yet`,
     },
 ];
 
 export const SHIELD = {
+    /** Without it the subscription lapses at its end date. */
+    autoRenew: 'ENABLED',
     protections: [
         { resource: `arn:aws:cloudfront::${ACCOUNT_ID}:distribution/${DISTRIBUTION_ID}`, autoResponse: 'Count' },
         { resource: ALB.arn, autoResponse: 'Count' },
