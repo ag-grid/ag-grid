@@ -396,6 +396,8 @@ export function wafChecks(): CheckDef[] {
                         continue;
                     }
                     p.eq(`${exp.rule} positional`, secret.positional, 'EXACTLY');
+                    // EXACTLY compares after the transformations: any but NONE normalises the header.
+                    p.eq(`${exp.rule} transforms`, secret.transforms, ['NONE']);
                     p.check(secret.value.length >= 32, `${exp.rule}: secret is only ${secret.value.length} chars`);
                     lengths.push(`${exp.header} ${describeSecret(secret.value)}`);
                     if (exp.pathPrefix) {
@@ -840,10 +842,17 @@ export function wafChecks(): CheckDef[] {
                 const crs = noneOfLeaves(
                     byName('AWS-AWSManagedRulesCommonRuleSet')?.Statement.ManagedRuleGroupStatement.ScopeDownStatement
                 );
-                p.check(
-                    !!crs?.some((l) => l.kind === 'byte' && l.value === ALB_ACL.commonRuleSetExemptPrefix),
-                    'CRS scope-down is not NOT(the exempt prefix)'
-                );
+                // The whole leaf, alone: the prefix on another field, matched anywhere or after a
+                // transformation, or beside another exemption lets callers skip CRS.
+                p.eq('CRS scope-down', crs?.map(leafKey), [
+                    leafKey({
+                        kind: 'byte',
+                        field: 'UriPath',
+                        value: ALB_ACL.commonRuleSetExemptPrefix,
+                        positional: 'STARTS_WITH',
+                        transforms: ['NONE'],
+                    }),
+                ]);
                 for (const [name, limit] of Object.entries(ALB_ACL.rateLimits)) {
                     p.eq(`${name} limit`, byName(name)?.Statement.RateBasedStatement.Limit, limit);
                 }
