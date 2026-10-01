@@ -148,7 +148,14 @@ export function headerChecks(): CheckDef[] {
                 }
                 p.check(etags.size === 1, `ETags differ: ${[...etags].join(' vs ')}`);
                 p.check(dates.size === 1, `Last-Modified differs: ${[...dates].join(' vs ')}`);
-                return p.outcome(`${fromOrigin.length} origin responses, ETag ${[...etags][0]}`);
+                if (p.count) {
+                    return p.outcome();
+                }
+                // Nothing in a response says which ALB target sent it, so agreement may be one host
+                // answering every time: only a disagreement proves anything about both.
+                return skip(
+                    `inconclusive: ${fromOrigin.length} origin responses agree (ETag ${[...etags][0]}), but nothing shows they came from both hosts`
+                );
             },
         },
         {
