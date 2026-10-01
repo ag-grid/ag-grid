@@ -1,8 +1,11 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { getDocsPages } from '@components/docs/utils/pageData';
+import { load } from 'js-yaml';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, sep } from 'node:path';
 
 import { FRAMEWORKS, FRAMEWORK_LANDING_HUBS } from '../constants';
 import { SESSIONS, sessionSlug } from './beyondThePromptSessions';
+import type { DocsPage } from './pages';
 
 /**
  * Resolves a site path against the Astro routes in `src/pages` and the docs content collection, so
@@ -16,7 +19,22 @@ const CAMPAIGN_CONTENT_DIR = join(__dirname, '../content/campaigns/bryntum-produ
 type Params = Record<string, string>;
 
 const isFramework = (framework: string) => FRAMEWORKS.some((known) => known === framework);
-const isDocsPage = (pageName: string) => existsSync(join(DOCS_CONTENT_DIR, pageName, 'index.mdoc'));
+
+/** The docs collection as `getCollection('docs')` sees it: one entry per page, with its frontmatter. */
+const DOCS_ENTRIES = readdirSync(DOCS_CONTENT_DIR)
+    .filter((pageName) => existsSync(join(DOCS_CONTENT_DIR, pageName, 'index.mdoc')))
+    .map((pageName) => {
+        const source = readFileSync(join(DOCS_CONTENT_DIR, pageName, 'index.mdoc'), 'utf8');
+        const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1];
+        return { id: pageName, data: (frontmatter && load(frontmatter)) || {} } as DocsPage;
+    });
+
+// The docs page routes' own getStaticPaths filter, so a page restricted to some frameworks by its
+// `frameworks` frontmatter (e.g. `react-hooks`) resolves for those frameworks only.
+const DOCS_ROUTES = new Set(
+    getDocsPages(DOCS_ENTRIES).map((route) => `${route?.params.framework}/${route?.params.pageName}`)
+);
+const isDocsRoute = (framework: string, pageName: string) => DOCS_ROUTES.has(`${framework}/${pageName}`);
 // `bryntum-scheduler-pro` is rendered from `schedulerpro.json`: the routes hyphenate two slugs.
 const isBryntumCampaign = (product: string) =>
     /^bryntum-/.test(product) &&
@@ -30,10 +48,8 @@ const isRecordedSession = (slug: string) =>
  */
 const DYNAMIC_ROUTE_PARAMS: Record<string, (params: Params) => boolean> = {
     '[framework]-data-grid/index.astro': ({ framework }) => isFramework(framework),
-    '[framework]-data-grid/[pageName].astro': ({ framework, pageName }) =>
-        isFramework(framework) && isDocsPage(pageName),
-    '[framework]-data-grid/[pageName].md.ts': ({ framework, pageName }) =>
-        isFramework(framework) && isDocsPage(pageName),
+    '[framework]-data-grid/[pageName].astro': ({ framework, pageName }) => isDocsRoute(framework, pageName),
+    '[framework]-data-grid/[pageName].md.ts': ({ framework, pageName }) => isDocsRoute(framework, pageName),
     '[framework]-data-grid.md.ts': ({ framework }) => FRAMEWORK_LANDING_HUBS.some((hub) => hub === framework),
     'campaigns/[bryntumProduct].astro': ({ bryntumProduct }) => isBryntumCampaign(bryntumProduct),
     'campaigns/[bryntumProduct].md.ts': ({ bryntumProduct }) => isBryntumCampaign(bryntumProduct),

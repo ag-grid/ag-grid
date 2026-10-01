@@ -174,6 +174,13 @@ describe('curated links in llms.txt and AGENTS.md', () => {
         // The JavaScript root has no landing hub, so no markdown twin.
         expect(resolveRoute('/react-data-grid.md')).toBeDefined();
         expect(resolveRoute('/javascript-data-grid.md')).toBeUndefined();
+        // A page restricted by its `frameworks` frontmatter is built for those frameworks only.
+        expect(resolveRoute('/react-data-grid/react-hooks/')).toBeDefined();
+        expect(resolveRoute('/react-data-grid/react-hooks.md')).toBeDefined();
+        expect(resolveRoute('/angular-data-grid/react-hooks/')).toBeUndefined();
+        expect(resolveRoute('/angular-data-grid/react-hooks.md')).toBeUndefined();
+        expect(resolveRoute('/vue-data-grid/vue3-script-setup/')).toBeDefined();
+        expect(resolveRoute('/react-data-grid/vue3-script-setup/')).toBeUndefined();
     });
 
     describe.each([
