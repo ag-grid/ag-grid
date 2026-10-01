@@ -154,19 +154,32 @@ export const substitute = (target, match) => target.replace(/\$(\d)/g, (_, n) =>
 export const collapseSlashes = (url) =>
     url.replace(/^(https?:\/\/[^/]+)?(.*)$/, (_, origin = '', path) => origin + path.replace(/\/{2,}/g, '/'));
 
+/**
+ * Every generated redirect row also asserts it is never cached (the root's `Header always set
+ * Cache-Control "no-cache"` for 3xx except 304), so a cached Location cannot replay one visitor's
+ * query string to another. A row asserting its own Cache-Control keeps it.
+ */
+const withRedirectChecks = (status, extra) =>
+    status >= 300 && status < 400 && status !== 304 && !extra.some((e) => /^cc[=~]/.test(e))
+        ? [...extra, 'cc=no-cache']
+        : extra;
+
 export class Rows {
     constructor() {
         this.rows = [];
         this.seen = new Set();
     }
-    /** First row for a host+path+accept wins: Apache answers one way per request. */
-    add(host, path, status, loc = '', extra = []) {
-        const key = `${host}\t${path}\t${extra.find((e) => e.startsWith('accept=')) ?? ''}`;
+    /**
+     * First row for a host+path+accept wins: Apache answers one way per request. A `variant` names
+     * a further row for the same request that asserts something else about the same response.
+     */
+    add(host, path, status, loc = '', extra = [], variant = '') {
+        const key = `${host}\t${path}\t${extra.find((e) => e.startsWith('accept=')) ?? ''}\t${variant}`;
         if (this.seen.has(key)) {
             return;
         }
         this.seen.add(key);
-        this.rows.push([host, path, String(status), loc, ...extra].join('\t'));
+        this.rows.push([host, path, String(status), loc, ...withRedirectChecks(Number(status), extra)].join('\t'));
     }
     section(title) {
         this.rows.push('', `# @category ${title}`);

@@ -69,12 +69,43 @@ blog	/studio/	301	https://www.ag-grid.com/studio/	hops=1	final=200
 blog	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
 apex	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
 # Archive redirects stay inside the archive (they used to land on the CURRENT docs).
-www	/archive/36.2.0/react-data-grid/whats-new	301	/archive/36.2.0/react-data-grid/whats-new/	hops=2	final=200	final-url=https://www.ag-grid.com/archive/36.2.0/whats-new/	page=/archive/36.2.0/whats-new/
+# The single-hop rewrites are rebased onto the archive, so a slash-less legacy URL skips the add-slash hop.
+www	/archive/36.2.0/react-data-grid/whats-new	301	https://www.ag-grid.com/archive/36.2.0/whats-new/	hops=1	final=200	page=/archive/36.2.0/whats-new/
 www	/archive/36.2.0/react-data-grid/whats-new/	301	/archive/36.2.0/whats-new/	hops=1	final=200
 www	/archive/36.2.0/index.php	301	/archive/36.2.0/	hops=1	final=200
 www	/archive/36.2.0/react-data-grid/index.php	301	/archive/36.2.0/react-data-grid/	hops=1	final=200
-www	/archive/36.2.0/javascript-grid/	301	/archive/36.2.0/javascript-data-grid/
+www	/archive/36.2.0/javascript-grid/	301	https://www.ag-grid.com/archive/36.2.0/javascript-data-grid/getting-started/	hops=1
+# Legacy URLs that 404ed in archives while they carried no single-hop rewrites.
+www	/archive/36.2.0/javascript-grid/themes-customising/	301	https://www.ag-grid.com/archive/36.2.0/javascript-data-grid/themes/	hops=1
+www	/archive/36.3.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.3.0/react-data-grid/react-hooks/	hops=1
 www	/archive/36.2.0/	200	
+
+# @category redirects-never-cached
+# Every redirect is sent Cache-Control: no-cache from the root's always-table rule, which no child
+# .htaccess overrides: host swap, add-slash and rule redirects, on every site, live and archived.
+apex	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	cc=no-cache
+blog	/some-post/	301	https://www.ag-grid.com/blog/some-post/	cc=no-cache
+www	/license-pricing	301	/license-pricing/	cc=no-cache
+www	/react-grid/fine-tuning/	301	https://www.ag-grid.com/react-data-grid/react-hooks/	cc=no-cache
+www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/	cc=no-cache
+www	/sitemap.xml	301	https://www.ag-grid.com/sitemap-index.xml	cc=no-cache
+apex	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	cc=no-cache
+www	/archive/36.2.0/license-pricing	301	/archive/36.2.0/license-pricing/	cc=no-cache
+www	/archive/36.2.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/react-hooks/	cc=no-cache
+www	/archive/36.3.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.3.0/react-data-grid/react-hooks/	cc=no-cache
+apex	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+apex	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	cc=no-cache
+www	/charts/archive/14.2.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	cc=no-cache
+www	/charts/archive/14.3.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.3.0/react/bar-series/	cc=no-cache
+apex	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	cc=no-cache
+www	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	cc=no-cache
+apex	/studio/archive/3.0.0/react/quick-start/	301	https://www.ag-grid.com/studio/archive/3.0.0/react/quick-start/	cc=no-cache
+# A 304 is a 3xx too, but it refreshes the headers of the copy a cache holds: it keeps that copy's
+# long cache rather than turning it into no-cache.
+www	/_astro/index.AbCd1234.js	304		req:If-None-Match=*	cc=public, max-age=604800, s-maxage=31536000
+www	/archive/36.2.0/images/logo.svg	304		req:If-None-Match=*	cc=public, max-age=604800, s-maxage=31536000
 
 # @category charts-landing-hubs
 # /charts/{react,angular,vue}/ are landing hubs now (not -> quick-start); javascript still forwards.
@@ -164,7 +195,7 @@ www	/archive/36.3.0/missing.html	404		body~grid-root-404
 # @category header-scoping
 # The agent Link header is for successful HTML documents only.
 www	/react-data-grid/getting-started/	200		accept=html	link+describedby	csp=1	sec+	xrt=absent
-www	/javascript-grid/	301	/javascript-data-grid/	link-describedby	sec+
+www	/javascript-grid/	301	https://www.ag-grid.com/javascript-data-grid/getting-started/	link-describedby	sec+
 www	/images/logo.png	200		link-describedby
 www	/charts/react/bar-series/	200		accept=html	link+describedby	csp=1	sec+	xrt=absent
 www	/studio/react/quick-start/	200		accept=html	link+describedby	csp=1	sec+	xrt=absent

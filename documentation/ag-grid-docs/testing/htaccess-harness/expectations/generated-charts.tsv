@@ -3,131 +3,131 @@
 # @min-rows 121
 
 # @category charts-redirects
-www	/charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series
-www	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series
-apex	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series
-blog	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series
-www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
-www	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
-apex	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
-blog	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
-www	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
-www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
-apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
-blog	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
-www	/charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
-www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
-apex	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
-blog	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
-www	/charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/
-www	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/
-apex	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/
-blog	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/
-www	/charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/
-www	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/
-apex	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/
-blog	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/
-www	/charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/
-www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/
-apex	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/
-blog	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/
-www	/charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/
-www	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/
-apex	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/
-blog	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/
-www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/
-www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/
-apex	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/
-blog	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/
-www	/charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
-www	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
-apex	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
-blog	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
-www	/charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/
-www	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/
-apex	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/
-blog	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/
-www	/charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/
-www	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/
-apex	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/
-blog	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/
-www	/charts/sitemap.xml	301	https://www.ag-grid.com/charts/sitemap-0.xml
-www	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml
-apex	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml
-blog	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml
-www	/charts/archive	301	https://www.ag-grid.com/charts/documentation-archive/
-www	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/
-apex	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/
-blog	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/
+www	/charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+apex	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+blog	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
+apex	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
+blog	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+blog	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
+apex	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
+blog	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+www	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+apex	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+blog	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+www	/charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
+www	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
+apex	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
+blog	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
+www	/charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+apex	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+blog	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+www	/charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
+www	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
+apex	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
+blog	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
+www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+apex	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+blog	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+www	/charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+www	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+apex	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+blog	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+www	/charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+www	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+apex	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+blog	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+www	/charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+www	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+apex	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+blog	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+www	/charts/sitemap.xml	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
+www	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
+apex	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
+blog	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
+www	/charts/archive	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
+www	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
+apex	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
+blog	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
 www	/charts/privacy/bar-series	410	
 www	/charts/privacy/bar-series/	410	
 www	/charts/privacy	410	
 www	/charts/privacy/	410	
 apex	/charts/privacy/	410	
 blog	/charts/privacy/	410	
-www	/charts/javascript-charts/javascript/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-apex	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-blog	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/angular-charts/angular/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/
-www	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/
-apex	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/
-blog	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/
-www	/charts/react-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/
-www	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
-apex	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
-blog	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
-www	/charts/vue-charts/vue/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/
-www	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/
-apex	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/
-blog	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/
-www	/charts/enterprise-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/
-www	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
-apex	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
-blog	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/
-www	/charts/javascript-charts/gallery/bar-series	301	https://www.ag-grid.com/charts/gallery/
-www	/charts/javascript-charts/gallery/bar-series/	301	https://www.ag-grid.com/charts/gallery/
-www	/charts/javascript-charts/gallery	301	https://www.ag-grid.com/charts/gallery/
-www	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/
-apex	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/
-blog	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/
-www	/charts/javascript-charts/options/bar-series	301	https://www.ag-grid.com/charts/options/
-www	/charts/javascript-charts/options/bar-series/	301	https://www.ag-grid.com/charts/options/
-www	/charts/javascript-charts/options	301	https://www.ag-grid.com/charts/options/
-www	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/
-apex	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/
-blog	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/
-www	/charts/enterprise-charts/bar-series	301	https://www.ag-grid.com/charts/enterprise-charts/
-www	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/
-apex	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/
-blog	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/
-www	/charts/core	301	https://www.ag-grid.com/charts/javascript/quick-start/
-www	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/
-apex	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/
-blog	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/
-www	/charts/core/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-apex	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-blog	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/side/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-apex	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-blog	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/server-side-rendering/bar-series	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
-www	/charts/server-side-rendering/bar-series/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
-www	/charts/server-side-rendering	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
-www	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
-apex	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
-blog	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/
-www	/charts/javascript/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/javascript/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-apex	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-blog	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
-www	/charts/javascript/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
-www	/charts/javascript/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
-www	/charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
-www	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
-apex	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
-blog	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/
+www	/charts/javascript-charts/javascript/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+apex	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+blog	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/angular-charts/angular/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+www	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+apex	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+blog	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+www	/charts/react-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+apex	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+blog	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/vue-charts/vue/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+www	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+apex	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+blog	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+www	/charts/enterprise-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+apex	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+blog	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/javascript-charts/gallery/bar-series	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+www	/charts/javascript-charts/gallery/bar-series/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+www	/charts/javascript-charts/gallery	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+www	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+apex	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+blog	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+www	/charts/javascript-charts/options/bar-series	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+www	/charts/javascript-charts/options/bar-series/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+www	/charts/javascript-charts/options	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+www	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+apex	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+blog	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+www	/charts/enterprise-charts/bar-series	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
+www	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
+apex	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
+blog	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
+www	/charts/core	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+www	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+apex	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+blog	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+www	/charts/core/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+apex	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+blog	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/side/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+apex	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+blog	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/server-side-rendering/bar-series	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+www	/charts/server-side-rendering/bar-series/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+www	/charts/server-side-rendering	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+www	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+apex	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+blog	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+www	/charts/javascript/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+apex	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+blog	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/javascript/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+apex	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+blog	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache

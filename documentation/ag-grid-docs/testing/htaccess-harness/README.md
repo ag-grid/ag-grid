@@ -183,6 +183,7 @@ It runs as the invoking user on a high port.
 | Assertion                                       | Checks                                                    |
 | ----------------------------------------------- | --------------------------------------------------------- |
 | `accept=html\|md\|none\|<literal>`              | the `Accept` header to send                               |
+| `req:<Name>=<value>`                            | a further request header, e.g. `req:If-None-Match=*`      |
 | `cc=` / `cc~`                                   | `Cache-Control`                                           |
 | `ct=` / `ct~`                                   | `Content-Type`                                            |
 | `xrt=`                                          | `X-Robots-Tag` (`=absent` works for all of these)         |
@@ -227,11 +228,11 @@ guards against a generator silently dropping rows.
 
 **`generated-*.tsv` are generated and must never be hand-edited:**
 
-| File                                                                                 | Generator                       | Source of the rows                                                                                                              |
-| ------------------------------------------------------------------------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `generated-grid.tsv`, `-grid-archive`                                                | `gen-main-expectations.mjs`     | every `Redirect`/`RedirectMatch` and SE-64 single-hop rewrite in the grid file                                                  |
-| `generated-charts.tsv`, `-charts-archive`, `generated-studio.tsv`, `-studio-archive` | `gen-subsite-expectations.mjs`  | every `RewriteRule` redirect and `[G]` in the subsite file, on www, apex and blog                                               |
-| `generated-markdown.tsv`                                                             | `gen-markdown-expectations.mjs` | each site's `*_MARKDOWN_PAGE_GROUPS` registry: `.md` negotiation, plus the HTML headers of each content class, live and archive |
+| File                                                                                 | Generator                       | Source of the rows                                                                                                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generated-grid.tsv`, `-grid-archive`                                                | `gen-main-expectations.mjs`     | every `Redirect`/`RedirectMatch` and SE-64 single-hop rewrite in the grid file (an archive's rebased subset too)                                                                |
+| `generated-charts.tsv`, `-charts-archive`, `generated-studio.tsv`, `-studio-archive` | `gen-subsite-expectations.mjs`  | every `RewriteRule` redirect and `[G]` in the subsite file, on www, apex and blog                                                                                               |
+| `generated-markdown.tsv`                                                             | `gen-markdown-expectations.mjs` | each site's `*_MARKDOWN_PAGE_GROUPS` registry: `.md` negotiation, plus the HTML headers of each content class, live and archive; every archive `.md` is `X-Robots-Tag: noindex` |
 
 **The generators predict each row from the rule's own semantics**, not by asking Apache:
 
@@ -241,6 +242,10 @@ guards against a generator silently dropping rows.
 - per-dir pattern context.
 
 Running the rows against Apache cross-checks those predictions.
+
+**Every generated redirect row also asserts `Cache-Control: no-cache`**, the root's always-table
+rule for 3xx except 304 (see `Rows.add` in `generators/lib.mjs`). `edge.tsv` checks that a 304 keeps
+the long cache of the copy it revalidates.
 
 **Where Apache will do something the rule's author did not intend, the generator asserts the
 intended target and marks the row `known-fail`:**
@@ -266,11 +271,7 @@ Each one is listed in the run summary under `KNOWN FAILURES`, with its reference
 - Charts archive builds serve their own `404.html` below the archive path, so the root's archive cache rule matches it.
 - Approved fix: gate the archive cache on `REQUEST_STATUS == 200`.
 
-**Grid rules shadowed by a broader `Redirect`** (24 on the live site, 15 in archives).
-
-- Live site: `/{fw}-grid/server-side-*` reaches its target in 2 hops, which breaks SE-64's one-hop rule.
-- Archives: `/archive/<v>/{fw}-grid/themes-customising/` and the like land on a 404. Archives carry no single-hop rewrites, which #15411 dropped.
-
-**Four `RedirectMatch "^/documentation/<fw>/charts.*"` rules** are unreachable, because `Redirect /documentation/<fw>/` precedes them.
-
-**`Redirect /vue-data-grid/framework-data-flow /vue-data-grid/getting-started/`** sends the slashed URL to `getting-started//`.
+The grid redirect findings this harness first reported - rules shadowed by a broader `Redirect`
+(`/{fw}-grid/server-side-*` in 2 hops, archive `themes-*` pages on a 404), the unreachable
+`/documentation/<fw>/charts*` rules (AG-17152) and the `framework-data-flow` double slash - are
+fixed, and their rows now pass as ordinary expectations.

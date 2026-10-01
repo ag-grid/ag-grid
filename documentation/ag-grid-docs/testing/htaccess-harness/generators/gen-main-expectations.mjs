@@ -4,8 +4,8 @@
 // per redirect rule, with EXACT predicted Locations.
 //
 // The prediction models the request path through the rules in the order Apache applies them:
-//   1. mod_rewrite (per-dir, runs first): the SE-64/66 single-hop rewrites (live site only), the
-//      index.php strips, the add-trailing-slash rule for a dot-less slash-less path, the .php
+//   1. mod_rewrite (per-dir, runs first): the SE-64/66 single-hop rewrites (in an archive, the
+//      subset rebased onto the archive's own copy of each target), the index.php strips, the add-trailing-slash rule for a dot-less slash-less path, the .php
 //      path-suffix strip;
 //   2. mod_alias, FIRST match in config order (not longest match): `Redirect` is a segment-prefix
 //      match that APPENDS the unmatched remainder to the target; `RedirectMatch` is a regex with
@@ -41,7 +41,7 @@ const alias = []; // { kind: 'prefix'|'regex', status, from|re, to, text }
 for (const line of lines) {
     let m;
     if ((m = line.match(/^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301(?:,NE)?,L\]/))) {
-        // literal single-hop rewrites only; the regex rules (charts mirror) govern /charts, not here
+        // literal single-hop rewrites only (the per-dir pattern, so the same `from` in an archive)
         if (!/[()|[\]{}+*?]/.test(m[1])) {
             singleHop.set('/' + m[1].replace(/\\\./g, '.'), m[2]);
         }
@@ -80,10 +80,10 @@ function apply(d, path) {
 
 /** The first response for a www request, or null for "served/404". */
 function simulate(path) {
-    if (!base && singleHop.has(path)) {
-        return { status: 301, loc: singleHop.get(path), by: 'single-hop' };
-    }
     const rel = path.slice(base.length + 1); // per-dir path below the .htaccess directory
+    if (path.startsWith(`${base}/`) && singleHop.has(`/${rel}`)) {
+        return { status: 301, loc: singleHop.get(`/${rel}`), by: 'single-hop' };
+    }
     if (rel === 'index.php') {
         return { status: 301, loc: `${base}/`, by: 'index.php' };
     }
@@ -159,14 +159,6 @@ function rowFor(path, d, { synthetic = false } = {}) {
         return;
     }
     const sameEnd = finalOf(sim.loc) === finalOf(own.loc);
-    if (base && sameEnd) {
-        // Archive builds deliberately carry no single-hop rewrites (#15411 dropped them rather than
-        // make them base-aware), so a 2-hop chain that still ends on the target is the accepted
-        // behaviour there. Only a chain ending somewhere else is a defect.
-        counts.ok++;
-        rows.add('www', path, sim.status, sim.loc);
-        return;
-    }
     counts.shadowed++;
     const how = sameEnd ? 'reaches the target in 2+ hops' : `ends on ${finalOf(sim.loc)}, not the target`;
     rows.add('www', path, own.status, collapseSlashes(own.loc), [
@@ -195,13 +187,12 @@ for (const d of alias) {
     }
 }
 
-if (!base) {
-    // SE-64 / SE-66: a single-hop rewrite lands on its final www URL in ONE 301, on www and apex.
-    rows.section('grid-single-hop');
-    for (const [from, to] of singleHop) {
-        rows.add('www', from, 301, to);
-        rows.add('apex', from, 301, to);
-    }
+// SE-64 / SE-66: a single-hop rewrite lands on its final www URL in ONE 301, on www and apex - in an
+// archive, on the archive's own copy of the target.
+rows.section(base ? 'grid-archive-single-hop' : 'grid-single-hop');
+for (const [from, to] of singleHop) {
+    rows.add('www', `${base}${from}`, 301, to, ['hops=1']);
+    rows.add('apex', `${base}${from}`, 301, to);
 }
 
 rows.section(base ? 'grid-archive-infra' : 'grid-infra');
