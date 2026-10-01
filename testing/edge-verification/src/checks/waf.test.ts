@@ -11,6 +11,7 @@ const CHECKS = {
     commonRuleSet: 'waf-config.cf.common-rule-set',
     nonBrowser: 'waf-config.cf.nonbrowser-rule',
     dataCentre: 'waf-config.cf.rule.block-datacenter-except-agent-paths',
+    browserChallenge: 'waf-config.cf.automated-browser-challenge',
 };
 
 const check = (id: string): CheckDef => {
@@ -79,6 +80,27 @@ describe('WAF statement structure', () => {
             },
         ],
         ['data-centre rule as an OR', CHECKS.dataCentre, 'block-datacenter-except-agent-paths', and2or],
+        ['browser challenge as an OR', CHECKS.browserChallenge, 'challenge-automated-browser-documents', and2or],
+        [
+            'browser challenge exemption without its negation',
+            CHECKS.browserChallenge,
+            'challenge-automated-browser-documents',
+            (s) => {
+                s.AndStatement.Statements[1] = s.AndStatement.Statements[1].NotStatement.Statement;
+                return s;
+            },
+        ],
+        [
+            'browser challenge exemption on another field',
+            CHECKS.browserChallenge,
+            'challenge-automated-browser-documents',
+            (s) => {
+                s.AndStatement.Statements[1].NotStatement.Statement.RegexMatchStatement.FieldToMatch = {
+                    QueryString: {},
+                };
+                return s;
+            },
+        ],
     ];
 
     for (const [what, id, rule, edit] of MUTATIONS) {
