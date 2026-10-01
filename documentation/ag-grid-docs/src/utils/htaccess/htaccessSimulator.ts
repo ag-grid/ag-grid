@@ -13,6 +13,12 @@
  *   Conditions ([OR], [NC], negation, -f), back-references ($N, %N), [L], [R=nnn], [G],
  *   [NE], [S=n], internal rewrites (re-run as a new request) and the Vary header mod_rewrite adds
  *   when a condition on a request header holds.
+ * - URL escaping, as Apache 2.4 does it: the request path is decoded once (an invalid escape is a
+ *   400, %00 a 404) and rules match the decoded bytes; an external redirect's path is re-escaped
+ *   unless [NE], with lowercase hex; a query string the rule did not change goes out as it came in;
+ *   a '?' that a back-reference or variable carried into a substitution is refused with 403
+ *   (CVE-2024-38474). mod_alias escapes a Redirect's appended remainder and a RedirectMatch
+ *   target's path (not its query or fragment). Verified against Apache 2.4.67.
  * - mod_alias: Redirect (prefix match on whole path segments, remainder appended) and
  *   RedirectMatch (regex on the full path), first match wins, the child's directives before the
  *   parent's. mod_rewrite runs first (its fixup hook is registered before mod_alias's).
@@ -22,8 +28,10 @@
  *   RequestHeader edit/edit* (regex substitution on each instance of a request header, parent
  *   then child), which runs before the handler evaluates conditional requests.
  *
- * Anything outside that subset throws rather than being silently ignored. The real-Apache
- * harness in testing/htaccess-harness remains the authority on interactions this does not model
+ * Anything outside that subset throws rather than being silently ignored: an unknown directive,
+ * rule flag or Header action, and an encoded slash (%2F), whose handling depends on the vhost's
+ * AllowEncodedSlashes. The directives in IGNORED_DIRECTIVES are the only ones skipped. The
+ * real-Apache harness in testing/htaccess-harness remains the authority on interactions this does not model
  * (mod_dir's DirectorySlash, the vhost, CloudFront).
  */
 
@@ -114,14 +122,42 @@ export interface ResponseContext {
     varyFromRewrite?: string[];
 }
 
-const flagsOf = (raw: string | undefined): Flags => {
+// The flags this model implements. Any other flag ([B], [QSA], [PT], [UnsafeAllow3F], ...) changes
+// routing or escaping in a way it does not reproduce, so it throws rather than being dropped.
+const RULE_FLAGS = new Set(['L', 'R', 'NC', 'NE', 'S', 'G']);
+const COND_FLAGS = new Set(['NC', 'OR']);
+
+const flagsOf = (raw: string | undefined, supported: Set<string>, source: string): Flags => {
     const flags: Flags = new Map();
-    for (const part of (raw ?? '').split(',').filter(Boolean)) {
+    for (const part of (raw ?? '')
+        .replace(/^\[|\]$/g, '')
+        .split(',')
+        .filter(Boolean)) {
         const [key, value] = part.split('=');
-        flags.set(key.trim().toUpperCase(), value === undefined ? true : value.trim());
+        const name = key.trim().toUpperCase();
+        if (!supported.has(name)) {
+            throw new Error(`Unsupported flag [${part}]: ${source}`);
+        }
+        flags.set(name, value === undefined ? true : value.trim());
     }
     return flags;
 };
+
+/**
+ * Directives skipped on purpose: they set no status, Location or header this model asserts on.
+ * `<IfModule>` only wraps directives that are parsed on their own; AddType and AddCharset feed the
+ * content type, which callers pass in; AddOutputFilterByType is compression; `Options -Indexes`
+ * only turns off directory listings. Every other directive not modelled below throws, so a typo
+ * (`RewriteEngin On`) or a new directive cannot silently drop out of every test.
+ */
+export const IGNORED_DIRECTIVES = new Set([
+    '<IfModule',
+    '</IfModule>',
+    'AddType',
+    'AddCharset',
+    'AddOutputFilterByType',
+    'Options',
+]);
 
 /**
  * Splits a directive's arguments the way Apache does: whitespace separates them, double or single
@@ -198,7 +234,7 @@ const parseRequestHeader = (args: string[], source: string): RequestHeaderDirect
 };
 
 // ap_pregsub: `&` and `$0` are the whole match, `$1`-`$9` a group, a backslash escapes the next character.
-const pregsub = (replacement: string, match: RegExpExecArray): string =>
+const pregsub = (replacement: string, match: RegExpMatchArray): string =>
     replacement.replace(/\\(.)|&|\$(\d)/g, (token, escaped: string | undefined, group: string | undefined) => {
         if (escaped !== undefined) {
             return escaped;
@@ -251,22 +287,17 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
                 currentIf = undefined;
                 break;
             }
-            case '<ElseIf':
-            case '<Else>':
-            case '<Files':
-            case '<FilesMatch':
-            case 'RewriteBase':
-            case 'RewriteOptions':
-            case 'RewriteMap':
-                throw new Error(`Unsupported directive: ${line}`);
             case 'RewriteEngine':
+                if (args.length !== 1 || args[0].toLowerCase() !== 'on') {
+                    throw new Error(`Unsupported RewriteEngine: ${line}`);
+                }
                 compiled.hasRewrite = true;
                 break;
             case 'RewriteCond': {
                 const [testString, rawPattern, rawFlags] = args;
                 const negate = rawPattern.startsWith('!');
                 const pattern = negate ? rawPattern.slice(1) : rawPattern;
-                const flags = flagsOf(rawFlags?.replace(/^\[|\]$/g, ''));
+                const flags = flagsOf(rawFlags, COND_FLAGS, line);
                 const isFileTest = /^-[fdsl]$/.test(pattern);
                 pendingConds.push({
                     testString,
@@ -279,7 +310,7 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
             }
             case 'RewriteRule': {
                 const [pattern, substitution, rawFlags] = args;
-                const flags = flagsOf(rawFlags?.replace(/^\[|\]$/g, ''));
+                const flags = flagsOf(rawFlags, RULE_FLAGS, line);
                 compiled.hasRewrite = true;
                 compiled.rewriteRules.push({
                     pattern: new RegExp(pattern, flags.has('NC') ? 'i' : ''),
@@ -320,8 +351,9 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
                 compiled.errorDocuments.set(Number(args[0]), args[1]);
                 break;
             default:
-                // AddType, AddCharset, Options, <IfModule> wrappers, mod_deflate: no routing or
-                // header effect that this model needs.
+                if (!IGNORED_DIRECTIVES.has(directive)) {
+                    throw new Error(`Unsupported directive: ${line}`);
+                }
                 break;
         }
     }
@@ -340,36 +372,132 @@ const applicableFiles = (files: CompiledHtaccess[], path: string): CompiledHtacc
 interface RewriteContext {
     host: string;
     https: boolean;
+    /** %{REQUEST_URI}: the decoded URL-path, as a byte string (see decodePath). */
     uri: string;
+    /** The query string exactly as the client sent it. */
     query: string;
     accept: string;
     fileExists: (urlPath: string) => boolean;
 }
 
-const expandVars = (value: string, ctx: RewriteContext, rule: RegExpMatchArray, cond: RegExpMatchArray | null) =>
-    value
-        .replace(/%\{([A-Z_]+)\}/g, (_, name: string) => {
-            switch (name) {
-                case 'HTTP_HOST':
-                    return ctx.host;
-                case 'REQUEST_URI':
-                    return ctx.uri;
-                case 'SERVER_PORT':
-                    return ctx.https ? '443' : '80';
-                case 'HTTPS':
-                    return ctx.https ? 'on' : 'off';
-                case 'HTTP_ACCEPT':
-                    return ctx.accept;
-                case 'QUERY_STRING':
-                    return ctx.query;
-                case 'DOCUMENT_ROOT':
-                    return '';
-                default:
-                    throw new Error(`Unsupported server variable %{${name}}`);
+// Apache decodes the URL-path to bytes and matches rules against those bytes. A JS string holding
+// one character per byte stands in for them, so a decoded UTF-8 sequence re-escapes byte by byte.
+const fromByteString = (bytes: string): string =>
+    new TextDecoder().decode(Uint8Array.from(bytes, (char) => char.charCodeAt(0)));
+
+type DecodedPath = { bytes: string } | { status: number; reason: string };
+
+// ap_unescape_url, with the vhost defaults: a malformed escape is a 400 and %00 a 404. An encoded
+// slash depends on the vhost's AllowEncodedSlashes, which this model does not know, so it throws.
+function decodePath(rawPath: string): DecodedPath {
+    let bytes = '';
+    for (let i = 0; i < rawPath.length; i++) {
+        if (rawPath[i] !== '%') {
+            bytes += rawPath[i];
+            continue;
+        }
+        const hex = rawPath.slice(i + 1, i + 3);
+        if (!/^[0-9a-fA-F]{2}$/.test(hex)) {
+            return { status: 400, reason: `malformed escape in ${rawPath}` };
+        }
+        const byte = parseInt(hex, 16);
+        if (byte === 0) {
+            return { status: 404, reason: `%00 in ${rawPath}` };
+        }
+        if (byte === 0x2f) {
+            throw new Error(`Unsupported encoded slash in ${rawPath}: it depends on AllowEncodedSlashes`);
+        }
+        bytes += String.fromCharCode(byte);
+        i += 2;
+    }
+    return { bytes };
+}
+
+// ap_escape_uri: every byte outside this set becomes %xx, in lowercase hex as Apache writes it.
+const PATH_SAFE = /[A-Za-z0-9$\-_.+!*'(),:;@&=~/]/;
+const escapePath = (bytes: string): string =>
+    Array.from(bytes, (char) =>
+        PATH_SAFE.test(char) ? char : `%${char.charCodeAt(0).toString(16).padStart(2, '0')}`
+    ).join('');
+
+// escape_absolute_uri: an absolute URL keeps its scheme and authority; only what follows is escaped.
+const escapeLocation = (location: string): string => {
+    const origin = /^[a-z][a-z0-9+.-]*:\/\/[^/]*/i.exec(location)?.[0] ?? '';
+    return origin + escapePath(location.slice(origin.length));
+};
+
+const qualify = (location: string, ctx: RewriteContext): string =>
+    location.startsWith('/') ? `${ctx.https ? 'https' : 'http'}://${ctx.host}${location}` : location;
+
+interface Expansion {
+    text: string;
+    /** Whether a back-reference or variable put a '?' into the result, which Apache refuses. */
+    unsafeQuery: boolean;
+}
+
+// mod_rewrite's do_expand: a backslash escapes the next character; %{VAR}, $N and %N are expanded.
+function expand(value: string, ctx: RewriteContext, rule: RegExpMatchArray, cond: RegExpMatchArray | null): Expansion {
+    let unsafeQuery = false;
+    const text = value.replace(
+        /\\(.)|%\{([A-Z_]+)\}|\$(\d)|%(\d)/g,
+        (
+            _,
+            escaped: string | undefined,
+            name: string | undefined,
+            ruleRef: string | undefined,
+            condRef: string | undefined
+        ) => {
+            if (escaped !== undefined) {
+                return escaped;
             }
-        })
-        .replace(/\$(\d)/g, (_, n) => rule[Number(n)] ?? '')
-        .replace(/%(\d)/g, (_, n) => cond?.[Number(n)] ?? '');
+            const expanded =
+                name !== undefined
+                    ? serverVariable(name, ctx)
+                    : ruleRef !== undefined
+                      ? (rule[Number(ruleRef)] ?? '')
+                      : (cond?.[Number(condRef)] ?? '');
+            unsafeQuery ||= expanded.includes('?');
+            return expanded;
+        }
+    );
+    return { text, unsafeQuery };
+}
+
+function serverVariable(name: string, ctx: RewriteContext): string {
+    switch (name) {
+        case 'HTTP_HOST':
+            return ctx.host;
+        case 'REQUEST_URI':
+            return ctx.uri;
+        case 'SERVER_PORT':
+            return ctx.https ? '443' : '80';
+        case 'HTTPS':
+            return ctx.https ? 'on' : 'off';
+        case 'HTTP_ACCEPT':
+            return ctx.accept;
+        case 'QUERY_STRING':
+            return ctx.query;
+        case 'DOCUMENT_ROOT':
+            return '';
+        default:
+            throw new Error(`Unsupported server variable %{${name}}`);
+    }
+}
+
+/**
+ * The Location of a mod_rewrite external redirect. The substitution's own query replaces the
+ * request's (an empty one drops it); the path is escaped unless [NE], and so is a query the rule
+ * changed, while the request's own query goes out exactly as it came in.
+ */
+function rewriteLocation(substitution: string, ctx: RewriteContext, noEscape: boolean): string {
+    const queryAt = substitution.indexOf('?');
+    const target = qualify(queryAt === -1 ? substitution : substitution.slice(0, queryAt), ctx);
+    const ownQuery = queryAt === -1 ? undefined : substitution.slice(queryAt + 1);
+    const query = ownQuery ?? ctx.query;
+    const escapedQuery = noEscape || ownQuery === undefined || ownQuery === ctx.query ? query : escapePath(query);
+    // Unescaped bytes go out as they are, and a client reads them as UTF-8.
+    return fromByteString((noEscape ? target : escapeLocation(target)) + (query ? `?${escapedQuery}` : ''));
+}
 
 const HEADER_VARS: Record<string, string> = { HTTP_ACCEPT: 'Accept', HTTP_HOST: 'Host' };
 
@@ -395,16 +523,16 @@ function runRewrite(file: CompiledHtaccess, ctx: RewriteContext): RewriteResult 
         let groupHolds = false;
         const ruleVary: string[] = [];
         for (const cond of rule.conds) {
-            const testValue = expandVars(cond.testString, ctx, match, lastCondMatch);
+            const testValue: string = expand(cond.testString, ctx, match, lastCondMatch).text;
             let holds: boolean;
             if (cond.regex) {
-                const condMatch = testValue.match(cond.regex);
+                const condMatch: RegExpMatchArray | null = testValue.match(cond.regex);
                 holds = (condMatch !== null) !== cond.negate;
                 if (condMatch && !cond.negate) {
                     lastCondMatch = condMatch;
                 }
             } else if (cond.pattern === '-f') {
-                holds = ctx.fileExists(testValue) !== cond.negate;
+                holds = ctx.fileExists(fromByteString(testValue)) !== cond.negate;
             } else {
                 throw new Error(`Unsupported file test ${cond.pattern}`);
             }
@@ -436,29 +564,27 @@ function runRewrite(file: CompiledHtaccess, ctx: RewriteContext): RewriteResult 
             if (status < 300 || status > 399) {
                 return { outcome: { type: 'status', status, by: rule.source }, vary };
             }
-            let location = expandVars(substitution, ctx, match, lastCondMatch);
-            if (location.startsWith('/')) {
-                location = `${ctx.https ? 'https' : 'http'}://${ctx.host}${location}`;
+        }
+        if (substitution === '-') {
+            if (rule.flags.has('L')) {
+                break;
             }
-            if (!rule.flags.has('NE')) {
-                // Without [NE], mod_rewrite escapes the substitution, so a '#' becomes a literal %23.
-                location = location.replace(/#/g, '%23');
-            }
-            if (ctx.query && !location.includes('?')) {
-                location += `?${ctx.query}`;
-            }
+            continue;
+        }
+        const expanded = expand(substitution, ctx, match, lastCondMatch);
+        // CVE-2024-38474: a '?' decoded from the request (%3F) must not start a query string.
+        if (expanded.unsafeQuery) {
+            return { outcome: { type: 'status', status: 403, by: rule.source }, vary };
+        }
+        if (redirectFlag !== undefined) {
+            const status = redirectFlag === true ? 302 : Number(redirectFlag);
+            const location = rewriteLocation(expanded.text, ctx, rule.flags.has('NE'));
             return { outcome: { type: 'redirect', status, location, by: rule.source }, vary };
         }
-        if (substitution !== '-') {
-            const path = expandVars(substitution, ctx, match, lastCondMatch);
-            if (!path.startsWith('/')) {
-                throw new Error(`Unsupported relative internal rewrite: ${rule.source}`);
-            }
-            return { outcome: { type: 'rewrite', path }, vary };
+        if (!expanded.text.startsWith('/') || expanded.text.includes('?')) {
+            throw new Error(`Unsupported internal rewrite (relative, or with a query): ${rule.source}`);
         }
-        if (rule.flags.has('L')) {
-            break;
-        }
+        return { outcome: { type: 'rewrite', path: expanded.text }, vary };
     }
     return { outcome: null, vary };
 }
@@ -488,6 +614,12 @@ function aliasMatchLength(uri: string, prefix: string): number {
     return u;
 }
 
+// RedirectMatch escapes the substituted target's path only: its query and fragment go out as written.
+const escapeTargetPath = (target: string): string => {
+    const end = target.search(/[?#]/);
+    return end === -1 ? escapeLocation(target) : escapeLocation(target.slice(0, end)) + target.slice(end);
+};
+
 function runAliases(files: CompiledHtaccess[], ctx: RewriteContext): RouteOutcome | null {
     // mod_alias merges the child's directives in front of the parent's.
     const directives = [...files].reverse().flatMap((file) => file.aliases);
@@ -498,36 +630,39 @@ function runAliases(files: CompiledHtaccess[], ctx: RewriteContext): RouteOutcom
             if (!length) {
                 continue;
             }
-            location = alias.to === undefined ? undefined : alias.to + ctx.uri.slice(length);
+            // The target is used as written; only the remainder taken from the request is escaped.
+            location = alias.to === undefined ? undefined : alias.to + escapePath(ctx.uri.slice(length));
         } else {
             const match = ctx.uri.match(alias.regex!);
             if (!match) {
                 continue;
             }
-            location = alias.to?.replace(/\$(\d)/g, (_, n) => match[Number(n)] ?? '');
+            location = alias.to === undefined ? undefined : escapeTargetPath(pregsub(alias.to, match));
         }
         if (alias.status < 300 || alias.status > 399) {
             return { type: 'status', status: alias.status, by: alias.source };
         }
-        if (location!.startsWith('/')) {
-            location = `${ctx.https ? 'https' : 'http'}://${ctx.host}${location}`;
-        }
-        if (ctx.query && !location!.includes('?')) {
+        location = qualify(location!, ctx);
+        if (ctx.query && !location.includes('?')) {
             location += `?${ctx.query}`;
         }
-        return { type: 'redirect', status: alias.status, location: location!, by: alias.source };
+        return { type: 'redirect', status: alias.status, location: fromByteString(location), by: alias.source };
     }
     return null;
 }
 
-/** What the docroot does with one request: a redirect, a bare status (410), or a file to serve. */
+/** What the docroot does with one request: a redirect, a bare status (400, 403, 404, 410), or a file to serve. */
 export function route(files: CompiledHtaccess[], request: SimRequest): RouteOutcome {
     const url = new URL(request.url);
+    const decoded = decodePath(url.pathname);
+    if ('status' in decoded) {
+        return { type: 'status', status: decoded.status, by: `core: ${decoded.reason}` };
+    }
     const vary: string[] = [];
     const ctx: RewriteContext = {
         host: url.host,
         https: url.protocol === 'https:',
-        uri: decodeURIComponent(url.pathname),
+        uri: decoded.bytes,
         query: url.search.replace(/^\?/, ''),
         accept: request.accept ?? 'text/html',
         fileExists: request.fileExists ?? (() => false),
@@ -549,7 +684,7 @@ export function route(files: CompiledHtaccess[], request: SimRequest): RouteOutc
         if (aliased) {
             return aliased;
         }
-        return { type: 'serve', path: ctx.uri, query: ctx.query, vary: [...new Set(vary)] };
+        return { type: 'serve', path: fromByteString(ctx.uri), query: ctx.query, vary: [...new Set(vary)] };
     }
     throw new Error(`Internal rewrite loop for ${request.url}`);
 }
