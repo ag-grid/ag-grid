@@ -96,7 +96,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         warnSpy.mockRestore();
     });
 
-    test('B1 the callback receives a dialog-created column and its result applies', async () => {
+    test('the callback receives a dialog-created column and its result applies', async () => {
         const processColDef = vi.fn<ProcessColDef>((params) => ({
             ...params.colDef,
             filter: true,
@@ -124,7 +124,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, calcId)).toBe(20);
     });
 
-    test('B2 returning params.colDef is the same as having no callback', async () => {
+    test('returning params.colDef is the same as having no callback', async () => {
         const plain = gridWithUserColumn('pcd-b2-plain', 'calc', '[a] * 2', undefined);
         const passthrough = gridWithUserColumn('pcd-b2-pass', 'calc', '[a] * 2', (params) => params.colDef);
         await waitForColumn(plain, 'calc');
@@ -139,7 +139,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
     test.each([
         ['undefined', () => undefined],
         ['null', () => null as unknown as undefined],
-    ])('B3 returning %s is the same as having no callback', async (name, processColDef) => {
+    ])('returning %s is the same as having no callback', async (name, processColDef) => {
         const plain = gridWithUserColumn(`pcd-b3-plain-${name}`, 'calc', '[a] * 2', undefined);
         const other = gridWithUserColumn(`pcd-b3-${name}`, 'calc', '[a] * 2', processColDef);
         await waitForColumn(plain, 'calc');
@@ -149,7 +149,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(layoutOf(other, 'b3')).toEqual(layoutOf(plain, 'b3'));
     });
 
-    test('B4 a returned property beats defaultColDef and a column type for the same property', async () => {
+    test('a returned property beats defaultColDef and a column type for the same property', async () => {
         const api = gridWithUserColumn(
             'pcd-b4',
             'calc',
@@ -171,7 +171,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(api.getColumn('a')!.getColDef().headerClass).toBe('from-default');
     });
 
-    test('B5 editing the column in the dialog re-runs the callback', async () => {
+    test('editing the column in the dialog re-runs the callback', async () => {
         const processColDef = vi.fn<ProcessColDef>((params) => ({
             ...params.colDef,
             enableValue: params.colDef.cellDataType === 'number',
@@ -202,7 +202,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         ['valueSetter', { valueSetter: () => true }, undefined],
         ['cellEditor', { cellEditor: 'agTextCellEditor' }, undefined],
         ['cellEditorSelector', { cellEditorSelector: () => undefined }, undefined],
-    ])('B6 a callback setting protected %s has no effect and warns', async (property, override, forced) => {
+    ])('a callback setting protected %s has no effect and warns', async (property, override, forced) => {
         // Suppress only the diagnostic this test asserts on; any other diagnostic still throws.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [335] });
         const colId = `calc_${property}`;
@@ -236,7 +236,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(getDialog().querySelector('textarea')!.value).toBe('[A] * 2');
     });
 
-    test('B7 callback changes to headerName, cellDataType, calculatedExpression and columnGroupShow apply', async () => {
+    test('callback changes to headerName, cellDataType, calculatedExpression and columnGroupShow apply', async () => {
         const api = gridWithUserColumn('pcd-b7', 'calc', '[a] * 2', (params) => ({
             ...params.colDef,
             headerName: 'Custom',
@@ -253,7 +253,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(Number(cellValue(api, 'calc'))).toBe(11);
     });
 
-    test('B8 a callback suffixing headerName never compounds through dialog edits', async () => {
+    test('a callback suffixing headerName never compounds through dialog edits', async () => {
         const api = createGrid('pcd-b8', {
             rowData: ROW_DATA,
             columnDefs: columnDefs(),
@@ -281,7 +281,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(propertiesOf(api.getState(), 'calc')?.headerName).toBe('Profit');
     });
 
-    test('B9 mutating params.colDef and returning nothing has no effect', async () => {
+    test('mutating params.colDef and returning nothing has no effect', async () => {
         const api = gridWithUserColumn('pcd-b9', 'calc', '[a] * 2', (params) => {
             params.colDef.headerClass = 'mutated';
             params.colDef.filter = true;
@@ -297,7 +297,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(propertiesOf(api.getState(), 'calc')).toEqual({ calculatedExpression: '[a] * 2' });
     });
 
-    test('B10 a columnDefs-declared calculated column is never passed to the callback', async () => {
+    test('a columnDefs-declared calculated column is never passed to the callback', async () => {
         const processColDef = vi.fn<ProcessColDef>((params) => ({ ...params.colDef, headerClass: 'processed' }));
         const api = createGrid('pcd-b10', {
             rowData: ROW_DATA,
@@ -316,7 +316,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(api.getColumn('calc')!.getColDef().headerClass).toBe('processed');
     });
 
-    test('B11 a callback enabling values lets the column aggregate in group rows', async () => {
+    test('a callback enabling values lets the column aggregate in group rows', async () => {
         const api = createGrid('pcd-b11', {
             rowData: ROW_DATA,
             columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
@@ -337,7 +337,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
     });
 
-    test('E1 a column restored via initialState or api.setState has the callback applied', async () => {
+    test('a column restored via initialState or api.setState has the callback applied', async () => {
         const processColDef: ProcessColDef = (params) => ({ ...params.colDef, headerClass: 'restored' });
         const viaInitialState = gridWithUserColumn('pcd-e1-initial', 'calc', '[a] * 2', processColDef);
         await waitForColumn(viaInitialState, 'calc');
@@ -354,7 +354,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(viaSetState, 'calc')).toBe(20);
     });
 
-    test('E2 grid-state column state wins over initial* properties from the callback', async () => {
+    test('grid-state column state wins over initial* properties from the callback', async () => {
         const processColDef: ProcessColDef = (params) => ({
             ...params.colDef,
             initialWidth: 321,
@@ -388,7 +388,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(column.getAggFunc()).toBe('max');
     });
 
-    test('E3 resetColumnState then applyColumnState re-adds the column with the callback applied', async () => {
+    test('resetColumnState then applyColumnState re-adds the column with the callback applied', async () => {
         const api = gridWithUserColumn('pcd-e3', 'calc', '[a] * 2', (params) => ({
             ...params.colDef,
             headerClass: 'e3',
@@ -405,7 +405,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, 'calc')).toBe(20);
     });
 
-    test('E4 changing the callback via setGridOption re-applies it to existing columns', async () => {
+    test('changing the callback via setGridOption re-applies it to existing columns', async () => {
         const api = gridWithUserColumn('pcd-e4', 'calc', '[a] * 2', (params) => ({
             ...params.colDef,
             headerClass: 'one',
@@ -430,7 +430,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(api.getDisplayedRowAtIndex(0)!.data).toEqual(ROW_DATA[0]);
     });
 
-    test('E5 callback-only properties are absent from getState().userColumns', async () => {
+    test('callback-only properties are absent from getState().userColumns', async () => {
         const api = gridWithUserColumn('pcd-e5', 'calc', '[a] * 2', (params) => ({
             ...params.colDef,
             filter: true,
@@ -443,7 +443,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(propertiesOf(api.getState(), 'calc')).toEqual({ calculatedExpression: '[a] * 2' });
     });
 
-    test('E6 callback-only properties raise no calculated column events', async () => {
+    test('callback-only properties raise no calculated column events', async () => {
         const created = vi.fn();
         const changed = vi.fn();
         const api = createGrid('pcd-e6', {
@@ -488,7 +488,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(created).not.toHaveBeenCalled();
         expect(changed).not.toHaveBeenCalled();
     });
-    test('E6 with callback-only properties, real changes still raise the calculated column events', async () => {
+
+    test('with callback-only properties, real changes still raise the calculated column events', async () => {
         const created = vi.fn();
         const changed = vi.fn();
         const api = createGrid('pcd-e6-control', {

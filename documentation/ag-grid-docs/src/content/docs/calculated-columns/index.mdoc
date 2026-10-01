@@ -189,9 +189,9 @@ The callback only runs for columns created in the dialog, including those restor
 
 It runs every time the column is built: when the column is created, each time it is edited in the dialog, when it is restored from Grid State, and when the `calculatedColumns` option changes. Properties derived from the column's values, such as `enableValue` above, follow the user's edits.
 
-Calculated columns are always read-only, so `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. If the returned definition sets any of them, the value is ignored and a console warning is logged.
+Calculated columns are always read-only, so `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. If the returned definition sets any of them to a different value, that value is ignored and a console warning is logged. If it has no `calculatedExpression`, the user's expression is kept.
 
-The dialog shows and saves the user's values, not the callback's. For example, a callback that appends a suffix to `headerName` changes the column header, but the dialog still shows the title the user typed. The callback's output is not saved in Grid State; it is applied again when the column is restored.
+The dialog shows and saves the user's values, not the callback's. For example, a callback that appends a suffix to `headerName` changes the column header, but the dialog still shows the title the user typed. The callback's output is not saved in Grid State; it is applied again when the column is restored. Expressions in other calculated columns refer to the column by the header the grid shows, including any `headerName` set by the callback.
 
 Stateful properties such as `width`, `sort` and `hide` are applied when the column is created, so prefer their `initial*` forms, such as `initialWidth`. Column state saved in Grid State takes precedence over `initial*` properties set by the callback. Do not call column APIs from the callback.
 

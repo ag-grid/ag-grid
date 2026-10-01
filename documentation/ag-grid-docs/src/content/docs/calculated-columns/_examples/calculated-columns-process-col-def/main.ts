@@ -1,6 +1,7 @@
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    GridStateModule,
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    GridStateModule,
     CalculatedColumnsModule,
     ColumnMenuModule,
     RowGroupingModule,
