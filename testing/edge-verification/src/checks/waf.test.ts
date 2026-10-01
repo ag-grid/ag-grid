@@ -251,6 +251,45 @@ describe('p11 saliencebot exemption', () => {
     }
 });
 
+describe('p11 exemptions are exactly the declared set', () => {
+    const exemptionAlts = (s: any): any[] => s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements;
+    const uaRegex = (value: string): any => ({
+        RegexMatchStatement: {
+            FieldToMatch: { SingleHeader: { Name: 'user-agent' } },
+            RegexString: value,
+            TextTransformations: [{ Priority: 0, Type: 'LOWERCASE' }],
+        },
+    });
+
+    for (const [what, mutate] of [
+        [
+            'an extra UA regex admits every UA but saliencebot',
+            (alts: any[]) => alts.push(uaRegex('^(?!.*saliencebot).*$')),
+        ],
+        ['the in-app browser regex is replaced by a catch-all', (alts: any[]) => (alts[4] = uaRegex('.*'))],
+        [
+            'an extra label is exempt',
+            (alts: any[]) => alts.push({ LabelMatchStatement: { Scope: 'LABEL', Key: 'x:y' } }),
+        ],
+        [
+            'a second AND exemption is added',
+            (alts: any[]) => alts.push(structuredClone(alts.find((a: any) => a.AndStatement))),
+        ],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await run(CHECKS.nonBrowser, {
+                rule: 'block-nonbrowser-except-ai-assistants',
+                edit: (s) => {
+                    mutate(exemptionAlts(s));
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /exemption/);
+        });
+    }
+});
+
 describe('rate-rule asset scope-down keeps its matching semantics', () => {
     const RULE = 'soft-rate-limit-rule-with-captcha';
     const assetLeaves = (s: any): any[] =>
