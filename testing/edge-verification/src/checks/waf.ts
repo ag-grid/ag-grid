@@ -45,6 +45,16 @@ function compareRuleList(p: Problems, liveRules: any[], expected: RuleExpectatio
             continue;
         }
         p.eq(`${e.name} action`, ruleAction(r), e.action);
+        // ExcludedRules is the legacy form of a Count override: one there disables a blocking rule
+        // without appearing in RuleActionOverrides. None are declared, and none exist live.
+        const mrg = r.Statement?.ManagedRuleGroupStatement;
+        if (mrg) {
+            p.eq(
+                `${e.name} ExcludedRules`,
+                (mrg.ExcludedRules ?? []).map((x: any) => x.Name),
+                []
+            );
+        }
         if (e.metricName) {
             p.eq(`${e.name} metric`, r.VisibilityConfig?.MetricName, e.metricName);
         }

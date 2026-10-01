@@ -762,3 +762,22 @@ describe('p11 UA regexes are compared in full', () => {
         assert.equal(outcome.status, 'pass', outcome.detail);
     });
 });
+
+describe('managed groups carry no legacy ExcludedRules', () => {
+    for (const [acl, name] of [
+        ['cf', 'AWS-AWSManagedRulesCommonRuleSet'],
+        ['alb', 'AWS-AWSManagedRulesKnownBadInputsRuleSet'],
+        ['alb', 'AWS-AWSManagedRulesCommonRuleSet'],
+    ] as const) {
+        it(`fails when ${acl} ${name} excludes a rule`, async () => {
+            const rules = acl === 'cf' ? cfAclRules() : albAclRules();
+            const mrg = rules.find((r: any) => r.Name === name).Statement.ManagedRuleGroupStatement;
+            mrg.ExcludedRules = [{ Name: 'SizeRestrictions_QUERYSTRING' }];
+            const id = acl === 'cf' ? 'waf-config.cf.rules' : 'waf-config.alb.rules';
+            const handlers = acl === 'cf' ? cfAclHandlers(rules) : albAclHandlers(rules);
+            const outcome = await check(id).run(offlineCtx(new FakeAws(handlers)));
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /ExcludedRules/);
+        });
+    }
+});
