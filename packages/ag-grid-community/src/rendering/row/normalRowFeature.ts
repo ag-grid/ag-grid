@@ -4,7 +4,6 @@ import { _getColsForRow, _getRowColSpan } from '../../columns/columnSpanUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../cell/cellCtrl';
@@ -79,7 +78,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.createAllCellCtrls();
     }
 
-    public getInitialCellCtrls(_containerType: RowContainerType): CellCtrl[] | null {
+    public getInitialCellCtrls(): CellCtrl[] | null {
         if (this.rowCtrl.useAnimationFrameForCreate) {
             return null;
         }
@@ -122,21 +121,16 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     public onDisplayedColumnsChanged(): void {
         // skip animations to avoid stale valueGetters when column sets change
-        this.updateColumnLists(true);
-        this.beans.rowAutoHeight?.requestCheckAutoHeight();
+        this.updateColumnLists(true, false, true);
     }
 
     public onVirtualColumnsChanged(): void {
-        this.updateColumnLists(false, true);
+        this.updateColumnLists(false, true, true);
     }
 
     public renderFocusedCell(): void {
         // synchronous, so the cell exists before the focus change is applied to the cells
-        this.updateColumnLists(true);
-    }
-
-    public onColumnMoved(): void {
-        this.updateColumnLists();
+        this.updateColumnLists(true, false, true);
     }
 
     public onSpannedCellsUpdated(pinned: ColumnPinnedType): void {
@@ -283,9 +277,9 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return changed;
     }
 
-    public getCellCtrl(column: AgColumn, skipColSpanSearch: boolean): CellCtrl | undefined {
+    public getCellCtrl(column: AgColumn): CellCtrl | undefined {
         const visibleCols = this.beans.visibleCols;
-        if (skipColSpanSearch || visibleCols.colSpanColCount === 0) {
+        if (visibleCols.colSpanColCount === 0) {
             return this.getOwnCellCtrl(column);
         }
         if (this.updateColumnListsPending && this.rowCtrl.isAlive()) {
@@ -315,7 +309,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         return findLastSpanning(list, column, this.hasKeptCells ? 0 : Math.max(end - 1, 0), end);
     }
 
-    private getOwnCellCtrl(column: AgColumn): CellCtrl | undefined {
+    public getOwnCellCtrl(column: AgColumn): CellCtrl | undefined {
         const id = column.instanceId;
         return this.centerCellCtrls.map[id] ?? this.leftCellCtrls.map[id] ?? this.rightCellCtrls.map[id];
     }

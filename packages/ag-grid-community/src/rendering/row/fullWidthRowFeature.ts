@@ -123,10 +123,6 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public onVirtualColumnsChanged(): void {}
 
-    public onColumnMoved(): void {
-        this.notesFeature?.refresh();
-    }
-
     public onSpannedCellsUpdated(_pinned: ColumnPinnedType): void {}
 
     public createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType, adopt = false): UserCompDetails {

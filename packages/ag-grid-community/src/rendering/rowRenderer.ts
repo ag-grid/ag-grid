@@ -12,7 +12,7 @@ import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
+import type { BodyScrollEvent, CellFocusedEvent, ColumnEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
@@ -33,6 +33,7 @@ import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { CellCtrl } from './cell/cellCtrl';
+import { _refreshCellPosition } from './cell/cellPositionFeature';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
@@ -75,7 +76,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private readonly destroyFuncsForColumnListeners: (() => void)[] = [];
+    /** The columns the cell listeners are on, copied as `colsList` can be reordered in place. */
+    private listenedCols: AgColumn[] = [];
 
     public firstRenderedRow: number;
     public lastRenderedRow: number;
@@ -257,8 +259,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param event cell focused event
      */
     private updateCellFocus(event?: CellFocusedEvent) {
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            cellCtrl.onCellFocused(event);
+        const rowCtrls = this.getAllRowCtrls();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const cellCtrls = rowCtrls[i].getAllCellCtrls();
+            for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                cellCtrls[j].onCellFocused(event);
+            }
         }
         for (const rowCtrl of this.getFullWidthRowCtrls()) {
             rowCtrl.onRowFocused(event);
@@ -290,8 +296,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            cellCtrl.onSuppressCellFocusChanged(suppressCellFocus);
+        const rowCtrls = this.getAllRowCtrls();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const cellCtrls = rowCtrls[i].getAllCellCtrls();
+            for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                cellCtrls[j].onSuppressCellFocusChanged(suppressCellFocus);
+            }
         }
         for (const rowCtrl of this.getFullWidthRowCtrls()) {
             rowCtrl.onSuppressCellFocusChanged(suppressCellFocus);
@@ -302,50 +312,39 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        const refreshRightPinnedCellPositions = () => {
-            for (const cellCtrl of this.getAllCellCtrls()) {
-                if (cellCtrl.column.pinnedLane === 2) {
-                    cellCtrl.onLeftChanged();
-                }
-            }
-        };
-
         this.addManagedEventListeners({
             cellFocused: (event) => this.onCellFocusChanged(event),
             cellFocusCleared: () => this.updateCellFocus(),
             flashCells: (event) => {
                 const { cellFlashSvc } = this.beans;
                 if (cellFlashSvc) {
-                    for (const cellCtrl of this.getAllCellCtrls()) {
-                        cellFlashSvc.onFlashCells(cellCtrl, event);
+                    const rowCtrls = this.getAllRowCtrls();
+                    for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+                        const cellCtrls = rowCtrls[i].getAllCellCtrls();
+                        for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                            cellFlashSvc.onFlashCells(cellCtrls[j], event);
+                        }
                     }
                 }
             },
             columnHoverChanged: () => {
-                for (const cellCtrl of this.getAllCellCtrls()) {
-                    cellCtrl.onColumnHover();
-                }
-            },
-            displayedColumnsChanged: () => {
-                for (const cellCtrl of this.getAllCellCtrls()) {
-                    cellCtrl.onDisplayedColumnsChanged();
-                }
-            },
-            displayedColumnsWidthChanged: () => {
-                // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
-                // then changing the width of the containers will impact left position. eg the center cols all have their
-                // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
-                // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
-                // in different containers so doesn't impact.
-                if (this.printLayout) {
-                    for (const cellCtrl of this.getAllCellCtrls()) {
-                        cellCtrl.onLeftChanged();
+                const rowCtrls = this.getAllRowCtrls();
+                for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+                    const cellCtrls = rowCtrls[i].getAllCellCtrls();
+                    for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                        cellCtrls[j].onColumnHover();
                     }
                 }
             },
-            // right-pinned cells are anchored via `right` in the flattened layout and depend on
-            // the total pinned-right lane width, even when their own column left does not change.
-            rightPinnedWidthChanged: refreshRightPinnedCellPositions,
+            displayedColumnsChanged: () => {
+                const rowCtrls = this.getAllRowCtrls();
+                for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+                    const cellCtrls = rowCtrls[i].getAllCellCtrls();
+                    for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                        cellCtrls[j].onDisplayedColumnsChanged();
+                    }
+                }
+            },
         });
 
         this.setupRangeSelectionListeners();
@@ -362,29 +361,21 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private readonly setupRangeSelectionListeners = () => {
         const onCellSelectionChanged = () => {
-            for (const cellCtrl of this.getAllCellCtrls()) {
-                cellCtrl.onCellSelectionChanged();
-            }
-        };
-
-        const onColumnMovedPinnedVisible = () => {
-            for (const cellCtrl of this.getAllCellCtrls()) {
-                cellCtrl.updateRangeBordersIfRangeCount();
+            const rowCtrls = this.getAllRowCtrls();
+            for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+                const cellCtrls = rowCtrls[i].getAllCellCtrls();
+                for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                    cellCtrls[j].onCellSelectionChanged();
+                }
             }
         };
 
         const addCellSelectionListeners = () => {
             this.eventSvc.addListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.addListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.addListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.addListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeCellSelectionListeners = () => {
             this.eventSvc.removeListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.removeListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.removeListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.removeListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
         this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
@@ -401,12 +392,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     };
 
-    // executes all functions in destroyFuncsForColumnListeners and then clears the list
     private removeGridColumnListeners(): void {
-        for (const func of this.destroyFuncsForColumnListeners) {
-            func();
+        const cols = this.listenedCols;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            cols[i].__removeEventListener('colDefChanged', this.onColDefChanged);
         }
-        this.destroyFuncsForColumnListeners.length = 0;
+        this.listenedCols = [];
     }
 
     // this function adds listeners onto all the grid columns, which are the column that we could have cellComps for.
@@ -416,46 +407,47 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.colModel.colsList;
+        const cols = this.colModel.colsList.slice();
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            cols[i].__addEventListener('colDefChanged', this.onColDefChanged);
+        }
+        this.listenedCols = cols;
+    }
 
-        for (const col of cols) {
-            const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
-                for (const cellCtrl of this.getAllCellCtrls()) {
-                    if (cellCtrl.column === col) {
-                        callback(cellCtrl);
-                    }
-                }
-            };
+    private readonly onColDefChanged = (event: ColumnEvent): void => {
+        const col = event.column as AgColumn;
+        const rowCtrls = this.getAllRowCtrls();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            rowCtrls[i].getOwnCellCtrl(col)?.onColDefChanged();
+        }
+    };
 
-            const leftChangedListener = () => {
-                forEachCellWithThisCol((cellCtrl) => cellCtrl.onLeftChanged());
-            };
-            const widthChangedListener = () => {
-                forEachCellWithThisCol((cellCtrl) => cellCtrl.onWidthChanged());
-            };
-            const firstRightPinnedChangedListener = () => {
-                forEachCellWithThisCol((cellCtrl) => cellCtrl.onFirstRightPinnedChanged());
-            };
-            const lastLeftPinnedChangedListener = () => {
-                forEachCellWithThisCol((cellCtrl) => cellCtrl.onLastLeftPinnedChanged());
-            };
-            const colDefChangedListener = () => {
-                forEachCellWithThisCol((cellCtrl) => cellCtrl.onColDefChanged());
-            };
+    /** Called by the visible columns once every left and width is set; a cell writes only what moved, so a span rewritten later costs one write. */
+    public refreshCellPositions(): void {
+        const beans = this.beans;
+        const rowCtrls = this.getAllRowCtrls();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const cellCtrls = rowCtrls[i].getAllCellCtrls();
+            for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                _refreshCellPosition(beans, cellCtrls[j]);
+            }
+        }
+    }
 
-            col.__addEventListener('leftChanged', leftChangedListener);
-            col.__addEventListener('widthChanged', widthChangedListener);
-            col.__addEventListener('firstRightPinnedChanged', firstRightPinnedChangedListener);
-            col.__addEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
-            col.__addEventListener('colDefChanged', colDefChangedListener);
-
-            this.destroyFuncsForColumnListeners.push(() => {
-                col.__removeEventListener('leftChanged', leftChangedListener);
-                col.__removeEventListener('widthChanged', widthChangedListener);
-                col.__removeEventListener('firstRightPinnedChanged', firstRightPinnedChangedListener);
-                col.__removeEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
-                col.__removeEventListener('colDefChanged', colDefChangedListener);
-            });
+    /** Called by the visible columns with the columns that left or reached a pinned edge, null where none did. */
+    public refreshPinnedEdgeCells(
+        prevLastLeft: AgColumn | null,
+        newLastLeft: AgColumn | null,
+        prevFirstRight: AgColumn | null,
+        newFirstRight: AgColumn | null
+    ): void {
+        const rowCtrls = this.getAllRowCtrls();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const rowCtrl = rowCtrls[i];
+            refreshPinnedEdges(rowCtrl, prevLastLeft);
+            refreshPinnedEdges(rowCtrl, newLastLeft);
+            refreshPinnedEdges(rowCtrl, prevFirstRight);
+            refreshPinnedEdges(rowCtrl, newFirstRight);
         }
     }
 
@@ -509,7 +501,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const res: HTMLElement[] = [];
 
         for (const rowCtrl of this.getAllRowCtrls()) {
-            const eCell = rowCtrl.getCellCtrl(column, true)?.eGui;
+            const eCell = rowCtrl.getOwnCellCtrl(column)?.eGui;
             if (eCell) {
                 res.push(eCell);
             }
@@ -851,38 +843,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return null;
     }
 
-    public getAllCellCtrls(): CellCtrl[] {
-        const res: CellCtrl[] = [];
-        const rowCtrls = this.getAllRowCtrls();
-        const rowCtrlsLength = rowCtrls.length;
-
-        for (let i = 0; i < rowCtrlsLength; i++) {
-            const cellCtrls = rowCtrls[i].getAllCellCtrls();
-            const cellCtrlsLength = cellCtrls.length;
-
-            for (let j = 0; j < cellCtrlsLength; j++) {
-                res.push(cellCtrls[j]);
-            }
-        }
-
-        return res;
-    }
-
     public getAllRowCtrls(): RowCtrl[] {
-        const { spannedRowRenderer } = this.beans;
-        const stickyTopRowCtrls = this.getStickyTopRowCtrls();
-        const stickyBottomRowCtrls = this.getStickyBottomRowCtrls();
-        const res = [
-            ...this.topRowCtrls,
-            ...this.bottomRowCtrls,
-            ...stickyTopRowCtrls,
-            ...stickyBottomRowCtrls,
-            ...(spannedRowRenderer?.getCtrls('top') ?? []),
-            ...(spannedRowRenderer?.getCtrls('bottom') ?? []),
-            ...(spannedRowRenderer?.getCtrls('center') ?? []),
-            ...Object.values(this.rowCtrlsByRowIndex),
-        ];
-
+        const res: RowCtrl[] = [];
+        pushAll(res, this.topRowCtrls);
+        pushAll(res, this.bottomRowCtrls);
+        pushAll(res, this.getStickyTopRowCtrls());
+        pushAll(res, this.getStickyBottomRowCtrls());
+        this.beans.spannedRowRenderer?.pushAllCtrls(res);
+        pushAll(res, Object.values(this.rowCtrlsByRowIndex));
         return res;
     }
 
@@ -1829,3 +1797,15 @@ export function isRowInMap(
             return rowIdsMap.normal[id] != null;
     }
 }
+
+const refreshPinnedEdges = (rowCtrl: RowCtrl, col: AgColumn | null): void => {
+    if (col !== null) {
+        rowCtrl.getOwnCellCtrl(col)?.refreshPinnedEdges();
+    }
+};
+
+const pushAll = <T>(res: T[], items: T[]): void => {
+    for (let i = 0, len = items.length; i < len; ++i) {
+        res.push(items[i]);
+    }
+};
