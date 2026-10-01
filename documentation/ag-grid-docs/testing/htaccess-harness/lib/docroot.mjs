@@ -10,18 +10,22 @@ import { dirname, extname, join } from 'node:path';
 
 import { normaliseLocation } from './probe.mjs';
 
+// mod_deflate leaves a body of under about 100 bytes uncompressed, so the text placeholders are
+// padded past that: a compressible type must come back compressed, with the -gzip ETag.
+const padded = (body) => body + 'padding '.repeat(32) + '\n';
+
 const bodyFor = (file) => {
     switch (extname(file)) {
         case '.html':
-            return `<!doctype html><title>${file}</title>placeholder ${file}\n`;
+            return padded(`<!doctype html><title>${file}</title>placeholder ${file}\n`);
         case '.md':
-            return `# placeholder ${file}\n`;
+            return padded(`# placeholder ${file}\n`);
         case '.json':
             return '{}\n';
         case '.svg':
             return '<svg xmlns="http://www.w3.org/2000/svg"/>\n';
         default:
-            return `placeholder ${file}\n`;
+            return padded(`placeholder ${file}\n`);
     }
 };
 
