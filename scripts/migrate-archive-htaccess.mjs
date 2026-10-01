@@ -145,6 +145,13 @@ const condText = (cond) => cond.args.join(' ');
 const sameConds = (group, expected) =>
     group.conds.length === expected.length && group.conds.every((cond, i) => condText(cond) === expected[i]);
 
+const DIRECTORY_COND = String.raw`%{REQUEST_URI} /+[^\.]+$`;
+
+// %{HTTP_HOST}:%{SERVER_PORT} matching www on plain http or any alias host, as the generator's
+// canonicalising trailing-slash rule writes it; captures the alias hosts.
+const HOST_PORT_COND =
+    /^%\{HTTP_HOST\}:%\{SERVER_PORT\} \^\(\?:www\\\.ag-grid\\\.com:80\|\(\?:((?:[a-z0-9-]+\\\.)+[a-z]+(?:\|(?:[a-z0-9-]+\\\.)+[a-z]+)*)\):\[0-9\]\+\)\$ \[NC\]$/;
+
 const HOST_COND = /^%\{HTTP_HOST\} \^((?:[a-z0-9-]+\\\.)+[a-z]+)\$(?: \[(?:NC|OR|NC,OR)\])?$/;
 
 // The hosts a group's conditions select, when they are nothing but alias-host tests (OR-ed, or a
@@ -400,13 +407,33 @@ function rewriteRecognisers(base) {
             },
         },
         {
-            // Add trailing slash for directories: %{REQUEST_URI} keeps the prefix.
+            // Add trailing slash for directories: %{REQUEST_URI} keeps the prefix. Later
+            // generators also exempt the certificate-validation tokens.
             name: 'trailing slash',
             classify: (group) =>
                 group.rule.args.join(' ') === '^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]' &&
-                sameConds(group, [String.raw`%{REQUEST_URI} /+[^\.]+$`])
+                (sameConds(group, [DIRECTORY_COND]) || sameConds(group, [DIRECTORY_COND, ...WELL_KNOWN_CONDS]))
                     ? { action: 'keep', reason: 'trailing-slash redirect' }
                     : null,
+        },
+        {
+            // Slash-less directory URL on an alias host or plain http: add the slash and
+            // canonicalise onto www in one hop. %{REQUEST_URI} keeps the prefix.
+            name: 'canonical trailing slash',
+            classify: (group) => {
+                if (group.rule.args.join(' ') !== `^(.+[^/])$ ${CANONICAL_ORIGIN}%{REQUEST_URI}/ [R=301,L]`) {
+                    return null;
+                }
+                const [hostPort, ...rest] = group.conds;
+                const m = hostPort?.args.join(' ').match(HOST_PORT_COND);
+                if (!m || !sameConds({ conds: rest }, [DIRECTORY_COND, ...WELL_KNOWN_CONDS])) {
+                    return null;
+                }
+                const hosts = m[1].split('|').map((host) => host.replace(/\\\./g, '.'));
+                return hosts.length === ALIAS_HOSTS.length && ALIAS_HOSTS.every((host) => hosts.includes(host))
+                    ? { action: 'keep', reason: 'canonicalising trailing-slash redirect' }
+                    : null;
+            },
         },
     ];
 }
