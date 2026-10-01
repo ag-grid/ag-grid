@@ -16,6 +16,20 @@ For the full guide — runner flag reference, Vitest patterns, the complete asyn
 
 Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
 
+## Playwright e2e, behavioural test or docs-example spec
+
+Behavioural tests run in happy-dom, which has no layout engine and models native form controls differently from a browser. Pick the layer by what the behaviour depends on:
+
+| Write a... | When | Where |
+| --- | --- | --- |
+| **Behavioural test** (default) | The behaviour is grid logic driven through the public `GridApi` and DOM, and happy-dom models it faithfully. | `testing/behavioural/` |
+| **Playwright e2e spec** | The behaviour depends on real browser input, layout, scrolling or native controls (typed text in an `<input>`, wheel scrolling, column virtualisation, popup positioning), or must hold in Firefox and WebKit. It needs its own grid configuration, community or enterprise. | `testing/e2e/e2e/*.spec.ts` |
+| **Docs-example spec** | The behaviour is what a docs example demonstrates, and the example must keep working in every framework. | `example.spec.ts` beside the example (see `docs-example-specs.md`) |
+
+A Playwright e2e spec builds its grid from `mountGrid(page, { enterprise?, options })` in `testing/e2e/src/mountGrid.ts`, which loads the UMD bundle into a blank page: no docs site and no dev server. The enterprise bundle registers every enterprise module, so a spec cannot test a partial module registration. If the behaviour is the same in happy-dom and in Chrome, it belongs in `testing/behavioural/` instead.
+
+The e2e suite is slower than the behavioural one and is **not part of the PR CI**. The `Grid E2E Tests` workflow runs it nightly on Chromium, Firefox and WebKit, writing its run time to the job summary. A failing nightly run notifies Slack and raises a JIRA ticket, so run `./grid-e2e.sh --all-browsers` locally before relying on a new spec.
+
 ## Wait, don't sleep
 
 **Poll async grid updates with `waitFor`** (from `@testing-library/dom`). **Never** `await asyncSetTimeout(<fixed n>)` and then assert — a guessed delay is flaky and slow. A `no-restricted-syntax` ESLint rule in `testing/behavioural/eslint.config.mjs` flags every `asyncSetTimeout(n)` where `n > 0`.
@@ -50,10 +64,11 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 - `./behave.sh` — the whole unit suite (package + behavioural) as one multi-project Vitest run.
 - `./benches.sh` — behavioural benchmarks in headless Chromium.
 - `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
+- `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them.
 
 ### Never block on a gate; read its log afterwards
 
-**Never run `./behave.sh`, `./checks.sh`, `./benches.sh` or `./docs-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
+**Never run `./behave.sh`, `./checks.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
 
 **Never `sleep` to wait for a run.** One you backgrounded wakes the agent by itself; one started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live.
 
