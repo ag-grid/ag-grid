@@ -36,7 +36,7 @@ caller as a datacenter). A full run takes a few minutes and makes about 300-400 
 | `--json <file>`        | Also write the results and the request log as JSON (redacted)                                                                        |
 | `--bot-window <dur>`   | `bot-outcomes`: WAF log window, e.g. `30m` or `2h` (default 2h)                                                                      |
 | `--bot-threshold <%>`  | `bot-outcomes`: highest acceptable non-ALLOW share, in percent (default 1)                                                           |
-| `--bot-min-volume <n>` | `bot-outcomes`: smaller populations are reported, not judged (default 100)                                                           |
+| `--bot-min-volume <n>` | `bot-outcomes`: smaller populations are reported, not judged (default 20)                                                            |
 | `--bot-max-gb <n>`     | `bot-outcomes`: refuse the query when its estimated scan is larger (default 4)                                                       |
 
 Exit code: 0 when nothing failed, 1 on any failure (with `--strict`, also on a known issue or a
@@ -129,7 +129,7 @@ Areas, in report order (the `--only` names). Counts are checks per area (pending
 | `agent-files`    | 21 (3 / 2)    | llms.txt, AGENTS.md, advertised `.md` twins and links, the MCP server card                                                                                                                                                                                                                                                         |
 | `seo-content`    | 28 (1 / 7)    | H1s, empty headings, JSON-LD graph, Organization, offers, canonicals, footer headings, social images, landmarks, viewport, links to redirecting URLs                                                                                                                                                                               |
 | `blog`           | 9 (0 / 0)     | The /blog/ migration: headers, posts, tag noindex, pagination, RSS and sitemaps                                                                                                                                                                                                                                                    |
-| `bot-outcomes`   | 61 (18 / 1)   | From the WAF logs (no HTTP): per crawler and agent family, whether Bot Control-verified requests were allowed, and whether families the live p11 allowlist admits were (payload-rule blocks excluded), above a 1% share and a 100-request floor                                                                                    |
+| `bot-outcomes`   | 61 (18 / 1)   | From the WAF logs (no HTTP): per crawler and agent family, whether Bot Control-verified requests were allowed, and whether families the live p11 allowlist admits were (payload-rule blocks excluded), above a 1% share and a 20-request floor                                                                                     |
 
 ### SE tickets
 
