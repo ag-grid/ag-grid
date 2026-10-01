@@ -210,6 +210,33 @@ describe('rules inserted straight after p11 by two scripts', () => {
         assert.match(outcome.detail ?? '', /scope-down regex/);
     });
 
+    it('keeps the statement checks once the pending markers are removed', async () => {
+        const inserted = CF_ACL.rules.filter((r) => r.after === 'block-nonbrowser-except-ai-assistants');
+        const markers = inserted.map((r) => r.pending);
+        try {
+            for (const r of inserted) {
+                delete (r as { pending?: string }).pending;
+            }
+            const checks = wafChecks();
+            const found = (id: string): CheckDef => {
+                const c = checks.find((x) => x.id === id);
+                assert.ok(c, `no check ${id} once deployed`);
+                assert.equal(c.pending, undefined);
+                return c;
+            };
+            const rules = cfAclRulesWithAgentAllowlist(true);
+            for (const id of [rate, dataCentre]) {
+                const outcome = await found(id).run(offlineCtx(new FakeAws(cfAclHandlers(rules))));
+                assert.equal(outcome.status, 'pass', `${id}: ${outcome.detail}`);
+            }
+            rules.find((x) => x.Name === 'count-allowlisted-agents-rate').Statement.RateBasedStatement.Limit = 6000;
+            const outcome = await found(rate).run(offlineCtx(new FakeAws(cfAclHandlers(rules))));
+            assert.equal(outcome.status, 'fail', outcome.detail);
+        } finally {
+            inserted.forEach((r, i) => Object.assign(r, { pending: markers[i] }));
+        }
+    });
+
     it('the allowlist check fails until every new token is admitted', async () => {
         const outcome = await runOn(allowlist, cfAclRules());
         assert.equal(outcome.status, 'fail');

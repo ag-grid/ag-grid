@@ -273,11 +273,11 @@ function p11UaAllowlist(p11: any): Extract<Leaf, { kind: 'regex' }> | undefined 
     );
 }
 
-/** The statement each pending inserted rule must have: the shape its script builds. */
-const PENDING_RULE_SHAPES: Record<
-    string,
-    { refs: string[]; check: (rule: any, live: Live, p: Problems) => Promise<void> }
-> = {
+/**
+ * The statement each inserted rule must have: the shape its script builds. It stays checked after
+ * the rule's pending marker is removed; the marker only decides whether a failure counts yet.
+ */
+const RULE_SHAPES: Record<string, { refs: string[]; check: (rule: any, live: Live, p: Problems) => Promise<void> }> = {
     'block-datacenter-except-agent-paths': {
         refs: [finding(5)],
         // AND(data-centre label, NOT(any verified bot or Accept: text/markdown), NOT(any p11 safe
@@ -389,12 +389,14 @@ export function wafChecks(): CheckDef[] {
             },
         },
         ...CF_ACL.rules
-            .filter((r) => r.pending)
+            .filter((r) => r.pending || RULE_SHAPES[r.name])
             .map((exp): CheckDef => ({
                 id: `waf-config.cf.rule.${exp.name}`,
                 area: 'waf-config',
-                title: `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`,
-                refs: PENDING_RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
+                title: exp.pending
+                    ? `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`
+                    : `${exp.name}: statement as declared, ${exp.action}`,
+                refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
                 pending: exp.pending,
                 async run({ live }) {
                     const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
@@ -403,13 +405,14 @@ export function wafChecks(): CheckDef[] {
                         return fail('rule not present');
                     }
                     const p = new Problems();
-                    const between = pendingSiblingOrder(rules, exp);
+                    // Once deployed, waf-config.cf.rules checks its exact position.
+                    const between = exp.pending ? pendingSiblingOrder(rules, exp) : undefined;
                     if (between) {
                         p.add(between);
                     }
                     p.eq('action', ruleAction(rules[i]), exp.action);
                     p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
-                    const shape = PENDING_RULE_SHAPES[exp.name];
+                    const shape = RULE_SHAPES[exp.name];
                     if (!shape) {
                         p.add(`no statement check declared for ${exp.name}`);
                     } else {
