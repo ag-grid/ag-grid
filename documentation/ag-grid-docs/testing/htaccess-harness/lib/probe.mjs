@@ -7,9 +7,9 @@ const agent = new http.Agent({ keepAlive: true, maxSockets: 16 });
 export const isHarnessHost = (host, extraHosts) =>
     /(^|\.)ag-grid\.com$/i.test(host) || /^(www\.)?angulargrid\.com$/i.test(host) || extraHosts.includes(host);
 
-export function request({ port, host, path, accept }) {
+export function request({ port, host, path, accept, requestHeaders = {} }) {
     return new Promise((resolvePromise, reject) => {
-        const headers = { Host: host, 'User-Agent': 'ag-htaccess-harness' };
+        const headers = { ...requestHeaders, Host: host, 'User-Agent': 'ag-htaccess-harness' };
         if (accept != null) {
             headers.Accept = accept;
         }
@@ -107,7 +107,13 @@ const HEADER_KEYS = { cc: 'Cache-Control', ct: 'Content-Type', xrt: 'X-Robots-Ta
 /** Run one row; returns a list of failure strings (empty = pass). */
 export async function runRow(row, ctx) {
     const mapHost = (s) => (ctx.siteHost === 'www.ag-grid.com' ? s : s.replaceAll('www.ag-grid.com', ctx.siteHost));
-    const res = await request({ port: ctx.port, host: row.host, path: row.path, accept: row.accept });
+    const res = await request({
+        port: ctx.port,
+        host: row.host,
+        path: row.path,
+        accept: row.accept,
+        requestHeaders: row.requestHeaders,
+    });
     const fails = [];
     const loc = normaliseLocation(header(res, 'location'), ctx.port);
     if (res.status !== row.status) {
