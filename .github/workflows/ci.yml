@@ -133,8 +133,9 @@ jobs:
           if [[ "${{ steps.filter.outputs.code }}" == "true" ]] || \
              [[ "${{ steps.filter.outputs.ci }}" == "true" ]]; then
             echo "run_code_ci=true" >> $GITHUB_OUTPUT
-            echo "run_docs_ci=false" >> $GITHUB_OUTPUT
-            echo "Code or CI changes detected (code=${{ steps.filter.outputs.code }}, ci=${{ steps.filter.outputs.ci }}), running full CI"
+            # Mixed code + docs PRs must still be link-checked: run_docs_ci is what enables CHECK_LINKS.
+            echo "run_docs_ci=${{ steps.filter.outputs.docs }}" >> $GITHUB_OUTPUT
+            echo "Code or CI changes detected (code=${{ steps.filter.outputs.code }}, ci=${{ steps.filter.outputs.ci }}, docs=${{ steps.filter.outputs.docs }}), running full CI"
           elif [[ "${{ steps.filter.outputs.docs }}" == "true" ]]; then
             echo "run_code_ci=false" >> $GITHUB_OUTPUT
             echo "run_docs_ci=true" >> $GITHUB_OUTPUT
