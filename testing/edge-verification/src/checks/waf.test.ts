@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import type { CheckDef, Outcome } from '../core/types';
+import { CF_ACL } from '../expected/edge';
 import {
     FakeAws,
     albAclHandlers,
@@ -416,6 +417,63 @@ describe('waf-config.cf.common-rule-set identity', () => {
             assert.match(outcome.detail ?? '', new RegExp(value));
         });
     }
+});
+
+describe('IP-set matches use the connection IP, not a forwarded header', () => {
+    const forwarded = { HeaderName: 'X-Forwarded-For', Position: 'ANY', FallbackBehavior: 'MATCH' };
+    const ipSetArn = (name: string): string => `arn:aws:wafv2:us-east-1:000000000000:global/ipset/${name}/0000`;
+
+    const runBuildServer = (config?: object): Promise<Outcome> => {
+        const rules = [
+            ...cfAclRules(),
+            {
+                Name: 'allow-internal-ec2',
+                Priority: 99,
+                Statement: {
+                    IPSetReferenceStatement: {
+                        ARN: ipSetArn(CF_ACL.buildServerIpSet.name),
+                        ...(config ? { IPSetForwardedIPConfig: config } : {}),
+                    },
+                },
+            },
+        ];
+        return check('waf-config.cf.build-server-ipset').run(
+            offlineCtx(
+                new FakeAws({
+                    ...cfAclHandlers(rules),
+                    'wafv2 get-ip-set': () => ({
+                        IPSet: { Name: CF_ACL.buildServerIpSet.name, Addresses: CF_ACL.buildServerIpSet.addresses },
+                    }),
+                })
+            )
+        );
+    };
+
+    it('the build-server rule passes on the connection IP', async () => {
+        const outcome = await runBuildServer();
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    it('the build-server rule fails when it matches X-Forwarded-For', async () => {
+        const outcome = await runBuildServer(forwarded);
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /X-Forwarded-For/);
+    });
+
+    it('the saliencebot exemption fails when its IP set matches X-Forwarded-For', async () => {
+        const outcome = await run(CHECKS.nonBrowser, {
+            rule: 'block-nonbrowser-except-ai-assistants',
+            edit: (s) => {
+                const and = s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements.find(
+                    (a: any) => a.AndStatement
+                ).AndStatement.Statements;
+                and[1].IPSetReferenceStatement.IPSetForwardedIPConfig = forwarded;
+                return s;
+            },
+        });
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /saliencebot/);
+    });
 });
 
 describe('rate-rule asset scope-down keeps its matching semantics', () => {
