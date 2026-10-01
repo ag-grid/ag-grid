@@ -5,6 +5,7 @@ import { FakeAws, FakeHttp, type FakeResponse, fakeCtx, healthyCloudFront } from
 import { headerChecks } from './headers';
 
 const agree = headerChecks().find((c) => c.id === 'headers.archive-validators-agree')!;
+const notModified = headerChecks().find((c) => c.id === 'headers.not-modified-keeps-cache')!;
 
 const MISS = { 'x-cache': 'Miss from cloudfront' };
 const VALIDATORS = { etag: '"abc-123"', 'last-modified': 'Tue, 22 Sep 2026 10:00:00 GMT' };
@@ -47,4 +48,38 @@ describe('headers.archive-validators-agree', () => {
             assert.match(outcome.detail ?? '', detail);
         });
     }
+});
+
+describe('headers.not-modified-keeps-cache', () => {
+    const LONG = 'public, max-age=604800, s-maxage=31536000';
+    async function runNotModified(firstCacheControl: string, notModified304: FakeResponse) {
+        let n = 0;
+        const http = new FakeHttp(() =>
+            n++ === 0
+                ? { status: 200, headers: { ...MISS, ...VALIDATORS, 'cache-control': firstCacheControl } }
+                : notModified304
+        );
+        try {
+            return await notModified.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+
+    it('passes when the 200 has the long archive cache and the 304 does not resend Cache-Control', async () => {
+        const outcome = await runNotModified(LONG, { status: 304, headers: MISS });
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    it('fails when the 200 already lacks the long archive cache', async () => {
+        const outcome = await runNotModified('no-cache', { status: 304, headers: MISS });
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /cache-control/);
+    });
+
+    it('fails when the 304 replaces the stored Cache-Control', async () => {
+        const outcome = await runNotModified(LONG, { status: 304, headers: { ...MISS, 'cache-control': 'no-cache' } });
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /replaces/);
+    });
 });
