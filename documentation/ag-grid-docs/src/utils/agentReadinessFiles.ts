@@ -62,7 +62,9 @@ interface AgentReadinessLinks {
 function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentReadinessLinks {
     const grid = `${siteRoot}${gridDocsPrefix}/`;
     return {
-        dataGrid: grid,
+        // The homepage is the Data Grid's landing page. The JavaScript docs root is not: it is a
+        // client-side forwarder with no sitemap entry and no markdown twin (waf-finding.md §20.3).
+        dataGrid: siteRoot,
         charts: `${siteRoot}charts/`,
         studio: `${siteRoot}studio/`,
         dataGridDocs: `${grid}getting-started/`,
