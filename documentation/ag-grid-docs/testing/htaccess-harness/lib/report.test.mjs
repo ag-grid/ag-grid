@@ -88,12 +88,42 @@ describe('coverageErrors', () => {
         ]);
     });
 
-    it('excuses a category, and the file minimum, when its site was explicitly skipped', () => {
+    it('excuses a category, and its rows from the file minimum, when its site was explicitly skipped', () => {
         const { rows, declared, minRows } = tsv(FILE);
         const siteSkipped = rows.filter((row) => row.category === 'no-shadow');
         const executed = rows.filter((row) => !siteSkipped.includes(row));
         assert.deepEqual(coverageErrors({ declared, minRows, executed, siteSkipped }), []);
         assert.deepEqual(coverageErrors({ declared, minRows, executed: [], siteSkipped: rows }), []);
+    });
+
+    // generated-markdown.tsv mixes grid, charts and studio rows: skipping one site must lower the
+    // minimum by that site's rows only, not switch the check off for the rows that still ran.
+    const MIXED = [
+        '# @min-rows 4',
+        '# @category markdown',
+        'www\t/a/\t200\t',
+        'www\t/b/\t200\t',
+        'www\t/charts/a/\t200\t',
+        'www\t/charts/b/\t200\t',
+    ].join('\n');
+    const bySite = (rows) => ({
+        grid: rows.filter((row) => !row.path.startsWith('/charts/')),
+        charts: rows.filter((row) => row.path.startsWith('/charts/')),
+    });
+
+    it('lowers the file minimum by the rows of a skipped site', () => {
+        const { rows, declared, minRows } = tsv(MIXED);
+        const { grid, charts } = bySite(rows);
+        assert.deepEqual(coverageErrors({ declared, minRows, executed: grid, siteSkipped: charts }), []);
+    });
+
+    it('still fails the file minimum for the other sites when one site is skipped', () => {
+        // a grid row lost from a file whose charts rows were skipped
+        const { rows, declared, minRows } = tsv(MIXED.replace('www\t/b/\t200\t\n', ''));
+        const { grid, charts } = bySite(rows);
+        assert.deepEqual(coverageErrors({ declared, minRows, executed: grid, siteSkipped: charts }), [
+            'cases.tsv: 1 rows executed, @min-rows 4 less 2 site-skipped',
+        ]);
     });
 
     it('fails a file that executed fewer rows than its @min-rows', () => {
