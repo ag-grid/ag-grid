@@ -1,4 +1,4 @@
-import { finding } from './lifecycle';
+import { type Lifecycle, PENDING, finding } from './lifecycle';
 
 /**
  * The agent-facing files per site. `curated` sections are the hand-written pointers at the top
@@ -44,9 +44,49 @@ export const AGENT_SITES: AgentSite[] = [
 ];
 
 /** Links (or .md twins) known to be broken, reported as known issues rather than failures. */
-export const KNOWN_BROKEN: Record<string, string> = {
-    'https://www.ag-grid.com/charts/javascript/options/': `${finding(13)} (charts agentReadinessFiles.ts:61)`,
+export const KNOWN_BROKEN: Record<string, Required<Pick<Lifecycle, 'knownIssue'>> & Lifecycle> = {
+    'https://www.ag-grid.com/charts/javascript/options/': {
+        knownIssue: `${finding(13)} (charts agentReadinessFiles.ts:61)`,
+        fixedBy: PENDING.chartsSeo,
+    },
 };
+
+/**
+ * Links an in-flight change makes the agent files carry: `[label](url)` in the named file, and
+ * (with `notUrl`) the link it replaces gone. Each also resolves in one response, no redirect.
+ */
+export interface AdvertisedLink extends Lifecycle {
+    id: string;
+    file: string;
+    label?: string;
+    url: string;
+    notUrl?: string;
+    refs: string[];
+}
+
+export const ADVERTISED_LINKS: AdvertisedLink[] = [
+    {
+        // §20.3: /javascript-data-grid/ only forwards in the browser (no sitemap entry, no .md twin).
+        // grid#15424 ec123914161 points the link at the homepage (siteRoot), the Data Grid landing page.
+        id: 'grid-data-grid',
+        file: 'https://www.ag-grid.com/llms.txt',
+        label: 'Data Grid',
+        url: 'https://www.ag-grid.com/',
+        notUrl: 'https://www.ag-grid.com/javascript-data-grid/',
+        refs: [finding(20), 'grid#15424', 'SE-77'],
+        pending: PENDING.gridLlmsDataGrid,
+    },
+    ...['https://www.ag-grid.com/charts/llms.txt', 'https://www.ag-grid.com/charts/AGENTS.md'].map(
+        (file): AdvertisedLink => ({
+            id: `charts-options.${file.endsWith('AGENTS.md') ? 'agents-md' : 'llms'}`,
+            file,
+            url: 'https://www.ag-grid.com/charts/options/',
+            notUrl: 'https://www.ag-grid.com/charts/javascript/options/',
+            refs: [finding(13), 'ag-charts#8432', 'SE-77'],
+            pending: PENDING.chartsSeo,
+        })
+    ),
+];
 
 /** Advertised links deliberately not checked at all (decided, not defects). */
 export const IGNORED_LINKS = new Set<string>([
