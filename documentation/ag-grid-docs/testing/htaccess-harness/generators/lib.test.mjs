@@ -93,3 +93,42 @@ describe('a parsed rule with no generated sample', () => {
         });
     }
 });
+
+describe('a redirect that catches a protected live page', () => {
+    const GEN_DIR = fileURLToPath(new URL('.', import.meta.url));
+    const generateMain = (fixture, args = []) => {
+        const dir = mkdtempSync(join(tmpdir(), 'htaccess-gen-'));
+        const input = join(dir, 'input');
+        writeFileSync(input, fixture);
+        const curatedDir = join(dir, 'curated');
+        mkdirSync(curatedDir);
+        return spawnSync('node', [join(GEN_DIR, 'gen-main-expectations.mjs'), input, ...args], {
+            encoding: 'utf8',
+            env: { ...process.env, CURATED_DIR: curatedDir },
+        });
+    };
+
+    for (const [name, fixture, args, page] of [
+        ['root', 'Redirect 301 /angular-data-grid/grid-api/ /wrong/', [], '/angular-data-grid/grid-api/'],
+        [
+            'archive',
+            'RedirectMatch 301 "^/archive/36\\.2\\.0/react-data-grid/components/$" "/wrong/"',
+            ['--base', '/archive/36.2.0'],
+            '/archive/36.2.0/react-data-grid/components/',
+        ],
+    ]) {
+        it(`fails the ${name} generator, naming the page and the rule`, () => {
+            const result = generateMain(fixture, args);
+            assert.equal(result.status, 1, result.stderr);
+            assert.ok(result.stderr.includes(page), result.stderr);
+            assert.ok(result.stderr.includes(fixture), result.stderr);
+            assert.equal(result.stdout, '');
+        });
+    }
+
+    it('still asserts every protected page as 200 when no rule catches one', () => {
+        const result = generateMain('Redirect 301 /a/ /b/');
+        assert.equal(result.status, 0, result.stderr);
+        assert.match(result.stdout, /^www\t\/angular-data-grid\/grid-api\/\t200\b/m);
+    });
+});
