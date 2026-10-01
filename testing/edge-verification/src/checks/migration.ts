@@ -67,22 +67,20 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
         run: ({ http }) => oneHop(http, `https://${host}${path}`, `${WWW}${path}`),
     });
 
-    // A slash-less directory URL, on the alias host and on http www: one hop to the slashed www URL.
+    // A slash-less directory URL on the alias host: one hop to the slashed www URL. http on www is
+    // in the rule too, but production's port-80 vhost redirects all http to https (path kept, no
+    // slash) before any .htaccess runs, so that case is not observable here.
     const directory = `${base}/${(site.directoryPage ?? site.page).replace(/\/$/, '')}`;
-    for (const [kind, from] of [
-        ['alias-host', `https://${host}${directory}${MIGRATION_QUERY}`],
-        ['http-www', `http://www.ag-grid.com${directory}${MIGRATION_QUERY}`],
-    ]) {
-        checks.push({
-            id: `${id}.slashless.${kind}`,
-            area: 'migration',
-            title: `${from} -> one hop to the slashed archive URL on www`,
-            ...lifecycle,
-            refs: [...MIGRATION_REFS, 'grid#15434', 'grid#15435'],
-            pending: SLASHLESS_PENDING,
-            run: ({ http }) => oneHop(http, from, `${WWW}${directory}/${MIGRATION_QUERY}`),
-        });
-    }
+    const from = `https://${host}${directory}${MIGRATION_QUERY}`;
+    checks.push({
+        id: `${id}.slashless.alias-host`,
+        area: 'migration',
+        title: `${from} -> one hop to the slashed archive URL on www`,
+        ...lifecycle,
+        refs: [...MIGRATION_REFS, 'grid#15434', 'grid#15435'],
+        pending: SLASHLESS_PENDING,
+        run: ({ http }) => oneHop(http, from, `${WWW}${directory}/${MIGRATION_QUERY}`),
+    });
 
     const leaks = [...(site.leaks?.['*'] ?? []), ...(site.leaks?.[version] ?? [])];
     if (leaks.length) {
