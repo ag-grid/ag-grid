@@ -6,6 +6,12 @@ const LOOKUP_CONCURRENCY = 5;
 // Slack rejects a section over 3,000 characters, which ten untrimmed titles plus their link
 // markup can reach on their own.
 const MAX_TITLE_LENGTH = 120;
+// The same 3,000-character limit applies to the finished section, and breaching it costs the
+// whole message, so the budget keeps headroom for the markup Slack counts but a reader does not.
+const MAX_SECTION_LENGTH = 2800;
+// One author line cannot be allowed to run away on its own: a wide range of single-PR authors
+// would otherwise spend the entire budget naming them.
+const MAX_AUTHOR_LIST_LENGTH = 400;
 
 // Fallbacks for when the associated-pulls endpoint gives us nothing: a squash merge puts the
 // number in a trailing `(#123)`, and a true merge commit uses GitHub's own subject line.
@@ -72,30 +78,64 @@ export function renderPullRequestBlame({ pullRequests, users = [], mention = 'sl
         return undefined;
     }
 
-    const listed = pullRequests.slice(0, MAX_LISTED_PRS);
-    const lines = listed.map((pullRequest) => {
-        const title = updateWithJiraUrl(shorten(pullRequest.title || `#${pullRequest.number}`));
-        return `• ${authorDisplay(pullRequest, mention, users)} — ${title} (<${pullRequest.url}|#${pullRequest.number}>)`;
-    });
-
-    // The overflow still names its authors: the point of the section is that whoever landed the
-    // change hears about it, and being the eleventh PR in the range does not excuse them.
-    const hidden = pullRequests.slice(MAX_LISTED_PRS);
-    if (hidden.length > 0) {
-        const authors = [...new Set(hidden.map((pullRequest) => authorDisplay(pullRequest, mention, users)))];
-        lines.push(`• ...and ${hidden.length} more from ${authors.join(', ')}`);
-    }
-    if (truncated) {
-        lines.push('• _the range was too wide to list in full; older PRs are not shown_');
-    }
-
+    const display = (pullRequest) => authorDisplay(pullRequest, mention, users);
     const heading = isSuccess
         ? 'PRs since the last passing run:'
         : pullRequests.length === 1
           ? 'Suspect PR:'
           : 'Suspect PRs since the last passing run:';
 
+    // Slack rejects the entire message when a section runs over its limit, so the section is
+    // assembled and then shrunk a line at a time until it fits. A range wide enough to need that
+    // is a long red period, and naming fewer of its PRs beats losing the notification outright.
+    for (let shown = Math.min(pullRequests.length, MAX_LISTED_PRS); ; shown--) {
+        const text = assembleBlame({ pullRequests, heading, shown, display, truncated });
+        if (text.length <= MAX_SECTION_LENGTH || shown === 0) {
+            return text;
+        }
+    }
+}
+
+function assembleBlame({ pullRequests, heading, shown, display, truncated }) {
+    const lines = pullRequests.slice(0, shown).map((pullRequest) => {
+        const title = updateWithJiraUrl(shorten(pullRequest.title || `#${pullRequest.number}`));
+        return `• ${display(pullRequest)} - ${title} (<${pullRequest.url}|#${pullRequest.number}>)`;
+    });
+
+    // The overflow still names its authors: the point of the section is that whoever landed the
+    // change hears about it, and being the eleventh PR in the range does not excuse them.
+    const hidden = pullRequests.slice(shown);
+    if (hidden.length > 0) {
+        const authors = joinAuthorsWithinBudget([...new Set(hidden.map(display))]);
+        lines.push(
+            shown > 0
+                ? `• ...and ${hidden.length} more from ${authors}`
+                : `• ${hidden.length} PRs in range, from ${authors}`
+        );
+    }
+    if (truncated) {
+        lines.push('• _the range was too wide to list in full; older PRs are not shown_');
+    }
     return `${heading}\n${lines.join('\n')}`;
+}
+
+/** Names as many authors as the allowance holds and counts the rest, so the line stays bounded. */
+function joinAuthorsWithinBudget(names) {
+    const kept = [];
+    let length = 0;
+    for (const name of names) {
+        const addition = (kept.length > 0 ? 2 : 0) + name.length;
+        if (length + addition > MAX_AUTHOR_LIST_LENGTH) {
+            break;
+        }
+        kept.push(name);
+        length += addition;
+    }
+    const remaining = names.length - kept.length;
+    if (remaining === 0) {
+        return kept.join(', ');
+    }
+    return kept.length > 0 ? `${kept.join(', ')} and ${remaining} others` : `${names.length} authors`;
 }
 
 /** Guarded against a missing login, which would otherwise match a directory row that records none. */

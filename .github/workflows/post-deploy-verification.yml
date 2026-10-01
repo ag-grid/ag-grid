@@ -129,11 +129,17 @@ jobs:
           # come from different runs: `outcome` from the last run that actually verified the site,
           # which decides whether the channel is owed a back-to-green message, and `sha` from the
           # last run that passed, so the range it anchors holds every commit not yet seen green.
+          # Both answers describe the automatic staging verification only. A manual dispatch can
+          # point the suite at a hand-given URL, so its result says nothing about staging and must
+          # not stand in as either one. The limit is generous because the window has to outlast a
+          # long red period: the run that last passed is furthest away precisely when the range it
+          # anchors has the most commits to name.
           RUNS=$(gh run list \
             --workflow post-deploy-verification.yml \
             --branch latest \
+            --event workflow_run \
             --status completed \
-            --limit 20 \
+            --limit 100 \
             --json headSha,conclusion)
 
           echo "outcome=$(echo "$RUNS" | jq -r 'map(select(.conclusion == "success" or .conclusion == "failure"))[0].conclusion // ""')" >> $GITHUB_OUTPUT

@@ -134,7 +134,21 @@ function simplifyQueryResults(response, keyMap) {
   return response.results.map((page) => simplifyPage(page, keyMap));
 }
 
-export async function getSlackUserConfig({
+/**
+ * Every caller treats a returned `error` as "name the authors by login and carry on", so a
+ * failure here must not throw: two of the notification scripts wrap the call in no handler at
+ * all, and a socket error or the request timeout would abort them instead of degrading the
+ * message. Only the paginated read is guarded; the validation below already returns its errors.
+ */
+export async function getSlackUserConfig(options) {
+    try {
+        return await queryUserDirectory(options);
+    } catch (error) {
+        return { error: `Notion request failed: ${error.message}` };
+    }
+}
+
+async function queryUserDirectory({
     notionApiToken,
     notionDataSourceId,
     notionApiVersion = "2026-03-11",
