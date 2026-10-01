@@ -7,6 +7,7 @@ import type { Ctx, Options } from '../core/types';
 import {
     ACCOUNT_ID,
     ALB_ACL,
+    type AlarmExpectation,
     BEHAVIOURS,
     CACHE_POLICIES,
     CF_ACL,
@@ -226,6 +227,47 @@ export function albAclRules(): any[] {
 export const albAclHandlers = (rules = albAclRules()): Record<string, Handler> => ({
     'wafv2 get-web-acl': () => webAcl(ALB_ACL, albAclSettings(), rules),
 });
+
+/** An alarm as describe-alarms returns it, from its declaration (dimensions as Name/Value lists). */
+export function alarmFixture(exp: AlarmExpectation): any {
+    const dims = (d: Record<string, string> = {}): any[] => Object.entries(d).map(([Name, Value]) => ({ Name, Value }));
+    const topic = `arn:aws:sns:${exp.region}:${ACCOUNT_ID}:${exp.topic}`;
+    return JSON.parse(
+        JSON.stringify({
+            AlarmName: exp.name,
+            AlarmArn: `arn:aws:cloudwatch:${exp.region}:${ACCOUNT_ID}:alarm:${exp.name}`,
+            AlarmDescription: 'fixture',
+            ActionsEnabled: true,
+            OKActions: exp.notifyOk ? [topic] : [],
+            AlarmActions: [topic],
+            InsufficientDataActions: [],
+            StateValue: 'OK',
+            StateUpdatedTimestamp: '2026-10-01T00:00:00Z',
+            MetricName: exp.metric,
+            Namespace: exp.namespace,
+            Statistic: exp.statistic,
+            Dimensions: dims(exp.dimensions),
+            Period: exp.period,
+            EvaluationPeriods: exp.evaluationPeriods,
+            DatapointsToAlarm: exp.datapointsToAlarm,
+            Threshold: exp.threshold,
+            ComparisonOperator: exp.comparison,
+            TreatMissingData: exp.treatMissingData,
+            Metrics: exp.metrics?.map((m: any) =>
+                m.MetricStat
+                    ? {
+                          ...m,
+                          MetricStat: {
+                              ...m.MetricStat,
+                              Metric: { ...m.MetricStat.Metric, Dimensions: dims(m.MetricStat.Metric.Dimensions) },
+                          },
+                      }
+                    : m
+            ),
+            ThresholdMetricId: exp.thresholdMetricId,
+        })
+    );
+}
 
 /** get-logging-configuration as both ACLs have it (live 2026-10-01): their declared log group, nothing redacted. */
 export const loggingHandler: Handler = (args) => {
