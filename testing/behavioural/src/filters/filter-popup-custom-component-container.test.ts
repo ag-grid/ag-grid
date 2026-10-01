@@ -192,7 +192,7 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
             expect(getGridElement(gridA)!.querySelector('.ag-popup')).not.toBeNull();
             expect(gridA.getEditingCells()).toHaveLength(1);
 
-            moveFocusFromEditorTo(gridA, button);
+            firstCell(gridA).dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: button }));
             expect(gridA.getEditingCells()).toHaveLength(1);
         });
     });
