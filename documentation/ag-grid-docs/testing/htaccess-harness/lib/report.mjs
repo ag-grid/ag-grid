@@ -31,11 +31,12 @@ export function classifyRow(row, fails) {
  * Coverage gaps that fail the run. `declared` lists every `# @category` a file declares (whether or
  * not any row follows it), `minRows` each file's `@min-rows`, `executed` the rows that ran, and
  * `siteSkipped` the rows deliberately not run because their site was switched off (SKIP_CHARTS=1,
- * SKIP_STUDIO=1, or a site outside the --env topology). A file must execute its `@min-rows` less its
- * site-skipped rows, and a declared category that executed no rows is an error unless every one of
- * its rows was such a site skip.
+ * SKIP_STUDIO=1, or a site outside the --env topology), `featureSkipped` the rows whose `needs=`
+ * optional Apache feature is unavailable (reported as NOT TESTED, and an error under
+ * HTTPD_REQUIRED=1). A file must execute its `@min-rows` less those permitted skips, and a declared
+ * category that executed no rows is an error unless every one of its rows was such a skip.
  */
-export function coverageErrors({ declared, minRows, executed, siteSkipped }) {
+export function coverageErrors({ declared, minRows, executed, siteSkipped, featureSkipped = [] }) {
     const errors = [];
     const count = (rows, file, category) =>
         rows.filter((row) => row.file === file && (category === undefined || row.category === category)).length;
@@ -43,14 +44,18 @@ export function coverageErrors({ declared, minRows, executed, siteSkipped }) {
         // A skipped site lowers the minimum by its own rows only, so the rows of the sites that
         // did run are still held to it (a file such as generated-markdown.tsv mixes all three).
         const ran = count(executed, file);
-        const skipped = count(siteSkipped, file);
-        if (min && ran < min - skipped) {
-            const less = skipped ? ` less ${skipped} site-skipped` : '';
-            errors.push(`${file}: ${ran} rows executed, @min-rows ${min}${less}`);
+        const bySite = count(siteSkipped, file);
+        const byFeature = count(featureSkipped, file);
+        if (min && ran < min - bySite - byFeature) {
+            const less = [bySite && `${bySite} site-skipped`, byFeature && `${byFeature} feature-skipped`]
+                .filter(Boolean)
+                .join(' and ');
+            errors.push(`${file}: ${ran} rows executed, @min-rows ${min}${less ? ` less ${less}` : ''}`);
         }
     }
+    const permitted = [...siteSkipped, ...featureSkipped];
     for (const { file, category, line } of declared) {
-        if (!count(executed, file, category) && !count(siteSkipped, file, category)) {
+        if (!count(executed, file, category) && !count(permitted, file, category)) {
             errors.push(`${file}:${line}: category ${category} executed no rows`);
         }
     }
