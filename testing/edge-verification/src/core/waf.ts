@@ -79,31 +79,40 @@ export function noneOfLeaves(stmt: any): Leaf[] | undefined {
 }
 
 /**
- * NOT(any of: a leaf, or an AND of leaves): p11's exemption shape, where one alternative needs two
- * conditions at once (the saliencebot UA from the salience-bot IP set). Single-leaf alternatives
- * come back in `leaves`, AND alternatives in `ands`. Undefined for any other shape.
+ * NOT(any of: a leaf, an AND of leaves, or an AND of a leaf and an OR of leaves): p11's exemption
+ * shape. One alternative needs two conditions at once (the saliencebot UA from the salience-bot IP
+ * set); tighten-p11-markdown-exemption.sh makes the Accept test another, scoped to the negotiable
+ * paths. Single-leaf alternatives come back in `leaves`, AND-of-leaves alternatives in `ands`, and
+ * AND(leaf, OR(leaves)) alternatives in `scoped`. Undefined for any other shape.
  */
-export function noneOfAlternatives(stmt: any): { leaves: Leaf[]; ands: Leaf[][] } | undefined {
+export function noneOfAlternatives(
+    stmt: any
+): { leaves: Leaf[]; ands: Leaf[][]; scoped: Array<{ leaf: Leaf; anyOf: Leaf[] }> } | undefined {
     const inner = notOf(stmt);
     if (inner === undefined) {
         return undefined;
     }
     const single = leafOf(inner);
     if (single) {
-        return { leaves: [single], ands: [] };
+        return { leaves: [single], ands: [], scoped: [] };
     }
     const alternatives: any[] | undefined = inner?.OrStatement?.Statements;
     if (!Array.isArray(alternatives)) {
         return undefined;
     }
-    const out = { leaves: [] as Leaf[], ands: [] as Leaf[][] };
+    const out = { leaves: [] as Leaf[], ands: [] as Leaf[][], scoped: [] as Array<{ leaf: Leaf; anyOf: Leaf[] }> };
     for (const alt of alternatives) {
         const leaf = leafOf(alt);
         const and = leaf ? undefined : andOfLeaves(alt);
+        const parts = leaf || and ? undefined : andOf(alt);
+        const scopedLeaf = parts?.length === 2 ? leafOf(parts[0]) : undefined;
+        const anyOf = scopedLeaf && parts?.[1]?.OrStatement ? anyOfLeaves(parts[1]) : undefined;
         if (leaf) {
             out.leaves.push(leaf);
         } else if (and) {
             out.ands.push(and);
+        } else if (scopedLeaf && anyOf) {
+            out.scoped.push({ leaf: scopedLeaf, anyOf });
         } else {
             return undefined;
         }

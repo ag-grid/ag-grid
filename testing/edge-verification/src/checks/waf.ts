@@ -214,17 +214,20 @@ const redactedFields = (headers: string[]): any[] => headers.map((Name) => ({ Si
 const byKey = (xs: any[]): string[] => sorted(xs.map((x) => JSON.stringify(x)));
 
 /**
- * p11's three clauses, read in the one shape that means "block a non-browser trigger unless it is
- * exempt or on a safe path": AND(any trigger, NOT(any exemption), NOT(any safe path)).
- */
-/**
  * p11 as AND(any trigger label, NOT(any exemption), NOT(any safe path)). An exemption is a single
- * condition (`exemptions`) or an AND of conditions (`exemptionAnds`, e.g. the saliencebot UA from
- * its IP set).
+ * condition (`exemptions`), an AND of conditions (`exemptionAnds`, e.g. the saliencebot UA from
+ * its IP set), or a condition scoped to some paths (`scopedExemptions`: the Accept test once
+ * tighten-p11-markdown-exemption.sh has run).
  */
-function p11Parts(
-    rule: any
-): { trigger: Leaf[]; exemptions: Leaf[]; exemptionAnds: Leaf[][]; safe: Leaf[] } | undefined {
+function p11Parts(rule: any):
+    | {
+          trigger: Leaf[];
+          exemptions: Leaf[];
+          exemptionAnds: Leaf[][];
+          scopedExemptions: Array<{ leaf: Leaf; anyOf: Leaf[] }>;
+          safe: Leaf[];
+      }
+    | undefined {
     const parts = andOf(rule.Statement);
     if (parts?.length !== 3) {
         return undefined;
@@ -233,9 +236,40 @@ function p11Parts(
     const exemptions = noneOfAlternatives(parts[1]);
     const safe = noneOfLeaves(parts[2]);
     return trigger && exemptions && safe
-        ? { trigger, exemptions: exemptions.leaves, exemptionAnds: exemptions.ands, safe }
+        ? {
+              trigger,
+              exemptions: exemptions.leaves,
+              exemptionAnds: exemptions.ands,
+              scopedExemptions: exemptions.scoped,
+              safe,
+          }
         : undefined;
 }
+
+const isAcceptLeaf = (l: Leaf): boolean => l.kind === 'byte' && l.field === 'header:accept';
+
+/** p11's Accept tests, bare or path-scoped: the data-centre rule copies whichever it finds. */
+function p11AcceptLeaves(parts: NonNullable<ReturnType<typeof p11Parts>>): Leaf[] {
+    return [...parts.exemptions, ...parts.scopedExemptions.map((x) => x.leaf)].filter(isAcceptLeaf);
+}
+
+/** The declared Accept: text/markdown test, as p11 has it. */
+const isDeclaredAccept = (l: Leaf): boolean =>
+    l.kind === 'byte' &&
+    l.field === 'header:accept' &&
+    l.positional === 'CONTAINS' &&
+    l.value === CF_ACL.nonBrowser.markdownAcceptExemption &&
+    JSON.stringify(l.transforms) === JSON.stringify(CF_ACL.nonBrowser.markdownAcceptTransforms);
+
+/** The negotiable-path regexes the path-scoped markdown exemptions use, as leaf keys in order. */
+const negotiablePathKeys = (): string[] =>
+    CF_ACL.dataCentreMarkdownPaths.map((value) =>
+        leafKey({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })
+    );
+
+/** A scoped exemption is the declared one: the Accept test, on exactly the negotiable paths. */
+const isDeclaredScopedAccept = (x: { leaf: Leaf; anyOf: Leaf[] }): boolean =>
+    isDeclaredAccept(x.leaf) && JSON.stringify(x.anyOf.map(leafKey)) === JSON.stringify(negotiablePathKeys());
 
 /**
  * Where a pending inserted rule must sit: after `exp.after`, with only other pending rules that
@@ -319,12 +353,7 @@ function isDeclaredP11Exemption(l: Leaf): boolean {
         case 'label':
             return nb.exemptLabels.includes(l.value);
         case 'byte':
-            return (
-                l.field === 'header:accept' &&
-                l.positional === 'CONTAINS' &&
-                l.value === nb.markdownAcceptExemption &&
-                JSON.stringify(l.transforms) === JSON.stringify(nb.markdownAcceptTransforms)
-            );
+            return isDeclaredAccept(l);
         case 'regex':
             // The complete regex, not sample membership: the allowlist by its full token set, the
             // other UA regexes by their exact live strings, and always lower-casing first.
@@ -395,7 +424,7 @@ const RULE_SHAPES: Record<string, { refs: string[]; check: (rule: any, live: Liv
                 .filter((l) => l?.kind === 'byte' && l.field === 'header:accept');
             p.check(!bareAccept.length, 'Accept: text/markdown is exempt on every path, not only negotiable ones');
             const ands = alternatives.map(andOf).filter((a): a is any[] => !!a);
-            const p11Accept = p11?.exemptions.filter((l) => l.kind === 'byte' && l.field === 'header:accept');
+            const p11Accept = p11 && p11AcceptLeaves(p11);
             const accept = ands.length === 1 && ands[0].length === 2 ? leafOf(ands[0][0]) : undefined;
             const paths = ands.length === 1 && ands[0].length === 2 ? anyOfLeaves(ands[0][1]) : undefined;
             if (!accept || !paths) {
@@ -410,13 +439,7 @@ const RULE_SHAPES: Record<string, { refs: string[]; check: (rule: any, live: Liv
                 `markdown exemption statement's Accept test is not p11's Accept: ${CF_ACL.nonBrowser.markdownAcceptExemption} condition`
             );
             // Raw path, no transformation: the origin's conditions are case-sensitive.
-            p.eq(
-                'negotiable path regexes',
-                paths.map(leafKey),
-                CF_ACL.dataCentreMarkdownPaths.map((value) =>
-                    leafKey({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })
-                )
-            );
+            p.eq('negotiable path regexes', paths.map(leafKey), negotiablePathKeys());
             p.eq('custom body', rule.Action?.Block?.CustomResponse?.CustomResponseBodyKey, 'automated-access-blocked');
         },
     },
@@ -809,7 +832,7 @@ export function wafChecks(): CheckDef[] {
                 if (!parts) {
                     return fail('statement is not AND(any trigger label, NOT(any exemption), NOT(any safe path))');
                 }
-                const { trigger: t, exemptions: e, exemptionAnds: ands, safe: s } = parts;
+                const { trigger: t, exemptions: e, exemptionAnds: ands, scopedExemptions: scoped, safe: s } = parts;
                 const p = new Problems();
                 p.check(
                     t.every((l) => l.kind === 'label'),
@@ -868,24 +891,30 @@ export function wafChecks(): CheckDef[] {
                     ),
                     'the saliencebot UA is exempt on its own, without the IP set'
                 );
+                // One Accept test, bare (today) or scoped to the negotiable paths (once
+                // tighten-p11-markdown-exemption.sh runs: its own pending check says which).
+                const accepts = p11AcceptLeaves(parts);
                 p.check(
-                    e.some(
-                        (l) =>
-                            l.kind === 'byte' &&
-                            l.field === 'header:accept' &&
-                            l.positional === 'CONTAINS' &&
-                            l.value === nb.markdownAcceptExemption &&
-                            JSON.stringify(l.transforms) === JSON.stringify(nb.markdownAcceptTransforms)
-                    ),
-                    `Accept: text/markdown exemption missing (CONTAINS, transforms ${nb.markdownAcceptTransforms.join(',')})`
+                    accepts.length === 1 && isDeclaredAccept(accepts[0]),
+                    `not exactly one Accept: text/markdown exemption (CONTAINS, transforms ${nb.markdownAcceptTransforms.join(',')}): ${accepts.length}`
+                );
+                const undeclaredScoped = scoped.filter((x) => !isDeclaredScopedAccept(x));
+                p.check(
+                    !undeclaredScoped.length,
+                    `path-scoped exemptions that are not the Accept test on the negotiable paths: ${undeclaredScoped.map((x) => leafKey(x.leaf)).join(', ')}`
                 );
                 // Exactly the declared exemptions: the allowlist and in-app UA regexes, the verified
                 // labels, Accept: text/markdown and the saliencebot AND. Anything else (say a UA regex
                 // admitting all but saliencebot) exempts traffic nothing above declared.
                 const undeclared = e.filter((l) => !isDeclaredP11Exemption(l));
                 p.check(!undeclared.length, `undeclared exemptions: ${undeclared.map(leafKey).join(', ')}`);
-                // The allowlist, each other UA regex, the labels and the Accept match (the saliencebot AND is counted apart).
-                p.eq('exemption count', e.length, 1 + nb.otherUaRegexes.length + nb.exemptLabels.length + 1);
+                // The allowlist, each other UA regex, the labels and the Accept match, bare or scoped
+                // (the saliencebot AND is counted apart).
+                p.eq(
+                    'exemption count',
+                    e.length + scoped.length,
+                    1 + nb.otherUaRegexes.length + nb.exemptLabels.length + 1
+                );
                 p.eq('AND exemption count', ands.length, 1);
                 // Every property, not just the value: a safe path matched on another field, as an
                 // exact match, or after another transform no longer exempts what it names.
@@ -920,6 +949,29 @@ export function wafChecks(): CheckDef[] {
                 );
                 p.eq('transforms', regex.transforms, ['LOWERCASE']);
                 return p.outcome(`regex ${regex.value.length} chars`);
+            },
+        },
+        {
+            id: 'waf-config.cf.nonbrowser-rule.markdown-scoped',
+            area: 'waf-config',
+            title: 'p11 honours Accept: text/markdown only on the negotiable paths (no bare Accept exemption left)',
+            refs: [finding(9)],
+            pending: nb.markdownScopedPending,
+            async run({ live }) {
+                const parts = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'));
+                if (!parts) {
+                    return fail('p11 statement is not AND(triggers, NOT(exemptions), NOT(safe paths))');
+                }
+                const p = new Problems();
+                const bare = parts.exemptions.filter(isAcceptLeaf);
+                p.check(!bare.length, 'Accept: text/markdown is still exempt on every path');
+                const scoped = parts.scopedExemptions.filter((x) => isAcceptLeaf(x.leaf));
+                p.eq('path-scoped Accept exemptions', scoped.length, 1);
+                if (scoped.length === 1) {
+                    p.check(isDeclaredAccept(scoped[0].leaf), `Accept test is ${leafKey(scoped[0].leaf)}`);
+                    p.eq('negotiable path regexes', scoped[0].anyOf.map(leafKey), negotiablePathKeys());
+                }
+                return p.outcome();
             },
         },
         {
