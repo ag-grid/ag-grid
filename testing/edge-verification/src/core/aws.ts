@@ -10,6 +10,18 @@ export const AWS_PROFILE = 'ddos-report-readonly';
 /** get-*, list-*, describe-* and CloudTrail's lookup-events are the only verbs that can run. */
 const READ_ONLY_OPERATION = /^(get|list|describe|lookup)-[a-z0-9-]+$/;
 
+/**
+ * The one exception: starting a CloudWatch Logs Insights query (logs:StartQuery), which reads log
+ * events and changes nothing; its results come back through get-query-results. Allowed for the
+ * `logs` service only, so no other service's start-* can slip through.
+ */
+const READ_ONLY_EXCEPTIONS = new Set(['logs start-query']);
+
+/** Whether the guard lets a `service operation` run (exported for the offline tests). */
+export function isReadOnlyOperation(service: string, operation: string): boolean {
+    return READ_ONLY_OPERATION.test(operation) || READ_ONLY_EXCEPTIONS.has(`${service} ${operation}`);
+}
+
 /** Arguments that could redirect the call to other credentials or endpoints. */
 const FORBIDDEN_ARGS = ['--profile', '--endpoint-url', '--no-sign-request'];
 
@@ -114,15 +126,27 @@ export class Aws {
 
     constructor(private readonly maxConcurrent = 4) {}
 
-    /** Memoised: the same call within one run is made once. */
-    call<T = any>(service: string, operation: string, args: string[] = [], region = 'us-east-1'): Promise<T> {
-        if (!READ_ONLY_OPERATION.test(operation)) {
+    /**
+     * Memoised: the same call within one run is made once, unless `memo: false` (a poll that must
+     * see a new answer, or a query that must not be shared).
+     */
+    call<T = any>(
+        service: string,
+        operation: string,
+        args: string[] = [],
+        region = 'us-east-1',
+        opts: { memo?: boolean } = {}
+    ): Promise<T> {
+        if (!isReadOnlyOperation(service, operation)) {
             throw new Error(`Refusing non-read-only AWS operation: ${service} ${operation}`);
         }
         for (const arg of args) {
             if (FORBIDDEN_ARGS.some((f) => arg === f || arg.startsWith(f + '='))) {
                 throw new Error(`Refusing AWS argument ${arg}`);
             }
+        }
+        if (opts.memo === false) {
+            return this.exec(service, operation, args, region);
         }
         const key = JSON.stringify([service, operation, args, region]);
         let promise = this.cache.get(key);
