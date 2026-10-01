@@ -338,6 +338,16 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?javascript-data-grid/grid-callbacks/$" "https://www.ag-grid.com/javascript-data-grid/grid-options/" [R=301,L]
     RewriteRule "^/?javascript-grid-cell-rendering/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
 
+    # Slash-less directory URLs on a non-canonical host or scheme: add the slash and canonicalise
+    # in the same hop.
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com):[0-9]+)$ [NC]
+    RewriteCond %{REQUEST_URI} /+[^\\.]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+    RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
+
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
     RewriteCond %{HTTP_HOST} ^(www\\.)?ag-grid\\.com$ [NC]
@@ -642,6 +652,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
 
     # Add trailing slash for directories
     RewriteCond %{REQUEST_URI} /+[^\\.]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
     RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
 
     # Redirect paths after a php file (ie index.php/path/path => index.php)

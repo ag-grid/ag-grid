@@ -1460,6 +1460,14 @@ describe('htaccessRules', () => {
                 const chain = followRedirects(deployed, { url: `${host}${BASE}/react-data-grid/getting-started/?x=1` });
                 expect(chain.hops, host).toHaveLength(1);
                 expect(chain.final.url, host).toBe(`${WWW}${BASE}/react-data-grid/getting-started/?x=1`);
+                // waf-finding.md §20.2: a slash-less directory path gets its slash in that same hop.
+                const slashless = followRedirects(deployed, {
+                    url: `${host}${BASE}/react-data-grid/getting-started?x=1`,
+                });
+                expect(
+                    slashless.hops.map((hop) => hop.location),
+                    host
+                ).toEqual([`${WWW}${BASE}/react-data-grid/getting-started/?x=1`]);
             }
         });
 
@@ -1522,7 +1530,9 @@ describe('htaccessRules', () => {
         it('skips the single-hop rewrites on other hosts, which canonicalise first', () => {
             for (const host of ['https://angulargrid.com', 'https://react-grid.ag-grid.com']) {
                 for (const { from } of keptSingleHops) {
-                    expect(at(from, host), `${host}${from}`).toMatchObject({ location: `${WWW}${BASE}${from}` });
+                    // Canonicalising a slash-less directory path adds its slash in the same hop.
+                    const canonical = /\/[^/.]+$/.test(from) ? `${from}/` : from;
+                    expect(at(from, host), `${host}${from}`).toMatchObject({ location: `${WWW}${BASE}${canonical}` });
                 }
             }
         });
@@ -1732,6 +1742,89 @@ describe('htaccessRules', () => {
         it('keeps certificate-validation files reachable over http, without a redirect', () => {
             const path = '/.well-known/pki-validation/0123456789ABCDEF0123456789ABCDEF.txt';
             expect(route(files(), { url: `http://www.ag-grid.com${path}` })).toMatchObject({ type: 'serve' });
+        });
+
+        // waf-finding.md §20.1: an HTTP-01 token has no extension, so the add-slash rule took it for a
+        // directory and the validation fetch got a 301 to a URL with no token behind it.
+        it.each(['/.well-known/acme-challenge/Abc_123-xyz', '/.well-known/cpanel-dcv/Abc_123-xyz'])(
+            'serves the certificate-validation token %s as it is, over http and https',
+            (path) => {
+                for (const scheme of ['http', 'https']) {
+                    expect(route(files(), { url: `${scheme}://www.ag-grid.com${path}` }), scheme).toMatchObject({
+                        type: 'serve',
+                        path,
+                    });
+                }
+                // An alias host is still canonicalised, but onto the token itself, not a slashed path.
+                const chain = followRedirects(files(), { url: `http://ag-grid.com${path}` });
+                expect(chain.hops.map((hop) => hop.location)).toEqual([`${WWW}${path}`]);
+                expect(chain.final.outcome).toMatchObject({ type: 'serve', path });
+            }
+        );
+
+        // waf-finding.md §20.2: a slash-less directory path on an alias host or over http took two
+        // hops, the host swap and then the add-slash. Both now happen in the one redirect.
+        it.each([
+            ...ALIAS_HOSTS.flatMap((host) => ['http', 'https'].map((scheme) => [scheme, host])),
+            ['http', 'www.ag-grid.com'],
+        ])(
+            '%s://%s adds the slash to a directory path in the same hop as the canonicalisation, and leaves files alone',
+            (scheme, host) => {
+                for (const path of ['/react-data-grid/getting-started', '/a/b/c']) {
+                    const chain = followRedirects(files(), { url: `${scheme}://${host}${path}?x=1` });
+                    expect(
+                        chain.hops.map((hop) => hop.location),
+                        `${scheme}://${host}${path}`
+                    ).toEqual([`${WWW}${path}/?x=1`]);
+                }
+                for (const path of ['/robots.txt', '/react-data-grid/page.html']) {
+                    const chain = followRedirects(files(), { url: `${scheme}://${host}${path}` });
+                    expect(
+                        chain.hops.map((hop) => hop.location),
+                        `${scheme}://${host}${path}`
+                    ).toEqual([`${WWW}${path}`]);
+                }
+            }
+        );
+
+        it('keeps markdown negotiation on a slash-less docs URL over https on www, without a redirect', () => {
+            const path = '/react-data-grid/getting-started';
+            expect(
+                route(files(), { url: `${WWW}${path}`, accept: 'text/markdown', fileExists: (p) => p === `${path}.md` })
+            ).toMatchObject({ type: 'serve', path: `${path}.md` });
+        });
+
+        // Apache decodes the path, matches the rules against the decoded bytes, and re-escapes it in
+        // the Location (the simulator's escaping is pinned against real Apache in its own suite).
+        it.each(ALIAS_HOSTS.flatMap((host) => ['http', 'https'].map((scheme) => [scheme, host])))(
+            '%s://%s keeps an encoded path encoded when canonicalising it',
+            (scheme, host) => {
+                const at = (path: string) => route(files(), { url: `${scheme}://${host}${path}` });
+                expect(at('/some%20page/?q=a%20b')).toMatchObject({ location: `${WWW}/some%20page/?q=a%20b` });
+                expect(at('/some%20page')).toMatchObject({ location: `${WWW}/some%20page/` });
+                expect(at('/caf%C3%A9/')).toMatchObject({ location: `${WWW}/caf%c3%a9/` });
+                expect(at('/a%23b/')).toMatchObject({ location: `${WWW}/a%23b/` });
+                expect(at('/a%26b/')).toMatchObject({ location: `${WWW}/a&b/` });
+                // A %3F would become the start of a query string, which Apache refuses.
+                expect(at('/a%3Fb/')).toMatchObject({ type: 'status', status: 403 });
+            }
+        );
+
+        it('matches a single-hop rule against the decoded path, keeping the query', () => {
+            for (const { from, to } of SITE_SINGLE_HOP_REWRITES.filter((rule) => !rule.to.includes('#')).slice(0, 20)) {
+                const encoded = from.replace(
+                    /[a-z]/,
+                    (letter) => `%${letter.charCodeAt(0).toString(16).toUpperCase()}`
+                );
+                expect(encoded).not.toBe(from);
+                for (const origin of [WWW, 'http://ag-grid.com']) {
+                    const chain = followRedirects(files(), { url: `${origin}${encoded}?q=a%20b` });
+                    expect(
+                        chain.hops.map((hop) => hop.location),
+                        `${origin}${encoded}`
+                    ).toEqual([`${to}?q=a%20b`]);
+                }
+            }
         });
 
         it('adds the trailing slash to a directory path in one hop, keeping the query', () => {
