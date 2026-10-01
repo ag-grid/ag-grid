@@ -788,12 +788,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public copyRangeDown(): void {
-        const { rangeSvc, gos, formula, valueSvc } = this.beans;
+        const { rangeSvc, gos, formula, valueSvc, dataTypeSvc } = this.beans;
         if (!rangeSvc || rangeSvc.isEmpty()) {
             return;
         }
 
         const firstRowValues: any[] = [];
+        const rawFirstRowValues: any[] = [];
 
         const pasteOperation = (
             cellsToFlash: Record<string, boolean>,
@@ -811,10 +812,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     // two reasons for looping through columns
                     columns.forEach((column: AgColumn) => {
                         // get the initial values to copy down
+                        const rawValue = valueSvc.getValue(column, rowNode, 'batch');
+                        rawFirstRowValues.push(rawValue);
                         const value = this.processCell(
                             rowNode,
                             column,
-                            valueSvc.getValue(column, rowNode, 'batch'),
+                            rawValue,
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -846,7 +849,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             firstRowValues[index],
                             EXPORT_TYPE_DRAG_COPY,
                             processCellFromClipboardFunc,
-                            true
+                            !dataTypeSvc?.skipParseForCopiedValue(
+                                column,
+                                rawFirstRowValues[index],
+                                firstRowValues[index]
+                            )
                         );
 
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);

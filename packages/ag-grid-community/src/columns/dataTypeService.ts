@@ -113,6 +113,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     };
     public isPendingInference: boolean = false;
     private hasObjectValueParser: boolean;
+    private textValueParser: CoreDataTypeDefMap['text']['valueParser'];
     private hasObjectValueFormatter: boolean;
     private initialData: any[] | null | undefined;
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
@@ -179,6 +180,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const { valueParser: userValueParser, valueFormatter: userValueFormatter } = newDataTypeDefinitions.object;
 
         this.hasObjectValueParser = userValueParser !== defaultValueParser;
+        this.textValueParser = defaultDataTypes.text.valueParser;
         this.hasObjectValueFormatter = userValueFormatter !== defaultValueFormatter;
         this.formatValueFuncs = newFormatValueFuncs;
         this.dataTypeDefinitions = newDataTypeDefinitions;
@@ -528,6 +530,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public getBaseDataType(column: AgColumn): BaseCellDataType | undefined {
         return this.getDataTypeDefinition(column)?.baseDataType;
+    }
+
+    /**
+     * The built-in text parser turns `''` into `null`, which suits an emptied editor, but a string copied
+     * unchanged from another cell (fill handle, copy range down) is already the value to store.
+     */
+    public skipParseForCopiedValue(column: AgColumn, sourceValue: unknown, value: unknown): boolean {
+        return (
+            typeof sourceValue === 'string' &&
+            value === sourceValue &&
+            column.getColDef().valueParser === this.textValueParser
+        );
     }
 
     public checkType(column: AgColumn, value: any): boolean {

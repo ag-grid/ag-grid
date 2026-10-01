@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, clipboardUtils } from 'ag-test-utils';
 
-import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
+import { NumberEditorModule, TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 /**
@@ -14,7 +14,7 @@ import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-e
  */
 describe('Clipboard Copy: uses batch values not edit values', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClipboardModule, CellSelectionModule, BatchEditModule, TextEditorModule],
+        modules: [ClipboardModule, CellSelectionModule, BatchEditModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeAll(() => {
@@ -154,6 +154,30 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
         `);
 
         api.cancelBatchEdit();
+    });
+
+    test('copyRangeDown copies an empty-string source as an empty string into an inferred text column', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardCopyRangeDownEmptyString', {
+            cellSelection: true,
+            columnDefs: [
+                { field: 'text', editable: true },
+                { field: 'num', editable: true },
+            ],
+            rowData: [
+                { id: '0', text: '', num: 5 },
+                { id: '1', text: 'target', num: 1 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['text', 'num'] });
+        api.copySelectedRangeDown();
+
+        await new GridRows(api, 'after copy range down').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 text:"" num:5
+            └── LEAF id:1 text:"" num:5
+        `);
     });
 
     test('copy without batch edit copies data values', async () => {

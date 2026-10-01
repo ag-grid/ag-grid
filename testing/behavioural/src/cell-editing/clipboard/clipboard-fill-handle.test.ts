@@ -569,4 +569,94 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             ]);
         }
     });
+
+    test('fill handle copies an empty-string source as an empty string into an inferred text column', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardGridFillEmptyString', {
+            cellSelection: { handle: { mode: 'fill' } },
+            columnDefs: [
+                { field: 'athlete', editable: true },
+                { field: 'country', editable: true, valueGetter: (params) => params.data.country },
+                { field: 'sport', editable: true, valueParser: (params) => params.newValue },
+            ],
+            rowData: [
+                { id: 'ROW_0', athlete: '', country: '', sport: '' },
+                { id: 'ROW_1', athlete: '', country: '', sport: '' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        for (const field of ['athlete', 'country', 'sport']) {
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', field)));
+            const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+            fireGridPointerDown(cell);
+            await cellSelectionChanged;
+
+            const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+            const fillEnd = waitForEvent('fillEnd', api);
+            await userEvent.dblClick(fillHandle);
+            await fillEnd;
+        }
+
+        expect(api.getRowNode('ROW_1')!.data).toEqual({ id: 'ROW_1', athlete: '', country: '', sport: '' });
+    });
+
+    test('dragging the fill handle horizontally copies an empty-string source as an empty string', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardGridHorizontalFillEmptyString', {
+            cellSelection: { handle: { mode: 'fill', direction: 'x' } },
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [{ id: 'ROW_0', a: '', b: 'Y' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const sourceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(sourceCell);
+        await cellSelectionChanged;
+
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        const cellB = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b')));
+        const fillEnd = waitForEvent('fillEnd', api);
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
+        cellB.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 60, clientY: 0 }));
+        cellB.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 60, clientY: 0 }));
+        await fillEnd;
+
+        expect(api.getRowNode('ROW_0')!.data).toEqual({ id: 'ROW_0', a: '', b: '' });
+    });
+
+    test('fill handle still parses a formatted empty string from a null source to null', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardGridFillFormattedNull', {
+            cellSelection: { handle: { mode: 'fill', direction: 'y' } },
+            columnDefs: [{ field: 'a', editable: true, valueFormatter: (params) => params.value ?? '' }],
+            rowData: [
+                { id: 'ROW_0', a: null },
+                { id: 'ROW_1', a: 'Y' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const sourceCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(sourceCell);
+        await cellSelectionChanged;
+
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        const targetCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a')));
+        const fillEnd = waitForEvent('fillEnd', api);
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
+        targetCell.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 0, clientY: 60 }));
+        targetCell.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY: 60 }));
+        await fillEnd;
+
+        expect(api.getRowNode('ROW_1')!.data).toEqual({ id: 'ROW_1', a: null });
+    });
 });
