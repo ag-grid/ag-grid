@@ -19,13 +19,9 @@ import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/G
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
 import AnnouncementBanner from '@ag-website-shared/components/announcement-banner/AnnouncementBanner.astro';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
-import {
-    buildAgGridOrganization,
-    buildSoftwareApplication,
-    buildWebSite,
-    siteRootUrl,
-    type JsonLdObject,
-} from '@ag-website-shared/utils/structuredData';
+import { type JsonLdObject } from '@ag-website-shared/utils/structuredData';
+import { buildSiteStructuredData } from '@utils/docsStructuredData';
+import { getSocialImageUrl } from '@utils/socialImageUrl';
 
 interface Props {
     title: string;
@@ -89,12 +85,10 @@ const {
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
-// Open Graph and Twitter crawlers require absolute image URLs, so resolve the social image against the site root.
-const socialImagePathOrUrl = urlWithBaseUrl(overrideSocialImage ?? metadata.socialImage);
-const socialImage = socialImagePathOrUrl.startsWith('http')
-    ? socialImagePathOrUrl
-    : `${siteRoot}${socialImagePathOrUrl.replace(/^\//, '')}`;
+const socialImage = getSocialImageUrl({
+    canonicalUrlBase: metadata.canonicalUrlBase,
+    image: overrideSocialImage ?? metadata.socialImage,
+});
 
 const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
@@ -102,30 +96,13 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.replaceAll('/', '');
 
 const includeStructuredData = !hidePageFromSearchEngines && !isArchive;
-const licensePricingUrl = `${siteRoot}license-pricing/`;
-const softwareApplicationSameAs = ['https://www.npmjs.com/package/ag-grid-community'];
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
-          buildAgGridOrganization(),
-          buildWebSite({
+          ...buildSiteStructuredData({
               canonicalUrlBase: metadata.canonicalUrlBase,
               name: metadata.title,
               description: metadata.description,
-          }),
-          buildSoftwareApplication({
-              canonicalUrlBase: metadata.canonicalUrlBase,
-              name: 'AG Grid',
-              version: agGridVersion.split('-')[0],
-              sameAs: softwareApplicationSameAs,
-              offers: [
-                  {
-                      '@type': 'Offer',
-                      name: 'AG Grid Community',
-                      price: '0',
-                      priceCurrency: 'USD',
-                      url: licensePricingUrl,
-                  },
-              ],
+              version: agGridVersion,
           }),
           ...(pageStructuredData ?? []),
       ]
