@@ -249,14 +249,31 @@ describe('htaccessRules', () => {
             });
         });
 
-        it('should scope it to HTML documents, not assets', () => {
-            expect(getNoCacheRule(productionContent)).toContain('%{CONTENT_TYPE} =~ m#^text/html#');
+        it('should scope it to HTML documents and their markdown variants, not assets', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                const [, source] = getNoCacheRule(content).match(/%\{CONTENT_TYPE\} =~ m#([^#]+)#/)!;
+                const contentType = new RegExp(source);
+                expect(contentType.test('text/html; charset=utf-8')).toBe(true);
+                // A live page's markdown variant changes with the page, so it must revalidate too -
+                // whether fetched as /<page>.md or negotiated at the page URL.
+                expect(contentType.test('text/markdown; charset=utf-8')).toBe(true);
+                expect(contentType.test('text/css')).toBe(false);
+                expect(contentType.test('application/javascript')).toBe(false);
+                expect(contentType.test('text/plain')).toBe(false);
+            });
         });
 
         it('should exclude archived versions, which are immutable', () => {
             const rule = getNoCacheRule(productionContent);
             expect(rule).toContain('!(');
             expect(rule).toContain('archive/[0-9]');
+        });
+
+        it('should leave archived markdown to the archive long cache', () => {
+            // The exclusion is on the path, so an archive's .md keeps archiveCacheRules' long cache.
+            const [, source] = getNoCacheRule(productionContent).match(/REQUEST_URI\} =~ m#([^#]+)#/)!;
+            expect(new RegExp(source).test('/archive/36.2.0/react-data-grid/getting-started.md')).toBe(true);
+            expect(new RegExp(source).test('/react-data-grid/getting-started.md')).toBe(false);
         });
 
         it('should use no-cache rather than no-store, to keep back/forward navigation', () => {
@@ -371,6 +388,101 @@ describe('htaccessRules', () => {
             });
             expect(staging).toContain('^/archive/36\\.2\\.0/#');
             expect(staging).toContain('^/charts/archive/14\\.3\\.0/#');
+        });
+    });
+
+    describe('Redirects are never cached', () => {
+        // A shared cache keying a redirect on the path alone would replay the first visitor's query
+        // string (carried into Location) to everyone after, so every redirect must be no-cache.
+        const getRedirectRules = (content: string) =>
+            content.split('\n').filter((l) => l.startsWith('Header always set Cache-Control'));
+
+        // Evaluates the rule's REQUEST_STATUS comparisons the way ap_expr does.
+        const appliesToStatus = (rule: string, status: number) =>
+            [...rule.matchAll(/%\{REQUEST_STATUS\} -(ge|lt|ne) (\d+)/g)].every(([, op, value]) => {
+                const n = Number(value);
+                return op === 'ge' ? status >= n : op === 'lt' ? status < n : status !== n;
+            });
+
+        it('sets no-cache on every redirect status, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                const rules = getRedirectRules(content);
+                // The only 'always' Cache-Control rule, so nothing else can override it on a redirect.
+                expect(rules).toHaveLength(1);
+                expect(rules[0]).toContain('Cache-Control "no-cache"');
+                for (const status of [301, 302, 303, 307, 308]) {
+                    expect(appliesToStatus(rules[0], status)).toBe(true);
+                }
+            });
+        });
+
+        it('never touches a 200, an error, or a 304', () => {
+            // A 304 refreshes the headers of the copy a cache already holds, so no-cache there would
+            // wipe out the long cache of every revalidated asset and released archive page.
+            const [rule] = getRedirectRules(productionContent);
+            for (const status of [200, 204, 304, 404, 410, 500]) {
+                expect(appliesToStatus(rule, status)).toBe(false);
+            }
+        });
+
+        it("uses 'always', the only header table Apache sends on a redirect", () => {
+            // The ordinary (onsuccess) table is dropped on non-2xx responses, which is also why no
+            // later onsuccess Cache-Control rule - an archive's own included - can override this one.
+            expect(getRedirectRules(productionContent)[0]).toMatch(/^Header always set /);
+        });
+    });
+
+    describe('Archived markdown variants are noindexed', () => {
+        const getNoindexRules = (content: string) => content.split('\n').filter((l) => l.includes('X-Robots-Tag'));
+
+        it('sets X-Robots-Tag: noindex on archived markdown only', () => {
+            const rules = getNoindexRules(productionContent);
+            expect(rules).toHaveLength(1);
+            expect(rules[0]).toMatch(/^Header set X-Robots-Tag "noindex" /);
+            const [, contentType] = rules[0].match(/%\{CONTENT_TYPE\} =~ m#([^#]+)#/)!;
+            const [, path] = rules[0].match(/%\{REQUEST_URI\} =~ m#([^#]+)#/)!;
+            // Matched on content type, so the variant negotiated at the page's own URL is covered.
+            expect(new RegExp(contentType).test('text/markdown; charset=utf-8')).toBe(true);
+            // Archived HTML is already noindexed by its robots meta tag.
+            expect(new RegExp(contentType).test('text/html; charset=utf-8')).toBe(false);
+            for (const archived of [
+                '/archive/36.2.0/react-data-grid/getting-started.md',
+                '/archive/36.2.0/react-data-grid/getting-started/',
+                '/charts/archive/11.0.4/react/line-series.md',
+                '/studio/archive/1.0.0/index.md',
+            ]) {
+                expect(new RegExp(path).test(archived)).toBe(true);
+            }
+            for (const live of ['/react-data-grid/getting-started.md', '/documentation-archive.md', '/index.md']) {
+                expect(new RegExp(path).test(live)).toBe(false);
+            }
+        });
+    });
+
+    // Both are root-owned: an archive's own .htaccess is applied after the root's, so a copy there
+    // would only duplicate the root's rule (and must not carry anything that undoes it).
+    describe('archive builds leave the redirect no-cache and markdown noindex to the root', () => {
+        let archiveContent: string;
+
+        beforeAll(async () => {
+            vi.resetModules();
+            vi.doMock('../../constants', async (importActual) => {
+                const actual = await importActual<typeof Constants>();
+                return { ...actual, SITE_BASE_URL: '/archive/36.2.0/' };
+            });
+            const archiveRules = await import('./htaccessRules');
+            archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+        });
+
+        afterAll(() => {
+            vi.doUnmock('../../constants');
+            vi.resetModules();
+        });
+
+        it('emits neither rule, nor anything touching X-Robots-Tag or the always-sent Cache-Control', () => {
+            expect(archiveContent).not.toContain('X-Robots-Tag');
+            expect(archiveContent).not.toContain('Header always set Cache-Control');
+            expect(archiveContent).not.toContain('REQUEST_STATUS} -ge 300');
         });
     });
 
@@ -1470,6 +1582,11 @@ describe('htaccessRules', () => {
             '/some-post/amp/',
             '/feed/',
             '/theo/',
+            // Legacy URLs the harness found 404ing inside archives once the single-hop rewrites were
+            // dropped: mod_alias's broad /{fw}-grid/ prefix rule maps them onto a page that does not exist.
+            '/javascript-grid/themes-customising/',
+            '/react-grid/themes-provided/',
+            '/react-grid/fine-tuning/',
             ...SITE_SINGLE_HOP_REWRITES.map((r) => r.from),
             ...SITE_301_REDIRECTS.flatMap((r) => ('from' in r ? [r.from] : [])),
         ].map((path) => `${BASE}${path}`);
@@ -1498,10 +1615,78 @@ describe('htaccessRules', () => {
             expect(escapes).toEqual([]);
         });
 
-        it('emits none of the current-site single-hop or /charts/ rewrites', () => {
-            expect(archiveContent).not.toContain('# SE-64 / SE-66: single-hop chain shortening');
+        // The redirects a request on the canonical host could take, in rule order - so the first is
+        // the one that fires, every rule being [L]. Host canonicalisation (the same URL) is left out.
+        const onHostTargets = (uri: string) =>
+            rewriteTargets(archiveContent, uri).filter((t) => t !== `https://www.ag-grid.com${uri}`);
+        const firstHop = (uri: string) => onHostTargets(uri)[0];
+
+        it('sends legacy single-hop URLs to their page inside the archive, in one hop', () => {
+            expect(firstHop(`${BASE}/javascript-grid/themes-customising/`)).toBe(
+                `https://www.ag-grid.com${BASE}/javascript-data-grid/themes/`
+            );
+            expect(firstHop(`${BASE}/react-grid/themes-provided/`)).toBe(
+                `https://www.ag-grid.com${BASE}/react-data-grid/themes/`
+            );
+            expect(firstHop(`${BASE}/react-grid/fine-tuning/`)).toBe(
+                `https://www.ag-grid.com${BASE}/react-data-grid/react-hooks/`
+            );
+            // Ahead of the trailing-slash fix, which would otherwise make it two hops.
+            expect(firstHop(`${BASE}/react-data-grid/whats-new`)).toBe(`https://www.ag-grid.com${BASE}/whats-new/`);
+        });
+
+        it('keeps every single-hop rewrite whose target the archive has a copy of', () => {
+            const kept = SITE_SINGLE_HOP_REWRITES.filter(
+                (r) => !/^https:\/\/www\.ag-grid\.com\/(charts|blog)\//.test(r.to)
+            );
+            expect(kept.length).toBeGreaterThan(0);
+            for (const { from, to } of kept) {
+                expect(firstHop(`${BASE}${from}`)).toBe(
+                    to.replace('https://www.ag-grid.com', `https://www.ag-grid.com${BASE}`)
+                );
+            }
+        });
+
+        it('drops the single-hop and semantic rewrites onto charts and the blog, which no grid archive holds', () => {
+            const dropped = SITE_SINGLE_HOP_REWRITES.filter((r) => /\/(charts|blog)\//.test(r.to));
+            expect(dropped.length).toBeGreaterThan(0);
+            for (const { from } of dropped) {
+                expect(archiveContent).not.toContain(`"^/?${from.slice(1).replace(/\./g, '\\.')}$"`);
+            }
             expect(archiveContent).not.toContain('RewriteRule "^/?charts/');
-            expect(archiveContent).not.toMatch(/RewriteRule \^ - \[S=\d+\]/);
+            expect(archiveContent).not.toContain('https://www.ag-grid.com/charts/');
+        });
+
+        it('skips exactly the emitted site rewrites on other hosts', () => {
+            const lines = archiveContent.split('\n').map((l) => l.trim());
+            const skipAt = lines.findIndex((l) => /^RewriteRule \^ - \[S=\d+\]$/.test(l));
+            const skip = Number(lines[skipAt].match(/S=(\d+)/)![1]);
+            const httpsAt = lines.findIndex((l) => l.startsWith('# Always use https'));
+            const skipped = lines.slice(skipAt + 1, httpsAt).filter((l) => l.startsWith('RewriteRule '));
+            expect(skipped).toHaveLength(skip);
+        });
+
+        it('lands every single-hop rewrite on a final URL inside the archive', () => {
+            // mod_alias matches the full path: Redirect by path-segment prefix, RedirectMatch by regex.
+            const aliasRules = archiveContent
+                .split('\n')
+                .map((l) => l.trim().match(/^(Redirect|RedirectMatch) \d{3} "?([^\s"]+)"?/))
+                .filter((m): m is RegExpMatchArray => m !== null);
+            const aliasMatches = (path: string) =>
+                aliasRules.some(([, directive, source]) =>
+                    directive === 'RedirectMatch'
+                        ? new RegExp(source).test(path)
+                        : path === source || path.startsWith(source.endsWith('/') ? source : `${source}/`)
+                );
+            const chained = SITE_SINGLE_HOP_REWRITES.flatMap(({ from }) => {
+                const target = firstHop(`${BASE}${from}`);
+                if (!target?.startsWith('https://')) {
+                    return []; // not a kept single-hop rewrite
+                }
+                const path = new URL(target).pathname;
+                return onHostTargets(path).length || aliasMatches(path) ? [`${from} -> ${target}`] : [];
+            });
+            expect(chained).toEqual([]);
         });
 
         it('makes the index.php and path-after-php fixes base-aware', () => {
