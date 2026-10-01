@@ -98,7 +98,11 @@ const markdownAccept = (): any =>
 export const allowlistRegex = (extended: boolean): string =>
     `(${[...nb.uaAllowTokens, ...(extended ? nb.pendingUaAllowTokens.tokens : [])].join('|')})`;
 
-function p11Statement(extended: boolean): any {
+/** Accept: text/markdown, only on the paths the origin negotiates. */
+const markdownOnNegotiablePaths = (): any =>
+    and(markdownAccept(), or(...CF_ACL.dataCentreMarkdownPaths.map((r) => regex('UriPath', r, ['NONE']))));
+
+function p11Statement(extended: boolean, scoped: boolean): any {
     return and(
         or(...nb.triggerLabels.map(label)),
         not(
@@ -107,7 +111,7 @@ function p11Statement(extended: boolean): any {
                 ...nb.exemptLabels.map(label),
                 ...nb.otherUaRegexes.map((r) => regex('header:user-agent', r, ['LOWERCASE'])),
                 and(regex('header:user-agent', nb.saliencebotUaRegex, ['LOWERCASE']), ipset(nb.saliencebotIpSet)),
-                markdownAccept()
+                scoped ? markdownOnNegotiablePaths() : markdownAccept()
             )
         ),
         not(or(...p11Safe()))
@@ -208,13 +212,17 @@ function cfStatements(): Record<string, (exp: RuleExpectation) => DeclaredRule['
             ),
         'block-credential-scanner-paths': (exp: RuleExpectation) =>
             one(rule(exp, regex('UriPath', CF_ACL.credentialScanner.regex, CF_ACL.credentialScanner.transforms))),
-        'block-nonbrowser-except-ai-assistants': (exp: RuleExpectation) => [
-            { rule: rule(exp, p11Statement(false), { Action: blockWith(nb.customBody) }) },
-            {
-                rule: rule(exp, p11Statement(true), { Action: blockWith(nb.customBody) }),
-                pending: nb.pendingUaAllowTokens.pending,
-            },
-        ],
+        // Two independent pending scripts edit p11: either, both or neither may have run.
+        'block-nonbrowser-except-ai-assistants': (exp: RuleExpectation) =>
+            [false, true].flatMap((extended) =>
+                [false, true].map((scoped) => ({
+                    rule: rule(exp, p11Statement(extended, scoped), { Action: blockWith(nb.customBody) }),
+                    pending:
+                        [extended && nb.pendingUaAllowTokens.pending, scoped && nb.markdownScopedPending]
+                            .filter(Boolean)
+                            .join('; ') || undefined,
+                }))
+            ),
         // move-datacenter-block-after-agent-exemptions.sh: p11's safe paths, and p11's Accept exemption
         // only on the paths the origin negotiates, copied.
         'block-datacenter-except-agent-paths': (exp: RuleExpectation) =>
@@ -223,15 +231,7 @@ function cfStatements(): Record<string, (exp: RuleExpectation) => DeclaredRule['
                     exp,
                     and(
                         label(CF_ACL.dataCentreLabel),
-                        not(
-                            or(
-                                ...CF_ACL.dataCentreVerifiedLabels.map(label),
-                                and(
-                                    markdownAccept(),
-                                    or(...CF_ACL.dataCentreMarkdownPaths.map((r) => regex('UriPath', r, ['NONE'])))
-                                )
-                            )
-                        ),
+                        not(or(...CF_ACL.dataCentreVerifiedLabels.map(label), markdownOnNegotiablePaths())),
                         not(or(...p11Safe()))
                     ),
                     { Action: blockWith(nb.customBody) }

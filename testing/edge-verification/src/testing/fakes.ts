@@ -204,7 +204,7 @@ export function cfAclRules(): any[] {
     for (const o of CF_ACL.managedGroups['AWS-AWSManagedRulesBotControlRuleSet'].pendingOverrides ?? []) {
         bot.RuleActionOverrides.push({ Name: o.name, ActionToUse: { [o.action]: {} } });
     }
-    return [...rules.map((r, i) => ({ Priority: i, ...r })), SHIELD_RULE];
+    return [...rules.map((r, i) => ({ Priority: i, ...r })), structuredClone(SHIELD_RULE)];
 }
 
 /** get-web-acl's WebACL: the declared settings around `rules`. */
@@ -230,7 +230,7 @@ export function albAclRules(): any[] {
     const declared = albDeclaredRules();
     return [
         ...ALB_ACL.rules.map((r, i) => ({ Priority: i, ...wire(declared.get(r.name)!.variants[0].rule, i) })),
-        SHIELD_RULE,
+        structuredClone(SHIELD_RULE),
     ];
 }
 
@@ -351,7 +351,10 @@ export function offlineCtx(aws: Aws, opts: Partial<Options> = {}): Ctx {
 export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRules()): any[] {
     const declared = cfDeclaredRules();
     const p11 = structuredClone(rules.find((r) => r.Name === 'block-nonbrowser-except-ai-assistants'));
-    p11.Statement = structuredClone(declared.get(p11.Name)!.variants[1].rule.Statement);
+    const extended = declared
+        .get(p11.Name)!
+        .variants.find((v) => v.pending === CF_ACL.nonBrowser.pendingUaAllowTokens.pending)!;
+    p11.Statement = structuredClone(extended.rule.Statement);
     const rate = structuredClone(declared.get(CF_ACL.nonBrowser.allowlistedAgentsRate.rule)!.variants[0].rule);
     const out: any[] = [];
     for (const r of rules) {
@@ -364,6 +367,31 @@ export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRu
         }
     }
     return out.map((r, i) => ({ ...r, Priority: r.Priority === 10000000 ? r.Priority : i }));
+}
+
+/**
+ * The ACL after tighten-p11-markdown-exemption.sh: p11's bare Accept exemption replaced, at the same
+ * position, by AND(it, OR(the negotiable-path regexes)). Applied to `rules`, so it combines with
+ * the other scripts' fixtures.
+ */
+export function cfAclRulesWithScopedP11(rules = cfAclRules()): any[] {
+    const scoped = cfDeclaredRules()
+        .get('block-nonbrowser-except-ai-assistants')!
+        .variants.find((v) => v.pending === CF_ACL.nonBrowser.markdownScopedPending)!;
+    const scopedAlt =
+        scoped.rule.Statement.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements.find(
+            (x: any) => x.AndStatement?.Statements?.[1]?.OrStatement
+        );
+    return rules.map((r) => {
+        if (r.Name !== 'block-nonbrowser-except-ai-assistants') {
+            return r;
+        }
+        const out = structuredClone(r);
+        const alts = out.Statement.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements;
+        const i = alts.findIndex((x: any) => x.ByteMatchStatement?.FieldToMatch?.SingleHeader?.Name === 'accept');
+        alts[i] = structuredClone(scopedAlt);
+        return out;
+    });
 }
 
 /** What a FakeHttp answers one request with. */
