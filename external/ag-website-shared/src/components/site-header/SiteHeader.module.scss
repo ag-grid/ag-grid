@@ -43,8 +43,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    // Containing block for the Products switcher's popup, which right-aligns to this
-    // box's trailing edge — see ../product-dropdown/ProductDropdown.module.scss.
+    // Containing block for the Products switcher's popup, which is positioned and
+    // clamped within this box — see ../product-dropdown/ProductDropdown.module.scss.
     position: relative;
     width: 100%;
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
