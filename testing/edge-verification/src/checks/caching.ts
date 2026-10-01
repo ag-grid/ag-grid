@@ -140,8 +140,13 @@ export function cachingChecks(): CheckDef[] {
                 await http.request({ method: 'HEAD', url, fresh: true });
                 const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT }, fresh: true });
                 const html = await http.request({ url, fresh: true });
+                // Both representations, in request order: a split that serves one entry to both
+                // (or a blocked markdown request) must not pass on the HTML alone.
                 const p = new Problems();
-                p.eq('HTML after markdown', contentType(html), 'text/html');
+                p.eq('markdown status', md.status, 200);
+                p.eq('markdown content-type', contentType(md), 'text/markdown');
+                p.eq('html status after markdown', html.status, 200);
+                p.eq('html content-type after markdown', contentType(html), 'text/html');
                 return p.outcome(`markdown ${md.status} ${contentType(md)} ${xCache(md)}; html ${xCache(html)}`);
             },
         },
