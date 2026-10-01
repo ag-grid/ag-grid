@@ -151,15 +151,15 @@ describe('Row numbers column autosize', () => {
 
     test('growing past a digit boundary keeps a column the user widened beyond the measured width', async () => {
         const api = await createGrid(97, { rowNumbers: { resizable: true } });
-        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 200 }]);
-        expect(rowNumberWidth(api)).toBe(200);
+        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 100 }]);
+        expect(rowNumberWidth(api)).toBe(100);
 
         api.applyTransaction({ add: makeRows(3, 97) });
         await pastDebounce();
-        expect(rowNumberWidth(api)).toBe(200);
+        expect(rowNumberWidth(api)).toBe(100);
 
-        api.applyTransaction({ add: makeRows(99_900, 100) });
-        await expectWidth(api, '100001');
+        api.applyTransaction({ add: makeRows(900, 100) });
+        await expectWidth(api, '1001');
     });
 
     test('a full rowData reset still re-sizes to fit, including shrinking', async () => {
