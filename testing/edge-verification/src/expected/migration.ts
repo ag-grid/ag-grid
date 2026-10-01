@@ -13,7 +13,8 @@ import { PENDING, finding } from './lifecycle';
  *   too depends on the block: until grid#15434 / #15435 it adds no slash, so the archive's own
  *   add-slash follows as a second hop; with them it carries the generator's canonicalising
  *   trailing-slash rule, which sends a slash-less directory URL on an alias host (or on http www)
- *   to the slashed www URL in one hop. The slash-less checks are pending on those PRs.
+ *   to the slashed www URL in one hop. The slash-less checks are pending on those PRs. (A bare
+ *   archive root, whose last segment has dots, is not this rule's: the live root .htaccess slashes it.)
  * - grid: removes every rule that leaves the archive (the prefix-dropping host and index.php rules,
  *   the single-hop rewrites such as react-data-grid/whats-new, live-URL redirects such as
  *   sitemap.xml); those URLs now 404 inside the archive, or take an in-archive redirect.
@@ -114,7 +115,10 @@ export const MIGRATION_PENDING = PENDING.archiveMigration;
  * No [QSD], so the query string is kept after the added slash.
  */
 export const SLASHLESS_RULE = {
-    /** CANONICAL_SLASH_HOSTS, on any port; www itself only on port 80. */
+    /**
+     * CANONICAL_SLASH_HOSTS, on any port. www on port 80 is in the rule too, but production's http
+     * vhost redirects every http request to https first, so only these hosts over https are probed.
+     */
     hosts: [
         'ag-grid.com',
         'angulargrid.ag-grid.com',
