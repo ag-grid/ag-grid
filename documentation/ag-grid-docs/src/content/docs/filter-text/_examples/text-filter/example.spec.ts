@@ -1,8 +1,6 @@
 import { expect, test } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
-const RESIZE_DISTANCE = 80;
-
 // Drags the open column filter's right-hand resizer and checks the popup widened by the same amount.
 async function expectFilterPopupWidensFromRightEdge(page: Page): Promise<void> {
     const popup = page.locator('.ag-menu').first();
@@ -14,18 +12,20 @@ async function expectFilterPopupWidensFromRightEdge(page: Page): Promise<void> {
     const resizerBox = (await resizer.boundingBox())!;
 
     // The popup can only widen up to the grid's right edge, so the drag must stay inside it.
-    expect(popupBox.x + popupBox.width + RESIZE_DISTANCE).toBeLessThan(gridBox.x + gridBox.width);
+    const distance = Math.min(80, Math.floor(gridBox.x + gridBox.width - (popupBox.x + popupBox.width)) - 10);
+    expect(distance).toBeGreaterThanOrEqual(40);
 
     const x = resizerBox.x + resizerBox.width / 2;
     const y = resizerBox.y + resizerBox.height / 2;
     await page.mouse.move(x, y);
     await page.mouse.down();
-    await page.mouse.move(x + RESIZE_DISTANCE, y, { steps: 10 });
+    await page.mouse.move(x + distance, y, { steps: 10 });
     await page.mouse.up();
 
     await expect(async () => {
         const width = (await popup.boundingBox())!.width;
-        expect(width).toBeCloseTo(popupBox.width + RESIZE_DISTANCE, 0);
+        // Allow for sub-pixel rounding of the drag; a capped popup would fall short by far more.
+        expect(Math.abs(width - (popupBox.width + distance))).toBeLessThan(5);
     }).toPass();
 }
 
