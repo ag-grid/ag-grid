@@ -4,6 +4,8 @@ import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack
 import type {
     AgColumn,
     BeanCollection,
+    ColDef,
+    DataTypeFormatValueFunc,
     ISetFilterParams,
     TextFormatter,
     ValueFormatterParams,
@@ -36,6 +38,12 @@ export function processDataPath(
         return processedDataPath.filter((treeKey) => treeKey != null);
     }
     return processedDataPath;
+}
+
+/** The key creator a data type gives its columns, which keys each value by its formatted text. */
+export function getDataTypeKeyCreator(beans: BeanCollection, colDef: ColDef): DataTypeFormatValueFunc | undefined {
+    const cellDataType = colDef.cellDataType;
+    return typeof cellDataType === 'string' ? beans.dataTypeSvc?.getFormatValue(cellDataType) : undefined;
 }
 
 /**

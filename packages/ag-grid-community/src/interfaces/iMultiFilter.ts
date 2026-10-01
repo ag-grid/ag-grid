@@ -33,7 +33,7 @@ export interface IMultiFilterDef extends IFilterDef {
     /** The title to be used when a filter is displayed inside a sub-menu or accordion. */
     title?: string;
 
-    /** Child filter component to use inside the Multi Filter. */
+    /** Child filter component to use inside the Multi Filter. Set to `true` to use the Text Filter. */
     filter?: IFilterType | ColumnFilter;
     /** Custom parameters to be passed to the child filter component. */
     filterParams?: any;
@@ -43,8 +43,8 @@ export interface IMultiFilterDef extends IFilterDef {
     floatingFilterComponentParams?: any;
     /**
      * Function or expression. Gets the value for filtering purposes.
-     * Allows for different values to be used for child filters
-     * instead of using `colDef.filterValueGetter`.
+     * Allows for different values to be used for child filters instead of the Multi Filter's own:
+     * `colDef.filterValueGetter`, or that of the Selectable Filter definition the Multi Filter is chosen from.
      */
     filterValueGetter?: string | ValueGetterFunc;
 }

@@ -18,6 +18,7 @@ import {
     PaginationModule,
     PinnedRowModule,
     TextFilterModule,
+    getGridElement,
 } from 'ag-grid-community';
 import type { GridApi, GridOptions, GridState, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
 import {
@@ -81,6 +82,33 @@ describe('Manual pinned rows', () => {
 
     afterEach(() => {
         gridsManager.reset();
+    });
+
+    test('a row pinned after render takes the height getRowHeight gives the pinned row, not its source', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            getRowHeight: ({ node }) => (node.rowPinned ? ((node as RowNode).pinnedSibling ? 30 : 99) : 50),
+        });
+        await asyncSetTimeout(0);
+        const football = api.getDisplayedRowAtIndex(0)!;
+        football.setRowHeight(80);
+        api.onRowHeightChanged();
+
+        api.setGridOption('isRowPinned', (node) =>
+            node.data?.sport === 'rugby' || node.data?.sport === 'football' ? 'top' : null
+        );
+
+        await waitFor(() =>
+            expect(getPinnedRows(api, 'top').map((node) => node.data.sport)).toEqual(['football', 'rugby'])
+        );
+        const [pinnedFootball, pinnedRugby] = getPinnedRows(api, 'top');
+        expect(pinnedFootball.rowHeight).toBe(30);
+        expect(football.rowHeight).toBe(80);
+        expect(pinnedRugby.rowHeight).toBe(30);
+        expect(pinnedRugby.pinnedSibling!.rowHeight).toBe(50);
+        expect(pinnedRugby.rowTop).toBe(30);
     });
 
     test('exports manually pinned rows and optionally omits their body duplicates', async () => {
@@ -335,6 +363,57 @@ describe('Manual pinned rows', () => {
             └── LEAF id:6 sport:"rowing"
             PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
         `);
+    });
+
+    test('a grand total pinned by `grandTotalRow` stays there when a context menu item pins or unpins it', async () => {
+        const restoreOffsetParent = polyfillOffsetParent();
+        try {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                enableRowPinning: true,
+                grandTotalRow: 'pinnedBottom',
+                getContextMenuItems: () => ['pinTop', 'unpinRow'],
+            });
+            const pinnedBottomElements = () => getGridElement(api)!.querySelectorAll('.ag-row-pinned[row-index^="b"]');
+            const expectPinnedBottomOnly = () => {
+                assertPinnedRows(api, 'top', []);
+                assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+                expect(pinnedBottomElements().length).toBe(1);
+            };
+            await waitFor(() => expect(pinnedBottomElements().length).toBe(1));
+            const modelUpdated = vi.fn();
+            api.addEventListener('modelUpdated', modelUpdated);
+
+            for (const option of ['Pin to Top', 'Unpin Row']) {
+                await userEvent.pointer({
+                    keys: '[MouseRight]',
+                    target: pinnedBottomElements()[0].querySelector<HTMLElement>('.ag-cell')!,
+                });
+                await clickMenuOption(option);
+                await asyncSetTimeout(0);
+                expectPinnedBottomOnly();
+            }
+            expect(modelUpdated).not.toHaveBeenCalled(); // nothing to re-map when the pin is refused
+        } finally {
+            restoreOffsetParent();
+        }
+    });
+
+    test('a grand total pinned by `grandTotalRow` stays there when the row pinning state names it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'pinnedBottom',
+        });
+
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await asyncSetTimeout(0);
+
+        assertPinnedRows(api, 'top', []);
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
     });
 
     test('can move position of pinned grand total row with `grandTotalRow`', async () => {
@@ -1521,6 +1600,16 @@ describe('Manual pinned rows', () => {
             return api;
         };
 
+        // the pinned row font weight etc. reach a spanned cell only through its own spanned row
+        const SPANNED_PIN_CLASSES = { 't-top-1': ['ag-row-pinned'], '1': ['ag-row-pinned-source'] };
+        const spannedRowPinClasses = () =>
+            Object.fromEntries(
+                Array.from(document.querySelectorAll('#myGrid .ag-spanned-row'), (row) => [
+                    row.getAttribute('row-id'),
+                    Array.from(row.classList).filter((c) => c === 'ag-row-pinned' || c === 'ag-row-pinned-source'),
+                ])
+            );
+
         const rightClickCell = async (rowId: string) => {
             const cell = await waitFor(() => {
                 const found = document.querySelector<HTMLElement>(`#myGrid .ag-row[row-id="${rowId}"] .ag-cell`);
@@ -1591,6 +1680,23 @@ describe('Manual pinned rows', () => {
                 ├── LEAF id:2 country:"Ireland"↥ sport:"Hurling"
                 └── LEAF id:3 country:"Italy" sport:"Cycling"
             `);
+            await waitFor(() => expect(spannedRowPinClasses()).toEqual(SPANNED_PIN_CLASSES));
+        });
+
+        test('spanned cells of a row pinned from initial state carry the pinned row styling', async () => {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', spanRows: true }, { field: 'sport' }],
+                rowData: [
+                    { id: '1', country: 'Ireland', sport: 'Rugby' },
+                    { id: '2', country: 'Ireland', sport: 'Hurling' },
+                    { id: '3', country: 'Italy', sport: 'Cycling' },
+                ],
+                getRowId: (params) => params.data.id,
+                enableRowPinning: true,
+                enableCellSpan: true,
+                initialState: { rowPinning: { top: ['1', '2'], bottom: [] } },
+            });
+            await waitFor(() => expect(spannedRowPinClasses()).toEqual(SPANNED_PIN_CLASSES));
         });
 
         test('pinning a cell range that includes an already pinned row pins only the others', async () => {

@@ -36,7 +36,9 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/documen
 
 <Layout
     title={'AG Grid Documentation Archive'}
-    description={'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.'}
+    description={
+        'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.'
+    }
     showDocsNav={true}
     showSearchBar={true}
     markdownUrl={markdownUrl}
@@ -51,16 +53,14 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/documen
                 <article>
                     <p>Review documentation for previous AG Grid versions.</p>
 
-                    {
-                        majors.map((major) => {
-                            return (
-                                <>
-                                    <h2 id={`version-${major}`}>Version {major}</h2>
-                                    <MajorTable library="grid" major={major} type="archive" />
-                                </>
-                            );
-                        })
-                    }
+                    {majors.map((major) => {
+                        return (
+                            <>
+                                <h2 id={`version-${major}`}>Version {major}</h2>
+                                <MajorTable library="grid" major={major} type="archive" />
+                            </>
+                        );
+                    })}
                 </article>
             </div>
         </div>

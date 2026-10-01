@@ -54,13 +54,7 @@ import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
-import {
-    _getColSpanningList,
-    _initCellPosition,
-    _onCellLeftChanged,
-    _onCellWidthChanged,
-    _setupCellPosition,
-} from './cellPositionFeature';
+import { _initCellPosition, _onCellLeftChanged, _onCellWidthChanged } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -106,6 +100,8 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     public eGui: HTMLElement;
 
@@ -123,9 +119,12 @@ export class CellCtrl extends BeanStub {
 
     public lastIPadMouseClickEvent = 0;
 
-    // per-cell positioning state, owned by the cell position functions (rendering/cell/cellPositionFeature)
-    public colsSpanning?: AgColumn[];
-    public rowSpan = 1;
+    /** The columns this cell covers, kept by `cellPositionFeature`; null until it first spans past its own. */
+    public colsSpanning: AgColumn[] | null = null;
+    /** The `displayedColsVersion` `colsSpanning` was taken at. */
+    public colsSpanningVersion = -1;
+    /** The rows the legacy `colDef.rowSpan` spans; a `spanRows` cell has a `cellSpan` instead. */
+    public legacyRowSpan = 1;
 
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
@@ -166,7 +165,9 @@ export class CellCtrl extends BeanStub {
         public readonly column: AgColumn,
         public readonly rowNode: RowNode,
         beans: BeanCollection,
-        public readonly rowCtrl: RowCtrl
+        public readonly rowCtrl: RowCtrl,
+        /** The `colDef.spanRows` span this cell draws, with `enableCellSpan`; such a cell sizes itself. */
+        public readonly cellSpan: CellSpan | null
     ) {
         super();
         this.beans = beans;
@@ -181,15 +182,17 @@ export class CellCtrl extends BeanStub {
         if (!this.isClientSideLoadingCell()) {
             this.updateAndFormatValue(false);
         }
-        // must stay in the constructor, not setComp — see _setupCellPosition
-        _setupCellPosition(beans, this);
+        // read before mount so a data change can compare against it
+        if (cellSpan === null) {
+            this.legacyRowSpan = column.getRowSpan(rowNode);
+        }
     }
 
     private isClientSideLoadingCell(): boolean {
         return _isClientSideLoadingRow(this.gos, this.rowNode);
     }
 
-    private addFeatures(): void {
+    private addFeatures(compBean: BeanStub): void {
         const { beans } = this;
 
         this.enableTooltipFeature();
@@ -204,15 +207,7 @@ export class CellCtrl extends BeanStub {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
 
-        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this);
-    }
-
-    public isCellSpanning(): boolean {
-        return false;
-    }
-
-    public getCellSpan(): CellSpan | undefined {
-        return undefined;
+        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this, compBean);
     }
 
     private removeFeatures(): void {
@@ -279,7 +274,7 @@ export class CellCtrl extends BeanStub {
         this.addDomData(compBean);
         const isClientSideLoadingCell = this.isClientSideLoadingCell();
         if (!isClientSideLoadingCell) {
-            this.addFeatures();
+            this.addFeatures(compBean);
             compBean.addDestroyFunc(() => this.removeFeatures());
         }
 
@@ -782,10 +777,6 @@ export class CellCtrl extends BeanStub {
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         _onCellMouseEvent(this.beans, this, eventName, mouseEvent);
-    }
-
-    public getColSpanningList(): AgColumn[] {
-        return _getColSpanningList(this.beans, this);
     }
 
     public onLeftChanged(): void {

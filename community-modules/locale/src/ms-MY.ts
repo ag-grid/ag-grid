@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     clearFilter: 'Kosongkan',
     cancelFilter: 'Batal',
     cancelColumnToolPanel: 'Batal',
+    resetColumnToolPanel: 'Set Semula',
 
     // Filter Titles
     textFilter: 'Penapis Teks',

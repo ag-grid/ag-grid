@@ -112,13 +112,13 @@ const hashInlineScript = (source: string): string =>
 //      hash the inline <script> contents in dist and diff against the list below.)
 //   4. Replace the hashes below with the new values, and bump
 //      ASTRO_HYDRATION_HASHES_VERIFIED_FOR to the new Astro version.
-export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '6.1.9';
+export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '7.3.4';
 const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='", // client:load bootstrap
     "'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc='", // client:only bootstrap
     "'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q='", // client:visible bootstrap
     "'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='", // client:idle bootstrap
-    "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
+    "'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U='", // <astro-island> hydration runtime
 ];
 
 // Inline scripts injected by third parties — the shared Google Tag Manager container and the

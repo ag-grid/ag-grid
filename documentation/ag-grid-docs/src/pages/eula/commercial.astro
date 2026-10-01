@@ -25,19 +25,21 @@ const sections = getPolicySections(eulaSource);
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    {content.meta.map((line) => <h4 set:html={line} />)}
-                    {content.intro.map((line) => <p set:html={line} />)}
+                    {content.meta.map((line) => (
+                        <h4 set:html={line} />
+                    ))}
+                    {content.intro.map((line) => (
+                        <p set:html={line} />
+                    ))}
                 </div>
 
                 <nav>
                     <ul class="list-style-none">
-                        {
-                            sections.map(({ id, title }) => (
-                                <li>
-                                    <a href={`#${id}`}>{title}</a>
-                                </li>
-                            ))
-                        }
+                        {sections.map(({ id, title }) => (
+                            <li>
+                                <a href={`#${id}`}>{title}</a>
+                            </li>
+                        ))}
                     </ul>
                 </nav>
             </header>

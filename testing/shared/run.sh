@@ -142,8 +142,18 @@ if ${production} ; then
     echo ">>> npm i ag-grid-${fw} (production)"
     npm i ag-grid-${fw} @playwright/test@${playwright_version} --cache ${cache_location}
 else
-    echo ">>> npm i ../ag-grid*.tgz"
-    npm i ../ag-stack.tgz ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz @playwright/test@${playwright_version} --cache ${cache_location} --registry https://registry.ag-grid.com/
+    # Local grid builds depend on pre-release AG Charts packages that are only on the AG registry.
+    # Fetch just those as tarballs, so everything else (including the framework) comes from npm.
+    charts_version=$(tar -xOzf ../ag-grid-community.tgz package/package.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).dependencies['ag-charts-types']")
+    echo ">>> npm pack ag-charts-*@${charts_version}"
+    charts_packages=()
+    for charts_package in types core locale community enterprise ; do
+        charts_packages+=("ag-charts-${charts_package}@${charts_version}")
+    done
+    npm pack "${charts_packages[@]}" --pack-destination .. --loglevel warn --cache ${cache_location} --registry https://registry.ag-grid.com/
+
+    echo ">>> npm i ../ag-grid*.tgz ../ag-charts-*.tgz"
+    npm i ../ag-stack.tgz ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz ../ag-charts-*.tgz @playwright/test@${playwright_version} --cache ${cache_location}
 fi
 
 patch_dir=../patches

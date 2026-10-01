@@ -241,6 +241,100 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     }
 }
 
+// Seed project links: a StackBlitz and a GitHub button beneath the CTAs, so the "get started" pair
+// keeps its prominence. Placement is provisional pending design review.
+.openIn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-3;
+    margin: $spacing-size-4 0 0;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        justify-content: flex-start;
+    }
+}
+
+// Anchors the framework list to its button.
+.openInMenu {
+    position: relative;
+}
+
+.openInButton {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    cursor: pointer;
+    // A <summary> otherwise draws a disclosure triangle of its own.
+    list-style: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+    }
+}
+
+.openInChevron {
+    transition: transform 0.15s ease-out;
+
+    details[open] & {
+        transform: rotate(180deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+}
+
+// Same surface as the site's other dropdown menus (MarkdownActions).
+.openInList {
+    position: absolute;
+    top: calc(100% + #{$spacing-size-1});
+    left: 0;
+    z-index: 10;
+    min-width: 100%;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+}
+
+.openInLink {
+    display: block;
+    padding: $spacing-size-2 12px;
+    border-radius: 3px;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: var(--color-text-primary);
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            color: var(--color-fg-white);
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}
+
 .demoCard {
     position: relative;
     // The demo has no usable small-screen form: it is held at $demo-held-width, so a phone

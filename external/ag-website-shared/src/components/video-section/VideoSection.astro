@@ -17,7 +17,9 @@ const link = `https://www.youtube.com/watch?v=${id}${playlist ? `&list=${playlis
 ---
 
 <div class={styles.videoSection}>
-    <div class:list={{ [styles.header]: showHeader }}><slot /></div>
+    <div class:list={{ [styles.header]: showHeader }}>
+        <slot />
+    </div>
     <a href={link} target="_blank">
         <div class={styles.ytContainer}>
             <img src={`https://img.youtube.com/vi/${id}/0.jpg`} alt={`${title} thumbnail`} class={styles.ytThumbnail} />

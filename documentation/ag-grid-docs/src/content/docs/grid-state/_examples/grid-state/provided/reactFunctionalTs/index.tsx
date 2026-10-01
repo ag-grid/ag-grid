@@ -76,22 +76,41 @@ const GridExample = () => {
     const toolbar = useMemo<Toolbar>(() => ({ items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] }), []);
     const [initialState, setInitialState] = useState<GridState>();
     const [currentState, setCurrentState] = useState<GridState>();
+    const [savedState, setSavedState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);
+    // Whether the next destroy should carry its state over to the recreated grid.
+    const keepStateOnDestroy = useRef(true);
 
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
-    const reloadGrid = useCallback(() => {
+    const recreateGrid = useCallback((keepState: boolean) => {
+        keepStateOnDestroy.current = keepState;
         setGridVisible(false);
         setTimeout(() => {
             setGridVisible(true);
         });
     }, []);
 
+    const recreateWithCurrentState = useCallback(() => recreateGrid(true), [recreateGrid]);
+    const recreateWithNoState = useCallback(() => recreateGrid(false), [recreateGrid]);
+
     const onGridPreDestroyed = useCallback((params: GridPreDestroyedEvent<IOlympicData>) => {
         const { state } = params;
         console.log('Grid state on destroy (can be persisted)', state);
-        setInitialState(state);
+        setInitialState(keepStateOnDestroy.current ? state : undefined);
     }, []);
+
+    const saveState = useCallback(() => {
+        console.log('Saved state', currentState);
+        setSavedState(currentState);
+    }, [currentState]);
+
+    const setState = useCallback(() => {
+        if (savedState) {
+            gridRef.current!.api.setState(savedState);
+            console.log('Set state', savedState);
+        }
+    }, [savedState]);
 
     const onStateUpdated = useCallback((params: StateUpdatedEvent<IOlympicData>) => {
         console.log('State updated', params.state);
@@ -108,7 +127,10 @@ const GridExample = () => {
                 <div className="example-wrapper">
                     <div>
                         <span className="button-group">
-                            <button onClick={reloadGrid}>Recreate Grid with Current State</button>
+                            <button onClick={recreateWithCurrentState}>Recreate with State</button>
+                            <button onClick={saveState}>Save State</button>
+                            <button onClick={recreateWithNoState}>Recreate without State</button>
+                            <button onClick={setState}>Set State</button>
                             <button onClick={printState}>Print State</button>
                         </span>
                     </div>

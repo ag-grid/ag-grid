@@ -27,8 +27,12 @@ const content = POLICY_CONTENT.privacy;
 
             <header>
                 <div id="introduction" class={styles.introduction}>
-                    {content.meta.map((line) => <h4 set:html={line} />)}
-                    {content.intro.map((line) => <p set:html={line} />)}
+                    {content.meta.map((line) => (
+                        <h4 set:html={line} />
+                    ))}
+                    {content.intro.map((line) => (
+                        <p set:html={line} />
+                    ))}
                 </div>
 
                 <nav>

@@ -56,11 +56,13 @@ export class CellSpan {
     }
 
     /**
-     * Gets the auto height value for last node in the spanned cell.
-     * The first node is used to store the auto height for the cell, but the additional height for this cell
-     * needs applied to the last row in the span.
+     * The height `row` needs for the cell measured on the first row: only the last row carries it, less the rows
+     * above (0 or less once they cover it). Null for the other rows, undefined until measured.
      */
-    public getLastNodeAutoHeight(): number | undefined {
+    public getRowAutoHeight(row: RowNode): number | null | undefined {
+        if (row !== this.lastNode) {
+            return null;
+        }
         const autoHeight = this.firstNode.__autoHeights?.[this.col.colId];
         if (autoHeight == null) {
             return undefined;

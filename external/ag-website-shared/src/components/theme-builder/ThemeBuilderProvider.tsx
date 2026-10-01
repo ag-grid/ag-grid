@@ -3,9 +3,10 @@ import { type ReactNode, useLayoutEffect, useMemo, useState } from 'react';
 
 import { allParamModels } from '../../theming/ParamModel';
 import { allFeatureModels } from '../../theming/PartModel';
-import { addChangedModelItem, getChangedModelItemCount } from '../../theming/changed-model-items';
+import { addChangedModelItem } from '../../theming/changed-model-items';
 import { type Preset, applyPreset } from '../../theming/preset';
 import { initialiseStore } from '../../theming/store';
+import { hasStoredModel } from '../../theming/stored-model';
 
 interface Props {
     initialPreset: Preset;
@@ -17,8 +18,7 @@ export const ThemeBuilderProvider = ({ initialPreset, children }: Props) => {
     const [initialised, setInitialised] = useState(false);
 
     useLayoutEffect(() => {
-        const hasChanges = getChangedModelItemCount(store) !== 0;
-        if (!hasChanges) {
+        if (!hasStoredModel(store)) {
             applyPreset(store, initialPreset);
         }
         const detectChange = (name: string) => {

@@ -75,17 +75,15 @@ const heroHeading = contactResultsData[type].heroHeading;
 
             <section class={styles.resourcesSection}>
                 <div class={styles.resourcesGrid}>
-                    {
-                        resources.map(({ title, description, linkText, linkUrl }) => (
-                            <div class={styles.resourceCard}>
-                                <h3>{title}</h3>
-                                <p>{description}</p>
-                                <a href={linkUrl} class={styles.resourceLink}>
-                                    {linkText} →
-                                </a>
-                            </div>
-                        ))
-                    }
+                    {resources.map(({ title, description, linkText, linkUrl }) => (
+                        <div class={styles.resourceCard}>
+                            <h3>{title}</h3>
+                            <p>{description}</p>
+                            <a href={linkUrl} class={styles.resourceLink}>
+                                {linkText} →
+                            </a>
+                        </div>
+                    ))}
                 </div>
             </section>
         </div>

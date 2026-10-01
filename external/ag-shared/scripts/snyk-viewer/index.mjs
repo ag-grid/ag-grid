@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import { readFileSync, writeFileSync, mkdirSync, unlinkSync, readdirSync, renameSync, existsSync, statSync } from 'fs';
 import { resolve, dirname, sep } from 'path';
 import { fileURLToPath } from 'url';
-import jsYaml from 'js-yaml';
+import { dump } from 'js-yaml';
 import { exec, spawn } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -231,7 +231,7 @@ function addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires) {
     // Dump as a single-key mapping, strip the ": null" value, then append ":".
     // e.g. "@nx/foo@1 > bar@2"  →  "'@nx/foo@1 > bar@2':"
     //      "vitest@2 > vite@3"  →  "vitest@2 > vite@3:"
-    const quotedKey = jsYaml.dump({ [depPath]: null }, { lineWidth: -1 })
+    const quotedKey = dump({ [depPath]: null }, { lineWidth: -1 })
         .trim()
         .replace(/:\s*null\s*$/, '') + ':';
 

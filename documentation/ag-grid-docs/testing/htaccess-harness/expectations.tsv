@@ -94,6 +94,13 @@ www	/archive/	301	/documentation-archive/
 # --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200
+www	/react-data-grid/	200
+www	/angular-data-grid/	200
+www	/vue-data-grid/	200
+# All three hubs behave the same from the apex: host swap only, no forward on to getting-started.
+apex	/react-data-grid/	301	https://www.ag-grid.com/react-data-grid/
+apex	/angular-data-grid/	301	https://www.ag-grid.com/angular-data-grid/
+apex	/vue-data-grid/	301	https://www.ag-grid.com/vue-data-grid/
 www	/charts/react/bar-series/	200
 
 # ── SE-91/SE-86: blog.ag-grid.com -> www.ag-grid.com/blog/ ────────────────────────────
@@ -116,7 +123,7 @@ blog	/whats-new-in-ag-grid-v24/	410
 blog	/tag/react	301	https://www.ag-grid.com/blog/tag/react-data-grid/
 blog	/conferences-ag-grid-amsterdam-june-2022/	301	https://www.ag-grid.com/blog/js-nation-and-react-summit-june-2022-overview/
 blog	/getting-more-from-your-datagrid-introducing-adaptable/	301	https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/
-blog	/javascript-grid-comparison-column-pinning-ag-grid/	301	https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/
+blog	/javascript-grid-comparison-column-pinning-ag-grid/	301	https://www.ag-grid.com/react-data-grid/column-pinning/
 blog	/whats-new-in-ag-studio-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/
 blog	/whats-new-in-ag-studio-2-1/	301	https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-1-javascript-embedded-analytics/
 # Leaves the blog entirely — target is a main-site docs page
@@ -231,6 +238,7 @@ blog	/football-stats-direct/	301	https://www.ag-grid.com/blog/
 blog	/football-stats-direct-interview/	301	https://www.ag-grid.com/blog/
 blog	/free-online-training-for-ag-grid-in-react-and-angular/	301	https://www.ag-grid.com/react-data-grid/getting-started/
 blog	/game-of-charts/	301	https://www.ag-grid.com/charts/gallery/
+blog	/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/	301	https://www.ag-grid.com/react-data-grid/column-pinning/
 blog	/how-to-write-a-podcast-app-using-react/	301	https://www.ag-grid.com/blog/
 blog	/implementing-infinite-loading-in-an-angular-store-application/	301	https://www.ag-grid.com/angular-data-grid/infinite-scrolling/
 blog	/proof-trading-case-study/	301	https://www.ag-grid.com/blog/
@@ -253,6 +261,7 @@ blog	/webpack-tutorial-understanding-ngtools-webpack/	301	https://www.ag-grid.co
 # The /amp/ form must reach the final destination too, not the generic /amp/ strip rule
 blog	/testing-ag-grid-react-jest-enzyme/amp/	301	https://www.ag-grid.com/react-data-grid/testing/
 blog	/ag-grid-vuex-creating-a-modern-user-widget/amp/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
+blog	/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/amp/	301	https://www.ag-grid.com/react-data-grid/column-pinning/
 
 # SE-93 adversarial variant-suffix audit. A 410 must reject every shape under the slug:
 # matching only an enumerated suffix set let /feed/, stacked suffixes and case variants

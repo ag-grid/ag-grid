@@ -1,8 +1,11 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex, isElementDisplayed } from 'ag-test-utils';
 
 import type { RowSelectedEvent } from 'ag-grid-community';
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { columnDefs, createGrid, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -195,6 +198,89 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = createGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+            });
+
+            test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
+                const [api, actions] = createGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.selectRowsByIndex([1, 3, 5], true);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+                await new GridRows(
+                    api,
+                    `with click toggle, clicking a selected row still reduces a wider selection to it after reducing`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF selected id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+            });
+
+            test('with click toggle, deselecting by click forwards the browser click event', async () => {
+                const events: RowSelectedEvent[] = [];
+                const [api, actions] = createGrid(
+                    {
+                        columnDefs,
+                        rowData,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                            checkboxes: false,
+                        },
+                        onRowSelected: (event) => events.push(event),
+                    },
+                    clickToggleSelection
+                );
+
+                const selectClick = actions.clickRowByIndex(3);
+                const deselectClick = actions.clickRowByIndex(3);
+
+                // gridOptions callbacks are dispatched asynchronously via setTimeout
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                assertSelectedRowsByIndex([], api);
+                expect(events.map(({ event }) => event)).toEqual([selectClick, deselectClick]);
             });
 
             test('Disabled checkbox shown when `isRowSelectable` returns `true` and `checkboxes` returns `false`', () => {

@@ -356,7 +356,10 @@ export interface _KeyboardNavigationGridApi {
     /** Clears the focused cell. */
     clearFocusedCell(): void;
 
-    /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
+    /**
+     * Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned).
+     * A column that a drawn `colSpan` covers focuses the cell spanning it, as keyboard navigation does.
+     */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
 
     /** Sets the focus to the specified header. If `floatingFilter` is true, the Column's floatingFilter element will be focused. */
@@ -720,7 +723,7 @@ export interface _ColumnGridApi<TData> {
     getColumnState(): ColumnState[];
 
     /**
-     * Sets the state back to match the originally provided column definitions.
+     * Resets the column state to match the current column definitions, i.e. the `columnDefs` most recently provided to the grid.
      * @agModule `ColumnApiModule`
      */
     resetColumnState(): void;
@@ -828,7 +831,7 @@ export interface _ColumnGroupGridApi {
     /** Sets the state of the column group state from a previous state. */
     setColumnGroupState(stateItems: { groupId: string; open: boolean }[]): void;
 
-    /** Sets the state back to match the originally provided column definitions. */
+    /** Resets the column group state to match the current column definitions, i.e. the `columnDefs` most recently provided to the grid. */
     resetColumnGroupState(): void;
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
@@ -1221,9 +1224,9 @@ export interface _StateGridApi {
     /**
      * Set the current state of the grid.
      * Can be used in conjunction with `api.getState()` or `onStateUpdated` to save and restore grid state.
-     * This method should only be used to restore state;
-     * it should not be called on every state update (the grid does not support being used as a controlled component).
-     * @param propertiesToIgnore If supplied, the existing state of the provided properties will be maintained.
+     * The provided state replaces the grid state rather than patching it: every section it omits is reset unless listed in `propertiesToIgnore`.
+     * @param propertiesToIgnore Top-level state sections to leave as they are, e.g. `['filter']` keeps the current filters.
+     * @agModule `GridStateModule`
      */
     setState(state: GridState, propertiesToIgnore?: GridStateKey[]): void;
 }

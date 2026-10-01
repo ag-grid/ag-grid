@@ -1193,8 +1193,8 @@
         },
         "setState": {
             "more": {
-                "name": "Setting State",
-                "url": "./grid-state/#setting-state"
+                "name": "Restore via API",
+                "url": "./grid-state/#restore-via-api"
             }
         }
     },

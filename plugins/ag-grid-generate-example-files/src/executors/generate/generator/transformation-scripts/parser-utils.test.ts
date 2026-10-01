@@ -1,8 +1,11 @@
 import {
     DARK_INTEGRATED_END,
     DARK_INTEGRATED_START,
+    extractDevValidationsArgs,
     getIntegratedDarkModeCode,
     getIntegratedDarkModeInitialChartThemesCode,
+    getVanillaDevValidationsPreamble,
+    removeModuleRegistration,
 } from './parser-utils';
 
 describe('getIntegratedDarkModeCode', () => {
@@ -91,5 +94,46 @@ describe('getIntegratedDarkModeInitialChartThemesCode', () => {
         ])!;
 
         expect(code).not.toContain('import {');
+    });
+});
+
+describe('dev validations guard', () => {
+    const guarded = (call: string) =>
+        `if (process.env.NODE_ENV !== 'production') {\n    // Enable extended validations only for development\n    ${call};\n}\n\nconst x = 1;\n`;
+
+    it('strips a bare guard and builds a bare preamble', () => {
+        const code = guarded('agGrid.enableDevValidations()');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('');
+        expect(getVanillaDevValidationsPreamble(extractDevValidationsArgs(code))).toBe(
+            '// Enable extended validations only for development\nagGrid.enableDevValidations();'
+        );
+    });
+
+    it('strips a guard with { debug: true } and keeps the args in the preamble', () => {
+        const code = guarded('agGrid.enableDevValidations({ debug: true })');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('{ debug: true }');
+        expect(getVanillaDevValidationsPreamble(extractDevValidationsArgs(code))).toBe(
+            '// Enable extended validations only for development\nagGrid.enableDevValidations({ debug: true });'
+        );
+    });
+
+    it('strips a guard with { showOverlayOn: [] } preceded by a comment line', () => {
+        const code = `// The overlay is turned off.\n${guarded('agGrid.enableDevValidations({ showOverlayOn: [] })')}`;
+        const stripped = removeModuleRegistration(code);
+        expect(stripped).toBe('\nconst x = 1;\n');
+        expect(stripped).not.toContain('process.env');
+        expect(extractDevValidationsArgs(code)).toBe('{ showOverlayOn: [] }');
+    });
+
+    it('keeps multi-line args containing a commented-out option', () => {
+        const code = guarded('enableDevValidations({\n        // debug: true\n    })');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('{\n        // debug: true\n    }');
+    });
+
+    it('returns empty args when there is no guard', () => {
+        expect(extractDevValidationsArgs('const x = 1;')).toBe('');
     });
 });

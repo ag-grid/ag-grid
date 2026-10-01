@@ -113,7 +113,14 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
             return undefined;
         }
 
-        return ctrl.getAllCellCtrls().find((cellCtrl) => cellCtrl.column === cellPosition.column);
+        return ctrl.getCellCtrl(cellSpan.col, true);
+    }
+
+    /** Refreshes the rows rendering the spans `node` starts, which the row renderer does not hold. */
+    public refreshRowsOf(node: RowNode): void {
+        this.topCtrls.get(node)?.refreshRow();
+        this.bottomCtrls.get(node)?.refreshRow();
+        this.centerCtrls.get(node)?.refreshRow();
     }
 
     public getCtrls(container: SpannedRowContainerType): RowCtrl[] {

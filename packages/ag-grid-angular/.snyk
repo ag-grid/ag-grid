@@ -1,6 +1,29 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-HTTPCACHESEMANTICS-19964068:
+    - '@angular/cli@20.3.35 > pacote@21.5.1 > npm-registry-fetch@19.1.1 > make-fetch-happen@15.0.5 > http-cache-semantics@4.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T10:04:26.805Z
+  SNYK-JS-HTTPCACHESEMANTICS-19964064:
+    - '@angular/cli@20.3.35 > pacote@21.5.1 > npm-registry-fetch@19.1.1 > make-fetch-happen@15.0.5 > http-cache-semantics@4.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:38:20.445Z
+  SNYK-JS-BRACES-19963945:
+    - karma@6.4.4 > chokidar@3.6.0 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.489Z
+    - karma@6.4.4 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-09-24T09:36:23.487Z
   SNYK-JS-UNDICI-19635226:
     - '@angular/cli@20.3.35 > pacote@21.5.1 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.28.0':
         reason: >-

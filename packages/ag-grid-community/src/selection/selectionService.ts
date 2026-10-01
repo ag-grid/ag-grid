@@ -2,6 +2,7 @@ import type { GridApi } from '../api/gridApi';
 import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { NamedBean } from '../context/bean';
+import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions, RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
@@ -80,13 +81,20 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     public handleSelectionEvent(
         event: MouseEvent | KeyboardEvent,
         rowNode: RowNode,
-        source: SelectionEventSourceType
+        source: SelectionEventSourceType,
+        column?: AgColumn
     ): number {
         if (this.isRowSelectionBlocked(rowNode)) {
             return 0;
         }
 
-        const selection = this.inferNodeSelections(rowNode, event.shiftKey, event.metaKey || event.ctrlKey, source);
+        const selection = this.inferNodeSelections(
+            rowNode,
+            event.shiftKey,
+            event.metaKey || event.ctrlKey,
+            source,
+            column
+        );
 
         if (selection == null) {
             return 0;
@@ -266,6 +274,25 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return this.selectedNodes.size;
     }
 
+    protected isSoleSelection(node: RowNode): boolean {
+        const { selectedNodes } = this;
+        if (node.isSelected() !== true) {
+            return false;
+        }
+
+        if (!this.groupSelectsDescendants) {
+            return selectedNodes.size === 1 && selectedNodes.get(node.id!) === node;
+        }
+
+        // a group selected with its descendants is computed, not stored (see `selectRowNode`)
+        for (const selected of selectedNodes.values()) {
+            if (selected !== node && !isDescendantOf(node, selected)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Drops a node leaving the model (destroyed, removed or detached) from the selection. Event-free
      * and allocation-free: only updates the map, so callers can call it inline as they tear nodes down.
@@ -290,6 +317,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         changedPath?: ChangedPath,
         event?: Event
     ): boolean {
+        return this.rollUpGroupSelection(source, changedPath, event, false);
+    }
+
+    /**
+     * @param regrouped true when the hierarchy may have changed since the last roll-up. Only then can a tree
+     * row have turned from a leaf into a group or back, so only then are the children of each group checked.
+     */
+    private rollUpGroupSelection(
+        source: SelectionEventSourceType,
+        changedPath: ChangedPath | undefined,
+        event: Event | undefined,
+        regrouped: boolean
+    ): boolean {
         // we only do this when group selection state depends on selected children
         if (!this.groupSelectsDescendants) {
             return false;
@@ -306,9 +346,35 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         let selectionChanged = false;
+        const selectedNodes = this.selectedNodes;
+        const checkChildren = regrouped && this.gos.get('treeData');
+        const detailSelection = this.detailSelection;
 
         const nodeCallback = (rowNode: RowNode): void => {
+            if (checkChildren) {
+                // A leaf missing from the map carries the computed state of a group it was demoted from,
+                // unless it is a master row whose indeterminate state is tracked from its detail grid.
+                const children = rowNode.childrenAfterGroup!;
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    const child = children[i];
+                    const selected = child.__selected;
+                    if (
+                        selected !== false &&
+                        !child.group &&
+                        !(selected === undefined && detailSelection.has(child.id!)) &&
+                        selectedNodes.get(child.id!) !== child
+                    ) {
+                        selectionChanged = this.selectRowNode(child, false, event, source) || selectionChanged;
+                    }
+                }
+            }
             if (rowNode !== rootNode) {
+                // Groups under descendants are computed, never stored, so a leaf promoted to a group leaves the map.
+                const id = rowNode.id!;
+                if (regrouped && selectedNodes.get(id) === rowNode) {
+                    selectedNodes.delete(id);
+                    selectionChanged = true;
+                }
                 const selected = this.calculateSelectedFromChildren(rowNode);
                 selectionChanged =
                     this.selectRowNode(rowNode, selected === null ? false : selected, event, source) ||
@@ -780,7 +846,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
             if (
                 this.groupSelectsDescendants &&
-                this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath)
+                this.rollUpGroupSelection('rowGroupChanged', changedPath, undefined, true)
             ) {
                 this.dispatchSelectionChanged('rowGroupChanged');
             }

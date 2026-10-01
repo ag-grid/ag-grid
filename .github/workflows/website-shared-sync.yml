@@ -1,0 +1,71 @@
+name: Website shared sync
+
+# Posts to #website-sync when a merge to `latest` leaves external/ag-website-shared
+# changes unsynced, and when a sync PR opens. Read-only. See ag-dev-prompts
+# docs/website-shared-sync.md.
+#
+# Prerequisites:
+#   secrets: SLACK_BOT_OAUTH_TOKEN
+#   vars:    WEBSITE_SYNC_SLACK_CHANNEL
+#            WEBSITE_SYNC_DRY_RUN (optional, default 'true')
+
+on:
+    workflow_run:
+        workflows: ['CI']
+        types: [completed]
+        branches: [latest]
+    pull_request:
+        types: [opened]
+        branches: [latest]
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: 'Prefix the Slack post with [dry run].'
+                type: boolean
+                default: true
+
+permissions:
+    contents: read
+
+env:
+    GIT_CONFIG_COUNT: 2
+    GIT_CONFIG_KEY_0: gc.auto
+    GIT_CONFIG_VALUE_0: '0'
+    GIT_CONFIG_KEY_1: maintenance.auto
+    GIT_CONFIG_VALUE_1: 'false'
+    DEV_PROMPTS_CHANNEL: canary
+
+jobs:
+    notify:
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            (github.event_name == 'pull_request' &&
+             contains(github.head_ref, '-website-shared-') &&
+             github.event.pull_request.head.repo.full_name == github.repository) ||
+            (github.event.workflow_run.run_attempt == 1 &&
+             github.event.workflow_run.event == 'push' &&
+             github.event.workflow_run.head_repository.full_name == github.repository)
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        permissions:
+            contents: read
+            pull-requests: read
+            packages: read
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  filter: blob:none
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - name: Notify
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/website-shared-sync-notify
+              with:
+                  slack_channel: ${{ vars.WEBSITE_SYNC_SLACK_CHANNEL }}
+                  slack_bot_token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+                  trigger_sha: ${{ github.event.workflow_run.head_sha }}
+                  dry_run: ${{ format('{0}', inputs.dry_run) || vars.WEBSITE_SYNC_DRY_RUN || 'true' }}

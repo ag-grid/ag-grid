@@ -28,7 +28,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColGroupDef: {
         headerName: 'A shared prop for all Groups',
     },
-    // debug: true,
     columnDefs: columnDefs,
 };
 

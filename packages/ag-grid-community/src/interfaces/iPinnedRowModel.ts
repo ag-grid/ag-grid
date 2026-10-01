@@ -53,7 +53,7 @@ export interface IPinnedRowModel {
 
     /**
      * Specific method for flagging the grand total row to be pinned, since the behaviour
-     * is different than for all other pinned rows. Used by `FlattenStage` only. End users
+     * is different than for all other pinned rows. Used by `FlattenStage` and `LazyStore` only. End users
      * and API calls should be routed through `pinRow` like normal.
      *
      * This is a no-op for the static pinned row model.

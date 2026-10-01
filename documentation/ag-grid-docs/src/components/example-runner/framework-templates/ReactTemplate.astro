@@ -71,23 +71,20 @@ const {
         >
             window.__basePath = appLocation;
         </script>
-
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
-        {
-            !ignoreModuleLoader && (
-                <ExampleModules
-                    appLocation={appLocation}
-                    entryFileName={entryFileName}
-                    fileNames={fileNames}
-                    internalFramework={internalFramework}
-                    isEnterprise={isEnterprise}
-                    isIntegratedCharts={isIntegratedCharts}
-                    usesMathRandom={usesMathRandom}
-                    transpileInBrowser={transpileInBrowser}
-                    nonce={nonce}
-                />
-            )
-        }
+        {!ignoreModuleLoader && (
+            <ExampleModules
+                appLocation={appLocation}
+                entryFileName={entryFileName}
+                fileNames={fileNames}
+                internalFramework={internalFramework}
+                isEnterprise={isEnterprise}
+                isIntegratedCharts={isIntegratedCharts}
+                usesMathRandom={usesMathRandom}
+                transpileInBrowser={transpileInBrowser}
+                nonce={nonce}
+            />
+        )}
         <slot />
     </body>
 </html>

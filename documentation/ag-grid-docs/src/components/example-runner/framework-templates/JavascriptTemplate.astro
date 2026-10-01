@@ -72,11 +72,13 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         <ExampleStyle extraStyles={extraStyles} />
         <Styles
             baseUrl={appLocation}
-            files={isDev && styleFiles
-                ? styleFiles
-                      .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
-                      .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
-                : []}
+            files={
+                isDev && styleFiles
+                    ? styleFiles
+                          .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
+                          .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
+                    : []
+            }
         />
         <Extras extras={extras ?? []} />
         <Fragment set:html={headFragment} />
@@ -96,16 +98,21 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         <ExampleRunnerClient isExported={transpileInBrowser} nonce={nonce} />
         <ExampleRunnerCall fn="setUpPage" nonce={nonce} />
         {usesMathRandom && <SeedRandom nonce={nonce} />}
-        {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} crossorigin="anonymous" />}
-        <script nonce={nonce} src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath} crossorigin="anonymous"
+        {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} crossorigin="anonymous"></script>}
+        <script
+            nonce={nonce}
+            src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath}
+            crossorigin="anonymous"
         ></script>
-        {isLocale && <script nonce={nonce} src={gridScriptLocalePath} crossorigin="anonymous" />}
+        {isLocale && <script nonce={nonce} src={gridScriptLocalePath} crossorigin="anonymous"></script>}
         <Scripts baseUrl={appLocation} files={scriptFiles!} nonce={nonce} />
         <Styles
             baseUrl={appLocation}
-            files={styleFiles
-                ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
-                : []}
+            files={
+                styleFiles
+                    ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
+                    : []
+            }
         />
         <slot />
     </body>

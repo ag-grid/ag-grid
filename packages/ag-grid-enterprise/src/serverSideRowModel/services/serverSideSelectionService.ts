@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     ISelectionService,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
@@ -72,13 +73,20 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     public handleSelectionEvent(
         event: MouseEvent | KeyboardEvent,
         rowNode: RowNode<any>,
-        source: SelectionEventSourceType
+        source: SelectionEventSourceType,
+        column?: AgColumn
     ): number {
         if (this.isRowSelectionBlocked(rowNode)) {
             return 0;
         }
 
-        const selection = this.inferNodeSelections(rowNode, event.shiftKey, event.metaKey || event.ctrlKey, source);
+        const selection = this.inferNodeSelections(
+            rowNode,
+            event.shiftKey,
+            event.metaKey || event.ctrlKey,
+            source,
+            column
+        );
 
         if (selection == null) {
             return 0;
@@ -220,6 +228,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return this.selectionStrategy.getSelectionCount();
     }
 
+    protected isSoleSelection(node: RowNode): boolean {
+        return this.selectionStrategy.isSoleSelection(node);
+    }
+
     public syncInRowNode(rowNode: RowNode<any>): void {
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
@@ -350,9 +362,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                     ? null
                     : this.selectionStrategy.getSelectedNodes(true, false),
             serverSideState: this.getSelectionState() as
-                | IServerSideSelectionState
-                | IServerSideGroupSelectionState
-                | null,
+                IServerSideSelectionState | IServerSideGroupSelectionState | null,
         });
     }
 

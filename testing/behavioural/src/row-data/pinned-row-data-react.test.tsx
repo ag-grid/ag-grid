@@ -2,8 +2,8 @@ import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
 
-import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, PinnedRowModule } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, PinnedRowModule, RowApiModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 const PINNED_TOP_SELECTOR = '.ag-grid-pinned-top-rows [row-id]';
@@ -15,7 +15,7 @@ const PINNED_BOTTOM_SELECTOR = '.ag-grid-pinned-bottom-rows [row-id]';
 // array reference is unchanged.
 describe('React-driven pinned row data', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, PinnedRowModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, PinnedRowModule, RowApiModule]);
     });
 
     afterEach(async () => {
@@ -78,5 +78,32 @@ describe('React-driven pinned row data', () => {
         act(() => drivePinnedBottom!([{ make: 'Bottom A' }, { make: 'Bottom B' }]));
         await waitFor(() => expect(rendered.container.querySelectorAll(PINNED_BOTTOM_SELECTOR).length).toBe(2));
         expect(rendered.container.textContent).toContain('Bottom B');
+    });
+
+    test('redrawing a pinned top or bottom row renders the row made for it', async () => {
+        let api: GridApi | undefined;
+        const rendered = render(
+            <AgGridReact
+                rowData={rowData}
+                columnDefs={columnDefs}
+                pinnedTopRowData={[{ make: 'Top A' }]}
+                pinnedBottomRowData={[{ make: 'Bottom A' }]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        await waitFor(() => expect(rendered.container.querySelectorAll(PINNED_BOTTOM_SELECTOR).length).toBe(1));
+
+        const topNode = api!.getPinnedTopRow(0)!;
+        const bottomNode = api!.getPinnedBottomRow(0)!;
+        topNode.data.make = 'Top redrawn';
+        bottomNode.data.make = 'Bottom redrawn';
+        act(() => api!.redrawRows({ rowNodes: [topNode, bottomNode] }));
+
+        await waitFor(() =>
+            expect(rendered.container.querySelector(PINNED_TOP_SELECTOR)!.textContent).toBe('Top redrawn')
+        );
+        expect(rendered.container.querySelector(PINNED_BOTTOM_SELECTOR)!.textContent).toBe('Bottom redrawn');
     });
 });

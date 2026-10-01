@@ -1,8 +1,9 @@
 import { AgChartsCommunityModule } from 'ag-charts-community';
 import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { SparklinesModule } from 'ag-grid-enterprise';
 
 import { VERSION } from '../version';
@@ -14,6 +15,7 @@ describe('debug version logging with sparklines', () => {
     let consoleLogSpy: MockInstance;
 
     beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, debug: true });
         consoleLogSpy = vitest.spyOn(console, 'log').mockImplementation(() => {});
         gridsManager.reset();
     });
@@ -27,7 +29,6 @@ describe('debug version logging with sparklines', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],
             rowData: [],
-            debug: true,
         });
 
         expect(consoleLogSpy).toHaveBeenCalledWith(

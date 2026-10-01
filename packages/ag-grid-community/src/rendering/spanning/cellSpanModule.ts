@@ -5,7 +5,8 @@ import { SpannedRowRenderer } from './spannedRowRenderer';
 
 /**
  * @feature Spanning -> Cell Spanning
- * @colDef colDef.rowSpan, colDef.colSpan
+ * @gridOption enableCellSpan
+ * @colDef spanRows
  */
 export const CellSpanModule: _ModuleWithoutApi = {
     moduleName: 'CellSpan',

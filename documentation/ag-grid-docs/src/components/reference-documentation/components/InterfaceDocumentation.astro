@@ -38,17 +38,15 @@ if (model.type === 'code') {
 }
 ---
 
-{
-    model.type === 'code' ? (
-        <Code code={model.code} preHighlightedHtml={preHighlightedHtml} />
-    ) : (
-        <InterfaceDocumentation
-            client:load
-            interfaceName={interfaceName}
-            framework={framework}
-            model={model}
-            config={{ ...config, hideHeader: config?.hideHeader ?? true }}
-            isInline={true}
-        />
-    )
-}
+{model.type === 'code' ? (
+    <Code code={model.code} preHighlightedHtml={preHighlightedHtml} />
+) : (
+    <InterfaceDocumentation
+        client:load
+        interfaceName={interfaceName}
+        framework={framework}
+        model={model}
+        config={{ ...config, hideHeader: config?.hideHeader ?? true }}
+        isInline={true}
+    />
+)}

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     clearFilter: 'Borrar',
     cancelFilter: 'Cancelar',
     cancelColumnToolPanel: 'Cancelar',
+    resetColumnToolPanel: 'Reiniciar',
 
     // Filter Titles
     textFilter: 'Filtro de Texto',

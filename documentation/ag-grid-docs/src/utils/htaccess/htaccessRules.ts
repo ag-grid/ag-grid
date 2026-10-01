@@ -322,7 +322,7 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?getting-more-from-your-datagrid-introducing-adaptable(?:/amp)?/?$ https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/ [R=301,NC,L]
+    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/column-pinning/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?whats-new-in-ag-studio-2(?:-0)?(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
@@ -382,6 +382,8 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteRule ^/?free-online-training-for-ag-grid-in-react-and-angular(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/getting-started/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?game-of-charts(?:/amp)?/?$ https://www.ag-grid.com/charts/gallery/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/column-pinning/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?how-to-write-a-podcast-app-using-react(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
@@ -608,6 +610,9 @@ ErrorDocument 404 /404.html
 AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
+
+# Apache has no built-in .webp type, so without this the images are served with no Content-Type.
+AddType image/webp .webp
 
 # serve the per-page LLM markdown files as markdown
 AddType text/markdown md

@@ -79,7 +79,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         filter: true,
     },
-    // debug: true,
     columnDefs: columnDefs,
     defaultExcelExportParams: {
         freezeColumns: 'pinned',

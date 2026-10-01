@@ -8,16 +8,16 @@ import type {
     GridModule,
     InterfaceEntry,
     MetaTag,
-    PropertyViewModelMap,
+    PropertyViewModel,
 } from '../types';
 import { getDefinitionType } from './getDefinitionType';
 import { getDetailsCode } from './getDetailsCode';
-import { getPropertyViewModel } from './getPropertyViewModel';
+import { type PropertyResolver, getPropertyViewModel } from './getPropertyViewModel';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
 import { getAllSectionPropertyEntries, mergeObjects } from './interface-helpers';
 import { getDetailsKey } from './referenceDetails';
 
-interface Params {
+interface Params<P> {
     framework: Framework;
     sources: string[];
     section: string;
@@ -28,6 +28,8 @@ interface Params {
     interfaceLookup: Record<string, InterfaceEntry>;
     codeConfigs: Record<string, any>;
     allModules: GridModule[];
+    /** Defaults to the page's view model; the markdown twin passes its own. */
+    resolveProperty?: PropertyResolver<P>;
 }
 
 function getCodeLookup({ propertyConfigs, codeConfigs }: { propertyConfigs: any[]; codeConfigs: Record<string, any> }) {
@@ -42,7 +44,7 @@ function getCodeLookup({ propertyConfigs, codeConfigs }: { propertyConfigs: any[
     return codeLookup;
 }
 
-function getResolvedProperties({
+function getResolvedProperties<P>({
     framework,
     sectionKey,
     names,
@@ -51,6 +53,7 @@ function getResolvedProperties({
     interfaceLookup,
     config,
     allModules,
+    resolveProperty,
 }: {
     framework: Framework;
     sectionKey: string;
@@ -60,6 +63,7 @@ function getResolvedProperties({
     interfaceLookup: Record<string, InterfaceEntry>;
     config: Config;
     allModules: GridModule[];
+    resolveProperty: PropertyResolver<P>;
 }) {
     const { meta, ...processedProperties } = properties;
 
@@ -99,7 +103,7 @@ function getResolvedProperties({
 
             return [
                 name,
-                getPropertyViewModel({
+                resolveProperty({
                     name,
                     framework,
                     definition,
@@ -115,12 +119,12 @@ function getResolvedProperties({
                 }),
             ];
         });
-    const resolvedProperties = Object.fromEntries(resolvedPropertyEntries) as PropertyViewModelMap;
+    const resolvedProperties: Record<string, P> = Object.fromEntries(resolvedPropertyEntries);
 
     return { meta, resolvedProperties };
 }
 
-function getSectionProperties({
+function getSectionProperties<P>({
     framework,
     section,
     names,
@@ -129,6 +133,7 @@ function getSectionProperties({
     interfaceLookup,
     config,
     allModules,
+    resolveProperty,
 }: {
     framework: Framework;
     section: string;
@@ -139,6 +144,7 @@ function getSectionProperties({
     gridOpProp?: InterfaceEntry;
     config: Config;
     allModules: GridModule[];
+    resolveProperty: PropertyResolver<P>;
 }) {
     const keys = section.split('.');
     const title = keys[keys.length - 1];
@@ -165,6 +171,7 @@ function getSectionProperties({
         interfaceLookup,
         config,
         allModules,
+        resolveProperty,
     });
 
     return {
@@ -174,7 +181,7 @@ function getSectionProperties({
     };
 }
 
-export function getApiDocumentationModel({
+export function getApiDocumentationModel<P = PropertyViewModel>({
     framework,
     sources,
     section,
@@ -185,7 +192,8 @@ export function getApiDocumentationModel({
     interfaceLookup,
     codeConfigs,
     allModules,
-}: Params): ApiDocumentationModel | undefined {
+    resolveProperty = getPropertyViewModel as PropertyResolver<P>,
+}: Params<P>): ApiDocumentationModel<P> | undefined {
     if (!sources || sources.length < 1) {
         return undefined;
     }
@@ -207,6 +215,7 @@ export function getApiDocumentationModel({
             interfaceLookup,
             config,
             allModules,
+            resolveProperty,
         });
 
         return {
@@ -229,6 +238,7 @@ export function getApiDocumentationModel({
                 interfaceLookup,
                 config,
                 allModules,
+                resolveProperty,
             });
 
             return [name, { meta: meta as MetaTag, properties: resolvedProperties }];

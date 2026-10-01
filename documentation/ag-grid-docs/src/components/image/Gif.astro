@@ -23,15 +23,13 @@ const { imageSrc, darkModeImageSrc, gifStillImageSrc, gifDarkModeStillImageSrc }
 });
 ---
 
-{
-    /* A player for GIFs: the still first frame loads with the page and a play button is shown over
+{/* A player for GIFs: the still first frame loads with the page and a play button is shown over
     it, and only a click loads and plays the (much larger) GIF itself.
 
     The four sources are handed to gif-player.js as data-attributes, and it picks between them
     before the first paint. The `src` here is a light one either way, so that the image still
     resolves without JavaScript: it is already correct on a light page, and on a dark one the
-    script replaces it in the same task this markup is parsed in, before anything is painted. */
-}
+    script replaces it in the same task this markup is parsed in, before anything is painted. */}
 <div class={styles.gifPlayer} data-gif-player data-playing={autoPlay ? '' : undefined}>
     <img
         class:list={[styles.gif, { [styles.wrapped]: wrapped }]}

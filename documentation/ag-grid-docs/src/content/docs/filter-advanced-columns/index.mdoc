@@ -308,7 +308,7 @@ const gridOptions = {
 };
 ```
 
-A column with a filter other than the Set Filter keeps that filter and its `filterParams` unchanged. Its values are offered unconfigured, apart from `colDef.keyCreator` and `colDef.filterValueGetter`.
+A column with a filter other than the Set Filter keeps that filter and its `filterParams` unchanged. Its values are offered unconfigured, apart from `colDef.keyCreator` and `colDef.filterValueGetter`. Where the key creator is the one its [Cell Data Type](./cell-data-types/#pre-defined-cell-data-types) provides, such as for `date` or `object`, the values are shown with the column's [Value Formatter](./value-formatters/), which that key creator names them by.
 
 {% warning %}
 The `SetFilterModule` must be registered. Without it, naming either option in `filterOptions` reports a missing module and the column falls back to its default options.

@@ -242,7 +242,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
     /** Dynamic per-row heights are not supported by design: data is not isotropic in time, so the view model would desync. A uniform height change is applied via `updateRowHeights()`. */
     onRowHeightChanged() {
-        // not supported
+        // Body rows have a fixed height here, so only pinned rows can have moved.
+        this.beans.pinnedRowModel?.ensureRowHeightsValid();
     }
 
     public getRowBounds(index: number): RowBounds {

@@ -651,7 +651,7 @@ export class GridBodyScrollFeature extends BeanStub {
             // when data loads, try again to scroll to the row.
             // Cancel if any other scroll event occurs.
             // also retry if the row is not measured yet, as this can happen when using autoHeight
-            if (retry < 10 && (rowNode?.stub || !this.beans.rowAutoHeight?.areRowsMeasured())) {
+            if (retry < 10 && (rowNode?.stub || this.beans.rowAutoHeight?.areRowsMeasured() === false)) {
                 const scrollTop = this.getVScrollPosition().top;
                 this.clearRetryListenerFncs = this.addManagedEventListeners({
                     bodyScroll: () => {

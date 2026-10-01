@@ -46,6 +46,9 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         rowCtrl.getInitialCellCtrls(containerType)
     );
     const cellCtrlsRef = useRef<CellCtrl[] | null>(cellCtrlsFlushSync);
+    // the cell list last taken as the row gave it, and the columns version it was laid out at
+    const givenCellCtrlsRef = useRef<CellCtrl[] | null>(null);
+    const givenColsVersionRef = useRef(-1);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [embeddedFullWidthCompDetails, setEmbeddedFullWidthCompDetails] =
         useState<HorizontalSectionMap<UserCompDetails>>();
@@ -150,9 +153,17 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             setUserStyles,
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: (next, useFlushSync) => {
+            setCellCtrls: (next, useFlushSync, colsVersion) => {
                 const prevCellCtrls = cellCtrlsRef.current;
-                const nextCells = getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current);
+                // showing the row's own list, laid out at the same columns: `next` already keeps its cells in order
+                const nextCells =
+                    prevCellCtrls === givenCellCtrlsRef.current && colsVersion === givenColsVersionRef.current
+                        ? next
+                        : getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current, true);
+                if (nextCells === next) {
+                    givenCellCtrlsRef.current = next;
+                    givenColsVersionRef.current = colsVersion;
+                }
                 if (nextCells !== prevCellCtrls) {
                     cellCtrlsRef.current = nextCells;
                     if (enableUses) {

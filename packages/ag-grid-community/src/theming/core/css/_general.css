@@ -38,6 +38,13 @@
     min-width: 0;
     overflow: hidden;
     flex: 1 1 auto;
+}
+
+/* Always-present scrollbars need an opaque bg to prevent content being visible under it as it scrolls.
+   Shown-on-demand scrollbars should remain transparent as they appear over the content which should be
+   visible below it */
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-viewport,
+:where(.ag-body-vertical-scroll:not(.ag-scrollbar-invisible)) > .ag-body-vertical-scroll-viewport {
     background-color: var(--ag-data-background-color);
 }
 
