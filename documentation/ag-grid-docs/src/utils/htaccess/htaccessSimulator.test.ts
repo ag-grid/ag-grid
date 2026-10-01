@@ -2,6 +2,7 @@ import {
     compileHtaccess,
     evaluateExpr,
     followRedirects,
+    requestHeaders,
     responseHeaders,
     route,
     samplePath,
@@ -24,6 +25,16 @@ describe('htaccessSimulator', () => {
                 'RewriteCond',
                 '%{REQUEST_URI}',
                 '!^/a(?:\\ Comodo\\ DCV)?$',
+            ]);
+        });
+
+        it('groups single-quoted arguments too, so a double quote can sit inside one', () => {
+            expect(tokenize(`RequestHeader edit* If-None-Match '-gzip"' '"'`)).toEqual([
+                'RequestHeader',
+                'edit*',
+                'If-None-Match',
+                '-gzip"',
+                '"',
             ]);
         });
     });
@@ -221,6 +232,30 @@ Header always unset X-Gone`);
             expect(js.get('x-dup')).toEqual(['a', 'b']);
             expect(js.has('x-gone')).toBe(false);
             expect(responseHeaders([file], { uri: '/a.html', status: 200 }).has('cache-control')).toBe(false);
+        });
+
+        it('RequestHeader edit replaces the first match per header instance, edit* every match, parent then child', () => {
+            const root = compileHtaccess(
+                `RequestHeader edit* X-List '-x"' '"'\nRequestHeader edit X-One "a(b)" "[$1&]"`
+            );
+            const child = compileHtaccess(`RequestHeader edit X-List '^"' "'"`, '/sub/');
+            const headers = requestHeaders([root, child], {
+                uri: '/sub/page.html',
+                headers: { 'X-List': ['"1-x", "2-x"', '"3-x"'], 'X-One': 'abab', 'X-Other': '"4-x"' },
+            });
+            expect(headers.get('x-list')).toEqual([`'1", "2"`, `'3"`]);
+            expect(headers.get('x-one')).toEqual(['[bab]ab']);
+            expect(headers.get('x-other')).toEqual(['"4-x"']);
+            expect(
+                requestHeaders([root, child], { uri: '/page.html', headers: { 'X-List': '"1-x"' } }).get('x-list')
+            ).toEqual(['"1"']);
+        });
+
+        it('throws on a RequestHeader form it does not model', () => {
+            expect(() => compileHtaccess('RequestHeader set X-A "1"')).toThrow(/Unsupported RequestHeader/);
+            expect(() => compileHtaccess('RequestHeader edit X-A "a" "b" "expr=true"')).toThrow(
+                /Unsupported RequestHeader/
+            );
         });
     });
 });

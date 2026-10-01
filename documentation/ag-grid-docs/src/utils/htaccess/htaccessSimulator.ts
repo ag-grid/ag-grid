@@ -19,6 +19,8 @@
  * - mod_headers: Header set/append/add/unset with expr= conditions, `always` vs onsuccess
  *   tables, and <If> sections, which Apache merges after every plain section - so all plain
  *   directives (parent, then child) apply before any <If> block (parent's, then child's).
+ *   RequestHeader edit/edit* (regex substitution on each instance of a request header, parent
+ *   then child), which runs before the handler evaluates conditional requests.
  *
  * Anything outside that subset throws rather than being silently ignored. The real-Apache
  * harness in testing/htaccess-harness remains the authority on interactions this does not model
@@ -61,6 +63,15 @@ interface HeaderDirective {
     source: string;
 }
 
+interface RequestHeaderDirective {
+    /** `edit` substitutes the first match in each header value, `edit*` every match. */
+    action: 'edit' | 'edit*';
+    name: string;
+    regex: RegExp;
+    replacement: string;
+    source: string;
+}
+
 export interface CompiledHtaccess {
     /** The directory the file is served from, with leading and trailing slash: `/` or `/archive/36.3.0/`. */
     dir: string;
@@ -71,6 +82,8 @@ export interface CompiledHtaccess {
     headers: HeaderDirective[];
     /** <If> sections, in file order. */
     ifSections: { expr: string; headers: HeaderDirective[] }[];
+    /** RequestHeader directives, in file order. */
+    requestHeaders: RequestHeaderDirective[];
     errorDocuments: Map<number, string>;
 }
 
@@ -111,8 +124,9 @@ const flagsOf = (raw: string | undefined): Flags => {
 };
 
 /**
- * Splits a directive's arguments the way Apache does: whitespace separates them, double quotes
- * group them (with `\"` the only escape removed), and a backslash-escaped space stays in its token.
+ * Splits a directive's arguments the way Apache does: whitespace separates them, double or single
+ * quotes group them (with a backslash before the same quote the only escape removed), and a
+ * backslash-escaped space stays in its token.
  */
 export function tokenize(line: string): string[] {
     const tokens: string[] = [];
@@ -125,10 +139,11 @@ export function tokenize(line: string): string[] {
             break;
         }
         let token = '';
-        if (line[i] === '"') {
+        const quote = line[i];
+        if (quote === '"' || quote === "'") {
             i++;
-            while (i < line.length && line[i] !== '"') {
-                if (line[i] === '\\' && line[i + 1] === '"') {
+            while (i < line.length && line[i] !== quote) {
+                if (line[i] === '\\' && line[i + 1] === quote) {
                     i++;
                 }
                 token += line[i++];
@@ -174,6 +189,38 @@ const parseHeader = (args: string[], source: string): HeaderDirective => {
     return { always, action, name, value, expr, source };
 };
 
+const parseRequestHeader = (args: string[], source: string): RequestHeaderDirective => {
+    const [action, name, pattern, replacement, ...rest] = args;
+    if ((action !== 'edit' && action !== 'edit*') || replacement === undefined || rest.length) {
+        throw new Error(`Unsupported RequestHeader: ${source}`);
+    }
+    return { action, name: name.toLowerCase(), regex: new RegExp(pattern), replacement, source };
+};
+
+// ap_pregsub: `&` and `$0` are the whole match, `$1`-`$9` a group, a backslash escapes the next character.
+const pregsub = (replacement: string, match: RegExpExecArray): string =>
+    replacement.replace(/\\(.)|&|\$(\d)/g, (token, escaped: string | undefined, group: string | undefined) => {
+        if (escaped !== undefined) {
+            return escaped;
+        }
+        return match[token === '&' ? 0 : Number(group)] ?? '';
+    });
+
+// mod_headers' edit/edit*: substitute the first match, or every non-overlapping match.
+const editValue = (directive: RequestHeaderDirective, value: string): string => {
+    const regex = new RegExp(directive.regex.source, 'g');
+    let result = '';
+    let last = 0;
+    for (let match = regex.exec(value); match; match = regex.exec(value)) {
+        result += value.slice(last, match.index) + pregsub(directive.replacement, match);
+        last = match.index + match[0].length;
+        if (directive.action === 'edit' || !match[0].length) {
+            break;
+        }
+    }
+    return result + value.slice(last);
+};
+
 export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
     const compiled: CompiledHtaccess = {
         dir,
@@ -182,6 +229,7 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
         aliases: [],
         headers: [],
         ifSections: [],
+        requestHeaders: [],
         errorDocuments: new Map(),
     };
     let pendingConds: RewriteCond[] = [];
@@ -259,6 +307,13 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
             case 'Header': {
                 const header = parseHeader(args, line);
                 (currentIf ? currentIf.headers : compiled.headers).push(header);
+                break;
+            }
+            case 'RequestHeader': {
+                if (currentIf) {
+                    throw new Error(`Unsupported RequestHeader inside <If>: ${line}`);
+                }
+                compiled.requestHeaders.push(parseRequestHeader(args, line));
                 break;
             }
             case 'ErrorDocument':
@@ -752,6 +807,33 @@ export function responseHeaders(files: CompiledHtaccess[], response: ResponseCon
         emit(tables.onsuccess);
     }
     emit(tables.always);
+    return result;
+}
+
+/**
+ * The request headers the handler sees once the .htaccess chain's RequestHeader directives have run
+ * (parent, then child), as lower-cased name -> one value per header instance. Conditional request
+ * handling (If-None-Match against the ETag) happens after this, in the handler.
+ */
+export function requestHeaders(
+    files: CompiledHtaccess[],
+    request: { uri: string; headers: Record<string, string | string[]> }
+): Map<string, string[]> {
+    const result = new Map<string, string[]>();
+    for (const [name, value] of Object.entries(request.headers)) {
+        result.set(name.toLowerCase(), Array.isArray(value) ? [...value] : [value]);
+    }
+    for (const file of applicableFiles(files, request.uri)) {
+        for (const directive of file.requestHeaders) {
+            const values = result.get(directive.name);
+            if (values) {
+                result.set(
+                    directive.name,
+                    values.map((value) => editValue(directive, value))
+                );
+            }
+        }
+    }
     return result;
 }
 

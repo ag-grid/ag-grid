@@ -21,7 +21,14 @@ import {
     getInFlightArchiveRules,
 } from './htaccessRules';
 import type { CompiledHtaccess } from './htaccessSimulator';
-import { compileHtaccess, followRedirects, responseHeaders, route, samplePath } from './htaccessSimulator';
+import {
+    compileHtaccess,
+    followRedirects,
+    requestHeaders,
+    responseHeaders,
+    route,
+    samplePath,
+} from './htaccessSimulator';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -391,32 +398,39 @@ describe('htaccessRules', () => {
     });
 
     describe('Compressed responses revalidate', () => {
-        const getEditRules = (content: string) =>
-            content.split('\n').filter((l) => l.startsWith('RequestHeader edit* If-None-Match '));
+        // The ETag Apache computes for the file, and the one mod_deflate sends with the gzip body.
+        const ETAG = '"8aea4-65cb43860ca80"';
+        const GZIP_ETAG = '"8aea4-65cb43860ca80-gzip"';
+        const PAGE = '/react-data-grid/getting-started/index.html';
 
-        // Applies the rule the way mod_headers' edit* does: a global regex replace of the header value.
-        const applyRule = (rule: string, value: string) => {
-            const [, pattern, replacement] = rule.match(/^RequestHeader edit\* If-None-Match '([^']*)' '([^']*)'$/)!;
-            return value.replace(new RegExp(pattern, 'g'), replacement);
-        };
+        const ifNoneMatchSeen = (content: string, ifNoneMatch: string, uri = PAGE) =>
+            requestHeaders([compileHtaccess(content)], { uri, headers: { 'If-None-Match': ifNoneMatch } }).get(
+                'if-none-match'
+            );
 
-        it('strips the mod_deflate ETag suffix from If-None-Match once, in both envs', () => {
-            [productionContent, stagingContent].forEach((content) => {
-                expect(getEditRules(content)).toHaveLength(1);
-            });
+        it('hands the handler the unsuffixed ETag a compressed page was revalidated with, in both envs', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(ifNoneMatchSeen(content, GZIP_ETAG)).toEqual([ETAG]);
+                expect(ifNoneMatchSeen(content, GZIP_ETAG, '/_astro/DocsExampleRunner.CiSTQ4_g.css')).toEqual([ETAG]);
+            }
         });
 
-        it('turns a compressed ETag back into the one Apache compares against', () => {
-            const [rule] = getEditRules(productionContent);
-            expect(applyRule(rule, '"8aea4-65cb43860ca80-gzip"')).toBe('"8aea4-65cb43860ca80"');
-            expect(applyRule(rule, 'W/"8aea4-65cb43860ca80-gzip"')).toBe('W/"8aea4-65cb43860ca80"');
-            expect(applyRule(rule, '"a-1-gzip", W/"b-2-gzip","c-3"')).toBe('"a-1", W/"b-2","c-3"');
+        it('is the only request-header rule, in both envs', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(compileHtaccess(content).requestHeaders).toHaveLength(1);
+            }
+        });
+
+        it('strips every suffix in a list of ETags, weak ones included', () => {
+            expect(ifNoneMatchSeen(productionContent, `W/${GZIP_ETAG}`)).toEqual([`W/${ETAG}`]);
+            expect(ifNoneMatchSeen(productionContent, `"a-1-gzip", W/${GZIP_ETAG},"c-3"`)).toEqual([
+                `"a-1", W/${ETAG},"c-3"`,
+            ]);
         });
 
         it('leaves uncompressed, brotli and wildcard validators alone', () => {
-            const [rule] = getEditRules(productionContent);
-            for (const value of ['"8aea4-65cb43860ca80"', '"8aea4-65cb43860ca80-br"', '*']) {
-                expect(applyRule(rule, value)).toBe(value);
+            for (const value of [ETAG, '"8aea4-65cb43860ca80-br"', '*']) {
+                expect(ifNoneMatchSeen(productionContent, value)).toEqual([value]);
             }
         });
 
@@ -538,7 +552,13 @@ describe('htaccessRules', () => {
         });
 
         it('leaves the If-None-Match suffix strip to the root, which mod_headers merges into archives', () => {
-            expect(archiveContent).not.toContain('RequestHeader');
+            const uri = '/archive/36.2.0/react-data-grid/getting-started/index.html';
+            const headers = { 'If-None-Match': '"8aea4-65cb43860ca80-gzip"' };
+            const archiveFile = compileHtaccess(archiveContent, '/archive/36.2.0/');
+            expect(archiveFile.requestHeaders).toEqual([]);
+            expect(
+                requestHeaders([compileHtaccess(productionContent), archiveFile], { uri, headers }).get('if-none-match')
+            ).toEqual(['"8aea4-65cb43860ca80"']);
         });
     });
 
