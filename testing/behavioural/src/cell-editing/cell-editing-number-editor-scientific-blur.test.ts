@@ -61,8 +61,9 @@ describe('agNumberCellEditor with precision, scientific-notation input', () => {
 
         await user.keyboard('{Enter}');
 
+        expect(api.getCellEditorInstances()).toHaveLength(0);
         expect(rowData[0].number).toBe(42);
-        expect(cell(api, 0).textContent).not.toBe('1.23');
+        expect(cell(api, 0).textContent).toBe('42');
     });
 
     test('clicking away with precision only commits the full-magnitude value', async () => {
