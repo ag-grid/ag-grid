@@ -63,7 +63,7 @@ const VueExample = defineComponent({
                     <button v-on:click="onStopMessages()">&#9632; Stop</button>
                     <button v-on:click="onStartLoad()">&#9658; Start</button>
                 </span>
-                <span style="margin-left: 30px">
+                <span class="gap-left">
                     <button v-on:click="updateChart('stackedColumn')">Stacked Column Chart</button>
                     <button v-on:click="updateChart('groupedColumn')">Grouped Column Chart</button>
                     <button v-on:click="updateChart('line')">Line Chart</button>

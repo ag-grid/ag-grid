@@ -25,7 +25,7 @@ const VueExample = defineComponent({
             <div class="example-controls" style="flex: 0 1 0%">
                 <div class="controls-row">
                     Theme:
-                    <select style="margin-right: 16px" v-model="theme">
+                    <select v-model="theme">
                         <option v-for="(theme, id) in themes" :value="theme">{{ id }}</option>
                     </select>
                 </div>
