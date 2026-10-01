@@ -122,11 +122,14 @@ const archiveCacheRules = `
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
 `;
 
-// Omitted from archive builds. An archive ships its own .htaccess, which Apache applies after
-// the root one, so emitting this rule there would override the root's in-flight no-cache and
-// make a release candidate cacheable while it is still under test. The root .htaccess already
-// applies this rule to every archive and owns the in-flight state, so the archive needs neither.
-const getArchiveCacheRules = (): string => (SITE_BASE_URL?.includes('/archive/') ? '' : archiveCacheRules);
+// Archive builds ship their own .htaccess, which Apache applies after the root one, so any
+// Cache-Control rule in it that matches unhashed content would override the root's in-flight
+// no-cache and make a release candidate cacheable while it is still under test. The root
+// .htaccess already applies every one of these rules to the archives and owns the in-flight
+// state, so archive builds emit none of them. Content-hashed assets keep their rule: a changed
+// hash is a new URL, so it can never serve a release candidate stale.
+const isArchiveBuild = (): boolean => SITE_BASE_URL?.includes('/archive/') ?? false;
+const unlessArchiveBuild = (rules: string): string => (isArchiveBuild() ? '' : rules);
 
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
@@ -233,10 +236,15 @@ ${getMarkdownNegotiationRules()}
 // variant to a browser, or HTML to an agent. Scoped to the negotiated paths so the rest of
 // the site keeps its default (URL-only) cache key. Derived from the same registry and base
 // as the rewrite rule, so the two stay in lockstep.
+//
+// The HTML variant is served through mod_dir's DirectoryIndex, an internal redirect that has
+// already rewritten REQUEST_URI to <page>/index.html by the time this header is applied, so
+// that form must match too - otherwise only the markdown variant (whose Vary mod_rewrite adds
+// itself) carries Vary: Accept, and a shared cache holding the HTML would serve it to agents.
 const getMarkdownVaryHeader =
     (): string => `# SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:${getMarkdownPagesBelowBase()})/?$# || %{REQUEST_URI} == '${getMarkdownBasePath()}/'">
+<If "%{REQUEST_URI} =~ m#^/(?:${getMarkdownPagesBelowBase()})(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^${getMarkdownBasePattern()}/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>`;
 
@@ -676,9 +684,9 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
-${staticAssetCacheRules}
-${scriptAssetCacheRules}
-${getArchiveCacheRules()}
+${unlessArchiveBuild(staticAssetCacheRules)}
+${unlessArchiveBuild(scriptAssetCacheRules)}
+${unlessArchiveBuild(archiveCacheRules)}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}

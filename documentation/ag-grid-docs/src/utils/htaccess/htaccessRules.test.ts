@@ -444,14 +444,22 @@ describe('htaccessRules', () => {
                 expect(archiveContent).not.toContain('^/(charts/)?archive/[0-9]#"');
             });
 
-            it('sets no long-lived Cache-Control that could match an archived page', () => {
-                const longCacheLines = archiveContent
+            it('emits none of the unhashed asset cache rules either', () => {
+                // Images, example-assets, theme icons, videos and /scripts/*.js are unhashed, so
+                // each of these would also override the root's in-flight no-cache.
+                expect(archiveContent).not.toContain('/(images|example-assets|example|theme-icons|videos)/');
+                expect(archiveContent).not.toContain('m#/scripts/[^/]+');
+            });
+
+            it('keeps only cache rules that cannot match an archived release candidate', () => {
+                const cachingLines = archiveContent
                     .split('\n')
-                    .filter((l) => l.startsWith('Header set Cache-Control') && l.includes('s-maxage'));
-                // Only the content-hashed asset rule remains: a changed hash is a new URL, so it
-                // cannot serve a release candidate stale.
-                expect(longCacheLines).toHaveLength(1);
-                expect(longCacheLines[0]).toContain('/_astro/');
+                    .filter((l) => l.startsWith('Header set Cache-Control') && l.includes('public'));
+                // The content-hashed asset rule (a changed hash is a new URL, so it can never be
+                // stale) and the root-anchored robots.txt/favicon.ico rule (never under /archive/).
+                expect(cachingLines).toHaveLength(2);
+                expect(cachingLines.find((l) => l.includes('/_astro/'))).toBeDefined();
+                expect(cachingLines.find((l) => l.includes('m#^/(robots'))).toBeDefined();
             });
         });
 
@@ -1157,9 +1165,9 @@ describe('htaccessRules', () => {
         };
 
         const extractVaryPattern = (content: string) => {
-            const match = content.match(/<If "%\{REQUEST_URI\} =~ m#\^\/\(\?:(.+)\)\/\?\$#/);
+            const match = content.match(/<If "%\{REQUEST_URI\} =~ m#\^\/\(\?:(.+)\)\(\?:\/\|\/index\\\.html\)\?\$#/);
             expect(match).not.toBeNull();
-            return new RegExp(`^/(?:${match![1]})/?$`);
+            return new RegExp(`^/(?:${match![1]})(?:/|/index\\.html)?$`);
         };
 
         // One representative URL per group in the registry. Every URL in the sitemap must
@@ -1274,11 +1282,16 @@ describe('htaccessRules', () => {
                 const varyPattern = extractVaryPattern(content);
                 for (const path of negotiablePaths) {
                     expect(varyPattern.test(path), `${path} should carry Vary: Accept`).toBe(true);
+                    // The HTML variant is served via DirectoryIndex, which has already rewritten
+                    // REQUEST_URI to <page>/index.html when the header applies - so that form
+                    // must carry Vary too, or only the markdown variant would.
+                    const indexPath = `${path.replace(/\/$/, '')}/index.html`;
+                    expect(varyPattern.test(indexPath), `${indexPath} should carry Vary: Accept`).toBe(true);
                 }
                 for (const path of nonNegotiablePaths) {
                     expect(varyPattern.test(path), `${path} should not carry Vary: Accept`).toBe(false);
                 }
-                expect(content).toContain(`%{REQUEST_URI} == '/'`);
+                expect(content).toContain('%{REQUEST_URI} =~ m#^/(?:index\\.html)?$#');
             }
         });
 
@@ -1369,9 +1382,13 @@ describe('htaccessRules', () => {
                 const varyPattern = extractVaryPattern(archiveContent);
                 for (const path of negotiablePaths) {
                     expect(varyPattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path}`).toBe(true);
+                    expect(
+                        varyPattern.test(`/archive/36.2.0${path.replace(/\/$/, '')}/index.html`),
+                        `/archive/36.2.0${path} via DirectoryIndex`
+                    ).toBe(true);
                     expect(varyPattern.test(path), `${path} is outside the archive`).toBe(false);
                 }
-                expect(archiveContent).toContain(`%{REQUEST_URI} == '/archive/36.2.0/'`);
+                expect(archiveContent).toContain('%{REQUEST_URI} =~ m#^/archive/36\\.2\\.0/(?:index\\.html)?$#');
             });
         });
     });
