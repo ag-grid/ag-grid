@@ -479,8 +479,22 @@ export const CF_ACL = {
             assetScopeDown: true,
             customBody: 'automated-access-blocked',
         },
-        { name: 'soft-rate-limit-flat-with-captcha-flat', limit: 10000, window: 300, assetScopeDown: false },
-        { name: 'count-nonbrowser-safe-paths', limit: 300, window: 300, assetScopeDown: false },
+        // Live 2026-10-01: the flat rule counts every request (no scope-down at all), and the counting
+        // rule is AND(p11's non-browser trigger labels, the four safe-path regexes).
+        {
+            name: 'soft-rate-limit-flat-with-captcha-flat',
+            limit: 10000,
+            window: 300,
+            assetScopeDown: false,
+            scopeDown: 'none',
+        },
+        {
+            name: 'count-nonbrowser-safe-paths',
+            limit: 300,
+            window: 300,
+            assetScopeDown: false,
+            scopeDown: 'nonbrowser-safe-paths',
+        },
     ],
     assetScopeDownRegex:
         '\\.(js|css|mjs|map|woff2?|ttf|otf|eot|png|jpe?g|gif|svg|webp|avif|ico|json|xml|txt|ts|tsx|jsx|gz|mp4|webm|yml|yaml|md)$',
