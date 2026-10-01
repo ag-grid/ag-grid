@@ -963,7 +963,7 @@ export const AG_GRID_ERRORS = {
     334: () =>
         `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
     335: ({ colId, properties }: { colId: string; properties: string[] }) =>
-        `\`calculatedColumns.processColDef\` returned \`${properties.join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
+        `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
