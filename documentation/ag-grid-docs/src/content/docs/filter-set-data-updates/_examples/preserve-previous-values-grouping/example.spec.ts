@@ -71,10 +71,13 @@ test.agExample(import.meta, () => {
         await page.getByRole('button', { name: 'Remove Rome' }).click();
         await page.getByRole('button', { name: 'Remove France' }).click();
         await page.getByRole('button', { name: 'Clear Preserved Values' }).click();
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
 
+        // Had 'Paris' stayed in the model, its rows would pass again once they return.
+        await page.getByRole('button', { name: 'Restore Data' }).click();
         await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
         await openFilterExpanded(page);
-        await expect(filterItem(page, 'Paris')).toHaveCount(0);
+        await expect(filterItem(page, 'Paris').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Milan').locator('input')).not.toBeChecked();
     });
 });

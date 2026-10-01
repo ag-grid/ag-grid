@@ -136,10 +136,8 @@ export class SetFilterHandler<TValue = string>
         // Before the values, whose reload may evict by what the model checks.
         this.appliedModel.update(params.model);
         this.heldKeyIndex.update({ filterType: 'set', values: this.heldKeys });
-        let valuesKnown = false;
-        if (wasPreserving && !params.filterParams.preservePreviousValues) {
-            // Values it saw have left the data, so their model entries go even with no rows left, as with a clear.
-            valuesKnown = valueModel.missingKeys.size > valueModel.keyOnlyKeys.size;
+        const turnedOff = wasPreserving && !params.filterParams.preservePreviousValues;
+        if (turnedOff) {
             this.clearMissing(false);
         }
         // the rows are read again once the types are inferred, provided values are keyed again here
@@ -151,7 +149,8 @@ export class SetFilterHandler<TValue = string>
             this.refreshFilterValuesForColDef();
         }
 
-        this.validateModel(undefined, undefined, valuesKnown);
+        // Once data has been seen, what left it goes from the model even with no rows left, as with a clear.
+        this.validateModel(undefined, undefined, turnedOff && valueModel.valuesSeen);
         return true;
     }
 
@@ -425,6 +424,10 @@ export class SetFilterHandler<TValue = string>
     }
 
     public clearOwnPreservedValues(onlyUnselected: boolean): void {
+        // One keeping nothing has nothing to clear, and a model it holds may still be waiting for its rows.
+        if (!this.valueModel.isPreserving()) {
+            return;
+        }
         this.clearMissing(onlyUnselected).then(() => {
             if (!onlyUnselected) {
                 // Asked for: whatever the data lacks now goes, model values never seen in it included.
@@ -434,11 +437,11 @@ export class SetFilterHandler<TValue = string>
     }
 
     private clearMissing(onlyUnselected: boolean): AgPromise<unknown> {
-        const { valueModel, appliedModel, heldKeyIndex } = this;
+        const { valueModel, heldKeyIndex } = this;
         const missingCount = valueModel.missingKeys.size;
         // Values an applied Advanced Filter expression names are still in use, so they are always kept.
         const cleared = valueModel.clearMissing(
-            onlyUnselected ? (key) => appliedModel.has(key) || heldKeyIndex.has(key) : (key) => heldKeyIndex.has(key)
+            onlyUnselected ? (key) => this.isKeyChecked(key) : (key) => heldKeyIndex.has(key)
         );
         if (valueModel.missingKeys.size === missingCount) {
             return cleared;

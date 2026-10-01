@@ -189,7 +189,12 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const cols = colModel.getColsInStateOrder();
         for (let i = 0, len = cols.length; i < len; ++i) {
             const column = cols[i];
-            if (column.primary && this.getSetFilterParams(column)?.preservePreviousValues) {
+            // One it holds is skipped before its params are read, as reading may call the app's function.
+            if (
+                column.primary &&
+                !this.columns.has(column.getColId()) &&
+                this.getSetFilterParams(column)?.preservePreviousValues
+            ) {
                 this.getSetColumn(column);
             }
         }
@@ -228,7 +233,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         const hasSetFilter =
             this.isSetFilterDef(column) ||
             (colDef.filter === 'agMultiColumnFilter' &&
-                !!getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter'));
+                !!getMultiFilterChild(this.getMultiFilterParams(column), 'agSetColumnFilter'));
         // Both options are matched against the column's values, so a column with none to offer would take
         // a written value it can never resolve. Only the Client-Side Row Model can derive them from its rows.
         return hasSetFilter && this.hasSetFilterValues(column);
@@ -247,6 +252,15 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         // `filterParams` may be a function of the grid params, so it is resolved the way the handler's own are.
         return typeof filterParams === 'function'
             ? this.createHandlerParams(column, 'init').filterParams
+            : filterParams;
+    }
+
+    /** A `filterParams` function is merged as for the filter about to be created, so its children can be read. */
+    private getMultiFilterParams(column: AgColumn): any {
+        const colDef = column.colDef;
+        const filterParams = colDef.filterParams;
+        return typeof filterParams === 'function'
+            ? this.beans.colFilter!.createHandlerFilterParams(column, colDef, 'init')
             : filterParams;
     }
 
@@ -556,7 +570,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         // params are written for itself, a Date Filter's `comparator` being called with two cell values here.
         const child =
             colDef.filter === 'agMultiColumnFilter'
-                ? getMultiFilterChild(colDef.filterParams, 'agSetColumnFilter')
+                ? getMultiFilterChild(this.getMultiFilterParams(column), 'agSetColumnFilter')
                 : undefined;
         const filterParams = child ? child.filterParams : this.getKeyFormatterParams(colDef);
         return { ...colDef, filter: 'agSetColumnFilter', filterParams };
@@ -717,15 +731,13 @@ const buildFlatValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): Se
 const buildTreeValues = (setColumn: SetColumn, allKeys: SetFilterModelValue): SetColumnValues => {
     const handler = setColumn.handler;
     const treeListFormatter = handler.params.filterParams.treeListFormatter;
-    const keyOnlyKeys = handler.valueModel.keyOnlyKeys;
 
     const entries: SetValueEntry[] = [];
     const values = createValues();
     const walk = (items: SetFilterTreeItems, path: string[]): void => {
         for (const item of items.values()) {
             // A blank names itself the way the Set Filter's own list names it, so the two offer one label.
-            const formatted =
-                formatTreeKey(item, treeListFormatter, keyOnlyKeys) ?? translateForSetFilter(handler, 'blanks');
+            const formatted = formatTreeKey(item, treeListFormatter) ?? translateForSetFilter(handler, 'blanks');
             const itemPath = [...path, formatted];
             const children = item.children;
             const keys = item.keys;

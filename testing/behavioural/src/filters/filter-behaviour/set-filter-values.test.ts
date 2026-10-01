@@ -2864,6 +2864,37 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(displayed(api, 'item')).toEqual(['Apple', 'Cherry', 'Sky', 'Sea']);
     });
 
+    test('a model set while a values callback is pending is not replaced by one set before it', async () => {
+        let respond = () => {};
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'item' },
+                {
+                    field: 'colour',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        values: (params: SetFilterValuesFuncParams) => {
+                            respond = () => params.success(['Red', 'Blue', 'Green']);
+                        },
+                    },
+                },
+            ],
+            rowData: COLOUR_ROWS,
+        });
+        await asyncSetTimeout(0);
+        // Folded to 'Red' once the values arrive, which must not replace the model set after it.
+        for (const values of [['red'], ['Blue']]) {
+            void api.setColumnFilterModel('colour', { filterType: 'set', values });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+        }
+
+        respond();
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('colour')).toEqual({ filterType: 'set', values: ['Blue'] });
+        expect(displayed(api, 'item')).toEqual(['Sky', 'Sea']);
+    });
+
     test('a values callback answering after a newer one does not replace its values', async () => {
         const pending: ((values: string[]) => void)[] = [];
         const colourCol = (): ColDef => ({
@@ -2891,7 +2922,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(handler.getFilterKeys()).toEqual(['Blue']);
     });
 
-    test('a values callback overtaken by a values list still ends its loading', async () => {
+    test('a values callback overtaken by a values list ends its loading, whether or not it ever answers', async () => {
         const pending: ((values: string[]) => void)[] = [];
         const colourCol = (values: ISetFilterParams['values']): ColDef => ({
             field: 'colour',
@@ -2912,6 +2943,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
 
         api.setGridOption('columnDefs', [{ field: 'item' }, colourCol(['Red', 'Blue'])]);
         await asyncSetTimeout(0);
+        expect(loading()).toBe(false);
         pending[0](['Green']);
         await asyncSetTimeout(0);
 
@@ -2936,33 +2968,28 @@ describe('Set Filter — filterParams given as a function on a column with a cel
 
     const rowData = [{ value: 10 }, { value: 9 }];
 
-    test("its params apply over the data type's own, whose comparator still sorts the list", async () => {
-        const api: GridApi = gridsManager.createGrid('grid1', {
-            columnDefs: [
-                { field: 'value', filter: 'agSetColumnFilter', filterParams: () => ({ values: [10, 9, 100] }) },
-            ],
-            rowData,
-        });
-        await asyncSetTimeout(0);
-        const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '9', '10', '100']);
-    });
+    test("its params apply over the data type's own, whose comparator still sorts the list, on a Set Filter or a Multi Filter's child", async () => {
+        const setParams = () => ({ values: [10, 9, 100] });
+        const colDefs: ColDef[] = [
+            { field: 'value', filter: 'agSetColumnFilter', filterParams: setParams },
+            {
+                field: 'value',
+                filter: 'agMultiColumnFilter',
+                filterParams: () => ({ filters: [{ filter: 'agSetColumnFilter', filterParams: setParams }] }),
+            },
+        ];
+        const lists: string[][] = [];
+        for (const colDef of colDefs) {
+            const api: GridApi = gridsManager.createGrid('grid1', { columnDefs: [colDef], rowData });
+            await asyncSetTimeout(0);
+            const filter = await ColumnFilterHarness.open(api, 'value');
+            lists.push(filter.setFilterItemLabels());
+            gridsManager.reset();
+        }
 
-    test("a Multi Filter's apply too, its Set Filter child keeping the data type's comparator", async () => {
-        const api: GridApi = gridsManager.createGrid('grid1', {
-            columnDefs: [
-                {
-                    field: 'value',
-                    filter: 'agMultiColumnFilter',
-                    filterParams: () => ({
-                        filters: [{ filter: 'agSetColumnFilter', filterParams: () => ({ values: [10, 9, 100] }) }],
-                    }),
-                },
-            ],
-            rowData,
-        });
-        await asyncSetTimeout(0);
-        const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '9', '10', '100']);
+        expect(lists).toEqual([
+            ['(Select All)', '9', '10', '100'],
+            ['(Select All)', '9', '10', '100'],
+        ]);
     });
 });

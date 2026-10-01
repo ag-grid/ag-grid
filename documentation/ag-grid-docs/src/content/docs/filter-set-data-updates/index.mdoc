@@ -111,8 +111,8 @@ With this enabled:
 
 - A selected value whose rows are all removed stays selected, so its rows pass the filter again when they return.
 - An unselected value whose rows are all removed stays unselected, so its rows stay filtered out when they return.
-- Values no longer in the data are listed after the current values in a muted colour, and screen readers and the default tooltip describe them as not in the current data. In [Excel Mode](./filter-set-excel-mode/), `(Blanks)` stays last unless `suppressSorting` is set. They can still be selected and deselected, and take part in the Mini Filter and **(Select All)**. In a [Tree List](./filter-set-tree-list/) they stay in place, and a group is muted once every value under it is no longer in the data.
-- Values in a filter model that are not in the data are kept and listed by their key, so a model set before any rows are loaded is applied as written rather than reduced to the values present. Having no value, they are not passed to `valueFormatter`, the comparator, a cell renderer or the Tree List's `treeListPathGetter` and `treeListFormatter`, and `getFilterValues()` returns `null` for them.
+- Values no longer in the data are listed after the current values in a muted colour, and screen readers, and the default tooltip when `showTooltips` is set, describe them as not in the current data. In [Excel Mode](./filter-set-excel-mode/), `(Blanks)` stays last unless `suppressSorting` is set. They can still be selected and deselected, and take part in the Mini Filter and **(Select All)**. In a [Tree List](./filter-set-tree-list/) they stay in place, and a group is muted once every value under it is no longer in the data.
+- Values in a filter model that the data has never contained are kept and listed by their key, so a model set before any rows are loaded is applied as written rather than reduced to the values present. Having no value, they are not passed to `valueFormatter`, the comparator, a cell renderer or the Tree List's `treeListPathGetter` and `treeListFormatter`, and `getFilterValues()` returns `null` for them.
 - The floating filter and the Filters Tool Panel include selected values that are no longer in the data, as the filter still selects them.
 - New values are added as normal: unselected while the filter is active, and selected while it is inactive.
 - Values supplied through `filterParams.values` or `setFilterValues` work the same way: a value missing from the latest list is kept.
@@ -155,7 +155,7 @@ Selected values are always kept. Unselected values that are no longer in the dat
 
 When the limit is exceeded, the value that left the data first is discarded first. Discarding an unselected value does not change which rows pass the applied filter: it is not in the model, so if its rows return it is added back as a new, unselected value and its rows stay filtered out, exactly as if it had been kept. The limit only decides which of these values stay listed, and in memory, while their rows are away.
 
-Values are discarded when the values next reload, for example when the data changes or `refreshFilterValues` is called, not when a value is deselected. Only the applied filter model protects a value: with an **Apply** button, a value selected but not yet applied can be discarded by such a reload.
+Values are discarded when the values next reload, for example when the data changes or `refreshFilterValues` is called, not when a value is deselected. Only the applied filter model, and an applied Advanced Filter expression, protect a value: with an **Apply** button, a value selected but not yet applied can be discarded by such a reload.
 
 While the filter is inactive there is no model, so every retained value counts as unselected and the limit still applies. If a filter is applied later, a discarded value that returns is added back as a new, unselected value.
 
@@ -169,7 +169,7 @@ api.doFilterAction({ colId: ['col1', 'col2'], action: 'clearPreservedValues' });
 api.doFilterAction({ action: 'clearPreservedValues' });
 ```
 
-The values are cleared wherever the column keeps them: its Set Filter, a Set Filter inside a [Multi Filter](./filter-multi/), and the [Advanced Filter](./filter-advanced/). Each filter model is then reconciled with the remaining values, as happens without `preservePreviousValues`: selected values that were discarded leave the model, and the filter becomes inactive if every remaining value is selected. The values an applied Advanced Filter expression names are kept, as the expression still uses them.
+The values are cleared wherever the column keeps them: its Set Filter, a Set Filter inside a [Multi Filter](./filter-multi/) or a selectable filter, and the [Advanced Filter](./filter-advanced/). Each filter model is then reconciled with the remaining values, as happens without `preservePreviousValues`: selected values that were discarded leave the model, and the filter becomes inactive if every remaining value is selected. The values an applied Advanced Filter expression names are kept, as the expression still uses them.
 
 The `clearUnselectedPreservedValues` action discards only the values that are not in the applied filter model. Those in it stay listed, and the model is left as it is:
 

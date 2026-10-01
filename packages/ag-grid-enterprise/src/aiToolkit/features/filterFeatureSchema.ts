@@ -1,4 +1,4 @@
-import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
+import type { BeanCollection, IFilterDef, StructuredSchemaParams } from 'ag-grid-community';
 import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
@@ -52,10 +52,16 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
         const defaultFilter = colFilter!.getDefaultFilter(column);
         const includeSetValues = columnParams?.includeSetValues ?? false;
 
+        // Merged as for the filter about to be created, so a `filterParams` function is described by what it returns.
+        const resolveParams = (def: IFilterDef) =>
+            typeof def.filterParams === 'function'
+                ? colFilter.createHandlerFilterParams(column, def, 'init')
+                : def.filterParams;
         const filter = buildColumnFilterSchema(
             colDef.filter,
-            colDef.filterParams,
+            resolveParams(colDef),
             defaultFilter,
+            resolveParams,
             (isMulti: boolean = false, multiIndex: number = 0) => {
                 if (!includeSetValues) {
                     return [];
@@ -93,6 +99,7 @@ function buildColumnFilterSchema(
     filter: any,
     filterParams: any | undefined,
     defaultFilter: string,
+    resolveParams: (def: IFilterDef) => any,
     getKeys?: (isMulti?: boolean, index?: number) => (string | null)[]
 ): SchemaBuilder | null {
     let filterKey: string | undefined = undefined;
@@ -128,7 +135,7 @@ function buildColumnFilterSchema(
     } else if (filterKey === SetFilterKey) {
         return buildSetFilterSchema(getKeys);
     } else if (filterKey === MultiFilterKey) {
-        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), getKeys);
+        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), resolveParams, getKeys);
     }
 
     return null;
@@ -256,11 +263,12 @@ const buildSetFilterSchema = (getKeys?: () => (string | null)[]) => {
 
 const buildMultiFilterSchema = (
     filters: any[],
+    resolveParams: (def: IFilterDef) => any,
     getKeys: (isMulti: boolean, index?: number) => (string | null)[] = () => []
 ): SchemaBuilder | null => {
     const childSchemas = filters
         .map((filter: any, index: number) =>
-            buildColumnFilterSchema(filter.filter, filter.filterParams, DEFAULT_CHILD_FILTER, () =>
+            buildColumnFilterSchema(filter.filter, resolveParams(filter), DEFAULT_CHILD_FILTER, resolveParams, () =>
                 getKeys(true, index)
             )
         )

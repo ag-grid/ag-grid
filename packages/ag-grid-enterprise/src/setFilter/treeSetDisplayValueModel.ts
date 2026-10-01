@@ -113,6 +113,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                     available,
                     parentTreeKeys: [],
                     keys: [key],
+                    keyOnly: true,
                 };
                 allDisplayedItemsTree.set(leaf, leaf);
                 continue;
@@ -233,7 +234,6 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private updateFilter(matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean): void {
         const treeListFormatter = this.treeListFormatter;
-        const keyOnlyKeys = this.getKeyOnlyKeys();
         const passesFilter = (item: SetFilterModelTreeItem) => {
             if (!item.available) {
                 return false;
@@ -242,7 +242,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 return nullMatchesFilter;
             }
 
-            return matchesFilter(this.formatter(formatTreeKey(item, treeListFormatter, keyOnlyKeys)));
+            return matchesFilter(this.formatter(formatTreeKey(item, treeListFormatter)));
         };
 
         for (const item of this.allDisplayedItemsTree.values()) {

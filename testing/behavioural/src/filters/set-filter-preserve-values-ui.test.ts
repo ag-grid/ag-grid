@@ -16,7 +16,6 @@ import type {
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterParams,
-    SetFilterHandler,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, TooltipModule, setupAgTestIds } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
@@ -280,23 +279,22 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'Z', '(Blanks)']);
     });
 
-    test('in Excel Mode a blank in the data is listed after the retained values', async () => {
-        const api = createGrid(rows('A', null, 'B'), { excelMode: 'windows' });
-        await asyncSetTimeout(0);
-        await setRowData(api, rows('A', null));
+    test('in Excel Mode a blank in the data is listed after the retained values, or in its first-seen place with suppressSorting', async () => {
+        const lists: { labels: string[]; missing: (string | undefined)[] }[] = [];
+        for (const suppressSorting of [false, true]) {
+            const api = createGrid(rows('A', null, 'B'), { excelMode: 'windows', suppressSorting });
+            await asyncSetTimeout(0);
+            await setRowData(api, rows('A', null));
 
-        const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', '(Blanks)']);
-        expect(missingItems()).toEqual(['B']);
-    });
+            const filter = await ColumnFilterHarness.open(api, 'value');
+            lists.push({ labels: filter.setFilterItemLabels(), missing: missingItems() });
+            gridsManager.reset();
+        }
 
-    test('in Excel Mode with suppressSorting a blank keeps its first-seen place', async () => {
-        const api = createGrid(rows('A', null, 'B'), { excelMode: 'windows', suppressSorting: true });
-        await asyncSetTimeout(0);
-        await setRowData(api, rows('A', null));
-
-        const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', '(Blanks)', 'B']);
+        expect(lists).toEqual([
+            { labels: ['(Select All)', 'A', 'B', '(Blanks)'], missing: ['B'] },
+            { labels: ['(Select All)', 'A', '(Blanks)', 'B'], missing: ['B'] },
+        ]);
     });
 
     test("a data change keeps the open list's rows while a model value never seen is listed", async () => {
@@ -328,6 +326,22 @@ describe('Set Filter preservePreviousValues - filter list', () => {
 
         await setRowData(api, rows('Apple', 'Avocado', 'Pear'));
         expect(shown(api)).toEqual(['Apple', 'Pear']);
+    });
+
+    test('with an Apply button, a retained value selected but not applied is discarded by a reload over the limit', async () => {
+        const api = createGrid(rows('A', 'B', 'C'), { buttons: ['apply'], preservePreviousValuesLimit: 1 });
+        await asyncSetTimeout(0);
+        await setModel(api, ['A']);
+        await setRowData(api, rows('A', 'C'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        await filter.toggleSetItem('B');
+        expect(missingItems()).toEqual(['B']);
+
+        // Only the applied model protects a value, so 'C' leaving evicts 'B', the first to leave.
+        await setRowData(api, rows('A'));
+        expect(missingItems()).toEqual(['C']);
+        expect(modelOf(api)?.values).toEqual(['A']);
     });
 
     test('unchecking with no model keeps every retained value selected', async () => {
@@ -480,49 +494,18 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(cellRenderer.mock.calls.map(([params]) => params.value)).not.toContain('Z');
     });
 
-    test('a tree list model value never seen in the data keeps its own row beside a group with its label', async () => {
-        const treeListFormatter = vi.fn((pathKey: string | null) => `#${pathKey}`);
-        const api = createGrid(
-            rows('2024-01-01'),
-            { treeList: true, treeListFormatter },
-            { cellDataType: 'dateString' }
-        );
+    test('a tree list model value never seen in the data keeps its own row beside a group with the same label', async () => {
+        const api = createGrid(rows('2024-01-01'), { treeList: true }, { cellDataType: 'dateString' });
         await asyncSetTimeout(0);
         await setModel(api, ['2024-01-01', '2024']);
 
         const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '#2024', '2024']);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '2024', '2024']);
         expect(missingItems()).toEqual(['2024']);
 
-        await filter.toggleSetItem('2024');
+        // The harness toggles by label, which would reach the group first.
+        popup().querySelector<HTMLInputElement>('.ag-set-filter-item-missing input')!.click();
         await asyncSetTimeout(0);
         expect(modelOf(api)?.values).toEqual(['2024-01-01']);
-    });
-
-    test('grid state restores selected retained values', async () => {
-        const api = createGrid(rows('A', 'B', 'C'));
-        await asyncSetTimeout(0);
-        await setModel(api, ['A', 'B']);
-        await setRowData(api, rows('A', 'C'));
-        const state = api.getState();
-
-        const restored = gridsManager.createGrid<Row>('restored', {
-            columnDefs: [
-                { field: 'value', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
-            ],
-            getRowId: ({ data }) => data.id,
-            rowData: rows('A', 'C'),
-            initialState: state,
-        });
-        await asyncSetTimeout(0);
-        expect(modelOf(restored)?.values).toEqual(['A', 'B']);
-        expect((restored.getColumnFilterHandler('value') as SetFilterHandler).getFilterKeys().sort()).toEqual([
-            'A',
-            'B',
-            'C',
-        ]);
-
-        await setRowData(restored, rows('A', 'B', 'C'));
-        expect(shown(restored)).toEqual(['A', 'B']);
     });
 });

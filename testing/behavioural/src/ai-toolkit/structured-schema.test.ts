@@ -1044,6 +1044,25 @@ describe('getStructuredSchema - filter feature', () => {
             const [child] = ageFilter.properties.filterModels.items.anyOf.map(resolveNullable);
             expect(child.properties.filterType.enum).toEqual(['text']);
         });
+
+        test('children from filterParams given as a function are the ones it returns', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: () => ({ filters: [{ filter: 'agSetColumnFilter' }] }),
+                    },
+                ],
+                rowData: [{ name: 'Alice' }],
+            });
+
+            const schema = toJSON(api.getStructuredSchema());
+            const nameFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.name);
+            // A child that has no model is described as `null`.
+            const children = nameFilter.properties.filterModels.items.anyOf.filter((child: any) => child.properties);
+            expect(children.map((child: any) => child.properties.filterType.enum[0])).toEqual(['set']);
+        });
     });
 });
 

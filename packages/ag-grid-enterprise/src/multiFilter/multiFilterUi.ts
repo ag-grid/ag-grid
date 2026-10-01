@@ -38,17 +38,22 @@ export class MultiFilterUi
 
     public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {
         this.params = params;
-        const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
-            if (filterDef.filterParams?.buttons) {
-                this.beans.log.warn(292, { colId: params.column.getColId() });
-                const newParams = { ...filterDef.filterParams };
-                delete newParams.buttons;
-                return {
-                    ...filterDef,
-                    filterParams: newParams,
-                };
+        const withoutButtons = (filterParams: any) => {
+            if (!filterParams?.buttons) {
+                return filterParams;
             }
-            return filterDef;
+            this.beans.log.warn(292, { colId: params.column.getColId() });
+            const newParams = { ...filterParams };
+            delete newParams.buttons;
+            return newParams;
+        };
+        const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
+            const filterParams = filterDef.filterParams;
+            if (typeof filterParams === 'function') {
+                // Its buttons are only known once it has run with the child filter.
+                return { ...filterDef, filterParams: (childParams: any) => withoutButtons(filterParams(childParams)) };
+            }
+            return filterParams?.buttons ? { ...filterDef, filterParams: withoutButtons(filterParams) } : filterDef;
         });
         this.filterDefs = filterDefs;
 

@@ -1,21 +1,14 @@
-import type {
-    AgColumn,
-    ColumnFilterService,
-    GridOptionsService,
-    ISetFilterService,
-    NamedBean,
-} from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
+import type { AgColumn, IFilterDef, IFilterParams, ISetFilterService, NamedBean } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { SetFilterHandler } from './setFilterHandler';
 
-interface PreservingFilterParams {
+/** Read from a filter's params as written, or as merged for the filter about to be created. */
+interface PreservingFilterParams extends Partial<IFilterParams> {
     preservePreviousValues?: boolean;
     defaultFilterParams?: { preservePreviousValues?: boolean };
-    filters?: { filterParams?: PreservingFilterParamsDef }[];
+    filters?: (IFilterDef | null | undefined)[];
 }
-
-type PreservingFilterParamsDef = PreservingFilterParams | ((params: any) => PreservingFilterParams | undefined);
 
 /** Every Set Filter handler by column, as a column's filter, Multi Filter children and the Advanced Filter each keep values. */
 export class SetFilterService extends BeanStub implements NamedBean, ISetFilterService {
@@ -38,14 +31,13 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
         if (!colFilter || filterManager?.isAdvFilterEnabled() || dataTypeSvc?.isPendingInference) {
             return;
         }
-        const gos = this.gos;
         if (column) {
-            createPreservingFilter(gos, colFilter, column);
+            this.createPreservingFilter(column);
             return;
         }
         const cols = colModel.getColsInStateOrder();
         for (let i = 0, len = cols.length; i < len; ++i) {
-            createPreservingFilter(gos, colFilter, cols[i]);
+            this.createPreservingFilter(cols[i]);
         }
     }
 
@@ -85,42 +77,44 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
         }
     }
 
-    public override destroy(): void {
-        this.handlersByColId.clear();
-        super.destroy();
+    /** Not for pivot result columns, which copy their value column's params and are rebuilt by every pivot change. */
+    private createPreservingFilter(column: AgColumn): void {
+        const colFilter = this.beans.colFilter!;
+        // A column that has its filter is skipped before its params are read, as reading may call the app's function.
+        if (
+            column.primary &&
+            !colFilter.hasFilter(column) &&
+            colFilter.isFilterAllowed(column) &&
+            colFilter.isCurrentColumn(column) &&
+            this.wantsPreservedValues(column, column.colDef)
+        ) {
+            colFilter.getHandler(column, true);
+        }
+    }
+
+    /** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
+    private wantsPreservedValues(column: AgColumn, def: IFilterDef): boolean {
+        let filterParams: PreservingFilterParams | undefined = def.filterParams;
+        if (typeof filterParams === 'function') {
+            // Merged as for the filter about to be created, so the function is handed every param it expects.
+            filterParams = this.beans.colFilter!.createHandlerFilterParams(column, def, 'init');
+        }
+        if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
+            return true;
+        }
+        const filters = filterParams?.filters;
+        if (!Array.isArray(filters)) {
+            return false;
+        }
+        for (let i = 0, len = filters.length; i < len; ++i) {
+            const child = filters[i];
+            if (child && this.wantsPreservedValues(column, child)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
-
-/** Not for pivot result columns, which copy their value column's params and are rebuilt by every pivot change. */
-const createPreservingFilter = (gos: GridOptionsService, colFilter: ColumnFilterService, column: AgColumn): void => {
-    // A column that has its filter is skipped before its params are read, as reading may call the app's function.
-    if (
-        column.primary &&
-        !colFilter.hasFilter(column) &&
-        colFilter.isCurrentColumn(column) &&
-        wantsPreservedValues(gos, column, column.colDef.filterParams)
-    ) {
-        colFilter.getHandler(column, true);
-    }
-};
-
-/** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
-const wantsPreservedValues = (
-    gos: GridOptionsService,
-    column: AgColumn,
-    def: PreservingFilterParamsDef | undefined
-): boolean => {
-    // Called as for the filter about to be created, as the Filters Tool Panel resolves them before one exists.
-    const filterParams =
-        typeof def === 'function'
-            ? def(_addGridCommonParams(gos, { column, colDef: column.colDef, source: 'init' }))
-            : def;
-    if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
-        return true;
-    }
-    const filters = filterParams?.filters;
-    return Array.isArray(filters) && filters.some((child) => wantsPreservedValues(gos, column, child?.filterParams));
-};
 
 const clearHandlers = (handlers: Set<SetFilterHandler<any>> | undefined, onlyUnselected: boolean): void => {
     if (!handlers) {

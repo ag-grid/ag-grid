@@ -40,11 +40,11 @@ test.agExample(import.meta, () => {
         await expect(rows(page)).toHaveCount(1);
     });
 
-    test.eachFramework('Clear Preserved Values drops values not in the data', async ({ page }) => {
+    test.eachFramework('Clear Preserved Values drops values not in the data, and from the model', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await filterItemCheckbox(page, 'C').uncheck();
+        await page.getByRole('button', { name: 'Select Only B' }).click();
         await page.getByRole('button', { name: 'Apply Data Update 1' }).click();
         await expect(filterItem(page, 'B')).toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'C')).toHaveClass(/ag-set-filter-item-missing/);
@@ -53,5 +53,10 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'B')).toHaveCount(0);
         await expect(filterItem(page, 'C')).toHaveCount(0);
         await expect(filterItem(page, 'D')).toHaveCount(1);
+
+        // Had 'B' stayed in the model, its rows would pass again once they return.
+        await page.getByRole('button', { name: 'Apply Data Update 2' }).click();
+        await expect(filterItemCheckbox(page, 'B')).not.toBeChecked();
+        await expect(rows(page)).toHaveCount(0);
     });
 });

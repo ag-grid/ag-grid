@@ -52,4 +52,6 @@ export interface SetFilterModelTreeItem {
     children?: SetFilterTreeItems;
     keys?: (string | null)[];
     parentTreeKeys: (string | null)[];
+    /** A leaf for a value known only by its key, which has no value to format or render. */
+    keyOnly?: boolean;
 }

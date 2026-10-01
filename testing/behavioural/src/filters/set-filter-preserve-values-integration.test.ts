@@ -14,6 +14,7 @@ import type {
     GridApi,
     GridOptions,
     IFilterComp,
+    IFilterParams,
     IMultiFilter,
     ISetFilterParams,
     KeyCreatorParams,
@@ -133,13 +134,24 @@ describe('Set Filter preservePreviousValues - integration', () => {
             await expectCRetained(api);
         });
 
-        test('from filterParams given as a function', async () => {
+        test('from filterParams given as a function, handed the params its filter is created with', async () => {
             const api = createGrid(rows('A', 'B', 'C'), {
                 filter: 'agSetColumnFilter',
-                filterParams: () => ({ preservePreviousValues: true }),
+                filterParams: (params: IFilterParams) => ({
+                    preservePreviousValues: params.rowModel.getType() === 'clientSide',
+                }),
             });
             await asyncSetTimeout(0);
             await expectCRetained(api);
+        });
+
+        test('not for a column that cannot be filtered, whose filterParams function is never called', async () => {
+            const filterParams = vi.fn(() => ({ preservePreviousValues: true }));
+            const api = createGrid(rows('A', 'B', 'C'), { filter: false, filterParams });
+            await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', [{ field: 'value', filter: false, filterParams }]);
+            await asyncSetTimeout(0);
+            expect(filterParams).not.toHaveBeenCalled();
         });
 
         test('when a column definition update turns the option on', async () => {
@@ -214,7 +226,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
 
         test("but not for the pivot result columns that copy a value column's params", async () => {
             const values = vi.fn((params: SetFilterValuesFuncParams<Row, string>) => params.success(['1']));
-            gridsManager.createGrid<Row>('grid', {
+            const api = gridsManager.createGrid<Row>('grid', {
                 columnDefs: [
                     { field: 'value', pivot: true },
                     { colId: 'count', valueGetter: () => 1, aggFunc: 'sum', ...setFilter({ values }) },
@@ -223,7 +235,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
                 rowData: rows('A', 'B', 'C', 'D'),
                 pivotMode: true,
             });
-            await asyncSetTimeout(0);
+            await waitFor(() => expect(api.getPivotResultColumns()?.length).toBeGreaterThan(0));
             await asyncSetTimeout(0);
             expect(values).toHaveBeenCalledTimes(1);
         });
@@ -329,7 +341,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
             void api.getColumnFilterInstance('ag-Grid-AutoColumn');
             await asyncSetTimeout(0);
 
-            // Removed, then recreated under the same colId.
+            // Recreated under the same colId, so the removed filter's late load must not reach the new one.
             api.setRowGroupColumns([]);
             api.setGridOption('autoGroupColumnDef', autoGroupColumnDef('agSetColumnFilter', setFilter().filterParams));
             api.setRowGroupColumns(['athlete']);
@@ -393,8 +405,8 @@ describe('Set Filter preservePreviousValues - integration', () => {
             await expectCleared(withHandlers, handler.getHandler<SetFilterHandler>(1)!);
         });
 
-        test('a Set Filter child is created up front from params given as functions', async () => {
-            const api = createGrid(rows('A', 'B', 'C'), {
+        test('a Set Filter child is created up front, so it retains values that leave before first use, from params as objects or functions', async () => {
+            const fromFunctions: ColDef<Row> = {
                 filter: 'agMultiColumnFilter',
                 filterParams: () => ({
                     filters: [
@@ -402,21 +414,16 @@ describe('Set Filter preservePreviousValues - integration', () => {
                         { filter: 'agSetColumnFilter', filterParams: () => ({ preservePreviousValues: true }) },
                     ],
                 }),
-            });
-            await asyncSetTimeout(0);
-            await setRowData(api, rows('A', 'B'));
+            };
+            for (const colDef of [multiFilter, fromFunctions]) {
+                const api = createGrid(rows('A', 'B', 'C'), colDef);
+                await asyncSetTimeout(0);
+                await setRowData(api, rows('A', 'B'));
 
-            await ColumnFilterHarness.open(api, 'value');
-            await waitFor(() => expect(missingLabels(popup())).toEqual(['C']));
-        });
-
-        test('a Set Filter child is created up front, so it retains values that leave before first use', async () => {
-            const api = createGrid(rows('A', 'B', 'C'), multiFilter);
-            await asyncSetTimeout(0);
-            await setRowData(api, rows('A', 'B'));
-
-            await ColumnFilterHarness.open(api, 'value');
-            await waitFor(() => expect(missingLabels(popup())).toEqual(['C']));
+                await ColumnFilterHarness.open(api, 'value');
+                await waitFor(() => expect(missingLabels(popup())).toEqual(['C']));
+                gridsManager.reset();
+            }
         });
     });
 
@@ -573,6 +580,20 @@ describe('Set Filter preservePreviousValues - integration', () => {
         const filter = await ColumnFilterHarness.open(api, 'value');
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'D']);
         expect(missingLabels(popup())).toEqual(['D']);
+    });
+
+    test('a values callback answering after destroyFilter does not reach the filter created in its place', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const values = (params: SetFilterValuesFuncParams<Row, string>) => pending.push(params.success);
+        const api = createGrid(rows('A'), setFilter({ values }));
+        await waitFor(() => expect(pending).toHaveLength(1));
+
+        api.destroyFilter('value');
+        await waitFor(() => expect(pending).toHaveLength(2));
+        pending[1](['New']);
+        pending[0](['Old']);
+        await asyncSetTimeout(0);
+        expect(handlerOf(api).getFilterKeys()).toEqual(['New']);
     });
 
     test('changing caseSensitive discards retained values, with the filter when one is applied', async () => {

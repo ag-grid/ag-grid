@@ -71,10 +71,13 @@ test.agExample(import.meta, () => {
         await page.getByRole('button', { name: 'Remove beach.jpg' }).click();
         await page.getByRole('button', { name: 'Remove Documents' }).click();
         await page.getByRole('button', { name: 'Clear Preserved Values' }).click();
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
 
+        // Had 'report.pdf' stayed in the model, its rows would pass again once they return.
+        await page.getByRole('button', { name: 'Restore Data' }).click();
         await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
         await openFilterExpanded(page);
-        await expect(filterItem(page, 'report.pdf')).toHaveCount(0);
+        await expect(filterItem(page, 'report.pdf').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'city.jpg').locator('input')).not.toBeChecked();
     });
 });

@@ -1,4 +1,5 @@
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -14,6 +15,7 @@ import {
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { ColumnMenuModule, FiltersToolPanelModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -89,6 +91,34 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test('a child whose filterParams are a function is warned about its buttons, as a child with an object is', async () => {
+        // Deliberate: child buttons are dropped with warning #292.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [292] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter' },
+                            { filter: 'agSetColumnFilter', filterParams: () => ({ buttons: ['apply'] }) },
+                        ],
+                    },
+                },
+            ],
+            rowData: ROWS,
+        });
+
+        await ColumnFilterHarness.open(api, 'name');
+        expect(document.querySelectorAll('.ag-multi-filter .ag-filter-apply-panel')).toHaveLength(0);
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #292');
+        warnSpy.mockRestore();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
 
     test('default filters render text + set together; both must pass (AND)', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {

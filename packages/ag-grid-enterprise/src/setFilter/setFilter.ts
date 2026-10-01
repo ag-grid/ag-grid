@@ -40,7 +40,6 @@ import { SetFilterListItem } from './setFilterListItem';
 import {
     areAllTreeKeysIn,
     formatTreeKey,
-    isKeyOnlyTreeLeaf,
     setFilterNullIfBlank,
     translateForSetFilter,
     unformattedSetFilterText,
@@ -501,12 +500,11 @@ export class SetFilter<V = string>
 
         // A group additionally expands; both act for every key their row stands for.
         const children = item.children;
-        const keyOnlyKeys = this.handler.valueModel.keyOnlyKeys;
         return {
-            value: formatTreeKey(item, this.params.treeListFormatter, keyOnlyKeys) ?? item.treeKey,
+            value: formatTreeKey(item, this.params.treeListFormatter) ?? item.treeKey,
             depth: item.depth,
             isGroup: !!children,
-            isKeyOnly: isKeyOnlyTreeLeaf(item, keyOnlyKeys),
+            isKeyOnly: !!item.keyOnly,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
                 this.onTreeItemSelected(e.item, e.isSelected),
             expandedListener: children

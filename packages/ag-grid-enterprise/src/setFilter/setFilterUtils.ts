@@ -37,19 +37,13 @@ export function areAllTreeKeysIn(item: SetFilterModelTreeItem, keys: ReadonlySet
     return true;
 }
 
-/** A leaf standing only for keys known from a model, whose values have no path to format or render. */
-export function isKeyOnlyTreeLeaf(item: SetFilterModelTreeItem, keyOnlyKeys: ReadonlySet<string | null>): boolean {
-    return !item.children && keyOnlyKeys.size > 0 && areAllTreeKeysIn(item, keyOnlyKeys);
-}
-
 /** A tree item's label; a key-only leaf is labelled by its key, having no value for the formatter to describe. */
 export function formatTreeKey(
     item: SetFilterModelTreeItem,
     treeListFormatter:
-        ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined,
-    keyOnlyKeys: ReadonlySet<string | null>
+        ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined
 ): string | null {
-    return treeListFormatter && !isKeyOnlyTreeLeaf(item, keyOnlyKeys)
+    return treeListFormatter && !item.keyOnly
         ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
         : item.treeKey;
 }

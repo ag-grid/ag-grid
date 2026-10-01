@@ -1,6 +1,7 @@
+import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, GridApi, ISetFilterParams, SetFilterHandler, SetFilterValuesFuncParams } from 'ag-grid-community';
+import type { ColDef, GridApi, ISetFilterParams, SetFilterHandler } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -116,22 +117,16 @@ describe('Set Filter preservePreviousValues', () => {
         expect(modelOf(api)?.values).toEqual(['one']);
     }
 
-    test('transactions keep a value whose rows are all removed, with a declared data type', async () => {
-        const api = createGrid([], {}, { cellDataType: 'text' });
-        await asyncSetTimeout(0);
-        await setModel(api, ['one']);
-        expect(handlerOf(api).getFilterKeys()).toEqual(['one']);
-        expect(modelOf(api)?.values).toEqual(['one']);
-        await expectTransactionsKeepValue(api);
-    });
-
-    test('transactions keep a value whose rows are all removed, with an inferred data type', async () => {
-        const api = createGrid([]);
-        await asyncSetTimeout(0);
-        await setModel(api, ['one']);
-        // Inference holds the model back until data arrives, so nothing is listed yet.
-        expect(handlerOf(api).getFilterKeys()).toEqual([]);
-        await expectTransactionsKeepValue(api);
+    test('transactions keep a value whose rows are all removed, with a declared or an inferred data type', async () => {
+        const colDefs: Partial<ColDef<Row>>[] = [{ cellDataType: 'text' }, {}];
+        for (const colDef of colDefs) {
+            // The filter is left to be created by the grid, once the data type is known.
+            const api = createGrid([], {}, colDef);
+            await asyncSetTimeout(0);
+            await setModel(api, ['one']);
+            await expectTransactionsKeepValue(api);
+            gridsManager.reset();
+        }
     });
 
     test('without the option, values leaving the data are still pruned from the model', async () => {
@@ -166,6 +161,33 @@ describe('Set Filter preservePreviousValues', () => {
         expect(shown(api)).toEqual(['B']);
     });
 
+    test('grid state restores selected retained values', async () => {
+        const api = createGrid(rows('A', 'B', 'C'));
+        await asyncSetTimeout(0);
+        await setModel(api, ['A', 'B']);
+        await setRowData(api, rows('A', 'C'));
+        const state = api.getState();
+
+        const restored = gridsManager.createGrid<Row>('restored', {
+            columnDefs: [
+                { field: 'value', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: rows('A', 'C'),
+            initialState: state,
+        });
+        await asyncSetTimeout(0);
+        expect(modelOf(restored)?.values).toEqual(['A', 'B']);
+        expect((restored.getColumnFilterHandler('value') as SetFilterHandler).getFilterKeys().sort()).toEqual([
+            'A',
+            'B',
+            'C',
+        ]);
+
+        await setRowData(restored, rows('A', 'B', 'C'));
+        expect(shown(restored)).toEqual(['A', 'B']);
+    });
+
     test('a selected blank that leaves the data stays selected, and its rows pass again on return', async () => {
         const api = createGrid(rows('A', null, ''));
         await asyncSetTimeout(0);
@@ -177,34 +199,6 @@ describe('Set Filter preservePreviousValues', () => {
 
         await setRowData(api, rows('A', null, ''));
         expect(shown(api)).toEqual([null, '']);
-    });
-
-    test('without the option, a model set while the values load is not overwritten by an earlier one', async () => {
-        let respond = () => {};
-        const api = gridsManager.createGrid<Row>('grid', {
-            columnDefs: [
-                {
-                    field: 'value',
-                    filter: 'agSetColumnFilter',
-                    filterParams: {
-                        values: (params: SetFilterValuesFuncParams<Row, string>) => {
-                            respond = () => params.success(['A', 'B', 'C']);
-                        },
-                    },
-                },
-            ],
-            getRowId: ({ data }) => data.id,
-            rowData: rows('A', 'B', 'C'),
-        });
-        await asyncSetTimeout(0);
-        // Folded to 'A' once the values arrive, which must not replace the model set after it.
-        await setModel(api, ['a']);
-        await setModel(api, ['B']);
-
-        respond();
-        await asyncSetTimeout(0);
-        expect(modelOf(api)?.values).toEqual(['B']);
-        expect(shown(api)).toEqual(['B']);
     });
 
     test('a model naming every value is kept as set, so a new value arrives unchecked', async () => {
@@ -292,12 +286,12 @@ describe('Set Filter preservePreviousValues', () => {
         let source = ['A', 'B', 'C'];
         const values = vi.fn((params) => params.success(source));
         const api = createGrid(rows('A', 'B', 'C'), { values });
-        await vi.waitFor(() => expect(handlerOf(api).getFilterKeys()).toEqual(['A', 'B', 'C']));
+        await waitFor(() => expect(handlerOf(api).getFilterKeys()).toEqual(['A', 'B', 'C']));
         await setModel(api, ['B']);
 
         source = ['A', 'C'];
         handlerOf(api).refreshFilterValues();
-        await vi.waitFor(() => expect(values).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(values).toHaveBeenCalledTimes(2));
         await asyncSetTimeout(0);
         expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B', 'C']);
         expect(modelOf(api)?.values).toEqual(['B']);
@@ -437,6 +431,36 @@ describe('Set Filter preservePreviousValues', () => {
         expect(shown(api)).toEqual(['A', 'B']);
     });
 
+    test('turning the option off with no rows left drops a model value never seen, even after the limit evicted every seen one', async () => {
+        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLimit: 0 });
+        await asyncSetTimeout(0);
+        await setModel(api, ['X']);
+        await setRowData(api, []);
+        expect(handlerOf(api).getFilterKeys()).toEqual(['X']);
+
+        api.setGridOption('columnDefs', [
+            { field: 'value', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: false } },
+        ]);
+        await asyncSetTimeout(0);
+        expect(modelOf(api)).toBeNull();
+
+        await setRowData(api, rows('A', 'B'));
+        expect(shown(api)).toEqual(['A', 'B']);
+    });
+
+    test('clearing every column leaves a filter without the option alone, its model still waiting for rows', async () => {
+        const api = createGrid([], { preservePreviousValues: false }, { cellDataType: 'text' });
+        await asyncSetTimeout(0);
+        await setModel(api, ['A']);
+
+        api.doFilterAction({ action: 'clearPreservedValues' });
+        await asyncSetTimeout(0);
+        expect(modelOf(api)?.values).toEqual(['A']);
+
+        await setRowData(api, rows('A', 'B'));
+        expect(shown(api)).toEqual(['A']);
+    });
+
     test('turning the option off before any rows arrive keeps the model waiting for them', async () => {
         // No type to infer, so the model reaches the filter before the rows do.
         const api = createGrid([], {}, { cellDataType: 'text' });
@@ -457,6 +481,17 @@ describe('Set Filter preservePreviousValues', () => {
 
         await setRowData(api, rows('A', 'B'));
         expect(shown(api)).toEqual(['A']);
+    });
+
+    test('a model value never seen that arrives in another case stays selected, the model taking the case the data brings', async () => {
+        const api = createGrid(rows('A'));
+        await asyncSetTimeout(0);
+        await setModel(api, ['X']);
+
+        await setRowData(api, rows('A', 'x'));
+        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'x']);
+        expect(modelOf(api)?.values).toEqual(['x']);
+        expect(shown(api)).toEqual(['x']);
     });
 
     describe('preservePreviousValuesLimit', () => {

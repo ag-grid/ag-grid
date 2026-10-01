@@ -50,6 +50,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** Missing keys known only from a model, whose values are unknown. */
     public readonly keyOnlyKeys = new Set<string | null>();
 
+    private loading = false;
+
+    /** Once any value has loaded, no values means an empty source rather than one not loaded yet. */
+    public valuesSeen = false;
+
     /** Bumped whenever `keyOnlyKeys` changes, so a list rebuilds the rows it drew for a key alone. */
     public keyOnlyVersion = 0;
 
@@ -195,6 +200,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     public updateAllValues(replace = false): AgPromise<(string | null)[]> {
         const load = ++this.loadCount;
+        const valuesType = this.valuesType;
+        if (this.loading && valuesType !== SetFilterModelValuesType.PROVIDED_CALLBACK) {
+            // The callback this load overtakes may never answer, so its loading ends here.
+            this.setLoading(false);
+        }
         const replaceKept = replace || this.replacePending;
         this.replacePending = replaceKept;
         this.allKeys = new AgPromise<(string | null)[]>((resolve) => {
@@ -206,7 +216,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                     this.allKeys.then(resolve);
                 }
             };
-            switch (this.valuesType) {
+            switch (valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                     this.getValuesFromRowsAsync().then((values) => {
                         if (this.isAlive()) {
@@ -224,14 +234,16 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                 }
 
                 case SetFilterModelValuesType.PROVIDED_CALLBACK: {
-                    this.dispatchLocalEvent({ type: 'loadingStart' });
+                    this.setLoading(true);
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, TValue>;
                     const { column, colDef } = this.params.handlerParams;
                     const params: SetFilterValuesFuncParams<any, TValue> = _addGridCommonParams(this.gos, {
                         success: (values) => {
                             if (this.isAlive()) {
-                                this.dispatchLocalEvent({ type: 'loadingEnd' });
+                                if (load === this.loadCount) {
+                                    this.setLoading(false);
+                                }
                                 resolveLoaded(this.uniqueValues(this.validateProvidedValues(values)));
                             }
                         },
@@ -377,8 +389,18 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         );
     }
 
+    private setLoading(loading: boolean): void {
+        if (this.loading !== loading) {
+            this.loading = loading;
+            this.dispatchLocalEvent({ type: loading ? 'loadingStart' : 'loadingEnd' });
+        }
+    }
+
     private processAllValues(values: Map<string | null, TValue | null> | null, replace: boolean): (string | null)[] {
         const freshValues = values ?? new Map();
+        if (freshValues.size) {
+            this.valuesSeen = true;
+        }
         if (this.isPreserving() && !replace) {
             this.mergeValues(freshValues);
         } else {

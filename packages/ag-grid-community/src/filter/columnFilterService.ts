@@ -169,7 +169,6 @@ function isAggFilter(
     return groupFilterEnabled;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnFilterService
     extends BeanStub<
         | 'filterParamsChanged'
@@ -1137,7 +1136,8 @@ export class ColumnFilterService
         return this.createHandlerParams(column, filterDef, filterParams, defaultFilter, parent);
     }
 
-    private createHandlerFilterParams(
+    /** The merged params a handler for the definition is created with, so a `filterParams` function reads every param. */
+    public createHandlerFilterParams(
         column: AgColumn,
         filterDef: IFilterDef,
         source: 'init' | 'colDef'

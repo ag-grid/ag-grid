@@ -10,7 +10,8 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { ColDef, GridApi, ISetFilterParams, SetAdvancedFilterModel } from 'ag-grid-community';
+import type { ColDef, GridApi, IFilterParams, ISetFilterParams, SetAdvancedFilterModel } from 'ag-grid-community';
+import { MultiFilterModule } from 'ag-grid-enterprise';
 
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES } from './advancedFilterSetFixture';
 
@@ -298,7 +299,7 @@ describe('Advanced Filter - Set Filter in the Builder', () => {
 });
 
 describe('Advanced Filter - Set Filter Builder round trip', () => {
-    const gridsManager = new TestGridsManager({ modules: SET_MODULES });
+    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, MultiFilterModule] });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -427,31 +428,47 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(label(items[items.length - 1])).toBe('Jamaica');
     });
 
-    test('with preservePreviousValues from filterParams given as a function, a value leaving before first use is kept', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', {
-            ...DEFAULT_OPTIONS,
-            columnDefs: [
-                { field: 'athlete', filter: 'agTextColumnFilter' },
-                {
-                    field: 'country',
-                    filter: 'agSetColumnFilter',
-                    filterParams: () => ({ preservePreviousValues: true }),
-                },
-            ],
-        });
-        const remaining = ROW_DATA.filter((row) => row.country !== 'Jamaica');
-        api.setGridOption('rowData', remaining);
-        await asyncSetTimeout(0);
-        api.setAdvancedFilterModel({
-            filterType: 'set',
-            colId: 'country',
-            type: 'isAnyOf',
-            values: [remaining[0].country],
-        });
-        await openPicker(api);
+    test('with preservePreviousValues from filterParams given as a function, a value leaving before first use is kept, on a Set Filter or a Multi Filter child', async () => {
+        const setParams = { preservePreviousValues: true };
+        const defs: ColDef[] = [
+            { field: 'country', filter: 'agSetColumnFilter', filterParams: () => setParams },
+            {
+                field: 'country',
+                filter: 'agMultiColumnFilter',
+                // Reads a param only a filter is handed, as an app's function may.
+                filterParams: (params: IFilterParams) => ({
+                    filters: [
+                        { filter: 'agTextColumnFilter' },
+                        {
+                            filter: params.rowModel.getType() === 'clientSide' ? 'agSetColumnFilter' : 'x',
+                            filterParams: setParams,
+                        },
+                    ],
+                }),
+            },
+        ];
+        const retained: string[][] = [];
+        for (const def of defs) {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter' }, def],
+            });
+            const remaining = ROW_DATA.filter((row) => row.country !== 'Jamaica');
+            api.setGridOption('rowData', remaining);
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel({
+                filterType: 'set',
+                colId: 'country',
+                type: 'isAnyOf',
+                values: [remaining[0].country],
+            });
+            await openPicker(api);
+            const items = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item-missing`));
+            retained.push(items.map((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim() ?? ''));
+            gridsManager.reset();
+        }
 
-        const items = Array.from(document.querySelectorAll<HTMLElement>(`${PICKER} .ag-set-filter-item-missing`));
-        expect(items.map((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim())).toEqual(['Jamaica']);
+        expect(retained).toEqual([['Jamaica'], ['Jamaica']]);
     });
 
     test('the Advanced Filter caps the values it keeps, sparing those its applied expression names in either case rule', async () => {
