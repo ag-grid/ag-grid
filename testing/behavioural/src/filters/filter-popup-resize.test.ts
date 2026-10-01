@@ -22,7 +22,7 @@ describe('column filter popup resize', () => {
         /** Horizontal drag distance applied to the resizer. */
         dx: number;
         /** Resizer to drag; defaults to the horizontal edge for the direction. */
-        side?: 'bottomRight';
+        side?: 'bottomRight' | 'bottomLeft';
     }
 
     const GRID_WIDTH = 700;
@@ -117,6 +117,11 @@ describe('column filter popup resize', () => {
         [
             'widens from the left edge in RTL when the grid is offset',
             { gridLeft: 416, popupX: 300, popupWidth: 200, enableRtl: true, dx: -50 },
+            '250px',
+        ],
+        [
+            'widens from the bottom-left corner in RTL when the grid is offset',
+            { gridLeft: 416, popupX: 300, popupWidth: 200, enableRtl: true, dx: -50, side: 'bottomLeft' },
             '250px',
         ],
         [
