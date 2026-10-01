@@ -1,17 +1,21 @@
 #!/bin/bash
 
-# Set or clear the in-flight archive caching exemption in the root .htaccess on a remote box.
-# Called by uploadAndUnzipArchive.sh during a grid release candidate, and runnable on its own.
+# Set or clear the in-flight archive caching exemption in the root .htaccess on a remote box, for
+# grid and charts independently. Called by uploadAndUnzipArchive.sh during a grid release
+# candidate, and runnable on its own (e.g. for a charts-only release candidate).
 
 if [ "$#" -lt 3 ]
   then
-    echo "You must supply a grid version, a charts version & a host"
+    echo "You must supply a grid version, a charts version & a host; '-' for a version leaves that product alone"
     echo "For example: ./scripts/deployments/prep_and_archive/patchUncachedArchives.sh 36.1.0 14.1.0 user@host"
+    echo "             ./scripts/deployments/prep_and_archive/patchUncachedArchives.sh - 14.1.0 user@host set"
     echo ""
-    echo "  set   (default) exempts both archives from caching while they are under test"
-    echo "  clear restores normal caching, and only if both versions match what is in flight"
+    echo "  set   (default) exempts the named archives from caching while they are under test,"
+    echo "        keeping the other product's entry as it is"
+    echo "  clear restores normal caching for the named archives, each only if that version is the"
+    echo "        one in flight (another version in flight is refused, and nothing changes)"
     echo ""
-    echo "For example: ./scripts/deployments/prep_and_archive/patchUncachedArchives.sh 36.1.0 14.1.0 user@host clear"
+    echo "For example: ./scripts/deployments/prep_and_archive/patchUncachedArchives.sh 36.1.0 - user@host clear"
     echo ""
     echo "Nothing has to clear this: a production docs deploy emits an empty in-flight block,"
     echo "so going live restores normal caching on its own. That cuts both ways - a docs deploy"
@@ -21,23 +25,29 @@ if [ "$#" -lt 3 ]
     exit 1
 fi
 
+# Either may be '-', leaving that product's in-flight entry as it is (but not both).
 VERSION=$1
-# The charts version cut alongside this grid version.
 CHARTS_VERSION=$2
 CURRENT_HOST=$3
 ACTION=${4:-set}
 
 export SSH_LOCATION=$SSH_FILE
 
-if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || "$VERSION" == "-" ]]
 then
-    echo "Version isn't in the expected format. Valid format is: Number.Number.Number. For example 36.1.0";
+    echo "Version isn't in the expected format. Valid format is: Number.Number.Number (for example 36.1.0), or -";
     exit 1;
 fi
 
-if ! [[ "$CHARTS_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+if ! [[ "$CHARTS_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || "$CHARTS_VERSION" == "-" ]]
 then
-    echo "Charts version isn't in the expected format. Valid format is: Number.Number.Number. For example 14.1.0";
+    echo "Charts version isn't in the expected format. Valid format is: Number.Number.Number (for example 14.1.0), or -";
+    exit 1;
+fi
+
+if [[ "$VERSION" == "-" && "$CHARTS_VERSION" == "-" ]]
+then
+    echo "Supply at least one of the grid and charts versions";
     exit 1;
 fi
 

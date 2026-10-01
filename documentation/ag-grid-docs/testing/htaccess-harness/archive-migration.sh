@@ -132,7 +132,7 @@ LOCAL="http://localhost:$PORT"
 W="https://www.ag-grid.com"
 pass=0; fail=0
 
-# phase  host  path  accept  status  expectation  [cache-control]
+# phase (before, after, both, charts-rc, grid-rc)  host  path  accept  status  expectation  [cache-control]
 #   expectation: a redirect's exact Location (@ = this server), or for a 200 a comma list of
 #   ct:<content-type prefix>, vary:<token>, novary:<token>
 #   cache-control: when given, the exact Cache-Control header (absent = none at all)
@@ -229,6 +229,14 @@ both	www.ag-grid.com	/charts/archive/12.3.1/no-such-page/	-	404	-	no-cache
 both	www.ag-grid.com	/charts/archive/13.3.1/no-such-page/	-	404	-	no-cache
 both	www.ag-grid.com	/charts/archive/14.0.0/react/bar-series/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
 both	www.ag-grid.com	/charts/archive/12.3.1/react/bar-series/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
+# --- in flight per product (scripts/uncached-archives.mjs on the root): a charts-only release
+# candidate leaves grid archive caching alone, and the reverse.
+charts-rc	www.ag-grid.com	/charts/archive/14.2.0/react/bar-series/	-	200	ct:text/html	no-cache
+charts-rc	www.ag-grid.com	/charts/archive/14.1.0/react/bar-series/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
+charts-rc	www.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
+grid-rc	www.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	-	200	ct:text/html	no-cache
+grid-rc	www.ag-grid.com	/archive/36.1.0/react-data-grid/getting-started/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
+grid-rc	www.ag-grid.com	/charts/archive/14.2.0/react/bar-series/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
 both	www.ag-grid.com	/charts/archive/14.2.0/react/bar-series	-	301	@/charts/archive/14.2.0/react/bar-series/	no-cache
 both	www.ag-grid.com	/archive/36.2.0/no-such-page/	-	404	-	no-cache
 # --- studio: no host canonicalisation at all before.
@@ -246,7 +254,8 @@ check_phase() {
   echo "==> $phase"
   while IFS=$'\t' read -r when host path accept status expect cc; do
     [[ -z "$when" || "$when" == \#* ]] && continue
-    [ "$when" = both ] || [ "$when" = "$phase" ] || continue
+    # 'both' is the before and after phases; the in-flight phases run only their own rows.
+    { [ "$when" = both ] && [[ "$phase" == before || "$phase" == after ]]; } || [ "$when" = "$phase" ] || continue
     local acc=()
     [ "$accept" = "-" ] || acc=(-H "Accept: $accept")
     local out code loc ct vary gotcc
@@ -299,6 +308,18 @@ done <<< "$ARCHIVES"
 
 start_httpd
 check_phase after
+stop_httpd
+
+# Release candidates per product, set with the real patcher on the root .htaccess.
+INFLIGHT="$REPO_DIR/scripts/uncached-archives.mjs"
+node "$INFLIGHT" "$HTDOCS/.htaccess" set - 14.2.0 || { echo "FAIL  could not set charts in flight"; fail=$((fail+1)); }
+start_httpd
+check_phase charts-rc
+stop_httpd
+node "$INFLIGHT" "$HTDOCS/.htaccess" clear - 14.2.0 && node "$INFLIGHT" "$HTDOCS/.htaccess" set 36.2.0 - \
+  || { echo "FAIL  could not move the in-flight entry to grid"; fail=$((fail+1)); }
+start_httpd
+check_phase grid-rc
 if [ "${KEEP_RUNNING:-}" = "1" ]; then
   trap - EXIT
   echo "httpd left running on :$PORT (stop: $HTTPD -f $WORK/httpd.conf -k stop)"

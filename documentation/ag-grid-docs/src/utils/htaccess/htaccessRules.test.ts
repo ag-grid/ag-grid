@@ -2252,6 +2252,20 @@ describe('htaccessRules', () => {
                 }
             });
 
+            it('sits after the long-cache line it overrides, and before the studio and in-flight rules', () => {
+                const lines = productionContent.split('\n');
+                const longAt = lines.findIndex((l) => l.includes('^/(charts/)?archive/[0-9]#"'));
+                const errorAt = lines.findIndex(
+                    (l) => l.includes('REQUEST_STATUS} -ge 400') && l.includes('archive/[0-9]#')
+                );
+                const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+                const inFlightAt = lines.findIndex((l) => l === IN_FLIGHT_BEGIN);
+                expect(lines[longAt]).toContain('s-maxage=31536000');
+                expect(errorAt).toBeGreaterThan(longAt);
+                expect(studioAt).toBeGreaterThan(errorAt);
+                expect(inFlightAt).toBeGreaterThan(errorAt);
+            });
+
             it('keeps redirects on the single no-cache from the always table', () => {
                 for (const status of [301, 302]) {
                     expect(archived('/charts/archive/14.0.0/react/fonts', status)).toEqual(['no-cache']);

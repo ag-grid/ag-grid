@@ -186,7 +186,9 @@ must change nothing), and asserts the result: alias hosts reach the same archive
 hop, grid markdown negotiates under the archive, and no request leaves the archive. Same Apache
 detection and skip rules as `run.sh`; `ARCHIVE_FIXTURES=<dir>` runs it on other copies of the files.
 It also checks the root's archive caching (error statuses no-cache, the rest long-cached) and the
-bare-archive-root and slash-less canonicalisation, each in one hop.
+bare-archive-root and slash-less canonicalisation, each in one hop, and then puts one product in flight
+at a time with `scripts/uncached-archives.mjs` (`set - <charts>`, then `set <grid> -`), checking that
+the other product's archives keep their long cache.
 
 The fixtures are the real, untrimmed `.htaccess` of every archive deployed with one of its own (grid
 36.0.0+, charts 14.0.0+, studio 2.0.0+), emitted by that archive's own generator at the commit that
