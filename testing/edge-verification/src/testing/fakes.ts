@@ -231,8 +231,8 @@ export function cfAclRules(): any[] {
                 label('awswaf:managed:aws:bot-control:signal:known_bot_data_center'),
                 not(
                     or(
-                        label('awswaf:managed:aws:bot-control:bot:verified'),
-                        byte('header:accept', 'CONTAINS', 'text/markdown')
+                        ...CF_ACL.dataCentreVerifiedLabels.map(label),
+                        byte('header:accept', 'CONTAINS', nb.markdownAcceptExemption)
                     )
                 ),
                 not(or(...p11Safe()))
