@@ -34,6 +34,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     private colSpans: number[] | null = null;
     /** The `displayedColsVersion` `colSpans` was read at; -1 to read it again. */
     private colSpansColsVersion = -1;
+    /** The `displayedColsVersion` the cells were laid out at. */
+    private cellCtrlsColsVersion = -1;
     private releaseKeptCellsPending = false;
     /** The last layout kept a cell only because it is focused or editing, outside the columns its lane renders. */
     private hasKeptCells = false;
@@ -144,16 +146,10 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.colSpansColsVersion = -1;
         const visibleCols = this.beans.visibleCols;
         const rowSpanCols = visibleCols.rowSpanCols;
-        if (rowSpanCols.length !== 0) {
-            const center = this.centerCellCtrls.map;
-            const left = this.leftCellCtrls.map;
-            const right = this.rightCellCtrls.map;
-            for (let i = 0, len = rowSpanCols.length; i < len; ++i) {
-                const id = rowSpanCols[i].instanceId;
-                const cellCtrl = center[id] ?? left[id] ?? right[id];
-                if (cellCtrl !== undefined) {
-                    _refreshCellRowSpan(this.beans, cellCtrl);
-                }
+        for (let i = 0, len = rowSpanCols.length; i < len; ++i) {
+            const cellCtrl = this.getOwnCellCtrl(rowSpanCols[i]);
+            if (cellCtrl !== undefined) {
+                _refreshCellRowSpan(this.beans, cellCtrl);
             }
         }
         if (!visibleCols.colSpanActive) {
@@ -212,7 +208,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.cellsStale = true;
         animationFrameSvc.createTask(
             () => {
-                if (!rowCtrl.isAlive()) {
+                // a reader of the drawn cells may have laid the row out already
+                if (!rowCtrl.isAlive() || !this.updateColumnListsPending) {
                     return;
                 }
                 this.updateColumnListsImpl(true);
@@ -241,7 +238,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
-        rowGui.rowComp.setCellCtrls(this.getAllCellCtrls(), useFlushSync);
+        rowGui.rowComp.setCellCtrls(this.getAllCellCtrls(), useFlushSync, this.cellCtrlsColsVersion);
         this.rowCtrl.refreshPinnedCellGroupWidths();
     }
 
@@ -255,6 +252,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const prevLeft = this.leftCellCtrls;
         const prevRight = this.rightCellCtrls;
         const colSpans = visibleCols.colSpanActive ? this.getColSpans() : null;
+        this.cellCtrlsColsVersion = visibleCols.displayedColsVersion;
         this.hasKeptCells = false;
         if (rowCtrl.printLayout) {
             const printCols = getColsForRow(rowNode, visibleCols.allCols, colSpans);
@@ -278,6 +276,43 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             this.allCellCtrls = null;
         }
         return changed;
+    }
+
+    public getCellCtrl(column: AgColumn, skipColSpanSearch: boolean): CellCtrl | undefined {
+        const visibleCols = this.beans.visibleCols;
+        if (skipColSpanSearch || !visibleCols.colSpanActive) {
+            return this.getOwnCellCtrl(column);
+        }
+        if (this.updateColumnListsPending && this.rowCtrl.isAlive()) {
+            // a pending layout runs a frame later, and whoever reads the drawn cells needs it now
+            this.updateColumnListsImpl(false);
+        }
+        const cellCtrl = this.getOwnCellCtrl(column);
+        if (cellCtrl !== undefined) {
+            return cellCtrl;
+        }
+        if (this.cellCtrlsColsVersion !== visibleCols.displayedColsVersion) {
+            // laid out against other columns, so the lanes are not in `allColsIndex` order
+            const all = this.getAllCellCtrls();
+            return findLastSpanning(all, column, 0, all.length);
+        }
+        const lane = this.rowCtrl.laneFor(column);
+        let list: CellCtrl[];
+        if (lane === 1) {
+            list = this.centerCellCtrls.list;
+        } else if (lane === 0) {
+            list = this.leftCellCtrls.list;
+        } else {
+            list = this.rightCellCtrls.list;
+        }
+        const end = firstCellFrom(list, column.allColsIndex + 1);
+        // only a kept cell can sit inside another cell's span, so otherwise the nearest start is the only candidate
+        return findLastSpanning(list, column, this.hasKeptCells ? 0 : Math.max(end - 1, 0), end);
+    }
+
+    private getOwnCellCtrl(column: AgColumn): CellCtrl | undefined {
+        const id = column.instanceId;
+        return this.centerCellCtrls.map[id] ?? this.leftCellCtrls.map[id] ?? this.rightCellCtrls.map[id];
     }
 
     /** Emptied when the displayed columns change, which every colDef change also does. */
@@ -344,9 +379,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         let keptCells: CellCtrl[] | null = null;
         for (const prevCellCtrl of prev.list) {
             const colInstanceId = prevCellCtrl.column.instanceId;
-            const cellInResult = res.map[colInstanceId] != null;
-
-            if (cellInResult) {
+            // a cell in the result is reused, and one in the wrong span was destroyed above
+            if (res.map[colInstanceId] != null || !prevCellCtrl.isAlive()) {
                 continue;
             }
 
@@ -393,18 +427,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         this.hasKeptCells = true;
         const list = res.list;
         // `allColsIndex` is display order in every layout, and the list is already in that order
-        const colIndex = cellCtrl.column.allColsIndex;
-        let low = 0;
-        let high = list.length;
-        while (low < high) {
-            const mid = (low + high) >>> 1;
-            if (list[mid].column.allColsIndex < colIndex) {
-                low = mid + 1;
-            } else {
-                high = mid;
-            }
-        }
-        list.splice(low, 0, cellCtrl);
+        list.splice(firstCellFrom(list, cellCtrl.column.allColsIndex), 0, cellCtrl);
         res.map[colInstanceId] = cellCtrl;
     }
 
@@ -532,4 +555,35 @@ const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
         c.destroy();
     }
     return { list: [], map: {} };
+};
+
+/** The index of the first of `list`, in `allColsIndex` order, whose column is at `allColsIndex` or after it. */
+const firstCellFrom = (list: CellCtrl[], allColsIndex: number): number => {
+    let low = 0;
+    let high = list.length;
+    while (low < high) {
+        const mid = (low + high) >>> 1;
+        if (list[mid].column.allColsIndex < allColsIndex) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low;
+};
+
+/** The last of `cellCtrls` in `[start, end)` whose drawn colSpan covers `column`. */
+const findLastSpanning = (
+    cellCtrls: CellCtrl[],
+    column: AgColumn,
+    start: number,
+    end: number
+): CellCtrl | undefined => {
+    for (let i = end - 1; i >= start; --i) {
+        const cellCtrl = cellCtrls[i];
+        if (cellCtrl.colsSpanning?.includes(column)) {
+            return cellCtrl;
+        }
+    }
+    return undefined;
 };

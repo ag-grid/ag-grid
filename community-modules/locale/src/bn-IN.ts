@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     clearFilter: 'পরিষ্কার করুন',
     cancelFilter: 'বাতিল করুন',
     cancelColumnToolPanel: 'বাতিল করুন',
+    resetColumnToolPanel: 'রিসেট করুন',
 
     // Filter Titles
     textFilter: 'টেক্সট ফিল্টার',

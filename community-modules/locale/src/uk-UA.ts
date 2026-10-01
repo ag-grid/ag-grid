@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     clearFilter: 'Очистити',
     cancelFilter: 'Скасувати',
     cancelColumnToolPanel: 'Скасувати',
+    resetColumnToolPanel: 'Скинути',
 
     // Filter Titles
     textFilter: 'Текстовий фільтр',

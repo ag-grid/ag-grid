@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     clearFilter: 'Изчисти',
     cancelFilter: 'Отказ',
     cancelColumnToolPanel: 'Отказ',
+    resetColumnToolPanel: 'Нулиране',
 
     // Filter Titles
     textFilter: 'Филтър за текст',

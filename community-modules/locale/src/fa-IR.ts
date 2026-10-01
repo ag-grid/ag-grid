@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
     cancelColumnToolPanel: 'لغو',
+    resetColumnToolPanel: 'بازنشانی',
 
     // Filter Titles
     textFilter: 'فیلتر متنی',

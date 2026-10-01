@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     clearFilter: 'Εκκαθάριση',
     cancelFilter: 'Ακύρωση',
     cancelColumnToolPanel: 'Ακύρωση',
+    resetColumnToolPanel: 'Επαναφορά',
 
     // Filter Titles
     textFilter: 'Φίλτρο Κειμένου',

@@ -129,7 +129,12 @@
                 "url": "./clipboard/#disabling-cut"
             }
         },
-        "suppressLastEmptyLineOnPaste": {},
+        "suppressLastEmptyLineOnPaste": {
+            "more": {
+                "name": "Trailing Empty Lines",
+                "url": "./clipboard/#trailing-empty-lines"
+            }
+        },
         "suppressClipboardPaste": {
             "more": {
                 "name": "Disabling Paste",

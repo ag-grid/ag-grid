@@ -273,16 +273,36 @@ export class RowComp extends Component {
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {
-        const cellsToRemove = new Map(this.cellComps);
+        const { cellComps, rowCtrl } = this;
+        const cellsToRemove = new Map(cellComps);
+        const len = cellCtrls.length;
+        // a new cell goes in before the next cell of its lane already drawn, so a lane keeps column order without
+        // moving a cell, and a span drawn over a kept cell paints beneath it
+        let nextDrawnIndex = cellComps.size === 0 ? len : 0;
+        let nextDrawnCell: HTMLElement | null = null;
 
-        for (const cellCtrl of cellCtrls) {
-            const key = cellCtrl.instanceId;
-
-            if (!this.cellComps.has(key)) {
-                this.newCellComp(cellCtrl);
-            } else {
-                cellsToRemove.delete(key);
+        for (let i = 0; i < len; ++i) {
+            const cellCtrl = cellCtrls[i];
+            if (cellsToRemove.delete(cellCtrl.instanceId)) {
+                continue;
             }
+            if (nextDrawnIndex <= i) {
+                // the lanes are contiguous, so the search stops where this one ends
+                const lane = rowCtrl.laneFor(cellCtrl.column);
+                nextDrawnCell = null;
+                for (nextDrawnIndex = i + 1; nextDrawnIndex < len; ++nextDrawnIndex) {
+                    const next = cellCtrls[nextDrawnIndex];
+                    if (rowCtrl.laneFor(next.column) !== lane) {
+                        break;
+                    }
+                    const drawn = cellComps.get(next.instanceId);
+                    if (drawn) {
+                        nextDrawnCell = drawn.getGui();
+                        break;
+                    }
+                }
+            }
+            this.newCellComp(cellCtrl, nextDrawnCell);
         }
 
         this.destroyCells(cellsToRemove);
@@ -311,12 +331,12 @@ export class RowComp extends Component {
         }
     }
 
-    private newCellComp(cellCtrl: CellCtrl): void {
+    private newCellComp(cellCtrl: CellCtrl, nextDrawnCell: HTMLElement | null): void {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
         const eParent = this.laneContainers[this.rowCtrl.laneFor(cellCtrl.column)] ?? this.getGui();
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eParent, editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);
-        eParent.appendChild(cellComp.getGui());
+        eParent.insertBefore(cellComp.getGui(), nextDrawnCell);
     }
 
     public override destroy(): void {

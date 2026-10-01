@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     clearFilter: 'Išvalyti',
     cancelFilter: 'Atšaukti',
     cancelColumnToolPanel: 'Atšaukti',
+    resetColumnToolPanel: 'Atstatyti',
 
     // Filter Titles
     textFilter: 'Teksto filtras',

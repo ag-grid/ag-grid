@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     clearFilter: 'Rensa',
     cancelFilter: 'Avbryt',
     cancelColumnToolPanel: 'Avbryt',
+    resetColumnToolPanel: 'Återställ',
 
     // Filter Titles
     textFilter: 'Textfilter',

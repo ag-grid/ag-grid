@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     clearFilter: 'Obriši',
     cancelFilter: 'Otkaži',
     cancelColumnToolPanel: 'Otkaži',
+    resetColumnToolPanel: 'Resetuj',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',

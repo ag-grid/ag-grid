@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     clearFilter: 'נקה',
     cancelFilter: 'בטל',
     cancelColumnToolPanel: 'בטל',
+    resetColumnToolPanel: 'אפס',
 
     // Filter Titles
     textFilter: 'מסנן טקסט',

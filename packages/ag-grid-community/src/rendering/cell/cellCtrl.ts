@@ -100,6 +100,8 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     public eGui: HTMLElement;
 
@@ -190,7 +192,7 @@ export class CellCtrl extends BeanStub {
         return _isClientSideLoadingRow(this.gos, this.rowNode);
     }
 
-    private addFeatures(): void {
+    private addFeatures(compBean: BeanStub): void {
         const { beans } = this;
 
         this.enableTooltipFeature();
@@ -205,7 +207,7 @@ export class CellCtrl extends BeanStub {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
 
-        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this);
+        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this, compBean);
     }
 
     private removeFeatures(): void {
@@ -272,7 +274,7 @@ export class CellCtrl extends BeanStub {
         this.addDomData(compBean);
         const isClientSideLoadingCell = this.isClientSideLoadingCell();
         if (!isClientSideLoadingCell) {
-            this.addFeatures();
+            this.addFeatures(compBean);
             compBean.addDestroyFunc(() => this.removeFeatures());
         }
 

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     clearFilter: 'Xóa',
     cancelFilter: 'Hủy',
     cancelColumnToolPanel: 'Hủy',
+    resetColumnToolPanel: 'Đặt lại',
 
     // Filter Titles
     textFilter: 'Bộ lọc văn bản',

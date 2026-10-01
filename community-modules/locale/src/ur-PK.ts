@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     clearFilter: 'صاف کریں',
     cancelFilter: 'منسوخ کریں',
     cancelColumnToolPanel: 'منسوخ کریں',
+    resetColumnToolPanel: 'ری سیٹ کریں',
 
     // Filter Titles
     textFilter: 'متن فلٹر',

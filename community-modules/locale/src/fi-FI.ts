@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     clearFilter: 'Tyhjennä',
     cancelFilter: 'Peruuta',
     cancelColumnToolPanel: 'Peruuta',
+    resetColumnToolPanel: 'Nollaa',
 
     // Filter Titles
     textFilter: 'Tekstisuodatin',

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
     cancelColumnToolPanel: 'Odustani',
+    resetColumnToolPanel: 'Poništi',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     clearFilter: 'Curăță',
     cancelFilter: 'Anulează',
     cancelColumnToolPanel: 'Anulează',
+    resetColumnToolPanel: 'Resetează',
 
     // Filter Titles
     textFilter: 'Filtru text',
