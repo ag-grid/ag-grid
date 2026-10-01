@@ -134,7 +134,7 @@ for site in "${SITES[@]}"; do
     # One listing of the archive .htaccess files rather than a round trip per version. The end
     # marker separates "no archive has its own .htaccess" from a failed ssh or cd, which would
     # otherwise look identical (an empty listing) and report nothing to patch.
-    if ! listing="$("${SSH[@]}" "cd '$root/archive' && for f in */.htaccess; do [ -f \"\$f\" ] && echo \"\${f%/.htaccess}\"; done; echo __END_OF_LISTING__")" \
+    if ! listing="$("${SSH[@]}" "cd '$root/archive' || exit 3; for f in */.htaccess; do [ -f \"\$f\" ] && echo \"\${f%/.htaccess}\"; done; echo __END_OF_LISTING__")" \
         || [ "$(printf '%s\n' "$listing" | tail -n 1)" != "__END_OF_LISTING__" ]; then
         echo "Could not list the .htaccess files under $root/archive on $HOST - exiting."; exit 1
     fi
