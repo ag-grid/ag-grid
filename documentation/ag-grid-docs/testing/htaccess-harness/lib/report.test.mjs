@@ -1,8 +1,13 @@
-// node --test: how a row's failures are classified against its known-fail marker.
+// node --test: how a row's failures are classified against its known-fail marker, and which
+// coverage gaps fail the run.
 import assert from 'node:assert/strict';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
-import { classifyRow } from './report.mjs';
+import { classifyRow, coverageErrors } from './report.mjs';
+import { parseFile } from './rows.mjs';
 
 const fail = (key) => ({ key, message: `${key} failed` });
 const row = (knownFail = null) => ({ knownFail });
@@ -43,5 +48,59 @@ describe('classifyRow', () => {
 
     it('does not let an unrelated failure hide a fixed known-fail as a known failure', () => {
         assert.deepEqual(classifyRow(cacheKnownFail, [fail('status')]), { kind: 'fail', fails: [fail('status')] });
+    });
+});
+
+describe('coverageErrors', () => {
+    const tsv = (text) => {
+        const file = join(mkdtempSync(join(tmpdir(), 'htaccess-coverage-')), 'cases.tsv');
+        writeFileSync(file, text);
+        const { rows, directives } = parseFile(file);
+        return { rows, declared: directives.categories, minRows: { 'cases.tsv': directives.minRows } };
+    };
+    const FILE = [
+        '# @min-rows 2',
+        '# @category redirects',
+        'www\t/a\t301\t/a/',
+        'www\t/b\t301\t/b/',
+        'www\t/c\t301\t/c/',
+        '# @category no-shadow',
+        'www\t/charts/live/\t200\t',
+    ].join('\n');
+
+    it('passes when every declared category executed rows', () => {
+        const { rows, declared, minRows } = tsv(FILE);
+        assert.deepEqual(coverageErrors({ declared, minRows, executed: rows, siteSkipped: [] }), []);
+    });
+
+    it('fails a category whose rows were all deleted, though the file is still above @min-rows', () => {
+        const { rows, declared, minRows } = tsv(FILE.replace('www\t/charts/live/\t200\t', ''));
+        assert.deepEqual(coverageErrors({ declared, minRows, executed: rows, siteSkipped: [] }), [
+            'cases.tsv:6: category no-shadow executed no rows',
+        ]);
+    });
+
+    it('fails a category whose rows exist but did not run for any reason but a skipped site', () => {
+        const { rows, declared, minRows } = tsv(FILE);
+        const executed = rows.filter((row) => row.category !== 'no-shadow');
+        assert.deepEqual(coverageErrors({ declared, minRows, executed, siteSkipped: [] }), [
+            'cases.tsv:6: category no-shadow executed no rows',
+        ]);
+    });
+
+    it('excuses a category, and the file minimum, when its site was explicitly skipped', () => {
+        const { rows, declared, minRows } = tsv(FILE);
+        const siteSkipped = rows.filter((row) => row.category === 'no-shadow');
+        const executed = rows.filter((row) => !siteSkipped.includes(row));
+        assert.deepEqual(coverageErrors({ declared, minRows, executed, siteSkipped }), []);
+        assert.deepEqual(coverageErrors({ declared, minRows, executed: [], siteSkipped: rows }), []);
+    });
+
+    it('fails a file that executed fewer rows than its @min-rows', () => {
+        const { rows, declared, minRows } = tsv(FILE);
+        assert.deepEqual(coverageErrors({ declared, minRows, executed: rows.slice(3), siteSkipped: [] }), [
+            'cases.tsv: 1 rows executed, @min-rows 2',
+            'cases.tsv:2: category redirects executed no rows',
+        ]);
     });
 });

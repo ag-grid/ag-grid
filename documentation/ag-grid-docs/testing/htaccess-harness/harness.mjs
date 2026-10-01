@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { detectApache, findMimeTypes, startHttpd, stopHttpd, writeHttpdConf } from './lib/apache.mjs';
 import { buildScaffold, placeRowFiles } from './lib/docroot.mjs';
 import { request, runRow } from './lib/probe.mjs';
-import { classifyRow } from './lib/report.mjs';
+import { classifyRow, coverageErrors } from './lib/report.mjs';
 import { parseFile, siteOf } from './lib/rows.mjs';
 import { LAYOUT, emitLayout, resolveSources, tsxEval } from './lib/sources.mjs';
 
@@ -117,9 +117,11 @@ const files = readdirSync(EXPECTATIONS)
     .sort();
 const all = [];
 const minRows = {};
+const declared = [];
 for (const f of files) {
     const { rows, directives } = parseFile(join(EXPECTATIONS, f));
     minRows[f] = directives.minRows;
+    declared.push(...directives.categories);
     all.push(...rows);
 }
 const active = [];
@@ -200,13 +202,11 @@ const tally = {};
 const failed = [];
 const knownFailed = [];
 const unexpectedPass = [];
-const executedPerFile = {};
 let formOnlyFails = 0;
 const messages = (fails) => fails.map((fail) => fail.message).join('\n        ');
 active.forEach((row, i) => {
     const t = (tally[row.category] ??= { sites: new Set(), pass: 0, fail: 0, known: 0, unexpected: 0 });
     t.sites.add(siteOf(row));
-    executedPerFile[row.file] = (executedPerFile[row.file] ?? 0) + 1;
     const where = `${row.file}:${row.line} ${row.hostAlias} ${row.path}${row.accept === 'text/markdown' ? ' [md]' : ''}`;
     const result = classifyRow(row, results[i].fails);
     const named = row.knownFail && `known-fail ${row.knownFail.assertions.join(',')}: ${row.knownFail.ref}`;
@@ -229,24 +229,13 @@ active.forEach((row, i) => {
         }
     }
 });
+const siteSkipped = skipped.filter((r) => sites[siteOf(r)].off);
 const skippedBySite = {};
-for (const row of skipped.filter((r) => sites[siteOf(r)].off)) {
+for (const row of siteSkipped) {
     skippedBySite[siteOf(row)] = (skippedBySite[siteOf(row)] ?? 0) + 1;
 }
 
-const coverageErrors = [];
-for (const [f, min] of Object.entries(minRows)) {
-    const ran = executedPerFile[f] ?? 0;
-    const fileSkipped = skipped.some((r) => r.file === f);
-    if (min && ran < min && !fileSkipped) {
-        coverageErrors.push(`${f}: ${ran} rows executed, @min-rows ${min}`);
-    }
-}
-for (const [cat, t] of Object.entries(tally)) {
-    if (t.pass + t.fail + t.known + t.unexpected === 0) {
-        coverageErrors.push(`category ${cat} executed no rows`);
-    }
-}
+const coverageGaps = coverageErrors({ declared, minRows, executed: active, siteSkipped });
 
 if (failed.length) {
     console.log(`\n==> FAILURES (${failed.length})`);
@@ -293,7 +282,7 @@ const totals = Object.values(tally).reduce(
     }),
     { pass: 0, fail: 0, known: 0, upass: 0 }
 );
-for (const c of coverageErrors) {
+for (const c of coverageGaps) {
     console.log(`  COVERAGE ERROR: ${c}`);
 }
 console.log(
@@ -315,7 +304,7 @@ if (flag('KEEP_RUNNING')) {
     console.log(`httpd left running on :${PORT} (stop: ${apache.httpd} -f ${conf} -k stop)`);
 }
 // explicit exit: the keep-alive agent would otherwise hold the process open
-process.exit(totals.fail || totals.upass || coverageErrors.length ? 1 : 0);
+process.exit(totals.fail || totals.upass || coverageGaps.length ? 1 : 0);
 
 async function waitForPort() {
     for (let i = 0; i < 50; i++) {

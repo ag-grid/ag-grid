@@ -145,7 +145,7 @@ GRID_REF=origin/latest ./testing/htaccess-harness/run.sh
 - a failing row;
 - a known-fail row that unexpectedly passes;
 - a file executing fewer rows than its `@min-rows`;
-- a category executing no rows.
+- a declared `@category` executing no rows, unless all of its rows belong to a site that was skipped (`SKIP_CHARTS=1`, `SKIP_STUDIO=1`, or outside the `--env` topology).
 
 The summary prints:
 
@@ -224,8 +224,9 @@ implemented yet, e.g. `known-fail=cc:waf-finding.md §4`.
 - If a named assertion passes, the run fails as an unexpected pass, so that the marker gets narrowed or removed.
 - Known-wrong behaviour is never encoded as expected. If the right answer isn't decided, the row is left unasserted.
 
-**Directives:** `# @category <name>` groups the rows that follow it in the summary. `# @min-rows <n>`
-guards against a generator silently dropping rows.
+**Directives:** `# @category <name>` groups the rows that follow it in the summary; every declared
+category must execute at least one row, so deleting a category's rows fails the run even when its
+file is still above its minimum. `# @min-rows <n>` guards against a generator silently dropping rows.
 
 ### Files
 
