@@ -21,6 +21,68 @@ function fieldName(ftm: any): string {
 const transforms = (s: any): string[] =>
     [...(s.TextTransformations ?? [])].sort((a: any, b: any) => a.Priority - b.Priority).map((t: any) => t.Type);
 
+// ---- boolean structure ---------------------------------------------------------------------
+// leaves() flattens a statement and so forgets AND / OR / NOT: a removed negation or an AND turned
+// into an OR keeps every leaf. These read a statement only in the shape a check requires, and
+// return undefined for any other shape, so a check can fail on structure as well as on values.
+
+const LEAF_STATEMENTS = new Set([
+    'ByteMatchStatement',
+    'RegexMatchStatement',
+    'LabelMatchStatement',
+    'IPSetReferenceStatement',
+]);
+
+/** The statement's leaf, when it is a single match statement (byte, regex, label, IP set). */
+export function leafOf(stmt: any): Leaf | undefined {
+    if (!stmt || typeof stmt !== 'object' || stmt.AndStatement || stmt.OrStatement || stmt.NotStatement) {
+        return undefined;
+    }
+    const keys = Object.keys(stmt);
+    if (keys.length !== 1 || !LEAF_STATEMENTS.has(keys[0])) {
+        return undefined;
+    }
+    return leaves(stmt)[0];
+}
+
+/** The children of an AndStatement, or undefined for any other statement. */
+export const andOf = (stmt: any): any[] | undefined =>
+    Array.isArray(stmt?.AndStatement?.Statements) ? stmt.AndStatement.Statements : undefined;
+
+/** The statement a NotStatement negates, or undefined for any other statement. */
+export const notOf = (stmt: any): any | undefined => stmt?.NotStatement?.Statement;
+
+/** The children of an AND, each a single leaf; undefined if it is not an AND of leaves. */
+export function andOfLeaves(stmt: any): Leaf[] | undefined {
+    return leavesOfEach(andOf(stmt));
+}
+
+/**
+ * The alternatives of an OR of leaves, or of a single leaf (WAF needs two statements for an OR,
+ * so a one-item list is written as the leaf itself). Undefined for any other shape.
+ */
+export function anyOfLeaves(stmt: any): Leaf[] | undefined {
+    const single = leafOf(stmt);
+    if (single) {
+        return [single];
+    }
+    return Array.isArray(stmt?.OrStatement?.Statements) ? leavesOfEach(stmt.OrStatement.Statements) : undefined;
+}
+
+/** NOT(any of leaves): the exemption shape. Undefined unless the statement is that negation. */
+export function noneOfLeaves(stmt: any): Leaf[] | undefined {
+    const inner = notOf(stmt);
+    return inner === undefined ? undefined : anyOfLeaves(inner);
+}
+
+function leavesOfEach(list: any[] | undefined): Leaf[] | undefined {
+    if (!list) {
+        return undefined;
+    }
+    const out = list.map(leafOf);
+    return out.every((l): l is Leaf => l !== undefined) ? out : undefined;
+}
+
 /** Every matching leaf in a statement tree, in document order. Search strings are decoded. */
 export function leaves(node: unknown): Leaf[] {
     const out: Leaf[] = [];
