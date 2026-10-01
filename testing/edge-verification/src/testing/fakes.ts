@@ -244,6 +244,19 @@ export function cfAclRules(): any[] {
                 VisibilityConfig: { MetricName: 'blockDataCenterExceptAgentPaths' },
             }
         ),
+        rule(
+            'challenge-automated-browser-documents',
+            and(
+                label(CF_ACL.automatedBrowserChallenge.label),
+                not(regex('UriPath', CF_ACL.automatedBrowserChallenge.exemptRegex))
+            ),
+            {
+                Action: { Challenge: {} },
+                ChallengeConfig: {
+                    ImmunityTimeProperty: { ImmunityTime: CF_ACL.automatedBrowserChallenge.immunity },
+                },
+            }
+        ),
     ].map((r, i) => ({ Priority: i, ...r }));
 }
 

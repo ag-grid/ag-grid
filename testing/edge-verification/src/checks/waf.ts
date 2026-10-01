@@ -720,17 +720,25 @@ export function wafChecks(): CheckDef[] {
             refs: [finding(7)],
             async run({ live }) {
                 const rule = await cfRule(live, 'challenge-automated-browser-documents');
-                const ls = leaves(rule.Statement);
                 const exp = CF_ACL.automatedBrowserChallenge;
                 const p = new Problems();
-                p.check(
-                    ls.some((l) => l.kind === 'label' && l.value === exp.label),
-                    'label match missing'
-                );
-                p.check(
-                    ls.some((l) => l.kind === 'regex' && l.value === exp.exemptRegex),
-                    'exempt regex differs'
-                );
+                // AND(label, NOT(exempt paths)): an OR, or a lost negation, keeps both leaves but
+                // challenges every automated browser or every exempt path instead.
+                const parts = andOf(rule.Statement);
+                const label = parts?.length === 2 ? leafOf(parts[0]) : undefined;
+                const exempt = parts?.length === 2 ? noneOfLeaves(parts[1]) : undefined;
+                if (!label || !exempt) {
+                    p.add('statement is not AND(label, NOT(exempt path regex))');
+                } else {
+                    p.check(label.kind === 'label' && label.value === exp.label, 'label match missing');
+                    p.check(
+                        exempt.length === 1 &&
+                            exempt[0].kind === 'regex' &&
+                            exempt[0].field === 'UriPath' &&
+                            exempt[0].value === exp.exemptRegex,
+                        'exempt statement is not the declared UriPath regex'
+                    );
+                }
                 p.eq('immunity', rule.ChallengeConfig?.ImmunityTimeProperty?.ImmunityTime, exp.immunity);
                 return p.outcome();
             },
