@@ -1393,6 +1393,164 @@ describe('htaccessRules', () => {
         });
     });
 
+    // Archive builds ship this production .htaccess into /archive/<v>/. A per-directory RewriteRule
+    // only sees the path below that directory, so any root-relative rule there drops the archive
+    // prefix: ag-grid.com/archive/36.2.0/react-data-grid/getting-started/ was host-swapped onto the
+    // CURRENT docs, and the current-site single-hop, blog and redirect rules fired inside archives.
+    describe('archive builds never redirect out of the archive', () => {
+        const BASE = '/archive/36.3.0';
+        let archiveContent: string;
+
+        beforeAll(async () => {
+            vi.resetModules();
+            vi.doMock('../../constants', async (importActual) => {
+                const actual = await importActual<typeof Constants>();
+                return { ...actual, SITE_BASE_URL: `${BASE}/` };
+            });
+            const archiveRules = await import('./htaccessRules');
+            archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+        });
+
+        afterAll(() => {
+            vi.doUnmock('../../constants');
+            vi.resetModules();
+        });
+
+        // Where each mod_rewrite rule would send `uri`, modelling the per-directory semantics that
+        // caused the bug: the RewriteRule pattern sees the path below the archive, while %{REQUEST_URI}
+        // and %N (from a positive REQUEST_URI condition) see the full path. Host and other conditions
+        // are assumed to hold, so every host-scoped rule is checked for every path.
+        const rewriteTargets = (content: string, uri: string): string[] => {
+            const below = uri.slice(`${BASE}/`.length);
+            const targets: string[] = [];
+            let condGroups: RegExpMatchArray | null | undefined;
+            for (const line of content.split('\n').map((l) => l.trim())) {
+                const cond = line.match(/^RewriteCond %\{REQUEST_URI\} (\S+)/);
+                if (cond && !cond[1].startsWith('!')) {
+                    condGroups = condGroups === null ? null : uri.match(new RegExp(cond[1]));
+                    continue;
+                }
+                const rule = line.match(/^RewriteRule "?(\S+?)"? "?(\S+?)"?(?: \[(.*)\])?$/);
+                if (!rule) {
+                    continue;
+                }
+                const [, pattern, substitution, flags = ''] = rule;
+                const groups = below.match(new RegExp(pattern, /\bNC\b/.test(flags) ? 'i' : ''));
+                if (groups && condGroups !== null && substitution !== '-' && /\bR=30[12]\b/.test(flags)) {
+                    targets.push(
+                        substitution
+                            .replace(/\$(\d)/g, (_, n) => groups[Number(n)] ?? '')
+                            .replace(/%(\d)/g, (_, n) => condGroups?.[Number(n)] ?? '')
+                            .replace('%{REQUEST_URI}', uri)
+                    );
+                }
+                condGroups = undefined;
+            }
+            return targets;
+        };
+
+        const staysInArchive = (target: string) =>
+            target.replace(/^https:\/\/www\.ag-grid\.com/, '').startsWith(`${BASE}/`);
+
+        // The reported URLs, plus every path a current-site rule is written for, so no rule can hide.
+        const probePaths = [
+            '/',
+            '/react-data-grid/getting-started/',
+            '/react-data-grid/getting-started',
+            '/react-data-grid/whats-new',
+            '/index.php',
+            '/react-data-grid/index.php',
+            '/react-data-grid/page.php/extra/',
+            '/javascript-data-grid/',
+            '/charts/react',
+            '/charts/react/fonts/',
+            '/charts/core/line-series',
+            '/tag/react/',
+            '/2018/11/29/inside-fiber/',
+            '/some-post/amp/',
+            '/feed/',
+            '/theo/',
+            ...SITE_SINGLE_HOP_REWRITES.map((r) => r.from),
+            ...SITE_301_REDIRECTS.flatMap((r) => ('from' in r ? [r.from] : [])),
+        ].map((path) => `${BASE}${path}`);
+
+        it('host canonicalisation keeps the full archive path', () => {
+            for (const target of rewriteTargets(archiveContent, `${BASE}/react-data-grid/getting-started/`)) {
+                expect(target).toBe(`https://www.ag-grid.com${BASE}/react-data-grid/getting-started/`);
+            }
+            expect(archiveContent).toContain('RewriteRule ^(.*)$ https://www.ag-grid.com%{REQUEST_URI} [R=301,L]');
+            expect(archiveContent).not.toContain('https://www.ag-grid.com/$1');
+        });
+
+        it('canonicalises blog.ag-grid.com onto the archive on www, not into /blog/', () => {
+            expect(archiveContent).toMatch(
+                /RewriteCond %\{HTTP_HOST\} \^blog\\\.ag-grid\\\.com\$ \[NC\]\n\s*RewriteRule \^\(\.\*\)\$ https:\/\/www\.ag-grid\.com%\{REQUEST_URI\} \[R=301,NC,L\]/
+            );
+            expect(archiveContent).not.toContain('https://www.ag-grid.com/blog/');
+        });
+
+        it('no mod_rewrite rule sends an archive URL outside the archive', () => {
+            const escapes = probePaths.flatMap((uri) =>
+                rewriteTargets(archiveContent, uri)
+                    .filter((target) => !staysInArchive(target))
+                    .map((target) => `${uri} -> ${target}`)
+            );
+            expect(escapes).toEqual([]);
+        });
+
+        it('emits none of the current-site single-hop or /charts/ rewrites', () => {
+            expect(archiveContent).not.toContain('# SE-64 / SE-66: single-hop chain shortening');
+            expect(archiveContent).not.toContain('RewriteRule "^/?charts/');
+            expect(archiveContent).not.toMatch(/RewriteRule \^ - \[S=\d+\]/);
+        });
+
+        it('makes the index.php and path-after-php fixes base-aware', () => {
+            // The on-host (www) rules only: the host-canonicalisation rules are checked above.
+            const onHost = (uri: string) => rewriteTargets(archiveContent, uri).filter((t) => t.startsWith('/'));
+            expect(onHost(`${BASE}/index.php`)).toEqual([`${BASE}/`]);
+            expect(onHost(`${BASE}/react-data-grid/index.php`)).toEqual([`${BASE}/react-data-grid/`]);
+            expect(onHost(`${BASE}/react-data-grid/page.php/extra/`)).toEqual([`${BASE}/react-data-grid/page.php`]);
+        });
+
+        it('every mod_alias redirect matches only archive URLs and lands inside the archive', () => {
+            const aliasLines = archiveContent
+                .split('\n')
+                .map((l) => l.trim())
+                .filter((l) => /^Redirect(Match)? /.test(l));
+            expect(aliasLines.length).toBeGreaterThan(0);
+            const escapes = aliasLines.filter((line) => {
+                const [, directive, , source, target] =
+                    line.match(/^(Redirect|RedirectMatch) (\d{3}) "?([^\s"]+)"?(?: "?([^\s"]+)"?)?$/) ?? [];
+                const sourceInArchive =
+                    directive === 'RedirectMatch'
+                        ? source?.startsWith(`^${BASE.replace(/\./g, '\\.')}/`)
+                        : source?.startsWith(`${BASE}/`);
+                return !sourceInArchive || (target !== undefined && !target.startsWith(`${BASE}/`));
+            });
+            expect(escapes).toEqual([]);
+        });
+
+        it('splices the base into fromPattern redirects, escaping the version dots', () => {
+            expect(archiveContent).toContain(
+                `RedirectMatch 301 "^/archive/36\\.3\\.0/javascript-grid-virtual-paging/.*" "${BASE}/javascript-data-grid/infinite-scrolling/"`
+            );
+            expect(archiveContent).toContain('RedirectMatch 410 "^/archive/36\\.3\\.0/forum/.+"');
+        });
+
+        it('keeps redirects whose target is inside the archive', () => {
+            expect(archiveContent).toContain(`Redirect 301 ${BASE}/react-data-grid/whats-new ${BASE}/whats-new`);
+        });
+
+        it('leaves the live-site output root-relative and complete', () => {
+            expect(productionContent).toContain('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
+            expect(productionContent).toContain('# SE-64 / SE-66: single-hop chain shortening');
+            expect(productionContent).toContain('RewriteRule ^index\\.php$ / [R=301,L]');
+            expect(productionContent).toContain('RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/');
+            expect(productionContent).toContain('RedirectMatch 410 "^/forum/.+"');
+            expect(productionContent).toContain('Redirect 301 /sitemap.xml https://www.ag-grid.com/sitemap-index.xml');
+        });
+    });
+
     describe('basic structure', () => {
         it('should include the autogenerated header', () => {
             expect(productionContent).toContain('### AUTOGENERATED DO NOT EDIT');

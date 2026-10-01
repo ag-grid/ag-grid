@@ -12,6 +12,7 @@ import {
     getCspHtaccessBlock,
     getScopedCspHtaccessBlock,
 } from './cspRules';
+import type { Redirect } from './redirects';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -131,6 +132,19 @@ Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQ
 const isArchiveBuild = (): boolean => SITE_BASE_URL?.includes('/archive/') ?? false;
 const unlessArchiveBuild = (rules: string): string => (isArchiveBuild() ? '' : rules);
 
+// The build's base URL without its trailing slash: '' for the live site, '/archive/<v>' for an
+// archive build. Built lazily because the base URL is only resolved at build time.
+const getBasePath = (): string => (SITE_BASE_URL ?? '').replace(/\/$/, '');
+
+// The base as a regex fragment: its dots (36.2.0) are literal, not any-character.
+const getBasePattern = (): string => getBasePath().replace(/\./g, '\\.');
+
+// The canonical-host redirect target. In a per-directory .htaccess, $1 is the path below that
+// directory, so an archive build would lose its /archive/<v>/ prefix and land on the current
+// docs; %{REQUEST_URI} is always the full path. The live site keeps its original form.
+const getHostCanonicalTarget = (): string =>
+    isArchiveBuild() ? 'https://www.ag-grid.com%{REQUEST_URI}' : 'https://www.ag-grid.com/$1';
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -193,22 +207,17 @@ const modDeflateRules = `
 //
 // Prefixed with the build's base URL, so an archive build (/archive/<v>/) negotiates under its
 // own path exactly as the live site does at the root - the same approach ag-charts takes. An
-// empty base emits the original root-anchored rules unchanged. Built lazily because the base
-// URL is only resolved at build time.
-const getMarkdownBasePath = (): string => (SITE_BASE_URL ?? '').replace(/\/$/, '');
-
-// The base as a regex fragment: its dots (36.2.0) are literal, not any-character.
-const getMarkdownBasePattern = (): string => getMarkdownBasePath().replace(/\./g, '\\.');
-
+// empty base emits the original root-anchored rules unchanged.
+//
 // The negotiable page paths below the base. Grouped when prefixed, since the alternation
 // has top-level `|` branches that the prefix must apply to as a whole.
 const getMarkdownPagesBelowBase = (): string => {
-    const basePattern = getMarkdownBasePattern();
+    const basePattern = getBasePattern();
     return basePattern ? `${basePattern.slice(1)}/(?:${markdownPathAlternation()})` : markdownPathAlternation();
 };
 
 const getMarkdownNegotiationRules = (): string => {
-    const basePath = getMarkdownBasePath();
+    const basePath = getBasePath();
     return `    RewriteCond %{HTTP_ACCEPT} text/markdown
     RewriteCond %{REQUEST_URI} ^/(${getMarkdownPagesBelowBase()})/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
@@ -217,7 +226,7 @@ const getMarkdownNegotiationRules = (): string => {
     # SE-80: the homepage twin (/ -> /index.md). Handled separately because the root URL has no
     # path segment to capture in %1; ^/$ matches only the root, so no other route is affected.
     RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^${getMarkdownBasePattern()}/$
+    RewriteCond %{REQUEST_URI} ^${getBasePattern()}/$
     RewriteCond %{DOCUMENT_ROOT}${basePath}/index.md -f
     RewriteRule ^ ${basePath}/index.md [L]`;
 };
@@ -244,7 +253,7 @@ ${getMarkdownNegotiationRules()}
 const getMarkdownVaryHeader =
     (): string => `# SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:${getMarkdownPagesBelowBase()})(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^${getMarkdownBasePattern()}/(?:index\\.html)?$#">
+<If "%{REQUEST_URI} =~ m#^/(?:${getMarkdownPagesBelowBase()})(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^${getBasePattern()}/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>`;
 
@@ -263,13 +272,10 @@ const getMarkdownVaryHeader =
 // production .htaccess so the header can be verified on staging.
 const agentLinkHeader = `Header set Link "</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related" "expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"`;
 
-// Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
-// build-time base URL), so it must not run at module import — only when the
-// production .htaccess is actually generated.
-const getModRewriteRules = (): string => `
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-
+// The current-site rewrites: SE-64/SE-66 single-hop chain shortening and the /charts/ semantic
+// redirects. Their targets are live URLs, so an archive build never emits them (see
+// getModRewriteRules).
+const getCurrentSiteRewriteRules = (): string => `
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
     RewriteRule ^ - [S=${SITE_SINGLE_HOP_REWRITES.length + 21}]
 
@@ -309,37 +315,11 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
 
     RewriteCond %{REQUEST_URI} /+[^.]+$
     RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]
+`;
 
-    # Always use https for secure connections (scoped to www/bare domain only
-    # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
-    RewriteCond %{HTTP_HOST} ^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteCond %{SERVER_PORT} 80
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-
-    # Redirect non-www to www
-    RewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-
-    # Redirect legacy Phase 1 subdomains to www
-    RewriteCond %{HTTP_HOST} ^angulargrid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-    RewriteCond %{HTTP_HOST} ^angular-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-    RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-    RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-
-    # Redirect angulargrid.com to www.ag-grid.com
-    RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
-    RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-
-    # blog.ag-grid.com -> www.ag-grid.com/blog/ (SE-86/SE-91). Host-scoped, so www and
+// blog.ag-grid.com -> www.ag-grid.com/blog/. Every target is a live blog or docs URL, so an
+// archive build swaps the host instead (see getArchiveBlogHostRule).
+const blogHostRedirectRules = `    # blog.ag-grid.com -> www.ag-grid.com/blog/ (SE-86/SE-91). Host-scoped, so www and
     # apex are unaffected. ORDER MATTERS: specific rules first, catch-all host swap last.
     # Targets are final destinations, not intermediate slugs -- SE-86 requires one hop.
     # The 410s are deliberate: those posts are gone, not moved. They swallow any sub-path and
@@ -578,7 +558,102 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteRule ^/?(sitemap[^/]*\\.xml)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
+    RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]`;
+
+// blog.ag-grid.com/archive/<v>/... was never a blog URL, and blogHostRedirectRules would send it
+// to /blog/<path below the archive> - a 404. The archive itself lives on www, so canonicalise
+// the host and keep the path, exactly as for the other alias hosts.
+const getArchiveBlogHostRule =
+    (): string => `    # blog.ag-grid.com/archive/<v>/... is archive content on the wrong host: keep the path.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,NC,L]`;
+
+// The partnership tracker is a current-site URL, so archive builds leave it out.
+const theoPartnershipRedirect = `    # temporary redirect for tracking of partnership   
+    RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
+    `;
+
+// Unlike per-directory mod_rewrite, mod_alias matches the full URL-path, so every pattern
+// must carry the base: `from` gets it via urlWithBaseUrl and `fromPattern` has it spliced in
+// here (as ag-charts and Studio do). An archive must never redirect out of its own version, so
+// an archive build also drops every redirect whose target is absolute - a live (or external)
+// URL - and keeps only those that resolve inside the archive. An empty base (the live site)
+// leaves every rule unchanged.
+const toBaseAwarePattern = (fromPattern: string): string =>
+    fromPattern.startsWith('^') ? `^${getBasePattern()}${fromPattern.slice(1)}` : `${getBasePattern()}${fromPattern}`;
+
+const leavesArchive = (redirect: Redirect): boolean => 'to' in redirect && /^https?:\/\//.test(redirect.to);
+
+const getSite301RedirectRules = (): string =>
+    SITE_301_REDIRECTS.filter((redirect) => !(isArchiveBuild() && leavesArchive(redirect)))
+        .map((redirect) => {
+            const { from, fromPattern, to, gone } = redirect as any;
+            if (!from && !fromPattern) {
+                // eslint-disable-next-line no-console
+                console.warn('Missing `from` in redirect', redirect);
+                return;
+            }
+            // 410 Gone: permanently removed, no target.
+            if (gone) {
+                return from
+                    ? `    Redirect 410 ${urlWithBaseUrl(from)}`
+                    : `    RedirectMatch 410 "${toBaseAwarePattern(fromPattern)}"`;
+            }
+            if (!to) {
+                // eslint-disable-next-line no-console
+                console.warn('Missing `to` in redirect', redirect);
+                return;
+            }
+            return from
+                ? `    Redirect 301 ${urlWithBaseUrl(from)} ${urlWithBaseUrl(to)}`
+                : `    RedirectMatch 301 "${toBaseAwarePattern(fromPattern)}" "${urlWithBaseUrl(to)}"`;
+        })
+        .filter(Boolean)
+        .join('\n');
+
+// Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
+// build-time base URL), so it must not run at module import — only when the
+// production .htaccess is actually generated.
+//
+// Archive builds ship this file into /archive/<v>/, and a per-directory RewriteRule only sees
+// the path below that directory, so a root-relative rule there silently drops the archive
+// prefix. Every rule here therefore either keeps the request inside the archive (host
+// canonicalisation via %{REQUEST_URI}, base-aware index.php/trailing-slash fixes, markdown
+// negotiation, base-aware redirects) or is a current-site rule left out of archive builds.
+const getModRewriteRules = (): string => `
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+${unlessArchiveBuild(getCurrentSiteRewriteRules())}
+    # Always use https for secure connections (scoped to www/bare domain only
+    # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
+    RewriteCond %{HTTP_HOST} ^(www\\.)?ag-grid\\.com$ [NC]
+    RewriteCond %{SERVER_PORT} 80
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+
+    # Redirect non-www to www
+    RewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+
+    # Redirect legacy Phase 1 subdomains to www
+    RewriteCond %{HTTP_HOST} ^angulargrid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+    RewriteCond %{HTTP_HOST} ^angular-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+    RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+    RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+
+    # Redirect angulargrid.com to www.ag-grid.com
+    RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
+    RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
+    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+
+${isArchiveBuild() ? getArchiveBlogHostRule() : blogHostRedirectRules}
 
     # SE-80: content-negotiate docs pages to their per-page markdown variant when a
     # client asks for it via Accept: text/markdown (typically an AI agent — browsers
@@ -594,13 +669,13 @@ ${getMarkdownNegotiationRules()}
     RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
-    RewriteRule ^index\\.php$ / [R=301,L]
+    RewriteRule ^index\\.php$ ${getBasePath()}/ [R=301,L]
 
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
-    RewriteRule ^(.*)/index\\.php$ /$1/ [R=301,L]
+    RewriteRule ^(.*)/index\\.php$ ${getBasePath()}/$1/ [R=301,L]
 
     # Add trailing slash for directories
     RewriteCond %{REQUEST_URI} /+[^\\.]+$
@@ -608,33 +683,10 @@ ${getMarkdownNegotiationRules()}
 
     # Redirect paths after a php file (ie index.php/path/path => index.php)
     # arguments will be carried over (ie index.php?abc=true will stay as is)
-    RewriteRule ^(.*)\\.php(\\/.+)$ /$1.php [R=301,L]
+    RewriteRule ^(.*)\\.php(\\/.+)$ ${getBasePath()}/$1.php [R=301,L]
  
-    # temporary redirect for tracking of partnership   
-    RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
-    
-${SITE_301_REDIRECTS.map((redirect) => {
-    const { from, fromPattern, to, gone } = redirect as any;
-    if (!from && !fromPattern) {
-        // eslint-disable-next-line no-console
-        console.warn('Missing `from` in redirect', redirect);
-        return;
-    }
-    // 410 Gone: permanently removed, no target.
-    if (gone) {
-        return from ? `    Redirect 410 ${urlWithBaseUrl(from)}` : `    RedirectMatch 410 "${fromPattern}"`;
-    }
-    if (!to) {
-        // eslint-disable-next-line no-console
-        console.warn('Missing `to` in redirect', redirect);
-        return;
-    }
-    return from
-        ? `    Redirect 301 ${urlWithBaseUrl(from)} ${urlWithBaseUrl(to)}`
-        : `    RedirectMatch 301 "${fromPattern}" "${urlWithBaseUrl(to)}"`;
-})
-    .filter(Boolean)
-    .join('\n')}
+${unlessArchiveBuild(theoPartnershipRedirect)}
+${getSite301RedirectRules()}
 
 </IfModule>
 `;
