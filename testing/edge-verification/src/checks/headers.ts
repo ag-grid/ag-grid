@@ -2,9 +2,17 @@ import { promises as dns } from 'node:dns';
 
 import { metaContents } from '../core/html';
 import { type Response, header, headerAll, headerTokens } from '../core/http';
-import { type CheckDef, Problems, fail, pass } from '../core/types';
-import { HEADER_ROWS, type HeaderRow, NOT_MODIFIED_PROBE, SECURITY_HEADERS } from '../expected/headers';
-import { finding } from '../expected/lifecycle';
+import { type CheckDef, Problems, fail, pass, skip } from '../core/types';
+import {
+    ARCHIVE_VALIDATOR_PROBE,
+    ARCHIVE_VALIDATOR_REQUESTS,
+    GZIP_REVALIDATION_PROBES,
+    HEADER_ROWS,
+    type HeaderRow,
+    NOT_MODIFIED_PROBE,
+    SECURITY_HEADERS,
+} from '../expected/headers';
+import { PENDING, finding } from '../expected/lifecycle';
 
 export function expectHeader(p: Problems, res: Response, name: string, exp: string | RegExp | null): void {
     const values = headerAll(res, name);
@@ -79,9 +87,58 @@ function headerCheck(row: HeaderRow): CheckDef {
     };
 }
 
+const GZIP = { 'accept-encoding': 'gzip' };
+
 export function headerChecks(): CheckDef[] {
     return [
         ...HEADER_ROWS.map(headerCheck),
+        ...GZIP_REVALIDATION_PROBES.map((probe): CheckDef => ({
+            id: `headers.revalidate-gzip.${probe.id}`,
+            area: 'headers',
+            title: `A gzip ${probe.id} page revalidated with its -gzip ETag (If-None-Match) is a 304`,
+            refs: [finding(19)],
+            pending: probe.pending,
+            async run({ http }) {
+                const full = await http.request({ url: probe.url, headers: GZIP, fresh: true });
+                const etag = header(full, 'etag');
+                const encoding = header(full, 'content-encoding');
+                if (full.status !== 200 || !etag || encoding !== 'gzip') {
+                    return fail(`${full.status}, Content-Encoding ${encoding}, ETag ${etag}: nothing to revalidate`);
+                }
+                const res = await http.request({
+                    url: probe.url,
+                    headers: { ...GZIP, 'if-none-match': etag },
+                    fresh: true,
+                });
+                const p = new Problems();
+                p.eq(`status for If-None-Match ${etag}`, res.status, 304);
+                return p.outcome(`If-None-Match ${etag}: ${res.status}`);
+            },
+        })),
+        {
+            id: 'headers.archive-validators-agree',
+            area: 'headers',
+            title: 'Both origin hosts send the same ETag and Last-Modified for an archive page',
+            refs: [finding(19)],
+            pending: PENDING.archiveMtimes,
+            async run({ http }) {
+                const responses = [];
+                for (let i = 0; i < ARCHIVE_VALIDATOR_REQUESTS; i++) {
+                    responses.push(await http.request({ method: 'HEAD', url: ARCHIVE_VALIDATOR_PROBE, fresh: true }));
+                }
+                // A CloudFront hit replays one host's copy, so only misses say what each host serves.
+                const fromOrigin = responses.filter((r) => /^Miss from cloudfront$/i.test(header(r, 'x-cache') ?? ''));
+                if (fromOrigin.length < 2) {
+                    return skip(`${fromOrigin.length} of ${responses.length} responses reached the origin`);
+                }
+                const etags = new Set(fromOrigin.map((r) => header(r, 'etag')));
+                const dates = new Set(fromOrigin.map((r) => header(r, 'last-modified')));
+                const p = new Problems();
+                p.check(etags.size === 1, `ETags differ: ${[...etags].join(' vs ')}`);
+                p.check(dates.size === 1, `Last-Modified differs: ${[...dates].join(' vs ')}`);
+                return p.outcome(`${fromOrigin.length} origin responses, ETag ${[...etags][0]}`);
+            },
+        },
         {
             id: 'headers.internal-host.prompts-docs-nxdomain',
             area: 'headers',

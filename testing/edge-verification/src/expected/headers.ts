@@ -62,6 +62,28 @@ const html = (id: string, title: string, url: string, refs: string[], extra: Par
 /** Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache. */
 export const NOT_MODIFIED_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
 
+/**
+ * Compressed pages revalidated with the -gzip ETag they were sent (waf-finding.md §19). The archive
+ * page also needs both hosts to agree on its ETag, so it waits for the re-extraction too.
+ */
+export const GZIP_REVALIDATION_PROBES: Array<{ id: string; url: string; pending: string }> = [
+    { id: 'live', url: `${WWW}/react-data-grid/getting-started/`, pending: PENDING.gridGzipRevalidation },
+    {
+        id: 'archive',
+        url: `${WWW}/archive/36.2.0/`,
+        pending: `${PENDING.gridGzipRevalidation}; ${PENDING.archiveMtimes}`,
+    },
+];
+
+/**
+ * An archive page both origin hosts must give the same validators for. 36.2.0 was extracted with
+ * `tar -m`, so it passes only once re-extracted; repoint this at the first archive uploaded after
+ * the script fix to verify that instead.
+ */
+export const ARCHIVE_VALIDATOR_PROBE = `${WWW}/archive/36.2.0/`;
+/** Fresh requests sent, so the load balancer is likely to reach both hosts. */
+export const ARCHIVE_VALIDATOR_REQUESTS = 4;
+
 export const HEADER_ROWS: HeaderRow[] = [
     // ---- current HTML ----------------------------------------------------------------------
     html('html.grid-docs', 'Grid docs page', `${WWW}/react-data-grid/getting-started/`, [

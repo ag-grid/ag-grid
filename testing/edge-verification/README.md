@@ -135,6 +135,7 @@ says so on every run (parents SE-8 and SE-181 are covered through their children
 | Archive caching and the markdown key split     | `cloudfront.behaviour./archive/*`, `cloudfront.function.archive-markdown-cache-key`, `caching.archive-markdown-split`, `caching.hit./archive/*` (pending) |
 | Redirects and live markdown never cached       | `headers.redirect.no-cache.*`, `headers.markdown.*-no-cache` (pending grid c0eadabc4e3), `headers.not-modified-keeps-cache`                               |
 | Archived markdown noindexed                    | `headers.markdown.archive-noindex.*` (pending)                                                                                                            |
+| Revalidation (304s) on gzip and across hosts   | `headers.revalidate-gzip.*` (pending grid a5ea9272023), `headers.archive-validators-agree` (pending grid d1087c3088f and a re-extract)                    |
 | Origin bypass                                  | `waf-config.alb.*`, `infra.alb.security-group`                                                                                                            |
 | Secrets in WAF logs                            | `waf-config.*.logging.redaction`, `waf-config.*.log-retention`, `waf-config.cf.verify-secrets-distinct`                                                   |
 | Bot and agent policy                           | `waf-config.cf.nonbrowser-rule*`, `waf-config.cf.bot-control*`, `waf-behaviour.*`, `crawler-policy.robots-vs-waf*`                                        |
