@@ -19,8 +19,16 @@ AddType text/markdown md
 AddCharset utf-8 .md
 
 
-# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
-Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+# Current pages and their markdown variants: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+
+
+# Redirects: never cached, so a cached Location cannot carry one visitor's query string to another.
+Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
+
+
+# Archived markdown variants: noindex, as the archived HTML is by its robots meta tag.
+Header set X-Robots-Tag "noindex" "expr=%{CONTENT_TYPE} =~ m#^text/markdown# && %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]#"
 
 
 # Content-addressed assets - the filename carries a content hash, so changed content is
@@ -3092,8 +3100,12 @@ AddType text/markdown md
 AddCharset utf-8 .md
 
 
-# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
-Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+# Current pages and their markdown variants: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+
+
+# Redirects: never cached, so a cached Location cannot carry one visitor's query string to another.
+Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
 
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
