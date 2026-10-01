@@ -32,6 +32,9 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 // www URL in a SINGLE hop regardless of host or scheme. Targets are absolute www URLs (with
 // no query string, so Apache preserves any inbound query). Destinations were derived by
 // replaying the current redirect rules to their fixpoint.
+//
+// No /charts/ or /studio/ sources: those sites' own .htaccess replaces these rewrite rules for
+// every request below them, so such an entry would never run (see htaccessRules.ts).
 export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     // The slash-less framework whats-new paths, which would otherwise pick up the
     // add-trailing-slash 301 first and reach /whats-new/ in two hops.
@@ -273,7 +276,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/ag-grid-changelog', to: 'https://www.ag-grid.com/changelog/' },
     { from: '/example-react-redux', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
     { from: '/javascript-grid/building-typescript/', to: 'https://www.ag-grid.com/javascript-data-grid/installation/' },
-    { from: '/charts/documentation', to: 'https://www.ag-grid.com/charts/documentation/' },
     {
         from: '/documentation/javascript/server-side-model-row-stores/',
         to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/',
@@ -303,16 +305,10 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/angular-data-grid/cell-rendering/',
         to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/',
     },
-    { from: '/charts/react/cone-funnel-series', to: 'https://www.ag-grid.com/charts/react/cone-funnel-series/' },
     {
         from: '/javascript-data-grid/applying-theme-builder-styling-grid/',
         to: 'https://www.ag-grid.com/javascript-data-grid/theming/',
     },
-    {
-        from: '/charts/react/financial-charts-toolbar',
-        to: 'https://www.ag-grid.com/charts/react/financial-charts-toolbar/',
-    },
-    { from: '/charts/react/api-state', to: 'https://www.ag-grid.com/charts/react/api-state/' },
     { from: '/javascript-grid-cell-editor/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-editors/' },
     {
         from: '/documentation/javascript/component-header/',
@@ -321,8 +317,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/react-grid/getting-started/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
     { from: '/javascript-grid-components/', to: 'https://www.ag-grid.com/javascript-data-grid/components/' },
     { from: '/javascript-charts/overlays/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
-    { from: '/charts/react/candlestick-series', to: 'https://www.ag-grid.com/charts/react/candlestick-series/' },
-    { from: '/charts/react/zoom', to: 'https://www.ag-grid.com/charts/react/zoom/' },
     { from: '/angular-data-grid/grid-properties/', to: 'https://www.ag-grid.com/angular-data-grid/grid-options/' },
     {
         from: '/react-data-grid/cell-rendering/',
@@ -333,7 +327,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         to: 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/',
     },
     { from: '/javascript-grid-data-update/', to: 'https://www.ag-grid.com/javascript-data-grid/data-update/' },
-    { from: '/charts/react/linear-gauge', to: 'https://www.ag-grid.com/charts/react/linear-gauge/' },
     {
         from: '/javascript-grid-provided-renderer-change/',
         to: 'https://www.ag-grid.com/javascript-data-grid/change-cell-renderers/',
@@ -349,20 +342,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     },
     { from: '/theme-builder', to: 'https://www.ag-grid.com/theme-builder/' },
     { from: '/changelog', to: 'https://www.ag-grid.com/changelog/' },
-    {
-        from: '/charts/react/upgrade-to-ag-charts-11-2',
-        to: 'https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-2/',
-    },
-    {
-        from: '/charts/react/upgrade-to-ag-charts-11-3',
-        to: 'https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-3/',
-    },
-    { from: '/charts/react/financial-charts', to: 'https://www.ag-grid.com/charts/react/financial-charts/' },
     { from: '/javascript-data-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
-    { from: '/charts/react/radial-gauge', to: 'https://www.ag-grid.com/charts/react/radial-gauge/' },
-    { from: '/charts/react/range-bar-series', to: 'https://www.ag-grid.com/charts/react/range-bar-series/' },
-    { from: '/charts/react/pyramid-series', to: 'https://www.ag-grid.com/charts/react/pyramid-series/' },
-    { from: '/charts/react/ohlc-series', to: 'https://www.ag-grid.com/charts/react/ohlc-series/' },
     { from: '/javascript-charts/bar-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/documentation/vue/aggregation/', to: 'https://www.ag-grid.com/vue-data-grid/aggregation/' },
     { from: '/vue-data-grid/cell-rendering/', to: 'https://www.ag-grid.com/vue-data-grid/component-cell-renderer/' },
@@ -376,7 +356,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         to: 'https://www.ag-grid.com/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series/',
     },
     { from: '/javascript-charts-overview/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
-    { from: '/charts/react/funnel-series', to: 'https://www.ag-grid.com/charts/react/funnel-series/' },
     { from: '/javascript-charts/pie-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/javascript-grid-rendering-flow/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-content/' },
     {
