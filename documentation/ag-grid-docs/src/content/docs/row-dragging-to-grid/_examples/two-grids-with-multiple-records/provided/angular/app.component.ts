@@ -61,14 +61,16 @@ export class SportRenderer implements ICellRendererAngularComp {
     template: /*html */ ` <div class="top-container">
         <div class="example-toolbar panel panel-default example-controls">
             <div class="panel-body controls-row">
-                <input type="radio" id="move" name="radio" checked #eMoveRadio />
-                <label for="move">Remove Source Rows</label>
-                <input type="radio" id="deselect" name="radio" #eDeselectRadio />
-                <label for="deselect">Only Deselect Source Rows</label>
-                <input type="radio" id="none" name="radio" />
-                <label for="none">None</label>
+                <div class="button-group" role="group" aria-label="Drag behaviour">
+                    <input type="radio" id="move" name="radio" checked #eMoveRadio />
+                    <label for="move">Remove Source Rows</label>
+                    <input type="radio" id="deselect" name="radio" #eDeselectRadio />
+                    <label for="deselect">Only Deselect Source Rows</label>
+                    <input type="radio" id="none" name="radio" />
+                    <label for="none">None</label>
+                </div>
                 <span class="input-group-button">
-                    <button type="button" class="btn btn-default reset" style="margin-left: 5px;" (click)="reset()">
+                    <button type="button" class="btn btn-default reset" (click)="reset()">
                         <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
                     </button>
                 </span>

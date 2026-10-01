@@ -106,7 +106,7 @@ const GridExample = () => {
             <div className="test-container">
                 <div className="test-header example-controls">
                     <div className="controls-row">
-                        <label>
+                        <div className="button-group" role="group" aria-label="Age filter">
                             <input
                                 type="radio"
                                 name="filter"
@@ -114,34 +114,26 @@ const GridExample = () => {
                                 defaultChecked
                                 onChange={() => setAgeType('everyone')}
                             />
-                            Everyone
-                        </label>
-                        <label>
+                            <label htmlFor="everyone">Everyone</label>
                             <input type="radio" name="filter" id="below25" onChange={() => setAgeType('below25')} />
-                            Below 25
-                        </label>
-                        <label>
+                            <label htmlFor="below25">Below 25</label>
                             <input
                                 type="radio"
                                 name="filter"
                                 id="between25and50"
                                 onChange={() => setAgeType('between25and50')}
                             />
-                            Between 25 and 50
-                        </label>
-                        <label>
+                            <label htmlFor="between25and50">Between 25 and 50</label>
                             <input type="radio" name="filter" id="above50" onChange={() => setAgeType('above50')} />
-                            Above 50
-                        </label>
-                        <label>
+                            <label htmlFor="above50">Above 50</label>
                             <input
                                 type="radio"
                                 name="filter"
                                 id="dateAfter2008"
                                 onChange={() => setAgeType('dateAfter2008')}
                             />
-                            After 01/01/2008
-                        </label>
+                            <label htmlFor="dateAfter2008">After 01/01/2008</label>
+                        </div>
                     </div>
                 </div>
                 <div style={{ height: '100%' }}>
