@@ -197,6 +197,25 @@ function p11SafeLeaves(): Leaf[] {
     ];
 }
 
+/** Whether a single-leaf p11 exemption is one the expectations declare (see the nonbrowser-rule check). */
+function isDeclaredP11Exemption(l: Leaf): boolean {
+    const nb = CF_ACL.nonBrowser;
+    switch (l.kind) {
+        case 'label':
+            return nb.exemptLabels.includes(l.value);
+        case 'byte':
+            return l.field === 'header:accept' && l.positional === 'CONTAINS' && l.value === nb.markdownAcceptExemption;
+        case 'regex':
+            return (
+                l.field === 'header:user-agent' &&
+                !nb.undeclaredUas.some((ua) => regexLeafMatches(l, ua)) &&
+                [...nb.uaAllowTokens, ...nb.otherUaExemptions].some((ua) => regexLeafMatches(l, ua))
+            );
+        default:
+            return false;
+    }
+}
+
 /** The p11 user-agent allowlist regex (the UA regex that admits chatgpt-user), or undefined. */
 function p11UaAllowlist(p11: any): Extract<Leaf, { kind: 'regex' }> | undefined {
     const e = p11Parts(p11)?.exemptions ?? [];
@@ -662,6 +681,13 @@ export function wafChecks(): CheckDef[] {
                     ),
                     'Accept: text/markdown exemption missing'
                 );
+                // Exactly the declared exemptions: the allowlist and in-app UA regexes, the verified
+                // labels, Accept: text/markdown and the saliencebot AND. Anything else (say a UA regex
+                // admitting all but saliencebot) exempts traffic nothing above declared.
+                const undeclared = e.filter((l) => !isDeclaredP11Exemption(l));
+                p.check(!undeclared.length, `undeclared exemptions: ${undeclared.map(leafKey).join(', ')}`);
+                p.eq('exemption count', e.length, 2 + nb.exemptLabels.length + 1);
+                p.eq('AND exemption count', ands.length, 1);
                 // Every property, not just the value: a safe path matched on another field, as an
                 // exact match, or after another transform no longer exempts what it names.
                 p.eq('safe paths', sorted(s.map(leafKey)), sorted(p11SafeLeaves().map(leafKey)));
