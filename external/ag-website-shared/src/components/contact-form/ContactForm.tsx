@@ -4,21 +4,17 @@ import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/con
 import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import {
-    reportMonitoringError,
-    trackMonitoringEvent,
-} from '@ag-website-shared/components/website-monitoring/websiteMonitoring';
 import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { ChangeEvent, FunctionComponent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { FieldErrors } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
 import { RETURN_URLS } from './constants';
+import { useContactFormMonitoring } from './useContactFormMonitoring';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
@@ -117,9 +113,19 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
 
     const {
+        onFormInteraction,
+        trackInvalidSubmit,
+        trackCaptchaIncomplete,
+        trackSubmit,
+        captchaCallbacks,
+        reportCaptchaLoadError,
+    } = useContactFormMonitoring(formLocation);
+
+    const {
         register,
         handleSubmit,
         setValue,
+        getValues,
         formState: { errors },
     } = useForm<FormValues>({
         // Validate on first blur, then re-validate on every change, so a message
@@ -172,15 +178,14 @@ export const ContactForm: FunctionComponent<Props> = ({
                 }
                 captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
                     sitekey: captchaSiteKey,
+                    ...captchaCallbacks,
                 });
                 captcha = initCaptcha(container, (ts) => {
                     captchaTimestamp.current = ts;
                 });
                 reapplyCaptchaTimestamp.current = captcha.reapply;
             })
-            .catch((error) => {
-                reportMonitoringError(error, { formLocation });
-            });
+            .catch(reportCaptchaLoadError);
 
         return () => {
             unmounted = true;
@@ -197,30 +202,19 @@ export const ContactForm: FunctionComponent<Props> = ({
         const widgetId = captchaWidgetId.current;
         const captchaPassed = widgetId != null && (globalThis as any).grecaptcha.getResponse(widgetId);
         if (captchaPassed) {
-            trackMonitoringEvent('contact_form_submit', { formLocation });
+            trackSubmit({
+                captchaTimestamp: captchaTimestamp.current,
+                enquiryType: enquiryTypeId ? getValues(enquiryTypeId) : undefined,
+                isDebug,
+            });
             reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
-            // A widget that never rendered points at reCAPTCHA failing, rather than the visitor
-            trackMonitoringEvent('contact_form_captcha_incomplete', {
-                formLocation,
-                isCaptchaRendered: widgetId != null,
-            });
+            trackCaptchaIncomplete(widgetId != null);
             setCaptchaError(true);
             setIsDisabled(false);
         }
-    }, [formLocation]);
-
-    // Field names only: the values are the visitor's personal details
-    const onInvalidSubmit = useCallback(
-        (fieldErrors: FieldErrors<FormValues>) => {
-            trackMonitoringEvent('contact_form_invalid', {
-                formLocation,
-                invalidFields: Object.keys(fieldErrors).join(','),
-            });
-        },
-        [formLocation]
-    );
+    }, [trackSubmit, trackCaptchaIncomplete, getValues, isDebug]);
 
     return (
         <form
@@ -229,7 +223,8 @@ export const ContactForm: FunctionComponent<Props> = ({
             className={styles.contactForm}
             action={actionUrl}
             method="POST"
-            onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}
+            onSubmit={handleSubmit(onValidSubmit, trackInvalidSubmit)}
+            onFocus={onFormInteraction}
             noValidate
         >
             <input

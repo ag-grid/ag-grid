@@ -219,6 +219,16 @@ const announcementBannerProps = {
 
         {structuredData.length > 0 && <JsonLd data={structuredData} />}
 
+        {/* Ahead of Google Tag Manager, so CSP violations from its tags are reported */}
+        {!isDev && PUBLIC_DASH0_ENDPOINT_URL && PUBLIC_DASH0_AUTH_TOKEN && (
+            <WebsiteMonitoring
+                serviceName="ag-grid-website"
+                serviceVersion={agGridVersion}
+                environment={isArchive ? 'archive' : isProduction ? 'production' : isStaging ? 'staging' : 'testing'}
+                endpointUrl={PUBLIC_DASH0_ENDPOINT_URL}
+                authToken={PUBLIC_DASH0_AUTH_TOKEN}
+            />
+        )}
         {!isDev && (
             <GoogleTagManager
                 googleTagManagerId={PUBLIC_GTM_ID}
@@ -229,16 +239,6 @@ const announcementBannerProps = {
         {isProduction && <Plausible domain="ag-grid.com" />}
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
-
-        {!isDev && PUBLIC_DASH0_ENDPOINT_URL && PUBLIC_DASH0_AUTH_TOKEN && (
-            <WebsiteMonitoring
-                serviceName="ag-grid-website"
-                serviceVersion={agGridVersion}
-                environment={isArchive ? 'archive' : isProduction ? 'production' : isStaging ? 'staging' : 'testing'}
-                endpointUrl={PUBLIC_DASH0_ENDPOINT_URL}
-                authToken={PUBLIC_DASH0_AUTH_TOKEN}
-            />
-        )}
 
         <style lang="scss" define:vars={{ lightModeCSSUrl, darkModeCSSUrl }}>
             :root {

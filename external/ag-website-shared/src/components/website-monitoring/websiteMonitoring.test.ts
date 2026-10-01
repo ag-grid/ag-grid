@@ -53,13 +53,27 @@ async function fireGtmTag(script: string) {
     await vi.dynamicImportSettled();
 }
 
+let dispose: (() => void) | undefined;
+
 // Each test gets a fresh module, as a page load would, since monitoring starts at most once
 async function initWebsiteMonitoring() {
     vi.resetModules();
     const websiteMonitoring = await import('./websiteMonitoring');
-    websiteMonitoring.initWebsiteMonitoring(CONFIG);
+    dispose = websiteMonitoring.initWebsiteMonitoring(CONFIG);
     await vi.dynamicImportSettled();
     return websiteMonitoring;
+}
+
+// jsdom has no SecurityPolicyViolationEvent, so build one with the fields the reporter reads
+function dispatchCspViolation() {
+    const event = Object.assign(new Event('securitypolicyviolation'), {
+        effectiveDirective: 'script-src-elem',
+        blockedURI: 'inline',
+        sourceFile: 'https://www.ag-grid.com/contact/',
+        lineNumber: 12,
+        disposition: 'enforce',
+    });
+    document.dispatchEvent(event);
 }
 
 beforeEach(() => {
@@ -78,6 +92,8 @@ function stubReload() {
 }
 
 afterEach(() => {
+    dispose?.();
+    dispose = undefined;
     vi.restoreAllMocks();
 });
 
@@ -149,7 +165,7 @@ describe('initWebsiteMonitoring', () => {
             const releaseSdkImport = holdSdkImport();
             vi.resetModules();
             const { initWebsiteMonitoring } = await import('./websiteMonitoring');
-            initWebsiteMonitoring(CONFIG);
+            dispose = initWebsiteMonitoring(CONFIG);
 
             pushCommand(WEBSITE_MONITORING_GTM_START_SCRIPT);
             pushCommand(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
@@ -166,7 +182,7 @@ describe('initWebsiteMonitoring', () => {
             pushCommand(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
             vi.resetModules();
             const { initWebsiteMonitoring } = await import('./websiteMonitoring');
-            initWebsiteMonitoring(CONFIG);
+            dispose = initWebsiteMonitoring(CONFIG);
             await releaseSdkImport();
 
             expect(dash0.init).not.toHaveBeenCalled();
@@ -176,7 +192,7 @@ describe('initWebsiteMonitoring', () => {
             const releaseSdkImport = holdSdkImport();
             vi.resetModules();
             const { initWebsiteMonitoring } = await import('./websiteMonitoring');
-            initWebsiteMonitoring(CONFIG);
+            dispose = initWebsiteMonitoring(CONFIG);
 
             pushCommand(WEBSITE_MONITORING_GTM_START_SCRIPT);
             pushCommand(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
@@ -197,6 +213,35 @@ describe('initWebsiteMonitoring', () => {
         await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
 
         expect(dash0.init).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('CSP violations', () => {
+    test('are reported once monitoring starts, including those from before it started', async () => {
+        await initWebsiteMonitoring();
+        dispatchCspViolation();
+        expect(dash0.sendEvent).not.toHaveBeenCalled();
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.sendEvent).toHaveBeenCalledWith('csp_violation', {
+            attributes: expect.objectContaining({ directive: 'script-src-elem', blockedUri: 'inline' }),
+            severity: 'WARN',
+        });
+    });
+
+    test('are never sent when GTM stops monitoring before it has started', async () => {
+        const releaseSdkImport = holdSdkImport();
+        vi.resetModules();
+        const { initWebsiteMonitoring } = await import('./websiteMonitoring');
+        dispose = initWebsiteMonitoring(CONFIG);
+        dispatchCspViolation();
+
+        new Function(WEBSITE_MONITORING_GTM_START_SCRIPT)();
+        new Function(WEBSITE_MONITORING_GTM_STOP_SCRIPT)();
+        await releaseSdkImport();
+
+        expect(dash0.sendEvent).not.toHaveBeenCalled();
     });
 });
 
