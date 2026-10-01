@@ -89,9 +89,10 @@ These are enforced in code, not by convention:
   distribution config shows the path's behaviour either does not cache, or keys its cache on
   `x-ag-accept-markdown`, runs the `archive-markdown-cache-key` viewer-request function, and that
   function's LIVE code (read with `cloudfront:GetFunction`) sets `x-ag-accept-markdown` from a
-  `text/markdown` test of the Accept header. The distribution's status (`cloudfront:GetDistribution`)
-  is read before anything is authorised: unless it is `Deployed`, every markdown probe is refused,
-  because the config is control-plane state the edges may not serve yet. If the live config cannot
+  `text/markdown` test of the Accept header. The guard reads the distribution's status and config
+  from one `cloudfront:GetDistribution` snapshot before anything is authorised: unless it is
+  `Deployed`, every markdown probe is refused, because the config is control-plane state the edges
+  may not serve yet. Two separate reads could pair a Deployed status with a newer config. If the live config cannot
   be read, every markdown
   probe is refused, whatever the declared behaviours say; if the function code cannot be read (the
   profile lacks `cloudfront:GetFunction` today) or does not pass that static check, every probe on a

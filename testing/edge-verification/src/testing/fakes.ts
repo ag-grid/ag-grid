@@ -145,7 +145,10 @@ export const functionCode =
 
 /** Handlers for a healthy distribution whose markdown key function is readable and correct. */
 export const healthyCloudFront = (): Record<string, Handler> => ({
-    'cloudfront get-distribution': () => ({ Distribution: { Id: DISTRIBUTION_ID, Status: 'Deployed' } }),
+    // get-distribution returns the status together with the config it describes.
+    'cloudfront get-distribution': () => ({
+        Distribution: { Id: DISTRIBUTION_ID, Status: 'Deployed', ...distributionConfig() },
+    }),
     'cloudfront get-distribution-config': distributionConfig,
     'cloudfront get-cache-policy': cachePolicy,
     'cloudfront get-function': functionCode(MARKDOWN_KEY_FUNCTION_CODE),
