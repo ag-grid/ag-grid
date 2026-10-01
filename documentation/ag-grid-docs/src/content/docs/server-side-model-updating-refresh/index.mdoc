@@ -55,7 +55,7 @@ Enable `serverSideCheckLevelConsistency` to have the grid detect this. Note the 
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["serverSideCheckLevelConsistency"] config={"overrideBottomMargin":"0rem"} /%}
 
-The following snippet reloads the affected level when an inconsistency is reported:
+The following snippet reports inconsistencies to the application rather than reloading on every event:
 
 ```js
 const gridOptions = {
@@ -63,13 +63,22 @@ const gridOptions = {
     getRowId: (params) => params.data.id,
     serverSideCheckLevelConsistency: true,
     onServerSideLevelInconsistent: (event) => {
-        // purge and reload the level that was loaded inconsistently
-        event.api.refreshServerSide({ route: event.route, purge: true });
+        // e.g. log, record a metric or tell the user the view may be out of date
+        console.warn('Level inconsistent', event.route, event.inconsistencies);
     },
 };
 ```
 
-Reloading may not produce a consistent level if the data keeps changing while the blocks are loaded, so avoid repeating the refresh indefinitely. To reduce the chance of inconsistencies:
+Avoid calling `refreshServerSide` each time the event fires. Reloading is itself a series of block requests, so while the data keeps changing it is likely to be inconsistent again. If a reload is used at all, limit the number of attempts, for example per route. To reduce the chance of inconsistencies:
 
 - Use a larger `cacheBlockSize`, so that a level is read in a single request.
 - Avoid server-side sorting on a column that is updated frequently.
+
+The following example demonstrates level consistency checking, note the following:
+
+- The `cacheBlockSize` is `10`, and the server alternately deletes and inserts a row at the top of the data before each block after the first is requested, so each newly loaded block is inconsistent with the block above it.
+- Each `serverSideLevelInconsistent` event is logged to the console, and summarised above the grid. Deleted rows are reported as `dropped`, inserted rows as `duplicated`.
+- Scroll down to load further blocks and report further inconsistencies.
+- Untick **Change data between block requests** and click **Reload** to load the level from unchanging data. No inconsistencies are reported.
+
+{% gridExampleRunner title="Level Consistency" name="level-consistency" exampleHeight=615 /%}
