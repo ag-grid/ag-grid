@@ -134,11 +134,7 @@ export const REDIRECTS: RedirectRow[] = [
             fixedBy: ARCHIVE_FIX,
         }
     ),
-    rp(`${WWW}/archive/36.2.0/react-data-grid/whats-new`, `${WWW}/archive/36.2.0/`, ['SE-64', 'grid#15430'], {
-        knownIssue: finding(3),
-        fixedBy: ARCHIVE_FIX,
-        note: 'single-hop rules must not leave the archive',
-    }),
+    // /archive/36.2.0/react-data-grid/whats-new and the other archive leaks: migration.grid.*.leaks.
     r(
         `${BLOG_HOST}/archive/36.2.0/react-data-grid/getting-started/`,
         `${WWW}/archive/36.2.0/react-data-grid/getting-started/`,

@@ -12,6 +12,7 @@ import { cloudfrontChecks } from './checks/cloudfront';
 import { crawlerPolicyChecks } from './checks/crawlerPolicy';
 import { headerChecks } from './checks/headers';
 import { infraChecks } from './checks/infra';
+import { migrationChecks } from './checks/migration';
 import { redirectChecks } from './checks/redirects';
 import { seoContentChecks } from './checks/seoContent';
 import { wafChecks } from './checks/waf';
@@ -136,6 +137,7 @@ export function allChecks(): CheckDef[] {
         ...wafChecks(),
         ...infraChecks(),
         ...redirectChecks(),
+        ...migrationChecks(),
         ...headerChecks(),
         ...cachingChecks(),
         ...wafBehaviourChecks(),
@@ -148,7 +150,7 @@ export function allChecks(): CheckDef[] {
 
 function select(checks: CheckDef[], only?: string[]): CheckDef[] {
     if (!only?.length) {
-        return checks;
+        return checks.filter((c) => !c.onlyWhenSelected);
     }
     const unknown = only.filter((o) => !(o in AREAS) && !checks.some((c) => c.id.startsWith(o)));
     if (unknown.length) {
