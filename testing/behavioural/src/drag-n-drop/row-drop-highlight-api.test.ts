@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, RowDragModule } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid row highlight', () => {
     const gridsManager = new TestGridsManager({
@@ -141,3 +143,161 @@ function getElementHighlight(element: HTMLElement) {
         position: above ? 'above' : below ? 'below' : 'none',
     };
 }
+
+describe('ag-grid row highlight indent with tree data', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowDragModule, TreeDataModule],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = [
+        {
+            id: 'root',
+            name: 'Root',
+            children: [
+                { id: 'a', name: 'A', children: [{ id: 'a1', name: 'A1' }] },
+                { id: 'b', name: 'B' },
+            ],
+        },
+    ];
+
+    const createGrid = (
+        id: string,
+        autoGroupColumnDef: GridOptions['autoGroupColumnDef'],
+        gridOptions?: Partial<GridOptions>
+    ) =>
+        gridsManager.createGrid(id, {
+            columnDefs: [{ field: 'type' }],
+            autoGroupColumnDef: { headerName: 'Name', field: 'name', rowDrag: true, ...autoGroupColumnDef },
+            treeData: true,
+            treeDataChildrenField: 'children',
+            rowDragManaged: true,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: ({ data }) => data.id,
+            ...gridOptions,
+        });
+
+    const getRowElement = (api: GridApi, rowId: string) =>
+        TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(`.ag-row[row-id="${rowId}"]`)!;
+
+    const getIndentState = (api: GridApi, rowId: string) => {
+        const rowElement = getRowElement(api, rowId);
+        return {
+            centreIndented: rowElement.classList.contains('ag-row-highlight-indent'),
+            level: rowElement.style.getPropertyValue('--ag-row-highlight-level') || '0',
+        };
+    };
+
+    const getIndentOffset = (api: GridApi, rowId: string) =>
+        getRowElement(api, rowId).style.getPropertyValue('--ag-internal-row-highlight-indent');
+
+    /** jsdom does no layout, so place the row's group label a given distance into its centre section. */
+    const placeGroupLabel = async (api: GridApi, rowId: string, left: number) => {
+        const section = getRowElement(api, rowId).querySelector('.ag-grid-scrolling-cells')!;
+        // The group renderer draws asynchronously.
+        const label = await waitFor(() => {
+            const groupValue = section.querySelector('.ag-group-value');
+            expect(groupValue).not.toBeNull();
+            return groupValue!;
+        });
+        section.getBoundingClientRect = () => new DOMRect(200, 0, 600, 40);
+        label.getBoundingClientRect = () => new DOMRect(200 + left, 0, 50, 40);
+    };
+
+    test('auto group column unpinned — the centre section keeps its level indent', () => {
+        const api = createGrid('unpinned', {});
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentState(api, 'a')).toEqual({ centreIndented: true, level: '1' });
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
+        expect(getIndentState(api, 'a1')).toEqual({ centreIndented: true, level: '2' });
+    });
+
+    test('auto group column pinned left — the centre section is not indented at any level (AG-18372 TC1)', () => {
+        const api = createGrid('pinnedLeft', { pinned: 'left' });
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentState(api, 'a')).toEqual({ centreIndented: false, level: '0' });
+        expect(getIndentOffset(api, 'a')).toBe('');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
+        expect(getIndentState(api, 'a1')).toEqual({ centreIndented: false, level: '0' });
+    });
+
+    test('auto group column pinned right — the centre section is not indented at any level (AG-18372 TC2)', () => {
+        const api = createGrid('pinnedRight', { pinned: 'right' });
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentState(api, 'a')).toEqual({ centreIndented: false, level: '0' });
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
+        expect(getIndentState(api, 'a1')).toEqual({ centreIndented: false, level: '0' });
+    });
+
+    test('print layout keeps the centre indent although the group column reports a pinned side', () => {
+        const api = createGrid('printLayout', { pinned: 'left' }, { domLayout: 'print' });
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentState(api, 'a')).toEqual({ centreIndented: true, level: '1' });
+    });
+
+    test('pinning and unpinning the auto group column while the indicator is shown re-evaluates the indent', () => {
+        const api = createGrid('repin', {});
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentState(api, 'a').centreIndented).toBe(true);
+
+        api.setColumnsPinned([GROUP_AUTO_COLUMN_ID], 'left');
+        expect(getIndentState(api, 'a').centreIndented).toBe(false);
+
+        api.setColumnsPinned([GROUP_AUTO_COLUMN_ID], null);
+        expect(getIndentState(api, 'a').centreIndented).toBe(true);
+    });
+
+    test('the indicator starts where the group label is rendered', async () => {
+        const api = createGrid('labelOffset', {});
+        await placeGroupLabel(api, 'a', 76);
+        await placeGroupLabel(api, 'a1', 104);
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentOffset(api, 'a')).toBe('76px');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'above' });
+        expect(getIndentOffset(api, 'a1')).toBe('104px');
+        expect(getIndentOffset(api, 'a')).toBe('');
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a1')!, dropIndicatorPosition: 'none' });
+        expect(getIndentOffset(api, 'a1')).toBe('');
+    });
+
+    test('resizing a column while the indicator is shown re-measures the group label', async () => {
+        const api = createGrid('resize', {});
+        await placeGroupLabel(api, 'a', 76);
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentOffset(api, 'a')).toBe('76px');
+
+        // A wider preceding column pushes the label further into the section.
+        await placeGroupLabel(api, 'a', 126);
+        api.setColumnWidths([{ key: 'type', newWidth: 300 }]);
+        expect(getIndentOffset(api, 'a')).toBe('126px');
+    });
+
+    test('a group cell without a group label falls back to the default offset', async () => {
+        const api = createGrid('customRenderer', { cellRenderer: () => 'custom' });
+        await waitFor(() => expect(getRowElement(api, 'a').textContent).toContain('custom'));
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentState(api, 'a').centreIndented).toBe(true);
+        expect(getIndentOffset(api, 'a')).toBe('');
+    });
+});

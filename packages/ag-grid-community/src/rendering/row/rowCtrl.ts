@@ -663,7 +663,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             pinnedRowDataChanged: this.onPinnedRowsChanged.bind(this),
             stickyBottomOffsetChanged: this.onStickyBottomOffsetChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
@@ -764,18 +764,45 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const highlightActive = highlighted !== 'none';
         const dropEdge = aboveOn || belowOn;
         const uiLevel = this.rowNode.uiLevel;
-        const shouldIndent = dropEdge && uiLevel > 0;
+        const shouldIndent = dropEdge && uiLevel > 0 && !this.isGroupColumnPinned();
         const highlightLevel = shouldIndent ? uiLevel.toString() : '0';
 
         rowGui?.rowComp.toggleCss('ag-row-highlight-above', aboveOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-inside', insideOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-below', belowOn);
         rowGui?.rowComp.toggleCss('ag-row-highlight-indent', shouldIndent);
+        const style = rowGui?.element.style;
         if (highlightActive) {
-            rowGui?.element.style.setProperty('--ag-row-highlight-level', highlightLevel);
+            style?.setProperty('--ag-row-highlight-level', highlightLevel);
         } else {
-            rowGui?.element.style.removeProperty('--ag-row-highlight-level');
+            style?.removeProperty('--ag-row-highlight-level');
         }
+        const labelOffset = shouldIndent ? this.getGroupLabelOffset() : undefined;
+        if (labelOffset === undefined) {
+            style?.removeProperty('--ag-internal-row-highlight-indent');
+        } else {
+            style?.setProperty('--ag-internal-row-highlight-indent', `${labelOffset}px`);
+        }
+    }
+
+    /** The drop indicator's level indent belongs to the centre section only while it holds the group column. */
+    private isGroupColumnPinned(): boolean {
+        // In print layout every column renders into the centre section, whatever side it is pinned to.
+        return !this.printLayout && !!this.beans.showRowGroupCols?.columns.some((col) => col.isPinned());
+    }
+
+    /**
+     * Where the group cell's label starts within the centre section, so the drop indicator lines up with it
+     * whatever controls the cell renders ahead of it. Undefined while no label is rendered there, which leaves
+     * the stylesheet's default offset in place.
+     */
+    private getGroupLabelOffset(): number | undefined {
+        const section = this.rowGui?.rowComp.getScrollingRowElement();
+        const label = section?.querySelector('.ag-group-value');
+        if (!section || !label) {
+            return undefined;
+        }
+        return label.getBoundingClientRect().left - section.getBoundingClientRect().left;
     }
 
     private postProcessRowDragging(): void {
@@ -786,6 +813,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onDisplayedColumnsChanged(): void {
         this.rowModeFeature.onDisplayedColumnsChanged();
+        this.refreshShownDropHighlight();
+    }
+
+    private onDisplayedColumnsWidthChanged(): void {
+        this.refreshPinnedCellGroupWidths();
+        this.refreshShownDropHighlight();
+    }
+
+    /** Pinning, moving or resizing columns while the drop indicator is shown moves the group label it lines up with. */
+    private refreshShownDropHighlight(): void {
+        if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
+            this.onRowNodeHighlightChanged();
+        }
     }
 
     private onVirtualColumnsChanged(): void {
