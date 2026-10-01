@@ -385,6 +385,35 @@ describe('migrate-archive-htaccess', () => {
             expect(refused(`${grid362}\nRedirect 301 /elsewhere/a /archive/36.2.0/b\n`).status).toBe('refused');
         });
 
+        // A redirect is only removed when it is exactly what a generator emitted: the status, the
+        // quoting and an absolute target on a host the redirect lists have used. Anything else that
+        // leaves the archive could be a hand-added rule, so the file is refused rather than losing it.
+        it.each([
+            [
+                'a 302 RedirectMatch to an external host',
+                String.raw`RedirectMatch 302 "^/archive/36\.2\.0/private/(.*)$" "https://example.com/login?return=$1"`,
+            ],
+            ['a 301 Redirect to a host no generator targets', 'Redirect 301 /archive/36.2.0/a https://example.com/b'],
+            ['a 301 RedirectMatch to a host no generator targets', 'RedirectMatch 301 "^/a$" "https://example.com/b"'],
+            ['a status no generator emits', 'Redirect 307 /archive/36.2.0/a https://www.ag-grid.com/b'],
+            ['a 302 other than the partnership tracker', 'RedirectMatch 302 ^/other/$ https://www.ag-grid.com/'],
+            ['the partnership tracker pointing elsewhere', 'RedirectMatch 302 ^/theo/$ https://example.com/'],
+            ['a quoted Redirect', 'Redirect 301 "/archive/36.2.0/a" "https://www.ag-grid.com/b"'],
+            ['an unquoted RedirectMatch 301', 'RedirectMatch 301 ^/a$ https://www.ag-grid.com/b'],
+            ['a root-relative target outside the archive', 'RedirectMatch 301 "^/a$" "/elsewhere/"'],
+            ['an http target', 'Redirect 301 /archive/36.2.0/a http://www.ag-grid.com/b'],
+        ])('a redirect out of the archive of no generated shape: %s', (_, line) => {
+            const result = refused(`${grid362}\n${line}\n`);
+            expect(result.status).toBe('refused');
+            expect(result.output).toBeNull();
+            expect(result.reasons).toEqual([expect.stringContaining(line)]);
+        });
+
+        it('a redirect inside the archive with a status no generator emits', () => {
+            const line = 'Redirect 302 /archive/36.2.0/a /archive/36.2.0/b';
+            expect(refused(`${grid362}\n${line}\n`).reasons).toEqual([expect.stringContaining(line)]);
+        });
+
         it('a rewrite directive no generator emits', () => {
             const source = grid362.replace(
                 '    RewriteEngine On\n',

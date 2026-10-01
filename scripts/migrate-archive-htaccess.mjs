@@ -20,8 +20,8 @@
 //   matches under /archive/<v>/), the block also negotiates them under the archive's own base.
 // - Removes the rules a grid archive inherited from the live-site generator that send a request
 //   OUT of the archive: the single-hop rewrites and their host skip, the /charts/ rules, the blog
-//   host block, the prefix-dropping host and index.php rules, and every redirect whose target is a
-//   live (or external) URL or a root-relative path outside the archive.
+//   host block, the prefix-dropping host and index.php rules, the partnership tracker, and every
+//   generated redirect whose target is a live (or external) URL on a host the redirect lists use.
 //
 // It is conservative by construction: every rewrite rule and redirect in the file must match a
 // shape one of the generators is known to have emitted, each with a fixed keep/remove decision.
@@ -384,12 +384,39 @@ function rewriteRecognisers(base) {
     ];
 }
 
-/** The mod_alias redirects: kept when they land inside the archive, removed when they leave it. */
-function classifyAlias(directive, args, base) {
-    const [status, from, to, ...rest] = args;
-    if (rest.length || !/^(301|302|303|307|308|410)$/.test(status ?? '') || !from) {
+// The hosts any version of the grid redirect list (documentation/ag-grid-docs/src/utils/htaccess/
+// redirects.ts) has pointed an absolute target at. A redirect to any other host was not generated.
+const GENERATED_REDIRECT_HOSTS = [
+    'www.ag-grid.com',
+    'ag-grid.com',
+    'blog.ag-grid.com',
+    'charts.ag-grid.com',
+    'medium.com',
+    'epicmax.co',
+];
+
+// The partnership tracker the live grid generator emits verbatim, and archive builds now leave out.
+const PARTNERSHIP_REDIRECT = 'RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/';
+
+/**
+ * The mod_alias redirects, by the exact forms the generators have emitted: `Redirect 301 <from>
+ * <to>` and `Redirect 410 <from>` unquoted, `RedirectMatch 301 "<pattern>" "<to>"` and
+ * `RedirectMatch 410 "<pattern>"` quoted, and the partnership tracker verbatim. One landing inside
+ * the archive is kept; one leaving it is removed only when its target is an absolute https URL on a
+ * host the redirect lists have used. Anything else - another status, other quoting, a root-relative
+ * target outside the archive, an unknown host - is not a generated shape, so it is never deleted.
+ */
+function classifyAlias(line, base) {
+    if (line === PARTNERSHIP_REDIRECT) {
+        return { action: 'remove', reason: 'partnership tracker redirect to the live site' };
+    }
+    const m =
+        line.match(/^(Redirect) (301|410) ([^\s"']+)(?: ([^\s"']+))?$/) ??
+        line.match(/^(RedirectMatch) (301|410) "([^"]+)"(?: "([^"]+)")?$/);
+    if (!m) {
         return null;
     }
+    const [, directive, status, from, to] = m;
     // A Redirect is a prefix match on the full path, so one that does not start with the base
     // could never fire in this directory. No generator emits that, so it is not a known shape.
     if (directive === 'Redirect' && from !== base && !from.startsWith(`${base}/`)) {
@@ -402,15 +429,13 @@ function classifyAlias(directive, args, base) {
         return null;
     }
     const scope = targetScope(to, base);
-    if (scope === 'unknown') {
-        return null;
+    if (scope === 'inside') {
+        return { action: 'keep', reason: 'redirect inside the archive' };
     }
-    return scope === 'inside'
-        ? { action: 'keep', reason: 'redirect inside the archive' }
-        : {
-              action: 'remove',
-              reason: /^https?:\/\//.test(to) ? 'redirect to a live or external URL' : 'redirect out of the archive',
-          };
+    const host = to.match(/^https:\/\/([^/?#]+)(?:[/?#]|$)/)?.[1];
+    return scope === 'outside' && GENERATED_REDIRECT_HOSTS.includes(host)
+        ? { action: 'remove', reason: 'redirect to a live or external URL' }
+        : null;
 }
 
 // The base-aware markdown negotiation for an archive that serves twins but cannot negotiate them.
@@ -612,9 +637,7 @@ export function migrateArchiveHtaccess(source, { site, base }) {
         }
         if (/^Redirect/.test(directive)) {
             // RedirectPermanent, RedirectTemp: no generator emits them.
-            const decision = ['Redirect', 'RedirectMatch'].includes(directive)
-                ? classifyAlias(directive, args, base)
-                : null;
+            const decision = ['Redirect', 'RedirectMatch'].includes(directive) ? classifyAlias(line, base) : null;
             if (!decision) {
                 unknown.push(`line ${i + 1}: ${line}`);
             } else {
