@@ -1,4 +1,5 @@
 import { decodeSearchString } from './live';
+import { byJson } from './projection';
 import { SECRET, SECRET_HEADER_PATTERN } from './redact';
 
 /** Helpers for reading WAFv2 rule statements. */
@@ -225,9 +226,6 @@ const sortKeys = (o: Record<string, unknown>): Record<string, unknown> =>
             .map((k) => [k, o[k]])
     );
 
-const json = (v: unknown): string => JSON.stringify(v);
-const byJsonOrder = (xs: unknown[]): unknown[] => [...xs].sort((a, b) => (json(a) < json(b) ? -1 : 1));
-
 /**
  * A rule, statement or ACL in a form two of them can be compared in field by field: SearchStrings
  * decoded (a verify-header secret replaced by SECRET, so it is never printed), header names
@@ -254,12 +252,12 @@ export function canonicalWaf(node: unknown): unknown {
         out.SearchString = SECRET_HEADER_PATTERN.test(header) ? SECRET : decodeSearchString(out.SearchString);
     }
     if (Array.isArray(out.Statements)) {
-        out.Statements = byJsonOrder(out.Statements);
+        out.Statements = byJson(out.Statements);
     }
     for (const list of ['RuleActionOverrides', 'ExcludedRules']) {
         const items = out[list];
         if (Array.isArray(items) && items.length) {
-            out[list] = byJsonOrder(items);
+            out[list] = byJson(items);
         } else if (Array.isArray(items)) {
             delete out[list];
         }
