@@ -647,7 +647,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             pinnedRowDataChanged: this.onPinnedRowsChanged.bind(this),
             stickyBottomOffsetChanged: this.onStickyBottomOffsetChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
             leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
@@ -790,7 +790,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onDisplayedColumnsChanged(): void {
         this.rowModeFeature.onDisplayedColumnsChanged();
-        // Pinning or moving the group column while the indicator is shown moves its indent.
+        this.refreshShownDropHighlight();
+    }
+
+    private onDisplayedColumnsWidthChanged(): void {
+        this.refreshPinnedCellGroupWidths();
+        this.refreshShownDropHighlight();
+    }
+
+    /** Pinning, moving or resizing columns while the drop indicator is shown moves the group label it lines up with. */
+    private refreshShownDropHighlight(): void {
         if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
             this.onRowNodeHighlightChanged();
         }

@@ -279,6 +279,19 @@ describe('ag-grid row highlight indent with tree data', () => {
         expect(getIndentOffset(api, 'a1')).toBe('');
     });
 
+    test('resizing a column while the indicator is shown re-measures the group label', async () => {
+        const api = createGrid('resize', {});
+        await placeGroupLabel(api, 'a', 76);
+
+        api.setRowDropPositionIndicator({ row: api.getRowNode('a')!, dropIndicatorPosition: 'below' });
+        expect(getIndentOffset(api, 'a')).toBe('76px');
+
+        // A wider preceding column pushes the label further into the section.
+        await placeGroupLabel(api, 'a', 126);
+        api.setColumnWidths([{ key: 'type', newWidth: 300 }]);
+        expect(getIndentOffset(api, 'a')).toBe('126px');
+    });
+
     test('a group cell without a group label falls back to the default offset', async () => {
         const api = createGrid('customRenderer', { cellRenderer: () => 'custom' });
         await waitFor(() => expect(getRowElement(api, 'a').textContent).toContain('custom'));
