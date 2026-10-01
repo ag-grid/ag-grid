@@ -134,6 +134,17 @@ export function headerChecks(): CheckDef[] {
                 const etags = new Set(fromOrigin.map((r) => header(r, 'etag')));
                 const dates = new Set(fromOrigin.map((r) => header(r, 'last-modified')));
                 const p = new Problems();
+                // Agreement only means something between successful responses that carry both:
+                // identical missing validators, or matching error pages, must not pass.
+                const failed = fromOrigin.filter((r) => r.status !== 200);
+                p.check(!failed.length, `origin responses not 200: ${failed.map((r) => r.status).join(', ')}`);
+                for (const name of ['etag', 'last-modified']) {
+                    const missing = fromOrigin.filter((r) => !header(r, name)).length;
+                    p.check(
+                        !missing,
+                        `${name === 'etag' ? 'ETag' : 'Last-Modified'} missing on ${missing} of ${fromOrigin.length} origin responses`
+                    );
+                }
                 p.check(etags.size === 1, `ETags differ: ${[...etags].join(' vs ')}`);
                 p.check(dates.size === 1, `Last-Modified differs: ${[...dates].join(' vs ')}`);
                 return p.outcome(`${fromOrigin.length} origin responses, ETag ${[...etags][0]}`);

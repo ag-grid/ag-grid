@@ -107,8 +107,8 @@ These are enforced in code, not by convention:
 
 The guard, the AWS error classification, the WAF structure checks (including the rules two scripts
 insert after p11, in either order) and the WAF log query (its text, result parsing, thresholds and
-byte cap), and the HTTP checks most exposed to a wrong verdict (the archive cache split, and the
-link checks under the request cap) have offline tests that use
+byte cap), and the HTTP checks most exposed to a wrong verdict (the archive cache split, the archive
+validator agreement, and the link checks under the request cap) have offline tests that use
 a fake AWS client, a fake HTTP transport behind the real client, and no network (`src/**/*.test.ts`, fixtures in `src/testing/fakes.ts`). They are
 not part of the repo's Vitest workspace or `./behave.sh`; run them with:
 
