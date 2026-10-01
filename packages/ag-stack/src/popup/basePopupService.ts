@@ -729,10 +729,10 @@ export abstract class BasePopupService<
         const eDocument = _getDocument(this.beans);
         const eRootDiv = this.beans.eRootDiv;
         while (el && el !== eDocument.body) {
-            if (el.parentElement === null) {
-                return true;
-            }
-            if (el.classList.contains('ag-custom-component-popup') && !el.contains(eRootDiv)) {
+            if (
+                el.parentElement === null ||
+                (el.classList.contains('ag-custom-component-popup') && !el.contains(eRootDiv))
+            ) {
                 return true;
             }
             el = el.parentElement;
