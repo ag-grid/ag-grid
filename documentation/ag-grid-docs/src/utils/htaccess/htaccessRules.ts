@@ -658,6 +658,44 @@ const getSite301RedirectRules = (): string =>
         .filter(Boolean)
         .join('\n');
 
+// Certificate-validation requests (ACME HTTP-01, cPanel DCV, Comodo/Sectigo DCV) must be answered
+// where they are asked, over http, without a redirect: the token paths have no extension, so the
+// trailing-slash rules would otherwise redirect them too.
+const certificateValidationExemptions = `    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?`;
+
+// Every host and scheme the rules below send to https://www.ag-grid.com with the path kept, as one
+// "host:port" pattern: http on www (port 80, as the https upgrade tests it), and any port on an
+// alias host. Must list the same hosts as those rules. An archive build also sends the blog host
+// there; the live site leaves it to the blog redirects, whose targets are not docs pages.
+const getCanonicalisedHostPortPattern = (): string => {
+    const aliases = [
+        'ag-grid\\.com',
+        'angulargrid\\.ag-grid\\.com',
+        'angular-grid\\.ag-grid\\.com',
+        'javascript-grid\\.ag-grid\\.com',
+        'react-grid\\.ag-grid\\.com',
+        'angulargrid\\.com',
+        'www\\.angulargrid\\.com',
+        ...(isArchiveBuild() ? ['blog\\.ag-grid\\.com'] : []),
+    ];
+    return `^(?:www\\.ag-grid\\.com:80|(?:${aliases.join('|')}):[0-9]+)$`;
+};
+
+// A directory URL without its trailing slash, requested on any of those hosts or schemes, goes to
+// the slashed canonical URL in ONE hop; otherwise the host swap and the add-slash rule below are
+// two. Same directory test as the add-slash rule (the last segment has no dot), so files are left
+// alone. %{REQUEST_URI} is the full path, so an archive build keeps its prefix.
+const getCanonicalDirectorySlashRule =
+    (): string => `    # Slash-less directory URLs on a non-canonical host or scheme: add the slash and canonicalise
+    # in the same hop.
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ${getCanonicalisedHostPortPattern()} [NC]
+    RewriteCond %{REQUEST_URI} /+[^\\.]+$
+${certificateValidationExemptions}
+    RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]`;
+
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
 // production .htaccess is actually generated.
@@ -672,14 +710,13 @@ const getModRewriteRules = (): string => `
 <IfModule mod_rewrite.c>
     RewriteEngine On
 ${getSiteRewriteRules()}
+${getCanonicalDirectorySlashRule()}
+
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
     RewriteCond %{HTTP_HOST} ^(www\\.)?ag-grid\\.com$ [NC]
     RewriteCond %{SERVER_PORT} 80
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+${certificateValidationExemptions}
     RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
 
     # Redirect non-www to www
@@ -713,20 +750,15 @@ ${isArchiveBuild() ? getArchiveBlogHostRule() : blogHostRedirectRules}
 ${getMarkdownNegotiationRules()}
 
     # Remove "index.php" from URLs
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+${certificateValidationExemptions}
     RewriteRule ^index\\.php$ ${getBasePath()}/ [R=301,L]
 
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
-    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+${certificateValidationExemptions}
     RewriteRule ^(.*)/index\\.php$ ${getBasePath()}/$1/ [R=301,L]
 
     # Add trailing slash for directories
     RewriteCond %{REQUEST_URI} /+[^\\.]+$
+${certificateValidationExemptions}
     RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
 
     # Redirect paths after a php file (ie index.php/path/path => index.php)
