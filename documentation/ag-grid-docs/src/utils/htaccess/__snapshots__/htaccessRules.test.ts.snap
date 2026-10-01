@@ -103,7 +103,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteEngine On
 
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=202]
+    RewriteRule ^ - [S=228]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
@@ -261,6 +261,32 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?react-grid/licensing/$" "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/" [R=301,L]
     RewriteRule "^/?react-grid/component-cell-editor/$" "https://www.ag-grid.com/react-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?javascript-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/" [R=301,L]
+    RewriteRule "^/?javascript-grid/$" "https://www.ag-grid.com/javascript-data-grid/getting-started/" [R=301,L]
+    RewriteRule "^/?documentation/javascript/$" "https://www.ag-grid.com/javascript-data-grid/getting-started/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-model-refresh/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-model-transactions/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-spark/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-model-transactions/$" "https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-spark/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-model-transactions/$" "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-spark/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-model-transactions/$" "https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-spark/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
     RewriteRule "^/?react-data-grid/grouping-footers$" "https://www.ag-grid.com/react-data-grid/aggregation-total-rows/" [R=301,L]
     RewriteRule "^/?javascript-grid-server-side-model$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
     RewriteRule "^/?angular-grid-api$" "https://www.ag-grid.com/angular-data-grid/grid-api/" [R=301,L]
@@ -626,6 +652,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
     
     Redirect 301 /sitemap.xml https://www.ag-grid.com/sitemap-index.xml
+    RedirectMatch 301 "^/documentation/javascript/charts.*" "https://www.ag-grid.com/charts/javascript/quick-start/"
+    RedirectMatch 301 "^/documentation/angular/charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
+    RedirectMatch 301 "^/documentation/react/charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
+    RedirectMatch 301 "^/documentation/vue/charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
     Redirect 301 /introducing-the-ag-grid-model-context-protocol-mcp-server/ https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
     Redirect 301 /javascript-data-grid/grouping-sticky-groups/ /javascript-data-grid/grouping-display-types/
     Redirect 301 /javascript-data-grid/global-style-upgrading-to-v28/ /javascript-data-grid/theming-v32-upgrading-to-v28/
@@ -645,7 +675,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-grid/ /react-data-grid/
     Redirect 301 /angular-grid/ /angular-data-grid/
     Redirect 301 /vue-grid/ /vue-data-grid/
-    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/
+    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/getting-started/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
     Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/
@@ -672,7 +702,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /ag-grid-building/ /javascript-data-grid/installation/
     Redirect 301 /javascript-data-grid/building/ /javascript-data-grid/installation/
     Redirect 301 /javascript-data-grid/npm/ /javascript-data-grid/installation/
-    Redirect 301 /javascript-data-grid/download/ /javascript-data-grid/installation
+    Redirect 301 /javascript-data-grid/download/ /javascript-data-grid/installation/
     Redirect 301 /ag-grid-datagrid-crud-part-1/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e
     Redirect 301 /ag-grid-datagrid-crud-part-2/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-2-c5e5e4548bf
     Redirect 301 /ag-grid-datagrid-crud-part-4/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-4-3189034df922
@@ -956,7 +986,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/angular/webpack/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /documentation/angular/ /angular-data-grid/
-    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/
+    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/getting-started/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-data-grid/accessibility/
     Redirect 301 /documentation/javascript/accessing-data/ /javascript-data-grid/accessing-data/
     Redirect 301 /documentation/javascript/aggregation/ /javascript-data-grid/aggregation/
@@ -2587,10 +2617,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RedirectMatch 301 "^/angular-charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
     RedirectMatch 301 "^/react-charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/vue-charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
-    RedirectMatch 301 "^/documentation/javascript/charts.*" "https://www.ag-grid.com/charts/javascript/quick-start/"
-    RedirectMatch 301 "^/documentation/angular/charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
-    RedirectMatch 301 "^/documentation/react/charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
-    RedirectMatch 301 "^/documentation/vue/charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
     RedirectMatch 301 "^/archive/$" "/documentation-archive/"
     Redirect 301 /javascript-data-grid/component-types/ /javascript-data-grid/components/
     Redirect 301 /angular-data-grid/component-types/ /angular-data-grid/components/
@@ -2698,7 +2724,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /vue-data-grid/whats-new /whats-new
     Redirect 301 /angular-data-grid/whats-new /whats-new
     Redirect 301 /javascript-data-grid/whats-new /whats-new
-    Redirect 301 /vue-data-grid/framework-data-flow /vue-data-grid/getting-started/
+    Redirect 301 /vue-data-grid/framework-data-flow/ /vue-data-grid/getting-started/
     Redirect 301 /react-data-grid/licensing/ /react-data-grid/community-vs-enterprise/
     Redirect 301 /vue-data-grid/licensing/ /vue-data-grid/community-vs-enterprise/
     Redirect 301 /angular-data-grid/licensing/ /angular-data-grid/community-vs-enterprise/
@@ -2837,10 +2863,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/upgrading-to-ag-grid-32-2 /angular-data-grid/upgrading-to-ag-grid-32-2-1
     Redirect 301 /react-data-grid/upgrading-to-ag-grid-32-2 /react-data-grid/upgrading-to-ag-grid-32-2-1
     Redirect 301 /vue-data-grid/upgrading-to-ag-grid-32-2 /vue-data-grid/upgrading-to-ag-grid-32-2-1
-    Redirect 301 /javascript-data-grid/accented-sort /javascript-data-grid/#locale-specific-sort
-    Redirect 301 /angular-data-grid/accented-sort /angular-data-grid/#locale-specific-sort
-    Redirect 301 /react-data-grid/accented-sort /react-data-grid/#locale-specific-sort
-    Redirect 301 /vue-data-grid/accented-sort /vue-data-grid/#locale-specific-sort
+    Redirect 301 /javascript-data-grid/accented-sort/ /javascript-data-grid/row-sorting/#locale-specific-sort
+    Redirect 301 /angular-data-grid/accented-sort/ /angular-data-grid/row-sorting/#locale-specific-sort
+    Redirect 301 /react-data-grid/accented-sort/ /react-data-grid/row-sorting/#locale-specific-sort
+    Redirect 301 /vue-data-grid/accented-sort/ /vue-data-grid/row-sorting/#locale-specific-sort
     Redirect 301 /javascript-data-grid/server-side-operations-nodejs /javascript-data-grid/server-side-model
     Redirect 301 /angular-data-grid/server-side-operations-nodejs /angular-data-grid/server-side-model
     Redirect 301 /react-data-grid/server-side-operations-nodejs /react-data-grid/server-side-model
