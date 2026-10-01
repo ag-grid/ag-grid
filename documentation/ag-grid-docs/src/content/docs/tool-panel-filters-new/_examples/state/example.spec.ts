@@ -20,6 +20,11 @@ test.agExample(import.meta, () => {
         // 2 cards and 1 add
         await expect(filterCards).toHaveCount(3);
 
+        // the buttons only change the filter panel state, so the sort must survive every one of them
+        const athleteHeader = agIdFor.headerCell('athlete');
+        await gridApi.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await expect(athleteHeader).toHaveAttribute('aria-sort', 'ascending');
+
         // the card summary renders the filter value, so it is the handle for "this filter is active"
         const ageCard = filterCards.nth(1);
         await gridApi.setFilterModel({ age: { type: 'lessThan', filter: 25 } });
@@ -33,6 +38,7 @@ test.agExample(import.meta, () => {
         // clearing the tool panel state removes every card, leaving only the add card
         await button('Clear Tool Panel').click();
         await expect(filterCards).toHaveCount(1);
+        await expect(athleteHeader).toHaveAttribute('aria-sort', 'ascending');
 
         await button('Restore Initial State').click();
         await expect(filterCards).toHaveCount(3);
@@ -52,6 +58,8 @@ test.agExample(import.meta, () => {
         await expect(filterCards).toHaveCount(3);
         await expect(filterCards.nth(1).getByRole('button', { name: 'Age' })).toBeVisible();
         await expect(filterCards.nth(1)).toContainText('25');
+
+        await expect(athleteHeader).toHaveAttribute('aria-sort', 'ascending');
     });
 });
 

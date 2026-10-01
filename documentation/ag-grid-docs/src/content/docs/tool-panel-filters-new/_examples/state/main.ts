@@ -76,8 +76,14 @@ function clearFilterValues() {
     gridApi.setFilterModel(null);
 }
 
+// `setState` resets any section of the grid state it is not given,
+// so spread the current state to keep everything else (e.g. sorting) unchanged
+function setFilterPanelState({ sideBar, filter }: Pick<GridState, 'sideBar' | 'filter'>) {
+    gridApi.setState({ ...gridApi.getState(), sideBar, filter });
+}
+
 function clearToolPanel() {
-    gridApi.setState({
+    setFilterPanelState({
         sideBar: {
             visible: true,
             position: 'right',
@@ -92,7 +98,7 @@ function clearToolPanel() {
 }
 
 function restoreInitialState() {
-    gridApi.setState({ sideBar: initialSideBarState });
+    setFilterPanelState({ sideBar: initialSideBarState });
 }
 
 function saveState() {
@@ -102,7 +108,7 @@ function saveState() {
 
 function restoreSavedState() {
     if (savedState) {
-        gridApi.setState({ filter: savedState.filter, sideBar: savedState.sideBar });
+        setFilterPanelState({ filter: savedState.filter, sideBar: savedState.sideBar });
         console.log('Restored state', savedState);
     }
 }
