@@ -122,7 +122,7 @@ export class ToolPanelContextMenu extends Component {
             return;
         }
 
-        this.displayContextMenu(menuItemsMapped);
+        this.displayContextMenu(menuItemsMapped, col);
     }
 
     private mapMenuItems(
@@ -318,9 +318,9 @@ export class ToolPanelContextMenu extends Component {
         return columnList.filter((col) => !predicate(col) || !toRemove.has(col));
     }
 
-    private displayContextMenu(menuItemsMapped: (MenuItemDef | 'separator')[]): void {
+    private displayContextMenu(menuItemsMapped: (MenuItemDef | 'separator')[], column: AgColumn | null): void {
         const eGui = this.getGui();
-        const menuList = this.createBean(new MenuList());
+        const menuList = this.createBean(new MenuList(0, { column, node: null, value: null }));
         const localeTextFunc = this.getLocaleTextFunc();
 
         let hideFunc = () => {};
