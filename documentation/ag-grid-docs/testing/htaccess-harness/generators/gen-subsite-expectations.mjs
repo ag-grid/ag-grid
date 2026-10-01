@@ -81,8 +81,9 @@ let shadowed = 0;
 function rowFor(alias, path, rule) {
     const sim = simulate(path, HOSTS[alias]);
     if (!sim) {
-        console.error(`# sample ${path} matches no rule (${rule.text})`);
-        return;
+        // A sample is only made for a rule it matches, so this is a generator bug: dropping the row
+        // would also lower @min-rows, losing the rule's coverage silently.
+        throw new Error(`sample ${path} matches no rule (${rule.text})`);
     }
     if (sim.by !== rule && typeof sim.by !== 'string') {
         const own = path.slice(base.length + 1).match(rule.re);

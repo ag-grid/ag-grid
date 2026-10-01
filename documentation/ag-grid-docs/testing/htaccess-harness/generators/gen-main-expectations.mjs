@@ -135,8 +135,9 @@ function finalOf(loc) {
 function rowFor(path, d, { synthetic = false } = {}) {
     const sim = simulate(path);
     if (!sim) {
-        console.error(`# no rule matches generated sample ${path} (from: ${d.text})`);
-        return;
+        // A sample is only made for a rule it matches, so this is a generator bug: dropping the row
+        // would also lower @min-rows, losing the rule's coverage silently.
+        throw new Error(`no rule matches generated sample ${path} (from: ${d.text})`);
     }
     if (sim.by === d) {
         const intended = collapseSlashes(sim.loc);
