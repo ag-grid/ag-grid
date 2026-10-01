@@ -1,4 +1,4 @@
-import type { IAriaAnnouncementService } from 'ag-stack';
+import type { AgStylesChangedEvent, IAriaAnnouncementService } from 'ag-stack';
 import { _debounce, _setAriaLabel } from 'ag-stack';
 
 import {
@@ -96,7 +96,7 @@ export class RowNumbersService
             modelUpdated: (params) => scheduleRefresh(!params.keepRenderedRows),
             rangeSelectionChanged: () => this.refreshCells(true),
             pinnedRowsChanged: () => scheduleRefresh(true),
-            stylesChanged: (params) => {
+            stylesChanged: (params: AgStylesChangedEvent) => {
                 // the new theme can change the cell padding and font, so the autosized width is stale
                 if (params.themeChanged) {
                     scheduleRefresh(true);
