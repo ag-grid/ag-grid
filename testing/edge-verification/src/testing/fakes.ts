@@ -11,6 +11,7 @@ import {
     CF_ACL,
     DEFAULT_BEHAVIOUR,
     DISTRIBUTION,
+    DISTRIBUTION_ID,
     MARKDOWN_KEY_FUNCTION,
 } from '../expected/edge';
 
@@ -144,6 +145,7 @@ export const functionCode =
 
 /** Handlers for a healthy distribution whose markdown key function is readable and correct. */
 export const healthyCloudFront = (): Record<string, Handler> => ({
+    'cloudfront get-distribution': () => ({ Distribution: { Id: DISTRIBUTION_ID, Status: 'Deployed' } }),
     'cloudfront get-distribution-config': distributionConfig,
     'cloudfront get-cache-policy': cachePolicy,
     'cloudfront get-function': functionCode(MARKDOWN_KEY_FUNCTION_CODE),

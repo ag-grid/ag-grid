@@ -138,6 +138,12 @@ export class Live {
         policies: Map<string, PolicyView>;
         /** Whether the LIVE code of the markdown key function was read and derives the key header. */
         keyFunction: { verified: boolean; reason: string };
+        /**
+         * Whether the distribution reported itself Deployed when the guard was prepared. The config
+         * is control-plane state: while a change is InProgress, edges may still serve the previous
+         * configuration, so the config read says nothing reliable about what a probe would hit.
+         */
+        deployment: { deployed: boolean; reason: string };
         /** Why the live config could not be read (declared fallback only). */
         error?: unknown;
         note?: string;
@@ -159,6 +165,8 @@ export class Live {
     private guardReady?: Promise<void>;
 
     private async loadGuard(): Promise<void> {
+        // Read first, so nothing is authorised on a config that may not have reached the edges yet.
+        const deployment = await this.deploymentStatus();
         try {
             const cfg = await this.distributionConfig();
             const behaviours: BehaviourView[] = (cfg.CacheBehaviors?.Items ?? []).map((b: any) =>
@@ -183,6 +191,8 @@ export class Live {
                 keyFunction: reliesOnFunction
                     ? await this.verifyMarkdownKeyFunction()
                     : { verified: false, reason: 'no behaviour keys its cache on the markdown function' },
+                deployment,
+                note: deployment.deployed ? deployment.reason : `${deployment.reason}; every markdown probe is refused`,
             };
         } catch (e) {
             const policies = new Map<string, PolicyView>();
@@ -208,9 +218,24 @@ export class Live {
                 defaultBehaviour: { pattern: '*', cachePolicyId: DEFAULT_BEHAVIOUR.cachePolicy, functionArns: [] },
                 policies,
                 keyFunction: { verified: false, reason: 'live distribution config unavailable' },
+                deployment,
                 error: e,
                 note: `distribution config unavailable (${(e as Error).message}); every markdown probe is refused`,
             };
+        }
+    }
+
+    /** Whether the distribution is Deployed; anything else, a failed read included, is not. */
+    private async deploymentStatus(): Promise<{ deployed: boolean; reason: string }> {
+        try {
+            const status = (await this.distribution())?.Status;
+            return status === 'Deployed'
+                ? { deployed: true, reason: 'distribution status Deployed' }
+                : { deployed: false, reason: `distribution status ${status || '(not reported)'}` };
+        } catch (e) {
+            const why =
+                e instanceof AwsError && e.deniedAction ? `needs IAM action ${e.deniedAction}` : (e as Error).message;
+            return { deployed: false, reason: `distribution status unreadable (${why})` };
         }
     }
 
@@ -314,6 +339,12 @@ export class Live {
             return {
                 allowed: false,
                 reason: 'live distribution config unavailable: markdown probes need verified cache state',
+            };
+        }
+        if (!state.deployment.deployed) {
+            return {
+                allowed: false,
+                reason: `live config not verified as Deployed (${state.deployment.reason}): edges may serve another configuration`,
             };
         }
         if (!state.aliases.has(url.hostname)) {
