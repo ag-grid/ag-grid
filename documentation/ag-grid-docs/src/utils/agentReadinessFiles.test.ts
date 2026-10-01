@@ -22,7 +22,7 @@ describe('buildLlmsTxt', () => {
     });
 
     test('links the products, docs, MCP server and sitemap (acceptance criteria)', () => {
-        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/):');
+        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/javascript-data-grid/getting-started/):');
         expect(txt).toContain('(https://www.ag-grid.com/charts/)');
         expect(txt).toContain('(https://www.ag-grid.com/studio/)');
         expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/getting-started/)');
@@ -160,7 +160,7 @@ describe('curated links in llms.txt and AGENTS.md', () => {
     const unindexedPages = (body: string) => {
         const { filter } = getSitemapConfig({});
         return gridPaths(body)
-            .filter((pathname) => pathname.endsWith('/') && pathname !== '/')
+            .filter((pathname) => pathname.endsWith('/'))
             .filter((pathname) => !filter(`${SITE_ROOT}${pathname}`));
     };
     const LLMS_TXT = buildLlmsTxt(INPUT);
@@ -214,7 +214,6 @@ describe('curated links in llms.txt and AGENTS.md', () => {
 
         test('each has a sitemap entry, so none is a redirect stub', () => {
             expect(unindexedPages(body)).toEqual([]);
-            expect(getSitemapConfig({}).filter(`${SITE_ROOT}/`)).toBe(true);
         });
 
         test.each(pages)('%s has a markdown twin', (pathname) => {
