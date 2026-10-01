@@ -8,6 +8,7 @@ export const AREAS = {
     'waf-config': 'WAF web ACLs, logging and redaction (AWS, read-only)',
     infra: 'Alarms, Shield, origin security group, real-time logs, CloudTrail and health (AWS, read-only)',
     redirects: 'Single-hop redirects across every host alias',
+    migration: 'Already-deployed archives after the grid#15430 .htaccess migration',
     headers: 'Response headers per content class',
     caching: 'CloudFront cache behaviour and markdown-poisoning guards',
     'waf-behaviour': 'WAF decisions as seen from this machine',
@@ -47,6 +48,8 @@ export interface CheckDef {
     knownIssue?: string;
     /** Optional pointer to the change expected to fix a known issue. */
     fixedBy?: string;
+    /** Left out of a run without --only; selected when --only names its area or an id prefix. */
+    onlyWhenSelected?: boolean;
     run(ctx: Ctx): Promise<Outcome>;
 }
 
