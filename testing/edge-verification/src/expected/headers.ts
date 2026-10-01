@@ -59,8 +59,17 @@ const html = (id: string, title: string, url: string, refs: string[], extra: Par
     ...extra,
 });
 
-/** Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache. */
-export const NOT_MODIFIED_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
+/**
+ * Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache (a root
+ * mod_headers rule, so it applies under /charts/ too). A charts archive page, because both hosts
+ * send it the same ETag and Last-Modified (20 of 20 requests, 2026-10-01): every grid archive was
+ * extracted with `tar -m` on each host, so a revalidation that reaches the other host gets a 200,
+ * and the extract fix (PENDING.archiveMtimes) only helps archives extracted after it. The grid
+ * divergence is a known issue of its own (headers.archive-validators-agree.35.0.0).
+ */
+export const NOT_MODIFIED_PROBE = `${WWW}/charts/archive/14.2.0/react/quick-start/`;
+/** A grid archive page whose two hosts send different validators (live 2026-10-01). */
+export const DIVERGENT_VALIDATOR_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
 /** The long archive cache its 200 must carry (as archive.grid-released expects) for the 304 to keep. */
 export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 
@@ -219,18 +228,16 @@ export const HEADER_ROWS: HeaderRow[] = [
                 `${PENDING.gridNoCache}; ${PENDING.studioHosts}`,
             ],
         ] as const
-    ).map(
-        ([site, url, pending]): HeaderRow => ({
-            id: `markdown.archive-noindex.${site}`,
-            title: `Archived ${site} .md twin sends X-Robots-Tag: noindex, like archived HTML`,
-            url,
-            method: 'HEAD',
-            status: 200,
-            expect: { 'content-type': /^text\/markdown/, 'x-robots-tag': /\bnoindex\b/ },
-            refs: [finding(11), 'SE-24'],
-            pending,
-        })
-    ),
+    ).map(([site, url, pending]): HeaderRow => ({
+        id: `markdown.archive-noindex.${site}`,
+        title: `Archived ${site} .md twin sends X-Robots-Tag: noindex, like archived HTML`,
+        url,
+        method: 'HEAD',
+        status: 200,
+        expect: { 'content-type': /^text\/markdown/, 'x-robots-tag': /\bnoindex\b/ },
+        refs: [finding(11), 'SE-24'],
+        pending,
+    })),
 
     // ---- non-200 and non-HTML: no Link header (SE-81 scoping) ---------------------------------
     {
@@ -391,32 +398,28 @@ export const HEADER_ROWS: HeaderRow[] = [
                 ['SE-166'],
             ],
         ] as const
-    ).map(
-        ([kind, url, pending, refs]): HeaderRow => ({
-            id: `redirect.no-cache.${kind}`,
-            title: `${kind} 301 sends Cache-Control: no-cache (${url})`,
-            url,
-            method: 'HEAD',
-            status: 301,
-            expect: { 'cache-control': NO_CACHE },
-            refs: [...new Set([...refs, finding(4)])],
-            pending,
-        })
-    ),
+    ).map(([kind, url, pending, refs]): HeaderRow => ({
+        id: `redirect.no-cache.${kind}`,
+        title: `${kind} 301 sends Cache-Control: no-cache (${url})`,
+        url,
+        method: 'HEAD',
+        status: 301,
+        expect: { 'cache-control': NO_CACHE },
+        refs: [...new Set([...refs, finding(4)])],
+        pending,
+    })),
 
     // ---- SE-187: internal hosts noindexed ------------------------------------------------------
     ...[
         'https://ecommerce.ag-grid.com/',
         'https://registry.ag-grid.com/',
         'https://registry.ag-grid.com/-/verdaccio/data/packages',
-    ].map(
-        (url, i): HeaderRow => ({
-            id: `internal-host.noindex.${i}`,
-            title: `${url} sends X-Robots-Tag: noindex, nofollow`,
-            url,
-            method: 'HEAD',
-            expect: { 'x-robots-tag': /noindex/ },
-            refs: ['SE-187'],
-        })
-    ),
+    ].map((url, i): HeaderRow => ({
+        id: `internal-host.noindex.${i}`,
+        title: `${url} sends X-Robots-Tag: noindex, nofollow`,
+        url,
+        method: 'HEAD',
+        expect: { 'x-robots-tag': /noindex/ },
+        refs: ['SE-187'],
+    })),
 ];

@@ -6,6 +6,7 @@ import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/typ
 import {
     ARCHIVE_VALIDATOR_PROBE,
     ARCHIVE_VALIDATOR_REQUESTS,
+    DIVERGENT_VALIDATOR_PROBE,
     GZIP_REVALIDATION_PROBES,
     HEADER_ROWS,
     type HeaderRow,
@@ -90,78 +91,85 @@ function headerCheck(row: HeaderRow): CheckDef {
 
 const GZIP = { 'accept-encoding': 'gzip' };
 
+/** Fresh misses for `url` carry one ETag and one Last-Modified: both hosts agree (a mismatch fails). */
+function validatorsAgree(id: string, url: string, lifecycle: { pending?: string; knownIssue?: string }): CheckDef {
+    return {
+        id,
+        area: 'headers',
+        title: `Both origin hosts send the same ETag and Last-Modified for ${new URL(url).pathname}`,
+        refs: [finding(19)],
+        ...lifecycle,
+        async run({ http }) {
+            const responses = [];
+            for (let i = 0; i < ARCHIVE_VALIDATOR_REQUESTS; i++) {
+                responses.push(await http.request({ method: 'HEAD', url, fresh: true }));
+            }
+            // A CloudFront hit replays one host's copy, so only misses say what each host serves.
+            const fromOrigin = responses.filter((r) => /^Miss from cloudfront$/i.test(header(r, 'x-cache') ?? ''));
+            if (fromOrigin.length < 2) {
+                return skip(`${fromOrigin.length} of ${responses.length} responses reached the origin`);
+            }
+            const etags = new Set(fromOrigin.map((r) => header(r, 'etag')));
+            const dates = new Set(fromOrigin.map((r) => header(r, 'last-modified')));
+            const p = new Problems();
+            // Agreement only means something between successful responses that carry both:
+            // identical missing validators, or matching error pages, must not pass.
+            const failed = fromOrigin.filter((r) => r.status !== 200);
+            p.check(!failed.length, `origin responses not 200: ${failed.map((r) => r.status).join(', ')}`);
+            for (const name of ['etag', 'last-modified']) {
+                const missing = fromOrigin.filter((r) => !header(r, name)).length;
+                p.check(
+                    !missing,
+                    `${name === 'etag' ? 'ETag' : 'Last-Modified'} missing on ${missing} of ${fromOrigin.length} origin responses`
+                );
+            }
+            p.check(etags.size === 1, `ETags differ: ${[...etags].join(' vs ')}`);
+            p.check(dates.size === 1, `Last-Modified differs: ${[...dates].join(' vs ')}`);
+            if (p.count) {
+                return p.outcome();
+            }
+            // Nothing in a response says which ALB target sent it, so agreement may be one host
+            // answering every time: only a disagreement proves anything about both.
+            return skip(
+                `inconclusive: ${fromOrigin.length} origin responses agree (ETag ${[...etags][0]}), but nothing shows they came from both hosts`
+            );
+        },
+    };
+}
+
 export function headerChecks(): CheckDef[] {
     return [
         ...HEADER_ROWS.map(headerCheck),
-        ...GZIP_REVALIDATION_PROBES.map(
-            (probe): CheckDef => ({
-                id: `headers.revalidate-gzip.${probe.id}`,
-                area: 'headers',
-                title: `A gzip ${probe.id} page revalidated with its -gzip ETag (If-None-Match) is a 304`,
-                refs: [finding(19)],
-                pending: probe.pending,
-                async run({ http }) {
-                    const full = await http.request({ url: probe.url, headers: GZIP, fresh: true });
-                    const etag = header(full, 'etag');
-                    const encoding = header(full, 'content-encoding');
-                    if (full.status !== 200 || !etag || encoding !== 'gzip') {
-                        return fail(
-                            `${full.status}, Content-Encoding ${encoding}, ETag ${etag}: nothing to revalidate`
-                        );
-                    }
-                    const res = await http.request({
-                        url: probe.url,
-                        headers: { ...GZIP, 'if-none-match': etag },
-                        fresh: true,
-                    });
-                    const p = new Problems();
-                    p.eq(`status for If-None-Match ${etag}`, res.status, 304);
-                    return p.outcome(`If-None-Match ${etag}: ${res.status}`);
-                },
-            })
-        ),
-        {
-            id: 'headers.archive-validators-agree',
+        ...GZIP_REVALIDATION_PROBES.map((probe): CheckDef => ({
+            id: `headers.revalidate-gzip.${probe.id}`,
             area: 'headers',
-            title: 'Both origin hosts send the same ETag and Last-Modified for an archive page',
+            title: `A gzip ${probe.id} page revalidated with its -gzip ETag (If-None-Match) is a 304`,
             refs: [finding(19)],
-            pending: PENDING.archiveMtimes,
+            pending: probe.pending,
             async run({ http }) {
-                const responses = [];
-                for (let i = 0; i < ARCHIVE_VALIDATOR_REQUESTS; i++) {
-                    responses.push(await http.request({ method: 'HEAD', url: ARCHIVE_VALIDATOR_PROBE, fresh: true }));
+                const full = await http.request({ url: probe.url, headers: GZIP, fresh: true });
+                const etag = header(full, 'etag');
+                const encoding = header(full, 'content-encoding');
+                if (full.status !== 200 || !etag || encoding !== 'gzip') {
+                    return fail(`${full.status}, Content-Encoding ${encoding}, ETag ${etag}: nothing to revalidate`);
                 }
-                // A CloudFront hit replays one host's copy, so only misses say what each host serves.
-                const fromOrigin = responses.filter((r) => /^Miss from cloudfront$/i.test(header(r, 'x-cache') ?? ''));
-                if (fromOrigin.length < 2) {
-                    return skip(`${fromOrigin.length} of ${responses.length} responses reached the origin`);
-                }
-                const etags = new Set(fromOrigin.map((r) => header(r, 'etag')));
-                const dates = new Set(fromOrigin.map((r) => header(r, 'last-modified')));
+                const res = await http.request({
+                    url: probe.url,
+                    headers: { ...GZIP, 'if-none-match': etag },
+                    fresh: true,
+                });
                 const p = new Problems();
-                // Agreement only means something between successful responses that carry both:
-                // identical missing validators, or matching error pages, must not pass.
-                const failed = fromOrigin.filter((r) => r.status !== 200);
-                p.check(!failed.length, `origin responses not 200: ${failed.map((r) => r.status).join(', ')}`);
-                for (const name of ['etag', 'last-modified']) {
-                    const missing = fromOrigin.filter((r) => !header(r, name)).length;
-                    p.check(
-                        !missing,
-                        `${name === 'etag' ? 'ETag' : 'Last-Modified'} missing on ${missing} of ${fromOrigin.length} origin responses`
-                    );
-                }
-                p.check(etags.size === 1, `ETags differ: ${[...etags].join(' vs ')}`);
-                p.check(dates.size === 1, `Last-Modified differs: ${[...dates].join(' vs ')}`);
-                if (p.count) {
-                    return p.outcome();
-                }
-                // Nothing in a response says which ALB target sent it, so agreement may be one host
-                // answering every time: only a disagreement proves anything about both.
-                return skip(
-                    `inconclusive: ${fromOrigin.length} origin responses agree (ETag ${[...etags][0]}), but nothing shows they came from both hosts`
-                );
+                p.eq(`status for If-None-Match ${etag}`, res.status, 304);
+                return p.outcome(`If-None-Match ${etag}: ${res.status}`);
             },
-        },
+        })),
+        validatorsAgree('headers.archive-validators-agree', ARCHIVE_VALIDATOR_PROBE, {
+            pending: PENDING.archiveMtimes,
+        }),
+        validatorsAgree('headers.archive-validators-agree.35.0.0', DIVERGENT_VALIDATOR_PROBE, {
+            // Extracted per host with tar -m before the fix, and not scheduled for re-extraction.
+            knownIssue: `${finding(19)} (grid 35.0.0: each host sends its own Last-Modified and ETag, so a revalidation that crosses hosts gets a 200)`,
+        }),
         {
             id: 'headers.internal-host.prompts-docs-nxdomain',
             area: 'headers',
