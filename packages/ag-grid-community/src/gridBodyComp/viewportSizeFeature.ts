@@ -17,7 +17,6 @@ export class ViewportSizeFeature extends BeanStub {
 
     private gridBodyCtrl: GridBodyCtrl | undefined;
 
-    private centerWidth: number;
     private bodyHeight: number;
 
     private readonly scheduleCenterViewportResize = this.throttleToFrame(() => this.onCenterViewportResized());
@@ -93,12 +92,11 @@ export class ViewportSizeFeature extends BeanStub {
             this.checkViewportAndScrolls(style);
 
             // The width reported above, so the flex pass and the containers are sized from the same one.
-            const newWidth = gridBodyCtrl.getCenterWidth(gridBodyCtrl.getReportedViewportWidth());
+            const newWidth = gridBodyCtrl.getReportedCenterWidth();
 
-            if (newWidth !== this.centerWidth) {
-                this.centerWidth = newWidth;
-                colFlex?.refreshFlexedColumns({
-                    viewportWidth: this.centerWidth,
+            if (colFlex && newWidth !== colFlex.flexViewportWidth) {
+                colFlex.refreshFlexedColumns({
+                    viewportWidth: newWidth,
                     updateBodyWidths: true,
                     fireResizedEvent: true,
                 });

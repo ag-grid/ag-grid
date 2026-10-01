@@ -26,19 +26,19 @@ interface GridHeaderCellBase {
     rowSpan: number;
 }
 
-export interface GridColumnHeaderCell extends GridHeaderCellBase {
+interface GridColumnHeaderCell extends GridHeaderCellBase {
     type: 'column';
     column: AgColumn;
 }
 
-export interface GridGroupHeaderCell extends GridHeaderCellBase {
+interface GridGroupHeaderCell extends GridHeaderCellBase {
     type: 'group' | 'padding';
     /** Backing group; padding cells created purely to tile a row have none. */
     column?: AgColumnGroup;
     collapsibleGroupRanges?: number[][];
 }
 
-export interface GridCoveredHeaderCell extends GridHeaderCellBase {
+interface GridCoveredHeaderCell extends GridHeaderCellBase {
     type: 'covered';
 }
 

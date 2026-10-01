@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     clearFilter: 'Törlés',
     cancelFilter: 'Mégse',
     cancelColumnToolPanel: 'Mégse',
+    resetColumnToolPanel: 'Visszaállítás',
 
     // Filter Titles
     textFilter: 'Szövegszűrő',

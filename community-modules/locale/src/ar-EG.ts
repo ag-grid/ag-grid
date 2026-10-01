@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     clearFilter: 'مسح',
     cancelFilter: 'إلغاء',
     cancelColumnToolPanel: 'إلغاء',
+    resetColumnToolPanel: 'إعادة تعيين',
 
     // Filter Titles
     textFilter: 'فلتر النص',

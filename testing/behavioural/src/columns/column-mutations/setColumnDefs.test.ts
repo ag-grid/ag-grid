@@ -18,6 +18,7 @@ import {
     ClientSideRowModelModule,
     RowSelectionModule,
     TooltipModule,
+    ValueCacheModule,
     enableDevValidations,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
@@ -33,6 +34,7 @@ describe('Column Mutations', () => {
             RowSelectionModule,
             TooltipModule,
             TreeDataModule,
+            ValueCacheModule,
         ],
     });
 
@@ -102,6 +104,96 @@ describe('Column Mutations', () => {
             ]);
             await asyncSetTimeout(0);
             expect(colDefChangedEvents.length).toBe(countAfterRealChange);
+        });
+
+        test("a column's colDefChanged listener sees every column of the update already redefined", () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', width: 100 },
+                    { colId: 'b', width: 200 },
+                ],
+            });
+            const widthsSeenByA: (number | undefined)[] = [];
+            api.getColumn('a')!.addEventListener('colDefChanged', () => {
+                widthsSeenByA.push(api.getColumn('b')!.getColDef().width);
+            });
+
+            api.setGridOption('columnDefs', [
+                { colId: 'a', width: 300 },
+                { colId: 'b', width: 400 },
+            ]);
+
+            expect(widthsSeenByA).toEqual([400]);
+        });
+
+        test("a pivot result column's colDefChanged listener can look the column up", async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                pivotMode: true,
+                columnDefs: [
+                    { field: 'country', pivot: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [{ country: 'Ireland', gold: 1 }],
+            });
+            const pivotCol = api.getPivotResultColumns()![0];
+            const lookedUp: unknown[] = [];
+            pivotCol.addEventListener('colDefChanged', () => {
+                lookedUp.push(api.getColumn(pivotCol.getColId()));
+            });
+
+            // a new definition of the value column redefines the pivot result columns derived from it
+            api.setGridOption('columnDefs', [
+                { field: 'country', pivot: true },
+                { field: 'gold', aggFunc: 'sum', cellClass: 'gold' },
+            ]);
+
+            expect(lookedUp).toEqual([pivotCol]);
+        });
+
+        test.each([false, true])(
+            'a cell computed from a column redefined later in the same update shows its new value (valueCache: %s)',
+            async (valueCache) => {
+                // built afresh per update, as an app rebuilding its column definitions would
+                const columnDefs = (field: 'a' | 'b'): ColDef[] => [
+                    { colId: 'copy', valueGetter: ({ getValue }) => getValue('source') },
+                    { colId: 'source', valueGetter: ({ data }) => data[field] },
+                ];
+                const api = gridsManager.createGrid('myGrid', {
+                    valueCache,
+                    columnDefs: columnDefs('a'),
+                    rowData: [{ a: 'A', b: 'B' }],
+                });
+                await asyncSetTimeout(0);
+                const copyCell = () => getGridHTMLElement(api)!.querySelector('.ag-row .ag-cell[col-id="copy"]')!;
+                expect(copyCell().textContent).toBe('A');
+
+                api.setGridOption('columnDefs', columnDefs('b'));
+                await asyncSetTimeout(0);
+
+                expect(copyCell().textContent).toBe('B');
+                expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'copy' })).toBe('B');
+            }
+        );
+
+        test('a cell computed from a column redefined later shows its new value when new rows come first in the update', async () => {
+            const columnDefs = (field: 'a' | 'b'): ColDef[] => [
+                { colId: 'copy', valueGetter: ({ getValue }) => getValue('source') },
+                { colId: 'source', valueGetter: ({ data }) => data[field] },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                valueCache: true,
+                columnDefs: columnDefs('a'),
+                rowData: [{ a: 'A1', b: 'B1' }],
+            });
+            await asyncSetTimeout(0);
+
+            // the rows are replaced before the columns are rebuilt, as when both change in one render
+            api.updateGridOptions({ rowData: [{ a: 'A2', b: 'B2' }], columnDefs: columnDefs('b') });
+            await asyncSetTimeout(0);
+
+            const copyCell = getGridHTMLElement(api)!.querySelector('.ag-row .ag-cell[col-id="copy"]')!;
+            expect(copyCell.textContent).toBe('B2');
+            expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'copy' })).toBe('B2');
         });
 
         test('column instances are replaced when colId is removed and re-added', async () => {

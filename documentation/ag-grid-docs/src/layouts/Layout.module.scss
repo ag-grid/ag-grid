@@ -4,11 +4,18 @@ html {
     overflow-x: hidden;
 }
 
+// Sticky footer: the footer sits outside .mainContainer, so the page column holds it down.
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .mainContainer {
     display: flex;
     flex-direction: column;
+    flex: 1 0 auto;
     width: 100%;
-    min-height: 100vh;
     padding: 0;
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {

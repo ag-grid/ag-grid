@@ -1,9 +1,13 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { fakeFetch } from './group-data';
 import { createGridAndWait, setupServerSideRowSelectionSuite } from './serverSideRowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -181,6 +185,135 @@ describe('Row Selection Grid Options', () => {
                     ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
                     └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
+            });
+
+            test('with click toggle, clicking a group row whose subtree is the whole selection deselects it', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([], api);
+            });
+
+            test('with click toggle, clicking a group row does not deselect it while another group is selected', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(0);
+                actions.clickRowByIndex(1, { ctrlKey: true });
+                assertSelectedRowsById(
+                    [
+                        getRowIdRaw({ data: { country: 'United States' }, api }),
+                        getRowIdRaw({ data: { country: 'Russia' }, api }),
+                    ],
+                    api
+                );
+
+                // a second branch holds its own selection state, so the click reduces rather than clears
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
+            });
+
+            test("with click toggle, clicking a group that is its parent's only row deselects it", async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        ...groupGridOptions,
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                const russia = getRowIdRaw({ data: { country: 'Russia' }, api });
+                const gymnastics = getRowIdRaw({ data: { sport: 'Gymnastics' }, parentKeys: ['Russia'], api });
+                api.getRowNode(russia)!.setExpanded(true);
+                await waitFor(() => expect(api.getRowNode(gymnastics)).toBeDefined());
+
+                // Russia holds this sport alone, so selecting it marks Russia selected as well
+                actions.clickRowByIndex(2);
+                assertSelectedRowsById([russia, gymnastics], api);
+
+                actions.clickRowByIndex(2);
+                assertSelectedRowsById([], api);
+            });
+
+            test('with click toggle, clicking a row does not deselect it while filtered-out siblings are selected', async () => {
+                const rows = [
+                    { country: 'X', name: 'A' },
+                    { country: 'X', name: 'B' },
+                ];
+                const [api, actions] = await createGridAndWait(
+                    {
+                        columnDefs: [
+                            { field: 'country', rowGroup: true, hide: true },
+                            { field: 'name', filter: 'agTextColumnFilter' },
+                        ],
+                        autoGroupColumnDef: { headerName: 'Athlete', cellRenderer: 'agGroupCellRenderer' },
+                        rowModelType: 'serverSide',
+                        getRowId,
+                        serverSideDatasource: {
+                            getRows(params) {
+                                const { filterModel, groupKeys } = params.request;
+                                const name = (filterModel as Record<string, { filter?: string }>)?.name?.filter;
+                                const visible = rows.filter((row) => !name || row.name === name);
+                                const rowData = groupKeys.length
+                                    ? visible.filter((row) => row.country === groupKeys[0])
+                                    : [...new Set(visible.map((row) => row.country))].map((country) => ({ country }));
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: {
+                            mode: 'multiRow',
+                            groupSelects: 'descendants',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                const groupX = getRowIdRaw({ data: { country: 'X' }, api });
+                const rowA = getRowIdRaw({ data: { country: 'X', name: 'A' }, parentKeys: ['X'], api });
+                const rowB = getRowIdRaw({ data: { country: 'X', name: 'B' }, parentKeys: ['X'], api });
+
+                actions.clickRowByIndex(0);
+                assertSelectedRowsById([groupX], api);
+
+                // B leaves the view but stays selected, so A is not the whole selection
+                api.setFilterModel({ name: { filterType: 'text', type: 'equals', filter: 'A' } });
+                await waitFor(() => expect(api.getRowNode(rowB)).toBeUndefined());
+                await waitFor(() => expect(api.getRowNode(groupX)).toBeDefined());
+                api.getRowNode(groupX)!.setExpanded(true);
+                await waitFor(() => expect(api.getRowNode(rowA)).toBeDefined());
+
+                actions.clickRowByIndex(1);
+                expect(api.getServerSideSelectionState()).toEqual({
+                    selectAllChildren: false,
+                    toggledNodes: [{ nodeId: groupX, selectAllChildren: false, toggledNodes: [{ nodeId: rowA }] }],
+                });
             });
 
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {

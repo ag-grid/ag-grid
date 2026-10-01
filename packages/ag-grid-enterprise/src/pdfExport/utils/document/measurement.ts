@@ -85,7 +85,7 @@ export type LayoutOptions = {
     imageRegistry?: PdfImageRegistry;
 };
 
-export type MeasuredCell = {
+type MeasuredCell = {
     columnIndex: number;
     span: number;
     width: number;

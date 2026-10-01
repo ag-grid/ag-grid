@@ -53,11 +53,13 @@ const {
         <ExampleStyle extraStyles={extraStyles} />
         <Styles
             baseUrl={appLocation}
-            files={isDev && styleFiles
-                ? styleFiles
-                      .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
-                      .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
-                : []}
+            files={
+                isDev && styleFiles
+                    ? styleFiles
+                          .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
+                          .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
+                    : []
+            }
         />
         <Extras extras={extras ?? []} />
         <Fragment set:html={headFragment} />
@@ -74,7 +76,6 @@ const {
         >
             window.__basePath = appLocation;
         </script>
-
         <ExampleModules
             appLocation={appLocation}
             entryFileName={entryFileName}
@@ -88,9 +89,11 @@ const {
         />
         <Styles
             baseUrl={appLocation}
-            files={styleFiles
-                ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
-                : []}
+            files={
+                styleFiles
+                    ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
+                    : []
+            }
         />
         <slot />
     </body>

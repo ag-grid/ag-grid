@@ -7,23 +7,21 @@ const { activeTab } = Astro.props;
 ---
 
 <div class={styles.tabs}>
-    {
-        demoTabs.map((tab) => (
-            <div class:list={[styles.tabItem, activeTab === tab.key && styles.activeTab]}>
-                <a href={urlWithBaseUrl(tab.href)}>
-                    <img
-                        class:list={[styles.showcaseImg, styles.showcaseImgLight]}
-                        src={urlWithBaseUrl(tab.imgLight)}
-                        alt={tab.altLight}
-                    />
-                    <img
-                        class:list={[styles.showcaseImg, styles.showcaseImgDark]}
-                        src={urlWithBaseUrl(tab.imgDark)}
-                        alt={tab.altDark}
-                    />
-                </a>
-                <span class={styles.label}>{tab.label}</span>
-            </div>
-        ))
-    }
+    {demoTabs.map((tab) => (
+        <div class:list={[styles.tabItem, activeTab === tab.key && styles.activeTab]}>
+            <a href={urlWithBaseUrl(tab.href)}>
+                <img
+                    class:list={[styles.showcaseImg, styles.showcaseImgLight]}
+                    src={urlWithBaseUrl(tab.imgLight)}
+                    alt={tab.altLight}
+                />
+                <img
+                    class:list={[styles.showcaseImg, styles.showcaseImgDark]}
+                    src={urlWithBaseUrl(tab.imgDark)}
+                    alt={tab.altDark}
+                />
+            </a>
+            <span class={styles.label}>{tab.label}</span>
+        </div>
+    ))}
 </div>

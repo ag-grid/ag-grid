@@ -186,8 +186,15 @@ const CellComp = ({
         const isPopup = editDetails!.popup === true;
 
         const cellEditorPromise = compDetails.newAgStackInstance();
+        // an editor resolving after a newer edit or the unmount is destroyed unshown, leaving the newer one alone
+        let destroyed = false;
+        let shownEditor: ICellEditorComp | undefined;
 
         cellEditorPromise.then((cellEditor: ICellEditorComp) => {
+            if (destroyed) {
+                context.destroyBean(cellEditor);
+                return;
+            }
             if (!cellEditor) {
                 return;
             }
@@ -195,6 +202,7 @@ const CellComp = ({
             const compGui = cellEditor.getGui();
 
             setCellEditorRef(cellEditor);
+            shownEditor = cellEditor;
 
             if (!isPopup) {
                 const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
@@ -207,15 +215,17 @@ const CellComp = ({
         });
 
         return () => {
-            cellEditorPromise.then((cellEditor) => {
-                const compGui = cellEditor.getGui();
-                cellCtrl.disableEditorTooltipFeature();
-                context.destroyBean(cellEditor);
-                setCellEditorRef(undefined);
-                setJsEditorComp(undefined);
+            destroyed = true;
+            if (!shownEditor) {
+                return;
+            }
+            const compGui = shownEditor.getGui();
+            cellCtrl.disableEditorTooltipFeature();
+            context.destroyBean(shownEditor);
+            setCellEditorRef(undefined);
+            setJsEditorComp(undefined);
 
-                compGui?.remove();
-            });
+            compGui?.remove();
         };
     }, [editDetails]);
 
@@ -269,7 +279,7 @@ const CellComp = ({
     );
 
     const init = useCallback(() => {
-        const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
+        const spanReady = cellCtrl.cellSpan === null || eWrapper.current;
         const eRef = eGui.current;
         if (!eRef || !spanReady || !cellCtrl?.isAlive() || context.isDestroyed()) {
             compBean.current = context.destroyBean(compBean.current);
@@ -384,7 +394,6 @@ const CellComp = ({
                 }
 
                 const { current } = cssManager;
-                current!.toggleCss('ag-cell-value', !showCellWrapper);
                 current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
                 current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
                 current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
@@ -505,7 +514,7 @@ const CellComp = ({
         </div>
     );
 
-    if (cellCtrl.isCellSpanning()) {
+    if (cellCtrl.cellSpan !== null) {
         return (
             <div ref={setWrapperRef} className="ag-spanned-cell-wrapper" role="presentation">
                 {renderCell()}

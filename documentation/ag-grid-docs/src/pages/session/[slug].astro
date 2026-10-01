@@ -29,29 +29,23 @@ const description = sessionDescription(session);
 >
     <div class="layout-max-width-small">
         <article class={styles.sessionPage}>
-            <a class={styles.sessionBack} href={urlWithBaseUrl('/community/beyond-the-prompt/')}
-                >← Back to Beyond the Prompt</a
-            >
+            <a class={styles.sessionBack} href={urlWithBaseUrl('/community/beyond-the-prompt/')}>
+                ← Back to Beyond the Prompt
+            </a>
             <h1>{session.title}</h1>
-            {
-                session.speakers && (
-                    <p class={styles.sessionSpeakers}>
-                        {session.speakers.map((s) => `${s.name} (${s.role})`).join(', ')}
-                    </p>
-                )
-            }
-            {
-                videoId && (
-                    <div class={styles.sessionVideo}>
-                        <iframe
-                            src={`https://www.youtube.com/embed/${videoId}`}
-                            title={session.title}
-                            allow="autoplay; encrypted-media; picture-in-picture; web-share"
-                            allowfullscreen
-                        />
-                    </div>
-                )
-            }
+            {session.speakers && (
+                <p class={styles.sessionSpeakers}>{session.speakers.map((s) => `${s.name} (${s.role})`).join(', ')}</p>
+            )}
+            {videoId && (
+                <div class={styles.sessionVideo}>
+                    <iframe
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title={session.title}
+                        allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+            )}
             {session.description && <p class={styles.sessionDescription}>{session.description}</p>}
         </article>
     </div>

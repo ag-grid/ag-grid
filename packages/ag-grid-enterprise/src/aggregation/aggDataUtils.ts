@@ -17,7 +17,7 @@ export const getNodesFromMappedSet = (mappedSet: any, keys: string[] | null | un
 };
 
 /** An aggData key and the column it came from. Structurally a {@link ResolvedValueColumn}. */
-export interface AggDataEventCol {
+interface AggDataEventCol {
     readonly colId: string;
     readonly column: AgColumn;
 }

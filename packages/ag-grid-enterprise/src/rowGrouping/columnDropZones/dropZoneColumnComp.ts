@@ -78,6 +78,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             this.eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
         }
 
+        // A rename leaves the drop zone's column lists unchanged, so the panel won't rebuild this pill.
+        this.addManagedListeners(this.column, {
+            headerNameChanged: () => {
+                this.displayName = colNames.getDisplayNameForColumn(this.column, 'columnDrop');
+                this.refreshDisplay();
+            },
+        });
+
         if (sortSvc) {
             this.setupSort();
 
@@ -462,11 +470,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             );
             // In synchronous mode, setColumnAggFunc dispatches events that can destroy this component, nulling this.column
             if (this.column) {
-                const eText = this.getGui().querySelector<HTMLElement>('.ag-column-drop-cell-text');
-                if (eText) {
-                    eText.textContent = this.getDisplayValue();
-                }
-                this.setupAria();
+                this.refreshDisplay();
             }
             refreshDeferredToolPanelUi(this.beans, this.updateParams);
         };

@@ -5,10 +5,12 @@ import { GridRows, TestGridsManager, waitForInput } from 'ag-test-utils';
 import type { CellEditingStoppedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    GridStateModule,
     NumberEditorModule,
     PinnedRowModule,
     RenderApiModule,
     TextEditorModule,
+    TextFilterModule,
     agTestIdFor,
     getGridElement,
     setupAgTestIds,
@@ -24,9 +26,11 @@ describe('Cell editing: purging edits on departure', () => {
         includeDefaultModules: true,
         modules: [
             ClientSideRowModelModule,
+            GridStateModule,
             NumberEditorModule,
             PinnedRowModule,
             TextEditorModule,
+            TextFilterModule,
             RenderApiModule,
             BatchEditModule,
             PivotModule,
@@ -234,6 +238,67 @@ describe('Cell editing: purging edits on departure', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"A0" b:"B0"
         `);
+    });
+
+    test('switching to manual pinning purges an edit staged on a static pinned row', async () => {
+        const api = await gridsManager.createGridAndWait('purge-pinned-switch', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ id: '0', a: 'A0', b: 'B0' }],
+            pinnedTopRowData: [{ id: 'PIN', a: 'PIN-A', b: 'PIN-B' }],
+            defaultColDef: { editable: true },
+            getRowId: (params) => params.data.id,
+        } satisfies GridOptions);
+
+        api.startBatchEdit();
+        await stage(api, 'PIN', 'a', 'EDITED');
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await new GridRows(api, 'static pinned row gone').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"A0" b:"B0"
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+        `);
+        expect(api.getEditingCells()).toHaveLength(0);
+    });
+
+    test('a manually pinned row hidden by a filter keeps its staged edit', async () => {
+        const api = await gridsManager.createGridAndWait('purge-pinned-hidden', {
+            columnDefs: [{ field: 'a', filter: true }, { field: 'b' }],
+            rowData: [
+                { id: '0', a: 'A0', b: 'B0' },
+                { id: '1', a: 'A1', b: 'B1' },
+            ],
+            defaultColDef: { editable: true },
+            getRowId: (params) => params.data.id,
+            enableRowPinning: true,
+            initialState: { rowPinning: { top: ['1'], bottom: [] } },
+        } satisfies GridOptions);
+
+        api.startBatchEdit();
+        await stage(api, 't-top-1', 'b', 'EDITED');
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+        await new GridRows(api, 'pinned row edit staged').check(`
+            PINNED_TOP id:t-top-1 a:"A1" b:⏳"EDITED" "B1"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"A0" b:"B0"
+            └── LEAF id:1 a:"A1" b:"EDITED"
+        `);
+
+        api.setFilterModel({ a: { filterType: 'text', type: 'notEqual', filter: 'A1' } });
+        await new GridRows(api, 'pinned row hidden by the filter').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"A0" b:"B0"
+        `);
+
+        api.setFilterModel(null);
+        await new GridRows(api, 'filter cleared, staged edit kept').check(`
+            PINNED_TOP id:t-top-1 a:"A1" b:⏳"EDITED" "B1"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"A0" b:"B0"
+            └── LEAF id:1 a:"A1" b:"EDITED"
+        `);
+        expect(api.getEditingCells()).toHaveLength(1);
     });
 
     // The purge runs before the node's position is cleared, so the event reports where the row actually

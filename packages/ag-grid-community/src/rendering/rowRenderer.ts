@@ -263,16 +263,23 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /**
      * Called when a new cell is focused in the grid
-     * - if the focused cell isn't rendered; re-draw rows to dry to render it
+     * - if the focused cell isn't rendered; renders it on its row, or re-draws rows if the row isn't rendered either
      * - subsequently updates all cell and row controls with the new focused cell
      * @param event cell focused event
      */
     private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
         if (event?.rowIndex != null && !event.rowPinned) {
+            const { rowIndex } = event;
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
-            if (!this.isCellBeingRendered(event.rowIndex, col)) {
-                this.redraw();
+            if (!this.isCellBeingRendered(rowIndex, col)) {
+                const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
+                if (rowCtrl) {
+                    // must not redraw: this can run inside redrawAfterModelUpdate while it holds the refresh lock
+                    rowCtrl.renderFocusedCell();
+                } else {
+                    this.redraw();
+                }
             }
         }
         this.updateCellFocus(event);
@@ -607,10 +614,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
             };
 
             switch (rowNode.rowPinned) {
+                // replaced, not written into, as a React row container keeps the array it was given
                 case 'top':
+                    this.topRowCtrls = this.topRowCtrls.slice();
                     destroyAndRecreateCtrl(this.topRowCtrls);
                     break;
                 case 'bottom':
+                    this.bottomRowCtrls = this.bottomRowCtrls.slice();
                     destroyAndRecreateCtrl(this.bottomRowCtrls);
                     break;
                 default:
@@ -777,7 +787,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // if focus has changed (e.g, if row has been removed, so focus moved up) focus new cell
         if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
-            focusSvc.setFocusedCell({
+            focusSvc.setFocusedCellOrSpan({
                 ...cellToFocus,
                 preventScrollOnBrowserFocus: true,
                 forceBrowserFocus: true,
@@ -970,12 +980,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (sticky && sticky !== indexed) {
             sticky.refreshRow();
         }
-        const spannedRowRenderer = this.beans.spannedRowRenderer;
-        if (spannedRowRenderer) {
-            refreshSpannedForNode(spannedRowRenderer.getCtrls('top'), node, indexed, sticky);
-            refreshSpannedForNode(spannedRowRenderer.getCtrls('bottom'), node, indexed, sticky);
-            refreshSpannedForNode(spannedRowRenderer.getCtrls('center'), node, indexed, sticky);
-        }
+        this.beans.spannedRowRenderer?.refreshRowsOf(node as RowNode);
     }
 
     /**
@@ -1787,18 +1792,3 @@ export function isRowInMap(
             return rowIdsMap.normal[id] != null;
     }
 }
-
-/** Refreshes any spanned ctrl rendering `node` that the caller has not refreshed already. */
-const refreshSpannedForNode = (
-    ctrls: RowCtrl[],
-    node: IRowNode,
-    indexed: RowCtrl | undefined,
-    sticky: RowCtrl | undefined
-): void => {
-    for (let i = 0, len = ctrls.length; i < len; ++i) {
-        const ctrl = ctrls[i];
-        if (ctrl.rowNode === node && ctrl !== indexed && ctrl !== sticky) {
-            ctrl.refreshRow();
-        }
-    }
-};

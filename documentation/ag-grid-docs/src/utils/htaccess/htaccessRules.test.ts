@@ -377,7 +377,7 @@ describe('htaccessRules', () => {
         it('does not apply to the live Studio site, which caches normally', () => {
             // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
             // document rule and the long hashed-asset cache.
-            const line = productionContent.split('\n').find((l) => l.includes('/studio/archive/'));
+            const line = productionContent.split('\n').find((l) => l.includes('m#^/studio/archive/#'));
             expect(line).toContain('m#^/studio/archive/#');
         });
 
@@ -400,6 +400,83 @@ describe('htaccessRules', () => {
             const doc = productionContent.split('\n').find((l) => l.includes('CONTENT_TYPE'));
             expect(doc).toContain('^/(charts/)?archive/[0-9]');
             expect(doc).not.toContain('studio');
+        });
+    });
+
+    describe('Released archive versions get cached, not just excluded from no-cache', () => {
+        // documentNoCacheRules excludes archive/[0-9] from forced no-cache, but that alone
+        // produces no Cache-Control header at all - confirmed live 2026-09-23, every request to
+        // a released archive page hit origin, including a 30k-request Sitebulb crawl of
+        // /charts/archive/11.0.4/. This rule is what actually fills that gap.
+        const line = () => productionContent.split('\n').find((l) => l.includes('^/(charts/)?archive/[0-9]#"'));
+
+        it('caches with the long, hashed-asset-class TTL, not the moderate unhashed one', () => {
+            const l = line();
+            expect(l).toContain('max-age=604800, s-maxage=31536000');
+        });
+
+        it('is production-only, like every other asset-caching rule', () => {
+            expect(stagingContent).not.toContain('archive/[0-9]#"');
+        });
+
+        it('matches a real released grid and charts archive page, any content type', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/archive/32.3.9/react-data-grid/getting-started/')).toBe(true);
+            expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/')).toBe(true);
+            // No extension allowlist, unlike every other unhashed-asset rule - a released
+            // archive's raw example source and dist bundles are just as frozen as its HTML.
+            expect(pattern.test('/charts/archive/11.0.4/angular/radial-gauge/examples/labels/main.ts')).toBe(true);
+            expect(pattern.test('/charts/archive/11.0.4/dev/ag-charts-enterprise/dist/package/main.cjs.js')).toBe(true);
+        });
+
+        it('does not match the archive listing pages, only a real numbered version', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/documentation-archive')).toBe(false);
+            expect(pattern.test('/charts/documentation-archive/')).toBe(false);
+        });
+
+        it('never matches /studio/archive/, which stays no-cache always', () => {
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/studio/archive/3.0.0/react/getting-started/')).toBe(false);
+        });
+
+        it('is emitted before studioArchiveNoCacheRules, though the paths never overlap anyway', () => {
+            const lines = productionContent.split('\n');
+            const archiveAt = lines.findIndex((l) => l.includes('archive/[0-9]#"'));
+            const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+            expect(archiveAt).toBeGreaterThan(-1);
+            expect(studioAt).toBeGreaterThan(archiveAt);
+        });
+
+        it('is overridden back to no-cache for a version still listed as in-flight', () => {
+            // getInFlightArchiveRules is emitted last, so its no-cache for a specific version
+            // wins over this rule's general cache header - the mechanism that lets a version
+            // stay uncached during release-candidate testing and only get cached once removed
+            // from that list.
+            const content = getHtaccessContent({
+                env: 'production',
+                uncachedGridArchive: '36.2.0',
+                uncachedChartsArchive: '14.3.0',
+            });
+            const lines = content.split('\n');
+            const archiveAt = lines.findIndex((l) => l.includes('archive/[0-9]#"'));
+            const inFlightGridAt = lines.findIndex((l) => l.includes('m#^/archive/36\\.2\\.0/#'));
+            const inFlightChartsAt = lines.findIndex((l) => l.includes('m#^/charts/archive/14\\.3\\.0/#'));
+            expect(archiveAt).toBeGreaterThan(-1);
+            expect(inFlightGridAt).toBeGreaterThan(archiveAt);
+            expect(inFlightChartsAt).toBeGreaterThan(archiveAt);
+        });
+
+        it('a version removed from the in-flight list falls through to this rule - the promised flip', () => {
+            const rule = getInFlightArchiveRules(null, null);
+            expect(rule).not.toContain('Cache-Control');
+            // With nothing in flight, every released archive is governed solely by this rule.
+            const [, source] = line()!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/archive/36.2.0/react-data-grid/getting-started/')).toBe(true);
         });
     });
 
@@ -500,6 +577,39 @@ describe('htaccessRules', () => {
             expect(pattern.test('/example-assets/olympic-data.xlsx')).toBe(true);
             expect(pattern.test('/images/about/carousel/intro.mp4')).toBe(true);
             expect(pattern.test('/images/about/carousel/intro.webm')).toBe(true);
+        });
+
+        it('also matches /theme-icons/, including the per-theme zip bundle', () => {
+            // public/theme-icons/<theme>/<icon>.svg plus a public/theme-icons/<theme>/<theme>-icons.zip
+            // bundle per theme - same asset class (unhashed, build-time static) as images/example-assets,
+            // so it shares this rule. The "does not match anything mutable" hashed-asset test elsewhere
+            // in this file already confirms /theme-icons/alpine.svg isn't hash-shaped; this confirms it's
+            // covered by *this* rule instead, not left uncached altogether.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/theme-icons/material/filter.svg')).toBe(true);
+            expect(pattern.test('/theme-icons/quartz/quartz-icons.zip')).toBe(true);
+        });
+
+        it('does NOT match a bare /theme-icons/ directory request, only files beneath it', () => {
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/theme-icons/')).toBe(false);
+            expect(pattern.test('/theme-icons/material/')).toBe(false);
+        });
+
+        it('also matches /videos/, on both the grid root (json/png) and product subtrees (mp4/webm)', () => {
+            // public/videos/*.json and *.png live directly under grid root; /studio/videos/*.mp4
+            // and *.webm are the nested-.htaccess-cascade case this rule intentionally reaches -
+            // see the "cascades into /charts/ or /studio/" test below for why that's expected.
+            const line = productionContent.split('\n').find((l) => l.includes('images|example-assets'));
+            const [, source] = line!.match(/m#([^#]+)#/)!;
+            const pattern = new RegExp(source);
+            expect(pattern.test('/videos/getting-started.json')).toBe(true);
+            expect(pattern.test('/studio/videos/drag-drop.webm')).toBe(true);
+            expect(pattern.test('/studio/videos/drag-drop.mp4')).toBe(true);
         });
     });
 
@@ -1021,6 +1131,7 @@ describe('htaccessRules', () => {
         const negotiablePaths = [
             '/react-data-grid/cell-editing/',
             '/javascript-data-grid/getting-started/',
+            '/react-data-grid/',
             '/about/',
             '/changelog/',
             '/documentation-archive/',
@@ -1057,7 +1168,7 @@ describe('htaccessRules', () => {
         // either 404 or (for the `.md` itself) loop into `.md.md`.
         const nonNegotiablePaths = [
             '/react-data-grid/cell-editing.md', // the twin itself — final segments exclude dots
-            '/react-data-grid/', // framework landing page, redirect stub
+            '/javascript-data-grid/', // the one framework root without a hub, so no twin
             '/react-data-grid/errors/123/', // sitemap-excluded
             '/data-grid/cell-editing/', // framework-agnostic redirect stub
             '/contact/success/', // form result, sitemap-excluded
@@ -1157,6 +1268,11 @@ describe('htaccessRules', () => {
         it('serves .md as UTF-8 so table glyphs (✓/✗) are not mojibaked', () => {
             expect(productionContent).toContain('AddCharset utf-8 .md');
             expect(stagingContent).toContain('AddCharset utf-8 .md');
+        });
+
+        it('registers the webp MIME type so the images are not served without a Content-Type', () => {
+            expect(productionContent).toContain('AddType image/webp .webp');
+            expect(stagingContent).toContain('AddType image/webp .webp');
         });
     });
 

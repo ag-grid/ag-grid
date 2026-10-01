@@ -309,7 +309,9 @@ In the example below, note the following:
 
 ## Resizing Groups
 
-When you resize a group, it will distribute the extra room to all columns in the group equally. In the example below the groups can be resized as follows:
+When you resize a group, the extra room is distributed across the columns in the group in proportion to their current widths. A column that reaches its `minWidth` or `maxWidth` keeps that width, and the remaining columns share what is left.
+
+In the example below the groups can be resized as follows:
 
 - The group 'Everything Resizes' will resize all columns.
 - The group 'Only Year Resizes' will resize only year, because the other columns have `resizable=false`.

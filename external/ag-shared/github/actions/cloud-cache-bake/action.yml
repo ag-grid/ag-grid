@@ -1,0 +1,206 @@
+name: cloud-cache-bake
+description: Bake a fully-scripted node_modules tarball and publish it as a release asset, so Claude Code cloud environments can restore it instead of installing. Consumed by each repo's thin cloud-cache-bake workflow.
+
+# Why this exists, and why it publishes a *release asset* rather than an artifact:
+#
+#   - A cloud environment's setup script has a ~5 minute cap. A full install of
+#     these monorepos does not fit (measured: 534s for ag-charts), so the setup
+#     script installs with --ignore-scripts and leaves the patches, allow-scripts
+#     and nx plugin build to a ~150s in-session finish-setup.sh. Even that pass is
+#     marginal: the same install measured 144s against a 249s budget on one
+#     environment build and overran a 199s budget on another. Which side of the
+#     cap it lands on is variance, not design.
+#   - Here there is no cap. Installing fully in CI and shipping the result means a
+#     session restores a tree that is already patched and built, so finish-setup.sh
+#     drops out of the session path entirely.
+#   - The setup script runs before the session's GitHub proxy exists and has no
+#     credentials, so whatever it downloads must be anonymously readable.
+#     Release assets are (verified: HTTP 200). GitHub Actions artifacts are not —
+#     the artifacts download endpoint returns 401 without actions:read even on a
+#     public repo, which is what rules out actions/upload-artifact here.
+#
+# Everything behavioural lives in this action so a fix percolates to every repo
+# via the ag-shared subrepo; each repo supplies only a caller workflow.
+
+inputs:
+    release-tag:
+        description: 'Release tag carrying the cache assets. One rolling prerelease, created on first use.'
+        required: false
+        default: 'cloud-cache'
+    keep-assets:
+        description: 'How many of the most recent assets to retain, so the tag does not grow without bound. Older lockfiles fall back to a local install.'
+        required: false
+        default: '5'
+    force:
+        description: "Re-bake and overwrite even when an asset for this lockfile already exists. Anything other than 'true' is ignored."
+        required: false
+        default: 'false'
+    github-token:
+        description: 'Token with contents:write, to create the release and upload assets.'
+        required: false
+        default: ${{ github.token }}
+
+outputs:
+    asset:
+        description: 'Name of the asset for this lockfile, whether it was baked now or already present.'
+        value: ${{ steps.key.outputs.asset }}
+    baked:
+        description: "'true' when this run built and uploaded the asset, 'false' when it was already published."
+        value: ${{ steps.existing.outputs.hit == 'true' && 'false' || 'true' }}
+
+runs:
+    using: composite
+    steps:
+        - name: Setup Node
+          uses: actions/setup-node@v7
+          with:
+              node-version-file: .nvmrc
+
+        - name: Provision yarn@1 and zstd
+          shell: bash
+          run: |
+              set -euo pipefail
+              command -v yarn >/dev/null 2>&1 || npm i -g --force yarn@1
+              # zstd is absent from the Claude Code cloud base image too; the setup
+              # script apt-installs it before extracting. Keep the format identical
+              # on both sides so there is only one artifact to reason about.
+              command -v zstd >/dev/null 2>&1 || {
+                  sudo apt-get update -qq
+                  sudo apt-get install -y -qq zstd
+              }
+              echo "node $(node -v), yarn $(yarn -v), $(zstd --version)"
+
+        - name: Compute cache key
+          id: key
+          shell: bash
+          run: |
+              set -euo pipefail
+              # cloud-setup.sh computes exactly this: sha256 of yarn.lock, first 16
+              # hex characters. The two must agree or every session misses the cache
+              # silently and falls back to installing. Change one, change both.
+              full="$(sha256sum yarn.lock | awk '{print $1}')"
+              {
+                  echo "full=${full}"
+                  echo "short=${full:0:16}"
+                  echo "asset=node-modules-${full:0:16}.tar.zst"
+              } >>"$GITHUB_OUTPUT"
+
+        - name: Skip when this lockfile is already baked
+          id: existing
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github-token }}
+              TAG: ${{ inputs.release-tag }}
+              ASSET: ${{ steps.key.outputs.asset }}
+              FORCE: ${{ inputs.force }}
+          run: |
+              set -euo pipefail
+              # A manual run is usually asking for a re-bake — the asset existing is
+              # the normal state, so without this a dispatch would almost always be
+              # a no-op and look like a broken workflow.
+              if [[ "$FORCE" == 'true' ]]; then
+                  echo 'hit=false' >>"$GITHUB_OUTPUT"
+                  echo "::notice::force requested; re-baking ${ASSET}"
+              elif gh release view "$TAG" --json assets -q '.assets[].name' 2>/dev/null | grep -qxF "$ASSET"; then
+                  echo 'hit=true' >>"$GITHUB_OUTPUT"
+                  echo "::notice::${ASSET} is already published; skipping the bake"
+              else
+                  echo 'hit=false' >>"$GITHUB_OUTPUT"
+              fi
+
+        - name: Install dependencies (full, with postinstall)
+          if: steps.existing.outputs.hit != 'true'
+          shell: bash
+          env:
+              AG_SKIP_NATIVE_DEP_VERSION_CHECK: '1'
+              PUPPETEER_SKIP_DOWNLOAD: 'true'
+              NX_DAEMON: 'false'
+          run: |
+              set -euo pipefail
+              # Deliberately a FULL install, unlike cloud-setup.sh's --ignore-scripts
+              # pass. patch-package, allow-scripts and the nx plugin build all run
+              # here. A tree baked without them would still pass `yarn check
+              # --integrity` on the far side, so the session would call itself ready
+              # with patches unapplied — the exact trap the `unscripted` marker
+              # exists to catch.
+              yarn install --frozen-lockfile
+
+        - name: Report tree shape
+          if: steps.existing.outputs.hit != 'true'
+          shell: bash
+          run: |
+              set -euo pipefail
+              # Deliberately reports rather than asserts. The guarantee that patches
+              # applied comes from the install step above having exited 0:
+              # patch-package fails the postinstall when a patch does not apply, so a
+              # green install already means a scripted tree. An extra check here
+              # would have to re-derive that, and an earlier draft of this step
+              # "verified" it by testing for .yarn-integrity — which any install
+              # writes, scripted or not, so it could never have failed.
+              #
+              # These counts are what a human compares against the far side when a
+              # restored tree misbehaves.
+              [[ -d node_modules/.bin ]] && echo ".bin entries:         $(find node_modules/.bin -mindepth 1 | wc -l | tr -d ' ')"
+              [[ -d patches ]] && echo "patches in repo:      $(find patches -name '*.patch' | wc -l | tr -d ' ')"
+              echo "node_modules entries: $(find node_modules -maxdepth 1 -mindepth 1 | wc -l | tr -d ' ')"
+              echo "node_modules files:   $(find node_modules -type f | wc -l | tr -d ' ')"
+              echo "node_modules size:    $(du -sh node_modules | awk '{print $1}')"
+              df -h . | tail -1
+
+        - name: Pack
+          if: steps.existing.outputs.hit != 'true'
+          shell: bash
+          env:
+              ASSET: ${{ steps.key.outputs.asset }}
+          run: |
+              set -euo pipefail
+              # The archive's root entry must be `node_modules/` — the cloud side
+              # extracts into a staging directory and moves that entry into place.
+              tar -I 'zstd -3 -T0' -cf "$ASSET" node_modules
+              ls -l "$ASSET"
+
+        - name: Publish as a release asset
+          if: steps.existing.outputs.hit != 'true'
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github-token }}
+              TAG: ${{ inputs.release-tag }}
+              ASSET: ${{ steps.key.outputs.asset }}
+          run: |
+              set -euo pipefail
+              # A prerelease so it stays out of the repo's normal release listing.
+              # Draft would not work: draft assets are not anonymously downloadable,
+              # and anonymous is the only access the cloud setup script has.
+              if ! gh release view "$TAG" >/dev/null 2>&1; then
+                  gh release create "$TAG" \
+                      --prerelease \
+                      --title 'Cloud session dependency cache' \
+                      --notes 'Prebuilt, fully-scripted node_modules trees consumed by Claude Code cloud environment setup. Assets are keyed by the first 16 hex characters of sha256(yarn.lock). Not a product release; safe to ignore.'
+              fi
+              gh release upload "$TAG" "$ASSET" --clobber
+
+        - name: Prune superseded assets
+          if: steps.existing.outputs.hit != 'true'
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github-token }}
+              TAG: ${{ inputs.release-tag }}
+              KEEP: ${{ inputs.keep-assets }}
+          run: |
+              set -euo pipefail
+              # Each asset is several hundred MB, so an unbounded tag would grow
+              # without limit. Dropping the oldest only costs those lockfiles a
+              # fallback to the existing local-install path.
+              mapfile -t stale < <(
+                  gh release view "$TAG" --json assets \
+                      -q ".assets | sort_by(.createdAt) | reverse | .[${KEEP}:] | .[].name" 2>/dev/null || true
+              )
+              ((${#stale[@]} > 0)) || {
+                  echo "nothing to prune (keeping ${KEEP})"
+                  exit 0
+              }
+              for name in "${stale[@]}"; do
+                  [[ -n "$name" ]] || continue
+                  echo "pruning ${name}"
+                  gh release delete-asset "$TAG" "$name" --yes || true
+              done

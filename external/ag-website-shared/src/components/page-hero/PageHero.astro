@@ -25,32 +25,24 @@ const hasSubhead = subhead != null || Astro.slots.has('subhead');
 ---
 
 <section class:list={[styles.pageHero, tone === 'brand' && styles.pageHeroBrand]}>
-    {
-        hasEyebrow && (
-            <p class={styles.pageHeroEyebrow}>
-                <slot name="eyebrow">{eyebrow}</slot>
-            </p>
-        )
-    }
-    {
-        hasHeadline && (
-            <h1 class={styles.pageHeroHeadline}>
-                <slot name="headline">{headline}</slot>
-            </h1>
-        )
-    }
-    {
-        hasSubhead && (
-            <p class={styles.pageHeroSubhead}>
-                <slot name="subhead">{subhead}</slot>
-            </p>
-        )
-    }
-    {
-        Astro.slots.has('default') && (
-            <div class={styles.pageHeroContent}>
-                <slot />
-            </div>
-        )
-    }
+    {hasEyebrow && (
+        <p class={styles.pageHeroEyebrow}>
+            <slot name="eyebrow">{eyebrow}</slot>
+        </p>
+    )}
+    {hasHeadline && (
+        <h1 class={styles.pageHeroHeadline}>
+            <slot name="headline">{headline}</slot>
+        </h1>
+    )}
+    {hasSubhead && (
+        <p class={styles.pageHeroSubhead}>
+            <slot name="subhead">{subhead}</slot>
+        </p>
+    )}
+    {Astro.slots.has('default') && (
+        <div class={styles.pageHeroContent}>
+            <slot />
+        </div>
+    )}
 </section>

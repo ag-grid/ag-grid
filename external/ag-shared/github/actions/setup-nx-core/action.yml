@@ -243,7 +243,7 @@ runs:
           # cache-folder) cannot silently point restore/save at the wrong (empty) path.
           # Gated to the cases where the yarn cache restore/save can run. Runners are
           # Linux-only, so no cross-OS path handling is needed.
-          if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install'
+          if: inputs.cache_mode != 'off'
           id: yarn_cache_dir
           shell: bash
           run: echo "dir=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
@@ -257,22 +257,30 @@ runs:
           # and simply ignored.
           #
           # Only restored when a tarball-fetching `yarn install` will actually run — i.e.
-          # NOT on `no-install` jobs (integrity check only) and NOT when node_modules was an
-          # exact hit (the common warm path: only `yarn postinstall` runs, no tarballs). This
-          # avoids downloading/extracting a large cache on the majority of jobs that never
-          # install. (The rare exact-hit-but-integrity-fails recovery path installs cold — an
-          # accepted trade-off vs restoring on every warm job.) Saved only in rw (below).
+          # NOT when node_modules was an exact hit (the common warm path: only `yarn
+          # postinstall` or an integrity check runs, no tarballs). This avoids downloading/
+          # extracting the cache on the majority of jobs that never install. `no-install` jobs
+          # are included: on an inexact node_modules restore they install to reconcile the
+          # tree (see "yarn install (skipping postinstall)"), and without this cache that
+          # install downloads everything. This is what lets jobs that deliberately start
+          # before init (e.g. a website build) take the stale path cheaply. (The rare
+          # exact-hit-but-integrity-fails recovery path installs cold — an accepted
+          # trade-off vs restoring on every warm job.) Saved only in rw (below).
           #
           # Also skipped for `yarn_postinstall: false` in ro mode: the only install step for
           # `false` is gated on rw, so an ro+false job never installs and a restore would be
           # wasted (matters only on an inexact node_modules restore — a degraded path).
-          if: inputs.cache_mode != 'off' && inputs.yarn_postinstall != 'no-install' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw') && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
+          #
+          # The key carries runner.arch because saved caches are hollowed for the saving
+          # runner's architecture (see "Hollow yarn cache"): a runner on another arch would
+          # find its native packages present-but-empty and never re-download them.
+          if: inputs.cache_mode != 'off' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw') && steps.cache_rw.outputs.cache-hit != 'true' && steps.cache_ro.outputs.cache-hit != 'true'
           id: yarn_cache
           uses: actions/cache/restore@v6
           with:
               path: ${{ steps.yarn_cache_dir.outputs.dir }}
-              key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
-              restore-keys: yarn-cache-${{ runner.os }}-
+              key: yarn-cache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.node_modules_hash }}
+              restore-keys: yarn-cache-${{ runner.os }}-${{ runner.arch }}-
 
         - name: yarn install
           if: inputs.yarn_postinstall == 'true'
@@ -353,18 +361,31 @@ runs:
               path: ${{ inputs.node_modules_paths }}
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
 
+        - name: Hollow yarn cache
+          # Shrink the download cache before saving it (~2.5 GB -> ~0.2 GB compressed).
+          # yarn v1 fetches every platform's optional native binaries and only checks
+          # os/cpu afterwards, so most of the cache is packages this runner never links.
+          # See hollow-yarn-cache.sh for why they are hollowed rather than deleted.
+          # Gated identically to "Save yarn cache".
+          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
+          shell: bash
+          env:
+              YARN_CACHE_DIR: ${{ steps.yarn_cache_dir.outputs.dir }}
+          run: bash "${{ github.action_path }}/hollow-yarn-cache.sh" "${YARN_CACHE_DIR}"
+
         - name: Save yarn cache
           # Save the download cache warmed by yarn install (see "Restore yarn cache").
           # rw writers (e.g. the init job) warm it; ro readers (matrix jobs) only restore.
           # Warmed on the default branch (latest), whose caches GitHub makes readable by all
           # branches, so a single warm propagates.
           #
-          # Gated to mirror the restore: only when a real install ran (not `no-install`, and
-          # node_modules was not an exact hit) and the yarn cache itself was not an exact hit
-          # (nothing new to save otherwise). Without this, an exact-node_modules-hit job would
-          # skip the restore yet still attempt a save of an unpopulated/stale cache dir.
-          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'no-install' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
+          # Gated to mirror the restore: only when a real install ran (node_modules was not an
+          # exact hit, so the install step reconciled it) and the yarn cache itself was not an
+          # exact hit (nothing new to save otherwise). Without this, an exact-node_modules-hit
+          # job would skip the restore yet still attempt a save of an unpopulated/stale cache
+          # dir.
+          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
           uses: actions/cache/save@v6
           with:
               path: ${{ steps.yarn_cache_dir.outputs.dir }}
-              key: yarn-cache-${{ runner.os }}-${{ inputs.node_modules_hash }}
+              key: yarn-cache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.node_modules_hash }}

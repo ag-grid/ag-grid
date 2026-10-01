@@ -546,7 +546,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
      */
     @Input({ transform: booleanAttribute }) public suppressCopySingleCellRanges: boolean | undefined = undefined;
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+    /** Set to `true` to always remove a trailing empty line from pasted data.
+     * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+     * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
      * @default false
      * @agModule `ClipboardModule`
      */
@@ -652,10 +654,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressGroupChangesColumnVisibility:
-        | boolean
-        | 'suppressHideOnGroup'
-        | 'suppressShowOnUngroup'
-        | undefined = undefined;
+        boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup' | undefined = undefined;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
      * @default false
      * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
@@ -935,9 +934,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `IntegratedChartsModule`
      */
     @Input() public chartMenuItems:
-        | (DefaultChartMenuItem | MenuItemDef<TData>)[]
-        | GetChartMenuItems<TData>
-        | undefined = undefined;
+        (DefaultChartMenuItem | MenuItemDef<TData>)[] | GetChartMenuItems<TData> | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
@@ -1061,9 +1058,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressChangeDetection: boolean | undefined = undefined;
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
-     * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
      * @default false
      * @initial
+     * @deprecated v36.3 Use `enableDevValidations({ debug: true })` instead.
      */
     @Input({ transform: booleanAttribute }) public debug: boolean | undefined = undefined;
     /** Show or hide the loading UI.

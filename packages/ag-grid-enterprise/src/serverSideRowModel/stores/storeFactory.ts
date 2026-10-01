@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColumnModel,
     GetServerSideGroupLevelParamsParams,
@@ -70,7 +71,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.rowAutoHeight?.active) {
+        if (this.rowAutoHeight && hasVisibleAutoHeightCol(this.colModel.colsList)) {
             this.warn(204);
             return undefined;
         }
@@ -108,3 +109,14 @@ export class StoreFactory extends BeanStub implements NamedBean {
         return res;
     }
 }
+
+/** Visible, not displayed: a collapsed group can show an auto-height column after the store stopped deciding. */
+const hasVisibleAutoHeightCol = (cols: AgColumn[]): boolean => {
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
+        if (col.colDef.autoHeight && col.visible) {
+            return true;
+        }
+    }
+    return false;
+};

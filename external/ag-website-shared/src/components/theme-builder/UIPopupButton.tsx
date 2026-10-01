@@ -1,3 +1,4 @@
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
     type Placement,
@@ -125,6 +126,20 @@ const Button = styled('button')`
     }
 `;
 
+// An animation name written into a template literal is global - Emotion scopes
+// only the ones this helper generates - so two components that each call theirs
+// `scaleIn` share whichever the page inserted last.
+const slideIn = keyframes`
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+`;
+
 const DropdownArea = styled(Card)`
     z-index: 10010; // above a sticky site header (e.g. Studio's z-index:10002) so the dropdown isn't hidden
     position: absolute;
@@ -134,20 +149,7 @@ const DropdownArea = styled(Card)`
     overflow: auto;
 
     .dropdownWrapper {
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0);
-                transform: translateY(5px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-                transform: translateY(0px);
-            }
-        }
-
         animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        animation: scaleIn 0.1s;
+        animation: ${slideIn} 0.1s;
     }
 `;

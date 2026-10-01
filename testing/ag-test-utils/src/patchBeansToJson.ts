@@ -1,3 +1,5 @@
+import { expect } from 'vitest';
+
 import type { GridApi } from 'ag-grid-community';
 import { ROOT_NODE_ID } from 'ag-grid-community';
 
@@ -47,6 +49,28 @@ function beanToJson(this: any): string {
         return `Bean#${debugId(this)}`;
     }
 }
+
+/**
+ * Two beans compare by identity: `toMatchObject` otherwise recurses into every property of an expected bean, even
+ * the same instance, walking the whole cyclic graph for minutes. A bean against a plain object still matches by shape.
+ */
+function beanIdentityTester(a: unknown, b: unknown): boolean | undefined {
+    if (Object.is(a, b)) {
+        return true;
+    }
+    return isBean(a) && isBean(b) ? false : undefined;
+}
+
+/** Every bean and row node holds the shared bean collection, so this needs no patched prototype. */
+function isBean(value: unknown): boolean {
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+    const beans = (value as { beans?: unknown }).beans;
+    return typeof beans === 'object' && beans !== null && 'gos' in beans;
+}
+
+expect.addEqualityTesters([beanIdentityTester]);
 
 /** The prototype directly below `Object.prototype` for `obj` (its root class prototype). */
 function rootPrototypeOf(obj: object): any {

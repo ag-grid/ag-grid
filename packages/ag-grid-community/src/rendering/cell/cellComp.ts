@@ -96,7 +96,7 @@ export class CellComp extends Component {
 
         // if doing a cell span, need to wrap the cell in a container with background-color to avoid
         // transparent cells displaying row lines
-        if (cellCtrl.isCellSpanning()) {
+        if (cellCtrl.cellSpan !== null) {
             wrapperDiv = _createElement({
                 tag: 'div',
                 cls: 'ag-spanned-cell-wrapper',
@@ -191,11 +191,6 @@ export class CellComp extends Component {
         }
 
         this.rowDraggingComp?.refreshVisibility();
-
-        // re-append row resizer if it was cleared from eCell (e.g. when no eCellWrapper exists)
-        if (this.rowResizerElement && !this.rowResizerElement.parentElement) {
-            this.eCell.appendChild(this.rowResizerElement);
-        }
     }
 
     private setEditDetails(
@@ -309,6 +304,16 @@ export class CellComp extends Component {
         const escapedValue = _toString(valueToDisplay);
         if (escapedValue != null) {
             eParent.textContent = escapedValue;
+        }
+        this.reattachDecorations(eParent);
+    }
+
+    /** Showing the value clears its parent, which holds the range handle, and without a wrapper the row resizer. */
+    private reattachDecorations(eParent: HTMLElement): void {
+        this.cellCtrl.rangeFeature?.reattachHandle(eParent);
+        const rowResizer = this.rowResizerElement;
+        if (rowResizer && !rowResizer.parentElement) {
+            this.eCell.appendChild(rowResizer);
         }
     }
 
@@ -446,6 +451,7 @@ export class CellComp extends Component {
             const eParent = this.getParentOfValue();
             _clearElement(eParent);
             eParent.appendChild(cellGui);
+            this.reattachDecorations(eParent);
         }
     }
 

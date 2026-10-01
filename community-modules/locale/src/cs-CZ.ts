@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     clearFilter: 'Vymazat',
     cancelFilter: 'Zrušit',
     cancelColumnToolPanel: 'Zrušit',
+    resetColumnToolPanel: 'Obnovit',
 
     // Filter Titles
     textFilter: 'Textový filtr',

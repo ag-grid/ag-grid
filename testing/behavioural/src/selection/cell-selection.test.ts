@@ -8,16 +8,19 @@ import {
     assertSelectedCellRanges,
     asyncSetTimeout,
     fireGridPointerDown,
+    nextAnimationFrame,
     waitForEvent,
 } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import {
+    AgPromise,
     ClientSideRowModelModule,
     NumberEditorModule,
     PaginationModule,
     PinnedRowModule,
+    RenderApiModule,
     TextEditorModule,
     agTestIdFor,
     getGridElement,
@@ -38,6 +41,7 @@ describe('Cell Selection', () => {
             NumberEditorModule,
             PaginationModule,
             PinnedRowModule,
+            RenderApiModule,
             TextEditorModule,
         ],
     });
@@ -114,6 +118,95 @@ describe('Cell Selection', () => {
     });
 
     describe('Fill Handle', () => {
+        const sportCell = (api: GridApi) =>
+            getByTestId(getGridElement(api)! as HTMLElement, agTestIdFor.cell('football', 'sport'));
+        const sports = (api: GridApi) => {
+            const values: string[] = [];
+            api.forEachNode((node) => values.push(api.getCellValue({ rowNode: node, colKey: 'sport' }) ?? ''));
+            return values;
+        };
+
+        test('the fill handle still fills after the cell is edited', async () => {
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: { handle: { mode: 'fill' } },
+                defaultColDef: { editable: true },
+                getRowId: (params) => params.data.sport,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('tennis', 'sport')));
+            const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+            fireGridPointerDown(cell);
+            await cellSelectionChanged;
+            await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+
+            api.startEditingCell({ rowIndex: 2, colKey: 'sport' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+            api.stopEditing(true);
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+
+            await userEvent.dblClick(await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle())));
+
+            await waitFor(() =>
+                expect(sports(api)).toEqual(['football', 'rugby', 'tennis', 'tennis', 'tennis', 'tennis', 'tennis'])
+            );
+        });
+
+        test('a cell redrawn while its range refresh is pending leaves no fill handle behind', async () => {
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: { handle: { mode: 'fill' } },
+                getRowId: (params) => params.data.sport,
+            });
+            const football = api.getRowNode('football')!;
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['sport'] });
+            await nextAnimationFrame();
+            const cellBeforeRedraw = sportCell(api);
+
+            api.refreshCells({ rowNodes: [football], columns: ['sport'], force: true });
+            api.redrawRows({ rowNodes: [football] });
+            await waitFor(() => expect(sportCell(api).querySelector('.ag-fill-handle')).not.toBeNull());
+            // frames run in the order they were asked for, so the old cell's pending refresh has run after this one
+            await nextAnimationFrame();
+
+            expect(sportCell(api)).not.toBe(cellBeforeRedraw);
+            expect(cellBeforeRedraw.querySelector('.ag-fill-handle')).toBeNull();
+        });
+
+        test('a cell renderer whose init resolves late keeps the fill handle', async () => {
+            const resolveInits: (() => void)[] = [];
+            class AsyncInitRenderer implements ICellRendererComp {
+                private readonly eGui = document.createElement('span');
+                public init(params: ICellRendererParams): AgPromise<void> {
+                    this.eGui.textContent = params.value;
+                    return new AgPromise<void>((resolve) => resolveInits.push(resolve));
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            }
+            const [api] = await createGrid({
+                columnDefs: [{ field: 'sport', cellRenderer: AsyncInitRenderer }],
+                rowData,
+                cellSelection: { handle: { mode: 'fill' } },
+                getRowId: (params) => params.data.sport,
+            });
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['sport'] });
+            await waitFor(() => expect(sportCell(api).querySelector('.ag-fill-handle')).not.toBeNull());
+
+            for (const resolve of resolveInits.splice(0)) {
+                resolve();
+            }
+
+            await waitFor(() => expect(sportCell(api).textContent).toBe('football'));
+            await waitFor(() => expect(sportCell(api).querySelector('.ag-fill-handle')).not.toBeNull());
+        });
+
         test('Double click on fill handle fills down', async () => {
             const [api] = await createGrid({
                 columnDefs,
@@ -147,12 +240,7 @@ describe('Cell Selection', () => {
 
             await fillEnd;
 
-            const sports: string[] = [];
-            api.forEachNode((node) => {
-                sports.push(api.getCellValue({ rowNode: node, colKey: 'sport' }) ?? '');
-            });
-
-            expect(sports).toEqual(['football', 'rugby', 'tennis', 'tennis', 'tennis', 'tennis', 'tennis']);
+            expect(sports(api)).toEqual(['football', 'rugby', 'tennis', 'tennis', 'tennis', 'tennis', 'tennis']);
 
             await new GridColumns(api, 'columns').checkColumns(`
                 CENTER
@@ -490,6 +578,36 @@ describe('Cell Selection', () => {
                 PINNED_BOTTOM id:b-bottom-2 sport:"tennis" year:2018 amount:235 day:"thursday"
                 PINNED_BOTTOM id:b-bottom-6 sport:"rowing" year:2019 amount:32 day:"saturday"
             `);
+        });
+
+        test('Ctrl+A range ends on the last pinned bottom row', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: true,
+                enableRowPinning: true,
+                isRowPinned: (node) => {
+                    if (node.data?.year < 2010) {
+                        return 'top';
+                    }
+                    if (node.data?.year < 2020) {
+                        return 'bottom';
+                    }
+                    return null;
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'sport')));
+            await userSession.click(cell);
+            await userSession.keyboard('{Control>}a{/Control}');
+
+            const ranges = api.getCellRanges()!;
+            expect(ranges).toHaveLength(1);
+            expect(ranges[0].startRow).toEqual({ rowIndex: 0, rowPinned: 'top' });
+            expect(ranges[0].endRow).toEqual({ rowIndex: 1, rowPinned: 'bottom' });
         });
 
         test('De-selecting column does not affect existing ranges', async () => {

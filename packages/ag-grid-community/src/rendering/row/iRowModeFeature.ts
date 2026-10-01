@@ -33,6 +33,7 @@ export interface IRowModeFeature {
     getModeCellRenderers?(): (ICellRenderer | null | undefined)[];
     setupFocus?(): void;
     onRowFocused?(event?: CellFocusedEvent): void;
+    renderFocusedCell?(): void;
     getRowContentElement?(): HTMLElement | null;
     getNavigationColumn?(): AgColumn;
     onKeyboardNavigate?(keyboardEvent: KeyboardEvent): void;
@@ -40,6 +41,9 @@ export interface IRowModeFeature {
     onRowMouseDown?(mouseEvent: MouseEvent): void;
     setupDetailRowAutoHeight?(eGui: HTMLElement): void;
     prepareInitialCellCtrls?(): void;
+    refreshSpans?(): void;
+    getCellCtrl?(column: AgColumn, skipColSpanSearch: boolean): CellCtrl | undefined;
+    releaseKeptCells?(afterEdit: boolean): void;
     getInitialCellCtrls?(containerType: RowContainerType): CellCtrl[] | null;
 
     // Target resolution

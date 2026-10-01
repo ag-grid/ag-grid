@@ -8,7 +8,5 @@ const framework = getFrameworkFromPath(pathname);
 const { data: seedRepos } = (await getEntry('seedProjects', 'grid-seed-projects')) as CollectionEntry<'seedProjects'>;
 ---
 
-{
-    /* SSR enabled because this component ha code samples that we want to appear in static HTML to be indexed by Algolia */
-}
+{/* SSR enabled because this component ha code samples that we want to appear in static HTML to be indexed by Algolia */}
 <LicenseSetup client:load library="grid" framework={framework} path={pathname} seedRepos={seedRepos} />

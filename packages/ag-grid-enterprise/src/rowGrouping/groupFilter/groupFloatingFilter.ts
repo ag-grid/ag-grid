@@ -10,7 +10,13 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
-import { AgInputTextField, AgPromise, Component, _isGroupMultiAutoColumn } from 'ag-grid-community';
+import {
+    AgInputTextField,
+    AgPromise,
+    Component,
+    _getFloatingFilterAriaLabel,
+    _isGroupMultiAutoColumn,
+} from 'ag-grid-community';
 
 import type { GroupFilter } from './groupFilter';
 import type { GroupFilterHandler } from './groupFilterHandler';
@@ -86,9 +92,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private setParams(): void {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true);
-        const translate = this.getLocaleTextFunc();
-        this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
+        this.eFloatingFilterText?.setInputAriaLabel(
+            _getFloatingFilterAriaLabel(this.beans, this.params.column as AgColumn, this.getLocaleTextFunc())
+        );
     }
 
     private addHandlerListeners(params: FloatingFilterDisplayParams, listener: () => void): void {

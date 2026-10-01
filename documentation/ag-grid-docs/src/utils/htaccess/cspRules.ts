@@ -112,13 +112,13 @@ const hashInlineScript = (source: string): string =>
 //      hash the inline <script> contents in dist and diff against the list below.)
 //   4. Replace the hashes below with the new values, and bump
 //      ASTRO_HYDRATION_HASHES_VERIFIED_FOR to the new Astro version.
-export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '6.1.9';
+export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '7.3.4';
 const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='", // client:load bootstrap
     "'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc='", // client:only bootstrap
     "'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q='", // client:visible bootstrap
     "'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='", // client:idle bootstrap
-    "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
+    "'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U='", // <astro-island> hydration runtime
 ];
 
 // Inline scripts injected by third parties — the shared Google Tag Manager container and the
@@ -152,14 +152,14 @@ const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.
 // all-pages tag that installs one `submit` listener and POSTs them to MAKE_WEBHOOK_HOST. Both
 // read location.search via URLSearchParams and reach the form through the submit event's
 // target, which is what keeps them free of the interpolation that would unpin these digests.
-const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
+const GTM_UTM_CAPTURE_HASH = "'sha256-UZ79CQlmQa9u4xp1a60kP2//w3o9IvBsC2tdqv57moc='";
 const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
 
 // An updated version of the GTM UTM-webhook tag above: the submit listener adds a third
 // `true` argument to addEventListener, switching it to the capturing phase — otherwise
 // byte-identical to GTM_UTM_WEBHOOK_HASH. Kept alongside it until the rollout is complete
 // and the old hash is confirmed unused. AG-3390.
-const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='";
+const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-7slCn/usH14D/QjSBhHPAkSInIZY56XqT8LTtYE71U8='";
 
 // Inline script used by the contact form.
 const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m8PkxY='";

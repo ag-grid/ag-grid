@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     clearFilter: 'Očisti',
     cancelFilter: 'Otkaži',
     cancelColumnToolPanel: 'Otkaži',
+    resetColumnToolPanel: 'Resetuj',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',

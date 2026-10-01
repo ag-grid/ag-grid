@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     clearFilter: 'Обриши',
     cancelFilter: 'Откажи',
     cancelColumnToolPanel: 'Откажи',
+    resetColumnToolPanel: 'Ресетуј',
 
     // Filter Titles
     textFilter: 'Текстуални филтер',

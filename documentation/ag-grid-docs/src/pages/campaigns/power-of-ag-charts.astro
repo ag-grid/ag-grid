@@ -51,7 +51,9 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
     <div class={styles.homepageHero}>
         <div class:list={[styles.heroInner, 'layout-max-width-small']}>
             <div class={styles.heroHeadings}>
-                <h1>Enhance your Insights with <span class={styles.noWrap}>AG Charts</span> Enterprise</h1>
+                <h1>
+                    Enhance your Insights with <span class={styles.noWrap}>AG Charts</span> Enterprise
+                </h1>
 
                 <h2>
                     Access advanced features and chart types without any additional development. Simply update your
@@ -62,9 +64,13 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
                     <a
                         href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
                         target="_blank"
-                        class="button-secondary">See the charts <Icon name="chevronRight" /></a
+                        class="button-secondary"
                     >
-                    <a href={MAILTO_HREF} class="button-secondary">Buy now <Icon name="email" /></a>
+                        See the charts <Icon name="chevronRight" />
+                    </a>
+                    <a href={MAILTO_HREF} class="button-secondary">
+                        Buy now <Icon name="email" />
+                    </a>
                 </div>
             </div>
 
@@ -78,16 +84,14 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
         </div>
 
         <div class={styles.quotesOuter}>
-            {
-                QUOTES_DATA.map(({ quote, source }) => {
-                    return (
-                        <div class={styles.quote}>
-                            <blockquote>{quote}</blockquote>
-                            <p class="text-sm">– {source}</p>
-                        </div>
-                    );
-                })
-            }
+            {QUOTES_DATA.map(({ quote, source }) => {
+                return (
+                    <div class={styles.quote}>
+                        <blockquote>{quote}</blockquote>
+                        <p class="text-sm">– {source}</p>
+                    </div>
+                );
+            })}
         </div>
 
         <div class={styles.campaignBenefitsContainer}>
@@ -108,8 +112,10 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
                 <a
                     href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
                     target="_blank"
-                    class="button-tertiary text-md">View Gallery <Icon name="arrowRight" /></a
+                    class="button-tertiary text-md"
                 >
+                    View Gallery <Icon name="arrowRight" />
+                </a>
             </div>
 
             <div class={styles.campaignBenefitsList}>
@@ -130,7 +136,9 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
                     <li>Export your visualisations to images and share them across your organisation.</li>
                     <li>Take advantage of exclusive bundle pricing for existing AG Grid customers.</li>
                 </ul>
-                <a href={MAILTO_HREF} class="button-tertiary text-md">Contact Sales <Icon name="email" /></a>
+                <a href={MAILTO_HREF} class="button-tertiary text-md">
+                    Contact Sales <Icon name="email" />
+                </a>
             </div>
         </div>
 
@@ -174,7 +182,10 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
                         <b>Access Support</b>
                         <br />
                         Access dedicated support from our engineering team via{' '}
-                        <a href={ZENDESK_URL + UTM_TRACKER} target="_blank">Zendesk</a>.
+                        <a href={ZENDESK_URL + UTM_TRACKER} target="_blank">
+                            Zendesk
+                        </a>
+                        .
                     </p>
                 </div>
             </div>
@@ -191,7 +202,9 @@ const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAM
 
             <div>
                 View our
-                <a href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER} target="_blank">gallery of charts</a>
+                <a href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER} target="_blank">
+                    gallery of charts
+                </a>
                 or contact sales at
                 <a href={MAILTO_HREF}>info@ag-grid.com</a>.
             </div>

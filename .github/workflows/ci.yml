@@ -563,6 +563,7 @@ jobs:
       fail-fast: false
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
+      previously_deployed_sha: ${{ steps.previously_deployed.outputs.sha }}
     steps:
       - name: Checkout
         id: checkout
@@ -592,6 +593,15 @@ jobs:
 
       - name: validate base url
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
+
+      - name: Read commit currently on staging
+        # Base of the staging-deploy notification; read before the deploy replaces it.
+        id: previously_deployed
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: |
+          sha=$(curl --silent --fail --max-time 30 https://grid-staging.ag-grid.com/debug/meta.json | node -pe 'JSON.parse(require("fs").readFileSync(0, "utf8")).git.hash' || true)
+          echo "sha=${sha}" >> $GITHUB_OUTPUT
+          echo "Commit currently on staging: ${sha:-<unknown>}"
 
       - name: Deploy to Staging
         id: deploy_to_staging
@@ -815,10 +825,12 @@ jobs:
         uses: ./external/ag-shared/github/actions/slack-ci-notification
         with:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_API_TOKEN: ${{ secrets.SLACK_USER_CONFIG_NOTION_API_TOKEN }}
           NOTION_DATA_SOURCE_ID: ${{ secrets.SLACK_USER_CONFIG_NOTION_DATA_SOURCE_ID }}
           AG_PROJECT: AgGrid
           LAST_SUCCESSFUL_SHA: ${{ steps.find_latest_sha.outputs.sha }}
+          LAST_DEPLOYED_SHA: ${{ needs.docs.outputs.previously_deployed_sha }}
           TEAM_CHANNEL: ${{ env.SLACK_CHANNEL }}
           DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}

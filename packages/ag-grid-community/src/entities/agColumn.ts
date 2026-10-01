@@ -277,7 +277,8 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const colModel = this.beans.colModel;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
@@ -288,7 +289,12 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             this.beans.rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
+        const colDefChangedInBuild = colModel.colDefChangedInBuild;
+        if (colDefChangedInBuild) {
+            colDefChangedInBuild.push(this);
+        } else {
+            this.dispatchColEvent('colDefChanged', source);
+        }
         this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
@@ -785,8 +791,7 @@ export class AgColumn<TValue = any>
             return 1;
         }
         const params: ColSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const colSpan = colSpanFn(params);
-        return colSpan < 1 ? 1 : colSpan; // colSpan must be number equal to or greater than 1
+        return toCellSpan(colSpanFn(params));
     }
 
     public getRowSpan(rowNode: IRowNode): number {
@@ -795,8 +800,7 @@ export class AgColumn<TValue = any>
             return 1;
         }
         const params: RowSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const rowSpanValue = rowSpan(params);
-        return rowSpanValue < 1 ? 1 : rowSpanValue; // rowSpan must be number equal to or greater than 1
+        return toCellSpan(rowSpan(params));
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
@@ -913,6 +917,9 @@ export class AgColumn<TValue = any>
         this.colEventSvc?.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
     }
 }
+
+/** Whole cells, at least one; NaN counts as one. */
+const toCellSpan = (span: number): number => (span >= 2 ? Math.floor(span) : 1);
 
 /** Convert input into a SortDef: a valid SortDef passes through, otherwise direction and type are normalised. */
 export const getSortDefFromInput = (input?: unknown): SortDef => {

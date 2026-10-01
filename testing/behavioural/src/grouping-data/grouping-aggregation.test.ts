@@ -486,4 +486,71 @@ describe('ag-grid grouping aggregation', () => {
             · · └── LEAF id:5 region:"US" category:"B" price:30 qty:2 total:60
         `);
     });
+
+    test('a group total row turned off and on again takes the height getRowHeight gives it, not its group', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'v' }],
+            rowData: [
+                { g: 'a', v: 1 },
+                { g: 'a', v: 2 },
+            ],
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            getRowHeight: ({ node }) => (node.footer ? (node.sibling ? 30 : 99) : 50),
+        });
+        expect(api.getDisplayedRowAtIndex(3)!.rowHeight).toBe(30);
+
+        api.setGridOption('groupTotalRow', undefined);
+        expect(api.getDisplayedRowCount()).toBe(3);
+        api.setGridOption('groupTotalRow', 'bottom');
+
+        const total = api.getDisplayedRowAtIndex(3)!;
+        expect(total.footer).toBe(true);
+        expect(total.rowHeight).toBe(30);
+        expect(total.rowTop).toBe(150);
+        expect(api.getDisplayedRowAtIndex(0)!.rowHeight).toBe(50);
+    });
+
+    test('a group total row turned on after its group was sized with setRowHeight asks getRowHeight', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'v' }],
+            rowData: [
+                { g: 'a', v: 1 },
+                { g: 'a', v: 2 },
+            ],
+            groupDefaultExpanded: -1,
+            getRowHeight: ({ node }) => (node.footer ? 30 : 50),
+        });
+        const group = api.getDisplayedRowAtIndex(0)!;
+        group.setRowHeight(80);
+        api.onRowHeightChanged();
+
+        api.setGridOption('groupTotalRow', 'bottom');
+
+        const total = api.getDisplayedRowAtIndex(3)!;
+        expect(total.footer).toBe(true);
+        expect(total.rowHeight).toBe(30);
+        expect(total.rowTop).toBe(180);
+        expect(group.rowHeight).toBe(80);
+    });
+
+    test('group total rows built with the grid are asked their height by the row model, not before', () => {
+        let callsBeforePositioned = 0;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'v' }],
+            rowData: Array.from({ length: 300 }, (_, i) => ({ g: 'g' + i, v: i })),
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            getRowHeight: ({ node }) => {
+                // The model estimates rows out of view, so an early call is one it would not have made.
+                if (node.footer && node.rowIndex == null) {
+                    ++callsBeforePositioned;
+                }
+                return node.footer ? 30 : 50;
+            },
+        });
+
+        expect(api.getDisplayedRowAtIndex(2)!.rowHeight).toBe(30);
+        expect(callsBeforePositioned).toBe(0);
+    });
 });

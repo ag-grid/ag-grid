@@ -78,10 +78,24 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 // before the extension so nested paths still match (e.g. example-assets/space-company-logos/
 // nasa.png, images/ag-logos/png-logos/react.png) - a real example-assets/flags/index.html
 // proves the extension allowlist, not the lack of nesting, is what has to keep HTML out.
+//
+// theme-icons (public/theme-icons/<theme>/<icon>.svg, plus a per-theme <theme>-icons.zip
+// bundle) is the same asset class - unhashed, build-time static, never a content page - so it
+// shares this rule rather than getting its own. zip is only needed for those bundle downloads;
+// none of images/example-assets/example are expected to contain one today, but allowing it
+// there too is no more risky than the rest of the allowlist.
+//
+// "videos" (public/videos/*.json|png here; public/videos/*.mp4|webm on the /studio side)
+// belongs for the same reason - and matters beyond grid's own directory: this rule is
+// unanchored on the directory segment (matches the substring anywhere in the path, same as
+// images/example-assets already did), so it cascades via nested .htaccess merge into
+// /charts/* and /studio/* too. Confirmed live: /studio/scripts/*.js and /studio/images/* were
+// already getting this header for free through that cascade, but /studio/videos/* was not -
+// "videos" was simply missing from the alternation, not a cascade failure.
 const staticAssetCacheRules = `
-# Images and example-page assets: unhashed filenames, so cap staleness with a moderate
-# max-age rather than caching indefinitely.
-Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm)$#"
+# Images, example-page assets, theme icon downloads, and videos: unhashed filenames, so cap
+# staleness with a moderate max-age rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example|theme-icons|videos)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm|zip)$#"
 `;
 
 // public/scripts/ (cookie consent, GTM, video/carousel players, the announcement banner,
@@ -93,6 +107,18 @@ const scriptAssetCacheRules = `
 # Static script bundles: unhashed filenames, so cap staleness with a moderate max-age
 # rather than caching indefinitely.
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
+`;
+
+// A released archive version is permanently immutable, so unlike every other rule in this
+// file this one has no extension allowlist or content-type restriction - everything under it
+// can be cached. Emitted before studioArchiveNoCacheRules and getInFlightArchiveRules, both of
+// which must keep overriding it for their own scope.
+const archiveCacheRules = `
+# Released archive versions: fully immutable, so cache literally everything under them
+# indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
+# no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
+# in-flight block below, which overrides this back to no-cache for that version only.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
 `;
 
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
@@ -296,7 +322,7 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?getting-more-from-your-datagrid-introducing-adaptable(?:/amp)?/?$ https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/ [R=301,NC,L]
+    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/column-pinning/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?whats-new-in-ag-studio-2(?:-0)?(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
@@ -356,6 +382,8 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteRule ^/?free-online-training-for-ag-grid-in-react-and-angular(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/getting-started/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?game-of-charts(?:/amp)?/?$ https://www.ag-grid.com/charts/gallery/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/column-pinning/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?how-to-write-a-podcast-app-using-react(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
@@ -583,6 +611,9 @@ AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
 
+# Apache has no built-in .webp type, so without this the images are served with no Content-Type.
+AddType image/webp .webp
+
 # serve the per-page LLM markdown files as markdown
 AddType text/markdown md
 # ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
@@ -619,6 +650,7 @@ ${documentNoCacheRules}
 ${hashedAssetCacheRules}
 ${staticAssetCacheRules}
 ${scriptAssetCacheRules}
+${archiveCacheRules}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}

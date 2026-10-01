@@ -361,7 +361,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/javascript-data-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
     { from: '/charts/react/radial-gauge', to: 'https://www.ag-grid.com/charts/react/radial-gauge/' },
     { from: '/charts/react/range-bar-series', to: 'https://www.ag-grid.com/charts/react/range-bar-series/' },
-    { from: '/vue-data-grid/', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
     { from: '/charts/react/pyramid-series', to: 'https://www.ag-grid.com/charts/react/pyramid-series/' },
     { from: '/charts/react/ohlc-series', to: 'https://www.ag-grid.com/charts/react/ohlc-series/' },
     { from: '/javascript-charts/bar-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
@@ -2976,10 +2975,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/grid-features/', to: 'https://www.ag-grid.com/' },
     { from: '/vue-data-grid/grid-features/', to: 'https://www.ag-grid.com/' },
 
+    // Only JavaScript: a rule for the other framework roots would shadow their landing hubs.
     { fromPattern: '^/javascript-data-grid/$', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
-    { fromPattern: '^/react-data-grid/$', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
-    { fromPattern: '^/angular-data-grid/$', to: 'https://www.ag-grid.com/angular-data-grid/getting-started/' },
-    { fromPattern: '^/vue-data-grid/$', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
 
     { fromPattern: '^/javascript-charts.*', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { fromPattern: '^/angular-charts.*', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },

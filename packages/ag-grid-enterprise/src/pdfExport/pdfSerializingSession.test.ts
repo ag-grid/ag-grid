@@ -63,7 +63,10 @@ const addColumnHeader = (row: ReturnType<PdfSerializingSession['onNewHeaderRow']
 describe('PdfSerializingSession', () => {
     it('clamps cell spans to the remaining exported columns', () => {
         const session = createSession();
-        const columns = [createColumn('A', 10), createColumn('B', 1), createColumn('C', 1)];
+        // displayed next to each other, as a span needs
+        const columns = [createColumn('A', 10), createColumn('B', 1), createColumn('C', 1)].map(
+            (column, allColsIndex) => Object.assign(column, { allColsIndex })
+        );
         const node = { data: {}, group: false, level: 2, rowIndex: 0, rowPinned: 'top' } as RowNode;
 
         session.prepare(columns);
@@ -80,6 +83,7 @@ describe('PdfSerializingSession', () => {
         expect(rows[0].cells).toHaveLength(1);
         expect(rows[0].cells[0].mergeAcross).toBe(2);
         expect(rows[0]).toMatchObject({ sourceNode: node, rowPinned: 'top', groupLevel: 2 });
+
         expect(rows[0].cells[0]).toMatchObject({
             elementType: 'cell',
             sourceColumn: columns[0],

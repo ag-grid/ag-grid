@@ -48,12 +48,12 @@ const commonThemeProperties: { overrides: AgThemeOverrides } = {
             axes: {
                 number: {
                     line: {
-                        width: 4,
+                        strokeWidth: 4,
                     },
                 },
                 category: {
                     line: {
-                        width: 2,
+                        strokeWidth: 2,
                     },
                     label: {
                         rotation: 0,

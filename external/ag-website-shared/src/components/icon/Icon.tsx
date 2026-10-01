@@ -61,6 +61,7 @@ const SOCIALS_ICON_MAP = {
 const CHARTS_ICON_MAP = {
     chartsBar: CarbonIcon.ChartBar,
     chartsColumn: CarbonIcon.ChartColumn,
+    chartsColumnStacked: CarbonIcon.ChartStacked,
     chartsLine: CarbonIcon.ChartLine,
     chartsArea: CarbonIcon.ChartArea,
     chartsScatter: CarbonIcon.ChartScatter,

@@ -26,15 +26,13 @@ const classForIndex = (idx: number): string => {
 };
 ---
 
-{
-    ctas.length > 0 && (
-        <div class={wrapperClass}>
-            {ctas.map((cta, idx) => (
-                <a href={resolveBryntumHref(cta.href)} class={classForIndex(idx)} target="_blank" rel="noopener">
-                    {cta.text}
-                    <Icon name="chevronRight" />
-                </a>
-            ))}
-        </div>
-    )
-}
+{ctas.length > 0 && (
+    <div class={wrapperClass}>
+        {ctas.map((cta, idx) => (
+            <a href={resolveBryntumHref(cta.href)} class={classForIndex(idx)} target="_blank" rel="noopener">
+                {cta.text}
+                <Icon name="chevronRight" />
+            </a>
+        ))}
+    </div>
+)}

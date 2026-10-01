@@ -1,4 +1,5 @@
 import {
+    _debounce,
     _getInnerWidth,
     _getScrollLeft,
     _isElementChildOfClass,
@@ -12,7 +13,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
-import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import { _isAnimateRows, _isDomLayout, _isServerSideRowModel } from '../gridOptionsUtils';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { VerticalSection } from '../interfaces/iGridSection';
@@ -175,9 +176,18 @@ export class GridBodyCtrl extends BeanStub {
             },
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
+            modelUpdated: setGridRootRole,
             rowResizeStarted: toggleRowResizeStyle,
             rowResizeEnded: toggleRowResizeStyle,
         });
+
+        const masterDetailSvc = this.beans.masterDetailSvc;
+        if (_isServerSideRowModel(this.gos) && masterDetailSvc) {
+            // Individual SSRM row updates can change master status without refreshing the model.
+            this.addManagedListeners(masterDetailSvc, {
+                masterChanged: _debounce(this, setGridRootRole, 0),
+            });
+        }
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
         this.addManagedPropertyListener('enableRtl', updatePinnedColumnStickyOffsets);
@@ -327,6 +337,11 @@ export class GridBodyCtrl extends BeanStub {
         return Math.max(0, this.getViewportWidthWithoutScrollbar(viewportWidth) - this.getPinnedWidth());
     }
 
+    /** Measurement-free, and 0 until something has reported a positive viewport width. */
+    public getReportedCenterWidth(): number {
+        return this.getCenterWidth(this.getReportedViewportWidth());
+    }
+
     public getHorizontalScrollLeft(): number {
         return _getScrollLeft(this.eGridViewport, this.gos.get('enableRtl'));
     }
@@ -348,7 +363,7 @@ export class GridBodyCtrl extends BeanStub {
     public updateColumnViewport(
         afterScroll: boolean = false,
         scrollLeft?: number,
-        centerWidth: number = this.getCenterWidth(this.getReportedViewportWidth())
+        centerWidth: number = this.getReportedCenterWidth()
     ): void {
         this.beans.colViewport.setScrollPosition(
             centerWidth,
@@ -372,6 +387,10 @@ export class GridBodyCtrl extends BeanStub {
             const rowGroupColumnLen = !rowGroupColsSvc ? 0 : rowGroupColsSvc.columns.length;
             const columnsNeededForGrouping = isPivotActive ? 2 : 1;
             isTreeGrid = rowGroupColumnLen >= columnsNeededForGrouping;
+        }
+
+        if (!isTreeGrid && gos.get('masterDetail')) {
+            isTreeGrid = this.beans.masterDetailSvc?.hasExpandableMasterRows() ?? false;
         }
 
         this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');
@@ -548,7 +567,7 @@ export class GridBodyCtrl extends BeanStub {
         const eTarget = target instanceof Element ? target : null;
         const isOnGridViewport =
             eTarget != null && (eTarget === this.eGridViewport || this.eGridViewport.contains(eTarget));
-        const isOnRenderedRow = !!eTarget?.closest('.ag-row, .ag-header-row');
+        const isOnRenderedRow = !!eTarget?.closest('.ag-row, .ag-spanned-row, .ag-header-row');
         const isOnPinnedTopSection = !!eTarget?.closest('.ag-grid-pinned-top-rows');
 
         if (isOnGridViewport && !isOnRenderedRow && !isOnPinnedTopSection) {

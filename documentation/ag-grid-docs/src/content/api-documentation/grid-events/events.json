@@ -473,6 +473,9 @@
             "more": {
                 "name": "Grid Pre-Destroyed",
                 "url": "./grid-lifecycle/#grid-pre-destroyed"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["GridPreDestroyedEvent", "GridState"]
             }
         },
         "firstDataRendered": {
@@ -486,6 +489,9 @@
             "more": {
                 "name": "Grid State",
                 "url": "./grid-state/"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["StateUpdatedEvent", "GridState"]
             }
         }
     },
