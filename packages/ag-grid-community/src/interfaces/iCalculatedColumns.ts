@@ -4,13 +4,25 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { AgGridCommon } from './iCommon';
 import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
 type CalculatedColumnApplyMode = 'live' | 'deferred';
 
-export interface CalculatedColumnsOptions {
+export interface CalculatedColumnProcessColDefParams<TData = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
+    /**
+     * The column's own definition: the properties set in the Calculated Column dialog, before `defaultColDef`
+     * and column types are merged in. A fresh copy is passed on every call.
+     */
+    colDef: ColDef<TData>;
+}
+
+export interface CalculatedColumnsOptions<TData = any> {
     /**
      * Cell data types shown in the Calculated Column dialog type selector.
      * Values must be built-in cell data types or custom types defined in `dataTypeDefinitions`.
@@ -33,9 +45,24 @@ export interface CalculatedColumnsOptions {
      * @default 'live'
      */
     applyMode?: CalculatedColumnApplyMode;
+    /**
+     * Customise the Column Definition of calculated columns created in the Calculated Column dialog, for example
+     * to add a filter, enable aggregation or set a value formatter. Not called for calculated columns defined in
+     * `columnDefs`.
+     *
+     * Called every time the column is built. Return the full Column Definition to use; returning `params.colDef`
+     * or `undefined` leaves the column unchanged. The returned definition takes precedence over `defaultColDef`
+     * and column types. `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and
+     * `cellEditorSelector` are always overridden for calculated columns.
+     *
+     * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
+     * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.
+     * Do not call column APIs from this callback.
+     */
+    processColDef?: (params: CalculatedColumnProcessColDefParams<TData>) => ColDef<TData> | undefined;
 }
 
-export type CalculatedColumnsGridOption = boolean | CalculatedColumnsOptions;
+export type CalculatedColumnsGridOption<TData = any> = boolean | CalculatedColumnsOptions<TData>;
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
     calculatedExpression: string;

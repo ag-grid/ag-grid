@@ -27,6 +27,7 @@ import type {
 import {
     BeanStub,
     _addColumnDefaultAndTypes,
+    _addGridCommonParams,
     _createUserColumn,
     _isCalculatedColumnsEnabled,
     _mergedEqual,
@@ -65,6 +66,18 @@ type ValidationState = 'valid' | CalculatedColumnValidationReason;
 
 // bounds the parse-error memo; dialog keystrokes feed it one entry per expression variant.
 const FORMULA_ERROR_CACHE_LIMIT = 256;
+
+/** Column properties that conflict with `calculatedExpression`, always forced to these values on calculated columns. */
+const PROTECTED_COL_DEF_VALUES = {
+    editable: false,
+    suppressPaste: true,
+    field: undefined,
+    valueGetter: undefined,
+    valueSetter: undefined,
+    cellEditor: undefined,
+    cellEditorSelector: undefined,
+} as const satisfies ColDef;
+const PROTECTED_COL_DEF_KEYS = Object.keys(PROTECTED_COL_DEF_VALUES) as (keyof typeof PROTECTED_COL_DEF_VALUES)[];
 
 function getParentGroupId(column: AgColumn | null | undefined): string | null {
     return column?.getFirstRealParent()?.groupId ?? null;
@@ -227,12 +240,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         const targetColId = targetColumn.colId;
         const nextColDef = this.getUpdatedCalculatedColDef(targetColumn, safeColDef);
-        // Skip rebuild when merged colDef is unchanged, avoiding a spurious `newColumnsLoaded`.
+        const dynamicColumn = this.dynamicColumns.get(targetColId);
+        // Skip rebuild when merged colDef is unchanged, avoiding a spurious `newColumnsLoaded`. Dialog-created
+        // columns compare stored definitions, so `processColDef` output never makes an unchanged edit look changed.
         const merged = _addColumnDefaultAndTypes(this.beans, nextColDef, targetColId);
-        const changed = !_mergedEqual(merged, targetColumn.colDef);
+        const current = dynamicColumn
+            ? _addColumnDefaultAndTypes(this.beans, dynamicColumn.colDef, targetColId)
+            : targetColumn.colDef;
+        const changed = !_mergedEqual(merged, current);
         // Skip when unchanged: a redundant override entry would needlessly re-apply on every later rebuild.
         if (changed) {
-            const dynamicColumn = this.dynamicColumns.get(targetColId);
             if (dynamicColumn) {
                 dynamicColumn.colDef = nextColDef;
                 this.recordCreatedColumn(
@@ -676,12 +693,38 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             // Reuse the owned instance (always alive: contributed/stamped every refresh, nulled when
             // parked/removed). Restamp + refresh colDef in case expression/cellDataType changed.
             existing.buildToken = buildToken;
-            existing.reapplyColDef(dc.colDef, source, newColDefs);
+            existing.reapplyColDef(this.processUserColDef(dc.colDef, colId), source, newColDefs);
             return existing;
         }
-        const agCol = _createUserColumn(beans, dc.colDef, colId, true, buildToken);
+        const agCol = _createUserColumn(beans, this.processUserColDef(dc.colDef, colId), colId, true, buildToken);
         dc.instance = agCol;
         return agCol;
+    }
+
+    /** Applies `calculatedColumns.processColDef` to a dialog-created column's stored colDef. The result becomes the
+     *  column's own colDef (`userProvidedColDef`) on purpose, so data type and show-values-as reads see it; the
+     *  stored colDef is left untouched so the dialog and grid state only ever see the user's values. */
+    private processUserColDef(storedColDef: ColDef, colId: string): ColDef {
+        const processColDef = this.getOptions()?.processColDef;
+        if (!processColDef) {
+            return storedColDef;
+        }
+        const result = processColDef(_addGridCommonParams(this.gos, { colDef: { ...storedColDef } }));
+        if (result == null) {
+            return storedColDef;
+        }
+        const ignored = PROTECTED_COL_DEF_KEYS.filter(
+            (key) => result[key] !== undefined && result[key] !== PROTECTED_COL_DEF_VALUES[key]
+        );
+        if (ignored.length) {
+            this.warn(335, { colId, properties: ignored });
+        }
+        const colDef = this.toCalculatedColDef(result, colId);
+        // A missing expression would silently stop the column being calculated, so keep the user's.
+        if (!colDef.calculatedExpression) {
+            colDef.calculatedExpression = storedColDef.calculatedExpression;
+        }
+        return colDef;
     }
 
     /** Rebuild the column tree for a calc-col mutation. Suppresses lifecycle/validation dispatch during the
@@ -1008,10 +1051,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private toDraft(column: AgColumn, mapper: CalculatedColumnReferenceMapper): CalculatedColumnDraft {
-        const colDef = column.colDef;
         const colId = column.colId;
+        // Dialog-created columns fill from the stored colDef, so the dialog shows and saves the user's values
+        // rather than `processColDef` output.
+        const storedColDef = this.dynamicColumns.get(colId)?.colDef;
+        const colDef = storedColDef ? _addColumnDefaultAndTypes(this.beans, storedColDef, colId) : column.colDef;
         const cellDataType = colDef.cellDataType;
-        const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header');
+        const displayName = storedColDef
+            ? column.headerNameOverride
+            : this.beans.colNames.getDisplayNameForColumn(column, 'header');
 
         return {
             colId,
@@ -1048,13 +1096,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             ...colDef,
             colId,
             calculatedExpression: _normaliseCalculatedExpression(colDef.calculatedExpression),
-            editable: false,
-            suppressPaste: true,
-            field: undefined,
-            valueGetter: undefined,
-            valueSetter: undefined,
-            cellEditor: undefined,
-            cellEditorSelector: undefined,
+            ...PROTECTED_COL_DEF_VALUES,
         };
     }
 

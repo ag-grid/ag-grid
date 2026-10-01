@@ -962,6 +962,8 @@ export const AG_GRID_ERRORS = {
     333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
     334: () =>
         `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
+    335: ({ colId, properties }: { colId: string; properties: string[] }) =>
+        `\`calculatedColumns.processColDef\` returned \`${properties.join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -977,7 +979,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 334;
+export const MAX_ERROR_ID = 335;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
