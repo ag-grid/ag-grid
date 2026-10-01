@@ -1,4 +1,4 @@
-import type { AgStylesChangedEvent, IAriaAnnouncementService } from 'ag-stack';
+import type { IAriaAnnouncementService } from 'ag-stack';
 import { _debounce, _setAriaLabel } from 'ag-stack';
 
 import {
@@ -73,35 +73,17 @@ export class RowNumbersService
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
 
     public postConstruct(): void {
-        // a later call within the debounce window must not cancel an autosize an earlier call asked for
-        let autoSizePending = false;
-        const refreshCells_debounced = _debounce(
-            this,
-            () => {
-                const runAutoSize = autoSizePending;
-                autoSizePending = false;
-                this.refreshCells(false, runAutoSize);
-            },
-            10
-        );
-        const scheduleRefresh = (runAutoSize: boolean) => {
-            autoSizePending ||= runAutoSize;
-            refreshCells_debounced();
-        };
+        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
         this.addManagedEventListeners({
             columnResized: () => {
                 this.lastColumnResized = Date.now();
             },
             cellFocused: this.onGridCellFocused.bind(this),
-            modelUpdated: (params) => scheduleRefresh(!params.keepRenderedRows),
-            rangeSelectionChanged: () => this.refreshCells(true),
-            pinnedRowsChanged: () => scheduleRefresh(true),
-            stylesChanged: (params: AgStylesChangedEvent) => {
-                // the new theme can change the cell padding and font, so the autosized width is stale
-                if (params.themeChanged) {
-                    scheduleRefresh(true);
-                }
+            modelUpdated: (params) => {
+                refreshCells_debounced(false, !params.keepRenderedRows);
             },
+            rangeSelectionChanged: () => this.refreshCells(true),
+            pinnedRowsChanged: () => refreshCells_debounced(false, true),
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
