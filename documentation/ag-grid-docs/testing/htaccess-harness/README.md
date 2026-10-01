@@ -145,7 +145,7 @@ GRID_REF=origin/latest ./testing/htaccess-harness/run.sh
 
 - a failing row;
 - a known-fail row that unexpectedly passes;
-- a file executing fewer rows than its `@min-rows`;
+- a file executing fewer rows than its `@min-rows`, less the rows of any site that was skipped (so skipping charts lowers a mixed file's minimum by its charts rows only);
 - a declared `@category` executing no rows, unless all of its rows belong to a site that was skipped (`SKIP_CHARTS=1`, `SKIP_STUDIO=1`, or outside the `--env` topology).
 
 The summary prints:
