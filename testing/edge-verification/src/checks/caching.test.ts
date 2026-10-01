@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { ARCHIVE_POISON_PROBE } from '../expected/caching';
+import { MARKDOWN_ACCEPT } from '../core/http';
+import { ARCHIVE_POISON_PROBE, POISON_PROBES } from '../expected/caching';
 import { FakeAws, FakeHttp, type FakeResponse, type SentRequest, fakeCtx, healthyCloudFront } from '../testing/fakes';
 import { cachingChecks } from './caching';
 
@@ -115,6 +116,24 @@ describe('caching.markdown-does-not-poison', () => {
         ['the markdown request is blocked', { status: 403, headers: { 'content-type': 'text/plain' } }, HTML, /403/],
         ['the HTML after markdown is a cache hit', MARKDOWN, CACHED_HTML, /from cache/],
     ];
+    it('sends its own markdown request even when another check already made the same one', async () => {
+        const http = new FakeHttp((req) => (isMarkdown(req) ? MARKDOWN : HTML));
+        try {
+            const ctx = await fakeCtx(new FakeAws(healthyCloudFront()), http);
+            // The first probe, as another check would have requested it.
+            await http.request({
+                url: `https://www.ag-grid.com${POISON_PROBES[0]}`,
+                headers: { accept: MARKDOWN_ACCEPT },
+            });
+            const before = http.sent.length;
+            await poison.run(ctx);
+            const sent = http.sent.slice(before).map((r) => (isMarkdown(r) ? 'md' : 'html'));
+            assert.deepEqual(sent.slice(-2), ['md', 'html']);
+        } finally {
+            http.close();
+        }
+    });
+
     for (const [why, markdown, html, detail] of BROKEN) {
         it(`fails when ${why}`, async () => {
             const outcome = await runPoison(markdown, html);
