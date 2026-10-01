@@ -1,0 +1,190 @@
+# Edge behaviour across the whole deployed tree: host canonicalisation, live regressions, caching
+# per content class, archives (released / in flight), which ErrorDocument answers, header scoping.
+# Format: see lib/rows.mjs. Hand-curated; rows marked known-fail= are approved behaviour that is not
+# implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
+
+# @category host-canonical-one-hop
+# Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
+# charts and studio pages, and for archives (whose path must be kept).
+apex	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+apex	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+apex	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+apex	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+apex	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+apex	/studio/	301	https://www.ag-grid.com/studio/	hops=1	final=200
+apex	/studio	301	https://www.ag-grid.com/studio/	hops=1	final=200
+apex	/charts	301	https://www.ag-grid.com/charts/	hops=1	final=200
+apex	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
+apex	/archive/36.3.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.3.0/react-data-grid/getting-started/	hops=1	final=200
+apex	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
+apex	/charts/archive/14.2.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
+apex	/studio/archive/3.0.0/react/quick-start/	301	https://www.ag-grid.com/studio/archive/3.0.0/react/quick-start/	hops=1	final=200
+blog	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+blog	/studio/	301	https://www.ag-grid.com/studio/	hops=1	final=200
+blog	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+blog	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
+blog	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
+blog	/studio/archive/3.0.0/react/quick-start/	301	https://www.ag-grid.com/studio/archive/3.0.0/react/quick-start/	hops=1	final=200
+angulargrid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+angulargrid.ag-grid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+angulargrid.ag-grid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+angular-grid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+angular-grid.ag-grid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+angular-grid.ag-grid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+javascript-grid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+javascript-grid.ag-grid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+javascript-grid.ag-grid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+react-grid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+react-grid.ag-grid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+react-grid.ag-grid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+react-grid.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
+angulargrid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+angulargrid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+angulargrid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+www.angulargrid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+www.angulargrid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+www.angulargrid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+www.angulargrid.com	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
+# The blog host maps the grid root's own paths into /blog/ (SE-86), in one hop.
+blog	/whats-new-in-ag-grid-35-3/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-35-3/	hops=1
+# A slash-less charts/studio URL on www goes straight to the slashed URL in one hop.
+www	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+www	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
+www	/charts	301	https://www.ag-grid.com/charts/	hops=1	final=200
+www	/studio	301	https://www.ag-grid.com/studio/	hops=1	final=200
+# A host the site does not own (an origin health check, a proxy's internal name) is served, not looped.
+localhost	/charts/react/bar-series/	200	
+localhost	/studio/react/quick-start/	200	
+
+# @category live-regressions
+# Live regressions from waf-finding.md §2/§3, now fixed: each must land on its final page in one hop.
+apex	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	hops=1	final=200
+apex	/charts/javascript-charts/javascript/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	hops=1	final=200
+www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	hops=1	final=200
+www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	hops=1	final=200
+www	/charts/core/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	hops=1	final=200
+www	/charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	hops=1	final=200
+www	/charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	hops=1	final=200
+blog	/studio/	301	https://www.ag-grid.com/studio/	hops=1	final=200
+blog	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
+apex	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
+# Archive redirects stay inside the archive (they used to land on the CURRENT docs).
+www	/archive/36.2.0/react-data-grid/whats-new	301	/archive/36.2.0/react-data-grid/whats-new/	hops=2	final=200	final-url=https://www.ag-grid.com/archive/36.2.0/whats-new/	page=/archive/36.2.0/whats-new/
+www	/archive/36.2.0/react-data-grid/whats-new/	301	/archive/36.2.0/whats-new/	hops=1	final=200
+www	/archive/36.2.0/index.php	301	/archive/36.2.0/	hops=1	final=200
+www	/archive/36.2.0/react-data-grid/index.php	301	/archive/36.2.0/react-data-grid/	hops=1	final=200
+www	/archive/36.2.0/javascript-grid/	301	/archive/36.2.0/javascript-data-grid/
+www	/archive/36.2.0/	200	
+
+# @category charts-landing-hubs
+# /charts/{react,angular,vue}/ are landing hubs now (not -> quick-start); javascript still forwards.
+www	/charts/react/	200	
+www	/charts/angular/	200	
+www	/charts/vue/	200	
+www	/charts/react	301	https://www.ag-grid.com/charts/react/	hops=1	final=200
+apex	/charts/vue/	301	https://www.ag-grid.com/charts/vue/	hops=1	final=200
+www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	hops=1	final=200
+www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/	hops=1	final=200
+
+# @category caching-live
+# Content-addressed assets: long cache, by hash SHAPE; unhashed /_astro is never cached.
+www	/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000	ct~javascript	link-describedby
+www	/_astro/index.js	200		cc=absent
+www	/_astro/fonts/0123456789abcdef.woff2	200		cc=public, max-age=604800, s-maxage=31536000
+# Unhashed static assets: a bounded one-day cache.
+www	/images/logo.png	200		cc=public, max-age=86400	ct=image/png	link-describedby
+www	/images/hero.webp	200		cc=public, max-age=86400	ct=image/webp
+www	/example-assets/data.json	200		cc=public, max-age=86400	ct~^application/json
+www	/theme-icons/quartz/arrow.svg	200		cc=public, max-age=86400	ct~^image/svg\+xml
+www	/theme-icons/quartz/quartz-icons.zip	200		cc=public, max-age=86400
+www	/videos/intro.json	200		cc=public, max-age=86400
+www	/scripts/banner.js	200		cc=public, max-age=86400	ct~javascript
+www	/robots.txt	200		cc=public, max-age=86400	ct~^text/plain
+www	/favicon.ico	200		cc=public, max-age=86400
+# /example/ is a live demo page: HTML no-cache, never the day-long asset cache.
+www	/example/	200		accept=html	cc=no-cache	ct~^text/html
+# Live 404: the root ErrorDocument, revalidated, no agent Link header.
+www	/no-such-page/	404		body~grid-root-404	cc=no-cache	link-describedby	sec+
+# The asset rules cascade into the subsites through the merged mod_headers config.
+www	/charts/images/logo.png	200		cc=public, max-age=86400
+www	/charts/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/charts/scripts/banner.js	200		cc=public, max-age=86400
+www	/studio/videos/intro.mp4	200		cc=public, max-age=86400
+www	/studio/images/logo.png	200		cc=public, max-age=86400
+www	/studio/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/charts/no-such-page/	404		body~charts-404	cc=no-cache	link-describedby
+www	/studio/no-such-page/	404		body~studio-404	cc=no-cache	link-describedby
+
+# @category caching-released-archives
+# A released grid/charts archive is immutable: everything under it is long-cached.
+www	/archive/36.2.0/_astro/index.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/archive/36.2.0/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/archive/36.2.0/images/logo.svg	200		cc=public, max-age=604800, s-maxage=31536000
+www	/archive/36.2.0/example-assets/data.json	200		cc=public, max-age=604800, s-maxage=31536000
+# A grid archive 404 is the ROOT 404 page (its ErrorDocument is /404.html), so it is not cached.
+www	/archive/36.2.0/no-such-page/	404		body~grid-root-404	cc=no-cache	link-describedby
+www	/charts/archive/14.2.0/_astro/index.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/charts/archive/14.2.0/images/logo.svg	200		cc=public, max-age=604800, s-maxage=31536000
+www	/charts/archive/14.2.0/data.json	200		cc=public, max-age=604800, s-maxage=31536000
+# The charts archive serves its own 404 page, which sits under the archive path and so matches the
+# long-cache rule: a missing page would be cached as missing for a year. Approved fix: gate the
+# archive cache on a 200 (waf-finding.md §4).
+www	/charts/archive/14.2.0/no-such-page/	404		body~charts-archive-14\.2\.0-404	cc=no-cache	known-fail=waf-finding.md §4: charts archive 404s are cached for a year; gate archiveCacheRules on REQUEST_STATUS == 200
+
+# @category caching-in-flight-archives
+# A release candidate is patched in flight by scripts/uncached-archives.mjs: no-cache for every
+# content class, overriding the archive and hashed-asset caches - grid AND charts.
+www	/archive/36.3.0/_astro/index.js	200		cc=no-cache
+# Except content-hashed grid assets: the grid archive build keeps its own hashed-asset rule, which
+# runs after the root in-flight block (a changed hash is a new URL, so it cannot serve stale).
+www	/archive/36.3.0/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/archive/36.3.0/images/logo.svg	200		cc=no-cache
+www	/archive/36.3.0/example-assets/data.json	200		cc=no-cache
+www	/archive/36.3.0/no-such-page/	404		body~grid-root-404	cc=no-cache
+www	/charts/archive/14.3.0/_astro/index.js	200		cc=no-cache
+www	/charts/archive/14.3.0/_astro/index.AbCd1234.js	200		cc=no-cache
+www	/charts/archive/14.3.0/images/logo.svg	200		cc=no-cache
+www	/charts/archive/14.3.0/data.json	200		cc=no-cache
+www	/charts/archive/14.3.0/no-such-page/	404		body~charts-archive-14\.3\.0-404	cc=no-cache
+
+# @category caching-studio-archives
+# Studio archives are never cached, whatever the content class; /studio itself caches normally.
+www	/studio/archive/3.0.0/_astro/index.js	200		cc=no-cache
+www	/studio/archive/3.0.0/_astro/index.AbCd1234.js	200		cc=no-cache
+www	/studio/archive/3.0.0/images/logo.svg	200		cc=no-cache
+www	/studio/archive/3.0.0/data.json	200		cc=no-cache
+www	/studio/archive/3.0.0/no-such-page/	404		body~studio-archive-3\.0\.0-404	cc=no-cache
+
+# @category error-documents
+# Each .htaccess is really in effect: its own ErrorDocument answers below it.
+www	/charts/archive/14.2.0/missing.html	404		body~charts-archive-14\.2\.0-404
+www	/studio/archive/3.0.0/missing.html	404		body~studio-archive-3\.0\.0-404
+www	/archive/36.3.0/missing.html	404		body~grid-root-404
+
+# @category header-scoping
+# The agent Link header is for successful HTML documents only.
+www	/react-data-grid/getting-started/	200		accept=html	link+describedby	csp=1	sec+	xrt=absent
+www	/javascript-grid/	301	/javascript-data-grid/	link-describedby	sec+
+www	/images/logo.png	200		link-describedby
+www	/charts/react/bar-series/	200		accept=html	link+describedby	csp=1	sec+	xrt=absent
+www	/studio/react/quick-start/	200		accept=html	link+describedby	csp=1	sec+	xrt=absent
+# Markdown twins: content type with charset, Vary: Accept, no Link.
+www	/react-data-grid/getting-started/	200		accept=md	ct=text/markdown; charset=utf-8	vary+Accept	link-describedby
+www	/charts/react/bar-series/	200		accept=md	ct=text/markdown; charset=utf-8	vary+Accept
+www	/studio/react/quick-start/	200		accept=md	ct=text/markdown; charset=utf-8	vary+Accept
+# A page without a twin is left alone: HTML, even for an agent.
+www	/react-data-grid/no-twin-page/	200		accept=md	twin=no	ct~^text/html
+# Paths outside the negotiated set do not Vary on Accept (keeps the shared cache key small).
+www	/images/logo.png	200		accept=md	vary-Accept
+www	/charts/images/logo.png	200		accept=md	vary-Accept
+
+# @category scanner-paths
+# Scanner probes get a plain 404 from Apache (blocking is the WAF's job): never a redirect into a
+# live page, never a 200.
+www	/wp-login.php	404		body~grid-root-404	link-describedby
+www	/xmlrpc.php	404		body~grid-root-404
+www	/.env	404		body~grid-root-404
+# (a dot-less last segment takes the generic add-slash hop first)
+www	/.git/config	301	/.git/config/	hops=1	final=404
+www	/charts/wp-login.php	404		body~charts-404
+www	/studio/.env	404		body~studio-404
