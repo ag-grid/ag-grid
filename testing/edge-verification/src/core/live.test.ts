@@ -125,6 +125,31 @@ describe('markdown guard', () => {
                 "    headers['x-ag-accept-markdown'] = { value: '0' };\n    return event.request;"
             ),
         ],
+        [
+            'sets the header on an object that is not the request',
+            MARKDOWN_KEY_FUNCTION_CODE.replace('var headers = event.request.headers;', 'var headers = {};'),
+        ],
+        [
+            'rebinds headers before setting the key',
+            MARKDOWN_KEY_FUNCTION_CODE.replace(
+                'var headers = event.request.headers;',
+                'var headers = event.request.headers;\n    headers = {};'
+            ),
+        ],
+        [
+            'replaces the request headers after binding them',
+            MARKDOWN_KEY_FUNCTION_CODE.replace(
+                '    return event.request;',
+                '    event.request.headers = {};\n    return event.request;'
+            ),
+        ],
+        [
+            'returns a replacement request',
+            MARKDOWN_KEY_FUNCTION_CODE.replace(
+                '    return event.request;',
+                '    event.request = { headers: {} };\n    return event.request;'
+            ),
+        ],
     ];
 
     for (const [what, code] of MUTATIONS) {
@@ -139,5 +164,13 @@ describe('markdown guard', () => {
 
     it('accepts the published function', () => {
         assert.deepEqual(markdownKeyFunctionProblems(MARKDOWN_KEY_FUNCTION_CODE), []);
+    });
+
+    it('accepts the key set on event.request.headers directly', () => {
+        const direct = MARKDOWN_KEY_FUNCTION_CODE.replace('    var headers = event.request.headers;\n', '')
+            .replace(/headers\.accept/g, 'event.request.headers.accept')
+            .replace("headers['x-ag-accept-markdown']", "event.request.headers['x-ag-accept-markdown']");
+        assert.notEqual(direct, MARKDOWN_KEY_FUNCTION_CODE);
+        assert.deepEqual(markdownKeyFunctionProblems(direct), []);
     });
 });

@@ -381,7 +381,12 @@ const hasKeyFunction = (b: BehaviourView): boolean =>
 export function markdownKeyFunctionProblems(code: string): string[] {
     const src = code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     const problems: string[] = [];
-    const acceptRead = /headers\s*(?:\.\s*accept|\[\s*['"]accept['"]\s*\])\s*\.\s*value/;
+    // `headers` here is either event.request.headers itself or a variable bound to it (checked
+    // below); a property of some other object (`x.headers`) never counts.
+    const requestHeaders = String.raw`(?<![\w$.])(?:event\s*\.\s*request\s*\.\s*)?headers`;
+    const acceptRead = new RegExp(
+        String.raw`${requestHeaders}\s*(?:\.\s*accept|\[\s*['"]accept['"]\s*\])\s*\.\s*value`
+    );
     const acceptVar = new RegExp(
         String.raw`(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*[^;\n]*${acceptRead.source}[^;\n]*`
     ).exec(src)?.[1];
@@ -391,7 +396,10 @@ export function markdownKeyFunctionProblems(code: string): string[] {
     const header = MARKDOWN_KEY_HEADER.replace(/-/g, '\\-');
     const assignments = [
         ...src.matchAll(
-            new RegExp(String.raw`headers\s*\[\s*['"]${header}['"]\s*\]\s*=\s*\{\s*value\s*:\s*([^}]*)\}`, 'g')
+            new RegExp(
+                String.raw`${requestHeaders}\s*\[\s*['"]${header}['"]\s*\]\s*=\s*\{\s*value\s*:\s*([^}]*)\}`,
+                'g'
+            )
         ),
     ];
     const mentions = src.toLowerCase().split(MARKDOWN_KEY_HEADER).length - 1;
@@ -413,6 +421,18 @@ export function markdownKeyFunctionProblems(code: string): string[] {
     }
     if (!/return\s+event\.request\s*;?/.test(src)) {
         problems.push('does not return the request');
+    }
+    // The header must land on the request that is returned: no replacement request, and a bare
+    // `headers` only as one binding to event.request.headers that is never reassigned.
+    if (/(?<![\w$.])event\s*(?:\.\s*request\s*(?:\.\s*headers\s*)?)?=(?!=)/.test(src)) {
+        problems.push('replaces event, event.request or its headers');
+    }
+    if (/(?<![\w$.])headers\b/.test(src.replace(/event\s*\.\s*request\s*\.\s*headers/g, ''))) {
+        const bindings = src.match(/(?:var|let|const)\s+headers\s*=\s*event\s*\.\s*request\s*\.\s*headers\s*(?:;|$)/gm);
+        const writes = src.match(/(?<![\w$.])headers\s*=(?!=)/g);
+        if (bindings?.length !== 1 || writes?.length !== 1) {
+            problems.push('headers is not bound once to event.request.headers');
+        }
     }
     return problems;
 }
