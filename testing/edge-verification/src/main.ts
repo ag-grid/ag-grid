@@ -36,7 +36,7 @@ const HELP = `Usage: yarn nx run ag-grid-edge-verification:test:edge-live -- [op
 Verifies production www.ag-grid.com: AWS edge configuration (read-only, profile ${AWS_PROFILE})
 and live HTTP behaviour (GET/HEAD only, low volume). Exit code 1 on any failure.
 
-  --only <list>         Comma-separated areas or check-id prefixes. Areas:
+  --only <list>         Comma-separated areas or check-id prefixes (end one with $ for an exact id). Areas:
                         ${Object.keys(AREAS).join(', ')}
   --pending             Also evaluate expectations that are not deployed yet (never fail the run)
   --strict              Known issues and warnings also fail the run
@@ -176,11 +176,14 @@ function select(checks: CheckDef[], only?: string[]): CheckDef[] {
     if (!only?.length) {
         return checks.filter((c) => !c.onlyWhenSelected);
     }
-    const unknown = only.filter((o) => !(o in AREAS) && !checks.some((c) => c.id.startsWith(o)));
+    // An entry ending in `$` names one check id exactly; any other entry is an area or an id prefix.
+    const matches = (o: string, c: CheckDef): boolean =>
+        o.endsWith('$') ? c.id === o.slice(0, -1) : c.area === o || c.id.startsWith(o);
+    const unknown = only.filter((o) => !checks.some((c) => matches(o, c)));
     if (unknown.length) {
         throw new Error(`--only: no area or check id matches ${unknown.join(', ')}`);
     }
-    return checks.filter((c) => only.some((o) => c.area === o || c.id.startsWith(o)));
+    return checks.filter((c) => only.some((o) => matches(o, c)));
 }
 
 async function main(): Promise<number> {
