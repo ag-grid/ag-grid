@@ -54,7 +54,10 @@ export const PENDING = {
     gridServerSideOneHop:
         'grid#15424 14aedee533f (24 server-side single-hop rewrites, /documentation/<fw>/charts* ahead of the prefix)',
     gridLlmsDataGrid:
-        'grid#15424 ec123914161 (llms.txt "Data Grid" points at the homepage, not the JavaScript forwarder)',
+        'grid#15424 (llms.txt "Data Grid" points at /javascript-data-grid/getting-started/, not the JavaScript forwarder)',
+    gridBuilding: 'grid#15424 (/angular|react|vue-data-grid/building/ go to installation, like JavaScript)',
+    gridRobotsTwinsQuery:
+        'grid#15424 2ed1049f81e (a .md? twin rule beside each .md$ rule, so a query string does not reopen it)',
     gridRobotsTwins:
         'grid#15424 0a48b836740 (a .md$ rule per directory Allow/Disallow, Allow: /archive/$ and /charts/archive/$)',
     /** grid#15430: run once per web host; both hosts serve every archive, so verify after the second. */
