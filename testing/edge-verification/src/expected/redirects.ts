@@ -290,18 +290,18 @@ export const REDIRECTS: RedirectRow[] = [
         pending: PENDING.chartsLegacyPrefixes,
         note: 'alias host, slash-less, renamed slug',
     }),
+    // Already live on 2026-10-01 (the first production run showed NOW LIVE), so deployed guards.
     r(
         `${WWW}/charts/react-charts/react/area-series/index.html`,
         `${WWW}/charts/react/area-series/index.html`,
         [finding(2), 'ag-charts#8422'],
-        { pending: PENDING.chartsLegacyPrefixes, note: 'a file keeps its path' }
+        { note: 'a file keeps its path' }
     ),
     r(
         `${WWW}/charts/react-charts/react/area-series.md`,
         `${WWW}/charts/react/area-series.md`,
         [finding(2), 'ag-charts#8422'],
         {
-            pending: PENDING.chartsLegacyPrefixes,
             note: 'a markdown twin keeps its path',
         }
     ),

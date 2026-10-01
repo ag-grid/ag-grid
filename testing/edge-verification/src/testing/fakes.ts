@@ -263,7 +263,7 @@ export function options(overrides: Partial<Options> = {}): Options {
         userAgent: 'offline-test',
         botWindowMs: 2 * 3_600_000,
         botThreshold: 0.01,
-        botMinVolume: 100,
+        botMinVolume: 20,
         botMaxBytes: 3e9,
         ...overrides,
     };
