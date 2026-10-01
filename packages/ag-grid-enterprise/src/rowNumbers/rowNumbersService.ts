@@ -73,21 +73,33 @@ export class RowNumbersService
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
 
     public postConstruct(): void {
-        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
+        // a later call within the debounce window must not cancel an autosize an earlier call asked for
+        let autoSizePending = false;
+        const refreshCells_debounced = _debounce(
+            this,
+            () => {
+                const runAutoSize = autoSizePending;
+                autoSizePending = false;
+                this.refreshCells(false, runAutoSize);
+            },
+            10
+        );
+        const scheduleRefresh = (runAutoSize: boolean) => {
+            autoSizePending ||= runAutoSize;
+            refreshCells_debounced();
+        };
         this.addManagedEventListeners({
             columnResized: () => {
                 this.lastColumnResized = Date.now();
             },
             cellFocused: this.onGridCellFocused.bind(this),
-            modelUpdated: (params) => {
-                refreshCells_debounced(false, !params.keepRenderedRows);
-            },
+            modelUpdated: (params) => scheduleRefresh(!params.keepRenderedRows),
             rangeSelectionChanged: () => this.refreshCells(true),
-            pinnedRowsChanged: () => refreshCells_debounced(false, true),
+            pinnedRowsChanged: () => scheduleRefresh(true),
             stylesChanged: (params) => {
                 // the new theme can change the cell padding and font, so the autosized width is stale
                 if (params.themeChanged) {
-                    refreshCells_debounced(false, true);
+                    scheduleRefresh(true);
                 }
             },
         });
