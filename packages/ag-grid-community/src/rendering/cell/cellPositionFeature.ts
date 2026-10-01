@@ -5,8 +5,8 @@ import type { CellCtrl } from './cellCtrl';
 
 // Called each time the cell component attaches (initial mount and any remount).
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    cellCtrl.drawnPosition = NaN;
-    cellCtrl.drawnWidth = NaN;
+    cellCtrl.drawnPosition = null;
+    cellCtrl.drawnWidth = null;
     _refreshCellPosition(beans, cellCtrl);
     legacyApplyRowSpan(beans, cellCtrl);
 }

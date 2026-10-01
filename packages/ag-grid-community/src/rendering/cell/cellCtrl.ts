@@ -103,9 +103,9 @@ export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
-    /** The `left`, or `right` when anchored right, and the width last written to the cell; NaN to write again. */
-    public drawnPosition = NaN;
-    public drawnWidth = NaN;
+    /** The `left`, or `right` when anchored right, and the width last written to the cell; null to write again. */
+    public drawnPosition: number | null = null;
+    public drawnWidth: number | null = null;
     /** The vanilla cell comp drawing this; a row has one row comp at a time, so the field is that comp's. */
     public drawnComp: CellComp | undefined = undefined;
     private drawnAriaColIndex = -1;
