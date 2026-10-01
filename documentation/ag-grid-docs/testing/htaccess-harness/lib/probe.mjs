@@ -111,7 +111,7 @@ const REVALIDATORS = {
     'revalidate-lm': { from: 'last-modified', send: 'If-Modified-Since' },
 };
 
-/** Run one row; returns a list of failure strings (empty = pass). */
+/** Run one row; returns its failures as `{ key, message }` (none = pass). */
 export async function runRow(row, ctx) {
     const mapHost = (s) => (ctx.siteHost === 'www.ag-grid.com' ? s : s.replaceAll('www.ag-grid.com', ctx.siteHost));
     const res = await request({
@@ -121,15 +121,17 @@ export async function runRow(row, ctx) {
         accept: row.accept,
         requestHeaders: row.requestHeaders,
     });
+    // Each failure names the assertion that made it, so a known-fail row can expect exactly those.
     const fails = [];
+    const fail = (key, message) => fails.push({ key, message });
     const loc = normaliseLocation(header(res, 'location'), ctx.port);
     if (res.status !== row.status) {
-        fails.push(`status ${res.status} (want ${row.status})`);
+        fail('status', `status ${res.status} (want ${row.status})`);
     }
     const wantLoc = mapHost(row.location);
     let formOnly = false;
     if (loc !== wantLoc) {
-        fails.push(`location '${loc}' (want '${wantLoc}')`);
+        fail('location', `location '${loc}' (want '${wantLoc}')`);
         // same page, only spelled host-relative instead of absolute (or vice versa) on the canonical
         // host: worth separating from a behavioural difference in the report
         const origin = `https://${ctx.siteHost}`;
@@ -142,41 +144,41 @@ export async function runRow(row, ctx) {
             const name = HEADER_KEYS[key] ?? key.slice(2);
             const actual = header(res, name);
             if (!matchValue(actual, op, v)) {
-                fails.push(`${name} '${actual ?? '(absent)'}' (want ${op}${v})`);
+                fail(key, `${name} '${actual ?? '(absent)'}' (want ${op}${v})`);
             }
         } else if (key === 'vary') {
             const tokens = (header(res, 'vary') ?? '').split(',').map((t) => t.trim().toLowerCase());
             const has = tokens.includes(v.toLowerCase());
             if ((op === '+') !== has) {
-                fails.push(`Vary '${header(res, 'vary') ?? '(absent)'}' (want ${op}${v})`);
+                fail(key, `Vary '${header(res, 'vary') ?? '(absent)'}' (want ${op}${v})`);
             }
         } else if (key === 'link') {
             const link = header(res, 'link') ?? '';
             const has = new RegExp(`rel="?${v}"?`).test(link);
             if ((op === '+') !== has) {
-                fails.push(`Link '${link || '(absent)'}' (want ${op}${v})`);
+                fail(key, `Link '${link || '(absent)'}' (want ${op}${v})`);
             }
         } else if (key === 'csp') {
             const n = headerValues(res, 'content-security-policy').length;
             if (n !== Number(v)) {
-                fails.push(`Content-Security-Policy count ${n} (want ${v})`);
+                fail(key, `Content-Security-Policy count ${n} (want ${v})`);
             }
         } else if (key === 'sec') {
             for (const name of ['Referrer-Policy', 'Permissions-Policy']) {
                 const n = headerValues(res, name).length;
                 if ((op === '+') !== n > 0) {
-                    fails.push(`${name} ${n ? 'present' : 'absent'} (want ${op})`);
+                    fail(key, `${name} ${n ? 'present' : 'absent'} (want ${op})`);
                 }
             }
         } else if (key === 'body') {
             if (!new RegExp(v).test(res.body)) {
-                fails.push(`body '${res.body.slice(0, 60).replace(/\s+/g, ' ')}' (want ~${v})`);
+                fail(key, `body '${res.body.slice(0, 60).replace(/\s+/g, ' ')}' (want ~${v})`);
             }
         } else if (key in REVALIDATORS) {
             const { from, send } = REVALIDATORS[key];
             const validator = header(res, from);
             if (validator == null) {
-                fails.push(`${key}: first response has no ${from}`);
+                fail(key, `${key}: first response has no ${from}`);
                 continue;
             }
             const again = await request({
@@ -187,7 +189,7 @@ export async function runRow(row, ctx) {
                 requestHeaders: { ...row.requestHeaders, [send]: validator },
             });
             if (String(again.status) !== v) {
-                fails.push(`${key} with ${send}: ${validator} -> ${again.status} (want ${v})`);
+                fail(key, `${key} with ${send}: ${validator} -> ${again.status} (want ${v})`);
             }
         } else if (key === 'hops' || key === 'final' || key === 'final-url') {
             chain ??= await follow(res, row, ctx);
@@ -200,10 +202,10 @@ export async function runRow(row, ctx) {
                       ? String(chain.finalStatus)
                       : mapHost(chain.finalUrl);
             if (actual !== v) {
-                fails.push(`${key} ${actual} (want ${v})`);
+                fail(key, `${key} ${actual} (want ${v})`);
             }
         } else {
-            fails.push(`unknown assertion '${key}'`);
+            fail('unknown', `unknown assertion '${key}'`);
         }
     }
     return { fails, formOnly: formOnly && fails.length === 1, status: res.status, location: loc, chain };

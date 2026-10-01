@@ -16,7 +16,7 @@
 // Usage: node gen-subsite-expectations.mjs <emitted .htaccess> --base /charts [--slug bar-series]
 import { readFileSync } from 'node:fs';
 
-import { Rows, substitute, synthFromPattern } from './lib.mjs';
+import { Rows, knownFailMarker, substitute, synthFromPattern } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, dflt) => (args.includes(name) ? args[args.indexOf(name) + 1] : dflt);
@@ -85,11 +85,14 @@ function rowFor(alias, path, rule) {
     }
     if (sim.by !== rule && typeof sim.by !== 'string') {
         const own = path.slice(base.length + 1).match(rule.re);
-        shadowed++;
-        rows.add(alias, path, rule.status, rule.status === 410 ? '' : substitute(rule.to, own), [
-            `known-fail=harness finding: shadowed by an earlier rule (${sim.by.text})`,
-        ]);
-        return;
+        const intended = { status: rule.status, loc: rule.status === 410 ? '' : substitute(rule.to, own) };
+        const marker = knownFailMarker(`harness finding: shadowed by an earlier rule (${sim.by.text})`, intended, sim);
+        if (marker) {
+            shadowed++;
+            rows.add(alias, path, intended.status, intended.loc, [marker]);
+            return;
+        }
+        // an earlier rule answers exactly as this one would: that IS the behaviour
     }
     rows.add(alias, path, sim.status, sim.loc);
 }

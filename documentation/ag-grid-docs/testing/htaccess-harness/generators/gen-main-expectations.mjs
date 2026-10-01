@@ -23,7 +23,7 @@
 // Usage: node gen-main-expectations.mjs <emitted .htaccess> [--base /archive/36.2.0]
 import { readFileSync } from 'node:fs';
 
-import { Rows, collapseSlashes, substitute, synthFromPattern } from './lib.mjs';
+import { Rows, collapseSlashes, knownFailMarker, substitute, synthFromPattern } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--') && args[args.indexOf(a) - 1] !== '--base');
@@ -142,7 +142,11 @@ function rowFor(path, d, { synthetic = false } = {}) {
         if (intended !== sim.loc) {
             counts.doubleSlash++;
             rows.add('www', path, sim.status, intended, [
-                'known-fail=harness finding: mod_alias prefix append doubles the slash (slash-less from, slashed to)',
+                knownFailMarker(
+                    'harness finding: mod_alias prefix append doubles the slash (slash-less from, slashed to)',
+                    { status: sim.status, loc: intended },
+                    sim
+                ),
             ]);
         } else {
             counts.ok++;
@@ -161,8 +165,9 @@ function rowFor(path, d, { synthetic = false } = {}) {
     const sameEnd = finalOf(sim.loc) === finalOf(own.loc);
     counts.shadowed++;
     const how = sameEnd ? 'reaches the target in 2+ hops' : `ends on ${finalOf(sim.loc)}, not the target`;
-    rows.add('www', path, own.status, collapseSlashes(own.loc), [
-        `known-fail=harness finding: shadowed by an earlier rule (${sim.by.text}) - ${how}`,
+    const intended = { status: own.status, loc: collapseSlashes(own.loc) };
+    rows.add('www', path, intended.status, intended.loc, [
+        knownFailMarker(`harness finding: shadowed by an earlier rule (${sim.by.text}) - ${how}`, intended, sim),
     ]);
 }
 
