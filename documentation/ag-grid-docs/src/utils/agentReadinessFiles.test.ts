@@ -1,4 +1,6 @@
 import { buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
+import { getHtaccessContent } from './htaccess/htaccessRules';
+import { compileHtaccess, route } from './htaccess/htaccessSimulator';
 import { resolveRoute } from './pageRoutes.test-utils';
 import { getSitemapConfig } from './sitemap';
 
@@ -20,7 +22,7 @@ describe('buildLlmsTxt', () => {
     });
 
     test('links the products, docs, MCP server and sitemap (acceptance criteria)', () => {
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/)');
+        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/):');
         expect(txt).toContain('(https://www.ag-grid.com/charts/)');
         expect(txt).toContain('(https://www.ag-grid.com/studio/)');
         expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/getting-started/)');
@@ -189,7 +191,31 @@ describe('curated links in llms.txt and AGENTS.md', () => {
         });
     });
 
-    test('AGENTS.md links only indexable pages, not redirect stubs', () => {
-        expect(unindexedPages(AGENTS_MD)).toEqual([]);
+    // waf-finding.md §20.3: the Data Grid link pointed at the JavaScript docs root, a client-side
+    // forwarder with no sitemap entry and no markdown twin. Every page an agent is pointed at must
+    // be one it can index and read as markdown, served without a redirect.
+    describe.each([
+        ['llms.txt', LLMS_TXT],
+        ['AGENTS.md', AGENTS_MD],
+    ])('%s links only real pages', (_name, body) => {
+        const pages = gridPaths(body).filter((pathname) => pathname.endsWith('/'));
+        const htaccess = [compileHtaccess(getHtaccessContent({ env: 'production' }))];
+
+        test('links pages, so the checks below are not vacuous', () => {
+            expect(pages.length).toBeGreaterThanOrEqual(5);
+        });
+
+        test('each has a sitemap entry, so none is a redirect stub', () => {
+            expect(unindexedPages(body)).toEqual([]);
+            expect(getSitemapConfig({}).filter(`${SITE_ROOT}/`)).toBe(true);
+        });
+
+        test.each(pages)('%s has a markdown twin', (pathname) => {
+            expect(resolveRoute(pathname === '/' ? '/index.md' : `${pathname.replace(/\/$/, '')}.md`)).toBeDefined();
+        });
+
+        test.each(pages)('%s is served without a redirect', (pathname) => {
+            expect(route(htaccess, { url: `${SITE_ROOT}${pathname}` })).toMatchObject({ type: 'serve' });
+        });
     });
 });
