@@ -93,3 +93,33 @@ describe('caching.never-hit', () => {
         assert.match(outcome.detail ?? '', /Hit from cloudfront/);
     });
 });
+
+describe('caching.markdown-does-not-poison', () => {
+    const poison = cachingChecks().find((c) => c.id.startsWith('caching.markdown-does-not-poison.'))!;
+    async function runPoison(markdown: FakeResponse, html: FakeResponse) {
+        const http = new FakeHttp((req) => (isMarkdown(req) ? markdown : html));
+        try {
+            return await poison.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+
+    it('passes when HTML stays uncached 200 text/html around a 200 markdown request', async () => {
+        const outcome = await runPoison(MARKDOWN, HTML);
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    const BROKEN: Array<[string, FakeResponse, FakeResponse, RegExp]> = [
+        ['the HTML requests fail', MARKDOWN, { status: 503, headers: { 'content-type': 'text/html' } }, /503/],
+        ['the markdown request is blocked', { status: 403, headers: { 'content-type': 'text/plain' } }, HTML, /403/],
+        ['the HTML after markdown is a cache hit', MARKDOWN, CACHED_HTML, /from cache/],
+    ];
+    for (const [why, markdown, html, detail] of BROKEN) {
+        it(`fails when ${why}`, async () => {
+            const outcome = await runPoison(markdown, html);
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', detail);
+        });
+    }
+});
