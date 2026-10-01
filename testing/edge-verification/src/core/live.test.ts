@@ -155,6 +155,27 @@ describe('markdown guard', () => {
             ),
         ],
         [
+            'returns early for some paths, before setting the key',
+            MARKDOWN_KEY_FUNCTION_CODE.replace(
+                '    var headers = event.request.headers;',
+                "    if (event.request.uri.startsWith('/charts/archive/')) return event.request;\n    var headers = event.request.headers;"
+            ),
+        ],
+        [
+            'sets the key only under a condition',
+            MARKDOWN_KEY_FUNCTION_CODE.replace(
+                "    headers['x-ag-accept-markdown']",
+                "    if (event.request.uri.length > 1) headers['x-ag-accept-markdown']"
+            ),
+        ],
+        [
+            'wraps the body in a try block',
+            MARKDOWN_KEY_FUNCTION_CODE.replace('    var headers', '    try { var headers').replace(
+                '    return event.request;',
+                '    } catch (e) {}\n    return event.request;'
+            ),
+        ],
+        [
             'replaces the request headers after binding them',
             MARKDOWN_KEY_FUNCTION_CODE.replace(
                 '    return event.request;',

@@ -448,7 +448,42 @@ export function markdownKeyFunctionProblems(code: string): string[] {
             problems.push('headers is not bound once to event.request.headers');
         }
     }
+    const shape = straightLineProblem(src);
+    if (shape) {
+        problems.push(shape);
+    }
     return problems;
+}
+
+/**
+ * Fails closed on control flow: the code must be exactly `function handler(event) { ... }` whose
+ * body is a straight line of the statements the published function uses, ending in
+ * `return event.request;`. An early return, an `if`, a loop or a `try` could leave some requests
+ * without the key, so any statement outside these shapes is a problem.
+ */
+function straightLineProblem(src: string): string | undefined {
+    const compact = src
+        .replace(/\s+/g, ' ')
+        .replace(/ ?([^\w$ ]) ?/g, '$1')
+        .trim();
+    const body = /^function handler\(event\)\{(.*)\}$/.exec(compact)?.[1];
+    if (body === undefined) {
+        return 'is not a single function handler(event) { ... }';
+    }
+    const statements = body.split(';');
+    if (statements.pop() !== '' || statements.pop() !== 'return event.request') {
+        return 'does not end with return event.request;';
+    }
+    const h = String.raw`(?:event\.request\.)?headers`;
+    const accept = String.raw`${h}(?:\.accept|\['accept'\]|\["accept"\])`;
+    const key = MARKDOWN_KEY_HEADER.replace(/-/g, '\\-');
+    const allowed = [
+        /^(?:var|let|const) headers=event\.request\.headers$/,
+        new RegExp(String.raw`^(?:var|let|const) [A-Za-z_$][\w$]*=${accept}\?${accept}\.value:(?:''|"")$`),
+        new RegExp(String.raw`^${h}\[(?:'${key}'|"${key}")\]=\{value:[^{};]*\}$`),
+    ];
+    const other = statements.find((st) => !allowed.some((re) => re.test(st)));
+    return other === undefined ? undefined : `has a statement outside the verified straight-line shape: ${other}`;
 }
 
 function toView(b: any, pattern: string): BehaviourView {
