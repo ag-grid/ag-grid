@@ -343,51 +343,25 @@ const getSingleHopRewriteRules = (): string[] =>
         return [`    RewriteRule "^/?${from}$" "${to}" [${flags}]`];
     });
 
-// The /charts/ semantic redirects. Their targets are live charts URLs, which a grid archive has no
-// copy of, so an archive build never emits them.
-const chartsSemanticRewriteRules = `
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|react)/toolbar/?$" "https://www.ag-grid.com/charts/$1/financial-charts-toolbar/" [R=301,L]
-    RewriteRule "^/?charts/react/line/?$" "https://www.ag-grid.com/charts/react/line-series/" [R=301,L]
-    RewriteRule "^/?charts/archive/?$" "https://www.ag-grid.com/charts/documentation-archive/" [R=301,L]
-    RewriteRule "^/?charts/javascript-charts/javascript/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
-    RewriteRule "^/?charts/angular-charts/angular/(.+?)/?$" "https://www.ag-grid.com/charts/angular/$1/" [R=301,L]
-    RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
-    RewriteRule "^/?charts/vue-charts/vue/(.+?)/?$" "https://www.ag-grid.com/charts/vue/$1/" [R=301,L]
-    RewriteRule "^/?charts/enterprise-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
-    RewriteRule "^/?charts/[a-z]+-charts/gallery(/.*)?$" "https://www.ag-grid.com/charts/gallery/" [R=301,L]
-    RewriteRule "^/?charts/[a-z]+-charts/options(/.*)?$" "https://www.ag-grid.com/charts/options/" [R=301,L]
-    RewriteRule "^/?charts/enterprise-charts/(?!index\\.html$).+$" "https://www.ag-grid.com/charts/enterprise-charts/" [R=301,L]
-    RewriteRule "^/?charts/(?:core|side)/?$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
-    RewriteRule "^/?charts/core/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
-    RewriteRule "^/?charts/side/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
-    RewriteRule "^/?charts/server-side-rendering(/.*)?$" "https://www.ag-grid.com/charts/javascript/server-side-rendering/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/axes(/.*)?$" "https://www.ag-grid.com/charts/$1/axes-configuration/" [R=301,L]
-
-    RewriteCond %{REQUEST_URI} /+[^.]+$
-    RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]
-`;
-
-// SE-64/SE-66 single-hop chain shortening and, on the live site only, the /charts/ semantic
-// redirects. Hosts other than www/apex skip the lot, so the skip count covers every RewriteRule
-// emitted here.
+// SE-64/SE-66 single-hop chain shortening. Hosts other than www/apex skip the lot, so the skip
+// count is the number of rules emitted - which an archive build trims to the targets it holds a copy
+// of.
+//
+// Nothing here may target a /charts/ or /studio/ path: those are separate sites whose own
+// .htaccess carries a mod_rewrite block, which REPLACES these rules for every request below it.
+// A root rule for them never runs (verified in real Apache), so the child .htaccess owns them.
 const getSiteRewriteRules = (): string => {
     const singleHopRules = getSingleHopRewriteRules();
-    const chartsRules = unlessArchiveBuild(chartsSemanticRewriteRules);
-    const skip = singleHopRules.length + (chartsRules.match(/^\s*RewriteRule /gm)?.length ?? 0);
     return `
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=${skip}]
+    RewriteRule ^ - [S=${singleHopRules.length}]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
     # scheme) lands on its final www URL in ONE 301. Inbound query strings are preserved
     # (targets carry none). See SITE_SINGLE_HOP_REWRITES in redirects.ts.
 ${singleHopRules.join('\n')}
-${chartsRules}`;
+`;
 };
 
 // blog.ag-grid.com -> www.ag-grid.com/blog/. Every target is a live blog or docs URL, so an

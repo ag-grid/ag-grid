@@ -18,6 +18,7 @@ import {
     getHtaccessContent,
     getInFlightArchiveRules,
 } from './htaccessRules';
+import { compileHtaccess, route } from './htaccessSimulator';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -1211,100 +1212,102 @@ describe('htaccessRules', () => {
             expect(loops).toEqual([]);
         });
 
-        it('does not keep a react-only bullet-series entry in the single-hop data (moved to the charts mirror)', () => {
-            const reactBullet = SITE_SINGLE_HOP_REWRITES.filter((r) => r.from.includes('bullet-series'));
-            expect(reactBullet).toEqual([]);
+        // The chain-shortening rewrites all target www, so a host guard skips them on every other
+        // host the docroot answers for. Its [S=n] count must equal the rules it guards: too small
+        // and the shortening leaks onto those hosts, too large and it swallows the host
+        // canonicalisation that follows.
+        it('skips the chain-shortening rules on other hosts, and only those rules', () => {
+            const files = [compileHtaccess(productionContent)];
+            const targets = new Set(SITE_SINGLE_HOP_REWRITES.map((rule) => rule.to));
+            const shortening = new Set(
+                files[0].rewriteRules.filter((rule) => targets.has(rule.substitution)).map((rule) => rule.source)
+            );
+            expect(shortening.size).toBeGreaterThan(0);
+            for (const rule of SITE_SINGLE_HOP_REWRITES) {
+                // On www the rule fires; on another host the guard must skip it (mod_alias may still match).
+                const onWww = route(files, { url: `https://www.ag-grid.com${rule.from}` });
+                expect(onWww, `${rule.from} on www`).toMatchObject({ location: rule.to });
+                expect(shortening.has((onWww as { by: string }).by), `${rule.from} on www`).toBe(true);
+                const outcome = route(files, { url: `https://studio.ag-grid.com${rule.from}` });
+                expect(shortening.has((outcome as { by?: string }).by ?? ''), `${rule.from} on studio`).toBe(false);
+            }
+            // The first rule after the guarded block still runs for a non-www host.
+            expect(route(files, { url: 'https://angulargrid.ag-grid.com/x/' })).toMatchObject({
+                type: 'redirect',
+                location: 'https://www.ag-grid.com/x/',
+            });
         });
     });
 
-    describe('SE-66: charts-subdir semantic redirects mirrored into the docroot', () => {
-        // The /charts subdir (ag-charts-website repo) owns these semantic redirects, but it only runs
-        // after the docroot normalises host/slash — so they are mirrored here to collapse to ONE hop.
-        // Assertions cover a representative rule per family; the full block is guarded by the snapshot.
+    // /charts/ and /studio/ are separate sites (the ag-charts and Studio repos) deployed with their
+    // own .htaccess. A child .htaccess with any mod_rewrite directive REPLACES the root's rewrite
+    // rules for every request below it (no RewriteOptions Inherit), so a root rule written for a
+    // /charts/ or /studio/ path never runs - verified in real Apache. The root mirrored the charts
+    // semantic redirects for a while (SE-66), which only ever produced dead rules, and the
+    // quick-start one would also have bounced the /charts/{react,angular,vue}/ landing hubs had it
+    // ever run. The child .htaccess owns those paths, so the root must treat them like any other
+    // path: whatever it does to /charts/<x> it must do identically to an unowned /<prefix>/<x>.
+    describe('SE-66 / waf-finding §2: the root leaves /charts/ and /studio/ to their own .htaccess', () => {
+        const NEUTRAL = 'zz-not-a-product';
+        const productPaths = [
+            '/charts/',
+            '/charts',
+            '/charts/react/',
+            '/charts/react',
+            '/charts/angular/',
+            '/charts/vue/',
+            '/charts/javascript/',
+            '/charts/react/bullet-series/',
+            '/charts/javascript/fonts',
+            '/charts/react/toolbar/',
+            '/charts/react/line',
+            '/charts/archive/',
+            '/charts/archive/12.0.0/',
+            '/charts/javascript-charts/javascript/bar-series/',
+            '/charts/enterprise-charts/react/bar-series/',
+            '/charts/enterprise-charts/foo/',
+            '/charts/react-charts/gallery/',
+            '/charts/core/line-series',
+            '/charts/side/',
+            '/charts/server-side-rendering/x/',
+            '/charts/vue/series/bar/',
+            '/charts/angular/axes/',
+            '/charts/documentation',
+            '/charts/react/zoom',
+            '/charts/react/cone-funnel-series',
+            '/charts/react/candlestick-series',
+            '/charts/react/zoom/?x=1',
+            '/studio/',
+            '/studio',
+            '/studio/react/getting-started',
+            '/studio/archive/',
+            '/studio/archive/1.0.0/',
+        ];
+        const hosts = [
+            'https://www.ag-grid.com',
+            'http://www.ag-grid.com',
+            'https://ag-grid.com',
+            'https://blog.ag-grid.com',
+        ];
 
-        it('collapses bullet-series to linear-gauge for every framework, with [NE] and the correct anchor', () => {
-            // #bullet-series (no trailing slash) — the id generated by the "## Bullet Series" heading;
-            // the previous react-only rule used the broken "#bullet-series/". [NE] keeps the # verbatim.
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]'
+        it('routes every /charts/ and /studio/ path exactly as it routes the same path under an unowned prefix', () => {
+            const files = [compileHtaccess(productionContent)];
+            const neutralise = (value: string) => value.replace(/\/(charts|studio)(?=\/|$|\?)/, `/${NEUTRAL}`);
+            const differences = hosts.flatMap((host) =>
+                productPaths.flatMap((path) => {
+                    const product = route(files, { url: `${host}${path}` });
+                    const neutral = route(files, { url: `${host}${neutralise(path)}` });
+                    const productComparable = JSON.stringify({ ...product, by: undefined, path: undefined }).replace(
+                        /\/(charts|studio)(?=\/|"|\?)/,
+                        `/${NEUTRAL}`
+                    );
+                    const neutralComparable = JSON.stringify({ ...neutral, by: undefined, path: undefined });
+                    return productComparable === neutralComparable
+                        ? []
+                        : [`${host}${path}: ${JSON.stringify(product)} vs ${JSON.stringify(neutral)}`];
+                })
             );
-            expect(productionContent).not.toContain('linear-gauge/#bullet-series/');
-        });
-
-        it('mirrors the fonts, landing, backreference, catch-all and aggregate-index families', () => {
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]'
-            );
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]'
-            );
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]'
-            );
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]'
-            );
-        });
-
-        it('does NOT mirror /charts/privacy (unresolved 410-vs-301, left to the charts subdir)', () => {
-            expect(productionContent).not.toContain('"^/?charts/privacy(/.*)?$"');
-        });
-
-        it('orders the enterprise-charts/react backreference before the enterprise-charts catch-all', () => {
-            // charts repo is first-match-wins: the specific /react/(.+) must win over the broad catch-all.
-            const specific = productionContent.indexOf('"^/?charts/enterprise-charts/react/(.+?)/?$"');
-            const catchAll = productionContent.indexOf('"^/?charts/enterprise-charts/(?!index\\.html$).+$"');
-            expect(specific).toBeGreaterThan(-1);
-            expect(catchAll).toBeGreaterThan(specific);
-        });
-
-        it('host-scopes the whole chain-shortening block, with an exact [S] skip count', () => {
-            // The single-hops + mirror + add-slash all rewrite to the canonical www host, so a host
-            // guard skips them for charts.ag-grid.com / studio.ag-grid.com. The [S] count MUST equal
-            // the number of RewriteRules it guards — overshoot would also skip the host canonicalisation
-            // rules (breaking the phase-1 subdomain redirects), undershoot would leak the chain-shortening.
-            const lines = productionContent.split('\n');
-            const guardIdx = lines.findIndex((l) => /RewriteRule \^ - \[S=\d+\]/.test(l));
-            expect(guardIdx).toBeGreaterThan(-1);
-            expect(lines[guardIdx - 1]).toContain('RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]');
-
-            const skip = Number(lines[guardIdx].match(/\[S=(\d+)\]/)![1]);
-            // The guarded span ends just before the https-upgrade host-swap (first `-> www/$1` rule).
-            const hostSwapIdx = lines.findIndex(
-                (l, i) => i > guardIdx && l.includes('https://www.ag-grid.com/$1 [R=301,L]')
-            );
-            expect(hostSwapIdx).toBeGreaterThan(guardIdx);
-            const guardedRuleCount = lines
-                .slice(guardIdx + 1, hostSwapIdx)
-                .filter((l) => /^\s*RewriteRule /.test(l)).length;
-            expect(skip).toBe(guardedRuleCount);
-        });
-    });
-
-    describe('SE-66 follow-up: no-slash /charts/* pages resolve in a single hop', () => {
-        it('emits a general single-hop rewrite that adds the trailing slash for any no-slash /charts/* path', () => {
-            expect(productionContent).toContain(
-                'RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]'
-            );
-        });
-
-        it('guards the general charts rewrite so real files (dot in the last segment) are left alone', () => {
-            const lines = productionContent.split('\n');
-            const ruleIndex = lines.findIndex((l) => l.includes('"^/?(charts/.+[^/])$"'));
-            expect(ruleIndex).toBeGreaterThan(0);
-            expect(lines[ruleIndex - 1]).toContain('RewriteCond %{REQUEST_URI} /+[^.]+$');
-        });
-
-        it('runs the charts semantic mirror before the general add-slash, and both before the host-swap', () => {
-            // Ordering is load-bearing: the semantic mirror (divergent targets, e.g. bullet-series) must
-            // win over the general add-slash rule ([L]), and both must precede the apex/www host-swap so
-            // the whole thing resolves in ONE hop.
-            const mirror = productionContent.indexOf('"^/?charts/(javascript|angular|react|vue)/bullet-series/?$"');
-            const general = productionContent.indexOf('"^/?(charts/.+[^/])$"');
-            const hostSwap = productionContent.indexOf('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
-            expect(mirror).toBeGreaterThan(-1);
-            expect(general).toBeGreaterThan(mirror);
-            expect(hostSwap).toBeGreaterThan(general);
+            expect(differences).toEqual([]);
         });
     });
 
