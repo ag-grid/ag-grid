@@ -30,4 +30,8 @@ We rely on order of CSS files to determine which rules take priority. There is a
 
 Within shared.css and core.css you can reorder files and rules to produce appropriate order. Within module and theme part CSS, all rules should be narrowly scoped to affect only the feature they relate to, and so reordering should not be necessary as there should be no interactions.
 
-NEVER USE `!important`. In review, use of !important should be flagged as a P0 API contract failure, it will break customer applications with 100% certainty.
+DO NOT USE `!important`. In review, use of !important should be flagged as a P0 API contract failure, it will break customer applications with 100% certainty.
+
+Some old code in our repo incorrectly uses !important. If you find yourself unable to override styles elsewhere because they are declared as important, a better fix is to remove the !important from previous code. Often this was added by a developer who is simply unaware that you can reorder CSS or increase specificity by doubling up a classname (.ag-my-component.ag-my-component - bad as 0,2,0 but better as a last resort than !important).
+
+Very occasionally it may be necessary to break these rules. This is a declaration that you have tried and failed every other way of adhering to them. When breaking these rules, you must add a comment explaining why. Reviewers should reject any code that adds a lint disable, but does not explain why.
