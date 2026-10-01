@@ -387,6 +387,20 @@ describe('waf-config.*.rules compares every field of every rule', () => {
         });
     }
 
+    for (const acl of ['cf', 'alb'] as const) {
+        it(`${acl} fails on an undeclared rule after the Shield group`, async () => {
+            const outcome = await run(RULES[acl], acl, (rules) =>
+                rules.push({
+                    Name: 'late-block',
+                    Priority: 10000001,
+                    Statement: { ByteMatchStatement: {} },
+                    Action: { Block: {} },
+                })
+            );
+            await assertFails(outcome, /rule order \(pending rules excluded\): got \[.*"late-block"\]/);
+        });
+    }
+
     it('reports a verify-header rule drift without printing the secret', async () => {
         const outcome = await run(RULES.cf, 'cf', (rules) => {
             named(rules, 'allow-trusted-mcp-lambda').Statement.ByteMatchStatement.FieldToMatch = {

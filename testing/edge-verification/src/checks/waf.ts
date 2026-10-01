@@ -102,7 +102,10 @@ function compareRuleList(
     declared: Map<string, DeclaredRule>,
     groups: Record<string, ManagedGroupExpectation>
 ): void {
-    const ordered = [...liveRules].sort((a, b) => a.Priority - b.Priority).filter((r) => r.Priority < SHIELD_PRIORITY);
+    // Only the Shield group itself is set aside: any other rule, at whatever priority, is compared.
+    const isShield = (r: any): boolean =>
+        r.Priority === SHIELD_PRIORITY && String(r.Name).startsWith('ShieldMitigationRuleGroup_');
+    const ordered = [...liveRules].sort((a, b) => a.Priority - b.Priority).filter((r) => !isShield(r));
     const pending = new Set(expected.filter((e) => e.pending).map((e) => e.name));
     const deployed = expected.filter((e) => !e.pending);
     p.eq(
@@ -122,11 +125,8 @@ function compareRuleList(
             compareOverrides(p, e.name, r, groups[e.name]);
         }
     }
-    const shield = liveRules.filter((r) => r.Priority === SHIELD_PRIORITY);
-    p.check(
-        shield.length === 1 && String(shield[0].Name).startsWith('ShieldMitigationRuleGroup_'),
-        'Shield mitigation group missing at priority 10000000'
-    );
+    const shield = liveRules.filter(isShield);
+    p.check(shield.length === 1, 'Shield mitigation group missing at priority 10000000');
     // Shield manages the group itself; the ACL decides only whether its verdicts apply.
     p.eq('Shield mitigation group override action', shield[0] && ruleAction(shield[0]), 'None');
 }
