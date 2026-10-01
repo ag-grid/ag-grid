@@ -2,12 +2,19 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import { runOne } from '../core/runner';
+import { AGENT_SITES } from '../expected/agentFiles';
 import { FakeAws, FakeHttp, type FakeResponse, fakeCtx, healthyCloudFront } from '../testing/fakes';
 import { agentFileChecks } from './agentFiles';
 
 const WWW = 'https://www.ag-grid.com';
 const LINKS = ['/a/', '/b/', '/c/'].map((p) => `${WWW}${p}`);
-const LLMS = `# AG Grid\n\n${LINKS.map((l, i) => `- [${i}](${l})`).join('\n')}\n\n## Documentation\n\n${LINKS.map((l, i) => `- [${i}](${l})`).join('\n')}\n`;
+const LIST = LINKS.map((l, i) => `- [${i}](${l})`).join('\n');
+/** Every curated and index section the grid declares, each listing LINKS. */
+const GRID = AGENT_SITES.find((x) => x.id === 'grid')!;
+const LLMS = `# AG Grid\n\n${LIST}\n${[...GRID.curated, ...GRID.index]
+    .filter(Boolean)
+    .map((name) => `\n## ${name}\n\n${LIST}\n`)
+    .join('')}`;
 
 const check = (id: string) => agentFileChecks().find((c) => c.id === id)!;
 
@@ -60,4 +67,37 @@ describe('agent-file link checks under the request budget', () => {
         http.close();
         assert.equal(result.status, 'pass', result.detail);
     });
+});
+
+describe('agent-file sections must be populated', () => {
+    const empty =
+        (section: string) =>
+        (req: { url: string }): FakeResponse =>
+            req.url === `${WWW}/llms.txt`
+                ? {
+                      status: 200,
+                      headers: { 'content-type': 'text/plain' },
+                      body: `${LLMS.replace(new RegExp(`(## ${section}\\n\\n)[^#]*`), '$1')}Accept: text/markdown\n`,
+                  }
+                : site(req);
+    const runOn = async (id: string, respond: (req: { url: string }) => FakeResponse) => {
+        const http = new FakeHttp(respond);
+        try {
+            return await runOne(check(id), await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    };
+
+    for (const [id, section, pattern] of [
+        ['agent-files.grid.index-links', 'Site pages', /index sections with no links: Site pages/],
+        ['agent-files.grid.curated-links', 'Products', /curated sections with no links: Products/],
+        ['agent-files.grid.llms', 'Documentation', /section "## Documentation" has no links/],
+    ] as const) {
+        it(`${id} fails when "## ${section}" keeps its heading but loses its links`, async () => {
+            const result = await runOn(id, empty(section));
+            assert.equal(result.status, 'fail', result.detail);
+            assert.match(result.detail ?? '', pattern);
+        });
+    }
 });

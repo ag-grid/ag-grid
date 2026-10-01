@@ -2,12 +2,12 @@ import {
     anchorHrefs,
     countTags,
     headings,
-    jsonLdNodes,
     linkHrefs,
     metaContents,
     nodesOfType,
     sections,
     stripTags,
+    validJsonLdNodes,
 } from '../core/html';
 import type { Http } from '../core/http';
 import { type CheckDef, Problems, budgeted, fail, info, pass } from '../core/types';
@@ -146,8 +146,7 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-43', 'SE-47'],
             ['home'],
             (html, p) => {
-                const nodes = jsonLdNodes(html);
-                p.check(!nodes.some((n) => n['@type'] === 'INVALID_JSON'), 'a JSON-LD block does not parse');
+                const nodes = validJsonLdNodes(html, (m) => p.add(m));
                 for (const t of HOME_GRAPH_TYPES) {
                     p.eq(`${t} nodes`, nodesOfType(nodes, t).length, 1);
                 }
@@ -159,7 +158,10 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-43', 'SE-166'],
             ['home'],
             (html, p) => {
-                const nav = nodesOfType(jsonLdNodes(html), 'SiteNavigationElement')[0] as any;
+                const nav = nodesOfType(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    'SiteNavigationElement'
+                )[0] as any;
                 const pairs = new Map<string, string>((nav?.name ?? []).map((n: string, i: number) => [n, nav.url[i]]));
                 for (const [name, url] of Object.entries(SITE_NAVIGATION)) {
                     p.eq(`nav "${name}"`, pairs.get(name), url);
@@ -173,7 +175,13 @@ export function seoContentChecks(): CheckDef[] {
             title: 'Every SiteNavigationElement URL answers 200 directly',
             refs: ['SE-43', 'SE-166'],
             run: budgeted(async ({ http }, p) => {
-                const nav = nodesOfType(jsonLdNodes(await page(http, 'home')), 'SiteNavigationElement')[0] as any;
+                const html = await page(http, 'home');
+                const nav = nodesOfType(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    'SiteNavigationElement'
+                )[0] as any;
+                // Nothing to resolve is a failure, not a pass over zero URLs.
+                p.check((nav?.url ?? []).length > 0, 'no SiteNavigationElement URLs');
                 for (const url of nav?.url ?? []) {
                     const res = await http.head(url);
                     p.check(res.status === 200, `${url}: ${res.status}`);
@@ -187,7 +195,10 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-47'],
             ['home'],
             (html, p) => {
-                const faq = nodesOfType(jsonLdNodes(html), 'FAQPage')[0] as any;
+                const faq = nodesOfType(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    'FAQPage'
+                )[0] as any;
                 const qs: any[] = faq?.mainEntity ?? [];
                 p.eq('questions', qs.length, FAQ_COUNT);
                 for (const q of qs) {
@@ -203,7 +214,14 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-47'],
             ['reactDocs', 'pricing'],
             (html, p) => {
-                p.eq('FAQPage nodes', nodesOfType(jsonLdNodes(html), 'FAQPage').length, 0);
+                p.eq(
+                    'FAQPage nodes',
+                    nodesOfType(
+                        validJsonLdNodes(html, (m) => p.add(m)),
+                        'FAQPage'
+                    ).length,
+                    0
+                );
             }
         ),
         perPage(
@@ -212,7 +230,7 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-71'],
             ['home', 'about', 'reactDocs'],
             (html, p) => {
-                const nodes = jsonLdNodes(html);
+                const nodes = validJsonLdNodes(html, (m) => p.add(m));
                 const orgs = nodesOfType(nodes, 'Organization') as any[];
                 p.eq('Organization nodes', orgs.length, 1);
                 const o = orgs[0] ?? {};
@@ -263,7 +281,10 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-162'],
             ['reactDocs', 'jsDocs'],
             (html, p) => {
-                const app = nodesOfType(jsonLdNodes(html), 'SoftwareApplication')[0] as any;
+                const app = nodesOfType(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    'SoftwareApplication'
+                )[0] as any;
                 const offers = [app?.offers ?? []].flat();
                 p.eq(
                     'offers',
@@ -278,7 +299,7 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-162', 'ag-studio#3087'],
             ['studioHome', 'studioDocs'],
             (html, p) => {
-                const nodes = jsonLdNodes(html);
+                const nodes = validJsonLdNodes(html, (m) => p.add(m));
                 p.check(nodes.length > 0, 'no JSON-LD');
                 const offers = nodes.flatMap((n) => offersIn(n));
                 p.check(!offers.length, `offers: ${JSON.stringify(offers)}`);
@@ -291,7 +312,7 @@ export function seoContentChecks(): CheckDef[] {
             ['SE-63', 'SE-193', 'SE-194'],
             ['reactDocs'],
             (html, p, key) => {
-                const nodes = jsonLdNodes(html);
+                const nodes = validJsonLdNodes(html, (m) => p.add(m));
                 const article = nodesOfType(nodes, 'TechArticle')[0] as any;
                 p.eq('TechArticle url', article?.url, `${WWW}${PAGES[key]}`);
                 p.check(nodesOfType(nodes, 'SoftwareSourceCode').length > 0, 'no SoftwareSourceCode node');
@@ -423,18 +444,16 @@ export function seoContentChecks(): CheckDef[] {
                 p.check(n === 0, `${n} ${OLD_BLOG_HREF}… attributes`);
             }
         ),
-        ...['SE-44', 'SE-46'].map(
-            (ticket): CheckDef => ({
-                id: `seo-content.not-checkable.${ticket}`,
-                area: 'seo-content',
-                title: `${ticket} needs a real browser (client-rendered DOM) - not checked here`,
-                refs: [ticket, finding(15)],
-                async run() {
-                    return info(
-                        `${finding(15)}: ${ticket === 'SE-44' ? 'consent banner is client-injected (OneTrust replaced by Enzuzo)' : 'hero grid alt text is client-rendered'}`
-                    );
-                },
-            })
-        ),
+        ...['SE-44', 'SE-46'].map((ticket): CheckDef => ({
+            id: `seo-content.not-checkable.${ticket}`,
+            area: 'seo-content',
+            title: `${ticket} needs a real browser (client-rendered DOM) - not checked here`,
+            refs: [ticket, finding(15)],
+            async run() {
+                return info(
+                    `${finding(15)}: ${ticket === 'SE-44' ? 'consent banner is client-injected (OneTrust replaced by Enzuzo)' : 'hero grid alt text is client-rendered'}`
+                );
+            },
+        })),
     ];
 }
