@@ -219,6 +219,7 @@ rows.add('www', `${base}/license-pricing`, 301, `${base}/license-pricing/`);
 
 // live pages that must not be swallowed by a broad rule
 rows.section(base ? 'grid-archive-no-shadow' : 'grid-no-shadow');
+const shadowedLive = [];
 for (const p of [
     '/angular-data-grid/getting-started/',
     '/react-data-grid/cell-editing/',
@@ -234,15 +235,20 @@ for (const p of [
     '/javascript-data-grid/aggregation/',
     '/angular-data-grid/component-cell-renderer/',
 ]) {
-    if (!simulate(base + p)) {
-        rows.add('www', base + p, 200);
-    } else {
-        console.error(
-            `# no-shadow candidate ${base + p} is redirected by the rules: ${JSON.stringify(simulate(base + p))}`
-        );
+    const caught = simulate(base + p);
+    if (caught) {
+        // Dropping the 200 row here would hide exactly the regression this section exists to catch
+        // (and lower @min-rows with it), so a caught live page stops the regeneration instead.
+        shadowedLive.push(`${base + p} -> ${caught.status} ${caught.loc} by ${caught.by.text ?? caught.by}`);
     }
+    rows.add('www', base + p, 200);
 }
 
+if (shadowedLive.length) {
+    console.error(`ERROR: ${file}: ${shadowedLive.length} protected live page(s) caught by a redirect:`);
+    shadowedLive.forEach((s) => console.error(`  ${s}`));
+    process.exit(1);
+}
 gaps.exitIfAny();
 
 process.stdout.write(
