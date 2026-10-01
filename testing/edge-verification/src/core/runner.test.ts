@@ -58,7 +58,11 @@ describe('missing AWS resources', () => {
     const waf = byId(wafChecks(), 'waf-config.cf.rules', 'waf-config.cf.mta-sts', 'waf-config.cf.logging');
 
     it('a missing distribution fails its checks, and --strict exits non-zero', async () => {
-        const aws = new FakeAws({ ...healthyCloudFront(), 'cloudfront get-distribution-config': NO_SUCH_DISTRIBUTION });
+        const aws = new FakeAws({
+            ...healthyCloudFront(),
+            'cloudfront get-distribution': NO_SUCH_DISTRIBUTION,
+            'cloudfront get-distribution-config': NO_SUCH_DISTRIBUTION,
+        });
         const results = await runAll(cloudfront, offlineCtx(aws), 2);
         assert.deepEqual(
             results.map((r) => r.status),
