@@ -204,7 +204,12 @@ function isDeclaredP11Exemption(l: Leaf): boolean {
         case 'label':
             return nb.exemptLabels.includes(l.value);
         case 'byte':
-            return l.field === 'header:accept' && l.positional === 'CONTAINS' && l.value === nb.markdownAcceptExemption;
+            return (
+                l.field === 'header:accept' &&
+                l.positional === 'CONTAINS' &&
+                l.value === nb.markdownAcceptExemption &&
+                JSON.stringify(l.transforms) === JSON.stringify(nb.markdownAcceptTransforms)
+            );
         case 'regex':
             return (
                 l.field === 'header:user-agent' &&
@@ -693,9 +698,10 @@ export function wafChecks(): CheckDef[] {
                             l.kind === 'byte' &&
                             l.field === 'header:accept' &&
                             l.positional === 'CONTAINS' &&
-                            l.value === nb.markdownAcceptExemption
+                            l.value === nb.markdownAcceptExemption &&
+                            JSON.stringify(l.transforms) === JSON.stringify(nb.markdownAcceptTransforms)
                     ),
-                    'Accept: text/markdown exemption missing'
+                    `Accept: text/markdown exemption missing (CONTAINS, transforms ${nb.markdownAcceptTransforms.join(',')})`
                 );
                 // Exactly the declared exemptions: the allowlist and in-app UA regexes, the verified
                 // labels, Accept: text/markdown and the saliencebot AND. Anything else (say a UA regex
