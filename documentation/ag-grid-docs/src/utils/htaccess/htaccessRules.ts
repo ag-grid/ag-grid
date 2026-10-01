@@ -218,6 +218,18 @@ const modDeflateRules = `
 </IfModule>
 `;
 
+// mod_deflate tags a compressed response's ETag with a "-gzip" suffix but compares If-None-Match
+// against the unsuffixed ETag, so a compressed page never revalidates to a 304: every browser and
+// CloudFront revalidation re-downloads the full body (If-None-Match outranks If-Modified-Since).
+// Stripping the suffix from the request validators makes them match again. 'edit*' replaces every
+// occurrence, so a list of ETags and weak (W/) ETags are covered; anything else passes unchanged.
+// DeflateAlterETag would fix this at the source but is not allowed in .htaccess.
+// Root-only: mod_headers merges this into every directory below, archives included.
+const compressedRevalidationRules = `
+# Let compressed responses revalidate: drop mod_deflate's "-gzip" ETag suffix from If-None-Match.
+RequestHeader edit* If-None-Match '-gzip"' '"'
+`;
+
 // SE-80: the RewriteCond/RewriteRule lines that serve the per-page markdown variant
 // on `Accept: text/markdown`, shared by the production and staging .htaccess so the
 // rule can't drift between them. Indented 4 spaces for use inside a mod_rewrite block.
@@ -778,6 +790,7 @@ ${redirectNoCacheRules}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
+${compressedRevalidationRules}
 
 ${getMarkdownNegotiationBlock()}
 
@@ -808,6 +821,7 @@ ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 ${modDeflateRules}
+${unlessArchiveBuild(compressedRevalidationRules)}
 ${getModRewriteRules()}
 
 # X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks
