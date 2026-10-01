@@ -333,7 +333,14 @@ export function albAclRules(): any[] {
             Name: exp.name,
             Priority: i,
             Statement: statements[exp.name] ?? {
-                RateBasedStatement: { Limit: rateLimits[exp.name], AggregateKeyType: 'IP' },
+                RateBasedStatement: {
+                    Limit: rateLimits[exp.name],
+                    AggregateKeyType: ALB_ACL.rateRuleShape.aggregateKeyType,
+                    EvaluationWindowSec: ALB_ACL.rateRuleShape.evaluationWindowSec,
+                    ScopeDownStatement: not(
+                        byte('UriPath', 'STARTS_WITH', ALB_ACL.rateRuleShape.scopeDownExemptPrefix)
+                    ),
+                },
             },
             ...(exp.action === 'None' ? { OverrideAction: { None: {} } } : { Action: { [exp.action]: {} } }),
             VisibilityConfig: { MetricName: exp.metricName ?? exp.name },
