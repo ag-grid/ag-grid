@@ -339,9 +339,14 @@ Header set X-Plain "root"`);
             expect(headers.get('x-plain')).toEqual(['child']);
         });
 
-        it('sends onsuccess headers only for 2xx (or an ErrorDocument), and `always` headers for every status', () => {
+        it('sends onsuccess headers for 2xx, a static-file 304 (or an ErrorDocument), and `always` headers for every status', () => {
             const file = compileHtaccess('Header set X-Success "1"\nHeader always set X-Always "1"');
             expect([...responseHeaders([file], { uri: '/', status: 301 }).keys()]).toEqual(['x-always']);
+            // Apache 2.4.52 (production) sends the normal table with a static-file revalidation.
+            expect([...responseHeaders([file], { uri: '/a.css', status: 304 }).keys()]).toEqual([
+                'x-success',
+                'x-always',
+            ]);
             expect([...responseHeaders([file], { uri: '/404.html', status: 404, onSuccess: true }).keys()]).toEqual([
                 'x-success',
                 'x-always',
