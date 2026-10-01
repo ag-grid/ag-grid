@@ -115,10 +115,10 @@ export function cachingChecks(): CheckDef[] {
             refs: ['SE-80', '2026-09-18 /example/ incident'],
             async run({ http }) {
                 const url = `${WWW}${path}`;
-                // Only the last request must be new: it has to follow a markdown request, and a
-                // shared one (made earlier by another check) still came first.
+                // The markdown and final HTML requests must both be new, so the last response follows a
+                // markdown request this check actually sent; the first may be shared (it came first).
                 const before = await http.request({ url });
-                const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT } });
+                const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT }, fresh: true });
                 const after = await http.request({ url, fresh: true });
                 const p = new Problems();
                 // Only successful responses show a markdown request leaving the page intact; an
