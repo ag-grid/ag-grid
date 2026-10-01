@@ -191,7 +191,7 @@
 
     .ag-row-highlight-indent > .ag-grid-scrolling-cells::after,
     .ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
-        /* the row measures its group label when it can; otherwise assume the expander plus one control */
+        // the row measures its group label when it can; otherwise assume the expander plus one control
         margin-left: var(
             --ag-internal-row-highlight-indent,
             calc(
