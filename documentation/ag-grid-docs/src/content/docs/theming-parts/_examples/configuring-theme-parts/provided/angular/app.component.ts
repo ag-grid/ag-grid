@@ -42,19 +42,19 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
             <div class="example-controls" style="flex: 0 1 0%">
                 <div class="controls-row">
                     Theme:
-                    <select style="margin-right: 16px" [(ngModel)]="baseTheme">
+                    <select class="gap-right" [(ngModel)]="baseTheme">
                         <option *ngFor="let baseTheme of baseThemes" [ngValue]="baseTheme.value">
                             {{ baseTheme.id }}
                         </option>
                     </select>
                     Icons:
-                    <select style="margin-right: 16px" [(ngModel)]="iconSet">
+                    <select class="gap-right" [(ngModel)]="iconSet">
                         <option *ngFor="let iconSet of iconSets" [ngValue]="iconSet.value">
                             {{ iconSet.id }}
                         </option>
                     </select>
                     Color scheme:
-                    <select style="margin-right: 16px" [(ngModel)]="colorScheme">
+                    <select [(ngModel)]="colorScheme">
                         <option *ngFor="let colorScheme of colorSchemes" [ngValue]="colorScheme.value">
                             {{ colorScheme.id }}
                         </option>

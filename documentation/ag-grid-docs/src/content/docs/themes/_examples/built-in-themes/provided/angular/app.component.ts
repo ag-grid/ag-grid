@@ -30,7 +30,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
             <div class="example-controls" style="flex: 0 1 0%">
                 <div class="controls-row">
                     Theme:
-                    <select style="margin-right: 16px" [(ngModel)]="theme">
+                    <select [(ngModel)]="theme">
                         <option *ngFor="let theme of themes" [ngValue]="theme.theme">
                             {{ theme.label }}
                         </option>

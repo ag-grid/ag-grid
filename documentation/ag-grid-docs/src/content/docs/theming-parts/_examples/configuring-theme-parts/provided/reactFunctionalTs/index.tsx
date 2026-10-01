@@ -70,8 +70,15 @@ const GridExample = () => {
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <div className="example-controls" style={{ flex: 0 }}>
                     <div className="controls-row">
-                        Theme: <PartSelector options={baseThemes} value={baseTheme} setValue={setBaseTheme} />
-                        Icons: <PartSelector options={iconSets} value={iconSet} setValue={setIconSet} />
+                        Theme:{' '}
+                        <PartSelector
+                            options={baseThemes}
+                            value={baseTheme}
+                            setValue={setBaseTheme}
+                            className="gap-right"
+                        />
+                        Icons:{' '}
+                        <PartSelector options={iconSets} value={iconSet} setValue={setIconSet} className="gap-right" />
                         Color scheme:{' '}
                         <PartSelector options={colorSchemes} value={colorScheme} setValue={setColorScheme} />
                     </div>
@@ -94,12 +101,13 @@ type PartSelectorProps<T extends { id: string } | null> = {
     options: T[];
     value: T;
     setValue: (value: T) => void;
+    className?: string;
 };
 
-const PartSelector = <T extends { id: string }>({ options, value, setValue }: PartSelectorProps<T>) => (
+const PartSelector = <T extends { id: string }>({ options, value, setValue, className }: PartSelectorProps<T>) => (
     <select
         onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value)! || null)}
-        style={{ marginRight: 16 }}
+        className={className}
         value={value?.id}
     >
         {options.map((option, i) => (

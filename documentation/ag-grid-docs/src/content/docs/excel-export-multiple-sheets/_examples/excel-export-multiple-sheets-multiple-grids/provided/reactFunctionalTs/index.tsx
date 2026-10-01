@@ -192,12 +192,7 @@ const GridExample = () => {
     const getTopToolBar = () => (
         <div className="example-controls">
             <div className="controls-row">
-                <button
-                    type="button"
-                    className="btn btn-default excel"
-                    style={{ marginRight: 5 }}
-                    onClick={onExcelExport}
-                >
+                <button type="button" className="btn btn-default excel" onClick={onExcelExport}>
                     <i className="far fa-file-excel" style={{ marginRight: 5, color: 'green' }}></i>Export to Excel
                 </button>
                 <button type="button" className="btn btn-default reset" onClick={reset}>
