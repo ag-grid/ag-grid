@@ -4,7 +4,9 @@ import { setNonAdvancedParams, setThemeParamSource } from '@ag-website-shared/th
 import { setFeatureModels } from '@ag-website-shared/theming/PartModel';
 import { setBaseTheme } from '@ag-website-shared/theming/base-theme';
 import { setRenderedFeatures } from '@ag-website-shared/theming/rendered-theme';
+import { setProductVersion } from '@ag-website-shared/theming/store';
 import { getThemeDefaultParams } from '@ag-website-shared/theming/utils';
+import { agStudioVersion } from '@constants';
 import { _getEditableThemeParams, studioTheme } from 'ag-studio';
 
 import { STUDIO_FONT_FAMILY_OPTIONS } from './fonts';
@@ -26,3 +28,5 @@ setRenderedFeatures([]);
 setThemeCodeConfig({ themeVariable: 'studioTheme', importSource: 'ag-studio' });
 
 setFontFamilyOptions(STUDIO_FONT_FAMILY_OPTIONS);
+
+setProductVersion(agStudioVersion);
