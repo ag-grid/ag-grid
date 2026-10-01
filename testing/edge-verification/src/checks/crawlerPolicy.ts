@@ -10,6 +10,7 @@ import {
     AI_TOKEN_ADMISSION,
     CONTENT_SIGNAL,
     GHOST_DISALLOWS,
+    MD_TWIN_POLICY,
     ROBOTS_FILES,
     ROBOTS_MATRIX,
     SITEMAP,
@@ -28,6 +29,36 @@ const aiGroup = (r: Robots) => r.groups.find((g) => g.agents.includes(AI_GROUP[0
 const starGroup = (r: Robots) => r.groups.find((g) => g.agents.includes('*'));
 const disallows = (g: { rules: Array<{ type: string; pattern: string }> } | undefined): string[] =>
     (g?.rules ?? []).filter((r) => r.type === 'disallow').map((r) => r.pattern);
+
+/**
+ * The concrete markdown-twin URL of every directory Disallow in a group (`/x/` -> `/x.md`, each
+ * `*` replaced by a sample segment). The Ghost endpoints are API paths, not pages, so have no twin.
+ */
+export function twinUrlsOfDisallows(group: { rules: Array<{ type: string; pattern: string }> } | undefined): string[] {
+    return disallows(group)
+        .filter((d) => d.length > 1 && d.endsWith('/') && !d.includes('?') && !GHOST_DISALLOWS.includes(d))
+        .map((d) => `${d.slice(0, -1)}.md`.replace(/\*/g, MD_TWIN_POLICY.wildcardSample));
+}
+
+/** Twins (plus `suffix`) the group's own token may still crawl, as "url (verdict)". */
+function crawlableTwins(r: Robots, suffix: string): { open: string[]; checked: number } {
+    const open: string[] = [];
+    let checked = 0;
+    for (const [name, group] of [
+        ['*', starGroup(r)],
+        ['ai', aiGroup(r)],
+    ] as const) {
+        const token = MD_TWIN_POLICY.groupTokens[name];
+        for (const twin of twinUrlsOfDisallows(group)) {
+            checked++;
+            const v = isAllowed(r, token, `${twin}${suffix}`);
+            if (v.allowed) {
+                open.push(`${name} ${twin}${suffix} (${describeVerdict(v)})`);
+            }
+        }
+    }
+    return { open, checked };
+}
 
 export function crawlerPolicyChecks(): CheckDef[] {
     return [
@@ -126,6 +157,34 @@ export function crawlerPolicyChecks(): CheckDef[] {
                 return p.outcome(describeVerdict(isAllowed(r, 'Googlebot', row.url)));
             },
         })),
+        {
+            id: 'crawler-policy.robots.md-twins',
+            area: 'crawler-policy',
+            title: 'robots.txt: the .md twin of every disallowed page directory is disallowed for the same group',
+            refs: ['grid#15424', 'waf-finding.md §11'],
+            pending: MD_TWIN_POLICY.pending,
+            async run({ http }) {
+                const { open, checked } = crawlableTwins(await wwwRobots(http), '');
+                return open.length
+                    ? fail(`${open.length}/${checked} twins crawlable, e.g. ${open.slice(0, 4).join('; ')}`)
+                    : pass(`${checked} twins disallowed`);
+            },
+        },
+        {
+            id: 'crawler-policy.robots.md-twins-query',
+            area: 'crawler-policy',
+            title: 'robots.txt: a query string does not reopen the .md twin of a disallowed page',
+            refs: ['grid#15424', 'waf-finding.md §11'],
+            knownIssue: MD_TWIN_POLICY.queryKnownIssue,
+            async run({ http }) {
+                const { open, checked } = crawlableTwins(await wwwRobots(http), MD_TWIN_POLICY.query);
+                return open.length
+                    ? fail(
+                          `${open.length}/${checked} twins crawlable with a query, e.g. ${open.slice(0, 3).join('; ')}`
+                      )
+                    : pass(`${checked} twins disallowed with a query`);
+            },
+        },
         {
             id: 'crawler-policy.robots-vs-waf',
             area: 'crawler-policy',
