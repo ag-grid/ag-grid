@@ -2239,6 +2239,13 @@
   resolved "https://registry.npmjs.org/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz#b6c75a56a1947cc916ea058772d666a2c8932f31"
   integrity sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==
 
+"@dash0/sdk-web@^0.27.0":
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/@dash0/sdk-web/-/sdk-web-0.27.0.tgz#c8caa5533f9d02f62c36ffb471a9dec528bf2c48"
+  integrity sha512-N18uQyBVKi/bPgs1kQzHwkz6t1hcwWy/WC2CTioNbVNmNjgatgED1mk1vWXzz9Gy2ysNbLS+l1r5Ll2ipM8JJw==
+  dependencies:
+    web-vitals "^5.0.3"
+
 "@emmetio/abbreviation@^2.3.3":
   version "2.3.3"
   resolved "https://registry.npmjs.org/@emmetio/abbreviation/-/abbreviation-2.3.3.tgz#ed2b88fe37b972292d6026c7c540aaf887cecb6e"
@@ -24506,6 +24513,11 @@ web-streams-polyfill@^4.2.0:
   version "4.2.0"
   resolved "https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-4.2.0.tgz#93295e67af95889a1e044a6beff1366c82720650"
   integrity sha512-0rYDzGOh9EZpig92umN5g5D/9A1Kff7k0/mzPSSCY8jEQeYkgRMoY7LhbXtUCWzLCMX0TUE9aoHkjFNB7D9pfA==
+
+web-vitals@^5.0.3:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-5.3.0.tgz#a67f57f229fdf68be99eb99d3725946def284ff3"
+  integrity sha512-q6LWsLatGYZp5VGBIOvbTj6JBV2nOmC8KvWztXBmwJcfFAzhwKwbOxhUH306XY3CcaZDUlSmSuNPBsCn0bFu+g==
 
 web-worker@^1.5.0:
   version "1.5.0"
