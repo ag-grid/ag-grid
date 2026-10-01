@@ -6,7 +6,8 @@ export type Leaf =
     | { kind: 'byte'; field: string; value: string; positional: string; transforms: string[] }
     | { kind: 'regex'; field: string; value: string; transforms: string[] }
     | { kind: 'label'; value: string; scope: string }
-    | { kind: 'ipset'; value: string };
+    /** `forwardedIp`: the header an IPSetForwardedIPConfig matches instead of the connection IP. */
+    | { kind: 'ipset'; value: string; forwardedIp?: string };
 
 function fieldName(ftm: any): string {
     if (!ftm) {
@@ -148,7 +149,8 @@ export function leaves(node: unknown): Leaf[] {
         } else if (o.LabelMatchStatement) {
             out.push({ kind: 'label', value: o.LabelMatchStatement.Key, scope: o.LabelMatchStatement.Scope });
         } else if (o.IPSetReferenceStatement) {
-            out.push({ kind: 'ipset', value: o.IPSetReferenceStatement.ARN });
+            const s = o.IPSetReferenceStatement;
+            out.push({ kind: 'ipset', value: s.ARN, forwardedIp: s.IPSetForwardedIPConfig?.HeaderName });
         } else {
             Object.values(o).forEach(walk);
         }

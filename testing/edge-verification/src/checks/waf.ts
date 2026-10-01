@@ -449,6 +449,8 @@ export function wafChecks(): CheckDef[] {
                 const set = await live.ipSet(name, id, CF_ACL.scope, CF_ACL.region);
                 const p = new Problems();
                 p.eq('name', set.Name, CF_ACL.buildServerIpSet.name);
+                // A forwarded-IP header is the caller's to set: matching it lets anyone claim the address.
+                p.eq('matched address', l.forwardedIp ?? 'connection IP', 'connection IP');
                 p.eq('addresses', sorted(set.Addresses), sorted(CF_ACL.buildServerIpSet.addresses));
                 return p.outcome();
             },
@@ -658,7 +660,12 @@ export function wafChecks(): CheckDef[] {
                     ands.some(
                         (and) =>
                             and.length === 2 &&
-                            and.some((l) => l.kind === 'ipset' && l.value.includes(`/ipset/${nb.saliencebotIpSet}/`)) &&
+                            and.some(
+                                (l) =>
+                                    l.kind === 'ipset' &&
+                                    !l.forwardedIp &&
+                                    l.value.includes(`/ipset/${nb.saliencebotIpSet}/`)
+                            ) &&
                             and.some(
                                 (l) =>
                                     l.kind === 'regex' &&
@@ -666,7 +673,7 @@ export function wafChecks(): CheckDef[] {
                                     regexLeafMatches(l, 'saliencebot')
                             )
                     ),
-                    'saliencebot exemption is not AND(a UA regex matching saliencebot, salience-bot IP set)'
+                    'saliencebot exemption is not AND(a UA regex matching saliencebot, salience-bot IP set on the connection IP)'
                 );
                 p.check(
                     !e.some(
