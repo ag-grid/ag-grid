@@ -145,6 +145,7 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         // Test, debug, error and post-submission pages are closed to everyone, twins included.
         ['/react-data-grid/cell-editing-batch-test/', 'block', 'block'],
         ['/react-data-grid/cell-editing-batch-test.md', 'block', 'block'],
+        ['/react-data-grid/cell-editing-batch-test.md?utm_source=x', 'block', 'block'],
         ['/studio/react/autosave-test/', 'block', 'block'],
         ['/studio/react/autosave-test.md', 'block', 'block'],
         ['/charts/react/selection-e2e/', 'block', 'block'],
@@ -163,6 +164,7 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         ['/campaigns/power-of-ag-charts/', 'block', 'block'],
         ['/campaigns/bryntum-gantt/', 'allow', 'allow'],
         ['/campaigns/bryntum-gantt.md', 'allow', 'allow'],
+        ['/campaigns/bryntum-gantt.md?utm_source=x', 'allow', 'allow'],
         ['/campaigns/bryntum-scheduler-pro/', 'allow', 'allow'],
 
         // SE-183: search-result variants are crawl waste, for every group.
@@ -204,6 +206,43 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         for (const agent of [...SEARCH_AGENTS, ...AI_CRAWLERS]) {
             expect(verdict(agent, markdownTwin(page)), agent).toBe(verdict(agent, page));
         }
+    });
+
+    // Robots rules match the path plus query, so a twin rule anchored with `$` alone would leave
+    // `<page>.md?utm_source=x` on the opposite verdict to `<page>/?utm_source=x`. Every twin rule
+    // the file emits is checked, with each `*` instantiated, bare and with a query string.
+    const TWIN_RULE_PAGES = [
+        ...new Set(
+            txt
+                .split('\n')
+                .map((line) => /^(?:Allow|Disallow): (.*)\.md\$$/.exec(line)?.[1])
+                .filter((base): base is string => base !== undefined)
+                .map((base) => `${base.replaceAll('*', 'react')}/`)
+        ),
+    ];
+    test('every twin rule is checked', () => {
+        expect(TWIN_RULE_PAGES).toEqual(
+            expect.arrayContaining(['/campaigns/bryntum-gantt/', '/react-data-grid/react-test/', '/archive/'])
+        );
+    });
+    test.each(TWIN_RULE_PAGES.flatMap((page) => [page, `${page}child/`]))(
+        '%s and its .md twin share a verdict with and without a query string',
+        (page) => {
+            // The archive roots are opened as exact redirect sources and have no twin of their own.
+            const queries = TWINLESS.includes(page) ? ['?utm_source=x', '?'] : ['', '?utm_source=x', '?'];
+            for (const agent of [...SEARCH_AGENTS, ...AI_CRAWLERS]) {
+                for (const query of queries) {
+                    expect(verdict(agent, `${markdownTwin(page)}${query}`), `${agent} ${query}`).toBe(
+                        verdict(agent, `${page}${query}`)
+                    );
+                }
+            }
+        }
+    );
+
+    test('twin rules reach only the twin, not other paths sharing its prefix', () => {
+        expect(verdict('Googlebot', '/campaigns/bryntum-gantt.mdx')).toBe('block');
+        expect(verdict('Googlebot', '/campaigns/bryntum-gantt.md/')).toBe('block');
     });
 
     test('AI crawlers are matched case-insensitively', () => {
