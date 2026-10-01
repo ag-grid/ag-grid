@@ -93,6 +93,14 @@ const BLOG_DISALLOW_PATHS = [
     '/blog/.ghost/analytics/api/',
 ];
 
+/**
+ * A rule written for a page directory (`/x/`) does not match the page's markdown twin (`/x.md`),
+ * so each one is paired with an exact rule for the twin: a blocked page's twin stays blocked, and
+ * a page opened under a broader Disallow keeps its twin open too.
+ */
+const withMarkdownTwins = (paths: string[]) =>
+    paths.flatMap((path) => (path.length > 1 && path.endsWith('/') ? [path, `${path.slice(0, -1)}.md$`] : [path]));
+
 const buildGroup = (userAgents: string[], allowPaths: string[], disallowPaths: string[]) =>
     [
         ...userAgents.map((userAgent) => `User-agent: ${userAgent}`),
@@ -104,8 +112,8 @@ const buildGroup = (userAgents: string[], allowPaths: string[], disallowPaths: s
         // covers it; stating it makes the intent unmissable to anyone reading the file, since the
         // migration depends on /blog/ staying crawlable.
         `Allow: ${urlWithBaseUrl('/blog/')}`,
-        ...allowPaths.map((path) => `Allow: ${path}`),
-        ...disallowPaths.map((path) => `Disallow: ${path}`),
+        ...withMarkdownTwins(allowPaths).map((path) => `Allow: ${path}`),
+        ...withMarkdownTwins(disallowPaths).map((path) => `Disallow: ${path}`),
         // After the Allow lines: robots.txt precedence is longest-match, not document order, so
         // `Disallow: /blog/ghost/` beats `Allow: /blog/` regardless of position.
         ...BLOG_DISALLOW_PATHS.map((path) => `Disallow: ${urlWithBaseUrl(path)}`),
