@@ -32,6 +32,8 @@ lib/sources.mjs              finds the three repos, materialises git refs, emits
 lib/docroot.mjs              production-shaped docroot + placeholder files
 lib/rows.mjs                 expectation-row format and parser
 lib/probe.mjs                HTTP client, chain following, assertions
+lib/report.mjs               the verdict: a row's failures against its known-fail marker
+*.test.mjs                   node --test self-tests of the verdict rules, run by run.sh before probing
 expectations/*.tsv           curated.tsv and edge.tsv (hand-written), generated-*.tsv (generated)
 generators/                  regenerate.mjs plus one generator per rule family (see below)
 ```
@@ -213,10 +215,13 @@ It runs as the invoking user on a high port.
 **Other keys:** `page=<path>` creates an extra placeholder file; `twin=no` skips the `.md` twin;
 `needs=deflate` runs the row only when the harness Apache has `mod_deflate`.
 
-**`known-fail=<ref>`** marks approved desired behaviour that is not implemented yet.
+**`known-fail=<assertion>[,<assertion>...]:<ref>`** marks approved desired behaviour that is not
+implemented yet, e.g. `known-fail=cc:waf-finding.md §4`.
 
-- The row must fail, and it is reported separately with its reference.
-- If it unexpectedly passes, the run fails so that the marker gets removed.
+- It names the assertions expected to fail: `status`, `location`, or one of the row's own keys (`cc`, `h:ETag`, `body`, `hops`, ...). Naming one the row does not make is a parse error.
+- The row must fail on exactly those, and it is reported separately with its reference.
+- Any other failing assertion, or a transport error, fails the run as on any other row, so a known-fail row cannot hide a new regression.
+- If a named assertion passes, the run fails as an unexpected pass, so that the marker gets narrowed or removed.
 - Known-wrong behaviour is never encoded as expected. If the right answer isn't decided, the row is left unasserted.
 
 **Directives:** `# @category <name>` groups the rows that follow it in the summary. `# @min-rows <n>`
@@ -258,7 +263,7 @@ rule for 3xx except 304 (see `Rows.add` in `generators/lib.mjs`). `edge.tsv` che
 the long cache of the copy it revalidates.
 
 **Where Apache will do something the rule's author did not intend, the generator asserts the
-intended target and marks the row `known-fail`:**
+intended target and marks the row `known-fail`, naming only the assertions whose answer differs:**
 
 - a doubled slash from a prefix append;
 - a rule shadowed by an earlier, broader one.

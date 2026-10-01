@@ -160,7 +160,7 @@ www	/charts/archive/14.2.0/data.json	200		cc=public, max-age=604800, s-maxage=31
 # The charts archive serves its own 404 page, which sits under the archive path and so matches the
 # long-cache rule: a missing page would be cached as missing for a year. Approved fix: gate the
 # archive cache on a 200 (waf-finding.md §4).
-www	/charts/archive/14.2.0/no-such-page/	404		body~charts-archive-14\.2\.0-404	cc=no-cache	known-fail=waf-finding.md §4: charts archive 404s are cached for a year; gate archiveCacheRules on REQUEST_STATUS == 200
+www	/charts/archive/14.2.0/no-such-page/	404		body~charts-archive-14\.2\.0-404	cc=no-cache	known-fail=cc:waf-finding.md §4: charts archive 404s are cached for a year; gate archiveCacheRules on REQUEST_STATUS == 200
 
 # @category caching-in-flight-archives
 # A release candidate is patched in flight by scripts/uncached-archives.mjs: no-cache for every

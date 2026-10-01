@@ -154,15 +154,30 @@ export const substitute = (target, match) => target.replace(/\$(\d)/g, (_, n) =>
 export const collapseSlashes = (url) =>
     url.replace(/^(https?:\/\/[^/]+)?(.*)$/, (_, origin = '', path) => origin + path.replace(/\/{2,}/g, '/'));
 
+const isRedirect = (status) => status >= 300 && status < 400 && status !== 304;
+
+/**
+ * The known-fail marker for a row that asserts the INTENDED answer where Apache gives another one,
+ * naming only the assertions that differ: status, location, and the redirect no-cache check (which
+ * `Rows.add` adds to an intended redirect) when Apache does not redirect at all. Null when the
+ * answers do not differ, so there is nothing to mark.
+ */
+export function knownFailMarker(ref, intended, actual) {
+    const assertions = [
+        intended.status !== actual.status && 'status',
+        intended.loc !== actual.loc && 'location',
+        isRedirect(intended.status) && !isRedirect(actual.status) && 'cc',
+    ].filter(Boolean);
+    return assertions.length ? `known-fail=${assertions.join(',')}:${ref}` : null;
+}
+
 /**
  * Every generated redirect row also asserts it is never cached (the root's `Header always set
  * Cache-Control "no-cache"` for 3xx except 304), so a cached Location cannot replay one visitor's
  * query string to another. A row asserting its own Cache-Control keeps it.
  */
 const withRedirectChecks = (status, extra) =>
-    status >= 300 && status < 400 && status !== 304 && !extra.some((e) => /^cc[=~]/.test(e))
-        ? [...extra, 'cc=no-cache']
-        : extra;
+    isRedirect(status) && !extra.some((e) => /^cc[=~]/.test(e)) ? [...extra, 'cc=no-cache'] : extra;
 
 export class Rows {
     constructor() {
