@@ -318,7 +318,7 @@ export class RowNumbersService
         // only grow between forced autosizes, so row counts hovering around a digit boundary don't cause width jank
         if (force || text.length > this.autoSizedTextLength) {
             this.autoSizedTextLength = text.length;
-            this.autoSize(column, text);
+            this.autoSize(column, text, !force);
         }
         this.refreshCells(false);
     }
@@ -331,11 +331,13 @@ export class RowNumbersService
         this.beans.rowRenderer.refreshCells({ columns: [column], force });
     }
 
-    private autoSize(column: AgColumn, text: string): void {
+    private autoSize(column: AgColumn, text: string, growOnly: boolean): void {
         const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
-        if (width != null) {
-            this.beans.colResize?.setColumnWidths([{ key: column, newWidth: width }], false, true, 'rowNumbersService');
+        // growing must not narrow a column the user has already widened past the measured width
+        if (width == null || (growOnly && width <= column.getActualWidth())) {
+            return;
         }
+        this.beans.colResize?.setColumnWidths([{ key: column, newWidth: width }], false, true, 'rowNumbersService');
     }
 
     private getLargestRowNumberText(column: AgColumn): string {

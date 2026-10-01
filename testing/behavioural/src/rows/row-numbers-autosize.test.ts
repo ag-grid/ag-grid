@@ -149,6 +149,19 @@ describe('Row numbers column autosize', () => {
         expect(rowNumberWidth(api)).toBe(widthFor('101'));
     });
 
+    test('growing past a digit boundary keeps a column the user widened beyond the measured width', async () => {
+        const api = await createGrid(97, { rowNumbers: { resizable: true } });
+        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 200 }]);
+        expect(rowNumberWidth(api)).toBe(200);
+
+        api.applyTransaction({ add: makeRows(3, 97) });
+        await pastDebounce();
+        expect(rowNumberWidth(api)).toBe(200);
+
+        api.applyTransaction({ add: makeRows(99_900, 100) });
+        await expectWidth(api, '100001');
+    });
+
     test('a full rowData reset still re-sizes to fit, including shrinking', async () => {
         const api = await createGrid(100, { getRowId: undefined });
 
