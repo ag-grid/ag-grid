@@ -168,6 +168,20 @@ export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): s
     return others.length ? `between ${exp.after} and ${exp.name}: ${others.join(', ')}` : undefined;
 }
 
+/** The rate rules' asset exemptions as the live ACL has them: UriPath, LOWERCASE, prefixes STARTS_WITH. */
+function assetScopeDownLeaves(): Leaf[] {
+    return [
+        { kind: 'regex', field: 'UriPath', value: CF_ACL.assetScopeDownRegex, transforms: ['LOWERCASE'] },
+        ...CF_ACL.assetScopeDownPrefixes.map((value): Leaf => ({
+            kind: 'byte',
+            field: 'UriPath',
+            value,
+            positional: 'STARTS_WITH',
+            transforms: ['LOWERCASE'],
+        })),
+    ];
+}
+
 /** p11's safe-path leaves as add-waf-safe-path-exemptions.sh builds them: UriPath, no transform. */
 function p11SafeLeaves(): Leaf[] {
     const nb = CF_ACL.nonBrowser;
@@ -718,16 +732,13 @@ export function wafChecks(): CheckDef[] {
                             p.add(`${exp.name}: scope-down is not NOT(any asset path)`);
                             continue;
                         }
-                        p.check(
-                            ls.some((l) => l.kind === 'regex' && l.value === CF_ACL.assetScopeDownRegex),
-                            `${exp.name}: asset regex differs`
+                        // Every property of every leaf, and nothing extra: an exemption matched on
+                        // another field or positional constraint would count assets towards the limit.
+                        p.eq(
+                            `${exp.name}: asset scope-down`,
+                            sorted(ls.map(leafKey)),
+                            sorted(assetScopeDownLeaves().map(leafKey))
                         );
-                        for (const prefix of CF_ACL.assetScopeDownPrefixes) {
-                            p.check(
-                                ls.some((l) => l.kind === 'byte' && l.value === prefix),
-                                `${exp.name}: ${prefix} not exempt`
-                            );
-                        }
                     }
                     if (exp.immunity) {
                         p.eq(
