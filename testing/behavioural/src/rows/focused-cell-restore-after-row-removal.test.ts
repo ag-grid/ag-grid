@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
-import type { GridApi } from 'ag-grid-community';
+import type { ColSpanParams, GridApi } from 'ag-grid-community';
 
 const ROW_COUNT = 100;
 const REMOVE = 5;
@@ -110,14 +110,17 @@ describe('Focused cell restore after row removal', () => {
         }
     );
 
-    /** Scrolls to the bottom with the first columns in view, so the last columns are virtualised out of every rendered row. */
-    async function createGridScrolledLeft() {
+    /** Scrolls to the bottom with the first columns in view, so the last columns are virtualised out of every rendered row.
+     *  With `colSpanColId`, that column spans by `colSpan` and is the one scrolled out: a covered column starts no cell. */
+    async function createGridScrolledLeft(colSpanColId?: string, colSpan?: (params: ColSpanParams) => number) {
+        const scrolledOutCol = colSpanColId ?? LAST_COL;
         const api = await gridMgr.createGridAndWait('focusScrolledOutColumn', {
             rowData: buildRows(ROW_COUNT),
             columnDefs: COLS.map((colId) => ({
                 colId,
                 field: colId,
                 width: 200,
+                colSpan: colId === colSpanColId ? colSpan : undefined,
             })),
             getRowId: (p) => p.data.id,
             rowHeight: 40,
@@ -129,10 +132,10 @@ describe('Focused cell restore after row removal', () => {
 
         api.ensureIndexVisible(LAST_ROW, 'bottom');
         await waitFor(() => expect(hasCell(LAST_ROW, 'col0')).toBe(true));
-        api.ensureColumnVisible(LAST_COL);
-        await waitFor(() => expect(hasCell(LAST_ROW, LAST_COL)).toBe(true));
+        api.ensureColumnVisible(scrolledOutCol);
+        await waitFor(() => expect(hasCell(LAST_ROW, scrolledOutCol)).toBe(true));
         api.ensureColumnVisible('col0');
-        await waitFor(() => expect(hasCell(FALLBACK_ROW, LAST_COL)).toBe(false));
+        await waitFor(() => expect(hasCell(FALLBACK_ROW, scrolledOutCol)).toBe(false));
         expect(hasCell(FALLBACK_ROW, 'col0')).toBe(true);
 
         return { api, hasCell };
@@ -152,5 +155,24 @@ describe('Focused cell restore after row removal', () => {
         expect(hasCell(FALLBACK_ROW, LAST_COL)).toBe(true);
         expect(() => api.ensureIndexVisible(0, 'top')).not.toThrow();
         await waitFor(() => expect(hasCell(0, 'col0')).toBe(true));
+    });
+
+    test('setFocusedCell onto a scrolled-out column a colSpan covers focuses the spanning cell', async () => {
+        const colSpan = vi.fn((_params: ColSpanParams) => 3);
+        const { api } = await createGridScrolledLeft('col9', colSpan);
+        const colSpanCallsForRow = () => colSpan.mock.calls.filter(([p]) => p.node?.rowIndex === FALLBACK_ROW).length;
+        const callsBeforeFocus = colSpanCallsForRow();
+        expect(callsBeforeFocus).toBeGreaterThan(0);
+
+        api.setFocusedCell(FALLBACK_ROW, LAST_COL);
+
+        await waitFor(() => expect(activeCell()).toEqual({ rowIndex: String(FALLBACK_ROW), colId: 'col9' }));
+        const focused = api.getFocusedCell();
+        expect({ rowIndex: focused?.rowIndex, colId: focused?.column.getColId() }).toEqual({
+            rowIndex: FALLBACK_ROW,
+            colId: 'col9',
+        });
+        // the rendered row has already read the span, so focusing it asks the callback again neither now nor on layout
+        expect(colSpanCallsForRow()).toBe(callsBeforeFocus);
     });
 });

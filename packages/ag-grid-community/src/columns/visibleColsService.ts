@@ -43,8 +43,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** `allCols` with `colDef.autoHeight`. Reused across refreshes to stay warm. */
     public readonly autoHeightCols: AgColumn[] = [];
 
-    /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
-    public colSpanActive = false;
+    /** How many displayed columns have `colDef.colSpan`, sizing a row's colSpans cache; while not 0, rows can differ
+     *  in the cells they draw. */
+    public colSpanColCount = 0;
 
     /** `allCols` with a legacy `colDef.rowSpan`, whose cells re-read it as their row's data changes. */
     public readonly rowSpanCols: AgColumn[] = [];
@@ -323,8 +324,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     public clear(): void {
         const prevAll = this.allCols;
         for (let i = 0, len = prevAll.length; i < len; ++i) {
-            prevAll[i].allColsIndex = -1;
-            prevAll[i].displayed = false;
+            const prev = prevAll[i];
+            prev.allColsIndex = -1;
+            prev.colSpanIndex = -1;
+            prev.displayed = false;
         }
         this.leftCols = [];
         this.rightCols = [];
@@ -332,7 +335,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.allCols = [];
         ++this.displayedColsVersion;
         this.autoHeightCols.length = 0;
-        this.colSpanActive = false;
+        this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
     }
 
@@ -363,12 +366,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // reach `displayed === false` or `setLeftValuesOfGroups` won't clear their stale `left`.
         const prevAll = this.allCols;
         for (let i = 0, len = prevAll.length; i < len; ++i) {
-            prevAll[i].allColsIndex = -1;
-            prevAll[i].displayed = false;
+            const prev = prevAll[i];
+            prev.allColsIndex = -1;
+            prev.colSpanIndex = -1;
+            prev.displayed = false;
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
-        this.colSpanActive = false;
+        this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
         this.flexActive = false;
@@ -415,7 +420,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 autoHeightCols.push(col);
             }
             if (col.colSpan != null) {
-                this.colSpanActive = true;
+                col.colSpanIndex = this.colSpanColCount;
+                ++this.colSpanColCount;
+            } else {
+                col.colSpanIndex = -1;
             }
             if (col.rowSpan != null) {
                 rowSpanCols.push(col);
