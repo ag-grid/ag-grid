@@ -11,7 +11,8 @@
 #     react-grid.ag-grid.com, angulargrid.com, www.angulargrid.com) to the SAME archive URL on
 #     www in one hop, query string kept. Today they serve the archive with a 200, or (grid 36.x)
 #     redirect to the CURRENT docs because the rule drops the /archive/<v>/ prefix. An archive with
-#     no rewrite block of its own (charts 14.0.x, studio 2.0.x) gets one.
+#     no rewrite block of its own (charts 14.0.x, studio 2.0.x) gets one. A slash-less directory
+#     URL on those hosts (or http on www) gets its slash in the same hop.
 #   - grid: the block also carries the http -> https upgrade (prefix kept), and, for archives with
 #     markdown twins (36.1.0, 36.2.0), negotiation on Accept: text/markdown under the archive base,
 #     plus the Vary: Accept that goes with it. Removes every rule that sends a request OUT of the

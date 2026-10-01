@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 275
+# @min-rows 285
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -28,6 +28,15 @@ blog	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.co
 blog	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
 blog	/studio/archive/3.0.0/react/quick-start/	301	https://www.ag-grid.com/studio/archive/3.0.0/react/quick-start/	hops=1	final=200
 angulargrid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
+# A bare archive root: mod_rewrite leaves it to mod_dir (the archive's .htaccess is in that very
+# directory), so the root's <If> redirect adds the slash and canonicalises the host in one hop.
+apex	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	hops=1	final=200
+apex	/archive/36.3.0?x=1	301	https://www.ag-grid.com/archive/36.3.0/?x=1	hops=1	final=200
+blog	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	hops=1	final=200
+angulargrid.com	/charts/archive/14.2.0	301	https://www.ag-grid.com/charts/archive/14.2.0/	hops=1	final=200
+apex	/studio/archive/3.0.0	301	https://www.ag-grid.com/studio/archive/3.0.0/	hops=1	final=200
+www	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	scheme=http	hops=1	final=200
+www	/archive/36.2.0	301	/archive/36.2.0/	hops=1	final=200
 angulargrid.ag-grid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
 angulargrid.ag-grid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
 angular-grid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
@@ -280,10 +289,14 @@ www	/archive/36.2.0/no-such-page/	404		body~grid-root-404	cc=no-cache	link-descr
 www	/charts/archive/14.2.0/_astro/index.js	200		cc=public, max-age=604800, s-maxage=31536000
 www	/charts/archive/14.2.0/images/logo.svg	200		cc=public, max-age=604800, s-maxage=31536000
 www	/charts/archive/14.2.0/data.json	200		cc=public, max-age=604800, s-maxage=31536000
+www	/charts/archive/14.2.0/react/bar-series/	200		accept=html	cc=public, max-age=604800, s-maxage=31536000
+# A 304 refreshes the cached copy's headers, so it keeps that copy's long cache.
+www	/charts/archive/14.2.0/images/logo.svg	304		req:If-None-Match=*	cc=public, max-age=604800, s-maxage=31536000
 # The charts archive serves its own 404 page, which sits under the archive path and so matches the
-# long-cache rule: a missing page would be cached as missing for a year. Approved fix: gate the
-# archive cache on a 200 (waf-finding.md §4).
-www	/charts/archive/14.2.0/no-such-page/	404		body~charts-archive-14\.2\.0-404	cc=no-cache	known-fail=cc:waf-finding.md §4: charts archive 404s are cached for a year; gate archiveCacheRules on REQUEST_STATUS == 200
+# long-cache rule; the root overrides any error status under an archive back to no-cache
+# (waf-finding.md §4), so a missing page is never cached as missing.
+www	/charts/archive/14.2.0/no-such-page/	404		body~charts-archive-14\.2\.0-404	cc=no-cache
+www	/charts/archive/14.2.0/missing.html	404		body~charts-archive-14\.2\.0-404	cc=no-cache
 
 # @category caching-in-flight-archives
 # A release candidate is patched in flight by scripts/uncached-archives.mjs: no-cache for every

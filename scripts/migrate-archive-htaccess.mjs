@@ -14,6 +14,8 @@
 //   replaces its parents', so no parent rule does this; and the grid 36.x rules that try drop the
 //   /archive/<v>/ prefix, landing on the current docs. A file with no rewrite block gets a block
 //   of its own. For grid it also carries the http -> https upgrade, replacing the one it removes.
+//   Ahead of both, the archive-aware generator's own slash-less directory rule sends a slash-less
+//   directory URL on an alias host (or http on www) to the slashed www URL in the same hop.
 //   No [NE]: %{REQUEST_URI} is decoded, so it has to be re-escaped on the way out (with [NE], %20
 //   went out as a raw space and %2541 as %41 - a different URL; verified on Apache 2.4).
 // - When a grid archive serves markdown twins but negotiates them root-anchored (which never
@@ -506,6 +508,30 @@ function markdownRules(base) {
     ];
 }
 
+// The slash-less directory rule exactly as the archive-aware grid generator writes it
+// (getCanonicalDirectorySlashRule in htaccessRules.ts), so an alias host (or http on www) reaches the
+// slashed www URL in one hop rather than via the host rule and then the add-slash rule or mod_dir.
+// Its host list is the generator's archive-build list, in the generator's order.
+const CANONICAL_SLASH_HOSTS = [
+    'ag-grid.com',
+    'angulargrid.ag-grid.com',
+    'angular-grid.ag-grid.com',
+    'javascript-grid.ag-grid.com',
+    'react-grid.ag-grid.com',
+    'angulargrid.com',
+    'www.angulargrid.com',
+    'blog.ag-grid.com',
+];
+
+const canonicalSlashRule = () => [
+    '    # Slash-less directory URLs on a non-canonical host or scheme: add the slash and canonicalise',
+    '    # in the same hop.',
+    `    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:${CANONICAL_SLASH_HOSTS.map(escapeRegex).join('|')}):[0-9]+)$ [NC]`,
+    `    RewriteCond ${DIRECTORY_COND}`,
+    ...WELL_KNOWN_CONDS.map((cond) => `    RewriteCond ${cond}`),
+    `    RewriteRule ^(.+[^/])$ ${CANONICAL_ORIGIN}%{REQUEST_URI}/ [R=301,L]`,
+];
+
 function buildBlock({ site, base, markdown, standalone }) {
     const hostConds = ALIAS_HOSTS.map(
         (host, i) =>
@@ -514,6 +540,7 @@ function buildBlock({ site, base, markdown, standalone }) {
     const rules = [
         '    # Added to this already-deployed archive by scripts/migrate-archive-htaccess.mjs; a re-run',
         '    # replaces it. Runs before every other rule here, and keeps the full archive path.',
+        ...canonicalSlashRule(),
         ...(site === 'grid'
             ? [
                   String.raw`    RewriteCond %{HTTP_HOST} ^(www\.)?ag-grid\.com$ [NC]`,

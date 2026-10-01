@@ -1,20 +1,13 @@
 // Tests for scripts/migrate-archive-htaccess.mjs, which patches the .htaccess of archives that are
 // already deployed (they are never rebuilt, so generator fixes never reach them).
 //
-// The fixtures in __fixtures__/deployed-archives are what each archive was deployed with,
-// regenerated from the release tag that built it, with the base URL its archive build used:
-//
-//   grid-<v>      ag-grid release-<v>,        PUBLIC_BASE_URL=/archive/<v>,        env production
-//   charts-<v>    ag-charts release-<v>,      PUBLIC_BASE_URL=/charts/archive/<v>, env production
-//   studio-<v>    ag-studio release-<v>,      PUBLIC_BASE_URL=/studio/archive/<v>, env production
-//   *-top-level   ag-charts / ag-studio latest at 2026-10-01, base /charts and /studio (the live
-//                 parents, which the archives without a rewrite block of their own inherit from)
-//
-// via `getHtaccessContent({ env: 'production' })`, as each repo's agHtaccessGen plugin calls it.
-// Archive builds only ship a .htaccess since grid 36.0.0, charts 14.0.0 and studio 2.0.0 (each
-// repo's `HTACCESS=production` in .env.build.archive, 2026-06-22/23); earlier archives have none
-// and keep the parent's rules, so there is nothing to migrate. Grid files are trimmed to 25 of each
-// kind of `Redirect 301` (in-archive and absolute target); every other line is verbatim.
+// The fixtures in __fixtures__/deployed-archives are what each deployed archive was built with,
+// in full: every archive that ships its own .htaccess (grid 36.0.0+, charts 14.0.0+, studio 2.0.0+;
+// earlier ones keep the parent's rules, so there is nothing to migrate). Each is emitted by that
+// archive's own generator at the commit that built it, with its archive base, by
+// testing/htaccess-harness/generators/deployed-archives.mjs, which lists the commits and how they
+// were matched to what is live. *-top-level are ag-charts / ag-studio latest at 2026-10-01, base
+// /charts and /studio (the live parents, which an archive without a rewrite block inherits from).
 import { readFileSync } from 'node:fs';
 
 import {
@@ -47,13 +40,19 @@ interface Case {
 const CASES: Case[] = [
     { site: 'grid', version: '36.0.0', page: 'react-data-grid/getting-started/', markdown: false },
     { site: 'grid', version: '36.0.1', page: 'react-data-grid/getting-started/', markdown: false },
+    { site: 'grid', version: '36.0.2', page: 'react-data-grid/getting-started/', markdown: false },
     { site: 'grid', version: '36.1.0', page: 'react-data-grid/getting-started/', markdown: true },
     { site: 'grid', version: '36.2.0', page: 'react-data-grid/getting-started/', markdown: true },
     { site: 'charts', version: '14.0.0', page: 'react/bar-series/', markdown: false },
+    { site: 'charts', version: '14.0.1', page: 'react/bar-series/', markdown: false },
+    { site: 'charts', version: '14.0.2', page: 'react/bar-series/', markdown: false },
     { site: 'charts', version: '14.1.0', page: 'react/bar-series/', markdown: true },
     { site: 'charts', version: '14.2.0', page: 'react/bar-series/', markdown: true },
     { site: 'studio', version: '2.0.0', page: 'react/getting-started/', markdown: false },
+    { site: 'studio', version: '2.0.1', page: 'react/getting-started/', markdown: false },
     { site: 'studio', version: '2.1.0', page: 'react/getting-started/', markdown: true },
+    { site: 'studio', version: '2.1.1', page: 'react/getting-started/', markdown: true },
+    { site: 'studio', version: '2.1.2', page: 'react/getting-started/', markdown: true },
     { site: 'studio', version: '3.0.0', page: 'react/getting-started/', markdown: true },
 ];
 
@@ -147,6 +146,27 @@ describe('migrate-archive-htaccess', () => {
             expect(chain.final.outcome).toEqual(expect.objectContaining({ type: 'serve', path: pageUrl }));
         });
 
+        // One hop rather than the host rule and then the add-slash rule (or mod_dir) on www.
+        it.each([...ALIAS_HOSTS.map((host) => `https://${host}`), 'http://www.ag-grid.com'])(
+            '%s: a slash-less page reaches its slashed www URL in one hop',
+            (origin) => {
+                const slashless = pageUrl.replace(/\/$/, '');
+                const chain = followRedirects(docroot(c.site, base, output), { url: `${origin}${slashless}?a=1` });
+                expect(chain.hops).toEqual([
+                    expect.objectContaining({ status: 301, location: `https://www.ag-grid.com${pageUrl}?a=1` }),
+                ]);
+            }
+        );
+
+        it('upgrades a block written before the slash-less rule to the current one', () => {
+            const lines = output.split('\n');
+            const start = lines.findIndex((l) => l.includes('# Slash-less directory URLs on a non-canonical host'));
+            const end = lines.findIndex((l, i) => i > start && l.trim().startsWith('RewriteRule '));
+            expect(start).toBeGreaterThan(-1);
+            const previous = [...lines.slice(0, start), ...lines.slice(end + 1)].join('\n');
+            expect(migrate(c, previous)).toMatchObject({ status: 'patched', output });
+        });
+
         it('leaves www serving the page', () => {
             expect(route(docroot(c.site, base, output), { url: `https://www.ag-grid.com${pageUrl}` })).toEqual(
                 expect.objectContaining({ type: 'serve', path: pageUrl })
@@ -238,7 +258,7 @@ describe('migrate-archive-htaccess', () => {
             ),
         });
 
-        it.each(['36.0.0', '36.0.1', '36.1.0', '36.2.0'])(
+        it.each(['36.0.0', '36.0.1', '36.0.2', '36.1.0', '36.2.0'])(
             '%s: the apex kept the archive path only after',
             (version) => {
                 const { before, after } = grid(version);
@@ -254,7 +274,7 @@ describe('migrate-archive-htaccess', () => {
             }
         );
 
-        it.each(['36.0.0', '36.0.1', '36.1.0', '36.2.0'])(
+        it.each(['36.0.0', '36.0.1', '36.0.2', '36.1.0', '36.2.0'])(
             '%s: index.php no longer redirects to the site root',
             (version) => {
                 const { before, after } = grid(version);
@@ -268,7 +288,7 @@ describe('migrate-archive-htaccess', () => {
             }
         );
 
-        it.each(['36.0.1', '36.1.0', '36.2.0'])(
+        it.each(['36.0.1', '36.0.2', '36.1.0', '36.2.0'])(
             '%s: a single-hop rewrite no longer lands on the live site',
             (version) => {
                 const { before, after } = grid(version);
@@ -282,7 +302,7 @@ describe('migrate-archive-htaccess', () => {
             }
         );
 
-        it.each(['36.0.0', '36.0.1', '36.1.0', '36.2.0'])(
+        it.each(['36.0.0', '36.0.1', '36.0.2', '36.1.0', '36.2.0'])(
             '%s: a redirect to a live URL is gone, an in-archive one stays',
             (version) => {
                 const { before, after } = grid(version);
@@ -350,6 +370,16 @@ describe('migrate-archive-htaccess', () => {
             const result = migrateArchiveHtaccess(archiveContent, { site: 'grid', base: '/archive/36.3.0' });
             expect(result.status).toBe('unchanged');
             expect(result.output).toBe(archiveContent);
+        });
+
+        it("inserts the generator's own slash-less canonicalising rule, verbatim", () => {
+            const rule = archiveContent.match(
+                /^ {4}# Slash-less directory URLs on a non-canonical host.*\n(?: {4}#.*\n)*(?: {4}RewriteCond .*\n)* {4}RewriteRule .*\n/m
+            )?.[0];
+            expect(rule).toBeDefined();
+            const migrated = migrateArchiveHtaccess(fixture('grid-36.2.0'), { site: 'grid', base: '/archive/36.2.0' });
+            const block = migrated.output!.slice(migrated.output!.indexOf(MIGRATION_BEGIN));
+            expect(block.slice(0, block.indexOf(MIGRATION_END))).toContain(rule);
         });
 
         it('canonicalises exactly the alias hosts the migration does', () => {

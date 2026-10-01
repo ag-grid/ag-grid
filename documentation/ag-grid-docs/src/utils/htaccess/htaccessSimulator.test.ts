@@ -44,13 +44,16 @@ describe('htaccessSimulator', () => {
             for (const line of [
                 'RewriteEngin On',
                 'Headr set X-A "1"',
-                'RewriteOptions Inherit',
                 'RewriteBase /',
                 '<Files "a.html">',
                 'ExpiresActive On',
             ]) {
                 expect(() => compileHtaccess(line), line).toThrow(/Unsupported directive/);
             }
+            // Only AllowNoSlash is modelled; Inherit would change which rewrite block applies.
+            expect(() => compileHtaccess('RewriteOptions Inherit')).toThrow(/Unsupported RewriteOptions/);
+            // Inside an <If>, mod_alias takes only the expression form.
+            expect(() => compileHtaccess('<If "-d \'/a\'">\nRedirect 301 /a /b\n</If>')).toThrow(/inside <If>/);
         });
 
         it('skips only the directives it ignores on purpose', () => {
@@ -281,6 +284,52 @@ RewriteRule ^ /%1.md [L]`);
             expect(route([file], { url: 'https://h.example/gone' })).toMatchObject({ type: 'status', status: 410 });
             expect(route([file], { url: 'https://h.example/gone-too/x' })).toMatchObject({ status: 410 });
         });
+
+        it("tries an <If>'s expression Redirect before the Redirect lists, inherited by a child", () => {
+            const root = compileHtaccess(`<If "%{HTTP_HOST} == 'alias.example' && -d '%{DOCUMENT_ROOT}%{REQUEST_URI}'">
+    Redirect 301 "https://www.example%{REQUEST_URI}/"
+</If>`);
+            const child = compileHtaccess('Redirect 301 /sub /listed', '/sub/');
+            const dirExists = (path: string) => path === '/sub';
+            expect(route([root, child], { url: 'https://alias.example/sub?q=1', dirExists })).toMatchObject({
+                type: 'redirect',
+                status: 301,
+                location: 'https://www.example/sub/?q=1',
+            });
+            // A false expression leaves the lists to answer.
+            expect(route([root, child], { url: 'https://www.example/sub', dirExists })).toMatchObject({
+                location: 'https://www.example/listed',
+            });
+            expect(route([root, child], { url: 'https://alias.example/sub' })).toMatchObject({
+                location: 'https://alias.example/listed',
+            });
+        });
+    });
+
+    describe("mod_rewrite and the .htaccess's own directory", () => {
+        const rules = 'RewriteEngine On\nRewriteRule ^ https://www.example%{REQUEST_URI} [R=301,L]';
+
+        it('skips the rules for that directory without its slash, leaving it to mod_dir', () => {
+            const child = compileHtaccess(rules, '/sub/');
+            expect(route([child], { url: 'https://h.example/sub' })).toMatchObject({ type: 'serve' });
+            expect(route([child], { url: 'https://h.example/sub/' })).toMatchObject({
+                location: 'https://www.example/sub/',
+            });
+            expect(route([child], { url: 'https://h.example/sub/page' })).toMatchObject({
+                location: 'https://www.example/sub/page',
+            });
+        });
+
+        it('runs them with RewriteOptions AllowNoSlash, or when the rules are in a parent directory', () => {
+            const allowing = compileHtaccess(`RewriteOptions AllowNoSlash\n${rules}`, '/sub/');
+            expect(route([allowing], { url: 'https://h.example/sub' })).toMatchObject({
+                location: 'https://www.example/sub',
+            });
+            const root = compileHtaccess(rules);
+            expect(route([root], { url: 'https://h.example/sub' })).toMatchObject({
+                location: 'https://www.example/sub',
+            });
+        });
     });
 
     describe('samplePath', () => {
@@ -322,7 +371,20 @@ RewriteRule ^ /%1.md [L]`);
 
         it('throws on variables or syntax it does not model, rather than guessing', () => {
             expect(() => evaluateExpr('%{HTTP_USER_AGENT} =~ m#x#', vars)).toThrow(/variable/);
-            expect(() => evaluateExpr('-f %{REQUEST_FILENAME}', vars)).toThrow(/syntax/);
+            expect(() => evaluateExpr("-s '/a'", vars)).toThrow(/syntax/);
+            // A file test needs a filesystem: header conditions have none.
+            expect(() => evaluateExpr("-d '/a'", vars)).toThrow(/file test/);
+        });
+
+        it('interpolates variables in quoted strings and runs file tests through the caller', () => {
+            const seen: string[] = [];
+            const dirs = (op: string, path: string) => {
+                seen.push(`${op} ${path}`);
+                return path === '/a/b.html';
+            };
+            expect(evaluateExpr("'%{REQUEST_URI}:%{REQUEST_STATUS}' == '/a/b.html:404'", vars)).toBe(true);
+            expect(evaluateExpr("-d '%{REQUEST_URI}' && !-d '/x'", vars, dirs)).toBe(true);
+            expect(seen).toEqual(['-d /a/b.html', '-d /x']);
         });
     });
 
