@@ -373,6 +373,51 @@ describe('waf-config.alb.rules CRS scope-down', () => {
     }
 });
 
+describe('waf-config.alb.origin-verify', () => {
+    const originVerify = check('waf-config.alb.origin-verify');
+    const runOrigin = (transform?: string): Promise<Outcome> => {
+        const rules = albAclRules();
+        if (transform) {
+            rules.find(
+                (r) => r.Name === 'block-non-cloudfront-origin'
+            ).Statement.NotStatement.Statement.ByteMatchStatement.TextTransformations = [
+                { Priority: 0, Type: transform },
+            ];
+        }
+        return originVerify.run(offlineCtx(new FakeAws(albAclHandlers(rules))));
+    };
+
+    it('passes on NOT(the header EXACTLY the secret) with no transformation', async () => {
+        const outcome = await runOrigin();
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    it('fails when the secret is compared after LOWERCASE', async () => {
+        const outcome = await runOrigin('LOWERCASE');
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /transforms/);
+    });
+});
+
+describe('waf-config.cf.common-rule-set identity', () => {
+    for (const [what, field, value] of [
+        ['another managed group replaces CRS', 'Name', 'AWSManagedRulesAdminProtectionRuleSet'],
+        ['the group is from another vendor', 'VendorName', 'SomeVendor'],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await run(CHECKS.commonRuleSet, {
+                rule: 'AWS-AWSManagedRulesCommonRuleSet',
+                edit: (s) => {
+                    s.ManagedRuleGroupStatement[field] = value;
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', new RegExp(value));
+        });
+    }
+});
+
 describe('rate-rule asset scope-down keeps its matching semantics', () => {
     const RULE = 'soft-rate-limit-rule-with-captcha';
     const assetLeaves = (s: any): any[] =>
