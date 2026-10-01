@@ -409,6 +409,35 @@ describe('migrate-archive-htaccess', () => {
             expect(result.reasons).toEqual([expect.stringContaining(line)]);
         });
 
+        // The same for rewrite rules: a removable shape with a target on a host its generator never
+        // used is not that shape.
+        it.each([
+            ['a single-hop rewrite', 'RewriteRule "^/?private/$" "https://example.com/login" [R=301,L]', ''],
+            [
+                'a blog host redirect',
+                'RewriteRule ^/?private/?$ https://example.com/login [R=301,NC,L]',
+                String.raw`RewriteCond %{HTTP_HOST} ^blog\.ag-grid\.com$ [NC]`,
+            ],
+            [
+                'a blog host redirect over http',
+                'RewriteRule ^/?private/?$ http://www.ag-grid.com/blog/ [R=301,NC,L]',
+                String.raw`RewriteCond %{HTTP_HOST} ^blog\.ag-grid\.com$ [NC]`,
+            ],
+            [
+                'a blog host catch-all',
+                'RewriteRule ^/?(.*)$ https://example.com/$1 [R=301,NC,L]',
+                String.raw`RewriteCond %{HTTP_HOST} ^blog\.ag-grid\.com$ [NC]`,
+            ],
+        ])('a rewrite rule out of the archive to a host no generator targets: %s', (_, rule, cond) => {
+            const source = grid362.replace(
+                '    RewriteEngine On\n',
+                `    RewriteEngine On\n${cond ? `    ${cond}\n` : ''}    ${rule}\n`
+            );
+            const result = refused(source);
+            expect(result.status).toBe('refused');
+            expect(result.reasons).toEqual([expect.stringContaining(rule)]);
+        });
+
         it('a redirect inside the archive with a status no generator emits', () => {
             const line = 'Redirect 302 /archive/36.2.0/a /archive/36.2.0/b';
             expect(refused(`${grid362}\n${line}\n`).reasons).toEqual([expect.stringContaining(line)]);

@@ -114,6 +114,24 @@ function targetScope(target, base) {
     return 'unknown';
 }
 
+// The hosts any version of the grid redirect list (documentation/ag-grid-docs/src/utils/htaccess/
+// redirects.ts) has pointed an absolute target at. A redirect to any other host was not generated.
+const GENERATED_REDIRECT_HOSTS = [
+    'www.ag-grid.com',
+    'ag-grid.com',
+    'blog.ag-grid.com',
+    'charts.ag-grid.com',
+    'medium.com',
+    'epicmax.co',
+];
+
+// The hosts the rewrite rules of any version of the grid generator (htaccessRules.ts) send a
+// request to: the live site, and one blog post that moved to its author's site.
+const GENERATED_REWRITE_HOSTS = ['www.ag-grid.com', 'epicmax.co'];
+
+// The host of an absolute https target, or undefined for anything else.
+const httpsHost = (target) => target.match(/^https:\/\/([^/?#%]+)(?:[/?#%]|$)/)?.[1];
+
 // The four .well-known exclusions the grid generator puts on its https and index.php rules. Under
 // /archive/<v>/ they can never match, so they carry no meaning of their own here.
 const WELL_KNOWN_CONDS = [
@@ -195,8 +213,12 @@ function rewriteRecognisers(base) {
                 if (!condsOk) {
                     return null;
                 }
-                return targetScope(target, base) === 'inside'
-                    ? { action: 'keep', reason: 'single-hop rewrite inside the archive' }
+                if (targetScope(target, base) === 'inside') {
+                    return { action: 'keep', reason: 'single-hop rewrite inside the archive' };
+                }
+                // The generator only ever pointed these at the live site.
+                return httpsHost(target) !== 'www.ag-grid.com'
+                    ? null
                     : {
                           action: 'remove',
                           reason:
@@ -248,7 +270,12 @@ function rewriteRecognisers(base) {
                 if (target === `${CANONICAL_ORIGIN}/$1`) {
                     return { action: 'remove', reason: 'host canonicalisation dropping the archive prefix' };
                 }
-                if (hosts.length === 1 && hosts[0] === 'blog.ag-grid.com' && targetScope(target, base) === 'outside') {
+                if (
+                    hosts.length === 1 &&
+                    hosts[0] === 'blog.ag-grid.com' &&
+                    targetScope(target, base) === 'outside' &&
+                    httpsHost(target) === 'www.ag-grid.com'
+                ) {
                     return { action: 'remove', reason: 'blog host redirect to the live blog' };
                 }
                 return null;
@@ -267,7 +294,7 @@ function rewriteRecognisers(base) {
                 }
                 if (
                     flags === '[R=301,NC,L]' &&
-                    /^https?:\/\//.test(target) &&
+                    GENERATED_REWRITE_HOSTS.includes(httpsHost(target)) &&
                     targetScope(target, base) === 'outside'
                 ) {
                     return { action: 'remove', reason: 'blog host redirect to the live blog' };
@@ -384,17 +411,6 @@ function rewriteRecognisers(base) {
     ];
 }
 
-// The hosts any version of the grid redirect list (documentation/ag-grid-docs/src/utils/htaccess/
-// redirects.ts) has pointed an absolute target at. A redirect to any other host was not generated.
-const GENERATED_REDIRECT_HOSTS = [
-    'www.ag-grid.com',
-    'ag-grid.com',
-    'blog.ag-grid.com',
-    'charts.ag-grid.com',
-    'medium.com',
-    'epicmax.co',
-];
-
 // The partnership tracker the live grid generator emits verbatim, and archive builds now leave out.
 const PARTNERSHIP_REDIRECT = 'RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/';
 
@@ -432,8 +448,7 @@ function classifyAlias(line, base) {
     if (scope === 'inside') {
         return { action: 'keep', reason: 'redirect inside the archive' };
     }
-    const host = to.match(/^https:\/\/([^/?#]+)(?:[/?#]|$)/)?.[1];
-    return scope === 'outside' && GENERATED_REDIRECT_HOSTS.includes(host)
+    return scope === 'outside' && GENERATED_REDIRECT_HOSTS.includes(httpsHost(to))
         ? { action: 'remove', reason: 'redirect to a live or external URL' }
         : null;
 }
