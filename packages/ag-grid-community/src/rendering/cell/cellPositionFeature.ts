@@ -1,12 +1,13 @@
 import type { BeanCollection } from '../../context/context';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
-import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../features/horizontalPositionUtils';
+import { getAnchoredPosition, getResolvedHorizontalOffset, isRightAnchored } from '../features/horizontalPositionUtils';
 import type { CellCtrl } from './cellCtrl';
 
 // Called each time the cell component attaches (initial mount and any remount).
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    _onCellLeftChanged(beans, cellCtrl);
-    _onCellWidthChanged(cellCtrl);
+    cellCtrl.drawnPosition = NaN;
+    cellCtrl.drawnWidth = NaN;
+    _refreshCellPosition(beans, cellCtrl);
     legacyApplyRowSpan(beans, cellCtrl);
 }
 
@@ -33,10 +34,6 @@ export function _setCellColSpan(beans: BeanCollection, cellCtrl: CellCtrl, colSp
         if (colSpan === 1 || cellCtrl.cellSpan !== null) {
             return;
         }
-        // any displayed col's width can be one this cell spans
-        cellCtrl.addManagedListeners(beans.eventSvc, {
-            displayedColumnsWidthChanged: () => _onCellWidthChanged(cellCtrl),
-        });
     } else if (prev.length === colSpan && cellCtrl.colsSpanningVersion === version) {
         // the same displayed columns give the same run
         return;
@@ -44,67 +41,55 @@ export function _setCellColSpan(beans: BeanCollection, cellCtrl: CellCtrl, colSp
     const start = cellCtrl.column.allColsIndex;
     cellCtrl.colsSpanning = visibleCols.allCols.slice(start, start + colSpan);
     cellCtrl.colsSpanningVersion = version;
-    _onCellWidthChanged(cellCtrl);
-    _onCellLeftChanged(beans, cellCtrl); // left changes when doing RTL
+    _refreshCellPosition(beans, cellCtrl);
 }
 
-export function _onCellWidthChanged(cellCtrl: CellCtrl): void {
-    const eContent = cellCtrl.eGui;
-    if (!eContent) {
+/** Writes the cell's width and its `left`, or `right` when anchored right, where either moved. */
+export function _refreshCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    const eGui = cellCtrl.eGui;
+    if (!eGui) {
         return;
     }
-    eContent.style.width = `${getCellWidth(cellCtrl)}px`;
+    const width = getCellWidth(cellCtrl);
+    if (width !== cellCtrl.drawnWidth) {
+        cellCtrl.drawnWidth = width;
+        eGui.style.width = `${width}px`;
+    }
+
+    const { gos, visibleCols } = beans;
+    const column = cellCtrl.column;
+    const lane = column.pinnedLane;
+    const isPrintLayout = cellCtrl.printLayout;
+    const isRtl = gos.get('enableRtl');
+    // column.left is the distance from the start edge in LTR and RTL, and a span starts at its own column
+    const left = column.left;
+    const offset = isPrintLayout
+        ? getResolvedHorizontalOffset({ left, lane, width, isPrintLayout, isRtl, visibleCols })
+        : left;
+    if (offset == null) {
+        return;
+    }
+    const rightAnchored = isRightAnchored(lane, isRtl, isPrintLayout);
+    const position = getAnchoredPosition(offset, width, rightAnchored, isRtl, visibleCols);
+    if (position === cellCtrl.drawnPosition) {
+        return;
+    }
+    cellCtrl.drawnPosition = position;
+    const style = cellCtrl.getRootElement().style;
+    style.left = rightAnchored ? '' : `${position}px`;
+    style.right = rightAnchored ? `${position}px` : '';
 }
 
 function getCellWidth(cellCtrl: CellCtrl): number {
     const { colsSpanning, column } = cellCtrl;
     if (!colsSpanning) {
-        return column.getActualWidth();
+        return column.actualWidth;
     }
     let width = 0;
     for (let i = 0, len = colsSpanning.length; i < len; ++i) {
         width += colsSpanning[i].actualWidth;
     }
     return width;
-}
-
-export function _onCellLeftChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const eSetLeft = cellCtrl.getRootElement();
-    if (!eSetLeft) {
-        return;
-    }
-    const { gos, visibleCols } = beans;
-    const left = getResolvedHorizontalOffset({
-        left: getCellLeft(cellCtrl),
-        lane: cellCtrl.column.pinnedLane,
-        width: getCellWidth(cellCtrl),
-        isPrintLayout: cellCtrl.printLayout,
-        isRtl: gos.get('enableRtl'),
-        visibleCols,
-    });
-    if (left == null) {
-        return;
-    }
-
-    setHorizontalPosition(beans, cellCtrl, eSetLeft, left);
-}
-
-function getCellLeft(cellCtrl: CellCtrl): number | null {
-    // column.getLeft() is "distance from start edge" — in both LTR and RTL,
-    // the cell's column is the start-edge column of any col-spanning range.
-    return cellCtrl.column.getLeft();
-}
-
-function setHorizontalPosition(beans: BeanCollection, cellCtrl: CellCtrl, eSetLeft: HTMLElement, left: number): void {
-    const { gos, visibleCols } = beans;
-    applyHorizontalPosition(eSetLeft, {
-        offset: left,
-        lane: cellCtrl.column.pinnedLane,
-        width: getCellWidth(cellCtrl),
-        isPrintLayout: cellCtrl.printLayout,
-        isRtl: gos.get('enableRtl'),
-        visibleCols,
-    });
 }
 
 function legacyApplyRowSpan(beans: BeanCollection, cellCtrl: CellCtrl, force?: boolean): void {

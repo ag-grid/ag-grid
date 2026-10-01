@@ -1,7 +1,6 @@
 import type { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { INotesFeature } from '../../interfaces/notes';
@@ -26,7 +25,6 @@ export interface IRowModeFeature {
     isSuppressMouseEvent(mouseEvent: MouseEvent): boolean;
     onDisplayedColumnsChanged(): void;
     onVirtualColumnsChanged(): void;
-    onColumnMoved(): void;
     onSpannedCellsUpdated(pinned: ColumnPinnedType): void;
 
     // Optional Features
@@ -43,9 +41,10 @@ export interface IRowModeFeature {
     prepareInitialCellCtrls?(): void;
     refreshSpans?(): void;
     getColSpans?(): number[] | undefined;
-    getCellCtrl?(column: AgColumn, skipColSpanSearch: boolean): CellCtrl | undefined;
+    getCellCtrl?(column: AgColumn): CellCtrl | undefined;
+    getOwnCellCtrl?(column: AgColumn): CellCtrl | undefined;
     releaseKeptCells?(afterEdit: boolean): void;
-    getInitialCellCtrls?(containerType: RowContainerType): CellCtrl[] | null;
+    getInitialCellCtrls?(): CellCtrl[] | null;
 
     // Target resolution
     getTargets?(): FullWidthTarget[];
