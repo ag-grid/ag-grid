@@ -33,6 +33,7 @@ export interface IRowModeFeature {
     getModeCellRenderers?(): (ICellRenderer | null | undefined)[];
     setupFocus?(): void;
     onRowFocused?(event?: CellFocusedEvent): void;
+    renderFocusedCell?(): void;
     getRowContentElement?(): HTMLElement | null;
     getNavigationColumn?(): AgColumn;
     onKeyboardNavigate?(keyboardEvent: KeyboardEvent): void;
