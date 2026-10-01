@@ -260,48 +260,45 @@ export class RowComp extends Component {
         // moving a cell, and a span drawn over a kept cell paints beneath it
         let nextDrawnIndex = prevCellCtrls.length === 0 ? len : 0;
         let nextDrawnCell: HTMLElement | null = null;
+        const elementsByLane: HTMLElement[][] | null = this.domOrder ? [[], [], []] : null;
 
         for (let i = 0; i < len; ++i) {
             const cellCtrl = cellCtrls[i];
-            const kept = cellCtrl.drawnComp;
-            if (kept !== undefined) {
-                kept.drawnInPass = pass;
-                continue;
-            }
-            if (nextDrawnIndex <= i) {
-                // the lanes are contiguous, so the search stops where this one ends
-                const lane = rowCtrl.laneFor(cellCtrl.column);
-                nextDrawnCell = null;
-                for (nextDrawnIndex = i + 1; nextDrawnIndex < len; ++nextDrawnIndex) {
-                    const next = cellCtrls[nextDrawnIndex];
-                    if (rowCtrl.laneFor(next.column) !== lane) {
-                        break;
-                    }
-                    const drawn = next.drawnComp;
-                    if (drawn) {
-                        nextDrawnCell = drawn.getGui();
-                        break;
+            let cellComp = cellCtrl.drawnComp;
+            if (cellComp !== undefined) {
+                cellComp.drawnInPass = pass;
+            } else {
+                if (nextDrawnIndex <= i) {
+                    // the lanes are contiguous, so the search stops where this one ends
+                    const lane = rowCtrl.laneFor(cellCtrl.column);
+                    nextDrawnCell = null;
+                    for (nextDrawnIndex = i + 1; nextDrawnIndex < len; ++nextDrawnIndex) {
+                        const next = cellCtrls[nextDrawnIndex];
+                        if (rowCtrl.laneFor(next.column) !== lane) {
+                            break;
+                        }
+                        const drawn = next.drawnComp;
+                        if (drawn) {
+                            nextDrawnCell = drawn.getGui();
+                            break;
+                        }
                     }
                 }
+                cellComp = this.newCellComp(cellCtrl, nextDrawnCell, pass);
             }
-            this.newCellComp(cellCtrl, nextDrawnCell, pass);
+            if (elementsByLane !== null) {
+                elementsByLane[rowCtrl.laneFor(cellCtrl.column)].push(cellComp.getGui());
+            }
         }
 
         this.drawnCellCtrls = cellCtrls;
         destroyCells(prevCellCtrls, pass);
-        this.ensureDomOrder(cellCtrls);
+        if (elementsByLane !== null) {
+            this.ensureDomOrder(elementsByLane);
+        }
     }
 
-    private ensureDomOrder(cellCtrls: CellCtrl[]): void {
-        if (!this.domOrder) {
-            return;
-        }
-
-        const elementsByLane: HTMLElement[][] = [[], [], []];
-        for (const cellCtrl of cellCtrls) {
-            elementsByLane[this.rowCtrl.laneFor(cellCtrl.column)].push(cellCtrl.drawnComp!.getGui());
-        }
-
+    private ensureDomOrder(elementsByLane: HTMLElement[][]): void {
         const containers = this.laneContainers;
         for (let lane = 0, len = containers.length; lane < len; ++lane) {
             const container = containers[lane];
@@ -311,13 +308,14 @@ export class RowComp extends Component {
         }
     }
 
-    private newCellComp(cellCtrl: CellCtrl, nextDrawnCell: HTMLElement | null, pass: number): void {
+    private newCellComp(cellCtrl: CellCtrl, nextDrawnCell: HTMLElement | null, pass: number): CellComp {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
         const eParent = this.laneContainers[this.rowCtrl.laneFor(cellCtrl.column)] ?? this.getGui();
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eParent, editing);
         cellComp.drawnInPass = pass;
         cellCtrl.drawnComp = cellComp;
         eParent.insertBefore(cellComp.getGui(), nextDrawnCell);
+        return cellComp;
     }
 
     public override destroy(): void {
