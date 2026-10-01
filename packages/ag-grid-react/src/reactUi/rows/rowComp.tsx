@@ -8,7 +8,7 @@ import type {
     ICellRenderer,
     ICellRendererParams,
     IRowComp,
-    RowContainerType,
+    PinnedCellGroupWidths,
     RowCtrl,
     RowStyle,
     UserCompDetails,
@@ -20,7 +20,7 @@ import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
-const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
+const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
     const { context, gos, editSvc } = useContext(BeansContext);
 
     const enableUses = useContext(RenderModeContext) === 'default';
@@ -43,7 +43,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     // Seeded so bulk-add doesn't flash empty rows; getInitialCellCtrls returns
     // null when creation is deferred or not applicable.
     const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() =>
-        rowCtrl.getInitialCellCtrls(containerType)
+        rowCtrl.getInitialCellCtrls()
     );
     const cellCtrlsRef = useRef<CellCtrl[] | null>(cellCtrlsFlushSync);
     // the cell list last taken as the row gave it, and the columns version it was laid out at
@@ -75,7 +75,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const fullWidthEmbeddedCenterParamsRef = useRef<ICellRendererParams>();
     const fullWidthEmbeddedRightParamsRef = useRef<ICellRendererParams>();
     const [, setEmbeddedSectionHasContent] = useState(() => rowCtrl.embeddedSectionHasContent);
-    const [, refreshWidths] = useState(0);
+    // the row ctrl returns the same widths object while they are unchanged, so setting it again is a no-op
+    const [, setPinnedWidths] = useState<PinnedCellGroupWidths>(() => rowCtrl.getMappedPinnedCellGroupWidths());
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -125,7 +126,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
 
         if (!eRef) {
-            rowCtrl.unsetComp(containerType);
+            rowCtrl.unsetComp();
             return;
         }
 
@@ -176,7 +177,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
             getScrollingRowElement: () => eScrollingCells.current ?? undefined,
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
-            refreshPinnedSections: () => refreshWidths((v) => v + 1),
+            refreshPinnedSections: () => setPinnedWidths(rowCtrl.getMappedPinnedCellGroupWidths()),
             showFullWidth: (compDetails) => {
                 embeddedFullWidthCompDetailsRef.current = undefined;
                 setEmbeddedFullWidthCompDetails(undefined);
@@ -288,7 +289,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 return leftRefreshed && centerRefreshed && rightRefreshed;
             },
         };
-        rowCtrl.setComp(compProxy, eRef, containerType, compBean.current);
+        rowCtrl.setComp(compProxy, eRef, compBean.current);
     }, []);
 
     const showEmbeddedFullWidth = isFullWidth && rowCtrl.shouldCreateCellSections();

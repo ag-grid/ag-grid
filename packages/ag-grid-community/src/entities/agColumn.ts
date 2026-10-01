@@ -625,13 +625,16 @@ export class AgColumn<TValue = any>
         return this.left! + this.actualWidth;
     }
 
-    public setLeft(left: number | null, source: ColumnEventType) {
+    /** @returns whether the left moved */
+    public setLeft(left: number | null, source: ColumnEventType): boolean {
         const oldLeft = this.left;
         this.oldLeft = oldLeft;
-        if (oldLeft !== left) {
-            this.left = left;
-            this.dispatchColEvent('leftChanged', source);
+        if (oldLeft === left) {
+            return false;
         }
+        this.left = left;
+        this.dispatchColEvent('leftChanged', source);
+        return true;
     }
 
     public isFilterActive(): boolean {

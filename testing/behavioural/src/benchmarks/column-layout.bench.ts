@@ -124,6 +124,9 @@ suite('column layout — rendered rows under colSpan density', () => {
         const cols400 = memo(() => buildCols(400, density));
         const grid100 = () => ({ columnDefs: cols100(), rowData: rows20k() });
         const grid400 = () => ({ columnDefs: cols400(), rowData: rows50k() });
+        // The move animation's CSS transitions cost more style work than the grid's own column change.
+        const grid100NoAnimation = () => ({ ...grid100(), suppressColumnMoveAnimation: true });
+        const grid400NoAnimation = () => ({ ...grid400(), suppressColumnMoveAnimation: true });
 
         benchLayout('horizontal scroll 100 cols x 20k rows (small steps)', density, grid100, (api, viewport, i) => {
             scrollTo(viewport, 600 + (i % 20) * COL_WIDTH, 0);
@@ -150,6 +153,33 @@ suite('column layout — rendered rows under colSpan density', () => {
         benchLayout('move a column across 100 cols x 20k rows', density, grid100, (api, _viewport, i) => {
             api.moveColumns(['c1'], i & 1 ? 1 : 3);
         });
+
+        benchLayout(
+            'hide/show 10 of 100 cols x 20k rows, no animation',
+            density,
+            grid100NoAnimation,
+            (api, _viewport, i) => {
+                api.setColumnsVisible(toggle100, (i & 1) === 1);
+            }
+        );
+
+        benchLayout(
+            'hide/show 40 of 400 cols x 50k rows, no animation',
+            density,
+            grid400NoAnimation,
+            (api, _viewport, i) => {
+                api.setColumnsVisible(toggle400, (i & 1) === 1);
+            }
+        );
+
+        benchLayout(
+            'move a column across 100 cols x 20k rows, no animation',
+            density,
+            grid100NoAnimation,
+            (api, _viewport, i) => {
+                api.moveColumns(['c1'], i & 1 ? 1 : 3);
+            }
+        );
 
         // Focusing a column a span covers finds the drawn cell spanning it.
         benchLayout('setFocusedCell along a rendered row, 100 cols', density, grid100, (api, _viewport, i) => {
