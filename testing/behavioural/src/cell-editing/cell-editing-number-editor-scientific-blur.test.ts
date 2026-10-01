@@ -69,7 +69,7 @@ describe('agNumberCellEditor with precision, scientific-notation input', () => {
         const { api, rowData } = await editAndClickAway({ precision: 2 }, '1234567890123456789012');
 
         expect(api.getCellEditorInstances()).toHaveLength(0);
-        expect(rowData[0].number).toBe(1234567890123456789012);
+        expect(rowData[0].number).toBe(Number('1234567890123456789012'));
     });
 
     test('clicking away does not commit a large negative value below min', async () => {
