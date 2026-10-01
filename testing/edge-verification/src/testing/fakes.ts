@@ -269,3 +269,38 @@ export function offlineCtx(aws: Aws, opts: Partial<Options> = {}): Ctx {
     });
     return { aws, http, live: new Live(aws), opts: options(opts) };
 }
+
+/**
+ * The ACL after extend-p11-agent-allowlist.sh: the p11 UA allowlist extended, and its Count rate
+ * rule inserted straight after p11. `rateFirst` is the order when that script ran second (its rule
+ * then lands next to p11, ahead of the data-centre rule); otherwise it follows the data-centre rule.
+ */
+export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRules()): any[] {
+    const extended = `(${[...nb.uaAllowTokens, ...nb.pendingUaAllowTokens.tokens].join('|')})`;
+    const p11 = structuredClone(rules.find((r) => r.Name === 'block-nonbrowser-except-ai-assistants'));
+    const ua = p11.Statement.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements[0];
+    ua.RegexMatchStatement.RegexString = extended;
+    const rate = rule(
+        nb.allowlistedAgentsRate.rule,
+        {
+            RateBasedStatement: {
+                Limit: nb.allowlistedAgentsRate.limit,
+                EvaluationWindowSec: nb.allowlistedAgentsRate.window,
+                AggregateKeyType: 'IP',
+                ScopeDownStatement: structuredClone(ua),
+            },
+        },
+        { Action: { Count: {} }, VisibilityConfig: { MetricName: 'countAllowlistedAgentsRate' } }
+    );
+    const out: any[] = [];
+    for (const r of rules) {
+        if (r.Name === p11.Name) {
+            out.push(p11, ...(rateFirst ? [rate] : []));
+        } else if (r.Name === 'block-datacenter-except-agent-paths' && !rateFirst) {
+            out.push(r, rate);
+        } else {
+            out.push(r);
+        }
+    }
+    return out.map((r, i) => ({ ...r, Priority: i }));
+}
