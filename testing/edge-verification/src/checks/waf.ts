@@ -2,7 +2,18 @@ import { decodeSearchString } from '../core/live';
 import type { Live } from '../core/live';
 import { describeSecret } from '../core/redact';
 import { type CheckDef, Problems, fail, pass } from '../core/types';
-import { type Leaf, anyPathLeafMatches, leaves, regexLeafMatches, ruleAction } from '../core/waf';
+import {
+    type Leaf,
+    andOf,
+    andOfLeaves,
+    anyOfLeaves,
+    anyPathLeafMatches,
+    leafOf,
+    leaves,
+    noneOfLeaves,
+    regexLeafMatches,
+    ruleAction,
+} from '../core/waf';
 import { ALB, ALB_ACL, CF_ACL, LOG_RETENTION_PENDING, type RuleExpectation } from '../expected/edge';
 import { finding } from '../expected/lifecycle';
 
@@ -109,6 +120,21 @@ function loggingChecks(
 
 const aclArn = (acl: any): string => acl.ARN;
 
+/**
+ * p11's three clauses, read in the one shape that means "block a non-browser trigger unless it is
+ * exempt or on a safe path": AND(any trigger, NOT(any exemption), NOT(any safe path)).
+ */
+function p11Parts(rule: any): { trigger: Leaf[]; exemptions: Leaf[]; safe: Leaf[] } | undefined {
+    const parts = andOf(rule.Statement);
+    if (parts?.length !== 3) {
+        return undefined;
+    }
+    const trigger = anyOfLeaves(parts[0]);
+    const exemptions = noneOfLeaves(parts[1]);
+    const safe = noneOfLeaves(parts[2]);
+    return trigger && exemptions && safe ? { trigger, exemptions, safe } : undefined;
+}
+
 export function wafChecks(): CheckDef[] {
     const nb = CF_ACL.nonBrowser;
     return [
@@ -165,18 +191,28 @@ export function wafChecks(): CheckDef[] {
                     p.eq('previous rule', rules[i - 1]?.Name, exp.after);
                     p.eq('action', ruleAction(rules[i]), exp.action);
                     p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
-                    // It must exempt exactly what p11 exempts (the script lifts them structurally).
-                    const own = leaves(rules[i].Statement);
-                    const p11 = leaves((await cfRule(live, 'block-nonbrowser-except-ai-assistants')).Statement);
-                    const pathLeaves = (ls: Leaf[]) =>
-                        ls.filter((l) => 'field' in l && l.field === 'UriPath').map((l) => l.value);
-                    p.eq('safe paths (same as p11)', sorted(pathLeaves(own)), sorted(pathLeaves(p11)));
+                    // AND(data-centre label, NOT(any verified bot or Accept: text/markdown), NOT(any p11
+                    // safe path)): the shape move-datacenter-block-after-agent-exemptions.sh builds.
+                    const parts = andOf(rules[i].Statement);
+                    const label = parts?.length === 3 ? leafOf(parts[0]) : undefined;
+                    const exempt = parts?.length === 3 ? noneOfLeaves(parts[1]) : undefined;
+                    const safe = parts?.length === 3 ? noneOfLeaves(parts[2]) : undefined;
+                    const p11Safe = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'))?.safe;
+                    if (!label || !exempt || !safe || !p11Safe) {
+                        p.add(
+                            `statement is not AND(label, NOT(exemptions), NOT(safe paths))${p11Safe ? '' : ' (nor is p11)'}`
+                        );
+                        return p.outcome();
+                    }
+                    const pathValues = (ls: Leaf[]) =>
+                        ls.map((l) => ('field' in l ? `${l.field} ${l.value}` : l.value));
+                    p.eq('safe paths (same as p11)', sorted(pathValues(safe)), sorted(pathValues(p11Safe)));
                     p.check(
-                        own.some((l) => l.kind === 'label' && l.value.endsWith('signal:known_bot_data_center')),
+                        label.kind === 'label' && label.value.endsWith('signal:known_bot_data_center'),
                         'does not match the known_bot_data_center label'
                     );
                     p.check(
-                        own.some(
+                        exempt.some(
                             (l) => l.kind === 'byte' && l.field === 'header:accept' && l.value === 'text/markdown'
                         ),
                         'no Accept: text/markdown exemption'
@@ -198,7 +234,17 @@ export function wafChecks(): CheckDef[] {
                 const p = new Problems();
                 const lengths: string[] = [];
                 for (const exp of CF_ACL.verifyHeaderRules) {
-                    const ls = leaves((await cfRule(live, exp.rule)).Statement);
+                    // The header alone, or the header AND the path prefix: never an OR, which would
+                    // Allow anything on the path (or anything with the header) past every later rule.
+                    const stmt = (await cfRule(live, exp.rule)).Statement;
+                    const single = leafOf(stmt);
+                    const ls = exp.pathPrefix ? andOfLeaves(stmt) : single && [single];
+                    if (!ls || ls.length !== (exp.pathPrefix ? 2 : 1)) {
+                        p.add(
+                            `${exp.rule}: statement is not ${exp.pathPrefix ? 'AND(header, path prefix)' : 'the header match alone'}`
+                        );
+                        continue;
+                    }
                     const secret = ls.find((l) => l.kind === 'byte' && l.field === `header:${exp.header}`);
                     if (!secret || secret.kind !== 'byte') {
                         p.add(`${exp.rule}: no ${exp.header} match`);
@@ -247,9 +293,9 @@ export function wafChecks(): CheckDef[] {
             area: 'waf-config',
             title: `allow-internal-ec2 IP set holds only ${CF_ACL.buildServerIpSet.addresses.join(', ')}`,
             async run({ live }) {
-                const l = leaves((await cfRule(live, 'allow-internal-ec2')).Statement).find((x) => x.kind === 'ipset');
-                if (!l) {
-                    return fail('no IP set reference');
+                const l = leafOf((await cfRule(live, 'allow-internal-ec2')).Statement);
+                if (l?.kind !== 'ipset') {
+                    return fail('statement is not the IP set reference alone');
                 }
                 const [, , , , , rest] = l.value.split(':');
                 const [, , name, id] = rest.split('/');
@@ -265,7 +311,10 @@ export function wafChecks(): CheckDef[] {
             area: 'waf-config',
             title: 'allow-mta-sts-policy matches host AND path exactly',
             async run({ live }) {
-                const ls = leaves((await cfRule(live, 'allow-mta-sts-policy')).Statement);
+                const ls = andOfLeaves((await cfRule(live, 'allow-mta-sts-policy')).Statement);
+                if (ls?.length !== 2) {
+                    return fail('statement is not AND(host, path)');
+                }
                 const p = new Problems();
                 p.check(
                     ls.some(
@@ -296,11 +345,17 @@ export function wafChecks(): CheckDef[] {
             title: `CommonRuleSet scope-down exempts ${CF_ACL.commonRuleSetExemptPrefixes.join(', ')}`,
             async run({ live }) {
                 const s = (await cfRule(live, 'AWS-AWSManagedRulesCommonRuleSet')).Statement.ManagedRuleGroupStatement;
-                const prefixes = leaves(s.ScopeDownStatement)
-                    .filter((l) => l.kind === 'byte')
-                    .map((l) => l.value);
+                // NOT(any exempt prefix): without the negation the rule set inspects ONLY those paths.
+                const exempt = noneOfLeaves(s.ScopeDownStatement);
+                if (!exempt) {
+                    return fail('scope-down is not NOT(any of the exempt path prefixes)');
+                }
                 const p = new Problems();
-                p.eq('exempt prefixes', sorted(prefixes), sorted(CF_ACL.commonRuleSetExemptPrefixes));
+                p.check(
+                    exempt.every((l) => l.kind === 'byte' && l.field === 'UriPath' && l.positional === 'STARTS_WITH'),
+                    'scope-down exempts something other than UriPath prefixes'
+                );
+                p.eq('exempt prefixes', sorted(exempt.map((l) => l.value)), sorted(CF_ACL.commonRuleSetExemptPrefixes));
                 p.eq('overrides', s.RuleActionOverrides ?? null, null);
                 return p.outcome();
             },
@@ -395,11 +450,9 @@ export function wafChecks(): CheckDef[] {
             title: 'block-credential-scanner-paths: regex as declared, blocks the SE-185 probe set, spares content',
             refs: ['SE-185'],
             async run({ live }) {
-                const leaf = leaves((await cfRule(live, 'block-credential-scanner-paths')).Statement).find(
-                    (l) => l.kind === 'regex'
-                );
-                if (!leaf || leaf.kind !== 'regex') {
-                    return fail('no regex statement');
+                const leaf = leafOf((await cfRule(live, 'block-credential-scanner-paths')).Statement);
+                if (leaf?.kind !== 'regex') {
+                    return fail('statement is not the regex match alone');
                 }
                 const p = new Problems();
                 p.eq('regex', leaf.value, CF_ACL.credentialScanner.regex);
@@ -420,11 +473,16 @@ export function wafChecks(): CheckDef[] {
             refs: ['SE-78', 'SE-184', finding(9), finding(10)],
             async run({ live }) {
                 const rule = await cfRule(live, 'block-nonbrowser-except-ai-assistants');
-                const [trigger, exemptions, safe] = rule.Statement.AndStatement.Statements;
-                const t = leaves(trigger);
-                const e = leaves(exemptions);
-                const s = leaves(safe);
+                const parts = p11Parts(rule);
+                if (!parts) {
+                    return fail('statement is not AND(any trigger label, NOT(any exemption), NOT(any safe path))');
+                }
+                const { trigger: t, exemptions: e, safe: s } = parts;
                 const p = new Problems();
+                p.check(
+                    t.every((l) => l.kind === 'label'),
+                    'trigger matches something other than labels'
+                );
                 p.eq('trigger labels', sorted(t.map((l) => l.value)), sorted(nb.triggerLabels));
                 const uaRegexes = e.filter((l) => l.kind === 'regex' && l.field === 'header:user-agent') as Array<
                     Extract<Leaf, { kind: 'regex' }>
@@ -483,9 +541,11 @@ export function wafChecks(): CheckDef[] {
             refs: ['SE-79', finding(13)],
             knownIssue: `${finding(13)} (server-card.json is not a p11 safe path)`,
             async run({ live }) {
-                const [, , safe] = (await cfRule(live, 'block-nonbrowser-except-ai-assistants')).Statement.AndStatement
-                    .Statements;
-                const missing = nb.shouldBeSafe.filter((path) => !anyPathLeafMatches(leaves(safe), path));
+                const safe = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'))?.safe;
+                if (!safe) {
+                    return fail('p11 statement is not AND(triggers, NOT(exemptions), NOT(safe paths))');
+                }
+                const missing = nb.shouldBeSafe.filter((path) => !anyPathLeafMatches(safe, path));
                 return missing.length ? fail(`not safe: ${missing.join(', ')}`) : pass();
             },
         },
@@ -503,7 +563,12 @@ export function wafChecks(): CheckDef[] {
                     p.eq(`${exp.name} window`, rb.EvaluationWindowSec, exp.window);
                     p.eq(`${exp.name} key`, rb.AggregateKeyType, 'IP');
                     if (exp.assetScopeDown) {
-                        const ls = leaves(rb.ScopeDownStatement);
+                        // NOT(any asset path): without the negation the limit would count ONLY assets.
+                        const ls = noneOfLeaves(rb.ScopeDownStatement);
+                        if (!ls) {
+                            p.add(`${exp.name}: scope-down is not NOT(any asset path)`);
+                            continue;
+                        }
                         p.check(
                             ls.some((l) => l.kind === 'regex' && l.value === CF_ACL.assetScopeDownRegex),
                             `${exp.name}: asset regex differs`
@@ -578,12 +643,12 @@ export function wafChecks(): CheckDef[] {
                     })),
                     ALB_ACL.ipReputationOverrides
                 );
-                const crs = leaves(
+                const crs = noneOfLeaves(
                     byName('AWS-AWSManagedRulesCommonRuleSet')?.Statement.ManagedRuleGroupStatement.ScopeDownStatement
                 );
                 p.check(
-                    crs.some((l) => l.kind === 'byte' && l.value === ALB_ACL.commonRuleSetExemptPrefix),
-                    'CRS scope-down differs'
+                    !!crs?.some((l) => l.kind === 'byte' && l.value === ALB_ACL.commonRuleSetExemptPrefix),
+                    'CRS scope-down is not NOT(the exempt prefix)'
                 );
                 for (const [name, limit] of Object.entries(ALB_ACL.rateLimits)) {
                     p.eq(`${name} limit`, byName(name)?.Statement.RateBasedStatement.Limit, limit);
