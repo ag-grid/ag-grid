@@ -58,9 +58,9 @@ describe('migration backup-not-served', () => {
 describe('migration slash-less directory URLs (pending grid#15434 / #15435)', () => {
     const checks = migrationChecks().filter((c) => c.id.includes('.slashless.'));
 
-    it('declares an alias-host and an http-www probe for every migrated version, all pending', () => {
+    it('declares an alias-host probe for every migrated version, all pending', () => {
         const versions = MIGRATED_SITES.reduce((n, site) => n + site.versions.length, 0);
-        assert.equal(checks.length, versions * 2);
+        assert.equal(checks.length, versions);
         assert.ok(checks.every((c) => c.pending?.includes('grid#15434')));
     });
 
@@ -70,12 +70,11 @@ describe('migration slash-less directory URLs (pending grid#15434 / #15435)', ()
         assert.match(studio.title, /\/studio\/archive\/2\.1\.1\/react\/quick-start\?/);
     });
 
-    it('every probe is one the committed rule matches: a listed host or http www, and a directory path', () => {
+    it('every probe is one the committed rule matches: a listed host over https, and a directory path', () => {
         for (const c of checks) {
             const from = new URL(c.title.split(' -> ')[0]);
             assert.ok(
-                SLASHLESS_RULE.hosts.includes(from.hostname) ||
-                    (from.hostname === 'www.ag-grid.com' && from.protocol === 'http:'),
+                SLASHLESS_RULE.hosts.includes(from.hostname) && from.protocol === 'https:',
                 `${c.id}: ${from.hostname} over ${from.protocol} is not covered by the rule`
             );
             assert.match(
