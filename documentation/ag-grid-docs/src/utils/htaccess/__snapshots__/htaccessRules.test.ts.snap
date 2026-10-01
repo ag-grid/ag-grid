@@ -51,6 +51,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scri
 # no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
 # in-flight block below, which overrides this back to no-cache for that version only.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+# ...except error responses. Charts archives from 14.x serve their 404 through an ErrorDocument
+# under the archive, and the internal redirect to it matches the rule above. Overridden to
+# no-cache rather than left without a header, which CloudFront would cache for its default TTL.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 400 && %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
 
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
@@ -347,6 +351,11 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
     RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
+    # A bare archive root on a non-canonical host or scheme: add the slash and canonicalise in the
+    # same hop.
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com):[0-9]+)$ [NC]
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+    RewriteRule ^archive/[^/]+$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
 
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
@@ -2990,6 +2999,13 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /eula/AG-Grid-Community-License.html /eula/community/
 
 </IfModule>
+
+
+# A bare archive root on a non-canonical host or scheme, where the archive has its own .htaccess:
+# add the slash and canonicalise in one hop (mod_rewrite leaves this request to mod_dir).
+<If "'%{HTTP_HOST}:%{SERVER_PORT}' =~ m#^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com|blog\\.ag-grid\\.com):[0-9]+)$#i && %{REQUEST_URI} =~ m#^/(?:charts/|studio/)?archive/[^/]+$# && -d '%{DOCUMENT_ROOT}%{REQUEST_URI}'">
+    Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"
+</If>
 
 
 # X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks

@@ -21,7 +21,11 @@
  *   target's path (not its query or fragment). Verified against Apache 2.4.67.
  * - mod_alias: Redirect (prefix match on whole path segments, remainder appended) and
  *   RedirectMatch (regex on the full path), first match wins, the child's directives before the
- *   parent's. mod_rewrite runs first (its fixup hook is registered before mod_alias's).
+ *   parent's. mod_rewrite runs first (its fixup hook is registered before mod_alias's). The
+ *   `Redirect <status> <expression>` form inside an <If> is tried before both (try_redirect).
+ * - mod_rewrite leaves a request for the directory that holds the .htaccess itself, without its
+ *   trailing slash, to mod_dir unless that file sets RewriteOptions AllowNoSlash (hook_fixup,
+ *   verified against the 2.4.52 source).
  * - mod_headers: Header set/append/add/unset with expr= conditions, `always` vs onsuccess
  *   tables, and <If> sections, which Apache merges after every plain section - so all plain
  *   directives (parent, then child) apply before any <If> block (parent's, then child's).
@@ -80,6 +84,13 @@ interface RequestHeaderDirective {
     source: string;
 }
 
+interface IfSection {
+    expr: string;
+    headers: HeaderDirective[];
+    /** `Redirect <status> <expression>`, the only mod_alias form an <If> may hold. */
+    redirect?: { status: number; target: string; source: string };
+}
+
 export interface CompiledHtaccess {
     /** The directory the file is served from, with leading and trailing slash: `/` or `/archive/36.3.0/`. */
     dir: string;
@@ -89,7 +100,9 @@ export interface CompiledHtaccess {
     /** Plain (unconditional-section) header directives, in file order. */
     headers: HeaderDirective[];
     /** <If> sections, in file order. */
-    ifSections: { expr: string; headers: HeaderDirective[] }[];
+    ifSections: IfSection[];
+    /** RewriteOptions AllowNoSlash: rewrite even a request for this directory without its slash. */
+    allowNoSlash: boolean;
     /** RequestHeader directives, in file order. */
     requestHeaders: RequestHeaderDirective[];
     errorDocuments: Map<number, string>;
@@ -101,6 +114,8 @@ export interface SimRequest {
     accept?: string;
     /** Whether a docroot-relative URL path exists on disk, for `-f` conditions. Defaults to nothing existing. */
     fileExists?: (urlPath: string) => boolean;
+    /** The same for directories, for `-d` tests in an <If>. Defaults to nothing existing. */
+    dirExists?: (urlPath: string) => boolean;
 }
 
 export type RouteOutcome =
@@ -266,11 +281,12 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
         aliases: [],
         headers: [],
         ifSections: [],
+        allowNoSlash: false,
         requestHeaders: [],
         errorDocuments: new Map(),
     };
     let pendingConds: RewriteCond[] = [];
-    let currentIf: { expr: string; headers: HeaderDirective[] } | undefined;
+    let currentIf: IfSection | undefined;
 
     for (const raw of content.split('\n')) {
         const line = raw.trim();
@@ -293,6 +309,12 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
                     throw new Error(`Unsupported RewriteEngine: ${line}`);
                 }
                 compiled.hasRewrite = true;
+                break;
+            case 'RewriteOptions':
+                if (args.length !== 1 || args[0] !== 'AllowNoSlash') {
+                    throw new Error(`Unsupported RewriteOptions: ${line}`);
+                }
+                compiled.allowNoSlash = true;
                 break;
             case 'RewriteCond': {
                 const [testString, rawPattern, rawFlags] = args;
@@ -325,6 +347,18 @@ export function compileHtaccess(content: string, dir = '/'): CompiledHtaccess {
             }
             case 'Redirect':
             case 'RedirectMatch': {
+                if (currentIf) {
+                    if (
+                        directive !== 'Redirect' ||
+                        args.length !== 2 ||
+                        !/^3\d\d$/.test(args[0]) ||
+                        currentIf.redirect
+                    ) {
+                        throw new Error(`Unsupported mod_alias directive inside <If>: ${line}`);
+                    }
+                    currentIf.redirect = { status: Number(args[0]), target: args[1], source: line };
+                    break;
+                }
                 const [status, from, to] = args;
                 compiled.aliases.push({
                     kind: directive,
@@ -379,6 +413,7 @@ interface RewriteContext {
     query: string;
     accept: string;
     fileExists: (urlPath: string) => boolean;
+    dirExists: (urlPath: string) => boolean;
 }
 
 // Apache decodes the URL-path to bytes and matches rules against those bytes. A JS string holding
@@ -534,6 +569,8 @@ function runRewrite(file: CompiledHtaccess, ctx: RewriteContext): RewriteResult 
                 }
             } else if (cond.pattern === '-f') {
                 holds = ctx.fileExists(fromByteString(testValue)) !== cond.negate;
+            } else if (cond.pattern === '-d') {
+                holds = ctx.dirExists(fromByteString(testValue)) !== cond.negate;
             } else {
                 throw new Error(`Unsupported file test ${cond.pattern}`);
             }
@@ -652,6 +689,40 @@ function runAliases(files: CompiledHtaccess[], ctx: RewriteContext): RouteOutcom
     return null;
 }
 
+// mod_alias's try_redirect: the merged per-directory redirect, where a true <If> (merged last, the
+// child's after the parent's) overrides a plain one. The expression's result is escaped as a URI,
+// leaving its query and fragment as written; the request's query is appended if it has none.
+function runIfRedirect(files: CompiledHtaccess[], ctx: RewriteContext): RouteOutcome | null {
+    const vars = {
+        HTTP_HOST: ctx.host,
+        SERVER_PORT: ctx.https ? '443' : '80',
+        REQUEST_URI: ctx.uri,
+        DOCUMENT_ROOT: '',
+    };
+    const fileTest = (op: string, path: string) => {
+        if (op !== '-d') {
+            throw new Error(`Unsupported ap_expr file test ${op}`);
+        }
+        return ctx.dirExists(fromByteString(path));
+    };
+    let redirect: IfSection['redirect'];
+    for (const file of files) {
+        for (const section of file.ifSections) {
+            if (section.redirect && evaluateExpr(section.expr, vars, fileTest)) {
+                redirect = section.redirect;
+            }
+        }
+    }
+    if (!redirect) {
+        return null;
+    }
+    let location = escapeTargetPath(interpolate(redirect.target, vars));
+    if (ctx.query && !location.includes('?')) {
+        location += `?${ctx.query}`;
+    }
+    return { type: 'redirect', status: redirect.status, location: fromByteString(location), by: redirect.source };
+}
+
 /** What the docroot does with one request: a redirect, a bare status (400, 403, 404, 410), or a file to serve. */
 export function route(files: CompiledHtaccess[], request: SimRequest): RouteOutcome {
     const url = new URL(request.url);
@@ -667,12 +738,14 @@ export function route(files: CompiledHtaccess[], request: SimRequest): RouteOutc
         query: url.search.replace(/^\?/, ''),
         accept: request.accept ?? 'text/html',
         fileExists: request.fileExists ?? (() => false),
+        dirExists: request.dirExists ?? (() => false),
     };
     // Internal rewrites restart the request with the new path, as Apache's internal redirect does.
     for (let pass = 0; pass < 10; pass++) {
         const chain = applicableFiles(files, ctx.uri);
         const rewriteFile = [...chain].reverse().find((file) => file.hasRewrite);
-        const rewritten = rewriteFile ? runRewrite(rewriteFile, ctx) : { outcome: null, vary: [] };
+        const leftToModDir = rewriteFile && !rewriteFile.allowNoSlash && `${ctx.uri}/` === rewriteFile.dir;
+        const rewritten = rewriteFile && !leftToModDir ? runRewrite(rewriteFile, ctx) : { outcome: null, vary: [] };
         vary.push(...rewritten.vary);
         if (rewritten.outcome?.type === 'rewrite') {
             ctx.uri = rewritten.outcome.path;
@@ -681,7 +754,7 @@ export function route(files: CompiledHtaccess[], request: SimRequest): RouteOutc
         if (rewritten.outcome) {
             return rewritten.outcome;
         }
-        const aliased = runAliases(chain, ctx);
+        const aliased = runIfRedirect(chain, ctx) ?? runAliases(chain, ctx);
         if (aliased) {
             return aliased;
         }
@@ -756,7 +829,7 @@ function tokenizeExpr(expr: string): ExprToken[] {
             }
             tokens.push({ kind: 'regex', regex: new RegExp(body, flags) });
             i = j;
-        } else if ((m = rest.match(/^(-(?:eq|ne|lt|le|gt|ge)\b|=~|!~|==|!=|&&|\|\||<=|>=|[!()<>])/))) {
+        } else if ((m = rest.match(/^(-(?:eq|ne|lt|le|gt|ge|[def])\b|=~|!~|==|!=|&&|\|\||<=|>=|[!()<>])/))) {
             tokens.push({ kind: 'op', value: m[1] });
             i += m[0].length;
         } else if ((m = rest.match(/^-?\d+/))) {
@@ -772,7 +845,20 @@ function tokenizeExpr(expr: string): ExprToken[] {
     return tokens;
 }
 
-export function evaluateExpr(expr: string, vars: Record<string, string | number | undefined>): boolean {
+// %{VAR} inside a quoted ap_expr string.
+const interpolate = (text: string, vars: Record<string, string | number | undefined>): string =>
+    text.replace(/%\{([A-Z_]+)\}/g, (_, name: string) => {
+        if (!(name in vars)) {
+            throw new Error(`Unsupported ap_expr variable %{${name}}`);
+        }
+        return String(vars[name] ?? '');
+    });
+
+export function evaluateExpr(
+    expr: string,
+    vars: Record<string, string | number | undefined>,
+    fileTest?: (op: string, path: string) => boolean
+): boolean {
     const tokens = tokenizeExpr(expr);
     let pos = 0;
     const peek = () => tokens[pos];
@@ -786,13 +872,25 @@ export function evaluateExpr(expr: string, vars: Record<string, string | number 
             }
             return vars[token.name] ?? '';
         }
-        if (token?.kind === 'num' || token?.kind === 'str') {
+        if (token?.kind === 'num') {
             return token.value;
+        }
+        if (token?.kind === 'str') {
+            return interpolate(token.value, vars);
         }
         throw new Error(`Expected an operand in ${expr}`);
     };
 
     const comparison = (): boolean => {
+        const test = peek();
+        if (test?.kind === 'op' && /^-[def]$/.test(test.value)) {
+            pos++;
+            const path = String(operand());
+            if (!fileTest) {
+                throw new Error(`Unsupported ap_expr file test ${test.value} here: ${expr}`);
+            }
+            return fileTest(test.value, path);
+        }
         const left = operand();
         const op = tokens[pos++];
         if (op?.kind !== 'op') {
@@ -928,7 +1026,8 @@ export function responseHeaders(files: CompiledHtaccess[], response: ResponseCon
     chain.forEach((file) => file.headers.forEach(apply));
     chain.forEach((file) =>
         file.ifSections.forEach((section) => {
-            if (evaluateExpr(section.expr, vars)) {
+            // A section that only redirects sets no headers (and may test the filesystem).
+            if (section.headers.length && evaluateExpr(section.expr, vars)) {
                 section.headers.forEach(apply);
             }
         })

@@ -144,6 +144,10 @@ const archiveCacheRules = `
 # no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
 # in-flight block below, which overrides this back to no-cache for that version only.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+# ...except error responses. Charts archives from 14.x serve their 404 through an ErrorDocument
+# under the archive, and the internal redirect to it matches the rule above. Overridden to
+# no-cache rather than left without a header, which CloudFront would cache for its default TTL.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 400 && %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
 `;
 
 // Archive builds ship their own .htaccess, which Apache applies after the root one, so any
@@ -670,7 +674,7 @@ const certificateValidationExemptions = `    RewriteCond %{REQUEST_URI} !^/\\.we
 // "host:port" pattern: http on www (port 80, as the https upgrade tests it), and any port on an
 // alias host. Must list the same hosts as those rules. An archive build also sends the blog host
 // there; the live site leaves it to the blog redirects, whose targets are not docs pages.
-const getCanonicalisedHostPortPattern = (): string => {
+const getCanonicalisedHostPortPattern = (withBlog = isArchiveBuild()): string => {
     const aliases = [
         'ag-grid\\.com',
         'angulargrid\\.ag-grid\\.com',
@@ -679,7 +683,7 @@ const getCanonicalisedHostPortPattern = (): string => {
         'react-grid\\.ag-grid\\.com',
         'angulargrid\\.com',
         'www\\.angulargrid\\.com',
-        ...(isArchiveBuild() ? ['blog\\.ag-grid\\.com'] : []),
+        ...(withBlog ? ['blog\\.ag-grid\\.com'] : []),
     ];
     return `^(?:www\\.ag-grid\\.com:80|(?:${aliases.join('|')}):[0-9]+)$`;
 };
@@ -696,6 +700,31 @@ const getCanonicalDirectorySlashRule =
 ${certificateValidationExemptions}
     RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]`;
 
+// The rule above leaves a path whose last segment has a dot to mod_dir, which adds the slash on
+// the requesting host - so a bare archive root (/archive/36.2.0) on an alias host took two hops.
+// This one is for the grid archives with no .htaccess of their own, whose requests these rules
+// see; getArchiveRootSlashRedirect covers the rest. Live site only: in an archive build the pattern
+// would be relative to the archive.
+const archiveRootSlashRule = `    # A bare archive root on a non-canonical host or scheme: add the slash and canonicalise in the
+    # same hop.
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ${getCanonicalisedHostPortPattern(false)} [NC]
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+    RewriteRule ^archive/[^/]+$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]`;
+
+// A bare archive root whose archive has its own .htaccess (grid 36.x, charts 14.x, studio 2.x+).
+// mod_rewrite leaves a request for the directory that holds the .htaccess to mod_dir unless that
+// file sets RewriteOptions AllowNoSlash, so neither its rules nor the root's can fire; mod_dir then
+// adds the slash on the requesting host, and the archive canonicalises the host on the next hop.
+// mod_alias runs before mod_dir and every archive inherits it, so this redirect does both in one
+// hop. The hosts are the archives' own (blog included). Verified on Apache 2.4.52.
+const getArchiveRootSlashRedirect = (): string => `
+# A bare archive root on a non-canonical host or scheme, where the archive has its own .htaccess:
+# add the slash and canonicalise in one hop (mod_rewrite leaves this request to mod_dir).
+<If "'%{HTTP_HOST}:%{SERVER_PORT}' =~ m#${getCanonicalisedHostPortPattern(true)}#i && %{REQUEST_URI} =~ m#^/(?:charts/|studio/)?archive/[^/]+$# && -d '%{DOCUMENT_ROOT}%{REQUEST_URI}'">
+    Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"
+</If>
+`;
+
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
 // production .htaccess is actually generated.
@@ -711,6 +740,7 @@ const getModRewriteRules = (): string => `
     RewriteEngine On
 ${getSiteRewriteRules()}
 ${getCanonicalDirectorySlashRule()}
+${unlessArchiveBuild(archiveRootSlashRule)}
 
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
@@ -829,6 +859,7 @@ ${inFlightArchiveRules}
 ${modDeflateRules}
 ${unlessArchiveBuild(compressedRevalidationRules)}
 ${getModRewriteRules()}
+${unlessArchiveBuild(getArchiveRootSlashRedirect())}
 
 # X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks
 # blog.ag-grid.com (and other *.ag-grid.com) from embedding examples. Clickjacking

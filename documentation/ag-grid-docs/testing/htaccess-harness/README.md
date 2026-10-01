@@ -35,7 +35,7 @@ lib/probe.mjs                HTTP client, chain following, assertions
 lib/report.mjs               the verdict: a row's failures against its known-fail marker
 *.test.mjs                   node --test self-tests of the verdict rules, run by run.sh before probing
 expectations/*.tsv           curated.tsv and edge.tsv (hand-written), generated-*.tsv (generated)
-generators/                  regenerate.mjs plus one generator per rule family (see below)
+generators/                  regenerate.mjs plus one generator per rule family (see below), and deployed-archives.mjs
 ```
 
 ### What gets served
@@ -185,6 +185,15 @@ what each request gets as deployed (pinning the defects), patches every archive 
 must change nothing), and asserts the result: alias hosts reach the same archive URL on www in one
 hop, grid markdown negotiates under the archive, and no request leaves the archive. Same Apache
 detection and skip rules as `run.sh`; `ARCHIVE_FIXTURES=<dir>` runs it on other copies of the files.
+It also checks the root's archive caching (error statuses no-cache, the rest long-cached) and the
+bare-archive-root and slash-less canonicalisation, each in one hop.
+
+The fixtures are the real, untrimmed `.htaccess` of every archive deployed with one of its own (grid
+36.0.0+, charts 14.0.0+, studio 2.0.0+), emitted by that archive's own generator at the commit that
+built it. `generators/deployed-archives.mjs` regenerates them (`--check` compares instead); its table
+pins each commit, the release branch head when the archive was built (its `Last-Modified` on www),
+which is not always the release tag. Add a row there when a new archive is deployed before the
+migration has run on it.
 
 ## Expectation rows
 

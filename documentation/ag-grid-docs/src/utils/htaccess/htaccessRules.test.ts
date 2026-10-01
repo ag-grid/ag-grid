@@ -1465,6 +1465,53 @@ describe('htaccessRules', () => {
             }
         });
 
+        // mod_rewrite leaves the bare archive root to mod_dir, which slashed it on the alias host
+        // first (2 hops); the root's <If> redirect slashes and canonicalises it at once.
+        it('sends a bare archive root on any alias host to its slashed www URL in one hop', () => {
+            const dirExists = (path: string) => path === BASE;
+            for (const host of HOSTS.slice(1)) {
+                const chain = followRedirects(deployed, { url: `${host}${BASE}?x=1`, dirExists });
+                expect(
+                    chain.hops.map((hop) => hop.location),
+                    host
+                ).toEqual([`${WWW}${BASE}/?x=1`]);
+            }
+            // On www it is mod_dir's own single hop, so nothing here touches it.
+            expect(route(deployed, { url: `${WWW}${BASE}`, dirExists })).toMatchObject({ type: 'serve' });
+            // Only an existing directory directly below an archive tree.
+            expect(route(deployed, { url: `https://ag-grid.com${BASE}` })).toMatchObject({ type: 'serve' });
+        });
+
+        it('does the same for charts and studio archive roots, and for archives with no .htaccess', () => {
+            const root = compileHtaccess(productionContent);
+            const ownRules = (dir: string) =>
+                compileHtaccess(
+                    'RewriteEngine On\nRewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]\nRewriteRule ^ https://www.ag-grid.com%{REQUEST_URI} [R=301,L]',
+                    dir
+                );
+            const dirs = ['/charts/archive/14.2.0', '/studio/archive/3.0.0', '/archive/35.3.1'];
+            const dirExists = (path: string) => dirs.includes(path);
+            const files = [root, ownRules('/charts/archive/14.2.0/'), ownRules('/studio/archive/3.0.0/')];
+            for (const dir of dirs) {
+                const chain = followRedirects(files, { url: `https://ag-grid.com${dir}`, dirExists });
+                expect(
+                    chain.hops.map((hop) => hop.location),
+                    dir
+                ).toEqual([`${WWW}${dir}/`]);
+            }
+            // A file directly below /archive/ is not a version: it keeps its name.
+            expect(route(files, { url: 'https://ag-grid.com/archive/notes.txt', dirExists })).toMatchObject({
+                location: `${WWW}/archive/notes.txt`,
+            });
+        });
+
+        it('leaves both archive-root rules to the live root .htaccess', () => {
+            expect(productionContent).toContain('Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"');
+            expect(productionContent).toContain('RewriteRule ^archive/[^/]+$');
+            expect(archiveContent).not.toContain('Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"');
+            expect(archiveContent).not.toContain('RewriteRule ^archive/[^/]+$');
+        });
+
         it('never redirects an archive URL out of the archive, from any host', () => {
             const escapes = HOSTS.flatMap((host) =>
                 probePaths().flatMap((path) => {
@@ -2132,6 +2179,84 @@ describe('htaccessRules', () => {
                     }).get('cache-control')
                 ).toEqual(['no-cache']);
             }
+        });
+
+        // Charts archives from 14.0.0 point their ErrorDocument at a page under the archive, so the
+        // 404 is built for a URI the released-archive rule matches (verified on Apache 2.4.52).
+        describe('archive error responses', () => {
+            const files = () => [compileHtaccess(productionContent)];
+            const archived = (uri: string, status: number) =>
+                responseHeaders(files(), { uri, status, contentType: 'text/html' }).get('cache-control');
+            const errorPage = (uri: string, status = 404) =>
+                responseHeaders(files(), { uri, status, contentType: 'text/html', onSuccess: true }).get(
+                    'cache-control'
+                );
+
+            it.each([
+                '/charts/archive/14.0.0/404.html',
+                '/charts/archive/14.2.0/404.html',
+                '/charts/archive/14.3.0/404.html',
+                '/archive/36.2.0/404.html',
+            ])('an error served by the ErrorDocument %s is no-cache, not the long cache', (uri) => {
+                expect(errorPage(uri)).toEqual(['no-cache']);
+                expect(errorPage(uri, 410)).toEqual(['no-cache']);
+            });
+
+            it('leaves 12.x and 13.x charts archives on the charts error page, outside the archive', () => {
+                // Their ErrorDocument is /charts/404.html, which no archive rule ever matched.
+                expect(errorPage('/charts/404.html')).toEqual(['no-cache']);
+            });
+
+            it('keeps the long cache on every successful archive response, and on a 304', () => {
+                for (const uri of [
+                    '/charts/archive/14.0.0/react/quick-start/index.html',
+                    '/charts/archive/12.3.1/index.html',
+                    '/archive/36.2.0/react-data-grid/getting-started/index.html',
+                    '/archive/36.2.0/images/logo.svg',
+                ]) {
+                    for (const status of [200, 206, 304]) {
+                        expect(archived(uri, status), `${uri} ${status}`).toEqual([LONG]);
+                    }
+                }
+            });
+
+            it('still lets the in-flight block override it', () => {
+                const inFlight = [
+                    compileHtaccess(
+                        getHtaccessContent({
+                            env: 'production',
+                            uncachedGridArchive: '36.3.0',
+                            uncachedChartsArchive: '14.3.0',
+                        })
+                    ),
+                ];
+                for (const page of ['/archive/36.3.0/', '/charts/archive/14.3.0/']) {
+                    for (const status of [200, 304]) {
+                        expect(
+                            responseHeaders(inFlight, {
+                                uri: `${page}index.html`,
+                                status,
+                                contentType: 'text/html',
+                            }).get('cache-control'),
+                            `${page} ${status}`
+                        ).toEqual(['no-cache']);
+                    }
+                    expect(
+                        responseHeaders(inFlight, {
+                            uri: `${page}404.html`,
+                            status: 404,
+                            contentType: 'text/html',
+                            onSuccess: true,
+                        }).get('cache-control')
+                    ).toEqual(['no-cache']);
+                }
+            });
+
+            it('keeps redirects on the single no-cache from the always table', () => {
+                for (const status of [301, 302]) {
+                    expect(archived('/charts/archive/14.0.0/react/fonts', status)).toEqual(['no-cache']);
+                }
+            });
         });
 
         it('staging never caches anything long, so testers never see a stale asset', () => {

@@ -65,18 +65,30 @@ twin() { page "$1"; echo "# md $1" > "$HTDOCS/$1.md"; }
 # site, version, a doc page path below the archive, whether it ships markdown twins
 ARCHIVES="grid 35.3.1 react-data-grid/getting-started no
 grid 36.0.0 react-data-grid/getting-started no
+grid 36.0.1 react-data-grid/getting-started no
+grid 36.0.2 react-data-grid/getting-started no
 grid 36.1.0 react-data-grid/getting-started yes
 grid 36.2.0 react-data-grid/getting-started yes
+charts 12.3.1 react/bar-series no
+charts 13.3.1 react/bar-series no
 charts 14.0.0 react/bar-series no
+charts 14.0.1 react/bar-series no
+charts 14.0.2 react/bar-series no
 charts 14.1.0 react/bar-series yes
 charts 14.2.0 react/bar-series yes
 studio 2.0.0 react/getting-started no
+studio 2.0.1 react/getting-started no
 studio 2.1.0 react/getting-started yes
+studio 2.1.1 react/getting-started yes
+studio 2.1.2 react/getting-started yes
 studio 3.0.0 react/getting-started yes"
 
 mkdir -p "$HTDOCS/charts" "$HTDOCS/studio"
 cp "$FIXTURES/charts-top-level.htaccess" "$HTDOCS/charts/.htaccess"
 cp "$FIXTURES/studio-top-level.htaccess" "$HTDOCS/studio/.htaccess"
+# The parents' own error pages, which their ErrorDocument names.
+echo "charts not found" > "$HTDOCS/charts/404.html"
+echo "studio not found" > "$HTDOCS/studio/404.html"
 while read -r site version doc md; do
   case "$site" in grid) dir="archive/$version";; *) dir="$site/archive/$version";; esac
   page "$dir"; echo "not found" > "$HTDOCS/$dir/404.html"
@@ -120,9 +132,10 @@ LOCAL="http://localhost:$PORT"
 W="https://www.ag-grid.com"
 pass=0; fail=0
 
-# phase  host  path  accept  status  expectation
+# phase  host  path  accept  status  expectation  [cache-control]
 #   expectation: a redirect's exact Location (@ = this server), or for a 200 a comma list of
 #   ct:<content-type prefix>, vary:<token>, novary:<token>
+#   cache-control: when given, the exact Cache-Control header (absent = none at all)
 ROWS="
 # --- grid 36.x: alias hosts kept the archive path? Before: dropped it, landing on the current docs.
 before	ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/?q=1	-	301	$W/react-data-grid/getting-started/?q=1
@@ -135,8 +148,25 @@ before	blog.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	-	301	$
 after	blog.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	-	301	$W/archive/36.2.0/react-data-grid/getting-started/
 before	blog.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started/	-	200	ct:text/html
 after	blog.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started/	-	301	$W/archive/36.0.0/react-data-grid/getting-started/
-# A slash-less URL keeps its path exactly as asked; www adds the slash afterwards, as on the live site.
-after	ag-grid.com	/archive/36.2.0/react-data-grid/getting-started	-	301	$W/archive/36.2.0/react-data-grid/getting-started
+# A slash-less URL gets its slash in the same hop, as the archive-aware generator does it.
+after	ag-grid.com	/archive/36.2.0/react-data-grid/getting-started	-	301	$W/archive/36.2.0/react-data-grid/getting-started/
+after	blog.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started?q=1	-	301	$W/archive/36.0.0/react-data-grid/getting-started/?q=1
+after	angulargrid.com	/charts/archive/14.0.0/react/bar-series	-	301	$W/charts/archive/14.0.0/react/bar-series/
+after	ag-grid.com	/charts/archive/14.2.0/react/bar-series	-	301	$W/charts/archive/14.2.0/react/bar-series/
+after	react-grid.ag-grid.com	/studio/archive/2.0.0/react/getting-started	-	301	$W/studio/archive/2.0.0/react/getting-started/
+# ...but a file keeps its name.
+after	ag-grid.com	/archive/36.2.0/images/logo.png	-	301	$W/archive/36.2.0/images/logo.png
+# A bare archive root on an alias host: mod_rewrite leaves it to mod_dir (the archive's own
+# .htaccess is in that directory), so the root's <If> redirect adds the slash and the host at once.
+both	ag-grid.com	/archive/36.2.0	-	301	$W/archive/36.2.0/
+both	blog.ag-grid.com	/archive/36.0.0?q=1	-	301	$W/archive/36.0.0/?q=1
+both	angulargrid.com	/charts/archive/14.1.0	-	301	$W/charts/archive/14.1.0/
+both	ag-grid.com	/studio/archive/3.0.0	-	301	$W/studio/archive/3.0.0/
+# An archive with no .htaccess of its own is the root's rewrite rules' to answer.
+both	ag-grid.com	/archive/35.3.1	-	301	$W/archive/35.3.1/
+# www is mod_dir's single hop; a missing version is not a directory, so it is left alone.
+both	www.ag-grid.com	/archive/36.2.0	-	301	@/archive/36.2.0/
+both	ag-grid.com	/archive/99.9.9	-	301	$W/archive/99.9.9
 # Escaping: the path goes out as it came in. Hence no [NE]: with it, %20 went out as a raw space,
 # %2541 as %41 (a different URL), %23 as a fragment and UTF-8 as raw bytes (verified on Apache 2.4).
 after	ag-grid.com	/archive/36.2.0/a%20b/	-	301	$W/archive/36.2.0/a%20b/
@@ -189,6 +219,18 @@ both	ag-grid.com	/charts/archive/14.2.0/react/bar-series/	-	301	$W/charts/archiv
 both	www.ag-grid.com	/charts/archive/14.1.0/react/bar-series/	text/markdown	200	ct:text/markdown
 # Charts' own prefix-match Redirect defect (finding 2) is in-archive, so the migration leaves it.
 both	www.ag-grid.com	/charts/archive/14.2.0/react/fonts/	-	301	@/charts/archive/14.2.0/react/text//
+# --- charts archive caching. 14.x serves its 404 through an ErrorDocument under the archive, which
+# the root's released-archive long cache matches; the root overrides error statuses to no-cache.
+# 12.x/13.x ship no .htaccess, so /charts/404.html answers there, outside the archive.
+both	www.ag-grid.com	/charts/archive/14.0.0/no-such-page/	-	404	-	no-cache
+both	www.ag-grid.com	/charts/archive/14.1.0/no-such-page/	-	404	-	no-cache
+both	www.ag-grid.com	/charts/archive/14.2.0/no-such-page/	-	404	-	no-cache
+both	www.ag-grid.com	/charts/archive/12.3.1/no-such-page/	-	404	-	no-cache
+both	www.ag-grid.com	/charts/archive/13.3.1/no-such-page/	-	404	-	no-cache
+both	www.ag-grid.com	/charts/archive/14.0.0/react/bar-series/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
+both	www.ag-grid.com	/charts/archive/12.3.1/react/bar-series/	-	200	ct:text/html	public, max-age=604800, s-maxage=31536000
+both	www.ag-grid.com	/charts/archive/14.2.0/react/bar-series	-	301	@/charts/archive/14.2.0/react/bar-series/	no-cache
+both	www.ag-grid.com	/archive/36.2.0/no-such-page/	-	404	-	no-cache
 # --- studio: no host canonicalisation at all before.
 before	ag-grid.com	/studio/archive/2.0.0/react/getting-started/	-	200	ct:text/html
 after	ag-grid.com	/studio/archive/2.0.0/react/getting-started/	-	301	$W/studio/archive/2.0.0/react/getting-started/
@@ -202,17 +244,18 @@ both	www.ag-grid.com	/studio/archive/2.1.0/	text/markdown	200	ct:text/markdown
 check_phase() {
   local phase="$1"
   echo "==> $phase"
-  while IFS=$'\t' read -r when host path accept status expect; do
+  while IFS=$'\t' read -r when host path accept status expect cc; do
     [[ -z "$when" || "$when" == \#* ]] && continue
     [ "$when" = both ] || [ "$when" = "$phase" ] || continue
     local acc=()
     [ "$accept" = "-" ] || acc=(-H "Accept: $accept")
-    local out code loc ct vary
+    local out code loc ct vary gotcc
     out="$(curl -s -o /dev/null -D - -H "Host: $host" "${acc[@]}" "$LOCAL$path" | tr -d '\r')"
     code="$(printf '%s\n' "$out" | awk 'NR==1{print $2}')"
     loc="$(printf '%s\n' "$out" | awk -F': ' 'tolower($1)=="location"{print $2}')"
     ct="$(printf '%s\n' "$out" | awk -F': ' 'tolower($1)=="content-type"{print $2}')"
     vary="$(printf '%s\n' "$out" | awk -F': ' 'tolower($1)=="vary"{print $2}' | paste -sd, -)"
+    gotcc="$(printf '%s\n' "$out" | awk -F': ' 'tolower($1)=="cache-control"{print $2}' | paste -sd, -)"
     local ok=1 want="${expect//@/$LOCAL}"
     [ "$code" = "$status" ] || ok=0
     if [[ "$status" == 3* ]]; then
@@ -227,8 +270,13 @@ check_phase() {
         esac
       done
     fi
+    if [ "$cc" = absent ]; then
+      [ -z "$gotcc" ] || ok=0
+    elif [ -n "$cc" ]; then
+      [ "$gotcc" = "$cc" ] || ok=0
+    fi
     if [ "$ok" = 1 ]; then pass=$((pass+1)); printf 'PASS  %-6s %-28s %-62s %s\n' "$phase" "$host" "$path${accept:+ [$accept]}" "$code";
-    else fail=$((fail+1)); printf 'FAIL  %-6s %-28s %-62s want %s %s, got %s loc=%s ct=%s vary=%s\n' "$phase" "$host" "$path [$accept]" "$status" "$want" "$code" "$loc" "$ct" "$vary"; fi
+    else fail=$((fail+1)); printf 'FAIL  %-6s %-28s %-62s want %s %s, got %s loc=%s ct=%s vary=%s cc=%s\n' "$phase" "$host" "$path [$accept]" "$status" "$want${cc:+ cc=$cc}" "$code" "$loc" "$ct" "$vary" "$gotcc"; fi
   done <<< "$ROWS"
 }
 
