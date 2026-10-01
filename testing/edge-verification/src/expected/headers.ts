@@ -61,6 +61,8 @@ const html = (id: string, title: string, url: string, refs: string[], extra: Par
 
 /** Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache. */
 export const NOT_MODIFIED_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
+/** The long archive cache its 200 must carry (as archive.grid-released expects) for the 304 to keep. */
+export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 
 /**
  * Compressed pages revalidated with the -gzip ETag they were sent (waf-finding.md §19). The archive
