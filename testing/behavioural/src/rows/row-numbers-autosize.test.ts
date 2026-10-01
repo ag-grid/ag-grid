@@ -3,7 +3,7 @@ import { TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { ColumnResizedEvent, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ROW_NUMBERS_COLUMN_ID } from 'ag-grid-community';
+import { ClientSideRowModelModule, ExternalFilterModule, ROW_NUMBERS_COLUMN_ID } from 'ag-grid-community';
 import { RowNumbersModule } from 'ag-grid-enterprise';
 
 interface RowData {
@@ -18,20 +18,26 @@ const makeRows = (count: number, start = 0): RowData[] =>
     Array.from({ length: count }, (_, i) => ({ id: String(start + i) }));
 
 describe('Row numbers column autosize', () => {
-    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, RowNumbersModule] });
-    let measure: MockInstance<(this: HTMLFormElement) => number>;
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ExternalFilterModule, RowNumbersModule],
+    });
+    let measure: MockInstance<(form: HTMLFormElement) => number>;
 
     beforeEach(() => {
         // happy-dom has no text layout, so make the autosize container's measured width depend on its text length
-        measure = vi.fn(function (this: HTMLFormElement) {
-            return (this.textContent?.length ?? 0) * PX_PER_CHAR;
+        const fn = vi.fn((form: HTMLFormElement) => (form.textContent?.length ?? 0) * PX_PER_CHAR);
+        measure = fn;
+        Object.defineProperty(HTMLFormElement.prototype, 'offsetWidth', {
+            configurable: true,
+            get(this: HTMLFormElement) {
+                return fn(this);
+            },
         });
-        Object.defineProperty(HTMLFormElement.prototype, 'offsetWidth', { configurable: true, get: measure });
     });
 
     afterEach(() => {
         gridMgr.reset();
-        delete (HTMLFormElement.prototype as Partial<HTMLFormElement>).offsetWidth;
+        Reflect.deleteProperty(HTMLFormElement.prototype, 'offsetWidth');
     });
 
     const createGrid = async (rowCount: number, gridOptions?: GridOptions<RowData>): Promise<GridApi<RowData>> => {
@@ -95,6 +101,30 @@ describe('Row numbers column autosize', () => {
         api.applyTransaction({ add: makeRows(3, 97) });
         await pastDebounce();
 
+        expect(rowNumberWidth(api)).toBe(widthFor('101'));
+        expect(measure).not.toHaveBeenCalled();
+    });
+
+    test('keeps the widest width when a filter drops the row count below a digit boundary', async () => {
+        let filtering = false;
+        const api = await createGrid(100, {
+            isExternalFilterPresent: () => filtering,
+            doesExternalFilterPass: (node) => Number(node.data!.id) < 97,
+        });
+        measure.mockClear();
+
+        filtering = true;
+        api.onFilterChanged();
+        await pastDebounce();
+
+        expect(api.getDisplayedRowCount()).toBe(97);
+        expect(rowNumberWidth(api)).toBe(widthFor('101'));
+
+        filtering = false;
+        api.onFilterChanged();
+        await pastDebounce();
+
+        expect(api.getDisplayedRowCount()).toBe(100);
         expect(rowNumberWidth(api)).toBe(widthFor('101'));
         expect(measure).not.toHaveBeenCalled();
     });
