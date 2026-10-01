@@ -333,6 +333,21 @@ describe('waf-config.alb.rules CRS scope-down', () => {
         assert.equal(outcome.status, 'pass', outcome.detail);
     });
 
+    for (const [field, value] of [
+        ['Name', 'AWSManagedRulesAdminProtectionRuleSet'],
+        ['VendorName', 'SomeVendor'],
+    ] as const) {
+        it(`fails when the group's ${field} is ${value}`, async () => {
+            const rules = albAclRules();
+            rules.find((r) => r.Name === 'AWS-AWSManagedRulesCommonRuleSet').Statement.ManagedRuleGroupStatement[
+                field
+            ] = value;
+            const outcome = await albRules.run(offlineCtx(new FakeAws(albAclHandlers(rules))));
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', new RegExp(value));
+        });
+    }
+
     const leaf = (s: any): any => s.NotStatement.Statement.ByteMatchStatement;
     for (const [what, edit] of [
         [
