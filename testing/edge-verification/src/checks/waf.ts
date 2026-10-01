@@ -782,6 +782,38 @@ export function wafChecks(): CheckDef[] {
                             sorted(assetScopeDownLeaves().map(leafKey))
                         );
                     }
+                    if ((exp as any).scopeDown === 'none') {
+                        p.eq(`${exp.name} scope-down`, rb.ScopeDownStatement ?? null, null);
+                    }
+                    if ((exp as any).scopeDown === 'nonbrowser-safe-paths') {
+                        // AND of exactly the trigger labels and the safe-path regexes: anything else
+                        // narrows or widens what is counted.
+                        const parts = rb.ScopeDownStatement?.AndStatement?.Statements;
+                        const labels = Array.isArray(parts) && parts.length === 2 ? anyOfLeaves(parts[0]) : undefined;
+                        const paths = Array.isArray(parts) && parts.length === 2 ? anyOfLeaves(parts[1]) : undefined;
+                        if (!labels || !paths) {
+                            p.add(`${exp.name}: scope-down is not AND(any trigger label, any safe path)`);
+                        } else {
+                            p.eq(
+                                `${exp.name}: scope-down labels`,
+                                sorted(labels.map(leafKey)),
+                                sorted(
+                                    CF_ACL.nonBrowser.triggerLabels.map((value) =>
+                                        leafKey({ kind: 'label', value, scope: 'LABEL' })
+                                    )
+                                )
+                            );
+                            p.eq(
+                                `${exp.name}: scope-down safe paths`,
+                                sorted(paths.map(leafKey)),
+                                sorted(
+                                    CF_ACL.nonBrowser.safePathRegexes.map((value) =>
+                                        leafKey({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })
+                                    )
+                                )
+                            );
+                        }
+                    }
                     if (exp.immunity) {
                         p.eq(
                             `${exp.name} CAPTCHA immunity`,

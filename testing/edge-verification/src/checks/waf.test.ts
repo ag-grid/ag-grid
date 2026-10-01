@@ -547,6 +547,52 @@ describe('IP-set matches use the connection IP, not a forwarded header', () => {
     });
 });
 
+describe('rate rules without an asset scope-down keep their declared scope', () => {
+    for (const [what, name, edit, pattern] of [
+        [
+            'the flat CAPTCHA rule is narrowed to one path',
+            'soft-rate-limit-flat-with-captcha-flat',
+            (rb: any) => {
+                rb.ScopeDownStatement = {
+                    ByteMatchStatement: {
+                        SearchString: Buffer.from('/never-requested/').toString('base64'),
+                        FieldToMatch: { UriPath: {} },
+                        TextTransformations: [{ Priority: 0, Type: 'NONE' }],
+                        PositionalConstraint: 'EXACTLY',
+                    },
+                };
+            },
+            /flat-with-captcha-flat scope-down/,
+        ],
+        [
+            'the counting rule loses a safe path',
+            'count-nonbrowser-safe-paths',
+            (rb: any) => rb.ScopeDownStatement.AndStatement.Statements[1].OrStatement.Statements.pop(),
+            /scope-down safe paths/,
+        ],
+        [
+            'the counting rule ORs labels and paths instead of ANDing them',
+            'count-nonbrowser-safe-paths',
+            (rb: any) => {
+                rb.ScopeDownStatement = { OrStatement: rb.ScopeDownStatement.AndStatement };
+            },
+            /AND\(any trigger label, any safe path\)/,
+        ],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await run(CHECKS.rateRules, {
+                rule: name,
+                edit: (s) => {
+                    edit(s.RateBasedStatement);
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', pattern);
+        });
+    }
+});
+
 describe('rate-rule asset scope-down keeps its matching semantics', () => {
     const RULE = 'soft-rate-limit-rule-with-captcha';
     const assetLeaves = (s: any): any[] =>
