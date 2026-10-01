@@ -99,8 +99,12 @@ export function crawlerPolicyChecks(): CheckDef[] {
                 const star = disallows(starGroup(r));
                 const ai = new Set(disallows(aiGroup(r)));
                 // isAiOpenExamplePath / isAiOpenArchivePath in robotsTxt.ts: deliberate differences.
-                const intentional = (path: string) =>
-                    (/example/.test(path) && !path.startsWith('/debug/')) || /(^|\/)archive\/$/.test(path);
+                // The generator leaves those paths out before adding the markdown twins, so a twin
+                // (`/x.md$`, `/x.md?`) goes with its directory (`/x/`).
+                const intentional = (path: string) => {
+                    const dir = path.replace(/\.md[$?]$/, '/');
+                    return (/example/.test(dir) && !dir.startsWith('/debug/')) || /(^|\/)archive\/$/.test(dir);
+                };
                 const missing = star.filter((d) => !ai.has(d) && !intentional(d));
                 const extra = [...ai].filter((d) => !star.includes(d));
                 const p = new Problems();
