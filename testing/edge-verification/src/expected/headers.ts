@@ -59,8 +59,17 @@ const html = (id: string, title: string, url: string, refs: string[], extra: Par
     ...extra,
 });
 
-/** Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache. */
-export const NOT_MODIFIED_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
+/**
+ * Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache (a root
+ * mod_headers rule, so it applies under /charts/ too). A charts archive page, because both hosts
+ * send it the same ETag and Last-Modified (20 of 20 requests, 2026-10-01): every grid archive was
+ * extracted with `tar -m` on each host, so a revalidation that reaches the other host gets a 200,
+ * and the extract fix (PENDING.archiveMtimes) only helps archives extracted after it. The grid
+ * divergence is a known issue of its own (headers.archive-validators-agree.35.0.0).
+ */
+export const NOT_MODIFIED_PROBE = `${WWW}/charts/archive/14.2.0/react/quick-start/`;
+/** A grid archive page whose two hosts send different validators (live 2026-10-01). */
+export const DIVERGENT_VALIDATOR_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
 /** The long archive cache its 200 must carry (as archive.grid-released expects) for the 304 to keep. */
 export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 
