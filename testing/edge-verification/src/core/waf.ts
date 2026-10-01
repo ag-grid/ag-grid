@@ -111,6 +111,21 @@ export function noneOfAlternatives(stmt: any): { leaves: Leaf[]; ands: Leaf[][] 
     return out;
 }
 
+/**
+ * The alternatives of NOT(OR(...)) (or of NOT(single statement)) as raw statements, for a check that
+ * reads a mix of leaves and nested statements itself. Undefined for any other shape.
+ */
+export function noneOfStatements(stmt: any): any[] | undefined {
+    const inner = notOf(stmt);
+    if (inner === undefined) {
+        return undefined;
+    }
+    if (inner?.OrStatement) {
+        return Array.isArray(inner.OrStatement.Statements) ? inner.OrStatement.Statements : undefined;
+    }
+    return [inner];
+}
+
 function leavesOfEach(list: any[] | undefined): Leaf[] | undefined {
     if (!list) {
         return undefined;

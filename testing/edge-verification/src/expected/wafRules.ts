@@ -215,14 +215,23 @@ function cfStatements(): Record<string, (exp: RuleExpectation) => DeclaredRule['
                 pending: nb.pendingUaAllowTokens.pending,
             },
         ],
-        // move-datacenter-block-after-agent-exemptions.sh: p11's Accept exemption and safe paths, copied.
+        // move-datacenter-block-after-agent-exemptions.sh: p11's safe paths, and p11's Accept exemption
+        // only on the paths the origin negotiates, copied.
         'block-datacenter-except-agent-paths': (exp: RuleExpectation) =>
             one(
                 rule(
                     exp,
                     and(
                         label(CF_ACL.dataCentreLabel),
-                        not(or(...CF_ACL.dataCentreVerifiedLabels.map(label), markdownAccept())),
+                        not(
+                            or(
+                                ...CF_ACL.dataCentreVerifiedLabels.map(label),
+                                and(
+                                    markdownAccept(),
+                                    or(...CF_ACL.dataCentreMarkdownPaths.map((r) => regex('UriPath', r, ['NONE'])))
+                                )
+                            )
+                        ),
                         not(or(...p11Safe()))
                     ),
                     { Action: blockWith(nb.customBody) }

@@ -565,3 +565,57 @@ describe('WAF logging configuration', () => {
         });
     }
 });
+
+describe('block-datacenter-except-agent-paths: Accept: text/markdown only on negotiable paths', () => {
+    const id = 'waf-config.cf.rule.block-datacenter-except-agent-paths';
+    const alternatives = (rules: any[]): any[] =>
+        named(rules, 'block-datacenter-except-agent-paths').Statement.AndStatement.Statements[1].NotStatement.Statement
+            .OrStatement.Statements;
+    const markdown = (rules: any[]): any[] => alternatives(rules).find((a) => a.AndStatement).AndStatement.Statements;
+    const pathRegexes = (rules: any[]): any[] => markdown(rules)[1].OrStatement.Statements;
+    const regexLeaf = (value: string): any => ({
+        RegexMatchStatement: {
+            RegexString: value,
+            FieldToMatch: { UriPath: {} },
+            TextTransformations: [{ Priority: 0, Type: 'NONE' }],
+        },
+    });
+
+    it('passes as the script builds it', async () => {
+        const outcome = await run(id, 'cf');
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    const MUTATIONS: Array<[string, (rules: any[]) => void, RegExp]> = [
+        [
+            'the Accept leaf is exempt on its own as well (unscoped)',
+            (rules) => alternatives(rules).push(structuredClone(markdown(rules)[0])),
+            /Accept: text\/markdown is exempt on every path/,
+        ],
+        [
+            'an _astro alternative is added',
+            (rules) => pathRegexes(rules).push(regexLeaf('^/_astro/')),
+            /negotiable path regexes/,
+        ],
+        [
+            'a path regex is matched after LOWERCASE',
+            (rules) =>
+                (pathRegexes(rules)[2].RegexMatchStatement.TextTransformations = [{ Priority: 0, Type: 'LOWERCASE' }]),
+            /negotiable path regexes/,
+        ],
+        [
+            'a fifth path regex is added',
+            (rules) => pathRegexes(rules).push(regexLeaf('^/blog/')),
+            /negotiable path regexes/,
+        ],
+        ['a path regex is missing', (rules) => pathRegexes(rules).pop(), /negotiable path regexes/],
+    ];
+    for (const [what, edit, pattern] of MUTATIONS) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await run(id, 'cf', edit);
+            await assertFails(outcome, pattern);
+            // The whole-rule comparison names the field too.
+            assert.match(outcome.detail ?? '', /block-datacenter-except-agent-paths Statement\.AndStatement/);
+        });
+    }
+});
