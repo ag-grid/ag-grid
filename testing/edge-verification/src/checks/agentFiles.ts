@@ -2,6 +2,7 @@ import { markdownLinks, markdownSections, twinOf } from '../core/html';
 import { type Http, describeChain, header } from '../core/http';
 import { type CheckDef, Problems, fail, pass } from '../core/types';
 import {
+    ADVERTISED_LINKS,
     AGENT_SITES,
     ARCHIVE_LLMS,
     type AgentSite,
@@ -181,15 +182,50 @@ function siteChecks(site: AgentSite): CheckDef[] {
 export function agentFileChecks(): CheckDef[] {
     return [
         ...AGENT_SITES.flatMap(siteChecks),
-        ...Object.entries(KNOWN_BROKEN).map(([url, ref]): CheckDef => ({
+        ...Object.entries(KNOWN_BROKEN).map(([url, lifecycle]): CheckDef => ({
             id: `agent-files.known.${url.replace('https://www.ag-grid.com', '')}`,
             area: 'agent-files',
             title: `${url} (advertised to agents) resolves`,
             refs: ['SE-77'],
-            knownIssue: ref,
+            knownIssue: lifecycle.knownIssue,
+            fixedBy: lifecycle.fixedBy,
             async run({ http }) {
                 const problem = await resolves(http, url);
                 return problem ? fail(problem) : pass();
+            },
+        })),
+        ...ADVERTISED_LINKS.map((link): CheckDef => ({
+            id: `agent-files.link.${link.id}`,
+            area: 'agent-files',
+            title: `${new URL(link.file).pathname} links ${link.label ? `[${link.label}](${link.url})` : link.url}${link.notUrl ? `, not ${link.notUrl}` : ''}`,
+            refs: link.refs,
+            pending: link.pending,
+            knownIssue: link.knownIssue,
+            fixedBy: link.fixedBy,
+            async run({ http }) {
+                const res = await http.get(link.file);
+                if (res.status !== 200) {
+                    return fail(`${link.file} returned ${res.status}`);
+                }
+                const p = new Problems();
+                const links = markdownLinks(res.body);
+                if (link.label) {
+                    const labelled = [...res.body.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g)]
+                        .filter((m) => m[1] === link.label)
+                        .map((m) => m[2]);
+                    p.eq(`[${link.label}] targets`, labelled, [link.url]);
+                } else {
+                    p.check(links.includes(link.url), `no link to ${link.url}`);
+                }
+                if (link.notUrl) {
+                    p.check(!links.includes(link.notUrl), `still links ${link.notUrl}`);
+                }
+                if (!p.count) {
+                    // Served as it is, with no redirect: an agent should not spend a hop on it.
+                    const target = await http.head(link.url);
+                    p.eq(`${link.url} status`, target.status, 200);
+                }
+                return p.outcome();
             },
         })),
         {
