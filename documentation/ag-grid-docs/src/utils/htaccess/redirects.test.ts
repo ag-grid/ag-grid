@@ -142,6 +142,25 @@ describe('redirects', () => {
         expect([...new Set(dead)]).toEqual([]);
     });
 
+    // waf-finding.md §20.4: mod_alias takes the first match, so a second entry for the same source
+    // never fires - and two of them named a different target, so the file disagreed with Apache.
+    it.each([
+        ['SITE_301_REDIRECTS', SITE_301_REDIRECTS],
+        ['SITE_SINGLE_HOP_REWRITES', SITE_SINGLE_HOP_REWRITES],
+    ])('no two entries in %s share a source, so none is dead', (_name, redirects: Redirect[]) => {
+        const sources = redirects.map(fromOf);
+        expect(sources.filter((source, i) => sources.indexOf(source) !== i)).toEqual([]);
+    });
+
+    it('keeps the target that was firing for the two sources that had conflicting entries', () => {
+        expect(followFromWww('/javascript-data-grid/building/').hops.map((hop) => hop.location)).toEqual([
+            `${WWW}/javascript-data-grid/installation/`,
+        ]);
+        expect(
+            followFromWww('/javascript-data-grid/server-side-model-high-frequency/').hops.map((hop) => hop.location)
+        ).toEqual([`${WWW}/javascript-data-grid/server-side-model-updating-transactions/`]);
+    });
+
     // SE-28 / SE-29: destinations name the canonical host, never the bare apex or http.
     it('every absolute target is https on www.ag-grid.com (or another site entirely)', () => {
         const nonCanonical = allRedirects
