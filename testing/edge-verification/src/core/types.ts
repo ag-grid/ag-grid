@@ -16,6 +16,7 @@ export const AREAS = {
     'agent-files': 'llms.txt, AGENTS.md and the MCP server card',
     'seo-content': 'Page-level SEO: headings, structured data, meta tags, landmarks',
     blog: 'The /blog/ migration',
+    'bot-outcomes': 'What real crawlers and AI agents received, from the WAF logs (AWS Logs Insights, read-only)',
 } as const;
 
 export type Area = keyof typeof AREAS;
@@ -76,6 +77,14 @@ export interface Options {
     concurrency: number;
     delayMs: number;
     userAgent: string;
+    /** bot-outcomes: the WAF log window, in ms. */
+    botWindowMs: number;
+    /** bot-outcomes: highest acceptable non-ALLOW share (0.01 = 1%). */
+    botThreshold: number;
+    /** bot-outcomes: populations smaller than this are reported, not judged. */
+    botMinVolume: number;
+    /** bot-outcomes: the query is refused when it would scan more than this. */
+    botMaxBytes: number;
 }
 
 export interface Ctx {
