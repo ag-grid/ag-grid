@@ -20,24 +20,24 @@ Prerequisites: the AWS CLI on `PATH` with a working `ddos-report-readonly` profi
 machine outside a datacenter IP range (the WAF behaviour rows assume Bot Control does not label the
 caller as a datacenter). A full run takes a few minutes and makes about 300-400 HTTP requests.
 
-| Flag                   | Effect                                                                                        |
-| ---------------------- | --------------------------------------------------------------------------------------------- |
-| `--only <list>`        | Comma-separated areas (below) or check-id prefixes, e.g. `--only redirects,headers.markdown`  |
-| `--pending`            | Also evaluate expectations that are not deployed yet. They never fail the run                 |
-| `--strict`             | Known issues and warnings also fail the run                                                   |
-| `--list`               | List the selected checks (with their lifecycle marker) without running anything               |
-| `--verbose`            | Show detail for passing checks, and log every HTTP request                                    |
-| `--full-links`         | Check every llms.txt index link (~850, slow and over the default cap: raise `--max-requests`) |
-| `--days <n>`           | CloudTrail window for the edge-write summary (default 7)                                      |
-| `--max-requests <n>`   | HTTP request cap (default 400)                                                                |
-| `--concurrency <n>`    | Requests in flight (default 4, max 8)                                                         |
-| `--delay <ms>`         | Minimum gap between request starts (default 120)                                              |
-| `--user-agent <ua>`    | Override the default browser User-Agent                                                       |
-| `--json <file>`        | Also write the results and the request log as JSON (redacted)                                 |
-| `--bot-window <dur>`   | `bot-outcomes`: WAF log window, e.g. `30m` or `2h` (default 2h)                               |
-| `--bot-threshold <%>`  | `bot-outcomes`: highest acceptable non-ALLOW share, in percent (default 1)                    |
-| `--bot-min-volume <n>` | `bot-outcomes`: smaller populations are reported, not judged (default 100)                    |
-| `--bot-max-gb <n>`     | `bot-outcomes`: refuse the query when its estimated scan is larger (default 4)                |
+| Flag                   | Effect                                                                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `--only <list>`        | Comma-separated areas (below) or check-id prefixes, e.g. `--only redirects,headers.markdown`; an entry ending in `$` is one exact id |
+| `--pending`            | Also evaluate expectations that are not deployed yet. They never fail the run                                                        |
+| `--strict`             | Known issues and warnings also fail the run                                                                                          |
+| `--list`               | List the selected checks (with their lifecycle marker) without running anything                                                      |
+| `--verbose`            | Show detail for passing checks, and log every HTTP request                                                                           |
+| `--full-links`         | Check every llms.txt index link (~850, slow and over the default cap: raise `--max-requests`)                                        |
+| `--days <n>`           | CloudTrail window for the edge-write summary (default 7)                                                                             |
+| `--max-requests <n>`   | HTTP request cap (default 400)                                                                                                       |
+| `--concurrency <n>`    | Requests in flight (default 4, max 8)                                                                                                |
+| `--delay <ms>`         | Minimum gap between request starts (default 120)                                                                                     |
+| `--user-agent <ua>`    | Override the default browser User-Agent                                                                                              |
+| `--json <file>`        | Also write the results and the request log as JSON (redacted)                                                                        |
+| `--bot-window <dur>`   | `bot-outcomes`: WAF log window, e.g. `30m` or `2h` (default 2h)                                                                      |
+| `--bot-threshold <%>`  | `bot-outcomes`: highest acceptable non-ALLOW share, in percent (default 1)                                                           |
+| `--bot-min-volume <n>` | `bot-outcomes`: smaller populations are reported, not judged (default 100)                                                           |
+| `--bot-max-gb <n>`     | `bot-outcomes`: refuse the query when its estimated scan is larger (default 4)                                                       |
 
 Exit code: 0 when nothing failed, 1 on any failure (with `--strict`, also on a known issue or a
 warning), 2 when the run aborted.
