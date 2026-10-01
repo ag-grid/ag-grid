@@ -39,6 +39,40 @@ describe('htaccessSimulator', () => {
         });
     });
 
+    describe('directives', () => {
+        it('throws on a directive it neither models nor deliberately ignores, typos included', () => {
+            for (const line of [
+                'RewriteEngin On',
+                'Headr set X-A "1"',
+                'RewriteOptions Inherit',
+                'RewriteBase /',
+                '<Files "a.html">',
+                'ExpiresActive On',
+            ]) {
+                expect(() => compileHtaccess(line), line).toThrow(/Unsupported directive/);
+            }
+        });
+
+        it('skips only the directives it ignores on purpose', () => {
+            const compiled = compileHtaccess(`<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+</IfModule>
+AddType text/markdown md
+AddCharset utf-8 .md
+Options -Indexes`);
+            expect(compiled).toMatchObject({ rewriteRules: [], aliases: [], headers: [], hasRewrite: false });
+        });
+
+        it('throws on a rule or condition flag, or a RewriteEngine form, it does not model', () => {
+            expect(() => compileHtaccess('RewriteRule ^(.*)$ /x/$1 [R=301,B,L]')).toThrow(/Unsupported flag \[B\]/);
+            expect(() => compileHtaccess('RewriteRule ^(.*)$ /x/ [R=301,QSA,L]')).toThrow(/Unsupported flag \[QSA\]/);
+            expect(() => compileHtaccess('RewriteCond %{HTTP_HOST} x [NV]\nRewriteRule ^ - [L]')).toThrow(
+                /Unsupported flag \[NV\]/
+            );
+            expect(() => compileHtaccess('RewriteEngine Off')).toThrow(/Unsupported RewriteEngine/);
+        });
+    });
+
     describe('mod_rewrite', () => {
         const at = (path: string, host = 'www.example.com') => `https://${host}${path}`;
 
@@ -97,6 +131,87 @@ RewriteRule ^b$ /t/#frag [R=301,NE,L]`);
             expect(route([file], { url: at('/b') })).toMatchObject({ location: 'https://www.example.com/t/#frag' });
         });
 
+        // Each expectation below is what Apache 2.4.67 answered for the same rule and request.
+        describe('URL escaping', () => {
+            const file = compileHtaccess(`RewriteRule ^r/(.*)$ https://www.example.com/$1 [R=301,L]
+RewriteRule ^ne/(.*)$ https://www.example.com/$1 [R=301,NE,L]
+RewriteRule ^u/ https://www.example.com%{REQUEST_URI} [R=301,L]
+RewriteRule ^rel/(.*)$ /target/$1 [R=301,L]
+RewriteRule ^ir/(.*)$ /t/$1 [L]
+RewriteRule ^lit$ /t/a\\ b#frag&x [R=301,L]
+RewriteRule ^qs/(.*)$ /t/$1?added=1 [R=301,L]
+RewriteRule ^qsp/ /t/?x=a\\ b [R=301,L]
+RewriteRule ^le/(.*)$ /t/$1? [R=301,L]`);
+            const location = (path: string) => {
+                const outcome = route([file], { url: `http://h.example${path}` });
+                return outcome.type === 'redirect' ? outcome.location : 'status' in outcome ? outcome.status : outcome;
+            };
+
+            it.each([
+                ['/r/some%20page/', 'https://www.example.com/some%20page/'],
+                ['/r/caf%C3%A9/', 'https://www.example.com/caf%c3%a9/'],
+                ['/r/café/', 'https://www.example.com/caf%c3%a9/'],
+                ['/r/a%23b/', 'https://www.example.com/a%23b/'],
+                ['/r/a&b/', 'https://www.example.com/a&b/'],
+                ['/r/a%26b/', 'https://www.example.com/a&b/'],
+                ['/r/a%7e%41/', 'https://www.example.com/a~A/'],
+                ["/r/a+b%25c~d'e(f)/", "https://www.example.com/a+b%25c~d'e(f)/"],
+                [
+                    '/r/a%22c%3Cd%7Bi%7Cj%60k%5El%5Bm%5Co;p:q@r=s,t!u*v$w/',
+                    'https://www.example.com/a%22c%3cd%7bi%7cj%60k%5el%5bm%5co;p:q@r=s,t!u*v$w/',
+                ],
+                ['/r/x/?q=a%20b&c=%3F', 'https://www.example.com/x/?q=a%20b&c=%3F'],
+                ['/u/some%20page/', 'https://www.example.com/u/some%20page/'],
+                ['/rel/some%20page/', 'http://h.example/target/some%20page/'],
+                ['/lit', 'http://h.example/t/a%20b%23frag&x'],
+            ])('re-escapes the path of an external redirect without [NE]: %s', (path, expected) => {
+                expect(location(path)).toBe(expected);
+            });
+
+            it.each([
+                ['/ne/some%20page/', 'https://www.example.com/some page/'],
+                ['/ne/caf%C3%A9/', 'https://www.example.com/café/'],
+                ['/ne/a%23b/', 'https://www.example.com/a#b/'],
+                ['/ne/a%25c/', 'https://www.example.com/a%c/'],
+            ])('sends the decoded bytes with [NE]: %s', (path, expected) => {
+                expect(location(path)).toBe(expected);
+            });
+
+            it("replaces the request's query with the substitution's, escaping only a query the rule wrote", () => {
+                expect(location('/qs/x%20y/?orig=1')).toBe('http://h.example/t/x%20y/?added=1');
+                expect(location('/qsp/?o=1')).toBe('http://h.example/t/?x=a%20b');
+                expect(location('/le/x/?orig=1')).toBe('http://h.example/t/x/');
+            });
+
+            it('refuses a %3F that a back-reference or variable carries into a substitution, but not a literal ?', () => {
+                expect(location('/r/a%3Fb/')).toBe(403);
+                expect(location('/u/a%3Fb/')).toBe(403);
+                expect(location('/qs/a%3Fb/')).toBe(403);
+                expect(route([file], { url: 'http://h.example/ir/a%3Fb' })).toMatchObject({
+                    type: 'status',
+                    status: 403,
+                });
+                expect(location('/qsp/a%3Fb')).toBe('http://h.example/t/?x=a%20b');
+            });
+
+            it('answers a malformed escape with 400 and %00 with 404, and refuses to guess at an encoded slash', () => {
+                expect(location('/r/a%zzb/')).toBe(400);
+                expect(location('/r/a%00b/')).toBe(404);
+                expect(() => location('/r/a%2Fb/')).toThrow(/AllowEncodedSlashes/);
+            });
+
+            it('matches rules against the decoded path and serves it decoded', () => {
+                const page = compileHtaccess('RewriteRule ^page/$ /moved/ [R=301,L]');
+                expect(route([page], { url: 'http://h.example/p%61ge/' })).toMatchObject({
+                    location: 'http://h.example/moved/',
+                });
+                expect(route([page], { url: 'http://h.example/caf%C3%A9/' })).toMatchObject({
+                    type: 'serve',
+                    path: '/café/',
+                });
+            });
+        });
+
         it('returns 410 for [G] and for R=410, and re-runs an internal rewrite as a new request', () => {
             const file = compileHtaccess(`RewriteRule ^gone$ - [G]
 RewriteRule ^also-gone$ - [R=410,L]
@@ -144,6 +259,21 @@ RewriteRule ^ /%1.md [L]`);
             expect(route([rewriteFirst], { url: 'https://h.example/a/' })).toMatchObject({
                 location: 'https://h.example/rewritten/',
             });
+        });
+
+        it("escapes a Redirect's appended remainder, and a RedirectMatch target's path but not its query or fragment", () => {
+            // As Apache 2.4.67 answered.
+            const file = compileHtaccess('Redirect 301 /al /dest\nRedirectMatch 301 ^/am/(.*)$ /dest/$1');
+            const at = (path: string) =>
+                (route([file], { url: `http://h.example${path}` }) as { location: string }).location;
+            expect(at('/al/some%20page/')).toBe('http://h.example/dest/some%20page/');
+            expect(at('/al/caf%C3%A9/')).toBe('http://h.example/dest/caf%c3%a9/');
+            expect(at('/al/a%3Fb/?x=1')).toBe('http://h.example/dest/a%3fb/?x=1');
+            expect(at('/al/a%23b/')).toBe('http://h.example/dest/a%23b/');
+            expect(at('/am/some%20page/')).toBe('http://h.example/dest/some%20page/');
+            expect(at('/am/a%3Fb/')).toBe('http://h.example/dest/a?b/');
+            expect(at('/am/a%23b/')).toBe('http://h.example/dest/a#b/');
+            expect(at('/am/a%26b/?x=1')).toBe('http://h.example/dest/a&b/?x=1');
         });
 
         it('a 410 Redirect returns Gone', () => {
