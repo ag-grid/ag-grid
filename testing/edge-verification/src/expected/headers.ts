@@ -372,7 +372,7 @@ export const HEADER_ROWS: HeaderRow[] = [
         method: 'HEAD',
         status: 301,
         expect: { 'cache-control': NO_CACHE },
-        refs: [...refs, finding(4)],
+        refs: [...new Set([...refs, finding(4)])],
         pending,
     })),
 
