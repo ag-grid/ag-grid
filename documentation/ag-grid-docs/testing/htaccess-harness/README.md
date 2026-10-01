@@ -86,6 +86,16 @@ on machines/CI without Apache. Set `HTTPD_REQUIRED=1` to turn those skips into h
 environment where Apache is expected). Note a genuine `httpd` _start_ failure (bad config / malformed
 generated `.htaccess`) is still a hard failure — that's a real bug worth catching.
 
+## Deployed-archive migration
+
+`./archive-migration.sh` checks `scripts/migrate-archive-htaccess.mjs`, the one-off patch for the
+`.htaccess` of archives that are already deployed. It serves the deployed-archive fixtures
+(`src/utils/htaccess/__fixtures__/deployed-archives`) under the current root `.htaccess`, asserts
+what each request gets as deployed (pinning the defects), patches every archive twice (the second run
+must change nothing), and asserts the result: alias hosts reach the same archive URL on www in one
+hop, grid markdown negotiates under the archive, and no request leaves the archive. Same Apache
+detection and skip rules as `run.sh`; `ARCHIVE_FIXTURES=<dir>` runs it on other copies of the files.
+
 ## The two expectation files
 
 Both are tab-separated: `host  path  expect_status  expect_location_substring`.
