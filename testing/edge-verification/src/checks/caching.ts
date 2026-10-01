@@ -114,7 +114,6 @@ export function cachingChecks(): CheckDef[] {
                 return p.outcome();
             },
         },
-<<<<<<< HEAD
         ...POISON_PROBES.map(
             (path): CheckDef => ({
                 id: `caching.markdown-does-not-poison.${path}`,
@@ -123,10 +122,10 @@ export function cachingChecks(): CheckDef[] {
                 refs: ['SE-80', '2026-09-18 /example/ incident'],
                 async run({ http }) {
                     const url = `${WWW}${path}`;
-                    // Only the last request must be new: it has to follow a markdown request, and a
-                    // shared one (made earlier by another check) still came first.
+                    // The markdown and final HTML requests must both be new, so the last response follows a
+                    // markdown request this check actually sent; the first may be shared (it came first).
                     const before = await http.request({ url });
-                    const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT } });
+                    const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT }, fresh: true });
                     const after = await http.request({ url, fresh: true });
                     const p = new Problems();
                     // Only successful responses show a markdown request leaving the page intact; an
@@ -144,32 +143,6 @@ export function cachingChecks(): CheckDef[] {
                 },
             })
         ),
-=======
-        ...POISON_PROBES.map((path): CheckDef => ({
-            id: `caching.markdown-does-not-poison.${path}`,
-            area: 'caching',
-            title: `${path}: HTML, then markdown, then HTML again is still HTML`,
-            refs: ['SE-80', '2026-09-18 /example/ incident'],
-            async run({ http }) {
-                const url = `${WWW}${path}`;
-                // The markdown and final HTML requests must both be new, so the last response follows a
-                // markdown request this check actually sent; the first may be shared (it came first).
-                const before = await http.request({ url });
-                const md = await http.request({ url, headers: { accept: MARKDOWN_ACCEPT }, fresh: true });
-                const after = await http.request({ url, fresh: true });
-                const p = new Problems();
-                // Only successful responses show a markdown request leaving the page intact; an
-                // error page or a blocked markdown request proves nothing either way.
-                p.eq('first status', before.status, 200);
-                p.eq('markdown status', md.status, 200);
-                p.eq('status after a markdown request', after.status, 200);
-                p.eq('first response', contentType(before), 'text/html');
-                p.eq('after a markdown request', contentType(after), 'text/html');
-                p.check(!HIT.test(xCache(after)), `HTML came from cache after a markdown request (${xCache(after)})`);
-                return p.outcome(`markdown request got ${md.status} ${contentType(md)}`);
-            },
-        })),
->>>>>>> 6609a756d7d (Fail on any legacy ExcludedRules, and send the poisoning probe's own markdown request)
         {
             id: 'caching.archive-markdown-split',
             area: 'caching',
