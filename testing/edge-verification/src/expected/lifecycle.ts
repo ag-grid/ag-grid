@@ -27,6 +27,14 @@ export const PENDING = {
     /** The #15416 follow-up commit on archive-rewrite-prefix. */
     gridNoCache:
         'grid#15416 follow-up c0eadabc4e3 (no-cache on 3xx and live markdown, X-Robots-Tag: noindex on archived markdown)',
+    /** The #15416 commit that strips mod_deflate's -gzip suffix from If-None-Match. */
+    gridGzipRevalidation: 'grid#15416 follow-up a5ea9272023 (If-None-Match without the -gzip ETag suffix)',
+    /**
+     * The #15416 commit that stops uploadAndUnzipArchive.sh stamping extraction time on each host.
+     * It only helps an archive extracted after it: older ones keep per-host mtimes until re-extracted.
+     */
+    archiveMtimes:
+        'grid#15416 follow-up d1087c3088f (archive extract keeps mtimes) + re-extracting the archive on both hosts',
     chartsHosts:
         'ag-charts#8422 + charts test branch (one-hop host canonicalisation and redirects under /charts, Vary on HTML)',
     studioHosts: 'ag-studio#3084 + studio test branch (one-hop host canonicalisation under /studio, Vary on HTML)',
