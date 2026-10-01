@@ -219,6 +219,21 @@ describe('htaccessRules', () => {
             expect(new RegExp(source).test('/react-data-grid/getting-started.md')).toBe(false);
         });
 
+        it('revalidates a live page and its markdown twin, whether fetched as .md or negotiated', () => {
+            for (const content of [productionContent, stagingContent]) {
+                const files = [compileHtaccess(content)];
+                for (const [uri, contentType] of [
+                    ['/react-data-grid/getting-started/index.html', 'text/html; charset=utf-8'],
+                    ['/react-data-grid/getting-started.md', 'text/markdown; charset=utf-8'],
+                    ['/index.md', 'text/markdown; charset=utf-8'],
+                ]) {
+                    const headers = responseHeaders(files, { uri, status: 200, contentType });
+                    expect(headers.get('cache-control'), uri).toEqual(['no-cache']);
+                    expect(headers.has('x-robots-tag'), uri).toBe(false);
+                }
+            }
+        });
+
         it('should use no-cache rather than no-store, to keep back/forward navigation', () => {
             expect(productionContent).not.toContain('no-store');
         });
@@ -411,6 +426,61 @@ describe('htaccessRules', () => {
             const opened = lines.slice(0, index).filter((l) => l.startsWith('<IfModule')).length;
             const closed = lines.slice(0, index).filter((l) => l.startsWith('</IfModule>')).length;
             expect(opened).toBe(closed);
+        });
+    });
+
+    describe('Redirects are never cached, end to end', () => {
+        const WWW = 'https://www.ag-grid.com';
+        // Every kind of redirect the root file issues: scheme upgrade, host swap, add-slash, a
+        // single-hop rewrite, a mod_alias redirect, the sitemap alias and the blog host move.
+        const REDIRECTS = [
+            'http://www.ag-grid.com/react-data-grid/getting-started/?x=1',
+            'https://ag-grid.com/react-data-grid/getting-started/',
+            'http://ag-grid.com/',
+            'https://angulargrid.com/license-pricing/',
+            `${WWW}/react-data-grid/getting-started?x=1`,
+            `${WWW}/react-data-grid/whats-new`,
+            `${WWW}/javascript-grid-virtual-paging/`,
+            `${WWW}/sitemap.xml`,
+            'https://blog.ag-grid.com/some-post/',
+        ];
+        const redirectHeaders = (content: string, url: string) => {
+            const files = [compileHtaccess(content)];
+            const outcome = route(files, { url });
+            expect(outcome.type, url).toBe('redirect');
+            const status = (outcome as { status: number }).status;
+            return responseHeaders(files, { uri: new URL(url).pathname, status, contentType: 'text/html' });
+        };
+
+        it.each(REDIRECTS)('%s is sent with Cache-Control: no-cache', (url) => {
+            expect(redirectHeaders(productionContent, url).get('cache-control')).toEqual(['no-cache']);
+        });
+
+        it('covers the redirects staging gets from Apache itself, such as the mod_dir add-slash', () => {
+            // Staging carries no redirect rules of its own, but the always-table rule still reaches
+            // any redirect Apache issues there.
+            const files = [compileHtaccess(stagingContent)];
+            for (const status of [301, 302, 307, 308]) {
+                const headers = responseHeaders(files, { uri: '/react-data-grid/getting-started', status });
+                expect(headers.get('cache-control'), String(status)).toEqual(['no-cache']);
+            }
+        });
+
+        it('leaves a 304 to the long cache of the copy it revalidates', () => {
+            // A 304 refreshes the stored headers, so a no-cache there would undo the long cache. Whichever
+            // header table Apache sends with it, the redirect rule adds nothing.
+            const files = [compileHtaccess(productionContent)];
+            const uri = '/_astro/DocsExampleRunner.CiSTQ4_g.css';
+            expect(
+                responseHeaders(files, { uri, status: 304, contentType: 'text/css', onSuccess: true }).get(
+                    'cache-control'
+                )
+            ).toEqual(responseHeaders(files, { uri, status: 200, contentType: 'text/css' }).get('cache-control'));
+            expect(
+                responseHeaders(files, { uri, status: 304, contentType: 'text/css', onSuccess: false }).get(
+                    'cache-control'
+                )
+            ).toBeUndefined();
         });
     });
 
@@ -1560,6 +1630,25 @@ describe('htaccessRules', () => {
             expect(headers.get('content-security-policy')![0]).toContain("'unsafe-eval'");
             expect(headers.get('referrer-policy')).toEqual(['strict-origin-when-cross-origin']);
             expect(headers.has('x-frame-options')).toBe(false);
+        });
+
+        it('sends every archive redirect with Cache-Control: no-cache, from the root rule', () => {
+            for (const path of [
+                '/react-data-grid/getting-started',
+                '/javascript-grid/themes-customising/',
+                '/index.php',
+            ]) {
+                for (const host of [WWW, 'https://ag-grid.com', 'http://www.ag-grid.com']) {
+                    const outcome = at(path, host);
+                    expect(outcome.type, `${host}${path}`).toBe('redirect');
+                    const headers = responseHeaders(deployed, {
+                        uri: `${BASE}${path}`,
+                        status: (outcome as { status: number }).status,
+                        contentType: 'text/html',
+                    });
+                    expect(headers.get('cache-control'), `${host}${path}`).toEqual(['no-cache']);
+                }
+            }
         });
 
         // AG-17157 / SE-24, waf-finding.md §11: archive HTML is noindexed by a <meta name="robots"> the
