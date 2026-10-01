@@ -176,6 +176,16 @@ The summary prints:
 
 It runs as the invoking user on a high port.
 
+## Deployed-archive migration
+
+`./archive-migration.sh` checks `scripts/migrate-archive-htaccess.mjs`, the one-off patch for the
+`.htaccess` of archives that are already deployed. It serves the deployed-archive fixtures
+(`src/utils/htaccess/__fixtures__/deployed-archives`) under the current root `.htaccess`, asserts
+what each request gets as deployed (pinning the defects), patches every archive twice (the second run
+must change nothing), and asserts the result: alias hosts reach the same archive URL on www in one
+hop, grid markdown negotiates under the archive, and no request leaves the archive. Same Apache
+detection and skip rules as `run.sh`; `ARCHIVE_FIXTURES=<dir>` runs it on other copies of the files.
+
 ## Expectation rows
 
 **Rows are tab-separated:** `host  path  status  location  [assertion]...`. The full reference is in
