@@ -1,13 +1,11 @@
 <div style="display: flex; flex-direction: column; height: 100%">
-    <div class="example-controls">
-        <div class="controls-row" style="display: flex">
-            <div class="row">
-                <label for="columnGroups"><input id="columnGroups" type="checkbox" />Skip Column Group Headers</label>
-                <label for="skipHeader"><input id="skipHeader" type="checkbox" />Skip Column Headers</label>
-            </div>
+    <div class="example-controls" style="margin-bottom: 10px">
+        <div class="controls-row">
+            <label for="columnGroups"><input id="columnGroups" type="checkbox" />Skip Column Group Headers</label>
+            <label for="skipHeader"><input id="skipHeader" type="checkbox" />Skip Column Headers</label>
         </div>
 
-        <div class="controls-row" style="margin: 10px 0">
+        <div class="controls-row">
             <button onclick="onBtnUpdate()">Show CSV export content text</button>
             <button onclick="onBtnExport()">Download CSV export file</button>
         </div>
