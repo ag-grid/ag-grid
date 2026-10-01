@@ -135,6 +135,96 @@ function p11Parts(rule: any): { trigger: Leaf[]; exemptions: Leaf[]; safe: Leaf[
     return trigger && exemptions && safe ? { trigger, exemptions, safe } : undefined;
 }
 
+/**
+ * Where a pending inserted rule must sit: after `exp.after`, with only other pending rules that
+ * follow the same rule in between. Two scripts that each insert straight after p11 therefore pass
+ * in either order. Returns the problem, if any.
+ */
+export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): string | undefined {
+    const names = sortedRules.map((r: any) => r.Name as string);
+    const i = names.indexOf(exp.name);
+    const a = names.indexOf(exp.after ?? '');
+    if (a < 0) {
+        return `${exp.after} not found`;
+    }
+    if (i < a) {
+        return `${exp.name} (priority ${sortedRules[i].Priority}) is before ${exp.after}`;
+    }
+    const siblings = new Set(
+        CF_ACL.rules.filter((r) => r.pending && r.after === exp.after && r.name !== exp.name).map((r) => r.name)
+    );
+    const others = names.slice(a + 1, i).filter((n) => !siblings.has(n));
+    return others.length ? `between ${exp.after} and ${exp.name}: ${others.join(', ')}` : undefined;
+}
+
+/** The p11 user-agent allowlist regex (the UA regex that admits chatgpt-user), or undefined. */
+function p11UaAllowlist(p11: any): Extract<Leaf, { kind: 'regex' }> | undefined {
+    const e = p11Parts(p11)?.exemptions ?? [];
+    return e.find(
+        (l): l is Extract<Leaf, { kind: 'regex' }> =>
+            l.kind === 'regex' && l.field === 'header:user-agent' && regexLeafMatches(l, 'chatgpt-user')
+    );
+}
+
+/** The statement each pending inserted rule must have: the shape its script builds. */
+const PENDING_RULE_SHAPES: Record<
+    string,
+    { refs: string[]; check: (rule: any, live: Live, p: Problems) => Promise<void> }
+> = {
+    'block-datacenter-except-agent-paths': {
+        refs: [finding(5)],
+        // AND(data-centre label, NOT(any verified bot or Accept: text/markdown), NOT(any p11 safe
+        // path)): the shape move-datacenter-block-after-agent-exemptions.sh builds.
+        async check(rule, live, p) {
+            const parts = andOf(rule.Statement);
+            const label = parts?.length === 3 ? leafOf(parts[0]) : undefined;
+            const exempt = parts?.length === 3 ? noneOfLeaves(parts[1]) : undefined;
+            const safe = parts?.length === 3 ? noneOfLeaves(parts[2]) : undefined;
+            const p11Safe = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'))?.safe;
+            if (!label || !exempt || !safe || !p11Safe) {
+                p.add(`statement is not AND(label, NOT(exemptions), NOT(safe paths))${p11Safe ? '' : ' (nor is p11)'}`);
+                return;
+            }
+            const pathValues = (ls: Leaf[]) => ls.map((l) => ('field' in l ? `${l.field} ${l.value}` : l.value));
+            p.eq('safe paths (same as p11)', sorted(pathValues(safe)), sorted(pathValues(p11Safe)));
+            p.check(
+                label.kind === 'label' && label.value.endsWith('signal:known_bot_data_center'),
+                'does not match the known_bot_data_center label'
+            );
+            p.check(
+                exempt.some((l) => l.kind === 'byte' && l.field === 'header:accept' && l.value === 'text/markdown'),
+                'no Accept: text/markdown exemption'
+            );
+            p.eq('custom body', rule.Action?.Block?.CustomResponse?.CustomResponseBodyKey, 'automated-access-blocked');
+        },
+    },
+    'count-allowlisted-agents-rate': {
+        refs: [finding(6), finding(7), 'SE-184'],
+        // RateBased(IP, 600 / 300 s, scope-down = p11's UA allowlist regex, same transforms), Count.
+        async check(rule, live, p) {
+            const exp = CF_ACL.nonBrowser.allowlistedAgentsRate;
+            const rate = rule.Statement?.RateBasedStatement;
+            if (!rate) {
+                p.add('statement is not a RateBasedStatement');
+                return;
+            }
+            p.eq('limit', rate.Limit, exp.limit);
+            p.eq('window', rate.EvaluationWindowSec, exp.window);
+            p.eq('aggregate key', rate.AggregateKeyType, 'IP');
+            const scope = leafOf(rate.ScopeDownStatement);
+            const p11Regex = p11UaAllowlist(await cfRule(live, 'block-nonbrowser-except-ai-assistants'));
+            if (!scope || scope.kind !== 'regex' || scope.field !== 'header:user-agent') {
+                p.add('scope-down is not a single user-agent RegexMatch');
+            } else if (!p11Regex) {
+                p.add('p11 has no user-agent allowlist regex to compare with');
+            } else {
+                p.eq('scope-down regex (same as p11)', scope.value, p11Regex.value);
+                p.eq('scope-down transforms (same as p11)', scope.transforms, p11Regex.transforms);
+            }
+        },
+    },
+};
+
 export function wafChecks(): CheckDef[] {
     const nb = CF_ACL.nonBrowser;
     return [
@@ -178,8 +268,8 @@ export function wafChecks(): CheckDef[] {
             .map((exp): CheckDef => ({
                 id: `waf-config.cf.rule.${exp.name}`,
                 area: 'waf-config',
-                title: `${exp.name} present straight after ${exp.after}, ${exp.action}`,
-                refs: [finding(5)],
+                title: `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`,
+                refs: PENDING_RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
                 pending: exp.pending,
                 async run({ live }) {
                     const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
@@ -188,41 +278,19 @@ export function wafChecks(): CheckDef[] {
                         return fail('rule not present');
                     }
                     const p = new Problems();
-                    p.eq('previous rule', rules[i - 1]?.Name, exp.after);
+                    const between = pendingSiblingOrder(rules, exp);
+                    if (between) {
+                        p.add(between);
+                    }
                     p.eq('action', ruleAction(rules[i]), exp.action);
                     p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
-                    // AND(data-centre label, NOT(any verified bot or Accept: text/markdown), NOT(any p11
-                    // safe path)): the shape move-datacenter-block-after-agent-exemptions.sh builds.
-                    const parts = andOf(rules[i].Statement);
-                    const label = parts?.length === 3 ? leafOf(parts[0]) : undefined;
-                    const exempt = parts?.length === 3 ? noneOfLeaves(parts[1]) : undefined;
-                    const safe = parts?.length === 3 ? noneOfLeaves(parts[2]) : undefined;
-                    const p11Safe = p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'))?.safe;
-                    if (!label || !exempt || !safe || !p11Safe) {
-                        p.add(
-                            `statement is not AND(label, NOT(exemptions), NOT(safe paths))${p11Safe ? '' : ' (nor is p11)'}`
-                        );
-                        return p.outcome();
+                    const shape = PENDING_RULE_SHAPES[exp.name];
+                    if (!shape) {
+                        p.add(`no statement check declared for ${exp.name}`);
+                    } else {
+                        await shape.check(rules[i], live, p);
                     }
-                    const pathValues = (ls: Leaf[]) =>
-                        ls.map((l) => ('field' in l ? `${l.field} ${l.value}` : l.value));
-                    p.eq('safe paths (same as p11)', sorted(pathValues(safe)), sorted(pathValues(p11Safe)));
-                    p.check(
-                        label.kind === 'label' && label.value.endsWith('signal:known_bot_data_center'),
-                        'does not match the known_bot_data_center label'
-                    );
-                    p.check(
-                        exempt.some(
-                            (l) => l.kind === 'byte' && l.field === 'header:accept' && l.value === 'text/markdown'
-                        ),
-                        'no Accept: text/markdown exemption'
-                    );
-                    p.eq(
-                        'custom body',
-                        rules[i].Action?.Block?.CustomResponse?.CustomResponseBodyKey,
-                        'automated-access-blocked'
-                    );
-                    return p.outcome();
+                    return p.outcome(`priority ${rules[i].Priority}`);
                 },
             })),
         {
@@ -532,6 +600,31 @@ export function wafChecks(): CheckDef[] {
                     CustomResponseBodyKey: nb.customBody,
                 });
                 return p.outcome(`${nb.uaAllowTokens.length} UA tokens admitted`);
+            },
+        },
+        {
+            id: 'waf-config.cf.nonbrowser-rule.agent-allowlist',
+            area: 'waf-config',
+            title: `p11 UA allowlist also admits the ${nb.pendingUaAllowTokens.tokens.length} agents extend-p11-agent-allowlist.sh adds, within WAF's regex limit`,
+            refs: [finding(6), 'SE-184'],
+            pending: nb.pendingUaAllowTokens.pending,
+            async run({ live }) {
+                const regex = p11UaAllowlist(await cfRule(live, 'block-nonbrowser-except-ai-assistants'));
+                if (!regex) {
+                    return fail('p11 has no user-agent allowlist regex (the one admitting chatgpt-user)');
+                }
+                const p = new Problems();
+                const missing = nb.pendingUaAllowTokens.tokens.filter((t) => !regexLeafMatches(regex, t));
+                p.check(!missing.length, `not admitted: ${missing.join(', ')}`);
+                // The pre-existing tokens must survive the edit.
+                const lost = nb.uaAllowTokens.filter((t) => !regexLeafMatches(regex, t));
+                p.check(!lost.length, `no longer admitted: ${lost.join(', ')}`);
+                p.check(
+                    regex.value.length <= nb.pendingUaAllowTokens.maxRegexLength,
+                    `regex is ${regex.value.length} chars, over ${nb.pendingUaAllowTokens.maxRegexLength}`
+                );
+                p.eq('transforms', regex.transforms, ['LOWERCASE']);
+                return p.outcome(`regex ${regex.value.length} chars`);
             },
         },
         {

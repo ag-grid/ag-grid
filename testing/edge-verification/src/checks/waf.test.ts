@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import type { CheckDef, Outcome } from '../core/types';
-import { FakeAws, cfAclHandlers, cfAclRules, offlineCtx } from '../testing/fakes';
+import { FakeAws, cfAclHandlers, cfAclRules, cfAclRulesWithAgentAllowlist, offlineCtx } from '../testing/fakes';
 import { wafChecks } from './waf';
 
 const CHECKS = {
@@ -88,4 +88,49 @@ describe('WAF statement structure', () => {
             assert.match(outcome.detail ?? '', /statement|scope-down/);
         });
     }
+});
+
+describe('rules inserted straight after p11 by two scripts', () => {
+    const allowlist = 'waf-config.cf.nonbrowser-rule.agent-allowlist';
+    const rate = 'waf-config.cf.rule.count-allowlisted-agents-rate';
+    const dataCentre = 'waf-config.cf.rule.block-datacenter-except-agent-paths';
+    const runOn = (id: string, rules: any[]): Promise<Outcome> =>
+        check(id).run(offlineCtx(new FakeAws(cfAclHandlers(rules))));
+
+    for (const rateFirst of [true, false]) {
+        it(`both inserted rules pass whichever script ran second (rate rule ${rateFirst ? 'first' : 'second'})`, async () => {
+            const rules = cfAclRulesWithAgentAllowlist(rateFirst);
+            for (const id of [allowlist, rate, dataCentre]) {
+                const outcome = await runOn(id, rules);
+                assert.equal(outcome.status, 'pass', `${id}: ${outcome.detail}`);
+            }
+        });
+    }
+
+    it('fails when an unrelated rule sits between p11 and an inserted rule', async () => {
+        const rules = cfAclRulesWithAgentAllowlist(false);
+        const i = rules.findIndex((r) => r.Name === 'block-datacenter-except-agent-paths');
+        rules.splice(i, 0, { Name: 'soft-rate-limit-docs-with-captch-count', Statement: {}, Action: { Count: {} } });
+        const outcome = await runOn(
+            rate,
+            rules.map((r, n) => ({ ...r, Priority: n }))
+        );
+        assert.equal(outcome.status, 'fail');
+        assert.match(outcome.detail ?? '', /between block-nonbrowser-except-ai-assistants and/);
+    });
+
+    it('fails when the rate rule scope-down drifts from the p11 allowlist', async () => {
+        const rules = cfAclRulesWithAgentAllowlist(true);
+        const r = rules.find((x) => x.Name === 'count-allowlisted-agents-rate');
+        r.Statement.RateBasedStatement.ScopeDownStatement.RegexMatchStatement.RegexString = '(gptbot)';
+        const outcome = await runOn(rate, rules);
+        assert.equal(outcome.status, 'fail');
+        assert.match(outcome.detail ?? '', /scope-down regex/);
+    });
+
+    it('the allowlist check fails until every new token is admitted', async () => {
+        const outcome = await runOn(allowlist, cfAclRules());
+        assert.equal(outcome.status, 'fail');
+        assert.match(outcome.detail ?? '', /not admitted: meta-webindexer/);
+    });
 });

@@ -250,7 +250,10 @@ export interface RuleExpectation extends Lifecycle {
     /** Action, or the OverrideAction for rule groups ('None'). */
     action: WafAction;
     metricName?: string;
-    /** Pending rules: the rule this one must immediately follow. */
+    /**
+     * Pending rules: the rule this one follows. Only other pending rules with the same `after` may
+     * sit between them, so two scripts that each insert straight after it pass in either order.
+     */
     after?: string;
 }
 
@@ -287,12 +290,21 @@ export const CF_ACL = {
         { name: 'AWS-AWSManagedRulesBotControlRuleSet', action: 'None' },
         { name: 'block-credential-scanner-paths', action: 'Block', metricName: 'block-credential-scanner-paths' },
         { name: 'block-nonbrowser-except-ai-assistants', action: 'Block', metricName: 'blockNonBrowserExceptAI' },
+        // Two pending scripts each insert one rule straight after p11; whichever runs second
+        // lands next to p11. So each is declared relative to p11 (see `after`), never by priority.
         {
             name: 'block-datacenter-except-agent-paths',
             action: 'Block',
             metricName: 'blockDataCenterExceptAgentPaths',
             after: 'block-nonbrowser-except-ai-assistants',
             pending: PENDING.datacenterAfterAgents,
+        },
+        {
+            name: 'count-allowlisted-agents-rate',
+            action: 'Count',
+            metricName: 'countAllowlistedAgentsRate',
+            after: 'block-nonbrowser-except-ai-assistants',
+            pending: PENDING.p11AgentAllowlist,
         },
         {
             name: 'soft-rate-limit-docs-with-captch-count',
@@ -403,6 +415,39 @@ export const CF_ACL = {
             'fb_iab',
             'instagram',
         ],
+        /** extend-p11-agent-allowlist.sh appends these (lower-cased: p11 applies LOWERCASE). */
+        pendingUaAllowTokens: {
+            pending: PENDING.p11AgentAllowlist,
+            tokens: [
+                'meta-webindexer',
+                'perplexity-user',
+                'amazon-quick',
+                'modelcontextprotocol',
+                'cohere-ai',
+                'youbot',
+                'mistralai-user',
+                'kiroserver',
+                'applebot',
+                'duckduckbot',
+                'duckassistbot',
+                'mattermost',
+                'webexteams',
+                'zohochat',
+                'synapse',
+                'kakaotalk',
+                'line-poker',
+                'chrome privacy preserving prefetch proxy',
+            ],
+            /** WAFv2's RegexString limit, which the script checks before submitting. */
+            maxRegexLength: 512,
+        },
+        /** extend-p11-agent-allowlist.sh: Count only, per IP, scoped to the same UA regex as p11. */
+        allowlistedAgentsRate: {
+            rule: 'count-allowlisted-agents-rate',
+            limit: 600,
+            window: 300,
+            pending: PENDING.p11AgentAllowlist,
+        },
         saliencebotIpSet: 'salience-bot',
         markdownAcceptExemption: 'text/markdown',
         safePathRegexes: ['/robots\\.txt$', '/llms\\.txt$', '/sitemap[^/]*\\.xml$', '\\.md$'],
