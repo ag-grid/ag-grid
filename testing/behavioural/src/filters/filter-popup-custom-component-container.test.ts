@@ -13,107 +13,113 @@ import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 const CUSTOM_POPUP_CLASS = 'ag-custom-component-popup';
 
-describe('Popups of a grid inside an ag-custom-component-popup container', () => {
-    const gridsManager = new TestGridsManager({
-        modules: [
-            ClientSideRowModelModule,
-            TextFilterModule,
-            CustomFilterModule,
-            TextEditorModule,
-            ColumnMenuModule,
-            ContextMenuModule,
-        ],
+const gridsManager = new TestGridsManager({
+    modules: [
+        ClientSideRowModelModule,
+        TextFilterModule,
+        CustomFilterModule,
+        TextEditorModule,
+        ColumnMenuModule,
+        ContextMenuModule,
+    ],
+});
+
+const createdElements: HTMLElement[] = [];
+let restoreOffsetParent: (() => void) | undefined;
+
+beforeEach(() => {
+    restoreOffsetParent = polyfillOffsetParent();
+});
+
+afterEach(() => {
+    gridsManager.reset();
+    createdElements.forEach((el) => el.remove());
+    createdElements.length = 0;
+    restoreOffsetParent?.();
+    restoreOffsetParent = undefined;
+});
+
+function appendDiv(parent: HTMLElement, className?: string): HTMLDivElement {
+    const div = document.createElement('div');
+    if (className) {
+        div.classList.add(className);
+    }
+    parent.appendChild(div);
+    if (parent === document.body) {
+        createdElements.push(div);
+    }
+    return div;
+}
+
+function createContainer(withCustomPopupClass: boolean): HTMLDivElement {
+    return appendDiv(document.body, withCustomPopupClass ? CUSTOM_POPUP_CLASS : undefined);
+}
+
+async function createGridIn(parent: HTMLElement, options: GridOptions): Promise<GridApi> {
+    return gridsManager.createGridAndWait(appendDiv(parent), {
+        columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
+        rowData: [{ name: 'Alice' }, { name: 'Bob' }],
+        ...options,
+    });
+}
+
+function firstCell(api: GridApi): HTMLElement {
+    const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell');
+    expect(cell).not.toBeNull();
+    return cell!;
+}
+
+function mouseDown(el: HTMLElement): void {
+    el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+}
+
+async function waitForPopupListeners(): Promise<void> {
+    await waitFor(() => expect(document.querySelector('.ag-popup')).not.toBeNull());
+    // the popup's outside-click listeners are registered on the next tick
+    await asyncSetTimeout(0);
+}
+
+async function openFilterInContainer(withCustomPopupClass: boolean) {
+    const container = createContainer(withCustomPopupClass);
+    const api = await createGridIn(container, {});
+    api.showColumnFilter('name');
+    await waitForPopupListeners();
+    return { container, api };
+}
+
+describe('Filter popup of a grid inside an ag-custom-component-popup container', () => {
+    test('closes on mousedown on a row cell of the same grid when the container has the class', async () => {
+        const { api } = await openFilterInContainer(true);
+        mouseDown(firstCell(api));
+        expect(document.querySelector('.ag-popup')).toBeNull();
     });
 
-    const createdElements: HTMLElement[] = [];
-    let restoreOffsetParent: (() => void) | undefined;
-
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
+    test('closes on mousedown on a row cell of the same grid when the container has no class (control)', async () => {
+        const { api } = await openFilterInContainer(false);
+        mouseDown(firstCell(api));
+        expect(document.querySelector('.ag-popup')).toBeNull();
     });
 
-    afterEach(() => {
-        gridsManager.reset();
-        createdElements.forEach((el) => el.remove());
-        createdElements.length = 0;
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
+    test('closes on mousedown on an empty area of the container', async () => {
+        const { container } = await openFilterInContainer(true);
+        mouseDown(container);
+        expect(document.querySelector('.ag-popup')).toBeNull();
     });
 
-    function appendDiv(parent: HTMLElement, className?: string): HTMLDivElement {
-        const div = document.createElement('div');
-        if (className) {
-            div.classList.add(className);
-        }
-        parent.appendChild(div);
-        if (parent === document.body) {
-            createdElements.push(div);
-        }
-        return div;
-    }
-
-    function createContainer(withCustomPopupClass: boolean): HTMLDivElement {
-        return appendDiv(document.body, withCustomPopupClass ? CUSTOM_POPUP_CLASS : undefined);
-    }
-
-    async function createGridIn(parent: HTMLElement, options: GridOptions): Promise<GridApi> {
-        return gridsManager.createGridAndWait(appendDiv(parent), {
-            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
-            rowData: [{ name: 'Alice' }, { name: 'Bob' }],
-            ...options,
-        });
-    }
-
-    function firstCell(api: GridApi): HTMLElement {
-        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell');
-        expect(cell).not.toBeNull();
-        return cell!;
-    }
-
-    function mouseDown(el: HTMLElement): void {
-        el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
-    }
-
-    async function waitForPopupListeners(): Promise<void> {
-        await waitFor(() => expect(document.querySelector('.ag-popup')).not.toBeNull());
-        // the popup's outside-click listeners are registered on the next tick
-        await asyncSetTimeout(0);
-    }
-
-    async function openFilterInContainer(withCustomPopupClass: boolean) {
-        const container = createContainer(withCustomPopupClass);
-        const api = await createGridIn(container, {});
-        api.showColumnFilter('name');
-        await waitForPopupListeners();
-        return { container, api };
-    }
-
-    describe('column filter', () => {
-        test('closes on mousedown on a row cell of the same grid when the container has the class', async () => {
-            const { api } = await openFilterInContainer(true);
-            mouseDown(firstCell(api));
-            expect(document.querySelector('.ag-popup')).toBeNull();
-        });
-
-        test('closes on mousedown on a row cell of the same grid when the container has no class (control)', async () => {
-            const { api } = await openFilterInContainer(false);
-            mouseDown(firstCell(api));
-            expect(document.querySelector('.ag-popup')).toBeNull();
-        });
-
-        test('closes on mousedown on an empty area of the container', async () => {
-            const { container } = await openFilterInContainer(true);
-            mouseDown(container);
-            expect(document.querySelector('.ag-popup')).toBeNull();
-        });
-
-        test('stays open on mousedown inside the filter popup', async () => {
-            await openFilterInContainer(true);
-            mouseDown(document.querySelector<HTMLElement>('.ag-popup .ag-filter')!);
-            expect(document.querySelector('.ag-popup')).not.toBeNull();
-        });
+    test('stays open on mousedown inside the filter popup', async () => {
+        await openFilterInContainer(true);
+        mouseDown(document.querySelector<HTMLElement>('.ag-popup .ag-filter')!);
+        expect(document.querySelector('.ag-popup')).not.toBeNull();
     });
 
+    test('closes on right-click on an empty area of the container', async () => {
+        const { container } = await openFilterInContainer(true);
+        container.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 }));
+        expect(document.querySelector('.ag-popup')).toBeNull();
+    });
+});
+
+describe('Other popups and editing of a grid inside an ag-custom-component-popup container', () => {
     test('column menu closes on mousedown on a row cell of the same grid', async () => {
         const container = createContainer(true);
         const api = await createGridIn(container, {});
