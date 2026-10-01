@@ -148,21 +148,24 @@ export function headerChecks(): CheckDef[] {
                         `${full.status}, no validator to revalidate with (ETag ${etag}, Last-Modified ${lastModified})`
                     );
                 }
-                const conditional: Record<string, string> = etag
-                    ? { 'if-none-match': etag }
-                    : { 'if-modified-since': lastModified! };
+                // Last-Modified first: Apache's mod_deflate suffixes the ETag of a compressed response
+                // (-gzip) and then does not match it, so If-None-Match can miss a 304 the date gets.
+                const conditional: Record<string, string> = lastModified
+                    ? { 'if-modified-since': lastModified }
+                    : { 'if-none-match': etag! };
+                const validator = Object.keys(conditional)[0];
                 const res = await http.request({ url, headers: conditional, fresh: true });
                 const stored = header(full, 'cache-control');
                 const revalidated = headerAll(res, 'cache-control');
                 const p = new Problems();
-                p.eq('status', res.status, 304);
+                p.eq(`status for ${validator}`, res.status, 304);
                 // Absent is fine: a cache keeps the stored Cache-Control when a 304 does not resend it.
                 p.check(
                     revalidated.length === 0 || (revalidated.length === 1 && revalidated[0] === stored),
                     `304 Cache-Control ${JSON.stringify(revalidated)} replaces the stored ${JSON.stringify(stored)}`
                 );
                 return p.outcome(
-                    `304 Cache-Control ${revalidated.length ? revalidated[0] : '(not resent)'}; 200 had ${stored}`
+                    `${validator}: 304 Cache-Control ${revalidated.length ? revalidated[0] : '(not resent)'}; 200 had ${stored}`
                 );
             },
         },

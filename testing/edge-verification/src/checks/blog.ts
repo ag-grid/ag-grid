@@ -12,7 +12,9 @@ const LASTMOD = {
 };
 const REMOVED_POST = 'testing-ag-grid-react-jest-enzyme';
 const MIGRATION_DAY = '2026-08-21';
-const BLOG_SITEMAPS = ['sitemap-posts.xml', 'sitemap-pages.xml', 'sitemap-authors.xml', 'sitemap-tags.xml'];
+const BLOG_SITEMAPS = ['sitemap-posts.xml', 'sitemap-pages.xml', 'sitemap-authors.xml'];
+/** SE-199 (grid#15392): every tag page is noindex, so the tag sitemap is deliberately not listed. */
+const UNLISTED_BLOG_SITEMAPS = ['sitemap-tags.xml'];
 
 export function blogChecks(): CheckDef[] {
     return [
@@ -129,13 +131,16 @@ export function blogChecks(): CheckDef[] {
         {
             id: 'blog.sitemap-index',
             area: 'blog',
-            title: 'sitemap-index.xml lists the four blog sitemaps',
-            refs: ['SE-85', 'SE-186'],
+            title: 'sitemap-index.xml lists the posts, pages and authors blog sitemaps, and not the noindexed tags one',
+            refs: ['SE-85', 'SE-186', 'SE-199'],
             async run({ http }) {
                 const res = await http.get('https://www.ag-grid.com/sitemap-index.xml');
                 const p = new Problems();
                 for (const s of BLOG_SITEMAPS) {
                     p.check(res.body.includes(`${BLOG}/${s}`), `missing ${BLOG}/${s}`);
+                }
+                for (const s of UNLISTED_BLOG_SITEMAPS) {
+                    p.check(!res.body.includes(`${BLOG}/${s}`), `lists ${BLOG}/${s}, whose pages are all noindex`);
                 }
                 return p.outcome();
             },
