@@ -1,17 +1,15 @@
 <div style="display: flex; flex-direction: column; height: 100%">
-    <div class="example-controls">
-        <div class="controls-row" style="display: flex">
-            <div class="row">
-                <label>columnSeparator = </label>
-                <select id="columnSeparator">
-                    <option value="none">(default)</option>
-                    <option value="tab">tab</option>
-                    <option value="|">bar (|)</option>
-                </select>
-            </div>
+    <div class="example-controls" style="margin-bottom: 10px">
+        <div class="controls-row">
+            <label for="columnSeparator">columnSeparator =</label>
+            <select id="columnSeparator">
+                <option value="none">(default)</option>
+                <option value="tab">tab</option>
+                <option value="|">bar (|)</option>
+            </select>
         </div>
 
-        <div class="controls-row" style="margin: 10px 0">
+        <div class="controls-row">
             <button onclick="onBtnUpdate()">Show CSV export content text</button>
             <button onclick="onBtnExport()">Download CSV export file</button>
         </div>
