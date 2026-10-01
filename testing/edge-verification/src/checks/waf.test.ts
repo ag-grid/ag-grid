@@ -12,6 +12,7 @@ const CHECKS = {
     nonBrowser: 'waf-config.cf.nonbrowser-rule',
     dataCentre: 'waf-config.cf.rule.block-datacenter-except-agent-paths',
     browserChallenge: 'waf-config.cf.automated-browser-challenge',
+    rateRules: 'waf-config.cf.rate-rules',
 };
 
 const check = (id: string): CheckDef => {
@@ -246,6 +247,58 @@ describe('p11 saliencebot exemption', () => {
             });
             assert.equal(outcome.status, 'fail');
             assert.match(outcome.detail ?? '', /saliencebot/);
+        });
+    }
+});
+
+describe('rate-rule asset scope-down keeps its matching semantics', () => {
+    const RULE = 'soft-rate-limit-rule-with-captcha';
+    const assetLeaves = (s: any): any[] =>
+        s.RateBasedStatement.ScopeDownStatement.NotStatement.Statement.OrStatement.Statements;
+    const MUTATIONS: Array<[string, (leaves: any[]) => void]> = [
+        [
+            'every asset exemption matched on the user-agent',
+            (ls) =>
+                ls.forEach((l) => {
+                    Object.values<any>(l)[0].FieldToMatch = { SingleHeader: { Name: 'user-agent' } };
+                }),
+        ],
+        [
+            'every prefix matched EXACTLY',
+            (ls) =>
+                ls.forEach((l) => {
+                    if (l.ByteMatchStatement) {
+                        l.ByteMatchStatement.PositionalConstraint = 'EXACTLY';
+                    }
+                }),
+        ],
+        [
+            'a different text transformation',
+            (ls) =>
+                ls.forEach((l) => {
+                    Object.values<any>(l)[0].TextTransformations = [{ Priority: 0, Type: 'NONE' }];
+                }),
+        ],
+        [
+            'an extra exemption',
+            (ls) => {
+                const extra = structuredClone(ls[0]);
+                extra.ByteMatchStatement.SearchString = Buffer.from('/docs/').toString('base64');
+                ls.push(extra);
+            },
+        ],
+    ];
+    for (const [what, mutate] of MUTATIONS) {
+        it(`fails on ${what}`, async () => {
+            const outcome = await run(CHECKS.rateRules, {
+                rule: RULE,
+                edit: (s) => {
+                    mutate(assetLeaves(s));
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail');
+            assert.match(outcome.detail ?? '', new RegExp(`${RULE}: asset scope-down`));
         });
     }
 });
