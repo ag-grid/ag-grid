@@ -160,11 +160,11 @@ const byte = (field: string, positional: string, value: string): any => ({
         TextTransformations: [{ Priority: 0, Type: 'NONE' }],
     },
 });
-const regex = (field: string, value: string): any => ({
+const regex = (field: string, value: string, transform = 'LOWERCASE'): any => ({
     RegexMatchStatement: {
         FieldToMatch: field.startsWith('header:') ? { SingleHeader: { Name: field.slice(7) } } : { [field]: {} },
         RegexString: value,
-        TextTransformations: [{ Priority: 0, Type: 'LOWERCASE' }],
+        TextTransformations: [{ Priority: 0, Type: transform }],
     },
 });
 const label = (key: string): any => ({ LabelMatchStatement: { Scope: 'LABEL', Key: key } });
@@ -178,7 +178,8 @@ const rule = (Name: string, Statement: any, extra: any = {}): any => ({ Name, St
 
 const nb = CF_ACL.nonBrowser;
 const p11Safe = (): any[] => [
-    ...nb.safePathRegexes.map((r) => regex('UriPath', r)),
+    // The live shape add-waf-safe-path-exemptions.sh builds: no transform on either kind.
+    ...nb.safePathRegexes.map((r) => regex('UriPath', r, 'NONE')),
     ...nb.safePathPrefixes.map((p) => byte('UriPath', 'STARTS_WITH', p)),
 ];
 

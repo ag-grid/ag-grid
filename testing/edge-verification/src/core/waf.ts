@@ -157,6 +157,9 @@ export function leaves(node: unknown): Leaf[] {
     return out;
 }
 
+/** A leaf with every matching property (field, positional constraint, transforms, value), for exact comparison. */
+export const leafKey = (l: Leaf): string => JSON.stringify(l);
+
 export function ruleAction(rule: any): string {
     const a = rule.Action ?? rule.OverrideAction ?? {};
     return Object.keys(a)[0] ?? '';
