@@ -1,3 +1,7 @@
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import {
     ALB_ACL,
     BEHAVIOURS,
@@ -9,7 +13,7 @@ import {
     MARKDOWN_KEY_FUNCTION,
     MARKDOWN_KEY_HEADER,
 } from '../expected/edge';
-import { Aws } from './aws';
+import { Aws, AwsError } from './aws';
 import { selectBehaviour } from './cfPattern';
 import type { MarkdownGuard } from './http';
 import { SECRET_HEADER_PATTERN, registerSecret } from './redact';
@@ -118,13 +122,19 @@ export class Live {
         behaviours: BehaviourView[];
         defaultBehaviour: BehaviourView;
         policies: Map<string, PolicyView>;
+        /** Whether the LIVE code of the markdown key function was read and derives the key header. */
+        keyFunction: { verified: boolean; reason: string };
+        /** Why the live config could not be read (declared fallback only). */
+        error?: unknown;
         note?: string;
     };
 
     /**
-     * Loads what the markdown guard needs: the live behaviours and their cache policies. If AWS
-     * is unreachable it falls back to the declared expectation, and in that mode never allows a
-     * markdown probe on a caching behaviour (it cannot prove the key is split).
+     * Loads what the markdown guard needs: the live behaviours, their cache policies and, when a
+     * behaviour relies on it, the published code of the markdown key function. If the live config
+     * cannot be read the declared behaviours stand in for the checks that only need a behaviour's
+     * pattern, but the guard then refuses EVERY markdown probe: a path declared uncached may have
+     * drifted to caching, which is exactly what this suite exists to catch.
      */
     prepareGuard(): Promise<void> {
         // Memoised: checks call this freely, and the guard must not change mid-run.
@@ -147,12 +157,18 @@ export class Live {
                 const p = await this.cachePolicy(id);
                 policies.set(id, toPolicyView(p));
             }
+            const reliesOnFunction = [defaultBehaviour, ...behaviours].some(
+                (b) => policies.get(b.cachePolicyId)?.keyHeaders.includes(MARKDOWN_KEY_HEADER) && hasKeyFunction(b)
+            );
             this.guardState = {
                 source: 'live',
                 aliases: new Set<string>(cfg.Aliases?.Items ?? []),
                 behaviours,
                 defaultBehaviour,
                 policies,
+                keyFunction: reliesOnFunction
+                    ? await this.verifyMarkdownKeyFunction()
+                    : { verified: false, reason: 'no behaviour keys its cache on the markdown function' },
             };
         } catch (e) {
             const policies = new Map<string, PolicyView>();
@@ -177,8 +193,53 @@ export class Live {
                 })),
                 defaultBehaviour: { pattern: '*', cachePolicyId: DEFAULT_BEHAVIOUR.cachePolicy, functionArns: [] },
                 policies,
-                note: `distribution config unavailable (${(e as Error).message}); markdown guard uses the declared behaviours`,
+                keyFunction: { verified: false, reason: 'live distribution config unavailable' },
+                error: e,
+                note: `distribution config unavailable (${(e as Error).message}); every markdown probe is refused`,
             };
+        }
+    }
+
+    /**
+     * Reads the LIVE stage of the markdown key function (cloudfront:GetFunction) and checks that
+     * its code derives the key header from the Accept test Apache uses. Unverified on any error,
+     * a denied read included: a matching function name alone proves nothing about what it does.
+     */
+    private async verifyMarkdownKeyFunction(): Promise<{ verified: boolean; reason: string }> {
+        const dir = mkdtempSync(join(tmpdir(), 'edge-verification-'));
+        try {
+            // get-function writes the code to a local file (its positional outfile argument).
+            const out = join(dir, `${MARKDOWN_KEY_FUNCTION}.js`);
+            await this.aws.call('cloudfront', 'get-function', [
+                '--name',
+                MARKDOWN_KEY_FUNCTION,
+                '--stage',
+                'LIVE',
+                out,
+            ]);
+            const problems = markdownKeyFunctionProblems(readFileSync(out, 'utf8'));
+            return problems.length
+                ? { verified: false, reason: `LIVE ${MARKDOWN_KEY_FUNCTION} code: ${problems.join('; ')}` }
+                : {
+                      verified: true,
+                      reason: `LIVE ${MARKDOWN_KEY_FUNCTION} code sets ${MARKDOWN_KEY_HEADER} from Accept`,
+                  };
+        } catch (e) {
+            const why =
+                e instanceof AwsError && e.deniedAction ? `needs IAM action ${e.deniedAction}` : (e as Error).message;
+            return { verified: false, reason: `LIVE ${MARKDOWN_KEY_FUNCTION} code not verified (${why})` };
+        } finally {
+            rmSync(dir, { recursive: true, force: true });
+        }
+    }
+
+    /** Rethrows why the live config could not be read, for checks that must judge the live state. */
+    requireLiveGuard(): void {
+        if (!this.guardState) {
+            throw new Error('markdown guard not prepared');
+        }
+        if (this.guardState.source !== 'live') {
+            throw this.guardState.error;
         }
     }
 
@@ -205,23 +266,41 @@ export class Live {
         return { behaviour, policy, caches };
     }
 
-    /** True when markdown and HTML get separate cache entries on this behaviour (live config only). */
-    markdownKeySplit(path: string): boolean {
+    /**
+     * Whether markdown and HTML get separate cache entries on this path's behaviour: the live
+     * policy keys on the header, the live behaviour runs the function, AND the function's LIVE
+     * code was read and derives the header from Accept. Never from the declared fallback.
+     */
+    markdownSplit(path: string): { split: boolean; reason: string } {
         const state = this.guardState;
         if (!state || state.source !== 'live') {
-            return false;
+            return { split: false, reason: 'live distribution config unavailable' };
         }
         const { behaviour, policy } = this.behaviourFor(path);
-        return (
-            !!policy?.keyHeaders.includes(MARKDOWN_KEY_HEADER) &&
-            behaviour.functionArns.some((arn) => arn.endsWith(`:function/${MARKDOWN_KEY_FUNCTION}`))
-        );
+        if (!policy?.keyHeaders.includes(MARKDOWN_KEY_HEADER)) {
+            return { split: false, reason: `behaviour ${behaviour.pattern} does not key on ${MARKDOWN_KEY_HEADER}` };
+        }
+        if (!hasKeyFunction(behaviour)) {
+            return { split: false, reason: `behaviour ${behaviour.pattern} does not run ${MARKDOWN_KEY_FUNCTION}` };
+        }
+        return { split: state.keyFunction.verified, reason: state.keyFunction.reason };
+    }
+
+    markdownKeySplit(path: string): boolean {
+        return this.markdownSplit(path).split;
     }
 
     readonly markdownGuard: MarkdownGuard = (url) => {
         const state = this.guardState;
         if (!state) {
             return { allowed: false, reason: 'guard not prepared' };
+        }
+        if (state.source !== 'live') {
+            // The declared behaviours say what SHOULD be uncached; only the live config says what is.
+            return {
+                allowed: false,
+                reason: 'live distribution config unavailable: markdown probes need verified cache state',
+            };
         }
         if (!state.aliases.has(url.hostname)) {
             return { allowed: false, reason: `${url.hostname} is not served by ${DISTRIBUTION_ID}` };
@@ -230,11 +309,67 @@ export class Live {
         if (!caches) {
             return { allowed: true, reason: `behaviour ${behaviour.pattern} does not cache` };
         }
-        if (this.markdownKeySplit(url.pathname)) {
-            return { allowed: true, reason: `behaviour ${behaviour.pattern} keys the cache on ${MARKDOWN_KEY_HEADER}` };
+        const { split, reason } = this.markdownSplit(url.pathname);
+        if (split) {
+            return {
+                allowed: true,
+                reason: `behaviour ${behaviour.pattern} keys the cache on ${MARKDOWN_KEY_HEADER}; ${reason}`,
+            };
         }
-        return { allowed: false, reason: `behaviour ${behaviour.pattern} caches without a markdown cache-key split` };
+        return {
+            allowed: false,
+            reason: `behaviour ${behaviour.pattern} caches without a verified markdown cache-key split: ${reason}`,
+        };
     };
+}
+
+const hasKeyFunction = (b: BehaviourView): boolean =>
+    b.functionArns.some((arn) => arn.endsWith(`:function/${MARKDOWN_KEY_FUNCTION}`));
+
+/**
+ * What is wrong with a markdown key function's code, statically: it must read the Accept header,
+ * set x-ag-accept-markdown exactly once to one of two different values chosen by a
+ * case-sensitive "text/markdown" substring test of that header (the test Apache's
+ * negotiation uses), and return the request. Anything else - a constant, another media type, a
+ * second assignment - is refused: an unusual but correct function only costs a refused probe.
+ */
+export function markdownKeyFunctionProblems(code: string): string[] {
+    const src = code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    const problems: string[] = [];
+    const acceptRead = /headers\s*(?:\.\s*accept|\[\s*['"]accept['"]\s*\])\s*\.\s*value/;
+    const acceptVar = new RegExp(
+        String.raw`(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*[^;\n]*${acceptRead.source}[^;\n]*`
+    ).exec(src)?.[1];
+    if (!acceptVar && !acceptRead.test(src)) {
+        problems.push('does not read the Accept header');
+    }
+    const header = MARKDOWN_KEY_HEADER.replace(/-/g, '\\-');
+    const assignments = [
+        ...src.matchAll(
+            new RegExp(String.raw`headers\s*\[\s*['"]${header}['"]\s*\]\s*=\s*\{\s*value\s*:\s*([^}]*)\}`, 'g')
+        ),
+    ];
+    const mentions = src.toLowerCase().split(MARKDOWN_KEY_HEADER).length - 1;
+    if (assignments.length !== 1 || mentions !== 1) {
+        problems.push(
+            `does not set ${MARKDOWN_KEY_HEADER} exactly once (${assignments.length} assignments, ${mentions} mentions)`
+        );
+    } else {
+        const subject = String.raw`(?:${acceptVar ? String.raw`${acceptVar}\b|` : ''}${acceptRead.source})`;
+        const test = new RegExp(
+            String.raw`^\(?\s*(?:${subject}\s*\.\s*indexOf\(\s*(['"])text/markdown\1\s*\)\s*(?:!==?\s*-1|>\s*-1|>=\s*0)|${subject}\s*\.\s*includes\(\s*(['"])text/markdown\2\s*\)|/text\\/markdown/\.test\(\s*${subject}\s*\))\s*\)?\s*\?\s*(['"])([^'"]*)\3\s*:\s*(['"])([^'"]*)\5\s*,?\s*$`
+        );
+        const m = test.exec(assignments[0][1].trim());
+        if (!m) {
+            problems.push(`${MARKDOWN_KEY_HEADER} is not chosen by a text/markdown test of the Accept header`);
+        } else if (m[4] === m[6]) {
+            problems.push(`${MARKDOWN_KEY_HEADER} is '${m[4]}' either way`);
+        }
+    }
+    if (!/return\s+event\.request\s*;?/.test(src)) {
+        problems.push('does not return the request');
+    }
+    return problems;
 }
 
 function toView(b: any, pattern: string): BehaviourView {
