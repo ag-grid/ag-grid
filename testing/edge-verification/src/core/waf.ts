@@ -1,4 +1,5 @@
 import { decodeSearchString } from './live';
+import { SECRET_HEADER_PATTERN } from './redact';
 
 /** Helpers for reading WAFv2 rule statements. */
 
@@ -213,4 +214,55 @@ export function anyPathLeafMatches(list: Leaf[], path: string): boolean {
               ? byteLeafMatches(l, path)
               : false
     );
+}
+
+// ---- whole-rule comparison -----------------------------------------------------------------
+
+const sortKeys = (o: Record<string, unknown>): Record<string, unknown> =>
+    Object.fromEntries(
+        Object.keys(o)
+            .sort()
+            .map((k) => [k, o[k]])
+    );
+
+const json = (v: unknown): string => JSON.stringify(v);
+const byJsonOrder = (xs: unknown[]): unknown[] => [...xs].sort((a, b) => (json(a) < json(b) ? -1 : 1));
+
+/**
+ * A rule, statement or ACL in a form two of them can be compared in field by field: SearchStrings
+ * decoded (a verify-header secret replaced by `secret`, so it is never printed), header names
+ * lower-cased, and the lists whose order means nothing (AND/OR children, overrides, excluded
+ * rules) put in a fixed order, with an empty one the same as none.
+ */
+export function canonicalWaf(node: unknown, secret: string): unknown {
+    if (Array.isArray(node)) {
+        return node.map((n) => canonicalWaf(n, secret));
+    }
+    if (!node || typeof node !== 'object') {
+        return node;
+    }
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+        out[k] = canonicalWaf(v, secret);
+    }
+    const single = out.SingleHeader as { Name?: string } | undefined;
+    if (single?.Name) {
+        out.SingleHeader = { ...single, Name: single.Name.toLowerCase() };
+    }
+    if (typeof out.SearchString === 'string') {
+        const header = (out.FieldToMatch as any)?.SingleHeader?.Name ?? '';
+        out.SearchString = SECRET_HEADER_PATTERN.test(header) ? secret : decodeSearchString(out.SearchString);
+    }
+    if (Array.isArray(out.Statements)) {
+        out.Statements = byJsonOrder(out.Statements);
+    }
+    for (const list of ['RuleActionOverrides', 'ExcludedRules']) {
+        const items = out[list];
+        if (Array.isArray(items) && items.length) {
+            out[list] = byJsonOrder(items);
+        } else if (Array.isArray(items)) {
+            delete out[list];
+        }
+    }
+    return sortKeys(out);
 }

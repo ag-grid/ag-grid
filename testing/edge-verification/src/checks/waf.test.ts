@@ -10,6 +10,7 @@ import {
     cfAclHandlers,
     cfAclRules,
     cfAclRulesWithAgentAllowlist,
+    ipSetHandler,
     offlineCtx,
 } from '../testing/fakes';
 import { wafChecks } from './waf';
@@ -454,7 +455,10 @@ describe('waf-config.alb.rules CRS scope-down', () => {
         it(`fails when ${what}`, async () => {
             const outcome = await runAlb(edit);
             assert.equal(outcome.status, 'fail', outcome.detail);
-            assert.match(outcome.detail ?? '', /CRS scope-down/);
+            assert.match(
+                outcome.detail ?? '',
+                /AWS-AWSManagedRulesCommonRuleSet Statement\.ManagedRuleGroupStatement\.ScopeDownStatement/
+            );
         });
     }
 });
@@ -476,10 +480,18 @@ describe('waf-config.alb.rules rate rules and CRS overrides', () => {
                 rate(rules).AggregateKeyType = 'FORWARDED_IP';
                 rate(rules).ForwardedIPConfig = { HeaderName: 'X-Forwarded-For', FallbackBehavior: 'MATCH' };
             },
-            /aggregate key|forwarded-IP/,
+            /hard-rate-limit-rule-with-blocking Statement\.RateBasedStatement\.(AggregateKeyType|ForwardedIPConfig)/,
         ],
-        ['a rate rule window changes', (rules: any[]) => (rate(rules).EvaluationWindowSec = 60), /window/],
-        ['a rate rule loses its scope-down', (rules: any[]) => delete rate(rules).ScopeDownStatement, /scope-down/],
+        [
+            'a rate rule window changes',
+            (rules: any[]) => (rate(rules).EvaluationWindowSec = 60),
+            /RateBasedStatement\.EvaluationWindowSec: got 60, expected 300/,
+        ],
+        [
+            'a rate rule loses its scope-down',
+            (rules: any[]) => delete rate(rules).ScopeDownStatement,
+            /RateBasedStatement\.ScopeDownStatement: got absent/,
+        ],
         [
             'the CRS group gains an override',
             (rules: any[]) => {
@@ -489,7 +501,7 @@ describe('waf-config.alb.rules rate rules and CRS overrides', () => {
                     { Name: 'SizeRestrictions_BODY', ActionToUse: { Count: {} } },
                 ];
             },
-            /CRS overrides/,
+            /AWS-AWSManagedRulesCommonRuleSet RuleActionOverrides.*SizeRestrictions_BODY:Count/,
         ],
     ] as const) {
         it(`fails when ${what}`, async () => {
@@ -547,31 +559,14 @@ describe('waf-config.cf.common-rule-set identity', () => {
 
 describe('IP-set matches use the connection IP, not a forwarded header', () => {
     const forwarded = { HeaderName: 'X-Forwarded-For', Position: 'ANY', FallbackBehavior: 'MATCH' };
-    const ipSetArn = (name: string): string => `arn:aws:wafv2:us-east-1:000000000000:global/ipset/${name}/0000`;
-
     const runBuildServer = (config?: object): Promise<Outcome> => {
-        const rules = [
-            ...cfAclRules(),
-            {
-                Name: 'allow-internal-ec2',
-                Priority: 99,
-                Statement: {
-                    IPSetReferenceStatement: {
-                        ARN: ipSetArn(CF_ACL.buildServerIpSet.name),
-                        ...(config ? { IPSetForwardedIPConfig: config } : {}),
-                    },
-                },
-            },
-        ];
+        const rules = cfAclRules();
+        const ref = rules.find((r) => r.Name === 'allow-internal-ec2').Statement.IPSetReferenceStatement;
+        if (config) {
+            ref.IPSetForwardedIPConfig = config;
+        }
         return check('waf-config.cf.build-server-ipset').run(
-            offlineCtx(
-                new FakeAws({
-                    ...cfAclHandlers(rules),
-                    'wafv2 get-ip-set': () => ({
-                        IPSet: { Name: CF_ACL.buildServerIpSet.name, Addresses: CF_ACL.buildServerIpSet.addresses },
-                    }),
-                })
-            )
+            offlineCtx(new FakeAws({ ...cfAclHandlers(rules), 'wafv2 get-ip-set': ipSetHandler }))
         );
     };
 
@@ -833,7 +828,7 @@ describe('a rule named for an AWS managed group runs that group', () => {
             const handlers = acl === 'cf' ? cfAclHandlers(rules) : albAclHandlers(rules);
             const outcome = await check(id).run(offlineCtx(new FakeAws(handlers)));
             assert.equal(outcome.status, 'fail', outcome.detail);
-            assert.match(outcome.detail ?? '', /managed group/);
+            assert.match(outcome.detail ?? '', new RegExp(`${name} Statement\\.ManagedRuleGroupStatement\\.Name`));
         });
     }
 });

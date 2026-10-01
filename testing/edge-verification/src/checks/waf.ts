@@ -1,5 +1,6 @@
 import { decodeSearchString } from '../core/live';
 import type { Live } from '../core/live';
+import { omit } from '../core/projection';
 import { describeSecret } from '../core/redact';
 import { type CheckDef, Problems, fail, pass } from '../core/types';
 import {
@@ -8,6 +9,7 @@ import {
     andOfLeaves,
     anyOfLeaves,
     anyPathLeafMatches,
+    canonicalWaf,
     leafKey,
     leafOf,
     leaves,
@@ -16,8 +18,27 @@ import {
     regexLeafMatches,
     ruleAction,
 } from '../core/waf';
-import { ALB, ALB_ACL, CF_ACL, LOG_RETENTION_PENDING, type RuleExpectation } from '../expected/edge';
+import {
+    ALB,
+    ALB_ACL,
+    CF_ACL,
+    type IpSetExpectation,
+    LOG_RETENTION_PENDING,
+    type ManagedGroupExpectation,
+    type OverrideExpectation,
+    type RuleExpectation,
+} from '../expected/edge';
 import { finding } from '../expected/lifecycle';
+import {
+    ACL_UNPINNED,
+    type DeclaredRule,
+    SECRET,
+    albAclSettings,
+    albDeclaredRules,
+    cfAclSettings,
+    cfDeclaredRules,
+    ipSetArn,
+} from '../expected/wafRules';
 
 const sorted = (xs: string[]): string[] => [...xs].sort();
 const SHIELD_PRIORITY = 10000000;
@@ -30,7 +51,58 @@ async function cfRule(live: Live, name: string): Promise<any> {
     return rule;
 }
 
-function compareRuleList(p: Problems, liveRules: any[], expected: RuleExpectation[]): void {
+const canonical = (node: unknown): any => canonicalWaf(node, SECRET);
+
+/** An override as `Name:Action`, or `Name:{...}` when the action carries settings (a custom response, say). */
+function overrideKey(name: string, actionToUse: any): string {
+    const keys = Object.keys(actionToUse ?? {});
+    const bare = keys.length === 1 && !Object.keys(actionToUse[keys[0]] ?? {}).length;
+    return `${name}:${bare ? keys[0] : JSON.stringify(canonical(actionToUse))}`;
+}
+
+const declaredOverride = (o: OverrideExpectation): string => overrideKey(o.name, { [o.action]: {} });
+
+/**
+ * A managed group's complete override set, name and action, against the declared one. An override a
+ * pending script adds is set aside when present with its declared action, so the group passes
+ * before and after that script; the pending check reports which state is live.
+ */
+function compareOverrides(p: Problems, name: string, liveRule: any, group: ManagedGroupExpectation): void {
+    const pending = new Set((group.pendingOverrides ?? []).map(declaredOverride));
+    const live = (liveRule.Statement?.ManagedRuleGroupStatement?.RuleActionOverrides ?? []).map((o: any) =>
+        overrideKey(o.Name, o.ActionToUse)
+    );
+    p.eq(
+        `${name} RuleActionOverrides (pending excluded)`,
+        sorted(live.filter((o: string) => !pending.has(o))),
+        sorted(group.overrides.map(declaredOverride))
+    );
+}
+
+/**
+ * Every field of a live rule against its declared forms (expected/wafRules.ts), Priority aside (the
+ * rule order covers it). A managed group's overrides are compared on their own, by compareOverrides.
+ */
+function compareRule(p: Problems, liveRule: any, declared: DeclaredRule): void {
+    const project = (r: any): any => {
+        const c = canonical(omit(r, ['Priority']));
+        delete c.Statement?.ManagedRuleGroupStatement?.RuleActionOverrides;
+        return c;
+    };
+    p.oneOf(
+        liveRule.Name,
+        project(liveRule),
+        declared.variants.map((v) => project(v.rule))
+    );
+}
+
+function compareRuleList(
+    p: Problems,
+    liveRules: any[],
+    expected: RuleExpectation[],
+    declared: Map<string, DeclaredRule>,
+    groups: Record<string, ManagedGroupExpectation>
+): void {
     const ordered = [...liveRules].sort((a, b) => a.Priority - b.Priority).filter((r) => r.Priority < SHIELD_PRIORITY);
     const pending = new Set(expected.filter((e) => e.pending).map((e) => e.name));
     const deployed = expected.filter((e) => !e.pending);
@@ -39,30 +111,16 @@ function compareRuleList(p: Problems, liveRules: any[], expected: RuleExpectatio
         ordered.map((r) => r.Name).filter((n) => !pending.has(n)),
         deployed.map((e) => e.name)
     );
+    const managed = ordered.filter((r) => r.Statement?.ManagedRuleGroupStatement).map((r) => r.Name);
+    p.eq('managed groups', sorted(managed), sorted(Object.keys(groups)));
     for (const e of deployed) {
         const r = ordered.find((x) => x.Name === e.name);
         if (!r) {
             continue;
         }
-        p.eq(`${e.name} action`, ruleAction(r), e.action);
-        // ExcludedRules is the legacy form of a Count override: one there disables a blocking rule
-        // without appearing in RuleActionOverrides. None are declared, and none exist live.
-        const mrg = r.Statement?.ManagedRuleGroupStatement;
-        // The rule name says nothing about the group it runs: a rule named for one AWS group
-        // could run another and quietly ignore overrides naming rules that group lacks.
-        const group = /^AWS-(AWSManagedRules\w+)$/.exec(e.name)?.[1];
-        if (group) {
-            p.eq(`${e.name} managed group`, `${mrg?.VendorName}/${mrg?.Name}`, `AWS/${group}`);
-        }
-        if (mrg) {
-            p.eq(
-                `${e.name} ExcludedRules`,
-                (mrg.ExcludedRules ?? []).map((x: any) => x.Name),
-                []
-            );
-        }
-        if (e.metricName) {
-            p.eq(`${e.name} metric`, r.VisibilityConfig?.MetricName, e.metricName);
+        compareRule(p, r, declared.get(e.name)!);
+        if (groups[e.name]) {
+            compareOverrides(p, e.name, r, groups[e.name]);
         }
     }
     const shield = liveRules.filter((r) => r.Priority === SHIELD_PRIORITY);
@@ -70,6 +128,8 @@ function compareRuleList(p: Problems, liveRules: any[], expected: RuleExpectatio
         shield.length === 1 && String(shield[0].Name).startsWith('ShieldMitigationRuleGroup_'),
         'Shield mitigation group missing at priority 10000000'
     );
+    // Shield manages the group itself; the ACL decides only whether its verdicts apply.
+    p.eq('Shield mitigation group override action', shield[0] && ruleAction(shield[0]), 'None');
 }
 
 function loggingChecks(
@@ -83,7 +143,7 @@ function loggingChecks(
         {
             id: `waf-config.${prefix}.logging`,
             area: 'waf-config',
-            title: `${aclName} logs to ${cfg.logGroup}`,
+            title: `${aclName} logs every request to ${cfg.logGroup} (no filter), redacted or not yet`,
             refs: [finding(1)],
             async run({ live }) {
                 const l = await live.loggingConfig(await getArn(live), region);
@@ -91,23 +151,36 @@ function loggingChecks(
                     return fail('no logging configuration');
                 }
                 const p = new Problems();
-                p.eq('destination', l.LogDestinationConfigs, [cfg.destination]);
+                // A LoggingFilter would drop requests from the log; any other new field is drift too.
+                // ResourceArn is the ACL the configuration was fetched for.
+                const declared = {
+                    LogDestinationConfigs: [cfg.destination],
+                    ManagedByFirewallManager: false,
+                    LogType: 'WAF_LOGS',
+                    LogScope: 'CUSTOMER',
+                };
+                p.oneOf('logging', canonical(omit(l, ['ResourceArn'])), [
+                    canonical(declared),
+                    canonical({ ...declared, RedactedFields: redactedFields(cfg.redactedHeaders) }),
+                ]);
                 return p.outcome();
             },
         },
         {
             id: `waf-config.${prefix}.logging.redaction`,
             area: 'waf-config',
-            title: `${aclName} log redacts every verify header (${cfg.redactedHeaders.join(', ')})`,
+            title: `${aclName} log redacts exactly the secret and credential headers (${cfg.redactedHeaders.join(', ')})`,
             refs: [finding(1)],
             pending: cfg.redactionPending,
             async run({ live }) {
                 const l = await live.loggingConfig(await getArn(live), region);
-                const redacted = (l?.RedactedFields ?? [])
-                    .map((f: any) => f.SingleHeader?.Name?.toLowerCase())
-                    .filter(Boolean);
-                const missing = cfg.redactedHeaders.filter((h) => !redacted.includes(h));
-                return missing.length ? fail(`not redacted: ${missing.join(', ')}`) : pass();
+                const p = new Problems();
+                p.eq(
+                    'redacted fields',
+                    byKey(canonical(l?.RedactedFields ?? [])),
+                    byKey(canonical(redactedFields(cfg.redactedHeaders)))
+                );
+                return p.outcome();
             },
         },
         {
@@ -137,6 +210,8 @@ function loggingChecks(
 }
 
 const aclArn = (acl: any): string => acl.ARN;
+const redactedFields = (headers: string[]): any[] => headers.map((Name) => ({ SingleHeader: { Name } }));
+const byKey = (xs: any[]): string[] => sorted(xs.map((x) => JSON.stringify(x)));
 
 /**
  * p11's three clauses, read in the one shape that means "block a non-browser trigger unless it is
@@ -188,15 +263,13 @@ export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): s
 function assetScopeDownLeaves(): Leaf[] {
     return [
         { kind: 'regex', field: 'UriPath', value: CF_ACL.assetScopeDownRegex, transforms: ['LOWERCASE'] },
-        ...CF_ACL.assetScopeDownPrefixes.map(
-            (value): Leaf => ({
-                kind: 'byte',
-                field: 'UriPath',
-                value,
-                positional: 'STARTS_WITH',
-                transforms: ['LOWERCASE'],
-            })
-        ),
+        ...CF_ACL.assetScopeDownPrefixes.map((value): Leaf => ({
+            kind: 'byte',
+            field: 'UriPath',
+            value,
+            positional: 'STARTS_WITH',
+            transforms: ['LOWERCASE'],
+        })),
     ];
 }
 
@@ -205,15 +278,13 @@ function p11SafeLeaves(): Leaf[] {
     const nb = CF_ACL.nonBrowser;
     return [
         ...nb.safePathRegexes.map((value): Leaf => ({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })),
-        ...nb.safePathPrefixes.map(
-            (value): Leaf => ({
-                kind: 'byte',
-                field: 'UriPath',
-                value,
-                positional: 'STARTS_WITH',
-                transforms: ['NONE'],
-            })
-        ),
+        ...nb.safePathPrefixes.map((value): Leaf => ({
+            kind: 'byte',
+            field: 'UriPath',
+            value,
+            positional: 'STARTS_WITH',
+            transforms: ['NONE'],
+        })),
     ];
 }
 
@@ -354,79 +425,136 @@ const RULE_SHAPES: Record<string, { refs: string[]; check: (rule: any, live: Liv
     },
 };
 
+/** AWS-AWSManagedRulesBotControlRuleSet -> bot-control. */
+const groupSlug = (rule: string): string =>
+    rule
+        .replace(/^AWS-AWSManagedRules/, '')
+        .replace(/RuleSet$/, '')
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        .toLowerCase();
+
+/** One check per pending managed-group override: reports whether its script has run. */
+function pendingOverrideChecks(
+    prefix: string,
+    groups: Record<string, ManagedGroupExpectation>,
+    acl: (live: Live) => Promise<any>
+): CheckDef[] {
+    return Object.entries(groups).flatMap(([rule, group]) =>
+        (group.pendingOverrides ?? []).map((o): CheckDef => ({
+            id: `waf-config.${prefix}.${groupSlug(rule)}.${o.name}`,
+            area: 'waf-config',
+            title: `${rule} ${o.name} overridden to ${o.action}`,
+            refs: [finding(5)],
+            pending: o.pending,
+            async run({ live }) {
+                const r = (await acl(live)).Rules.find((x: any) => x.Name === rule);
+                const found = (r?.Statement?.ManagedRuleGroupStatement?.RuleActionOverrides ?? []).find(
+                    (x: any) => x.Name === o.name
+                );
+                return found && overrideKey(found.Name, found.ActionToUse) === declaredOverride(o)
+                    ? pass()
+                    : fail(`no ${o.action} override (${found ? overrideKey(found.Name, found.ActionToUse) : 'none'})`);
+            },
+        }))
+    );
+}
+
+/**
+ * An IP set a rule references, by the leaf `ref` finds: the reference is to the declared set, on the
+ * connection IP, and the set holds exactly the declared addresses.
+ */
+function ipSetCheck(
+    id: string,
+    exp: IpSetExpectation,
+    usedBy: string,
+    ref: (live: Live) => Promise<Leaf | undefined>
+): CheckDef {
+    return {
+        id: `waf-config.cf.${id}-ipset`,
+        area: 'waf-config',
+        title: `${usedBy}: IP set ${exp.name} holds only ${exp.addresses.join(', ')}`,
+        async run({ live }) {
+            const l = await ref(live);
+            if (l?.kind !== 'ipset') {
+                return fail(`${usedBy} has no IP set reference where declared`);
+            }
+            const p = new Problems();
+            p.eq('referenced set', l.value, ipSetArn(exp));
+            // A forwarded-IP header is the caller's to set: matching it lets anyone claim the address.
+            p.eq('matched address', l.forwardedIp ?? 'connection IP', 'connection IP');
+            const set = await live.ipSet(exp.name, exp.id, CF_ACL.scope, CF_ACL.region);
+            // Name, Id and ARN identify the set fetched; the description is free text.
+            p.diff(
+                'IP set',
+                { ...omit(set, ['Name', 'Id', 'ARN', 'Description']), Addresses: sorted(set.Addresses ?? []) },
+                { IPAddressVersion: 'IPV4', Addresses: sorted(exp.addresses) }
+            );
+            return p.outcome();
+        },
+    };
+}
+
 export function wafChecks(): CheckDef[] {
     const nb = CF_ACL.nonBrowser;
     return [
         {
             id: 'waf-config.cf.acl',
             area: 'waf-config',
-            title: `${CF_ACL.name}: default Allow, token domain, CAPTCHA immunity, custom 403 body`,
+            title: `${CF_ACL.name}: every setting besides the rules (default Allow, token domain, CAPTCHA immunity, custom 403 body)`,
             async run({ live }) {
-                const acl = await live.cfAcl();
                 const p = new Problems();
-                p.eq('default action', Object.keys(acl.DefaultAction ?? {})[0], CF_ACL.defaultAction);
-                p.eq('token domains', acl.TokenDomains, CF_ACL.tokenDomains);
-                p.eq('CAPTCHA immunity', acl.CaptchaConfig?.ImmunityTimeProperty?.ImmunityTime, CF_ACL.captchaImmunity);
-                for (const [key, exp] of Object.entries(CF_ACL.customBodies)) {
-                    const body = acl.CustomResponseBodies?.[key];
-                    if (!body) {
-                        p.add(`custom body ${key} missing`);
-                        continue;
-                    }
-                    p.eq(`${key} content type`, body.ContentType, exp.contentType);
-                    for (const text of exp.mustContain) {
-                        p.check(body.Content.includes(text), `${key} body lacks "${text}"`);
-                    }
-                }
+                p.diff('ACL', canonical(omit(await live.cfAcl(), ACL_UNPINNED)), canonical(cfAclSettings()));
                 return p.outcome();
             },
         },
         {
             id: 'waf-config.cf.rules',
             area: 'waf-config',
-            title: `${CF_ACL.name}: rule order, actions and metric names as declared`,
+            title: `${CF_ACL.name}: rule order, and every field of every rule (managed-group overrides included) as declared`,
             refs: [finding(5), 'SE-185', 'SE-184'],
             async run({ live }) {
                 const p = new Problems();
-                compareRuleList(p, (await live.cfAcl()).Rules, CF_ACL.rules);
+                compareRuleList(p, (await live.cfAcl()).Rules, CF_ACL.rules, cfDeclaredRules(), CF_ACL.managedGroups);
                 return p.outcome(`${CF_ACL.rules.filter((r) => !r.pending).length} rules + Shield`);
             },
         },
         ...CF_ACL.rules
             .filter((r) => r.pending || RULE_SHAPES[r.name])
-            .map(
-                (exp): CheckDef => ({
-                    id: `waf-config.cf.rule.${exp.name}`,
-                    area: 'waf-config',
-                    title: exp.pending
-                        ? `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`
-                        : `${exp.name}: statement as declared, ${exp.action}`,
-                    refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
-                    pending: exp.pending,
-                    async run({ live }) {
-                        const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
-                        const i = rules.findIndex((r: any) => r.Name === exp.name);
-                        if (i < 0) {
-                            return fail('rule not present');
-                        }
-                        const p = new Problems();
-                        // Once deployed, waf-config.cf.rules checks its exact position.
-                        const between = exp.pending ? pendingSiblingOrder(rules, exp) : undefined;
-                        if (between) {
-                            p.add(between);
-                        }
-                        p.eq('action', ruleAction(rules[i]), exp.action);
-                        p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
-                        const shape = RULE_SHAPES[exp.name];
-                        if (!shape) {
-                            p.add(`no statement check declared for ${exp.name}`);
-                        } else {
-                            await shape.check(rules[i], live, p);
-                        }
-                        return p.outcome(`priority ${rules[i].Priority}`);
-                    },
-                })
-            ),
+            .map((exp): CheckDef => ({
+                id: `waf-config.cf.rule.${exp.name}`,
+                area: 'waf-config',
+                title: exp.pending
+                    ? `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`
+                    : `${exp.name}: statement as declared, ${exp.action}`,
+                refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
+                pending: exp.pending,
+                async run({ live }) {
+                    const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
+                    const i = rules.findIndex((r: any) => r.Name === exp.name);
+                    if (i < 0) {
+                        return fail('rule not present');
+                    }
+                    const p = new Problems();
+                    // Once deployed, waf-config.cf.rules checks its exact position.
+                    const between = exp.pending ? pendingSiblingOrder(rules, exp) : undefined;
+                    if (between) {
+                        p.add(between);
+                    }
+                    p.eq('action', ruleAction(rules[i]), exp.action);
+                    p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
+                    if (exp.pending) {
+                        // Once deployed, waf-config.cf.rules compares every field.
+                        compareRule(p, rules[i], cfDeclaredRules().get(exp.name)!);
+                    }
+                    const shape = RULE_SHAPES[exp.name];
+                    if (!shape) {
+                        p.add(`no statement check declared for ${exp.name}`);
+                    } else {
+                        await shape.check(rules[i], live, p);
+                    }
+                    return p.outcome(`priority ${rules[i].Priority}`);
+                },
+            })),
         {
             id: 'waf-config.cf.verify-header-rules',
             area: 'waf-config',
@@ -492,26 +620,14 @@ export function wafChecks(): CheckDef[] {
                 return dupes.length ? fail(`reuses an earlier rule's secret: ${dupes.join(', ')}`) : pass();
             },
         },
-        {
-            id: 'waf-config.cf.build-server-ipset',
-            area: 'waf-config',
-            title: `allow-internal-ec2 IP set holds only ${CF_ACL.buildServerIpSet.addresses.join(', ')}`,
-            async run({ live }) {
-                const l = leafOf((await cfRule(live, 'allow-internal-ec2')).Statement);
-                if (l?.kind !== 'ipset') {
-                    return fail('statement is not the IP set reference alone');
-                }
-                const [, , , , , rest] = l.value.split(':');
-                const [, , name, id] = rest.split('/');
-                const set = await live.ipSet(name, id, CF_ACL.scope, CF_ACL.region);
-                const p = new Problems();
-                p.eq('name', set.Name, CF_ACL.buildServerIpSet.name);
-                // A forwarded-IP header is the caller's to set: matching it lets anyone claim the address.
-                p.eq('matched address', l.forwardedIp ?? 'connection IP', 'connection IP');
-                p.eq('addresses', sorted(set.Addresses), sorted(CF_ACL.buildServerIpSet.addresses));
-                return p.outcome();
-            },
-        },
+        ipSetCheck('build-server', CF_ACL.buildServerIpSet, 'allow-internal-ec2', async (live) =>
+            leafOf((await cfRule(live, 'allow-internal-ec2')).Statement)
+        ),
+        ipSetCheck('salience-bot', nb.saliencebotIpSet, 'the p11 saliencebot exemption', async (live) =>
+            p11Parts(await cfRule(live, 'block-nonbrowser-except-ai-assistants'))
+                ?.exemptionAnds.flat()
+                .find((l) => l.kind === 'ipset')
+        ),
         {
             id: 'waf-config.cf.mta-sts',
             area: 'waf-config',
@@ -548,7 +664,7 @@ export function wafChecks(): CheckDef[] {
         {
             id: 'waf-config.cf.common-rule-set',
             area: 'waf-config',
-            title: `CommonRuleSet scope-down exempts ${CF_ACL.commonRuleSetExemptPrefixes.join(', ')}`,
+            title: `CommonRuleSet scope-down exempts ${CF_ACL.commonRuleSetExemptions.map((e) => e.prefix).join(', ')}`,
             async run({ live }) {
                 const s = (await cfRule(live, 'AWS-AWSManagedRulesCommonRuleSet')).Statement.ManagedRuleGroupStatement;
                 // NOT(any exempt prefix): without the negation the rule set inspects ONLY those paths.
@@ -559,12 +675,23 @@ export function wafChecks(): CheckDef[] {
                 const p = new Problems();
                 // The outer rule name says nothing about the group it runs.
                 p.eq('managed group', `${s.VendorName}/${s.Name}`, 'AWS/AWSManagedRulesCommonRuleSet');
-                p.check(
-                    exempt.every((l) => l.kind === 'byte' && l.field === 'UriPath' && l.positional === 'STARTS_WITH'),
-                    'scope-down exempts something other than UriPath prefixes'
+                // Every property of each prefix: on another field, matched anywhere or after another
+                // transformation, it exempts other requests from the rule set.
+                p.eq(
+                    'exempt prefixes',
+                    sorted(exempt.map(leafKey)),
+                    sorted(
+                        CF_ACL.commonRuleSetExemptions.map((e) =>
+                            leafKey({
+                                kind: 'byte',
+                                field: 'UriPath',
+                                value: e.prefix,
+                                positional: 'STARTS_WITH',
+                                transforms: e.transforms,
+                            })
+                        )
+                    )
                 );
-                p.eq('exempt prefixes', sorted(exempt.map((l) => l.value)), sorted(CF_ACL.commonRuleSetExemptPrefixes));
-                p.eq('overrides', s.RuleActionOverrides ?? null, null);
                 return p.outcome();
             },
         },
@@ -611,49 +738,22 @@ export function wafChecks(): CheckDef[] {
         {
             id: 'waf-config.cf.bot-control',
             area: 'waf-config',
-            title: 'Bot Control: COMMON inspection, Count overrides exactly as declared',
+            title: 'Bot Control: COMMON inspection, no scope-down (its overrides: waf-config.cf.rules)',
             refs: [finding(5), finding(10)],
             async run({ live }) {
                 const s = (await cfRule(live, 'AWS-AWSManagedRulesBotControlRuleSet')).Statement
                     .ManagedRuleGroupStatement;
-                const overrides: any[] = s.RuleActionOverrides ?? [];
-                const pending = new Set(CF_ACL.botControl.pendingCountOverrides.map((o) => o.name));
                 const p = new Problems();
                 p.eq(
                     'inspection level',
                     s.ManagedRuleGroupConfigs?.[0]?.AWSManagedRulesBotControlRuleSet?.InspectionLevel,
                     CF_ACL.botControl.inspectionLevel
                 );
-                p.eq(
-                    'Count overrides (pending excluded)',
-                    sorted(
-                        overrides
-                            .filter((o) => 'Count' in (o.ActionToUse ?? {}) && !pending.has(o.Name))
-                            .map((o) => o.Name)
-                    ),
-                    sorted(CF_ACL.botControl.countOverrides)
-                );
-                const other = overrides.filter((o) => !('Count' in (o.ActionToUse ?? {})));
-                p.check(!other.length, `non-Count overrides: ${other.map((o) => o.Name).join(', ')}`);
                 p.eq('scope-down', s.ScopeDownStatement ?? null, null);
                 return p.outcome();
             },
         },
-        ...CF_ACL.botControl.pendingCountOverrides.map(
-            (o): CheckDef => ({
-                id: `waf-config.cf.bot-control.${o.name}`,
-                area: 'waf-config',
-                title: `Bot Control ${o.name} overridden to Count (label kept, blocking moved after p11)`,
-                refs: [finding(5)],
-                pending: o.pending,
-                async run({ live }) {
-                    const s = (await cfRule(live, 'AWS-AWSManagedRulesBotControlRuleSet')).Statement
-                        .ManagedRuleGroupStatement;
-                    const found = (s.RuleActionOverrides ?? []).find((x: any) => x.Name === o.name);
-                    return found && 'Count' in found.ActionToUse ? pass() : fail('no Count override');
-                },
-            })
-        ),
+        ...pendingOverrideChecks('cf', CF_ACL.managedGroups, (live) => live.cfAcl()),
         {
             id: 'waf-config.cf.credential-scanner',
             area: 'waf-config',
@@ -728,7 +828,7 @@ export function wafChecks(): CheckDef[] {
                                 (l) =>
                                     l.kind === 'ipset' &&
                                     !l.forwardedIp &&
-                                    l.value.includes(`/ipset/${nb.saliencebotIpSet}/`)
+                                    l.value.includes(`/ipset/${nb.saliencebotIpSet.name}/`)
                             ) &&
                             and.some(
                                 (l) =>
@@ -930,70 +1030,32 @@ export function wafChecks(): CheckDef[] {
         {
             id: 'waf-config.alb.rules',
             area: 'waf-config',
-            title: `${ALB_ACL.name}: rule order, actions, IpReputation override, CRS scope-down, rate limits`,
+            title: `${ALB_ACL.name}: rule order, and every field of every rule (managed-group overrides included) as declared`,
             refs: [finding(14)],
             async run({ live }) {
-                const acl = await live.albAcl();
                 const p = new Problems();
-                p.eq('default action', Object.keys(acl.DefaultAction ?? {})[0], ALB_ACL.defaultAction);
-                compareRuleList(p, acl.Rules, ALB_ACL.rules);
-                const byName = (n: string) => acl.Rules.find((r: any) => r.Name === n);
-                const ipRep = byName('AWS-AWSManagedRulesAmazonIpReputationList')?.Statement.ManagedRuleGroupStatement;
-                p.eq(
-                    'IpReputation overrides',
-                    (ipRep?.RuleActionOverrides ?? []).map((o: any) => ({
-                        name: o.Name,
-                        action: Object.keys(o.ActionToUse)[0],
-                    })),
-                    ALB_ACL.ipReputationOverrides
+                compareRuleList(
+                    p,
+                    (await live.albAcl()).Rules,
+                    ALB_ACL.rules,
+                    albDeclaredRules(),
+                    ALB_ACL.managedGroups
                 );
-                const crsGroup = byName('AWS-AWSManagedRulesCommonRuleSet')?.Statement.ManagedRuleGroupStatement;
-                // The outer rule name says nothing about the group it runs.
-                p.eq(
-                    'CRS managed group',
-                    `${crsGroup?.VendorName}/${crsGroup?.Name}`,
-                    'AWS/AWSManagedRulesCommonRuleSet'
-                );
-                const crs = noneOfLeaves(crsGroup?.ScopeDownStatement);
-                // The whole leaf, alone: the prefix on another field, matched anywhere or after a
-                // transformation, or beside another exemption lets callers skip CRS.
-                p.eq('CRS scope-down', crs?.map(leafKey), [
-                    leafKey({
-                        kind: 'byte',
-                        field: 'UriPath',
-                        value: ALB_ACL.commonRuleSetExemptPrefix,
-                        positional: 'STARTS_WITH',
-                        transforms: ['NONE'],
-                    }),
-                ]);
-                p.eq(
-                    'CRS overrides',
-                    (crsGroup?.RuleActionOverrides ?? []).map(
-                        (o: any) => `${o.Name}:${Object.keys(o.ActionToUse ?? {})[0]}`
-                    ),
-                    ALB_ACL.commonRuleSetOverrides.map((o) => `${o.name}:${o.action}`)
-                );
-                const shape = ALB_ACL.rateRuleShape;
-                for (const [name, limit] of Object.entries(ALB_ACL.rateLimits)) {
-                    const rb = byName(name)?.Statement.RateBasedStatement;
-                    p.eq(`${name} limit`, rb?.Limit, limit);
-                    p.eq(`${name} aggregate key`, rb?.AggregateKeyType, shape.aggregateKeyType);
-                    p.eq(`${name} forwarded-IP config`, rb?.ForwardedIPConfig ?? null, shape.forwardedIpConfig);
-                    p.eq(`${name} window`, rb?.EvaluationWindowSec, shape.evaluationWindowSec);
-                    const sd = noneOfLeaves(rb?.ScopeDownStatement);
-                    p.eq(`${name} scope-down`, sd?.map(leafKey), [
-                        leafKey({
-                            kind: 'byte',
-                            field: 'UriPath',
-                            value: shape.scopeDownExemptPrefix,
-                            positional: 'STARTS_WITH',
-                            transforms: ['NONE'],
-                        }),
-                    ]);
-                }
+                return p.outcome(`${ALB_ACL.rules.length} rules + Shield`);
+            },
+        },
+        {
+            id: 'waf-config.alb.acl',
+            area: 'waf-config',
+            title: `${ALB_ACL.name}: every setting besides the rules (default Allow, metrics, on-source DDoS mode)`,
+            refs: [finding(14)],
+            async run({ live }) {
+                const p = new Problems();
+                p.diff('ACL', canonical(omit(await live.albAcl(), ACL_UNPINNED)), canonical(albAclSettings()));
                 return p.outcome();
             },
         },
+        ...pendingOverrideChecks('alb', ALB_ACL.managedGroups, (live) => live.albAcl()),
         {
             id: 'waf-config.alb.origin-verify',
             area: 'waf-config',
