@@ -19,6 +19,10 @@ const REQUIRED_MODS = [
     'headers',
 ];
 
+// Loaded when present; rows that need one declare it (needs=<feature>) and are skipped without it.
+// mod_deflate's AddOutputFilterByType is provided by mod_filter, so the two load together.
+const OPTIONAL_FEATURES = { deflate: ['filter', 'deflate'] };
+
 const which = (cmd) => {
     try {
         return execFileSync('sh', ['-c', `command -v ${cmd}`], { encoding: 'utf8' }).trim() || null;
@@ -27,7 +31,10 @@ const which = (cmd) => {
     }
 };
 
-/** Returns { httpd, loadModules } or { skip: reason }. */
+/**
+ * Returns { httpd, modsDir, loadModules, features } or { skip: reason }. `features` maps each optional
+ * feature to true, or to the reason it is unavailable.
+ */
 export function detectApache() {
     let httpd = process.env.HTTPD || null;
     if (!httpd) {
@@ -63,18 +70,30 @@ export function detectApache() {
     } catch {
         // an httpd that cannot list its modules still gets every module loaded from disk
     }
+    const isBuiltin = (m) => new RegExp(`mod_${m}\\.c$`, 'm').test(builtin);
+    const loadLine = (m) => `LoadModule ${m}_module ${join(mods, `mod_${m}.so`)}`;
     const loadModules = [];
     for (const m of REQUIRED_MODS) {
-        if (new RegExp(`mod_${m}\\.c$`, 'm').test(builtin)) {
+        if (isBuiltin(m)) {
             continue;
         }
-        const so = join(mods, `mod_${m}.so`);
-        if (!existsSync(so)) {
+        if (!existsSync(join(mods, `mod_${m}.so`))) {
             return { skip: `required Apache module mod_${m}.so not found in ${mods}` };
         }
-        loadModules.push(`LoadModule ${m}_module ${so}`);
+        loadModules.push(loadLine(m));
     }
-    return { httpd, modsDir: mods, loadModules };
+    const features = {};
+    for (const [feature, modules] of Object.entries(OPTIONAL_FEATURES)) {
+        const toLoad = modules.filter((m) => !isBuiltin(m));
+        const missing = toLoad.find((m) => !existsSync(join(mods, `mod_${m}.so`)));
+        if (missing) {
+            features[feature] = `mod_${missing}.so not found in ${mods}`;
+        } else {
+            features[feature] = true;
+            loadModules.push(...toLoad.map(loadLine));
+        }
+    }
+    return { httpd, modsDir: mods, loadModules, features };
 }
 
 /**

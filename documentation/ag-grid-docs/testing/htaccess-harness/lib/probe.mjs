@@ -104,6 +104,13 @@ const matchValue = (actual, op, value) => {
 
 const HEADER_KEYS = { cc: 'Cache-Control', ct: 'Content-Type', xrt: 'X-Robots-Tag' };
 
+// A conditional repeat of the row's request, carrying a validator from the first response, as a
+// browser or CloudFront revalidates its stored copy.
+const REVALIDATORS = {
+    revalidate: { from: 'etag', send: 'If-None-Match' },
+    'revalidate-lm': { from: 'last-modified', send: 'If-Modified-Since' },
+};
+
 /** Run one row; returns a list of failure strings (empty = pass). */
 export async function runRow(row, ctx) {
     const mapHost = (s) => (ctx.siteHost === 'www.ag-grid.com' ? s : s.replaceAll('www.ag-grid.com', ctx.siteHost));
@@ -164,6 +171,23 @@ export async function runRow(row, ctx) {
         } else if (key === 'body') {
             if (!new RegExp(v).test(res.body)) {
                 fails.push(`body '${res.body.slice(0, 60).replace(/\s+/g, ' ')}' (want ~${v})`);
+            }
+        } else if (key in REVALIDATORS) {
+            const { from, send } = REVALIDATORS[key];
+            const validator = header(res, from);
+            if (validator == null) {
+                fails.push(`${key}: first response has no ${from}`);
+                continue;
+            }
+            const again = await request({
+                port: ctx.port,
+                host: row.host,
+                path: row.path,
+                accept: row.accept,
+                requestHeaders: { ...row.requestHeaders, [send]: validator },
+            });
+            if (String(again.status) !== v) {
+                fails.push(`${key} with ${send}: ${validator} -> ${again.status} (want ${v})`);
             }
         } else if (key === 'hops' || key === 'final' || key === 'final-url') {
             chain ??= await follow(res, row, ctx);

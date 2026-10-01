@@ -24,6 +24,10 @@
 //   hops=<n>         redirects followed (within the harness hosts) until a non-3xx/external URL
 //   final=<status>   status at the end of that chain
 //   final-url=<url>  normalised URL at the end of that chain
+//   revalidate=<status>     repeat the request with If-None-Match set to the first response's ETag
+//   revalidate-lm=<status>  repeat the request with If-Modified-Since set to its Last-Modified
+//   needs=<feature>  only run when the harness Apache has the optional feature (deflate); the row
+//                    is skipped, and reported as such, otherwise
 //   page=<path>      extra placeholder file to create in the docroot
 //   twin=no          do not auto-create the .md twin for an accept=md row
 //   known-fail=<ref> approved desired behaviour, not implemented yet: the row is EXPECTED to fail;
@@ -86,6 +90,7 @@ export function parseFile(file) {
             checks: [],
             pages: [],
             twin: true,
+            needs: [],
             knownFail: null,
         };
         for (const raw of rest) {
@@ -106,6 +111,8 @@ export function parseFile(file) {
                 row.pages.push(value);
             } else if (key === 'twin') {
                 row.twin = value !== 'no';
+            } else if (key === 'needs') {
+                row.needs.push(value);
             } else if (key === 'known-fail') {
                 row.knownFail = value;
             } else {

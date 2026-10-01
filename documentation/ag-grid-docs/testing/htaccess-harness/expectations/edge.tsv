@@ -209,6 +209,26 @@ www	/react-data-grid/no-twin-page/	200		accept=md	twin=no	ct~^text/html
 www	/images/logo.png	200		accept=md	vary-Accept
 www	/charts/images/logo.png	200		accept=md	vary-Accept
 
+# @category compressed-revalidation
+# A compressed response's ETag carries mod_deflate's -gzip suffix; the root strips it from
+# If-None-Match so a revalidation is a 304, not the whole body again (If-None-Match outranks
+# If-Modified-Since in a browser's request). Root-owned, merged into every subsite and archive.
+www	/react-data-grid/getting-started/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/archive/36.2.0/react-data-grid/getting-started/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/archive/36.3.0/react-data-grid/getting-started/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/charts/react/bar-series/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/charts/archive/14.2.0/react/bar-series/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/studio/react/quick-start/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/studio/archive/3.0.0/react/quick-start/	200		accept=html	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+# The markdown twin and a compressible asset, live and archived.
+www	/react-data-grid/getting-started/	200		accept=md	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/archive/36.2.0/react-data-grid/getting-started/	200		accept=md	req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/_astro/index.AbCd1234.js	200		req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+www	/archive/36.2.0/_astro/index.js	200		req:Accept-Encoding=gzip, deflate, br	needs=deflate	h:Content-Encoding=gzip	h:ETag~-gzip"$	revalidate=304	revalidate-lm=304
+# Uncompressed responses keep the plain ETag, which always matched.
+www	/react-data-grid/getting-started/	200		accept=html	h:Content-Encoding=absent	h:ETag~^(W/)?"[0-9a-f]+-[0-9a-f]+"$	revalidate=304	revalidate-lm=304
+www	/archive/36.2.0/react-data-grid/getting-started/	200		accept=html	h:Content-Encoding=absent	h:ETag~^(W/)?"[0-9a-f]+-[0-9a-f]+"$	revalidate=304	revalidate-lm=304
+
 # @category scanner-paths
 # Scanner probes get a plain 404 from Apache (blocking is the WAF's job): never a redirect into a
 # live page, never a 200.
