@@ -123,7 +123,7 @@ export class Problems {
      */
     diff(label: string, actual: unknown, expected: unknown): void {
         for (const d of differences(actual, expected)) {
-            this.items.push(`${label} ${d}`);
+            this.items.push(`${label}${d.startsWith('[') ? '' : ' '}${d}`);
         }
     }
 

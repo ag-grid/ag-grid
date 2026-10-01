@@ -5,6 +5,12 @@ import { Http, type Response } from '../core/http';
 import { Live } from '../core/live';
 import type { Ctx, Options } from '../core/types';
 import {
+    declaredBehaviour,
+    declaredCachePolicy,
+    declaredDistributionSettings,
+    declaredOrigins,
+} from '../expected/distribution';
+import {
     ACCOUNT_ID,
     ALB_ACL,
     type AlarmExpectation,
@@ -12,9 +18,8 @@ import {
     CACHE_POLICIES,
     CF_ACL,
     DEFAULT_BEHAVIOUR,
-    DISTRIBUTION,
     DISTRIBUTION_ID,
-    MARKDOWN_KEY_FUNCTION,
+    ORIGIN_REQUEST_POLICIES,
 } from '../expected/edge';
 import { albAclSettings, albDeclaredRules, cfAclSettings, cfDeclaredRules, ipSetArn } from '../expected/wafRules';
 
@@ -88,27 +93,29 @@ function handler(event) {
 
 const policyId = (name: string): string => CACHE_POLICIES.find((p) => p.name === name)?.id ?? `fixture-${name}`;
 
-/** The declared distribution as get-distribution-config would return it, archive behaviours included. */
+/** The origin-verify value the fixture CloudFront sends: the fixture ALB rule's secret (its first rule). */
+export const FIXTURE_ORIGIN_SECRET = 'fixture-secret-0-'.padEnd(40, 'x');
+
+const orpId = (name: string): string => ORIGIN_REQUEST_POLICIES[name as keyof typeof ORIGIN_REQUEST_POLICIES];
+
+/** The declared distribution as get-distribution-config returns it, archive behaviours included. */
 export function distributionConfig(): any {
-    const fn = {
-        Quantity: 1,
-        Items: [
-            {
-                EventType: 'viewer-request',
-                FunctionARN: `arn:aws:cloudfront::${ACCOUNT_ID}:function/${MARKDOWN_KEY_FUNCTION}`,
-            },
-        ],
-    };
+    // Copies throughout: a test that edits the fixture must not edit the declarations it is compared with.
+    const origins = structuredClone(declaredOrigins(false));
+    for (const h of origins.Items[0].CustomHeaders.Items) {
+        h.HeaderValue = FIXTURE_ORIGIN_SECRET;
+    }
     return {
+        ETag: 'FIXTURE',
         DistributionConfig: {
-            Aliases: { Items: DISTRIBUTION.aliases },
-            DefaultCacheBehavior: { CachePolicyId: policyId(DEFAULT_BEHAVIOUR.cachePolicy) },
+            CallerReference: 'fixture',
+            Comment: 'fixture',
+            ...structuredClone(declaredDistributionSettings()),
+            Origins: origins,
+            DefaultCacheBehavior: structuredClone(declaredBehaviour(DEFAULT_BEHAVIOUR, policyId, orpId)),
             CacheBehaviors: {
-                Items: BEHAVIOURS.map((b) => ({
-                    PathPattern: b.pattern,
-                    CachePolicyId: policyId(b.cachePolicy),
-                    FunctionAssociations: b.viewerRequestFunctions.length ? fn : { Quantity: 0, Items: [] },
-                })),
+                Quantity: BEHAVIOURS.length,
+                Items: BEHAVIOURS.map((b) => structuredClone(declaredBehaviour(b, policyId, orpId))),
             },
         },
     };
@@ -124,19 +131,21 @@ export function cachePolicy(args: string[]): any {
             'An error occurred (NoSuchCachePolicy) when calling'
         );
     }
-    return {
-        CachePolicy: {
-            Id: id,
-            CachePolicyConfig: {
-                Name: p.name,
-                MinTTL: p.minTtl,
-                DefaultTTL: p.defaultTtl,
-                MaxTTL: p.maxTtl,
-                ParametersInCacheKeyAndForwardedToOrigin: { HeadersConfig: { Headers: { Items: p.keyHeaders } } },
-            },
-        },
-    };
+    const config = structuredClone(declaredCachePolicy(p));
+    // Live names the Host header with a capital, as the console writes it.
+    const headers = config.ParametersInCacheKeyAndForwardedToOrigin.HeadersConfig.Headers;
+    if (headers) {
+        headers.Items = headers.Items.map((h: string) => (h === 'host' ? 'Host' : h));
+    }
+    return { CachePolicy: { Id: id, CachePolicyConfig: { Comment: 'fixture', ...config } } };
 }
+
+/** list-cache-policies --type custom: the declared custom policies. */
+export const customCachePolicies: Handler = () => ({
+    CachePolicyList: {
+        Items: CACHE_POLICIES.filter((p) => !p.id).map((p) => cachePolicy(['--id', policyId(p.name)])),
+    },
+});
 
 /** get-function writes the code to its positional outfile argument (the last one). */
 export const functionCode =
@@ -154,6 +163,7 @@ export const healthyCloudFront = (): Record<string, Handler> => ({
     }),
     'cloudfront get-distribution-config': distributionConfig,
     'cloudfront get-cache-policy': cachePolicy,
+    'cloudfront list-cache-policies': customCachePolicies,
     'cloudfront get-function': functionCode(MARKDOWN_KEY_FUNCTION_CODE),
 });
 

@@ -81,6 +81,32 @@ export const ORIGIN_REQUEST_POLICIES = {
     'Managed-AllViewer': '216adef6-5c7f-47e4-b989-5492eafa07d3',
 } as const;
 
+/** Managed-AllViewer forwards every viewer header, cookie and query string (its Comment aside). */
+export const ALL_VIEWER_CONFIG = {
+    Name: 'Managed-AllViewer',
+    HeadersConfig: { HeaderBehavior: 'allViewer' },
+    CookiesConfig: { CookieBehavior: 'all' },
+    QueryStringsConfig: { QueryStringBehavior: 'all' },
+};
+
+/** The distribution's one origin, as every behaviour names it. */
+export const ORIGIN_ID = 'ag-grid-lb1-585556639.us-west-1.elb.amazonaws.com-mqnlc8c0eu7';
+export const REALTIME_LOG_CONFIG_NAME = 'cf-kinesis-real-time-logs-config';
+
+/**
+ * What every behaviour, the default included, has in common (live 2026-10-01): HTTPS redirect,
+ * compression, GET and HEAD cached, real-time logs, and the one origin.
+ */
+const BEHAVIOUR_COMMON: Pick<
+    BehaviourExpectation,
+    'viewerProtocolPolicy' | 'compress' | 'cachedMethods' | 'realtimeLogConfig'
+> = {
+    viewerProtocolPolicy: 'redirect-to-https',
+    compress: true,
+    cachedMethods: ['GET', 'HEAD'],
+    realtimeLogConfig: REALTIME_LOG_CONFIG_NAME,
+};
+
 /** The viewer-request function that splits the archive cache key on Accept: text/markdown. */
 export const MARKDOWN_KEY_FUNCTION = 'archive-markdown-cache-key';
 export const MARKDOWN_KEY_HEADER = 'x-ag-accept-markdown';
@@ -92,6 +118,11 @@ export interface BehaviourExpectation extends Lifecycle {
     /** viewer-request CloudFront Functions, by name. */
     viewerRequestFunctions: string[];
     allowedMethods: string[];
+    cachedMethods: string[];
+    viewerProtocolPolicy: 'redirect-to-https' | 'https-only' | 'allow-all';
+    compress: boolean;
+    /** The real-time log configuration, by name. */
+    realtimeLogConfig: string;
     /** Why the behaviour exists - printed when it drifts. */
     why: string;
 }
@@ -102,6 +133,7 @@ const cachedAsset = (pattern: string, why: string): BehaviourExpectation => ({
     originRequestPolicy: 'Managed-AllViewer',
     viewerRequestFunctions: [],
     allowedMethods: ALL_METHODS,
+    ...BEHAVIOUR_COMMON,
     why,
 });
 
@@ -119,6 +151,7 @@ export const BEHAVIOURS: BehaviourExpectation[] = [
         originRequestPolicy: 'Managed-AllViewer',
         viewerRequestFunctions: [],
         allowedMethods: ALL_METHODS,
+        ...BEHAVIOUR_COMMON,
         why: 'the /example/ demo page negotiates markdown; must stay ahead of /example/* (2026-09 cache-poisoning incident)',
     },
     {
@@ -127,6 +160,7 @@ export const BEHAVIOURS: BehaviourExpectation[] = [
         originRequestPolicy: 'Managed-AllViewer',
         viewerRequestFunctions: [],
         allowedMethods: ALL_METHODS,
+        ...BEHAVIOUR_COMMON,
         why: 'DirectoryIndex form of /example/; must stay ahead of /example/*',
     },
     cachedAsset('*/_astro/*', 'hashed build assets on grid, charts, studio and archives'),
@@ -150,6 +184,7 @@ export const BEHAVIOURS: BehaviourExpectation[] = [
         originRequestPolicy: 'Managed-AllViewer',
         viewerRequestFunctions: [MARKDOWN_KEY_FUNCTION],
         allowedMethods: ALL_METHODS,
+        ...BEHAVIOUR_COMMON,
         why: 'released grid archives are 58% of origin requests (waf-finding.md §8)',
         pending: PENDING.archiveCache,
     },
@@ -159,19 +194,18 @@ export const BEHAVIOURS: BehaviourExpectation[] = [
         originRequestPolicy: 'Managed-AllViewer',
         viewerRequestFunctions: [MARKDOWN_KEY_FUNCTION],
         allowedMethods: ALL_METHODS,
+        ...BEHAVIOUR_COMMON,
         why: 'released charts archives (waf-finding.md §8)',
         pending: PENDING.archiveCache,
     },
 ];
 
-export const DEFAULT_BEHAVIOUR = {
+export const DEFAULT_BEHAVIOUR: Omit<BehaviourExpectation, 'pattern' | 'why'> = {
     cachePolicy: 'Managed-CachingDisabled',
-    originRequestPolicy: 'Managed-AllViewer' as const,
-    viewerRequestFunctions: [] as string[],
+    originRequestPolicy: 'Managed-AllViewer',
+    viewerRequestFunctions: [],
     allowedMethods: ALL_METHODS,
-    viewerProtocolPolicy: 'redirect-to-https',
-    compress: true,
-    realtimeLogConfig: 'cf-kinesis-real-time-logs-config',
+    ...BEHAVIOUR_COMMON,
 };
 
 export const DISTRIBUTION = {
@@ -187,17 +221,22 @@ export const DISTRIBUTION = {
         'blog.ag-grid.com',
     ],
     webAclName: 'cloudfront-web-acl',
+    priceClass: 'PriceClass_All',
     httpVersion: 'http2',
     ipv6: true,
     minimumProtocolVersion: 'TLSv1.2_2021',
     certificateArn: `arn:aws:acm:us-east-1:${ACCOUNT_ID}:certificate/aa94ddce-6f9e-4072-a887-3f75de1a3fcc`,
     sslSupportMethod: 'sni-only',
     origin: {
+        id: ORIGIN_ID,
         domain: 'ag-grid-lb1-585556639.us-west-1.elb.amazonaws.com',
         protocolPolicy: 'https-only',
+        sslProtocols: ['TLSv1.2'],
         /** Names only; the value is compared with the ALB rule in memory. */
         customHeaderNames: ['x-ag-origin-verify'],
         readTimeout: 30,
+        keepaliveTimeout: 5,
+        connectionTimeout: 10,
         // waf-finding.md §8 fix 6 suggests 1-2; not scheduled, so the live value is declared.
         connectionAttempts: 3,
     },
@@ -211,8 +250,11 @@ export const DISTRIBUTION = {
 
 /** SE-116 / SE-117: LogLens reads these as positional TSV, so the order is the contract. */
 export const REALTIME_LOG_CONFIG = {
-    name: 'cf-kinesis-real-time-logs-config',
+    name: REALTIME_LOG_CONFIG_NAME,
     samplingRate: 100,
+    /** The Kinesis stream LogLens reads, and the role CloudFront writes to it with. */
+    stream: `arn:aws:kinesis:us-west-1:${ACCOUNT_ID}:stream/loglens-www-ag-grid-com`,
+    role: `arn:aws:iam::${ACCOUNT_ID}:role/service-role/CloudFrontRealtimeLogConfigRole-cf-kinesis-real-time-logs-config`,
     fields: [
         'timestamp',
         'c-ip',
