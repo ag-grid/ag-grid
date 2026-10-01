@@ -5,6 +5,7 @@ import { ARCHIVE_POISON_PROBE } from '../expected/caching';
 import {
     DENIED,
     FakeAws,
+    type Handler,
     MARKDOWN_KEY_FUNCTION_CODE,
     NO_CREDENTIALS,
     functionCode,
@@ -46,6 +47,35 @@ describe('markdown guard', () => {
                 assert.equal(allowed(live, path), false, path);
             }
             assert.match(live.guardSource, /^declared/);
+        });
+    }
+
+    const distribution =
+        (status: string): Handler =>
+        () => ({ Distribution: { Id: 'fixture', Status: status } });
+
+    it('reads the deployment status before anything else, and allows probes only once Deployed', async () => {
+        const { live, aws } = await guardWith(healthyCloudFront());
+        assert.equal(aws.calls[0], 'cloudfront get-distribution');
+        assert.match(live.guardSource, /Deployed/);
+        assert.ok(allowed(live, '/example/'));
+    });
+
+    for (const [why, handler] of [
+        ['a change is still propagating (InProgress)', distribution('InProgress')],
+        ['the status is not reported', distribution('')],
+        ['the status read is denied', DENIED('cloudfront:GetDistribution')],
+        ['credentials are unusable for the status read', NO_CREDENTIALS],
+    ] as const) {
+        it(`refuses every markdown probe when ${why}, even with a readable live config`, async () => {
+            const { live } = await guardWith({ ...healthyCloudFront(), 'cloudfront get-distribution': handler });
+            for (const path of [...UNCACHED, ARCHIVE_POISON_PROBE]) {
+                assert.equal(allowed(live, path), false, path);
+                assert.match(live.markdownGuard(new URL(`${WWW}${path}`)).reason, /not verified as Deployed/);
+            }
+            // The live config itself still loaded, so structural checks can judge it.
+            assert.match(live.guardSource, /^live/);
+            assert.doesNotThrow(() => live.requireLiveGuard());
         });
     }
 
