@@ -109,4 +109,48 @@ describe('Focused cell restore after row removal', () => {
             await expectFocusOnFallbackCellAndGridUsable(api, hasCell);
         }
     );
+
+    /** Scrolls to the bottom with the first columns in view, so the last columns are virtualised out of every rendered row. */
+    async function createGridScrolledLeft() {
+        const api = await gridMgr.createGridAndWait('focusScrolledOutColumn', {
+            rowData: buildRows(ROW_COUNT),
+            columnDefs: COLS.map((colId) => ({
+                colId,
+                field: colId,
+                width: 200,
+            })),
+            getRowId: (p) => p.data.id,
+            rowHeight: 40,
+            suppressRowVirtualisation: false,
+            suppressColumnVirtualisation: false,
+        });
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const hasCell = (rowIndex: number, colId: string) => !!gridDiv.querySelector(cellSelector(rowIndex, colId));
+
+        api.ensureIndexVisible(LAST_ROW, 'bottom');
+        await waitFor(() => expect(hasCell(LAST_ROW, 'col0')).toBe(true));
+        api.ensureColumnVisible(LAST_COL);
+        await waitFor(() => expect(hasCell(LAST_ROW, LAST_COL)).toBe(true));
+        api.ensureColumnVisible('col0');
+        await waitFor(() => expect(hasCell(FALLBACK_ROW, LAST_COL)).toBe(false));
+        expect(hasCell(FALLBACK_ROW, 'col0')).toBe(true);
+
+        return { api, hasCell };
+    }
+
+    const activeCell = () => ({
+        rowIndex: document.activeElement?.closest('.ag-row')?.getAttribute('row-index'),
+        colId: document.activeElement?.getAttribute('col-id'),
+    });
+
+    test('setFocusedCell onto a scrolled-out column of a rendered row renders that cell and focuses it', async () => {
+        const { api, hasCell } = await createGridScrolledLeft();
+
+        expect(() => api.setFocusedCell(FALLBACK_ROW, LAST_COL)).not.toThrow();
+
+        await waitFor(() => expect(activeCell()).toEqual({ rowIndex: String(FALLBACK_ROW), colId: LAST_COL }));
+        expect(hasCell(FALLBACK_ROW, LAST_COL)).toBe(true);
+        expect(() => api.ensureIndexVisible(0, 'top')).not.toThrow();
+        await waitFor(() => expect(hasCell(0, 'col0')).toBe(true));
+    });
 });
