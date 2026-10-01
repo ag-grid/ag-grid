@@ -10,6 +10,7 @@ import {
     anyPathLeafMatches,
     leafOf,
     leaves,
+    noneOfAlternatives,
     noneOfLeaves,
     regexLeafMatches,
     ruleAction,
@@ -124,15 +125,24 @@ const aclArn = (acl: any): string => acl.ARN;
  * p11's three clauses, read in the one shape that means "block a non-browser trigger unless it is
  * exempt or on a safe path": AND(any trigger, NOT(any exemption), NOT(any safe path)).
  */
-function p11Parts(rule: any): { trigger: Leaf[]; exemptions: Leaf[]; safe: Leaf[] } | undefined {
+/**
+ * p11 as AND(any trigger label, NOT(any exemption), NOT(any safe path)). An exemption is a single
+ * condition (`exemptions`) or an AND of conditions (`exemptionAnds`, e.g. the saliencebot UA from
+ * its IP set).
+ */
+function p11Parts(
+    rule: any
+): { trigger: Leaf[]; exemptions: Leaf[]; exemptionAnds: Leaf[][]; safe: Leaf[] } | undefined {
     const parts = andOf(rule.Statement);
     if (parts?.length !== 3) {
         return undefined;
     }
     const trigger = anyOfLeaves(parts[0]);
-    const exemptions = noneOfLeaves(parts[1]);
+    const exemptions = noneOfAlternatives(parts[1]);
     const safe = noneOfLeaves(parts[2]);
-    return trigger && exemptions && safe ? { trigger, exemptions, safe } : undefined;
+    return trigger && exemptions && safe
+        ? { trigger, exemptions: exemptions.leaves, exemptionAnds: exemptions.ands, safe }
+        : undefined;
 }
 
 /**
@@ -545,7 +555,7 @@ export function wafChecks(): CheckDef[] {
                 if (!parts) {
                     return fail('statement is not AND(any trigger label, NOT(any exemption), NOT(any safe path))');
                 }
-                const { trigger: t, exemptions: e, safe: s } = parts;
+                const { trigger: t, exemptions: e, exemptionAnds: ands, safe: s } = parts;
                 const p = new Problems();
                 p.check(
                     t.every((l) => l.kind === 'label'),
@@ -571,9 +581,21 @@ export function wafChecks(): CheckDef[] {
                 for (const label of nb.exemptLabels) {
                     p.check(labels.includes(label), `exemption label missing: ${label}`);
                 }
+                // The saliencebot exemption needs both its UA and its IP set (an AND), never the UA alone.
                 p.check(
-                    e.some((l) => l.kind === 'ipset' && l.value.includes(`/ipset/${nb.saliencebotIpSet}/`)),
-                    'saliencebot IP-set exemption missing'
+                    ands.some(
+                        (and) =>
+                            and.some((l) => l.kind === 'ipset' && l.value.includes(`/ipset/${nb.saliencebotIpSet}/`)) &&
+                            and.some((l) => l.kind === 'regex' && l.field === 'header:user-agent')
+                    ),
+                    'saliencebot exemption is not AND(saliencebot UA, salience-bot IP set)'
+                );
+                p.check(
+                    !e.some(
+                        (l) =>
+                            l.kind === 'regex' && l.field === 'header:user-agent' && regexLeafMatches(l, 'saliencebot')
+                    ),
+                    'the saliencebot UA is exempt on its own, without the IP set'
                 );
                 p.check(
                     e.some(

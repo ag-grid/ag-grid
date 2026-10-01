@@ -134,3 +134,19 @@ describe('rules inserted straight after p11 by two scripts', () => {
         assert.match(outcome.detail ?? '', /not admitted: meta-webindexer/);
     });
 });
+
+describe('p11 saliencebot exemption', () => {
+    it('fails when the saliencebot UA is exempt without its IP set', async () => {
+        const outcome = await run(CHECKS.nonBrowser, {
+            rule: 'block-nonbrowser-except-ai-assistants',
+            edit: (s) => {
+                const alts = s.AndStatement.Statements[1].NotStatement.Statement.OrStatement.Statements;
+                const i = alts.findIndex((a: any) => a.AndStatement);
+                alts[i] = alts[i].AndStatement.Statements[0];
+                return s;
+            },
+        });
+        assert.equal(outcome.status, 'fail');
+        assert.match(outcome.detail ?? '', /saliencebot/);
+    });
+});
