@@ -209,11 +209,12 @@ $EV --pending --only redirects,crawler-policy,agent-files,seo-content
 - `NOW LIVE`: the ACME rows (`/.well-known/acme-challenge/...` answered 404 on www and the apex,
   never add-slashed), the slash-less `/react-data-grid/getting-started` rows on each alias host, the
   server-side and `/documentation/<fw>/charts*` samples, `crawler-policy.robots.md-twins`,
-  `crawler-policy.robots.url./archive/` and `./charts/archive/`, `agent-files.link.grid-data-grid`.
+  `crawler-policy.robots.md-twins-query` (2ed1049f81e adds a `<page>.md?` rule beside each
+  `<page>.md$`, so a query string no longer reopens a twin), `crawler-policy.robots.url./archive/`
+  and `./charts/archive/`, `agent-files.link.grid-data-grid`. Delete each of these rows' `pending`
+  markers once they show `NOW LIVE`, `PENDING.gridRobotsTwinsQuery` included.
 - `FIXED?`: `redirects.www.ag-grid.com/javascript-grid/` and the `.md` twin rows of
   `crawler-policy.robots.url.*`.
-- Stays `KNOWN`: `crawler-policy.robots.md-twins-query`. The PR's twin rules end in `.md$`, so
-  `<page>.md?<query>` stays crawlable. That needs a follow-up; the release does not fix it.
 - The `angulargrid.com` and `www.angulargrid.com` rows `SKIP` while those hosts are not in DNS.
 - On failure: the release's `.htaccess` and `robots.txt` come from the docs build; redeploy the
   previous docs release (`switchReleaseRemote.sh`) if a deployed row fails.
