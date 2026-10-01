@@ -1,5 +1,6 @@
 // Relative rather than aliased: this module is pulled in by the agHtaccessGen integration, which
 // astro.config.mjs bundles without tsconfig path resolution (as with plugins/agDevMarkdownNegotiation).
+import { SITE_BASE_URL } from '../../constants';
 import { markdownPathAlternation } from '../markdownPages';
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv, CspMode } from './cspRules';
@@ -121,6 +122,12 @@ const archiveCacheRules = `
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
 `;
 
+// Omitted from archive builds. An archive ships its own .htaccess, which Apache applies after
+// the root one, so emitting this rule there would override the root's in-flight no-cache and
+// make a release candidate cacheable while it is still under test. The root .htaccess already
+// applies this rule to every archive and owns the in-flight state, so the archive needs neither.
+const getArchiveCacheRules = (): string => (SITE_BASE_URL?.includes('/archive/') ? '' : archiveCacheRules);
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -180,35 +187,56 @@ const modDeflateRules = `
 //
 // The path alternation is derived from GRID_MARKDOWN_PAGE_GROUPS — the same registry the
 // dev-server plugin uses — so the two can't disagree about what is negotiable.
-const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/(${markdownPathAlternation()})/?$
+//
+// Prefixed with the build's base URL, so an archive build (/archive/<v>/) negotiates under its
+// own path exactly as the live site does at the root - the same approach ag-charts takes. An
+// empty base emits the original root-anchored rules unchanged. Built lazily because the base
+// URL is only resolved at build time.
+const getMarkdownBasePath = (): string => (SITE_BASE_URL ?? '').replace(/\/$/, '');
+
+// The base as a regex fragment: its dots (36.2.0) are literal, not any-character.
+const getMarkdownBasePattern = (): string => getMarkdownBasePath().replace(/\./g, '\\.');
+
+// The negotiable page paths below the base. Grouped when prefixed, since the alternation
+// has top-level `|` branches that the prefix must apply to as a whole.
+const getMarkdownPagesBelowBase = (): string => {
+    const basePattern = getMarkdownBasePattern();
+    return basePattern ? `${basePattern.slice(1)}/(?:${markdownPathAlternation()})` : markdownPathAlternation();
+};
+
+const getMarkdownNegotiationRules = (): string => {
+    const basePath = getMarkdownBasePath();
+    return `    RewriteCond %{HTTP_ACCEPT} text/markdown
+    RewriteCond %{REQUEST_URI} ^/(${getMarkdownPagesBelowBase()})/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
     # SE-80: the homepage twin (/ -> /index.md). Handled separately because the root URL has no
     # path segment to capture in %1; ^/$ matches only the root, so no other route is affected.
     RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/$
-    RewriteCond %{DOCUMENT_ROOT}/index.md -f
-    RewriteRule ^ /index.md [L]`;
+    RewriteCond %{REQUEST_URI} ^${getMarkdownBasePattern()}/$
+    RewriteCond %{DOCUMENT_ROOT}${basePath}/index.md -f
+    RewriteRule ^ ${basePath}/index.md [L]`;
+};
 
 // Staging has no redirect rewrites, so negotiation gets its own minimal mod_rewrite
 // block. Production embeds the same rules inside its existing block instead.
-const markdownNegotiationBlock = `<IfModule mod_rewrite.c>
+const getMarkdownNegotiationBlock = (): string => `<IfModule mod_rewrite.c>
     RewriteEngine On
 
     # SE-80: content-negotiate docs pages to their markdown variant on Accept: text/markdown.
-${markdownNegotiationRules}
+${getMarkdownNegotiationRules()}
 </IfModule>`;
 
 // SE-80: negotiated pages content-negotiate on the Accept header (see the markdown rewrite
 // above), so shared caches must key on it — otherwise they could serve the markdown
 // variant to a browser, or HTML to an agent. Scoped to the negotiated paths so the rest of
-// the site keeps its default (URL-only) cache key. Derived from the same registry as the
-// rewrite rule, so the two stay in lockstep.
-const markdownVaryHeader = `# SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
+// the site keeps its default (URL-only) cache key. Derived from the same registry and base
+// as the rewrite rule, so the two stay in lockstep.
+const getMarkdownVaryHeader =
+    (): string => `# SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:${markdownPathAlternation()})/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:${getMarkdownPagesBelowBase()})/?$# || %{REQUEST_URI} == '${getMarkdownBasePath()}/'">
     Header append Vary Accept
 </If>`;
 
@@ -551,7 +579,7 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     # (no redirect, URL unchanged), gated by an on-disk check so a path without a .md
     # is left untouched. Placed after host/https canonicalization but before the
     # trailing-slash 301 so the canonical (slashed) docs URL negotiates in one hop.
-${markdownNegotiationRules}
+${getMarkdownNegotiationRules()}
 
     # Remove "index.php" from URLs
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
@@ -628,9 +656,9 @@ ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 
-${markdownNegotiationBlock}
+${getMarkdownNegotiationBlock()}
 
-${markdownVaryHeader}
+${getMarkdownVaryHeader()}
 
 ${agentLinkHeader}
 
@@ -650,7 +678,7 @@ ${documentNoCacheRules}
 ${hashedAssetCacheRules}
 ${staticAssetCacheRules}
 ${scriptAssetCacheRules}
-${archiveCacheRules}
+${getArchiveCacheRules()}
 ${studioArchiveNoCacheRules}
 ${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
@@ -663,7 +691,7 @@ ${getModRewriteRules()}
 Header always set Referrer-Policy "${REFERRER_POLICY_VALUE}"
 Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}"
 
-${markdownVaryHeader}
+${getMarkdownVaryHeader()}
 
 ${agentLinkHeader}
 

@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import type * as Constants from '../../constants';
 import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
@@ -417,6 +418,41 @@ describe('htaccessRules', () => {
 
         it('is production-only, like every other asset-caching rule', () => {
             expect(stagingContent).not.toContain('archive/[0-9]#"');
+        });
+
+        // An archive's own .htaccess is applied after the root one, so if it carried this rule
+        // it would override the root's in-flight no-cache for a release candidate under test.
+        describe('is left out of archive builds, so the root in-flight no-cache still wins', () => {
+            let archiveContent: string;
+
+            beforeAll(async () => {
+                vi.resetModules();
+                vi.doMock('../../constants', async (importActual) => {
+                    const actual = await importActual<typeof Constants>();
+                    return { ...actual, SITE_BASE_URL: '/archive/36.3.0/' };
+                });
+                const archiveRules = await import('./htaccessRules');
+                archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+            });
+
+            afterAll(() => {
+                vi.doUnmock('../../constants');
+                vi.resetModules();
+            });
+
+            it('emits no archive cache rule', () => {
+                expect(archiveContent).not.toContain('^/(charts/)?archive/[0-9]#"');
+            });
+
+            it('sets no long-lived Cache-Control that could match an archived page', () => {
+                const longCacheLines = archiveContent
+                    .split('\n')
+                    .filter((l) => l.startsWith('Header set Cache-Control') && l.includes('s-maxage'));
+                // Only the content-hashed asset rule remains: a changed hash is a new URL, so it
+                // cannot serve a release candidate stale.
+                expect(longCacheLines).toHaveLength(1);
+                expect(longCacheLines[0]).toContain('/_astro/');
+            });
         });
 
         it('matches a real released grid and charts archive page, any content type', () => {
@@ -1273,6 +1309,70 @@ describe('htaccessRules', () => {
         it('registers the webp MIME type so the images are not served without a Content-Type', () => {
             expect(productionContent).toContain('AddType image/webp .webp');
             expect(stagingContent).toContain('AddType image/webp .webp');
+        });
+
+        // Archive builds ship their own production .htaccess (HTACCESS=production in
+        // .env.build.archive), served from /archive/<v>/, so negotiation must be anchored there
+        // rather than at the root - otherwise no archived page ever negotiates.
+        describe('archive builds negotiate under their own base path', () => {
+            let archiveContent: string;
+
+            beforeAll(async () => {
+                vi.resetModules();
+                vi.doMock('../../constants', async (importActual) => {
+                    const actual = await importActual<typeof Constants>();
+                    return { ...actual, SITE_BASE_URL: '/archive/36.2.0/' };
+                });
+                const archiveRules = await import('./htaccessRules');
+                archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+            });
+
+            afterAll(() => {
+                vi.doUnmock('../../constants');
+                vi.resetModules();
+            });
+
+            it('negotiates every page group below the archive base, and nothing at the root', () => {
+                const pattern = extractNegotiationPattern(archiveContent);
+                for (const path of negotiablePaths) {
+                    expect(pattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path} should negotiate`).toBe(
+                        true
+                    );
+                    expect(pattern.test(path), `${path} is outside the archive`).toBe(false);
+                }
+                for (const path of nonNegotiablePaths) {
+                    expect(pattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path}`).toBe(false);
+                }
+            });
+
+            it('treats the version dots literally', () => {
+                const pattern = extractNegotiationPattern(archiveContent);
+                expect(pattern.test('/archive/36x2x0/react-data-grid/cell-editing/')).toBe(false);
+            });
+
+            it('captures the docroot-relative path in %1 so the -f guard and target resolve inside the archive', () => {
+                const pattern = extractNegotiationPattern(archiveContent);
+                expect('/archive/36.2.0/react-data-grid/cell-editing/'.match(pattern)?.[1]).toBe(
+                    'archive/36.2.0/react-data-grid/cell-editing'
+                );
+                expect(archiveContent).toContain('RewriteCond %{DOCUMENT_ROOT}/%1.md -f');
+                expect(archiveContent).toContain('RewriteRule ^ /%1.md [L]');
+            });
+
+            it('negotiates the archive homepage to its own index.md', () => {
+                expect(archiveContent).toContain('RewriteCond %{REQUEST_URI} ^/archive/36\\.2\\.0/$');
+                expect(archiveContent).toContain('RewriteCond %{DOCUMENT_ROOT}/archive/36.2.0/index.md -f');
+                expect(archiveContent).toContain('RewriteRule ^ /archive/36.2.0/index.md [L]');
+            });
+
+            it('scopes Vary: Accept to the same archived paths', () => {
+                const varyPattern = extractVaryPattern(archiveContent);
+                for (const path of negotiablePaths) {
+                    expect(varyPattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path}`).toBe(true);
+                    expect(varyPattern.test(path), `${path} is outside the archive`).toBe(false);
+                }
+                expect(archiveContent).toContain(`%{REQUEST_URI} == '/archive/36.2.0/'`);
+            });
         });
     });
 
