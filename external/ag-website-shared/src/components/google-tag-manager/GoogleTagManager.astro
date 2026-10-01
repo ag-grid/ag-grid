@@ -1,5 +1,5 @@
 ---
-import { getIsStaging } from '@utils/env';
+import { getIsProduction } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 interface Props {
@@ -9,7 +9,13 @@ interface Props {
 }
 
 const { googleTagManagerId, googleTagManagerAuth, googleTagManagerPreview } = Astro.props as Props;
-const extraParams = getIsStaging() ? `&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}` : '';
+// Every build but production and archive (which count as production) loads GTM's staging
+// environment, so tags can be tried on staging, branch deploys and local previews before they are
+// published. Left on Live if a build has no staging environment configured.
+const useStagingEnvironment = !getIsProduction() && googleTagManagerAuth && googleTagManagerPreview;
+const extraParams = useStagingEnvironment
+    ? `&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}`
+    : '';
 ---
 
 {/* Externalised (was an inline define:vars bootstrap) so the site CSP can drop
