@@ -21,10 +21,18 @@ export function classify(check: CheckDef, outcome: Outcome): FinalStatus {
 
 function errorOutcome(e: unknown): Outcome {
     if (e instanceof AwsError) {
-        return {
-            status: 'skip',
-            detail: e.deniedAction ? `unverifiable - needs IAM action ${e.deniedAction}` : e.message,
-        };
+        // Only a read that could not be made is unverifiable. A declared resource that is not there
+        // (NoSuch*, *NotFound, WAFNonexistentItemException) is drift, and any other AWS error is a
+        // failure too rather than a quiet skip.
+        if (e.unverifiable) {
+            return {
+                status: 'skip',
+                detail: e.deniedAction
+                    ? `unverifiable - needs IAM action ${e.deniedAction}`
+                    : `unverifiable - ${e.message}`,
+            };
+        }
+        return { status: 'fail', detail: e.message };
     }
     if (e instanceof BudgetExceeded) {
         return { status: 'skip', detail: `not run: ${e.message} (raise --max-requests)` };
