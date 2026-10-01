@@ -425,6 +425,8 @@ export const CF_ACL = {
             'fb_iab',
             'instagram',
         ],
+        /** Ordinary non-browser UAs that no p11 UA exemption may admit: a regex that does is not one of the declared two. */
+        undeclaredUas: ['curl/8.4.0', 'python-requests/2.31.0', 'go-http-client/1.1', 'wget/1.21.4'],
         /** extend-p11-agent-allowlist.sh appends these (lower-cased: p11 applies LOWERCASE). */
         pendingUaAllowTokens: {
             pending: PENDING.p11AgentAllowlist,
