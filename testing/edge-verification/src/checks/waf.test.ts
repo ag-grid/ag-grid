@@ -2,7 +2,15 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import type { CheckDef, Outcome } from '../core/types';
-import { FakeAws, cfAclHandlers, cfAclRules, cfAclRulesWithAgentAllowlist, offlineCtx } from '../testing/fakes';
+import {
+    FakeAws,
+    albAclHandlers,
+    albAclRules,
+    cfAclHandlers,
+    cfAclRules,
+    cfAclRulesWithAgentAllowlist,
+    offlineCtx,
+} from '../testing/fakes';
 import { wafChecks } from './waf';
 
 const CHECKS = {
@@ -286,6 +294,81 @@ describe('p11 exemptions are exactly the declared set', () => {
             });
             assert.equal(outcome.status, 'fail', outcome.detail);
             assert.match(outcome.detail ?? '', /exemption/);
+        });
+    }
+});
+
+describe('shared-secret Allow rules match the secret without transformation', () => {
+    for (const rule of ['allow-trusted-mcp-lambda', 'allow-trusted-ci-archive-tests', 'allow-seo-bot']) {
+        it(`fails when ${rule} normalises the header with CMD_LINE`, async () => {
+            const outcome = await run(CHECKS.verifyHeaders, {
+                rule,
+                edit: (s) => {
+                    const secret = s.ByteMatchStatement ?? s.AndStatement.Statements[0].ByteMatchStatement;
+                    secret.TextTransformations = [{ Priority: 0, Type: 'CMD_LINE' }];
+                    return s;
+                },
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', new RegExp(`${rule} transforms`));
+        });
+    }
+});
+
+describe('waf-config.alb.rules CRS scope-down', () => {
+    const albRules = check('waf-config.alb.rules');
+    const runAlb = (edit?: (scopeDown: any) => any): Promise<Outcome> => {
+        const rules = albAclRules();
+        if (edit) {
+            const crs = rules.find((r) => r.Name === 'AWS-AWSManagedRulesCommonRuleSet').Statement
+                .ManagedRuleGroupStatement;
+            crs.ScopeDownStatement = edit(crs.ScopeDownStatement);
+        }
+        return albRules.run(offlineCtx(new FakeAws(albAclHandlers(rules))));
+    };
+
+    it('passes on NOT(UriPath STARTS_WITH the exempt prefix)', async () => {
+        const outcome = await runAlb();
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    const leaf = (s: any): any => s.NotStatement.Statement.ByteMatchStatement;
+    for (const [what, edit] of [
+        [
+            'the prefix is matched on the User-Agent',
+            (s: any) => {
+                leaf(s).FieldToMatch = { SingleHeader: { Name: 'user-agent' } };
+                return s;
+            },
+        ],
+        [
+            'the prefix is matched with CONTAINS',
+            (s: any) => {
+                leaf(s).PositionalConstraint = 'CONTAINS';
+                return s;
+            },
+        ],
+        [
+            'the prefix is matched after a transformation',
+            (s: any) => {
+                leaf(s).TextTransformations = [{ Priority: 0, Type: 'URL_DECODE' }];
+                return s;
+            },
+        ],
+        [
+            'another exemption is added',
+            (s: any) => {
+                const exempt = s.NotStatement.Statement;
+                const everything = structuredClone(exempt);
+                everything.ByteMatchStatement.SearchString = Buffer.from('/').toString('base64');
+                return { NotStatement: { Statement: { OrStatement: { Statements: [exempt, everything] } } } };
+            },
+        ],
+    ] as const) {
+        it(`fails when ${what}`, async () => {
+            const outcome = await runAlb(edit);
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /CRS scope-down/);
         });
     }
 });
