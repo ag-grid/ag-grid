@@ -34,9 +34,24 @@ export const KNOWN_IAM_GAPS: Record<string, string> = {
     'cloudfront:ListFunctions': 'that the archive-markdown-cache-key function exists',
 };
 
+/**
+ * Why an AWS read failed. Only the first four leave a check unverifiable: the read could not be
+ * made. `missing` means the read was made and the declared resource is not there, which is drift.
+ */
+export type AwsErrorKind = 'denied' | 'credentials' | 'throttled' | 'unavailable' | 'missing' | 'other';
+
+/** The kinds that mean "could not look", reported as SKIP rather than FAIL. */
+export const UNVERIFIABLE_KINDS: ReadonlySet<AwsErrorKind> = new Set([
+    'denied',
+    'credentials',
+    'throttled',
+    'unavailable',
+]);
+
 export class AwsError extends Error {
     constructor(
         message: string,
+        readonly kind: AwsErrorKind,
         /** `service:Operation` when the call was denied by IAM. */
         readonly deniedAction?: string,
         /** The AWS error code, e.g. WAFNonexistentItemException. */
@@ -44,6 +59,49 @@ export class AwsError extends Error {
     ) {
         super(message);
     }
+
+    get unverifiable(): boolean {
+        return UNVERIFIABLE_KINDS.has(this.kind);
+    }
+}
+
+const MISSING_CODE = /^NoSuch|NotFound|^WAFNonexistentItemException$/;
+const THROTTLED_CODE =
+    /^(Throttling|ThrottlingException|TooManyRequestsException|RequestLimitExceeded|SlowDown|WAFLimitsExceededException)$/;
+const UNAVAILABLE_CODE =
+    /^(ServiceUnavailable|ServiceUnavailableException|InternalFailure|InternalError|InternalServerError|WAFInternalErrorException|RequestTimeout|RequestTimeoutException)$/;
+const CREDENTIALS_TEXT =
+    /Unable to locate credentials|config profile .* could not be found|SSO|ExpiredToken|InvalidClientTokenId|UnrecognizedClientException|security token included in the request is invalid|SignatureDoesNotMatch/i;
+const NETWORK_TEXT =
+    /Could not connect to the endpoint URL|Connect timeout|Read timeout|EndpointConnectionError|getaddrinfo|ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|Connection was closed/i;
+
+/** Classifies the AWS CLI's stderr for a failed call (exported for the offline tests). */
+export function awsErrorFromStderr(service: string, operation: string, stderr: string): AwsError {
+    const denied = /not authorized to perform: ([\w-]+:\w+)/.exec(stderr);
+    if (denied || /AccessDenied/i.test(stderr)) {
+        const action = denied?.[1] ?? `${service}:${operation}`;
+        return new AwsError(`AccessDenied: ${action}`, 'denied', action, 'AccessDenied');
+    }
+    const code = /An error occurred \((\w+)\)/.exec(stderr)?.[1];
+    const line = `${service} ${operation}: ${errorLine(stderr)}`;
+    if (code && MISSING_CODE.test(code)) {
+        return new AwsError(`declared resource missing - ${line}`, 'missing', undefined, code);
+    }
+    if (CREDENTIALS_TEXT.test(stderr)) {
+        return new AwsError(
+            `No usable credentials for profile ${AWS_PROFILE}: ${errorLine(stderr)}`,
+            'credentials',
+            undefined,
+            code ?? 'NoCredentials'
+        );
+    }
+    if (code && THROTTLED_CODE.test(code)) {
+        return new AwsError(`throttled - ${line}`, 'throttled', undefined, code);
+    }
+    if ((code && UNAVAILABLE_CODE.test(code)) || NETWORK_TEXT.test(stderr)) {
+        return new AwsError(`AWS unavailable - ${line}`, 'unavailable', undefined, code);
+    }
+    return new AwsError(line, 'other', undefined, code);
 }
 
 export class Aws {
@@ -97,7 +155,11 @@ export class Aws {
             ];
             const stdout = await new Promise<string>((resolve, reject) => {
                 execFile('aws', argv, { env, timeout: 90_000, maxBuffer: 64 * 1024 * 1024 }, (err, out, stderr) => {
-                    if (err) {
+                    if (err && ((err as NodeJS.ErrnoException).code === 'ENOENT' || err.killed)) {
+                        // No CLI, or the call timed out: nothing was read, so nothing can be concluded.
+                        const why = err.killed ? 'timed out' : 'AWS CLI not found';
+                        reject(new AwsError(`AWS unavailable - ${service} ${operation}: ${why}`, 'unavailable'));
+                    } else if (err) {
                         reject(this.toError(service, operation, String(stderr || err.message)));
                     } else {
                         resolve(out);
@@ -111,21 +173,11 @@ export class Aws {
     }
 
     private toError(service: string, operation: string, stderr: string): AwsError {
-        const denied = /not authorized to perform: ([\w-]+:\w+)/.exec(stderr);
-        if (denied || /AccessDenied/i.test(stderr)) {
-            const action = denied?.[1] ?? `${service}:${operation}`;
-            this.denied.add(action);
-            return new AwsError(`AccessDenied: ${action}`, action, 'AccessDenied');
+        const error = awsErrorFromStderr(service, operation, stderr);
+        if (error.deniedAction) {
+            this.denied.add(error.deniedAction);
         }
-        if (/Unable to locate credentials|config profile .* could not be found|SSO|ExpiredToken/i.test(stderr)) {
-            return new AwsError(
-                `No usable credentials for profile ${AWS_PROFILE}: ${errorLine(stderr)}`,
-                undefined,
-                'NoCredentials'
-            );
-        }
-        const code = /An error occurred \((\w+)\)/.exec(stderr)?.[1];
-        return new AwsError(`${service} ${operation}: ${errorLine(stderr)}`, undefined, code);
+        return error;
     }
 
     private async acquire(): Promise<void> {
