@@ -68,4 +68,6 @@ export const PENDING = {
     redactLogs: 'redact-waf-log-secrets.sh',
     datacenterAfterAgents: 'move-datacenter-block-after-agent-exemptions.sh',
     archiveCache: 'add-archive-cache-behaviors.sh',
+    /** Opt-in, awaiting approval; independent of the other WAF scripts. */
+    p11MarkdownScoped: 'tighten-p11-markdown-exemption.sh (p11 honours Accept: text/markdown only on negotiable paths)',
 } as const;

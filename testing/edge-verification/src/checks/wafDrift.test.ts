@@ -10,6 +10,7 @@ import {
     cfAclHandlers,
     cfAclRules,
     cfAclRulesWithAgentAllowlist,
+    cfAclRulesWithScopedP11,
     ipSetHandler,
     loggingHandler,
     offlineCtx,
@@ -617,5 +618,97 @@ describe('block-datacenter-except-agent-paths: Accept: text/markdown only on neg
             // The whole-rule comparison names the field too.
             assert.match(outcome.detail ?? '', /block-datacenter-except-agent-paths Statement\.AndStatement/);
         });
+    }
+});
+
+describe('p11 before and after tighten-p11-markdown-exemption.sh', () => {
+    const scopedRun = (id: string, rules: any[]): Promise<Outcome> =>
+        check(id).run(offlineCtx(new FakeAws(handlers('cf', rules))));
+    const pendingId = 'waf-config.cf.nonbrowser-rule.markdown-scoped';
+    const p11Checks = wafChecks().filter(
+        (c) =>
+            c.id.startsWith('waf-config.cf.') &&
+            !c.knownIssue &&
+            (!c.pending || c.id === 'waf-config.cf.rule.block-datacenter-except-agent-paths') &&
+            ![
+                'waf-config.cf.nonbrowser-rule.agent-allowlist',
+                'waf-config.cf.rule.count-allowlisted-agents-rate',
+            ].includes(c.id)
+    );
+    const exemptions = (rules: any[]): any[] =>
+        named(rules, 'block-nonbrowser-except-ai-assistants').Statement.AndStatement.Statements[1].NotStatement
+            .Statement.OrStatement.Statements;
+    const scopedPaths = (rules: any[]): any[] =>
+        exemptions(rules).find((a) => a.AndStatement?.Statements?.[1]?.OrStatement).AndStatement.Statements[1]
+            .OrStatement.Statements;
+
+    for (const c of p11Checks) {
+        it(`${c.id} passes with the Accept exemption path-scoped`, async () => {
+            const outcome = await scopedRun(c.id, cfAclRulesWithScopedP11());
+            assert.equal(outcome.status, 'pass', outcome.detail);
+        });
+    }
+
+    it('waf-config.cf.rules passes with both p11 scripts applied', async () => {
+        const outcome = await scopedRun(RULES.cf, cfAclRulesWithScopedP11(cfAclRulesWithAgentAllowlist(true)));
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    it("the pending check fails on today's bare exemption, and passes once scoped", async () => {
+        await assertFails(await scopedRun(pendingId, cfAclRules()), /still exempt on every path/);
+        const outcome = await scopedRun(pendingId, cfAclRulesWithScopedP11());
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    const MUTATIONS: Array<[string, (rules: any[]) => void, Record<string, RegExp>]> = [
+        [
+            'a bare Accept leaf remains beside the scoped one',
+            (rules) =>
+                exemptions(rules).push(
+                    structuredClone(
+                        exemptions(rules).find((a) => a.AndStatement?.Statements?.[1]?.OrStatement).AndStatement
+                            .Statements[0]
+                    )
+                ),
+            {
+                [pendingId]: /still exempt on every path/,
+                'waf-config.cf.nonbrowser-rule': /not exactly one Accept: text\/markdown exemption/,
+                [RULES.cf]: /block-nonbrowser-except-ai-assistants Statement/,
+            },
+        ],
+        [
+            'a negotiable-path regex is wrong',
+            (rules) => (scopedPaths(rules)[1].RegexMatchStatement.RegexString = '^/.*$'),
+            {
+                [pendingId]: /negotiable path regexes/,
+                'waf-config.cf.nonbrowser-rule': /path-scoped exemptions that are not the Accept test/,
+                [RULES.cf]: /block-nonbrowser-except-ai-assistants Statement.*RegexString/,
+            },
+        ],
+        [
+            'the path OR gains an alternative',
+            (rules) =>
+                scopedPaths(rules).push({
+                    RegexMatchStatement: {
+                        RegexString: '^/_astro/',
+                        FieldToMatch: { UriPath: {} },
+                        TextTransformations: [{ Priority: 0, Type: 'NONE' }],
+                    },
+                }),
+            {
+                [pendingId]: /negotiable path regexes/,
+                'waf-config.cf.nonbrowser-rule': /path-scoped exemptions that are not the Accept test/,
+                [RULES.cf]: /block-nonbrowser-except-ai-assistants Statement/,
+            },
+        ],
+    ];
+    for (const [what, edit, expectations] of MUTATIONS) {
+        for (const [id, pattern] of Object.entries(expectations)) {
+            it(`${id} fails when ${what}`, async () => {
+                const rules = cfAclRulesWithScopedP11();
+                edit(rules);
+                await assertFails(await scopedRun(id, rules), pattern);
+            });
+        }
     }
 });

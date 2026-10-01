@@ -603,6 +603,11 @@ export const CF_ACL = {
          * the origin's negotiation is case-sensitive and serves those requests HTML. Declared as-is.
          */
         markdownAcceptTransforms: ['LOWERCASE'],
+        /**
+         * tighten-p11-markdown-exemption.sh (opt-in, not yet approved): the bare Accept exemption
+         * becomes AND(it, OR(dataCentreMarkdownPaths)) in place.
+         */
+        markdownScopedPending: PENDING.p11MarkdownScoped,
         safePathRegexes: ['/robots\\.txt$', '/llms\\.txt$', '/sitemap[^/]*\\.xml$', '\\.md$'],
         safePathPrefixes: ['/blog/rss', '/blog/feed'],
         customBody: 'automated-access-blocked',
