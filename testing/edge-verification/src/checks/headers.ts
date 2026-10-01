@@ -9,6 +9,7 @@ import {
     GZIP_REVALIDATION_PROBES,
     HEADER_ROWS,
     type HeaderRow,
+    NOT_MODIFIED_CACHE_CONTROL,
     NOT_MODIFIED_PROBE,
     SECURITY_HEADERS,
 } from '../expected/headers';
@@ -225,6 +226,8 @@ export function headerChecks(): CheckDef[] {
                 const stored = header(full, 'cache-control');
                 const revalidated = headerAll(res, 'cache-control');
                 const p = new Problems();
+                // A 304 can only keep the long cache the 200 had: without it there is nothing to keep.
+                expectHeader(p, full, 'cache-control', NOT_MODIFIED_CACHE_CONTROL);
                 p.eq(`status for ${validator}`, res.status, 304);
                 // Absent is fine: a cache keeps the stored Cache-Control when a 304 does not resend it.
                 p.check(
