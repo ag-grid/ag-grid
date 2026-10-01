@@ -38,6 +38,8 @@ if (!['staging', 'production'].includes(htaccessEnv)) {
     process.exit(1);
 }
 const PORT = Number(env.PORT || 8899);
+// the plain-http listener, for rows with scheme=http
+const HTTP_PORT = Number(env.HTTP_PORT || PORT + 1);
 const WORK = env.HARNESS_WORK || join(env.TMPDIR || '/tmp', 'ag-htaccess-harness');
 const HTDOCS = join(WORK, 'htdocs');
 const flag = (name) => env[name] === '1' || env[name] === 'true';
@@ -155,7 +157,14 @@ buildScaffold(HTDOCS, {
 placeRowFiles(HTDOCS, active, PORT);
 
 // ---------------------------------------------------------------- serve + assert
-const conf = writeHttpdConf({ work: WORK, htdocs: HTDOCS, port: PORT, loadModules: apache.loadModules, mimeTypes });
+const conf = writeHttpdConf({
+    work: WORK,
+    htdocs: HTDOCS,
+    port: PORT,
+    httpPort: HTTP_PORT,
+    loadModules: apache.loadModules,
+    mimeTypes,
+});
 try {
     startHttpd(apache.httpd, conf);
 } catch (e) {
@@ -179,7 +188,7 @@ for (const sig of ['SIGINT', 'SIGTERM']) {
 }
 await waitForPort();
 
-const ctx = { port: PORT, siteHost, extraHosts: [siteHost] };
+const ctx = { port: PORT, httpPort: HTTP_PORT, siteHost, extraHosts: [siteHost] };
 const results = new Array(active.length);
 let next = 0;
 async function worker() {
@@ -207,7 +216,7 @@ const messages = (fails) => fails.map((fail) => fail.message).join('\n        ')
 active.forEach((row, i) => {
     const t = (tally[row.category] ??= { sites: new Set(), pass: 0, fail: 0, known: 0, unexpected: 0 });
     t.sites.add(siteOf(row));
-    const where = `${row.file}:${row.line} ${row.hostAlias} ${row.path}${row.accept === 'text/markdown' ? ' [md]' : ''}`;
+    const where = `${row.file}:${row.line} ${row.scheme === 'http' ? 'http://' : ''}${row.hostAlias} ${row.path}${row.accept === 'text/markdown' ? ' [md]' : ''}`;
     const result = classifyRow(row, results[i].fails);
     const named = row.knownFail && `known-fail ${row.knownFail.assertions.join(',')}: ${row.knownFail.ref}`;
     if (result.kind === 'known') {
@@ -301,7 +310,7 @@ if ((anyChildOff && htaccessEnv === 'production') || anyFeatureOff) {
     );
 }
 if (flag('KEEP_RUNNING')) {
-    console.log(`httpd left running on :${PORT} (stop: ${apache.httpd} -f ${conf} -k stop)`);
+    console.log(`httpd left running on :${PORT} and :${HTTP_PORT} (http) (stop: ${apache.httpd} -f ${conf} -k stop)`);
 }
 // explicit exit: the keep-alive agent would otherwise hold the process open
 process.exit(totals.fail || totals.upass || coverageGaps.length ? 1 : 0);

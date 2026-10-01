@@ -134,6 +134,7 @@ GRID_REF=origin/latest ./testing/htaccess-harness/run.sh
 | Option                                                            | Effect                                                                                                                                     |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `PORT=9100`                                                       | listen port (default 8899, bound to 127.0.0.1)                                                                                             |
+| `HTTP_PORT=9101`                                                  | the plain-http listener for `scheme=http` rows (default `PORT` + 1)                                                                        |
 | `KEEP_RUNNING=1`                                                  | leave httpd up afterwards to poke with `curl -H 'Host: www.ag-grid.com'`; the summary prints the stop command                              |
 | `VERBOSE=1`                                                       | print passing rows too                                                                                                                     |
 | `REWRITE_TRACE=1`                                                 | `LogLevel rewrite:trace3`, written to `$HARNESS_WORK/logs/error.log`                                                                       |
@@ -192,6 +193,7 @@ It runs as the invoking user on a high port.
 | Assertion                                       | Checks                                                    |
 | ----------------------------------------------- | --------------------------------------------------------- |
 | `accept=html\|md\|none\|<literal>`              | the `Accept` header to send                               |
+| `scheme=http`                                   | send the request over plain http (see below)              |
 | `req:<Name>=<value>`                            | a further request header, e.g. `req:If-None-Match=*`      |
 | `cc=` / `cc~`                                   | `Cache-Control`                                           |
 | `ct=` / `ct~`                                   | `Content-Type`                                            |
@@ -205,6 +207,10 @@ It runs as the invoking user on a high port.
 | `hops=N` / `final=<status>` / `final-url=<url>` | the redirect chain                                        |
 | `revalidate=<status>`                           | the status when repeated with `If-None-Match: <its ETag>` |
 | `revalidate-lm=<status>`                        | the same with `If-Modified-Since: <its Last-Modified>`    |
+
+**`scheme=http`** sends the request to a second listener whose `%{SERVER_PORT}` is pinned to 80, so
+the rules gated on port 80 (the https upgrade, the canonicalising slash hop) fire as they do for a
+real http request. The main listener stands in for https. A chain follows each Location's scheme.
 
 **How a chain is followed:**
 
@@ -234,7 +240,9 @@ file is still above its minimum. `# @min-rows <n>` guards against a generator si
 
 **`edge.tsv`** is hand-written too, and covers the edge behaviour of the whole tree:
 
-- every non-www host × grid, charts, studio and archive pages → **one** hop to the www URL;
+- every non-www host × grid, charts, studio and archive pages → **one** hop to the www URL, a slash-less directory URL included, over http and https;
+- certificate-validation tokens served as they are on www, over http and https, and canonicalised onto the token itself on an alias host;
+- encoded paths keeping their escaping through the host canonicalisation;
 - the live regressions from `waf-finding.md` §2/§3;
 - the charts landing hubs;
 - caching per content class, for live pages, released archives, in-flight archives (grid and charts) and studio archives;
