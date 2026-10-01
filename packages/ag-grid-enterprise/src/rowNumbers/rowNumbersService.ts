@@ -84,6 +84,12 @@ export class RowNumbersService
             },
             rangeSelectionChanged: () => this.refreshCells(true),
             pinnedRowsChanged: () => refreshCells_debounced(false, true),
+            stylesChanged: (params) => {
+                // the new theme can change the cell padding and font, so the autosized width is stale
+                if (params.themeChanged) {
+                    refreshCells_debounced(false, true);
+                }
+            },
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
@@ -320,7 +326,8 @@ export class RowNumbersService
     }
 
     private createDummyElement(column: AgColumn): HTMLDivElement {
-        const div = _createElement<HTMLDivElement>({ tag: 'div', cls: 'ag-cell-value ag-cell' });
+        // ag-row-number-cell gives the dummy the same font and tabular digits as the rendered cells
+        const div = _createElement<HTMLDivElement>({ tag: 'div', cls: 'ag-cell-value ag-cell ag-row-number-cell' });
 
         let value = String(this.beans.rowModel.getRowCount() + 1);
         const rowNumberOverrides = this.rowNumberOverrides;
