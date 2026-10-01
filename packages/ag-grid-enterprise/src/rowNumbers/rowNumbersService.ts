@@ -69,7 +69,7 @@ export class RowNumbersService
     private rowNumberOverrides: RowNumbersOptions | null = null;
     private lastColumnResized: number = 0;
     private pendingForceAutoSize: boolean = false;
-    private autoSizedTextLength: number | null = null;
+    private autoSizedTextLength: number = 0;
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
@@ -179,7 +179,7 @@ export class RowNumbersService
         const source = _convertColumnEventSourceType(event.source);
         this.refreshSelectionIntegration();
         const had = this.column !== null;
-        this.autoSizedTextLength = null;
+        this.autoSizedTextLength = 0;
         if (this.refreshCols()) {
             this.refreshColDef(source);
         } else if (had) {
@@ -316,7 +316,7 @@ export class RowNumbersService
         }
         const text = this.getLargestRowNumberText(column);
         // only grow between forced autosizes, so row counts hovering around a digit boundary don't cause width jank
-        if (force || this.autoSizedTextLength == null || text.length > this.autoSizedTextLength) {
+        if (force || text.length > this.autoSizedTextLength) {
             this.autoSizedTextLength = text.length;
             this.autoSize(column, text);
         }
