@@ -64,3 +64,32 @@ describe('caching.archive-markdown-split', () => {
         });
     }
 });
+
+describe('caching.never-hit', () => {
+    const neverHit = cachingChecks().find((c) => c.id.startsWith('caching.never-hit.'))!;
+    async function runNeverHit(response: FakeResponse) {
+        const http = new FakeHttp(() => response);
+        try {
+            return await neverHit.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+
+    it('passes on 200 misses', async () => {
+        const outcome = await runNeverHit(HTML);
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    it('fails on a non-200 response, naming its status', async () => {
+        const outcome = await runNeverHit({ status: 503, headers: { 'x-cache': 'Error from cloudfront' } });
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /503/);
+    });
+
+    it('fails on a cache hit', async () => {
+        const outcome = await runNeverHit(CACHED_HTML);
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /Hit from cloudfront/);
+    });
+});
