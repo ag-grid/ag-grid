@@ -12,6 +12,15 @@
         "cwd": "{projectRoot}"
       }
     },
+    "test:offline": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/src/**/*"],
+      "outputs": [],
+      "options": {
+        "command": "node --import tsx --test \"src/**/*.test.ts\"",
+        "cwd": "{projectRoot}"
+      }
+    },
     "build:types": {
       "executor": "nx:run-commands",
       "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tsconfig.json"],

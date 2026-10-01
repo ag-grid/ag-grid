@@ -84,6 +84,18 @@ These are enforced in code, not by convention:
 - **Offline self-test** of the CloudFront pattern matcher, the robots.txt evaluator, the WAF
   transforms and the markdown-twin mapping runs before any request.
 
+## Offline tests
+
+The guard, the AWS error classification and the WAF structure checks have offline tests that use
+a fake AWS client and no network (`src/**/*.test.ts`, fixtures in `src/testing/fakes.ts`). They are
+not part of the repo's Vitest workspace or `./behave.sh`; run them with:
+
+```bash
+NX_DAEMON=false yarn nx run ag-grid-edge-verification:test:offline
+# or, from testing/edge-verification:
+node --import tsx --test "src/**/*.test.ts"
+```
+
 ## What it covers
 
 Areas, in report order (the `--only` names). Counts are checks per area (pending / known issue).
