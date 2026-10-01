@@ -70,8 +70,14 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --apply) APPLY=1; shift;;
         --skip-unrecognised) SKIP_UNRECOGNISED=1; shift;;
-        --site) SITES+=("${2:-}"); shift 2;;
-        --version) ONLY_VERSION="${2:-}"; shift 2;;
+        --site|--version)
+            # Check the value exists first: `shift 2` on a trailing option fails without
+            # consuming it, which would loop forever.
+            if [ $# -lt 2 ] || [ -z "$2" ] || [[ "$2" == -* ]]; then
+                echo "$1 needs a value"; usage; exit 2
+            fi
+            if [ "$1" = "--site" ]; then SITES+=("$2"); else ONLY_VERSION="$2"; fi
+            shift 2;;
         -h|--help) usage; exit 0;;
         -*) echo "Unknown option $1"; usage; exit 2;;
         *) [ -z "$HOST" ] || { usage; exit 2; }; HOST="$1"; shift;;
@@ -125,8 +131,14 @@ for site in "${SITES[@]}"; do
     if ! dirs="$("${SSH[@]}" "ls -1 '$root/archive'")"; then
         echo "Could not list $root/archive on $HOST - exiting."; exit 1
     fi
-    # One listing of the archive .htaccess files rather than a round trip per version.
-    withFile="$("${SSH[@]}" "cd '$root/archive' && ls -1 */.htaccess 2>/dev/null" | sed 's#/\.htaccess$##')"
+    # One listing of the archive .htaccess files rather than a round trip per version. The end
+    # marker separates "no archive has its own .htaccess" from a failed ssh or cd, which would
+    # otherwise look identical (an empty listing) and report nothing to patch.
+    if ! listing="$("${SSH[@]}" "cd '$root/archive' && for f in */.htaccess; do [ -f \"\$f\" ] && echo \"\${f%/.htaccess}\"; done; echo __END_OF_LISTING__")" \
+        || [ "$(printf '%s\n' "$listing" | tail -n 1)" != "__END_OF_LISTING__" ]; then
+        echo "Could not list the .htaccess files under $root/archive on $HOST - exiting."; exit 1
+    fi
+    withFile="$(printf '%s\n' "$listing" | sed '$d')"
     versions="$(printf '%s\n' "$dirs" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V)"
     without=()
     for v in $versions; do
