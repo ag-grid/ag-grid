@@ -498,6 +498,8 @@ export function wafChecks(): CheckDef[] {
                     return fail('scope-down is not NOT(any of the exempt path prefixes)');
                 }
                 const p = new Problems();
+                // The outer rule name says nothing about the group it runs.
+                p.eq('managed group', `${s.VendorName}/${s.Name}`, 'AWS/AWSManagedRulesCommonRuleSet');
                 p.check(
                     exempt.every((l) => l.kind === 'byte' && l.field === 'UriPath' && l.positional === 'STARTS_WITH'),
                     'scope-down exempts something other than UriPath prefixes'
@@ -875,6 +877,12 @@ export function wafChecks(): CheckDef[] {
                 p.eq('shape', !!bm, true);
                 p.eq('header', bm?.FieldToMatch?.SingleHeader?.Name?.toLowerCase(), ALB_ACL.originVerifyHeader);
                 p.eq('positional', bm?.PositionalConstraint, 'EXACTLY');
+                // EXACTLY compares after the transformations: any but NONE normalises the header.
+                p.eq(
+                    'transforms',
+                    (bm?.TextTransformations ?? []).map((t: any) => t.Type),
+                    ['NONE']
+                );
                 return p.outcome(`secret ${describeSecret(decodeSearchString(bm?.SearchString))}`);
             },
         },

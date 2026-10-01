@@ -203,6 +203,7 @@ export function cfAclRules(): any[] {
         ),
         rule('AWS-AWSManagedRulesCommonRuleSet', {
             ManagedRuleGroupStatement: {
+                VendorName: 'AWS',
                 Name: 'AWSManagedRulesCommonRuleSet',
                 ScopeDownStatement: not(
                     or(...CF_ACL.commonRuleSetExemptPrefixes.map((p) => byte('UriPath', 'STARTS_WITH', p)))
