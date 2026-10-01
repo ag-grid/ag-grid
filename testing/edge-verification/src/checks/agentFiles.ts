@@ -1,6 +1,6 @@
 import { markdownLinks, markdownSections, twinOf } from '../core/html';
 import { type Http, describeChain, header } from '../core/http';
-import { type CheckDef, Problems, fail, pass } from '../core/types';
+import { type CheckDef, Problems, budgeted, fail, pass } from '../core/types';
 import {
     ADVERTISED_LINKS,
     AGENT_SITES,
@@ -46,8 +46,8 @@ function sample<T>(items: T[], n: number): T[] {
     return Array.from({ length: n }, (_, i) => items[Math.floor(((i + 0.5) * items.length) / n)]);
 }
 
-async function checkAll(http: Http, urls: string[]): Promise<{ failures: string[]; checked: number }> {
-    const failures: string[] = [];
+/** Resolves each URL, adding every failure to `p` as it is found; returns how many were checked. */
+async function checkAll(http: Http, urls: string[], p: Problems): Promise<number> {
     let checked = 0;
     for (const url of urls) {
         if (KNOWN_BROKEN[url] || IGNORED_LINKS.has(url)) {
@@ -56,10 +56,10 @@ async function checkAll(http: Http, urls: string[]): Promise<{ failures: string[
         checked++;
         const problem = await resolves(http, url);
         if (problem) {
-            failures.push(problem);
+            p.add(problem);
         }
     }
-    return { failures, checked };
+    return checked;
 }
 
 function siteChecks(site: AgentSite): CheckDef[] {
@@ -92,19 +92,19 @@ function siteChecks(site: AgentSite): CheckDef[] {
             area: 'agent-files',
             title: `Every curated link in ${site.id} llms.txt and AGENTS.md resolves (200, at most 1 redirect)`,
             refs: ['SE-77', 'SE-79', 'waf-finding.md §13 T8'],
-            async run({ http }) {
+            run: budgeted(async ({ http }, p) => {
                 const curated = linksIn(await fetchSections(http, site), site.curated);
                 const agents = markdownLinks((await http.get(site.agents)).body);
-                const { failures, checked } = await checkAll(http, [...new Set([...curated, ...agents])]);
-                return failures.length ? fail(failures.join('; ')) : pass(`${checked} links`);
-            },
+                const checked = await checkAll(http, [...new Set([...curated, ...agents])], p);
+                return p.outcome(`${checked} links`);
+            }),
         },
         {
             id: `${prefix}.md-twins`,
             area: 'agent-files',
             title: `The .md twins ${site.id} advertises resolve as text/markdown`,
             refs: ['SE-80', 'SE-77'],
-            async run({ http, opts }) {
+            run: budgeted(async ({ http, opts }, p) => {
                 const sections = await fetchSections(http, site);
                 const links = linksIn(sections, site.curated);
                 const explicit = links.filter((l) => l.endsWith('.md'));
@@ -121,7 +121,6 @@ function siteChecks(site: AgentSite): CheckDef[] {
                     }
                 }
                 const twins = [...new Set([...explicit, ...pages])];
-                const p = new Problems();
                 for (const twin of twins) {
                     if (KNOWN_BROKEN[twin] || IGNORED_LINKS.has(twin)) {
                         continue;
@@ -133,17 +132,17 @@ function siteChecks(site: AgentSite): CheckDef[] {
                     );
                 }
                 return p.outcome(`${twins.length} twins`);
-            },
+            }),
         },
         {
             id: `${prefix}.index-links`,
             area: 'agent-files',
             title: `${site.id} llms.txt index links resolve (sample of ${INDEX_SAMPLE_SIZE}, all with --full-links)`,
             refs: ['SE-77', 'waf-finding.md §13 T8'],
-            async run({ http, opts }) {
+            run: budgeted(async ({ http, opts }, p) => {
                 const all = linksIn(await fetchSections(http, site), site.index);
                 const chosen = opts.fullLinks ? all : sample(all, INDEX_SAMPLE_SIZE);
-                const { failures, checked } = await checkAll(http, chosen);
+                const checked = await checkAll(http, chosen, p);
                 if (!opts.fullLinks) {
                     const direct: string[] = [];
                     for (const link of chosen) {
@@ -152,13 +151,10 @@ function siteChecks(site: AgentSite): CheckDef[] {
                             direct.push(twin);
                         }
                     }
-                    const twins = await checkAll(http, direct);
-                    failures.push(...twins.failures);
+                    await checkAll(http, direct, p);
                 }
-                return failures.length
-                    ? fail(failures.join('; '))
-                    : pass(`${checked} of ${all.length} index links (+ twins)`);
-            },
+                return p.outcome(`${checked} of ${all.length} index links (+ twins)`);
+            }),
         },
         {
             id: `${prefix}.agents-md`,
@@ -233,9 +229,8 @@ export function agentFileChecks(): CheckDef[] {
             area: 'agent-files',
             title: '/.well-known/mcp/server-card.json names ag-mcp over stdio and its links resolve',
             refs: ['SE-79'],
-            async run({ http }) {
+            run: budgeted(async ({ http }, p) => {
                 const res = await http.get(SERVER_CARD.url);
-                const p = new Problems();
                 p.eq('status', res.status, 200);
                 p.check(
                     /^application\/json/.test(header(res, 'content-type') ?? ''),
@@ -259,7 +254,7 @@ export function agentFileChecks(): CheckDef[] {
                     p.check(!problem, `${url}: ${problem}`);
                 }
                 return p.outcome();
-            },
+            }),
         },
         {
             id: 'agent-files.archive-llms',

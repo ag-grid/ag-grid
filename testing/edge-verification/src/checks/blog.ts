@@ -1,6 +1,6 @@
 import { jsonLdNodes, linkHrefs, metaContents } from '../core/html';
 import { headerAll } from '../core/http';
-import { type CheckDef, Problems } from '../core/types';
+import { type CheckDef, Problems, budgeted } from '../core/types';
 import { expectHeader, expectSecurityHeaders, isNoindexed } from './headers';
 
 const BLOG = 'https://www.ag-grid.com/blog';
@@ -90,14 +90,13 @@ export function blogChecks(): CheckDef[] {
             area: 'blog',
             title: 'Pagination, author and static pages resolve under /blog/',
             refs: ['SE-88', 'SE-91'],
-            async run({ http }) {
-                const p = new Problems();
+            run: budgeted(async ({ http }, p) => {
                 for (const path of ['/page/2/', '/author/sean/', '/newsletter/']) {
                     const res = await http.head(`${BLOG}${path}`);
                     p.check(res.status === 200, `${path}: ${res.status}`);
                 }
                 return p.outcome();
-            },
+            }),
         },
         {
             id: 'blog.404',

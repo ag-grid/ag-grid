@@ -1,5 +1,5 @@
 import { MARKDOWN_ACCEPT, type Response, describeChain, header, headerTokens } from '../core/http';
-import { type CheckDef, Problems, fail, pass, skip } from '../core/types';
+import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/types';
 import {
     BACKUP_NAME,
     MIGRATED_SITES,
@@ -72,8 +72,7 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
             title: `${base}/{${leaks.join(',')}} stay inside the archive (404, or a redirect within ${base}/)`,
             pending: MIGRATION_PENDING,
             ...lifecycle,
-            async run({ http }) {
-                const p = new Problems();
+            run: budgeted(async ({ http }, p) => {
                 const seen: string[] = [];
                 for (const leak of leaks) {
                     const res = await http.head(`${WWW}${base}/${leak}`);
@@ -86,7 +85,7 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
                     }
                 }
                 return p.outcome(seen.join('; '));
-            },
+            }),
         });
     }
 
