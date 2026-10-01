@@ -1781,13 +1781,18 @@
     .ag-rich-select-field-input {
         flex: 1 1 auto;
         .ag-input-field-input {
-            padding: 0 !important;
+            padding-block: 0 !important;
+            padding-inline-end: 0 !important;
             border: none !important;
             box-shadow: none !important;
             text-overflow: ellipsis;
             &::placeholder {
                 opacity: 0.8;
             }
+        }
+        // with a search icon, the input keeps the start padding that the search input style gives it
+        &:not(.ag-input-field-search) .ag-input-field-input {
+            padding-inline-start: 0 !important;
         }
     }
 

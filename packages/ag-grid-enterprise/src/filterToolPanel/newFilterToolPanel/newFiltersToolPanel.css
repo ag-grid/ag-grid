@@ -147,11 +147,6 @@
     /** These all need different styling when used within the new filter tool panel compared to the existing use case within editors  */
 
     /* stylelint-disable-next-line selector-max-specificity */
-    .ag-text-field-input {
-        padding-inline-start: calc(var(--ag-icon-size) + var(--ag-spacing) * 2) !important;
-    }
-
-    /* stylelint-disable-next-line selector-max-specificity */
     .ag-rich-select-value {
         padding: calc(
                 ((1.5 * var(--ag-font-size) + 2 * var(--ag-button-vertical-padding)) - var(--ag-input-height)) / 2
