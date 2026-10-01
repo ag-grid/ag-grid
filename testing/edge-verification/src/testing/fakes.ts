@@ -6,6 +6,7 @@ import { Live } from '../core/live';
 import type { Ctx, Options } from '../core/types';
 import {
     ACCOUNT_ID,
+    ALB_ACL,
     BEHAVIOURS,
     CACHE_POLICIES,
     CF_ACL,
@@ -305,6 +306,45 @@ export function cfAclRules(): any[] {
 
 export const cfAclHandlers = (rules = cfAclRules()): Record<string, Handler> => ({
     'wafv2 get-web-acl': () => ({ WebACL: { Name: CF_ACL.name, ARN: 'arn:fixture', Rules: rules } }),
+});
+
+/** The ALB ACL in the shape waf-config.alb.rules expects, CRS scoped down by NOT(UriPath STARTS_WITH the exempt prefix). */
+export function albAclRules(): any[] {
+    const managed = (Name: string, extra: any = {}): any => ({
+        ManagedRuleGroupStatement: { VendorName: 'AWS', Name: Name.replace(/^AWS-/, ''), ...extra },
+    });
+    const statements: Record<string, any> = {
+        'block-non-cloudfront-origin': not(byte(`header:${ALB_ACL.originVerifyHeader}`, 'EXACTLY', 'x'.repeat(40))),
+        'AWS-AWSManagedRulesAmazonIpReputationList': managed('AWS-AWSManagedRulesAmazonIpReputationList', {
+            RuleActionOverrides: ALB_ACL.ipReputationOverrides.map((o) => ({
+                Name: o.name,
+                ActionToUse: { [o.action]: {} },
+            })),
+        }),
+        'AWS-AWSManagedRulesKnownBadInputsRuleSet': managed('AWS-AWSManagedRulesKnownBadInputsRuleSet'),
+        'AWS-AWSManagedRulesCommonRuleSet': managed('AWS-AWSManagedRulesCommonRuleSet', {
+            ScopeDownStatement: not(byte('UriPath', 'STARTS_WITH', ALB_ACL.commonRuleSetExemptPrefix)),
+        }),
+    };
+    const rateLimits: Record<string, number> = ALB_ACL.rateLimits;
+    return [
+        ...ALB_ACL.rules.map((exp, i) => ({
+            Name: exp.name,
+            Priority: i,
+            Statement: statements[exp.name] ?? {
+                RateBasedStatement: { Limit: rateLimits[exp.name], AggregateKeyType: 'IP' },
+            },
+            ...(exp.action === 'None' ? { OverrideAction: { None: {} } } : { Action: { [exp.action]: {} } }),
+            VisibilityConfig: { MetricName: exp.metricName ?? exp.name },
+        })),
+        { Name: 'ShieldMitigationRuleGroup_fixture', Priority: 10000000, OverrideAction: { None: {} } },
+    ];
+}
+
+export const albAclHandlers = (rules = albAclRules()): Record<string, Handler> => ({
+    'wafv2 get-web-acl': () => ({
+        WebACL: { Name: ALB_ACL.name, ARN: 'arn:fixture-alb', DefaultAction: { Allow: {} }, Rules: rules },
+    }),
 });
 
 export function options(overrides: Partial<Options> = {}): Options {
