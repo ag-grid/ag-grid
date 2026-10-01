@@ -198,9 +198,10 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
     });
 
     describe("a custom filter's own floating element with the class", () => {
+        let floatingParent: HTMLElement;
+        let floating: HTMLElement | undefined;
+
         class FilterWithFloatingElement implements IFilterComp {
-            static floatingParent: HTMLElement;
-            static floating: HTMLElement | undefined;
             private readonly eGui = document.createElement('div');
 
             getGui(): HTMLElement {
@@ -208,15 +209,14 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
             }
 
             afterGuiAttached(): void {
-                const floating = document.createElement('div');
+                floating = document.createElement('div');
                 floating.classList.add(CUSTOM_POPUP_CLASS);
-                FilterWithFloatingElement.floatingParent.appendChild(floating);
-                FilterWithFloatingElement.floating = floating;
+                floatingParent.appendChild(floating);
             }
 
             destroy(): void {
-                FilterWithFloatingElement.floating?.remove();
-                FilterWithFloatingElement.floating = undefined;
+                floating?.remove();
+                floating = undefined;
             }
 
             isFilterActive(): boolean {
@@ -234,15 +234,15 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
             setModel(): void {}
         }
 
-        async function openCustomFilter(gridParent: HTMLElement, floatingParent: HTMLElement): Promise<HTMLElement> {
-            FilterWithFloatingElement.floatingParent = floatingParent;
+        async function openCustomFilter(gridParent: HTMLElement, parentOfFloating: HTMLElement): Promise<HTMLElement> {
+            floatingParent = parentOfFloating;
             const api = await createGridIn(gridParent, {
                 columnDefs: [{ field: 'name', filter: FilterWithFloatingElement }],
             });
             api.showColumnFilter('name');
             await waitForPopupListeners();
-            await waitFor(() => expect(FilterWithFloatingElement.floating).toBeDefined());
-            return FilterWithFloatingElement.floating!;
+            await waitFor(() => expect(floating).toBeDefined());
+            return floating!;
         }
 
         test('keeps the filter open on mousedown on a floating element appended to the body', async () => {

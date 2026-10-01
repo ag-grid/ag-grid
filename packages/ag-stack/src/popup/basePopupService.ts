@@ -720,8 +720,7 @@ export abstract class BasePopupService<
 
         // if the user did not write their own Custom Element to be rendered as popup
         // and this component has an additional popup element, they should have the
-        // `ag-custom-component-popup` class to be detected as part of the Custom Component.
-        // A class-bearing ancestor that contains this grid is a container of the grid, not a popup.
+        // `ag-custom-component-popup` class to be detected as part of the Custom Component
         return this.isElementWithinCustomPopup(event.target as HTMLElement);
     }
 
@@ -729,6 +728,7 @@ export abstract class BasePopupService<
         const eDocument = _getDocument(this.beans);
         const eRootDiv = this.beans.eRootDiv;
         while (el && el !== eDocument.body) {
+            // a class-bearing ancestor of our own root is a container, not a component's popup
             if (
                 el.parentElement === null ||
                 (el.classList.contains('ag-custom-component-popup') && !el.contains(eRootDiv))
