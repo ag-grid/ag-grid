@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_SE = {
+export const AG_GRID_LOCALE_SV_SE = {
     // Set Filter
     selectAll: '(Välj alla)',
     selectAllSearchResults: '(Välj alla sökresultat)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_SE = {
     clearFilter: 'Rensa',
     cancelFilter: 'Avbryt',
     cancelColumnToolPanel: 'Avbryt',
+    resetColumnToolPanel: 'Återställ',
 
     // Filter Titles
     textFilter: 'Textfilter',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_SE = {
     advancedFilterValidationMissingCondition: 'Villkor saknas',
     advancedFilterValidationJoinOperatorMismatch: 'Kombinatorer inom ett villkor måste vara desamma',
     advancedFilterValidationInvalidJoinOperator: 'Kombinator hittades inte',
+    advancedFilterValidationMissingListStartBracket: 'Saknar inledande hakparentes',
+    advancedFilterValidationMissingListEndBracket: 'Saknar avslutande hakparentes',
     advancedFilterValidationMissingEndBracket: 'Saknar slutparentes',
     advancedFilterValidationExtraEndBracket: 'För många slutparenteser',
     advancedFilterValidationMessage: 'Uttrycket har ett fel. ${variable} - ${variable}.',
@@ -921,3 +924,6 @@ export const AG_GRID_LOCALE_SE = {
     deleteNote: 'Ta bort anteckning',
     notePlaceholder: 'Lägg till en anteckning...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_SV_SE` instead. */
+export const AG_GRID_LOCALE_SE = AG_GRID_LOCALE_SV_SE;

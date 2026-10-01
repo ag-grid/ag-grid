@@ -54,6 +54,29 @@ export class FilterExpressionParser {
         };
     }
 
+    /**
+     * The expression without the separators the parse found redundant, or null where it keeps them all.
+     * Only a list the caret has left is tidied: before its end bracket another value may still follow.
+     */
+    public stripRedundantSeparators(caretPosition: number): string | null {
+        const separators = this.params.redundantSeparators;
+        if (!separators) {
+            return null;
+        }
+        let expression = this.params.expression;
+        let stripped = false;
+        // Backwards, so removing one span cannot move the next one still to be removed.
+        for (let i = separators.length - 1; i >= 0; --i) {
+            const { startPosition, endPosition } = separators[i];
+            // The end bracket is the character after the span, so a caret past it has left the list.
+            if (caretPosition > endPosition + 1) {
+                expression = expression.slice(0, startPosition) + expression.slice(endPosition + 1);
+                stripped = true;
+            }
+        }
+        return stripped ? expression : null;
+    }
+
     public getAutocompleteListParams(position: number): AutocompleteListParams {
         return this.joinExpressionParser.getAutocompleteListParams(position) ?? { enabled: false };
     }

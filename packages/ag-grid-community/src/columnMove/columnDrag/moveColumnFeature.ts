@@ -491,7 +491,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         let diff = padding;
 
-        if (gos.get('enableRtl') && col.getPinned() === 'left') {
+        if (gos.get('enableRtl') && col.pinnedLane === 0) {
             diff = col.getActualWidth() - padding;
         }
 

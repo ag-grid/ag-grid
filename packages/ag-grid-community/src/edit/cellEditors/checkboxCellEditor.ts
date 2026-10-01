@@ -23,6 +23,8 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
     }
 
     protected readonly eEditor: GridCheckbox = RefPlaceholder;
+    /** Read off the widget, which cannot hold `null`, so an untouched commit would narrow it to `undefined`. */
+    private seededValue: boolean | undefined | this = this;
 
     public initialiseEditor(params: ICellEditorParams<any, boolean>): void {
         this.agSetEditValue(params.value);
@@ -39,11 +41,13 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         this.params.value = value;
         const isSelected = value ?? undefined;
         this.eEditor.setValue(isSelected, true);
+        this.seededValue = this.eEditor.getValue();
         this.setAriaLabel(isSelected);
     }
 
-    public getValue(): boolean | undefined {
-        return this.eEditor.getValue();
+    public getValue(): boolean | null | undefined {
+        const value = this.eEditor.getValue();
+        return value === this.seededValue ? this.params.value : value;
     }
 
     public focusIn(): void {

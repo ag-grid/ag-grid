@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('displays the source data with editing enabled', async ({ agIdFor }) => {
@@ -33,5 +33,34 @@ test.agExample(import.meta, () => {
         await input.press('Enter');
 
         await expect(cell).toContainText('99');
+    });
+
+    test.eachFramework("the editor used follows the column's cell data type", async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+
+        // 'athlete' is inferred as a text column, so it gets the text editor.
+        await agIdFor.cell('0', 'athlete').dblclick();
+        const textInput = page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
+        await expect(textInput).toHaveAttribute('type', 'text');
+        await textInput.press('Escape');
+
+        // 'age' holds numbers, so the same `editable: true` gives a numeric input instead.
+        await agIdFor.cell('0', 'age').dblclick();
+        const numberInput = page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
+        await expect(numberInput).toHaveAttribute('type', 'number');
+        await numberInput.press('Escape');
+    });
+
+    test.eachFramework('Escape discards an in-progress edit', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+
+        const cell = agIdFor.cell('0', 'athlete');
+        await cell.dblclick();
+
+        const input = page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
+        await input.fill('Discarded');
+        await input.press('Escape');
+
+        await expect(cell).toContainText('Michael Phelps');
     });
 });

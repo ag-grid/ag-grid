@@ -74,7 +74,7 @@ const gridOptions = {
 };
 ```
 
-The `bigintParser` and `bigintFormatter` are also passed the grid `api` and `context` as a second argument, along with the `column` and `colDef` they are working on. One callback set on `defaultColDef.filterParams` can therefore serve every column it applies to.
+The `bigintParser` and `bigintFormatter` are also passed the grid `api` and `context` as a second argument, along with the `column` and `colDef` they are working on. One callback set on `defaultColDef.filterParams` can therefore serve every column it applies to. The [Advanced Filter](./filter-advanced/) runs the same callbacks to read and write its operands; `params.source` is `'advancedFilter'` there and `'columnFilter'` here.
 
 ## BigInt Filter Model
 

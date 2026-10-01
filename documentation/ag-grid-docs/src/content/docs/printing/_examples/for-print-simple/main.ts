@@ -11,8 +11,8 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
-    { headerName: 'ID', valueGetter: 'node.rowIndex + 1', width: 70 },
-    { field: 'model', width: 150 },
+    { headerName: 'ID', valueGetter: 'node.rowIndex + 1', width: 70, pinned: 'left' },
+    { field: 'model' },
     { field: 'color' },
     { field: 'price', valueFormatter: '"$" + value.toLocaleString()' },
     { field: 'year' },
@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowData: getData(),
     defaultColDef: {
-        width: 100,
+        width: 150,
     },
 };
 

@@ -1,0 +1,51 @@
+---
+description: A column's cell data type is 'object', which needs a Value Formatter to display and a Value Parser to edit.
+---
+
+## Object Column Without a Formatter
+
+The column named in the message holds values the grid treats as the `'object'` [cell data type](./cell-data-types/#object). An object has no single sensible way to be shown in a cell, or to be turned back into a value after editing, so the grid cannot supply one. Until you provide it, cells show the result of calling `toString()` on the value, usually `[object Object]`.
+
+Which one the message asks for tells you which half is missing:
+
+- Value `Formatter`: the column cannot be displayed. Raised for any object column.
+- Value `Parser`: the column cannot be edited. Raised only when the column has `editable: true`.
+
+### Was the type inferred?
+
+`(inferred)` means the grid worked the type out from your data rather than being told it. Inference reads the value at the column's `field` and falls back to `'object'` when it matches none of the [pre-defined types](./cell-data-types/#pre-defined-cell-data-types), so an inferred object column usually means the field holds a nested object, an array, or a class instance. If that is unexpected, check what the field contains.
+
+Without `(inferred)`, `cellDataType: 'object'` was set explicitly on the column, its column type, or the default column definition.
+
+### Fix it on the column
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            // values are objects of the shape `{ code: 'GBR' }`
+            field: 'countryObject',
+            editable: true,
+            valueFormatter: (params) => (params.value == null ? '' : params.value.code),
+            valueParser: (params) =>
+                params.newValue == null || params.newValue === '' ? null : { code: params.newValue },
+        },
+    ],
+}
+```
+
+{% note %}
+`params.value` can be `null` or `undefined`, for group rows among other cases, so format defensively.
+{% /note %}
+
+### Fix it on a data type definition
+
+Where several columns hold the same shape of object, define your own cell data type once and point the columns at it. Adding a `dataTypeMatcher` also lets inference pick your type rather than falling back to `'object'`. See [Providing Custom Cell Data Types](./cell-data-types/#providing-custom-cell-data-types).
+
+### Or take the column out of the type system
+
+Set `cellDataType: false` on the column to [disable inference](./cell-data-types/#disabling-inference), or on the default column definition to disable it everywhere. Alternatively set a `valueGetter` to derive a primitive from the object, which also prevents inference.
+
+{% note %}
+A [Cell Renderer](./component-cell-renderer/) changes how the cell looks but does not stop the message. Only `valueGetter`, `valueParser`, `refData` and [Sparklines](./sparklines-overview/) prevent inference.
+{% /note %}

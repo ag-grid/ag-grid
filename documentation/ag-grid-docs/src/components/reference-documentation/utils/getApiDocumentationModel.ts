@@ -1,22 +1,23 @@
 import type { Framework } from '@ag-grid-types';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 
-import { AG_MODULE_TAG_NAME } from '../constants';
 import type {
     ApiDocumentationModel,
     ChildDocEntry,
     Config,
     GridModule,
-    ICallSignature,
     InterfaceEntry,
     MetaTag,
+    PropertyViewModel,
 } from '../types';
 import { getDefinitionType } from './getDefinitionType';
 import { getDetailsCode } from './getDetailsCode';
+import { type PropertyResolver, getPropertyViewModel } from './getPropertyViewModel';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
 import { getAllSectionPropertyEntries, mergeObjects } from './interface-helpers';
+import { getDetailsKey } from './referenceDetails';
 
-interface Params {
+interface Params<P> {
     framework: Framework;
     sources: string[];
     section: string;
@@ -27,55 +28,8 @@ interface Params {
     interfaceLookup: Record<string, InterfaceEntry>;
     codeConfigs: Record<string, any>;
     allModules: GridModule[];
-}
-
-function addEnterprisePropertyToTags({
-    callSignature,
-    allModules,
-}: {
-    callSignature: ICallSignature;
-    allModules: GridModule[];
-}) {
-    if (!callSignature?.meta?.tags) {
-        return callSignature;
-    }
-
-    const newTags = callSignature.meta?.tags.map((tag) => {
-        if (tag.name === AG_MODULE_TAG_NAME) {
-            const tagModule = tag.comment.replace(/`/g, '');
-
-            const modules = tagModule
-                .split(/\s*\/\s*/)
-                .map((m) => {
-                    const name = m.trim();
-                    if (!name) {
-                        return false;
-                    }
-
-                    const module = allModules.find((mod) => mod.moduleName === name);
-                    return {
-                        name,
-                        isEnterprise: module?.isEnterprise,
-                    };
-                })
-                .filter(Boolean);
-
-            return {
-                ...tag,
-                modules,
-            };
-        }
-
-        return tag;
-    });
-
-    return {
-        ...callSignature,
-        meta: {
-            ...callSignature.meta,
-            tags: newTags,
-        },
-    };
+    /** Defaults to the page's view model; the markdown twin passes its own. */
+    resolveProperty?: PropertyResolver<P>;
 }
 
 function getCodeLookup({ propertyConfigs, codeConfigs }: { propertyConfigs: any[]; codeConfigs: Record<string, any> }) {
@@ -90,22 +44,26 @@ function getCodeLookup({ propertyConfigs, codeConfigs }: { propertyConfigs: any[
     return codeLookup;
 }
 
-function getResolvedProperties({
+function getResolvedProperties<P>({
     framework,
+    sectionKey,
     names,
     properties,
     codeLookup,
     interfaceLookup,
     config,
     allModules,
+    resolveProperty,
 }: {
     framework: Framework;
+    sectionKey: string;
     names?: string[];
     properties: Record<string, any>;
     codeLookup: Record<string, any>;
     interfaceLookup: Record<string, InterfaceEntry>;
     config: Config;
     allModules: GridModule[];
+    resolveProperty: PropertyResolver<P>;
 }) {
     const { meta, ...processedProperties } = properties;
 
@@ -120,11 +78,7 @@ function getResolvedProperties({
             return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
         })
         .map(([name, definition]) => {
-            const codeLookUpGridOpProp = codeLookup[name];
-            const gridOpProp = addEnterprisePropertyToTags({
-                callSignature: codeLookUpGridOpProp,
-                allModules,
-            });
+            const gridOpProp = codeLookup[name];
             const showAdditionalDetails = getShowAdditionalDetails({ name, definition, gridOpProp, interfaceLookup });
             const { type, propertyType } = getDefinitionType({
                 name,
@@ -149,20 +103,28 @@ function getResolvedProperties({
 
             return [
                 name,
-                {
+                resolveProperty({
+                    name,
+                    framework,
                     definition,
                     gridOpProp,
-                    detailsCode,
+                    type,
                     propertyType,
-                },
+                    config,
+                    allModules,
+                    // A detailsUrl means the page fetches these on expand; without one they travel with it.
+                    detailsKey:
+                        detailsCode && config.detailsUrl ? getDetailsKey({ section: sectionKey, name }) : undefined,
+                    detailsCode: config.detailsUrl ? undefined : detailsCode,
+                }),
             ];
         });
-    const resolvedProperties = Object.fromEntries(resolvedPropertyEntries);
+    const resolvedProperties: Record<string, P> = Object.fromEntries(resolvedPropertyEntries);
 
     return { meta, resolvedProperties };
 }
 
-function getSectionProperties({
+function getSectionProperties<P>({
     framework,
     section,
     names,
@@ -171,6 +133,7 @@ function getSectionProperties({
     interfaceLookup,
     config,
     allModules,
+    resolveProperty,
 }: {
     framework: Framework;
     section: string;
@@ -181,6 +144,7 @@ function getSectionProperties({
     gridOpProp?: InterfaceEntry;
     config: Config;
     allModules: GridModule[];
+    resolveProperty: PropertyResolver<P>;
 }) {
     const keys = section.split('.');
     const title = keys[keys.length - 1];
@@ -200,12 +164,14 @@ function getSectionProperties({
     const properties = mergeObjects(processed);
     const { meta, resolvedProperties } = getResolvedProperties({
         framework,
+        sectionKey: title,
         names,
         properties,
         codeLookup,
         interfaceLookup,
         config,
         allModules,
+        resolveProperty,
     });
 
     return {
@@ -215,7 +181,7 @@ function getSectionProperties({
     };
 }
 
-export function getApiDocumentationModel({
+export function getApiDocumentationModel<P = PropertyViewModel>({
     framework,
     sources,
     section,
@@ -226,7 +192,8 @@ export function getApiDocumentationModel({
     interfaceLookup,
     codeConfigs,
     allModules,
-}: Params): ApiDocumentationModel | undefined {
+    resolveProperty = getPropertyViewModel as PropertyResolver<P>,
+}: Params<P>): ApiDocumentationModel<P> | undefined {
     if (!sources || sources.length < 1) {
         return undefined;
     }
@@ -248,6 +215,7 @@ export function getApiDocumentationModel({
             interfaceLookup,
             config,
             allModules,
+            resolveProperty,
         });
 
         return {
@@ -263,15 +231,17 @@ export function getApiDocumentationModel({
         ([name, properties]) => {
             const { meta, resolvedProperties } = getResolvedProperties({
                 framework,
+                sectionKey: name,
                 names,
                 properties,
                 codeLookup,
                 interfaceLookup,
                 config,
                 allModules,
+                resolveProperty,
             });
 
-            return [name, { meta: meta as MetaTag, properties: resolvedProperties as ChildDocEntry }];
+            return [name, { meta: meta as MetaTag, properties: resolvedProperties }];
         }
     );
 

@@ -27,6 +27,18 @@ export interface FilterState {
     selectableFilters?: SelectableFilterState;
 }
 
+export interface FindState {
+    /** Current search value */
+    searchValue?: string;
+    /** The number of the active match within all the matches in the grid (starting from `1`) */
+    activeMatch?: number;
+}
+
+export interface QuickFilterState {
+    /** Search text, mirroring the `quickFilterText` grid option. Absent when the text is empty. */
+    text?: string;
+}
+
 export interface CellSelectionCellState {
     id?: string;
     type?: CellRangeType;
@@ -100,7 +112,7 @@ export interface PaginationState {
 }
 
 export interface SortState {
-    /** Sorted columns and directions in order */
+    /** Sorted columns and directions, ordered by `sortIndex` */
     sortModel: SortModelItem[];
 }
 
@@ -239,9 +251,25 @@ export interface GridState {
     columnHeaderName?: ColumnHeaderNameState;
     /** Column Filters and Advanced Filter */
     filter?: FilterState;
+    /**
+     * Find search value and active match. Works for Client-Side Row Model only, and only when the
+     * Quick Access Toolbar is configured with `agFindToolbarItem`; otherwise the `findSearchValue`
+     * grid option is the only source
+     */
+    find?: FindState;
+    /**
+     * Quick Filter search text. Only captured and restored when the Quick Access Toolbar is configured with
+     * `agQuickFilterToolbarItem`; otherwise the `quickFilterText` grid option is the only source
+     */
+    quickFilter?: QuickFilterState;
     /** Currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;
-    /** Current page */
+    /**
+     * Current page and page size. With the Server Side Row Model or Infinite Row Model, restoring a page
+     * beyond the rows the grid already knows about needs `serverSideInitialRowCount` or
+     * `infiniteInitialRowCount` respectively set high enough to cover it, otherwise the grid restores the
+     * last page it knows about instead.
+     */
     pagination?: PaginationState;
     /** Currently manually pinned rows */
     rowPinning?: RowPinningState;
@@ -271,7 +299,7 @@ export interface GridState {
     scroll?: ScrollState;
     /** Current Side Bar positioning and opened tool panel, including the state of each open tool panel */
     sideBar?: SideBarState;
-    /** Current sort columns and direction (column state) */
+    /** Current sort columns and direction, ordered by `sortIndex` (column state) */
     sort?: SortState;
     /** The per-column "Show Values As" mode (column state) */
     showValuesAs?: ShowValuesAsState;
@@ -282,11 +310,11 @@ export interface GridState {
      */
     userColumns?: UserColumnState[];
     /**
-     * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
-     * This controls which top-level sections are supplied, not whether a section may itself be partial:
-     * any section you provide must match its documented shape.
-     * Not required if passing the whole state object retrieved from the grid.
-     * Not used for `api.setState()`, as that instead takes a second argument of properties to ignore.
+     * Set to `true` when `initialState` supplies some but not all of the column state sections.
+     * Without it, the omitted sections are reset, overriding column definition values such as `hide`, `pinned`
+     * or `aggFunc`.
+     * - Not required when passing the whole state object retrieved from the grid.
+     * - Ignored by `api.setState`; use the second argument `propertiesToIgnore` to leave sections untouched.
      */
     partialColumnState?: boolean;
 }

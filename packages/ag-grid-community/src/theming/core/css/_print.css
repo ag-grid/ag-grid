@@ -22,6 +22,15 @@
     .ag-body-horizontal-scroll {
         display: none;
     }
+
+    /* the grid must shrink to its columns rather than the width measured from
+       the container, otherwise the print engine scales the whole page down */
+    .ag-grid-scrollable-area,
+    .ag-grid-scrolling-container,
+    .ag-header-row,
+    .ag-full-width-anchor {
+        width: auto !important;
+    }
 }
 
 @media print {

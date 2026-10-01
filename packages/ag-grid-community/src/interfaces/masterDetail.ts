@@ -1,3 +1,5 @@
+import type { IEventEmitter } from 'ag-stack';
+
 import type { GridApi } from '../api/gridApi';
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
@@ -55,11 +57,12 @@ export interface IDetailCellRendererCtrl extends Bean {
     refresh(): boolean;
 }
 
-export interface IMasterDetailService {
+export interface IMasterDetailService extends IEventEmitter<'masterChanged'> {
     store: { [id: string]: DetailGridInfo | undefined };
 
     setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void;
     setMaster(row: RowNode, created: boolean, updated: boolean): void;
+    hasExpandableMasterRows(): boolean;
     /** Used by flatten stage to get or create a detail node from a master node */
     getDetail(masterNode: RowNode): RowNode | null;
     refreshModel(params: RefreshModelParams): void;

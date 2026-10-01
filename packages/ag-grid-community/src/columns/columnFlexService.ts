@@ -20,7 +20,8 @@ type FlexItem = {
 export class ColumnFlexService extends BeanStub implements NamedBean {
     beanName = 'colFlex' as const;
 
-    private flexViewportWidth: number;
+    /** The last centre width handed to the flex pass, recorded even when the pass then flexes nothing. */
+    public flexViewportWidth = 0;
     public columnsHidden = false;
 
     public refreshFlexedColumns(

@@ -15,10 +15,24 @@
  */
 (function () {
     var INJECTED_STYLE_SELECTOR = 'style[data-ag-css], style[data-ag-charts]';
+    // Kept in step with persist-cookie-consent.js, which marks its placeholders the same way.
+    var PLACEHOLDER_ATTR = 'data-ag-persist-placeholder';
     var nextPersistId = 0;
+
+    // A placeholder is inert and single-use: one still live has outlived its swap and duplicates a persist id.
+    function sweepStalePlaceholders() {
+        var stale = document.querySelectorAll('[' + PLACEHOLDER_ATTR + ']');
+
+        for (var i = 0, len = stale.length; i < len; ++i) {
+            stale[i].remove();
+        }
+    }
 
     document.addEventListener('astro:before-swap', function (event) {
         var newDocument = event.newDocument;
+
+        sweepStalePlaceholders();
+
         var styles = document.head.querySelectorAll(INJECTED_STYLE_SELECTOR);
 
         for (var i = 0, len = styles.length; i < len; ++i) {
@@ -30,6 +44,7 @@
 
             var placeholder = newDocument.createElement('style');
             placeholder.dataset.astroTransitionPersist = style.dataset.astroTransitionPersist;
+            placeholder.setAttribute(PLACEHOLDER_ATTR, '');
             newDocument.head.appendChild(placeholder);
         }
     });

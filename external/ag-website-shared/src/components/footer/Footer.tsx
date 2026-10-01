@@ -1,4 +1,4 @@
-import type { FooterItem } from '@ag-grid-types';
+import type { FooterItem, FooterLink } from '@ag-grid-types';
 import { DevToolsToggle } from '@ag-website-shared/components/dev-tools/DevTools';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
@@ -13,16 +13,16 @@ interface FooterProps {
     footerItems: FooterItem[];
 }
 
+const toggleCookiesPrefs = (event) => {
+    event.preventDefault();
+
+    if (!window.__enzuzoApi) return;
+
+    window.__enzuzoApi.prefCenter.show();
+};
+
 const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const slugger = new GithubSlugger();
-
-    const toggleCookiesPrefs = (event) => {
-        event.preventDefault();
-
-        if (!window.__enzuzoApi) return;
-
-        window.__enzuzoApi.prefCenter.show();
-    };
 
     return footerItems.map(({ title, links }) => {
         // Associate each link list with its (non-heading) title so assistive tech still announces the
@@ -34,7 +34,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
                     {title}
                 </span>
                 <ul className="list-style-none" aria-labelledby={titleId}>
-                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: any) => (
+                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: FooterLink) => (
                         <li key={`${title}_${name}`}>
                             <a
                                 id={`${slugger.slug(name)}-nav`}
@@ -54,7 +54,33 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     });
 };
 
+// Separators between the links are drawn in CSS so they stay out of the accessibility tree.
+const LegalLinks = ({ group }: { group: FooterItem }) => {
+    const slugger = new GithubSlugger();
+
+    return (
+        <ul className={classNames('list-style-none', 'text-sm', styles.legalLinks)} aria-label={group.title}>
+            {group.links.map(({ name, url, newTab, showCookiesPrefs }: FooterLink) => (
+                <li key={name}>
+                    <a
+                        id={`${slugger.slug(name)}-nav`}
+                        tabIndex={0}
+                        href={urlWithBaseUrl(url)}
+                        onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
+                        {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                    >
+                        {name}
+                    </a>
+                </li>
+            ))}
+        </ul>
+    );
+};
+
 export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
+    const columns = footerItems.filter((item) => !item.placement);
+    const legalGroup = footerItems.find((item) => item.placement === 'legal');
+
     return (
         <footer className={styles.footer}>
             <div className={classNames(styles.footerColumns, 'layout-grid')}>
@@ -93,8 +119,13 @@ export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
                         )}
                     </div>
                 </div>
-                <MenuColumns footerItems={footerItems} />
+                <MenuColumns footerItems={columns} />
             </div>
+            {legalGroup && (
+                <div className={classNames(styles.legalBar, 'layout-grid')}>
+                    <LegalLinks group={legalGroup} />
+                </div>
+            )}
         </footer>
     );
 };

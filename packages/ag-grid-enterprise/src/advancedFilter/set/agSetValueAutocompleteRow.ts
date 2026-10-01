@@ -2,13 +2,10 @@ import type { UserCompDetails } from 'ag-grid-community';
 import { _createElement } from 'ag-grid-community';
 
 import { AgAutocompleteRow } from '../autocomplete/agAutocompleteRow';
-import { SET_TREE_SEPARATOR } from './setOperandsParser';
-
-const PATH_SEPARATOR = ` ${SET_TREE_SEPARATOR} `;
 
 /**
  * Draws back the first `length` characters of the label, whatever nodes the match highlighting left
- * there: a searched path names its leaf, and the groups above it are context for reading that name.
+ * there: a path names its leaf, and the groups above it are context for reading that name.
  */
 const deEmphasisePrefix = (label: HTMLElement, length: number): void => {
     const ePrefix = _createElement({ tag: 'span', cls: 'ag-autocomplete-row-path-parent' });
@@ -31,14 +28,15 @@ const deEmphasisePrefix = (label: HTMLElement, length: number): void => {
     label.prepend(ePrefix);
 };
 
-/** A Set Filter value in the autocomplete: the column's own cell renderer, and a group's child count. */
+/** A Set Filter value in the autocomplete: the column's own cell renderer, and a path's parent segments. */
 export class AgSetValueAutocompleteRow extends AgAutocompleteRow {
     /** Decided when the row renders, not when the renderer arrives: a framework one lands a tick later. */
     private rendererOwnsLabel = false;
 
     constructor(
         value: string,
-        private readonly childCount: number | undefined,
+        /** How much of `value` names the groups above the leaf; 0 where the value is not a path. */
+        private readonly parentLength: number,
         private readonly createCellRenderer: (() => UserCompDetails | undefined) | undefined
     ) {
         super();
@@ -77,21 +75,22 @@ export class AgSetValueAutocompleteRow extends AgAutocompleteRow {
     }
 
     protected override afterLabelRendered(): void {
-        const value = this.value;
-        // Only a searched match displays a path; a renderer owns its own content, so it is left alone.
-        const separator = this.rendererOwnsLabel ? -1 : (value?.lastIndexOf(PATH_SEPARATOR) ?? -1);
-        if (separator >= 0) {
-            deEmphasisePrefix(this.getLabel(), separator + PATH_SEPARATOR.length);
-        }
-        const childCount = this.childCount;
-        if (childCount == null) {
+        const parentLength = this.parentLength;
+        if (!parentLength) {
             return;
         }
-        this.getLabel().appendChild(
+        const label = this.getLabel();
+        if (!this.rendererOwnsLabel) {
+            deEmphasisePrefix(label, parentLength);
+            return;
+        }
+        // A renderer draws the leaf alone, which in a flat list of paths leaves nothing telling two rows
+        // apart, so the parents are written beside it rather than taken out of it.
+        label.prepend(
             _createElement({
                 tag: 'span',
-                cls: 'ag-autocomplete-row-group-count',
-                children: ` [${childCount}]`,
+                cls: 'ag-autocomplete-row-path-parent',
+                children: this.value!.slice(0, parentLength),
             })
         );
     }

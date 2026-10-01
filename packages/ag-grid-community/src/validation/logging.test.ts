@@ -1,12 +1,15 @@
 import type { MockInstance } from 'vitest';
 
 import * as logModule from '../utils/log';
-import type { CapturedDiagnostic, MissingModuleReportParams } from './logging';
+import type { CapturedDiagnostic } from './logging';
 import {
     _addDiagnosticListener,
     _configureDiagnostics,
     _deprecatedForGrid,
+    _errMsg,
     _errorForGrid,
+    _errorToThrowForGrid,
+    _errorToThrowWithoutAttribution,
     _errorWithoutAttribution,
     _logPreInitErr,
     _logPreInitWarn,
@@ -218,6 +221,51 @@ describe('grid attribution', () => {
     });
 });
 
+describe('errors to throw', () => {
+    test('captures the error for its grid and returns it without logging', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        const error = _errorToThrowForGrid('own-grid', 11);
+
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toBe(_errMsg(11));
+        expect(received.map((e) => [e.id, e.severity, e.gridId])).toEqual([[11, 'error', 'own-grid']]);
+        // The caller's throw reaches the console, so logging here would duplicate it.
+        expect(mockErrorOnce).not.toHaveBeenCalled();
+        off();
+    });
+
+    test('captures an unattributed error untied', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        const error = _errorToThrowWithoutAttribution(11);
+
+        expect(error.message).toBe(_errMsg(11));
+        expect(received.map((e) => [e.id, e.gridId])).toEqual([[11, undefined]]);
+        off();
+    });
+
+    test('does not capture a suppressed id, but still returns the error', () => {
+        _configureDiagnostics({ capture: true, suppress: [11] });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(_errorToThrowForGrid('own-grid', 11)).toBeInstanceOf(Error);
+        expect(received).toEqual([]);
+        off();
+    });
+
+    test('does not throw itself under throw mode, leaving the throw to the caller', () => {
+        _configureDiagnostics({ throwOn: ['error'] });
+
+        expect(() => _errorToThrowWithoutAttribution(11)).not.toThrow();
+    });
+});
+
 describe('throw mode', () => {
     test("throwOn ['error'] throws on errors but not warnings or deprecations", () => {
         _configureDiagnostics({ throwOn: ['error'] });
@@ -289,6 +337,16 @@ describe('suppression', () => {
         off();
     });
 
+    test('applies suppression before replaying errors raised while capture was off', () => {
+        _logPreInitErr(257, {} as any, 'boom');
+        _configureDiagnostics({ capture: true, suppress: [257] });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(received).toEqual([]);
+        off();
+    });
+
     test('does not throw a suppressed id even when its severity is enabled', () => {
         _configureDiagnostics({ throwOn: ['error'], suppress: [11] });
 
@@ -301,10 +359,14 @@ describe('suppression', () => {
 // overlay entry) rather than one per unregistered module, and deduped per grid by module+reason. Fake
 // timers exercise the real debounce; `_resetMissingModuleReports` clears the batch + dedup between tests.
 describe('missing-module batching', () => {
-    function report(reasonOrId: string, moduleName: string, gridId = 'grid-a'): void {
+    function report(
+        reasonOrId: string,
+        moduleName: Parameters<typeof _reportMissingModule>[0]['moduleName'],
+        gridId = 'grid-a'
+    ): void {
         _reportMissingModule({
             reasonOrId,
-            moduleName: moduleName as MissingModuleReportParams['moduleName'],
+            moduleName,
             gridScoped: false,
             gridId,
             rowModelType: 'clientSide',
@@ -455,6 +517,8 @@ describe('dev validation config', () => {
     });
 });
 
+const VERSIONS_TEXT = 'ag-grid-community=99.9.9';
+
 describe('bootstrap panel', () => {
     test('renders only the buffered diagnostics not tied to a grid', () => {
         _configureDiagnostics({ capture: true });
@@ -463,12 +527,14 @@ describe('bootstrap panel', () => {
 
         const renderer = vi.fn();
         _provideBootstrapPanelRenderer(renderer);
-        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).toHaveBeenCalledTimes(1);
         const passed = renderer.mock.calls[0][1] as CapturedDiagnostic[];
         expect(passed.map((d) => d.id)).toEqual([200]);
         expect(passed.every((d) => d.gridId === undefined)).toBe(true);
+        // The versions reach the panel so a reported bootstrap failure carries the build it came from.
+        expect(renderer.mock.calls[0][2]).toBe(VERSIONS_TEXT);
     });
 
     test('does not invoke the renderer when there are no untied diagnostics', () => {
@@ -477,7 +543,7 @@ describe('bootstrap panel', () => {
 
         const renderer = vi.fn();
         _provideBootstrapPanelRenderer(renderer);
-        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).not.toHaveBeenCalled();
     });
@@ -490,8 +556,8 @@ describe('bootstrap panel', () => {
         _provideBootstrapPanelRenderer(renderer);
 
         // A re-created grid (e.g. React StrictMode) renders again; the consumed diagnostic must not repeat.
-        _renderBootstrapPanel(document.createElement('div'));
-        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
+        _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).toHaveBeenCalledTimes(1);
     });

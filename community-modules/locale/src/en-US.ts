@@ -1,4 +1,4 @@
-export const AG_GRID_LOCALE_EN = {
+export const AG_GRID_LOCALE_EN_US = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',
@@ -70,6 +70,7 @@ export const AG_GRID_LOCALE_EN = {
     clearFilter: 'Clear',
     cancelFilter: 'Cancel',
     cancelColumnToolPanel: 'Cancel',
+    resetColumnToolPanel: 'Reset',
 
     // Filter Titles
     textFilter: 'Text Filter',
@@ -175,6 +176,8 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterValidationMissingCondition: 'Condition is missing',
     advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
+    advancedFilterValidationMissingListStartBracket: 'Missing opening square bracket',
+    advancedFilterValidationMissingListEndBracket: 'Missing closing square bracket',
     advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
     advancedFilterValidationMessage: 'Expression has an error. ${variable} - ${variable}.',
@@ -927,3 +930,6 @@ export const AG_GRID_LOCALE_EN = {
     deleteNote: 'Remove Note',
     notePlaceholder: 'Add a note...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_EN_US` instead. */
+export const AG_GRID_LOCALE_EN = AG_GRID_LOCALE_EN_US;

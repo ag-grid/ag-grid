@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_JP = {
+export const AG_GRID_LOCALE_JA_JP = {
     // Set Filter
     selectAll: '(すべて選択)',
     selectAllSearchResults: '(検索結果をすべて選択)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_JP = {
     clearFilter: 'クリア',
     cancelFilter: 'キャンセル',
     cancelColumnToolPanel: 'キャンセル',
+    resetColumnToolPanel: 'リセット',
 
     // Filter Titles
     textFilter: 'テキストフィルター',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_JP = {
     advancedFilterValidationMissingCondition: '条件が欠落しています',
     advancedFilterValidationJoinOperatorMismatch: '条件内の結合演算子は同じである必要があります',
     advancedFilterValidationInvalidJoinOperator: '結合演算子が見つかりません',
+    advancedFilterValidationMissingListStartBracket: '開始の角括弧が欠落しています',
+    advancedFilterValidationMissingListEndBracket: '終端の角括弧が欠落しています',
     advancedFilterValidationMissingEndBracket: '終端の括弧が欠落しています',
     advancedFilterValidationExtraEndBracket: '終端の括弧が多すぎます',
     advancedFilterValidationMessage: '式にエラーがあります。${variable} - ${variable}。',
@@ -917,3 +920,6 @@ export const AG_GRID_LOCALE_JP = {
     deleteNote: 'メモを削除',
     notePlaceholder: 'メモを追加...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_JA_JP` instead. */
+export const AG_GRID_LOCALE_JP = AG_GRID_LOCALE_JA_JP;

@@ -16,6 +16,7 @@ import type { AdvancedFilterSetService } from './advancedFilterSetService';
 import { joinSetPath } from './setOperandsParser';
 
 const MAX_SUMMARY_VALUES = 3;
+const EMPTY_CLASS = 'ag-advanced-filter-builder-set-values-pill-empty';
 
 /** The value list of a set option in the Builder, opening the column's own Set Filter to change it. */
 export class SetValuesPillComp extends PillComp {
@@ -42,7 +43,13 @@ export class SetValuesPillComp extends PillComp {
             ariaLabel: string;
         }
     ) {
-        super(params);
+        super({
+            ...params,
+            cssClass: `${params.cssClass} ag-advanced-filter-builder-set-values-pill`,
+            wrapperClassName: 'ag-advanced-filter-builder-set-values-pill-wrapper',
+            displayClassName: 'ag-picker-field-display',
+            pickerIcon: 'advancedFilterBuilderSelectOpen',
+        });
         this.values = params.values;
     }
 
@@ -53,10 +60,11 @@ export class SetValuesPillComp extends PillComp {
 
     protected override renderValue(): void {
         const values = this.values;
+        this.ePill.classList.toggle(EMPTY_CLASS, values.length === 0);
         this.writeLabel(values.length ? this.summarise(values, this.params.column) : null);
     }
 
-    /** A long value list shortened for display: `[a, b, c, +4 more]`. Only the values shown are formatted. */
+    /** A populated list prefixed by its total and shortened for display: `(7) a, b, c, +4 more`. */
     private summarise(values: SetFilterModelValue, column: AgColumn): string {
         const total = values.length;
         const shown: string[] = [];
@@ -68,7 +76,7 @@ export class SetValuesPillComp extends PillComp {
         if (total > MAX_SUMMARY_VALUES) {
             shown.push(this.advFilterExpSvc.translate('advancedFilterSetMore', [String(total - MAX_SUMMARY_VALUES)]));
         }
-        return `[${shown.join(', ')}]`;
+        return `(${total}) ${shown.join(', ')}`;
     }
 
     protected override open(): void {

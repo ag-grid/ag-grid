@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { polyfillOffsetParent } from 'ag-test-utils';
+import { asyncSetTimeout, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
 import React from 'react';
 
 import type { GridApi } from 'ag-grid-community';
@@ -10,6 +10,7 @@ import {
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
+    TooltipModule,
     ValidationModule,
 } from 'ag-grid-enterprise';
 import type { CustomMenuItemProps } from 'ag-grid-react';
@@ -31,15 +32,19 @@ const CustomMenuItem = ({ name }: CustomMenuItemProps) => {
 };
 
 describe('React menu initial focus with async framework menu items', () => {
-    it('places keyboard focus inside the context menu once an async framework item has rendered', async () => {
+    it('focuses an async framework context menu item without showing its tooltip on mouse opening', async () => {
         const customName = 'Custom Item';
 
         render(
             <AgGridReact
                 columnDefs={[{ field: 'name' }]}
                 rowData={[{ name: 'cell value' }]}
-                getContextMenuItems={() => [{ name: customName, menuItem: CustomMenuItem }]}
-                modules={[ValidationModule, ClientSideRowModelModule, ContextMenuModule]}
+                getContextMenuItems={() => [
+                    { name: customName, menuItem: CustomMenuItem, tooltip: 'Custom tooltip' },
+                    { name: 'Next item', tooltip: 'Next tooltip' },
+                ]}
+                tooltipTrigger="focus"
+                modules={[ValidationModule, ClientSideRowModelModule, ContextMenuModule, TooltipModule]}
             />
         );
 
@@ -53,6 +58,19 @@ describe('React menu initial focus with async framework menu items', () => {
         await waitFor(() => {
             expect(document.activeElement).toBe(menuItem);
         });
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(getVisibleTooltips()).toHaveLength(0);
+
+        await userEvent.keyboard('{ArrowDown}');
+        await waitFor(() =>
+            expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual(['Next tooltip'])
+        );
+        await userEvent.keyboard('{ArrowUp}');
+        await waitFor(() =>
+            expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual(['Custom tooltip'])
+        );
     });
 
     it('places keyboard focus inside the column menu (ALT+DOWN) once an async framework item has rendered', async () => {

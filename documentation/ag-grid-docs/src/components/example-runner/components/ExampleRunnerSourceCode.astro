@@ -1,0 +1,29 @@
+---
+/**
+ * Build-time copy of the example's main source file, so crawlers can index it.
+ *
+ * The example runner itself is a client-only island and fetches the full source at runtime, so
+ * the panel is hidden and the island removes it once it mounts. It must only show source the code
+ * viewer shows: content that only a crawler could ever see would count as cloaking.
+ *
+ * Only the main file is embedded, matching the markdown twin page. Data and helper files can run to
+ * megabytes and repeat across a page's examples, taking the HTML past what crawlers read.
+ */
+import type { InternalFramework } from '@ag-grid-types';
+
+interface Props {
+    internalFramework: InternalFramework;
+    fileName: string;
+    code: string;
+}
+
+const { internalFramework, fileName, code } = Astro.props;
+---
+
+<div class="example-runner-source-code" data-example-source-code data-internal-framework={internalFramework} hidden>
+    <figure>
+        <figcaption>{fileName}</figcaption>
+        {/* prettier-ignore */}
+        <pre><code data-file-name={fileName} set:text={code} /></pre>
+    </figure>
+</div>

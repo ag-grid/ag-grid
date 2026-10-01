@@ -51,6 +51,8 @@ import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';
 
+const SET_VALUE_LIST_CLASS = 'ag-advanced-filter-builder-set-value-list';
+
 const AdvancedFilterBuilderItemElement: ElementParams = {
     tag: 'div',
     cls: 'ag-advanced-filter-builder-item-wrapper',
@@ -383,7 +385,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     private createPill(params: CreatePillParams): Pill {
         const { key, cssClass, ariaLabel } = params;
         if (params.isSelect === 'set') {
-            return this.createBean(new SetValuesPillComp({ ...params, update: this.onPillUpdated(params.update) }));
+            const classList = this.focusWrapper.classList;
+            const comp = this.createBean(
+                new SetValuesPillComp({ ...params, update: this.onPillUpdated(params.update) })
+            );
+            classList.add(SET_VALUE_LIST_CLASS);
+            comp.addDestroyFunc(() => classList.remove(SET_VALUE_LIST_CLASS));
+            return comp;
         }
         const onUpdated = this.onPillUpdated(params.update);
         if (params.isSelect === true) {

@@ -7,7 +7,7 @@ import { getPropertiesFromSource } from '@components/reference-documentation/uti
 import { getJsonFile } from '@utils/pages';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
-import { type LinkContext, buildApiReferenceSection } from './buildApiReferenceTable';
+import { type LinkContext, buildApiReferenceSection, toRawPropertyEntry } from './buildApiReferenceTable';
 
 interface RenderApiReferenceTableParams {
     attributes: Record<string, any>;
@@ -76,6 +76,7 @@ async function renderApiTable(
         interfaceLookup,
         codeConfigs,
         allModules,
+        resolveProperty: toRawPropertyEntry,
     });
 
     if (!model) {
@@ -124,13 +125,14 @@ async function renderInterfaceTable(
         config,
         codeLookup,
         interfaceLookup,
+        resolveProperty: toRawPropertyEntry,
     });
 
     if (model.type === 'code') {
         return `\`\`\`ts\n${model.code.trimEnd()}\n\`\`\``;
     }
 
-    const group = (model.properties as Record<string, any>)[interfaceName] ?? {};
+    const group = model.properties[interfaceName] ?? {};
     // Mirrors InterfaceDocumentation.astro, which hides the header unless the tag
     // asks for it — the page leads with the interface description instead.
     const sectionConfig = { ...config, hideHeader: config?.hideHeader ?? true };

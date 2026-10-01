@@ -1,4 +1,5 @@
 import type { Bean } from '../context/bean';
+import type { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColKey } from '../entities/colDef';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -6,6 +7,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
+import type { MenuItemDef } from './menuItem';
 
 export interface Note<TMetadata = any> {
     /** Text content of the note. */
@@ -154,10 +156,11 @@ export interface INotesDataService extends Bean {
 export interface INotesService extends Bean {
     hasDataSource(): boolean;
     onDataSourceChanged(): void;
-    createNotesFeature(ctrl: CellCtrl): INotesFeature | undefined;
+    createNotesFeature(ctrl: CellCtrl, compBean: BeanStub): INotesFeature | undefined;
     createFullWidthNotesFeature(ctrl: RowCtrl): INotesFeature | undefined;
     getNoteAccess(params: GetNoteParams): INoteAccess | undefined;
     getNote(params: GetNoteParams): Note | undefined;
+    getMenuItems(params: GetNoteParams): MenuItemDef[];
     showNote(params: GetNoteParams, focusEditor?: boolean): boolean;
     setNote(params: SetNoteParams): void;
     refreshNotes(params?: RefreshNotesParams): void;

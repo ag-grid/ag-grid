@@ -129,7 +129,12 @@
                 "url": "./clipboard/#disabling-cut"
             }
         },
-        "suppressLastEmptyLineOnPaste": {},
+        "suppressLastEmptyLineOnPaste": {
+            "more": {
+                "name": "Trailing Empty Lines",
+                "url": "./clipboard/#trailing-empty-lines"
+            }
+        },
         "suppressClipboardPaste": {
             "more": {
                 "name": "Disabling Paste",
@@ -623,25 +628,25 @@
         "includeHiddenColumnsInAdvancedFilter": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#including-hidden-columns"
+                "url": "./filter-advanced-columns/#including-hidden-columns"
             }
         },
         "advancedFilterParent": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#advanced-filter-parent"
+                "url": "./filter-advanced-input-builder/#filter-parent"
             }
         },
         "advancedFilterBuilderParams": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced-input-builder/#advanced-filter-builder"
             }
         },
         "advancedFilterParams": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter"
+                "url": "./filter-advanced-input-builder/#buttons"
             }
         },
         "alwaysPassFilter": {},
@@ -963,8 +968,7 @@
                 "name": "Triggering Value Change Detection",
                 "url": "./change-detection/#triggering-value-change-detection"
             }
-        },
-        "debug": {}
+        }
     },
     "overlays": {
         "meta": {
@@ -978,9 +982,15 @@
             "more": {
                 "name": "Loading",
                 "url": "./overlays-provided/#loading"
+            }
+        },
+        "loadingRows": {
+            "more": {
+                "name": "Loading Rows",
+                "url": "./loading-rows/"
             },
             "interfaceHierarchyOverrides": {
-                "include": ["LoadingOptions"]
+                "include": ["LoadingRowsOptions"]
             }
         },
         "overlayComponent": {
@@ -1858,7 +1868,7 @@
         "suppressServerSideFullWidthLoadingRow": {
             "more": {
                 "name": "Cell Loading",
-                "url": "./component-loading-cell-renderer/#skeleton-loading"
+                "url": "./server-side-model-loading-rows/#skeleton-loading"
             }
         },
         "purgeClosedRowNodes": {

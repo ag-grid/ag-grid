@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_DE = {
+export const AG_GRID_LOCALE_DE_DE = {
     // Set Filter
     selectAll: '(Alles auswählen)',
     selectAllSearchResults: '(Alle Suchergebnisse auswählen)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_DE = {
     clearFilter: 'Löschen',
     cancelFilter: 'Abbrechen',
     cancelColumnToolPanel: 'Abbrechen',
+    resetColumnToolPanel: 'Zurücksetzen',
 
     // Filter Titles
     textFilter: 'Textfilter',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_DE = {
     advancedFilterValidationMissingCondition: 'Bedingung fehlt',
     advancedFilterValidationJoinOperatorMismatch: 'Verknüpfungsoperatoren innerhalb einer Bedingung müssen gleich sein',
     advancedFilterValidationInvalidJoinOperator: 'Verknüpfungsoperator nicht gefunden',
+    advancedFilterValidationMissingListStartBracket: 'Öffnende eckige Klammer fehlt',
+    advancedFilterValidationMissingListEndBracket: 'Schließende eckige Klammer fehlt',
     advancedFilterValidationMissingEndBracket: 'Endklammer fehlt',
     advancedFilterValidationExtraEndBracket: 'Zu viele Endklammern',
     advancedFilterValidationMessage: 'Ausdruck enthält einen Fehler. ${variable} - ${variable}.',
@@ -925,3 +928,6 @@ export const AG_GRID_LOCALE_DE = {
     deleteNote: 'Notiz entfernen',
     notePlaceholder: 'Notiz hinzufügen...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_DE_DE` instead. */
+export const AG_GRID_LOCALE_DE = AG_GRID_LOCALE_DE_DE;

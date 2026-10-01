@@ -1,6 +1,7 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     ModuleRegistry,
     createGrid,
@@ -12,7 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ColumnAutoSizeModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ColumnApiModule, ColumnAutoSizeModule, ClientSideRowModelModule]);
 
 interface IRow {
     athlete: string;
@@ -26,43 +27,61 @@ const columnDefs: ColDef<IRow>[] = [
     { field: 'sport' },
 ];
 
-const shortRowData: IRow[] = [
-    { athlete: 'Michael Phelps', country: 'US', sport: 'Swimming' },
-    { athlete: 'Natalie Coughlin', country: 'US', sport: 'Swimming' },
-    { athlete: 'Aleksey Nemov', country: 'RU', sport: 'Gymnastics' },
+const ROW_DATA_SETS: IRow[][] = [
+    [
+        { athlete: 'Michael Phelps', country: 'US', sport: 'Swimming' },
+        { athlete: 'Natalie Coughlin', country: 'US', sport: 'Swimming' },
+        { athlete: 'Aleksey Nemov', country: 'RU', sport: 'Gymnastics' },
+    ],
+    [
+        {
+            athlete: 'Michael Fred Phelps II, the most decorated Olympian',
+            country: 'United States of America',
+            sport: 'Swimming, Individual Medley and Butterfly',
+        },
+        {
+            athlete: 'Natalie Anne Coughlin Hall, twelve-time medallist',
+            country: 'United States of America',
+            sport: 'Swimming, Backstroke and Freestyle',
+        },
+        {
+            athlete: 'Aleksey Yuryevich Nemov, twelve-time medallist',
+            country: 'Russian Federation',
+            sport: 'Artistic Gymnastics, All-Around',
+        },
+    ],
+    [
+        { athlete: 'Ian Thorpe', country: 'Australia', sport: 'Swimming' },
+        { athlete: 'Marit Bjoergen', country: 'Norway', sport: 'Cross Country Skiing' },
+        { athlete: 'Ole Einar Bjoerndalen', country: 'Norway', sport: 'Biathlon' },
+    ],
+    [
+        { athlete: 'Sun Yang', country: 'China', sport: 'Swimming' },
+        { athlete: 'Kohei Uchimura', country: 'Japan', sport: 'Artistic Gymnastics' },
+        { athlete: 'Yohan Blake', country: 'Jamaica', sport: 'Athletics' },
+    ],
 ];
 
-const longRowData: IRow[] = [
-    {
-        athlete: 'Michael Fred Phelps II, the most decorated Olympian',
-        country: 'United States of America',
-        sport: 'Swimming, Individual Medley and Butterfly',
-    },
-    {
-        athlete: 'Natalie Anne Coughlin Hall, twelve-time medallist',
-        country: 'United States of America',
-        sport: 'Swimming, Backstroke and Freestyle',
-    },
-    {
-        athlete: 'Aleksey Yuryevich Nemov, twelve-time medallist',
-        country: 'Russian Federation',
-        sport: 'Artistic Gymnastics, All-Around',
-    },
-];
+let dataSetIndex = 0;
 
 let gridApi: GridApi<IRow>;
 
 const gridOptions: GridOptions<IRow> = {
     columnDefs: columnDefs,
-    rowData: shortRowData,
+    rowData: ROW_DATA_SETS[0],
     autoSizeStrategy: {
         type: 'fitCellContents',
         continuous: true,
     },
 };
 
-function useLongerValues() {
-    gridApi!.setGridOption('rowData', longRowData);
+function nextValues() {
+    dataSetIndex = (dataSetIndex + 1) % ROW_DATA_SETS.length;
+    gridApi!.setGridOption('rowData', ROW_DATA_SETS[dataSetIndex]);
+}
+
+function releaseWidths() {
+    gridApi!.resetColumnState();
 }
 
 // setup the grid after the page has finished loading

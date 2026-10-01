@@ -35,7 +35,7 @@ export function stringToFloat(
 
     // Built here, not by the caller: this runs several times per keystroke and usually has no parser to pay for.
     if (numberParser) {
-        return numberParser(filterText, filterCallbackParams(gos, column));
+        return numberParser(filterText, filterCallbackParams(gos, column, 'columnFilter'));
     }
 
     return filterText == null || trimmed === '-' ? null : Number.parseFloat(filterText);

@@ -325,6 +325,31 @@ describe('Pinned rows', () => {
                 └── LEAF id:0 athlete:"body" sport:"body" age:0
             `);
         });
+
+        // The only pinned row keeps its top at zero however tall it grows, so nothing but the section
+        // total reports the change to the container that reserves its space.
+        test('the container follows the only pinned row growing', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
+                pinnedTopRowData: topData,
+            });
+            await new GridRows(api, 'the container follows the only pinned row growing').check(`
+                PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"body" sport:"body" age:0
+            `);
+
+            const container = document.querySelector<HTMLElement>('.ag-grid-pinned-top-rows-container')!;
+            const containerHeight = Number.parseFloat(container.style.height);
+            const rowHeight = getPinnedRowLayout(api, 'top').heights[0];
+
+            api.forEachPinnedRow('top', (node) => node.setRowHeight(rowHeight + 40));
+            api.onRowHeightChanged();
+
+            expect(getPinnedRowLayout(api, 'top').tops).toEqual([0]);
+            expect(Number.parseFloat(container.style.height)).toBe(containerHeight + 40);
+        });
     });
 
     describe('bottom', () => {

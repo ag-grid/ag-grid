@@ -27,8 +27,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private initialised = false;
-    private hasLoadedInitialState = false;
-    private isInitialState = false;
+    /** Consumed by the next rebuild only, so a later column event does not re-apply stale state. */
+    private pendingStateRestore = false;
+    private isRestoringState = false;
 
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
@@ -44,8 +45,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         super({ tag: 'div', cls: 'ag-filter-list-panel', role: 'group' });
     }
 
-    public init(params: ToolPanelFiltersCompParams): void {
+    public init(params: ToolPanelFiltersCompParams, isStateRestore = false): void {
         this.initialised = true;
+        this.pendingStateRestore = isStateRestore;
 
         const defaultParams: Partial<ToolPanelFiltersCompParams> = _addGridCommonParams(this.gos, {
             suppressExpandAll: false,
@@ -118,10 +120,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         // We can therefore restore focus if an element in the filter tool panel was focused.
         const activeElement = _getActiveDomElement(this.beans) as HTMLElement;
 
-        if (!this.hasLoadedInitialState) {
-            this.hasLoadedInitialState = true;
-            this.isInitialState = !!this.params.initialState;
-        }
+        this.isRestoringState = this.pendingStateRestore && !!this.params.initialState;
+        this.pendingStateRestore = false;
 
         // Want to restore the expansion state where possible.
         const expansionState = this.getExpansionState();
@@ -156,7 +156,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             activeElement.focus();
         }
 
-        this.isInitialState = false;
+        this.isRestoringState = false;
         this.refreshAriaLabel();
     }
 
@@ -254,7 +254,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         const expansionStateValue = expansionState.get(filterGroupComp.getFilterGroupId());
-        if ((this.isInitialState && !expansionStateValue) || expansionStateValue === false) {
+        if ((this.isRestoringState && !expansionStateValue) || expansionStateValue === false) {
             // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before or using initial state.
             filterGroupComp.collapse();
         }
@@ -279,7 +279,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     private getExpansionState(): Map<string, boolean> {
         const expansionState: Map<string, boolean> = new Map();
 
-        if (this.isInitialState) {
+        if (this.isRestoringState) {
             const { expandedColIds, expandedGroupIds } = this.params.initialState as FiltersToolPanelState;
             for (const id of expandedColIds) {
                 expansionState.set(id, true);
@@ -314,7 +314,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
-            this.init(this.params);
+            // First init, so any provided state is still to apply
+            this.init(this.params, true);
         }
     }
 

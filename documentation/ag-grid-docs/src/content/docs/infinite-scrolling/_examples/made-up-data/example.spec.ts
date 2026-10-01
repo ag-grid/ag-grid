@@ -17,10 +17,15 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        // rowCount is a known 100, so scrolling to the bottom renders the final rows (index 99).
-        // Under the infinite row model the last block loads asynchronously, so re-issue the
-        // scroll on each retry until the last block has loaded and its rows have rendered.
-        const viewport = page.locator('.ag-grid-viewport');
+        // rowCount is a known 100 and no `cacheBlockSize` is set, so rows 0-99 are a single
+        // default-size block: there is no later block to wait for. What needs retrying is the scroll
+        // itself - one issued while the viewport is still sizing does not move it - so re-issue it on
+        // each attempt until the final rows have rendered.
+        //
+        // The viewport selector is qualified with the layout class the shared scroll helper uses: an
+        // unqualified `.ag-grid-viewport` can match more than one element, and `evaluate` then scrolls
+        // whichever came first rather than the grid's own viewport.
+        const viewport = page.locator('.ag-grid-viewport.ag-layout-normal');
         const lastCell = page.locator('.ag-row[row-index="99"]').locator('[col-id="a"]');
 
         await expect(async () => {

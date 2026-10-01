@@ -31,20 +31,46 @@ const gridOptions = {
 
 {% gridExampleRunner title="Row Numbers with Cell Selection" name="row-numbers-cell-selection" /%}
 
-### Suppressing Integration
+## Row Selection
 
-By default, clicking a row number selects a cell range including all the cells in the row. To prevent this behaviour use the `suppressCellSelectionIntegration` option.
+When the grid is configured with [Row Selection](./row-selection/) and click selection is enabled via `rowSelection.enableClickSelection`, clicking a Row Number selects the row.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: true,
+    rowSelection: {
+        mode: 'multiRow',
+        enableClickSelection: true
+    }
+}
+```
+
+When [Cell Selection](./cell-selection/) is enabled as well, a Row Number click does both: it selects all the cells in the row and the row itself.
+
+### Suppressing Cell Selection Integration
+
+By default, clicking a row number selects a cell range including all the cells in the row. To prevent this behaviour use the `suppressCellSelectionIntegration` option, which leaves only the [Row Selection](./row-selection/) behaviour so that just the row is selected.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowNumbers: {
         suppressCellSelectionIntegration: true
     },
-    cellSelection: true
+    cellSelection: true,
+    rowSelection: {
+        mode: 'multiRow',
+        enableClickSelection: true
+    }
 }
 ```
 
 {% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } names=["suppressCellSelectionIntegration"] /%}
+
+{% gridExampleRunner title="Row Numbers with Row Selection" name="row-numbers-row-selection" /%}
+
+## Context Menu
+
+Right-clicking a Row Number cell opens the [Context Menu](./context-menu/). As the cell holds no data of its own, the default items are the row-level ones, such as `Export`. The clipboard items (`Cut`, `Copy` and their variants) are included only when there is a cell range or selected rows to copy. Use `rowNumbers.contextMenuItems` to override the items for the Row Numbers Column only.
 
 ## Row Resizing
 

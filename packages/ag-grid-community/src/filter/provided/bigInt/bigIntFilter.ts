@@ -47,7 +47,7 @@ export class BigIntFilter extends TextInputSimpleFilter<
     }
 
     protected override getValueFormatter(): ((value: bigint | null) => string | null) | undefined {
-        return _bindFilterCallback(this.params.bigintFormatter, this.gos, this.params.column);
+        return _bindFilterCallback(this.params.bigintFormatter, this.gos, this.params.column, 'columnFilter');
     }
 
     protected override createInputWidget(): GridInputTextField {

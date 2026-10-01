@@ -35,6 +35,59 @@ test.agExample(import.meta, () => {
         }).toPass({ timeout: 15000 });
     });
 
+    test.eachFramework('Column A is excluded from flashing', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await page.getByRole('button', { name: 'Scramble & Refresh All', exact: true }).click();
+
+        // defaultColDef sets enableCellChangeFlash, so changed cells flash — except column
+        // 'a', which opts out with enableCellChangeFlash: false.
+        const flashed = page.locator('.ag-cell-data-changed, .ag-cell-data-changed-animation');
+        await expect(flashed.first()).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('[col-id="a"].ag-cell-data-changed')).toHaveCount(0);
+    });
+
+    test.eachFramework('Force Refresh flashes unchanged cells too', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await page.getByLabel('Force Refresh').check();
+        await page.getByRole('button', { name: 'Scramble & Refresh All', exact: true }).click();
+
+        // Without force, scramble only changes ~50% of the cells, so only those flash. With
+        // force, change detection is bypassed and every flash-enabled cell is refreshed — so
+        // a whole column flashes at once.
+        const rowCount = await page.locator('.ag-grid-scrolling-container .ag-row').count();
+        expect(rowCount).toBeGreaterThan(0);
+        await expect(page.locator('.ag-grid-scrolling-container [col-id="b"].ag-cell-data-changed')).toHaveCount(
+            rowCount,
+            { timeout: 15000 }
+        );
+        // 'a' still opts out, even under a forced refresh.
+        await expect(page.locator('[col-id="a"].ag-cell-data-changed')).toHaveCount(0);
+    });
+
+    test.eachFramework('Suppress Flash updates the cells without flashing them', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // Force Refresh as well, so every cell is refreshed and the absence of flashing can
+        // only be down to suppressFlash rather than to change detection skipping cells.
+        await page.getByLabel('Force Refresh').check();
+        await page.getByLabel('Suppress Flash').check();
+
+        const before = await centreText(page);
+        await page.getByRole('button', { name: 'Scramble & Refresh All', exact: true }).click();
+
+        await expect(async () => {
+            expect(await centreText(page)).not.toBe(before);
+        }).toPass({ timeout: 15000 });
+
+        // The values updated, but suppressFlash means no cell was ever marked as changed.
+        await expect(page.locator('.ag-cell-data-changed, .ag-cell-data-changed-animation')).toHaveCount(0);
+    });
+
     test.eachFramework('Scramble & Refresh Left to Right updates the displayed cells', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);

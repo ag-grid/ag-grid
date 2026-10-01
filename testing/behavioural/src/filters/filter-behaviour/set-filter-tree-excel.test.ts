@@ -400,6 +400,36 @@ describe('Set Filter — treeListPathGetter and treeListFormatter', () => {
             model: null
         `);
     });
+
+    // The same value the Advanced Filter's own list passes, so a renderer drawing a path agrees with both.
+    test('a cellRenderer is given the formatted label, not the tree key beneath it', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        treeList: true,
+                        treeListPathGetter: (value: string | null) => (value ? value.split('/') : null),
+                        // Every level, leaf included, so the label and the tree key beneath it differ.
+                        treeListFormatter: (pathKey: string | null) => `${pathKey}!`,
+                        cellRenderer: (p: { value: string | null }) => `<em>${p.value ?? ''}</em>`,
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ country: 'Europe/Poland' }, { country: 'Americas/Jamaica' }],
+        });
+
+        await ColumnFilterHarness.open(api, 'country');
+        await toggleGroupExpand('Americas!');
+
+        expect(Array.from(document.querySelectorAll('.ag-set-filter-list em')).map((e) => e.textContent)).toEqual([
+            '(Select All)',
+            'Americas!',
+            'Jamaica!',
+            'Europe!',
+        ]);
+    });
 });
 
 describe('Set Filter — a tree path several values share', () => {

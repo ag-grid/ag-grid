@@ -36,6 +36,51 @@ describe('selection column auto-hide', () => {
         return ids;
     };
 
+    describe.each([false, true])('enableRtl=%s', (enableRtl) => {
+        describe.each([undefined, 'left', 'right'] as const)('pinned=%s', (pinned) => {
+            test.each(['left', 'right'] as const)(
+                'lockPosition=%s preserves selection order and auto-hide with row numbers',
+                async (lockPosition) => {
+                    const api = mgr.createGrid('g', {
+                        columnDefs: [
+                            {
+                                headerName: 'G',
+                                children: [
+                                    { field: 'a', pinned },
+                                    { field: 'b', pinned },
+                                ],
+                            },
+                        ],
+                        rowData: [{ a: 1, b: 2 }],
+                        rowSelection: { mode: 'multiRow' },
+                        selectionColumnDef: { lockPosition, pinned },
+                        rowNumbers: true,
+                        enableRtl,
+                    });
+                    const selectionFirst = (lockPosition === 'left') !== enableRtl;
+                    const expectedOrder = selectionFirst ? [SELECTION_COL, 'a', 'b'] : ['a', 'b', SELECTION_COL];
+
+                    expect(bodyColIds(api).filter((id) => id !== ROW_NUMBERS_COL)).toEqual(expectedOrder);
+                    expect(headerColIds(api).filter((id) => id !== ROW_NUMBERS_COL)).toEqual(expectedOrder);
+
+                    api.setColumnsVisible(['a'], false);
+                    await waitFor(() => expect(bodyColIds(api)).not.toContain('a'));
+                    expect(bodyColIds(api)).toContain(SELECTION_COL);
+                    expect(headerColIds(api)).toContain(SELECTION_COL);
+
+                    api.setColumnsVisible(['b'], false);
+                    await waitFor(() => expect(bodyColIds(api)).toEqual([ROW_NUMBERS_COL]));
+                    expect(headerColIds(api)).toEqual([ROW_NUMBERS_COL]);
+
+                    api.setColumnsVisible(['a', 'b'], true);
+                    await waitFor(() => expect(bodyColIds(api)).toContain('a'));
+                    expect(bodyColIds(api).filter((id) => id !== ROW_NUMBERS_COL)).toEqual(expectedOrder);
+                    expect(headerColIds(api).filter((id) => id !== ROW_NUMBERS_COL)).toEqual(expectedOrder);
+                }
+            );
+        });
+    });
+
     test('hiding all grouped data cols removes the selection col from body AND header (depth > 0)', async () => {
         const api = mgr.createGrid('g', {
             columnDefs: [{ headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] }],

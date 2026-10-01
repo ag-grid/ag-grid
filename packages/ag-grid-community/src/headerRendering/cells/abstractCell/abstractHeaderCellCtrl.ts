@@ -6,7 +6,7 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
-    _getElementSize,
+    _getVerticalPaddingAndBorder,
     _normaliseQwertyAzerty,
     _observeResize,
     _setAriaColIndex,
@@ -47,6 +47,8 @@ export abstract class AbstractHeaderCellCtrl<
     TFeature extends IHeaderResizeFeature = IHeaderResizeFeature,
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     private isResizing: boolean;
     private resizeToggleTimeout = 0;
@@ -195,8 +197,7 @@ export abstract class AbstractHeaderCellCtrl<
                 return;
             }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(this.eGui);
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+            const extraHeight = _getVerticalPaddingAndBorder(this.eGui);
 
             const wrapperHeight = wrapperElement.offsetHeight;
             const autoHeight = wrapperHeight + extraHeight;
@@ -364,12 +365,10 @@ export abstract class AbstractHeaderCellCtrl<
         const { gos, column } = this;
         let isLeft = (e.key === KeyCode.LEFT) !== gos.get('enableRtl');
 
-        const pinned = column.getPinned();
+        const lane = column.pinnedLane;
         const isRtl = gos.get('enableRtl');
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
+        if (lane !== 1 && isRtl !== (lane === 2)) {
+            isLeft = !isLeft;
         }
 
         return (isLeft ? -1 : 1) * this.resizeMultiplier;
@@ -396,6 +395,7 @@ export abstract class AbstractHeaderCellCtrl<
         const wrapperHasFocus = this.getWrapperHasFocus();
 
         switch (e.key) {
+            case KeyCode.SPACE:
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_HOME:

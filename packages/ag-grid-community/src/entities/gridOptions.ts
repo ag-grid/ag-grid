@@ -79,6 +79,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderFocusedEvent,
+    IssueRaisedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -140,7 +141,6 @@ import type { CalculatedColumnsGridOption } from '../interfaces/iCalculatedColum
 import type {
     DoesExternalFilterPass,
     FillOperation,
-    FillOperationParams,
     FocusGridInnerElement,
     FullRowEditValidationParams,
     GetBusinessKeyForNode,
@@ -174,6 +174,7 @@ import type {
     ProcessRowPostCreate,
     ProcessUnpinnedColumns,
     SendToClipboard,
+    SetFillValueCallback,
     TabToNextCell,
     TabToNextGridContainer,
     TabToNextHeader,
@@ -367,7 +368,9 @@ export interface GridOptions<TData = any> {
      */
     suppressCopySingleCellRanges?: boolean;
     /**
-     * Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+     * Set to `true` to always remove a trailing empty line from pasted data.
+     * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+     * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
      * @default false
      * @agModule `ClipboardModule`
      */
@@ -814,7 +817,10 @@ export interface GridOptions<TData = any> {
 
     // *** Integrated Charts *** //
     /**
-     * Set to `true` to Enable Charts.
+     * Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
+     * `chartRange` and `pivotChart` context menu items shown by default. Menu items requested by
+     * name via `getContextMenuItems` or `colDef.contextMenuItems` are shown regardless, and charts
+     * created programmatically through the Grid API do not require this option.
      * @default false
      * @agModule `IntegratedChartsModule`
      */
@@ -1019,22 +1025,29 @@ export interface GridOptions<TData = any> {
     suppressChangeDetection?: boolean;
     /**
      * Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
-     * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
      * @default false
      * @initial
+     * @deprecated v36.3 Use `enableDevValidations({ debug: true })` instead.
      */
     debug?: boolean;
 
     // *** Overlays *** //
     /**
      * Show or hide the loading UI.
-     * - `true`: the loading overlay is shown.
-     * - `false`: the loading overlay is hidden.
-     * - `LoadingOptions`: configure the loading UI.
+     * - `true`: the loading overlay is shown, or skeleton rows if `loadingRows` is enabled (Client-Side Row Model only).
+     * - `false`: the loading UI is hidden.
      * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
-    loading?: boolean | LoadingOptions;
+    loading?: boolean;
+
+    /**
+     * Display skeleton rows instead of the loading overlay when `loading=true` (Client-Side Row Model only).
+     * Set to `true` to display ten rows, or provide options to configure the row count.
+     * This option does not start loading; set `loading=true` to show the skeleton rows.
+     * @default false
+     */
+    loadingRows?: boolean | LoadingRowsOptions;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
@@ -2941,6 +2954,16 @@ export interface GridOptions<TData = any> {
      */
     onStateUpdated?(event: StateUpdatedEvent<TData>): void;
 
+    /**
+     * A development-time diagnostic - an error, warning or deprecation - was raised. Fires for every
+     * diagnostic, whether or not it is also shown in the validation overlay or thrown by `throwOn`,
+     * so tooling can react to it programmatically. Diagnostics raised before the grid is created
+     * (e.g. a missing row model module) are reported to the console only, as no grid exists to
+     * receive them.
+     * @agModule `ValidationModule`
+     */
+    onIssueRaised?(event: IssueRaisedEvent<TData>): void;
+
     // *** Pagination *** //
     /**
      * Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
@@ -3183,8 +3206,7 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
 }
 
 type MenuCallbackReturn<TMenuItem extends string, TData = any, TContext = any> = (
-    | TMenuItem
-    | MenuItemDef<TData, TContext>
+    TMenuItem | MenuItemDef<TData, TContext>
 )[];
 
 export type GetContextMenuItems<TData = any, TContext = any> = (
@@ -3260,12 +3282,7 @@ export interface LoadingCellRendererSelectorResult {
     params?: any;
 }
 
-export interface LoadingOptions {
-    /**
-     * Loading UI to display. Loading rows are only supported by the Client-Side Row Model.
-     * @default 'overlay'
-     */
-    type: 'overlay' | 'rows';
+export interface LoadingRowsOptions {
     /**
      * Number of skeleton rows displayed while loading.
      * @default 10
@@ -3276,7 +3293,7 @@ export interface LoadingOptions {
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
 /** Cell selection options */
-export interface CellSelectionOptions<TData = any> {
+export interface CellSelectionOptions<TData = any, TContext = any> {
     /**
      * If `true`, only a single range can be selected
      * @default false
@@ -3295,7 +3312,7 @@ export interface CellSelectionOptions<TData = any> {
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
-    handle?: RangeHandleOptions | FillHandleOptions<TData>;
+    handle?: RangeHandleOptions | FillHandleOptions<TData, TContext>;
 }
 
 /**
@@ -3308,7 +3325,7 @@ export interface RangeHandleOptions {
 /**
  * Configuration options for the fill handle
  */
-export interface FillHandleOptions<TData = any> {
+export interface FillHandleOptions<TData = any, TContext = any> {
     mode: 'fill';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
@@ -3323,12 +3340,11 @@ export interface FillHandleOptions<TData = any> {
     /**
      * Callback to fill values instead of simply copying values or increasing number values using linear progression.
      */
-    setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
+    setFillValue?: SetFillValueCallback<TData, TContext>;
 }
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
-    | SingleRowSelectionOptions<TData, TValue, TContext>
-    | MultiRowSelectionOptions<TData, TValue, TContext>;
+    SingleRowSelectionOptions<TData, TValue, TContext> | MultiRowSelectionOptions<TData, TValue, TContext>;
 
 interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
@@ -3578,10 +3594,7 @@ export interface PageNumbersPanelParams {
 }
 
 export type PaginationPanelParams =
-    | PageSummaryPanelParams
-    | PageSizePanelParams
-    | RowSummaryPanelParams
-    | PageNumbersPanelParams;
+    PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams | PageNumbersPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | 'pageNumbers' | PaginationPanelParams;
 

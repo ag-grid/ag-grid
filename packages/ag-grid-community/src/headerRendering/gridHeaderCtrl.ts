@@ -1,4 +1,4 @@
-import { KeyCode, _exists, _getActiveDomElement, _requestAnimationFrame } from 'ag-stack';
+import { KeyCode, _exists, _getActiveDomElement } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -10,20 +10,21 @@ import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridHeaderComp {
     toggleCss(cssClassName: string, on: boolean): void;
-    setHeightAndMinHeight(height: number): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridHeaderCtrl extends BeanStub {
     private comp: IGridHeaderComp;
     public eGui: HTMLElement;
+    private eGridViewport: HTMLElement;
     public headerHeight: number;
     private headerHeightWithBorder: number;
     private headerRowFocusFeatures: ManagedFocusFeature[] = [];
 
-    public setComp(comp: IGridHeaderComp, eGui: HTMLElement): void {
+    public setComp(comp: IGridHeaderComp, eGui: HTMLElement, eGridViewport: HTMLElement): void {
         this.comp = comp;
         this.eGui = eGui;
+        this.eGridViewport = eGridViewport;
 
         const { beans } = this;
         const { touchSvc, ctrlsSvc } = beans;
@@ -82,8 +83,8 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedEventListeners({
             headerRowsChanged: listener,
             columnHeaderHeightChanged: listener,
-            // add this to the animation frame to avoid a feedback loop
-            columnGroupHeaderHeightChanged: () => _requestAnimationFrame(this.beans, () => listener()),
+            // Deferred to a frame to avoid a feedback loop.
+            columnGroupHeaderHeightChanged: this.throttleToFrame(listener),
             stylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });
@@ -105,7 +106,9 @@ export class GridHeaderCtrl extends BeanStub {
         totalHeaderHeight += headerHeight;
         if (this.headerHeightWithBorder !== totalHeaderHeight) {
             this.headerHeightWithBorder = totalHeaderHeight;
-            this.comp.setHeightAndMinHeight(totalHeaderHeight);
+            const heightWithBorder = totalHeaderHeight + beans.environment.getHeaderRowBorderWidth();
+            this.eGridViewport.style.setProperty('--ag-internal-header-rows-height', `${heightWithBorder}px`);
+            this.eGui.style.height = `${heightWithBorder}px`;
         }
 
         if (this.headerHeight !== totalHeaderHeight) {

@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_HR = {
+export const AG_GRID_LOCALE_HR_HR = {
     // Set Filter
     selectAll: '(Odaberi sve)',
     selectAllSearchResults: '(Odaberi sve rezultate pretraživanja)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HR = {
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
     cancelColumnToolPanel: 'Odustani',
+    resetColumnToolPanel: 'Poništi',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterValidationMissingCondition: 'Nedostaje uvjet',
     advancedFilterValidationJoinOperatorMismatch: 'Spojni operatori unutar uvjeta moraju biti isti',
     advancedFilterValidationInvalidJoinOperator: 'Spojni operator nije pronađen',
+    advancedFilterValidationMissingListStartBracket: 'Nedostaje otvorena uglata zagrada',
+    advancedFilterValidationMissingListEndBracket: 'Nedostaje zatvorena uglata zagrada',
     advancedFilterValidationMissingEndBracket: 'Nedostaje završna zagrada',
     advancedFilterValidationExtraEndBracket: 'Previše završnih zagrada',
     advancedFilterValidationMessage: 'Izraz ima grešku. ${variable} - ${variable}.',
@@ -920,3 +923,6 @@ export const AG_GRID_LOCALE_HR = {
     deleteNote: 'Ukloni napomenu',
     notePlaceholder: 'Dodaj napomenu...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HR_HR` instead. */
+export const AG_GRID_LOCALE_HR = AG_GRID_LOCALE_HR_HR;

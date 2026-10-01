@@ -16,7 +16,12 @@ import { waitFor } from '@testing-library/dom';
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { AlignedGridsModule, ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
+import {
+    AlignedGridsModule,
+    ClientSideRowModelModule,
+    ColumnAutoSizeModule,
+    PaginationModule,
+} from 'ag-grid-community';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
 const MEASURED_WIDTH = 120;
@@ -24,7 +29,7 @@ const START_WIDTH = 300;
 
 describe('Continuous Column Autosize', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule],
+        modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule, PaginationModule],
     });
 
     afterEach(() => {
@@ -49,6 +54,9 @@ describe('Continuous Column Autosize', () => {
      */
     // eslint-disable-next-line no-restricted-syntax -- samples inside the continuous-resize debounce window, which is the behaviour under test
     const insideDebounceWindow = (): Promise<void> => asyncSetTimeout(40);
+
+    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize debounce window
+    const pastDebounceWindow = (): Promise<void> => asyncSetTimeout(300);
 
     /** Stands in for an internal trigger the grid would dispatch itself, payload and all. */
     const dispatchGridEvent = (api: GridApi, event: { type: string } & Record<string, unknown>): void =>
@@ -86,6 +94,26 @@ describe('Continuous Column Autosize', () => {
                 type: 'fitCellContents',
                 continuous: true,
                 skipHeader: true,
+                shouldAutoSizeColumns: ({ reason }) => {
+                    reasons.push(reason);
+                    return true;
+                },
+            },
+        });
+        return { api, reasons };
+    };
+
+    /** A `fitGridWidth` grid over two plain columns, recording every reason its callback is invoked with. */
+    const createGridFittingGridWidth = (): { api: GridApi; reasons: string[] } => {
+        const reasons: string[] = [];
+        const api = createGrid({
+            columnDefs: [
+                { colId: 'a', field: 'a' },
+                { colId: 'b', field: 'b' },
+            ],
+            autoSizeStrategy: {
+                type: 'fitGridWidth',
+                continuous: true,
                 shouldAutoSizeColumns: ({ reason }) => {
                     reasons.push(reason);
                     return true;
@@ -350,6 +378,18 @@ describe('Continuous Column Autosize', () => {
             await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
         });
 
+        test('a viewport trigger is ignored when no callback opts into it', async () => {
+            const api = createGrid();
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await flushScheduledResize();
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            dispatchGridEvent(api, { type: 'viewportChanged', firstRow: 0, lastRow: 10 });
+            await pastDebounceWindow();
+
+            expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+        });
+
         /** A data change must still be sized within the frame, rather than held back by the debounce. */
         test('a data change is not held back by the debounce', async () => {
             const { api, reasons } = createGridRecordingReasons();
@@ -397,6 +437,111 @@ describe('Continuous Column Autosize', () => {
             expect(reasons).toEqual([]);
 
             await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+        });
+
+        test('a page change re-sizes eligible columns', async () => {
+            const api = createGrid({
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: [1, 2],
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.paginationGoToNextPage();
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a page-size change re-sizes eligible columns', async () => {
+            const api = createGrid({
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: [1, 2],
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.setGridOption('paginationPageSize', 2);
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a page change re-sizes once, as a data change', async () => {
+            const reasons: string[] = [];
+            const api = createGrid({
+                pagination: true,
+                paginationPageSize: 1,
+                paginationPageSizeSelector: [1, 2],
+                rowData: [
+                    { pinned: 'a', eligible: 'b' },
+                    { pinned: 'c', eligible: 'd' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    continuous: true,
+                    skipHeader: true,
+                    shouldAutoSizeColumns: ({ reason }) => {
+                        reasons.push(reason);
+                        return true;
+                    },
+                },
+            });
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await pastDebounceWindow();
+            reasons.length = 0;
+
+            api.paginationGoToNextPage();
+
+            await pastDebounceWindow();
+            expect(reasons).toEqual(['dataChanged']);
+        });
+
+        /**
+         * Shrinking the grid makes the columns momentarily wider than the viewport, so a horizontal
+         * scrollbar appears alongside each `gridSizeChanged`. Routed straight through, that drains the
+         * pending reason the debounce was holding, and the drag re-sizes once per frame instead of once.
+         */
+        test('a shrink gesture re-sizes once, like a widen gesture', async () => {
+            const { api, reasons } = createGridFittingGridWidth();
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            for (let i = 0; i < 5; i++) {
+                dispatchGridEvent(api, { type: 'gridSizeChanged', clientWidth: 400 - i * 20, clientHeight: 300 });
+                dispatchGridEvent(api, { type: 'scrollVisibilityChanged' });
+                await insideDebounceWindow();
+            }
+
+            await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+            await flushScheduledResize();
+            expect(reasons).toEqual(['gridSizeChanged']);
+        });
+
+        /**
+         * Outside a resize gesture, a scrollbar appearing is the only signal a row transaction gave the
+         * width-distribution strategies, so it must not wait out the debounce.
+         */
+        test('a scrollbar change outside a gesture is not held back by the debounce', async () => {
+            const { api, reasons } = createGridFittingGridWidth();
+            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
+            await flushScheduledResize();
+            reasons.length = 0;
+
+            dispatchGridEvent(api, { type: 'scrollVisibilityChanged' });
+            // sampled well inside the debounce window, so a re-size caught by it would be missed here
+            await flushScheduledResize();
+
+            expect(reasons).toEqual(['gridSizeChanged']);
         });
 
         test('the strategy stays one-shot when `continuous` is omitted', async () => {

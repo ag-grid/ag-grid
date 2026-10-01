@@ -3,7 +3,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import styles from './DemoPage.module.scss';
-import type { DemoPageExample, DemoPageHero } from './types';
+import type { DemoPageExample, DemoPageHero, DemoPageOpenIn } from './types';
 
 interface Props extends DemoPageHero {
     /** Which demo is currently shown; drives the active feature-list item. */
@@ -12,7 +12,29 @@ interface Props extends DemoPageHero {
     examples: DemoPageExample[];
 }
 
-const { currentId, examples, eyebrow, title, description, primaryCta, secondaryCta } = Astro.props;
+const { currentId, examples, eyebrow, title, description, primaryCta, secondaryCta, openIn = [] } = Astro.props;
+
+/**
+ * The two ways to open a seed, each rendered as one button. `dataAttribute` marks every link it
+ * leads to; the post-deploy link check reads those attributes from the rendered HTML, so the links
+ * must stay in the markup rather than being built client-side.
+ */
+const openInActions = [
+    {
+        label: 'Open in StackBlitz',
+        icon: 'stackblitz',
+        buttonClass: 'button-secondary',
+        hrefOf: (seed: DemoPageOpenIn) => seed.href,
+        dataAttribute: 'data-seed-framework',
+    },
+    {
+        label: 'See on GitHub',
+        icon: 'github',
+        buttonClass: 'button-tertiary',
+        hrefOf: (seed: DemoPageOpenIn) => seed.sourceHref,
+        dataAttribute: 'data-seed-source',
+    },
+] as const;
 ---
 
 <div class={styles.demoPage}>
@@ -23,37 +45,89 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
             <p class={styles.description}>{description}</p>
 
             <ul class={styles.featureList}>
-                {
-                    examples.map((example) => {
-                        const isActive = example.id === currentId;
-                        return (
-                            <li>
-                                <a
-                                    href={urlWithBaseUrl(example.path)}
-                                    class:list={[styles.featureItem, isActive && styles.featureItemActive]}
-                                    aria-current={isActive ? 'page' : undefined}
-                                >
+                {examples.map((example) => {
+                    const isActive = example.id === currentId;
+                    return (
+                        <li>
+                            <a
+                                href={urlWithBaseUrl(example.path)}
+                                class:list={[styles.featureItem, isActive && styles.featureItemActive]}
+                                aria-current={isActive ? 'page' : undefined}
+                            >
+                                {example.image && (
+                                    <span class={styles.featureImage}>
+                                        <img src={urlWithBaseUrl(example.image)} alt="" decoding="async" />
+                                    </span>
+                                )}
+                                <span class={styles.featureBody}>
                                     <span class={styles.featureTitle}>{example.title}</span>
                                     <span class={styles.featureDescription}>{example.description}</span>
-                                </a>
-                            </li>
-                        );
-                    })
-                }
+                                </span>
+                            </a>
+                        </li>
+                    );
+                })}
             </ul>
 
+            {/* Stands in for the demo card, hidden at this notice's breakpoint. The hero copy above stays. */}
+            <slot name="mobile-notice" />
+
             <div class={styles.ctaButtons}>
-                <a class="button" href={primaryCta.href}>{primaryCta.label}</a>
+                <a class="button" href={primaryCta.href}>
+                    {primaryCta.label}
+                </a>
                 <a class:list={['button-tertiary', styles.contactButton]} href={secondaryCta.href}>
                     {secondaryCta.label}
                     <Icon name="chevronRight" />
                 </a>
             </div>
+
+            {/* One framework needs no choice, so each button links straight to it. With more, each
+                button opens a list of the frameworks. The shared `name` keeps one list open at a time;
+                demo-page.js closes it on Escape, on a click elsewhere and once a link is chosen. */}
+            {openIn.length > 0 && (
+                <div class={styles.openIn} role="group" aria-label="Run this demo yourself">
+                    {openInActions.map((action) =>
+                        openIn.length === 1 ? (
+                            <a
+                                class:list={[action.buttonClass, styles.openInButton]}
+                                href={action.hrefOf(openIn[0])}
+                                target="_blank"
+                                rel="noreferrer"
+                                {...{ [action.dataAttribute]: openIn[0].framework }}
+                            >
+                                <Icon name={action.icon} />
+                                {action.label}
+                            </a>
+                        ) : (
+                            <details class={styles.openInMenu} name="demo-open-in" data-open-in-menu>
+                                <summary class:list={[action.buttonClass, styles.openInButton]}>
+                                    <Icon name={action.icon} />
+                                    {action.label}
+                                    <Icon name="chevronDown" svgClasses={styles.openInChevron} />
+                                </summary>
+                                <ul class={styles.openInList} aria-label={action.label}>
+                                    {openIn.map((seed) => (
+                                        <li>
+                                            <a
+                                                class={styles.openInLink}
+                                                href={action.hrefOf(seed)}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                {...{ [action.dataAttribute]: seed.framework }}
+                                            >
+                                                {seed.framework}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </details>
+                        )
+                    )}
+                </div>
+            )}
         </div>
     </aside>
-
-    {/* Stands in for the hero and demo card, both hidden at this notice's breakpoint. */}
-    <slot name="mobile-notice" />
 
     <div class={styles.demoCard}>
         <div class={styles.stage} data-demo-stage data-expanded="false" data-cutoff="true">
@@ -75,7 +149,8 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
                             stroke="currentColor"
                             stroke-width="2"
                             stroke-linecap="round"
-                            stroke-linejoin="round"></path>
+                            stroke-linejoin="round"
+                        ></path>
                     </svg>
                     <span>Click to interact</span>
                 </span>
@@ -94,7 +169,8 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
                         stroke="currentColor"
                         stroke-width="2"
                         stroke-linecap="round"
-                        stroke-linejoin="round"></path>
+                        stroke-linejoin="round"
+                    ></path>
                 </svg>
                 Minimise
             </button>
@@ -102,9 +178,7 @@ const { currentId, examples, eyebrow, title, description, primaryCta, secondaryC
     </div>
 </div>
 
-{
-    /* Each site consuming this component serves the script from its own public folder.
+{/* Each site consuming this component serves the script from its own public folder.
     data-astro-rerun: the router swaps in a fresh, unwired stage, so the launch overlay
-    needs re-binding on each visit rather than only on the first document to load this. */
-}
+    needs re-binding on each visit rather than only on the first document to load this. */}
 <script is:inline defer data-astro-rerun src={urlWithBaseUrl('/scripts/demo-page.js')}></script>

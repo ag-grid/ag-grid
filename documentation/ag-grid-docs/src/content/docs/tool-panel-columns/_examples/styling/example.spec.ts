@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('toolPanelClass styling and location-aware header value getter', async ({ agIdFor, page }) => {
@@ -20,4 +20,26 @@ test.agExample(import.meta, () => {
         // 'header' -> 'H Country' in the grid header.
         await expect(agIdFor.headerCell('country')).toContainText('H Country');
     });
+
+    test.eachFramework(
+        'headerValueGetter uses the columnDrop location for the Row Groups pill',
+        async ({ agIdFor, page }) => {
+            await waitForGridContent(page);
+
+            // rowGroupPanelShow: 'always' means the Row Groups drop zone above the grid is always shown,
+            // and starts empty.
+            const rowGroupPanel = agIdFor.columnDropArea('panel', 'Row Groups');
+            await expect(rowGroupPanel.locator('.ag-column-drop-cell')).toHaveCount(0);
+
+            // Group by country via the tool panel context menu (country has enableRowGroup). The menu
+            // item uses the 'columnToolPanel' name, 'TP Country'.
+            await page.locator('.ag-column-select-column', { hasText: 'TP Country' }).click({ button: 'right' });
+            await agIdFor.menuOption('Group by TP Country').click();
+            await waitForRowAnimations(page);
+
+            // The pill in the drop zone resolves its name with location 'columnDrop' -> 'CD Country'.
+            await expect(rowGroupPanel.locator('.ag-column-drop-cell')).toHaveCount(1);
+            await expect(rowGroupPanel.locator('.ag-column-drop-cell-text')).toHaveText('CD Country');
+        }
+    );
 });

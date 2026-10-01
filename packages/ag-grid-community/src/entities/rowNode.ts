@@ -336,9 +336,6 @@ export class RowNode<TData = any>
 
     private readonly beans: BeanCollection;
 
-    /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
-    public __checkAutoHeightsDebounced: () => void;
-
     constructor(beans: BeanCollection) {
         this.beans = beans;
     }
@@ -980,7 +977,7 @@ export class RowNode<TData = any>
             this.displayed = false;
         }
 
-        if (!this.footer) {
+        if (!this.footer && !(this.rowPinned && pinnedSibling)) {
             const detailNode = this.detailNode;
             if (detailNode) {
                 detailNode._destroy(fadeOut);

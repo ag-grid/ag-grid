@@ -14,6 +14,7 @@ import { OptionsFactory } from '../../provided/optionsFactory';
 import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
 import { getNumberOfInputs } from '../../provided/simpleFilterUtils';
 import type { FloatingFilterDisplayParams, IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
 
 export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams<ISimpleFilter>>
     extends Component
@@ -23,6 +24,8 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     protected abstract readonly defaultOptions: string[];
     protected abstract setEditable(editable: boolean): void;
+
+    protected abstract refreshAriaLabel(): void;
 
     protected filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
 
@@ -90,6 +93,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         const reactive = this.gos.get('enableFilterHandlers');
         this.reactive = reactive;
         this.setParams(params);
+        this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
 
         if (reactive) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
@@ -174,7 +178,6 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     }
 
     protected getAriaLabel(column: AgColumn): string {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header', true);
-        return `${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`;
+        return _getFloatingFilterAriaLabel(this.beans, column, this.getLocaleTextFunc());
     }
 }

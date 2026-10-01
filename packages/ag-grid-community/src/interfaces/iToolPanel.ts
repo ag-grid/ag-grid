@@ -5,10 +5,13 @@ import type { IColumnSelectionPanelParams } from './iColumnSelectionPanel';
 import type { AgGridCommon } from './iCommon';
 import type { FilterAction } from './iFilter';
 
-export type ColumnToolPanelAction = 'apply' | 'cancel';
+export type ColumnToolPanelAction = 'apply' | 'cancel' | 'reset';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
-    /** The tool-panel-specific initial state as provided in grid options if applicable */
+    /**
+     * The tool panel state to apply, if applicable. Provided from `initialState` in the grid options,
+     * and again with each `api.setState` restore that includes side bar state.
+     */
     initialState?: TState;
 }
 
@@ -24,8 +27,9 @@ export interface IToolPanelParams<TData = any, TContext = any, TState = any> ext
 export interface IToolPanel<TData = any, TContext = any, TState = any> {
     /**
      * Called when `api.refreshToolPanel()` is called (with the current params).
-     * Also called when the `sideBar` grid option is updated (with the updated params).
-     * When `sideBar` is updated, if this method returns `true`,
+     * Also called when the `sideBar` grid option is updated, and when `api.setState` restores side bar
+     * state (with the updated params).
+     * When `sideBar` is updated or state is restored, if this method returns `true`,
      * then the grid will take no further action.
      * Otherwise, the tool panel will be destroyed and recreated.
      */
@@ -49,7 +53,15 @@ export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams,
     suppressPivots?: boolean;
     /** Suppress Pivot Mode selection */
     suppressPivotMode?: boolean;
-    /** Buttons to display at the bottom of the Columns Tool Panel. When 'apply' is included, changes are deferred until the apply button is clicked. */
+    /**
+     * Buttons to display at the bottom of the Columns Tool Panel, in the order they should be displayed in.
+     *
+     *  - `'apply'`: Changes are deferred until the Apply button is clicked.
+     *  - `'cancel'`: Discards any deferred changes. Only has an effect when `'apply'` is also included.
+     *  - `'reset'`: Discards any deferred changes and immediately resets the columns to the state defined in the column definitions.
+     *
+     * Only the `'apply'` button enables deferred changes.
+     */
     buttons?: ColumnToolPanelAction[];
 }
 

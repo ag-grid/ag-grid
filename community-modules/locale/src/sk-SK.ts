@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_SK = {
+export const AG_GRID_LOCALE_SK_SK = {
     // Set Filter
     selectAll: '(Vybrať všetko)',
     selectAllSearchResults: '(Vybrať všetky výsledky vyhľadávania)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_SK = {
     clearFilter: 'Vyčistiť',
     cancelFilter: 'Zrušiť',
     cancelColumnToolPanel: 'Zrušiť',
+    resetColumnToolPanel: 'Resetovať',
 
     // Filter Titles
     textFilter: 'Textový filter',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_SK = {
     advancedFilterValidationMissingCondition: 'Chýba podmienka',
     advancedFilterValidationJoinOperatorMismatch: 'Spojovacie operátory v rámci podmienky musia byť rovnaké',
     advancedFilterValidationInvalidJoinOperator: 'Spojovací operátor sa nenašiel',
+    advancedFilterValidationMissingListStartBracket: 'Chýba otváracia hranatá zátvorka',
+    advancedFilterValidationMissingListEndBracket: 'Chýba uzatváracia hranatá zátvorka',
     advancedFilterValidationMissingEndBracket: 'Chýba koncová zátvorka',
     advancedFilterValidationExtraEndBracket: 'Príliš veľa koncových zátvoriek',
     advancedFilterValidationMessage: 'Výraz obsahuje chybu. ${variable} - ${variable}.',
@@ -918,3 +921,6 @@ export const AG_GRID_LOCALE_SK = {
     deleteNote: 'Odstrániť poznámku',
     notePlaceholder: 'Pridať poznámku...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_SK_SK` instead. */
+export const AG_GRID_LOCALE_SK = AG_GRID_LOCALE_SK_SK;

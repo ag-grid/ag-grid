@@ -56,8 +56,22 @@ export function _batchCall(
         const funcsCopy = batch.funcs.slice();
         batch.funcs.length = 0;
         batch.pending = false;
-        for (const func of funcsCopy) {
-            func();
+        // The queue is module-global and holds user-supplied callbacks, so one throw must not drop the
+        // rest of the batch — including another grid's work.
+        let firstError: unknown;
+        let failed = false;
+        for (let i = 0, len = funcsCopy.length; i < len; ++i) {
+            try {
+                funcsCopy[i]();
+            } catch (e) {
+                if (!failed) {
+                    failed = true;
+                    firstError = e;
+                }
+            }
+        }
+        if (failed) {
+            throw firstError;
         }
     };
 

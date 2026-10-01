@@ -13,6 +13,7 @@ import type {
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
+    Toolbar,
 } from 'ag-grid-community';
 import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -35,7 +36,10 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="reloadGrid()">Recreate Grid with Current State</button>
+                    <button (click)="recreateWithCurrentState()">Recreate with State</button>
+                    <button (click)="saveState()">Save State</button>
+                    <button (click)="recreateWithNoState()">Recreate without State</button>
+                    <button (click)="setState()">Set State</button>
                     <button (click)="printState()">Print State</button>
                 </span>
             </div>
@@ -48,6 +52,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     [defaultColGroupDef]="defaultColGroupDef"
                     [autoGroupColumnDef]="autoGroupColumnDef"
                     [sideBar]="true"
+                    [toolbar]="toolbar"
                     [pagination]="true"
                     [rowSelection]="rowSelection"
                     [cellSelection]="true"
@@ -102,6 +107,7 @@ export class AppComponent {
     public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };
+    public toolbar: Toolbar = { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] };
     public rowData?: IOlympicData[];
     public gridVisible = signal(true);
     public initialState?: GridState;
@@ -113,10 +119,31 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {}
 
-    reloadGrid(): void {
-        const state = this.gridApi.getState();
+    private savedState?: GridState;
+
+    recreateWithCurrentState(): void {
+        this.recreateGrid(this.gridApi.getState());
+    }
+
+    recreateWithNoState(): void {
+        this.recreateGrid();
+    }
+
+    saveState(): void {
+        this.savedState = this.gridApi.getState();
+        console.log('Saved state', this.savedState);
+    }
+
+    setState(): void {
+        if (this.savedState) {
+            this.gridApi.setState(this.savedState);
+            console.log('Set state', this.savedState);
+        }
+    }
+
+    private recreateGrid(initialState?: GridState): void {
         this.gridVisible.set(false);
-        this.initialState = state;
+        this.initialState = initialState;
         this.rowData = undefined;
         setTimeout(() => {
             this.gridVisible.set(true);

@@ -6,8 +6,10 @@ import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanil
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
 import {
+    extractDevValidationsArgs,
     getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
+    getVanillaDevValidationsPreamble,
     readAsJsFile,
     removeModuleRegistration,
 } from '../transformation-scripts/parser-utils';
@@ -89,6 +91,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         }
 
         // Javascript is packages only
+        const devValidationsArgs = extractDevValidationsArgs(mainJs);
         mainJs = removeModuleRegistration(mainJs);
 
         const integratedDarkModeCode = getIntegratedDarkModeCode(bindings.exampleName, false, 'gridApi') ?? '';
@@ -98,8 +101,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainJs = transformEntryFile({ entryFile: mainJs });
         }
 
-        const enableDevValidations =
-            '// Enable extended validations only for development\nagGrid.enableDevValidations();';
+        const enableDevValidations = getVanillaDevValidationsPreamble(devValidationsArgs);
         mainJs = enableDevValidations + '\n\n' + getEnableAGTestIdLogic(true) + '\n\n' + mainJs;
 
         // remove any leading new lines

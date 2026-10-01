@@ -1,9 +1,11 @@
 ---
-import { Video } from './Video';
 import { getPageImages } from '@components/docs/utils/filesData';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 
+import VideoPlayer from './VideoPlayer.astro';
+
 interface Props {
+    pageName?: string;
     videoSrc?: string;
     autoplay?: boolean;
     showPlayPauseButtons?: boolean;
@@ -13,13 +15,12 @@ interface Props {
 const { pageName: propPageName, videoSrc, autoplay, showPlayPauseButtons, centered } = Astro.props as Props;
 
 const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
-const src = await getPageImages({ pageName, imagePath: videoSrc });
+const { imageSrc, darkModeImageSrc } = await getPageImages({ pageName, imagePath: videoSrc });
 ---
 
-<Video
-    client:load
-    videoSrc={src.imageSrc}
-    darkModeVideoSrc={src.darkModeImageSrc}
+<VideoPlayer
+    videoSrc={imageSrc}
+    darkModeVideoSrc={darkModeImageSrc}
     autoplay={autoplay}
     showPlayPauseButtons={showPlayPauseButtons}
     centered={centered}

@@ -95,6 +95,36 @@ const routes = [
         name: 'AG-14654 Change Detection',
         component: () => import('./test-cases/AG-14654-change-detection/Page.vue'),
     },
+    {
+        path: '/cell-slots',
+        name: 'Cell Slots',
+        component: () => import('./test-cases/cell-slots/Page.vue'),
+    },
+    {
+        path: '/cell-slots-multi-root',
+        name: 'Cell Slots Multi-Root',
+        component: () => import('./test-cases/cell-slots-multi-root/Page.vue'),
+    },
+    {
+        path: '/cell-slots-shared',
+        name: 'Cell Slots Shared',
+        component: () => import('./test-cases/cell-slots-shared/Page.vue'),
+    },
+    {
+        path: '/cell-slots-priority',
+        name: 'Cell Slots Priority',
+        component: () => import('./test-cases/cell-slots-priority/Page.vue'),
+    },
+    {
+        path: '/cell-slots-editor-scope',
+        name: 'Cell Slots Editor Scope',
+        component: () => import('./test-cases/cell-slots-editor-scope/Page.vue'),
+    },
+    {
+        path: '/cell-slots-component-multi-root',
+        name: 'Cell Slots Component Multi-Root',
+        component: () => import('./test-cases/cell-slots-component-multi-root/Page.vue'),
+    },
 ];
 
 export const router = createRouter({

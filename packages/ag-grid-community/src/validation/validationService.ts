@@ -12,7 +12,7 @@ import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _errMsg, _reportMissingModule, provideValidationServiceLogger } from './logging';
+import { _reportMissingModule, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -97,10 +97,10 @@ export class ValidationService extends BeanStub implements NamedBean {
         this.warn(101, { propertyName, componentName, suggestions });
     }
 
-    public missingDynamicBean(beanName: DynamicBeanName): string | undefined {
+    public missingDynamicBean(beanName: DynamicBeanName): Error | undefined {
         const moduleName = DYNAMIC_BEAN_MODULES[beanName];
         return moduleName
-            ? _errMsg(200, {
+            ? this.beans.log.errorToThrow(200, {
                   ...this.gos.getModuleErrorParams(),
                   moduleName,
                   reasonOrId: `\`${beanName}\``,

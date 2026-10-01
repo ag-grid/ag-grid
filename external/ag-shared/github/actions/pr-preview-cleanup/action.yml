@@ -1,5 +1,5 @@
-name: 'PR preview — cleanup gh-pages'
-description: Remove a PR's pr-<N>/ preview from the publish branch on PR close. Operates via a token-auth clone, so the caller checks out its own default branch (not gh-pages). Concurrent writers are resolved by a push-retry loop rather than a lock.
+name: 'PR preview — cleanup'
+description: Remove a PR's pr-<N>/ preview from the publish branch on PR close. Operates via a token-auth clone, so the caller checks out its own default branch (not the publish branch). Concurrent writers are resolved by a push-retry loop rather than a lock.
 
 inputs:
     pr_number:

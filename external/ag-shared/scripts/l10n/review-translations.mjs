@@ -22,6 +22,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const SRC_DIR = process.env.LOCALE_SRC_DIR;
 const MODEL = 'claude-opus-4-8';
 const REPORT_PATH = process.env.REPORT_PATH || 'l10n-review.md';
+// Locale file names are BCP 47 tags: language (2–3 letters), optional script (e.g. Latn), region.
+// Covers sr-Latn-RS.ts and fil-PH.ts as well as the common xx-YY.ts shape.
+const LOCALE_FILE = /\/[a-z]{2,3}(-[A-Z][a-z]{3})?-[A-Z]{2}\.ts$/;
 
 function git(args) {
     return execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).trimEnd();
@@ -32,7 +35,7 @@ function changedLocaleFiles(base, head) {
     return out
         .split('\n')
         .filter(Boolean)
-        .filter((f) => /\/[a-z]{2}-[A-Z]{2}\.ts$/.test(f) && !f.endsWith('en-US.ts')); // translated locales only — en-US is the source, not a translation
+        .filter((f) => LOCALE_FILE.test(f) && !f.endsWith('en-US.ts')); // translated locales only — en-US is the source, not a translation
 }
 
 async function callAnthropic(apiKey, system, userText) {

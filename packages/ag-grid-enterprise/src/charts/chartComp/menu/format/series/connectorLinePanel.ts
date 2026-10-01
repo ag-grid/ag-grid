@@ -55,7 +55,7 @@ export class ConnectorLinePanel extends Component {
         step: number = 1,
         isArray: boolean = false
     ): AgSliderParams {
-        const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, isArray);
+        const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, { isArray });
         params.step = step;
         return params;
     }

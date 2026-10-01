@@ -280,8 +280,10 @@ export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = an
     TData,
     TContext
 > {
-    data: any;
-    rowNode: IRowNode;
+    /** The data item provided to the grid for the row in question */
+    data: TData;
+    /** The row node being considered. */
+    rowNode: IRowNode<TData>;
 }
 
 export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -350,6 +352,8 @@ export interface FillOperationParams<TData = any, TContext = any> extends AgGrid
     /** Uses the grid's default Fill Handle behaviour for the current cell. */
     useDefault: () => FillOperationResult;
 }
+/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
+export type SetFillValueCallback<TData = any, TContext = any> = (params: FillOperationParams<TData, TContext>) => any;
 
 export type GetRowHeight<TData = any, TContext = any> = (
     params: RowHeightParams<TData, TContext>
@@ -411,7 +415,10 @@ export interface GetGroupIncludeTotalRowParams<TData = any, TContext = any> exte
 }
 
 export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The column, if a cell was clicked, otherwise null. */
+    /**
+     * The column the menu relates to: the clicked cell's column for the Context Menu, or the column the menu is
+     * for in the Column Menu, Columns Tool Panel and Column Chooser. Otherwise null, including for column groups.
+     */
     column: Column | null;
     /** The row node, if a cell was clicked, otherwise null. */
     node: IRowNode<TData> | null;

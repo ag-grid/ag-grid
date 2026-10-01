@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_TW = {
+export const AG_GRID_LOCALE_ZH_TW = {
     // Set Filter
     selectAll: '(全選)',
     selectAllSearchResults: '(全選搜尋結果)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_TW = {
     clearFilter: '清除',
     cancelFilter: '取消',
     cancelColumnToolPanel: '取消',
+    resetColumnToolPanel: '重置',
 
     // Filter Titles
     textFilter: '文字篩選',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_TW = {
     advancedFilterValidationMissingCondition: '缺少條件',
     advancedFilterValidationJoinOperatorMismatch: '條件內的連接操作符必須一致',
     advancedFilterValidationInvalidJoinOperator: '找不到連接操作符',
+    advancedFilterValidationMissingListStartBracket: '缺少開頭方括號',
+    advancedFilterValidationMissingListEndBracket: '缺少結尾方括號',
     advancedFilterValidationMissingEndBracket: '缺少結尾括號',
     advancedFilterValidationExtraEndBracket: '結尾括號過多',
     advancedFilterValidationMessage: '表達式有錯誤。${variable} - ${variable}。',
@@ -916,3 +919,6 @@ export const AG_GRID_LOCALE_TW = {
     deleteNote: '移除備註',
     notePlaceholder: '新增備註...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_ZH_TW` instead. */
+export const AG_GRID_LOCALE_TW = AG_GRID_LOCALE_ZH_TW;

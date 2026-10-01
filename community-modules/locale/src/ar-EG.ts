@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_EG = {
+export const AG_GRID_LOCALE_AR_EG = {
     // Set Filter
     selectAll: '(تحديد الكل)',
     selectAllSearchResults: '(تحديد كل نتائج البحث)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_EG = {
     clearFilter: 'مسح',
     cancelFilter: 'إلغاء',
     cancelColumnToolPanel: 'إلغاء',
+    resetColumnToolPanel: 'إعادة تعيين',
 
     // Filter Titles
     textFilter: 'فلتر النص',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterValidationMissingCondition: 'الشرط مفقود',
     advancedFilterValidationJoinOperatorMismatch: 'يجب أن تكون عوامل الربط داخل الشرط نفسها',
     advancedFilterValidationInvalidJoinOperator: 'عامل الربط غير موجود',
+    advancedFilterValidationMissingListStartBracket: 'قوس مربع افتتاحي مفقود',
+    advancedFilterValidationMissingListEndBracket: 'قوس مربع ختامي مفقود',
     advancedFilterValidationMissingEndBracket: 'القوس الختامي مفقود',
     advancedFilterValidationExtraEndBracket: 'أقواس ختامية كثيرة جداً',
     advancedFilterValidationMessage: 'التعبير يحتوي على خطأ. ${variable} - ${variable}.',
@@ -916,3 +919,6 @@ export const AG_GRID_LOCALE_EG = {
     deleteNote: 'إزالة الملاحظة',
     notePlaceholder: 'أضف ملاحظة...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_AR_EG` instead. */
+export const AG_GRID_LOCALE_EG = AG_GRID_LOCALE_AR_EG;

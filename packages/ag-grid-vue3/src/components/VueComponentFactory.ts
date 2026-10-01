@@ -1,18 +1,54 @@
-import { createVNode, defineComponent, render } from 'vue';
+import { createVNode, defineComponent, h, render } from 'vue';
 
 import { _errorForGrid, _errorWithoutAttribution } from 'ag-grid-community';
+
+// Slots are read-only presentational content, so only a rendering role may resolve to one — an
+// editor/filter/etc. doing so would misbehave instead of erroring on a genuinely missing component.
+const SLOT_ELIGIBLE_PROPERTY_NAMES = new Set(['cellRenderer']);
 
 export class VueComponentFactory {
     // WeakMap avoids repeat component tree traversals and allows GC of parent components
     private static componentCache = new WeakMap<any, Map<string, any>>();
+    // Separate from componentCache: a name can resolve to a slot on one lookup and, if that slot
+    // is later removed, to a registered component on the next — the two must not collide.
+    private static slotComponentCache = new WeakMap<any, Map<string, any>>();
 
-    private static getComponentDefinition(component: any, parent: any, gridId: string | undefined) {
+    // hasOwnProperty guards against the internal slots object's prototype (e.g. `toString`,
+    // `constructor`) being mistaken for a real slot.
+    public static hasSlot(parent: any, name: string): boolean {
+        return (
+            !!parent.slots &&
+            Object.prototype.hasOwnProperty.call(parent.slots, name) &&
+            typeof parent.slots[name] === 'function'
+        );
+    }
+
+    private static getOrCreateCache(cache: WeakMap<any, Map<string, any>>, parent: any): Map<string, any> {
+        let parentCache = cache.get(parent);
+        if (!parentCache) {
+            parentCache = new Map();
+            cache.set(parent, parentCache);
+        }
+        return parentCache;
+    }
+
+    private static getComponentDefinition(
+        component: any,
+        parent: any,
+        gridId: string | undefined,
+        propertyName: string | undefined
+    ) {
         let componentDefinition: any;
 
         // when referencing components by name - ie: cellRenderer: 'MyComponent'
         if (typeof component === 'string') {
-            // look up the definition in Vue
-            componentDefinition = this.searchForComponentInstance(parent, component, 10, false, gridId);
+            // A named slot on this AgGridVue instance takes precedence over a registered component.
+            componentDefinition =
+                propertyName != null &&
+                SLOT_ELIGIBLE_PROPERTY_NAMES.has(propertyName) &&
+                this.hasSlot(parent, component)
+                    ? this.getSlotComponentDefinition(parent, component)
+                    : this.searchForComponentInstance(parent, component, 10, false, gridId);
         } else {
             componentDefinition = { extends: defineComponent({ ...component }) };
         }
@@ -37,6 +73,36 @@ export class VueComponentFactory {
         return componentDefinition;
     }
 
+    private static getSlotComponentDefinition(parent: any, slotName: string) {
+        const parentCache = this.getOrCreateCache(this.slotComponentCache, parent);
+        let componentDefinition = parentCache.get(slotName);
+        if (!componentDefinition) {
+            componentDefinition = defineComponent({
+                props: { params: { type: Object, required: true } },
+                setup(props: any) {
+                    // parent.slots read fresh on every call (not captured here) so this always
+                    // reflects the slot's current content.
+                    return () => {
+                        const rendered = parent.slots[slotName]?.(props.params);
+                        let nodes: any[];
+                        if (Array.isArray(rendered)) {
+                            nodes = rendered;
+                        } else {
+                            nodes = rendered != null ? [rendered] : [];
+                        }
+                        const [only] = nodes;
+                        // Only a plain element (`.type` is a tag-name string, unlike text/comment/
+                        // fragment/component vnodes) is trusted to have exactly one DOM root.
+                        const isSingleElementNode = nodes.length === 1 && typeof only.type === 'string';
+                        return isSingleElementNode ? only : h('span', nodes);
+                    };
+                },
+            });
+            parentCache.set(slotName, componentDefinition);
+        }
+        return componentDefinition;
+    }
+
     private static addParamsToProps(props: any) {
         if (!props || (Array.isArray(props) && props.indexOf('params') === -1)) {
             props = ['params', ...(props ? props : [])];
@@ -55,9 +121,10 @@ export class VueComponentFactory {
         params: any,
         parent: any,
         provides: any,
-        gridId: string | undefined
+        gridId: string | undefined,
+        propertyName?: string
     ) {
-        const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent, gridId);
+        const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent, gridId, propertyName);
         if (!componentDefinition) {
             return;
         }
@@ -105,7 +172,7 @@ export class VueComponentFactory {
         gridId?: string
     ) {
         // Check cache first
-        let parentCache = this.componentCache.get(parent);
+        const parentCache = this.componentCache.get(parent);
         if (parentCache) {
             const cached = parentCache.get(component);
             if (cached !== undefined) {
@@ -175,11 +242,7 @@ export class VueComponentFactory {
 
         // Cache the result
         if (componentInstance) {
-            if (!parentCache) {
-                parentCache = new Map();
-                this.componentCache.set(parent, parentCache);
-            }
-            parentCache.set(component, componentInstance);
+            this.getOrCreateCache(this.componentCache, parent).set(component, componentInstance);
         }
 
         return componentInstance;

@@ -1,6 +1,6 @@
 import type { AgPromise, IComponent } from 'ag-stack';
 
-import type { ColDef, ColKey } from '../entities/colDef';
+import type { ColDef, ColKey, ValueGetterFunc } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
@@ -42,6 +42,26 @@ export interface FilterHandlerBaseParams<
     onModelAsStringChange: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgFilterHandlerBaseParams<
+    TData = any,
+    TContext = any,
+    TModel = any,
+    TCustomParams = any,
+> extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
+    /** What `getValue` reads the filter's column through, which a Multi Filter passes on to its children. */
+    filterValueGetter: FilterValueGetter<TData> | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FilterValueGetter<TData = any> = string | ValueGetterFunc<TData>;
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FilterGetValueFunc<TData = any> = <TValue = any>(
+    node: IRowNode<TData>,
+    column?: ColKey<TData, TValue>
+) => TValue | null | undefined;
+
 export type QuickFilterParser = (quickFilter: string) => string[];
 export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolean;
@@ -62,6 +82,12 @@ export interface FilterHandlerParams<
      */
     additionalEventAttributes?: any;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgFilterHandlerParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends
+        FilterHandlerParams<TData, TContext, TModel, TCustomParams>,
+        AgFilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {}
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilter, ReadOnlyFloatingFilterParent<TModel> {
@@ -304,6 +330,9 @@ export interface FilterWrapperParams {
     readOnly?: boolean;
 }
 
+/** Which filter is invoking a callback: both read the column's one `filterParams`. */
+export type FilterCallbackSource = 'columnFilter' | 'advancedFilter';
+
 /**
  * Passed to a filter callback that reads or judges a value rather than a row, such as a parser, a formatter
  * or an input rule. It names the column so that one callback can serve every column it is configured on.
@@ -313,6 +342,8 @@ export interface FilterInputCallbackParams<TData = any, TContext = any> extends 
     colDef: ColDef<TData>;
     /** The column this filter is on. */
     column: Column;
+    /** Which filter is invoking the callback. */
+    source: FilterCallbackSource;
 }
 
 export interface SharedFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

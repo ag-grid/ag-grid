@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_CZ = {
+export const AG_GRID_LOCALE_CS_CZ = {
     // Set Filter
     selectAll: '(Vybrat vše)',
     selectAllSearchResults: '(Vybrat všechny výsledky hledání)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_CZ = {
     clearFilter: 'Vymazat',
     cancelFilter: 'Zrušit',
     cancelColumnToolPanel: 'Zrušit',
+    resetColumnToolPanel: 'Obnovit',
 
     // Filter Titles
     textFilter: 'Textový filtr',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterValidationMissingCondition: 'Chybí podmínka',
     advancedFilterValidationJoinOperatorMismatch: 'Operátory spojení v rámci podmínky musí být stejné',
     advancedFilterValidationInvalidJoinOperator: 'Operátor spojení nenalezen',
+    advancedFilterValidationMissingListStartBracket: 'Chybí otevírací hranatá závorka',
+    advancedFilterValidationMissingListEndBracket: 'Chybí uzavírací hranatá závorka',
     advancedFilterValidationMissingEndBracket: 'Chybí koncová závorka',
     advancedFilterValidationExtraEndBracket: 'Příliš mnoho koncových závorek',
     advancedFilterValidationMessage: 'Výraz obsahuje chybu. ${variable} - ${variable}.',
@@ -918,3 +921,6 @@ export const AG_GRID_LOCALE_CZ = {
     deleteNote: 'Odstranit poznámku',
     notePlaceholder: 'Přidat poznámku...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_CS_CZ` instead. */
+export const AG_GRID_LOCALE_CZ = AG_GRID_LOCALE_CS_CZ;

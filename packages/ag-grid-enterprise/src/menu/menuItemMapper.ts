@@ -10,8 +10,6 @@ import type {
     GetNoteParams,
     IAggFuncService,
     IMenuActionParams,
-    INoteAccess,
-    INotesService,
     IValueColsService,
     MenuItemDef,
     NamedBean,
@@ -490,7 +488,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 }
                 case 'csvExport':
-                    return csvCreator && !gos.get('suppressCsvExport')
+                    return csvCreator
                         ? {
                               name: localeTextFunc('csvExport', 'CSV Export'),
                               icon: _createIconNoSpan('csvExport', beans, null),
@@ -498,7 +496,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'excelExport':
-                    return excelCreator && !gos.get('suppressExcelExport')
+                    return excelCreator
                         ? {
                               name: localeTextFunc('excelExport', 'Excel Export'),
                               icon: _createIconNoSpan('excelExport', beans, null),
@@ -506,7 +504,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pdfExport':
-                    return pdfCreator && !gos.get('suppressPdfExport')
+                    return pdfCreator
                         ? {
                               name: localeTextFunc('pdfExport', 'PDF Export'),
                               icon: _createIconNoSpan('pdfExport', beans, null),
@@ -624,13 +622,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
             if (typeof menuItemOrString === 'string') {
                 if (menuItemOrString === 'note') {
-                    const noteItems = createNoteMenuItems({
-                        notesSvc,
-                        column,
-                        node,
-                        noteParams,
-                        localeTextFunc,
-                    });
+                    const params = noteParams ?? (column && node ? { rowNode: node, column } : undefined);
+                    const noteItems = params ? (notesSvc?.getMenuItems(params) ?? []) : [];
 
                     if (noteItems.length) {
                         resultList.push(MENU_ITEM_SEPARATOR, ...noteItems, MENU_ITEM_SEPARATOR);
@@ -674,76 +667,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
         return resultList;
     }
-}
-
-function createNoteMenuItems({
-    notesSvc,
-    column,
-    node,
-    noteParams,
-    localeTextFunc,
-}: {
-    notesSvc: Pick<INotesService, 'hasDataSource' | 'getNoteAccess' | 'showNote' | 'setNote'> | undefined;
-    column: AgColumn | null;
-    node: RowNode | null;
-    noteParams: GetNoteParams | undefined;
-    localeTextFunc: LocaleTextFunc;
-}): MenuItemDef[] {
-    const access: INoteAccess | undefined = notesSvc?.hasDataSource()
-        ? noteParams
-            ? notesSvc.getNoteAccess(noteParams)
-            : column && node
-              ? notesSvc.getNoteAccess({ rowNode: node, column })
-              : undefined
-        : undefined;
-
-    if (!access) {
-        return [];
-    }
-
-    const result: MenuItemDef[] = [];
-
-    if (!access.note) {
-        result.push({
-            name: localeTextFunc('addNote', 'Add Note'),
-            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            disabled: !access.canCreate,
-            action: access.canCreate ? () => notesSvc!.showNote(access.params, true) : undefined,
-        });
-
-        return result;
-    }
-
-    if (access.canView && (access.isReadOnly || access.isSuppressed)) {
-        result.push({
-            name: localeTextFunc('viewNote', 'View Note'),
-            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            action: () => notesSvc!.showNote(access.params, true),
-        });
-    }
-
-    if (!access.isReadOnly && !access.isSuppressed) {
-        result.push({
-            name: localeTextFunc('editNote', 'Edit Note'),
-            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            disabled: !access.canEdit,
-            action: access.canEdit ? () => notesSvc!.showNote(access.params, true) : undefined,
-        });
-    }
-
-    result.push({
-        name: localeTextFunc('deleteNote', 'Remove Note'),
-        disabled: !access.canDelete,
-        action: access.canDelete
-            ? () =>
-                  notesSvc!.setNote({
-                      ...access.params,
-                      note: undefined,
-                  })
-            : undefined,
-    });
-
-    return result;
 }
 
 function createAggregationSubMenu(

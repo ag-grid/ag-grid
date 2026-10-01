@@ -38,6 +38,35 @@ test.agExample(import.meta, () => {
         await expect(textarea).toHaveValue('This cell still allows the full built-in note workflow.');
     });
 
+    test.eachFramework('Suppressed columns block add, edit and remove actions', async ({ agIdFor, page }) => {
+        // Row 2 year is a suppressed column holding a note: it can be viewed but not edited
+        // or removed through the built-in UI.
+        await agIdFor.cell('2', 'year').click({ button: 'right' });
+        await expect(agIdFor.menuOption('View Note')).toBeVisible();
+        await expect(agIdFor.menuOption('Edit Note')).toHaveCount(0);
+        await expect(agIdFor.menuOption('Remove Note')).toHaveClass(/ag-menu-option-disabled/);
+        await page.keyboard.press('Escape');
+
+        // Row 1 year is the same suppressed column with no note, so creation is blocked too.
+        await agIdFor.cell('1', 'year').click({ button: 'right' });
+        await expect(agIdFor.menuOption('Add Note')).toHaveClass(/ag-menu-option-disabled/);
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('Non-suppressed columns keep the full note workflow', async ({ agIdFor, page }) => {
+        // Row 1 athlete is not suppressed, so edit and remove are both offered and enabled.
+        await agIdFor.cell('1', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menuOption('Edit Note')).toBeVisible();
+        await expect(agIdFor.menuOption('Edit Note')).not.toHaveClass(/ag-menu-option-disabled/);
+        await expect(agIdFor.menuOption('Remove Note')).not.toHaveClass(/ag-menu-option-disabled/);
+        await page.keyboard.press('Escape');
+
+        // Row 1 country has no note on a non-suppressed column, so one can be created.
+        await agIdFor.cell('1', 'country').click({ button: 'right' });
+        await expect(agIdFor.menuOption('Add Note')).not.toHaveClass(/ag-menu-option-disabled/);
+        await page.keyboard.press('Escape');
+    });
+
     test.eachFramework('Grid renders correct data', async ({ agIdFor }) => {
         await expect(agIdFor.cell('1', 'athlete')).toContainText('Michael Phelps');
         await expect(agIdFor.cell('2', 'year')).toContainText('2008');

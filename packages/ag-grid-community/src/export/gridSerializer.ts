@@ -168,7 +168,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 columnsToExport,
                 gridSerializingSession.useGridHeaderLayout && !!this.gos.get('hidePaddedHeaderRows'),
                 !params.skipColumnHeaders,
-                gridSerializingSession.useGridHeaderLayout
+                gridSerializingSession.isSpanColumnHeader()
             );
             for (const row of rows) {
                 const accumulator = row.grouping

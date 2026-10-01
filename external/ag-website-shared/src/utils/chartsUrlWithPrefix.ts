@@ -14,9 +14,11 @@ export const chartsUrlWithPrefix = ({
 }): string => {
     let path = url;
     if (url.startsWith('./')) {
-        path = pathJoin(siteBaseUrl, framework, url.slice('./'.length));
+        // `pathJoin` strips the trailing slash, so put it back - the charts site is trailing-slash
+        // canonical and would otherwise 301 every one of these cross-site links.
+        path = addTrailingSlashToPath(pathJoin(siteBaseUrl, framework, url.slice('./'.length)));
     } else if (url.startsWith('/')) {
-        path = pathJoin(siteBaseUrl, url);
+        path = addTrailingSlashToPath(pathJoin(siteBaseUrl, url));
     }
 
     // Site pages are directory indexes, so the slash-less form only reaches them via a redirect, and

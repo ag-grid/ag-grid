@@ -168,6 +168,7 @@ export {
     _isInvisibleScrollbar,
     _isIOSUserAgent,
     _isMacOsUserAgent,
+    _isRealCssEngine,
 } from './utils/browser';
 export {
     _dateToFormattedString,
@@ -195,10 +196,10 @@ export {
     _formatSize,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
-    _getElementSize,
     _getInnerHeight,
     _getInnerWidth,
     _getScrollLeft,
+    _getVerticalPaddingAndBorder,
     _isElementChildOfClass,
     _isElementOverflowingCallback,
     _isFocusableFormField,

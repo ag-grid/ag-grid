@@ -9,18 +9,19 @@
     }
     window.__agAnnouncementBannerInit = true;
 
-    var announcementId = document.documentElement.dataset.announcementId || '';
-    var STORAGE_KEY = 'documentation:announcement-banner-dismissed:' + announcementId;
-    var banner = document.querySelector('[data-announcement-banner]');
-    var button = banner && banner.querySelector('[data-announcement-dismiss]');
+    function onDismissClick(event) {
+        var banner = event.currentTarget.closest('[data-announcement-banner]');
 
-    if (!button) {
-        return;
-    }
+        if (!banner) {
+            return;
+        }
 
-    button.addEventListener('click', function () {
+        // Read the id per click rather than once at load: a client-side navigation
+        // restores <html> to the incoming page's server-rendered attributes.
+        var announcementId = document.documentElement.dataset.announcementId || '';
+
         try {
-            localStorage.setItem(STORAGE_KEY, 'true');
+            localStorage.setItem('documentation:announcement-banner-dismissed:' + announcementId, 'true');
         } catch (_) {
             // localStorage unavailable (private mode, quota); dismiss for this session only.
         }
@@ -34,5 +35,21 @@
             },
             { once: true }
         );
-    });
+    }
+
+    function bindDismissButton() {
+        var button = document.querySelector('[data-announcement-dismiss]');
+
+        // Always the same function reference, so re-binding the same button is a no-op.
+        if (button) {
+            button.addEventListener('click', onDismissClick);
+        }
+    }
+
+    bindDismissButton();
+
+    // A client-side navigation swaps <body>, so the incoming page's banner is a brand-new
+    // element with no listener, while this script — already in the document — is not
+    // re-executed. Re-bind after every swap; astro:page-load covers the initial load too.
+    document.addEventListener('astro:page-load', bindDismissButton);
 })();

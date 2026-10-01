@@ -35,14 +35,14 @@ export abstract class BaseRegistry<
     public createDynamicBean<T>(name: TDynamicBeanName, mandatory: boolean, ...args: any[]): T | undefined {
         if (!this.dynamicBeans) {
             // this happens when a module tries to init a dynamic bean during module initialization lifecycle
-            throw new Error(this.getDynamicError(name, true));
+            throw this.createDynamicError(name, true);
         }
 
         const BeanClass = this.dynamicBeans[name];
 
         if (BeanClass == null) {
             if (mandatory) {
-                throw new Error(this.getDynamicError(name, false));
+                throw this.createDynamicError(name, false);
             }
             return undefined;
         }
@@ -50,5 +50,5 @@ export abstract class BaseRegistry<
         return new BeanClass(...args) as any;
     }
 
-    protected abstract getDynamicError(name: TDynamicBeanName, init: boolean): string;
+    protected abstract createDynamicError(name: TDynamicBeanName, init: boolean): Error;
 }

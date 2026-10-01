@@ -361,7 +361,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/javascript-data-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
     { from: '/charts/react/radial-gauge', to: 'https://www.ag-grid.com/charts/react/radial-gauge/' },
     { from: '/charts/react/range-bar-series', to: 'https://www.ag-grid.com/charts/react/range-bar-series/' },
-    { from: '/vue-data-grid/', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
     { from: '/charts/react/pyramid-series', to: 'https://www.ag-grid.com/charts/react/pyramid-series/' },
     { from: '/charts/react/ohlc-series', to: 'https://www.ag-grid.com/charts/react/ohlc-series/' },
     { from: '/javascript-charts/bar-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
@@ -2976,10 +2975,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/grid-features/', to: 'https://www.ag-grid.com/' },
     { from: '/vue-data-grid/grid-features/', to: 'https://www.ag-grid.com/' },
 
+    // Only JavaScript: a rule for the other framework roots would shadow their landing hubs.
     { fromPattern: '^/javascript-data-grid/$', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
-    { fromPattern: '^/react-data-grid/$', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
-    { fromPattern: '^/angular-data-grid/$', to: 'https://www.ag-grid.com/angular-data-grid/getting-started/' },
-    { fromPattern: '^/vue-data-grid/$', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
 
     { fromPattern: '^/javascript-charts.*', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { fromPattern: '^/angular-charts.*', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },
@@ -2999,7 +2996,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // /charts sub-directory one, hijacks them to the grid's own documentation-archive. Keep it
     // scoped to the grid root only. No bare `^/archive$` rule is needed: the parent trailing-slash
     // rewrite ([L]) always turns `/archive` into `/archive/` first, which this rule then matches.
-    { fromPattern: '^/archive/$', to: '/documentation-archive' },
+    { fromPattern: '^/archive/$', to: '/documentation-archive/' },
 
     { from: '/javascript-data-grid/component-types/', to: '/javascript-data-grid/components/' },
     { from: '/angular-data-grid/component-types/', to: '/angular-data-grid/components/' },
@@ -3387,4 +3384,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/react/expressions(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/react/overview(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/(react|angular|vue|javascript)/(.*)', to: 'https://www.ag-grid.com/charts/$1/$2' },
+    // SE-169: the static Word-export EULA files were replaced by the /eula/ pages. /eula/license-en.html
+    // is not redirected: it is served as a bare document for the ecommerce site's iframe.
+    { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
 ];

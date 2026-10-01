@@ -13,6 +13,10 @@
  */
 import { createHash } from 'node:crypto';
 
+import {
+    WEBSITE_MONITORING_GTM_START_SCRIPT,
+    WEBSITE_MONITORING_GTM_STOP_SCRIPT,
+} from '../../../../../external/ag-website-shared/src/components/website-monitoring/gtmTags';
 import type { AcceptedCspViolation } from '../csp/cspViolationReport';
 import {
     DARK_MODE_INIT_SCRIPT,
@@ -26,8 +30,10 @@ export type CspMode = 'report-only' | 'enforce';
 
 /**
  * - 'site': the default policy for ordinary pages.
- * - 'examples': additionally allows 'unsafe-eval'; applies only to the standalone
- *   example-runner documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ * - 'examples': additionally allows 'unsafe-eval', plus the third-party hosts the
+ *   archived doc versions load their legacy example runner, sample data and page
+ *   chrome from (the ARCHIVE_*_HOSTS lists); applies only to the standalone
+ *   example-runner documents and archived doc versions — see EXAMPLES_PATH_CONDITION.
  * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
  *   connect) for the partnership campaign pages' embedded Gantt demo — without
  *   'unsafe-eval'. See CAMPAIGNS_PATH_CONDITION.
@@ -110,13 +116,13 @@ const hashInlineScript = (source: string): string =>
 //      hash the inline <script> contents in dist and diff against the list below.)
 //   4. Replace the hashes below with the new values, and bump
 //      ASTRO_HYDRATION_HASHES_VERIFIED_FOR to the new Astro version.
-export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '6.1.9';
+export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '7.3.4';
 const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='", // client:load bootstrap
     "'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc='", // client:only bootstrap
     "'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q='", // client:visible bootstrap
     "'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='", // client:idle bootstrap
-    "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
+    "'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U='", // <astro-island> hydration runtime
 ];
 
 // Inline scripts injected by third parties — the shared Google Tag Manager container and the
@@ -150,14 +156,14 @@ const ENZUZO_GTM_CONSENT_BRIDGE_SCRIPT = 'if (window.enzuzoGtmConsent) { window.
 // all-pages tag that installs one `submit` listener and POSTs them to MAKE_WEBHOOK_HOST. Both
 // read location.search via URLSearchParams and reach the form through the submit event's
 // target, which is what keeps them free of the interpolation that would unpin these digests.
-const GTM_UTM_CAPTURE_HASH = "'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='";
+const GTM_UTM_CAPTURE_HASH = "'sha256-UZ79CQlmQa9u4xp1a60kP2//w3o9IvBsC2tdqv57moc='";
 const GTM_UTM_WEBHOOK_HASH = "'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='";
 
 // An updated version of the GTM UTM-webhook tag above: the submit listener adds a third
 // `true` argument to addEventListener, switching it to the capturing phase — otherwise
 // byte-identical to GTM_UTM_WEBHOOK_HASH. Kept alongside it until the rollout is complete
 // and the old hash is confirmed unused. AG-3390.
-const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='";
+const GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH = "'sha256-7slCn/usH14D/QjSBhHPAkSInIZY56XqT8LTtYE71U8='";
 
 // Inline script used by the contact form.
 const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m8PkxY='";
@@ -165,6 +171,12 @@ const CONTACT_FORM_SCRIPT_HASH = "'sha256-D3cdipua6lhS2IQ0W0AlSNVVsS+2b/sXycSE8m
 // GTM tag for internal promo tracking: fires a GA4 event. Authored in the shared GTM
 // container (not this repo); hash captured from the browser's CSP violation report.
 const GTM_PROMO_TRACKING_HASH = "'sha256-nC2/ZWBpMyJEdVw5YxKBKxSMNwMN/lOAPrHk4RcIBbc='";
+
+// GTM tags that start and stop Dash0 website monitoring once Enzuzo consent is granted or
+// withdrawn (see DASH0_INGRESS_HOST). Unlike the tags above, their source lives in this repo, in
+// the website-monitoring gtmTags module, so they are hashed from that rather than pinned; the GTM
+// tags must be copied from it byte for byte.
+const WEBSITE_MONITORING_GTM_SCRIPTS = [WEBSITE_MONITORING_GTM_START_SCRIPT, WEBSITE_MONITORING_GTM_STOP_SCRIPT];
 
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
@@ -179,6 +191,7 @@ const SITE_SCRIPT_HASHES = [
     GTM_UTM_WEBHOOK_CAPTURING_PHASE_HASH,
     CONTACT_FORM_SCRIPT_HASH,
     GTM_PROMO_TRACKING_HASH,
+    ...WEBSITE_MONITORING_GTM_SCRIPTS.map(hashInlineScript),
 ];
 
 // Enzuzo, the cookie-consent banner that replaces OneTrust. Like OneTrust before it,
@@ -303,6 +316,16 @@ const LINKEDIN_BEACON_HOST = 'https://px.ads.linkedin.com';
 // this changes if the automation is recreated in another zone.
 const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 
+// Dash0 website monitoring (real user monitoring), run by
+// @ag-website-shared/components/website-monitoring once GTM reports analytics consent (see
+// WEBSITE_MONITORING_GTM_SCRIPTS). The SDK is bundled from npm and served from our own origin, so
+// it needs no script-src origin; this is where it sends its OTLP traces and logs, with fetch() and
+// sendBeacon.
+//
+// Regional host — this changes if the Dash0 organisation moves region, along with
+// PUBLIC_DASH0_ENDPOINT_URL in the .env.build.* files.
+const DASH0_INGRESS_HOST = 'https://ingress.eu-west-1.aws.dash0.com';
+
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
 // bryntum.com. Allowed only in the 'campaigns' scope so the rest of the site does
@@ -310,6 +333,48 @@ const MAKE_WEBHOOK_HOST = 'https://hook.eu2.make.com';
 // 'unsafe-eval': if the Bryntum bundle's runtime new Function() path turns out to
 // be exercised, re-allowing it is a separate, conscious decision.
 const BRYNTUM_HOST = 'https://bryntum.com';
+
+// The Mailchimp newsletter-signup embed, used by both the Ghost blog and the archived doc
+// versions' page chrome: the validation bundle (which also carries the jQuery the embed's
+// inline snippet expects — 'jQuery is not defined' without it), the JSONP subscribe endpoint
+// the bundle loads as a <script src>, and the embed stylesheet.
+const MAILCHIMP_VALIDATE_SCRIPT = 'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js';
+const MAILCHIMP_JSONP_HOST = 'https://ag-grid.us11.list-manage.com';
+const MAILCHIMP_STYLE_HOST = 'https://cdn-images.mailchimp.com';
+// Embedded tweets: widgets.js (script-src) renders each tweet into an iframe on the same origin.
+const TWITTER_PLATFORM_HOST = 'https://platform.twitter.com';
+// GitHub star/fork buttons: buttons.js (script-src) renders into an iframe on the same origin.
+const GITHUB_BUTTONS_HOST = 'https://buttons.github.io';
+
+// Hosts the archived doc versions (/archive/<version>/, matched by EXAMPLES_PATH_CONDITION)
+// depend on but the current site does not. The snapshots are immutable, so the CSP is the
+// only place these can be allowed (AG-18490).
+//
+// Example runner:
+//  - unpkg.com: v25 to v28.1 framework examples load SystemJS, zone.js and core-js from it
+//    as <script src>, and their systemjs.config.js maps every package to it, which SystemJS
+//    then fetches over XHR. So script-src and connect-src.
+//  - raw.githubusercontent.com: pre-v25 examples fetch their sample data from it.
+//
+// Page chrome (the docs pages themselves, not the examples):
+//  - ajax.googleapis.com: the Web Font Loader (v16 to v24) and AngularJS (v14/v15).
+//  - Mailchimp newsletter signup: every version up to v28 carries the embed stylesheet;
+//    v16 to v24 also load mc-validate.js and its list-manage JSONP subscribe call.
+//  - Embedded tweets and GitHub buttons (v14 to v24); v14/v15 embed the GitHub button
+//    iframe from ghbtns.com directly instead of via buttons.js.
+//  - maxcdn.bootstrapcdn.com: Font Awesome 4 stylesheet and webfonts (v14 to v24).
+const ARCHIVE_SCRIPT_HOSTS = [
+    'https://unpkg.com',
+    'https://ajax.googleapis.com',
+    MAILCHIMP_VALIDATE_SCRIPT,
+    MAILCHIMP_JSONP_HOST,
+    TWITTER_PLATFORM_HOST,
+    GITHUB_BUTTONS_HOST,
+];
+const ARCHIVE_CONNECT_HOSTS = ['https://unpkg.com', 'https://raw.githubusercontent.com'];
+const ARCHIVE_STYLE_HOSTS = [MAILCHIMP_STYLE_HOST, 'https://maxcdn.bootstrapcdn.com'];
+const ARCHIVE_FONT_HOSTS = ['https://maxcdn.bootstrapcdn.com'];
+const ARCHIVE_FRAME_HOSTS = [TWITTER_PLATFORM_HOST, GITHUB_BUTTONS_HOST, 'https://ghbtns.com'];
 
 // Apache <If> expression matching the URL paths that get the 'examples' scope:
 // the standalone example-runner documents and archived doc versions (uploaded
@@ -382,16 +447,16 @@ const AG_GRID_HOSTS = 'https://*.ag-grid.com';
 
 // Origins the Ghost blog's post content needs beyond the site policy
 const BLOG_SCRIPT_HOSTS = [
-    'https://platform.twitter.com', // embedded tweets (widgets.js)
+    TWITTER_PLATFORM_HOST, // embedded tweets (widgets.js)
     'https://widget.spreaker.com', // podcast embeds
-    'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
+    MAILCHIMP_VALIDATE_SCRIPT,
     // The newsletter signup form submits via mc-validate's jQuery JSONP: the subscribe
     // call is loaded as a <script src> pointing at /subscribe/post-json on this origin,
     // so it needs script-src on top of the form-action entry in the base policy.
-    'https://ag-grid.us11.list-manage.com',
+    MAILCHIMP_JSONP_HOST,
 ];
 
-const BLOG_STYLE_HOSTS = ['https://cdn-images.mailchimp.com']; // Mailchimp embed stylesheet
+const BLOG_STYLE_HOSTS = [MAILCHIMP_STYLE_HOST]; // Mailchimp embed stylesheet
 
 const BLOG_FRAME_HOSTS = [
     // The apex, listed explicitly: CSP host wildcards do not match a bare domain, so
@@ -401,7 +466,7 @@ const BLOG_FRAME_HOSTS = [
     'https://codesandbox.io',
     'https://embed.plnkr.co',
     'https://*.github.io',
-    'https://platform.twitter.com',
+    TWITTER_PLATFORM_HOST,
     'https://open.spotify.com',
     'https://player.simplecast.com',
     'https://widget.spreaker.com',
@@ -530,6 +595,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             ENZUZO_APP_HOST, // Enzuzo banner config, cookie list and consent-analytics XHR
             ENZUZO_GVL_HOST, // Enzuzo-hosted IAB TCF Global Vendor List
             MAKE_WEBHOOK_HOST, // UTM-attribution POST on form submit (injected via GTM)
+            DASH0_INGRESS_HOST, // Dash0 website monitoring telemetry
             'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
             'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,
@@ -560,7 +626,11 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
 
     // script-src inline handling, by scope (and environment for 'site').
     if (scope === 'examples') {
-        directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE);
+        directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE, ...ARCHIVE_SCRIPT_HOSTS);
+        directives['style-src'].push(...ARCHIVE_STYLE_HOSTS);
+        directives['font-src'].push(...ARCHIVE_FONT_HOSTS);
+        directives['connect-src'].push(...ARCHIVE_CONNECT_HOSTS);
+        directives['frame-src'].push(...ARCHIVE_FRAME_HOSTS);
     } else if (scope === 'campaigns') {
         directives['script-src'].push(BRYNTUM_HOST, UNSAFE_INLINE);
         directives['style-src'].push(BRYNTUM_HOST);
@@ -678,7 +748,8 @@ export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mod
         [
             "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
             '# (the Angular JIT and Vue runtime template compilers compile in the browser;',
-            '# archived versions additionally eval-load modules with SystemJS).',
+            '# archived versions additionally eval-load modules with SystemJS), and the archived',
+            '# versions need the third-party hosts their legacy example runner and page chrome load from.',
         ],
         { ...options, scope: 'examples' },
         mode

@@ -129,6 +129,19 @@ print_remediation() {
     echo "" >&2
     echo "ag-dev-prompts fetch failed (exit $exit_code) from $REPO_URL" >&2
     echo "" >&2
+    # A runner has no credential helper, gh login or SSH key to fix, so the
+    # workstation options below do not apply there. Say what does.
+    if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+        cat >&2 <<EOF
+Auth path: ${AUTH_MODE}, on a GitHub Actions runner.
+
+Reading ${REPO_SLUG} needs a token with access to that private repo; the
+workflow's own GITHUB_TOKEN does not have it. Pass one to the step as
+GITHUB_TOKEN, or leave it unset and setup-prompts skips this fetch.
+
+EOF
+        return 0
+    fi
     case "$AUTH_MODE" in
         https)
             cat >&2 <<EOF

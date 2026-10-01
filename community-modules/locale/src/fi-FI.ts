@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_FI = {
+export const AG_GRID_LOCALE_FI_FI = {
     // Set Filter
     selectAll: '(Valitse kaikki)',
     selectAllSearchResults: '(Valitse kaikki hakutulokset)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FI = {
     clearFilter: 'Tyhjennä',
     cancelFilter: 'Peruuta',
     cancelColumnToolPanel: 'Peruuta',
+    resetColumnToolPanel: 'Nollaa',
 
     // Filter Titles
     textFilter: 'Tekstisuodatin',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_FI = {
     advancedFilterValidationMissingCondition: 'Ehto puuttuu',
     advancedFilterValidationJoinOperatorMismatch: 'Yhdisteoperaattoreiden täytyy olla samat ehdon sisällä',
     advancedFilterValidationInvalidJoinOperator: 'Yhdisteoperaattori ei löydy',
+    advancedFilterValidationMissingListStartBracket: 'Aloittava hakasulje puuttuu',
+    advancedFilterValidationMissingListEndBracket: 'Päättävä hakasulje puuttuu',
     advancedFilterValidationMissingEndBracket: 'Päättävä sulje puuttuu',
     advancedFilterValidationExtraEndBracket: 'Liian monta päättävää suljetta',
     advancedFilterValidationMessage: 'Lausekkeessa on virhe. ${variable} - ${variable}.',
@@ -922,3 +925,6 @@ export const AG_GRID_LOCALE_FI = {
     deleteNote: 'Poista muistiinpano',
     notePlaceholder: 'Lisää muistiinpano...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_FI_FI` instead. */
+export const AG_GRID_LOCALE_FI = AG_GRID_LOCALE_FI_FI;

@@ -428,7 +428,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 keyboardEvent.preventDefault();
             } else if (movedToNextCell === null) {
                 // want to let browser handle, however some of the containers prevent browser focus
-                ctrlsSvc.get('gridCtrl').allowFocusForNextCoreContainer(backwards);
+                ctrlsSvc.get('gridCtrl')?.allowFocusForNextCoreContainer(backwards);
             }
             return;
         }
@@ -469,7 +469,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        let cellOrRow: CellCtrl | RowCtrl | null = _getCellByPosition(beans, focusedCell);
+        let cellOrRow: CellCtrl | RowCtrl | null | undefined = _getCellByPosition(beans, focusedCell);
 
         // if cell is not rendered, means user has scrolled away from the cell
         // or that the focusedCell is a Full Width Row
@@ -787,7 +787,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
     }
 
-    private setCurrentColumnWithoutSpan(column: Column): void {
+    public setCurrentColumnWithoutSpan(column: Column): void {
         if (!this.hasColumnWithoutSpanListener) {
             const clearCurrentColumnWithoutSpan = () => {
                 this.currentColumnWithoutSpan = null;
@@ -894,15 +894,9 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
-        const cellCtrl = _getCellByPosition(this.beans, cell);
+        const colSpanningList = _getCellByPosition(this.beans, cell)?.colsSpanning;
 
-        if (!cellCtrl) {
-            return cell;
-        }
-
-        const colSpanningList = cellCtrl.getColSpanningList();
-
-        if (colSpanningList.length === 1) {
+        if (!colSpanningList || colSpanningList.length === 1) {
             return cell;
         }
 

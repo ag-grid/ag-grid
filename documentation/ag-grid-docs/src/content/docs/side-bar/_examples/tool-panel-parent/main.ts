@@ -74,7 +74,6 @@ function openPopup() {
     const popup = document.getElementById('popup')!;
     popup.classList.toggle('active', true);
     gridApi.openToolPanel(columnsToolPanel.id);
-    addStyles(popup);
 }
 
 function openDrawer() {
@@ -82,12 +81,6 @@ function openDrawer() {
     const drawer = document.getElementById('drawer')!;
     drawer.classList.toggle('active', true);
     gridApi.openToolPanel(filtersToolPanel.id, drawer.querySelector('.content'));
-    addStyles(drawer);
-}
-
-function addStyles(parentEl: HTMLElement) {
-    const contentClassnames = [...parentEl.querySelector('.content').classList].filter((e) => e !== 'content');
-    parentEl.classList.add(...contentClassnames);
 }
 
 // setup the grid after the page has finished loading

@@ -59,7 +59,7 @@ export class NumberFilter extends TextInputSimpleFilter<
     }
 
     protected override getValueFormatter(): ((value: number | null) => string | null) | undefined {
-        return _bindFilterCallback(this.params.numberFormatter, this.gos, this.params.column);
+        return _bindFilterCallback(this.params.numberFormatter, this.gos, this.params.column, 'columnFilter');
     }
 
     protected override createInputWidget(): NumberInput {

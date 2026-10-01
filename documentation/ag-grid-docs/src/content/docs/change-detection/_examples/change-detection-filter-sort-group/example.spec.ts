@@ -38,4 +38,35 @@ test.agExample(import.meta, () => {
         await waitForRowAnimations(page);
         await expect(groupB).toHaveAttribute('row-index', '0');
     });
+
+    test.eachFramework(
+        'Editing a group cell moves the row and re-aggregates both groups',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            await expect(agIdFor.cell('row-group-group-A', 'total')).toContainText('740');
+            await expect(agIdFor.cell('row-group-group-B', 'total')).toContainText('1230');
+
+            // Move leaf row 0 (i=1: a=63, b=11, c=43, d=77) out of group A and into group B.
+            const groupCell = agIdFor.cell('0', 'group');
+            await groupCell.dblclick();
+            const cellEditor = groupCell.locator('input');
+            await expect(cellEditor).toBeVisible();
+            await cellEditor.fill('B');
+            await page.keyboard.press('Enter');
+            await expect(cellEditor).toHaveCount(0);
+            await waitForRowAnimations(page);
+
+            // Group A drops to a=167, b=99, c=187, d=93 and group B rises to a=298, b=406, c=278, d=442.
+            await expect(agIdFor.cell('row-group-group-A', 'a')).toContainText('167');
+            await expect(agIdFor.cell('row-group-group-A', 'd')).toContainText('93');
+            await expect(agIdFor.cell('row-group-group-B', 'a')).toContainText('298');
+            await expect(agIdFor.cell('row-group-group-B', 'd')).toContainText('442');
+
+            // The Total column reads the aggregates through a valueGetter, so it has to follow them.
+            await expect(agIdFor.cell('row-group-group-A', 'total')).toContainText('546');
+            await expect(agIdFor.cell('row-group-group-B', 'total')).toContainText('1424');
+        }
+    );
 });

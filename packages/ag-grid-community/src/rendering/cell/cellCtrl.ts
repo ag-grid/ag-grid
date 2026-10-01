@@ -51,16 +51,11 @@ import type { DndSourceComp } from '../dndSourceComp';
 import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
+import type { CellComp } from './cellComp';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
-import {
-    _getColSpanningList,
-    _initCellPosition,
-    _onCellLeftChanged,
-    _onCellWidthChanged,
-    _setupCellPosition,
-} from './cellPositionFeature';
+import { _initCellPosition } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -106,6 +101,14 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
+    /** The `left`, or `right` when anchored right, and the width last written to the cell; null to write again. */
+    public drawnPosition: number | null = null;
+    public drawnWidth: number | null = null;
+    /** The vanilla cell comp drawing this; a row has one row comp at a time, so the field is that comp's. */
+    public drawnComp: CellComp | undefined = undefined;
+    private drawnAriaColIndex = -1;
 
     public eGui: HTMLElement;
 
@@ -123,9 +126,12 @@ export class CellCtrl extends BeanStub {
 
     public lastIPadMouseClickEvent = 0;
 
-    // per-cell positioning state, owned by the cell position functions (rendering/cell/cellPositionFeature)
-    public colsSpanning?: AgColumn[];
-    public rowSpan = 1;
+    /** The columns this cell covers, kept by `cellPositionFeature`; null until it first spans past its own. */
+    public colsSpanning: AgColumn[] | null = null;
+    /** The `displayedColsVersion` `colsSpanning` was taken at. */
+    public colsSpanningVersion = -1;
+    /** The rows the legacy `colDef.rowSpan` spans; a `spanRows` cell has a `cellSpan` instead. */
+    public legacyRowSpan = 1;
 
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
@@ -166,7 +172,9 @@ export class CellCtrl extends BeanStub {
         public readonly column: AgColumn,
         public readonly rowNode: RowNode,
         beans: BeanCollection,
-        public readonly rowCtrl: RowCtrl
+        public readonly rowCtrl: RowCtrl,
+        /** The `colDef.spanRows` span this cell draws, with `enableCellSpan`; such a cell sizes itself. */
+        public readonly cellSpan: CellSpan | null
     ) {
         super();
         this.beans = beans;
@@ -181,15 +189,17 @@ export class CellCtrl extends BeanStub {
         if (!this.isClientSideLoadingCell()) {
             this.updateAndFormatValue(false);
         }
-        // must stay in the constructor, not setComp — see _setupCellPosition
-        _setupCellPosition(beans, this);
+        // read before mount so a data change can compare against it
+        if (cellSpan === null) {
+            this.legacyRowSpan = column.getRowSpan(rowNode);
+        }
     }
 
     private isClientSideLoadingCell(): boolean {
         return _isClientSideLoadingRow(this.gos, this.rowNode);
     }
 
-    private addFeatures(): void {
+    private addFeatures(compBean: BeanStub): void {
         const { beans } = this;
 
         this.enableTooltipFeature();
@@ -204,15 +214,7 @@ export class CellCtrl extends BeanStub {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
 
-        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this);
-    }
-
-    public isCellSpanning(): boolean {
-        return false;
-    }
-
-    public getCellSpan(): CellSpan | undefined {
-        return undefined;
+        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this, compBean);
     }
 
     private removeFeatures(): void {
@@ -273,13 +275,14 @@ export class CellCtrl extends BeanStub {
     ): void {
         this.comp = comp;
         this.eGui = eCell;
+        this.drawnAriaColIndex = -1;
         this.printLayout = printLayout;
         compBean ??= this;
 
         this.addDomData(compBean);
         const isClientSideLoadingCell = this.isClientSideLoadingCell();
         if (!isClientSideLoadingCell) {
-            this.addFeatures();
+            this.addFeatures(compBean);
             compBean.addDestroyFunc(() => this.removeFeatures());
         }
 
@@ -289,8 +292,7 @@ export class CellCtrl extends BeanStub {
         this.applyStaticCssClasses();
         this.setWrapText();
 
-        this.onFirstRightPinnedChanged();
-        this.onLastLeftPinnedChanged();
+        this.refreshPinnedEdges();
         this.onColumnHover();
         if (!isClientSideLoadingCell) {
             this.setupControlComps();
@@ -784,23 +786,13 @@ export class CellCtrl extends BeanStub {
         _onCellMouseEvent(this.beans, this, eventName, mouseEvent);
     }
 
-    public getColSpanningList(): AgColumn[] {
-        return _getColSpanningList(this.beans, this);
-    }
-
-    public onLeftChanged(): void {
-        if (!this.comp) {
-            return;
-        }
-        _onCellLeftChanged(this.beans, this);
-    }
-
     public onDisplayedColumnsChanged(): void {
         if (!this.eGui) {
             return;
         }
         this.refreshAriaColIndex();
         this.refreshFirstAndLastStyles();
+        this.rangeFeature?.onDisplayedColumnsChanged();
     }
 
     private refreshFirstAndLastStyles(): void {
@@ -809,11 +801,11 @@ export class CellCtrl extends BeanStub {
     }
 
     private refreshAriaColIndex(): void {
-        _setAriaColIndex(this.eGui, this.column.ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
-    }
-
-    public onWidthChanged(): void {
-        _onCellWidthChanged(this);
+        const ariaColIndex = this.column.ariaColIndex;
+        if (ariaColIndex !== this.drawnAriaColIndex) {
+            this.drawnAriaColIndex = ariaColIndex;
+            _setAriaColIndex(this.eGui, ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
+        }
     }
 
     public getRowPosition(): RowPosition {
@@ -822,13 +814,6 @@ export class CellCtrl extends BeanStub {
             rowIndex,
             rowPinned,
         };
-    }
-
-    public updateRangeBordersIfRangeCount(): void {
-        if (!this.comp) {
-            return;
-        }
-        this.rangeFeature?.updateRangeBordersIfRangeCount();
     }
 
     public onCellSelectionChanged(): void {
@@ -922,20 +907,13 @@ export class CellCtrl extends BeanStub {
         _addOrRemoveAttribute(element, 'tabindex', suppressCellFocus ? undefined : -1);
     }
 
-    public onFirstRightPinnedChanged(): void {
-        if (!this.comp) {
+    public refreshPinnedEdges(): void {
+        const { comp, column } = this;
+        if (!comp) {
             return;
         }
-        const firstRightPinned = this.column.isFirstRightPinned();
-        this.comp.toggleCss(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
-    }
-
-    public onLastLeftPinnedChanged(): void {
-        if (!this.comp) {
-            return;
-        }
-        const lastLeftPinned = this.column.isLastLeftPinned();
-        this.comp.toggleCss(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
+        comp.toggleCss(CSS_CELL_FIRST_RIGHT_PINNED, column.isFirstRightPinned());
+        comp.toggleCss(CSS_CELL_LAST_LEFT_PINNED, column.isLastLeftPinned());
     }
 
     /**

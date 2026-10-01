@@ -39,11 +39,14 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
     const handleFrameworkChange = (selectedFramework: Framework) => {
         const pageName = getPageNameFromPath(path);
         const menuItem = menuItems && getMenuItemFromPageName({ menuItems, pageName });
-        let newUrl = getNewFrameworkPath({
-            path,
-            currentFramework,
-            newFramework: selectedFramework,
-        });
+        // The same page in another framework, so any query string still applies: an error page carries the
+        // details of the reader's own error there, and license setup its integrated-charts choice.
+        let newUrl =
+            getNewFrameworkPath({
+                path,
+                currentFramework,
+                newFramework: selectedFramework,
+            }) + window.location.search;
 
         // Redirect to default page if page does not exist in framework
         if (menuItem?.frameworks) {

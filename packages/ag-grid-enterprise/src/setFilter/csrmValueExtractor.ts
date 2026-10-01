@@ -5,10 +5,12 @@ import { processDataPath, setFilterNullIfBlank } from './setFilterUtils';
 
 /** @param V type of value in the Set Filter */
 export class CsrmValuesExtractor<V> extends BeanStub {
+    /** Both written by the value model with each column definition update, so rows are read and keyed the current way. */
+    public createKey: (value: V | null | undefined, node?: RowNode | null) => string | null;
+    public getValue: (node: RowNode) => V | null | undefined;
+
     constructor(
-        private readonly createKey: (value: V | null | undefined, node?: RowNode) => string | null,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
-        private readonly getValue: (node: RowNode) => V | null | undefined,
         private readonly isTreeDataOrGrouping: () => boolean,
         private readonly isTreeData: () => boolean
     ) {

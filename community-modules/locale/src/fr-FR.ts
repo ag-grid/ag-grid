@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_FR = {
+export const AG_GRID_LOCALE_FR_FR = {
     // Set Filter
     selectAll: '(Sélectionner tout)',
     selectAllSearchResults: '(Sélectionner tous les résultats de recherche)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FR = {
     clearFilter: 'Effacer',
     cancelFilter: 'Annuler',
     cancelColumnToolPanel: 'Annuler',
+    resetColumnToolPanel: 'Réinitialiser',
 
     // Filter Titles
     textFilter: 'Filtre de texte',
@@ -185,8 +186,10 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationJoinOperatorMismatch:
         "Les opérateurs de jonction au sein d'une condition doivent être identiques",
     advancedFilterValidationInvalidJoinOperator: 'Opérateur de jonction non trouvé',
-    advancedFilterValidationMissingEndBracket: 'Guillemet de fin manquante',
-    advancedFilterValidationExtraEndBracket: 'Trop de crochets de fin',
+    advancedFilterValidationMissingListStartBracket: 'Crochet ouvrant manquant',
+    advancedFilterValidationMissingListEndBracket: 'Crochet fermant manquant',
+    advancedFilterValidationMissingEndBracket: 'Parenthèse fermante manquante',
+    advancedFilterValidationExtraEndBracket: 'Trop de parenthèses fermantes',
     advancedFilterValidationMessage: "L'expression contient une erreur. ${variable} - ${variable}.",
     advancedFilterValidationMessageAtEnd: "L'expression contient une erreur. ${variable} à la fin de l'expression.",
     advancedFilterValidationMessageOnly: "L'expression contient une erreur. ${variable}.",
@@ -928,3 +931,6 @@ export const AG_GRID_LOCALE_FR = {
     deleteNote: 'Supprimer la note',
     notePlaceholder: 'Ajouter une note...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_FR_FR` instead. */
+export const AG_GRID_LOCALE_FR = AG_GRID_LOCALE_FR_FR;

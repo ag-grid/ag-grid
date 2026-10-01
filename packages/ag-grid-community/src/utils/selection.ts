@@ -21,7 +21,7 @@ export function _selectAllCells(beans: BeanCollection) {
         rowEnd = rowModel.getRowCount() - 1;
     } else {
         floatingEnd = 'bottom';
-        rowEnd = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
+        rowEnd = (pinnedRowModel?.getPinnedBottomRowCount() ?? 0) - 1;
     }
 
     rangeSvc.setCellRange({

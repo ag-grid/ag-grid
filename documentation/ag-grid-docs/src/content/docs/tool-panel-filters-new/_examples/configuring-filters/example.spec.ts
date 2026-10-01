@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page, agIdFor }) => {
@@ -56,5 +56,62 @@ test.agExample(import.meta, () => {
         await ageInput.press('Enter');
         const firstRowAge = page.locator('.ag-row').locator('[col-id="age"]').first();
         await expect(firstRowAge).toHaveText('23');
+    });
+
+    test.eachFramework("Switching Country's filter type swaps the rendered filter", async ({ page, agIdFor }) => {
+        await waitForGridContent(page);
+
+        await agIdFor.filterToolPanelAddFilterButton().click();
+        await page.getByRole('option', { name: 'Country' }).locator('div').click();
+
+        const miniFilter = agIdFor.setFilterInstanceMiniFilterInput({
+            source: 'filter-toolpanel',
+            colLabel: 'Country',
+        });
+        const textInput = agIdFor.textFilterInstanceInput({ source: 'filter-toolpanel', colLabel: 'Country' });
+
+        // Country lists the Set Filter first, so the Selection Filter is rendered by default.
+        await expect(miniFilter).toBeVisible();
+        await expect(textInput).toHaveCount(0);
+
+        // Selecting the Simple Filter swaps the rendered filter UI.
+        await agIdFor.filterToolPanelFilterTypeSelector('Country').click();
+        await page.locator('.ag-list-item').filter({ hasText: 'Simple Filter' }).click();
+        await expect(textInput).toBeVisible();
+        await expect(miniFilter).toHaveCount(0);
+
+        // The swapped-in filter drives the grid.
+        await textInput.fill('Argentina');
+        await textInput.press('Enter');
+        await expect(page.locator('.ag-row').locator('[col-id="country"]').first()).toContainText('Argentina');
+    });
+
+    test.eachFramework('The custom Year filter can be selected and applied', async ({ page, agIdFor }) => {
+        await waitForGridContent(page);
+
+        await agIdFor.filterToolPanelAddFilterButton().click();
+        await page.getByRole('option', { name: 'Year' }).locator('div').click();
+
+        const yearFilter = page.locator('.year-filter');
+        // The custom component is listed first, so it renders by default.
+        await expect(yearFilter).toContainText('Select Year Range');
+
+        // Switching to the Selection Filter replaces it...
+        await agIdFor.filterToolPanelFilterTypeSelector('Year').click();
+        await page.locator('.ag-list-item').filter({ hasText: 'Selection Filter' }).click();
+        await expect(yearFilter).toHaveCount(0);
+
+        // ...and selecting the Custom Filter renders it again.
+        await agIdFor.filterToolPanelFilterTypeSelector('Year').click();
+        await page.locator('.ag-list-item').filter({ hasText: 'Custom Filter' }).click();
+        await expect(yearFilter).toContainText('Select Year Range');
+
+        // Row 0 is a 2008 record, row 2 a 2012 one.
+        await expect(agIdFor.cell('0', 'year')).toContainText('2008');
+
+        // The custom filter's doesFilterPass keeps only years after 2010.
+        await yearFilter.locator('label').filter({ hasText: 'Since 2010' }).locator('input').check();
+        await expect(agIdFor.cell('0', 'year')).not.toBeVisible();
+        await expect(agIdFor.cell('2', 'year')).toContainText('2012');
     });
 });

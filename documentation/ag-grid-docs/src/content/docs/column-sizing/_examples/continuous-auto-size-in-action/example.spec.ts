@@ -1,12 +1,7 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
-const COLUMNS = ['athlete', 'age', 'country', 'sport', 'year', 'date', 'gold', 'silver', 'bronze', 'total'];
-
-/** Settle the width animation so measurements are stable. */
-async function waitForWidths(page: Page): Promise<void> {
-    await expect(page.locator('.ag-animate-autosize')).toHaveCount(0);
-}
+const COLUMNS = ['athlete', 'age', 'country', 'text1', 'text2', 'text3'];
 
 /** The page's first-row number in the paging summary, which changes as soon as the new page lands. */
 function firstRowOnPage(page: Page) {
@@ -14,21 +9,18 @@ function firstRowOnPage(page: Page) {
 }
 
 /**
- * Whether this page's content has moved any column off `initialWidths`. The re-size is asynchronous even
- * once the rows are rendered, so the widths are polled rather than sampled once — a page that leaves them
- * alone costs the settle window before it is ruled out, which is why that window is kept short.
+ * Re-samples until the value satisfies `predicate` or the timeout expires, then returns the last
+ * sample for the caller to assert on. `expect` re-exported from the docs test utils is a bare
+ * wrapper function, so Playwright's `expect.poll` is not available here.
  */
-async function widthsChangedFrom(page: Page, initialWidths: number[]): Promise<boolean> {
-    try {
-        await expect
-            .poll(async () => (await columnWidths(page)).some((width, index) => width !== initialWidths[index]), {
-                timeout: 2000,
-            })
-            .toBe(true);
-        return true;
-    } catch {
-        return false;
+async function pollFor<T>(sample: () => Promise<T>, predicate: (value: T) => boolean, timeoutMs: number) {
+    const deadline = Date.now() + timeoutMs;
+    let value = await sample();
+    while (!predicate(value) && Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        value = await sample();
     }
+    return value;
 }
 
 async function columnWidths(page: Page): Promise<number[]> {
@@ -43,36 +35,119 @@ async function columnWidths(page: Page): Promise<number[]> {
 test.agExample(import.meta, () => {
     test.eachFramework('renders every grouped column sized to its contents', async ({ page }) => {
         await waitForGridContent(page);
-        await waitForWidths(page);
 
-        await expect(page.locator('.ag-header-group-cell-label')).toHaveText(['Competitor', 'Event', 'Medals']);
+        // only the leftmost groups are rendered, so the visible prefix is asserted rather than the
+        // full set of seven groups
+        const groupLabels = page.locator('.ag-header-group-cell-label');
+        await expect(groupLabels.nth(0)).toHaveText('Competitor');
+        await expect(groupLabels.nth(1)).toHaveText('Profile');
+
+        // Auto-size runs asynchronously after the rows render, so the narrow columns are polled to their
+        // fitted state rather than sampled once: the narrow numeric columns must not be left padded out
+        // to the default width.
+        await expect(async () => {
+            expect(Math.min(...(await columnWidths(page)))).toBeLessThan(150);
+        }).toPass();
 
         const widths = await columnWidths(page);
         expect(widths.every((width) => width > 0)).toBe(true);
-        // the narrow numeric columns must not be padded out to the default width
-        expect(Math.min(...widths)).toBeLessThan(150);
     });
 
-    test.eachFramework('changing page re-fits the columns to the new page contents', async ({ page }) => {
+    test.eachFramework('changing page re-fits the columns to the new page contents', async ({ page, remoteGrid }) => {
+        // One proxy per test: creating it exposes the `logEvent` binding on the page.
+        const remoteApi = remoteGrid(page, '1');
         await waitForGridContent(page);
-        await waitForWidths(page);
+
+        await remoteApi.logEvent('columnResized', ['finished', 'source']);
+        const autoSizePasses = () =>
+            remoteGrid.eventLog.filter(
+                ([eventType, eventData]) =>
+                    eventType === 'columnResized' && eventData.finished && eventData.source === 'autosizeColumns'
+            ).length;
+
+        /**
+         * Whether a debounced auto-size pass landed for the page just shown. `columnResized` is only
+         * dispatched when a column was actually re-sized, so a page whose content fits the current
+         * widths legitimately produces no pass - hence the bounded wait, which decides only whether to
+         * move on to the next page. The test's own gate is the width assertion below, and it is on
+         * observed state, never on elapsed time.
+         */
+        const autoSizePassLanded = async (passesBeforePage: number): Promise<boolean> => {
+            const passes = await pollFor(
+                async () => autoSizePasses(),
+                (count) => count > passesBeforePage,
+                2000
+            );
+            return passes > passesBeforePage;
+        };
 
         const initialWidths = await columnWidths(page);
 
         // the first page whose content is wide enough somewhere to move a column off its initial width
         let changed = false;
+        let widths = initialWidths;
         for (let i = 0; i < 5 && !changed; i++) {
+            // The event log is cumulative and never reset, so each page compares against its own
+            // snapshot rather than an absolute count.
+            const passesBeforePage = autoSizePasses();
+
             // the previous page's rows are still on screen right after the click, so wait on the page
             // number rather than on row content, which would match before the new page had rendered
             const previousFirstRow = await firstRowOnPage(page).textContent();
             await page.getByRole('button', { name: 'Next Page' }).click();
             await expect(firstRowOnPage(page)).not.toHaveText(previousFirstRow ?? '');
             await waitForGridContent(page);
-            await waitForWidths(page);
 
-            changed = await widthsChangedFrom(page, initialWidths);
+            if (!(await autoSizePassLanded(passesBeforePage))) {
+                // nothing was re-sized for this page: its content fits the widths already on screen
+                continue;
+            }
+
+            widths = await columnWidths(page);
+            changed = widths.some((width, index) => width !== initialWidths[index]);
         }
 
-        expect(changed).toBe(true);
+        // Reported with both width sets: a bare boolean says nothing about which column failed to move.
+        expect(
+            changed,
+            `no column moved off its initial width over 5 pages.\n  columns: ${COLUMNS.join(', ')}` +
+                `\n  initial: ${initialWidths.join(', ')}\n     last: ${widths.join(', ')}`
+        ).toBe(true);
+    });
+
+    test.eachFramework('scrolling right fits the columns as they arrive', async ({ page }) => {
+        await waitForGridContent(page);
+
+        const goldHeader = page.locator('.ag-header-cell[col-id="gold"]').first();
+        const scrollViewport = page.locator('.ag-body-horizontal-scroll-viewport').first();
+
+        // The jump to the far edge is retried until "Gold" is actually rendered: a continuous auto-size
+        // pass lands while the scroll is in flight, changes the total column width and so clamps
+        // `scrollLeft` back, leaving the last group out of the (horizontally virtualised) header. A
+        // single un-retried jump then waits out the whole timeout on a header cell that is not in the
+        // DOM at all, which is how this spec fails on a different browser most nights.
+        await expect(async () => {
+            await scrollViewport.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+            await expect(goldHeader).toBeVisible({ timeout: 2_000 });
+        }).toPass();
+
+        // Continuous auto-sizing is debounced and fits each column as it arrives, so the width is
+        // polled to its fitted state rather than sampled off a single `columnResized` event: that
+        // event can land for a column passed mid-scroll while "Gold" is still at its default width.
+        // Each attempt also steps back off the far edge and returns to it, because a single jump to
+        // the end can leave the last columns unvisited by the pass - a real arrival, re-made.
+        let fitted = 0;
+        await expect(async () => {
+            fitted = (await goldHeader.boundingBox())?.width ?? 0;
+            if (fitted >= 150) {
+                await scrollViewport.evaluate((element) =>
+                    element.scrollTo({ left: Math.max(0, element.scrollLeft - 200) })
+                );
+                await scrollViewport.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+                fitted = (await goldHeader.boundingBox())?.width ?? 0;
+            }
+            expect(fitted, 'the "Gold" column was not fitted after scrolling it into view').toBeLessThan(150);
+        }).toPass();
+        expect(fitted).toBeGreaterThan(0);
     });
 });

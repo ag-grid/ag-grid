@@ -31,9 +31,14 @@ const ASYNC_ASSERTION_METHODS = new Set([
 ]);
 /**
  * Simple wrapper that protects async assertion methods from being used without await.
+ *
+ * The return value must be a `Proxy` over `playwrightExpect` trapping only `apply`: Playwright's
+ * `expect` is itself proxy-backed, so its statics (`poll`, `soft`, `configure`, `extend`,
+ * `objectContaining`, `not`, ...) are not own enumerable properties and survive only by being reached
+ * through the target. A plain function — or an `Object.assign` copy — silently drops every one of them.
  */
 export function shouldBeAsyncGuard<T>(playwrightExpect: T): T {
-    return function protectedExpect(...actual: any[]) {
+    function protectedExpect(...actual: any[]) {
         const expectResult = (playwrightExpect as any)(...actual);
 
         return new Proxy(expectResult, {
@@ -121,5 +126,11 @@ export function shouldBeAsyncGuard<T>(playwrightExpect: T): T {
                 return value;
             },
         });
-    } as T;
+    }
+
+    // Property access (the statics) falls through to `playwrightExpect`; only the call is intercepted.
+    // The `as T` cast is unavoidable: a `Proxy` is untyped.
+    return new Proxy(playwrightExpect as object, {
+        apply: (_target, _thisArg, actual: any[]) => protectedExpect(...actual),
+    }) as T;
 }

@@ -67,4 +67,56 @@ test.agExample(import.meta, () => {
             await expect(cell).toHaveText('English');
         }
     );
+
+    test.eachFramework(
+        'should debounce the search and send one request for the typed string',
+        async ({ agIdFor, page }) => {
+            const logs: string[] = [];
+            page.on('console', (m) => logs.push(m.text()));
+
+            const cell = agIdFor.cell('0', 'language');
+            await cell.dblclick();
+
+            const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+            await expect(editorInput).toBeVisible();
+
+            // Type three characters well within the 300ms searchDebounceDelay
+            await editorInput.pressSequentially('Spa', { delay: 30 });
+
+            // Only one request is made, and it carries the full typed string
+            await expect
+                .poll(() => logs.filter((line) => line.startsWith('Grid requested')), { timeout: 10000 })
+                .toContain('Grid requested `spa` from server.');
+
+            expect(logs.filter((line) => line === 'Grid requested `spa` from server.')).toHaveLength(1);
+            expect(logs.filter((line) => line === 'Grid requested `s` from server.')).toHaveLength(0);
+            expect(logs.filter((line) => line === 'Grid requested `sp` from server.')).toHaveLength(0);
+
+            await page.keyboard.press('Escape');
+        }
+    );
+
+    test.eachFramework(
+        'should report no hits from the server for a search with no matches',
+        async ({ agIdFor, page }) => {
+            const logs: string[] = [];
+            page.on('console', (m) => logs.push(m.text()));
+
+            const cell = agIdFor.cell('0', 'language');
+            await cell.dblclick();
+
+            const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+            await expect(editorInput).toBeVisible();
+
+            // 'zzz' matches none of the languages, so the server responds with 0 hits
+            await editorInput.fill('zzz');
+
+            await expect.poll(() => logs, { timeout: 10000 }).toContain('Server response for `zzz`: 0 hits.');
+
+            // No rows are rendered for an empty result set
+            await expect(page.locator('.ag-rich-select-row')).toHaveCount(0);
+
+            await page.keyboard.press('Escape');
+        }
+    );
 });

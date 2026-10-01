@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_IT = {
+export const AG_GRID_LOCALE_IT_IT = {
     // Set Filter
     selectAll: '(Seleziona tutto)',
     selectAllSearchResults: '(Seleziona tutti i risultati della ricerca)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_IT = {
     clearFilter: 'Pulisci',
     cancelFilter: 'Annulla',
     cancelColumnToolPanel: 'Annulla',
+    resetColumnToolPanel: 'Reimposta',
 
     // Filter Titles
     textFilter: 'Filtro di testo',
@@ -185,6 +186,8 @@ export const AG_GRID_LOCALE_IT = {
     advancedFilterValidationJoinOperatorMismatch:
         "Gli operatori di unione all'interno di una condizione devono essere uguali",
     advancedFilterValidationInvalidJoinOperator: 'Operatore di unione non trovato',
+    advancedFilterValidationMissingListStartBracket: 'Parentesi quadra di apertura mancante',
+    advancedFilterValidationMissingListEndBracket: 'Parentesi quadra di chiusura mancante',
     advancedFilterValidationMissingEndBracket: 'Parentesi di chiusura mancante',
     advancedFilterValidationExtraEndBracket: 'Troppe parentesi di chiusura',
     advancedFilterValidationMessage: "L'espressione ha un errore. ${variable} - ${variable}.",
@@ -925,3 +928,6 @@ export const AG_GRID_LOCALE_IT = {
     deleteNote: 'Rimuovi nota',
     notePlaceholder: 'Aggiungi una nota...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_IT_IT` instead. */
+export const AG_GRID_LOCALE_IT = AG_GRID_LOCALE_IT_IT;

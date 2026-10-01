@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_PK = {
+export const AG_GRID_LOCALE_UR_PK = {
     // Set Filter
     selectAll: '(سب منتخب کریں)',
     selectAllSearchResults: '(تمام تلاش کے نتائج منتخب کریں)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_PK = {
     clearFilter: 'صاف کریں',
     cancelFilter: 'منسوخ کریں',
     cancelColumnToolPanel: 'منسوخ کریں',
+    resetColumnToolPanel: 'ری سیٹ کریں',
 
     // Filter Titles
     textFilter: 'متن فلٹر',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterValidationMissingCondition: 'شرط غائب ہے',
     advancedFilterValidationJoinOperatorMismatch: 'ایک شرط میں جوائن آپریٹرز ایک جیسے ہونے چاہیے',
     advancedFilterValidationInvalidJoinOperator: 'جوائن آپریٹر نہیں ملا',
+    advancedFilterValidationMissingListStartBracket: 'ابتدائی مربع بریکٹ غائب ہے',
+    advancedFilterValidationMissingListEndBracket: 'اختتامی مربع بریکٹ غائب ہے',
     advancedFilterValidationMissingEndBracket: 'اختتامی بریکٹ غائب ہے',
     advancedFilterValidationExtraEndBracket: 'زیادہ اختتامی بریکٹس',
     advancedFilterValidationMessage: 'اظہار میں ایک نقص ہے. ${variable} - ${variable}.',
@@ -917,3 +920,6 @@ export const AG_GRID_LOCALE_PK = {
     deleteNote: 'نوٹ ہٹائیں',
     notePlaceholder: 'ایک نوٹ شامل کریں...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_UR_PK` instead. */
+export const AG_GRID_LOCALE_PK = AG_GRID_LOCALE_UR_PK;

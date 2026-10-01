@@ -209,11 +209,52 @@ function validateVersionFiles() {
     });
 }
 
+// 5. Validate yarn.lock resolves the bumped ag-charts dependencies
+//
+// The ag-grid packages are workspaces and never appear in the lockfile, but the ag-charts
+// packages are fetched from the registry, so a bump that skips `yarn install` leaves yarn.lock
+// on the previous version. CI then fails every job with `yarn check --integrity`.
+function validateLockfile() {
+    console.log('\nChecking yarn.lock...');
+
+    const lockfilePath = './yarn.lock';
+    if (!fs.existsSync(lockfilePath)) {
+        error('yarn.lock does not exist');
+        return;
+    }
+
+    // Yarn 1 entry headers are `name@range:` or `"name@range", "name@range2":` on their own line.
+    const lockedSelectors = new Set();
+    for (const line of fs.readFileSync(lockfilePath, 'utf8').split('\n')) {
+        if (!/^[^\s#].*:$/.test(line)) {
+            continue;
+        }
+        for (const selector of line.slice(0, -1).split(',')) {
+            lockedSelectors.add(selector.trim().replace(/^"|"$/g, ''));
+        }
+    }
+
+    // Peer dependencies are not installed, so the angular sub-project peers are not checked.
+    const missing = new Set();
+    for (const pkg of Object.values(getPackageInformation())) {
+        for (const [dep, depVersion] of Object.entries({ ...pkg.agChartDeps, ...pkg.agChartOptionalDeps })) {
+            if (!lockedSelectors.has(`${dep}@${depVersion}`)) {
+                missing.add(`${dep}@${depVersion}`);
+            }
+        }
+    }
+
+    for (const selector of missing) {
+        error(`yarn.lock has no entry for ${selector} - run yarn install and commit yarn.lock`);
+    }
+}
+
 // Run all validations
 validateEnvFile();
 validateRootPackageJson();
 validatePackageJsonFiles();
 validateVersionFiles();
+validateLockfile();
 
 console.log('\n************************************************************************************************');
 if (errors.length > 0) {

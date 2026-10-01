@@ -351,4 +351,24 @@ describe('ag-grid grouping pinned rows', () => {
         // Verify the Germany group no longer exists
         expect(api.getRowNode('row-group-country-Germany')).toBeUndefined();
     });
+
+    test('unpinning a group row keeps its group total row', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData: rowData.slice(0, 2),
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.group ? 'top' : null),
+            getRowId: (params) => params.data.id,
+        });
+        api.setGridOption('isRowPinned', () => null);
+        await new GridRows(api, 'unpinned group keeps its total row').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:fr-paris country:"France" sport:"football" amount:100
+            · ├── LEAF id:fr-lyon country:"France" sport:"rugby" amount:200
+            · └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"Total France" amount:300
+        `);
+    });
 });

@@ -5,6 +5,7 @@ import { renderBootstrapPanel } from './errorOverlay/bootstrapPanel';
 import errorOverlayCSS from './errorOverlay/errorOverlay.css';
 import { ErrorOverlayComponent } from './errorOverlay/errorOverlayComponent';
 import { ErrorOverlayService } from './errorOverlay/errorOverlayService';
+import { IssueEventService } from './issueEventService';
 import { _provideBootstrapPanelRenderer } from './logging';
 import type { DevValidationOptions } from './validationConfig';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
@@ -41,7 +42,7 @@ type ValidationModuleType = {
 export const ValidationModule: ValidationModuleType = {
     moduleName: 'Validation',
     version: VERSION,
-    beans: [ValidationService, ErrorOverlayService],
+    beans: [ValidationService, ErrorOverlayService, IssueEventService],
     userComponents: {
         agErrorOverlay: ErrorOverlayComponent,
     },
@@ -79,6 +80,7 @@ export const ValidationModule: ValidationModuleType = {
  * production builds.
  *
  * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: ['error'] }`.
+ * Pass `{ debug: true }` to also log grid debug information to the console.
  */
 export function enableDevValidations(options?: DevValidationOptions): void {
     _registerModule(ValidationModule.with(options), undefined);

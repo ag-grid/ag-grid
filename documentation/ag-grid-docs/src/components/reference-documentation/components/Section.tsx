@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import type { FunctionComponent, ReactElement } from 'react';
 import React, { Fragment } from 'react';
 
-import type { Config, ObjectCode, Properties, SectionProps } from '../types';
+import type { Config, ObjectCode, PropertyViewModelMap, SectionProps } from '../types';
 import { convertMarkdown, escapeGenericCode, getLinkedType } from '../utils/documentation-helpers';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
 import legacyStyles from './LegacyApiReference.module.scss';
@@ -64,7 +64,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
         indentationLevel++;
     });
 
-    Object.entries(properties).forEach(([key, definition]) => {
+    Object.entries(properties).forEach(([key, { definition = {} }]) => {
         let line = getIndent(indentationLevel) + key;
 
         // process property object
@@ -126,7 +126,7 @@ const SectionHeader = ({
     headerLevel?: number;
     hideHeader?: boolean;
     showSnippets?: boolean;
-    properties: Properties;
+    properties: PropertyViewModelMap;
 }) => {
     const breadcrumbKeys = Object.keys(breadcrumbs);
     const id = breadcrumbKeys.join('.');
@@ -211,17 +211,14 @@ export const Section: FunctionComponent<SectionProps> = ({
                     <col></col>
                 </colgroup>
                 <tbody>
-                    {Object.entries(properties).map(([name, { definition, gridOpProp, detailsCode, propertyType }]) => {
+                    {Object.entries(properties).map(([name, property]) => {
                         return (
                             <Property
                                 key={name}
                                 id={id}
                                 name={name}
                                 framework={framework}
-                                definition={definition}
-                                gridOpProp={gridOpProp}
-                                detailsCode={detailsCode}
-                                propertyType={propertyType}
+                                property={property}
                                 config={config}
                             />
                         );

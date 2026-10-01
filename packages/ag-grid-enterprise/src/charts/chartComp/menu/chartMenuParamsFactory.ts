@@ -16,6 +16,18 @@ import type { ChartOptionsProxy } from '../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { FontPanelParams } from './format/fontPanel';
 
+/**
+ * What a widget shows when its option is unset and AG Charts derives the effective value elsewhere at
+ * render time (a box plot whisker inherits the series stroke, a stage label is drawn by the category axis).
+ */
+type ValueWhenUnset<T = any> = () => T | undefined;
+
+interface ValueParamsOptions {
+    parseInputValue?: (value: any) => any;
+    formatInputValue?: (value: any) => any;
+    valueWhenUnset?: ValueWhenUnset;
+}
+
 export class ChartMenuParamsFactory extends BeanStub {
     private chartTranslation: ChartTranslationService;
 
@@ -30,10 +42,7 @@ export class ChartMenuParamsFactory extends BeanStub {
     public getDefaultColorPickerParams(
         expression: string,
         labelKey?: ChartTranslationKey,
-        options?: {
-            parseInputValue: (value: any) => any;
-            formatInputValue: (value: any) => any;
-        }
+        options?: ValueParamsOptions
     ): ColorPickerParams {
         return this.addValueParams(
             expression,
@@ -83,12 +92,10 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         defaultMaxValue: number,
-        isArray?: boolean
+        { isArray, valueWhenUnset }: { isArray?: boolean; valueWhenUnset?: ValueWhenUnset<number | number[]> } = {}
     ): AgSliderParams {
-        let value = this.chartOptionsProxy.getValue<number>(expression) ?? 0;
-        if (isArray && Array.isArray(value)) {
-            value = value[0];
-        }
+        const optionValue = this.chartOptionsProxy.getValue<number | number[]>(expression) ?? valueWhenUnset?.() ?? 0;
+        const value = isArray && Array.isArray(optionValue) ? optionValue[0] : (optionValue as number);
         const params = this.getDefaultSliderParamsWithoutValueParams(value, labelKey, defaultMaxValue);
         params.onValueChange = (value) => this.chartOptionsProxy.setValue(expression, isArray ? [value] : value);
         return params;
@@ -184,25 +191,27 @@ export class ChartMenuParamsFactory extends BeanStub {
         };
     }
 
-    public getDefaultFontPanelParams(expression: string, labelKey: ChartTranslationKey): FontPanelParams {
+    public getDefaultFontPanelParams(
+        expression: string,
+        labelKey: ChartTranslationKey,
+        valueWhenUnset?: FontPanelParams['valueWhenUnset']
+    ): FontPanelParams {
         const keyMapper = (key: string) => `${expression}.${key}`;
-        return this.addEnableParams<FontPanelParams>(keyMapper('enabled'), {
-            name: this.chartTranslation.translate(labelKey),
-            suppressEnabledCheckbox: false,
-            chartMenuParamsFactory: this,
-            keyMapper,
-        } as any);
+        return this.addEnableParams<FontPanelParams>(
+            keyMapper('enabled'),
+            {
+                name: this.chartTranslation.translate(labelKey),
+                suppressEnabledCheckbox: false,
+                chartMenuParamsFactory: this,
+                keyMapper,
+                valueWhenUnset,
+            } as any,
+            valueWhenUnset && (() => valueWhenUnset('enabled'))
+        );
     }
 
-    public addValueParams<P extends AgFieldParams>(
-        expression: string,
-        params: P,
-        options?: {
-            parseInputValue: (value: any) => any;
-            formatInputValue: (value: any) => any;
-        }
-    ): P {
-        const optionsValue = this.chartOptionsProxy.getValue(expression);
+    public addValueParams<P extends AgFieldParams>(expression: string, params: P, options?: ValueParamsOptions): P {
+        const optionsValue = this.chartOptionsProxy.getValue(expression) ?? options?.valueWhenUnset?.();
         params.value = options?.formatInputValue ? options.formatInputValue(optionsValue) : optionsValue;
         params.onValueChange = (value) => {
             const optionsValue = options?.parseInputValue ? options.parseInputValue(value) : value;
@@ -216,8 +225,8 @@ export class ChartMenuParamsFactory extends BeanStub {
             enabled?: boolean;
             onEnableChange?: (value: boolean) => void;
         },
-    >(expression: string, params: P): P {
-        params.enabled = this.chartOptionsProxy.getValue(expression) ?? false;
+    >(expression: string, params: P, valueWhenUnset?: ValueWhenUnset<boolean>): P {
+        params.enabled = this.chartOptionsProxy.getValue<boolean>(expression) ?? valueWhenUnset?.() ?? false;
         params.onEnableChange = (value) => this.chartOptionsProxy.setValue(expression, value);
         return params;
     }

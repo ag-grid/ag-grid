@@ -35,6 +35,7 @@ import { getFrameworkCapitalised } from '@utils/markdoc/getFrameworkCapitalised'
 
 import { agChartsVersion, agGridVersion } from './src/constants';
 import versionsData from './src/content/versions/ag-grid-versions.json';
+import { errorParam } from './src/utils/markdoc/tags/errorParam';
 import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
@@ -75,6 +76,7 @@ export default defineMarkdocConfig({
         chartsVersionPatch,
     },
     tags: {
+        errorParam,
         kbd,
         kbdShortcut,
         link,

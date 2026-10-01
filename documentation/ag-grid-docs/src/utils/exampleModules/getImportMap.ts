@@ -22,16 +22,19 @@ export const PROD_PARAM = 'prod';
 export interface DevFlags {
     query: string;
     appended: string;
+    /** File-name infix for CDNs that ship the production build as a separate file, such as Vue's `*.prod.js`. */
+    suffix: string;
 }
 
-export const PRODUCTION_FLAGS: DevFlags = { query: '', appended: '' };
-export const DEVELOPMENT_FLAGS: DevFlags = { query: '?dev', appended: '&dev' };
+export const PRODUCTION_FLAGS: DevFlags = { query: '', appended: '', suffix: '.prod' };
+export const DEVELOPMENT_FLAGS: DevFlags = { query: '?dev', appended: '&dev', suffix: '' };
 
 export const FRAMEWORK_VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
 
 export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
     query: '?ag-dev-query',
     appended: '&ag-dev-appended',
+    suffix: '.ag-dev-suffix',
 };
 
 const reactImports = (version: string, { query, appended }: DevFlags): ImportMap => ({
@@ -41,8 +44,8 @@ const reactImports = (version: string, { query, appended }: DevFlags): ImportMap
     'react-dom/': `https://esm.sh/react-dom@${version}&external=react${appended}/`,
 });
 
-const vueImports = (version: string): ImportMap => ({
-    vue: `${NPM_CDN}/vue@${version}/dist/vue.esm-browser.js`,
+const vueImports = (version: string, { suffix }: DevFlags): ImportMap => ({
+    vue: `${NPM_CDN}/vue@${version}/dist/vue.esm-browser${suffix}.js`,
 });
 
 const angularImports = (version: string): ImportMap => {
@@ -98,7 +101,7 @@ const getFrameworkImports = (
         return angularImports(version);
     }
     if (internalFramework === 'vue3') {
-        return vueImports(version);
+        return vueImports(version, dev);
     }
     return {};
 };

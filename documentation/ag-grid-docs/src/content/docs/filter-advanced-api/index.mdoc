@@ -1,0 +1,70 @@
+---
+title: "Advanced Filter - Filter Model / API"
+enterprise: true
+---
+
+The state of the Advanced Filter can be read as an Advanced Filter Model, and applied again later by setting that model back. This allows the filter to be saved and restored, for example across page reloads or between users, or to be set programmatically without typing an expression.
+
+## Advanced Filter Model
+
+The Advanced Filter model describes the current state of the Advanced Filter. This is represented by an `AdvancedFilterModel`, which is either a `ColumnAdvancedFilterModel` for a single condition, or a `JoinAdvancedFilterModel` for multiple conditions:
+
+{% interfaceDocumentation interfaceName="JoinAdvancedFilterModel" config={"description":""} /%}
+
+For example, the following Advanced Filter would be represented by the following model:
+
+`([Age] > 23 OR [Sport] ends with "ing") AND [Country] is any of ["Australia", "Italy"]`
+
+```js
+const advancedFilterModel = {
+    filterType: 'join',
+    type: 'AND',
+    conditions: [
+      {
+        filterType: 'join',
+        type: 'OR',
+        conditions: [
+          {
+            filterType: 'number',
+            colId: 'age',
+            type: 'greaterThan',
+            filter: 23,
+          },
+          {
+            filterType: 'text',
+            colId: 'sport',
+            type: 'endsWith',
+            filter: 'ing',
+          }
+        ]
+      },
+      {
+        filterType: 'set',
+        colId: 'country',
+        type: 'isAnyOf',
+        values: ['Australia', 'Italy'],
+      }
+    ]
+};
+```
+
+A condition using a [Custom Filter Option](./filter-advanced-custom-filter-options/#filter-model) stores the option's `displayKey` in `type`.
+
+## Saving and Restoring the Advanced Filter
+
+The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the API method `setAdvancedFilterModel`.
+
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["getAdvancedFilterModel", "setAdvancedFilterModel"] /%}
+
+{% note %}
+The Advanced Filter Model can be saved and restored as part of [Grid State](./grid-state/).
+{% /note %}
+
+The Advanced Filter Model and API methods are demonstrated in the following example:
+
+- Clicking `Save Advanced Filter Model` will save the current Advanced Filter.
+- Clicking `Restore Saved Advanced Filter Model` will restore the previously saved Advanced Filter.
+- Clicking `Set Custom Advanced Filter Model` will set `[Gold] >= 1`.
+- Clicking `Clear Advanced Filter` will clear the current Advanced Filter.
+
+{% gridExampleRunner title="Advanced Filter Model / API" name="advanced-filter-model-api" /%}

@@ -214,13 +214,13 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const eGridScrollableArea = this.eGridScrollableArea;
         if (section === 'top') {
             const eTop = this.eTop;
-            const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${height}px)`;
-            eTop.style.setProperty('--ag-top-rows-height', `${height}px`);
+            const topSectionHeight = `calc(var(--ag-internal-header-rows-height, 0px) + ${height}px)`;
+            this.eGridViewport.style.setProperty('--ag-internal-top-rows-height', `${height}px`);
             eTop.style.minHeight = topSectionHeight;
             eTop.style.height = topSectionHeight;
             eGridScrollableArea.classList.toggle('ag-has-top-pinned-rows', !invisible);
         } else {
-            this.eBottom.style.setProperty('--ag-bottom-rows-height', `${height}px`);
+            this.eGridViewport.style.setProperty('--ag-internal-bottom-rows-height', `${height}px`);
             eGridScrollableArea.classList.toggle('ag-has-bottom-pinned-rows', !invisible);
             this.refreshBottomSectionHeight();
         }

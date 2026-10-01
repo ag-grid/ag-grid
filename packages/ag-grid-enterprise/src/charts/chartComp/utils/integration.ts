@@ -26,10 +26,6 @@ export interface AgChartActual extends AgChartInstance {
         id: string;
         type: string;
         toggleSeriesItem(enabled?: boolean, legendType?: string, itemId?: string, legendItemName?: string): void;
-        properties: {
-            [key: string]: any;
-            toJson(): any;
-        };
     }[];
     axes?: Record<
         string,

@@ -21,6 +21,7 @@ export default (props: CustomCellRendererProps) => {
 
     return (
         <div
+            className="custom-group-row"
             style={{
                 paddingLeft: `${node.level * 15}px`,
             }}
@@ -37,7 +38,6 @@ export default (props: CustomCellRendererProps) => {
                     &rarr;
                 </div>
             )}
-            &nbsp;
             {value}
         </div>
     );

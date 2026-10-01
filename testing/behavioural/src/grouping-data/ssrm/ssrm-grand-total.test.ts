@@ -1,10 +1,13 @@
 import { waitFor } from '@testing-library/dom';
+import { userEvent } from '@testing-library/user-event';
 import {
     ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
+    clickMenuOption,
+    polyfillOffsetParent,
     unindentText,
     waitForEvent,
     waitForNoLoadingRows,
@@ -19,13 +22,20 @@ import type {
 } from 'ag-grid-community';
 import {
     GRAND_TOTAL_ROW_ID,
+    GridStateModule,
     NumberFilterModule,
     PaginationModule,
     PinnedRowModule,
     ROOT_NODE_ID,
     enableDevValidations,
+    getGridElement,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    ContextMenuModule,
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
 
 const GRAND_TOTAL_ID = GRAND_TOTAL_ROW_ID;
 
@@ -44,11 +54,14 @@ describe('SSRM grand total row', () => {
             PaginationModule,
             NumberFilterModule,
             PinnedRowModule,
+            GridStateModule,
+            ContextMenuModule,
         ],
     });
 
     afterEach(() => {
         gridManager.reset();
+        vi.restoreAllMocks();
     });
 
     interface RowData {
@@ -828,6 +841,19 @@ describe('SSRM grand total row', () => {
         expect(api.getDisplayedRowCount()).toBe(3);
     });
 
+    test('pinned grand total picks up a theme row height change', async () => {
+        const api = gridManager.createGrid(null, createFlatGridOptions({ grandTotalRow: 'pinnedBottom' }));
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+
+        // `stylesChanged` is internal with no public trigger; drive it as the theme code does.
+        const beans = (api.getPinnedBottomRow(0) as any).beans;
+        vi.spyOn(beans.environment, 'getDefaultRowHeight').mockReturnValue(64);
+        beans.eventSvc.dispatchEvent({ type: 'stylesChanged', rowHeightChanged: true });
+        await waitFor(() => expect(api.getPinnedBottomRow(0)?.rowHeight).toBe(64));
+    });
+
     test('grand total at pinnedTop renders in pinned area, not inline', async () => {
         const api = gridManager.createGrid(
             null,
@@ -851,6 +877,64 @@ describe('SSRM grand total row', () => {
         expect(api.getPinnedBottomRowCount()).toBe(0);
         expect(api.getPinnedTopRow(0)?.data?.value).toBe(60);
         expect(api.getDisplayedRowCount()).toBe(3);
+    });
+
+    describe('a grand total pinned by grandTotalRow stays where the option pins it', () => {
+        const pinnedRowElements = (api: GridApi, floating: 'top' | 'bottom') =>
+            getGridElement(api)!.querySelectorAll(`.ag-row-pinned[row-index^="${floating[0]}"]`);
+
+        const expectPinnedBottomOnly = (api: GridApi) => {
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)!.data!.value).toBe(60);
+            expect(pinnedRowElements(api, 'top').length).toBe(0);
+            expect(pinnedRowElements(api, 'bottom').length).toBe(1);
+        };
+
+        const createPinnedBottomGrid = async (overrides: Partial<GridOptions<RowData>> = {}): Promise<GridApi> => {
+            const api = gridManager.createGrid(
+                null,
+                createFlatGridOptions({ grandTotalRow: 'pinnedBottom', ...overrides })
+            );
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            await waitFor(() => expect(pinnedRowElements(api, 'bottom').length).toBe(1));
+            return api;
+        };
+
+        test('when a context menu item pins it to the other side or unpins it', async () => {
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
+                const openMenuOnGrandTotal = () =>
+                    userEvent.pointer({
+                        keys: '[MouseRight]',
+                        target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
+                    });
+
+                await openMenuOnGrandTotal();
+                await clickMenuOption('Pin to Top');
+                await asyncSetTimeout(0);
+                expectPinnedBottomOnly(api);
+
+                await openMenuOnGrandTotal();
+                await clickMenuOption('Unpin Row');
+                await asyncSetTimeout(0);
+                expectPinnedBottomOnly(api);
+            } finally {
+                restoreOffsetParent();
+            }
+        });
+
+        test('when the row pinning state names it', async () => {
+            const api = await createPinnedBottomGrid();
+
+            api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+            await asyncSetTimeout(0);
+
+            expectPinnedBottomOnly(api);
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+        });
     });
 
     test('cycle through grandTotalRow positions including pinned', async () => {

@@ -551,13 +551,26 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
     }
 }
 
+const DEV_VALIDATIONS_GUARD_REGEX =
+    /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(\/\/[^\n]*\n\s*)?(agGrid\.)?enableDevValidations\(([^)]*)\);\s*\}\n?/;
+
+/**
+ * Returns the arguments passed to the NODE_ENV-guarded `enableDevValidations(...)` call,
+ * e.g. `{ debug: true }`, or `''` when the call is bare or there is no guard.
+ */
+export function extractDevValidationsArgs(code: string): string {
+    return code.match(DEV_VALIDATIONS_GUARD_REGEX)?.[4]?.trim() ?? '';
+}
+
+/** Builds the vanilla/UMD preamble that enables dev validations with the given arguments. */
+export function getVanillaDevValidationsPreamble(args: string): string {
+    return `// Enable extended validations only for development\nagGrid.enableDevValidations(${args});`;
+}
+
 export function removeModuleRegistration(code: string) {
-    // Strip the dev-only validations guard (the vanilla/UMD generator re-injects a plain
-    // agGrid.enableDevValidations() call — process.env is not defined in the browser bundle).
-    code = code.replace(
-        /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(\/\/[^\n]*\n\s*)?(agGrid\.)?enableDevValidations\(\);\s*\}\n?/g,
-        ''
-    );
+    // Strip the dev-only validations guard (the vanilla/UMD generator re-injects an
+    // agGrid.enableDevValidations(...) call — process.env is not defined in the browser bundle).
+    code = code.replace(new RegExp(DEV_VALIDATIONS_GUARD_REGEX.source, 'g'), '');
     return code.replace(/\b(agGrid\.)?ModuleRegistry\.registerModules(.|\n)*?]\)(;)/g, '');
 }
 
@@ -699,15 +712,45 @@ const chartsExamplePathSubstrings = [
     '/key-features',
 ];
 
+const isChartsExample = (exampleName: string) => !!chartsExamplePathSubstrings.find((s) => exampleName.includes(s));
+
 export function getIntegratedDarkModeCode(
     exampleName: string,
     typescript?: boolean,
     apiName = 'params.api'
 ): string | undefined {
-    if (!chartsExamplePathSubstrings.find((s) => exampleName.includes(s))) {
+    if (!isChartsExample(exampleName)) {
         return undefined;
     }
     return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
+}
+
+/**
+ * Charts created while the grid is initialising (i.e. in `onFirstDataRendered`) are rendered before the api based
+ * dark mode code above can run, so on a dark page they flash with the light theme. React and Angular have no hook
+ * that runs after the grid api exists but before the grid renders, so provide the initial `chartThemes` globally
+ * instead - that happens before any grid is created, so the very first chart render uses the correct theme.
+ *
+ * Examples that set `chartThemes` themselves still win over the global option, and are handled by the api based
+ * code above as before.
+ */
+export function getIntegratedDarkModeInitialChartThemesCode(
+    exampleName: string,
+    imports: string[]
+): string | undefined {
+    if (!isChartsExample(exampleName)) {
+        return undefined;
+    }
+    const importStatement = imports.some((i) => i.includes('provideGlobalGridOptions'))
+        ? ''
+        : "import { provideGlobalGridOptions } from 'ag-grid-community';\n";
+    return `${DARK_INTEGRATED_START}
+${importStatement}provideGlobalGridOptions({
+    chartThemes: ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'].map(
+        (theme) => theme + (document.documentElement.dataset.agThemeMode?.includes('dark') ? '-dark' : '')
+    ),
+});
+${DARK_INTEGRATED_END}`;
 }
 
 const darkModeTs = `

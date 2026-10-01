@@ -1,0 +1,27 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.example-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.example-header label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.example-header input[type='number'] {
+    width: 60px;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}

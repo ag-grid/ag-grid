@@ -143,22 +143,32 @@ shared across all per-file ignore operations in this section.
 
 #### Per-vuln cards (one per unique vuln ID, collapsible)
 
+Cards with paths still to ignore come first, with an amber left edge. Fully resolved cards
+sort below a **Resolved** divider and render as a muted single line with a green edge.
+
 Click the header to collapse/expand. Header shows:
 - Severity badge, vuln ID (linked to Snyk), title
+- **N to do** — paths not yet in `.snyk` (hidden once the card is resolved)
 - Path/dep count badge (`N paths · M deps`)
 - **Via:** dep tags — click a tag to hide all dep groups for that dep (skip-by-dep)
 - **Skip ✕** — greys out the card and excludes it from "Mark All" operations
 
-Card body is sub-grouped by **top-level dep** (e.g. `lodash`, `webpack`). Each dep group shows:
+The section header toggles the card body between **All** (default — every path in one
+group), **By Dep** and **By File**. In By Dep, the body is sub-grouped by **top-level dep**
+(e.g. `lodash`, `webpack`); the other views have the same group layout. Each dep group shows:
 - Dep name (monospace, accent colour) and path count
 - **✓ In .snyk** badge if all paths in that dep are already ignored
 - **Reason input** — a single text field shared across all paths for that dep
 - **Preset dropdown** — preset reason strings; selecting one fills the reason input
-- One checkbox row per dep path (each row shows the `.snyk` file badge and the dep chain)
+- One checkbox row per pending dep path (each row shows the `.snyk` file badge and the dep
+  chain, with the top-level dep highlighted), highlighted as the to-do list. Already-ignored paths follow in a collapsed
+  **✓ N already in .snyk** list; in By Dep / By File, groups with nothing left to do start
+  collapsed and sort after the rest.
 - **Add N path(s) to .snyk** — validates reason and expiry, then calls `/add-snyk-ignore`
   for each checked path in sequence. Paths may span multiple `.snyk` files; the button
   fans out across all of them automatically. On success, all added rows convert to
-  already-ignored display and the reason row / button are removed from the DOM.
+  already-ignored display. If unchecked paths remain, the reason row and button stay so they
+  can be added with a different reason; otherwise both are removed from the DOM.
 
 #### Global actions
 

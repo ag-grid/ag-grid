@@ -88,7 +88,7 @@
     flex-wrap: wrap;
     gap: $spacing-size-2;
     white-space: pre-wrap;
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-ratio-base);
 }
 
 .type-null,

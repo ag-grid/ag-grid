@@ -47,8 +47,8 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     }
 
     private revealWhenRendered(): void {
-        // Called on a timer as well as directly, so re-check liveness. Outstanding requesters mean
-        // someone else still wants the columns hidden.
+        // Called on a retry timer as well as directly, so re-check liveness. Outstanding requesters
+        // mean someone else still wants the columns hidden.
         if (this.alreadyRevealed || !this.isAlive() || this.requesters.size > 0) {
             return;
         }

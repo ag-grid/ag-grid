@@ -57,11 +57,11 @@ describe('ColumnDelayRenderService reveal retries', () => {
         // reveal outruns the header render and the anti-flicker hide achieves nothing.
         for (let i = 0; i < MAX_RETRIES - 1; i++) {
             expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(true);
-            vi.runOnlyPendingTimers();
+            vi.advanceTimersToNextTimer();
         }
 
         expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(true);
-        vi.runOnlyPendingTimers();
+        vi.advanceTimersToNextTimer();
 
         // The cap is a fail safe: the grid reveals even though the header cells never rendered.
         expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
@@ -80,7 +80,7 @@ describe('ColumnDelayRenderService reveal retries', () => {
         expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(true);
 
         rendered = true;
-        vi.runOnlyPendingTimers();
+        vi.advanceTimersToNextTimer();
 
         expect(eGridBody.classList.contains(HIDE_CLASS)).toBe(false);
         expect(areHeaderCellsRendered).toHaveBeenCalledTimes(2);

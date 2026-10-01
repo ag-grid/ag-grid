@@ -4,7 +4,6 @@ import type {
     AgColumn,
     AgShowValuesAsResolved,
     BeanCollection,
-    ChangedPath,
     ColDef,
     ColumnEventType,
     ColumnModel,
@@ -19,7 +18,6 @@ import type {
     IValueColsService,
     MenuItemDef,
     NamedBean,
-    RowNode,
     RowRenderer,
     ShowValuesAs,
     ShowValuesAsApplicability,
@@ -60,12 +58,6 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
      *  {@link resolvedBuiltinModes}. */
     private cachedResolvedBuiltinModes: Record<string, ShowValuesAsModeDefResolved> | undefined;
 
-    // Cache for the displayed-active value-column scan, keyed by the column-array ref it was computed for
-    // (ref-stable until that set changes) — so a destroyed column is never retained. Dropped by {@link setActive}
-    // when the active set toggles. Plain fields (no wrapper object) to avoid a per-recompute allocation.
-    private displayedColsKey: AgColumn[] | null = null;
-    private displayedActiveResult: AgColumn[] | null = null;
-
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.rowRenderer = beans.rowRenderer;
@@ -77,20 +69,10 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         this.dataTypeSvc = beans.dataTypeSvc;
     }
 
-    public postConstruct(): void {
-        // Filtered denominators depend on the visible row membership, which sort and filter change without
-        // otherwise repainting these cells. Refresh after each — change-detected, so only the cells whose value
-        // actually moved repaint (a no-op with no active modes).
-        const refresh = (): void => this.refreshRenderedCells();
-        this.addManagedEventListeners({ sortChanged: refresh, filterChanged: refresh });
-    }
-
     public override destroy(): void {
         super.destroy();
         this.cachedBuiltinModes = undefined;
         this.cachedResolvedBuiltinModes = undefined;
-        this.displayedColsKey = null;
-        this.displayedActiveResult = null;
     }
 
     /** Resolve the column's config (all modes, once) and active mode from the colDef. `applyInitial` is true only
@@ -254,13 +236,8 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         return { type, def, formatter, transformedDataType };
     }
 
-    /** Sole writer of `column.showValuesAs`. Drops the displayed-active scan cache (and its column references, so a
-     *  destroyed column is never retained) when the active set toggles. */
+    /** Sole writer of `column.showValuesAs`. */
     private setActive(column: AgColumn, resolved: AgShowValuesAsResolved | null): void {
-        if ((column.showValuesAs != null) !== (resolved != null)) {
-            this.displayedColsKey = null;
-            this.displayedActiveResult = null;
-        }
         column.showValuesAs = resolved;
     }
 
@@ -350,63 +327,6 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         resolved._applyingSig = sig;
         resolved._applyingValue = value;
         return value;
-    }
-
-    /** The currently-displayed columns with an active mode — for the refresh sweep. Cached by the displayed-column
-     *  array ref ({@link VisibleColsService.allCols}, reassigned whenever columns change, so a removed column drops
-     *  out); {@link setActive} drops the cache when the active set changes. */
-    private getDisplayedActiveCols(): AgColumn[] {
-        const displayed = this.beans.visibleCols.allCols;
-        if (this.displayedColsKey !== displayed) {
-            const result: AgColumn[] = [];
-            for (let i = 0, len = displayed.length; i < len; ++i) {
-                const col = displayed[i];
-                if (col.showValuesAs != null) {
-                    result.push(col);
-                }
-            }
-            this.displayedColsKey = displayed;
-            this.displayedActiveResult = result;
-        }
-        return this.displayedActiveResult!;
-    }
-
-    /** Refresh the Show Values As cells across every rendered row — for a general view refresh, where any row's
-     *  aggregate-derived value may be stale (recycled DOM, or rendered before aggregation settled). Change-detected
-     *  (`force: false`), so only moved values repaint, honouring each column's `enableCellChangeFlash`. */
-    public refreshRenderedCells(): void {
-        const aggCols = this.getDisplayedActiveCols();
-        // `refreshCells` builds a colId map once and walks each row's cells a single time — cheaper than scanning
-        // for each column per row, and the same primitive the menu uses (see `setColumnShowValuesAs`).
-        if (aggCols.length) {
-            this.rowRenderer.refreshCells({ columns: aggCols, force: false });
-        }
-    }
-
-    /** Refresh the Show Values As cells in the rendered rows the caller did NOT already refresh — for the post-edit
-     *  re-aggregation, where `nodes`/`path` identify the rows the change-detection flush refreshed (they flash their
-     *  own moved cells). Row membership is O(1) via the `Set`/`ChangedPath`; `refreshCells` can't express the
-     *  exclusion, so this walks each remaining row's cells once, refreshing those on an active column directly. */
-    public refreshRenderedCellsExcept(nodes: Set<RowNode> | null, path: ChangedPath | null): void {
-        if (!this.getDisplayedActiveCols().length) {
-            return;
-        }
-        const params = { force: false, newData: false };
-        const rowCtrls = this.rowRenderer.getAllRowCtrls();
-        for (let r = 0, rLen = rowCtrls.length; r < rLen; ++r) {
-            const rowCtrl = rowCtrls[r];
-            const node = rowCtrl.rowNode;
-            if (nodes?.has(node) || path?.hasRow(node)) {
-                continue;
-            }
-            const cellCtrls = rowCtrl.getAllCellCtrls();
-            for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
-                const cellCtrl = cellCtrls[c];
-                if (cellCtrl.column.showValuesAs != null) {
-                    cellCtrl.refreshOrDestroyCell(params);
-                }
-            }
-        }
     }
 
     public transform(column: AgColumn, rowNode: IRowNode, rawValue: any): ShowValuesAsResult | null {

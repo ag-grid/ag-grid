@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { IRowContainerComp, RowCtrl } from 'ag-grid-community';
+import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
 import {
     RowContainerCtrl,
     _getRowContainerClass,
@@ -13,14 +13,12 @@ import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
-export type ReactRowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
-
 const RowContainerComp = ({
     name,
     viewportElement,
     extraClassName,
 }: {
-    name: ReactRowContainerName;
+    name: RowContainerName;
     viewportElement?: HTMLElement | null;
     extraClassName?: string | null;
 }) => {
@@ -33,6 +31,7 @@ const RowContainerComp = ({
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [hidden, setHidden] = useState<boolean>(true);
+    const hiddenRef = useRef(true);
 
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
@@ -122,7 +121,12 @@ const RowContainerComp = ({
                     eSpanContainerForCtrl.style.transform = `translateY(${offset})`;
                 }
             },
-            setHidden: (hidden: boolean) => setHidden(hidden),
+            setHidden: (hidden: boolean) => {
+                if (hiddenRef.current !== hidden) {
+                    hiddenRef.current = hidden;
+                    setHidden(hidden);
+                }
+            },
         };
 
         rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
@@ -154,14 +158,12 @@ const RowContainerComp = ({
     const buildSpanContainer = () => (
         <div className={spanClasses} ref={setSpanContainerRef} role={'presentation'}>
             {spannedRowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+                <RowComp rowCtrl={rowCtrl} key={rowCtrl.instanceId}></RowComp>
             ))}
         </div>
     );
 
-    const rows = rowCtrlsOrdered.map((rowCtrl) => (
-        <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
-    ));
+    const rows = rowCtrlsOrdered.map((rowCtrl) => <RowComp rowCtrl={rowCtrl} key={rowCtrl.instanceId}></RowComp>);
 
     return (
         <div className={containerClasses} ref={setContainerRef} role={'presentation'}>

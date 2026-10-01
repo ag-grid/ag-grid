@@ -40,20 +40,18 @@ const contactPageStructuredData = buildContactPage({
                 </div>
 
                 <div class={styles.socialLinks}>
-                    {
-                        socialLinks.map(({ label, ariaLabel, icon, url }) => (
-                            <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={ariaLabel ?? label}
-                                class={styles.socialLinkRow}
-                            >
-                                <Icon name={icon} />
-                                <span>{label}</span>
-                            </a>
-                        ))
-                    }
+                    {socialLinks.map(({ label, ariaLabel, icon, url }) => (
+                        <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={ariaLabel ?? label}
+                            class={styles.socialLinkRow}
+                        >
+                            <Icon name={icon} />
+                            <span>{label}</span>
+                        </a>
+                    ))}
                 </div>
             </section>
         </div>

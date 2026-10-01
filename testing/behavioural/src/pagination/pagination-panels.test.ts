@@ -1,4 +1,4 @@
-import { AG_GRID_LOCALE_FR, AG_GRID_LOCALE_JP } from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_FR_FR, AG_GRID_LOCALE_JA_JP } from '@ag-grid-community/locale';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
@@ -946,13 +946,13 @@ describe('paginationPanels number formatting', () => {
     }
 
     test('ja-JP groups digits with a conventional separator, not full-width prose punctuation', () => {
-        const api = createLocalisedPaginationGrid(AG_GRID_LOCALE_JP);
+        const api = createLocalisedPaginationGrid(AG_GRID_LOCALE_JA_JP);
 
         expect(getRowSummaryText(api)).toContain('12,345');
     });
 
     test('fr-FR groups digits with a no-break space', () => {
-        const api = createLocalisedPaginationGrid(AG_GRID_LOCALE_FR);
+        const api = createLocalisedPaginationGrid(AG_GRID_LOCALE_FR_FR);
 
         // Escaped, never a typed literal: a plain U+0020 in both the locale source and this
         // expectation would compare equal and let the wrong character ship.

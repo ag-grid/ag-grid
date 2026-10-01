@@ -1,49 +1,53 @@
 @use 'core' as *;
 
+// Each class takes the track it has always rendered, which is why the heading levels are not all on
+// the display track: h1/.text-2xl and h6/.text-xs ship body leading, and only design should change
+// that. See the TODO on --text-lh-body-2xl in _root.scss.
+
 .text-2xs {
     font-size: var(--text-fs-2xs);
-    line-height: var(--text-lh-2xs);
+    line-height: var(--text-lh-display-2xs);
 }
 
 h6#{$selector-exclude-grid},
 .text-xs {
     font-size: var(--text-fs-xs);
-    line-height: var(--text-lh-xs);
+    line-height: var(--text-lh-body-xs);
 }
 
 h5#{$selector-exclude-grid},
 .text-sm {
     font-size: var(--text-fs-sm);
-    line-height: var(--text-lh-sm);
+    line-height: var(--text-lh-body-sm);
 }
 
 h4#{$selector-exclude-grid},
 .text-base {
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-body-base);
 }
 
 h3#{$selector-exclude-grid},
 .text-lg {
     font-size: var(--text-fs-lg);
-    line-height: var(--text-lh-lg);
+    line-height: var(--text-lh-display-lg);
 }
 
 h2#{$selector-exclude-grid},
 .text-xl {
     font-size: var(--text-fs-xl);
-    line-height: var(--text-lh-xl);
+    line-height: var(--text-lh-display-xl);
 }
 
 h1#{$selector-exclude-grid},
 .text-2xl {
     font-size: var(--text-fs-2xl);
-    line-height: var(--text-lh-2xl);
+    line-height: var(--text-lh-body-2xl);
 }
 
 .text-3xl {
     font-size: var(--text-fs-3xl);
-    line-height: var(--text-lh-3xl);
+    line-height: var(--text-lh-display-3xl);
 }
 
 h1#{$selector-exclude-grid},

@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_IR = {
+export const AG_GRID_LOCALE_FA_IR = {
     // Set Filter
     selectAll: '(انتخاب همه)',
     selectAllSearchResults: '(انتخاب همه نتایج جستجو)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_IR = {
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
     cancelColumnToolPanel: 'لغو',
+    resetColumnToolPanel: 'بازنشانی',
 
     // Filter Titles
     textFilter: 'فیلتر متنی',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterValidationMissingCondition: 'شرط گمشده است',
     advancedFilterValidationJoinOperatorMismatch: 'اپراتورهای پیوسته در یک شرط باید یکسان باشند',
     advancedFilterValidationInvalidJoinOperator: 'اپراتور پیوست یافت نشد',
+    advancedFilterValidationMissingListStartBracket: 'براکت مربعی باز گمشده است',
+    advancedFilterValidationMissingListEndBracket: 'براکت مربعی بسته گمشده است',
     advancedFilterValidationMissingEndBracket: 'براکت انتهایی گمشده است',
     advancedFilterValidationExtraEndBracket: 'براکت انتهایی زیادی وجود دارد',
     advancedFilterValidationMessage: 'عبارت حاوی یک خطاست. ${variable} - ${variable}.',
@@ -919,3 +922,6 @@ export const AG_GRID_LOCALE_IR = {
     deleteNote: 'حذف یادداشت',
     notePlaceholder: 'یک یادداشت اضافه کنید...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_FA_IR` instead. */
+export const AG_GRID_LOCALE_IR = AG_GRID_LOCALE_FA_IR;

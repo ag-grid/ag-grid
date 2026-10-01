@@ -12,7 +12,7 @@ interface ParsedSegment {
     endPosition: number;
     /** Whether a terminator was reached, rather than the segment running to the caret. */
     closed: boolean;
-    /** Quoting is what says a separator is a path separator rather than part of the value. */
+    /** A quoted segment is one on purpose, so the value is never re-read as a single whole text. */
     quoted: boolean;
 }
 
@@ -35,21 +35,29 @@ interface ParsedSetValue {
     resolved: boolean;
 }
 
-/** Written lists use square brackets, as the design draws them; parentheses are read but not written. */
+/** A list is enclosed in these, as the design draws it; no other bracket opens one. */
 export const SET_LIST_OPEN_CHAR = '[';
 export const SET_LIST_CLOSE_CHAR = ']';
 /** Separates the path segments of one value where the column's Set Filter is a tree list. */
-export const SET_TREE_SEPARATOR = '›';
-/** How a path is spelled wherever one is shown or written, so the separator is spaced in one place. */
-export const joinSetPath = (path: readonly string[]): string => path.join(` ${SET_TREE_SEPARATOR} `);
+const SET_TREE_SEPARATOR = '›';
+/** What a written path is separated by instead: no keyboard offers the drawn one, and text is retyped. */
+const SET_TREE_WRITE_SEPARATOR = '>';
+/** Built once: joining runs per value of a column, and neither spacing ever varies. */
+const DRAWN_JOINER = ` ${SET_TREE_SEPARATOR} `;
+const WRITTEN_JOINER = ` ${SET_TREE_WRITE_SEPARATOR} `;
+
+/** How a path is drawn, in the list and wherever else one is shown. */
+export const joinSetPath = (path: readonly string[]): string => path.join(DRAWN_JOINER);
+/** How a path is spelled in an expression, which the author has to be able to type back. */
+export const writeSetPath = (path: readonly string[]): string => path.join(WRITTEN_JOINER);
 
 /**
- * The value list an `is any of` / `is none of` option takes. Either bracket and bare values are read;
- * only square brackets and quotes are written. With a tree list one value is a path: `["Argentina" › "Sailing"]`.
+ * The value list an `is any of` / `is none of` option takes. Square brackets enclose it and quoting a
+ * value is optional. With a tree list one value is a whole path: `["Argentina > Sailing"]`.
  */
 export class SetOperandsParser {
     private readonly values: ParsedSetValue[] = [];
-    private closeChar: string | undefined;
+    private hasOpenBracket = false;
     private hasCloseBracket = false;
     /** Where the list was closed, so a caret before it is still inside the list. */
     private closeBracketPosition = -1;
@@ -60,6 +68,8 @@ export class SetOperandsParser {
     private pendingQuoteClose = false;
     /** Set once a value is read and the next character must be a separator or the end bracket. */
     private expectSeparator = false;
+    /** Where a separator with no value yet after it was read, so closing the list makes it redundant. */
+    private separatorPosition = -1;
     private readonly validation: RegionValidation;
 
     constructor(
@@ -94,13 +104,13 @@ export class SetOperandsParser {
         this.finishValue(position, false);
         if (!this.values.length) {
             this.validation.reject('advancedFilterValidationMissingValue');
-        } else if (this.closeChar && !this.hasCloseBracket) {
-            this.validation.reject('advancedFilterValidationMissingEndBracket');
+        } else if (!this.hasCloseBracket) {
+            this.validation.reject('advancedFilterValidationMissingListEndBracket');
         }
     }
 
     public isComplete(): boolean {
-        return this.values.length > 0 && (!this.closeChar || this.hasCloseBracket);
+        return this.values.length > 0 && this.hasCloseBracket;
     }
 
     /** The Set Filter keys the list resolves to, in the order written. */
@@ -154,7 +164,9 @@ export class SetOperandsParser {
         const values = this.values;
         for (let i = 0, len = values.length; i < len; ++i) {
             const value = values[i];
-            if (position < value.startPosition || position > value.endPosition + 1) {
+            // A caret at the very start of a value is in the gap before it, so a value chosen there is
+            // inserted rather than written over the one the caret is touching.
+            if (position <= value.startPosition || position > value.endPosition + 1) {
                 continue;
             }
             const segments = value.segments;
@@ -215,10 +227,8 @@ export class SetOperandsParser {
     }
 
     private parseInSegment(char: string, position: number): boolean | undefined {
-        // Brackets say where the value ends, so a bare one inside them may hold spaces, and a `)` in it is
-        // an ordinary character. Without them a space ends the value and a `)` is the enclosing group's.
-        const endsBare = !this.closeChar && (char === ' ' || char === ')');
-        if (endsBare || char === ',' || isTreeSeparator(char) || char === this.closeChar) {
+        // The brackets say where the value ends, so a bare one may hold spaces and a `)` in it is ordinary.
+        if (char === ',' || isTreeSeparator(char) || char === SET_LIST_CLOSE_CHAR) {
             this.finishSegment(position - 1, true);
             return this.parseBetweenSegments(char, position);
         }
@@ -227,40 +237,34 @@ export class SetOperandsParser {
     }
 
     private parseBetweenSegments(char: string, position: number): boolean | undefined {
+        if (!this.hasOpenBracket) {
+            if (char === ' ') {
+                return undefined;
+            }
+            if (char !== SET_LIST_OPEN_CHAR) {
+                return this.validation.reject('advancedFilterValidationMissingListStartBracket', position);
+            }
+            this.hasOpenBracket = true;
+            return undefined;
+        }
+
         if (char === ' ') {
-            // A space between the written parts; past the last one an unbracketed list is over.
-            if (!this.expectSeparator || this.closeChar) {
-                return undefined;
-            }
-            this.finishValue(position - 1, true);
-            return true;
+            return undefined;
         }
 
-        if (!this.closeChar && !this.values.length) {
-            const closeChar = getCloseBracket(char);
-            if (closeChar) {
-                this.closeChar = closeChar;
-                return undefined;
-            }
-        }
-
-        if (char === this.closeChar) {
+        if (char === SET_LIST_CLOSE_CHAR) {
             this.hasCloseBracket = true;
             this.closeBracketPosition = position;
             this.finishValue(position - 1, true);
             if (!this.values.length) {
                 this.validation.reject('advancedFilterValidationMissingValue', position);
+            } else if (this.separatorPosition >= 0) {
+                (this.params.redundantSeparators ??= []).push({
+                    startPosition: this.separatorPosition,
+                    endPosition: position - 1,
+                });
             }
             return false;
-        }
-
-        if (char === ')' && !this.closeChar) {
-            // The enclosing group's bracket, so the region ends on the character before it.
-            this.finishValue(position - 1, true);
-            if (!this.values.length) {
-                this.validation.reject('advancedFilterValidationMissingValue');
-            }
-            return true;
         }
 
         if (char === ',') {
@@ -268,6 +272,7 @@ export class SetOperandsParser {
                 return this.validation.reject('advancedFilterValidationMissingValue', position);
             }
             this.finishValue(position - 1, true);
+            this.separatorPosition = position;
             return undefined;
         }
 
@@ -281,10 +286,7 @@ export class SetOperandsParser {
         }
 
         if (this.expectSeparator) {
-            return this.validation.reject(
-                this.closeChar ? 'advancedFilterValidationMissingEndBracket' : 'advancedFilterValidationMissingValue',
-                position
-            );
+            return this.validation.reject('advancedFilterValidationMissingListEndBracket', position);
         }
 
         this.startSegment(char, position);
@@ -292,6 +294,7 @@ export class SetOperandsParser {
     }
 
     private startSegment(char: string, position: number): void {
+        this.separatorPosition = -1;
         if (!this.value) {
             this.value = {
                 segments: [],
@@ -353,19 +356,24 @@ export class SetOperandsParser {
             return;
         }
         const path = value.segments.map((segment) => segment.text);
-        const keys = this.params.advFilterSetSvc.getKeys(column, path) ?? this.getKeysForWholeValue(value, column);
+        const advFilterSetSvc = this.params.advFilterSetSvc;
+        // The segments as parsed, then the text whole, then the text re-split: quoting picks a side.
+        const keys =
+            advFilterSetSvc.getKeys(column, path) ??
+            this.getKeysForWholeValue(value, column) ??
+            this.getKeysForJoinedPath(column, path);
         value.resolved = keys !== undefined;
         // A value the column no longer holds still filters on what it says, so a data change cannot
         // silently rewrite an applied expression into a different one. The blank is named by its label,
         // there being no text that spells the blank key itself.
         const written = joinSetPath(path);
-        const isBlank = path.length === 1 && written === this.params.advFilterSetSvc.getBlankLabel(column);
+        const isBlank = path.length === 1 && written === advFilterSetSvc.getBlankLabel(column);
         value.keys = keys ?? [isBlank ? null : written];
     }
 
     /**
      * A bare `Arrow > Land` reads as a path first; where that names nothing, the separator was part of
-     * the value. Quoting any segment says a path was meant, so the reading is never guessed twice.
+     * the value. A quoted segment says the split was meant, so that second reading is not tried.
      */
     private getKeysForWholeValue(value: ParsedSetValue, column: AgColumn): SetFilterModelValue | undefined {
         const segments = value.segments;
@@ -385,21 +393,37 @@ export class SetOperandsParser {
         );
         return this.params.advFilterSetSvc.getKeys(column, [written]);
     }
+
+    /**
+     * A whole path written as one value, which is the form the autocomplete produces. Read last, so a value
+     * whose own text holds a separator is never taken apart on the strength of one.
+     */
+    private getKeysForJoinedPath(column: AgColumn, path: readonly string[]): SetFilterModelValue | undefined {
+        if (path.length !== 1) {
+            return undefined;
+        }
+        const segments = splitSetPath(path[0]);
+        return segments.length > 1 ? this.params.advFilterSetSvc.getKeys(column, segments) : undefined;
+    }
 }
 
+const isTreeSeparator = (char: string): boolean => char === SET_TREE_SEPARATOR || char === SET_TREE_WRITE_SEPARATOR;
+
 /**
- * The guillemet is what a path is written and drawn as; the two forms a keyboard offers are read too.
- * `/` is safe to accept because a path that names nothing is re-read as the text taken whole, which is
- * what leaves a date-like value spelling itself.
+ * Splits a whole path written as one value, on the same characters, so quoting one does not change what
+ * divides it. Spacing around a separator is how a path is spelled, not part of what it divides.
  */
-const isTreeSeparator = (char: string): boolean => char === SET_TREE_SEPARATOR || char === '>' || char === '/';
+export const splitSetPath = (text: string): string[] => {
+    const segments: string[] = [];
+    let start = 0;
+    for (let i = 0, len = text.length; i < len; ++i) {
+        if (isTreeSeparator(text[i])) {
+            segments.push(text.slice(start, i).trim());
+            start = i + 1;
+        }
+    }
+    segments.push(text.slice(start).trim());
+    return segments;
+};
 
 const isQuote = (char: string): boolean => char === `'` || char === '"';
-
-/** The bracket that closes a list this character opens, if it opens one. */
-const getCloseBracket = (char: string): string | undefined => {
-    if (char === SET_LIST_OPEN_CHAR) {
-        return SET_LIST_CLOSE_CHAR;
-    }
-    return char === '(' ? ')' : undefined;
-};

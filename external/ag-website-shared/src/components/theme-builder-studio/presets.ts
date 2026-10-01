@@ -87,9 +87,9 @@ function sharedFonts(family: FontFamilyValue, size: number, headerWeight: number
     return {
         fontFamily: family,
         fontSize: size,
-        headerFontFamily: family,
-        headerFontSize: size,
-        headerFontWeight: headerWeight,
+        studioPanelHeaderFontFamily: family,
+        studioPanelHeaderFontSize: size,
+        studioPanelHeaderFontWeight: headerWeight,
         gridFontFamily: family,
         gridFontSize: size,
         gridHeaderFontFamily: family,
@@ -189,7 +189,6 @@ export const PRESETS: StudioPreset[] = [
                     // Panel section dividers default to ~8% foreground; lift them to
                     // the contrast border so they match the axes and widget outlines.
                     studioPanelSectionBorderColor: '#0F4A85',
-                    headerTextColor: '#292929',
                     invalidColor: '#B5200D',
                     focusShadow: { spread: 2, color: '#006BBD' },
                     studioWidgetTitleTextColor: '#292929',
@@ -219,7 +218,6 @@ export const PRESETS: StudioPreset[] = [
                     // the contrast border alone separates widgets (see light).
                     studioWidgetBorder: [1, '#6FC3DF'],
                     studioPanelSectionBorderColor: '#6FC3DF',
-                    headerTextColor: '#FFFFFF',
                     invalidColor: '#F48771',
                     focusShadow: { spread: 2, color: '#F38518' },
                     studioWidgetTitleTextColor: '#FFFFFF',
@@ -323,7 +321,6 @@ export const PRESETS: StudioPreset[] = [
                     borderColor: '#E4E0D8',
                     textColor: '#3C3836',
                     subtleTextColor: '#7A756E',
-                    cardShadow: { offsetX: 0, offsetY: 1, radius: 3, color: '#3C383612' },
                     dropdownShadow: { offsetX: 0, offsetY: 4, radius: 12, color: '#3C383618' },
                     browserColorScheme: 'light',
                     ...paletteParams('slate', 'light'),
@@ -340,7 +337,6 @@ export const PRESETS: StudioPreset[] = [
                     borderColor: '#3A3632',
                     textColor: '#D4CFC7',
                     subtleTextColor: '#8A847C',
-                    cardShadow: { offsetX: 0, offsetY: 1, radius: 3, color: '#00000025' },
                     dropdownShadow: { offsetX: 0, offsetY: 4, radius: 12, color: '#00000030' },
                     browserColorScheme: 'dark',
                     ...paletteParams('slate', 'dark'),

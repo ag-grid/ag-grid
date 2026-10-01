@@ -5,6 +5,12 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
+        getValues: function (field) {
+            const rows = alasql('SELECT DISTINCT ' + field + ' FROM ? ORDER BY ' + field, [allData]);
+
+            return rows.map((row) => String(row[field]));
+        },
+
         getData: function (request) {
             const results = executeQuery(request);
 
@@ -46,6 +52,8 @@ export function FakeServer(allData) {
                 return textFilterMapper(model.colId, model);
             } else if (model.filterType === 'number') {
                 return numberFilterMapper(model.colId, model);
+            } else if (model.filterType === 'set') {
+                return setFilterMapper(model.colId, model);
             } else {
                 console.log('filter type not implemented: ' + model.filterType);
                 return ' 1 = 1 ';
@@ -74,6 +82,15 @@ export function FakeServer(allData) {
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
+    }
+
+    // `is any of` / `is none of` send the Set Filter keys the written values resolved to, which are strings.
+    // A blank is sent as a `null` key, so blank cells and the key are both folded to '' before comparing.
+    function setFilterMapper(key, item) {
+        const values = item.values.map((value) => "'" + (value ?? '').replace(/'/g, "''") + "'").join(', ');
+        const operator = item.type === 'isNoneOf' ? ' NOT IN (' : ' IN (';
+
+        return 'COALESCE(CAST(' + key + " AS STRING), '')" + operator + values + ')';
     }
 
     function numberFilterMapper(key, item) {

@@ -127,7 +127,9 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
 
 <Layout
     title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
-    description={'AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features.'}
+    description={
+        'AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features.'
+    }
     showSearchBar={false}
     showDocsNav={false}
     pageStructuredData={[siteNavigationStructuredData, faqStructuredData]}
@@ -138,7 +140,8 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
             <section class={styles.heroHeadings}>
                 <h1 className="text-xl">
                     <span className={styles.heroTopLine}>
-                        <span>{hero.headingPrefix}</span>&nbsp;<FrameworkTextAnimation client:load />
+                        <span>{hero.headingPrefix}</span>&nbsp;
+                        <FrameworkTextAnimation client:load />
                     </span>
                     <span>{hero.headingSuffix}</span>
                 </h1>
@@ -177,8 +180,10 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
                 <a
                     id="hero-buy-now-cta"
                     class:list={['button-tertiary', styles.heroSectioncta1]}
-                    href={urlWithBaseUrl(hero.buyNowUrl)}>{hero.buyNowText} <Icon name="chevronRight" /></a
+                    href={urlWithBaseUrl(hero.buyNowUrl)}
                 >
+                    {hero.buyNowText} <Icon name="chevronRight" />
+                </a>
 
                 <a
                     id="demos-cta"
@@ -187,8 +192,10 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
                         styles.heroSectioncta1,
                         'plausible-event-name=react-table-get-started',
                     ]}
-                    href={urlWithBaseUrl(hero.seeDemosUrl)}>{hero.seeDemosText} <Icon name="chevronRight" /></a
+                    href={urlWithBaseUrl(hero.seeDemosUrl)}
                 >
+                    {hero.seeDemosText} <Icon name="chevronRight" />
+                </a>
 
                 <a id="github-cta" class="button-tertiary" href={hero.githubUrl}>
                     <Icon name="github" svgClasses={styles.githubIcon} />
@@ -231,28 +238,26 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
 
     <LandingPageSection client:load {...sectionProps('whats-new')}>
         <div class={styles.latestNewsVersions}>
-            {
-                versionsData
-                    .filter((versionInfo) => versionInfo.version.endsWith('.0')) // Exclude patch releases
-                    .slice(0, 3)
-                    .map((versionInfo, index) => {
-                        if (versionInfo.highlights) {
-                            const { major, minor } = parseVersion(versionInfo.version);
-                            const blogUrl = `${minor ? `${blogPrefix}${major}-${minor}` : `${blogPrefix}${major}`}/`;
-                            return (
-                                <Version
-                                    client:load
-                                    isLatest={index === 0}
-                                    blogUrl={blogUrl}
-                                    version={versionInfo.version}
-                                    date={versionInfo.date}
-                                    highlights={versionInfo.highlights}
-                                    notesPath={versionInfo.notesPath}
-                                />
-                            );
-                        }
-                    })
-            }
+            {versionsData
+                .filter((versionInfo) => versionInfo.version.endsWith('.0')) // Exclude patch releases
+                .slice(0, 3)
+                .map((versionInfo, index) => {
+                    if (versionInfo.highlights) {
+                        const { major, minor } = parseVersion(versionInfo.version);
+                        const blogUrl = `${minor ? `${blogPrefix}${major}-${minor}` : `${blogPrefix}${major}`}/`;
+                        return (
+                            <Version
+                                client:load
+                                isLatest={index === 0}
+                                blogUrl={blogUrl}
+                                version={versionInfo.version}
+                                date={versionInfo.date}
+                                highlights={versionInfo.highlights}
+                                notesPath={versionInfo.notesPath}
+                            />
+                        );
+                    }
+                })}
         </div>
     </LandingPageSection>
 

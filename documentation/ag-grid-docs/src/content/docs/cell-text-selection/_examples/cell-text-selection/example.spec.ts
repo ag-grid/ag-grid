@@ -17,6 +17,31 @@ test.agExample(import.meta, () => {
         expect(userSelect).not.toBe('none');
     });
 
+    test.eachFramework(
+        'ensureDomOrder keeps the DOM row order matching the display order',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            // Text selection only spans the right cells if the rows sit in the DOM in the same
+            // order they are displayed, which is what ensureDomOrder guarantees. Row elements
+            // are reused and reordered on sort, so check the order survives a sort too.
+            const domRowIndexes = async () =>
+                (await page
+                    .locator('.ag-grid-scrolling-container .ag-row')
+                    .evaluateAll((els) => els.map((el) => Number(el.getAttribute('row-index'))))) as number[];
+
+            const before = await domRowIndexes();
+            expect(before.length).toBeGreaterThan(1);
+            expect(before).toEqual([...before].sort((a, b) => a - b));
+
+            await agIdFor.headerCell('age').click();
+
+            const after = await domRowIndexes();
+            expect(after).toEqual([...after].sort((a, b) => a - b));
+        }
+    );
+
     test.eachFramework('Sorting by age reorders the rows', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);

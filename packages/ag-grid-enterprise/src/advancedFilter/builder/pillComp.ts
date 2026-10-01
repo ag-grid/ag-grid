@@ -1,6 +1,6 @@
 import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel } from 'ag-stack';
 
-import type { BeanCollection, ComponentEvent, ElementParams } from 'ag-grid-community';
+import type { BeanCollection, ComponentEvent, ElementParams, IconName } from 'ag-grid-community';
 import { Component, KeyCode, _stopPropagationForAgGrid } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
@@ -9,33 +9,60 @@ const VALUE_EMPTY_CLASS = 'ag-advanced-filter-builder-value-empty';
 const VALUE_NUMBER_CLASS = 'ag-advanced-filter-builder-value-number';
 const VALUE_TEXT_CLASS = 'ag-advanced-filter-builder-value-text';
 
-const PillElement: ElementParams = {
-    tag: 'div',
-    cls: 'ag-advanced-filter-builder-pill-wrapper',
-    role: 'presentation',
-    children: [
+interface PillParams {
+    cssClass: string;
+    ariaLabel: string;
+    wrapperClassName?: string;
+    displayClassName?: string;
+    pickerIcon?: IconName;
+}
+
+const getPillElement = ({ cssClass, wrapperClassName, displayClassName, pickerIcon }: PillParams): ElementParams => {
+    const pillChildren: ElementParams[] = [
         {
-            tag: 'div',
-            ref: 'ePill',
-            cls: 'ag-advanced-filter-builder-pill',
-            role: 'button',
-            children: [{ tag: 'span', cls: 'ag-advanced-filter-builder-pill-display', ref: 'eLabel' }],
+            tag: 'span',
+            cls: `ag-advanced-filter-builder-pill-display ${displayClassName ?? ''}`,
+            ref: 'eLabel',
         },
-    ],
+    ];
+    if (pickerIcon) {
+        pillChildren.push({
+            tag: 'span',
+            ref: 'eIcon',
+            cls: 'ag-picker-field-icon',
+            attrs: { 'aria-hidden': 'true' },
+        });
+    }
+
+    return {
+        tag: 'div',
+        cls: `ag-advanced-filter-builder-pill-wrapper ${wrapperClassName ?? ''}`,
+        role: 'presentation',
+        children: [
+            {
+                tag: 'div',
+                ref: 'ePill',
+                cls: `ag-advanced-filter-builder-pill ${cssClass}`,
+                role: 'button',
+                children: pillChildren,
+            },
+        ],
+    };
 };
 
 /** A labelled button holding one part of a Builder condition, which activating opens an editor for. */
 export abstract class PillComp<TLocalEvent extends string = ComponentEvent> extends Component<TLocalEvent> {
     protected readonly ePill: HTMLElement = RefPlaceholder;
     protected readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eIcon: HTMLElement = RefPlaceholder;
     protected advFilterExpSvc: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
     }
 
-    constructor(private readonly pillParams: { cssClass: string; ariaLabel: string }) {
-        super(PillElement);
+    constructor(private readonly pillParams: PillParams) {
+        super(getPillElement(pillParams));
     }
 
     /** The label and its state class. A `null` text is "nothing chosen yet", which the base words. */
@@ -55,12 +82,18 @@ export abstract class PillComp<TLocalEvent extends string = ComponentEvent> exte
     }
 
     public postConstruct(): void {
-        const { cssClass, ariaLabel } = this.pillParams;
+        const { ariaLabel, pickerIcon } = this.pillParams;
         const ePill = this.ePill;
         const eLabel = this.eLabel;
 
-        ePill.classList.add(cssClass);
         this.activateTabIndex([ePill]);
+
+        if (pickerIcon) {
+            const icon = this.beans.iconSvc.createIconNoSpan(pickerIcon);
+            if (icon) {
+                this.eIcon.appendChild(icon);
+            }
+        }
 
         eLabel.id = `${this.getCompId()}`;
         _setAriaDescribedBy(ePill, eLabel.id);

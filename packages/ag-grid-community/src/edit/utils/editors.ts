@@ -22,6 +22,7 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
+import { INPUT_INVALID_CLASS, _refreshDateInputValidationStyle } from '../styles/inputValidationStyle';
 import { _getCellCtrl, _getRowCtrl } from './controllers';
 import { _announceChangedValidationErrors } from './validationAnnouncements';
 import { _formatValidationMessages } from './validationMessages';
@@ -943,6 +944,10 @@ export function _populateModelValidationErrors(
 
                 if (el instanceof HTMLInputElement) {
                     el.setCustomValidity(invalidMessage);
+                    const eCell = ctrl.eGui;
+                    if (eCell.classList.contains(INPUT_INVALID_CLASS)) {
+                        _refreshDateInputValidationStyle(eCell, el);
+                    }
                 } else {
                     el.classList.toggle('invalid', isInvalid);
                 }

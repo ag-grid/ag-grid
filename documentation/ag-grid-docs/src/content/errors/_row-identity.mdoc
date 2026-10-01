@@ -1,0 +1,16 @@
+### How the grid identifies a row
+
+When you hand the grid a data item, it has to match that item against a row it already holds. It does this in one of two ways, and which one applies decides how identity problems present:
+
+- With `getRowId` configured, rows are matched on the id your callback returns.
+- Without it, rows are matched by object reference, using `===` against the data you previously gave the grid.
+
+See [Identifying Rows for Update and Remove](./data-update-transactions/#identifying-rows-for-update-and-remove) for how this affects transactions.
+
+### The getRowId contract
+
+The callback must return a string that is unique across the rows in the grid, the same on every call for a given row, and stable across data updates. Returning a value that is not a string raises [error #25](./errors/25).
+
+Its params include `parentKeys` and `level` alongside `data`, so a composite id can be built where a business key is only unique within its parent.
+
+See [Row IDs](./row-ids/#row-ids) for the full detail.

@@ -249,11 +249,12 @@ describe('Column Interactions', () => {
                 └── c width:200
             `);
 
-            // Verify header cells are in correct containers
+            // Scoped to .ag-header: the body cells sit in identically-classed containers, so an
+            // unscoped selector is satisfied without the header ever being placed correctly.
             const gridDiv = getGridElement(api)! as HTMLElement;
-            const leftHeader = gridDiv.querySelector('.ag-grid-pinned-left-cells [col-id="a"]');
-            const centerHeader = gridDiv.querySelector('.ag-grid-scrolling-cells [col-id="b"]');
-            const rightHeader = gridDiv.querySelector('.ag-grid-pinned-right-cells [col-id="c"]');
+            const leftHeader = gridDiv.querySelector('.ag-header .ag-grid-pinned-left-cells [col-id="a"]');
+            const centerHeader = gridDiv.querySelector('.ag-header .ag-grid-scrolling-cells [col-id="b"]');
+            const rightHeader = gridDiv.querySelector('.ag-header .ag-grid-pinned-right-cells [col-id="c"]');
 
             expect(leftHeader).not.toBeNull();
             expect(centerHeader).not.toBeNull();

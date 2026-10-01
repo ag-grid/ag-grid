@@ -16,7 +16,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { KeyCode, _clamp } from 'ag-grid-community';
+import { KeyCode, _clamp, _createIconNoSpan } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import agAutocompleteCSS from './agAutocomplete.css';
@@ -27,17 +27,29 @@ import type {
     AutocompleteRowComponentCreator,
 } from './autocompleteParams';
 
-const AgAutocompleteListElement: ElementParams = {
+/** The list stands empty while values load, so it shows a loading message rather than reading as an empty result. */
+const getAgAutocompleteListElement = (loading: boolean): ElementParams => ({
     tag: 'div',
     cls: 'ag-autocomplete-list-popup',
     children: [
+        loading
+            ? {
+                  tag: 'div',
+                  cls: 'ag-loading ag-autocomplete-loading',
+                  children: [
+                      { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
+                      { tag: 'span', ref: 'eLoadingLabel', cls: 'ag-loading-text' },
+                  ],
+              }
+            : null,
         {
             tag: 'div',
             ref: 'eList',
-            cls: 'ag-autocomplete-list',
+            cls: `ag-autocomplete-list${loading ? ' ag-hidden' : ''}`,
+            attrs: loading ? { 'aria-hidden': 'true' } : undefined,
         },
     ],
-};
+});
 export class AgAutocompleteList extends AgPopupComponent<
     BeanCollection,
     GridOptionsWithDefaults,
@@ -47,6 +59,8 @@ export class AgAutocompleteList extends AgPopupComponent<
     AgComponentSelectorType
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
+    private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
+    private readonly eLoadingLabel: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<AutocompleteRowComponent, AutocompleteEntry>;
 
@@ -65,40 +79,64 @@ export class AgAutocompleteList extends AgPopupComponent<
             autocompleteEntries: AutocompleteEntry[];
             onConfirmed: () => void;
             useStartsWithSearch?: boolean;
+            suggestFirstMatch?: boolean;
             autoSizeList?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
             rowComponentCreator?: AutocompleteRowComponentCreator;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
             onActiveOptionChanged?: (optionId: string | null) => void;
+            /** Whether the entries are still being fetched, so the list stands in for them until they land. */
+            loading?: boolean;
         }
     ) {
-        super(AgAutocompleteListElement);
+        super(getAgAutocompleteListElement(!!params.loading));
         this.registerCSS(agAutocompleteCSS);
     }
 
     public postConstruct(): void {
+        this.setupLoading();
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
-        this.virtualList.getAriaElement().id = this.getListId();
-        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-        this.eList.appendChild(this.virtualList.getGui());
+        const virtualList = this.virtualList;
+        const virtualListGui = virtualList.getGui();
+        virtualList.getAriaElement().id = this.getListId();
+        virtualList.setComponentCreator(this.createRowComponent.bind(this));
+        this.eList.appendChild(virtualListGui);
 
-        this.virtualList.setModel({
+        virtualList.setModel({
             getRowCount: () => this.autocompleteEntries.length,
             getRow: (index: number) => this.autocompleteEntries[index],
         });
 
-        const virtualListGui = this.virtualList.getGui();
+        // Taken on mousedown too: a list rebuilt under a stationary pointer highlights its first row, and a
+        // click with no mousemove before it would confirm that row rather than the one clicked.
+        const selectRowUnderMouse = (e: MouseEvent) => {
+            if (e.type === 'mousedown') {
+                e.preventDefault();
+            }
+            this.selectRowUnderMouse(e);
+        };
 
         this.addManagedListeners(virtualListGui, {
             click: () => this.params.onConfirmed(),
-            mousemove: this.onMouseMove.bind(this),
-            mousedown: (e) => e.preventDefault(),
+            mousemove: selectRowUnderMouse,
+            mousedown: selectRowUnderMouse,
         });
 
         this.setSelectedValue(0);
         this.updateListHeight();
+    }
+
+    private setupLoading(): void {
+        if (!this.params.loading) {
+            return;
+        }
+        this.eLoadingLabel.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
+        const eIcon = _createIconNoSpan('setFilterLoading', this.beans, null);
+        if (eIcon) {
+            this.eLoadingIcon.appendChild(eIcon);
+        }
     }
 
     public getActiveOptionId(): string | null {
@@ -123,11 +161,20 @@ export class AgAutocompleteList extends AgPopupComponent<
         const oldIndex = this.autocompleteEntries[cachedIndex] === this.selectedValue ? cachedIndex : -1;
         let nextIndex = 0;
         if (oldIndex >= 0) {
-            nextIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+            const isPage = key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN;
+            const step = isPage ? this.getPageSize() : 1;
+            nextIndex = key === KeyCode.UP || key === KeyCode.PAGE_UP ? oldIndex - step : oldIndex + step;
         }
         const lastIndex = this.autocompleteEntries.length - 1;
 
         this.setSelectedValue(_clamp(nextIndex, 0, lastIndex));
+    }
+
+    private getPageSize(): number {
+        const virtualList = this.virtualList;
+        const rowHeight = virtualList.getRowHeight();
+        const height = virtualList.getGui().getBoundingClientRect().height;
+        return rowHeight > 0 ? Math.max(1, Math.floor(height / rowHeight)) : 1;
     }
 
     public setSearch(searchString: string): void {
@@ -141,7 +188,6 @@ export class AgAutocompleteList extends AgPopupComponent<
             this.checkSetSelectedValue(0);
             this.updateListHeight();
         }
-        this.updateSearchInList();
     }
 
     /**
@@ -159,7 +205,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         let topStartsWith = false;
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const text = entry.displayValue ?? entry.key;
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
             const index = text.toLocaleLowerCase().indexOf(lowerCaseSearchString);
             if (index < 0) {
                 continue;
@@ -184,7 +230,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         const matches: AutocompleteEntry[] = [];
         for (let i = 0, len = entries.length; i < len; ++i) {
             const entry = entries[i];
-            const text = entry.displayValue ?? entry.key;
+            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
             if (text.toLocaleLowerCase().startsWith(lowerCaseSearchString)) {
                 matches.push(entry);
             }
@@ -194,7 +240,7 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     /** One pass, producing the list to show and the row to suggest together, per keystroke. */
     private runSearch(): void {
-        const { autocompleteEntries, useStartsWithSearch, forceLastSelection } = this.params;
+        const { autocompleteEntries, useStartsWithSearch, suggestFirstMatch, forceLastSelection } = this.params;
         const searchString = this.searchString;
 
         let matches: AutocompleteEntry[];
@@ -203,6 +249,9 @@ export class AgAutocompleteList extends AgPopupComponent<
             matches = this.runStartsWithSearch(searchString, autocompleteEntries);
         } else {
             ({ matches, topIndex } = this.runContainsSearch(searchString, autocompleteEntries));
+            if (suggestFirstMatch) {
+                topIndex = 0;
+            }
         }
 
         const selectedValue = this.selectedValue;
@@ -215,10 +264,6 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.refreshVirtualList();
         this.updateListHeight();
         this.checkSetSelectedValue(topIndex);
-    }
-
-    private updateSearchInList(): void {
-        this.virtualList.forEachRenderedRow((row) => row.setSearchString(this.searchString));
     }
 
     private updateListHeight(): void {
@@ -318,23 +363,24 @@ export class AgAutocompleteList extends AgPopupComponent<
         listItemElement: HTMLElement,
         rowIndex: number
     ): AutocompleteRowComponent {
-        const customRow = this.params.rowComponentCreator?.(value, value === this.selectedValue);
-        if (customRow) {
-            this.createBean(customRow);
-            this.updateRowAriaProperties(customRow, listItemElement, rowIndex);
-            return customRow;
+        const selected = value === this.selectedValue;
+        let row = this.params.rowComponentCreator?.(value, selected);
+        if (row) {
+            this.createBean(row);
+        } else {
+            const defaultRow = new AgAutocompleteRow();
+            this.createBean(defaultRow);
+            defaultRow.setState(value.displayValue ?? value.key, selected);
+            row = defaultRow;
         }
-
-        const row = new AgAutocompleteRow();
-
-        this.createBean(row);
-        row.setState(value.displayValue ?? value.key, value === this.selectedValue);
+        // A row drawn after the search ran, scrolling to it say, has to mark up its own match.
+        row.setSearchString(this.searchString);
         this.updateRowAriaProperties(row, listItemElement, rowIndex);
 
         return row;
     }
 
-    private onMouseMove(mouseEvent: MouseEvent): void {
+    private selectRowUnderMouse(mouseEvent: MouseEvent): void {
         const virtualList = this.virtualList;
         const rect = virtualList.getGui().getBoundingClientRect();
         const scrollTop = virtualList.getScrollTop();

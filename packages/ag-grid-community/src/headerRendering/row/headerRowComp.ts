@@ -11,10 +11,21 @@ import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCt
 import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import type { PinnedSectionWidthsCache } from '../headerUtils';
-import { compareCtrlsByLeft, partitionByPinned, updatePinnedSectionWidths } from '../headerUtils';
+import { compareCtrlsByPinnedThenLeft, updatePinnedSectionWidths } from '../headerUtils';
 import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export type HeaderRowType = 'group' | 'column' | 'filter';
+
+/** Print layout has no pinned lanes, so position alone is the order. */
+const compareCompsByLeft = (
+    a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
+    b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
+): number => (a.getCtrl().column.left ?? 0) - (b.getCtrl().column.left ?? 0);
+
+const compareCompsByPinnedThenLeft = (
+    a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
+    b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
+): number => compareCtrlsByPinnedThenLeft(a.getCtrl(), b.getCtrl());
 
 export class HeaderRowComp extends Component {
     private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
@@ -116,13 +127,8 @@ export class HeaderRowComp extends Component {
         this.updatePinnedCellGroupWidths();
 
         if (forceOrder) {
-            const sortByLeft = (
-                a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
-                b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
-            ) => compareCtrlsByLeft(a.getCtrl(), b.getCtrl());
-
             if (this.gos.get('domLayout') === 'print') {
-                const comps = Object.values(this.headerComps).sort(sortByLeft);
+                const comps = Object.values(this.headerComps).sort(compareCompsByLeft);
                 _setDomChildOrder(
                     this.eScrollingCells,
                     comps.map((c) => c.getGui())
@@ -131,24 +137,17 @@ export class HeaderRowComp extends Component {
             }
 
             const comps = Object.values(this.headerComps);
-            const { left, center, right } = partitionByPinned(comps, (c) => c.getCtrl().column.getPinned());
+            comps.sort(compareCompsByPinnedThenLeft);
 
-            left.sort(sortByLeft);
-            center.sort(sortByLeft);
-            right.sort(sortByLeft);
+            const elsByLane: HTMLElement[][] = [[], [], []];
+            for (let i = 0, len = comps.length; i < len; ++i) {
+                const comp = comps[i];
+                elsByLane[comp.getCtrl().column.pinnedLane].push(comp.getGui());
+            }
 
-            _setDomChildOrder(
-                this.ePinnedLeftWrapper,
-                left.map((c) => c.getGui())
-            );
-            _setDomChildOrder(
-                this.eScrollingCells,
-                center.map((c) => c.getGui())
-            );
-            _setDomChildOrder(
-                this.ePinnedRightWrapper,
-                right.map((c) => c.getGui())
-            );
+            _setDomChildOrder(this.ePinnedLeftWrapper, elsByLane[0]);
+            _setDomChildOrder(this.eScrollingCells, elsByLane[1]);
+            _setDomChildOrder(this.ePinnedRightWrapper, elsByLane[2]);
         }
     }
 
@@ -157,14 +156,11 @@ export class HeaderRowComp extends Component {
             return this.eScrollingCells;
         }
 
-        const pinned = ctrl.column.getPinned();
-        if (pinned === 'left') {
+        const lane = ctrl.column.pinnedLane;
+        if (lane === 0) {
             return this.ePinnedLeftWrapper;
         }
-        if (pinned === 'right') {
-            return this.ePinnedRightWrapper;
-        }
-        return this.eScrollingCells;
+        return lane === 2 ? this.ePinnedRightWrapper : this.eScrollingCells;
     }
 
     private updatePinnedCellGroupWidths(): void {

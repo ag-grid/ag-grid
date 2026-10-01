@@ -38,45 +38,41 @@ const showAltBg = isAlt && hasMedia && !isWhite;
                 {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
                 {section.body_html && <div class={styles.bodyText} set:html={decorateBryntumHtml(section.body_html)} />}
 
-                {
-                    section.ctas && (
-                        <BryntumCtaList
-                            ctas={section.ctas}
-                            buttonClass="button-tertiary"
-                            wrapperClass={styles.textMediaCtas}
-                        />
-                    )
-                }
+                {section.ctas && (
+                    <BryntumCtaList
+                        ctas={section.ctas}
+                        buttonClass="button-tertiary"
+                        wrapperClass={styles.textMediaCtas}
+                    />
+                )}
             </div>
 
-            {
-                hasMedia && (
-                    <div class={styles.textMediaVisual}>
-                        {imageMedia && (
-                            <img
-                                src={resolveBryntumAsset(imageMedia.src, productSlug)}
-                                alt={imageMedia.alt ?? ''}
-                                width={imageMedia.width}
-                                height={imageMedia.height}
-                                class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
-                                loading="lazy"
-                            />
-                        )}
-                        {videoMedia && (
-                            <video
-                                src={resolveBryntumAsset(videoMedia.src, productSlug)}
-                                autoplay
-                                muted
-                                loop
-                                playsinline
-                                preload="metadata"
-                                aria-label={section.heading ?? 'Product demo video'}
-                                class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
-                            />
-                        )}
-                    </div>
-                )
-            }
+            {hasMedia && (
+                <div class={styles.textMediaVisual}>
+                    {imageMedia && (
+                        <img
+                            src={resolveBryntumAsset(imageMedia.src, productSlug)}
+                            alt={imageMedia.alt ?? ''}
+                            width={imageMedia.width}
+                            height={imageMedia.height}
+                            class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
+                            loading="lazy"
+                        />
+                    )}
+                    {videoMedia && (
+                        <video
+                            src={resolveBryntumAsset(videoMedia.src, productSlug)}
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="metadata"
+                            aria-label={section.heading ?? 'Product demo video'}
+                            class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
+                        />
+                    )}
+                </div>
+            )}
         </div>
     </div>
 </section>

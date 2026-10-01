@@ -71,159 +71,132 @@ const shouldShowTemplate = (framework: InternalFramework) => {
 };
 ---
 
-{
-    generatedContents.excluded && (
-        <>
-            <h3 data-testid="excluded-framework">PLACEHODER</h3>
-            <p>
-                Example not generated as exampleConfig.json has supportedFrameworks specified but not including this
-                one.
-            </p>
-        </>
-    )
-}
+{generatedContents.excluded && (
+    <>
+        <h3 data-testid="excluded-framework">PLACEHODER</h3>
+        <p>Example not generated as exampleConfig.json has supportedFrameworks specified but not including this one.</p>
+    </>
+)}
 
-{
-    !generatedContents && (
-        <p>
-            Error generating content for: <a href={exampleUrl}>{exampleUrl}</a>
-        </p>
-    )
-}
+{!generatedContents && (
+    <p>
+        Error generating content for: <a href={exampleUrl}>{exampleUrl}</a>
+    </p>
+)}
 
-{
-    shouldShowTemplate('vanilla') && (
-        <JavascriptTemplate
-            isDev={isDev}
-            title={title}
-            modifiedTimeMs={timeNow}
-            isEnterprise={isEnterprise}
-            isIntegratedCharts={!!isIntegratedCharts}
-            isLocale={!!isLocale}
-            scriptFiles={scriptFiles}
-            styleFiles={styleFiles}
-            indexFragment={indexFragment!}
-            appLocation={appLocation}
-            extraStyles={extraStyles}
-            extras={extras}
-            headFragment={headFragment}
-            usesMathRandom={usesMathRandom}
-            transpileInBrowser={transpileInBrowser}
-            nonce={nonce}
-        >
-            {addInitMessageScript && (
-                <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />
-            )}
-        </JavascriptTemplate>
-    )
-}
+{shouldShowTemplate('vanilla') && (
+    <JavascriptTemplate
+        isDev={isDev}
+        title={title}
+        modifiedTimeMs={timeNow}
+        isEnterprise={isEnterprise}
+        isIntegratedCharts={!!isIntegratedCharts}
+        isLocale={!!isLocale}
+        scriptFiles={scriptFiles}
+        styleFiles={styleFiles}
+        indexFragment={indexFragment!}
+        appLocation={appLocation}
+        extraStyles={extraStyles}
+        extras={extras}
+        headFragment={headFragment}
+        usesMathRandom={usesMathRandom}
+        transpileInBrowser={transpileInBrowser}
+        nonce={nonce}
+    >
+        {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
+    </JavascriptTemplate>
+)}
 
-{
-    shouldShowTemplate('typescript') && (
-        <TypescriptTemplate
-            isDev={isDev}
-            title={title}
-            modifiedTimeMs={timeNow}
-            entryFileName={entryFileName!}
-            fileNames={fileNames}
-            styleFiles={styleFiles}
-            indexFragment={indexFragment!}
-            appLocation={appLocation}
-            extraStyles={extraStyles}
-            isEnterprise={isEnterprise}
-            isIntegratedCharts={!!isIntegratedCharts}
-            extras={extras}
-            headFragment={headFragment}
-            usesMathRandom={usesMathRandom}
-            transpileInBrowser={transpileInBrowser}
-            nonce={nonce}
-        >
-            {addInitMessageScript && (
-                <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />
-            )}
-        </TypescriptTemplate>
-    )
-}
+{shouldShowTemplate('typescript') && (
+    <TypescriptTemplate
+        isDev={isDev}
+        title={title}
+        modifiedTimeMs={timeNow}
+        entryFileName={entryFileName!}
+        fileNames={fileNames}
+        styleFiles={styleFiles}
+        indexFragment={indexFragment!}
+        appLocation={appLocation}
+        extraStyles={extraStyles}
+        isEnterprise={isEnterprise}
+        isIntegratedCharts={!!isIntegratedCharts}
+        extras={extras}
+        headFragment={headFragment}
+        usesMathRandom={usesMathRandom}
+        transpileInBrowser={transpileInBrowser}
+        nonce={nonce}
+    >
+        {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
+    </TypescriptTemplate>
+)}
 
-{
-    (shouldShowTemplate('reactFunctional') || shouldShowTemplate('reactFunctionalTs')) && (
-        <ReactTemplate
-            isDev={isDev}
-            title={title}
-            modifiedTimeMs={timeNow}
-            entryFileName={entryFileName!}
-            fileNames={fileNames}
-            scriptFiles={scriptFiles}
-            styleFiles={styleFiles}
-            appLocation={appLocation}
-            ignoreModuleLoader={ignoreModuleLoader}
-            extraStyles={extraStyles}
-            isEnterprise={isEnterprise}
-            isIntegratedCharts={!!isIntegratedCharts}
-            internalFramework={internalFramework}
-            extras={extras}
-            headFragment={headFragment}
-            usesMathRandom={usesMathRandom}
-            transpileInBrowser={transpileInBrowser}
-            nonce={nonce}
-        >
-            {addInitMessageScript && (
-                <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />
-            )}
-        </ReactTemplate>
-    )
-}
+{(shouldShowTemplate('reactFunctional') || shouldShowTemplate('reactFunctionalTs')) && (
+    <ReactTemplate
+        isDev={isDev}
+        title={title}
+        modifiedTimeMs={timeNow}
+        entryFileName={entryFileName!}
+        fileNames={fileNames}
+        scriptFiles={scriptFiles}
+        styleFiles={styleFiles}
+        appLocation={appLocation}
+        ignoreModuleLoader={ignoreModuleLoader}
+        extraStyles={extraStyles}
+        isEnterprise={isEnterprise}
+        isIntegratedCharts={!!isIntegratedCharts}
+        internalFramework={internalFramework}
+        extras={extras}
+        headFragment={headFragment}
+        usesMathRandom={usesMathRandom}
+        transpileInBrowser={transpileInBrowser}
+        nonce={nonce}
+    >
+        {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
+    </ReactTemplate>
+)}
 
-{
-    shouldShowTemplate('angular') && (
-        <AngularTemplate
-            isDev={isDev}
-            title={title}
-            isEnterprise={isEnterprise}
-            isIntegratedCharts={!!isIntegratedCharts}
-            modifiedTimeMs={timeNow}
-            entryFileName={entryFileName!}
-            fileNames={fileNames}
-            styleFiles={styleFiles}
-            scriptFiles={scriptFiles}
-            appLocation={appLocation}
-            extraStyles={extraStyles}
-            extras={extras}
-            headFragment={headFragment}
-            usesMathRandom={usesMathRandom}
-            transpileInBrowser={transpileInBrowser}
-            nonce={nonce}
-        >
-            {addInitMessageScript && (
-                <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />
-            )}
-        </AngularTemplate>
-    )
-}
+{shouldShowTemplate('angular') && (
+    <AngularTemplate
+        isDev={isDev}
+        title={title}
+        isEnterprise={isEnterprise}
+        isIntegratedCharts={!!isIntegratedCharts}
+        modifiedTimeMs={timeNow}
+        entryFileName={entryFileName!}
+        fileNames={fileNames}
+        styleFiles={styleFiles}
+        scriptFiles={scriptFiles}
+        appLocation={appLocation}
+        extraStyles={extraStyles}
+        extras={extras}
+        headFragment={headFragment}
+        usesMathRandom={usesMathRandom}
+        transpileInBrowser={transpileInBrowser}
+        nonce={nonce}
+    >
+        {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
+    </AngularTemplate>
+)}
 
-{
-    shouldShowTemplate('vue3') && (
-        <VueTemplate
-            isDev={isDev}
-            title={title}
-            isEnterprise={isEnterprise}
-            isIntegratedCharts={!!isIntegratedCharts}
-            modifiedTimeMs={timeNow}
-            entryFileName={entryFileName!}
-            fileNames={fileNames}
-            scriptFiles={scriptFiles}
-            styleFiles={styleFiles}
-            appLocation={appLocation}
-            extraStyles={extraStyles}
-            extras={extras}
-            headFragment={headFragment}
-            usesMathRandom={usesMathRandom}
-            transpileInBrowser={transpileInBrowser}
-            nonce={nonce}
-        >
-            {addInitMessageScript && (
-                <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />
-            )}
-        </VueTemplate>
-    )
-}
+{shouldShowTemplate('vue3') && (
+    <VueTemplate
+        isDev={isDev}
+        title={title}
+        isEnterprise={isEnterprise}
+        isIntegratedCharts={!!isIntegratedCharts}
+        modifiedTimeMs={timeNow}
+        entryFileName={entryFileName!}
+        fileNames={fileNames}
+        scriptFiles={scriptFiles}
+        styleFiles={styleFiles}
+        appLocation={appLocation}
+        extraStyles={extraStyles}
+        extras={extras}
+        headFragment={headFragment}
+        usesMathRandom={usesMathRandom}
+        transpileInBrowser={transpileInBrowser}
+        nonce={nonce}
+    >
+        {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
+    </VueTemplate>
+)}

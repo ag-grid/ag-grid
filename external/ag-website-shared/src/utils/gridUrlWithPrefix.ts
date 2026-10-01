@@ -15,9 +15,11 @@ export const gridUrlWithPrefix = ({
     let path = url;
     if (url.startsWith('./')) {
         const gridFrameworkPath = `${framework}-data-grid`;
-        path = pathJoin(siteBaseUrl, gridFrameworkPath, url.slice('./'.length));
+        // `pathJoin` strips the trailing slash, so put it back - the grid site is trailing-slash
+        // canonical and would otherwise 301 every one of these cross-site links.
+        path = addTrailingSlashToPath(pathJoin(siteBaseUrl, gridFrameworkPath, url.slice('./'.length)));
     } else if (url.startsWith('/')) {
-        path = pathJoin(siteBaseUrl, url);
+        path = addTrailingSlashToPath(pathJoin(siteBaseUrl, url));
     }
 
     // Site pages are directory indexes, so the slash-less form only reaches them via a redirect, and

@@ -2,11 +2,14 @@ import { LocalEventService, _removeFromArray } from 'ag-stack';
 
 import type {
     AgColumn,
+    AgFilterHandlerBaseParams,
+    BaseFilterParams,
     FilterAction,
     FilterDisplayParams,
     FilterDisplayState,
+    FilterGetValueFunc,
     FilterHandler,
-    FilterHandlerBaseParams,
+    FilterValueGetter,
     FilterWrapperParams,
     IDoesFilterPassParams,
     IFilter,
@@ -33,10 +36,10 @@ import {
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import {
+    DEFAULT_CHILD_FILTER,
     getFilterModelForIndex,
     getMultiFilterDefs,
     multiFilterChildrenChanged,
-    updateGetValue,
 } from './multiFilterUtil';
 
 interface MultiFilterWrapper {
@@ -45,10 +48,12 @@ interface MultiFilterWrapper {
     /** only set for handlers */
     filterParams?: FilterDisplayParams;
     handler?: FilterHandler;
-    handlerParams?: FilterHandlerBaseParams;
+    handlerParams?: AgFilterHandlerBaseParams;
     /** only set for handlers */
     model?: any;
     state?: FilterDisplayState;
+    /** A ui rebuilt for new params, installed only if nothing newer took its place while it loaded. */
+    pendingUi: AgPromise<IFilterComp> | undefined;
 }
 
 /** temporary type until `MultiFilterParams` is updated as breaking change */
@@ -75,8 +80,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         this.filterChangedCallback = filterChangedCallback;
 
+        const inherited = this.getInheritedGetter();
         const filterPromises = this.filterDefs.map((filterDef, index) =>
-            this.createFilter(filterDef, index, initialModel)
+            this.createFilter(filterDef, index, initialModel, inherited)
         );
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
@@ -96,13 +102,111 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public refresh(params: MultiFilterParams): boolean {
-        if (multiFilterChildrenChanged(this.filterDefs, getMultiFilterDefs(params))) {
+        const newDefs = getMultiFilterDefs(params);
+        if (multiFilterChildrenChanged(this.filterDefs, newDefs)) {
             return false;
         }
         // `filterDefs` is deliberately not updated: the gui is built from it once, so fresh defs beside a
         // stale gui would misreport each child's `display` to `afterGuiAttached`.
         this.params = params;
+        const { beans, wrappers } = this;
+        const colFilter = beans.colFilter!;
+        const column = params.column as AgColumn;
+        const parent = { filterValueGetter: this.getInheritedGetter() };
+        for (let i = 0, len = wrappers.length; i < len; ++i) {
+            const wrapper = wrappers[i];
+            const handler = wrapper?.handler;
+            if (!handler) {
+                continue;
+            }
+            const filterDef = newDefs[i];
+            const { onModelChange, doesRowPassOtherFilter } = wrapper.handlerParams!;
+            const handlerParams: AgFilterHandlerBaseParams = {
+                ...colFilter.createHandlerParamsForDef(column, filterDef, DEFAULT_CHILD_FILTER, parent),
+                onModelChange,
+                doesRowPassOtherFilter,
+            };
+            // the ui keeps the callbacks its wrapper was built around and takes the new params
+            const { getHandler, onStateChange, onAction } = wrapper.filterParams!;
+            const filterParams = colFilter.createFilterComp(
+                column,
+                filterDef,
+                DEFAULT_CHILD_FILTER,
+                (defaultParams) => ({
+                    ...this.createChildParams(defaultParams, true, handlerParams.getValue, i),
+                    onModelChange,
+                    getHandler,
+                    onStateChange,
+                    onAction,
+                }),
+                true,
+                'colDef'
+            )!.compDetails.params;
+            // stored first, as reconciling the model inside `refresh` refreshes the child from the wrapper
+            wrapper.handlerParams = handlerParams;
+            wrapper.filterParams = filterParams;
+            // a child cannot be rebuilt on its own, so one refusing the new params recreates the whole filter
+            if (handler.refresh?.({ ...handlerParams, model: wrapper.model ?? null, source: 'colDef' }) === false) {
+                return false;
+            }
+            const model = wrapper.model ?? null;
+            const state = wrapper.state ?? { model };
+            // a ui taking these params supersedes a rebuild still loading from older ones
+            wrapper.pendingUi = undefined;
+            if (wrapper.filter.refresh?.({ ...filterParams, model, state, source: 'colDef' }) === false) {
+                this.recreateChildUi(wrapper, i, filterDef);
+            }
+        }
         return true;
+    }
+
+    /** A child ui that cannot take new params is rebuilt around its handler, which keeps the model. */
+    private recreateChildUi(wrapper: MultiFilterWrapper, index: number, filterDef: IMultiFilterDef): void {
+        const { handler, handlerParams } = wrapper;
+        const model = wrapper.model ?? null;
+        let createWrapperComp: ((filter: IFilterComp<any> | null) => FilterWrapperComp) | undefined;
+        const { compDetails, createFilterUi } = this.beans.colFilter!.createFilterComp(
+            this.params.column as AgColumn,
+            filterDef,
+            DEFAULT_CHILD_FILTER,
+            (defaultParams) => {
+                const params = this.createChildParams(defaultParams, true, handlerParams!.getValue, index);
+                createWrapperComp = this.updateDisplayParams(
+                    params as unknown as FilterDisplayParams,
+                    index,
+                    model,
+                    () => compDetails,
+                    () => handler!,
+                    handlerParams!.onModelChange
+                );
+                return params;
+            },
+            true,
+            'colDef'
+        )!;
+        const pendingUi = createFilterUi();
+        wrapper.pendingUi = pendingUi;
+        void pendingUi.then((filter) => {
+            if (wrapper.pendingUi !== pendingUi || this.wrappers[index] !== wrapper || !this.isAlive()) {
+                this.destroyBean(filter);
+                return;
+            }
+            wrapper.pendingUi = undefined;
+            const oldFilter = wrapper.filter;
+            const filterParams = compDetails.params;
+            wrapper.filter = filter!;
+            wrapper.comp = createWrapperComp!(filter);
+            wrapper.filterParams = filterParams;
+            wrapper.state = { model };
+            this.destroyBean(oldFilter);
+            // a framework ui can resolve after the model moved on
+            const currentModel = wrapper.model ?? null;
+            if (currentModel !== model) {
+                wrapper.state = { model: currentModel };
+                _refreshFilterUi(filter as any, filterParams, currentModel, wrapper.state, 'api');
+            }
+            this.refreshChildGui();
+        });
     }
 
     public isFilterActive(): boolean {
@@ -295,7 +399,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private createFilter(
         filterDef: IMultiFilterDef,
         index: number,
-        initialModel: IMultiFilterModel | null
+        initialModel: IMultiFilterModel | null,
+        inherited: FilterValueGetter | undefined
     ): AgPromise<MultiFilterWrapper | null> {
         const column = this.params.column as AgColumn;
 
@@ -331,66 +436,56 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             });
         };
 
+        const colFilter = beans.colFilter!;
+        const filterValueGetter = colFilter.resolveFilterValueGetter(
+            column,
+            filterDef,
+            inherited,
+            DEFAULT_CHILD_FILTER
+        );
+        const getValue = colFilter.createHandlerGetValue(column, filterValueGetter);
         const {
             compDetails,
             handler,
             handlerParams: originalHandlerParams,
             createFilterUi,
-        } = beans.colFilter!.createFilterInstance(
-            column,
-            filterDef,
-            'agTextColumnFilter',
-            (defaultParams, isHandler) => {
-                const updatedParams = {
-                    ...defaultParams,
-                    filterChangedCallback: isHandler
-                        ? () => {}
-                        : (additionalEventAttributes?: any) => {
-                              this.executeWhenAllFiltersReady(() =>
-                                  this.onFilterModelChanged(index, additionalEventAttributes)
-                              );
-                          },
-                    doesRowPassOtherFilter: (node: RowNode) =>
-                        defaultParams.doesRowPassOtherFilter(node) &&
-                        this.doesFilterPass({ node, data: node.data }, index),
-                    getValue: updateGetValue(beans, column, filterDef, defaultParams.getValue),
-                };
-                if (isHandler) {
-                    initialModelForFilter = getFilterModelForIndex(initialModel, index);
-                    createWrapperComp = this.updateDisplayParams(
-                        updatedParams as unknown as FilterDisplayParams,
-                        index,
-                        initialModelForFilter,
-                        () => compDetails,
-                        () => handler!,
-                        onModelChange
-                    );
-                }
-                return updatedParams;
+        } = colFilter.createFilterInstance(column, filterDef, DEFAULT_CHILD_FILTER, (defaultParams, isHandler) => {
+            const updatedParams = this.createChildParams(defaultParams, isHandler, getValue, index);
+            if (isHandler) {
+                initialModelForFilter = getFilterModelForIndex(initialModel, index);
+                createWrapperComp = this.updateDisplayParams(
+                    updatedParams as unknown as FilterDisplayParams,
+                    index,
+                    initialModelForFilter,
+                    () => compDetails,
+                    () => handler!,
+                    onModelChange
+                );
             }
-        );
+            return updatedParams;
+        });
 
         if (!createFilterUi) {
             return AgPromise.resolve(null);
         }
 
-        let handlerParams: FilterHandlerBaseParams | undefined;
+        let handlerParams: AgFilterHandlerBaseParams | undefined;
         if (handler) {
-            const { doesRowPassOtherFilter, getValue } = originalHandlerParams!;
+            const doesRowPassOtherFilter = originalHandlerParams!.doesRowPassOtherFilter;
             handlerParams = {
                 ...originalHandlerParams!,
+                filterValueGetter,
+                getValue,
                 onModelChange,
                 doesRowPassOtherFilter: (node) =>
                     doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
-
-                getValue: updateGetValue(beans, column, filterDef, getValue),
             };
             handler.init?.({ ...handlerParams, model: initialModelForFilter, source: 'init' });
         }
 
         return createFilterUi().then((filter) => {
             if (!handler) {
-                return { filter: filter!, comp: filter! };
+                return { filter: filter!, comp: filter!, pendingUi: undefined };
             }
             const filterParams = compDetails?.params;
             const comp = createWrapperComp!(filter);
@@ -401,8 +496,42 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 handler,
                 handlerParams,
                 model: initialModelForFilter,
+                pendingUi: undefined,
             };
         });
+    }
+
+    /** The getter this filter reads with, which a child without its own reads through. */
+    private getInheritedGetter(): FilterValueGetter | undefined {
+        const { colFilter, selectableFilter } = this.beans;
+        const column = this.params.column as AgColumn;
+        const colDef = column.colDef;
+        // this filter's own definition, as a Selectable Filter records its choice's getter only after a refresh
+        const multiDef = selectableFilter?.isSelectable(colDef)
+            ? selectableFilter.getFilterDef(column, colDef)
+            : colDef;
+        return colFilter!.resolveFilterValueGetter(column, multiDef, colDef.filterValueGetter, undefined);
+    }
+
+    private createChildParams(
+        defaultParams: BaseFilterParams,
+        isHandler: boolean,
+        getValue: FilterGetValueFunc,
+        index: number
+    ) {
+        return {
+            ...defaultParams,
+            filterChangedCallback: isHandler
+                ? () => {}
+                : (additionalEventAttributes?: any) => {
+                      this.executeWhenAllFiltersReady(() =>
+                          this.onFilterModelChanged(index, additionalEventAttributes)
+                      );
+                  },
+            doesRowPassOtherFilter: (node: RowNode) =>
+                defaultParams.doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
+            getValue,
+        };
     }
 
     private updateDisplayParams(

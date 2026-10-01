@@ -59,4 +59,88 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });
+
+    test.eachFramework('Country column resolves its menu items asynchronously', async ({ agIdFor, page }) => {
+        await expect(agIdFor.cell('0', 'country')).toContainText('United States');
+
+        // the country column returns a Promise resolved after a delay, so the items
+        // arrive after the right-click - the web-first assertions retry until they do
+        await agIdFor.cell('0', 'country').click({ button: 'right' });
+
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Log United States' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Always Disabled' })).toBeVisible();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Country' })).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.menu()).toHaveCount(0);
+    });
+
+    test.eachFramework('the Country sub menu items render image icons', async ({ agIdFor, page }) => {
+        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menu()).toBeVisible();
+
+        await page.locator('.ag-menu-option').filter({ hasText: 'Country' }).hover();
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Ireland' })).toBeVisible();
+
+        // each sub menu entry supplies an <img> flag as its icon
+        const ireland = page.locator('.ag-menu-option').filter({ hasText: 'Ireland' });
+        await expect(ireland.locator('.ag-menu-option-icon img')).toHaveCount(1);
+
+        await page.keyboard.press('Escape');
+    });
+
+    test.eachFramework('the top menu item carries its cssClasses', async ({ agIdFor, page }) => {
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+
+        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menu()).toBeVisible();
+
+        // cssClasses: ['red', 'bold'] on the first item
+        const logItem = page.locator('.ag-menu-option').filter({ hasText: 'Log Michael Phelps' });
+        await expect(logItem).toHaveClass(/\bred\b/);
+        await expect(logItem).toHaveClass(/\bbold\b/);
+
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.menu()).toHaveCount(0);
+    });
+
+    test.eachFramework('the Always Disabled item shows its tooltip on hover', async ({ agIdFor, page }) => {
+        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menu()).toBeVisible();
+
+        await page.locator('.ag-menu-option').filter({ hasText: 'Always Disabled' }).hover();
+
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+        await expect(tooltip).toBeVisible();
+        await expect(tooltip).toContainText('Very long tooltip');
+    });
+
+    test.eachFramework('a checked item renders a checkmark instead of its icon', async ({ agIdFor, page }) => {
+        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menu()).toBeVisible();
+
+        // checked: true and icon are mutually exclusive - the icon is ignored
+        const checkedItem = page.locator('.ag-menu-option').filter({ hasText: 'Checked' });
+        await expect(checkedItem).toHaveAttribute('aria-checked', 'true');
+        // the MenuItem module maps the 'check' icon name to the 'tick' icon
+        await expect(checkedItem.locator('.ag-menu-option-icon .ag-icon-tick')).toBeVisible();
+        await expect(checkedItem.locator('.ag-menu-option-icon img')).toHaveCount(0);
+
+        // contrast: the Mac item supplies the same icon and does render it
+        const macItem = page.locator('.ag-menu-option').filter({ hasText: 'Mac' });
+        await expect(macItem.locator('.ag-menu-option-icon img')).toHaveCount(1);
+
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.menu()).toHaveCount(0);
+    });
+
+    test.eachFramework('the built-in chartRange item is included', async ({ agIdFor, page }) => {
+        await agIdFor.cell('0', 'athlete').click({ button: 'right' });
+        await expect(agIdFor.menu()).toBeVisible();
+
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Chart Range' })).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await expect(agIdFor.menu()).toHaveCount(0);
+    });
 });

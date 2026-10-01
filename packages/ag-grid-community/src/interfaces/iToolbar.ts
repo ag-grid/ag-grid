@@ -223,6 +223,8 @@ export interface IToolbarService {
     setToolbar(toolbar: IToolbarComp): void;
     clearToolbar(toolbar: IToolbarComp): void;
     getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined;
+    /** Whether the toolbar is configured with the given item, by shorthand or by `toolbarItem`. */
+    hasItem(itemName: ToolbarItemShorthand): boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

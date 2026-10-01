@@ -223,7 +223,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                     columnId: range.startColumn.getColId(),
                 };
 
-                this.setLastFocusedCell(lastFocusedCell);
+                this.setLastFocusedCell(lastFocusedCell, false);
             }
 
             const cellRangeParams: CellRangeParams = {
@@ -254,10 +254,11 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         // when single cells are being processed, they should be considered
         // as ranges when the rangeSvc is present (singleCellRanges).
         // otherwise focus will be restore but the range will not.
-        this.setLastFocusedCell(lastFocusedCell);
+        this.setLastFocusedCell(lastFocusedCell, true);
     }
 
-    private setLastFocusedCell(lastFocusedCell: LastFocusedCell) {
+    /** @param setRange false where the caller restores its own ranges, which setting one here would clear */
+    private setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRange: boolean) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const { colModel, focusSvc, rangeSvc } = this.beans;
 
@@ -272,9 +273,11 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         scrollFeature.ensureColumnVisible(column);
 
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
-        focusSvc.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+        focusSvc.setFocusedCellOrSpan({ ...cellPosition, forceBrowserFocus: true });
 
-        rangeSvc?.setRangeToCell(cellPosition);
+        if (setRange) {
+            rangeSvc?.setRangeToCell(focusSvc.getFocusedCell() ?? cellPosition);
+        }
     }
 
     private addListeners(): void {

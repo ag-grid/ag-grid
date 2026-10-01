@@ -45,11 +45,13 @@ export { BaseSingleColService as _BaseSingleColService } from './columns/baseSin
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';
+export { _getDrawnColSpan } from './columns/columnSpanUtils';
 export {
     _convertColumnEventSourceType,
     _destroyColumnTreeAll,
     _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
+    _isHeaderNameChangeForGroup,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,
@@ -151,19 +153,28 @@ export {
     presetDateFilterTypeRelativeFromToMap as _PRESET_DATE_FILTER_RANGES,
 } from './filter/provided/date/relativeDateRanges';
 export type { FilterManager } from './filter/filterManager';
-export type { FilterValueService } from './filter/filterValueService';
+export type { FilterValueService, FilterValueSource } from './filter/filterValueService';
+export { _getFilterValueSource } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
+export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
+    _ADVANCED_FILTER_ONLY_OPTIONS,
     _bindFilterCallback,
     _classifyFilterOptions,
+    filterCallbackParams as _filterCallbackParams,
     _getCustomOptionDisplayName,
     _getCustomOptionNumberOfInputs,
     _hasValue,
     _isBlank,
     _isRangeOutOfOrder,
 } from './filter/provided/simpleFilterUtils';
+export {
+    defaultLowercaseFormatter as _defaultLowercaseFormatter,
+    TEXT_COMPARISONS as _TEXT_COMPARISONS,
+    trimInputForFilter as _trimInputForFilter,
+} from './filter/provided/text/textFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
 export { GridCoreCreator } from './grid';
@@ -183,7 +194,6 @@ export type {
     IRowContainerComp,
     RowContainerName,
     RowContainerOptions,
-    RowContainerType,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export { GridCtrl } from './gridComp/gridCtrl';
@@ -191,6 +201,7 @@ export type { IGridComp } from './gridComp/gridCtrl';
 export {
     _addGridCommonParams,
     _addRowHeightChangedListener,
+    _canScrollVertically,
     _canSkipShowingRowGroup,
     _combineAttributesAndGridOptions,
     _getCallbackForEvent,
@@ -261,12 +272,10 @@ export {
     getFloatingFiltersHeight as _getFloatingFiltersHeight,
     getHeaderRowCount as _getHeaderRowCount,
     getPinnedSectionWidths as _getPinnedSectionWidths,
-    partitionByPinned as _partitionByPinned,
     updatePinnedSectionWidths as _updatePinnedSectionWidths,
 } from './headerRendering/headerUtils';
 export type {
     PinnedSectionElements,
-    PinnedSections,
     PinnedSectionWidths,
     PinnedSectionWidthsCache,
 } from './headerRendering/headerUtils';
@@ -292,6 +301,12 @@ export type {
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
+export type {
+    AgFilterHandlerBaseParams,
+    AgFilterHandlerParams,
+    FilterGetValueFunc,
+    FilterValueGetter,
+} from './interfaces/iFilter';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
 export type { IFooterService } from './interfaces/iFooterService';
 export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
@@ -419,6 +434,7 @@ export {
     _skipFocusableContainerListenerForAgGrid,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
+export { _setAgPackageInfo } from './logVersion';
 export { _consoleError, _warnOnce } from './utils/log';
 export { _isProtoPollutionKey, _mergeDeep, _mergedEqual } from './utils/mergeDeep';
 export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
@@ -428,9 +444,10 @@ export type { LogService } from './validation/logService';
 export {
     _errMsg,
     _errorForGrid,
+    _errorToThrowForGrid,
+    _errorToThrowWithoutAttribution,
     _errorWithoutAttribution,
     _logPreInitWarn,
-    _preInitErrMsg,
     _resetMissingModuleReports,
     _warnForGrid,
     _warnWithoutAttribution,
@@ -520,6 +537,8 @@ export type {
     ModuleName,
     ModuleValidationResult,
 } from './interfaces/iModule';
+export { _createInternalFeatureFlagsModule } from './internalFeatureFlags/internalFeatureFlagsModule';
+export type { InternalFeatureFlags as _InternalFeatureFlags } from './interfaces/iInternalFeatureFlags';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';
 export { SharedRowSelectionModule as _SharedRowSelectionModule } from './selection/rowSelectionModule';

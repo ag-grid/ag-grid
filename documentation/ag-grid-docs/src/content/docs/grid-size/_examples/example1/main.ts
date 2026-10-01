@@ -16,6 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([ColumnAutoSizeModule, ColumnApiModule, ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
+let sizeToFitTimer: number | undefined;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -61,8 +62,13 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
     params.api.setColumnsVisible(columnsToHide, false);
 
     // wait until columns stopped moving and fill out
-    // any available space to ensure there are no gaps
-    window.setTimeout(() => {
+    // any available space to ensure there are no gaps. The timer is cleared on every size change so
+    // only the latest one re-fits, and the grid can be destroyed before it fires - hence the guard.
+    window.clearTimeout(sizeToFitTimer);
+    sizeToFitTimer = window.setTimeout(() => {
+        if (params.api.isDestroyed()) {
+            return;
+        }
         params.api.sizeColumnsToFit();
     }, 10);
 }

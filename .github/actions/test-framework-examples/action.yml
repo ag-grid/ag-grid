@@ -1,8 +1,12 @@
 name: 'Run Framework Example Tests'
 description: 'Run Framework Example Tests'
 inputs:
+  ref:
+    description: "Revision to check out (default: the ref the event would pick)"
+    required: false
+    default: ''
   framework:
-    description: 'Framework to use'
+    description: "Framework to use, or 'all' to run every framework in one pass"
     required: true
     default: 'invalid-framework'
   browsers:
@@ -15,16 +19,28 @@ inputs:
     required: false
     default: 'https://grid-staging.ag-grid.com/'
   test_pattern:
-    description: 'Test pattern to run'
+    description: 'Space-separated Playwright file patterns to run (empty = every test)'
     required: false
     default: ''
+  shard_index:
+    description: 'Playwright shard index'
+    required: false
+    default: '1'
+  shard_total:
+    description: 'Playwright shard count'
+    required: false
+    default: '1'
     
 runs:
   using: "composite"
   steps:
+    # A caller testing a deployed site must pin this to the deployed revision: left to its
+    # default this checks out the event's ref, which on workflow_run is the default-branch
+    # head, and would silently replace a revision the caller had already checked out.
     - name: Checkout
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+        ref: ${{ inputs.ref }}
         fetch-depth: 1
 
     # These tests run Playwright against a remote deployed site (base_url), so they need
@@ -86,13 +102,16 @@ runs:
       env:
         CI: 'true'
       shell: bash
-      run: ./docs-e2e.sh ${{ inputs.test_pattern }} --framework ${{ inputs.framework }} --url "${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}" ${{ inputs.browsers == 'all' && '--all-browsers' || '' }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      # An empty --framework would make the gate consume the following --url as its value, so
+      # 'all' omits the flag entirely rather than passing a blank one. Playwright then runs every
+      # framework variant in the one pass, which is what an unset FRAMEWORK means.
+      run: ./docs-e2e.sh ${{ inputs.test_pattern }} ${{ inputs.framework != 'all' && format('--framework {0}', inputs.framework) || '' }} --url "${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}" ${{ inputs.browsers == 'all' && '--all-browsers' || '' }} --shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}
     
     - name: Upload Test Report
       id: upload-recipes-report
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ !cancelled() }}
       with:
-        name: playwright-${{ inputs.framework }}-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
+        name: playwright-${{ inputs.framework }}-examples-${{ inputs.shard_index }}-of-${{ inputs.shard_total }}
         path: reports/
         retention-days: ${{env.DEFAULT_RETENTION_DAYS}}

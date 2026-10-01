@@ -41,6 +41,7 @@ const gridOptions: GridOptions = {
         { field: 'c', type: 'valueColumn' },
         { field: 'd', type: 'valueColumn' },
         {
+            colId: 'total',
             headerName: 'Total',
             type: 'totalColumn',
             valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")',

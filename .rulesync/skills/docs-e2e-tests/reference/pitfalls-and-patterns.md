@@ -172,6 +172,30 @@ A test that only reads static cell values is the weakest form — always drive t
 
 Give each behaviour its own `test.eachFramework(...)` block with a descriptive name rather than piling everything into one monolithic test — separate blocks read as a coverage list and fail independently.
 
+### Pitfall 13: "Randomised" Example Data Is Seeded — Assert Explicit Values
+
+An example that generates its rows with `Math.random()` is **not** non-deterministic under test. The example generator rewrites every `Math.random()` call to `window.agRandom()` (`plugins/ag-grid-generate-example-files/src/executors/generate/executor.ts`), and the example runner seeds that generator with a fixed seed, before the example's script runs (`documentation/ag-grid-docs/public/example-runner/example-runner.js`). The same rows therefore appear on every run, in every framework. The one exception is an example with `usesWebWorker` set, where the worker cannot reach `window.agRandom()`.
+
+So do not defend against randomness by reading the current value off the page and asserting relative to it:
+
+```ts
+// WRONG — reads the value it is supposed to be asserting, so the test cannot fail on a wrong value
+const before = await cell.textContent();
+await cell.dblclick();
+await expect(editInput(page)).toHaveValue(before!.trim());
+```
+
+Assert the value the example actually renders:
+
+```ts
+// RIGHT — the seeded data puts 118 in row 0 of the value column
+await expect(cell).toContainText('£ 118');
+await cell.dblclick();
+await expect(editInput(page)).toHaveValue('118');
+```
+
+Get the expected value from a run rather than by reasoning about the seed: write the assertion against what you believe the value is, run `./docs-e2e.sh "<example-name>"`, and take the real value from the failure message. A starting value read back off the page asserts nothing — it passes whatever the grid renders, including a regression.
+
 ## Example Test Patterns
 
 ### Pattern: Row Grouping with Aggregation and Totals

@@ -115,6 +115,13 @@ const {
     DISABLE_EXAMPLE_RUNNER,
 
     /*
+     * Disable embedding each example's source in the docs page HTML for crawlers
+     *
+     * The example runner keeps fetching the source at runtime either way
+     */
+    DISABLE_EXAMPLE_SOURCE_EMBED,
+
+    /*
      * Disable markdown doc generation
      */
     DISABLE_MARKDOWN_DOCS,
@@ -177,6 +184,7 @@ console.log(
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
+            DISABLE_EXAMPLE_SOURCE_EMBED,
             DISABLE_MARKDOWN_DOCS,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
@@ -259,6 +267,8 @@ export default defineConfig({
     ],
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
+    // Astro 7's 'jsx' default drops the space in `hosted by\n<span>`, which many pages rely on.
+    compressHTML: true,
     security: {
         /**
          * Allow cross-origin dev-server fetches from external example hosts.
@@ -279,6 +289,12 @@ export default defineConfig({
     },
     vite: {
         plugins,
+        resolve: {
+            // Per-file tsconfig paths redirect ag-grid-community's built `ag-stack` import to source.
+            tsconfigPaths: false,
+            // Left external, the prerender output resolves the hoisted cookie 0.x, not Astro's 2.x.
+            noExternal: ['cookie'],
+        },
         server: {
             https: httpsEnabled,
             cors: {

@@ -23,5 +23,8 @@ export function getErrorRedirectBaseUrl({ errorVersion, pageVersion }: Params) {
         return;
     }
 
-    return `${GRID_ARCHIVE_BASE_URL}/${errorVersion}`;
+    // The archive is only published per release, so a pre-release tag has to be dropped from the path.
+    const { major, minor, patchNum } = parseVersion(errorVersion);
+
+    return `${GRID_ARCHIVE_BASE_URL}/${major}.${minor}.${patchNum}`;
 }

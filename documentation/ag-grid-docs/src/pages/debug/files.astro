@@ -8,34 +8,38 @@ const extraFiles = getExtraFiles();
 
 <DebugLayout title={`Debug: Extra Files`}>
     <h1>Extra files ({extraFiles.length})</h1>
-    <p><code>props.file</code> gets the file contents, but is not shown here.</p>
+    <p>
+        <code>props.file</code> gets the file contents, but is not shown here.
+    </p>
     <table>
         <thead>
             <th>No.</th>
             <th>Url</th>
-            <th><code>params.filePath</code></th>
-            <th><code>props.fullFilePath</code></th>
+            <th>
+                <code>params.filePath</code>
+            </th>
+            <th>
+                <code>props.fullFilePath</code>
+            </th>
         </thead>
         <tbody>
-            {
-                extraFiles.map((file, index) => {
-                    const { filePath } = file.params;
-                    const { fullFilePath } = file.props;
-                    const url = getExtraFileUrl({
-                        filePath,
-                    });
-                    return (
-                        <tr>
-                            <td>{index + 1}</td>
-                            <td>
-                                <a href={url}>{url}</a>
-                            </td>
-                            <td>{filePath}</td>
-                            <td>{fullFilePath}</td>
-                        </tr>
-                    );
-                })
-            }
+            {extraFiles.map((file, index) => {
+                const { filePath } = file.params;
+                const { fullFilePath } = file.props;
+                const url = getExtraFileUrl({
+                    filePath,
+                });
+                return (
+                    <tr>
+                        <td>{index + 1}</td>
+                        <td>
+                            <a href={url}>{url}</a>
+                        </td>
+                        <td>{filePath}</td>
+                        <td>{fullFilePath}</td>
+                    </tr>
+                );
+            })}
         </tbody>
     </table>
 </DebugLayout>

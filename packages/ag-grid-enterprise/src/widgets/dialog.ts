@@ -28,8 +28,10 @@ export const DIALOG_CALLBACKS: AgDialogCallbacks<BeanCollection, Dialog> = {
 
     configureFocusableContainer: (beans: BeanCollection, dialog: Dialog) => {
         const gridCtrl = beans.ctrlsSvc.get('gridCtrl');
-        gridCtrl.addFocusableContainer(dialog);
-        dialog.addDestroyFunc(() => gridCtrl.removeFocusableContainer(dialog));
+        if (gridCtrl) {
+            gridCtrl.addFocusableContainer(dialog);
+            dialog.addDestroyFunc(() => gridCtrl.removeFocusableContainer(dialog));
+        }
     },
 };
 

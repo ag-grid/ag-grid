@@ -89,7 +89,7 @@ export class SeriesItemsPanel extends Component {
         step: number = 1,
         isArray: boolean = false
     ) {
-        const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, isArray);
+        const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, { isArray });
         params.step = step;
 
         const itemSlider: GridSlider = this.seriesItemsGroup.createManagedBean(new AgSlider(params));

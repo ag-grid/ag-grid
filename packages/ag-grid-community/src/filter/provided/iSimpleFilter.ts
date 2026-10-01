@@ -1,5 +1,6 @@
+import type { AdvancedFilterOnlyOptionKey } from '../../interfaces/advancedFilterModel';
 import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
-import type { IFilterParams } from '../../interfaces/iFilter';
+import type { FilterInputCallbackParams, IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
 import type { OptionsFactory } from './optionsFactory';
@@ -9,8 +10,8 @@ export interface IFilterOptionDef {
     displayKey: string;
     /** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */
     displayName: string;
-    /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
-    predicate?: (filterValues: any[], cellValue: any) => boolean;
+    /** Custom filter logic returning a boolean from the `filterValues` and `cellValue`; `params` names the column and the calling filter. */
+    predicate?: (filterValues: any[], cellValue: any, params: FilterInputCallbackParams) => boolean;
     /** Number of inputs for this option, and the values an Advanced Filter writes. Defaults to `1`, clamped to 0-2. */
     numberOfInputs?: 0 | 1 | 2;
 }
@@ -49,7 +50,7 @@ export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParam
  */
 export interface ISimpleFilterParams extends IProvidedFilterParams, IAutoCompleteComponentParams {
     /** Array of filter options to present to the user, and the options the Advanced Filter offers for the column. */
-    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
+    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType | AdvancedFilterOnlyOptionKey)[];
     /** The default filter option to be selected. Must be one of the offered options. */
     defaultOption?: ISimpleFilterModelType | CustomFilterOptionKey;
     /**

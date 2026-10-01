@@ -1,4 +1,4 @@
-import type { WrappableInterface } from 'ag-grid-community';
+import type { ComponentType, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _warnForGrid } from 'ag-grid-community';
 
 import { VueComponentFactory } from './VueComponentFactory';
@@ -18,8 +18,9 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         this.provides = provides;
     }
 
-    protected createWrapper(component: any): WrappableInterface {
+    protected createWrapper(component: any, componentType?: ComponentType): WrappableInterface {
         const that = this;
+        const propertyName = componentType?.name;
 
         class DynamicComponent extends VueComponent<any> implements WrappableInterface {
             public override init(params: any): void {
@@ -71,7 +72,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             protected createComponent(params: any): any {
-                return that.createComponent(component, params);
+                return that.createComponent(component, params, propertyName);
             }
         }
 
@@ -79,13 +80,14 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         return wrapper;
     }
 
-    public createComponent(component: any, params: any): any {
+    public createComponent(component: any, params: any, propertyName?: string): any {
         return VueComponentFactory.createAndMountComponent(
             component,
             params,
             this.parent!,
             this.provides!,
-            this.gridId
+            this.gridId,
+            propertyName
         );
     }
 

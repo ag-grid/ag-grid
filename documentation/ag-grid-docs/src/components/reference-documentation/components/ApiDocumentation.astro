@@ -4,7 +4,9 @@ import { getPropertiesFromSource } from '../utils/getPropertiesFromSource';
 import { getApiDocumentationModel } from '../utils/getApiDocumentationModel';
 import { flattenModules } from '../utils/flattenModules';
 import { ApiDocumentation } from './ApiDocumentation';
+import { getReferenceDetailsPath } from '../utils/referenceDetails';
 import { getJsonFile } from '@utils/pages';
+import { getExtraFileUrl } from '@utils/extraFileUrl';
 import { getEntry, type CollectionEntry } from 'astro:content';
 
 const { names, config, source, sources: sourcesProp, section } = Astro.props;
@@ -20,12 +22,19 @@ const { sources, propertiesFromFiles, propertyConfigs, codeConfigs } = await get
     sources: sourcesProp,
 });
 
+// The fetched file is keyed by source and framework only. `isApi` changes the signatures the same
+// source produces, so those few pages keep theirs inline rather than earning a second variant.
+const detailsUrl =
+    source && !config?.isApi
+        ? getExtraFileUrl({ filePath: getReferenceDetailsPath({ framework, source }) })
+        : undefined;
+
 const model = getApiDocumentationModel({
     framework,
     sources,
     section,
     names,
-    config,
+    config: { ...config, detailsUrl },
     propertiesFromFiles,
     propertyConfigs,
     interfaceLookup,

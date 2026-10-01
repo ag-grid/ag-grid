@@ -1,8 +1,8 @@
 import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
-import { _classifyFilterOptions } from 'ag-grid-community';
+import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
-import { getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
+import { DEFAULT_CHILD_FILTER, getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
@@ -114,7 +114,13 @@ function buildColumnFilterSchema(
         // The filter's own definition of a usable entry, so the schema cannot offer a `type` it drops.
         // Read-only, so an entry it drops is not warned about again here.
         const filterOptions = filterParams?.filterOptions
-            ? [..._classifyFilterOptions(filterParams.filterOptions, () => {}).offered.keys()]
+            ? [
+                  ..._classifyFilterOptions(
+                      filterParams.filterOptions,
+                      () => {},
+                      _ADVANCED_FILTER_ONLY_OPTIONS
+                  ).offered.keys(),
+              ]
             : undefined;
         const useIsoSeparator = filterParams?.useIsoSeparator || false;
 
@@ -122,7 +128,7 @@ function buildColumnFilterSchema(
     } else if (filterKey === SetFilterKey) {
         return buildSetFilterSchema(getKeys);
     } else if (filterKey === MultiFilterKey) {
-        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), defaultFilter, getKeys);
+        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), getKeys);
     }
 
     return null;
@@ -250,12 +256,13 @@ const buildSetFilterSchema = (getKeys?: () => (string | null)[]) => {
 
 const buildMultiFilterSchema = (
     filters: any[],
-    defaultFilter: string,
     getKeys: (isMulti: boolean, index?: number) => (string | null)[] = () => []
 ): SchemaBuilder | null => {
     const childSchemas = filters
         .map((filter: any, index: number) =>
-            buildColumnFilterSchema(filter.filter, filter.filterParams, defaultFilter, () => getKeys(true, index))
+            buildColumnFilterSchema(filter.filter, filter.filterParams, DEFAULT_CHILD_FILTER, () =>
+                getKeys(true, index)
+            )
         )
         .filter((schema: SchemaBuilder | null): schema is SchemaBuilder => schema !== null);
 

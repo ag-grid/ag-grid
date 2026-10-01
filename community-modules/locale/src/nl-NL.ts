@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_NL = {
+export const AG_GRID_LOCALE_NL_NL = {
     // Set Filter
     selectAll: '(Alles selecteren)',
     selectAllSearchResults: '(Alle zoekresultaten selecteren)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_NL = {
     clearFilter: 'Wissen',
     cancelFilter: 'Annuleren',
     cancelColumnToolPanel: 'Annuleren',
+    resetColumnToolPanel: 'Resetten',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_NL = {
     advancedFilterValidationMissingCondition: 'Voorwaarde ontbreekt',
     advancedFilterValidationJoinOperatorMismatch: 'Logische operatoren binnen een voorwaarde moeten gelijk zijn',
     advancedFilterValidationInvalidJoinOperator: 'Logische operator niet gevonden',
+    advancedFilterValidationMissingListStartBracket: 'Ontbrekende open blokhaak',
+    advancedFilterValidationMissingListEndBracket: 'Ontbrekende sluit blokhaak',
     advancedFilterValidationMissingEndBracket: 'Ontbrekende eindhaak',
     advancedFilterValidationExtraEndBracket: 'Te veel eindhaken',
     advancedFilterValidationMessage: 'Uitdrukking bevat een fout. ${variable} - ${variable}.',
@@ -920,3 +923,6 @@ export const AG_GRID_LOCALE_NL = {
     deleteNote: 'Notitie verwijderen',
     notePlaceholder: 'Een notitie toevoegen...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_NL_NL` instead. */
+export const AG_GRID_LOCALE_NL = AG_GRID_LOCALE_NL_NL;

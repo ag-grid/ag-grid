@@ -59,6 +59,68 @@ const studioArchiveNoCacheRules = `
 Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/studio/archive/#"
 `;
 
+const rootStaticFileCacheRules = `
+# Root static files (robots.txt, favicon.ico): unhashed but low-churn, so a moderate
+# max-age is enough to cut repeat crawler fetches (SE-189 measured /robots.txt refetched
+# ~25x/day with no header at all) without risking a stale copy for long after a real change.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(robots\\.txt|favicon\\.ico)$#"
+`;
+
+// Unlike hashedAssetCacheRules, these filenames carry no content hash, so a stale copy can
+// persist after content changes. A moderate max-age bounds that staleness window instead of
+// relying on a release-time cache invalidation step being remembered.
+//
+// Requires a real static-asset extension, not just the directory name - /example/ and
+// /example/index.html are the live demo page (documentNoCacheRules), and since this rule is
+// emitted after that one, an unanchored match here would win and override its no-cache with
+// a day-long public cache. Anchoring on the file extension makes that impossible by
+// construction, rather than relying on rule order to avoid it. Uses ".+" rather than "[^/]+"
+// before the extension so nested paths still match (e.g. example-assets/space-company-logos/
+// nasa.png, images/ag-logos/png-logos/react.png) - a real example-assets/flags/index.html
+// proves the extension allowlist, not the lack of nesting, is what has to keep HTML out.
+//
+// theme-icons (public/theme-icons/<theme>/<icon>.svg, plus a per-theme <theme>-icons.zip
+// bundle) is the same asset class - unhashed, build-time static, never a content page - so it
+// shares this rule rather than getting its own. zip is only needed for those bundle downloads;
+// none of images/example-assets/example are expected to contain one today, but allowing it
+// there too is no more risky than the rest of the allowlist.
+//
+// "videos" (public/videos/*.json|png here; public/videos/*.mp4|webm on the /studio side)
+// belongs for the same reason - and matters beyond grid's own directory: this rule is
+// unanchored on the directory segment (matches the substring anywhere in the path, same as
+// images/example-assets already did), so it cascades via nested .htaccess merge into
+// /charts/* and /studio/* too. Confirmed live: /studio/scripts/*.js and /studio/images/* were
+// already getting this header for free through that cascade, but /studio/videos/* was not -
+// "videos" was simply missing from the alternation, not a cascade failure.
+const staticAssetCacheRules = `
+# Images, example-page assets, theme icon downloads, and videos: unhashed filenames, so cap
+# staleness with a moderate max-age rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(images|example-assets|example|theme-icons|videos)/.+\\.(png|jpe?g|gif|svg|webp|ico|json|xlsx|mp4|webm|zip)$#"
+`;
+
+// public/scripts/ (cookie consent, GTM, video/carousel players, the announcement banner,
+// etc.) - unhashed filenames, so the same reasoning as staticAssetCacheRules applies.
+// Anchored to .js so it can only ever match an actual script file, not a directory or
+// anything else that might one day live under /scripts/ - the /example/ bug this rule was
+// added alongside showed relying on that never happening is not a safe assumption.
+const scriptAssetCacheRules = `
+# Static script bundles: unhashed filenames, so cap staleness with a moderate max-age
+# rather than caching indefinitely.
+Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
+`;
+
+// A released archive version is permanently immutable, so unlike every other rule in this
+// file this one has no extension allowlist or content-type restriction - everything under it
+// can be cached. Emitted before studioArchiveNoCacheRules and getInFlightArchiveRules, both of
+// which must keep overriding it for their own scope.
+const archiveCacheRules = `
+# Released archive versions: fully immutable, so cache literally everything under them
+# indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
+# no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
+# in-flight block below, which overrides this back to no-cache for that version only.
+Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+`;
+
 // Delimiters for the in-place patchable block. Exported so the patch script and the tests
 // use the same literals rather than duplicating them.
 export const IN_FLIGHT_BEGIN = '# BEGIN in-flight release archives - patched in place, do not edit by hand';
@@ -260,7 +322,7 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?getting-more-from-your-datagrid-introducing-adaptable(?:/amp)?/?$ https://www.ag-grid.com/blog/adaptable-tools-demo-and-interview/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition/ [R=301,NC,L]
+    RewriteRule ^/?javascript-grid-comparison-column-pinning-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/column-pinning/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?whats-new-in-ag-studio-2(?:-0)?(?:/amp)?/?$ https://www.ag-grid.com/blog/whats-new-in-ag-studio-2-0-javascript-embedded-analytics/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
@@ -284,6 +346,82 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?index\\.php/2018/11/29/inside-fiber https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/ [R=301,NC,L]
+
+    # SE-86 residual fix: retired posts previously fell through to the catch-all, which sends
+    # them to /blog/<old-slug> -- Ghost's own redirects.json then adds a second hop to the real
+    # destination. These specific rules resolve each in one hop, per Nick Redding's report.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?a-plain-english-introduction-to-json-web-tokens-jwt-what-it-is-and-what-it-isnt(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?ag-grid-on-the-angular-plus-show-podcast(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?ag-grid-vuex-creating-a-modern-user-widget(?:/amp)?/?$ https://www.ag-grid.com/vue-data-grid/getting-started/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?angular-grid-reports-formatted-values-and-links(?:/amp)?/?$ https://www.ag-grid.com/angular-data-grid/value-formatters/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?build-email-client-with-ag-grid-like-gmail(?:/amp)?/?$ https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?building-crud-in-ag-grid-with-angular-and-ngxs(?:/amp)?/?$ https://www.ag-grid.com/blog/building-crud-in-ag-grid-with-angular-ngrx/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?building-crud-in-ag-grid-with-angular-and-redux(?:/amp)?/?$ https://www.ag-grid.com/blog/building-crud-in-ag-grid-with-angular-ngrx/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?building-crud-operations-with-sequelize-angular-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/building-crud-in-ag-grid-with-angular-ngrx/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?creating-a-react-tile-slider-puzzle(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?custom-angular-directives(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?customising-react-data-grid-with-hooks-and-functions(?:/amp)?/?$ https://www.ag-grid.com/blog/learn-to-customize-react-grid-in-less-than-10-minutes/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?cypress-plugin-for-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/end-to-end-testing-for-ag-grid-in-react-with-cypress/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?football-stats-direct(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?football-stats-direct-interview(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?free-online-training-for-ag-grid-in-react-and-angular(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/getting-started/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?game-of-charts(?:/amp)?/?$ https://www.ag-grid.com/charts/gallery/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?heres-why-column-pinning-in-react-datagrid-by-ag-grid-wins-over-competition(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/column-pinning/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?how-to-write-a-podcast-app-using-react(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?implementing-infinite-loading-in-an-angular-store-application(?:/amp)?/?$ https://www.ag-grid.com/angular-data-grid/infinite-scrolling/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?proof-trading-case-study(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?proof-trading-webrush-podcast-using-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?react-data-grid-example-projects(?:/amp)?/?$ https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?react-data-grid-use-hooks-to-build-a-pomodoro-app(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?react-redux-trading-platform(?:/amp)?/?$ https://www.ag-grid.com/blog/persisting-ag-grid-state-with-react-redux/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?react-ui-animation-getting-started-with-react-spring(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?subscribing-live-data-stream-ag-grid-rxjs-observables(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/data-update-high-frequency/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?take-full-control-of-editing-in-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/next-level-cell-editing-in-ag-grid-with-crud-and-react-hooks/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?testing-ag-grid-react-jest-enzyme(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/testing/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?testing-ag-grid-with-taiko-automation-tool(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/testing/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?type-checking-and-auto-completion-in-plunker(?:/amp)?/?$ https://www.ag-grid.com/blog/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?upcoming-changes-to-ag-grid-angular-in-v28(?:/amp)?/?$ https://www.ag-grid.com/angular-data-grid/upgrading-to-ag-grid-28/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?upgrading-to-ag-grid-v25-server-side-row-model(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/server-side-model/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-ag-grid-inside-a-vuejs-application(?:/amp)?/?$ https://www.ag-grid.com/vue-data-grid/getting-started/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-ag-grid-react-ui-with-remix-run(?:/amp)?/?$ https://www.ag-grid.com/react-data-grid/getting-started/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?using-react-testing-library-with-ag-grid(?:/amp)?/?$ https://www.ag-grid.com/blog/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/ [R=301,NC,L]
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?webpack-tutorial-understanding-ngtools-webpack(?:/amp)?/?$ https://www.ag-grid.com/blog/webpack-tutorial-understanding-how-it-works/ [R=301,NC,L]
 
     # WordPress-era permalinks. Every /index.php/ and bare dated path in the archive was
     # checked and its derived target status-verified: 15 resolve, 6 needed an explicit
@@ -473,6 +611,9 @@ AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
 
+# Apache has no built-in .webp type, so without this the images are served with no Content-Type.
+AddType image/webp .webp
+
 # serve the per-page LLM markdown files as markdown
 AddType text/markdown md
 # ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
@@ -484,6 +625,7 @@ function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${studioArchiveNoCacheRules}
+${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 
 ${markdownNegotiationBlock}
@@ -506,7 +648,11 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${documentNoCacheRules}
 ${hashedAssetCacheRules}
+${staticAssetCacheRules}
+${scriptAssetCacheRules}
+${archiveCacheRules}
 ${studioArchiveNoCacheRules}
+${rootStaticFileCacheRules}
 ${inFlightArchiveRules}
 ${modDeflateRules}
 ${getModRewriteRules()}

@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_GR = {
+export const AG_GRID_LOCALE_EL_GR = {
     // Set Filter
     selectAll: '(Επιλογή όλων)',
     selectAllSearchResults: '(Επιλογή όλων των αποτελεσμάτων αναζήτησης)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_GR = {
     clearFilter: 'Εκκαθάριση',
     cancelFilter: 'Ακύρωση',
     cancelColumnToolPanel: 'Ακύρωση',
+    resetColumnToolPanel: 'Επαναφορά',
 
     // Filter Titles
     textFilter: 'Φίλτρο Κειμένου',
@@ -184,8 +185,10 @@ export const AG_GRID_LOCALE_GR = {
     advancedFilterValidationMissingCondition: 'Η συνθήκη λείπει',
     advancedFilterValidationJoinOperatorMismatch: 'Οι τελεστές ένωσης εντός συνθήκης πρέπει να είναι οι ίδιοι',
     advancedFilterValidationInvalidJoinOperator: 'Ο τελεστής ένωσης δεν βρέθηκε',
-    advancedFilterValidationMissingEndBracket: 'Λείπει το τελικά στηρίγμα',
-    advancedFilterValidationExtraEndBracket: 'Περισσότερα από ένα τελικά στηρίγματα',
+    advancedFilterValidationMissingListStartBracket: 'Λείπει η αρχική αγκύλη',
+    advancedFilterValidationMissingListEndBracket: 'Λείπει η τελική αγκύλη',
+    advancedFilterValidationMissingEndBracket: 'Λείπει η τελική παρένθεση',
+    advancedFilterValidationExtraEndBracket: 'Πάρα πολλές τελικές παρενθέσεις',
     advancedFilterValidationMessage: 'Η έκφραση έχει σφάλμα. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Η έκφραση έχει σφάλμα. ${variable} στο τέλος της έκφρασης.',
     advancedFilterValidationMessageOnly: 'Η έκφραση έχει σφάλμα. ${variable}.',
@@ -923,3 +926,6 @@ export const AG_GRID_LOCALE_GR = {
     deleteNote: 'Αφαίρεση σημείωσης',
     notePlaceholder: 'Προσθέστε μια σημείωση...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_EL_GR` instead. */
+export const AG_GRID_LOCALE_GR = AG_GRID_LOCALE_EL_GR;

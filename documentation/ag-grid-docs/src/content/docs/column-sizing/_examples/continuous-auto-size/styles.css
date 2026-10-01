@@ -7,11 +7,10 @@
 .interaction-bar {
     margin-bottom: 1rem;
     display: flex;
-    gap: 1em;
-    align-items: center;
+    gap: 0.5em;
 }
 
-.longer-values-button {
+.interaction-bar button {
     margin: 0px !important;
 }
 

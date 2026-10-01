@@ -344,7 +344,7 @@
         "advancedFilterBuilderVisibleChanged": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced-input-builder/#advanced-filter-builder"
             }
         }
     },
@@ -473,6 +473,9 @@
             "more": {
                 "name": "Grid Pre-Destroyed",
                 "url": "./grid-lifecycle/#grid-pre-destroyed"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["GridPreDestroyedEvent", "GridState"]
             }
         },
         "firstDataRendered": {
@@ -486,6 +489,24 @@
             "more": {
                 "name": "Grid State",
                 "url": "./grid-state/"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["StateUpdatedEvent", "GridState"]
+            }
+        }
+    },
+    "validation": {
+        "meta": {
+            "displayName": "Validation",
+            "page": {
+                "name": "Development Validation",
+                "url": "./dev-validation/"
+            }
+        },
+        "issueRaised": {
+            "more": {
+                "name": "Development Validation",
+                "url": "./dev-validation/#reacting-to-diagnostics-in-code"
             }
         }
     },

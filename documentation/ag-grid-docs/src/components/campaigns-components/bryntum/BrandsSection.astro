@@ -18,26 +18,22 @@ const itemsWithSvg = section.items.map((item) => ({
 
 <section class={styles.section}>
     <div class={styles.sectionInnerWide}>
-        {
-            section.eyebrow && (
-                <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
-            )
-        }
+        {section.eyebrow && (
+            <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
+        )}
         {section.heading && <h3 class={styles.brandsHeading}>{section.heading}</h3>}
 
         <div class={styles.brandsRow}>
-            {
-                itemsWithSvg.map(({ item, svgMarkup }) => (
-                    <a
-                        href={resolveBryntumHref(item.href)}
-                        target="_blank"
-                        rel="noopener"
-                        aria-label={item.label ?? 'Customer logo'}
-                    >
-                        {svgMarkup && <Fragment set:html={svgMarkup} />}
-                    </a>
-                ))
-            }
+            {itemsWithSvg.map(({ item, svgMarkup }) => (
+                <a
+                    href={resolveBryntumHref(item.href)}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={item.label ?? 'Customer logo'}
+                >
+                    {svgMarkup && <Fragment set:html={svgMarkup} />}
+                </a>
+            ))}
         </div>
     </div>
 </section>

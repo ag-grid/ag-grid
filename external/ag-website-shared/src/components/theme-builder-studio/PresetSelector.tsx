@@ -1,9 +1,7 @@
 import { PresetButton, PresetScroller } from '@ag-website-shared/components/theme-builder/PresetScroller';
-import { ResetChangesModal } from '@ag-website-shared/components/theme-builder/ResetChangesModal';
-import { getChangedModelItemCount } from '@ag-website-shared/theming/changed-model-items';
+import { usePresetApply } from '@ag-website-shared/components/theme-builder/usePresetApply';
 import { applyPreset } from '@ag-website-shared/theming/preset';
 import { useStore } from 'jotai';
-import { useState } from 'react';
 
 import { PresetPreview } from './PresetPreview';
 import { PRESETS, type StudioPreset, toSharedPreset } from './presets';
@@ -16,24 +14,13 @@ interface Props {
 
 export const PresetSelector = ({ isDark, selectedId, onSelect }: Props) => {
     const store = useStore();
-    const [showDialog, setShowDialog] = useState(false);
-    const [pendingPreset, setPendingPreset] = useState<StudioPreset | null>(null);
 
     const apply = (preset: StudioPreset) => {
         applyPreset(store, toSharedPreset(preset, isDark));
         onSelect(preset);
     };
 
-    const selectPreset = (preset: StudioPreset) => {
-        // Only warn about losing manual edits; a single change is the preset
-        // application itself, mirroring the grid host's threshold.
-        if (getChangedModelItemCount(store) > 1) {
-            setPendingPreset(preset);
-            setShowDialog(true);
-        } else {
-            apply(preset);
-        }
-    };
+    const { selectPreset, resetChangesModal } = usePresetApply({ apply, baselineChanges: 1 });
 
     return (
         <>
@@ -60,13 +47,7 @@ export const PresetSelector = ({ isDark, selectedId, onSelect }: Props) => {
                     );
                 })}
             </PresetScroller>
-            {pendingPreset && (
-                <ResetChangesModal
-                    showDialog={showDialog}
-                    setShowDialog={setShowDialog}
-                    onSuccess={() => apply(pendingPreset)}
-                />
-            )}
+            {resetChangesModal}
         </>
     );
 };

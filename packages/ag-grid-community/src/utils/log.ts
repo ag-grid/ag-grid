@@ -2,10 +2,27 @@ import { _doOnce } from 'ag-stack';
 
 import type { GridOptionsService } from '../gridOptionsService';
 
+/** Writes a debug line with the standard grid prefix. Callers are responsible for the `debug` check. */
+export function _logDebug(message: string, ...args: any[]) {
+    // eslint-disable-next-line no-console
+    console.log('AG Grid: ' + message, ...args);
+}
+
+// Set by `enableDevValidations({ debug: true })`. Global, so it enables debug logging for every grid.
+let devDebugLogging = false;
+
+export function _setDevDebugLogging(enabled: boolean): void {
+    devDebugLogging = enabled;
+}
+
+/** Whether debug logging is on, either through the deprecated `debug` grid option or `enableDevValidations`. */
+export function _isDebugLoggingEnabled(gridOptionsDebug: boolean | undefined): boolean {
+    return !!gridOptionsDebug || devDebugLogging;
+}
+
 export function _logIfDebug(gos: GridOptionsService, message: string, ...args: any[]) {
-    if (gos.get('debug')) {
-        // eslint-disable-next-line no-console
-        console.log('AG Grid: ' + message, ...args);
+    if (_isDebugLoggingEnabled(gos.get('debug'))) {
+        _logDebug(message, ...args);
     }
 }
 

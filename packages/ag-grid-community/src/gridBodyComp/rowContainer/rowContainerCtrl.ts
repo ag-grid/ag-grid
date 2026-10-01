@@ -1,4 +1,4 @@
-import { _getInnerWidth, _isInDOM, _observeResize } from 'ag-stack';
+import { _isInDOM, _observeResize } from 'ag-stack';
 
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
@@ -6,22 +6,19 @@ import { _isDomLayout } from '../../gridOptionsUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
-import { CenterWidthFeature } from '../centerWidthFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
+export const ROW_CONTAINER_NAMES = ['scrolling', 'pinnedTop', 'pinnedBottom', 'stickyTop', 'stickyBottom'] as const;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowContainerType = 'center';
+export type RowContainerName = (typeof ROW_CONTAINER_NAMES)[number];
 
 type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
 type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerOptions = {
-    type: RowContainerType;
     name: string;
     getRowCtrls: GetRowCtrls;
     getSpannedRowCtrls?: GetSpannedRowCtrls;
@@ -39,34 +36,29 @@ const getSpannedBottomRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('bottom')
 
 const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
     scrolling: {
-        type: 'center',
         name: 'grid-scrolling',
         getRowCtrls: getCentreRowCtrls,
         getSpannedRowCtrls: getSpannedCenterRowCtrls,
     },
 
     pinnedTop: {
-        type: 'center',
         name: 'grid-pinned-top-rows',
         getRowCtrls: getTopRowCtrls,
         getSpannedRowCtrls: getSpannedTopRowCtrls,
     },
 
     pinnedBottom: {
-        type: 'center',
         name: 'grid-pinned-bottom-rows',
         getRowCtrls: getBottomRowCtrls,
         getSpannedRowCtrls: getSpannedBottomRowCtrls,
     },
 
     stickyTop: {
-        type: 'center',
         name: 'grid-sticky-top-rows',
         getRowCtrls: getStickyTopRowCtrls,
     },
 
     stickyBottom: {
-        type: 'center',
         name: 'grid-sticky-bottom-rows',
         getRowCtrls: getStickyBottomRowCtrls,
     },
@@ -112,6 +104,7 @@ export class RowContainerCtrl extends BeanStub {
     public viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
     // Maintaining a constant reference enables optimization in React.
     private readonly EMPTY_CTRLS = [];
+    private containerWidth: number | null = null;
 
     constructor(private readonly name: RowContainerName) {
         super();
@@ -132,7 +125,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private registerWithCtrlsService(): void {
-        this.beans.ctrlsSvc.register(this.name as any, this);
+        this.beans.ctrlsSvc.register(this.name, this);
     }
 
     private isScrollingCenterContainer(): boolean {
@@ -171,43 +164,34 @@ export class RowContainerCtrl extends BeanStub {
             this.createManagedBean(new SetHeightFeature(this.eContainer));
         }
 
-        const updateContainerWidth = this.updateContainerWidth.bind(this);
-
-        this.createManagedBean(new CenterWidthFeature(updateContainerWidth));
-        this.registerViewportResizeListener(updateContainerWidth);
+        this.setPinnedRowBorderWidth();
         this.addListeners();
         this.registerWithCtrlsService();
     }
 
-    private updateContainerWidth(): void {
-        const { visibleCols, ctrlsSvc } = this.beans;
-        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
-        const fallbackContentWidth =
-            visibleCols.bodyWidth +
-            visibleCols.getLeftStickyColumnContainerWidth() +
-            visibleCols.getRightStickyColumnContainerWidth();
-        const contentWidth = gridBodyCtrl?.getHorizontalContentWidth() ?? fallbackContentWidth;
-        const viewportWidth = gridBodyCtrl?.getHorizontalViewportWidth() ?? _getInnerWidth(this.eViewport);
-        const width = Math.max(contentWidth, viewportWidth, 1);
-        this.comp.setContainerWidth(`${width}px`);
-
-        // Set viewport width (without scrollbar) as a CSS variable so full-width
-        // row anchors can size themselves without per-row JS listeners.
+    /** Published for application CSS; nothing in the grid reads it. */
+    private setPinnedRowBorderWidth(): void {
         this.eContainer.style.setProperty(
             '--ag-pinned-row-border-width',
             `${this.beans.environment.getPinnedRowBorderWidth()}px`
         );
     }
 
+    /** Pushed by `GridBodyCtrl.updateWidths`. Several events report one column change, so the same
+     *  width arrives more than once per refresh. */
+    public setContainerWidth(width: number): void {
+        if (width !== this.containerWidth) {
+            this.containerWidth = width;
+            this.comp.setContainerWidth(`${width}px`);
+        }
+    }
+
     private addListeners(): void {
         const { spannedRowRenderer, gos } = this.beans;
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
-        const updateContainerWidth = this.updateContainerWidth.bind(this);
 
         this.addManagedEventListeners({
-            scrollVisibilityChanged: updateContainerWidth,
-            scrollbarWidthChanged: updateContainerWidth,
-            gridSizeChanged: updateContainerWidth,
+            stylesChanged: this.setPinnedRowBorderWidth.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
             displayedColumnsWidthChanged: onDisplayedColumnsChanged,
             displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),

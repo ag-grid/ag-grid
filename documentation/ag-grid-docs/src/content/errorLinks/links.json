@@ -435,5 +435,47 @@
         "errorIds": [291],
         "text": "Installing Your Licence Key",
         "url": "./license-install/"
+    },
+    {
+        "errorIds": [252],
+        "text": "Grid Lifecycle",
+        "url": "./grid-lifecycle/",
+        "description": "Events for running logic once the grid has finished rendering."
+    },
+    {
+        "errorIds": [252],
+        "text": "Cell Renderer",
+        "url": "./component-cell-renderer/",
+        "description": "The component lifecycle this error is most often raised from."
+    },
+    {
+        "errorIds": [29],
+        "text": "Grid Size",
+        "url": "./grid-size/",
+        "description": "Giving the grid's container a size for the columns to be fitted to."
+    },
+    {
+        "errorIds": [101],
+        "text": "Components",
+        "url": "./components/",
+        "description": "Building and registering your own grid components."
+    },
+    {
+        "errorIds": [2, 5],
+        "text": "Transaction Updates",
+        "url": "./data-update-transactions/#identifying-rows-for-update-and-remove",
+        "description": "How the grid matches a data item against a row it holds."
+    },
+    {
+        "errorIds": [9, 106, 239, 240],
+        "text": "Theming API",
+        "url": "./theming/",
+        "description": "The theme objects passed to the `theme` grid option."
+    },
+    {
+        "errorIds": [9, 106, 239, 240],
+        "text": "Migrating to the Theming API",
+        "url": "./theming-migration/",
+        "description": "Moving from the v32 CSS themes to the Theming API."
     }
 ]

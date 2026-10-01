@@ -68,4 +68,27 @@ test.agExample(import.meta, () => {
             await expect(cell).toHaveText('Language 5000');
         }
     );
+
+    test.eachFramework('should start filtered paging from row 0', async ({ agIdFor, page }) => {
+        const cell = agIdFor.cell('0', 'language');
+        await cell.dblclick();
+
+        const editorInput = page.locator('.ag-rich-select-field-input .ag-input-field-input').first();
+        await expect(editorInput).toBeVisible();
+
+        // '5000' matches exactly 'Language 5000' and 'Language 15000'
+        await editorInput.fill('5000');
+
+        const popup = page.locator('.ag-rich-select-list').first();
+        await expect(popup).toBeVisible({ timeout: 10000 });
+
+        // valuesPageInitialStartRow only applies to the initial unfiltered load - once a search is
+        // active, resolveValuesPageStartRow returns 0, so the filtered page starts at the first match
+        const rows = popup.locator('.ag-rich-select-row');
+        await expect(rows).toHaveCount(2, { timeout: 10000 });
+        await expect(rows.nth(0)).toHaveText('Language 5000');
+        await expect(rows.nth(1)).toHaveText('Language 15000');
+
+        await page.keyboard.press('Escape');
+    });
 });

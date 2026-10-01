@@ -486,7 +486,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
                     initialState: sideBarState?.toolPanels?.[id],
                     onStateUpdated: () => this.dispatchSideBarUpdated(),
                 });
-                const hasRefreshed = toolPanelWrapper.getToolPanelInstance()?.refresh(params);
+                const hasRefreshed = toolPanelWrapper.refreshWithParams(params);
                 if (hasRefreshed !== true) {
                     return;
                 }

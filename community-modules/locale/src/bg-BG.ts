@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_BG = {
+export const AG_GRID_LOCALE_BG_BG = {
     // Set Filter
     selectAll: '(Избери Всички)',
     selectAllSearchResults: '(Избери Всички Резултати от Търсенето)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_BG = {
     clearFilter: 'Изчисти',
     cancelFilter: 'Отказ',
     cancelColumnToolPanel: 'Отказ',
+    resetColumnToolPanel: 'Нулиране',
 
     // Filter Titles
     textFilter: 'Филтър за текст',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterValidationMissingCondition: 'Липсва условие',
     advancedFilterValidationJoinOperatorMismatch: 'Операционните съединители в едно условие трябва да са еднакви',
     advancedFilterValidationInvalidJoinOperator: 'Операционният съединител не е намерен',
+    advancedFilterValidationMissingListStartBracket: 'Липсва отваряща квадратна скоба',
+    advancedFilterValidationMissingListEndBracket: 'Липсва затваряща квадратна скоба',
     advancedFilterValidationMissingEndBracket: 'Липсва крайна скоба',
     advancedFilterValidationExtraEndBracket: 'Прекалено много крайни скоби',
     advancedFilterValidationMessage: 'Има грешка в израза. ${variable} - ${variable}.',
@@ -923,3 +926,6 @@ export const AG_GRID_LOCALE_BG = {
     deleteNote: 'Премахване на бележката',
     notePlaceholder: 'Добавете бележка...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_BG_BG` instead. */
+export const AG_GRID_LOCALE_BG = AG_GRID_LOCALE_BG_BG;

@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_RO = {
+export const AG_GRID_LOCALE_RO_RO = {
     // Set Filter
     selectAll: '(Selectează tot)',
     selectAllSearchResults: '(Selectează toate rezultatele căutării)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_RO = {
     clearFilter: 'Curăță',
     cancelFilter: 'Anulează',
     cancelColumnToolPanel: 'Anulează',
+    resetColumnToolPanel: 'Resetează',
 
     // Filter Titles
     textFilter: 'Filtru text',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterValidationMissingCondition: 'Lipsă condiție',
     advancedFilterValidationJoinOperatorMismatch: 'Operatorii de unire din cadrul unei condiții trebuie să fie aceeași',
     advancedFilterValidationInvalidJoinOperator: 'Operator de unire negăsit',
+    advancedFilterValidationMissingListStartBracket: 'Lipsă paranteză dreaptă de deschidere',
+    advancedFilterValidationMissingListEndBracket: 'Lipsă paranteză dreaptă de închidere',
     advancedFilterValidationMissingEndBracket: 'Lipsă paranteză de încheiere',
     advancedFilterValidationExtraEndBracket: 'Prea multe paranteze de încheiere',
     advancedFilterValidationMessage: 'Expresia are o eroare. ${variable} - ${variable}.',
@@ -922,3 +925,6 @@ export const AG_GRID_LOCALE_RO = {
     deleteNote: 'Elimină nota',
     notePlaceholder: 'Adaugă o notă...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_RO_RO` instead. */
+export const AG_GRID_LOCALE_RO = AG_GRID_LOCALE_RO_RO;

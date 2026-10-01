@@ -1,7 +1,9 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    DateFilterModule,
     ModuleRegistry,
+    NumberFilterModule,
     RowApiModule,
     TextFilterModule,
     createGrid,
@@ -16,16 +18,24 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([RowApiModule, ClientSideRowModelModule, TreeDataModule, TextFilterModule]);
+ModuleRegistry.registerModules([
+    RowApiModule,
+    ClientSideRowModelModule,
+    TreeDataModule,
+    TextFilterModule,
+    NumberFilterModule,
+    DateFilterModule,
+]);
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'created' },
-        { field: 'modified' },
+        { field: 'created', filter: 'agDateColumnFilter' },
+        { field: 'modified', filter: 'agDateColumnFilter' },
         {
             field: 'size',
+            filter: 'agNumberColumnFilter',
             aggFunc: 'sum',
             valueFormatter: (params) => {
                 if (params.value == null) {
@@ -45,7 +55,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
     },
     autoGroupColumnDef: {
         headerName: 'File Explorer',

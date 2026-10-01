@@ -1,0 +1,25 @@
+.outer-div {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.interaction-bar {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.interaction-bar button {
+    margin: 0px !important;
+}
+
+.grid-sizer {
+    width: 100%;
+    height: 100%;
+}
+
+.grid {
+    height: 320px;
+}

@@ -165,6 +165,10 @@ export abstract class TextInputFloatingFilter<
         return (value as TValue) || null; // '' to null
     }
 
+    protected refreshAriaLabel(): void {
+        this.inputSvc.setAriaLabel(this.getAriaLabel(this.params.column as AgColumn));
+    }
+
     protected setEditable(editable: boolean): void {
         this.inputSvc.setEditable(editable);
     }

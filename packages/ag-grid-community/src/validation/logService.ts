@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ErrorId, LogArgs } from './errorMessages/errorText';
-import { _deprecatedForGrid, _errorForGrid, _warnForGrid } from './logging';
+import { _deprecatedForGrid, _errorForGrid, _errorToThrowForGrid, _warnForGrid } from './logging';
 
 /**
  * Grid-scoped façade over the free logging functions. Because a bean intrinsically knows its own grid,
@@ -31,5 +31,10 @@ export class LogService extends BeanStub implements NamedBean {
 
     public override error<TId extends ErrorId>(...args: LogArgs<TId>): void {
         _errorForGrid(this.gridId, args[0], args[1] as any);
+    }
+
+    /** Captures the error for this grid's overlay and returns it for the caller to throw. */
+    public errorToThrow<TId extends ErrorId>(...args: LogArgs<TId>): Error {
+        return _errorToThrowForGrid(this.gridId, args[0], args[1] as any);
     }
 }

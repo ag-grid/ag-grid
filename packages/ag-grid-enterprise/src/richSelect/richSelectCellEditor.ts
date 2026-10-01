@@ -31,6 +31,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     private cachedRaw: unknown = this;
     /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
     private cachedParsed: any;
+    /** Recorded rather than read back, because this widget stores the value by identity and normalises
+     * only `undefined` to `null` on the way in. */
+    private seededValue: TValue | null | undefined | this = this;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -50,6 +53,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
 
         this.eEditor = richSelect;
+        this.seededValue = this.params.value;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
@@ -428,10 +432,14 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     public agSetEditValue(value: TValue | null | undefined): void {
         this.params.value = value;
         this.eEditor.setValue(value ?? null, true);
+        this.seededValue = value ?? null;
     }
 
     public getValue(): any {
         const value = this.eEditor.getValue();
+        if (value === this.seededValue) {
+            return this.params.value;
+        }
         if (Object.is(this.cachedRaw, value)) {
             return this.cachedParsed;
         }

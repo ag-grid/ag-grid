@@ -32,6 +32,7 @@ export interface IExpansionService<T extends RowGroupExpansionState | RowGroupBu
     getRowExpandedListeners(rowCtrl: RowCtrl): {
         expandedChanged: () => void;
         hasChildrenChanged: () => void;
+        masterChanged: () => void;
     };
 
     setExpansionState(state: T, source: 'gridInitializing' | 'api'): void;

@@ -180,6 +180,12 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         }
     }
 
+    protected refreshDisplay(): void {
+        this.eText.textContent = this.getDisplayValue();
+        this.setupAria();
+        this.tooltipFeature?.refreshTooltip();
+    }
+
     protected isRemovable(): boolean {
         return true;
     }
@@ -197,8 +203,10 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.addManagedElementListeners(this.eButton, {
             click: (mouseEvent: MouseEvent) => {
-                this.dispatchLocalEvent(agEvent);
+                // Stop first: the pill's own GUI carries a click-to-sort listener, so a listener that throws
+                // must not leak the click up to it.
                 mouseEvent.stopPropagation();
+                this.dispatchLocalEvent(agEvent);
             },
         });
 

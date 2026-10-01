@@ -1,10 +1,10 @@
 import type { Framework } from '@ag-grid-types';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import styles from './PropertyModules.module.scss';
+import { ReferenceIcon } from './ReferenceIcon';
 
 const Module: FunctionComponent<{
     module: object;
@@ -18,9 +18,9 @@ const Module: FunctionComponent<{
                 framework,
             })}
         >
-            <Icon name="module" />
+            <ReferenceIcon name="module" />
             <span>{module.name}</span>
-            {module.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
+            {module.isEnterprise && <ReferenceIcon name="enterprise" svgClasses={styles.enterpriseIcon} />}
         </a>
     );
 };
@@ -92,7 +92,7 @@ export const PropertyModules: FunctionComponent<{
                                 toggleModuleTooltip();
                             }}
                         >
-                            +{labelCount} <Icon name="chevronDown" />
+                            +{labelCount} <ReferenceIcon name="chevronDown" />
                         </button>
 
                         <div

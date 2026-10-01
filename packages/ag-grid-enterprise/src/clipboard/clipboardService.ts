@@ -38,11 +38,32 @@ type RangeCallback = (callRange: CellRange) => void;
 
 type CellsToFlashType = { [key: string]: boolean };
 type DataForCellRangesType = { data: string; cellsToFlash: CellsToFlashType };
+type ClipboardWithUnsanitizedRead = Clipboard & {
+    read(options: { unsanitized: string[] }): Promise<ClipboardItems>;
+};
+type ClipboardReadResult = { data?: string; html?: string; htmlReadFailed?: boolean };
 
 // Matches value in changeDetectionService
 const SOURCE_PASTE = 'paste';
 const EXPORT_TYPE_DRAG_COPY = 'dragCopy';
 const EXPORT_TYPE_CLIPBOARD = 'clipboard';
+
+// Skips a tag's attributes, including quoted values that contain `>`.
+const HTML_TAG_ATTRIBUTES = `(?:[^>"']|"[^"]*"|'[^']*')*`;
+const HTML_TAG_SOURCE = `<(\\/?)([a-z][\\w:-]*)${HTML_TAG_ATTRIBUTES}>`;
+
+function htmlElementRegex(name: string): RegExp {
+    return new RegExp(`<${name}\\b${HTML_TAG_ATTRIBUTES}>([\\s\\S]*?)<\\/${name}\\s*>`, 'i');
+}
+
+const HTML_BODY_REGEX = htmlElementRegex('body');
+const HTML_TABLE_REGEX = htmlElementRegex('table');
+// An empty table cell may contain a paragraph with only a line break.
+const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(`^<p\\b${HTML_TAG_ATTRIBUTES}>\\s*<br\\s*\\/?>\\s*<\\/p\\s*>$`, 'i');
+
+function isBlankLine(line: string[] | undefined): boolean {
+    return line?.length === 1 && line[0] === '';
+}
 
 enum CellClearType {
     CellRange,
@@ -161,23 +182,86 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
-        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard?.readText) {
-            navigator.clipboard
-                .readText()
-                .then(this.processClipboardData.bind(this))
-                .catch((e) => {
-                    this.warn(40, { e, method: 'readText' });
-                    this.navigatorApiFailed = true;
-                    this.pasteFromClipboardLegacy();
-                });
+        if (allowNavigator && !this.navigatorApiFailed && typeof navigator.clipboard?.readText === 'function') {
+            void this.pasteFromClipboardApi(navigator.clipboard);
         } else {
             this.pasteFromClipboardLegacy();
+        }
+    }
+
+    private async pasteFromClipboardApi(clipboard: Clipboard): Promise<void> {
+        let result: ClipboardReadResult | null = null;
+        if (this.isHtmlReconciliationEnabled() && typeof clipboard.read === 'function') {
+            // The HTML table shape can distinguish selected blank cells from an extra plain-text line.
+            result = await this.tryReadItems(clipboard, true);
+            if (!this.isAlive()) {
+                return;
+            }
+            if (!result || result.htmlReadFailed) {
+                // A sanitised read may still retain the table when unsanitised HTML is unavailable.
+                const sanitisedResult = await this.tryReadItems(clipboard, false);
+                if (!this.isAlive()) {
+                    return;
+                }
+                if (!result || sanitisedResult?.html) {
+                    result = sanitisedResult;
+                }
+            }
+        }
+
+        let data = result?.data;
+        if (data == null) {
+            try {
+                data = await clipboard.readText();
+            } catch (error) {
+                if (this.isAlive()) {
+                    this.warn(40, { error, method: 'readText' });
+                    this.navigatorApiFailed = true;
+                    this.pasteFromClipboardLegacy();
+                }
+                return;
+            }
+        }
+
+        if (this.isAlive()) {
+            this.processClipboardData(data, result?.html);
+        }
+    }
+
+    private async tryReadItems(clipboard: Clipboard, unsanitised: boolean): Promise<ClipboardReadResult | null> {
+        try {
+            const items = await (unsanitised
+                ? (clipboard as ClipboardWithUnsanitizedRead).read({ unsanitized: ['text/html'] })
+                : clipboard.read());
+            return await this.readClipboardItems(items);
+        } catch {
+            return null;
+        }
+    }
+
+    private async readClipboardItems(items: ClipboardItems): Promise<ClipboardReadResult> {
+        const item = items.find((item) => item.types.includes('text/plain'));
+        if (!item) {
+            // readText is the preferred source when the items carry no plain text.
+            return {};
+        }
+
+        const data = await (await item.getType('text/plain')).text();
+        if (!item.types.includes('text/html')) {
+            return { data };
+        }
+
+        try {
+            return { data, html: await (await item.getType('text/html')).text() };
+        } catch {
+            return { data, htmlReadFailed: true };
         }
     }
 
     private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
         let defaultPrevented = false;
+        let html: string | undefined;
         const handlePasteEvent = (e: ClipboardEvent) => {
             const currentPastOperationTime = Date.now();
             if (currentPastOperationTime - this.lastPasteOperationTime < 50) {
@@ -185,6 +269,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 e.preventDefault();
             }
             this.lastPasteOperationTime = currentPastOperationTime;
+            const clipboardData = e.clipboardData;
+            if (!defaultPrevented && clipboardData && this.isHtmlReconciliationEnabled()) {
+                html = clipboardData.getData('text/html');
+            }
         };
 
         this.executeOnTempElement(
@@ -195,7 +283,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             (element) => {
                 const data = element.value;
                 if (!defaultPrevented) {
-                    this.processClipboardData(data);
+                    this.processClipboardData(data, html);
                 } else {
                     this.refocusLastFocusedCell();
                 }
@@ -223,12 +311,33 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         return _exists(delimiter) ? delimiter : '\t';
     }
 
-    private processClipboardData(data: string): void {
+    private isHtmlReconciliationEnabled(): boolean {
+        return !this.gos.get('suppressLastEmptyLineOnPaste');
+    }
+
+    private processClipboardData(data: string, html?: string): void {
         if (data == null) {
             return;
         }
 
-        let parsedData: string[][] | null = stringToArray(data, this.getClipboardDelimiter());
+        const delimiter = this.getClipboardDelimiter();
+        const htmlToReconcile = this.isHtmlReconciliationEnabled() ? html : undefined;
+        let parsedData: string[][] | null = stringToArray(data, delimiter);
+
+        if (htmlToReconcile && delimiter !== '\t' && /[\r\n]$/.test(data)) {
+            // Excel's plain text uses tabs even when the grid is configured with another delimiter.
+            // Use its table shape only to identify a synthetic final row, not to add HTML columns.
+            if (isBlankLine(_last(parsedData))) {
+                const tabularData = stringToArray(data, '\t');
+                if (this.reconcileClipboardDataWithHtml(tabularData, htmlToReconcile)) {
+                    parsedData.pop();
+                }
+            }
+        }
+
+        if (htmlToReconcile && delimiter === '\t') {
+            this.reconcileClipboardDataWithHtml(parsedData, htmlToReconcile);
+        }
 
         const userFunc = this.gos.getCallback('processDataFromClipboard');
 
@@ -265,6 +374,164 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         };
 
         this.doPasteOperation(pasteOperation);
+    }
+
+    private reconcileClipboardDataWithHtml(parsedData: string[][], html: string): boolean {
+        const table = this.getHtmlTableShape(html, parsedData);
+        if (!table) {
+            return false;
+        }
+
+        const removeLastLine = parsedData.length === table.rowCount + 1 && isBlankLine(_last(parsedData));
+        if (parsedData.length > table.rowCount && !removeLastLine) {
+            return false;
+        }
+
+        const finalPlainRow = parsedData.length - (removeLastLine ? 2 : 1);
+        const boundaryRows = table.boundaryRows;
+        for (let i = 0, len = boundaryRows.length; i < len; ++i) {
+            const { row, cellCount, hasNonEmptyMissingCell } = boundaryRows[i];
+            if (row < finalPlainRow) {
+                continue;
+            }
+            if (cellCount < (parsedData[row]?.length ?? 0) || hasNonEmptyMissingCell) {
+                return false;
+            }
+        }
+
+        if (removeLastLine) {
+            parsedData.pop();
+        }
+        for (let i = 0, len = boundaryRows.length; i < len; ++i) {
+            const { row, cellCount } = boundaryRows[i];
+            if (row < finalPlainRow) {
+                continue;
+            }
+            const plainRow = parsedData[row];
+            const count = cellCount - (plainRow?.length ?? 0);
+            if (plainRow) {
+                for (let cell = 0; cell < count; ++cell) {
+                    plainRow.push('');
+                }
+            } else {
+                parsedData.push(Array(count).fill(''));
+            }
+        }
+        return removeLastLine;
+    }
+
+    private getHtmlTableShape(
+        html: string,
+        parsedData: string[][]
+    ): {
+        rowCount: number;
+        boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[];
+    } | null {
+        const body = HTML_BODY_REGEX.exec(html)?.[1] ?? html;
+        const uncommentedBody = body.replace(/<!--[\s\S]*?-->/g, '');
+        if (uncommentedBody.includes('<!--')) {
+            return null;
+        }
+        const table = HTML_TABLE_REGEX.exec(uncommentedBody);
+        if (!table) {
+            return null;
+        }
+
+        // Surrounding content may be an intended line rather than part of the table.
+        const outsideTable =
+            uncommentedBody.slice(0, table.index) + uncommentedBody.slice(table.index + table[0].length);
+        if (outsideTable.trim()) {
+            return null;
+        }
+
+        const tableContent = table[1];
+        const boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[] = [];
+        const firstBoundaryRow = parsedData.length - 2;
+        let rowCount = 0;
+        let inRow = false;
+        let cellName: string | undefined;
+        let cellContentStart = 0;
+        let cellCount = 0;
+        let plainCellCount = 0;
+        let hasNonEmptyMissingCell = false;
+        const tagPattern = new RegExp(HTML_TAG_SOURCE, 'gi');
+        let endOfPreviousTag = 0;
+        for (let match = tagPattern.exec(tableContent); match; match = tagPattern.exec(tableContent)) {
+            const strayTag = tableContent.indexOf('<', endOfPreviousTag);
+            if (strayTag >= 0 && strayTag < match.index) {
+                return null;
+            }
+            if (!cellName && tableContent.slice(endOfPreviousTag, match.index).trim()) {
+                return null;
+            }
+            endOfPreviousTag = tagPattern.lastIndex;
+
+            const [tag, closingSlash, tagName] = match;
+            const isClosingTag = closingSlash === '/';
+            const name = tagName.toLowerCase();
+            if (
+                name === 'table' ||
+                name === 'script' ||
+                name === 'style' ||
+                name === 'textarea' ||
+                name === 'template'
+            ) {
+                return null;
+            }
+            if (name === 'td' || name === 'th') {
+                if (isClosingTag) {
+                    if (cellName !== name) {
+                        return null;
+                    }
+                    if (
+                        rowCount >= firstBoundaryRow &&
+                        cellCount >= plainCellCount &&
+                        !this.isEmptyHtmlCell(tableContent.slice(cellContentStart, match.index))
+                    ) {
+                        hasNonEmptyMissingCell = true;
+                    }
+                    cellCount++;
+                    cellName = undefined;
+                } else {
+                    if (!inRow || cellName || /\b(?:rowspan|colspan)\s*=/i.test(tag) || /\/\s*>$/.test(tag)) {
+                        return null;
+                    }
+                    cellName = name;
+                    cellContentStart = tagPattern.lastIndex;
+                }
+                continue;
+            }
+            if (name !== 'tr') {
+                continue;
+            }
+            if (isClosingTag) {
+                if (!inRow || cellName || !cellCount) {
+                    return null;
+                }
+                if (rowCount >= firstBoundaryRow) {
+                    boundaryRows.push({ row: rowCount, cellCount, hasNonEmptyMissingCell });
+                }
+                rowCount++;
+                inRow = false;
+            } else {
+                if (inRow || cellName) {
+                    return null;
+                }
+                inRow = true;
+                cellCount = 0;
+                plainCellCount = parsedData[rowCount]?.length ?? 0;
+                hasNonEmptyMissingCell = false;
+            }
+        }
+
+        return !inRow && !cellName && rowCount && !tableContent.slice(endOfPreviousTag).trim()
+            ? { rowCount, boundaryRows }
+            : null;
+    }
+
+    private isEmptyHtmlCell(content: string): boolean {
+        const trimmed = content.trim();
+        return !trimmed || HTML_EMPTY_PARAGRAPH_REGEX.test(trimmed);
     }
 
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
@@ -601,9 +868,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private removeLastLineIfBlank(parsedData: string[][]): void {
         // remove last row if empty, excel puts empty last row in
         const lastLine = _last(parsedData);
-        const lastLineIsBlank = lastLine?.length === 1 && lastLine[0] === '';
 
-        if (lastLineIsBlank) {
+        if (isBlankLine(lastLine)) {
             // do not remove the last empty line when that is the only line pasted
             if (parsedData.length === 1) {
                 return;
@@ -812,6 +1078,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             // If user is using the deprecated API, we preserve the previous behaviour
             return !gos.get('suppressCopyRowsToClipboard');
         }
+    }
+
+    public copiesRangeOrSelectedRows(): boolean {
+        const gos = this.gos;
+        const rowSelection = gos.get('rowSelection');
+        // mirrors the Range > Row > Focus priority of `copyOrCutToClipboard`, minus the focused-cell fallback
+        return this.shouldCopyCells(gos.get('cellSelection'), rowSelection) || this.shouldCopyRows(rowSelection);
     }
 
     private clearCellsAfterCopy(type: CellClearType) {
@@ -1192,7 +1465,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                this.warn(40, { e, method: 'writeText' });
+                this.warn(40, { error: e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;

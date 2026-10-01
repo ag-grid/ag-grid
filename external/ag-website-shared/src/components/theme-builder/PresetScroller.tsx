@@ -59,6 +59,7 @@ export const PresetButton = styled('button')`
     text-align: left;
     margin: 0 12px 8px 0;
     padding: 0;
+    box-shadow: none;
     scroll-snap-align: center;
 
     // Higher z index than blur container z index
@@ -82,7 +83,9 @@ export const PresetButton = styled('button')`
 // instead of collapsing to 0. Nesting an extra plain block between this and
 // Main would break that.
 const Wrapper = styled('div')`
-    --scroller-height: 192px;
+    // A second name, because a host overriding --scroller-height on an ancestor
+    // would lose to this declaration of it.
+    --scroller-height: var(--preset-scroller-height, 192px);
 
     position: relative;
     width: 100%;

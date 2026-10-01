@@ -278,6 +278,7 @@ export type { TextFilter } from './filter/provided/text/textFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export type {
     AdvancedFilterModel,
+    AdvancedFilterOnlyOptionKey,
     BooleanAdvancedFilterModel,
     BooleanAdvancedFilterModelType,
     ColumnAdvancedFilterModel,
@@ -319,6 +320,7 @@ export type {
     DoesFilterPassParams,
     FilterAction,
     FilterActionParams,
+    FilterCallbackSource,
     FilterDisplay,
     FilterDisplayComp,
     FilterDisplayParams,
@@ -707,6 +709,7 @@ export type {
     ColumnVisibilityState,
     FilterState,
     FiltersToolPanelState,
+    FindState,
     FocusedCellState,
     GridState,
     GridStateKey,
@@ -715,6 +718,7 @@ export type {
     PaginationState,
     PivotSortModelItem,
     PivotState,
+    QuickFilterState,
     RangeSelectionCellState,
     RangeSelectionState,
     RowGroupState,
@@ -918,7 +922,7 @@ export type {
     IsServerSideGroup,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    LoadingOptions,
+    LoadingRowsOptions,
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
@@ -1014,6 +1018,7 @@ export type {
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     ServerSideStoreParams,
+    SetFillValueCallback,
     TabToNextCell,
     TabToNextCellParams,
     TabToNextGridContainer,
@@ -1175,6 +1180,7 @@ export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
 export { enableDevValidations, ValidationModule } from './validation/validationModule';
 export type { DevValidationOptions } from './validation/validationConfig';
+export type { ErrorId } from './validation/errorMessages/errorText';
 export type { Severity } from './validation/logging';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 

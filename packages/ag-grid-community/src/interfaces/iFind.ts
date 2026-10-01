@@ -1,5 +1,6 @@
 import type { GridApi } from '../api/gridApi';
 import type { GetFindTextFunc } from '../entities/colDef';
+import type { FindState } from './gridState';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
@@ -35,6 +36,10 @@ export interface IFindService {
     registerDetailGrid(node: IRowNode, api: GridApi): void;
 
     refresh(maintainActive: boolean): void;
+
+    getState(): FindState | undefined;
+
+    setState(state: FindState): void;
 }
 
 export interface FindOptions {

@@ -24,16 +24,11 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     flex-direction: column;
     gap: $demo-column-gap;
     width: 100%;
-    padding: $spacing-size-6 var(--demo-gutter);
+    padding: $spacing-size-6 var(--demo-gutter) $spacing-size-32;
     box-sizing: border-box;
 
-    // Only the slotted mobile notice shows this narrow; give it the space the demo would have filled.
-    min-height: var(--demo-height);
-    justify-content: center;
-
     @media screen and (min-width: $breakpoint-docs-search-medium) {
-        min-height: 0;
-        justify-content: flex-start;
+        padding-bottom: $spacing-size-6;
     }
 
     @media screen and (min-width: $breakpoint-hero-large) {
@@ -56,18 +51,17 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 }
 
 .hero {
-    // Its copy sells the demo and its list switches between examples: nothing to offer
-    // while no demo is reachable.
-    display: none;
+    // Shown at every width, including those too narrow for the demo: its heading and
+    // intro are the page's subject, so hiding them leaves the mobile-rendered page -
+    // the one search engines index - headed by the stand-in notice instead.
+    display: flex;
     flex-shrink: 0;
-
-    @media screen and (min-width: $breakpoint-docs-search-medium) {
-        display: flex;
-    }
 
     @media screen and (min-width: $breakpoint-hero-large) {
         width: clamp(360px, 34vw, 480px);
-        align-items: center;
+        align-items: flex-start;
+        // Scrolls in-column rather than growing the page, which is pinned to the viewport.
+        overflow-y: auto;
     }
 }
 
@@ -96,57 +90,62 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 }
 
 .title {
-    margin: 0 0 $spacing-size-5;
+    margin: 0 0 $spacing-size-4;
     font-size: var(--text-fs-3xl);
-    line-height: var(--text-lh-3xl);
+    line-height: var(--text-lh-display-3xl);
     font-weight: var(--text-bold);
     letter-spacing: -0.02em;
     color: var(--color-fg-primary);
 }
 
 .description {
-    margin: 0 0 $spacing-size-8;
+    margin: 0 0 $spacing-size-6;
     font-size: var(--text-fs-base);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-body-base);
     color: var(--color-fg-secondary);
 }
 
-// Doubles as the demo switcher. A shared rule runs down the left; each item's own
-// transparent border overlays it, colouring in when active.
+// Doubles as the demo switcher, so each item is carded up to read as a button.
 .featureList {
+    display: none;
     list-style: none;
-    margin: 0 0 $spacing-size-8;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    // Only bites in the stacked layout, where the hero has the whole page width.
+    max-width: 560px;
+    margin: 0 0 $spacing-size-6;
     padding: 0;
-    border-left: 2px solid var(--color-border-primary);
 }
 
 .featureItem {
     display: flex;
-    flex-direction: column;
-    gap: $spacing-size-1;
-    margin-left: -2px;
-    padding: $spacing-size-3 0 $spacing-size-3 $spacing-size-8;
-    border-left: 2px solid transparent;
+    align-items: center;
+    gap: $spacing-size-3;
+    padding: $spacing-size-2;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-primary);
     text-decoration: none;
+    transition:
+        border-color $transition-default-timing,
+        background-color $transition-default-timing,
+        box-shadow $transition-default-timing;
 
-    &:hover .featureTitle {
-        color: var(--color-brand-500);
+    &:hover,
+    &:focus-visible {
+        border-color: var(--color-brand-500);
+        background-color: var(--color-bg-secondary);
+        box-shadow: var(--shadow-sm);
+
+        .featureTitle {
+            color: var(--color-brand-500);
+        }
     }
 
-    #{$selector-darkmode} &:hover .featureTitle {
-        color: var(--color-brand-300);
-    }
-}
-
-.featureItemActive {
-    border-left-color: var(--color-brand-600);
-
-    .featureTitle {
-        color: var(--color-brand-600);
-    }
-
-    #{$selector-darkmode} & {
-        border-left-color: var(--color-brand-300);
+    #{$selector-darkmode} &:hover,
+    #{$selector-darkmode} &:focus-visible {
+        border-color: var(--color-brand-300);
 
         .featureTitle {
             color: var(--color-brand-300);
@@ -154,17 +153,63 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     }
 }
 
+.featureItemActive {
+    border-color: var(--color-brand-600);
+    // Tinted rather than filled: the button still has to carry a screenshot legibly.
+    background-color: color-mix(in srgb, var(--color-brand-500) 8%, var(--color-bg-primary));
+
+    .featureTitle {
+        color: var(--color-brand-600);
+    }
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-brand-300);
+        background-color: color-mix(in srgb, var(--color-brand-300) 12%, var(--color-bg-primary));
+
+        .featureTitle {
+            color: var(--color-brand-300);
+        }
+    }
+}
+
+// Fixed px, not a share of the button: the panel must not widen, so the text wraps into
+// whatever is left beside this.
+.featureImage {
+    flex-shrink: 0;
+    width: 160px;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-secondary);
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.featureBody {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+    // Lets the text wrap rather than pushing the button wider.
+    min-width: 0;
+}
+
 .featureTitle {
     font-size: 18px;
     font-weight: var(--text-semibold);
-    line-height: var(--text-lh-base);
+    line-height: var(--text-lh-ratio-base);
     color: var(--color-fg-primary);
     transition: color $transition-default-timing;
 }
 
 .featureDescription {
-    font-size: var(--text-fs-base);
-    line-height: var(--text-lh-base);
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-body-sm);
     // Undo the global `a` rule's semibold so the title carries the weight.
     font-weight: var(--text-regular);
     color: var(--color-fg-tertiary);
@@ -172,9 +217,21 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 
 .ctaButtons {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     gap: $spacing-size-3;
+    margin-top: $spacing-size-8;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        justify-content: flex-start;
+        margin-top: 0;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .contactButton {
@@ -184,11 +241,105 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     }
 }
 
+// Seed project links: a StackBlitz and a GitHub button beneath the CTAs, so the "get started" pair
+// keeps its prominence. Placement is provisional pending design review.
+.openIn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-3;
+    margin: $spacing-size-4 0 0;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        justify-content: flex-start;
+    }
+}
+
+// Anchors the framework list to its button.
+.openInMenu {
+    position: relative;
+}
+
+.openInButton {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    cursor: pointer;
+    // A <summary> otherwise draws a disclosure triangle of its own.
+    list-style: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+    }
+}
+
+.openInChevron {
+    transition: transform 0.15s ease-out;
+
+    details[open] & {
+        transform: rotate(180deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+}
+
+// Same surface as the site's other dropdown menus (MarkdownActions).
+.openInList {
+    position: absolute;
+    top: calc(100% + #{$spacing-size-1});
+    left: 0;
+    z-index: 10;
+    min-width: 100%;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+}
+
+.openInLink {
+    display: block;
+    padding: $spacing-size-2 12px;
+    border-radius: 3px;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: var(--color-text-primary);
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            color: var(--color-fg-white);
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}
+
 .demoCard {
     position: relative;
     // The demo has no usable small-screen form: it is held at $demo-held-width, so a phone
-    // would show a sliver of it. Hide it until there is room; the page-level mobile notice
-    // stands in, as one inside this card would centre in the held width and land off-screen.
+    // would show a sliver of it. Hide it until there is room; the mobile notice in the
+    // hero stands in, as one inside this card would centre in the held width and land off-screen.
     display: none;
     flex: 1 1 auto;
     min-width: 0;

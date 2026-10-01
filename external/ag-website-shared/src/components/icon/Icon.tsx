@@ -61,6 +61,7 @@ const SOCIALS_ICON_MAP = {
 const CHARTS_ICON_MAP = {
     chartsBar: CarbonIcon.ChartBar,
     chartsColumn: CarbonIcon.ChartColumn,
+    chartsColumnStacked: CarbonIcon.ChartStacked,
     chartsLine: CarbonIcon.ChartLine,
     chartsArea: CarbonIcon.ChartArea,
     chartsScatter: CarbonIcon.ChartScatter,
@@ -94,6 +95,7 @@ const CHARTS_ICON_MAP = {
     chartsCandlestick: CarbonIcon.ChartCandlestick,
     chartsOHLC: CarbonIcon.ChartHighLow,
     chartsOrg: CarbonIcon.ContainerServices,
+    chartsQuadrant: CarbonIcon.QuadrantPlot,
 };
 
 export const ICON_MAP = {
@@ -169,7 +171,16 @@ type Props = { id?: string; name: IconName; svgClasses?: string; onClick?: () =>
 export const Icon = ({ id, name, svgClasses, onClick }: Props) => {
     const IconSvg = ICON_MAP[name];
 
+    // Icons never carry an accessible name of their own, so they are always decorative. The
+    // surrounding element (button, link, text) provides the name
     return IconSvg ? (
-        <IconSvg id={id} size="32" className={classNames(styles.icon, 'icon', svgClasses)} onClick={onClick} />
+        <IconSvg
+            id={id}
+            size="32"
+            className={classNames(styles.icon, 'icon', svgClasses)}
+            onClick={onClick}
+            aria-hidden="true"
+            focusable="false"
+        />
     ) : null;
 };

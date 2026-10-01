@@ -27,7 +27,7 @@
     "test:vitest": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-website-shared.xml"],
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.ts",

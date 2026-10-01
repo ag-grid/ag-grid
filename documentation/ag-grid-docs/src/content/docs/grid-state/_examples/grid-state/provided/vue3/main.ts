@@ -9,6 +9,7 @@ import type {
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
+    Toolbar,
 } from 'ag-grid-community';
 import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -29,7 +30,10 @@ const VueExample = defineComponent({
             <div class="example-wrapper">
                 <div>
                     <span class="button-group">
-                        <button v-on:click="reloadGrid()">Recreate Grid with Current State</button>
+                        <button v-on:click="recreateWithCurrentState()">Recreate with State</button>
+                        <button v-on:click="saveState()">Save State</button>
+                        <button v-on:click="recreateWithNoState()">Recreate without State</button>
+                        <button v-on:click="setState()">Set State</button>
                         <button v-on:click="printState()">Print State</button>
                     </span>
                 </div>
@@ -43,6 +47,7 @@ const VueExample = defineComponent({
                     :defaultColGroupDef="defaultColGroupDef"
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :sideBar="true"
+                    :toolbar="toolbar"
                     :pagination="true"
                     :rowSelection="rowSelection"
                     :cellSelection="true"
@@ -98,19 +103,31 @@ const VueExample = defineComponent({
         const rowSelection = ref<RowSelectionOptions>({
             mode: 'multiRow',
         });
+        const toolbar = ref<Toolbar>({ items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] });
         const rowData = ref<any[] | undefined>(undefined);
         const gridVisible = ref(true);
         const initialState = ref<GridState | undefined>(undefined);
 
-        const reloadGrid = () => {
-            if (gridApi.value) {
-                const state = gridApi.value.getState();
-                gridVisible.value = false;
-                setTimeout(() => {
-                    initialState.value = state;
-                    rowData.value = undefined;
-                    gridVisible.value = true;
-                });
+        const savedState = ref<GridState>();
+
+        const recreateGrid = (state?: GridState) => {
+            gridVisible.value = false;
+            setTimeout(() => {
+                initialState.value = state;
+                rowData.value = undefined;
+                gridVisible.value = true;
+            });
+        };
+        const recreateWithCurrentState = () => recreateGrid(gridApi.value!.getState());
+        const recreateWithNoState = () => recreateGrid();
+        const saveState = () => {
+            savedState.value = gridApi.value!.getState();
+            console.log('Saved state', savedState.value);
+        };
+        const setState = () => {
+            if (savedState.value) {
+                gridApi.value!.setState(savedState.value);
+                console.log('Set state', savedState.value);
             }
         };
         const printState = () => {
@@ -139,13 +156,17 @@ const VueExample = defineComponent({
             defaultColGroupDef,
             autoGroupColumnDef,
             rowSelection,
+            toolbar,
             rowData,
             gridVisible,
             initialState,
             onGridReady,
             onGridPreDestroyed,
             onStateUpdated,
-            reloadGrid,
+            recreateWithCurrentState,
+            recreateWithNoState,
+            saveState,
+            setState,
             printState,
         };
     },

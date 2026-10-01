@@ -1,4 +1,12 @@
-import { getIntegratedDarkModeCode } from './parser-utils';
+import {
+    DARK_INTEGRATED_END,
+    DARK_INTEGRATED_START,
+    extractDevValidationsArgs,
+    getIntegratedDarkModeCode,
+    getIntegratedDarkModeInitialChartThemesCode,
+    getVanillaDevValidationsPreamble,
+    removeModuleRegistration,
+} from './parser-utils';
 
 describe('getIntegratedDarkModeCode', () => {
     const exampleName = '/documentation/integrated-charts-chart-tool-panels/_examples/chart-tool-panels';
@@ -45,5 +53,87 @@ describe('getIntegratedDarkModeCode', () => {
         it('does not push an unchanged theme list, which would re-render the chart', () => {
             expect(code).toContain('currentThemes.every((theme, i) => theme === modifiedThemes[i])');
         });
+    });
+});
+
+describe('getIntegratedDarkModeInitialChartThemesCode', () => {
+    const exampleName = '/documentation/integrated-charts-chart-tool-panels/_examples/chart-tool-panels';
+
+    it('returns nothing for an example that does not use charts', () => {
+        expect(
+            getIntegratedDarkModeInitialChartThemesCode('/documentation/row-sorting/_examples/basic', [])
+        ).toBeUndefined();
+    });
+
+    it('provides the themes globally, so a chart created while the grid initialises is themed on its first render', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [])!;
+
+        expect(code).toContain('provideGlobalGridOptions({');
+        expect(code).toContain("chartThemes: ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid']");
+        expect(code).toContain("document.documentElement.dataset.agThemeMode?.includes('dark') ? '-dark' : ''");
+    });
+
+    it('is wrapped in the dark mode delimiters, so it is stripped from the code the user sees', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [])!;
+
+        expect(code.startsWith(DARK_INTEGRATED_START)).toBe(true);
+        expect(code.endsWith(DARK_INTEGRATED_END)).toBe(true);
+    });
+
+    it('imports provideGlobalGridOptions inside the delimiters, so the import is stripped along with it', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [
+            "import { createGrid } from 'ag-grid-community';",
+        ])!;
+
+        expect(code).toContain("import { provideGlobalGridOptions } from 'ag-grid-community';");
+    });
+
+    it('does not add a duplicate import when the example already imports provideGlobalGridOptions', () => {
+        const code = getIntegratedDarkModeInitialChartThemesCode(exampleName, [
+            "import { createGrid, provideGlobalGridOptions } from 'ag-grid-community';",
+        ])!;
+
+        expect(code).not.toContain('import {');
+    });
+});
+
+describe('dev validations guard', () => {
+    const guarded = (call: string) =>
+        `if (process.env.NODE_ENV !== 'production') {\n    // Enable extended validations only for development\n    ${call};\n}\n\nconst x = 1;\n`;
+
+    it('strips a bare guard and builds a bare preamble', () => {
+        const code = guarded('agGrid.enableDevValidations()');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('');
+        expect(getVanillaDevValidationsPreamble(extractDevValidationsArgs(code))).toBe(
+            '// Enable extended validations only for development\nagGrid.enableDevValidations();'
+        );
+    });
+
+    it('strips a guard with { debug: true } and keeps the args in the preamble', () => {
+        const code = guarded('agGrid.enableDevValidations({ debug: true })');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('{ debug: true }');
+        expect(getVanillaDevValidationsPreamble(extractDevValidationsArgs(code))).toBe(
+            '// Enable extended validations only for development\nagGrid.enableDevValidations({ debug: true });'
+        );
+    });
+
+    it('strips a guard with { showOverlayOn: [] } preceded by a comment line', () => {
+        const code = `// The overlay is turned off.\n${guarded('agGrid.enableDevValidations({ showOverlayOn: [] })')}`;
+        const stripped = removeModuleRegistration(code);
+        expect(stripped).toBe('\nconst x = 1;\n');
+        expect(stripped).not.toContain('process.env');
+        expect(extractDevValidationsArgs(code)).toBe('{ showOverlayOn: [] }');
+    });
+
+    it('keeps multi-line args containing a commented-out option', () => {
+        const code = guarded('enableDevValidations({\n        // debug: true\n    })');
+        expect(removeModuleRegistration(code)).toBe('\nconst x = 1;\n');
+        expect(extractDevValidationsArgs(code)).toBe('{\n        // debug: true\n    }');
+    });
+
+    it('returns empty args when there is no guard', () => {
+        expect(extractDevValidationsArgs('const x = 1;')).toBe('');
     });
 });

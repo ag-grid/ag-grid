@@ -31,4 +31,49 @@ test.agExample(import.meta, () => {
         await expect(editInput(page)).toHaveCount(0);
         await expect(cell).toContainText('42');
     });
+    test.eachFramework(
+        'block mode keeps the invalid editor open until a valid value is entered',
+        async ({ agIdFor, page }) => {
+            // Documented claim: 'block' "Keeps the invalid editing session open until a valid value is provided".
+            const cell = agIdFor.cell('0', 'age');
+            await expect(cell).toContainText('23');
+
+            await page.locator('#select-validation-mode').selectOption('block');
+
+            await cell.dblclick();
+            await expect(editInput(page)).toBeVisible();
+            await editInput(page).fill('200');
+            await editInput(page).press('Enter');
+
+            // The editor stays open and still holds the rejected value, so the edit never completed.
+            await expect(editInput(page)).toBeVisible();
+            await expect(editInput(page)).toHaveValue('200');
+
+            // Supplying a valid value completes the same editing session.
+            await editInput(page).fill('50');
+            await editInput(page).press('Enter');
+
+            await expect(editInput(page)).toHaveCount(0);
+            await expect(cell).toContainText('50');
+        }
+    );
+
+    test.eachFramework('block mode edit can still be cancelled with Escape', async ({ agIdFor, page }) => {
+        // Documented claim: a blocked session stays open "until a valid value is provided or the edit is cancelled".
+        const cell = agIdFor.cell('0', 'age');
+        await expect(cell).toContainText('23');
+
+        await page.locator('#select-validation-mode').selectOption('block');
+
+        await cell.dblclick();
+        await expect(editInput(page)).toBeVisible();
+        await editInput(page).fill('200');
+        await editInput(page).press('Enter');
+        await expect(editInput(page)).toBeVisible();
+
+        await editInput(page).press('Escape');
+
+        await expect(editInput(page)).toHaveCount(0);
+        await expect(cell).toContainText('23');
+    });
 });

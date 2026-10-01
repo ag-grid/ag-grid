@@ -72,9 +72,57 @@ export class AdvancedFilterHarness {
         );
     }
 
+    /** What the list says while its values are still being fetched, `null` once they have arrived. */
+    public autocompleteLoadingText(): string | null {
+        const loading = document.querySelector<HTMLElement>('.ag-autocomplete-loading');
+        return loading && !loading.classList.contains('ag-hidden') ? (loading.textContent?.trim() ?? '') : null;
+    }
+
+    /** The entry the list is suggesting, which is what Enter would confirm. */
+    public selectedAutocompleteEntry(): string | null {
+        const row = document.querySelector('.ag-autocomplete-list .ag-autocomplete-row-selected');
+        return row?.textContent?.trim() ?? null;
+    }
+
+    /** What each rendered entry marks up as matching the search, `''` where a row marks nothing. */
+    public autocompleteMatches(): string[] {
+        return Array.from(document.querySelectorAll('.ag-autocomplete-list .ag-autocomplete-row')).map(
+            (row) => row.querySelector('b')?.textContent ?? ''
+        );
+    }
+
     /** Selects the highlighted autocomplete entry (Enter). */
     public async selectAutocomplete(): Promise<this> {
         return this.pressKey('Enter');
+    }
+
+    /**
+     * Picks an autocomplete entry with the mouse alone: `mousedown` then `click` over that row, with no
+     * preceding `mousemove`, which is what a pointer that never moved between two picks produces.
+     */
+    public async clickAutocompleteEntry(text: string): Promise<this> {
+        const rows = Array.from(document.querySelectorAll<HTMLElement>('.ag-autocomplete-list .ag-autocomplete-row'));
+        const row = rows.find((el) => (el.textContent?.trim() ?? '') === text);
+        if (!row) {
+            throw new Error(
+                `Autocomplete entry not found: "${text}". Offered: ${rows.map((el) => el.textContent?.trim()).join(', ')}`
+            );
+        }
+        const item = row.closest<HTMLElement>('.ag-virtual-list-item') ?? row;
+        const viewport = row.closest<HTMLElement>('.ag-virtual-list-viewport');
+        const rowHeight = parseFloat(item.style.height) || 20;
+        const top = parseFloat(item.style.top) || 0;
+        const clientY = (viewport?.getBoundingClientRect().top ?? 0) - (viewport?.scrollTop ?? 0) + top + rowHeight / 2;
+        const init = { bubbles: true, clientX: 1, clientY };
+        row.dispatchEvent(new MouseEvent('mousedown', init));
+        row.dispatchEvent(new MouseEvent('click', init));
+        await asyncSetTimeout(0);
+        if (this.isAutocompleteOpen()) {
+            nudgeVirtualList('.ag-autocomplete-list-popup .ag-virtual-list-viewport');
+            nudgeVirtualList('.ag-autocomplete-list .ag-virtual-list-viewport');
+            await asyncSetTimeout(0);
+        }
+        return this;
     }
 
     /** Tab also confirms the highlighted autocomplete entry. */

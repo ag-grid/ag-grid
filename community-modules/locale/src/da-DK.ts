@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_DK = {
+export const AG_GRID_LOCALE_DA_DK = {
     // Set Filter
     selectAll: '(Vælg alle)',
     selectAllSearchResults: '(Vælg alle søgeresultater)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_DK = {
     clearFilter: 'Ryd',
     cancelFilter: 'Annuller',
     cancelColumnToolPanel: 'Annuller',
+    resetColumnToolPanel: 'Nulstil',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_DK = {
     advancedFilterValidationMissingCondition: 'Betingelse mangler',
     advancedFilterValidationJoinOperatorMismatch: 'Join-operatører inden for en betingelse skal være ens',
     advancedFilterValidationInvalidJoinOperator: 'Join-operator ikke fundet',
+    advancedFilterValidationMissingListStartBracket: 'Mangler indledende kantet parentes',
+    advancedFilterValidationMissingListEndBracket: 'Mangler afsluttende kantet parentes',
     advancedFilterValidationMissingEndBracket: 'Mangler afsluttende parentes',
     advancedFilterValidationExtraEndBracket: 'For mange afsluttende parenteser',
     advancedFilterValidationMessage: 'Udtrykket har en fejl. ${variable} - ${variable}.',
@@ -920,3 +923,6 @@ export const AG_GRID_LOCALE_DK = {
     deleteNote: 'Fjern note',
     notePlaceholder: 'Tilføj en note...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_DA_DK` instead. */
+export const AG_GRID_LOCALE_DK = AG_GRID_LOCALE_DA_DK;

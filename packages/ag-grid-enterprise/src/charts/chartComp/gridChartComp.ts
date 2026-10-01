@@ -27,7 +27,7 @@ import type {
     SortModelItem,
     UpdateChartParams,
 } from 'ag-grid-community';
-import { Component, _addGridCommonParams, _errMsg, _focusGridInnerElement, _mergeDeep } from 'ag-grid-community';
+import { Component, _addGridCommonParams, _focusGridInnerElement, _mergeDeep } from 'ag-grid-community';
 
 import { Dialog } from '../../widgets/dialog';
 import type { AgChartsExports } from '../agChartsExports';
@@ -288,7 +288,7 @@ export class GridChartComp extends Component {
         }
         const enterpriseChartProxy = this.enterpriseChartProxyFactory?.createChartProxy(chartProxyParams);
         if (!enterpriseChartProxy) {
-            throw _errMsg(251, { chartType });
+            throw this.beans.log.errorToThrow(251, { chartType });
         }
         return enterpriseChartProxy;
     }
@@ -547,7 +547,7 @@ export class GridChartComp extends Component {
         const availableChartThemes = this.gos.get('chartThemes') || DEFAULT_THEMES;
 
         if (availableChartThemes.length === 0) {
-            throw new Error(_errMsg(254));
+            throw this.beans.log.errorToThrow(254);
         }
 
         const { chartThemeName } = this.params;

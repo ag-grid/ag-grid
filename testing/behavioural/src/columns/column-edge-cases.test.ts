@@ -895,13 +895,12 @@ describe('Column Edge Cases', () => {
     });
 
     describe('colSpan interactions', () => {
-        test('colSpanActive flag is set when any column has colSpan', async () => {
+        test('colSpan leaves the column structure alone', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', colSpan: () => 2 }, { colId: 'b' }, { colId: 'c' }],
                 rowData: [{ a: 1, b: 2, c: 3 }],
             });
 
-            // colSpan doesn't affect column structure, only cell rendering
             await new GridColumns(api, 'with colSpan').checkColumns(`
                 CENTER
                 ├── a width:200

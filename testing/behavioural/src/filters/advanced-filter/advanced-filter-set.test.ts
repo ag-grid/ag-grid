@@ -8,8 +8,15 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridOptions, IServerSideGetRowsParams, IServerSideGetRowsRequest } from 'ag-grid-community';
-import { ServerSideRowModelModule } from 'ag-grid-enterprise';
+import type {
+    ColDef,
+    GridOptions,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
+    ISetFilterParams,
+} from 'ag-grid-community';
+import { NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import { AdvancedFilterModule, MultiFilterModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
     DEFAULT_OPTIONS,
@@ -378,7 +385,9 @@ describe('Advanced Filter - Set Filter excelMode', () => {
 });
 
 describe('Advanced Filter - Set Filter with the server-side row model', () => {
-    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, ServerSideRowModelModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [...SET_MODULES, ServerSideRowModelModule, MultiFilterModule],
+    });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -389,18 +398,17 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
         { athlete: 'Anna Kowalski', country: 'Poland' },
     ];
 
+    /** The row values live on the server, so the list has to be declared. */
+    const DECLARED_VALUES: ColDef = {
+        field: 'country',
+        filter: 'agSetColumnFilter',
+        filterParams: { values: ['Jamaica', 'Poland'] },
+    };
+
     /** Grid whose rows come from a datasource, recording what each request was asked to filter by. */
-    async function createServerSideGrid(requests: IServerSideGetRowsRequest[]) {
+    async function createServerSideGrid(requests: IServerSideGetRowsRequest[], country: ColDef = DECLARED_VALUES) {
         return gridsManager.createGridAndWait('grid1', {
-            columnDefs: [
-                { field: 'athlete' },
-                {
-                    field: 'country',
-                    filter: 'agSetColumnFilter',
-                    // The row values live on the server, so the list has to be declared.
-                    filterParams: { values: ['Jamaica', 'Poland'] },
-                },
-            ],
+            columnDefs: [{ field: 'athlete' }, country],
             rowModelType: 'serverSide',
             serverSideDatasource: {
                 getRows: (params: IServerSideGetRowsParams) => {
@@ -412,6 +420,82 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
         } as GridOptions);
     }
 
+    const MULTI_FILTER_CHILDREN = (setParams?: ISetFilterParams) => ({
+        field: 'country',
+        filter: 'agMultiColumnFilter',
+        filterParams: {
+            filters: [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter', filterParams: setParams }],
+        },
+    });
+
+    test.each([
+        ['a Set Filter column', { field: 'country', filter: 'agSetColumnFilter' }],
+        ['a `filter: true` column, which the module resolves to a Set Filter', { field: 'country', filter: true }],
+        ['a Multi Filter holding one', MULTI_FILTER_CHILDREN()],
+    ])('%s with no declared values offers neither set option', async (_, country) => {
+        const api = await createServerSideGrid([], country as ColDef);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+
+        expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+    });
+
+    test('a Multi Filter offers the set options from the values declared on its Set Filter child', async () => {
+        const api = await createServerSideGrid([], MULTI_FILTER_CHILDREN({ values: ['Jamaica', 'Poland'] }) as ColDef);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+    });
+
+    test('`filter: true` resolves to a Set Filter, so its declared values are what the list offers', async () => {
+        const api = await createServerSideGrid([], {
+            field: 'country',
+            filter: true,
+            filterParams: { values: ['Jamaica', 'Poland'] },
+        });
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+    });
+
+    test.each([
+        [
+            'a Set Filter column',
+            { field: 'country', filter: 'agSetColumnFilter', filterParams: () => ({ values: ['Jamaica', 'Poland'] }) },
+        ],
+        [
+            'a Multi Filter child',
+            {
+                field: 'country',
+                filter: 'agMultiColumnFilter',
+                filterParams: {
+                    filters: [
+                        { filter: 'agTextColumnFilter' },
+                        { filter: 'agSetColumnFilter', filterParams: () => ({ values: ['Jamaica', 'Poland'] }) },
+                    ],
+                },
+            },
+        ],
+    ])('values declared by a `filterParams` function on %s offer the set options', async (_, country) => {
+        const api = await createServerSideGrid([], country as ColDef);
+        const af = AdvancedFilterHarness.get(api);
+
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual([...TEXT_OPTIONS, ...SET_OPTIONS]);
+
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+    });
+
     test('the declared values are what the list offers', async () => {
         const api = await createServerSideGrid([]);
         const af = AdvancedFilterHarness.get(api);
@@ -419,6 +503,34 @@ describe('Advanced Filter - Set Filter with the server-side row model', () => {
         await af.type('[Country] is any of [');
 
         expect(af.autocompleteEntries()).toEqual(['Jamaica', 'Poland']);
+    });
+
+    describe('without the Set Filter module', () => {
+        const noSetFilter = new TestGridsManager({
+            modules: [TextFilterModule, NumberFilterModule, AdvancedFilterModule, ServerSideRowModelModule],
+        });
+
+        afterEach(() => noSetFilter.reset());
+
+        test('`filter: true` is a Text Filter, so declared values offer no set option', async () => {
+            const api = await noSetFilter.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'country', filter: true, filterParams: { values: ['Jamaica', 'Poland'] } },
+                ],
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params: IServerSideGetRowsParams) =>
+                        params.success({ rowData: SERVER_ROWS, rowCount: SERVER_ROWS.length }),
+                },
+                enableAdvancedFilter: true,
+            } as GridOptions);
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.type('[Country] ');
+
+            expect(af.autocompleteEntries()).toEqual(TEXT_OPTIONS);
+        });
     });
 
     test('the set model reaches the datasource request, which is what does the filtering', async () => {

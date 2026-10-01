@@ -43,7 +43,11 @@ export class PolarAxisPanel extends Component {
             new ChartMenuParamsFactory(chartOptionsService.getPolarAxisThemeOverridesProxy('angle'))
         );
         const axisColorInputParams = chartAxisThemeOverrides.getDefaultColorPickerParams('line.stroke');
-        const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParams('line.width', 'thickness', 10);
+        const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParams(
+            'line.strokeWidth',
+            'thickness',
+            10
+        );
         this.setTemplate(
             /* html */ `<div>
             <ag-group-component data-ref="axisGroup">

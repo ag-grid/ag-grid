@@ -47,14 +47,15 @@ describe('cspRules', () => {
             );
         });
 
-        it('site and examples scopes differ only in script-src', () => {
+        it('examples scope only ever adds to the site scope, never drops a source', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
             const examples = getCspDirectives({ env: 'production', scope: 'examples' });
 
             expect(Object.keys(examples)).toEqual(Object.keys(site));
-            const otherNames = Object.keys(site).filter((name) => name !== 'script-src');
-            for (let i = 0, len = otherNames.length; i < len; ++i) {
-                expect(examples[otherNames[i]]).toEqual(site[otherNames[i]]);
+            const names = Object.keys(site);
+            for (let i = 0, len = names.length; i < len; ++i) {
+                const siteSources = site[names[i]].filter((source) => !source.startsWith("'sha256-"));
+                expect(examples[names[i]]).toEqual(expect.arrayContaining(siteSources));
             }
         });
 
@@ -64,6 +65,63 @@ describe('cspRules', () => {
                 expect(getCspDirectives({ env: 'production', scope: scopes[i] })['style-src']).toContain(
                     "'unsafe-inline'"
                 );
+            }
+        });
+    });
+
+    describe('archived doc versions (AG-18490: legacy example runner and page chrome hosts)', () => {
+        const site = getCspDirectives({ env: 'production', scope: 'site' });
+        const examples = getCspDirectives({ env: 'production', scope: 'examples' });
+        const archiveOnlyHosts = [
+            'https://unpkg.com',
+            'https://ajax.googleapis.com',
+            'https://raw.githubusercontent.com',
+            'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js',
+            // (list-manage.com is not archive-only: the site scope carries it in form-action.)
+            'https://cdn-images.mailchimp.com',
+            'https://platform.twitter.com',
+            'https://buttons.github.io',
+            'https://ghbtns.com',
+            'https://maxcdn.bootstrapcdn.com',
+        ];
+
+        it('allows the SystemJS example runner of v25 to v28.1 to load and fetch from unpkg.com', () => {
+            expect(examples['script-src']).toContain('https://unpkg.com');
+            expect(examples['connect-src']).toContain('https://unpkg.com');
+        });
+
+        it('allows the pre-v25 Web Font Loader script and GitHub-hosted sample data', () => {
+            expect(examples['script-src']).toContain('https://ajax.googleapis.com');
+            expect(examples['connect-src']).toContain('https://raw.githubusercontent.com');
+        });
+
+        it('allows the pre-v25 Mailchimp newsletter embed, whose bundle supplies the jQuery the page expects', () => {
+            expect(examples['script-src']).toContain(
+                'https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'
+            );
+            expect(examples['script-src']).toContain('https://ag-grid.us11.list-manage.com');
+            expect(examples['style-src']).toContain('https://cdn-images.mailchimp.com');
+        });
+
+        it('allows the pre-v25 embedded tweets and GitHub buttons, which render into iframes on their own origins', () => {
+            expect(examples['script-src']).toContain('https://platform.twitter.com');
+            expect(examples['frame-src']).toContain('https://platform.twitter.com');
+            expect(examples['script-src']).toContain('https://buttons.github.io');
+            expect(examples['frame-src']).toContain('https://buttons.github.io');
+            expect(examples['frame-src']).toContain('https://ghbtns.com');
+        });
+
+        it('allows the pre-v25 Font Awesome 4 stylesheet and webfonts from the Bootstrap CDN', () => {
+            expect(examples['style-src']).toContain('https://maxcdn.bootstrapcdn.com');
+            expect(examples['font-src']).toContain('https://maxcdn.bootstrapcdn.com');
+        });
+
+        it('keeps the archive-only hosts out of every directive of the site scope', () => {
+            const names = Object.keys(site);
+            for (let i = 0, len = names.length; i < len; ++i) {
+                for (let j = 0, jLen = archiveOnlyHosts.length; j < jLen; ++j) {
+                    expect(site[names[i]]).not.toContain(archiveOnlyHosts[j]);
+                }
             }
         });
     });
@@ -345,7 +403,7 @@ describe('cspRules', () => {
 
         it('authorises both capture tags by hash in the site scope', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
-            expect(site).toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='"); // page-view capture
+            expect(site).toContain("'sha256-UZ79CQlmQa9u4xp1a60kP2//w3o9IvBsC2tdqv57moc='"); // page-view capture
             expect(site).toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='"); // webhook POST (live)
         });
 
@@ -355,14 +413,39 @@ describe('cspRules', () => {
             // alongside it until the rollout is complete and the old hash is confirmed
             // unused. AG-3390.
             const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
-            expect(site).toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
+            expect(site).toContain("'sha256-7slCn/usH14D/QjSBhHPAkSInIZY56XqT8LTtYE71U8='");
         });
 
         it('is site-scope only, since examples keeps unsafe-inline', () => {
             const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
-            expect(examples).not.toContain("'sha256-nsp/0430/yfuSNjsteV2fUwjHINMowl9qldFKy6PKJs='");
+            expect(examples).not.toContain("'sha256-UZ79CQlmQa9u4xp1a60kP2//w3o9IvBsC2tdqv57moc='");
             expect(examples).not.toContain("'sha256-7f34QP24yF/YC+G6zSHRCBZrBez6xFf6GbcGIXkZ4K0='");
-            expect(examples).not.toContain("'sha256-1biJs72+znqmnYHTG0Ps3v04No9BtvG8+3CNYyK5djo='");
+            expect(examples).not.toContain("'sha256-7slCn/usH14D/QjSBhHPAkSInIZY56XqT8LTtYE71U8='");
+        });
+    });
+
+    describe('Dash0 website monitoring (AG-18692)', () => {
+        it('allows the Dash0 ingress in connect-src in every environment', () => {
+            const envs = ['dev', 'staging', 'production'] as const;
+            for (let i = 0, len = envs.length; i < len; ++i) {
+                expect(getCspDirectives({ env: envs[i], scope: 'site' })['connect-src']).toContain(
+                    'https://ingress.eu-west-1.aws.dash0.com'
+                );
+            }
+        });
+
+        it('does not grant the ingress script-src (the SDK is served from our own origin)', () => {
+            expect(getCspDirectives({ env: 'production', scope: 'site' })['script-src']).not.toContain(
+                'https://ingress.eu-west-1.aws.dash0.com'
+            );
+        });
+
+        it('authorises the GTM start and stop tags by hash in the site scope', () => {
+            // Pinned so a change to the tag source in gtmTags is a deliberate one: the tags in the
+            // shared GTM container must then be updated to match, byte for byte.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-mEEBV2lFpiAmDNE5KUyh96GfbHxzY6fQyivqgFN8qok='"); // start
+            expect(site).toContain("'sha256-I3QGV+JbPLDPH/LSfCc18uFddKqpiYEYRrrBUdnCC2Q='"); // stop
         });
     });
 
@@ -408,7 +491,7 @@ describe('cspRules', () => {
             // only Astro's framework-injected hydration scripts remain, pinned by hash
             // (see ASTRO_HYDRATION_SCRIPT_HASHES). Regenerate these when bumping Astro.
             const scriptSrc = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
-            expect(scriptSrc).toContain("'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='"); // <astro-island> runtime
+            expect(scriptSrc).toContain("'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U='"); // <astro-island> runtime
             expect(scriptSrc).toContain("'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='"); // client:load
             expect(scriptSrc).toContain("'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='"); // client:idle
         });

@@ -149,7 +149,8 @@
         background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
     }
 
-    .ag-grid-container-wrapper {
+    > .ag-grid-pinned-left-cells > .ag-grid-container-wrapper,
+    > .ag-grid-pinned-right-cells > .ag-grid-container-wrapper {
         /* re-apply the transparent row color over the opaque background */
         background-color: inherit;
     }
@@ -476,6 +477,20 @@
     .ag-grid-scrolling-rows {
         min-height: var(--ag-auto-height-min-body-height);
     }
+}
+
+/* reset these to prevent inheritance by detail grids. */
+.ag-grid-viewport {
+    --ag-internal-header-rows-height: 0px;
+    --ag-internal-top-rows-height: 0px;
+    --ag-internal-bottom-rows-height: 0px;
+}
+
+.ag-grid-viewport.ag-layout-auto-height {
+    max-height: calc(
+        var(--ag-auto-height-max-body-height) + var(--ag-internal-header-rows-height) +
+            var(--ag-internal-top-rows-height) + var(--ag-internal-bottom-rows-height)
+    );
 }
 
 .ag-overlay-loading-wrapper,

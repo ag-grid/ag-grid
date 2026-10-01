@@ -203,7 +203,11 @@ export class MenuService extends BeanStub implements NamedBean {
 
     public isHeaderContextMenuEnabled(column?: AgColumn | AgProvidedColumnGroup): boolean {
         const colDef = column?.isColumn ? column.colDef : column?.getColGroupDef();
-        return !colDef?.suppressHeaderContextMenu && this.gos.get('columnMenu') === 'new';
+        return (
+            !!this.beans.enterpriseMenuFactory &&
+            !colDef?.suppressHeaderContextMenu &&
+            this.gos.get('columnMenu') === 'new'
+        );
     }
 
     public isHeaderMenuButtonAlwaysShowEnabled(): boolean {

@@ -18,7 +18,7 @@
     padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
     padding-bottom: $spacing-size-4;
     padding-left: $spacing-size-2;
-    line-height: var(--text-lh-sm);
+    line-height: var(--text-lh-ratio-base);
 
     #{$selector-darkmode} & {
         --link-color: var(--color-gray-400);

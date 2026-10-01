@@ -14,6 +14,7 @@ import {
     _createIconNoSpan,
     _getHeaderTooltipComponentDefinition,
     _getShouldDisplayTooltip,
+    _isHeaderNameChangeForGroup,
     _resolveHeaderTooltipValue,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
@@ -108,6 +109,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.refreshFilterClass();
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
+        this.addHeaderNameChangedListener();
         this.setupTooltip();
         this.addInIcon('filterActive');
     }
@@ -210,6 +212,28 @@ export class ToolPanelFilterGroupComp extends Component {
         if (!isProvidedColumnGroup(this.columnGroup)) {
             this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         }
+    }
+
+    private addHeaderNameChangedListener(): void {
+        const { columnGroup } = this;
+        const onRenamed = () => {
+            this.setGroupTitle();
+            this.tooltipFeature?.refreshTooltip();
+        };
+
+        if (!isProvidedColumnGroup(columnGroup)) {
+            this.addManagedListeners(columnGroup, { headerNameChanged: onRenamed });
+            return;
+        }
+
+        const groupId = columnGroup.getGroupId();
+        this.addManagedEventListeners({
+            columnHeaderNameChanged: (event) => {
+                if (_isHeaderNameChangeForGroup(event, groupId)) {
+                    onRenamed();
+                }
+            },
+        });
     }
 
     private refreshFilterClass(): void {

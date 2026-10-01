@@ -32,15 +32,22 @@ test.agExample(import.meta, () => {
             expect(await deepestRenderedIndex()).toBeGreaterThanOrEqual(DEEP_INDEX);
         }).toPass();
 
-        const renderedIndex = await page.evaluate((min) => {
-            const deep = Array.from(document.querySelectorAll('.ag-row'))
-                .map((r) => Number(r.getAttribute('row-index')))
-                .filter((idx) => Number.isFinite(idx) && idx >= min)
-                .sort((a, b) => a - b);
-            return deep[0];
-        }, DEEP_INDEX);
         // A block beyond the first was fetched on demand: the deep row carries its real id and data.
-        await expect(dataRow(renderedIndex).locator('[col-id="id"]')).toContainText(String(renderedIndex));
-        await expect(dataRow(renderedIndex).locator('[col-id="athlete"]')).not.toBeEmpty();
+        // The index is re-read per attempt: resolving a block re-renders the viewport, so the
+        // deepest index can be virtualised away before the assertion runs.
+        await expect(async () => {
+            const renderedIndex = await page.evaluate((min) => {
+                const deep = Array.from(document.querySelectorAll('.ag-row'))
+                    .map((r) => Number(r.getAttribute('row-index')))
+                    .filter((idx) => Number.isFinite(idx) && idx >= min)
+                    .sort((a, b) => a - b);
+                return deep[0];
+            }, DEEP_INDEX);
+            expect(renderedIndex, `no row at or past index ${DEEP_INDEX} is rendered`).toBeDefined();
+
+            const row = dataRow(renderedIndex);
+            await expect(row.locator('[col-id="id"]')).toContainText(String(renderedIndex), { timeout: 5000 });
+            await expect(row.locator('[col-id="athlete"]')).not.toBeEmpty({ timeout: 5000 });
+        }).toPass();
     });
 });

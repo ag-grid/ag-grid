@@ -189,13 +189,23 @@ describe('getImportMap', () => {
             expect(development['react-dom/']).toContain('&external=react&dev/');
         });
 
-        test.each(['angular', 'vue3'] as InternalFramework[])(
-            '%s resolves the same entries either way, having no separate development build',
-            (internalFramework) => {
-                expect(getImportMap({ internalFramework, isEnterprise: false, dev: DEVELOPMENT_FLAGS })).toEqual(
-                    getImportMap({ internalFramework, isEnterprise: false })
-                );
-            }
-        );
+        test('Vue resolves its production build by default and its development build on request', () => {
+            const version = getDefaultFrameworkVersion('vue3');
+            const production = getImportMap({ internalFramework: 'vue3', isEnterprise: false });
+            const development = getImportMap({
+                internalFramework: 'vue3',
+                isEnterprise: false,
+                dev: DEVELOPMENT_FLAGS,
+            });
+
+            expect(production['vue']).toBe(`https://cdn.jsdelivr.net/npm/vue@${version}/dist/vue.esm-browser.prod.js`);
+            expect(development['vue']).toBe(`https://cdn.jsdelivr.net/npm/vue@${version}/dist/vue.esm-browser.js`);
+        });
+
+        test('Angular resolves the same entries either way, having no separate development build', () => {
+            expect(getImportMap({ internalFramework: 'angular', isEnterprise: false, dev: DEVELOPMENT_FLAGS })).toEqual(
+                getImportMap({ internalFramework: 'angular', isEnterprise: false })
+            );
+        });
     });
 });

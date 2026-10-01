@@ -45,6 +45,8 @@ const onGridReady = (params: GridReadyEvent) => {
             :defaultColDef="defaultColDef"
             :rowData="rowData"
             @grid-ready="onGridReady"
-        />
+        >
+            <template #priceCell="params">{{ params.value }}</template>
+        </AgGridVue>
     </div>
 </template>

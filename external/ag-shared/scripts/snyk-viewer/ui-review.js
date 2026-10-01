@@ -40,8 +40,8 @@
             deps: new Set(),   // skipped top-level dep names
         };
 
-        // ── Section 3 view mode: 'by-dep' (default) | 'by-file' ──
-        let s3ViewMode = 'by-dep';
+        // ── Section 3 view mode: 'all' (default) | 'by-dep' | 'by-file' ──
+        let s3ViewMode = 'all';
 
         // ── Section 3 near-panel open state ──
         let nearPanelOpen = true;
@@ -185,6 +185,25 @@
         function sevBadge(vuln) {
             const s = sevClass(vuln);
             return `<span class="sev-badge ${s}">${s}</span>`;
+        }
+
+        function doneRowsHtml(count, rowsHtml) {
+            return `<details class="s3-done-rows">
+                <summary>&#x2713; <span class="s3-done-count">${count}</span> already in .snyk</summary>
+                ${rowsHtml}
+            </details>`;
+        }
+
+        // The top-level dep is what an ignore decision hinges on, so it leads the chain visually.
+        // textContent stays the plain path, which the add handlers read back.
+        function depPathHtml(depPath) {
+            const [topDep, ...rest] = depPath.split(' > ');
+            const restHtml = rest.length ? `<span class="path-chain-rest">${esc(' > ' + rest.join(' > '))}</span>` : '';
+            return `<span class="path-deppath"><span class="path-top-dep">${esc(topDep)}</span>${restHtml}</span>`;
+        }
+
+                function todoBadgeHtml(count) {
+            return `<span class="s3-todo-badge">${count} to do</span>`;
         }
 
         function vulnListHtml(items) {
@@ -337,6 +356,17 @@
                 `<option value="${esc(r)}">${esc(r)}</option>`
             ).join('');
 
+            // Pending paths first, then the add button; already-ignored paths are tucked into a
+            // collapsed list while there are pending paths to focus on.
+            function groupRowsHtml(paths, renderRow, addBtnHtml) {
+                const pending = paths.filter(p => !p.alreadyIgnored);
+                const doneHtml = paths.filter(p => p.alreadyIgnored).map(renderRow).join('');
+                if (!pending.length) return doneHtml;
+                const doneCount = paths.length - pending.length;
+                return pending.map(renderRow).join('') + addBtnHtml
+                    + (doneCount ? doneRowsHtml(doneCount, doneHtml) : '');
+            }
+
             // Near-ignored panel
             let nearHtml = '';
             if (nearItems.size) {
@@ -397,6 +427,9 @@
                 return (SEV_ORDER[sevClass(a.vuln)] ?? 4) - (SEV_ORDER[sevClass(b.vuln)] ?? 4);
             });
 
+            // Resolved cards are sorted last; a divider separates them from the to-do cards.
+            const firstResolvedIdx = vulnCards.findIndex(c => [...c.byDep.values()].every(dps => dps.every(p => p.alreadyIgnored)));
+
             const vulnCardsHtml = vulnCards.map(({ id, vuln, skipped, byDep }, vi) => {
                 // Top-level dep tags for skip-by-dep
                 const depTagsHtml = [...byDep.keys()].filter(Boolean).map(dep => {
@@ -416,6 +449,9 @@
                 const countBadge = `<span class="s3-path-count-badge">${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${depCount} dep${depCount !== 1 ? 's' : ''}${resolvedPart}</span>`;
 
                 const allPathsIgnored = [...byDep.values()].every(dps => dps.every(p => p.alreadyIgnored));
+                const doneGroupClass = allPathsIgnored ? ' s3-dep-group--done' : ' s3-dep-group--done s3-dep-group--collapsed';
+                const pendingFirst = entries => entries.sort(([, a], [, b]) =>
+                    a.every(p => p.alreadyIgnored) - b.every(p => p.alreadyIgnored));
 
                 // ── By-file view: build byFile from byDep ──
                 const byFile = new Map();
@@ -425,17 +461,17 @@
                         byFile.get(path.snykFile).push(path);
                     }
                 }
-                const fileGroupsHtml = [...byFile.entries()].map(([snykFile, fps]) => {
+                const fileGroupsHtml = pendingFirst([...byFile.entries()]).map(([snykFile, fps]) => {
                     const allFileIgnored = fps.every(p => p.alreadyIgnored);
                     const pendingCount = fps.filter(p => !p.alreadyIgnored).length;
                     const safeFileId = snykFile.replace(/[^a-z0-9]/gi, '-');
                     const groupId = `s3-file-${vi}-${safeFileId}`;
                     const reasonInputId = `file-reason-${vi}-${safeFileId}`;
-                    const rowsHtml = fps.map(path => {
+                    const renderRow = path => {
                         if (path.alreadyIgnored) {
                             return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(path.topLevelDep)}">
                                 <span class="path-already-ignored-check">&#x2713;</span>
-                                <span class="path-deppath">${esc(path.depPath)}</span>
+                                ${depPathHtml(path.depPath)}
                                 <input type="text" class="ignore-form-input already-ignored-reason-input"
                                     value="${esc(path.existingReason || '')}" placeholder="Reason&hellip;"
                                     data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">
@@ -448,10 +484,10 @@
                         return `<div class="path-checkbox-row${depSkipped ? ' dep-skipped' : ''}" data-top-dep="${esc(path.topLevelDep)}">
                             <input type="checkbox" class="path-cb"${depSkipped ? '' : ' checked'}
                                 data-card="${cardId}" data-vuln-idx="${vi}" data-vuln-id="${esc(id)}">
-                            <span class="path-deppath">${esc(path.depPath)}</span>
+                            ${depPathHtml(path.depPath)}
                         </div>`;
-                    }).join('');
-                    return `<div class="s3-dep-group${allFileIgnored ? ' s3-dep-group--done' : ''}" data-snyk-file="${esc(snykFile)}" id="${esc(groupId)}">
+                    };
+                    return `<div class="s3-dep-group${allFileIgnored ? doneGroupClass : ''}" data-snyk-file="${esc(snykFile)}" id="${esc(groupId)}">
                         <div class="s3-dep-group-header" data-action="toggle-dep-group" data-group-id="${esc(groupId)}">
                             <span class="s3-dep-group-chevron">&#x25BC;</span>
                             <span class="s3-dep-group-name">${esc(snykFile)}</span>
@@ -467,28 +503,27 @@
                                 ${presetOptionsHtml}
                             </select>
                         </div>` : ''}
-                        ${rowsHtml}
-                        ${!allFileIgnored ? `<button class="btn btn-sm btn-accent s3-dep-add-btn"
+                        ${groupRowsHtml(fps, renderRow, `<button class="btn btn-sm btn-accent s3-dep-add-btn"
                             data-action="add-file-group"
                             data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(id)}" data-group-id="${esc(groupId)}">
                             Add ${pendingCount} path${pendingCount !== 1 ? 's' : ''} to .snyk
-                        </button>` : ''}
+                        </button>`)}
                         </div>
                     </div>`;
                 }).join('');
 
-                const depGroupsHtml = [...byDep.entries()].map(([depName, dps]) => {
+                const depGroupsHtml = pendingFirst([...byDep.entries()]).map(([depName, dps]) => {
                     const allDepIgnored = dps.every(p => p.alreadyIgnored);
                     const pendingCount = dps.filter(p => !p.alreadyIgnored).length;
                     const safeDepId = depName.replace(/[^a-z0-9]/gi, '-');
                     const groupId = `s3-dep-${vi}-${safeDepId}`;
                     const reasonInputId = `dep-reason-${vi}-${safeDepId}`;
-                    const rowsHtml = dps.map(path => {
+                    const renderRow = path => {
                         if (path.alreadyIgnored) {
                             return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(depName)}">
                                 <span class="path-already-ignored-check">&#x2713;</span>
                                 <span class="s3-file-badge">${esc(path.snykFile)}</span>
-                                <span class="path-deppath">${esc(path.depPath)}</span>
+                                ${depPathHtml(path.depPath)}
                                 <input type="text" class="ignore-form-input already-ignored-reason-input"
                                     value="${esc(path.existingReason || '')}" placeholder="Reason&hellip;"
                                     data-snyk-file="${esc(path.snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">
@@ -501,10 +536,10 @@
                             <input type="checkbox" class="path-cb" checked
                                 data-card="${cardId}" data-vuln-idx="${vi}" data-vuln-id="${esc(id)}">
                             <span class="s3-file-badge">${esc(path.snykFile)}</span>
-                            <span class="path-deppath">${esc(path.depPath)}</span>
+                            ${depPathHtml(path.depPath)}
                         </div>`;
-                    }).join('');
-                    return `<div class="s3-dep-group${allDepIgnored ? ' s3-dep-group--done' : ''}" data-dep="${esc(depName)}" id="${esc(groupId)}">
+                    };
+                    return `<div class="s3-dep-group${allDepIgnored ? doneGroupClass : ''}" data-dep="${esc(depName)}" id="${esc(groupId)}">
                         <div class="s3-dep-group-header" data-action="toggle-dep-group" data-group-id="${esc(groupId)}">
                             <span class="s3-dep-group-chevron">&#x25BC;</span>
                             <span class="s3-dep-group-name">${npmLink(depName)}${esc(depName)}</span>
@@ -520,12 +555,11 @@
                                 ${presetOptionsHtml}
                             </select>
                         </div>` : ''}
-                        ${rowsHtml}
-                        ${!allDepIgnored ? `<button class="btn btn-sm btn-accent s3-dep-add-btn"
+                        ${groupRowsHtml(dps, renderRow, `<button class="btn btn-sm btn-accent s3-dep-add-btn"
                             data-action="add-dep-group"
                             data-dep="${esc(depName)}" data-vuln-id="${esc(id)}" data-group-id="${esc(groupId)}">
                             Add ${pendingCount} path${pendingCount !== 1 ? 's' : ''} to .snyk
-                        </button>` : ''}
+                        </button>`)}
                         </div>
                     </div>`;
                 }).join('');
@@ -536,12 +570,12 @@
                 const pendingAllCount = allPaths.filter(p => !p.alreadyIgnored).length;
                 const allGroupId = `s3-all-${vi}`;
                 const allReasonInputId = `all-reason-${vi}`;
-                const allRowsHtml = allPaths.map(path => {
+                const renderAllRow = path => {
                     if (path.alreadyIgnored) {
                         return `<div class="path-checkbox-row path-already-ignored" data-top-dep="${esc(path.topLevelDep)}">
                                 <span class="path-already-ignored-check">&#x2713;</span>
                                 <span class="s3-file-badge">${esc(path.snykFile)}</span>
-                                <span class="path-deppath">${esc(path.depPath)}</span>
+                                ${depPathHtml(path.depPath)}
                                 <input type="text" class="ignore-form-input already-ignored-reason-input"
                                     value="${esc(path.existingReason || '')}" placeholder="Reason&hellip;"
                                     data-snyk-file="${esc(path.snykFile)}" data-vuln-id="${esc(id)}" data-dep-path="${esc(path.depPath)}">
@@ -554,9 +588,9 @@
                             <input type="checkbox" class="path-cb" checked
                                 data-card="${cardId}" data-vuln-idx="${vi}" data-vuln-id="${esc(id)}">
                             <span class="s3-file-badge">${esc(path.snykFile)}</span>
-                            <span class="path-deppath">${esc(path.depPath)}</span>
+                            ${depPathHtml(path.depPath)}
                         </div>`;
-                }).join('');
+                };
                 const allGroupsHtml = `<div class="s3-dep-group${allAllIgnored ? ' s3-dep-group--done' : ''}" id="${esc(allGroupId)}">
                     <div class="s3-dep-group-header" data-action="toggle-dep-group" data-group-id="${esc(allGroupId)}">
                         <span class="s3-dep-group-chevron">&#x25BC;</span>
@@ -572,22 +606,23 @@
                                 ${presetOptionsHtml}
                             </select>
                         </div>` : ''}
-                        ${allRowsHtml}
-                        ${!allAllIgnored ? `<button class="btn btn-sm btn-accent s3-dep-add-btn"
+                        ${groupRowsHtml(allPaths, renderAllRow, `<button class="btn btn-sm btn-accent s3-dep-add-btn"
                             data-action="add-all-group"
                             data-vuln-id="${esc(id)}" data-group-id="${esc(allGroupId)}">
                             Add ${pendingAllCount} path${pendingAllCount !== 1 ? 's' : ''} to .snyk
-                        </button>` : ''}
+                        </button>`)}
                     </div>
                 </div>`;
 
-                return `<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}${allPathsIgnored ? ' s3-card-all-ignored' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}">
+                const dividerHtml = vi === firstResolvedIdx ? '<div class="s3-resolved-divider">&#x2713; Resolved</div>' : '';
+                return `${dividerHtml}<details class="rq-card s3-vuln-card${skipped ? ' s3-card-skipped' : ''}${allPathsIgnored ? ' s3-card-all-ignored' : ''}" id="s3-card-${vi}" data-vuln-id="${esc(id)}">
                     <summary class="rq-card-header s3-card-header">
                         <div class="s3-card-header-main">
                             <span class="s3-card-chevron">&#x25BC;</span>
                             ${sevBadge(vuln)}
                             <a class="vuln-id-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener">${esc(id)}</a>
                             <span class="rq-card-title">${esc(vuln.title || '')}</span>
+                            ${allPathsIgnored ? '' : todoBadgeHtml(totalPaths - resolvedPaths)}
                             ${countBadge}
                             ${allPathsIgnored ? '<span class="s3-all-resolved-badge">&#x2713; Resolved</span>' : ''}
                         </div>
@@ -819,7 +854,7 @@
                 if (!badge) return;
                 const totalPaths = card.querySelectorAll('.path-checkbox-row').length;
                 const resolvedPaths = card.querySelectorAll('.path-checkbox-row.path-already-ignored').length;
-                const depCount = card.querySelectorAll('.s3-dep-group').length;
+                const depCount = new Set([...card.querySelectorAll('.path-checkbox-row')].map(r => r.dataset.topDep)).size;
                 const resolvedPart = resolvedPaths > 0 ? ` &middot; <span class="s3-resolved-count">${resolvedPaths} resolved</span>` : '';
                 badge.innerHTML = `${totalPaths} path${totalPaths !== 1 ? 's' : ''} &middot; ${depCount} dep${depCount !== 1 ? 's' : ''}${resolvedPart}`;
                 const allResolved = totalPaths > 0 && resolvedPaths === totalPaths;
@@ -831,6 +866,42 @@
                     badge.insertAdjacentElement('afterend', checkBadge);
                 } else if (!allResolved && checkBadge) {
                     checkBadge.remove();
+                }
+                card.classList.toggle('s3-card-all-ignored', allResolved);
+                const todoBadge = card.querySelector('.s3-todo-badge');
+                if (allResolved) todoBadge?.remove();
+                else if (todoBadge) todoBadge.outerHTML = todoBadgeHtml(totalPaths - resolvedPaths);
+            }
+
+            // After a group's checked paths are added: keep the reason row and button while
+            // unchecked paths remain, otherwise mark the group done.
+            function finishGroupAdd(group, btn) {
+                const remaining = group.querySelectorAll('.path-checkbox-row:not(.path-already-ignored)').length;
+                if (remaining) {
+                    btn.disabled = false;
+                    btn.textContent = `Add ${remaining} path${remaining !== 1 ? 's' : ''} to .snyk`;
+                    // Move the just-added rows out of the to-do rows, into the already-in-.snyk list
+                    let doneList = group.querySelector('.s3-done-rows');
+                    if (!doneList) {
+                        btn.insertAdjacentHTML('afterend', doneRowsHtml(0, ''));
+                        doneList = group.querySelector('.s3-done-rows');
+                    }
+                    const added = [...group.querySelectorAll('.path-already-ignored')].filter(row => !doneList.contains(row));
+                    doneList.querySelector('summary').after(...added);
+                    doneList.querySelector('.s3-done-count').textContent = doneList.querySelectorAll('.path-already-ignored').length;
+                } else {
+                    group.querySelector('.s3-dep-group-reason-row')?.remove();
+                    group.classList.add('s3-dep-group--done', 's3-dep-group--collapsed');
+                    btn.remove();
+                }
+
+                const card = group.closest('.s3-vuln-card');
+                if (card) {
+                    updateCardCountBadge(card);
+                    if (remaining) return;
+                    const allGroupsDone = [...card.querySelectorAll('.s3-dep-group')].every(g => g.classList.contains('s3-dep-group--done'));
+                    if (allGroupsDone) card.open = false;
+                    card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             }
 
@@ -888,23 +959,13 @@
                     row.dataset.topDep = topDep;
                     row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
                         + `<span class="s3-file-badge">${esc(snykFile)}</span>`
-                        + `<span class="path-deppath">${esc(depPath)}</span>`
+                        + `${depPathHtml(depPath)}`
                         + `<input type="text" class="ignore-form-input already-ignored-reason-input" value="${esc(reason)}" placeholder="Reason&hellip;" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">`
                         + `<button class="btn btn-sm btn-outline" data-action="update-ignore-reason" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">Update</button>`
                         + `<span class="already-ignored-badge">Already in .snyk</span>`;
                 });
 
-                group.querySelector('.s3-dep-group-reason-row')?.remove();
-                group.classList.add('s3-dep-group--done', 's3-dep-group--collapsed');
-                btn.remove();
-
-                const card = group.closest('.s3-vuln-card');
-                if (card) {
-                    updateCardCountBadge(card);
-                    const allGroupsDone = [...card.querySelectorAll('.s3-dep-group')].every(g => g.classList.contains('s3-dep-group--done'));
-                    if (allGroupsDone) card.open = false;
-                    card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                finishGroupAdd(group, btn);
             }
 
             async function handleAddFileGroup(btn) {
@@ -956,23 +1017,13 @@
                     row.className = 'path-checkbox-row path-already-ignored';
                     row.dataset.topDep = topDep;
                     row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
-                        + `<span class="path-deppath">${esc(depPath)}</span>`
+                        + `${depPathHtml(depPath)}`
                         + `<input type="text" class="ignore-form-input already-ignored-reason-input" value="${esc(reason)}" placeholder="Reason&hellip;" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">`
                         + `<button class="btn btn-sm btn-outline" data-action="update-ignore-reason" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">Update</button>`
                         + `<span class="already-ignored-badge">Already in .snyk</span>`;
                 });
 
-                group.querySelector('.s3-dep-group-reason-row')?.remove();
-                group.classList.add('s3-dep-group--done', 's3-dep-group--collapsed');
-                btn.remove();
-
-                const card = group.closest('.s3-vuln-card');
-                if (card) {
-                    updateCardCountBadge(card);
-                    const allGroupsDone = [...card.querySelectorAll('.s3-dep-group')].every(g => g.classList.contains('s3-dep-group--done'));
-                    if (allGroupsDone) card.open = false;
-                    card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                finishGroupAdd(group, btn);
             }
 
             async function handleAddAllGroup(btn) {
@@ -1030,22 +1081,13 @@
                     row.dataset.topDep = topDep;
                     row.innerHTML = `<span class="path-already-ignored-check">&#x2713;</span>`
                         + `<span class="s3-file-badge">${esc(snykFile)}</span>`
-                        + `<span class="path-deppath">${esc(depPath)}</span>`
+                        + `${depPathHtml(depPath)}`
                         + `<input type="text" class="ignore-form-input already-ignored-reason-input" value="${esc(reason)}" placeholder="Reason&hellip;" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">`
                         + `<button class="btn btn-sm btn-outline" data-action="update-ignore-reason" data-snyk-file="${esc(snykFile)}" data-vuln-id="${esc(vulnId)}" data-dep-path="${esc(depPath)}">Update</button>`
                         + `<span class="already-ignored-badge">Already in .snyk</span>`;
                 });
 
-                group.querySelector('.s3-dep-group-reason-row')?.remove();
-                group.classList.add('s3-dep-group--done', 's3-dep-group--collapsed');
-                btn.remove();
-
-                const card = group.closest('.s3-vuln-card');
-                if (card) {
-                    updateCardCountBadge(card);
-                    card.open = false;
-                    card.querySelector('.s3-card-header')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                finishGroupAdd(group, btn);
             }
 
             // Preset dropdown — fills the dep-group reason input

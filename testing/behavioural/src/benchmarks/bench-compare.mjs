@@ -29,7 +29,8 @@
  *   --runs <n>        Re-runs per side (default: 1). Precision comes from each bench's own sampling
  *                     (tinybench rme), not from re-runs; raise this only to guard against a fluky
  *                     process, or lengthen a noisy bench instead. Runs interleave with --runs > 1.
- *   --filter <glob>   Filter benchmark files (forwarded to vitest bench)
+ *   --filter <glob>   Filter benchmark files (forwarded to vitest bench). Repeatable, and the run covers
+ *                     the union: `--filter scroll --filter column-update`.
  *   --output <path>   Output directory for results (default: ./tmp)
  *   --node            Run benchmarks in node/happy-dom instead of the default real Chromium (Playwright).
  *                     Both sides must use the same engine — `compare` refuses a node-vs-browser mix.
@@ -84,7 +85,7 @@ grid source (packages/) they measure. So the comparison can never drift on diffe
 
 Options:
   --runs <n>        Re-runs per side (default: 1; precision comes from each bench's sampling, not re-runs)
-  --filter <glob>   Filter benchmark files
+  --filter <glob>   Filter benchmark files (repeatable; the run covers the union)
   --output <path>   Results directory (default: ./tmp)
   --node            Run in node/happy-dom instead of the default real Chromium (both sides must match)
 
@@ -103,7 +104,7 @@ if (!['base', 'test', 'compare', 'all', 'backup'].includes(command)) {
 }
 
 let runs = 1;
-let filter = '';
+const filters = [];
 let outputDir = join(__dirname, 'tmp');
 let targetDir = '';
 let node = false;
@@ -130,7 +131,8 @@ for (let i = 1; i < args.length; i++) {
             break;
         }
         case '--filter':
-            filter = takeValue('--filter', args, i++);
+            // Repeatable: vitest takes several file-path substrings and runs their union.
+            filters.push(takeValue('--filter', args, i++));
             break;
         case '--output':
             outputDir = resolve(takeValue('--output', args, i++));
@@ -153,7 +155,11 @@ for (let i = 1; i < args.length; i++) {
 // A filtered run only covers some benchmarks, so its outputs are tagged `-partial` to keep them
 // distinct from a complete comparison's files (and from each other). Pass the same `--filter` to
 // the `compare` command to read the partial cohort back.
-const partialSuffix = filter ? '-partial' : '';
+const isPartial = filters.length > 0;
+const partialSuffix = isPartial ? '-partial' : '';
+
+/** Sorted so two cohorts given the same filters in a different order still compare equal. */
+const filter = filters.slice().sort().join(' ');
 
 // Benchmarks to exclude — these depend on DOM rendering and produce
 // unreliable results that vary between environments.
@@ -295,9 +301,7 @@ function runBenchmarks(projectDir, outputFile) {
     for (const ex of EXCLUDED_BENCH_FILES) {
         benchArgs.push('--exclude', `**/${ex}*`);
     }
-    if (filter) {
-        benchArgs.push(filter);
-    }
+    benchArgs.push(...filters);
 
     console.log(`  Dir: ${projectDir}`);
     console.log(`  Running: npx ${benchArgs.join(' ')}\n`);
@@ -402,7 +406,7 @@ function createSide(label, sideTargetDir, env) {
                     cohortId,
                     completed,
                     engine: node ? 'node' : 'browser',
-                    partial: !!filter,
+                    partial: isPartial,
                     filter,
                     excludedFiles: EXCLUDED_BENCH_FILES,
                     runsRequested: runs,
@@ -614,8 +618,8 @@ if (command === 'all') {
 
     console.log(`\n========== bench-compare compare ==========`);
     const compareArgs = ['--output', outputDir];
-    if (filter) {
-        compareArgs.push('--filter', filter);
+    for (const each of filters) {
+        compareArgs.push('--filter', each);
     }
     const result = spawnSync('node', [SELF, 'compare', ...compareArgs], { stdio: 'inherit' });
     process.exit(result.status ?? 1);

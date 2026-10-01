@@ -84,6 +84,10 @@ const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ColKind = 'user' | 'auto-group' | 'selection' | 'row-number' | 'hierarchy';
 
+/** A column's pinned section: `0` left, `1` centre, `2` right. Indexes the lane containers and sorts
+ *  the header, so renumbering reorders rendered DOM. Also carried by `AgColumnGroup`. */
+export type ColumnLane = 0 | 1 | 2;
+
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
 //
@@ -134,6 +138,8 @@ export class AgColumn<TValue = any>
     private userSized: boolean = false;
     public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
+    /** `pinned` resolved to a lane; written wherever `pinned` is. */
+    public pinnedLane: ColumnLane = 1;
     public left: number | null = null;
     public oldLeft: number | null = null;
     /** User intent: should this column be shown if display rules allow it. */
@@ -162,6 +168,8 @@ export class AgColumn<TValue = any>
     public buildToken: number = 0;
     /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
     public allColsIndex: number = -1;
+    /** Slot in a row's colSpans cache, stamped with `allColsIndex`; `-1` without `colDef.colSpan` or not displayed. */
+    public colSpanIndex: number = -1;
     /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
      *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
     public inColsList: boolean = false;
@@ -230,6 +238,7 @@ export class AgColumn<TValue = any>
     public override destroy() {
         super.destroy();
         this.allColsIndex = -1;
+        this.colSpanIndex = -1;
         this.displayed = false;
         this.colsListIndex = -1;
         this.inColsList = false;
@@ -271,7 +280,8 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const colModel = this.beans.colModel;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
@@ -282,7 +292,12 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             this.beans.rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
+        const colDefChangedInBuild = colModel.colDefChangedInBuild;
+        if (colDefChangedInBuild) {
+            colDefChangedInBuild.push(this);
+        } else {
+            this.dispatchColEvent('colDefChanged', source);
+        }
         this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
@@ -610,13 +625,16 @@ export class AgColumn<TValue = any>
         return this.left! + this.actualWidth;
     }
 
-    public setLeft(left: number | null, source: ColumnEventType) {
+    /** @returns whether the left moved */
+    public setLeft(left: number | null, source: ColumnEventType): boolean {
         const oldLeft = this.left;
         this.oldLeft = oldLeft;
-        if (oldLeft !== left) {
-            this.left = left;
-            this.dispatchColEvent('leftChanged', source);
+        if (oldLeft === left) {
+            return false;
         }
+        this.left = left;
+        this.dispatchColEvent('leftChanged', source);
+        return true;
     }
 
     public isFilterActive(): boolean {
@@ -779,8 +797,7 @@ export class AgColumn<TValue = any>
             return 1;
         }
         const params: ColSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const colSpan = colSpanFn(params);
-        return colSpan < 1 ? 1 : colSpan; // colSpan must be number equal to or greater than 1
+        return toCellSpan(colSpanFn(params));
     }
 
     public getRowSpan(rowNode: IRowNode): number {
@@ -789,8 +806,7 @@ export class AgColumn<TValue = any>
             return 1;
         }
         const params: RowSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const rowSpanValue = rowSpan(params);
-        return rowSpanValue < 1 ? 1 : rowSpanValue; // rowSpan must be number equal to or greater than 1
+        return toCellSpan(rowSpan(params));
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
@@ -907,6 +923,9 @@ export class AgColumn<TValue = any>
         this.colEventSvc?.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
     }
 }
+
+/** Whole cells, at least one; NaN counts as one. */
+const toCellSpan = (span: number): number => (span >= 2 ? Math.floor(span) : 1);
 
 /** Convert input into a SortDef: a valid SortDef passes through, otherwise direction and type are normalised. */
 export const getSortDefFromInput = (input?: unknown): SortDef => {
@@ -1036,4 +1055,12 @@ export const _getDisplaySortForColumn = (column: AgColumn, beans: BeanCollection
         isDescending: direction === 'desc',
         direction,
     };
+};
+
+/** The one derivation of a lane from a pinned value. Called only where `pinned` is written. */
+export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
+    if (pinned === 'right') {
+        return 2;
+    }
+    return pinned === 'left' || pinned === true ? 0 : 1;
 };

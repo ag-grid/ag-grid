@@ -53,7 +53,7 @@ export interface SizeColumnsToContentColumnLimits extends WidthLimits {
 
 /** Params for the `shouldAutoSizeColumns` callback of a continuous auto-size strategy. */
 export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** What changed in the grid to make it want to re-size columns. */
+    /** The grid change that triggered this re-size. */
     reason: 'dataChanged' | 'columnsChanged' | 'viewportChanged' | 'gridSizeChanged';
     /**
      * All eligible columns — those the user has not resized, and not otherwise excluded.
@@ -66,23 +66,25 @@ export interface AutoSizeColumnsTriggerParams<TData = any, TContext = any> exten
 export interface ContinuousAutoSizeOptions<TData = any, TContext = any> {
     /**
      * If `true`, the strategy is re-applied whenever the grid changes in a way that affects column widths,
-     * not only on first render. Every type responds to displayed-column changes and to grid resizes. Beyond
-     * that, `fitCellContents` responds to any row data change and to viewport changes, because both change
-     * what there is to measure, while the width-distribution strategies respond to new data, a page change
-     * and a scrollbar appearing or disappearing — the changes to the width there is to share out.
-     * Viewport and grid-size changes are debounced, so scrolling or resizing the grid re-sizes once the
-     * gesture settles rather than once per frame.
+     * not only on first render. Every type responds to displayed-column changes and to grid resizes.
+     * `fitCellContents` also responds to any row data change, while the width-distribution strategies
+     * respond to new data, a page change and a scrollbar appearing or disappearing. Grid resizes are
+     * debounced, so the columns settle once the gesture stops.
      *
-     * A column the user has resized themselves is left alone and treated as fixed width — a header drag, a
-     * keyboard resize or a double-click auto-size — as is one given an explicit width through
-     * `applyColumnState`. `colDef.width` is only a starting width and stays eligible; to hold a column at a
-     * fixed width, set `suppressAutoSize` or `suppressSizeToFit` on it.
+     * Scrolling is excluded by default, unless `shouldAutoSizeColumns` allows the `'viewportChanged'` reason.
+     *
+     * Columns the user has sized themselves are left alone and treated as fixed width — a header drag, a
+     * keyboard resize, a double-click auto-size, or an explicit width through `applyColumnState`.
+     * `colDef.width` is only a starting width and stays eligible; to hold a column at a fixed width, set
+     * `suppressAutoSize` or `suppressSizeToFit` on it.
      * @default false
      */
     continuous?: boolean;
     /**
      * Called before each continuous re-size, with the columns eligible to be re-sized and the reason the
      * grid wants to re-size them. Return `false` to skip this one. Requires `continuous`.
+     *
+     * Return `true` for `'viewportChanged'` to opt `fitCellContents` into scroll-driven re-sizing.
      */
     shouldAutoSizeColumns?: (params: AutoSizeColumnsTriggerParams<TData, TContext>) => boolean;
 }

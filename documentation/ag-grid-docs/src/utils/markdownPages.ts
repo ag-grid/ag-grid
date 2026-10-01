@@ -1,7 +1,7 @@
 // Type-only import: erased at runtime, so this module stays loadable under plain node (the
 // htaccess test harness runs it through `tsx`, where the shared subrepo resolves as CJS).
 import type { MarkdownPageGroup } from '../../../../external/ag-website-shared/src/markdown-pages/markdownPageRegistry';
-import { FRAMEWORKS } from '../constants';
+import { FRAMEWORKS, FRAMEWORK_LANDING_HUBS } from '../constants';
 
 /**
  * SE-80: every AG Grid page that ships a markdown (`.md`) twin, declared once.
@@ -28,6 +28,10 @@ export const GRID_MARKDOWN_PAGE_GROUPS: MarkdownPageGroup[] = [
         pattern: `(?:${FRAMEWORKS.join('|')})-data-grid/[^/.]+`,
     },
     {
+        describes: 'The framework landing hubs at the bare framework roots (the docs group needs a subpage).',
+        pattern: `(?:${FRAMEWORK_LANDING_HUBS.join('|')})-data-grid`,
+    },
+    {
         describes: 'Top-level content pages.',
         pattern: 'about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new',
     },
@@ -51,7 +55,7 @@ export const GRID_MARKDOWN_PAGE_GROUPS: MarkdownPageGroup[] = [
         // /privacy/your-choice is deliberately absent: it is a post-submission confirmation page,
         // disallowed in robots.txt and excluded from the sitemap, like the /contact result pages.
         describes: 'Legal and policy pages.',
-        pattern: 'cookies|modern-slavery|privacy',
+        pattern: 'cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use',
     },
     {
         describes: 'Standalone demo applications.',

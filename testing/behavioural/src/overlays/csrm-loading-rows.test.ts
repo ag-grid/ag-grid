@@ -31,10 +31,73 @@ describe('CSRM loading rows', () => {
         return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
     }
 
+    test.each([false, undefined])('loadingRows does not start loading when loading=%s', async (loading) => {
+        const rowData = [{ athlete: 'Michael Phelps', country: 'United States' }];
+        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, loading, loadingRows: true });
+
+        api.setGridOption('loadingRows', { rowCount: 4 });
+        expect(api.getDisplayedRowCount()).toBe(1);
+        expect(api.getDisplayedRowAtIndex(0)?.data).toBe(rowData[0]);
+        expect(hasLoadingOverlay()).toBe(false);
+
+        api.setGridOption('loading', true);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(4));
+        expect(api.getDisplayedRowAtIndex(0)?.stub).toBe(true);
+        expect(hasLoadingOverlay()).toBe(false);
+
+        api.setGridOption('loading', false);
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.data).toBe(rowData[0]));
+        api.setGridOption('loading', true);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(4));
+        expect(api.getDisplayedRowAtIndex(0)?.stub).toBe(true);
+    });
+
+    test('loadingRows preserves the automatic initial overlay until loading is explicitly enabled', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs, loadingRows: true });
+
+        expect(hasLoadingOverlay()).toBe(true);
+        expect(api.getDisplayedRowCount()).toBe(0);
+        api.setGridOption('loading', true);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(10));
+        expect(hasLoadingOverlay()).toBe(false);
+    });
+
+    test('loadingRows switches the overlay before asynchronous columns start the row model', async () => {
+        const api = gridsManager.createGrid('myGrid', { loading: true });
+        expect(hasLoadingOverlay()).toBe(true);
+
+        api.setGridOption('loadingRows', { rowCount: 3 });
+        expect(hasLoadingOverlay()).toBe(false);
+        api.setGridOption('loadingRows', false);
+        expect(hasLoadingOverlay()).toBe(true);
+        api.setGridOption('loadingRows', true);
+        expect(hasLoadingOverlay()).toBe(false);
+
+        api.setGridOption('columnDefs', columnDefs);
+        await waitFor(() => expect(document.querySelectorAll('.ag-row-loading')).toHaveLength(10));
+    });
+
+    test('batched loading and loadingRows updates apply together', async () => {
+        const rowData = [{ athlete: 'Usain Bolt', country: 'Jamaica' }];
+        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, loading: false });
+
+        api.updateGridOptions({ loading: true, loadingRows: { rowCount: 3 } });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
+        expect(api.getDisplayedRowAtIndex(0)?.stub).toBe(true);
+        expect(hasLoadingOverlay()).toBe(false);
+
+        api.updateGridOptions({ loading: false, loadingRows: { rowCount: 5 } });
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.data).toBe(rowData[0]));
+        expect(hasLoadingOverlay()).toBe(false);
+        api.setGridOption('loading', true);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(5));
+    });
+
     test('loading rows display ten skeleton rows instead of the loading overlay by default', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            loading: { type: 'rows' },
+            loading: true,
+            loadingRows: true,
         });
 
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(10));
@@ -53,7 +116,8 @@ describe('CSRM loading rows', () => {
     test('rowCount configures the number of loading rows', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            loading: { type: 'rows', rowCount: 3 },
+            loading: true,
+            loadingRows: { rowCount: 3 },
         });
 
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
@@ -69,7 +133,8 @@ describe('CSRM loading rows', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
-            loading: { type: 'rows', rowCount: 3 },
+            loading: true,
+            loadingRows: { rowCount: 3 },
         });
 
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
@@ -88,15 +153,27 @@ describe('CSRM loading rows', () => {
     test('loading options update the row count and switch to the overlay', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            loading: { type: 'rows', rowCount: 2 },
+            loading: true,
+            loadingRows: { rowCount: 2 },
         });
 
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
 
-        api.setGridOption('loading', { type: 'rows', rowCount: 4 });
+        api.setGridOption('loadingRows', { rowCount: 4 });
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(4));
 
-        api.setGridOption('loading', { type: 'overlay' });
+        api.setGridOption('loadingRows', false);
+        await waitFor(() => expect(hasLoadingOverlay()).toBe(true));
+        expect(api.getDisplayedRowCount()).toBe(0);
+
+        api.setGridOption('loadingRows', true);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(10));
+        expect(hasLoadingOverlay()).toBe(false);
+        api.setGridOption('loadingRows', {});
+        expect(api.getDisplayedRowCount()).toBe(10);
+        api.setGridOption('loadingRows', { rowCount: 1 });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+        api.setGridOption('loadingRows', undefined);
         await waitFor(() => expect(hasLoadingOverlay()).toBe(true));
         expect(api.getDisplayedRowCount()).toBe(0);
     });
@@ -111,7 +188,8 @@ describe('CSRM loading rows', () => {
     test('loading rows use the configured loading cell renderer', async () => {
         gridsManager.createGrid('myGrid', {
             columnDefs,
-            loading: { type: 'rows', rowCount: 2 },
+            loading: true,
+            loadingRows: { rowCount: 2 },
             defaultColDef: {
                 loadingCellRenderer: () => 'Waiting for data',
             },
@@ -131,7 +209,8 @@ describe('CSRM loading rows', () => {
         let firstDataRenderedCount = 0;
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            loading: { type: 'rows' },
+            loading: true,
+            loadingRows: true,
             getRowHeight: (params) => {
                 rowHeightData.push(params.data);
                 return 30;
@@ -204,7 +283,8 @@ describe('CSRM loading rows', () => {
             },
         ];
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows', rowCount: 2 },
+            loading: true,
+            loadingRows: { rowCount: 2 },
             columnDefs: makeCallbackColumnDefs(),
             getRowStyle: (params) => {
                 if (!params.data) {
@@ -260,7 +340,8 @@ describe('CSRM loading rows', () => {
     test('loading rows cannot be converted into full-width application rows', async () => {
         let fullWidthRendererCalls = 0;
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows', rowCount: 2 },
+            loading: true,
+            loadingRows: { rowCount: 2 },
             columnDefs,
             isFullWidthRow: (params) => params.rowNode.data == null,
             fullWidthCellRenderer: () => {
@@ -276,7 +357,8 @@ describe('CSRM loading rows', () => {
 
     test('the first rowData update uses the initial-data path and fires rowCountReady', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows' },
+            loading: true,
+            loadingRows: true,
             columnDefs,
             getRowId: ({ data }) => data.id,
         });
@@ -292,7 +374,8 @@ describe('CSRM loading rows', () => {
 
     test('loading rows use the configured numeric row height', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows', rowCount: 2 },
+            loading: true,
+            loadingRows: { rowCount: 2 },
             columnDefs,
             rowHeight: 60,
         });
@@ -305,7 +388,8 @@ describe('CSRM loading rows', () => {
 
     test('loading rows wait for asynchronous column definitions without showing the no-rows overlay', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows' },
+            loading: true,
+            loadingRows: true,
         });
 
         expect(isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'))).toBe(false);
@@ -320,7 +404,8 @@ describe('CSRM loading rows', () => {
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const api = gridsManager.createGrid('myGrid', {
-                loading: { type: 'rows', rowCount: 2 },
+                loading: true,
+                loadingRows: { rowCount: 2 },
                 columnDefs,
             });
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
@@ -344,7 +429,8 @@ describe('CSRM loading rows', () => {
     test('auto-height cells do not measure loading rows or call getRowHeight with missing data', async () => {
         let getRowHeightCallsWithMissingData = 0;
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows', rowCount: 2 },
+            loading: true,
+            loadingRows: { rowCount: 2 },
             columnDefs: [{ field: 'athlete', autoHeight: true }],
             getRowHeight: (params) => {
                 if (!params.data) {
@@ -365,7 +451,8 @@ describe('CSRM loading rows', () => {
 
     test('row spanning does not merge or evaluate loading rows', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            loading: { type: 'rows', rowCount: 3 },
+            loading: true,
+            loadingRows: { rowCount: 3 },
             enableCellSpan: true,
             columnDefs: [{ field: 'athlete', spanRows: true }],
         });

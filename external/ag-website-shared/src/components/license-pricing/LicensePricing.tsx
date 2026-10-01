@@ -33,6 +33,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     const licensesOuterRef = useRef(null);
     const stickyBarAnchorRef = useRef(null);
+    const fullWidthBarRef = useRef<HTMLDivElement>(null);
     const framework = useFrameworkFromStore();
 
     const gridLicenseData = DEV_LICENSE_DATA.filter(
@@ -68,6 +69,37 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    // Pin the sticky summary bar directly below the site header. The header is sticky and
+    // paints above the bar, and its height is not a constant: below the header's
+    // $docs-search-inline threshold the search box wraps onto a second row and the header
+    // roughly doubles. That threshold is a container query on the header's own width, so
+    // CSS here cannot mirror it without also guessing the scrollbar's width — measure the
+    // rendered header instead.
+    useEffect(() => {
+        const header = document.querySelector<HTMLElement>('.site-header');
+        const bar = fullWidthBarRef.current;
+        if (!header || !bar) {
+            return;
+        }
+
+        const updateHeaderOffset = () => {
+            // A header that isn't sticky scrolls away with the page, so the bar pins to the top.
+            const isSticky = window.getComputedStyle(header).position === 'sticky';
+            const offset = isSticky ? header.getBoundingClientRect().height : 0;
+            bar.style.setProperty('--site-header-offset', `${offset}px`);
+        };
+
+        // Observing the header covers both ways the offset can change: its height changes
+        // when the search box wraps, and its width changes on any resize that could flip it
+        // in or out of the sticky state. The observer also fires once on observe().
+        const resizeObserver = new ResizeObserver(updateHeaderOffset);
+        resizeObserver.observe(header);
+
+        return () => {
+            resizeObserver.disconnect();
         };
     }, []);
 
@@ -110,7 +142,10 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 </div>
             </div>
 
-            <div className={classnames(styles.fullWidthBar, { [styles.active]: showFullWidthBar })}>
+            <div
+                ref={fullWidthBarRef}
+                className={classnames(styles.fullWidthBar, { [styles.active]: showFullWidthBar })}
+            >
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                     {licenseData.map((license, i) => {
                         const isCommunity = license.id === 'community';

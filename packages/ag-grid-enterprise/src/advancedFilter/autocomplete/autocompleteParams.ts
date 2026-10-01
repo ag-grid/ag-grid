@@ -12,13 +12,16 @@ export interface AutocompleteListParams {
     searchString?: string;
     entries?: AutocompleteEntry[];
     rowComponentCreator?: AutocompleteRowComponentCreator;
+    /** Suggest the first match rather than the closest one, the list being in an order of its own. */
+    suggestFirstMatch?: boolean;
+    /** Whether the entries are still being fetched, so the list says so rather than reading as empty. */
+    loading?: boolean;
 }
 
 export interface AutocompleteEntry {
     key: string;
     displayValue?: string;
-    /** Immediate children, where the entry groups others; absent on an entry that stands for itself. */
-    childCount?: number;
+    searchValue?: string;
 }
 
 /** How a list renders one row; returning nothing leaves the default row in place. */

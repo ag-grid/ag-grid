@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_VN = {
+export const AG_GRID_LOCALE_VI_VN = {
     // Set Filter
     selectAll: '(Chọn Tất Cả)',
     selectAllSearchResults: '(Chọn Tất Cả Các Kết Quả Tìm Kiếm)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_VN = {
     clearFilter: 'Xóa',
     cancelFilter: 'Hủy',
     cancelColumnToolPanel: 'Hủy',
+    resetColumnToolPanel: 'Đặt lại',
 
     // Filter Titles
     textFilter: 'Bộ lọc văn bản',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_VN = {
     advancedFilterValidationMissingCondition: 'Thiếu điều kiện',
     advancedFilterValidationJoinOperatorMismatch: 'Các toán tử kết nối trong một điều kiện phải giống nhau',
     advancedFilterValidationInvalidJoinOperator: 'Không tìm thấy toán tử kết nối',
+    advancedFilterValidationMissingListStartBracket: 'Thiếu dấu ngoặc vuông mở',
+    advancedFilterValidationMissingListEndBracket: 'Thiếu dấu ngoặc vuông đóng',
     advancedFilterValidationMissingEndBracket: 'Thiếu dấu ngoặc kết thúc',
     advancedFilterValidationExtraEndBracket: 'Quá nhiều dấu ngoặc kết thúc',
     advancedFilterValidationMessage: 'Biểu thức có lỗi. ${variable} - ${variable}.',
@@ -918,3 +921,6 @@ export const AG_GRID_LOCALE_VN = {
     deleteNote: 'Xóa ghi chú',
     notePlaceholder: 'Thêm ghi chú...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_VI_VN` instead. */
+export const AG_GRID_LOCALE_VN = AG_GRID_LOCALE_VI_VN;

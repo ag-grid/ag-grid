@@ -53,6 +53,8 @@ For **each** example, read:
 
 If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), read the corresponding file from `documentation/ag-grid-docs/public/example-assets/` to understand the data shape and calculate expected values.
 
+**Randomised data is still deterministic — assert explicit values.** An example that builds its rows with `Math.random()` produces the *same* rows on every run and in every framework: the example generator rewrites every `Math.random()` call to the seeded `window.agRandom()` (`plugins/ag-grid-generate-example-files/src/executors/generate/executor.ts`), which the example runner seeds with a fixed seed before the example's own script runs (`documentation/ag-grid-docs/public/example-runner/example-runner.js`). Treat `Math.random()` in an example exactly like a hard-coded dataset. See Pitfall 13.
+
 ### 1e. Check for existing tests
 
 For each example, check if `example.spec.ts` already exists and whether it is:
@@ -147,6 +149,7 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 - Assertions cover the behaviours described in the documentation for each example.
 - Every distinct behaviour the example's doc prose calls out has its own test block — not just one interaction (expand/sort/filter/toggle each behaviour the example demonstrates), and never value-only where an interaction is possible (see Pitfall 12).
 - No fixed `page.waitForTimeout(...)` is used to wait for grid state — waits are deterministic (see "Writing Deterministic (Non-Flaky) Tests").
+- Starting values are asserted explicitly, never read back off the page to dodge "randomised" data — example data is seeded and stable (see Pitfall 13).
 - Tests follow existing conventions (see nearby `example.spec.ts` files for style).
 
 ---
@@ -234,5 +237,6 @@ Read the relevant entries from `reference/pitfalls-and-patterns.md` based on wha
 | 10 | Retrying assertions — `.toPass()`, not `expect.poll()` | reads console messages / computed values off the page |
 | 11 | Sorting rows — `expectRowIdAtIndex`, not a row's row-index; & the double-click trap | asserts sort ordering via clicks |
 | 12 | Prefer value + interaction, not value alone | supports any interaction (nearly all) |
+| 13 | Randomised data is seeded — assert explicit values | generates any of its data with `Math.random()` |
 
 **Worked patterns** (also in the reference file): row grouping with aggregation & totals; aggregation with sort + expand interactions; tree data with filler nodes.

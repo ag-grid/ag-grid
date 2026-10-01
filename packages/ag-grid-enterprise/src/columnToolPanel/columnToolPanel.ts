@@ -12,7 +12,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, _addGridCommonParams } from 'ag-grid-community';
+import { Component, FilterButtonComp, _addGridCommonParams, _resetColumnState } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -41,8 +41,16 @@ interface GridStateSnapshot {
 
 const DEFERRED_TOOL_PANEL_CLASS = 'ag-column-panel-deferred';
 
+const BUTTON_LOCALE: Record<ColumnToolPanelAction, [key: string, defaultValue: string]> = {
+    apply: ['applyColumnToolPanel', 'Apply'],
+    cancel: ['cancelColumnToolPanel', 'Cancel'],
+    reset: ['resetColumnToolPanel', 'Reset'],
+};
+
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private initialised = false;
+    /** The params object state was last applied from, to tell a refresh apart from a restore. */
+    private appliedParams: ToolPanelColumnCompParams | undefined;
     private params: ToolPanelColumnCompParams;
 
     private readonly childDestroyFuncs: (() => void)[] = [];
@@ -53,7 +61,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private valuesDropZonePanel?: ValuesDropZonePanel;
     private pivotDropZonePanel?: PivotDropZonePanel;
     private colToolPanelFactory?: ColumnToolPanelFactory;
-    private deferredButtonsComp?: FilterButtonComp;
+    private buttonsComp?: FilterButtonComp;
     private isDeferModeEnabled = false;
     private isCommitting = false;
     private lastKnownGridState?: GridStateSnapshot;
@@ -93,6 +101,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             ...params,
         };
         this.params = mergedParams;
+        this.appliedParams = params;
 
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
@@ -165,39 +174,33 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             );
         }
 
-        if (mergedParams.buttons) {
-            if (!mergedParams.buttons.includes('apply')) {
+        const buttons = mergedParams.buttons;
+        if (buttons?.length) {
+            if (buttons.includes('cancel') && !this.isDeferModeEnabled) {
                 this.beans.log.warn(298);
             }
-            if (mergedParams.buttons.length) {
-                this.initDeferredButtons(mergedParams.buttons);
-            }
+            this.initButtons(buttons);
         }
 
         this.initialised = true;
     }
 
-    private initDeferredButtons(buttons: ColumnToolPanelAction[]): void {
+    private initButtons(buttons: ColumnToolPanelAction[]): void {
         const buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-column-panel-buttons' }));
-        this.deferredButtonsComp = buttonComp;
+        this.buttonsComp = buttonComp;
         this.childDestroyFuncs.push(() => {
-            this.deferredButtonsComp = this.destroyBean(this.deferredButtonsComp);
+            this.buttonsComp = this.destroyBean(this.buttonsComp);
         });
 
         const translate = this.getLocaleTextFunc();
 
-        const buttonDefs = buttons.map((type) => ({
-            type,
-            label: translate(
-                type === 'apply' ? 'applyColumnToolPanel' : 'cancelColumnToolPanel',
-                type === 'apply' ? 'Apply' : 'Cancel'
-            ),
-        }));
+        const buttonDefs = buttons.map((type) => ({ type, label: translate(...BUTTON_LOCALE[type]) }));
         buttonComp.updateButtons(buttonDefs);
         buttonComp.updateValidity(false);
         buttonComp.addManagedListeners(buttonComp, {
             apply: this.onDeferredApply,
             cancel: this.onDeferredCancel,
+            reset: this.onReset,
         });
 
         this.appendChild(buttonComp);
@@ -210,22 +213,29 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         } finally {
             this.isCommitting = false;
         }
-        this.deferredButtonsComp?.updateValidity(false);
+        this.buttonsComp?.updateValidity(false);
         this.lastKnownGridState = this.captureGridState();
     };
 
     private readonly onDeferredCancel = (): void => {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
-        this.deferredButtonsComp?.updateValidity(false);
+        this.buttonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
         this.lastKnownGridState = this.captureGridState();
     };
 
+    /** Unlike Cancel, Reset applies immediately, including when changes are deferred. */
+    private readonly onReset = (): void => {
+        _resetColumnState(this.beans, 'toolPanelUi');
+        // Any pending changes predate the reset, so they are discarded rather than left to apply over it.
+        this.onDeferredCancel();
+    };
+
     private readonly onPivotModePanelValueChanged = (): void => {
         this.refreshToolPanelLayouts();
         this.setLastVisible();
-        this.deferredButtonsComp?.updateValidity(
+        this.buttonsComp?.updateValidity(
             this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)
         );
     };
@@ -261,7 +271,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private resetDeferredState(): void {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);
-        this.deferredButtonsComp?.updateValidity(false);
+        this.buttonsComp?.updateValidity(false);
         this.refreshToolPanelLayouts();
         this.pivotModePanel?.refreshEditStrategy();
     }
@@ -306,7 +316,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.refreshToolPanelLayouts();
         this.setLastVisible();
         this.pivotModePanel?.refreshEditStrategy();
-        this.deferredButtonsComp?.updateValidity(
+        this.buttonsComp?.updateValidity(
             this.beans.columnStateUpdateStrategy.hasPendingChanges(this.isDeferModeEnabled)
         );
     }
@@ -458,8 +468,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public refresh(params: ToolPanelColumnCompParams): boolean {
+        // A restore hands over fresh params; `api.refreshToolPanel()` re-presents the applied ones, so
+        // the live expansion must survive it. The state object can be the same on repeat restores.
+        const isRestoringState = !!params.initialState && params !== this.appliedParams;
+        const stateToApply = isRestoringState ? params.initialState : this.getState();
+
         this.destroyChildren();
-        this.init(params);
+        this.init({ ...params, initialState: stateToApply });
+        this.appliedParams = params;
         return true;
     }
 

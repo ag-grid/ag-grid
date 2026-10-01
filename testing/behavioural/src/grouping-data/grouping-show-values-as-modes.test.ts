@@ -1,4 +1,5 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, IRowNode, ShowValuesAsModeDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ExternalFilterModule } from 'ag-grid-community';
@@ -310,6 +311,42 @@ describe('showValuesAs built-in modes', () => {
             └── LEAF id:2 a:"#N/A" b:"x2:14"
         `);
     });
+
+    // A custom mode needs no defaultAggFunc, so a grid can have an active transform and no aggregation
+    // at all. Such a transform still moves with row order, so the refresh sweep must reach it even
+    // though nothing has produced aggData.
+    test('an order-dependent custom mode follows a sort on a flat grid with no aggregation', async () => {
+        const api = gridsManager.createGrid('sva-custom-no-agg', {
+            columnDefs: [
+                { field: 'name' },
+                {
+                    field: 'amount',
+                    showValuesAs: 'rank',
+                    showValuesAsDef: { modes: { rank: { transform: (p) => (p.node?.rowIndex ?? -1) + 1 } } },
+                },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: [
+                { id: 'a', name: 'a', amount: 10 },
+                { id: 'b', name: 'b', amount: 90 },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        const column = (colId: string) =>
+            [...document.querySelectorAll(`#sva-custom-no-agg [col-id="${colId}"][role="gridcell"]`)].map((cell) =>
+                cell.textContent?.trim()
+            );
+
+        expect(column('name')).toEqual(['a', 'b']);
+        expect(column('amount')).toEqual(['1', '2']);
+
+        api.applyColumnState({ state: [{ colId: 'amount', sort: 'desc' }] });
+        await waitFor(() => expect(column('name')).toEqual(['b', 'a']));
+
+        // The ranks belong to the positions, not to the rows that moved into them.
+        expect(column('amount')).toEqual(['1', '2']);
+    });
 });
 
 describe('showValuesAs bigint support', () => {
@@ -499,5 +536,35 @@ describe('showValuesAs interaction with filtering', () => {
         // Grand total = all rows (30 + 10 + 60 = 100).
         expect(transformed(allRows, '1', 'amount')).toBeCloseTo(0.3);
         expect(transformed(allRows, '3', 'amount')).toBeCloseTo(0.6);
+    });
+});
+
+/**
+ * The transform reads aggData, which only AggregationStage writes, so registering ShowValuesAsModule
+ * without the module that provides the stage transformed every cell to blank.
+ */
+describe('showValuesAs registered without a grouping module', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ShowValuesAsModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('percentOfGrandTotal transforms on a flat grid', async () => {
+        await gridsManager.createGridAndWait('sva-standalone', {
+            columnDefs: [{ field: 'name' }, { field: 'amount', showValuesAs: 'percentOfGrandTotal' }],
+            rowData: [
+                { name: 'a', amount: 25 },
+                { name: 'b', amount: 75 },
+            ],
+        });
+
+        const amountAt = (row: number) =>
+            document.querySelector(`#sva-standalone [row-index="${row}"] [col-id="amount"]`)?.textContent?.trim();
+
+        await waitFor(() => expect(amountAt(0)).toBe('25.00%'));
+        expect(amountAt(1)).toBe('75.00%');
     });
 });

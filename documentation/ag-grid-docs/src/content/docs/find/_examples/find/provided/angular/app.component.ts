@@ -37,7 +37,7 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule]);
             </div>
             <div class="example-controls">
                 <span>Go to match:</span>
-                <input #goToInput type="number" />
+                <input #goToInput type="number" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>
         </div>

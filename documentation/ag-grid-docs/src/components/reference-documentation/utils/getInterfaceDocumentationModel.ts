@@ -6,11 +6,11 @@ import type {
     CodeEntry,
     Config,
     DocCode,
-    DocEntryMap,
     DocProperties,
     InterfaceDocumentationModel,
     InterfaceEntry,
     Overrides,
+    PropertyViewModel,
 } from '../types';
 import {
     escapeGenericCode,
@@ -21,10 +21,11 @@ import {
 } from './documentation-helpers';
 import { getDefinitionType } from './getDefinitionType';
 import { getDetailsCode } from './getDetailsCode';
+import { type PropertyResolver, getPropertyViewModel } from './getPropertyViewModel';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
 import { getInterfacesToWrite } from './interface-helpers';
 
-interface Params {
+interface Params<P> {
     interfaceName: string;
     framework: Framework;
     overrides: Overrides;
@@ -33,9 +34,11 @@ interface Params {
     config: any;
     interfaceLookup: Record<string, any>;
     codeLookup: Record<string, any>;
+    /** Defaults to the page's view model; the markdown twin passes its own. */
+    resolveProperty?: PropertyResolver<P>;
 }
 
-export function getProperties({
+export function getProperties<P>({
     framework,
     interfaceName,
     interfaceData,
@@ -45,6 +48,7 @@ export function getProperties({
     exclude,
     codeData,
     config,
+    resolveProperty,
 }: {
     framework: Framework;
     interfaceName: string;
@@ -55,7 +59,8 @@ export function getProperties({
     exclude: string[];
     codeData: CodeEntry;
     config: Config;
-}): DocProperties {
+    resolveProperty: PropertyResolver<P>;
+}): DocProperties<P> {
     const props: any = {};
     let interfaceOverrides: Overrides = {} as Overrides;
     let interfaceOverridesMeta = {};
@@ -105,7 +110,7 @@ export function getProperties({
         }
     });
 
-    const orderedProps = {};
+    const orderedProps: Record<string, P> = {};
     const ordered = Object.entries<ChildDocEntry>(props)
         .sort(([, v1], [, v2]) => {
             // Put required props at the top as likely to be the most important
@@ -154,15 +159,19 @@ export function getProperties({
               })
             : undefined;
 
-        orderedProps[name] = {
+        orderedProps[name] = resolveProperty({
+            name,
+            framework,
             definition,
-            detailsCode,
             gridOpProp,
+            type,
             propertyType,
-        };
+            config,
+            detailsCode,
+        });
     });
 
-    const properties: DocEntryMap = {
+    const properties: Record<string, Record<string, P>> = {
         [interfaceName]: {
             ...orderedProps,
         },
@@ -215,7 +224,7 @@ function getDocCode({
 // These should use apiDocumentation so that @agModule tag is correctly rendered.
 const DISALLOWED_INTERFACE_NAMES = ['ColDef', 'GridOptions'];
 
-export function getInterfaceDocumentationModel({
+export function getInterfaceDocumentationModel<P = PropertyViewModel>({
     framework,
     interfaceName,
     overrides,
@@ -224,7 +233,8 @@ export function getInterfaceDocumentationModel({
     config = {},
     interfaceLookup,
     codeLookup,
-}: Params): InterfaceDocumentationModel {
+    resolveProperty = getPropertyViewModel as PropertyResolver<P>,
+}: Params<P>): InterfaceDocumentationModel<P> {
     if (DISALLOWED_INTERFACE_NAMES.includes(interfaceName)) {
         throw new Error(
             `<interface-documentation>: '${interfaceName}' should not be used with interfaceDocumentation. Use apiDocumentation with the appropriate properties.json source instead.`
@@ -250,6 +260,7 @@ export function getInterfaceDocumentationModel({
               exclude,
               codeData,
               config,
+              resolveProperty,
           });
 
     return model;

@@ -82,7 +82,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         const { pinnedCols, ctrlsSvc, colResize } = beans;
 
-        if (this.column.getPinned()) {
+        if (this.column.pinnedLane !== 1) {
             const leftWidth = pinnedCols?.leftWidth ?? 0;
             const rightWidth = pinnedCols?.rightWidth ?? 0;
             const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
@@ -119,9 +119,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
 
-        const pinned = this.column.getPinned();
-        const notPinningLeft = pinned !== 'left';
-        const pinningRight = pinned === 'right';
+        const lane = this.column.pinnedLane;
+        const notPinningLeft = lane !== 0;
+        const pinningRight = lane === 2;
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left

@@ -128,6 +128,15 @@ export class CheckboxSelectionComponent extends Component {
         }
 
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+
+        const { rowNode, beans } = this;
+        beans.selectionSvc?.registerCheckbox(rowNode, this);
+        this.addDestroyFunc(() => beans.selectionSvc?.unregisterCheckbox(rowNode, this));
+    }
+
+    /** Whether this checkbox is shown in `column` (`undefined` for a full-width row) and can be toggled. */
+    public isEnabledIn(column: AgColumn | undefined): boolean {
+        return this.column === column && this.isDisplayed() && !this.eCheckbox.isDisabled();
     }
 
     private showOrHideSelect(): void {

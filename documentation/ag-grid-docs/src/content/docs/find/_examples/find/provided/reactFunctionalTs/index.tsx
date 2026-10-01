@@ -102,7 +102,7 @@ const GridExample = () => {
                     </div>
                     <div className="example-controls">
                         <span>Go to match:</span>
-                        <input type="number" ref={goToRef} />
+                        <input type="number" min="1" ref={goToRef} />
                         <button onClick={goToFind}>Go To</button>
                     </div>
                 </div>

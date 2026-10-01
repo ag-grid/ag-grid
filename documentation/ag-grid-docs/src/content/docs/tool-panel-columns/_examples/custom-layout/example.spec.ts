@@ -52,4 +52,36 @@ test.agExample(import.meta, () => {
             toolPanel.locator('.ag-column-select-column-label', { hasText: 'Dummy Group 3' }).first()
         ).toBeVisible();
     });
+
+    test.eachFramework('the Custom Group Layout omits columns entirely from the tool panel', async ({ page }) => {
+        await waitForGridContent(page);
+
+        const toolPanel = page.locator('.ag-column-select');
+        const leafLabels = toolPanel.locator('.ag-column-select-column .ag-column-select-column-label');
+
+        // 'Year' and 'Date' are listed initially (from gridOptions.columnDefs).
+        await expect(leafLabels.filter({ hasText: 'Year' })).toHaveCount(1);
+        await expect(leafLabels.filter({ hasText: 'Date' })).toHaveCount(1);
+
+        await page.getByRole('button', { name: 'Custom Group Layout' }).click();
+
+        // customToolPanelColumnDefs omits the 'year' and 'date' columns, so they disappear from the
+        // tool panel list altogether (the grid itself still has them).
+        await expect(leafLabels.filter({ hasText: 'Year' })).toHaveCount(0);
+        await expect(leafLabels.filter({ hasText: 'Date' })).toHaveCount(0);
+    });
+
+    test.eachFramework('the Custom Group Layout leaf order follows the layout, not the grid', async ({ page }) => {
+        await waitForGridContent(page);
+
+        const toolPanel = page.locator('.ag-column-select');
+        const leafLabels = toolPanel.locator('.ag-column-select-column .ag-column-select-column-label');
+
+        await page.getByRole('button', { name: 'Custom Group Layout' }).click();
+
+        // Dummy Group 1: Age, Name, Dummy Group 2 (Sport, Country)
+        // Medals: Total, Bronze, Dummy Group 3 (Silver, Gold)
+        // Note 'Medals' in the grid is Gold, Silver, Bronze, Total - the layout order wins.
+        await expect(leafLabels).toHaveText(['Age', 'Name', 'Sport', 'Country', 'Total', 'Bronze', 'Silver', 'Gold']);
+    });
 });

@@ -1,0 +1,290 @@
+import { waitFor } from '@testing-library/dom';
+import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+
+import type { GridApi, Toolbar } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule } from 'ag-grid-community';
+import { AllEnterpriseModule, ToolbarModule } from 'ag-grid-enterprise';
+
+describe('Grid state - quick filter text', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule, ToolbarModule],
+    });
+
+    const rowData = [
+        { name: 'Alice', country: 'Canada' },
+        { name: 'Bob', country: 'Ireland' },
+    ];
+
+    const columnDefs = [{ field: 'name' }, { field: 'country' }];
+
+    const toolbar: Toolbar = { items: ['agQuickFilterToolbarItem'] };
+
+    const pivotGridMgr = new TestGridsManager({
+        modules: [AllEnterpriseModule],
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        pivotGridMgr.reset();
+    });
+
+    function getInput(api: GridApi): HTMLInputElement {
+        return TestGridsManager.getHTMLElement(api)!.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+    }
+
+    async function typeInToolbar(api: GridApi, value: string): Promise<void> {
+        const input = getInput(api);
+        input.value = value;
+        input.dispatchEvent(new Event('input'));
+        await waitForEvent('filterChanged', api);
+    }
+
+    test('captures text typed in the toolbar input', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-capture', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(api.getState().quickFilter).toBeUndefined();
+
+        await typeInToolbar(api, 'canada');
+
+        expect(api.getState().quickFilter?.text).toBe('canada');
+        await new GridRows(api, `captures text typed in the toolbar input filtered`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Canada"
+        `);
+    });
+
+    test('an empty input produces no state entry', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-empty', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        await typeInToolbar(api, 'canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
+
+        await typeInToolbar(api, '');
+
+        expect(api.getState().quickFilter?.text).toBeUndefined();
+        await new GridRows(api, `an empty input produces no state entry unfiltered`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Alice" country:"Canada"
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('a case-only edit updates the captured text', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-case', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        await typeInToolbar(api, 'canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
+
+        // Uppercasing makes this equal to the previous filter, so no `filterChanged` is dispatched.
+        const input = getInput(api);
+        input.value = 'CANADA';
+        input.dispatchEvent(new Event('input'));
+
+        await waitFor(() => expect(api.getState().quickFilter?.text).toBe('CANADA'));
+    });
+
+    test('initialState restores the text, the rows and the toolbar input', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-restore', {
+            columnDefs,
+            rowData,
+            toolbar,
+            initialState: { quickFilter: { text: 'canada' } },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(api.getGridOption('quickFilterText')).toBe('canada');
+        expect(api.getState().quickFilter?.text).toBe('canada');
+        expect(getInput(api).value).toBe('canada');
+        await new GridRows(api, `initialState restores the text, the rows and the toolbar input`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Canada"
+        `);
+    });
+
+    test('restored state takes precedence over a conflicting grid option', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-precedence', {
+            columnDefs,
+            rowData,
+            toolbar,
+            quickFilterText: 'ireland',
+            initialState: { quickFilter: { text: 'canada' } },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(api.getGridOption('quickFilterText')).toBe('canada');
+        expect(getInput(api).value).toBe('canada');
+        await new GridRows(api, `restored state takes precedence over a conflicting grid option`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Canada"
+        `);
+    });
+
+    test('setState without a quickFilter section clears the text', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-clear', {
+            columnDefs,
+            rowData,
+            toolbar,
+            quickFilterText: 'canada',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.setState({});
+
+        await waitFor(() => expect(api.getGridOption('quickFilterText')).toBe(''));
+        expect(api.getState().quickFilter?.text).toBeUndefined();
+        expect(getInput(api).value).toBe('');
+        await new GridRows(api, `setState without a quickFilter section clears the text`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Alice" country:"Canada"
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('setState with a filter section but no quickFilter section clears the text', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-clear-partial-filter', {
+            columnDefs: [{ field: 'name', filter: true }, { field: 'country' }],
+            rowData,
+            toolbar,
+            quickFilterText: 'canada',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.setState({ filter: { filterModel: { name: { filterType: 'text', type: 'contains', filter: 'o' } } } });
+
+        await waitFor(() => expect(api.getGridOption('quickFilterText')).toBe(''));
+        expect(api.getState().quickFilter?.text).toBeUndefined();
+        expect(getInput(api).value).toBe('');
+        await new GridRows(api, `setState with a filter section but no quickFilter section clears the text`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('setGridOption updates the toolbar input', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-resync', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(getInput(api).value).toBe('');
+
+        api.setGridOption('quickFilterText', 'canada');
+
+        await waitFor(() => expect(getInput(api).value).toBe('canada'));
+        await new GridRows(api, `setGridOption updates the toolbar input`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Canada"
+        `);
+    });
+
+    test('reports source api when applied through setState', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-source', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const sources: (string | undefined)[] = [];
+        api.addEventListener('filterChanged', ({ source }) => sources.push(source));
+
+        api.setState({ quickFilter: { text: 'canada' } });
+
+        await waitFor(() => expect(sources).toEqual(['api']));
+    });
+
+    test('reports source quickFilter when the user types in the toolbar input', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-source-user', {
+            columnDefs,
+            rowData,
+            toolbar,
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        const sources: (string | undefined)[] = [];
+        api.addEventListener('filterChanged', ({ source }) => sources.push(source));
+
+        await typeInToolbar(api, 'canada');
+
+        await waitFor(() => expect(sources).toEqual(['quickFilter']));
+    });
+
+    test('the grid option is the only source without the toolbar item', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-no-toolbar', {
+            columnDefs,
+            rowData,
+            quickFilterText: 'ireland',
+            initialState: { quickFilter: { text: 'canada' } },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        // The state section is ignored in both directions, so the grid option stands.
+        expect(api.getGridOption('quickFilterText')).toBe('ireland');
+        expect(api.getState().quickFilter).toBeUndefined();
+        await new GridRows(api, `the grid option is the only source without the toolbar item`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('setState does not clear the grid option without the toolbar item', async () => {
+        const api = gridMgr.createGrid('quick-filter-state-no-toolbar-clear', {
+            columnDefs,
+            rowData,
+            quickFilterText: 'ireland',
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.setState({});
+
+        expect(api.getGridOption('quickFilterText')).toBe('ireland');
+        await new GridRows(api, `setState does not clear the grid option without the toolbar item`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 name:"Bob" country:"Ireland"
+        `);
+    });
+
+    test('restores against pivot result columns when pivot mode is enabled', async () => {
+        // With the default `applyQuickFilterBeforePivotOrAgg`, quick filter searches the aggregated values of
+        // the pivot result columns, so a gold total only matches once those columns exist.
+        const api = pivotGridMgr.createGrid('quick-filter-state-pivot', {
+            columnDefs: [
+                { field: 'name', rowGroup: true },
+                { field: 'country', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            rowData: [
+                { name: 'Alice', country: 'Canada', gold: 111 },
+                { name: 'Bob', country: 'Ireland', gold: 222 },
+            ],
+            pivotMode: true,
+            toolbar,
+            initialState: { quickFilter: { text: '111' } },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(api.getState().quickFilter?.text).toBe('111');
+        await new GridRows(api, `restores against pivot result columns when pivot mode is enabled`).check(`
+            ROOT id:ROOT_NODE_ID pivot_country_Canada_gold:111 pivot_country_Ireland_gold:222
+            └─┬ LEAF_GROUP collapsed id:row-group-name-Alice ag-Grid-AutoColumn:"Alice" pivot_country_Canada_gold:111 pivot_country_Ireland_gold:null
+            · └── LEAF hidden id:0 pivot_country_Canada_gold:111 pivot_country_Ireland_gold:111
+        `);
+    });
+});

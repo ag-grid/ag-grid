@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_KR = {
+export const AG_GRID_LOCALE_KO_KR = {
     // Set Filter
     selectAll: '(전체 선택)',
     selectAllSearchResults: '(검색 결과 모두 선택)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_KR = {
     clearFilter: '지우기',
     cancelFilter: '취소',
     cancelColumnToolPanel: '취소',
+    resetColumnToolPanel: '재설정',
 
     // Filter Titles
     textFilter: '텍스트 필터',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_KR = {
     advancedFilterValidationMissingCondition: '조건이 누락되었습니다',
     advancedFilterValidationJoinOperatorMismatch: '조건 내의 연결 연산자는 동일해야 합니다',
     advancedFilterValidationInvalidJoinOperator: '연결 연산자를 찾을 수 없습니다',
+    advancedFilterValidationMissingListStartBracket: '여는 대괄호가 누락되었습니다',
+    advancedFilterValidationMissingListEndBracket: '닫는 대괄호가 누락되었습니다',
     advancedFilterValidationMissingEndBracket: '끝 괄호가 누락되었습니다',
     advancedFilterValidationExtraEndBracket: '종결 괄호가 너무 많습니다',
     advancedFilterValidationMessage: '식에 오류가 있습니다. ${variable} - ${variable}.',
@@ -917,3 +920,6 @@ export const AG_GRID_LOCALE_KR = {
     deleteNote: '메모 제거',
     notePlaceholder: '메모 추가...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_KO_KR` instead. */
+export const AG_GRID_LOCALE_KR = AG_GRID_LOCALE_KO_KR;

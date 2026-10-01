@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_BR = {
+export const AG_GRID_LOCALE_PT_BR = {
     // Set Filter
     selectAll: '(Selecionar Todos)',
     selectAllSearchResults: '(Selecionar Todos os Resultados da Pesquisa)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_BR = {
     clearFilter: 'Limpar',
     cancelFilter: 'Cancelar',
     cancelColumnToolPanel: 'Cancelar',
+    resetColumnToolPanel: 'Redefinir',
 
     // Filter Titles
     textFilter: 'Filtro de Texto',
@@ -184,8 +185,10 @@ export const AG_GRID_LOCALE_BR = {
     advancedFilterValidationMissingCondition: 'Condição está faltando',
     advancedFilterValidationJoinOperatorMismatch: 'Operadores de junção dentro de uma condição devem ser os mesmos',
     advancedFilterValidationInvalidJoinOperator: 'Operador de junção não encontrado',
-    advancedFilterValidationMissingEndBracket: 'Faltando colchete final',
-    advancedFilterValidationExtraEndBracket: 'Colchetes finais em excesso',
+    advancedFilterValidationMissingListStartBracket: 'Faltando colchete inicial',
+    advancedFilterValidationMissingListEndBracket: 'Faltando colchete final',
+    advancedFilterValidationMissingEndBracket: 'Faltando parêntese final',
+    advancedFilterValidationExtraEndBracket: 'Parênteses finais em excesso',
     advancedFilterValidationMessage: 'Expressão tem um erro. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Expressão tem um erro. ${variable} no final da expressão.',
     advancedFilterValidationMessageOnly: 'Expressão tem um erro. ${variable}.',
@@ -923,3 +926,6 @@ export const AG_GRID_LOCALE_BR = {
     deleteNote: 'Remover nota',
     notePlaceholder: 'Adicionar uma nota...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_PT_BR` instead. */
+export const AG_GRID_LOCALE_BR = AG_GRID_LOCALE_PT_BR;

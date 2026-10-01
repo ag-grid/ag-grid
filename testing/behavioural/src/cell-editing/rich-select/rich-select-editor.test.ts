@@ -532,4 +532,37 @@ describe('Rich Select cell editor', () => {
             expect(api.getFocusedCell()?.rowIndex).toBe(0);
         });
     });
+
+    // Opening and closing without picking must leave the stored value alone, so a `parseValue`
+    // supplied for committed picks does not rewrite it.
+    test('an untouched editor commits the stored value without running parseValue', async () => {
+        const api = await createGrid({
+            columnDefs: [baseColDef({ parseValue: (v: unknown) => `${String(v)}!` })],
+            rowData: [{ id: '0', a: 'Alpha' }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openEditor(api, gridDiv, 0, 'a');
+
+        api.stopEditing();
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+        expect(getAllRows(api)[0].data.a).toBe('Alpha');
+    });
+
+    // `setDataValue(..., 'edit')` hands the editor a model value, and the widget normalises an
+    // `undefined` push to `null`, so the seed has to be what was pushed rather than what it holds.
+    test('an undefined value pushed into an open editor commits as undefined', async () => {
+        const api = await createGrid({
+            columnDefs: [baseColDef()],
+            rowData: [{ id: '0', a: 'Alpha' }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openEditor(api, gridDiv, 0, 'a');
+
+        getAllRows(api)[0].setDataValue('a', undefined, 'edit');
+        api.stopEditing();
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
+        expect(getAllRows(api)[0].data.a).toBeUndefined();
+    });
 });

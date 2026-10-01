@@ -24,9 +24,64 @@ test.agExample(import.meta, () => {
         // gold uses a static cellStyle backgroundColor #aaffaa (rgb(170, 255, 170)).
         await expect(agIdFor.cell('0', 'gold')).toHaveCSS('background-color', 'rgb(170, 255, 170)');
 
-        // silver 0 -> numberToColor(0) -> #ffaaaa (rgb(255, 170, 170)).
+        // silver 0 and bronze 0 -> numberToColor(0) -> #ffaaaa (rgb(255, 170, 170)).
         await expect(agIdFor.cell('0', 'silver')).toContainText('0');
         await expect(agIdFor.cell('0', 'silver')).toHaveCSS('background-color', 'rgb(255, 170, 170)');
+        await expect(agIdFor.cell('0', 'bronze')).toContainText('0');
+        await expect(agIdFor.cell('0', 'bronze')).toHaveCSS('background-color', 'rgb(255, 170, 170)');
+    });
+
+    test.eachFramework('Editing a cell re-applies its cellClassRules', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // age 23 starts on the 'x >= 20 && x < 25' rule.
+        const ageCell = agIdFor.cell('0', 'age');
+        await expect(ageCell).toHaveClass(/rag-blue/);
+
+        await ageCell.dblclick();
+        const ageEditor = ageCell.locator('input');
+        await expect(ageEditor).toBeVisible();
+        await ageEditor.fill('15');
+        await page.keyboard.press('Enter');
+        await expect(ageEditor).toHaveCount(0);
+
+        // 15 now matches 'x < 20', and the old class is removed rather than accumulating.
+        await expect(ageCell).toHaveClass(/rag-green/);
+        await expect(ageCell).not.toHaveClass(/rag-blue/);
+
+        // year 2008 starts on the rag-green-outer function rule.
+        const yearCell = agIdFor.cell('0', 'year');
+        await expect(yearCell).toHaveClass(/rag-green-outer/);
+
+        await yearCell.dblclick();
+        const yearEditor = yearCell.locator('input');
+        await expect(yearEditor).toBeVisible();
+        await yearEditor.fill('2000');
+        await page.keyboard.press('Enter');
+        await expect(yearEditor).toHaveCount(0);
+
+        await expect(yearCell).toHaveClass(/rag-red-outer/);
+        await expect(yearCell).not.toHaveClass(/rag-green-outer/);
+    });
+
+    test.eachFramework('Editing a cell re-applies its cellStyle', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // silver 0 -> numberToColor(0) -> #ffaaaa.
+        const silverCell = agIdFor.cell('0', 'silver');
+        await expect(silverCell).toHaveCSS('background-color', 'rgb(255, 170, 170)');
+
+        await silverCell.dblclick();
+        const editor = silverCell.locator('input');
+        await expect(editor).toBeVisible();
+        await editor.fill('1');
+        await page.keyboard.press('Enter');
+        await expect(editor).toHaveCount(0);
+
+        // numberToColor(1) -> #aaaaff.
+        await expect(silverCell).toHaveCSS('background-color', 'rgb(170, 170, 255)');
     });
 
     test.eachFramework('cellClassRules re-evaluate as rows are reordered by sort', async ({ agIdFor, page }) => {

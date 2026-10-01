@@ -182,6 +182,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.addManagedPropertyListeners(
             [
                 'loading',
+                'loadingRows',
                 'activeOverlay',
                 'activeOverlayParams',
                 'overlayComponentParams',
@@ -353,7 +354,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private onPropChange(changedProps: ReadonlySet<string>): void {
         const activeOverlayChanged = changedProps.has('activeOverlay');
-        if (activeOverlayChanged || changedProps.has('loading')) {
+        if (activeOverlayChanged || changedProps.has('loading') || changedProps.has('loadingRows')) {
             if (this.updateOverlay(activeOverlayChanged)) {
                 return; // overlay changed, no need to check further
             }

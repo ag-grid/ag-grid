@@ -1,0 +1,45 @@
+---
+description: sizeColumnsToFit was called while the grid had no width, usually because it was not visible yet.
+---
+
+## Grid Had No Width to Fit
+
+`sizeColumnsToFit()` divides the grid's available width between the columns, so it needs the grid to have a width. This message means the grid body measured zero pixels wide, and the columns were left at their existing widths.
+
+{% note %}
+The grid does not give up on the first attempt. It re-measures immediately, then after 100ms, then after 500ms, and only warns once all four attempts return zero. Wrapping your own call in a longer `setTimeout` is therefore unlikely to help.
+{% /note %}
+
+A grid measuring zero wide almost always means it is not on screen, or its container has not been given a size.
+
+### Check the container has a size
+
+The grid fills its container, so the container needs a height and width of its own. A container with no explicit size, or one whose parent has collapsed, gives the grid nothing to fill. See [Grid Size](./grid-size/).
+
+### Check the grid is visible when you call
+
+The call often runs while the grid is hidden, leaving nothing to measure:
+
+- In a tab, accordion, modal or drawer that is not the active one. Anything hidden with `display: none` has zero size, so call `sizeColumnsToFit()` when the panel becomes visible rather than when it is created.
+- Before the container has been laid out, for example immediately after mounting rather than from a grid event.
+- In a collapsed flex or grid child, where the parent has given the column no width.
+
+Note that `visibility: hidden` and `opacity: 0` still occupy space, so those are safe. `display: none` is not.
+
+### Prefer declaring the strategy
+
+For the usual case of fitting the columns when the grid loads, the [`autoSizeStrategy`](./column-sizing/#auto-size-columns-to-fit-grid) grid option suits better than an imperative call, because the grid applies it at the right moment itself:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    autoSizeStrategy: {
+        type: 'fitGridWidth',
+    },
+}
+```
+
+To have the columns keep sharing the width as the grid resizes, use [Column Flex](./column-sizing/#column-flex) instead. `flex` is maintained continuously, so it survives the container being hidden and shown again without any call from you.
+
+### If you must call it yourself
+
+Call it once the grid is visible. Reacting to the container becoming visible, through a tab-change handler or a `ResizeObserver`, is more reliable than a delay because it does not depend on how long layout takes.

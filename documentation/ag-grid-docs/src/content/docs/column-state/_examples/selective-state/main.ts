@@ -53,7 +53,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
-    // debug: true,
     columnDefs: columnDefs,
 };
 

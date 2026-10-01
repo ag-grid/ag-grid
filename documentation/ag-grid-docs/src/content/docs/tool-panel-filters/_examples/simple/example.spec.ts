@@ -41,4 +41,32 @@ test.agExample(import.meta, () => {
         await athleteGroup.locator('.ag-filter-toolpanel-group-title-bar').first().click();
         await expect(athleteInput).toBeHidden();
     });
+
+    test.eachFramework('An active filter shows a filter icon beside the column name', async ({ page, agIdFor }) => {
+        await ensureGridReady(page);
+
+        const athleteGroup = agIdFor.filterToolPanelGroup('Athlete');
+        const filterIcon = athleteGroup.locator('.ag-filter-toolpanel-group-instance-header-icon').first();
+
+        // No filter is active, so no icon is shown.
+        await expect(athleteGroup).not.toHaveClass(/ag-has-filter/);
+        await expect(filterIcon).toBeHidden();
+
+        // Apply the Athlete filter.
+        await athleteGroup.locator('.ag-filter-toolpanel-group-title-bar').first().click();
+        const athleteInput = agIdFor.textFilterInstanceInput({ source: 'filter-toolpanel', colLabel: 'Athlete' });
+        await athleteInput.fill('Michael Phelps');
+        await athleteInput.press('Enter');
+        await expect(agIdFor.cell('0', 'athlete').first()).toContainText('Michael Phelps');
+
+        // The filter icon now appears beside the column name in the tool panel.
+        await expect(athleteGroup).toHaveClass(/ag-has-filter/);
+        await expect(filterIcon).toBeVisible();
+
+        // Clearing the filter removes the icon again.
+        await athleteInput.fill('');
+        await athleteInput.press('Enter');
+        await expect(athleteGroup).not.toHaveClass(/ag-has-filter/);
+        await expect(filterIcon).toBeHidden();
+    });
 });

@@ -23,7 +23,7 @@ import {
     enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { AdvancedFilterModule, ColumnMenuModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, ColumnMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
 /** What a `filterOptions` list offers, and what is reported when it cannot. */
 interface AgeRow {
@@ -1711,5 +1711,75 @@ describe('Column filter — the list a data type supplies', () => {
             'False',
             'Shout',
         ]);
+    });
+});
+
+describe('Column filter — an Advanced Filter option named in `filterOptions`', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [TextFilterModule, SetFilterModule, ColumnMenuModule, AdvancedFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    /** The list is the column's statement of what it offers, and the two filters read it for different operators. */
+    const SHARED_LIST = {
+        filterOptions: ['contains', 'isAnyOf', 'isNoneOf', 'true', 'false', 'equals'],
+        debounceMs: 0,
+        maxNumConditions: 1,
+    } satisfies ITextFilterParams;
+
+    const createGrid = (filterParams: ITextFilterParams, enableAdvancedFilter?: boolean) =>
+        gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams }],
+            rowData: [{ country: 'Jamaica' }, { country: 'Poland' }],
+            enableAdvancedFilter,
+        } as GridOptions);
+
+    test('is withheld from the dropdown, no column filter having an operator for it', async () => {
+        const api: GridApi = await createGrid(SHARED_LIST);
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Equals']);
+    });
+
+    test('is offered by the Advanced Filter, which is the reader it was named for', async () => {
+        const api: GridApi = await createGrid(SHARED_LIST, true);
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Country] ');
+        expect(af.autocompleteEntries()).toEqual(['contains', 'is any of', 'is none of', 'equals']);
+    });
+
+    test('a Custom Filter Option under the same key is offered, being its own statement of what it means', async () => {
+        const api: GridApi = await createGrid({
+            filterOptions: [
+                'contains',
+                {
+                    displayKey: 'isAnyOf',
+                    displayName: 'Is one of these',
+                    numberOfInputs: 1,
+                    predicate: ([value], cellValue) => `${value}`.split(',').includes(cellValue),
+                },
+            ],
+            debounceMs: 0,
+            maxNumConditions: 1,
+        } satisfies ITextFilterParams);
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(await filter.operatorOptions()).toEqual(['Contains', 'Is one of these']);
+
+        await filter.selectOperator('Is one of these');
+        await filter.setText('Poland,Kenya', 0);
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'the custom option under an Advanced Filter key evaluates').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 country:"Poland"
+        `);
     });
 });

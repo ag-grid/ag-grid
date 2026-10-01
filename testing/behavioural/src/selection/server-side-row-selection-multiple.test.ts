@@ -1,11 +1,16 @@
 import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
 
+import type { RowSelectedEvent } from 'ag-grid-community';
+import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
+
 import {
     columnDefs,
     createGridAndWait,
     rowData,
     setupServerSideRowSelectionSuite,
 } from './serverSideRowSelectionHarness';
+
+const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
 describe('Row Selection Grid Options', () => {
     describe('User Interactions', () => {
@@ -173,6 +178,71 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
+            test('with click toggle, clicking the only selected row deselects it', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+            });
+
+            test('with click toggle, clicking a selected row still reduces a wider selection to it', async () => {
+                const [api, actions] = await createGridAndWait(
+                    {
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: {
+                            mode: 'multiRow',
+                            enableClickSelection: true,
+                        },
+                    },
+                    clickToggleSelection
+                );
+
+                actions.selectRowsByIndex([1, 3, 5], false);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([3], api);
+                await new GridRows(
+                    api,
+                    `with click toggle, clicking a selected row still reduces a wider selection to it after reducing`
+                ).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF selected id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+
+                actions.clickRowByIndex(3);
+                assertSelectedRowsByIndex([], api);
+            });
+
             test('must de-select with CTRL when `enableClickSelection: true`', async () => {
                 const [api, actions] = await createGridAndWait({
                     columnDefs,
@@ -323,6 +393,30 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('rowSelected reports the originating browser event', async () => {
+                const events: RowSelectedEvent[] = [];
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                    onRowSelected: (event) => events.push(event),
+                });
+
+                const rowClick = actions.clickRowByIndex(1);
+                const checkboxClick = actions.toggleCheckboxByIndex(3);
+
+                // gridOptions callbacks are dispatched asynchronously via setTimeout
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                assertSelectedRowsByIndex([1, 3], api);
+                expect(events.map(({ event }) => event)).toEqual([rowClick, checkboxClick]);
             });
         });
     });

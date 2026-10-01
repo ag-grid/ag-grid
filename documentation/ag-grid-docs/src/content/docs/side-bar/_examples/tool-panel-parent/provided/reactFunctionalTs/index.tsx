@@ -33,11 +33,6 @@ const modules = [
     TextFilterModule,
 ];
 
-function addStyles(parentEl) {
-    const contentClassnames = [...parentEl.querySelector('.content').classList].filter((e) => e !== 'content');
-    parentEl.classList.add(...contentClassnames);
-}
-
 const GridExample = () => {
     const gridRef = useRef(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -111,7 +106,6 @@ const GridExample = () => {
         const popup = popupRef.current;
         popup.classList.toggle('active', true);
         gridRef.current.api.openToolPanel(columnsToolPanel.id);
-        addStyles(popup);
     }, [popupRef.current, closeDrawer, columnsToolPanel]);
 
     const openDrawer = useCallback(() => {
@@ -119,7 +113,6 @@ const GridExample = () => {
         const drawer = drawerRef.current;
         drawer.classList.toggle('active', true);
         gridRef.current.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
-        addStyles(drawer);
     }, [drawerRef, closePopup, filtersToolPanel]);
 
     return (

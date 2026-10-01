@@ -171,3 +171,14 @@
     flex-wrap: wrap;
     gap: calc(var(--ag-spacing) * 1.5);
 }
+
+.ag-overlay-error-versions {
+    /* footer: stays pinned below the scrolling body, reporting the AG package versions in use. */
+    flex: none;
+    padding: calc(var(--ag-spacing) * 0.75) calc(var(--ag-spacing) * 1.5);
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
+    font-size: 0.85em;
+
+    /* muted: context for a reported error, not part of the diagnostics themselves. */
+    opacity: 0.7;
+}

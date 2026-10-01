@@ -609,9 +609,17 @@
 .fullWidthBar {
     $bar-height: 100px;
 
+    // How far below the top of the viewport this bar pins: the height of the sticky site
+    // header, which paints above it. That height is not a constant and cannot be derived
+    // in CSS from here — LicensePricing.tsx measures the rendered header and sets
+    // --site-header-offset (see there for why). The fallback below only applies if that
+    // measurement never runs; the bar's visibility is React-controlled too, so in practice
+    // it is never on screen before then.
+    --site-header-offset-fallback: 0px;
+
     width: 100%;
     position: fixed;
-    top: 0px;
+    top: var(--site-header-offset, var(--site-header-offset-fallback));
     border-bottom: 1px solid var(--color-border-secondary);
     height: $bar-height;
     padding-top: $spacing-size-4;
@@ -636,7 +644,7 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        top: 64px;
+        --site-header-offset-fallback: var(--layout-site-header-height);
     }
 }
 

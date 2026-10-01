@@ -23,6 +23,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private filtersRowCtrl: HeaderRowCtrl | undefined;
     private columnsRowCtrl: HeaderRowCtrl | undefined;
     private groupsRowCtrls: HeaderRowCtrl[] = [];
+    /** The last width pushed here, so a group or floating-filter row arriving later can size itself from
+     *  it rather than ask the grid body to recompute. `null` until the first push. */
+    public rowWidth: number | null = null;
     public eViewport: HTMLElement;
 
     public setComp(comp: IHeaderRowsComp, eGui: HTMLElement, eScrollViewport: HTMLElement = eGui): void {
@@ -44,6 +47,22 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         if (colModel.ready) {
             this.refresh();
         }
+    }
+
+    /** Pushed by `GridBodyCtrl.updateWidths`. Walks the fields rather than `getAllCtrls`, which
+     *  allocates, because this runs on every column width change. */
+    public setRowWidths(width: number): void {
+        // Several events report one column change, and a row created later reads `rowWidth` itself.
+        if (width === this.rowWidth) {
+            return;
+        }
+        this.rowWidth = width;
+        const groupsRowCtrls = this.groupsRowCtrls;
+        for (let i = 0, len = groupsRowCtrls.length; i < len; ++i) {
+            groupsRowCtrls[i].setRowWidth(width);
+        }
+        this.columnsRowCtrl?.setRowWidth(width);
+        this.filtersRowCtrl?.setRowWidth(width);
     }
 
     public getAllCtrls(): HeaderRowCtrl[] {

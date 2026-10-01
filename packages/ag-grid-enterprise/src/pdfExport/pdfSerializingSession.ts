@@ -21,7 +21,12 @@ import type {
     RowNode,
     RowPinnedType,
 } from 'ag-grid-community';
-import { BaseGridSerializingSession, _addGridCommonParams, _isFullWidthGroupRow } from 'ag-grid-community';
+import {
+    BaseGridSerializingSession,
+    _addGridCommonParams,
+    _getDrawnColSpan,
+    _isFullWidthGroupRow,
+} from 'ag-grid-community';
 
 import { createPdfDocument } from './pdfDocument';
 import { resolvePdfCellStyleColors } from './utils/colors';
@@ -193,7 +198,6 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
     public onNewBodyRow(node?: RowNode): RowAccumulator {
         const row = this.createRow('BODY', node);
         const rowIndex = this.rowIndex;
-        const exportedColumnCount = this.columnsToExport.length;
         let skipCols = 0;
         let rowStyleResolved = false;
 
@@ -254,8 +258,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                         column,
                     })
                 );
-                const remainingColumns = Math.max(exportedColumnCount - index, 1);
-                const colSpan = Math.min(column.getColSpan(activeNode), remainingColumns);
+                const colSpan = _getDrawnColSpan(this.columnsToExport, index, activeNode);
                 const mergeAcross = colSpan > 1 ? colSpan - 1 : undefined;
 
                 if (mergeAcross) {

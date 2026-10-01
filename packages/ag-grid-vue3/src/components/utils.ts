@@ -74,7 +74,7 @@ import type {
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
-    LoadingOptions,
+    LoadingRowsOptions,
     LocaleText,
     MenuItemDef,
     NavigateToNextCell,
@@ -198,6 +198,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderFocusedEvent,
+    IssueRaisedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -380,7 +381,9 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
          */
     suppressCopySingleCellRanges?: boolean,
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+    /** Set to `true` to always remove a trailing empty line from pasted data.
+         * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+         * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
          * @default false
          * @agModule `ClipboardModule`
          */
@@ -722,7 +725,10 @@ export interface Props<TData> {
          * @initial
          */
     filterHandlers?: FilterHandlers<TData>,
-    /** Set to `true` to Enable Charts.
+    /** Set to `true` to allow users to create Integrated Charts from the grid UI, e.g. via the
+         * `chartRange` and `pivotChart` context menu items shown by default. Menu items requested by
+         * name via `getContextMenuItems` or `colDef.contextMenuItems` are shown regardless, and charts
+         * created programmatically through the Grid API do not require this option.
          * @default false
          * @agModule `IntegratedChartsModule`
          */
@@ -882,19 +888,24 @@ export interface Props<TData> {
          */
     suppressChangeDetection?: boolean,
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
-         * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
          * @default false
          * @initial
+         * @deprecated v36.3 Use `enableDevValidations({ debug: true })` instead.
          */
     debug?: boolean,
     /** Show or hide the loading UI.
-         * - `true`: the loading overlay is shown.
-         * - `false`: the loading overlay is hidden.
-         * - `LoadingOptions`: configure the loading UI.
+         * - `true`: the loading overlay is shown, or skeleton rows if `loadingRows` is enabled (Client-Side Row Model only).
+         * - `false`: the loading UI is hidden.
          * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
          * @default undefined
          */
-    loading?: boolean | LoadingOptions,
+    loading?: boolean,
+    /** Display skeleton rows instead of the loading overlay when `loading=true` (Client-Side Row Model only).
+         * Set to `true` to display ten rows, or provide options to configure the row count.
+         * This option does not start loading; set `loading=true` to show the skeleton rows.
+         * @default false
+         */
+    loadingRows?: boolean | LoadingRowsOptions,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -2157,6 +2168,7 @@ export interface Props<TData> {
    'onDrag-stopped'?: DragStoppedEvent<TData>,
    'onDrag-cancelled'?: DragCancelledEvent<TData>,
    'onState-updated'?: StateUpdatedEvent<TData>,
+   'onIssue-raised'?: IssueRaisedEvent<TData>,
    'onPagination-changed'?: PaginationChangedEvent<TData>,
    'onRow-drag-enter'?: RowDragEnterEvent<TData>,
    'onRow-drag-move'?: RowDragMoveEvent<TData>,
@@ -2332,6 +2344,7 @@ export function getProps() {
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
+        loadingRows: undefined,
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,
@@ -2679,7 +2692,8 @@ export function getProps() {
         'onBulk-editing-started': undefined,
         'onBulk-editing-stopped': undefined,
         'onBatch-editing-started': undefined,
-        'onBatch-editing-stopped': undefined
+        'onBatch-editing-stopped': undefined,
+        'onIssue-raised': undefined
 // @END_EVENT_PROPS@
 
      };

@@ -1,11 +1,22 @@
 import type { LocaleTextFunc } from 'ag-stack';
 import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack';
 
-import type { AgColumn, BeanCollection, ISetFilterParams, ValueFormatterParams } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColDef,
+    DataTypeFormatValueFunc,
+    ISetFilterParams,
+    TextFormatter,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 import { _isBlank } from 'ag-grid-community';
 
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
+
+/** What the Mini Filter searches when the column configures no `textFormatter`. */
+export const unformattedSetFilterText: TextFormatter = (value) => value ?? null;
 
 export function processDataPath(
     dataPath: string[] | null,
@@ -27,6 +38,12 @@ export function processDataPath(
         return processedDataPath.filter((treeKey) => treeKey != null);
     }
     return processedDataPath;
+}
+
+/** The key creator a data type gives its columns, which keys each value by its formatted text. */
+export function getDataTypeKeyCreator(beans: BeanCollection, colDef: ColDef): DataTypeFormatValueFunc | undefined {
+    const cellDataType = colDef.cellDataType;
+    return typeof cellDataType === 'string' ? beans.dataTypeSvc?.getFormatValue(cellDataType) : undefined;
 }
 
 /**

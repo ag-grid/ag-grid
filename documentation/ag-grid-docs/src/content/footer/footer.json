@@ -7,6 +7,18 @@
                 "url": "/documentation/"
             },
             {
+                "name": "React Data Grid",
+                "url": "/react-data-grid/"
+            },
+            {
+                "name": "Angular Data Grid",
+                "url": "/angular-data-grid/"
+            },
+            {
+                "name": "Vue Data Grid",
+                "url": "/vue-data-grid/"
+            },
+            {
                 "name": "Roadmap",
                 "url": "/roadmap/"
             },
@@ -44,6 +56,10 @@
             {
                 "name": "Security",
                 "url": "/data-grid/security/"
+            },
+            {
+                "name": "Accessibility",
+                "url": "/data-grid/accessibility/"
             }
         ]
     },
@@ -69,27 +85,6 @@
             {
                 "name": "Blog",
                 "url": "https://www.ag-grid.com/blog/"
-            },
-            {
-                "name": "Privacy Policy",
-                "url": "/privacy/"
-            },
-            {
-                "name": "Cookies Policy",
-                "url": "/cookies/"
-            },
-            {
-                "name": "Manage Cookies",
-                "url": "#manage_cookies",
-                "showCookiesPrefs": true
-            },
-            {
-                "name": "Modern Slavery",
-                "url": "/modern-slavery/"
-            },
-            {
-                "name": "Sitemap",
-                "url": "https://www.ag-grid.com/sitemap/"
             }
         ]
     },
@@ -115,6 +110,45 @@
                 "name": "LinkedIn",
                 "url": "https://www.linkedin.com/company/ag-grid",
                 "iconName": "linkedin"
+            }
+        ]
+    },
+    {
+        "title": "Legal",
+        "placement": "legal",
+        "links": [
+            {
+                "name": "Terms of Use",
+                "url": "/terms-of-use/"
+            },
+            {
+                "name": "Commercial EULA",
+                "url": "/eula/commercial/"
+            },
+            {
+                "name": "Community Licence",
+                "url": "/eula/community/"
+            },
+            {
+                "name": "Privacy Policy",
+                "url": "/privacy/"
+            },
+            {
+                "name": "Cookies Policy",
+                "url": "/cookies/"
+            },
+            {
+                "name": "Manage Cookies",
+                "url": "#manage_cookies",
+                "showCookiesPrefs": true
+            },
+            {
+                "name": "Modern Slavery",
+                "url": "/modern-slavery/"
+            },
+            {
+                "name": "Sitemap",
+                "url": "https://www.ag-grid.com/sitemap/"
             }
         ]
     }

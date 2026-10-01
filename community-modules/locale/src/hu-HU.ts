@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_HU = {
+export const AG_GRID_LOCALE_HU_HU = {
     // Set Filter
     selectAll: '(Mindet kiválaszt)',
     selectAllSearchResults: '(Összes keresési találat kiválasztása)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HU = {
     clearFilter: 'Törlés',
     cancelFilter: 'Mégse',
     cancelColumnToolPanel: 'Mégse',
+    resetColumnToolPanel: 'Visszaállítás',
 
     // Filter Titles
     textFilter: 'Szövegszűrő',
@@ -184,7 +185,9 @@ export const AG_GRID_LOCALE_HU = {
     advancedFilterValidationMissingCondition: 'Feltétel hiányzik',
     advancedFilterValidationJoinOperatorMismatch: 'A feltételek összekapcsoló operátorai azonosak kell, hogy legyenek',
     advancedFilterValidationInvalidJoinOperator: 'Összekapcsoló operátor nem található',
-    advancedFilterValidationMissingEndBracket: 'Hiányzó zárózárójelek',
+    advancedFilterValidationMissingListStartBracket: 'Hiányzó nyitó szögletes zárójel',
+    advancedFilterValidationMissingListEndBracket: 'Hiányzó záró szögletes zárójel',
+    advancedFilterValidationMissingEndBracket: 'Hiányzó zárózárójel',
     advancedFilterValidationExtraEndBracket: 'Túl sok zárózárójel',
     advancedFilterValidationMessage: 'A kifejezés hibát tartalmaz. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'A kifejezés hibát tartalmaz. ${variable} a kifejezés végén.',
@@ -925,3 +928,6 @@ export const AG_GRID_LOCALE_HU = {
     deleteNote: 'Megjegyzés eltávolítása',
     notePlaceholder: 'Megjegyzés hozzáadása...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HU_HU` instead. */
+export const AG_GRID_LOCALE_HU = AG_GRID_LOCALE_HU_HU;

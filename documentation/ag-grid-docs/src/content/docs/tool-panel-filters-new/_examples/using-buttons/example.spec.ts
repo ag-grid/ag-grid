@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page, agIdFor }) => {
@@ -49,5 +49,53 @@ test.agExample(import.meta, () => {
         await expect(firstCell).toHaveText('Juan Martín del Potro');
         await expect(agIdFor.cell('1921', 'age')).toHaveText('23');
         await expect(agIdFor.cell('1921', 'country')).toHaveText('Argentina');
+    });
+
+    test.eachFramework('Cancel discards unapplied changes to the filters', async ({ page, agIdFor }) => {
+        await waitForGridContent(page);
+
+        const filterToolPanel = agIdFor.filterToolPanel();
+        await expect(filterToolPanel).toBeVisible();
+
+        await agIdFor.filterToolPanelAddFilterButton().click();
+        await page.getByRole('option', { name: 'Age' }).locator('div').click();
+
+        const ageInput = agIdFor.numberFilterInstanceInput({ source: 'filter-toolpanel', colLabel: 'Age' });
+        await ageInput.fill('23');
+        await filterToolPanel.getByRole('button', { name: 'Apply' }).click();
+
+        // Age = 23 is applied - row 1 (age 19) is filtered out.
+        await expect(agIdFor.cell('0', 'age').first()).toContainText('23');
+        await expect(agIdFor.cell('1', 'age')).not.toBeVisible();
+
+        // Edit the filter value without applying it, then Cancel.
+        await ageInput.fill('24');
+        await filterToolPanel.getByRole('button', { name: 'Cancel' }).click();
+
+        // The panel reverts to the applied model...
+        await expect(ageInput).toHaveValue('23');
+        // ...and the grid is still filtered on age 23.
+        await expect(agIdFor.cell('0', 'age').first()).toContainText('23');
+        await expect(agIdFor.cell('1', 'age')).not.toBeVisible();
+    });
+
+    test.eachFramework('Only the global buttons show inside the tool panel', async ({ page, agIdFor }) => {
+        const filterToolPanel = agIdFor.filterToolPanel();
+        await expect(filterToolPanel).toBeVisible();
+
+        await agIdFor.filterToolPanelAddFilterButton().click();
+        await page.getByRole('option', { name: 'Age' }).locator('div').click();
+
+        // The tool panel shows the global buttons configured via toolPanelParams...
+        await expect(filterToolPanel.getByRole('button', { name: 'Apply' })).toBeVisible();
+        await expect(filterToolPanel.getByRole('button', { name: 'Cancel' })).toBeVisible();
+        // ...and the filter's own buttons are not rendered inside the filter card.
+        await expect(
+            agIdFor.setFilterApplyPanelButton({ source: 'filter-toolpanel', colLabel: 'Age' }, 'Apply')
+        ).toHaveCount(0);
+
+        // The same filter instance does show its own Apply button in the column menu.
+        await agIdFor.headerFilterButton('age').click();
+        await expect(agIdFor.setFilterApplyPanelButton({ source: 'column-filter' }, 'Apply')).toBeVisible();
     });
 });

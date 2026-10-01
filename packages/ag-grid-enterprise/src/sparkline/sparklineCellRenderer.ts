@@ -72,11 +72,15 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         const colDef = this.params?.colDef;
         const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.checkboxSelection ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
         const env = this.env;
+        const cellPadding = env.getDefaultCellHorizontalPadding();
+        const widgetSpace = widgets * (env.getDefaultIconSize() + env.getDefaultCellWidgetSpacing());
+
+        // cell padding has 1 subtracted from it because the CSS subtracts 1px for the selection border
+        const inset = cellPadding - 1 + widgetSpace;
+        this.getGui().style.setProperty('--ag-internal-sparkline-inset', inset + 'px');
 
         // account for the cell's border and padding, and any widgets sharing the cell
-        newWidth -=
-            2 * env.getDefaultCellHorizontalPadding() +
-            widgets * (env.getDefaultIconSize() + env.getDefaultCellWidgetSpacing());
+        newWidth -= 2 * cellPadding + widgetSpace;
 
         if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
             this.cachedWidth = newWidth;

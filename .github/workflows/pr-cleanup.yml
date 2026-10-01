@@ -1,6 +1,6 @@
 name: Cleanup on PR close
 
-# Removes a PR's gh-pages UMD preview (pr-<N>/) on close.
+# Removes a PR's gh-pages preview (the whole pr-<N>/ tree) on close.
 
 on:
   pull_request:

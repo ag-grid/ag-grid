@@ -16,7 +16,7 @@ import { resolveFiniteNumber } from './numbers';
 const PAGE_FURNITURE_PADDING = 4;
 const DEFAULT_PAGE_TEXT_SIZE = 9;
 
-export type PdfHeaderFooterPosition = 'Left' | 'Center' | 'Right';
+type PdfHeaderFooterPosition = 'Left' | 'Center' | 'Right';
 
 export type ResolvedPageFurnitureContent = {
     value: string;

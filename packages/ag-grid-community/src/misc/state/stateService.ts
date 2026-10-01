@@ -19,11 +19,13 @@ import type {
     ColumnSizingState,
     ColumnVisibilityState,
     FilterState,
+    FindState,
     FocusedCellState,
     GridState,
     GridStateKey,
     PaginationState,
     PivotState,
+    QuickFilterState,
     RowGroupState,
     RowPinningState,
     ScrollState,
@@ -278,6 +280,7 @@ export class StateService extends BeanStub implements NamedBean {
     ): void {
         const {
             filter: filterState,
+            quickFilter: quickFilterState,
             rowGroupExpansion: rowGroupExpansionState,
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
@@ -289,6 +292,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (shouldSetState('filter', filterState)) {
             this.setFilterStateDeferringPivot(filterState, source);
+        }
+        if (shouldSetState('quickFilter', quickFilterState)) {
+            this.setQuickFilterState(quickFilterState, source);
         }
         if (
             shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
@@ -308,6 +314,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const updateCachedState = this.updateCachedState.bind(this);
         updateCachedState('filter', this.getFilterState());
+        updateCachedState('quickFilter', this.getQuickFilterState());
         this.updateGroupExpansionState();
 
         updateCachedState('rowSelection', this.getRowSelectionState());
@@ -323,6 +330,10 @@ export class StateService extends BeanStub implements NamedBean {
             this.updateGroupExpansionState();
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
+        // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
+        this.addManagedPropertyListener('quickFilterText', () =>
+            updateCachedState('quickFilter', this.getQuickFilterState())
+        );
 
         const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
@@ -368,6 +379,7 @@ export class StateService extends BeanStub implements NamedBean {
         const {
             scroll: scrollState,
             cellSelection: cellSelectionState,
+            find: findState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
         } = state;
@@ -380,15 +392,19 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetState('cellSelection', cellSelectionState)) {
             this.setCellSelectionState(cellSelectionState);
         }
-        if (shouldSetState('scroll', scrollState)) {
-            this.setScrollState(scrollState);
-        }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
         const deferredFilterState = this.deferredFilterState;
         if (deferredFilterState) {
             this.deferredFilterState = undefined;
             this.setFilterState(deferredFilterState, source);
+        }
+
+        if (shouldSetState('find', findState)) {
+            this.setFindState(findState, source);
+        }
+        if (shouldSetState('scroll', scrollState)) {
+            this.setScrollState(scrollState);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -399,6 +415,7 @@ export class StateService extends BeanStub implements NamedBean {
         updateCachedState('rangeSelection', cellSelection);
         updateCachedState('cellSelection', cellSelection);
         updateCachedState('scroll', this.getScrollState());
+        updateCachedState('find', this.getFindState());
     }
 
     private setupStateOnFirstDataRendered(initialState: GridState): void {
@@ -417,6 +434,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
+            findChanged: () => updateCachedState('find', this.getFindState()),
         });
     }
 
@@ -471,9 +489,39 @@ export class StateService extends BeanStub implements NamedBean {
             columnStateMap[colId] = columnState;
             return columnState;
         };
-        const defaultState: ColumnStateParams = {};
-
         const shouldSetSortState = shouldSetState('sort', sortState);
+        const shouldSetGroupState = shouldSetState('rowGroup', groupState);
+        const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
+        const shouldSetShowValuesAsState = shouldSetState('showValuesAs', showValuesAsState);
+        const shouldSetPivotState = shouldSetState('pivot', pivotState);
+        const shouldSetColumnPinningState = shouldSetState('columnPinning', columnPinningState);
+        const shouldSetColumnVisibilityState = shouldSetState('columnVisibility', columnVisibilityState);
+        const shouldSetColumnSizingState = shouldSetState('columnSizing', columnSizingState);
+        const shouldSetHeaderNameState = shouldSetState('columnHeaderName', columnHeaderNameState);
+
+        // `null` resets a field on columns the state omits; `undefined` leaves it untouched.
+        const reset = (shouldSet: boolean) => (shouldSet || !partialColumnState ? null : undefined);
+        const defaultState: ColumnStateParams = {
+            sort: reset(shouldSetSortState),
+            sortIndex: reset(shouldSetSortState),
+            rowGroup: reset(shouldSetGroupState),
+            rowGroupIndex: reset(shouldSetGroupState),
+            aggFunc: reset(shouldSetAggregationState),
+            valueIndex: reset(shouldSetAggregationState),
+            showValuesAs: reset(shouldSetShowValuesAsState),
+            pivot: reset(shouldSetPivotState),
+            pivotIndex: reset(shouldSetPivotState),
+            pinned: reset(shouldSetColumnPinningState),
+            hide: reset(shouldSetColumnVisibilityState),
+            flex: reset(shouldSetColumnSizingState),
+            headerName: reset(shouldSetHeaderNameState),
+            // `null` pivotSort would clear the colDef default ('asc') on every pivoted column; width/sortType are no-ops.
+            // Including to enable type checking to guard against missing properties in the future
+            sortType: undefined,
+            width: undefined,
+            pivotSort: undefined,
+        } satisfies Record<keyof ColumnStateParams, unknown>;
+
         if (shouldSetSortState && sortState) {
             const sortModel = sortState.sortModel;
             for (let sortIndex = 0, len = sortModel.length; sortIndex < len; ++sortIndex) {
@@ -484,12 +532,7 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.sortType = type;
             }
         }
-        if (shouldSetSortState || !partialColumnState) {
-            defaultState.sort = null;
-            defaultState.sortIndex = null;
-        }
 
-        const shouldSetGroupState = shouldSetState('rowGroup', groupState);
         if (shouldSetGroupState && groupState) {
             const groupColIds = groupState.groupColIds;
             for (let rowGroupIndex = 0, len = groupColIds.length; rowGroupIndex < len; ++rowGroupIndex) {
@@ -498,12 +541,7 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.rowGroupIndex = rowGroupIndex;
             }
         }
-        if (shouldSetGroupState || !partialColumnState) {
-            defaultState.rowGroup = null;
-            defaultState.rowGroupIndex = null;
-        }
 
-        const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
         if (shouldSetAggregationState && aggregationState) {
             const aggregationModel = aggregationState.aggregationModel;
             for (let i = 0, len = aggregationModel.length; i < len; ++i) {
@@ -513,12 +551,7 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.valueIndex = i;
             }
         }
-        if (shouldSetAggregationState || !partialColumnState) {
-            defaultState.aggFunc = null;
-            defaultState.valueIndex = null;
-        }
 
-        const shouldSetShowValuesAsState = shouldSetState('showValuesAs', showValuesAsState);
         if (shouldSetShowValuesAsState && showValuesAsState) {
             const showValuesAsModel = showValuesAsState.showValuesAsModel;
             for (let i = 0, len = showValuesAsModel.length; i < len; ++i) {
@@ -527,11 +560,7 @@ export class StateService extends BeanStub implements NamedBean {
                 getColumnState(colId).showValuesAs = _cloneDeep(showValuesAs);
             }
         }
-        if (shouldSetShowValuesAsState || !partialColumnState) {
-            defaultState.showValuesAs = null;
-        }
 
-        const shouldSetPivotState = shouldSetState('pivot', pivotState);
         if (shouldSetPivotState && pivotState) {
             const pivotColIds = pivotState.pivotColIds;
             for (let pivotIndex = 0, len = pivotColIds.length; pivotIndex < len; ++pivotIndex) {
@@ -547,12 +576,7 @@ export class StateService extends BeanStub implements NamedBean {
                 source: source as any,
             });
         }
-        if (shouldSetPivotState || !partialColumnState) {
-            defaultState.pivot = null;
-            defaultState.pivotIndex = null;
-        }
 
-        const shouldSetColumnPinningState = shouldSetState('columnPinning', columnPinningState);
         if (shouldSetColumnPinningState) {
             for (const colId of columnPinningState?.leftColIds ?? []) {
                 getColumnState(colId).pinned = 'left';
@@ -561,21 +585,13 @@ export class StateService extends BeanStub implements NamedBean {
                 getColumnState(colId).pinned = 'right';
             }
         }
-        if (shouldSetColumnPinningState || !partialColumnState) {
-            defaultState.pinned = null;
-        }
 
-        const shouldSetColumnVisibilityState = shouldSetState('columnVisibility', columnVisibilityState);
         if (shouldSetColumnVisibilityState) {
             for (const colId of columnVisibilityState?.hiddenColIds ?? []) {
                 getColumnState(colId).hide = true;
             }
         }
-        if (shouldSetColumnVisibilityState || !partialColumnState) {
-            defaultState.hide = null;
-        }
 
-        const shouldSetColumnSizingState = shouldSetState('columnSizing', columnSizingState);
         if (shouldSetColumnSizingState) {
             for (const { colId, flex, width } of columnSizingState?.columnSizingModel ?? []) {
                 const columnState = getColumnState(colId);
@@ -583,18 +599,11 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.width = width;
             }
         }
-        if (shouldSetColumnSizingState || !partialColumnState) {
-            defaultState.flex = null;
-        }
 
-        const shouldSetHeaderNameState = shouldSetState('columnHeaderName', columnHeaderNameState);
         if (shouldSetHeaderNameState) {
             for (const { colId, headerName } of columnHeaderNameState?.columnHeaderNames ?? []) {
                 getColumnState(colId).headerName = headerName;
             }
-        }
-        if (shouldSetHeaderNameState || !partialColumnState) {
-            defaultState.headerName = null;
         }
 
         const columns = columnOrderState?.orderedColIds;
@@ -733,6 +742,32 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
+    /**
+     * Find and the Quick Filter are only state-managed when the Quick Access Toolbar owns an input
+     * for them; otherwise their grid option is the only source and state leaves it alone.
+     */
+    private isToolbarStateManaged(item: 'agFindToolbarItem' | 'agQuickFilterToolbarItem'): boolean {
+        return !!this.beans.toolbar?.hasItem(item);
+    }
+
+    private getQuickFilterState(): QuickFilterState | undefined {
+        // Without the module the option is inert, and writing it on restore reports a missing-module error.
+        return this.isToolbarStateManaged('agQuickFilterToolbarItem') ? this.beans.quickFilter?.getState() : undefined;
+    }
+
+    private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.isToolbarStateManaged('agQuickFilterToolbarItem')) {
+            return;
+        }
+        const { text } = quickFilterState ?? {};
+        // An `api` restore resets what it omits, so a state without the text clears the Quick Filter. At
+        // initialisation an absent value instead leaves the `quickFilterText` grid option as provided.
+        this.beans.quickFilter?.setState(
+            { text: source === 'api' ? (text ?? '') : text },
+            source === 'api' ? 'api' : undefined
+        );
+    }
+
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */
     private setFilterStateDeferringPivot(state: FilterState | undefined, source: 'gridInitializing' | 'api'): void {
         const { colModel, pivotResultCols } = this.beans;
@@ -801,6 +836,21 @@ export class StateService extends BeanStub implements NamedBean {
         rangeSvc.setCellRanges(cellRanges);
     }
 
+    private getFindState(): FindState | undefined {
+        return this.isToolbarStateManaged('agFindToolbarItem') ? this.beans.findSvc?.getState() : undefined;
+    }
+
+    private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.isToolbarStateManaged('agFindToolbarItem')) {
+            return;
+        }
+        const { searchValue, activeMatch } = findState ?? {};
+        this.beans.findSvc?.setState({
+            searchValue: source === 'api' ? (searchValue ?? '') : searchValue,
+            activeMatch,
+        });
+    }
+
     private getScrollState(): ScrollState | undefined {
         if (!this.isClientSideRowModel) {
             // can't restore, so don't provide
@@ -865,7 +915,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
-        focusSvc.setFocusedCell({
+        focusSvc.setFocusedCellOrSpan({
             column: colModel.colsById[colId] ?? null,
             rowIndex,
             rowPinned,
@@ -909,10 +959,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowSelectionState():
-        | string[]
-        | ServerSideRowSelectionState
-        | ServerSideRowGroupSelectionState
-        | undefined {
+        string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {
         const selectionSvc = this.beans.selectionSvc;
         if (!selectionSvc) {
             return undefined;
@@ -951,12 +998,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowPinningState(state?: RowPinningState): void {
-        const pinnedRowModel = this.beans.pinnedRowModel;
-        if (state) {
-            pinnedRowModel?.setPinnedState(state);
-        } else {
-            pinnedRowModel?.reset();
-        }
+        this.beans.pinnedRowModel?.setPinnedState(state ?? { top: [], bottom: [] });
     }
 
     private setRowGroupExpansionState(

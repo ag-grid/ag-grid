@@ -160,6 +160,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         function adjustDetailsOnExpandOrCollapseAll({ source }: AgEventTypeParams['expandOrCollapseAll']) {
+            if (api.isDestroyed()) {
+                return;
+            }
             if (source === 'expandAll') {
                 return api.expandAll();
             }
@@ -178,7 +181,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         // initialise selection and expandAll state
         api.addEventListener('firstDataRendered', () => {
-            if (api.isDestroyed() || masterGridApi.isDestroyed()) {
+            if (!this.isAlive() || api.isDestroyed() || masterGridApi.isDestroyed()) {
                 return;
             }
 
@@ -204,7 +207,14 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             },
         });
 
-        this.addDestroyFunc(() => this.onDestroy(gridInfo));
+        this.addDestroyFunc(() => {
+            // listeners on the master api are not torn down with this detail grid, unlike ones on its own api
+            if (!masterGridApi.isDestroyed()) {
+                masterGridApi.removeEventListener('rowSelected', onMasterRowSelected);
+                masterGridApi.removeEventListener('expandOrCollapseAll', adjustDetailsOnExpandOrCollapseAll);
+            }
+            this.onDestroy(gridInfo);
+        });
     }
 
     private onDestroy(gridInfo: DetailGridInfo) {

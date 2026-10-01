@@ -1,1 +1,13 @@
-<div id="myGrid" style="height: 100%"></div>
+<div class="example-wrapper">
+    <div class="example-header">
+        <label>
+            <span>loading:</span>
+            <input type="checkbox" id="loading-toggle" checked onchange="onLoadingToggled()" />
+        </label>
+        <label>
+            <span>loadingRows.rowCount:</span>
+            <input type="number" id="row-count" min="1" max="50" value="10" onchange="onRowCountChanged()" />
+        </label>
+    </div>
+    <div id="myGrid" style="height: 100%"></div>
+</div>

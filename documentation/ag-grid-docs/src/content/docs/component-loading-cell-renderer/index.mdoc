@@ -1,21 +1,38 @@
 ---
-title: "Loading Component"
+title: "Loading Cell Component"
+description: "Customise loading cells in the Client-Side and Server-Side Row Models."
 ---
 
-The Loading Component is displayed for a row to show data is loading.
+Use a custom Loading Cell Component to replace the grid's provided loading indicators. The same component interface is used for skeleton cells in the Client-Side and Server-Side Row Models, and for full-width loading rows in the Server-Side Row Model.
 
-## Full Width Loading Row
+For configuration and examples, see the loading guide for your row model:
 
-The example below demonstrates replacing the Provided Loading Component with a Custom Loading Component.
+- [Loading Rows](./loading-rows/) for the Client-Side Row Model.
+- [Server-Side Row Model Loading Rows](./server-side-model-loading-rows/) for datasource-driven loading.
 
-- **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
-- **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
-- Example simulates a long delay to display the spinner clearly.
-- Scrolling the grid will request more rows and again display the loading cell renderer.
+## Registering a Loading Cell Component
 
-{% gridExampleRunner title="Custom Loading Cell Renderer" name="custom-loading-cell-renderer" /%}
+Set `loadingCellRenderer` and `loadingCellRendererParams` on a column definition to customise its loading cells. Set them on `defaultColDef` to provide defaults for all columns. Individual column definitions take precedence over `defaultColDef`.
 
-### Custom Loading Row
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            loadingCellRenderer: CustomLoadingCellRenderer,
+            loadingCellRendererParams: {
+                loadingMessage: 'Loading athlete...',
+            },
+        },
+    ],
+};
+```
+
+For Server-Side Row Model full-width loading rows, configure the component on the grid options.
+
+Loading rows are placeholders: row data is not yet available. Custom loading components should not rely on `params.node.data` being defined.
+
+## Component Interface
 
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-angular.mdoc" /%}
@@ -30,21 +47,9 @@ The example below demonstrates replacing the Provided Loading Component with a C
 {% interfaceDocumentation interfaceName="CustomLoadingCellRendererProps" names=["api", "context", "node"] /%}
 {% /if %}
 
-### Failed Loading
+## Dynamic Loading Row Selection
 
-When using a Custom Loading Component, you can add handling for loading failures in the component directly.
-
-In the example below, note that:
-
-- **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
-- **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
-- The example simulates a long delay to display the spinner clearly and simulates a loading failure.
-
-{% gridExampleRunner title="Custom Loading Cell Renderer Failed" name="custom-loading-cell-renderer-failed" /%}
-
-### Dynamic Loading Row Selection
-
-It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. This requires providing a `loadingCellRendererSelector`.
+Use `loadingCellRendererSelector` to choose a loading component at runtime. Return the component and any additional parameters, or `undefined` to fall back to the configured loading component.
 
 {% if isFramework("javascript", "angular", "react") %}
 {% partial file="./_component-dynamic-angular-react-js.mdoc" /%}
@@ -52,39 +57,14 @@ It's possible to determine what Loading Cell Renderer to use dynamically - i.e. 
 
 {% partial file="./_component-dynamic-vue.mdoc" /%}
 
+## Full Width Loading Row
+
+See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row) for the Server-Side Row Model example.
+
+### Failed Loading
+
+See [Failed Loading](./server-side-model-loading-rows/#failed-loading) for handling datasource failures in a custom loading component.
+
 ## Skeleton Loading
 
-The Server-Side Row Model can display loading indicators in cells by enabling `suppressServerSideFullWidthLoadingRow`.
-
-{% gridExampleRunner title="Skeleton Loading Cell Renderer" name="skeleton-loading-cell-renderer" /%}
-
-```
-const gridOptions = {
-    suppressServerSideFullWidthLoadingRow: true,
-};
-```
-
-### Custom Loading Cells
-
-The default grid behaviour can be overridden in order to provide renderers on a per-column basis.
-
-{% gridExampleRunner title="Custom Cell Loading Renderer" name="custom-cell-loading-renderer" /%}
-
-```
-const gridOptions = {
-    suppressServerSideFullWidthLoadingRow: true,
-    columnDefs: [
-        { field: 'athlete', loadingCellRenderer: CustomLoadingCellRenderer },
-        // More columns, with no load renderer...
-    ],
-    defaultColDef: {
-        loadingCellRenderer: () => '',
-    },
-};
-```
-
-The above example demonstrates the following:
-
-- `suppressServerSideFullWidthLoadingRow` is enabled, preventing the grid from defaulting to full width loading.
-- `loadingCellRenderer` is configured on the _Athlete_ column, allowing a loading spinner to be displayed for just this column.
-- `loadingCellRenderer` is configured on the `defaultColDef` providing an empty cell renderer in order to prevent the default grid loading renderer from displaying on other columns.
+See [Custom Loading Cells](./loading-rows/#custom-loading-cells) for the Client-Side Row Model, or [Skeleton Loading](./server-side-model-loading-rows/#skeleton-loading) for the Server-Side Row Model.

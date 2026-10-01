@@ -16,13 +16,21 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
      * if a given component is within that context - this method provides this
      * Note: This is only really used/necessary with cellRendererSelectors
      */
-    public override frameworkComponent(name: string, components?: any): any {
+    public override frameworkComponent(name: string, components?: any, propertyName?: string): any {
+        // A named slot counts as a framework component too, cellRenderer only (matches
+        // VueComponentFactory's own eligibility check), so it isn't reported as unregistered.
+        const slotEligible = propertyName === 'cellRenderer';
+        if (slotEligible && VueComponentFactory.hasSlot(this.parent, name)) {
+            return name;
+        }
         let result = VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
         if (!result && components && components[name]) {
             const indirectName = components[name];
-            result = VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true)
-                ? indirectName
-                : null;
+            result =
+                (slotEligible && VueComponentFactory.hasSlot(this.parent, indirectName)) ||
+                VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true)
+                    ? indirectName
+                    : null;
         }
         return result;
     }

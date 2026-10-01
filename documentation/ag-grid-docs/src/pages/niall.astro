@@ -18,29 +18,27 @@ const { meta, eyebrow, heading, intro, photos, sections } = niallData;
             <p>{intro}</p>
         </section>
 
-        {
-            sections.map((paragraphs, index) => {
-                const photo = photos[index];
-                return (
-                    <>
-                        {photo && (
-                            <div class:list={[styles.photoSection, index > 0 && styles.photoSectionTwo]}>
-                                <img src={urlWithBaseUrl(photo.src)} alt={photo.alt} class={styles.niallHeaderImage} />
-                                {photo.caption && <span>{photo.caption}</span>}
+        {sections.map((paragraphs, index) => {
+            const photo = photos[index];
+            return (
+                <>
+                    {photo && (
+                        <div class:list={[styles.photoSection, index > 0 && styles.photoSectionTwo]}>
+                            <img src={urlWithBaseUrl(photo.src)} alt={photo.alt} class={styles.niallHeaderImage} />
+                            {photo.caption && <span>{photo.caption}</span>}
+                        </div>
+                    )}
+                    <section class={styles.contentSection}>
+                        <div class={styles.niallSectionContent}>
+                            <div class={styles.niallTextBlock}>
+                                {paragraphs.map((paragraph) => (
+                                    <p>{paragraph}</p>
+                                ))}
                             </div>
-                        )}
-                        <section class={styles.contentSection}>
-                            <div class={styles.niallSectionContent}>
-                                <div class={styles.niallTextBlock}>
-                                    {paragraphs.map((paragraph) => (
-                                        <p>{paragraph}</p>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-                    </>
-                );
-            })
-        }
+                        </div>
+                    </section>
+                </>
+            );
+        })}
     </div>
 </Layout>

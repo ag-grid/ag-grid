@@ -53,4 +53,23 @@ test.agExample(import.meta, () => {
             await expect(cell).toContainText('French');
         }
     );
+
+    test.eachFramework(
+        'should show the formatted value in the picker display while editing',
+        async ({ agIdFor, page }) => {
+            const cell = agIdFor.cell('0', 'language');
+            await cell.dblclick();
+
+            const popup = page.locator('.ag-rich-select-list').first();
+            await expect(popup).toBeVisible();
+
+            // formatValue becomes the editor's valueFormatter, which renders the picker's display area,
+            // so it shows the uppercase form of whichever language this randomised row holds.
+            const display = page.locator('.ag-rich-select-value .ag-picker-field-display').first();
+            await expect(display).toBeVisible();
+            await expect(display).toHaveText(/^(ENGLISH|SPANISH|FRENCH|PORTUGUESE|\(OTHER\))$/);
+
+            await page.keyboard.press('Escape');
+        }
+    );
 });

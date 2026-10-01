@@ -1,0 +1,49 @@
+{
+    "name": "AG Grid",
+    "legalName": "AG Grid Ltd",
+    "description": "AG Grid is a JavaScript data grid and charting library for building enterprise web applications, developed by AG Grid Ltd. Its product family is AG Grid, AG Charts and AG Studio.",
+    "foundingDate": "2010-07-19",
+    "logoUrl": "https://www.ag-grid.com/images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png",
+    "sameAs": [
+        "https://github.com/ag-grid",
+        "https://x.com/ag_grid",
+        "https://youtube.com/c/ag-grid",
+        "https://www.linkedin.com/company/ag-grid",
+        "https://www.crunchbase.com/organization/ag-grid",
+        "https://www.wikidata.org/wiki/Q128283374"
+    ],
+    "address": {
+        "streetAddress": "70 Wilson Street",
+        "addressLocality": "London",
+        "postalCode": "EC2A 2DB",
+        "addressCountry": "GB"
+    },
+    "identifiers": [
+        {
+            "propertyID": "Companies House",
+            "value": "07318192"
+        },
+        {
+            "propertyID": "VAT",
+            "value": "GB998360167"
+        }
+    ],
+    "founder": {
+        "name": "Niall Crosby",
+        "sameAs": ["https://www.wikidata.org/wiki/Q114758691"]
+    },
+    "contactPoints": [
+        {
+            "contactType": "sales",
+            "url": "https://www.ag-grid.com/contact/",
+            "areaServed": "Worldwide",
+            "availableLanguage": "English"
+        },
+        {
+            "contactType": "technical support",
+            "url": "https://ag-grid.zendesk.com/",
+            "areaServed": "Worldwide",
+            "availableLanguage": "English"
+        }
+    ]
+}

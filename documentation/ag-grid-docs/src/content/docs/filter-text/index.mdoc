@@ -100,6 +100,8 @@ In most cases, you can customise the Text Filter matching logic by providing you
 
 For more advanced use cases, you can provide your own `textMatcher` to decide when to include a row in the filtered results. For example, you might want to apply different logic for the filter option `equals` than for `contains`.
 
+The [Advanced Filter](./filter-advanced/) compares text with the same `textFormatter`, `textMatcher` and `trimInput` the column is configured with, so a condition written there matches the rows this filter matches. `params.source` tells a `textFormatter` or `textMatcher` which of the two is asking.
+
 {% interfaceDocumentation interfaceName="ITextFilterParams" names=["textMatcher"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The following is an example of a `textMatcher` that mimics the current implementation of AG Grid. This can be used as a template to create your own.

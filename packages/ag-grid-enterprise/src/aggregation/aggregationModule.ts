@@ -27,12 +27,25 @@ export const SharedAggregationModule: _ModuleWithApi<_AggregationGridApi<any>> =
 };
 
 /**
+ * The pipeline stage that writes aggData, on its own so a feature that only reads it does not pull in
+ * the filtering and children services with it.
+ * @internal
+ */
+export const AggregationStageModule: _ModuleWithoutApi = {
+    moduleName: 'AggregationStage',
+    version: VERSION,
+    beans: [AggregationStage],
+    rowModels: ['clientSide'],
+    dependsOn: [SharedAggregationModule],
+};
+
+/**
  * @internal
  */
 export const AggregationModule: _ModuleWithoutApi = {
     moduleName: 'Aggregation',
     version: VERSION,
-    beans: [AggregationStage, FilterAggregatesStage, AggregatedChildrenSvc],
+    beans: [FilterAggregatesStage, AggregatedChildrenSvc],
     rowModels: ['clientSide'],
-    dependsOn: [SharedAggregationModule],
+    dependsOn: [AggregationStageModule],
 };

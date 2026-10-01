@@ -11,8 +11,9 @@ import { FRAMEWORK_REDIRECT_PATH, FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@
 import Layout from '@layouts/Layout.astro';
 import { getIsArchive } from '@utils/env';
 import { getFrameworkDisplayText } from '@utils/framework';
-import { getErrorText } from '@utils/getErrorText';
+import { getErrorTextDetails } from '@utils/getErrorText';
 import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
+import { getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
@@ -56,10 +57,12 @@ export async function getStaticPaths() {
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
 const errorCode = parseInt(code, 10);
-// Covers both a code retired since an earlier release and a number never allocated — the two cannot be
-// told apart without a hand-maintained list, so the copy stays version-neutral. It must never reach
-// `getErrorText`, which throws for an unknown code under `astro dev` via `throwDevWarning`.
+// Covers both a code retired since an earlier release and a number never allocated. Having a page of its
+// own is what tells the two apart, with no list to maintain: content was only ever written against a code
+// that existed. Neither must reach `getErrorText`, which throws for an unknown code under `astro dev`
+// via `throwDevWarning`.
 const isUnknownCode = !(errorCode in AG_GRID_ERRORS);
+const isRetiredCode = isUnknownCode && errorPage !== undefined;
 const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
@@ -71,16 +74,28 @@ const { data: allErrorLinks } = (await getEntry('errorLinks', 'links')) as Colle
 const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
-const defaultErrorText = isUnknownCode ? '' : getErrorText({ errorCode: errorCode as ErrorId });
+// No query string at build time, so a parameterised error renders with placeholders here and the
+// script re-renders it from the URL.
+const { text: defaultErrorText, hasPlaceholders } = isUnknownCode
+    ? { text: '', hasPlaceholders: false }
+    : getErrorTextDetails({ errorCode: errorCode as ErrorId });
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
-const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
+// Slug stays put across all three cases; only the label follows what the section actually holds.
+const fullErrorTextHeading = {
+    slug: getTabItemSlug('full-error-text'),
+    depth: 2,
+    text: isRetiredCode ? 'Retired Error Code' : 'Full Error Text',
+};
 const relatedDocPages = { slug: getTabItemSlug('related-doc-pages'), depth: 2, text: 'Related Doc Pages' };
+// Error content lives in `content/errors/`, so partials resolve against that rather than `content/docs`.
+const errorsContentPath = pathJoin(getContentRootFileUrl().pathname, 'errors');
 let headings = errorPage
     ? await getHeadings({
           title,
           pageName,
+          partialBasePath: errorsContentPath,
           markdocContent: errorPage.body,
           framework,
           getTabItemSlug,
@@ -98,6 +113,8 @@ if (errorLinks.length > 0) {
 
 const isArchive = getIsArchive();
 const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH, 'migration');
+// Without a version to redirect to, the archive index is the one link that helps.
+const archiveUrl = pathJoin(PRODUCTION_GRID_SITE_URL, 'documentation-archive') + '/';
 ---
 
 <Layout
@@ -113,66 +130,78 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
         <div id="doc-content" class:list={[styles.docPage, styles.errorPage]}>
             <Header client:load title={title} framework={framework} path={path} menuItems={docsNavData.sections} />
 
-            {
-                isArchive && (
-                    <Warning>
-                        You are using an older version of AG Grid. To upgrade, please see our{' '}
-                        <a href={migrationUrl}>migration guides</a>.
-                    </Warning>
-                )
-            }
+            {isArchive && (
+                <Warning>
+                    You are using an older version of AG Grid. To upgrade, please see our{' '}
+                    <a href={migrationUrl}>migration guides</a>.
+                </Warning>
+            )}
 
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
-                {
-                    isUnknownCode ? (
+                {isRetiredCode ? (
+                    <Warning>
+                        Error #{code} is no longer raised by AG Grid {VERSION}. If you are using an earlier version, the
+                        guidance below still applies — otherwise, find your version in the{' '}
+                        <a href={archiveUrl}>documentation archive</a>.
+                    </Warning>
+                ) : isUnknownCode ? (
+                    <Warning>
+                        Error #{code} is not recognised in AG Grid {VERSION} — it either applies to an older version, or
+                        is not an error AG Grid raises. Following the link from your browser's developer console will
+                        bring you to the documentation for the version you are running; if you reached this page another
+                        way, find your version in the <a href={archiveUrl}>documentation archive</a>.
+                    </Warning>
+                ) : (
+                    <>
+                        <pre id="errorCodeText">{defaultErrorText}</pre>
+                        {hasPlaceholders && (
+                            <>
+                                <div id="error-missing-params" hidden>
+                                    <Warning>
+                                        This URL does not carry the specifics of your error, so the message above shows
+                                        placeholders (<code>&lt;name&gt;</code>) in their place. Follow the full link
+                                        from your browser's developer console to see the complete message.
+                                    </Warning>
+                                </div>
+                                {/* Nothing reveals the warning without JS, so CSS does it there. */}
+                                <noscript>
+                                    <style
+                                        is:inline
+                                        set:html="#error-missing-params[hidden] { display: block }"
+                                    ></style>
+                                </noscript>
+                            </>
+                        )}
                         <Note>
-                            Error #{code} is not recognised in AG Grid {VERSION}. If you followed this link from an
-                            older version of AG Grid, you will be redirected to that version's documentation.
+                            To show this error text in the dev console,{' '}
+                            <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
+                                enable development validations
+                            </a>
+                            .
                         </Note>
-                    ) : (
-                        <>
-                            <div class="missing-params-message">
-                                <Warning>
-                                    Full error message cannot be shown because there are missing parameters in the URL.
-                                    Please follow the full link from the developer tool logs.
-                                </Warning>
-                            </div>
-                            <div class="full-error-message">
-                                <pre id="errorCodeText">{defaultErrorText}</pre>
-                                <Note>
-                                    To show this error text in the dev console,{' '}
-                                    <a href={urlWithPrefix({ framework, url: './dev-validation' })}>
-                                        enable development validations
-                                    </a>
-                                    .
-                                </Note>
-                            </div>
-                        </>
-                    )
-                }
-
-                {
-                    errorLinks.length > 0 ? (
-                        <>
-                            <h2 id={relatedDocPages.slug}>{relatedDocPages.text}</h2>
-                            <p>
-                                The following documentation pages should provide additional context / guidance on how to
-                                resolve this error.
-                            </p>
-                            <ul>
-                                {errorLinks.map((e) => (
-                                    <li>
-                                        <a href={urlWithPrefix({ framework, url: e.url })}>{e.text}</a>
-                                        {e.description ? <span> - {e.description}</span> : undefined}
-                                    </li>
-                                ))}
-                            </ul>
-                        </>
-                    ) : undefined
-                }
+                    </>
+                )}
 
                 {Content ? <Content framework={framework} /> : undefined}
+
+                {errorLinks.length > 0 ? (
+                    <>
+                        <h2 id={relatedDocPages.slug}>{relatedDocPages.text}</h2>
+                        <p>
+                            The following documentation pages should provide additional context / guidance on how to
+                            resolve this error.
+                        </p>
+                        <ul>
+                            {errorLinks.map((e) => (
+                                <li>
+                                    <a href={urlWithPrefix({ framework, url: e.url })}>{e.text}</a>
+                                    {e.description ? <span> - {e.description}</span> : undefined}
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                ) : undefined}
             </div>
         </div>
 
@@ -181,49 +210,67 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
 </Layout>
 
 <script>
-    import { getErrorText } from '@utils/getErrorText';
+    import { getErrorTextDetails, formatErrorParamValue } from '@utils/getErrorText';
     import {
         AG_GRID_ERRORS,
         type ErrorId,
     } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
     import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
+    import { replaceLocation } from '@ag-website-shared/utils/replaceLocation';
     import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
     import { pathJoin } from '@utils/pathJoin';
 
-    const MISSING_PARAMS_MESSAGE_SELECTOR = '.missing-params-message';
-    const FULL_ERROR_MESSAGE_SELECTOR = '.full-error-message';
+    const MISSING_PARAMS_ID = 'error-missing-params';
     const ERROR_CODE_TEXT_ID = 'errorCodeText';
+    const ERROR_PARAM_SELECTOR = '[data-error-param]';
 
-    // Get errorCode from url, so it doesn't need to be passed
-    // in from Astro and we can import in this script
-    const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10);
-    const searchParams = new URLSearchParams(window.location.search);
-    const { _version_, ...params } = Object.fromEntries(searchParams.entries());
+    const applyErrorDetails = () => {
+        // Get errorCode from url, so it doesn't need to be passed
+        // in from Astro and we can import in this script
+        const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10);
+        const searchParams = new URLSearchParams(window.location.search);
+        const { _version_, ...params } = Object.fromEntries(searchParams.entries());
 
-    if (!_version_) {
-        // Missing version number, show a warning message. Both blocks are absent on an unknown code's page.
-        const missingParamsMessage = document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement | null;
-        const fullErrorMessage = document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement | null;
-
-        if (missingParamsMessage) {
-            missingParamsMessage.style.display = 'block';
-        }
-        if (fullErrorMessage) {
-            fullErrorMessage.style.display = 'none';
-        }
-    } else {
-        // Redirect first, so the hop to the archive can never sit downstream of a failing text lookup.
-        const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
+        // Redirect first, so the hop to the archive never sits downstream of a failing text lookup.
+        const errorRedirectBaseUrl = _version_
+            ? getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION })
+            : undefined;
 
         if (errorRedirectBaseUrl) {
-            // `replace` does not halt this script, so the text update below has to be an explicit `else`.
+            // `replace` does not halt this script, so everything below has to be an explicit `else`.
             const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
-            window.location.replace(redirectUrl);
+            replaceLocation(redirectUrl);
         } else if (errorCode in AG_GRID_ERRORS) {
+            const typedErrorCode = errorCode as ErrorId;
+
+            const { text, hasPlaceholders } = getErrorTextDetails({ errorCode: typedErrorCode, params });
+
             const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
             if (errorCodeTextEl) {
-                errorCodeTextEl.textContent = getErrorText({ errorCode: errorCode as ErrorId, params });
+                errorCodeTextEl.textContent = text;
+            }
+
+            // Hidden until now, so a complete message never flashes the warning.
+            const missingParamsEl = document.getElementById(MISSING_PARAMS_ID);
+            if (hasPlaceholders) {
+                missingParamsEl?.removeAttribute('hidden');
+            } else {
+                missingParamsEl?.remove();
+            }
+
+            // Swap each `errorParam` placeholder for this reader's own value.
+            for (const el of document.querySelectorAll<HTMLElement>(ERROR_PARAM_SELECTOR)) {
+                const name = el.dataset.errorParam;
+                const value = name === undefined ? undefined : params[name];
+                if (value !== undefined) {
+                    el.textContent = `${formatErrorParamValue(value)}${el.dataset.errorParamSuffix ?? ''}`;
+                }
             }
         }
-    }
+    };
+
+    applyErrorDetails();
+    // A module does not re-run after a `<ClientRouter />` swap, so switching framework would otherwise
+    // leave the freshly served page's message unrendered and its warning still hidden.
+    document.addEventListener('astro:page-load', applyErrorDetails);
 </script>

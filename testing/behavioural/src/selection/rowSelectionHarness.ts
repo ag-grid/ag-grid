@@ -7,6 +7,7 @@ import type { GridApi, GridOptions, Params } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     PaginationModule,
+    PinnedRowModule,
     QuickFilterModule,
     RowSelectionModule,
     TextEditorModule,
@@ -22,6 +23,7 @@ export const gridMgr = new TestGridsManager({
         ClientSideRowModelModule,
         RowGroupingModule,
         PaginationModule,
+        PinnedRowModule,
         QuickFilterModule,
         TextEditorModule,
     ],

@@ -1,6 +1,6 @@
 import type { LogService } from '../../validation/logService';
 import type { IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
-import { _classifyFilterOptions } from './simpleFilterUtils';
+import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from './simpleFilterUtils';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
@@ -38,7 +38,12 @@ export class OptionsFactory {
     }
 
     private collectUsableOptions(log: LogService, configuredOptions: (IFilterOptionDef | string)[]): void {
-        const { offered, customOptions } = _classifyFilterOptions(configuredOptions, (keys) => log.warn(72, { keys }));
+        // A column offers the Advanced Filter's own options through the same list, and cannot evaluate one itself.
+        const { offered, customOptions } = _classifyFilterOptions(
+            configuredOptions,
+            (keys) => log.warn(72, { keys }),
+            _ADVANCED_FILTER_ONLY_OPTIONS
+        );
         this.offeredOptions = offered;
         this.filterOptions = [...offered.values()];
         this.customFilterOptions = customOptions;

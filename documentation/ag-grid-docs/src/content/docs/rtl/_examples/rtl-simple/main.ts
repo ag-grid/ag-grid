@@ -1,4 +1,4 @@
-import { AG_GRID_LOCALE_EG, AG_GRID_LOCALE_IL } from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_AR_EG, AG_GRID_LOCALE_HE_IL } from '@ag-grid-community/locale';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -36,7 +36,7 @@ interface LanguageConfig {
 
 const LANGUAGES: Record<string, LanguageConfig> = {
     arabic: {
-        localeText: AG_GRID_LOCALE_EG,
+        localeText: AG_GRID_LOCALE_AR_EG,
         enableRtl: true,
         columnDefs: [
             { field: 'city', headerName: 'المدينة' },
@@ -58,7 +58,7 @@ const LANGUAGES: Record<string, LanguageConfig> = {
         ],
     },
     hebrew: {
-        localeText: AG_GRID_LOCALE_IL,
+        localeText: AG_GRID_LOCALE_HE_IL,
         enableRtl: true,
         columnDefs: [
             { field: 'city', headerName: 'עיר' },

@@ -25,6 +25,8 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
     private cachedRaw: unknown = this;
     /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
     private cachedParsed: any;
+    /** Read off the widget, not from `getStartValue`, because the widget normalises what it is given. */
+    private seededText: string | null | undefined | this = this;
 
     constructor() {
         super(LargeTextCellElement, [AgInputTextAreaSelector]);
@@ -46,6 +48,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             .setRows(rows || 10);
 
         let startValue: string | null | undefined;
+        let seeded = false;
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (cellStartedEdit) {
@@ -57,6 +60,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
                 startValue = eventKey;
             } else {
                 startValue = this.getStartValue(params);
+                seeded = true;
 
                 if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -65,11 +69,13 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         } else {
             this.focusAfterAttached = false;
             startValue = this.getStartValue(params);
+            seeded = true;
         }
 
         if (startValue != null) {
             eEditor.setValue(startValue, true);
         }
+        this.seededText = seeded ? eEditor.getValue() : this;
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
         this.activateTabIndex();
@@ -84,6 +90,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         this.params.value = value;
         const startValue = this.getStartValue(this.params);
         this.eEditor.setValue(startValue ?? '', true);
+        this.seededText = this.eEditor.getValue();
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -121,6 +128,9 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         const { value } = params;
         const editorValue = eEditor.getValue();
 
+        if (editorValue === this.seededText) {
+            return value;
+        }
         if (!_exists(editorValue) && !_exists(value)) {
             return value;
         }

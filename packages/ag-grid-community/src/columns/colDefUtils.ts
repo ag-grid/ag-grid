@@ -105,12 +105,12 @@ function mergeTypeKeys(
     typeMap: { [key: string]: ColDef }
 ): void {
     for (let i = 0; i < typeKeysLen; ++i) {
-        const t = typeKeys[i].trim();
-        const typeColDef = typeMap[t];
+        const type = typeKeys[i].trim();
+        const typeColDef = typeMap[type];
         if (typeColDef) {
             _mergeDeep(colDefMerged, typeColDef, false, true);
         } else {
-            beans.log.warn(36, { t });
+            beans.log.warn(36, { type });
         }
     }
 }

@@ -92,6 +92,11 @@ type StopContext = {
 
 type StopOutcome = { edits: EditMap; res: boolean };
 
+type BulkEditFormulaProgress = {
+    value: EditValue['pendingValue'];
+    lastRowNode?: RowNode;
+};
+
 type StopValidationDecision = {
     blockRejected: boolean;
     skipAllCommits: boolean;
@@ -129,6 +134,14 @@ const CHECK_SIBLING = { checkSiblings: true };
 
 const FORCE_REFRESH = { force: true, suppressFlash: true };
 const FORCE_REFRESH_FLASH = { force: true };
+
+// Raw formula indices retain hidden-row gaps; getFormulaRowIndex() falls back to displayed indices.
+// Rows outside formula-row space advance the accumulated offset by one.
+function getFormulaRowDelta(previousRowNode: RowNode, rowNode: RowNode): number {
+    const from = previousRowNode.formulaRowIndex;
+    const to = rowNode.formulaRowIndex;
+    return from == null || to == null ? 1 : to - from;
+}
 
 export class EditService extends BeanStub implements NamedBean {
     public beanName = 'editSvc' as const;
@@ -1913,13 +1926,13 @@ export class EditService extends BeanStub implements NamedBean {
         if (!ranges || ranges.length === 0) {
             return;
         }
-        const { beans, rangeSvc, valueSvc } = this;
+        const { beans } = this;
         const { formula } = beans;
 
         _syncFromEditors(beans, { persist: true });
 
         const edits: EditMap = this.model.getEditMapCopy();
-        let editValue = edits.get(rowNode)?.get(column)?.pendingValue;
+        const editValue = edits.get(rowNode)?.get(column)?.pendingValue;
 
         let bulkStartDispatched = false;
         if (!this.batch) {
@@ -1930,61 +1943,10 @@ export class EditService extends BeanStub implements NamedBean {
 
         const isFormula = formula?.isFormula(editValue) ?? false;
 
+        // Carry the shifted formula so refs that cannot move keep their last valid position.
+        let formulaProgress: BulkEditFormulaProgress = { value: editValue };
         for (let i = 0, len = ranges.length; i < len; ++i) {
-            const range = ranges[i];
-            const rangeColumns = range.columns as AgColumn[];
-            const hasFormulaColumnsInRange = rangeColumns.some((col) => col?.allowFormula);
-            rangeSvc?.forEachRowInRange(range, (position) => {
-                const rowNode = _getRowNode(beans, position);
-                if (rowNode === undefined) {
-                    return;
-                }
-
-                const editRow: EditRow = edits.get(rowNode) ?? new Map();
-                let valueForColumn = editValue;
-                for (const column of rangeColumns) {
-                    if (!column) {
-                        continue;
-                    }
-
-                    const isFormulaForColumn = !!isFormula && column.allowFormula;
-
-                    if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const sourceValue = valueSvc.getValueFromData(column as AgColumn, rowNode, true);
-                        let pendingValue = valueSvc.parseValue(
-                            column as AgColumn,
-                            rowNode ?? null,
-                            valueForColumn,
-                            sourceValue
-                        );
-
-                        if (Number.isNaN(pendingValue)) {
-                            // non-number was bulk edited into a number column
-                            pendingValue = null;
-                        }
-
-                        editRow.set(column, {
-                            editorValue: undefined,
-                            pendingValue,
-                            sourceValue,
-                            state: 'changed',
-                            editorState: {
-                                isCancelAfterEnd: undefined,
-                                isCancelBeforeStart: undefined,
-                            },
-                        });
-                    }
-                    if (isFormulaForColumn) {
-                        valueForColumn = formula?.updateFormulaByOffset({ value: valueForColumn, columnDelta: 1 });
-                    }
-                }
-                if (editRow.size > 0) {
-                    edits.set(rowNode, editRow);
-                }
-                if (isFormula && hasFormulaColumnsInRange) {
-                    editValue = formula?.updateFormulaByOffset({ value: editValue, rowDelta: 1 });
-                }
-            });
+            formulaProgress = this.applyBulkEditToRange(ranges[i], edits, isFormula, formulaProgress);
         }
 
         // One bulk edit however many ranges it spans, so commit once: a stopped event per range leaves
@@ -2013,6 +1975,100 @@ export class EditService extends BeanStub implements NamedBean {
         const cellCtrl = _getCellCtrl(beans, { rowNode, column })!;
         if (cellCtrl) {
             cellCtrl.focusCell({ forceBrowserFocus: true });
+        }
+    }
+
+    private applyBulkEditToRange(
+        range: CellRange,
+        edits: EditMap,
+        isFormula: boolean,
+        progress: BulkEditFormulaProgress
+    ): BulkEditFormulaProgress {
+        const { beans, rangeSvc } = this;
+        const { formula } = beans;
+        const rangeColumns = range.columns as AgColumn[];
+        const shiftFormulaPerRow = isFormula && rangeColumns.some((col) => col?.allowFormula);
+        let { value, lastRowNode } = progress;
+        let firstRow = true;
+
+        rangeSvc?.forEachRowInRange(range, (position) => {
+            const rowNode = _getRowNode(beans, position);
+            if (rowNode === undefined) {
+                return;
+            }
+
+            const lastRowIndex = lastRowNode?.rowIndex;
+            let rowDelta = lastRowNode ? 1 : 0;
+            // Only displayed-adjacent ranges include the hidden-row gap at their boundary.
+            if (
+                shiftFormulaPerRow &&
+                lastRowNode &&
+                (!firstRow ||
+                    (lastRowIndex != null &&
+                        rowNode.rowPinned === lastRowNode.rowPinned &&
+                        rowNode.rowIndex === lastRowIndex + 1))
+            ) {
+                rowDelta = getFormulaRowDelta(lastRowNode, rowNode);
+            }
+            const rowValue = rowDelta === 0 ? value : formula?.updateFormulaByOffset({ value, rowDelta });
+
+            this.applyBulkEditToRow(rowNode, rangeColumns, edits, rowValue, isFormula);
+
+            firstRow = false;
+            if (shiftFormulaPerRow) {
+                value = rowValue;
+                lastRowNode = rowNode;
+            }
+        });
+
+        return { value, lastRowNode };
+    }
+
+    /** Writes `value` into every editable cell of `rowNode` across `rangeColumns`, one column step per formula column. */
+    private applyBulkEditToRow(
+        rowNode: RowNode,
+        rangeColumns: AgColumn[],
+        edits: EditMap,
+        value: EditValue['pendingValue'],
+        isFormula: boolean
+    ): void {
+        const { beans, valueSvc } = this;
+        const { formula } = beans;
+        const editRow: EditRow = edits.get(rowNode) ?? new Map();
+        let valueForColumn = value;
+
+        for (const column of rangeColumns) {
+            if (!column) {
+                continue;
+            }
+
+            if (this.isCellEditable({ rowNode, column }, 'api')) {
+                const sourceValue = valueSvc.getValueFromData(column, rowNode, true);
+                let pendingValue = valueSvc.parseValue(column, rowNode, valueForColumn, sourceValue);
+
+                if (Number.isNaN(pendingValue)) {
+                    // non-number was bulk edited into a number column
+                    pendingValue = null;
+                }
+
+                editRow.set(column, {
+                    editorValue: undefined,
+                    pendingValue,
+                    sourceValue,
+                    state: 'changed',
+                    editorState: {
+                        isCancelAfterEnd: undefined,
+                        isCancelBeforeStart: undefined,
+                    },
+                });
+            }
+            if (isFormula && column.allowFormula) {
+                valueForColumn = formula?.updateFormulaByOffset({ value: valueForColumn, columnDelta: 1 });
+            }
+        }
+
+        if (editRow.size > 0) {
+            edits.set(rowNode, editRow);
         }
     }
 

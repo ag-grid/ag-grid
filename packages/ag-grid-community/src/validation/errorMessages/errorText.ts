@@ -290,7 +290,7 @@ export const AG_GRID_ERRORS = {
     25: ({ id }: { id: any }) =>
         [`The \`getRowId\` callback must return a string. The ID `, id, ` is being cast to a string.`] as const,
     26: ({ fnName, preDestroyLink }: { fnName: string; preDestroyLink: string }) => {
-        return `Grid API function \`${fnName}()\` cannot be called as the grid has been destroyed.\n Either clear local references to the grid api, when it is destroyed, or check \`gridApi.isDestroyed()\` to avoid calling methods against a destroyed grid.\n To run logic when the grid is about to be destroyed use the \`gridPreDestroy\` event. See: ${preDestroyLink}` as const;
+        return `Grid API function \`${fnName}()\` cannot be called as the grid has been destroyed.\n Either clear local references to the grid api, when it is destroyed, or check \`gridApi.isDestroyed()\` to avoid calling methods against a destroyed grid.\n To run logic when the grid is about to be destroyed use the \`gridPreDestroyed\` event. See: ${preDestroyLink}` as const;
     },
     27: ({ fnName, module }: { fnName: string; module: string }) =>
         `API function \`${fnName}\` not registered to module \`${module}\`` as const,
@@ -313,14 +313,14 @@ export const AG_GRID_ERRORS = {
         `the column type \`${key}\` is a default column type and cannot be overridden.` as const,
     35: () =>
         `Column type definitions \`columnTypes\` with a \`type\` attribute are not supported because a column type cannot refer to another column type. Only column definitions \`columnDefs\` can use the \`type\` attribute to refer to a column type.` as const,
-    36: ({ t }: { t: string }) =>
-        `\`colDef.type\` \`${t}\` does not correspond to defined \`gridOptions.columnTypes\`` as const,
+    36: ({ type }: { type: string }) =>
+        `\`colDef.type\` \`${type}\` does not correspond to defined \`gridOptions.columnTypes\`` as const,
     37: () => `Changing the column pinning status is not allowed with \`domLayout='print'\`` as const,
     38: ({ iconName }: { iconName: string }) =>
         `provided icon \`${iconName}\` needs to be a string or a function` as const,
     39: () =>
         'Applying column order broke a group where columns should be married together. Applying new order has been discarded.' as const,
-    40: ({ e, method }: { e: any; method: string }) => `${e}\n${clipboardApiError(method)}` as const,
+    40: ({ error, method }: { error: any; method: string }) => `${error}\n${clipboardApiError(method)}` as const,
     41: () =>
         "Browser did not allow `document.execCommand('copy')`. Ensure `api.copySelectedRowsToClipboard()` is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
     42: () => "Browser does not support `document.execCommand('copy')` for clipboard operations" as const,
@@ -820,7 +820,7 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
-    298: () => `Columns Tool Panel \`buttons\` requires \`apply\` to enable Deferred Updates.` as const,
+    298: () => `Columns Tool Panel \`cancel\` button has no effect without the \`apply\` button.` as const,
     301: ({ key }: { key: string }) =>
         `Toolbar item \`${key}\` is missing the \`toolbarItem\` property and will not be rendered.` as const,
     302: ({
@@ -959,6 +959,9 @@ export const AG_GRID_ERRORS = {
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
         `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${baseDocLink}/theming-migration/` as const,
+    333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
+    334: () =>
+        `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -974,7 +977,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 332;
+export const MAX_ERROR_ID = 334;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
@@ -1001,6 +1004,7 @@ const MISSING_MODULE_REASONS = {
     1: 'Charting Aggregation',
     2: '`pivotResultFields`',
     3: '`setTooltip`',
+    4: 'the `isAnyOf` / `isNoneOf` filter options in the Advanced Filter',
 } as const;
 
 export type MissingModuleErrors = typeof MISSING_MODULE_REASONS;

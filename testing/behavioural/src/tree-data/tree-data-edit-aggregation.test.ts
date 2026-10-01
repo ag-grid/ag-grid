@@ -9,7 +9,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GridOptions, IAggFuncParams, ValueSetterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 interface VehicleRow {
@@ -24,7 +24,7 @@ interface VehicleRow {
 
 describe('ag-grid tree data edit aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule, TextEditorModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule, TextEditorModule, NumberEditorModule],
     });
 
     beforeEach(() => {

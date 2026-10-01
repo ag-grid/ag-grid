@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_UA = {
+export const AG_GRID_LOCALE_UK_UA = {
     // Set Filter
     selectAll: '(Вибрати все)',
     selectAllSearchResults: '(Вибрати всі результати пошуку)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_UA = {
     clearFilter: 'Очистити',
     cancelFilter: 'Скасувати',
     cancelColumnToolPanel: 'Скасувати',
+    resetColumnToolPanel: 'Скинути',
 
     // Filter Titles
     textFilter: 'Текстовий фільтр',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterValidationMissingCondition: 'Відсутня умова',
     advancedFilterValidationJoinOperatorMismatch: "Оператори об'єднання в межах умови мають бути однаковими",
     advancedFilterValidationInvalidJoinOperator: "Оператор об'єднання не знайдено",
+    advancedFilterValidationMissingListStartBracket: 'Відсутня відкриваюча квадратна дужка',
+    advancedFilterValidationMissingListEndBracket: 'Відсутня закриваюча квадратна дужка',
     advancedFilterValidationMissingEndBracket: 'Відсутня кінцева дужка',
     advancedFilterValidationExtraEndBracket: 'Забагато кінцевих дужок',
     advancedFilterValidationMessage: 'У виразі є помилка. ${variable} - ${variable}.',
@@ -920,3 +923,6 @@ export const AG_GRID_LOCALE_UA = {
     deleteNote: 'Видалити нотатку',
     notePlaceholder: 'Додати нотатку...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_UK_UA` instead. */
+export const AG_GRID_LOCALE_UA = AG_GRID_LOCALE_UK_UA;

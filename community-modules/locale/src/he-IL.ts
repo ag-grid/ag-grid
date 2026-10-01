@@ -8,7 +8,7 @@
  * chosen phrase or spelling variant in the target language.
  */
 
-export const AG_GRID_LOCALE_IL = {
+export const AG_GRID_LOCALE_HE_IL = {
     // Set Filter
     selectAll: '(בחר הכל)',
     selectAllSearchResults: '(בחר את כל תוצאות החיפוש)',
@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_IL = {
     clearFilter: 'נקה',
     cancelFilter: 'בטל',
     cancelColumnToolPanel: 'בטל',
+    resetColumnToolPanel: 'אפס',
 
     // Filter Titles
     textFilter: 'מסנן טקסט',
@@ -184,6 +185,8 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterValidationMissingCondition: 'חסר תנאי',
     advancedFilterValidationJoinOperatorMismatch: 'המפעילים בתנאי חייבים להיות אותו דבר',
     advancedFilterValidationInvalidJoinOperator: 'אופרטור צרוף לא נמצא',
+    advancedFilterValidationMissingListStartBracket: 'חסר סוגר פתיחה מרובע',
+    advancedFilterValidationMissingListEndBracket: 'חסר סוגר סיום מרובע',
     advancedFilterValidationMissingEndBracket: 'חסר סוגר סיום',
     advancedFilterValidationExtraEndBracket: 'יותר מדי סוגרי סיום',
     advancedFilterValidationMessage: 'יש שגיאה בביטוי. ${variable} - ${variable}.',
@@ -916,3 +919,6 @@ export const AG_GRID_LOCALE_IL = {
     deleteNote: 'הסר הערה',
     notePlaceholder: 'הוסף הערה...',
 };
+
+/** @deprecated v36.3 Use `AG_GRID_LOCALE_HE_IL` instead. */
+export const AG_GRID_LOCALE_IL = AG_GRID_LOCALE_HE_IL;

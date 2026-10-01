@@ -1,4 +1,5 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
 import type { ChartType, GridOptions } from 'ag-grid-community';
@@ -32,7 +33,7 @@ interface Widget {
     isArray?: boolean;
     proxy: ChartOptionsProxy;
     /** The params object handed to the widget. Panels may still amend it after the factory returns. */
-    params: { value?: unknown };
+    params: { value?: unknown; enabled?: boolean };
 }
 
 const PROXY_FACTORY_METHODS = [
@@ -64,13 +65,18 @@ const LEAF_FACTORIES: [string, WidgetKind][] = [
     ['addEnableParams', 'enable'],
 ];
 
+/** What the widget shows: enable toggles carry it as `enabled`, everything else as `value`. */
+function shownValue(widget: Widget): unknown {
+    return widget.kind === 'enable' ? widget.params.enabled : widget.params.value;
+}
+
 /**
  * A panel may resolve a value the option itself doesn't hold, in which case the binding is doing its job.
  * `getDefaultSliderParams` masks a missing read with `?? 0` and `addEnableParams` with `?? false`, so a
  * widget still showing the masked value proves nothing - anything else was put there by the panel.
  */
 function hasRecoveredValue(widget: Widget): boolean {
-    const { value } = widget.params;
+    const value = shownValue(widget);
     // `fontStyle` has no widget of its own - the weight/style select folds it into its options and falls
     // back to `normal`, which is the default AG Charts itself applies, so the control agrees with the chart.
     if (widget.kind === 'font' && widget.expression.endsWith('.fontStyle')) {
@@ -82,7 +88,10 @@ function hasRecoveredValue(widget: Widget): boolean {
     if (widget.kind === 'slider') {
         return value !== '0';
     }
-    return widget.kind !== 'enable';
+    if (widget.kind === 'enable') {
+        return value === true;
+    }
+    return true;
 }
 
 interface Instrumentation {
@@ -126,7 +135,7 @@ function instrumentPanels(): Instrumentation {
     ) => {
         const proxy = (factory as any).chartOptionsProxy as ChartOptionsProxy;
         const choices = kind === 'select' && Array.isArray(args[2]) ? args[2].map((o: any) => o?.value) : undefined;
-        const isArray = kind === 'slider' && args[3] === true;
+        const isArray = kind === 'slider' && args[3]?.isArray === true;
         widgets.push({ scope: scopes.get(proxy) ?? 'unknown', expression, kind, choices, isArray, proxy, params });
     };
 
@@ -305,6 +314,10 @@ interface PanelBindings {
     count: number;
     /** Bindings whose value the panel could not resolve. */
     unresolved: string[];
+    /** What each widget shows, by `scope -> expression`: the option's value, or what the panel resolved. */
+    shown: Map<string, unknown>;
+    /** The raw option behind each binding, plus any `scope -> expression` a suite asked to `read`. */
+    options: Map<string, unknown>;
     /** AG Charts' own complaints about the options the panels wrote. */
     rejected: string[];
     /** Diagnostics that are neither drift nor a rejection of this suite's probe value, so nobody has
@@ -355,6 +368,10 @@ const BENIGN_UNRESOLVED: { key: string; chartTypes: ChartType[] }[] = [
         key: 'getPolarAxisThemeOverridesProxy(radius,thisAxis) -> innerRadiusRatio',
         chartTypes: ['radarLine', 'radarArea', 'nightingale'],
     },
+    // The whisker inherits the series line dash, which the theme sets to solid (`[0]`, offset 0), so the
+    // panel resolves the same 0 the slider masks with; `format-panel-inherited-options` pins the value.
+    { key: 'getSeriesOptionsProxy() -> whisker.lineDash', chartTypes: ['boxPlot'] },
+    { key: 'getSeriesOptionsProxy() -> whisker.lineDashOffset', chartTypes: ['boxPlot'] },
 ];
 
 export function benignUnresolved(chartType: ChartType): string[] {
@@ -369,7 +386,16 @@ export function benignUnresolved(chartType: ChartType): string[] {
  * chart family, and they run in parallel. Each file then runs one `test.each` case per chart type: all 37
  * in one test reported "the format panel is broken" without saying where.
  */
-export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<PanelBindings> {
+interface OpenFormatPanelOptions {
+    /** Further `scope -> expression` options to look up through the same proxies before the chart is torn down. */
+    read?: string[];
+    chartThemeOverrides?: AgChartThemeOverrides;
+}
+
+export function setupFormatPanelSuite(): (
+    chartType: ChartType,
+    options?: OpenFormatPanelOptions
+) => Promise<PanelBindings> {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -388,7 +414,10 @@ export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<Panel
     afterEach(() => gridsManager.reset());
 
     /** Opens the format panel on a chart of `chartType` and probes every binding it built. */
-    async function openFormatPanel(chartType: ChartType): Promise<PanelBindings> {
+    async function openFormatPanel(
+        chartType: ChartType,
+        { read = [], chartThemeOverrides }: OpenFormatPanelOptions = {}
+    ): Promise<PanelBindings> {
         const unresolved: string[] = [];
         const rejected: string[] = [];
         const unexpected: string[] = [];
@@ -404,6 +433,7 @@ export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<Panel
             const chartRef = api.createRangeChart({
                 cellRange: { columns: ALL_COLUMNS },
                 chartType,
+                chartThemeOverrides,
                 seriesChartTypes:
                     chartType === 'customCombo'
                         ? [
@@ -424,6 +454,9 @@ export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<Panel
             panels.setRecording(false);
 
             const seen = new Set<string>();
+            const shown = new Map<string, unknown>();
+            const options = new Map<string, unknown>();
+            const proxies = new Map<string, ChartOptionsProxy>();
             const writes = new Map<ChartOptionsProxy, { expression: string; value: unknown }[]>();
             for (let i = 0, len = panels.widgets.length; i < len; ++i) {
                 const widget = panels.widgets[i];
@@ -432,12 +465,15 @@ export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<Panel
                     continue;
                 }
                 seen.add(key);
+                shown.set(key, shownValue(widget));
+                proxies.set(widget.scope, widget.proxy);
 
                 if (isHidden(widget.expression, chartType)) {
                     continue;
                 }
 
                 const value = widget.proxy.getValue(widget.expression);
+                options.set(key, value);
                 if (value === undefined && !hasRecoveredValue(widget)) {
                     unresolved.push(key);
                 }
@@ -451,6 +487,11 @@ export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<Panel
                     }
                     batch.push({ expression: widget.expression, value: probe });
                 }
+            }
+
+            for (const key of read) {
+                const [scope, expression] = key.split(' -> ');
+                options.set(key, proxies.get(scope)?.getValue(expression));
             }
 
             // Batched per proxy, then settled once: `setValues` is the expensive half, and one call per
@@ -483,6 +524,8 @@ export function setupFormatPanelSuite(): (chartType: ChartType) => Promise<Panel
             return {
                 count: seen.size,
                 unresolved: unresolved.sort((a, b) => a.localeCompare(b)),
+                shown,
+                options,
                 rejected,
                 unexpected,
             };

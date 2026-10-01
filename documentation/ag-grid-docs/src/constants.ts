@@ -33,7 +33,20 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     vue: 'Vue',
 };
 
+/**
+ * Frameworks whose `/<framework>-data-grid/` root serves a landing hub. JavaScript is absent by
+ * design: its root forwards on to getting-started, so it has no sitemap entry and no markdown twin.
+ */
+export const FRAMEWORK_LANDING_HUBS: readonly Framework[] = ['react', 'angular', 'vue'] as const;
+
+/** Whether this framework's root serves a landing hub — see {@link FRAMEWORK_LANDING_HUBS}. */
+export const isFrameworkLandingHub = (framework?: string): framework is Framework =>
+    FRAMEWORK_LANDING_HUBS.some((hub) => hub === framework);
+
 export const DISABLE_EXAMPLE_RUNNER = isTruthy(import.meta.env?.DISABLE_EXAMPLE_RUNNER);
+
+// Turn off the hidden, crawlable copy of each example's source that docs pages embed at build time
+export const DISABLE_EXAMPLE_SOURCE_EMBED = isTruthy(import.meta.env?.DISABLE_EXAMPLE_SOURCE_EMBED);
 
 // Turn off per-page markdown (`.md`) generation for LLMs. When set, no `.md`
 // routes are emitted and the docs pages omit the markdown affordances
@@ -201,3 +214,8 @@ export const ZI_FORM_ID = 'aad0527d-5af6-4263-8dcd-60f3ac998d5d';
 export const PUBLIC_GTM_ID = import.meta.env?.PUBLIC_GTM_ID;
 export const PUBLIC_GTM_AUTH = import.meta.env?.PUBLIC_GTM_AUTH;
 export const PUBLIC_GTM_PREVIEW = import.meta.env?.PUBLIC_GTM_PREVIEW;
+
+// Dash0 website monitoring. The auth token ships in the page by design: it is an ingest-only
+// token scoped to the website dataset
+export const PUBLIC_DASH0_ENDPOINT_URL = import.meta.env?.PUBLIC_DASH0_ENDPOINT_URL;
+export const PUBLIC_DASH0_AUTH_TOKEN = import.meta.env?.PUBLIC_DASH0_AUTH_TOKEN;

@@ -1,3 +1,4 @@
+import agGridOrganization from '@ag-website-shared/content/organization/agGridOrganization.json';
 import { PRODUCTION_GRID_SITE_URL } from '@constants';
 
 /**
@@ -106,6 +107,17 @@ interface SoftwareApplicationInput {
     sameAs?: string[];
 }
 
+interface SoftwareSourceCodeInput {
+    pageUrl: string;
+    /** Unique among the examples on the page, used to key the node's `@id`. */
+    exampleName: string;
+    programmingLanguage: string;
+    /** Framework the example runs on (e.g. `React`), emitted as `runtimePlatform`. */
+    runtimePlatform?: string;
+    /** `@id` of the `TechArticle` this example illustrates, so the two nodes stay linked. */
+    aboutEntityId?: string;
+}
+
 interface TechArticleInput {
     canonicalUrlBase: string;
     pageUrl: string;
@@ -117,6 +129,24 @@ interface TechArticleInput {
      * `about` is not set.
      */
     aboutEntityId?: string;
+    /**
+     * Optional `@id` of the docs topic this article is one framework variant of
+     * (see `buildDocsTopic`). Emitted alongside the WebSite in `isPartOf`, so
+     * every variant of a page declares the same set.
+     */
+    topicId?: string;
+    keywords?: string[];
+    /** Packages the article's steps need (e.g. `ag-grid-react`), emitted as `dependencies`. */
+    dependencies?: string[];
+}
+
+interface DocsTopicInput {
+    canonicalUrlBase: string;
+    /** Framework-neutral page name shared by every variant, e.g. `column-definitions`. */
+    pageName: string;
+    name: string;
+    /** URLs of every framework variant of the page, including the current one. */
+    variantPageUrls: string[];
 }
 
 export interface BreadcrumbItem {
@@ -176,8 +206,14 @@ export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
 export const getSiteNavigationElementId = (canonicalUrlBase: string): string =>
     `${siteRootUrl(canonicalUrlBase)}#site-navigation`;
 
+export const getTechArticleId = (pageUrl: string): string => `${pageUrl}${ARTICLE_ID_FRAGMENT}`;
+export const getDocsTopicId = (canonicalUrlBase: string, pageName: string): string =>
+    `${siteRootUrl(canonicalUrlBase)}${DOCS_TOPIC_ID_FRAGMENT}-${pageName}`;
+
 const ARTICLE_ID_FRAGMENT = '#article';
+const SOURCE_CODE_ID_FRAGMENT = '#source-code';
 const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
+const DOCS_TOPIC_ID_FRAGMENT = '#docs-topic';
 const FAQ_ID_FRAGMENT = '#faq';
 const CONTACT_PAGE_ID_FRAGMENT = '#contact-page';
 
@@ -233,6 +269,15 @@ export function buildOrganization({
     return result;
 }
 
+/**
+ * The Organization node for AG Grid Ltd, the company behind every AG product. All AG sites
+ * emit it under the grid `@id` (see `getOrganizationId`); the company details live in
+ * `content/organization/agGridOrganization.json`.
+ */
+export function buildAgGridOrganization(): JsonLdObject {
+    return buildOrganization({ canonicalUrlBase: PRODUCTION_GRID_SITE_URL, ...agGridOrganization });
+}
+
 export function buildWebSite({ canonicalUrlBase, name, description }: WebSiteInput): JsonLdObject {
     return {
         '@type': 'WebSite',
@@ -279,18 +324,77 @@ export function buildTechArticle({
     title,
     description,
     aboutEntityId,
+    topicId,
+    keywords,
+    dependencies,
 }: TechArticleInput): JsonLdObject {
+    const websiteRef = { '@id': getWebSiteId(canonicalUrlBase) };
     const result: JsonLdObject = {
         '@type': 'TechArticle',
-        '@id': `${pageUrl}${ARTICLE_ID_FRAGMENT}`,
+        '@id': getTechArticleId(pageUrl),
         headline: title,
         description,
         inLanguage: 'en',
         url: pageUrl,
         mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
-        isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
+        isPartOf: topicId ? [websiteRef, { '@id': topicId }] : websiteRef,
         publisher: { '@id': getOrganizationId() },
     };
+    if (aboutEntityId) {
+        result.about = { '@id': aboutEntityId };
+    }
+    if (keywords && keywords.length > 0) {
+        result.keywords = keywords;
+    }
+    if (dependencies && dependencies.length > 0) {
+        result.dependencies = dependencies.join(', ');
+    }
+    return result;
+}
+
+/**
+ * Build the node that groups the framework variants of one docs page (React,
+ * Angular, Vue, JavaScript) into a single set. Each variant emits the same
+ * node, and each variant's `TechArticle` references it from `isPartOf`, so
+ * crawlers can tell the pages are one topic rather than near-duplicates.
+ */
+export function buildDocsTopic({ canonicalUrlBase, pageName, name, variantPageUrls }: DocsTopicInput): JsonLdObject {
+    return {
+        '@type': 'CreativeWork',
+        '@id': getDocsTopicId(canonicalUrlBase, pageName),
+        name,
+        inLanguage: 'en',
+        isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
+        hasPart: variantPageUrls.map((pageUrl) => ({ '@id': getTechArticleId(pageUrl) })),
+    };
+}
+
+/**
+ * Build a `SoftwareSourceCode` node for one runnable example embedded on a docs page.
+ *
+ * Deliberately omits `text`: the example's files are already crawlable as visible markup
+ * (see `ExampleRunnerSourceCode.astro`), so repeating them here would only double the page
+ * weight for no indexing benefit. The node exists to type and name that visible block, and
+ * to link it back to the `TechArticle` it illustrates via `about`.
+ */
+export function buildSoftwareSourceCode({
+    pageUrl,
+    exampleName,
+    programmingLanguage,
+    runtimePlatform,
+    aboutEntityId,
+}: SoftwareSourceCodeInput): JsonLdObject {
+    const result: JsonLdObject = {
+        '@type': 'SoftwareSourceCode',
+        '@id': `${pageUrl}${SOURCE_CODE_ID_FRAGMENT}-${exampleName}`,
+        name: exampleName,
+        programmingLanguage,
+        codeSampleType: 'full',
+        url: pageUrl,
+    };
+    if (runtimePlatform) {
+        result.runtimePlatform = runtimePlatform;
+    }
     if (aboutEntityId) {
         result.about = { '@id': aboutEntityId };
     }

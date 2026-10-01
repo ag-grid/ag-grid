@@ -1,13 +1,18 @@
 import {
+    buildAgGridOrganization,
     buildBreadcrumbList,
     buildContactPage,
+    buildDocsTopic,
     buildJsonLdDocument,
     buildOrganization,
     buildSiteNavigationElement,
     buildSoftwareApplication,
+    buildSoftwareSourceCode,
     buildTechArticle,
     buildWebSite,
+    getDocsTopicId,
     getSoftwareApplicationId,
+    getTechArticleId,
     serializeJsonLd,
 } from './structuredData';
 
@@ -294,6 +299,36 @@ describe('buildTechArticle', () => {
         expect(result.isPartOf).toEqual({ '@id': `${CANONICAL_URL_BASE}/#website` });
         expect(result.publisher).toEqual({ '@id': `https://www.ag-grid.com/#organization` });
         expect(result.about).toBeUndefined();
+        expect(result.keywords).toBeUndefined();
+        expect(result.dependencies).toBeUndefined();
+    });
+
+    test('adds the docs topic to isPartOf alongside the WebSite when topicId is provided', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/getting-started/`;
+        const topicId = getDocsTopicId(CANONICAL_URL_BASE, 'getting-started');
+        const result = buildTechArticle({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            pageUrl,
+            title: 'Getting Started',
+            description: 'Get started with AG Grid for React.',
+            topicId,
+        });
+
+        expect(result.isPartOf).toEqual([{ '@id': `${CANONICAL_URL_BASE}/#website` }, { '@id': topicId }]);
+    });
+
+    test('emits keywords as a list and dependencies as comma-separated text', () => {
+        const result = buildTechArticle({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            pageUrl: `${CANONICAL_URL_BASE}/react-data-grid/getting-started/`,
+            title: 'Getting Started',
+            description: 'Get started with AG Grid for React.',
+            keywords: ['React', 'React Data Grid'],
+            dependencies: ['ag-grid-react', 'ag-grid-enterprise'],
+        });
+
+        expect(result.keywords).toEqual(['React', 'React Data Grid']);
+        expect(result.dependencies).toBe('ag-grid-react, ag-grid-enterprise');
     });
 
     test('emits an about reference when aboutEntityId is provided', () => {
@@ -307,6 +342,97 @@ describe('buildTechArticle', () => {
         });
 
         expect(result.about).toEqual({ '@id': `${CANONICAL_URL_BASE}/#software-application` });
+    });
+
+    test('getTechArticleId matches the @id it produces', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/getting-started/`;
+        const result = buildTechArticle({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            pageUrl,
+            title: 'Getting Started',
+            description: 'Get started with AG Grid for React.',
+        });
+
+        expect(getTechArticleId(pageUrl)).toBe(result['@id']);
+    });
+});
+
+describe('buildSoftwareSourceCode', () => {
+    test('names the example, sets programmingLanguage and codeSampleType, and omits about when not provided', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/filtering/`;
+        const result = buildSoftwareSourceCode({
+            pageUrl,
+            exampleName: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+        });
+
+        expect(result).toEqual({
+            '@type': 'SoftwareSourceCode',
+            '@id': `${pageUrl}#source-code-simple-filter`,
+            name: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+            codeSampleType: 'full',
+            url: pageUrl,
+        });
+        expect(result.about).toBeUndefined();
+        expect(result.text).toBeUndefined();
+    });
+
+    test('links to the TechArticle it illustrates via about, and keys @id per example', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/react-data-grid/filtering/`;
+        const articleId = getTechArticleId(pageUrl);
+
+        const first = buildSoftwareSourceCode({
+            pageUrl,
+            exampleName: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+            aboutEntityId: articleId,
+        });
+        const second = buildSoftwareSourceCode({
+            pageUrl,
+            exampleName: 'custom-filter',
+            programmingLanguage: 'TypeScript',
+            aboutEntityId: articleId,
+        });
+
+        expect(first.about).toEqual({ '@id': articleId });
+        expect(second.about).toEqual({ '@id': articleId });
+        expect(first['@id']).not.toBe(second['@id']);
+    });
+
+    test('emits runtimePlatform when provided', () => {
+        const result = buildSoftwareSourceCode({
+            pageUrl: `${CANONICAL_URL_BASE}/react-data-grid/filtering/`,
+            exampleName: 'simple-filter',
+            programmingLanguage: 'TypeScript',
+            runtimePlatform: 'React',
+        });
+
+        expect(result.runtimePlatform).toBe('React');
+    });
+});
+
+describe('buildDocsTopic', () => {
+    test('uses the same framework-neutral @id for every variant and lists each variant article in hasPart', () => {
+        const variantPageUrls = ['react', 'angular'].map(
+            (framework) => `${CANONICAL_URL_BASE}/${framework}-data-grid/column-definitions/`
+        );
+        const result = buildDocsTopic({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            pageName: 'column-definitions',
+            name: 'Column Definitions',
+            variantPageUrls,
+        });
+
+        expect(result).toEqual({
+            '@type': 'CreativeWork',
+            '@id': `${CANONICAL_URL_BASE}/#docs-topic-column-definitions`,
+            name: 'Column Definitions',
+            inLanguage: 'en',
+            isPartOf: { '@id': `${CANONICAL_URL_BASE}/#website` },
+            hasPart: variantPageUrls.map((pageUrl) => ({ '@id': getTechArticleId(pageUrl) })),
+        });
+        expect(result['@id']).toBe(getDocsTopicId(CANONICAL_URL_BASE, 'column-definitions'));
     });
 });
 
@@ -424,5 +550,21 @@ describe('serializeJsonLd', () => {
         expect(serialised).not.toContain('</script>');
         expect(serialised).toContain('<\\/script>');
         expect(JSON.parse(serialised)).toEqual(data);
+    });
+});
+
+describe('buildAgGridOrganization', () => {
+    test('emits the AG Grid Ltd company node under the grid @id', () => {
+        const result = buildAgGridOrganization();
+
+        expect(result).toMatchObject({
+            '@type': 'Organization',
+            '@id': 'https://www.ag-grid.com/#organization',
+            name: 'AG Grid',
+            url: 'https://www.ag-grid.com/',
+            legalName: 'AG Grid Ltd',
+            sameAs: expect.arrayContaining(['https://www.wikidata.org/wiki/Q128283374']),
+        });
+        expect(result.contactPoint).toHaveLength(2);
     });
 });

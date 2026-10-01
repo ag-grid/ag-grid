@@ -58,11 +58,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onColumnPinned(event: ColumnPinnedEvent) {
     const allCols = event.api.getAllGridColumns();
+    const allFixedCols = allCols.filter((col) => col.getColDef().lockPosition);
 
-    if (event.pinned !== 'right') {
-        const allFixedCols = allCols.filter((col) => col.getColDef().lockPosition);
-        event.api.setColumnsPinned(allFixedCols, event.pinned);
-    }
+    // A column locked to the left cannot follow a column pinned to the right,
+    // so un-pin it instead of leaving it wherever a previous action put it.
+    event.api.setColumnsPinned(allFixedCols, event.pinned === 'right' ? null : event.pinned);
 }
 
 function onPinAthleteLeft() {

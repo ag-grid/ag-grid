@@ -1,6 +1,8 @@
 import { setThemeBuilderDocsUrl } from '@ag-website-shared/components/theme-builder-grid/components/general/ThemeImportExportDialog';
 import { setFontFamilyOptions } from '@ag-website-shared/components/theme-builder/FontFamilyValueEditor';
 import { setImageValuesDocsUrl } from '@ag-website-shared/components/theme-builder/ImageValueEditor';
+import { setProductVersion } from '@ag-website-shared/theming/store';
+import { agGridVersion } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 setFontFamilyOptions([
@@ -71,3 +73,5 @@ setFontFamilyOptions([
 setImageValuesDocsUrl('/react-data-grid/theming-parameters/#image-values');
 
 setThemeBuilderDocsUrl(urlWithBaseUrl('/data-grid/theming-theme-builder/'));
+
+setProductVersion(agGridVersion);

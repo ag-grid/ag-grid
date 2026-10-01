@@ -19,6 +19,8 @@ const {
     RUN_ID,
     CURRENT_SHA,
     LAST_SUCCESSFUL_SHA,
+    GITHUB_REPOSITORY,
+    GITHUB_TOKEN,
     WEBSITE_STATUS_CHANNEL,
     LIBRARY_WEBSITE_STATUS_CHANNEL,
     DEPLOY_TO_STAGING,
@@ -31,7 +33,7 @@ if (DEPLOY_TO_STAGING !== 'true') {
 
 // WEBSITE_STATUS_CHANNEL is optional — when unset we skip the shared-channel
 // post but still send opt-in DMs.
-const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA };
+const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA, GITHUB_REPOSITORY, GITHUB_TOKEN };
 for (const [name, value] of Object.entries(required)) {
     if (!value) {
         ghaError(`${name} environment variable is not set.`, { title: 'Staging deploy notification: missing config' });
@@ -52,7 +54,10 @@ for (const [name, value] of Object.entries(required)) {
         process.exit(1);
     }
 
-    const changes = getGitChanges(CURRENT_SHA, LAST_SUCCESSFUL_SHA, users);
+    const changes = await getGitChanges(CURRENT_SHA, LAST_SUCCESSFUL_SHA, users, {
+        repository: GITHUB_REPOSITORY,
+        token: GITHUB_TOKEN,
+    });
     const buildChangesData = (userDisplayTypeSetting) =>
         getChangesData({
             currentSha: CURRENT_SHA,

@@ -67,7 +67,7 @@ export class SetLeftFeature extends BeanStub {
 
         const oldActualLeft = getResolvedHorizontalOffset({
             left: colOrGroup.getOldLeft()!,
-            pinned: colOrGroup.getPinned(),
+            lane: colOrGroup.pinnedLane,
             width,
             isPrintLayout,
             isRtl,
@@ -76,7 +76,7 @@ export class SetLeftFeature extends BeanStub {
 
         const actualLeft = getResolvedHorizontalOffset({
             left: colOrGroup.getLeft()!,
-            pinned: colOrGroup.getPinned(),
+            lane: colOrGroup.pinnedLane,
             width,
             isPrintLayout,
             isRtl,
@@ -106,7 +106,7 @@ export class SetLeftFeature extends BeanStub {
         const left = colOrGroup.getLeft();
         this.actualLeft = getResolvedHorizontalOffset({
             left,
-            pinned: colOrGroup.getPinned(),
+            lane: colOrGroup.pinnedLane,
             width: colOrGroup.getActualWidth(),
             isPrintLayout: _isDomLayout(gos, 'print'),
             isRtl: gos.get('enableRtl'),
@@ -141,7 +141,7 @@ export class SetLeftFeature extends BeanStub {
         const { gos, visibleCols } = this.beans;
         applyHorizontalPosition(this.eCell, {
             offset: left,
-            pinned: colOrGroup.getPinned(),
+            lane: colOrGroup.pinnedLane,
             width: colOrGroup.getActualWidth(),
             isPrintLayout: _isDomLayout(gos, 'print'),
             isRtl: gos.get('enableRtl'),

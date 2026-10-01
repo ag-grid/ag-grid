@@ -1,6 +1,9 @@
+:where(.ag-selection-checkbox) .ag-checkbox-input-wrapper:where(:not(.ag-disabled)) {
+    cursor: pointer;
+}
+
 :where(.ag-selection-checkbox) .ag-checkbox-input-wrapper::before {
     content: '';
     position: absolute;
     inset: -8px;
-    cursor: pointer;
 }

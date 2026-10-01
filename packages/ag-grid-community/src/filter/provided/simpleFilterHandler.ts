@@ -215,7 +215,13 @@ export abstract class SimpleFilterHandler<
         const values = this.mapValuesFromModel(filterModel, optionsFactory);
         const customFilterOption = optionsFactory.getCustomOption(filterModel.type);
 
-        const customFilterResult = evaluateCustomFilter<TValue>(customFilterOption, values, cellValue);
+        const customFilterResult = evaluateCustomFilter<TValue>(
+            customFilterOption,
+            values,
+            cellValue,
+            this.beans.gos,
+            this.params.column
+        );
         if (customFilterResult != null) {
             return customFilterResult;
         }

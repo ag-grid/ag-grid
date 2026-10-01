@@ -1,0 +1,66 @@
+---
+title: "Advanced Filter - Input & Builder"
+enterprise: true
+---
+
+This section describes the grid options that configure the Advanced Filter input, where it is displayed, and the Advanced Filter Builder.
+
+## Advanced Filter Input
+
+The buttons shown in the Advanced Filter input and the element it is displayed in can both be configured.
+
+### Buttons
+
+It is possible to customise the buttons displayed in the Advanced Filter, allowing for the use of other Filter Buttons such as Reset, Cancel and Clear. Configure via the grid option `advancedFilterParams` which follows the `IAdvancedFilterParams` interface:
+
+{% interfaceDocumentation interfaceName="IAdvancedFilterParams" config={"description":"", "sortAlphabetically":true} /%}
+
+The following example demonstrates configuring the Advanced Filter:
+
+- The `Builder` button has been removed via `suppressBuilderButton`. The Builder can still be opened via the [API](#launch-via-api).
+- The `buttons` have been configured to add the Clear and Reset buttons.
+
+{% gridExampleRunner title="Configuring Advanced Filter" name="configuring-advanced-filter" /%}
+
+### Filter Parent
+
+By default the Advanced Filter is displayed underneath the Column Headers. To display the Advanced Filter outside of the grid (such as above it), set the grid option `advancedFilterParent`. The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Advanced Filter parent and the grid.
+
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["advancedFilterParent"] /%}
+
+The following example demonstrates displaying the Advanced Filter outside of the grid:
+
+- The Advanced Filter parent is set using an element directly above the grid.
+- Popup Parent is set to the document body.
+
+{% gridExampleRunner title="External Parent" name="external-parent" /%}
+
+## Advanced Filter Builder
+
+The Advanced Filter Builder can be configured via the grid option `advancedFilterBuilderParams` which follows the `IAdvancedFilterBuilderParams` interface:
+
+{% interfaceDocumentation interfaceName="IAdvancedFilterBuilderParams" config={"description":"", "sortAlphabetically":true} /%}
+
+### Launch via API
+
+As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method, and hide it via `hideAdvancedFilterBuilder`:
+
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["showAdvancedFilterBuilder", "hideAdvancedFilterBuilder"] /%}
+
+### Events
+
+When the Advanced Filter Builder is shown or hidden, the `advancedFilterBuilderVisibleChanged` event is fired:
+
+{% apiDocumentation source="grid-events/events.json" section="filter" names=["advancedFilterBuilderVisibleChanged"] /%}
+
+The following example demonstrates configuring the Advanced Filter Builder:
+
+- The `Advanced Filter Builder` button displays the Advanced Filter Builder via the API method `showAdvancedFilterBuilder`.
+- The `advancedFilterBuilderVisibleChanged` event is used to toggle the disabled status of the `Advanced Filter Builder` button.
+- The `showMoveButtons` param is set in the `advancedFilterBuilderParams`, which displays buttons allowing the filter rows to be moved up and down (including via keyboard navigation).
+
+{% gridExampleRunner title="Configuring Advanced Filter Builder" name="configuring-advanced-filter-builder" /%}
+
+## Localisation
+
+If providing custom [Localisation](./localisation/) values for the Advanced Filter, note that if the filter option values contain spaces, one option value cannot start with another option value.

@@ -15,39 +15,43 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([RenderApiModule, HighlightChangesModule, ClientSideRowModelModule]);
 
-const gbpFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'GBP',
-    minimumFractionDigits: 2,
-});
-const eurFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-});
-const usdFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-});
+type Currency = 'EUR' | 'GBP' | 'USD';
 
-const currencyComparator = (a: any, b: any) => {
+interface IPrice {
+    currency: Currency;
+    amount: number;
+}
+
+interface IProduct {
+    product: string;
+    price: IPrice;
+}
+
+// The shape of the context object, provided to the TContext generic parameter below
+// so that params.context is typed wherever it is used.
+interface IReportingContext {
+    reportingCurrency: Currency;
+}
+
+const formatters: Record<Currency, Intl.NumberFormat> = {
+    EUR: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }),
+    GBP: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2 }),
+    USD: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }),
+};
+
+const currencyComparator = (a: IPrice, b: IPrice) => {
     return a.amount - b.amount;
 };
 
-const currencyCellRenderer = (params: ICellRendererParams) => {
-    switch (params.value.currency) {
-        case 'EUR':
-            return eurFormatter.format(params.value.amount);
-        case 'USD':
-            return usdFormatter.format(params.value.amount);
-        case 'GBP':
-            return gbpFormatter.format(params.value.amount);
+const currencyCellRenderer = (params: ICellRendererParams<IProduct, IPrice, IReportingContext>) => {
+    const price = params.value;
+    if (!price) {
+        return '';
     }
-    return params.value.amount;
+    return formatters[price.currency]?.format(price.amount) ?? price.amount;
 };
 
-const columnDefs: ColDef[] = [
+const columnDefs: ColDef<IProduct>[] = [
     { field: 'product' },
     { headerName: 'Currency', field: 'price.currency' },
     {
@@ -67,64 +71,50 @@ const columnDefs: ColDef[] = [
     },
 ];
 
-let gridApi: GridApi;
+let gridApi: GridApi<IProduct>;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IProduct> = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
         enableCellChangeFlash: true,
     },
     rowData: getData(),
+    // `context` is typed as `any`, so use `as` to apply the context interface
     context: {
         reportingCurrency: 'EUR',
-    },
+    } as IReportingContext,
 };
 
-function reportingCurrencyValueGetter(params: ValueGetterParams) {
-    // Rates taken from google at time of writing
-    const exchangeRates: Record<string, any> = {
-        EUR: {
-            GBP: 0.72,
-            USD: 1.08,
-        },
-        GBP: {
-            EUR: 1.29,
-            USD: 1.5,
-        },
-        USD: {
-            GBP: 0.67,
-            EUR: 0.93,
-        },
-    };
+// Rates taken from google at time of writing
+const exchangeRates: Record<Currency, Partial<Record<Currency, number>>> = {
+    EUR: { GBP: 0.72, USD: 1.08 },
+    GBP: { EUR: 1.29, USD: 1.5 },
+    USD: { GBP: 0.67, EUR: 0.93 },
+};
 
-    const price = params.data[params.colDef.field!];
+function reportingCurrencyValueGetter(params: ValueGetterParams<IProduct, IPrice, IReportingContext>): IPrice {
+    const price = params.data!.price;
+    // params.context is typed as IReportingContext, so reportingCurrency is typed as Currency
     const reportingCurrency = params.context.reportingCurrency;
-    const fxRateSet = exchangeRates[reportingCurrency];
-    const fxRate = fxRateSet[price.currency];
-    let priceInReportingCurrency;
-    if (fxRate) {
-        priceInReportingCurrency = price.amount * fxRate;
-    } else {
-        priceInReportingCurrency = price.amount;
-    }
+    const fxRate = exchangeRates[reportingCurrency][price.currency];
 
-    const result = {
+    return {
         currency: reportingCurrency,
-        amount: priceInReportingCurrency,
+        amount: fxRate ? price.amount * fxRate : price.amount,
     };
-
-    return result;
 }
 
 function currencyChanged() {
-    const value = (document.getElementById('currency') as any).value;
-    gridApi.setGridOption('context', { reportingCurrency: value });
-    gridApi!.refreshCells();
-    gridApi!.refreshHeader();
+    const value = (document.getElementById('currency') as HTMLSelectElement).value as Currency;
+    gridApi.setGridOption('context', { reportingCurrency: value } as IReportingContext);
+    // Changing the context does not refresh the grid on its own - the cells and
+    // headers that read from it must be refreshed explicitly.
+    gridApi.refreshCells();
+    gridApi.refreshHeader();
 }
 
-function getData() {
+function getData(): IProduct[] {
     return [
         { product: 'Product 1', price: { currency: 'EUR', amount: 644 } },
         { product: 'Product 2', price: { currency: 'EUR', amount: 354 } },
