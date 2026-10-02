@@ -62,36 +62,33 @@ const html = (id: string, title: string, url: string, refs: string[], extra: Par
 /**
  * Revalidated with its own validator: the 304 must not carry the redirect rule's no-cache (a root
  * mod_headers rule, so it applies under /charts/ too). A charts archive page, because both hosts
- * send it the same ETag and Last-Modified (20 of 20 requests, 2026-10-01): every grid archive was
- * extracted with `tar -m` on each host, so a revalidation that reaches the other host gets a 200,
- * and the extract fix (PENDING.archiveMtimes) only helps archives extracted after it. The grid
- * divergence is a known issue of its own (headers.archive-validators-agree.35.0.0).
+ * send it the same ETag and Last-Modified (20 of 20 requests, 2026-10-01). Every grid archive
+ * deployed so far was extracted with `tar -m` on each host, so its two hosts send different
+ * validators; those archives are never re-extracted, and that is accepted rather than checked.
  */
 export const NOT_MODIFIED_PROBE = `${WWW}/charts/archive/14.2.0/react/quick-start/`;
-/** A grid archive page whose two hosts send different validators (live 2026-10-01). */
-export const DIVERGENT_VALIDATOR_PROBE = `${WWW}/archive/35.0.0/react-data-grid/getting-started/`;
 /** The long archive cache its 200 must carry (as archive.grid-released expects) for the 304 to keep. */
 export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 
 /**
  * Compressed pages revalidated with the -gzip ETag they were sent (waf-finding.md §19). The archive
- * page also needs both hosts to agree on its ETag, so it waits for the re-extraction too.
+ * page is a charts one, for the reason NOT_MODIFIED_PROBE gives: a grid archive's hosts disagree.
  */
 export const GZIP_REVALIDATION_PROBES: Array<{ id: string; url: string; pending: string }> = [
     { id: 'live', url: `${WWW}/react-data-grid/getting-started/`, pending: PENDING.gridGzipRevalidation },
     {
         id: 'archive',
-        url: `${WWW}/archive/36.2.0/`,
-        pending: `${PENDING.gridGzipRevalidation}; ${PENDING.archiveMtimes}`,
+        url: NOT_MODIFIED_PROBE,
+        pending: PENDING.gridGzipRevalidation,
     },
 ];
 
 /**
- * An archive page both origin hosts must give the same validators for. 36.2.0 was extracted with
- * `tar -m`, so it passes only once re-extracted; repoint this at the first archive uploaded after
- * the script fix to verify that instead.
+ * An archive page both origin hosts must give the same validators for: the first grid archive
+ * uploaded with the extract fix. Archives deployed before it keep their per-host mtimes for good
+ * (accepted, never re-extracted), so none of them is probed.
  */
-export const ARCHIVE_VALIDATOR_PROBE = `${WWW}/archive/36.2.0/`;
+export const ARCHIVE_VALIDATOR_PROBE = `${WWW}/archive/36.3.0/`;
 /** Fresh requests sent, so the load balancer is likely to reach both hosts. */
 export const ARCHIVE_VALIDATOR_REQUESTS = 4;
 

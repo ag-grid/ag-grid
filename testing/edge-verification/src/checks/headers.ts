@@ -6,7 +6,6 @@ import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/typ
 import {
     ARCHIVE_VALIDATOR_PROBE,
     ARCHIVE_VALIDATOR_REQUESTS,
-    DIVERGENT_VALIDATOR_PROBE,
     GZIP_REVALIDATION_PROBES,
     HEADER_ROWS,
     type HeaderRow,
@@ -169,10 +168,6 @@ export function headerChecks(): CheckDef[] {
         ),
         validatorsAgree('headers.archive-validators-agree', ARCHIVE_VALIDATOR_PROBE, {
             pending: PENDING.archiveMtimes,
-        }),
-        validatorsAgree('headers.archive-validators-agree.35.0.0', DIVERGENT_VALIDATOR_PROBE, {
-            // Extracted per host with tar -m before the fix, and not scheduled for re-extraction.
-            knownIssue: `${finding(19)} (grid 35.0.0: each host sends its own Last-Modified and ETag, so a revalidation that crosses hosts gets a 200)`,
         }),
         {
             id: 'headers.internal-host.prompts-docs-nxdomain',

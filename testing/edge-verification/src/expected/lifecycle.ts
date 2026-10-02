@@ -31,10 +31,11 @@ export const PENDING = {
     gridGzipRevalidation: 'grid#15416 follow-up a5ea9272023 (If-None-Match without the -gzip ETag suffix)',
     /**
      * The #15416 commit that stops uploadAndUnzipArchive.sh stamping extraction time on each host.
-     * It only helps an archive extracted after it: older ones keep per-host mtimes until re-extracted.
+     * It only helps an archive extracted after it: archives already deployed keep their per-host
+     * mtimes, which is accepted, so only an archive uploaded after it is checked.
      */
     archiveMtimes:
-        'grid#15416 follow-up d1087c3088f (archive extract keeps mtimes) + re-extracting the archive on both hosts',
+        'grid#15416 follow-up d1087c3088f (archive extract keeps mtimes), first live with the 36.3.0 archive',
     chartsHosts:
         'ag-charts#8422 + charts test branch (one-hop host canonicalisation and redirects under /charts, Vary on HTML)',
     /** ag-charts#8422 274611a3e7 and d60a274a40 (the latter committed locally, not yet pushed, on 2026-10-01). */

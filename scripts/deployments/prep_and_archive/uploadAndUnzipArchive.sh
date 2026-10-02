@@ -69,6 +69,7 @@ scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $CURRENT_HOST:$GRID_ROOT_DIR/archive/
 # unzip archive, keeping the mtimes recorded in it. Apache derives ETag and Last-Modified from
 # mtime and this runs once per host, so stamping files with the extraction time (tar -m) gave each
 # host different validators for the same file, and a revalidation routed to the other host missed.
+# Archives already deployed keep their per-host mtimes: they are never re-extracted, and that is accepted.
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/$VERSION && tar -xf $ARCHIVE\""
 ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/$VERSION && tar -xf $ARCHIVE"
 
