@@ -24,6 +24,9 @@
 
     --row-gap: 6px;
     --controls-gap: calc(var(--row-gap) * 2);
+    /* Inside a label that wraps its own control. Deliberately below `--row-gap` -- see the
+       `.example-controls label` rule for why the two must not be equal. */
+    --label-gap: 4px;
 
     --select-chevron: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
@@ -365,7 +368,13 @@ body > #highlighter {
 .example-controls label {
     display: inline-flex;
     align-items: center;
-    gap: var(--row-gap);
+    /* Tighter than the gap between controls, so the pair reads as one control. At the same 6px a
+       wrapped control sat as far from its own text as that text sat from the next control along:
+       on the active-overlay switcher, a "Loading" checkbox leading a row of buttons left "Loading"
+       looking equally attached to the first button. Only labels that wrap their control have more
+       than one flex item, so this reaches nothing else -- a label that merely sits beside its
+       control, and a `.button-group` segment, both hold text alone and ignore the gap. */
+    gap: var(--label-gap);
     /* A label toggles its control on click, so repeated clicks would otherwise select its text. */
     user-select: none;
 }
