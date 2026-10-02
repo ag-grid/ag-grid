@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { runOne } from '../core/runner';
 import { AI_GROUP } from '../expected/robots';
 import { FakeAws, FakeHttp, cfAclHandlers, fakeCtx, healthyCloudFront } from '../testing/fakes';
-import { crawlerPolicyChecks } from './crawlerPolicy';
+import { crawlerPolicyChecks, isIntentionalAiOpening } from './crawlerPolicy';
 
 const check = (id: string) => crawlerPolicyChecks().find((c) => c.id === id)!;
 
@@ -27,17 +27,14 @@ function robots(star: string[], ai: string[]): string {
 // Every Disallow comes with its markdown twins, as the generator writes them.
 const withTwins = (dirs: string[]) => dirs.flatMap((d) => [d, `${d.slice(0, -1)}.md$`, `${d.slice(0, -1)}.md?`]);
 
-async function mirror(body: string) {
+async function mirror(body: string, id = 'crawler-policy.robots.ai-group-mirrors-star') {
     const http = new FakeHttp((req) =>
         req.url === 'https://www.ag-grid.com/robots.txt'
             ? { status: 200, headers: { 'content-type': 'text/plain' }, body }
             : { status: 404 }
     );
     try {
-        return await runOne(
-            check('crawler-policy.robots.ai-group-mirrors-star'),
-            await fakeCtx(new FakeAws(healthyCloudFront()), http)
-        );
+        return await runOne(check(id), await fakeCtx(new FakeAws(healthyCloudFront()), http));
     } finally {
         http.close();
     }
@@ -72,10 +69,54 @@ describe('crawler-policy.robots.ai-group-mirrors-star', () => {
         assert.match(result.detail ?? '', /\/debug\.md\$/);
     });
 
+    // The generator keeps examples closed under any /debug/ directory (robotsTxt.ts includes('/debug/')).
+    it('fails when the AI group drops an example under a nested /debug/ directory', async () => {
+        const kept = ['/charts/debug/docs-examples/', '/debug/examples/'];
+        for (const dropped of kept) {
+            const result = await mirror(robots(withTwins(kept), withTwins(kept.filter((d) => d !== dropped))));
+            assert.equal(result.status, 'fail', `${dropped}: ${result.detail}`);
+            assert.ok(result.detail?.includes(dropped), result.detail);
+        }
+    });
+
+    it('treats an example as intentionally open only outside every /debug/ directory', () => {
+        assert.equal(isIntentionalAiOpening('/charts/react/bar-series/examples/'), true);
+        assert.equal(isIntentionalAiOpening('/charts/react/bar-series/examples.md$'), true);
+        assert.equal(isIntentionalAiOpening('/debug/examples/'), false);
+        assert.equal(isIntentionalAiOpening('/charts/debug/docs-examples/'), false);
+        assert.equal(isIntentionalAiOpening('/charts/debug/docs-examples.md?'), false);
+    });
+
     it('does not treat a page whose name merely ends in archive as an archive', async () => {
         const result = await mirror(robots(withTwins(['/documentation-archive/']), []));
         assert.equal(result.status, 'fail', result.detail);
         assert.match(result.detail ?? '', /\/documentation-archive\.md\?/);
+    });
+});
+
+describe('crawler-policy.robots.ai-group-mirrors-star.allows', () => {
+    const ID = 'crawler-policy.robots.ai-group-mirrors-star.allows';
+    const withAllows = (star: string[], ai: string[]) =>
+        [
+            'User-agent: *',
+            lines('Allow', ['/', ...star]),
+            'Disallow: /debug/',
+            '',
+            ...AI_GROUP.map((agent) => `User-agent: ${agent}`),
+            lines('Allow', ['/', ...ai]),
+            'Disallow: /debug/',
+            '',
+        ].join('\n');
+
+    it('passes when both groups carry the same Allow lines', async () => {
+        const result = await mirror(withAllows(['/archive/$', '/blog/'], ['/blog/', '/archive/$']), ID);
+        assert.equal(result.status, 'pass', result.detail);
+    });
+
+    it('fails when the AI group lacks one of the * Allow lines', async () => {
+        const result = await mirror(withAllows(['/archive/$', '/blog/'], ['/blog/']), ID);
+        assert.equal(result.status, 'fail', result.detail);
+        assert.match(result.detail ?? '', /\/archive\/\$/);
     });
 });
 

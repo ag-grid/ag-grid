@@ -6,6 +6,7 @@ import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/typ
 import {
     ARCHIVE_VALIDATOR_PROBE,
     ARCHIVE_VALIDATOR_REQUESTS,
+    BLOG_HOST_REDIRECT,
     BROWSER_CACHE_BLOG_CONTENT_URLS,
     BROWSER_CACHE_CAP_SECONDS,
     BROWSER_CACHE_HEURISTIC_URLS,
@@ -17,6 +18,7 @@ import {
     type HeaderRow,
     NOT_MODIFIED_CACHE_CONTROL,
     NOT_MODIFIED_PROBE,
+    NO_X_FRAME_OPTIONS_URLS,
     SECURITY_HEADERS,
 } from '../expected/headers';
 import { PENDING, finding } from '../expected/lifecycle';
@@ -251,6 +253,35 @@ export function headerChecks(): CheckDef[] {
             refs: ['SE-189'],
             pending: PENDING.blogVhostCap,
             run: budgeted(({ http }, p) => checkBrowserCache(http, p, new Set(BROWSER_CACHE_BLOG_CONTENT_URLS))),
+        },
+        {
+            id: 'headers.html.no-x-frame-options',
+            area: 'headers',
+            title: 'No X-Frame-Options on pages (the CSP frame-ancestors governs embedding)',
+            refs: ['SE-38'],
+            run: budgeted(async ({ http }, p) => {
+                for (const url of NO_X_FRAME_OPTIONS_URLS) {
+                    const res = await http.head(url);
+                    p.eq(`${url} status`, res.status, 200);
+                    const values = headerAll(res, 'x-frame-options');
+                    p.check(!values.length, `${url} sends X-Frame-Options ${JSON.stringify(values)}`);
+                }
+                return p.outcome(`${NO_X_FRAME_OPTIONS_URLS.length} pages`);
+            }),
+        },
+        {
+            id: 'headers.redirect.blog-host-301',
+            area: 'headers',
+            title: 'The blog.ag-grid.com 301 carries HSTS, Referrer-Policy, Permissions-Policy and one CSP',
+            refs: ['SE-93'],
+            async run({ http }) {
+                const res = await http.head(BLOG_HOST_REDIRECT.url);
+                const p = new Problems();
+                p.eq('status', res.status, 301);
+                p.eq('Location', header(res, 'location'), BLOG_HOST_REDIRECT.location);
+                expectSecurityHeaders(p, res);
+                return p.outcome();
+            },
         },
         ...HEADER_ROWS.map(headerCheck),
         ...GZIP_REVALIDATION_PROBES.map(

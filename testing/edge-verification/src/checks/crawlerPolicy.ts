@@ -61,6 +61,21 @@ function crawlableTwins(r: Robots, suffix: string): { open: string[]; checked: n
     return { open, checked };
 }
 
+/**
+ * A * Disallow the AI group deliberately leaves out: isAiOpenExamplePath / isAiOpenArchivePath in
+ * robotsTxt.ts. Examples stay closed under any /debug/ directory, wherever it sits (the generator
+ * tests `includes('/debug/')`, so /charts/debug/*example* is closed too). The generator leaves those
+ * paths out before adding the markdown twins, so a twin (`/x.md$`, `/x.md?`) goes with its
+ * directory (`/x/`).
+ */
+export function isIntentionalAiOpening(path: string): boolean {
+    const dir = path.replace(/\.md[$?]$/, '/');
+    return (/example/.test(dir) && !dir.includes('/debug/')) || /(^|\/)archive\/$/.test(dir);
+}
+
+const allows = (g: { rules: Array<{ type: string; pattern: string }> } | undefined): string[] =>
+    (g?.rules ?? []).filter((r) => r.type === 'allow').map((r) => r.pattern);
+
 export function crawlerPolicyChecks(): CheckDef[] {
     return [
         {
@@ -99,19 +114,27 @@ export function crawlerPolicyChecks(): CheckDef[] {
                 const r = await wwwRobots(http);
                 const star = disallows(starGroup(r));
                 const ai = new Set(disallows(aiGroup(r)));
-                // isAiOpenExamplePath / isAiOpenArchivePath in robotsTxt.ts: deliberate differences.
-                // The generator leaves those paths out before adding the markdown twins, so a twin
-                // (`/x.md$`, `/x.md?`) goes with its directory (`/x/`).
-                const intentional = (path: string) => {
-                    const dir = path.replace(/\.md[$?]$/, '/');
-                    return (/example/.test(dir) && !dir.startsWith('/debug/')) || /(^|\/)archive\/$/.test(dir);
-                };
-                const missing = star.filter((d) => !ai.has(d) && !intentional(d));
+                const missing = star.filter((d) => !ai.has(d) && !isIntentionalAiOpening(d));
                 const extra = [...ai].filter((d) => !star.includes(d));
                 const p = new Problems();
                 p.check(!missing.length, `in * but not in the AI group: ${missing.join(', ')}`);
                 p.check(!extra.length, `in the AI group but not in *: ${extra.join(', ')}`);
                 return p.outcome(`${star.length} * disallows, ${ai.size} AI disallows`);
+            },
+        },
+        {
+            id: 'crawler-policy.robots.ai-group-mirrors-star.allows',
+            area: 'crawler-policy',
+            title: "The AI group carries exactly the * group's Allow lines",
+            refs: ['SE-78', 'SE-182'],
+            async run({ http }) {
+                const r = await wwwRobots(http);
+                const star = allows(starGroup(r));
+                const ai = allows(aiGroup(r));
+                const p = new Problems();
+                p.check(star.length > 0, 'the * group has no Allow lines to compare');
+                p.eq('AI group Allow lines', [...ai].sort(), [...star].sort());
+                return p.outcome(`${star.length} Allow lines`);
             },
         },
         {
@@ -258,7 +281,7 @@ export function crawlerPolicyChecks(): CheckDef[] {
         {
             id: 'crawler-policy.robots.charts',
             area: 'crawler-policy',
-            title: '/charts/robots.txt is a real robots file with a Sitemap, not a soft 404',
+            title: '/charts/robots.txt is a real robots file with Allow: / and a Sitemap, not a soft 404',
             refs: ['SE-182'],
             async run({ http }) {
                 const res = await http.get(ROBOTS_FILES.charts);
@@ -271,6 +294,12 @@ export function crawlerPolicyChecks(): CheckDef[] {
                     'no User-agent: * group'
                 );
                 p.check(r.sitemaps.length > 0, 'no Sitemap line');
+                p.check(
+                    r.groups.some(
+                        (g) => g.agents.includes('*') && g.rules.some((x) => x.type === 'allow' && x.pattern === '/')
+                    ),
+                    'the * group lacks Allow: /'
+                );
                 return p.outcome(r.sitemaps.join(', '));
             },
         },

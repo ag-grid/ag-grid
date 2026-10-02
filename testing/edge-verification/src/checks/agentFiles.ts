@@ -6,9 +6,11 @@ import {
     AGENT_SITES,
     ARCHIVE_LLMS,
     type AgentSite,
+    GRID_LLMS_MCP_LINE,
     IGNORED_LINKS,
     INDEX_SAMPLE_SIZE,
     KNOWN_BROKEN,
+    NPM_LATEST,
     SERVER_CARD,
     TWIN_SAMPLE_SIZE,
 } from '../expected/agentFiles';
@@ -272,6 +274,43 @@ export function agentFileChecks(): CheckDef[] {
                 }
                 return p.outcome();
             }),
+        },
+        {
+            id: 'agent-files.grid.llms.mcp-line',
+            area: 'agent-files',
+            title: 'The grid llms.txt links the MCP server docs by name',
+            refs: ['SE-79'],
+            async run({ http }) {
+                const url = AGENT_SITES.find((s) => s.id === 'grid')!.llms;
+                const res = await http.get(url);
+                const p = new Problems();
+                p.eq('status', res.status, 200);
+                p.check(res.body.includes(GRID_LLMS_MCP_LINE), `${url} lacks ${GRID_LLMS_MCP_LINE}`);
+                return p.outcome();
+            },
+        },
+        {
+            id: 'agent-files.server-card.npm',
+            area: 'agent-files',
+            title: 'The npm package the server card runs (npx ag-mcp) is published with an ag-mcp binary',
+            refs: ['SE-79'],
+            async run({ http }) {
+                const res = await http.get(NPM_LATEST);
+                const p = new Problems();
+                p.eq('status', res.status, 200);
+                let latest: any = {};
+                try {
+                    latest = JSON.parse(res.body);
+                } catch {
+                    p.add('not valid JSON');
+                }
+                p.eq('name', latest.name, SERVER_CARD.package.name);
+                p.check(
+                    typeof latest.bin?.[SERVER_CARD.package.args[0]] === 'string',
+                    `bin ${JSON.stringify(latest.bin)} has no ${SERVER_CARD.package.args[0]}`
+                );
+                return p.outcome(`ag-mcp ${latest.version}`);
+            },
         },
         {
             id: 'agent-files.archive-llms',

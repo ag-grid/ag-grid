@@ -216,3 +216,49 @@ describe('headers.browser-cache-cap', () => {
         });
     });
 });
+
+describe('headers.html.no-x-frame-options and headers.redirect.blog-host-301', () => {
+    const SECURITY = {
+        'strict-transport-security': 'max-age=31536000; includeSubDomains',
+        'referrer-policy': 'strict-origin-when-cross-origin',
+        'permissions-policy': 'geolocation=(), microphone=(), camera=()',
+        'content-security-policy': "default-src 'self'; frame-ancestors 'self' https://*.ag-grid.com",
+    };
+
+    async function run(id: string, respond: (url: string) => FakeResponse) {
+        const http = new FakeHttp((req) => respond(req.url));
+        try {
+            return await headerChecks()
+                .find((c) => c.id === id)!
+                .run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+
+    it('fails a page that sends X-Frame-Options, naming it', async () => {
+        const clean = await run('headers.html.no-x-frame-options', () => ({ status: 200 }));
+        assert.equal(clean.status, 'pass', clean.detail);
+        const outcome = await run('headers.html.no-x-frame-options', (url) => ({
+            status: 200,
+            headers: url.endsWith('/blog/') ? { 'x-frame-options': 'SAMEORIGIN' } : ({} as Record<string, string>),
+        }));
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /\/blog\/ sends X-Frame-Options/);
+    });
+
+    it('fails the blog-host 301 when it carries only HSTS', async () => {
+        const location = { location: 'https://www.ag-grid.com/blog/' };
+        const full = await run('headers.redirect.blog-host-301', () => ({
+            status: 301,
+            headers: { ...SECURITY, ...location },
+        }));
+        assert.equal(full.status, 'pass', full.detail);
+        const outcome = await run('headers.redirect.blog-host-301', () => ({
+            status: 301,
+            headers: { 'strict-transport-security': SECURITY['strict-transport-security'], ...location },
+        }));
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /referrer-policy: expected exactly one copy, got 0/);
+    });
+});

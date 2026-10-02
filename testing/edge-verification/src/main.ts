@@ -2,33 +2,41 @@
  * Post-deploy verification of www.ag-grid.com against PRODUCTION: SEO tickets, AI-crawler policy,
  * CloudFront caching and WAF configuration. What the live run checks, by area (`--only <area>`):
  *
- *   redirects      every alias host (apex, blog., react-grid., charts. ...) and legacy URL reaches the
- *                  right www URL in one hop, query string kept; archive URLs stay inside their archive
+ *   redirects      every alias host (apex, blog., react-grid., charts. ..., over http too) and legacy URL
+ *                  reaches the right www URL in one hop, query string kept; archive URLs stay inside
+ *                  their archive
  *   bot-outcomes   queries recent WAF logs: each crawler/agent family (Googlebot, OAI-SearchBot,
  *                  DuckAssistBot, Meta, LINE ...) is actually allowed, under a non-allowed threshold
  *   headers        Cache-Control per page type (HTML no-cache, archives 7 days, images 1 day), the
- *                  7-day browser-cache cap on every response class, Vary: Accept on negotiable HTML,
- *                  markdown negotiation, noindex on archive .md, 304 revalidation
+ *                  7-day browser-cache cap on every response class (Ghost's uploads and 301s included)
+ *                  with nothing left to a heuristic lifetime, Vary: Accept on negotiable HTML, markdown
+ *                  negotiation, noindex on archive .md, 304 revalidation, no X-Frame-Options, security
+ *                  headers on the blog-host 301, internal hosts noindex, nofollow
  *   crawler-policy robots.txt parsed with an RFC 9309 evaluator: per URL, what search crawlers and the
- *                  AI group may fetch, including each .md twin
+ *                  AI group may fetch, including each .md twin; the AI group mirrors the * Disallow and
+ *                  Allow lines
  *   waf-config     every WAF rule and ACL setting on both ACLs, field by field: order, actions,
  *                  regexes, managed-group overrides, rate limits, logging and redaction, and the
  *                  pending script shapes
  *   cloudfront     distribution, origin and every behaviour field by field; cache/origin-request
  *                  policies, real-time logs, the archive markdown function
- *   seo-content    sample pages: one H1, <main>, viewport, canonical, absolute og:image, structured
- *                  data (FAQPage only on the home page)
+ *   seo-content    sample pages: one H1 (and its visible text), <main>, viewport, canonical, absolute
+ *                  og:image that loads, structured data (FAQPage only on the home page, its questions
+ *                  visible; Organization on all three sites; one Community offer per product; each
+ *                  framework's examples), blog links that answer directly, the changelog search page
  *   caching        the live cache: repeat requests hit for cached paths, never for HTML;
  *                  HTML -> markdown -> HTML stays HTML (cache poisoning)
  *   waf-behaviour  real requests: curl gets the guidance 403, curl with Accept: text/markdown gets
- *                  markdown, credential-scanner probes blocked, allowed agents served
+ *                  markdown, credential-scanner probes blocked, allowed agents served (Meta on docs and
+ *                  the blog too)
  *   migration      migrated archives redirect alias hosts in one hop; .htaccess.bak-* files never served
  *   agent-files    llms.txt and AGENTS.md for all three sites: content type, sections, every
- *                  advertised .md link resolves
+ *                  advertised .md link resolves; the MCP server line, the server card and its npm package
  *   infra          alarms watch the right metric and notify the right topic; Shield protections; ALB
  *                  settings
- *   blog           Ghost blog headers (one CSP, Referrer/Permissions-Policy, no X-Robots-Tag) and its
- *                  sitemap
+ *   blog           Ghost blog headers on every page type (one CSP, Referrer/Permissions-Policy, no
+ *                  X-Robots-Tag), its sitemap, legacy /blog/ paths, in-post and footer links that answer
+ *                  directly, search/newsletter/analytics markup, original publication dates
  *
  * AWS is read-only: the ddos-report-readonly profile is hard-wired, and only allowlisted read calls
  * are made. HTTP is GET/HEAD only, at low volume (a request cap, concurrency and a minimum gap).
@@ -81,7 +89,7 @@ and live HTTP behaviour (GET/HEAD only, low volume). Exit code 1 on any failure.
   --verbose             Show detail for passing checks and every HTTP request
   --full-links          Check every link in llms.txt (~850, slow); default samples the index
   --days <n>            CloudTrail window for the write-event summary (default ${HEALTH.cloudTrailDays})
-  --max-requests <n>    HTTP request cap (default 400)
+  --max-requests <n>    HTTP request cap (default 600)
   --concurrency <n>     Concurrent HTTP requests (default 4)
   --delay <ms>          Minimum gap between request starts (default 120)
   --user-agent <ua>     Override the default browser User-Agent
@@ -100,7 +108,7 @@ function parseArgs(argv: string[]): Options {
         verbose: false,
         fullLinks: false,
         days: HEALTH.cloudTrailDays,
-        maxRequests: 400,
+        maxRequests: 600,
         concurrency: 4,
         delayMs: 120,
         userAgent: BROWSER_UA,

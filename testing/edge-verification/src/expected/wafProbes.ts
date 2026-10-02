@@ -175,6 +175,22 @@ export const WAF_PROBES: WafProbe[] = [
         refs: ['SE-184'],
     },
     {
+        id: 'ai.meta-externalagent.docs',
+        title: 'meta-externalagent UA is served a docs page',
+        path: '/react-data-grid/getting-started/',
+        ua: 'metaExternalAgent',
+        expect: ok,
+        refs: ['SE-184'],
+    },
+    {
+        id: 'ai.meta-externalagent.blog',
+        title: 'meta-externalagent UA is served the blog',
+        path: '/blog/',
+        ua: 'metaExternalAgent',
+        expect: ok,
+        refs: ['SE-184'],
+    },
+    {
         id: 'ai.perplexity-user',
         title: 'Perplexity-User UA is served',
         path: '/react-data-grid/getting-started/',
