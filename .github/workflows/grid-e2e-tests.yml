@@ -16,6 +16,10 @@ env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
 on:
+  # TEMPORARY (AG-18745): proves the workflow runs on this PR before it exists on the default branch. Remove before merge.
+  pull_request:
+    paths:
+      - '.github/workflows/grid-e2e-tests.yml'
   schedule:
     - cron: '30 3 * * *' # Daily at 3:30am UTC, an hour after doc-tests.yml. Deliberately not part of the PR CI.
   workflow_dispatch:
