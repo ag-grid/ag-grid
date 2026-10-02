@@ -124,12 +124,17 @@ fi
 # deploy - would be silently lost by an unconditional mv. One remote command therefore checks that
 # the live file is still that copy and that the upload arrived intact, keeps a timestamped backup
 # (one cp away from undoing the patch without this script or a deploy), and only then renames.
-# ag-charts tools/archive/ uses the same protocol for its charts-only copy.
+# The check and the rename run under an exclusive flock on .htaccess.lock beside the live file, so
+# two patchers (grid and charts release candidates at once) cannot both pass the check against the
+# same file and then both rename; the second sees the first's change and stops. ag-charts
+# tools/archive/ uses the same protocol, and the same lock file, for its charts-only copy. A docs
+# deploy does not take the lock, but it replaces the whole file, which resets the block anyway.
 if ! scp -i $SSH_LOCATION -P $SSH_PORT "$LIVE_HTACCESS" $CURRENT_HOST:$STAGED
 then
     patchFailed "Could not upload the patched root .htaccess.";
 fi
 SWAP="cd $GRID_ROOT_DIR || exit 5; \
+    exec 9>>.htaccess.lock && flock -w 60 9 || { echo 'could not lock .htaccess.lock'; exit 6; }; \
     [ \"\$(sha256sum < $REMOTE | cut -d' ' -f1)\" = $SNAPSHOT_SHA ] || { echo 'live file changed since it was fetched'; exit 3; }; \
     [ \"\$(sha256sum < $STAGED | cut -d' ' -f1)\" = $PATCHED_SHA ] || { echo 'uploaded file does not match the patched one'; exit 4; }; \
     cp -p $REMOTE $BACKUP && chmod 644 $STAGED && mv $STAGED $REMOTE"
@@ -138,6 +143,7 @@ case $? in
     0) ;;
     3) patchFailed "The live root .htaccess changed while this ran (another in-flight update or a deploy). Re-run this to patch the current file.";;
     4) patchFailed "The upload did not arrive intact. Re-run this.";;
+    6) patchFailed "Another patch of the live root .htaccess held its lock for over a minute. Re-run this.";;
     *) patchFailed "Could not move the patched root .htaccess into place.";;
 esac
 rm -f "$LIVE_HTACCESS"

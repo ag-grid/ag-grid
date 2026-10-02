@@ -2,7 +2,7 @@
 // root .htaccess over ssh. ssh and scp are stubbed to act on a local directory standing in for the
 // web box, so the fetch -> patch -> upload -> swap protocol runs for real, and a concurrent change
 // or a damaged upload can be injected between its steps.
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -31,6 +31,24 @@ cp "\${src#*:}" "\${dst#*:}" || exit 1
 if [[ "$src" == *:* && -n "$STUB_AFTER_FETCH" ]]; then bash -c "$STUB_AFTER_FETCH"; fi
 if [[ "$dst" == *:* && -n "$STUB_DAMAGE_UPLOAD" ]]; then echo damaged >> "\${dst#*:}"; fi
 `;
+// flock -w <seconds> <fd>, as util-linux has it (macOS has none): an exclusive lock on the inherited
+// descriptor, which the calling shell then holds until it exits.
+const FLOCK_STUB = `#!/usr/bin/perl
+use Fcntl qw(:flock);
+my ($w, $secs, $fd) = @ARGV;
+open(my $fh, ">>&=", $fd) or exit 1;
+for (my $i = 0; $i < $secs * 10; $i++) { exit 0 if flock($fh, LOCK_EX | LOCK_NB); select(undef, undef, undef, 0.1); }
+exit 1;
+`;
+// The rename at the end of the swap. With $STUB_MV_BARRIER set, each caller waits (up to 3s) until
+// two have arrived, so two unserialised swaps both pass their checks before either renames.
+const MV_STUB = `#!/bin/bash
+if [ -n "$STUB_MV_BARRIER" ]; then
+    touch "$STUB_MV_BARRIER/$$"
+    for i in $(seq 1 30); do [ "$(ls "$STUB_MV_BARRIER" | wc -l)" -ge 2 ] && break; sleep 0.1; done
+fi
+exec /bin/mv "$@"
+`;
 
 function box(initial: string) {
     const root = mkdtempSync(join(tmpdir(), 'patch-uncached-'));
@@ -41,6 +59,8 @@ function box(initial: string) {
     for (const [name, body] of [
         ['ssh', SSH_STUB],
         ['scp', SCP_STUB],
+        ['flock', FLOCK_STUB],
+        ['mv', MV_STUB],
     ]) {
         writeFileSync(join(bin, name), body);
         chmodSync(join(bin, name), 0o755);
@@ -59,9 +79,25 @@ function box(initial: string) {
                 ...env,
             },
         });
+    const runAsync = ([grid, charts, action]: string[], env: Record<string, string> = {}) =>
+        new Promise<{ status: number | null; stdout: string }>((resolve) => {
+            const child = spawn('bash', [SCRIPT, grid, charts, 'user@box', action], {
+                env: {
+                    ...process.env,
+                    PATH: `${bin}:${process.env.PATH}`,
+                    SSH_FILE: 'key',
+                    SSH_PORT: '22',
+                    GRID_ROOT_DIR: docroot,
+                    ...env,
+                },
+            });
+            let stdout = '';
+            child.stdout.on('data', (chunk) => (stdout += chunk));
+            child.on('close', (status) => resolve({ status, stdout }));
+        });
     const live = () => readFileSync(join(docroot, '.htaccess'), 'utf8');
-    const leftovers = () => readdirSync(docroot).filter((f) => f !== '.htaccess');
-    return { docroot, run, live, leftovers };
+    const leftovers = () => readdirSync(docroot).filter((f) => f !== '.htaccess' && f !== '.htaccess.lock');
+    return { docroot, run, runAsync, live, leftovers };
 }
 
 const args = (grid: string, charts: string, action: string) => [grid, charts, action];
@@ -102,6 +138,28 @@ describe('patchUncachedArchives.sh', () => {
         expect(b.live()).toBe(concurrent);
         expect(b.leftovers()).toEqual([]);
     });
+
+    // Two patchers at once (grid and charts release candidates) fetch the same file. Without a lock
+    // both pass the hash check before either renames, and the second rename drops the first's entry.
+    it('serialises two patchers, so the second stops rather than dropping the first', async () => {
+        const b = box(generated(null, null));
+        const barrier = join(b.docroot, '..', 'barrier');
+        mkdirSync(barrier);
+        const env = { STUB_MV_BARRIER: barrier };
+        const [grid, charts] = await Promise.all([
+            b.runAsync(args('36.3.0', '-', 'set'), env),
+            b.runAsync(args('-', '14.3.0', 'set'), env),
+        ]);
+        const results = [grid, charts];
+        expect(results.map((r) => r.status).sort(), results.map((r) => r.stdout).join('\n')).toEqual([0, 1]);
+        expect(results.find((r) => r.status === 1)!.stdout).toContain('changed while this ran');
+        const winner = grid.status === 0 ? generated('36.3.0', null) : generated(null, '14.3.0');
+        expect(b.live()).toBe(winner);
+        // Re-running the one that stopped lands both.
+        const rerun = grid.status === 0 ? args('-', '14.3.0', 'set') : args('36.3.0', '-', 'set');
+        expect(b.run(rerun).status).toBe(0);
+        expect(b.live()).toBe(generated('36.3.0', '14.3.0'));
+    }, 30_000);
 
     it('leaves the live file alone when the upload arrives damaged', () => {
         const before = generated(null, null);
