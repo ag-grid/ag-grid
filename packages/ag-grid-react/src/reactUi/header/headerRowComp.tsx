@@ -18,13 +18,31 @@ import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
-function getCellSectionSignature(ctrls: AbstractHeaderCellCtrl[], isPrint: boolean): string {
-    if (isPrint) {
-        return 'print';
-    }
-
-    return ctrls.map((ctrl) => `${ctrl.instanceId}:${ctrl.column?.pinnedLane ?? 1}`).join('|');
+/** The lane each header cell renders in, keyed by position, so a section change is told without building a key. */
+interface CellSections {
+    isPrint: boolean;
+    ctrls: AbstractHeaderCellCtrl[];
+    lanes: number[];
 }
+
+/** Records `ctrls` and their lanes, returning whether they differ from the last recorded ones. */
+const updateCellSections = (sections: CellSections, ctrls: AbstractHeaderCellCtrl[], isPrint: boolean): boolean => {
+    const lanes = sections.lanes;
+    const len = ctrls.length;
+    let changed = isPrint !== sections.isPrint || (!isPrint && len !== sections.ctrls.length);
+    for (let i = 0; i < len && !isPrint; ++i) {
+        const cellCtrl = ctrls[i];
+        const lane = cellCtrl.column?.pinnedLane ?? 1;
+        if (cellCtrl !== sections.ctrls[i] || lane !== lanes[i]) {
+            changed = true;
+        }
+        lanes[i] = lane;
+    }
+    lanes.length = isPrint ? 0 : len;
+    sections.isPrint = isPrint;
+    sections.ctrls = ctrls;
+    return changed;
+};
 
 /** A header cell with no column renders in the centre. */
 const partitionByLane = (cellCtrls: AbstractHeaderCellCtrl[]) => {
@@ -55,7 +73,7 @@ const HeaderRowComp = ({
     // Cell ctrls partitioned into 3 sections
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
     const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
-    const sectionSignatureRef = useRef<string>('');
+    const sectionsRef = useRef<CellSections>({ isPrint: false, ctrls: [], lanes: [] });
     const domOrderRef = useRef<boolean>(false);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>([]);
     const [tabIndex, setTabIndex] = useState<number | undefined>(() =>
@@ -94,15 +112,13 @@ const HeaderRowComp = ({
 
             const updateCellCtrls = (useFlushSync: boolean) => {
                 const isPrint = gos.get('domLayout') === 'print';
-                const nextSectionSignature = getCellSectionSignature(cellCtrlsRef.current, isPrint);
-                const shouldRefreshForSectionChange = sectionSignatureRef.current !== nextSectionSignature;
-                const next = shouldRefreshForSectionChange
-                    ? cellCtrlsRef.current
-                    : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrlsRef.current, domOrderRef.current)!;
+                const cellCtrls = cellCtrlsRef.current;
+                const next = updateCellSections(sectionsRef.current, cellCtrls, isPrint)
+                    ? cellCtrls
+                    : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrls, domOrderRef.current);
 
                 if (next !== prevCellCtrlsRef.current) {
                     prevCellCtrlsRef.current = next;
-                    sectionSignatureRef.current = nextSectionSignature;
                     agFlushSync(useFlushSync, () => setCellCtrls(next));
                 }
             };

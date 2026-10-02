@@ -230,31 +230,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     /**
-     * Checks if the cell is rendered or not. Also returns true if row ctrl is present but has not rendered
-     * cells yet.
-     * @returns true if cellCtrl is present, or if the row is present but has not rendered rows yet
-     */
-    private isCellBeingRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
-
-        // if no column, simply check for row ctrl, if no rowCtrl then return false
-        if (!column || !rowCtrl) {
-            return !!rowCtrl;
-        }
-
-        if (rowCtrl.isFullWidth()) {
-            return true;
-        }
-
-        // return true if:
-        // - spannedRowRenderer has a cell for this position,
-        // - or if the rowCtrl has a cell for this column
-        // - or if the row is not rendered yet, as it might try to render it
-        const spannedCell = this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned: null });
-        return !!spannedCell || !!rowCtrl.getCellCtrl(column) || !rowCtrl.isRowRendered();
-    }
-
-    /**
      * Notifies all row and cell controls of any change in focused cell.
      * @param event cell focused event
      */
@@ -279,17 +254,23 @@ export class RowRenderer extends BeanStub implements NamedBean {
      */
     private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
-        if (event?.rowIndex != null && !event.rowPinned) {
-            const { rowIndex } = event;
-            const col = this.beans.colModel.getCol(event.column) ?? undefined;
-            if (!this.isCellBeingRendered(rowIndex, col)) {
-                const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
-                if (rowCtrl) {
-                    // must not redraw: this can run inside redrawAfterModelUpdate while it holds the refresh lock
-                    rowCtrl.renderFocusedCell();
-                } else {
-                    this.redraw();
-                }
+        const rowIndex = event?.rowIndex;
+        if (rowIndex != null) {
+            const rowPinned = event.rowPinned ?? null;
+            const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned });
+            const column = this.beans.colModel.getCol(event.column);
+            if (!rowCtrl && !rowPinned) {
+                // a pinned row is always rendered, so only a normal row can be missing
+                this.redraw();
+            } else if (
+                rowCtrl &&
+                column &&
+                !rowCtrl.isFullWidth() &&
+                !this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned }) &&
+                !rowCtrl.getCellCtrl(column)
+            ) {
+                // must not redraw: this can run inside redrawAfterModelUpdate while it holds the refresh lock
+                rowCtrl.renderFocusedCell();
             }
         }
         this.updateCellFocus(event);

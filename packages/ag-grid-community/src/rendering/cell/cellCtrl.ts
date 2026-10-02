@@ -101,7 +101,7 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
-    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    /** Scratch for a list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
     /** The `left`, or `right` when anchored right, and the width last written to the cell; null to write again. */
     public drawnPosition: number | null = null;
