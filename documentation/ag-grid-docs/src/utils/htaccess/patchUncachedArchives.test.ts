@@ -230,7 +230,9 @@ describe('patchUncachedArchives.sh', () => {
         // The production layout: every directory the switch carries over from the old docroot (charts
         // and studio among them) lives inside it. Read from the script, so a new one cannot break this.
         const switchScript = readFileSync(
-            fileURLToPath(new URL('../../../../../scripts/deployments/release/switchReleaseRemote.sh', import.meta.url)),
+            fileURLToPath(
+                new URL('../../../../../scripts/deployments/release/switchReleaseRemote.sh', import.meta.url)
+            ),
             'utf8'
         );
         for (const [, dir] of switchScript.matchAll(/public_html_\$TIMESTAMP\/([\w.-]+)/g)) {
