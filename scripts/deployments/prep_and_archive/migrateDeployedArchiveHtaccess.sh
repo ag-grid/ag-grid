@@ -218,10 +218,17 @@ for entry in "${PATCHED[@]}"; do
     "${SSH[@]}" "cp -p '$remote' '$remote.bak-$TS'" || applyFailed "Could not back up $remote."
     # Upload beside the live file and rename over it: scp writes in place, so an interrupted
     # transfer straight onto .htaccess would leave the archive with a truncated one.
+    # The upload is checked before it replaces anything, in the same command as the rename: a
+    # damaged copy left live could fail every request under the archive.
     "${SCP[@]}" "$patched" "$HOST:$staged" || { "${SSH[@]}" "rm -f '$staged'"; applyFailed "Could not upload $staged."; }
-    "${SSH[@]}" "chmod 644 '$staged' && mv '$staged' '$remote'" || { "${SSH[@]}" "rm -f '$staged'"; applyFailed "Could not move $staged into place."; }
+    expected="$(cksum < "$patched")"
+    "${SSH[@]}" "[ \"\$(cksum < '$staged')\" = '$expected' ] || exit 4; chmod 644 '$staged' && mv '$staged' '$remote'"
+    case $? in
+        0) ;;
+        4) "${SSH[@]}" "rm -f '$staged'"; applyFailed "$staged did not arrive intact. Re-run with --apply.";;
+        *) "${SSH[@]}" "rm -f '$staged'"; applyFailed "Could not move $staged into place.";;
+    esac
     APPLIED+=("$remote")
-    [ "$("${SSH[@]}" "cksum < '$remote'")" = "$(cksum < "$patched")" ] || applyFailed "$remote does not read back as uploaded."
     echo "patched $remote (previous copy at $remote.bak-$TS)"
 done
 
