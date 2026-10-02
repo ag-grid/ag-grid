@@ -353,7 +353,8 @@ export class RowNumbersService
             column,
             colDef: column.colDef,
         });
-        return rowNumberOverrides.valueFormatter(valueFormatterParams);
+        // the measurement row has no data, so a formatter reading data may return nothing
+        return rowNumberOverrides.valueFormatter(valueFormatterParams) ?? '';
     }
 
     private createDummyElement(text: string): HTMLDivElement {

@@ -162,6 +162,17 @@ describe('Row numbers column autosize', () => {
         await expectWidth(api, '1001');
     });
 
+    test('tolerates a valueFormatter that returns nothing for the data-less measurement row', async () => {
+        const api = await createGrid(97, {
+            rowNumbers: { valueFormatter: ({ data }) => data?.id as string },
+        });
+        expect(rowNumberWidth(api)).toBe(60);
+
+        api.applyTransaction({ add: makeRows(3, 97) });
+        await pastDebounce();
+        expect(rowNumberWidth(api)).toBe(60);
+    });
+
     test('a full rowData reset still re-sizes to fit, including shrinking', async () => {
         const api = await createGrid(100, { getRowId: undefined });
 
