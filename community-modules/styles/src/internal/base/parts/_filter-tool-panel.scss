@@ -253,6 +253,9 @@
     .ag-filter-card-add {
         padding: 0;
         border: 0;
+
+        /* room for the button's focus shadow once the panel scrolls; a margin, so the card's background does not show in it */
+        margin-bottom: var(--ag-grid-size);
     }
 
     .ag-filter-add-button {

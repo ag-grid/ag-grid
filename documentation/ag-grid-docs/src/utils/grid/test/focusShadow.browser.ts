@@ -97,13 +97,37 @@ export function auditFocusShadows(): FocusShadowIssue[] {
 
     const shadowOf = (el: Element): string => getComputedStyle(el).boxShadow;
 
+    /** Splits one layer per entry, leaving the commas inside `rgba(…)` and `color-mix(…)` alone. */
+    const shadowLayers = (shadow: string): string[] => {
+        const layers: string[] = [];
+        let depth = 0;
+        let start = 0;
+        for (let i = 0; i < shadow.length; i++) {
+            const char = shadow[i];
+            if (char === '(') {
+                depth++;
+            } else if (char === ')') {
+                depth--;
+            } else if (char === ',' && depth === 0) {
+                layers.push(shadow.slice(start, i));
+                start = i + 1;
+            }
+        }
+        layers.push(shadow.slice(start));
+        return layers;
+    };
+
     /**
-     * How far the shadow reaches beyond the border box. Focus shadows carry no offset, so blur plus spread is
-     * the reach, and summing the resolved pixel lengths gets there without parsing the value's structure.
-     * Reading the computed value rather than assuming a fixed extent keeps this true for every theme.
+     * How far the shadow reaches beyond the border box: the furthest-reaching of its layers, each measured by
+     * summing its resolved pixel lengths. A focus ring is symmetrical, so offset, blur and spread all add to
+     * the reach. Reading the computed value rather than assuming a fixed extent keeps this true per theme.
      */
     const shadowExtent = (shadow: string): number =>
-        (shadow.match(/[\d.]+px/g) ?? []).reduce((total, length) => total + parseFloat(length), 0);
+        Math.max(
+            ...shadowLayers(shadow).map((layer) =>
+                (layer.match(/[\d.]+px/g) ?? []).reduce((total, length) => total + parseFloat(length), 0)
+            )
+        );
 
     // --- clipping -------------------------------------------------------------------------------------------
 
@@ -203,6 +227,16 @@ export function auditFocusShadows(): FocusShadowIssue[] {
 
     // --- audit ----------------------------------------------------------------------------------------------
 
+    const reported = ((window as unknown as { agFocusAuditReported?: [Element, Element][] }).agFocusAuditReported ??=
+        []);
+    const alreadyReported = (node: Element, clipper: Element): boolean => {
+        if (reported.some(([shadowed, cutter]) => shadowed === node && cutter === clipper)) {
+            return true;
+        }
+        reported.push([node, clipper]);
+        return false;
+    };
+
     /** The element and its ancestors up to the grid root: the shadow may be on any of them. */
     const chainOf = (el: Element): Element[] => {
         const chain: Element[] = [el];
@@ -267,6 +301,13 @@ export function auditFocusShadows(): FocusShadowIssue[] {
 
             const clipper = findClipper(node, shadowExtent(shadow));
             if (!clipper) {
+                continue;
+            }
+
+            // An example is audited twice, and a clip usually survives whatever the test body did, so the
+            // same pair is matched on element identity rather than on its description, whose classes change
+            // with state. The registry lives on the page, which is per test.
+            if (alreadyReported(node, clipper.ancestor)) {
                 continue;
             }
 

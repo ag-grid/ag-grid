@@ -23,6 +23,14 @@ export default {
             apply: (state, value) => (process.env.BASE_URL = value),
         },
         '--all-variants': { takes: NONE, apply: () => (process.env.ALL_FRAMEWORK_VARIANTS = 'true') },
+        '--focus-audit': {
+            takes: NONE,
+            apply: () => {
+                process.env.AG_FOCUS_AUDIT = '1';
+                // One framework covers every example, and a later --framework still wins.
+                process.env.FRAMEWORK ??= 'reactFunctionalTs';
+            },
+        },
     },
 
     // `--ui` and `--debug` hand the terminal to Playwright and never return on their own, so a captured or
@@ -62,6 +70,13 @@ Options:
                           ALL_FRAMEWORK_VARIANTS=true). By default examples run on one
                           React build: development locally, production in CI. Tests
                           naming a framework outright always run and are unaffected.
+  --focus-audit           Run the focus shadow clipping audit (AG_FOCUS_AUDIT=1), pinned to
+                          reactFunctionalTs unless --framework says otherwise. A manual
+                          development utility, run on its own: every example is focused
+                          element by element, which breaks some examples' own assertions,
+                          so while auditing those failures and console output are silenced
+                          and only clipped focus shadows are reported. See
+                          documentation/ag-grid-docs/src/utils/grid/test/focusShadow.ts
   --help                  Show this help message
 
 Run capture (shared with ./behave.sh, ./checks.sh and ./benches.sh). Every run streams stdout+stderr to
@@ -86,6 +101,8 @@ Examples:
   ./docs-e2e.sh --url https://localhost:4610
   ./docs-e2e.sh --headed
   ./docs-e2e.sh --ui
+  ./docs-e2e.sh --focus-audit
+  ./docs-e2e.sh "tool-panel-filters-new" --focus-audit
 
 Iterate-until-green loop (re-run only failures each pass):
   ./docs-e2e.sh                 # initial run records failures to .last-run.json

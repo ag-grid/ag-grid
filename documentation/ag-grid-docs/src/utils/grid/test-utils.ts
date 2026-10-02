@@ -5,7 +5,7 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
-import { checkFocusShadows, reportFocusIssues } from './test/focusShadow';
+import { focusAuditEnabled, recordFocusShadows, reportFocusShadows } from './test/focusShadow';
 import {
     routeExampleAssetsFromDisk,
     routeExternalThroughMirror,
@@ -443,9 +443,9 @@ const frameworkTest =
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
-            reportFocusIssues(await checkFocusShadows(page), page);
+            await recordFocusShadows(page);
             await applyCpuThrottle({ page, cpuThrottle }, testInfo);
-            await testBody({
+            const body = testBody({
                 page,
                 agExampleUrl,
                 agIdFor,
@@ -456,6 +456,9 @@ const frameworkTest =
                 request,
                 context,
             } as TestFixtures);
+            // While auditing focus shadows the body only drives the grid into the states the example
+            // demonstrates, and having focused every element beforehand is enough to break its assertions.
+            await (focusAuditEnabled ? body.catch(() => {}) : body);
             await clearCpuThrottle({ page, cpuThrottle });
         };
 
@@ -515,15 +518,15 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page, pe
         console.log(`Test failed, page URL: ${page.url()}`);
     }
 
-    if (errors.length > 0) {
+    if (errors.length > 0 && !focusAuditEnabled) {
         expect(errors, `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`).toEqual(
             []
         );
     }
 
-    // Audited before teardown, while the grid is still in the page, and after the test body so that focusing
-    // every element cannot perturb the assertions.
-    reportFocusIssues(await checkFocusShadows(page), page);
+    // Audited while the grid is still in the page, and after the test body so that focusing every element
+    // cannot perturb the assertions.
+    await reportFocusShadows(page);
 
     // Settled first so the example's own fetch applies its rows while the grid is still there.
     const hadDataRequestInFlight = await pendingRequests.settle(page);
@@ -546,7 +549,9 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page, pe
     const destructionErrors = errors.filter(
         (error) => !(hadDataRequestInFlight && error.includes(DESTROYED_GRID_WARNING))
     );
-    expect(destructionErrors, 'Example Errors during destruction').toEqual([]);
+    if (!focusAuditEnabled) {
+        expect(destructionErrors, 'Example Errors during destruction').toEqual([]);
+    }
 
     // Ensure the routes registered by the fixtures are removed to avoid warnings in the logs
     await page.unrouteAll({ behavior: 'ignoreErrors' });

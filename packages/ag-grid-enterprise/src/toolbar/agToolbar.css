@@ -27,8 +27,8 @@
 .ag-toolbar-button-wrapper {
     display: inline-flex;
 
-    /* always at least 3 pixels of padding to allow for the focus outline */
-    padding: max(var(--ag-spacing) * 0.25, 3px);
+    /* always at least 3 pixels of padding to allow for the focus outline where the clipping toolbar edge is adjacent: above and below, and at the toolbar ends */
+    padding: max(var(--ag-spacing) * 0.25, 3px) calc(var(--ag-spacing) * 0.25);
     height: 100%;
 }
 
@@ -57,6 +57,16 @@
 .ag-toolbar-button-wrapper:hover {
     background-color: var(--ag-icon-button-hover-background-color);
     color: var(--ag-icon-button-hover-color);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-button-wrapper:first-child {
+    padding-inline-start: max(var(--ag-spacing) * 0.25, 3px);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-button-wrapper:last-child {
+    padding-inline-end: max(var(--ag-spacing) * 0.25, 3px);
 }
 
 :where(.ag-toolbar-button-wrapper:hover) .ag-toolbar-button,
