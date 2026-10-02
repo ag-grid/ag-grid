@@ -15,6 +15,7 @@ import {
 import type { GridApi } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     NumberFilterModule,
     TextFilterModule,
     getGridElement,
@@ -73,6 +74,7 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            CustomFilterModule,
             RowGroupingModule,
             GroupFilterModule,
             SetFilterModule,
@@ -412,6 +414,26 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             · ├── LEAF id:2 country:"France" sport:"Run"
             · └── LEAF id:3 country:"France" sport:"Jump"
         `);
+    });
+
+    test('named by `component` with custom logic, it is still the group filter of the grouped columns', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait<Row>('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, filter: 'agSetColumnFilter' },
+                { field: 'sport' },
+            ],
+            autoGroupColumnDef: { filter: { component: 'agGroupColumnFilter', doesFilterPass: () => true } },
+            groupDefaultExpanded: -1,
+            rowData: ROW_DATA,
+        });
+
+        await api.setColumnFilterModel('country', { filterType: 'set', values: ['Italy'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+        const filter = await ColumnFilterHarness.open(api, AUTO_COL);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Australia', 'France', 'Italy']);
     });
 
     test('clearing the underlying filter deactivates the group column indicator', async () => {

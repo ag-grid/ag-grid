@@ -14,7 +14,7 @@ import type {
     NewFiltersToolPanelState,
     SelectableFilterDef,
 } from 'ag-grid-community';
-import { BeanStub, FilterComp } from 'ag-grid-community';
+import { BeanStub, FilterComp, _getDisplayHandler } from 'ag-grid-community';
 
 interface StateWrapper {
     state: FilterPanelFilterState;
@@ -209,14 +209,9 @@ export class FilterPanelService
             return;
         }
 
-        const { colFilter, selectableFilter } = this.beans;
-        selectableFilter?.setActive(id, filterDefs, filterDef);
-        colFilter!.filterParamsChanged(id, 'columnFilter');
-        const column = state.column;
-        this.eventSvc.dispatchEvent({
-            type: 'filterSwitched',
-            column,
-        });
+        const selectableFilter = this.beans.selectableFilter!;
+        selectableFilter.setActive(id, filterDefs, filterDef);
+        selectableFilter.switchFilter(state.column, 'columnFilter');
         const newStateWrapper = this.states.get(id);
         if (!newStateWrapper) {
             return;
@@ -268,7 +263,7 @@ export class FilterPanelService
         const column = colModel.getNonPivotColById(id);
 
         if (column && !column.colDef.suppressFiltersToolPanel) {
-            const handler = colFilter!.getHandler(column, true);
+            const handler = _getDisplayHandler(colFilter!.getHandler(column, true));
             if (handler) {
                 return this.createFilterState(column, handler, expanded);
             }

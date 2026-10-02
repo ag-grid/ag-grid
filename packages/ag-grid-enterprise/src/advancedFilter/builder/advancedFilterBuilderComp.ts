@@ -586,10 +586,10 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private validateItems(): void {
         const advFilterExpSvc = this.advFilterExpSvc;
         for (const item of this.items) {
-            if (!item.filterModel || item.filterModel.filterType === 'join') {
+            const filterModel = item.filterModel;
+            if (!filterModel || filterModel.filterType === 'join') {
                 continue;
             }
-            const { filterModel } = item;
             item.validationMessage = null;
             const { colId } = filterModel;
             const hasColumn = advFilterExpSvc.getColumnAutocompleteEntries().find(({ key }) => key === colId);
@@ -606,15 +606,15 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 clearCondition(filterModel);
                 continue;
             }
-            item.validationMessage = getConditionValidationMessage(
+            const validationMessage = getConditionValidationMessage(
                 advFilterExpSvc,
-                this.gos,
                 filterModel,
                 column,
                 baseCellDataType,
                 operator
             );
-            item.valid = !item.validationMessage;
+            item.validationMessage = validationMessage;
+            item.valid = !validationMessage;
         }
     }
 }

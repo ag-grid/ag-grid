@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     addFilterCard: 'فلٹر شامل کریں',
     agTextColumnFilterDisplayName: 'سادہ فلٹر',
     agNumberColumnFilterDisplayName: 'سادہ فلٹر',
+    agBigIntColumnFilterDisplayName: 'سادہ فلٹر',
     agDateColumnFilterDisplayName: 'سادہ فلٹر',
     agSetColumnFilterDisplayName: 'انتخابی فلٹر',
     agMultiColumnFilterDisplayName: 'کمبو فلٹر',

@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     addFilterCard: 'Dodaj filtr',
     agTextColumnFilterDisplayName: 'Prosty filtr',
     agNumberColumnFilterDisplayName: 'Prosty filtr',
+    agBigIntColumnFilterDisplayName: 'Prosty filtr',
     agDateColumnFilterDisplayName: 'Prosty filtr',
     agSetColumnFilterDisplayName: 'Filtr wyboru',
     agMultiColumnFilterDisplayName: 'Filtr złożony',

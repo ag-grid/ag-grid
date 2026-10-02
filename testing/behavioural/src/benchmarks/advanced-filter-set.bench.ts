@@ -120,6 +120,16 @@ suite('advanced filter set values vs set filter mini filter', () => {
         { ...benchDefaults(), setup: setUpExpression }
     );
 
+    // The same keystrokes in an expression every version parses, as `is any of` and its value list are newer.
+    bench(
+        'advanced filter: keystroke in a contains expression',
+        () => {
+            typeInto(expressionInput, '[Code] contains "code-1999');
+            typeInto(expressionInput, '[Code] contains "code-19999');
+        },
+        { ...benchDefaults(), setup: setUpExpression }
+    );
+
     bench(
         `set filter mini filter: keystroke matching every value (${ROW_COUNT})`,
         () => {

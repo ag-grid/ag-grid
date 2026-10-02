@@ -1,6 +1,7 @@
 import {
     AdvancedFilterBuilderHarness,
     AdvancedFilterHarness,
+    FilterDom,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -186,6 +187,57 @@ describe('Advanced Filter - number custom parser and formatter', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:2 value:1234
         `);
+    });
+
+    test('a builder operand the parser cannot read empties the value rather than storing the text', async () => {
+        const api = gridsManager.createGrid('grid1', {
+            columnDefs: withParser,
+            rowData: ROW_DATA,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel({ filterType: 'number', colId: 'value', type: 'equals', filter: 1234 });
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        await builder.setValue((await builder.conditionItems())[0], '12a');
+        await new FilterDom(api, 'unreadable builder operand', { mode: 'builder' }).checkFilterDom(`
+            BUILDER
+            AND
+              Value = Enter a value... ✗
+              + add
+            buttons: Apply ⊘ | Cancel
+            model:
+              filterType: "number"
+              colId: "value"
+              type: "equals"
+              filter: 1234
+        `);
+    });
+
+    test('a parser and formatter given by a function read the operands', async () => {
+        const api = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    cellDataType: 'number',
+                    filter: 'agNumberColumnFilter',
+                    filterParams: () => ({ numberParser: parseGrouped, numberFormatter: formatGrouped }),
+                },
+            ],
+            rowData: ROW_DATA,
+            enableAdvancedFilter: true,
+        });
+        await asyncSetTimeout(0);
+        await AdvancedFilterHarness.get(api).applyExpression('[Value] = 1,234');
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'grouped operand read through a function').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 value:1234
+        `);
+        api.setAdvancedFilterModel(api.getAdvancedFilterModel());
+        expect(AdvancedFilterHarness.get(api).value).toBe('[Value] = 1,234');
     });
 
     // Operands are the column's own syntax only where it can both read and write that syntax. Without a

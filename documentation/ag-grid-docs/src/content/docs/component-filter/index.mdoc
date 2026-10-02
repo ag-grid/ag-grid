@@ -157,6 +157,12 @@ It is also possible to define filter handlers in the `filterHandlers` grid optio
 
 {% apiDocumentation source="grid-options/properties.json" section="filter" names=["filterHandlers"] /%}
 
+Filter logic given with `component` requires `enableFilterHandlers`. Without it, the grid warns and uses `component` as the filter.
+
+### Custom Logic with Provided Filters
+
+`component` can also name a filter the grid provides, so that its UI is kept while `doesFilterPass` or the handler decides which rows pass. The [Set](./filter-set/), [Multi](./filter-multi/) and [Group](./grouping-single-group-column/#inherit-row-grouped-columns-filters) Filters keep their own handler for their UI, and `api.getColumnFilterHandler` returns the handler supplied, or for `doesFilterPass` the one the grid builds around it. Logic given to a Multi Filter leaves its children narrowing each other's values with their own filters, while logic given to a child narrows its siblings.
+
 ## Using Buttons
 
 It is possible to use the [Filter Buttons](./filter-applying/) for grid-provided filters with custom filter components.

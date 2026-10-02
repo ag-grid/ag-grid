@@ -1,6 +1,8 @@
 import type { AgColumn, ColumnEventType, IGroupFilterService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
+import { isGroupFilterDef } from '../../rowHierarchy/rowHierarchyUtils';
+
 export class GroupFilterService extends BeanStub implements NamedBean, IGroupFilterService {
     readonly beanName = 'groupFilter' as const;
 
@@ -11,7 +13,7 @@ export class GroupFilterService extends BeanStub implements NamedBean, IGroupFil
     }
 
     public isGroupFilter(column: AgColumn): boolean {
-        return column.colDef.filter === 'agGroupColumnFilter';
+        return isGroupFilterDef(column.colDef.filter);
     }
 
     public isFilterAllowed(column: AgColumn): boolean {

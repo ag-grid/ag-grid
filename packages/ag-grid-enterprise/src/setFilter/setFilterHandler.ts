@@ -35,7 +35,7 @@ import {
     translateForSetFilter,
     unformattedSetFilterText,
 } from './setFilterUtils';
-import SetFilterModelValuesType, { SetValueModel, isProvidedValues } from './setValueModel';
+import { SetValueModel, isProvidedValues } from './setValueModel';
 import type { SetValueModelParams } from './setValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
@@ -87,15 +87,18 @@ export class SetFilterHandler<TValue = string>
 
         this.appliedModel.update(params.model);
 
-        this.validateModel(params);
+        this.validateModel();
 
         this.addEventListenersForDataChanges();
     }
 
     public refresh(params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): boolean {
         const { keysFormedBy, valueSource, caseSensitive, valueModel } = this;
-        // a model over provided values names them, however the rows are read, while they stay provided
-        const keyedFromRows = this.isValuesTakenFromGrid() || !isProvidedValues(params.filterParams.values);
+        // provided values, the API's included, key the model until the definition's `values` changes
+        const values = params.filterParams.values;
+        const keyedFromRows =
+            valueModel.isValuesTakenFromGrid() ||
+            ((values ?? null) !== (this.params.filterParams.values ?? null) && !isProvidedValues(values));
         const wasTreeDataOrGrouping = this.isTreeDataOrGrouping();
         const valueModelParams = this.updateParams(params);
         const newValueSource = this.valueSource;
@@ -111,19 +114,20 @@ export class SetFilterHandler<TValue = string>
                         newValueSource.readsFormula !== valueSource.readsFormula)));
         // a type inferred from the first rows is the one the model was written for
         const inferring = keysChanged && !!this.beans.dataTypeSvc?.isInferring();
-        if (keysChanged && !inferring && params.model != null) {
+        const model = params.model;
+        if (keysChanged && !inferring && model != null) {
             // the model's keys may name nothing under the new rules, so the grid recreates the filter without it
             return false;
         }
+        // Before the reload, which reconciles the model once the values arrive.
+        this.appliedModel.update(model);
         const reloading = valueModel.refresh(valueModelParams);
         // the rows are read again once the types are inferred, provided values are keyed again here
-        if (reloading || (keysChanged && !(inferring && this.isValuesTakenFromGrid()))) {
-            this.refreshFilterValuesForColDef();
+        if (reloading || (keysChanged && !(inferring && valueModel.isValuesTakenFromGrid()))) {
+            this.reloadValues(true);
         }
 
-        this.appliedModel.update(params.model);
-
-        this.validateModel(params);
+        this.validateModel();
         return true;
     }
 
@@ -302,13 +306,12 @@ export class SetFilterHandler<TValue = string>
     }
 
     public setFilterValues(values: (TValue | null)[]): void {
-        this.valueModel.overrideValues(values).then(() => {
-            this.refreshFilterValues();
-        });
+        this.valueModel.setProvidedValues(values);
+        this.refreshFilterValues();
     }
 
     public resetFilterValues(): void {
-        this.valueModel.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        this.valueModel.setProvidedValues(undefined);
         this.syncAfterDataChange(false);
     }
 
@@ -316,21 +319,11 @@ export class SetFilterHandler<TValue = string>
         this.reloadValues(false);
     }
 
-    /** As `refreshFilterValues`, loading once for a column definition however many ask. */
-    public refreshFilterValuesForColDef(): void {
-        this.reloadValues(true);
-    }
-
     /** Through the API the model is checked against the available values, for a column definition against all. */
     private reloadValues(forColDef: boolean): void {
-        const valueModel = this.valueModel;
-        // the model is still being initialised
-        if (!valueModel.isInitialised()) {
-            return;
-        }
-        valueModel.refreshValues(forColDef).then(() => {
+        this.valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
-            this.validateModel(this.params, undefined, !forColDef);
+            this.validateModel(undefined, !forColDef);
         });
     }
 
@@ -371,47 +364,39 @@ export class SetFilterHandler<TValue = string>
     }
 
     private syncAfterDataChange(forColDef: boolean): void {
-        if (!this.isValuesTakenFromGrid()) {
+        const valueModel = this.valueModel;
+        if (!valueModel.isValuesTakenFromGrid()) {
             return;
         }
-        this.valueModel.refreshValues(forColDef).then(() => {
+        valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged' });
-            this.validateModel(this.params, { afterDataChange: true });
+            this.validateModel({ afterDataChange: true });
         });
     }
 
-    private validateModel(
-        params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>,
-        additionalEventAttributes?: any,
-        restrictToAvailableValues?: boolean
-    ): void {
+    /** Reads the params once the values load, as a refresh in the meantime supersedes the model. */
+    private validateModel(additionalEventAttributes?: any, restrictToAvailableValues?: boolean): void {
         const valueModel = this.valueModel;
 
         valueModel.allKeys.then(() => {
+            const params = this.params;
             const model = params.model;
             if (model == null) {
                 return;
             }
-            const existingFormattedKeys: Map<string | null, string | null> = new Map();
-            const addKey = (key: string | null) => existingFormattedKeys.set(this.caseFormat(key), key);
-            if (restrictToAvailableValues) {
-                for (const key of valueModel.availableKeys) {
-                    addKey(key);
-                }
-            } else {
-                valueModel.allValues.forEach((_value, key) => addKey(key));
-            }
+            const existingFormattedKeys = valueModel.mapFormattedKeys(restrictToAvailableValues);
             // An empty grid-derived value set means the values are not yet known (e.g. the filter was
             // instantiated before cellDataType inference populated the rows), not that everything is selected.
             // Reconciling now would discard the applied criteria; leave the model untouched until real values
             // arrive and re-reconcile then (via cellValueChanged / dataTypesInferred / onNewRowsLoaded).
-            const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-            if (takenFromGrid && existingFormattedKeys.size === 0 && model.values.length > 0) {
+            const takenFromGrid = valueModel.isValuesTakenFromGrid();
+            const modelValues = model.values;
+            if (takenFromGrid && existingFormattedKeys.size === 0 && modelValues.length > 0) {
                 return;
             }
             const newValues: SetFilterModelValue = [];
             let updated = false;
-            for (const unformattedKey of model.values) {
+            for (const unformattedKey of modelValues) {
                 const formattedKey = this.caseFormat(setFilterNullIfBlank(unformattedKey));
                 const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                 if (existingUnformattedKey !== undefined) {
@@ -441,10 +426,6 @@ export class SetFilterHandler<TValue = string>
                 params.onModelChange(newModel, additionalEventAttributes);
             }
         });
-    }
-
-    private isValuesTakenFromGrid(): boolean {
-        return this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private doesFilterPassForTreeData(node: IRowNode, model: SetFilterAppliedModel): boolean | undefined {
