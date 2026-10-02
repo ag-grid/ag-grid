@@ -114,6 +114,7 @@
       "plugins/ag-grid-task-autogen",
       "testing/ag-test-utils",
       "testing/behavioural",
+      "testing/e2e",
       "testing/typedoc-links",
       "testing/module-size",
       "testing/module-size-angular",

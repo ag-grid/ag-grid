@@ -13,14 +13,14 @@ This file provides guidance to AI Agents when working with code in this reposito
 - **Pre-commit checks:** `./checks.sh` — the preferred gate: type-check + lint + spec type-check across every project in one parallel, cache-aware Nx run. Much faster than chaining separate `yarn nx build:types` / `yarn nx lint` calls.
 - **Test:** `./behave.sh` (whole unit suite — package + behavioural — as one multi-project Vitest run). Single project: `./behave.sh --project <name>` (e.g. `ag-grid-community`, `behavioural`).
 - **Benchmarks:** `./benches.sh` (behavioural benchmarks in headless Chromium).
-- **E2E:** `./docs-e2e.sh` (Playwright against the docs site; the Nx target is `test:e2e`, not `e2e`).
+- **E2E:** `./docs-e2e.sh` (Playwright against the docs site; the Nx target is `test:e2e`, not `e2e`). Real-browser grid specs with their own configuration: `./grid-e2e.sh` (`--all-browsers` for all three).
 - **Build:** `yarn nx build <package>`; types only: `yarn nx build:types <package>`.
 - **Dev server:** `yarn nx dev` (launches on https://localhost:4610/, check if it is already running before trying to run it)
 - **NX daemon:** Always use `NX_DAEMON=false` for nx commands to avoid pipe hangs (set automatically via SessionStart hook)
 
 Each script takes `--help`. Full flag reference lives in the guides below rather than here: test and E2E flags in the Testing Guide, benchmark and profiling flags in the Benchmarks Guide.
 
-**Locally, never run `./checks.sh`, `./behave.sh`, `./benches.sh` or `./docs-e2e.sh` in the foreground** (under `CI` or in a workflow, do the opposite: see below). They take minutes, and a foreground call blocks the whole session: the user cannot reach the agent, no other work proceeds, and the wait is dead time repeated at every gate. Start them with the agent harness's background mechanism, which delivers a completion event in a later turn, then keep working. **Never `sleep` to wait for one either** — that is the same block, wearing a different hat.
+**Locally, never run `./checks.sh`, `./behave.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** (under `CI` or in a workflow, do the opposite: see below). They take minutes, and a foreground call blocks the whole session: the user cannot reach the agent, no other work proceeds, and the wait is dead time repeated at every gate. Start them with the agent harness's background mechanism, which delivers a completion event in a later turn, then keep working. **Never `sleep` to wait for one either** — that is the same block, wearing a different hat.
 
 Nothing needs to be arranged to read the result afterwards: every local run captures itself and prints the log path as its first line (`tmp/_<name>-output/<id>/output.log`). Grep that file — while the run is going to abort early on the first failure, or after it for the verdict; `--bail 1` makes the run stop itself there instead, which is what you want in a fix-one-error-at-a-time loop. `./behave.sh` also writes Vitest's machine-readable `result.json` beside the log; the other scripts leave only the log and a status file. **All of this is local-only, and so is the rule above.** Backgrounding exists to keep an interactive session reachable; a CI job or workflow has nobody to block, so run these in the foreground there and read the output directly. The scripts capture nothing under `CI` for the same reason.
 
@@ -115,6 +115,8 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 ### Development Workflow
 
 **Behavioural tests are the primary test suite.** `testing/behavioural/` verifies grid behaviour as a black box; package unit tests are co-located in `packages/*/src`. `./behave.sh` runs both together as one multi-project Vitest run. The Testing Guide covers layer choice, async waiting patterns, and snapshots.
+
+**Not every change needs a test.** Add one for logic, state, events, interaction and API behaviour. Do not add one for styling-only changes (never assert exact pixel or CSS values), copy, refactors with existing coverage, or type-only changes. Say "No test added: <reason>" in your summary. The Testing Guide's "Does this change need a test?" section has the criteria.
 
 **Bug fix or feature work:** update the implementation (typically `packages/ag-grid-*/src/`), sync dependent docs and examples, then run `./behave.sh` and `./checks.sh`. Docs and example workflows are covered by the docs-pages and examples rules, which load when you touch those trees.
 
