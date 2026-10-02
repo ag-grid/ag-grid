@@ -164,6 +164,10 @@ Debug logging includes:
 
 - the versions of the AG packages in use when a grid is created
 - a message when each grid has initialised
-- each grid option update, with its previous and new values{% if isFramework("react") %} (see [React Hooks](./react-hooks/#debug-mode)){% /if %}
+- each grid option update, with its previous and new values
 
 Defaults to `false`. As with the other options, `debug` is global and applies to every grid on the page.
+
+{% if isFramework("react") %}
+Debug logging is also useful for diagnosing unnecessary grid updates on each render, see [React Hooks](./react-hooks/#debug-mode).
+{% /if %}

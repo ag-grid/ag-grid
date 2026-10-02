@@ -20,6 +20,7 @@ import {
     asyncSetTimeout,
     mockGridLayout,
 } from 'ag-test-utils';
+import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, ColGroupDef, GridApi, Module } from 'ag-grid-community';
 import {
@@ -710,6 +711,41 @@ describe('Column Features', () => {
             }
 
             expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
+        });
+
+        test('hiding the taller of two auto-height columns shrinks the row to the other', async () => {
+            const cellHeights = new Map([
+                ['tall', 120],
+                ['short', 60],
+            ]);
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) =>
+                el.classList.contains('ag-cell-wrapper')
+                    ? cellHeights.get(el.closest('.ag-cell')?.getAttribute('col-id') ?? '')
+                    : undefined;
+            const uninstallResizeObserver = installMockResizeObserver();
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { colId: 'tall', autoHeight: true },
+                        { colId: 'short', autoHeight: true },
+                    ],
+                    rowData: [{ id: 'r0' }],
+                    getRowId: (params) => params.data.id,
+                });
+                const row = api.getRowNode('r0')!;
+                await waitFor(() => expect(row.rowHeight).toBe(120));
+
+                api.setGridOption('columnDefs', [
+                    { colId: 'tall', autoHeight: true, hide: true },
+                    { colId: 'short', autoHeight: true },
+                ]);
+                await waitFor(() => expect(row.rowHeight).toBe(60));
+            } finally {
+                uninstallResizeObserver();
+                mockGridLayout.useRealOffsetDimensions = false;
+                mockGridLayout.elementHeightOverride = undefined;
+            }
         });
 
         test('colDef.colSpan + colDef.autoHeight on same grid draws the span and sets the auto-height cell up', () => {
