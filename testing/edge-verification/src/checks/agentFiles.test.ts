@@ -101,3 +101,34 @@ describe('agent-file sections must be populated', () => {
         });
     }
 });
+
+describe('agent-files md-twins needs a twin to test', () => {
+    const runTwins = async (respond: (req: { url: string }) => FakeResponse) => {
+        const http = new FakeHttp(respond);
+        try {
+            return await runOne(
+                check('agent-files.grid.md-twins'),
+                await fakeCtx(new FakeAws(healthyCloudFront()), http)
+            );
+        } finally {
+            http.close();
+        }
+    };
+    const twin = (req: { url: string }): FakeResponse =>
+        req.url.endsWith('.md')
+            ? { status: 200, headers: { 'content-type': 'text/markdown; charset=utf-8' } }
+            : LINKS.includes(req.url)
+              ? { status: 200, headers: { 'content-type': 'text/html' } }
+              : site(req);
+
+    it('passes when the curated pages have twins that resolve', async () => {
+        const result = await runTwins(twin);
+        assert.equal(result.status, 'pass', result.detail);
+    });
+
+    it('fails when no curated page answers 200, so no twin was tested', async () => {
+        const result = await runTwins((req) => (LINKS.includes(req.url) ? { status: 301 } : twin(req)));
+        assert.equal(result.status, 'fail', result.detail);
+        assert.match(result.detail ?? '', /no eligible twin to test/);
+    });
+});
