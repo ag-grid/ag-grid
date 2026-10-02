@@ -26,6 +26,9 @@ import type { DndSourceComp } from './../dndSourceComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component {
+    /** The row's cell pass that last drew this cell. */
+    public drawnInPass = 0;
+
     private readonly eCell: HTMLElement;
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export const verticalSpacingIcon = (
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -44,3 +46,19 @@ export const radiusIcon = (
         </g>
     </svg>
 );
+
+/** The length editors that carry an icon; the rest are labelled by name alone. */
+export type LengthIcon = 'radius' | 'verticalSpacing' | 'horizontalSpacing';
+
+export const iconFor = (icon?: LengthIcon): ReactNode => {
+    switch (icon) {
+        case 'radius':
+            return radiusIcon;
+        case 'verticalSpacing':
+            return verticalSpacingIcon;
+        case 'horizontalSpacing':
+            return horizontalSpacingIcon;
+        default:
+            return undefined;
+    }
+};

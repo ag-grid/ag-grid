@@ -18,6 +18,8 @@
     --ag-example-chart-foreground-color: #181d1f;
     --ag-example-chart-grid-line-color: #e8e9e9;
     --ag-example-chart-grouped-category-line-color: #d8d9d9;
+    --ag-example-chart-scrollbar-thumb-border-color: #abadad;
+    --ag-example-chart-scrollbar-track-border-color: #d6d7d7;
     --ag-example-chart-subtle-text-color: #707374;
 }
 
@@ -30,5 +32,7 @@
     --ag-example-chart-foreground-color: #fff;
     --ag-example-chart-grid-line-color: #545b67;
     --ag-example-chart-grouped-category-line-color: #7e838c;
+    --ag-example-chart-scrollbar-thumb-border-color: #6d727c;
+    --ag-example-chart-scrollbar-track-border-color: #424956;
     --ag-example-chart-subtle-text-color: #7c818a;
 }

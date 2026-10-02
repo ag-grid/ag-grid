@@ -17,3 +17,5 @@ Do not leave the placeholder `example.spec.ts` in place. The placeholder only pr
 3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"` and per-framework runs. Use the grid documentation framework strings for `--framework` (validated against `ALL_FRAMEWORKS` in `documentation/ag-grid-docs/src/utils/grid/test-utils.ts`): `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`.
 
 See [docs-e2e-tests/SKILL.md](../skills/docs-e2e-tests/SKILL.md) for the full procedure.
+
+A behaviour that needs a real browser but is not what a docs example demonstrates (an arbitrary configuration, or an enterprise feature) belongs in `testing/e2e` instead: see *Playwright e2e, behavioural test or docs-example spec* in `testing.md`.

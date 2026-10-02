@@ -1,4 +1,4 @@
-import { cleanup, waitFor } from '@testing-library/react';
+import { act, cleanup, waitFor } from '@testing-library/react';
 
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, ModuleRegistry, RowApiModule, ValidationModule } from 'ag-grid-community';
@@ -107,15 +107,19 @@ describe('Column Spanning Keyboard Navigation (React)', () => {
         });
         const rowNode = api.getDisplayedRowAtIndex(0)!;
 
-        api.setFocusedCell(0, 'span');
-        rowNode.setDataValue('span', 2);
-        api.tabToNextCell();
+        act(() => {
+            api.setFocusedCell(0, 'span');
+            rowNode.setDataValue('span', 2);
+            api.tabToNextCell();
+        });
         expect(getFocusedColId(api)).toBe('c');
         await waitFor(() => expect(getActiveCellColId()).toBe('c'));
 
-        api.setFocusedCell(0, 'span');
-        rowNode.setDataValue('span', 1);
-        api.tabToNextCell();
+        act(() => {
+            api.setFocusedCell(0, 'span');
+            rowNode.setDataValue('span', 1);
+            api.tabToNextCell();
+        });
         expect(getFocusedColId(api)).toBe('b');
         await waitFor(() => expect(getActiveCellColId()).toBe('b'));
     });

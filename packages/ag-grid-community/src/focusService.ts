@@ -7,7 +7,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
-import { _areCellsEqual, _getCellByPosition, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
+import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
@@ -249,16 +249,14 @@ export class FocusService extends BeanStub implements NamedBean {
         });
     }
 
-    /** As keyboard navigation does, a column a drawn colSpan covers focuses the spanning cell, and vertical moves go
-     *  on from the column asked for. */
+    /** As keyboard navigation does, a column a colSpan covers focuses the spanning cell, rendered or not, and
+     *  vertical moves go on from the column asked for. */
     public setFocusedCellOrSpan(params: CellFocusedParams): void {
         const { rowIndex, rowPinned } = params;
         // only a drawn colSpan can cover a column
-        const column = this.visibleCols.colSpanActive ? this.colModel.getCol(params.column) : null;
-        const spanningCol =
-            column && rowIndex != null
-                ? _getCellByPosition(this.beans, { rowIndex, rowPinned, column })?.column
-                : undefined;
+        const column = this.visibleCols.colSpanColCount !== 0 ? this.colModel.getCol(params.column) : null;
+        const rowNode = column && rowIndex != null ? _getRowNode(this.beans, { rowIndex, rowPinned }) : undefined;
+        const spanningCol = column && rowNode ? this.rowRenderer.getSpanningCol(column, rowNode) : null;
         if (column && spanningCol && spanningCol !== column) {
             this.setFocusedCell({ ...params, column: spanningCol });
             this.navigation?.setCurrentColumnWithoutSpan(column);

@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
 import { RETURN_URLS } from './constants';
+import { useContactFormMonitoring } from './useContactFormMonitoring';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
@@ -84,10 +85,10 @@ function loadRecaptcha(): Promise<void> {
         script.src = `${RECAPTCHA_URL}?render=explicit&onload=${RECAPTCHA_READY_CALLBACK}`;
         script.async = true;
         script.defer = true;
-        script.onerror = (error) => {
+        script.onerror = () => {
             // Drop the cached promise so a later mount retries the load.
             globals[RECAPTCHA_READY_PROMISE] = undefined;
-            reject(error);
+            reject(new Error(`Failed to load reCAPTCHA from ${RECAPTCHA_URL}`));
         };
         document.head.appendChild(script);
     });
@@ -112,9 +113,19 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
 
     const {
+        onFormInteraction,
+        trackInvalidSubmit,
+        trackCaptchaIncomplete,
+        trackSubmit,
+        captchaCallbacks,
+        reportCaptchaLoadError,
+    } = useContactFormMonitoring(formLocation);
+
+    const {
         register,
         handleSubmit,
         setValue,
+        getValues,
         formState: { errors },
     } = useForm<FormValues>({
         // Validate on first blur, then re-validate on every change, so a message
@@ -159,19 +170,22 @@ export const ContactForm: FunctionComponent<Props> = ({
         let unmounted = false;
         let captcha: CaptchaTicker | undefined;
 
-        loadRecaptcha().then(() => {
-            const container = captchaRef.current;
-            if (unmounted || container == null) {
-                return;
-            }
-            captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
-                sitekey: captchaSiteKey,
-            });
-            captcha = initCaptcha(container, (ts) => {
-                captchaTimestamp.current = ts;
-            });
-            reapplyCaptchaTimestamp.current = captcha.reapply;
-        });
+        loadRecaptcha()
+            .then(() => {
+                const container = captchaRef.current;
+                if (unmounted || container == null) {
+                    return;
+                }
+                captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
+                    sitekey: captchaSiteKey,
+                    ...captchaCallbacks,
+                });
+                captcha = initCaptcha(container, (ts) => {
+                    captchaTimestamp.current = ts;
+                });
+                reapplyCaptchaTimestamp.current = captcha.reapply;
+            })
+            .catch(reportCaptchaLoadError);
 
         return () => {
             unmounted = true;
@@ -188,13 +202,19 @@ export const ContactForm: FunctionComponent<Props> = ({
         const widgetId = captchaWidgetId.current;
         const captchaPassed = widgetId != null && (globalThis as any).grecaptcha.getResponse(widgetId);
         if (captchaPassed) {
+            trackSubmit({
+                captchaTimestamp: captchaTimestamp.current,
+                enquiryType: enquiryTypeId ? getValues(enquiryTypeId) : undefined,
+                isDebug,
+            });
             reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
+            trackCaptchaIncomplete(widgetId != null);
             setCaptchaError(true);
             setIsDisabled(false);
         }
-    }, []);
+    }, [trackSubmit, trackCaptchaIncomplete, getValues, isDebug]);
 
     return (
         <form
@@ -203,7 +223,8 @@ export const ContactForm: FunctionComponent<Props> = ({
             className={styles.contactForm}
             action={actionUrl}
             method="POST"
-            onSubmit={handleSubmit(onValidSubmit)}
+            onSubmit={handleSubmit(onValidSubmit, trackInvalidSubmit)}
+            onFocus={onFormInteraction}
             noValidate
         >
             <input

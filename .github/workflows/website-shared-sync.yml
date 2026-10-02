@@ -6,6 +6,7 @@ name: Website shared sync
 #
 # Prerequisites:
 #   secrets: SLACK_BOT_OAUTH_TOKEN
+#            AG_STUDIO_GITHUB_READ_APP_ID, AG_STUDIO_GITHUB_READ_APP_PRIVATE_KEY
 #   vars:    WEBSITE_SYNC_SLACK_CHANNEL
 #            WEBSITE_SYNC_DRY_RUN (optional, default 'true')
 
@@ -62,10 +63,21 @@ jobs:
               with:
                   channel: ${{ env.DEV_PROMPTS_CHANNEL }}
 
+            - name: Mint ag-studio read token
+              id: studio-token
+              if: github.event_name != 'pull_request'
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  app-id: ${{ secrets.AG_STUDIO_GITHUB_READ_APP_ID }}
+                  private-key: ${{ secrets.AG_STUDIO_GITHUB_READ_APP_PRIVATE_KEY }}
+                  owner: ag-grid
+                  repositories: ag-studio
+
             - name: Notify
               uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/website-shared-sync-notify
               with:
                   slack_channel: ${{ vars.WEBSITE_SYNC_SLACK_CHANNEL }}
                   slack_bot_token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+                  repos_token: ${{ steps.studio-token.outputs.token }}
                   trigger_sha: ${{ github.event.workflow_run.head_sha }}
                   dry_run: ${{ format('{0}', inputs.dry_run) || vars.WEBSITE_SYNC_DRY_RUN || 'true' }}
