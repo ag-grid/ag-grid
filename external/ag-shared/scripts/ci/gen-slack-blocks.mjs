@@ -101,12 +101,17 @@ async function getPullRequestBlameSection() {
         if (totalCommits === 0) {
             return undefined;
         }
-        // The user directory is only fetched on the path that names people, so a range reported as
-        // a count costs no Notion request on top of the lookups it already skipped.
-        const blame = isRangeTooWide({ pullRequests, totalCommits })
-            ? undefined
-            : renderPullRequestBlame({ pullRequests, users: await getUsers() });
-        return section(blame ?? renderRangeSummary({ totalCommits }));
+        const tooWide = isRangeTooWide({ pullRequests, totalCommits });
+        // The user directory is only fetched on the path that names people, so neither a range
+        // reported as a count nor one that resolved to no pull request costs a Notion request on
+        // top of the lookups it already skipped.
+        const blame =
+            tooWide || pullRequests.length === 0
+                ? undefined
+                : renderPullRequestBlame({ pullRequests, users: await getUsers() });
+        // Passed on rather than re-derived in the renderer, which cannot tell an oversized range
+        // from one that simply resolved to no pull request: both arrive with an empty list.
+        return section(blame ?? renderRangeSummary({ totalCommits, tooWide }));
     } catch (error) {
         ghaWarning(`Could not work out which PRs are in this range: ${error.message}`, {
             title: 'PR attribution unavailable',

@@ -76,9 +76,14 @@ export function isRangeTooWide({ pullRequests, totalCommits }) {
  * rendered. One line, no names and no pings: what a reader needs from it is how far back the last
  * passing run was, and the Git diff link below the section already says what landed.
  */
-export function renderRangeSummary({ totalCommits }) {
+export function renderRangeSummary({ totalCommits, tooWide }) {
     const commits = totalCommits === 1 ? '1 commit' : `${totalCommits} commits`;
-    return `${commits} since the last passing run, too wide to point at a suspect; see the Git diff below.`;
+    // Width is the designed reason to land here and worth naming. The other two - a range that
+    // resolved to no pull request at all, and a list too long for one Slack section - are rare,
+    // and the width wording would describe the wrong problem, so they get a neutral line.
+    return tooWide
+        ? `${commits} since the last passing run, too wide to point at a suspect; see the Git diff below.`
+        : `${commits} since the last passing run, with no suspect list to show; see the Git diff below.`;
 }
 
 /**
