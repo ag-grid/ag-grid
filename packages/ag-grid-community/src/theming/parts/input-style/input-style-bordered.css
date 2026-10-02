@@ -7,7 +7,7 @@
     input[type='datetime-local'],
     textarea
 ) {
-    &:focus {
+    &:where(.ag-input-field-input:not(.ag-input-frameless)):focus {
         box-shadow: var(--ag-input-focus-shadow);
 
         &:where(:invalid),

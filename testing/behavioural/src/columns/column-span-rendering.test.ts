@@ -135,6 +135,19 @@ describe('Legacy colSpan rendering', () => {
         expect(document.activeElement?.getAttribute('col-id')).toBe('b');
     });
 
+    test('columns shown on both sides of a drawn cell are drawn in column order', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a', hide: true }, { field: 'b' }, { field: 'c', hide: true }],
+            rowData,
+            ensureDomOrder: false,
+        });
+        expect(renderedRow(api, 0)).toBe('b:200px');
+
+        api.setColumnsVisible(['a', 'c'], true);
+
+        expect(renderedRow(api, 0)).toBe('a:200px b:200px c:200px');
+    });
+
     test('a column a span covers starts no cell, so its own colSpan is ignored', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ ...columnDefs[0], colSpan: () => 2 }, { ...columnDefs[1], colSpan: () => 2 }, columnDefs[2]],

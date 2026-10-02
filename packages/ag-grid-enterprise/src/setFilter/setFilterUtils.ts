@@ -55,6 +55,18 @@ export function setFilterNullIfBlank<T>(value?: T): T | null {
     return value == null || _isBlank(value) ? null : value;
 }
 
+/** Each key under its case-folded form, so a key named in another case finds the one the values hold. */
+export function mapFormattedKeys(
+    keys: Iterable<string | null>,
+    caseFormat: <T extends string | null>(valueToFormat: T) => T
+): Map<string | null, string | null> {
+    const formattedKeys = new Map<string | null, string | null>();
+    for (const key of keys) {
+        formattedKeys.set(caseFormat(key), key);
+    }
+    return formattedKeys;
+}
+
 /** The Set Filter formats with its own formatter only, never the column's. */
 export function setFilterFormattedValue(
     beans: BeanCollection,

@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     clearFilter: 'Очистить',
     cancelFilter: 'Отмена',
     cancelColumnToolPanel: 'Отмена',
+    resetColumnToolPanel: 'Сбросить',
 
     // Filter Titles
     textFilter: 'Текстовый фильтр',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     addFilterCard: 'Добавить фильтр',
     agTextColumnFilterDisplayName: 'Простой фильтр',
     agNumberColumnFilterDisplayName: 'Простой фильтр',
+    agBigIntColumnFilterDisplayName: 'Простой фильтр',
     agDateColumnFilterDisplayName: 'Простой фильтр',
     agSetColumnFilterDisplayName: 'Фильтр выбора',
     agMultiColumnFilterDisplayName: 'Комбинированный фильтр',

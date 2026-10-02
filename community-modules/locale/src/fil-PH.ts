@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     clearFilter: 'I-clear',
     cancelFilter: 'Kanselahin',
     cancelColumnToolPanel: 'Kanselahin',
+    resetColumnToolPanel: 'I-reset',
 
     // Filter Titles
     textFilter: 'Filter ng Teksto',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     addFilterCard: 'Magdagdag ng Filter',
     agTextColumnFilterDisplayName: 'Simpleng Filter',
     agNumberColumnFilterDisplayName: 'Simpleng Filter',
+    agBigIntColumnFilterDisplayName: 'Simpleng Filter',
     agDateColumnFilterDisplayName: 'Simpleng Filter',
     agSetColumnFilterDisplayName: 'Filter ng Pagpili',
     agMultiColumnFilterDisplayName: 'Combo Filter',

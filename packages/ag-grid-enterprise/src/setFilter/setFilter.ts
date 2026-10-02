@@ -83,20 +83,21 @@ export class SetFilter<V = string>
         const handler = this.updateHandler(params.getHandler() as unknown as SetFilterHandler<V>);
 
         const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = params;
+        const beans = this.beans;
 
         this.formatter =
-            _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
+            _bindFilterCallback(textFormatter, beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
-                  this.beans.log,
+                  beans.log,
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
                   handler.isTreeDataOrGrouping()
               )
             : (new FlatSetDisplayValueModel<V>(
-                  this.beans.valueSvc,
+                  beans.valueSvc,
                   () => this.handler.valueFormatter,
                   this.formatter,
                   column as AgColumn
@@ -109,10 +110,6 @@ export class SetFilter<V = string>
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
-
-        if (handler.valueModel.isLoading()) {
-            this.setIsLoading(true);
-        }
 
         this.initialiseFilterBodyUi();
     }
@@ -148,10 +145,26 @@ export class SetFilter<V = string>
         this.formatter =
             _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
-        if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
-            this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
+        const displayValueModel = this.displayValueModel;
+        if (displayValueModel instanceof TreeSetDisplayValueModel) {
+            displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
         }
-        this.handler.refreshFilterValuesForColDef();
+        // the handler decides whether the values load again; the list is redrawn under the new params either way
+        this.redisplayValues(true);
+    }
+
+    private redisplayValues(hardRefresh: boolean | undefined): void {
+        this.handler.valueModel.allKeys.then((values) => {
+            if (this.isAlive()) {
+                this.updateDisplayedValues('reload', values ?? []);
+                this.setSelectedModel(this.state.model?.values ?? null);
+                if (hardRefresh) {
+                    this.hardRefreshVirtualList = true;
+                }
+                this.checkAndRefreshVirtualList();
+                this.showOrHideResults();
+            }
+        });
     }
 
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
@@ -160,6 +173,7 @@ export class SetFilter<V = string>
             for (const func of this.handlerDestroyFuncs ?? []) {
                 func();
             }
+            const valueModel = handler.valueModel;
             this.handlerDestroyFuncs = [
                 ...this.addManagedListeners(handler, {
                     anyFilterChanged: (event) => {
@@ -173,26 +187,18 @@ export class SetFilter<V = string>
                             }
                         });
                     },
-                    dataChanged: ({ hardRefresh }) => {
-                        handler.valueModel.allKeys.then((values) => {
-                            if (this.isAlive()) {
-                                this.updateDisplayedValues('reload', values ?? []);
-                                this.setSelectedModel(this.state.model?.values ?? null);
-                                if (hardRefresh) {
-                                    this.hardRefreshVirtualList = true;
-                                }
-                                this.checkAndRefreshVirtualList();
-                                this.showOrHideResults();
-                            }
-                        });
-                    },
+                    dataChanged: ({ hardRefresh }) => this.redisplayValues(hardRefresh),
                 }),
-                ...this.addManagedListeners(handler.valueModel, {
+                ...this.addManagedListeners(valueModel, {
                     loadingStart: () => this.setIsLoading(true),
                     loadingEnd: () => this.setIsLoading(false),
                 }),
             ];
             this.handler = handler;
+            const isLoading = valueModel.isLoading();
+            if (oldHandler || isLoading) {
+                this.setIsLoading(isLoading);
+            }
         }
         return handler;
     }
@@ -211,6 +217,8 @@ export class SetFilter<V = string>
                     tag: 'div',
                     ref: 'eFilterLoading',
                     cls: 'ag-filter-loading ag-loading ag-hidden',
+                    role: 'status',
+                    attrs: { tabindex: '-1' },
                     children: [
                         { tag: 'span', ref: 'eFilterLoadingIcon', cls: 'ag-loading-icon' },
                         { tag: 'span', cls: 'ag-loading-text', children: translateForSetFilter(this, 'loadingOoo') },
@@ -328,10 +336,16 @@ export class SetFilter<V = string>
     }
 
     private setIsLoading(isLoading: boolean): void {
-        _setDisplayed(this.eFilterLoading, isLoading);
+        const eFilterLoading = this.eFilterLoading;
+        const hadFocus = !isLoading && _getActiveDomElement(this.beans) === eFilterLoading;
+        _setDisplayed(eFilterLoading, isLoading);
         if (!isLoading) {
             // hard refresh when async data received
             this.hardRefreshVirtualList = true;
+        }
+        if (hadFocus) {
+            // hiding the message would otherwise drop focus out of the filter
+            this.focusFirstElement();
         }
     }
 
@@ -612,16 +626,22 @@ export class SetFilter<V = string>
 
         this.refreshVirtualList();
 
-        const { eMiniFilter } = this;
-
-        eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
+        this.eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
 
         if (!params?.suppressFocus) {
-            if (eMiniFilter.isDisplayed()) {
-                eMiniFilter.getFocusableElement().focus();
-            } else {
-                this.virtualList.awaitStable(() => this.virtualList.focusRow(0));
-            }
+            this.focusFirstElement();
+        }
+    }
+
+    /** The mini filter sits under the loading message, so while values load the message takes focus instead. */
+    private focusFirstElement(): void {
+        const { eMiniFilter, eFilterLoading } = this;
+        if (this.handler.valueModel.isLoading()) {
+            eFilterLoading.focus();
+        } else if (eMiniFilter.isDisplayed()) {
+            eMiniFilter.getFocusableElement().focus();
+        } else {
+            this.virtualList.awaitStable(() => this.virtualList.focusRow(0));
         }
     }
 
@@ -1159,18 +1179,16 @@ export class SetFilter<V = string>
                 this.resetSelectionState(keys ?? []);
             } else {
                 // select all values from the model that exist in the filter
-                this.selectedKeys.clear();
+                const selectedKeys = this.selectedKeys;
+                selectedKeys.clear();
 
-                const existingFormattedKeys: Map<string | null, string | null> = new Map();
-                valueModel.allValues.forEach((_value, key) => {
-                    existingFormattedKeys.set(handler.caseFormat(key), key);
-                });
+                const existingFormattedKeys = valueModel.mapFormattedKeys();
 
                 model.forEach((unformattedKey) => {
                     const formattedKey = handler.caseFormat(setFilterNullIfBlank(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
-                        this.selectedKeys.add(existingUnformattedKey);
+                        selectedKeys.add(existingUnformattedKey);
                     }
                 });
             }

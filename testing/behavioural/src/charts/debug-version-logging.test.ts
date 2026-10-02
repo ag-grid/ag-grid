@@ -1,8 +1,9 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule, CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
 import { VERSION } from '../version';
@@ -17,6 +18,7 @@ describe('debug version logging with integrated charts', () => {
     let consoleLogSpy: MockInstance;
 
     beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, debug: true });
         consoleLogSpy = vitest.spyOn(console, 'log').mockImplementation(() => {});
     });
 
@@ -35,7 +37,6 @@ describe('debug version logging with integrated charts', () => {
         getGridsManager().createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],
             rowData: [],
-            debug: true,
         });
 
         expect(consoleLogSpy).toHaveBeenCalledWith(expectedMessage);

@@ -42,7 +42,7 @@ cp -R $GRID_ROOT_DIR/support public_html_tmp/
 cp -R $GRID_ROOT_DIR/example-assets public_html_tmp/
 cp -R $GRID_ROOT_DIR/ecommerce public_html_tmp/
 cp -R $GRID_ROOT_DIR/__shared public_html_tmp/
-cp -R $GRID_ROOT_DIR/blog public_html_tmp/
+cp -R $GRID_ROOT_DIR/blog-examples public_html_tmp/
 
 #update folder permissions (default is 777 - change to 755)
 echo "Updating folder permissions"

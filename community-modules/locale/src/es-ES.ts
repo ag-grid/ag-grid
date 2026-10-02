@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     clearFilter: 'Borrar',
     cancelFilter: 'Cancelar',
     cancelColumnToolPanel: 'Cancelar',
+    resetColumnToolPanel: 'Reiniciar',
 
     // Filter Titles
     textFilter: 'Filtro de Texto',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     addFilterCard: 'Agregar Filtro',
     agTextColumnFilterDisplayName: 'Filtro Simple',
     agNumberColumnFilterDisplayName: 'Filtro Simple',
+    agBigIntColumnFilterDisplayName: 'Filtro Simple',
     agDateColumnFilterDisplayName: 'Filtro Simple',
     agSetColumnFilterDisplayName: 'Filtro de Selección',
     agMultiColumnFilterDisplayName: 'Filtro Combinado',

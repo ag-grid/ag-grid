@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from 'ag-test-utils';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { GridOptions, SetFilterHandler } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -11,7 +11,6 @@ import {
     UndoRedoEditModule,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
-import type { SetFilter } from 'ag-grid-enterprise';
 
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
@@ -388,29 +387,20 @@ describe('ag-grid formulas filtering', () => {
 
         await waitForEvent('firstDataRendered', api);
 
-        const setFilter = (await api.getColumnFilterInstance('athlete')) as SetFilter<any> | null | undefined;
-        if (!setFilter) {
-            throw new Error('Expected SetFilter instance for athlete column');
-        }
-
-        const initialKeys = (await setFilter.handler.valueModel.allKeys) ?? [];
-        expect(initialKeys.filter((key): key is string => typeof key === 'string').sort()).toEqual([
-            'Laura Trott',
-            'Michael Phelps',
-            'Ref Judge',
-        ]);
+        const handler = api.getColumnFilterHandler('athlete') as SetFilterHandler<any>;
+        const listed = () =>
+            handler
+                .getFilterValues()
+                .filter((key): key is string => typeof key === 'string')
+                .sort();
+        await waitFor(() => expect(listed()).toEqual(['Laura Trott', 'Michael Phelps', 'Ref Judge']));
 
         const cellChanged = waitForEvent('cellValueChanged', api);
         api.getRowNode('2')?.setDataValue('athlete', '=A1');
         await cellChanged;
 
-        await setFilter.handler.valueModel.refreshAll();
-        const updatedKeys = (await setFilter.handler.valueModel.allKeys) ?? [];
-
-        expect(updatedKeys.filter((key): key is string => typeof key === 'string').sort()).toEqual([
-            'Laura Trott',
-            'Michael Phelps',
-        ]);
+        // the value change refreshes the list by itself
+        await waitFor(() => expect(listed()).toEqual(['Laura Trott', 'Michael Phelps']));
         await new GridRows(api, `TC3-1 Set filter lists evaluated formula values final state`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps" country:"United States" sport:"Swimming"

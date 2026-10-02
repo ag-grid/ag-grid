@@ -146,6 +146,9 @@ export {
     _isGridSuppliedFilterOptions,
     _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
+export { _getDefaultFilter, _getFilterKey, _resolveFilter } from './filter/filterDefResolver';
+export type { ResolvedFilter } from './filter/filterDefResolver';
+export { _getDisplayHandler, _getRowHandler } from './filter/pairedFilterHandler';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export {
     PRESET_DATE_FILTER_TYPES as _PRESET_DATE_FILTER_TYPES,
@@ -194,7 +197,6 @@ export type {
     IRowContainerComp,
     RowContainerName,
     RowContainerOptions,
-    RowContainerType,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export { GridCtrl } from './gridComp/gridCtrl';

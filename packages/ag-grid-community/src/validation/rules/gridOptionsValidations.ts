@@ -101,6 +101,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     },
 
     suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
+    debug: { version: '36.3', message: 'Use `enableDevValidations({ debug: true })` instead.' },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | ValidationWarning | null {

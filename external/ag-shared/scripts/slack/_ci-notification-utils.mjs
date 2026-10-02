@@ -27,14 +27,15 @@ const LIBRARY_CONFIG = {
 
 const DEFAULT_LIBRARY = 'AgGrid';
 
-// JIRA ticket prefix → project's browse URL. Tickets in commit messages from
-// any library are linked regardless of which prefix they use.
-const JIRA_BASE_URL_BY_PREFIX = {
-    AG: 'https://ag-grid.atlassian.net/browse/AG',
-    AS: 'https://ag-grid.atlassian.net/browse/AS',
-};
+// Tickets in commit messages from any library are linked, whichever project prefix they carry.
+const JIRA_BROWSE_URL = 'https://ag-grid.atlassian.net/browse';
 
 const MANY_CHANGES_LIMIT = 10;
+
+// A notification step is the last thing to run and has nothing downstream to rescue it: a stalled
+// socket would hold the job open until the runner's own 6-hour ceiling rather than fail it, and the
+// message never reaches the channel. Bound every request so latency degrades like an error does.
+const API_TIMEOUT_MS = 15_000;
 
 // ────────────────────────────────────────────────────────────────────────────
 // GitHub Actions workflow-command helpers. Emit `::warning::` / `::error::`
@@ -120,18 +121,19 @@ export function getUserDisplay(githubUsername, userDisplayType, users) {
 }
 
 export function updateWithJiraUrl(str) {
-    return str.replace(/((AG|AS)-[0-9]+)(.*)/gm, (_, ticket, prefix, rest) => {
-        const base = JIRA_BASE_URL_BY_PREFIX[prefix];
-        return base ? `<${base}/${ticket}|${ticket}>${rest}` : `${ticket}${rest}`;
-    });
+    return str.replace(
+        /((?:AG|AS)-[0-9]+)(.*)/gm,
+        (_, ticket, rest) => `<${JIRA_BROWSE_URL}/${ticket}|${ticket}>${rest}`
+    );
 }
 
 export function updateWithGithubPRUrl({ str, baseGithubUrl }) {
     return str.replace(/#(\d+)/gm, `<${baseGithubUrl}/pull/$1 | #$1>`);
 }
 
-async function githubApi(path, token) {
+export async function githubApi(path, token) {
     const response = await fetch(new URL(path, 'https://api.github.com'), {
+        signal: AbortSignal.timeout(API_TIMEOUT_MS),
         headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/vnd.github+json',

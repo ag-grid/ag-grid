@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     clearFilter: 'صاف کریں',
     cancelFilter: 'منسوخ کریں',
     cancelColumnToolPanel: 'منسوخ کریں',
+    resetColumnToolPanel: 'ری سیٹ کریں',
 
     // Filter Titles
     textFilter: 'متن فلٹر',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     addFilterCard: 'فلٹر شامل کریں',
     agTextColumnFilterDisplayName: 'سادہ فلٹر',
     agNumberColumnFilterDisplayName: 'سادہ فلٹر',
+    agBigIntColumnFilterDisplayName: 'سادہ فلٹر',
     agDateColumnFilterDisplayName: 'سادہ فلٹر',
     agSetColumnFilterDisplayName: 'انتخابی فلٹر',
     agMultiColumnFilterDisplayName: 'کمبو فلٹر',

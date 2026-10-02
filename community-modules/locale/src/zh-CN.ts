@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     clearFilter: '清除',
     cancelFilter: '取消',
     cancelColumnToolPanel: '取消',
+    resetColumnToolPanel: '重置',
 
     // Filter Titles
     textFilter: '文本过滤器',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     addFilterCard: '添加过滤器',
     agTextColumnFilterDisplayName: '简单过滤器',
     agNumberColumnFilterDisplayName: '简单过滤器',
+    agBigIntColumnFilterDisplayName: '简单过滤器',
     agDateColumnFilterDisplayName: '简单过滤器',
     agSetColumnFilterDisplayName: '选择过滤器',
     agMultiColumnFilterDisplayName: '组合过滤器',

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     clearFilter: 'Tøm',
     cancelFilter: 'Avbryt',
     cancelColumnToolPanel: 'Avbryt',
+    resetColumnToolPanel: 'Tilbakestill',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     addFilterCard: 'Legg til filter',
     agTextColumnFilterDisplayName: 'Enkel filter',
     agNumberColumnFilterDisplayName: 'Enkel filter',
+    agBigIntColumnFilterDisplayName: 'Enkel filter',
     agDateColumnFilterDisplayName: 'Enkel filter',
     agSetColumnFilterDisplayName: 'Utvalgfilter',
     agMultiColumnFilterDisplayName: 'Kombinasjonsfilter',

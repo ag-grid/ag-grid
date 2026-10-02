@@ -1,10 +1,12 @@
+import { ImportExportButton } from '@ag-website-shared/components/theme-builder/ImportExportButton';
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
 
 import { EditorPanel } from '../editors/EditorPanel';
 import { PresetSelector } from '../presets/PresetSelector';
-import { GetThemeButton } from './GetTheme';
 import { GridPreview } from './GridPreview';
+
+const IMPORT_PLACEHOLDER = 'Paste your theme code here:\n\nconst myTheme = themeQuartz.withParams({...});';
 
 export const RootContainer = () => {
     const renderedTheme = useRenderedTheme();
@@ -16,7 +18,13 @@ export const RootContainer = () => {
                     <EditorPanel />
                 </EditorScroller>
                 <MenuBottom>
-                    <GetThemeButton />
+                    <ImportExportButton
+                        allowedPlacements={['right-end']}
+                        dialogProps={{
+                            downloadFileName: 'ag-grid-theme-builder.js',
+                            importPlaceholder: IMPORT_PLACEHOLDER,
+                        }}
+                    />
                 </MenuBottom>
             </Menu>
             <Main>
@@ -73,6 +81,7 @@ const MenuBottom = styled('div')`
     bottom: 0;
     display: flex;
     justify-content: space-between;
+    padding-right: 24px;
 
     &:after {
         content: '';

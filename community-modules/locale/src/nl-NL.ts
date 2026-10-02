@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     clearFilter: 'Wissen',
     cancelFilter: 'Annuleren',
     cancelColumnToolPanel: 'Annuleren',
+    resetColumnToolPanel: 'Resetten',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     addFilterCard: 'Filter toevoegen',
     agTextColumnFilterDisplayName: 'Eenvoudig Filter',
     agNumberColumnFilterDisplayName: 'Eenvoudig Filter',
+    agBigIntColumnFilterDisplayName: 'Eenvoudig Filter',
     agDateColumnFilterDisplayName: 'Eenvoudig Filter',
     agSetColumnFilterDisplayName: 'Selectie Filter',
     agMultiColumnFilterDisplayName: 'Combinatie Filter',

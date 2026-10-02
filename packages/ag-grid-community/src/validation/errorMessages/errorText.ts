@@ -820,7 +820,7 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
-    298: () => `Columns Tool Panel \`buttons\` requires \`apply\` to enable Deferred Updates.` as const,
+    298: () => `Columns Tool Panel \`cancel\` button has no effect without the \`apply\` button.` as const,
     301: ({ key }: { key: string }) =>
         `Toolbar item \`${key}\` is missing the \`toolbarItem\` property and will not be rendered.` as const,
     302: ({
@@ -962,6 +962,8 @@ export const AG_GRID_ERRORS = {
     333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
     334: () =>
         `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
+    335: ({ colId }: { colId: string }) =>
+        `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so they are ignored and \`filter.component\` is used as the filter.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -977,7 +979,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 334;
+export const MAX_ERROR_ID = 335;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

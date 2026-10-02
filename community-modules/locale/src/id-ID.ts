@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     clearFilter: 'Bersihkan',
     cancelFilter: 'Batal',
     cancelColumnToolPanel: 'Batal',
+    resetColumnToolPanel: 'Atur Ulang',
 
     // Filter Titles
     textFilter: 'Filter Teks',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     addFilterCard: 'Tambah Filter',
     agTextColumnFilterDisplayName: 'Filter Sederhana',
     agNumberColumnFilterDisplayName: 'Filter Sederhana',
+    agBigIntColumnFilterDisplayName: 'Filter Sederhana',
     agDateColumnFilterDisplayName: 'Filter Sederhana',
     agSetColumnFilterDisplayName: 'Filter Seleksi',
     agMultiColumnFilterDisplayName: 'Filter Kombinasi',

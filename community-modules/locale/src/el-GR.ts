@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     clearFilter: 'Εκκαθάριση',
     cancelFilter: 'Ακύρωση',
     cancelColumnToolPanel: 'Ακύρωση',
+    resetColumnToolPanel: 'Επαναφορά',
 
     // Filter Titles
     textFilter: 'Φίλτρο Κειμένου',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     addFilterCard: 'Προσθήκη Φίλτρου',
     agTextColumnFilterDisplayName: 'Απλό Φίλτρο',
     agNumberColumnFilterDisplayName: 'Απλό Φίλτρο',
+    agBigIntColumnFilterDisplayName: 'Απλό Φίλτρο',
     agDateColumnFilterDisplayName: 'Απλό Φίλτρο',
     agSetColumnFilterDisplayName: 'Φίλτρο Επιλογής',
     agMultiColumnFilterDisplayName: 'Σύνθετο Φίλτρο',

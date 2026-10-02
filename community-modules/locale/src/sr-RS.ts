@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     clearFilter: 'Обриши',
     cancelFilter: 'Откажи',
     cancelColumnToolPanel: 'Откажи',
+    resetColumnToolPanel: 'Ресетуј',
 
     // Filter Titles
     textFilter: 'Текстуални филтер',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     addFilterCard: 'Додај филтер',
     agTextColumnFilterDisplayName: 'Једноставан филтер',
     agNumberColumnFilterDisplayName: 'Једноставан филтер',
+    agBigIntColumnFilterDisplayName: 'Једноставан филтер',
     agDateColumnFilterDisplayName: 'Једноставан филтер',
     agSetColumnFilterDisplayName: 'Филтер избора',
     agMultiColumnFilterDisplayName: 'Комбиновани филтер',

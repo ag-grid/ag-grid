@@ -2,6 +2,7 @@ import { _defaultComparator } from 'ag-stack';
 
 import type {
     FilterHandlerParams,
+    IClientSideRowModel,
     ISetFilterParams,
     RowNode,
     SetFilterModel,
@@ -13,7 +14,7 @@ import type {
 import { AgPromise, BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
-import { createTreeDataOrGroupingComparator, setFilterNullIfBlank } from './setFilterUtils';
+import { createTreeDataOrGroupingComparator, mapFormattedKeys, setFilterNullIfBlank } from './setFilterUtils';
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
 
@@ -22,7 +23,13 @@ enum SetFilterModelValuesType {
     PROVIDED_CALLBACK,
     TAKEN_FROM_GRID_VALUES,
 }
-export default SetFilterModelValuesType;
+
+/** One load of the values. Only the newest is read; one it overtakes settles with its keys. */
+interface ValuesLoad {
+    settle: (keys: (string | null)[]) => void;
+    answered: boolean;
+    readonly fromCallback: boolean;
+}
 
 export interface SetValueModelParams<TValue> {
     handlerParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
@@ -42,7 +49,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** Remaining keys when filters from other columns have been applied. */
     public availableKeys = new Set<string | null>();
 
-    public valuesType: SetFilterModelValuesType;
+    private valuesType: SetFilterModelValuesType;
 
     private keyComparator: (a: string | null, b: string | null) => number;
     private entryComparator: (a: [string | null, TValue | null], b: [string | null, TValue | null]) => number;
@@ -51,6 +58,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private providedValues: SetFilterValues<any, TValue> | null = null;
 
     private initialised: boolean = false;
+
+    private current: ValuesLoad | undefined;
+
+    /** The current load's read of the rows, waiting for them to be ready; a newer load drops or replaces it. */
+    private readRowsWhenReady: (() => void) | undefined;
 
     /** The load for the latest column definition, so however many ask for it, it loads once. */
     private colDefLoad: AgPromise<unknown> | undefined;
@@ -65,6 +77,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public postConstruct(): void {
+        if (this.csrmValuesExtractor) {
+            this.addManagedEventListeners({
+                rowCountReady: () => this.readRowsWhenReady?.(),
+            });
+        }
         const params = this.params;
         this.updateParams(params);
         this.setProvidedValues(params.handlerParams.filterParams.values);
@@ -82,24 +99,38 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         }
         this.colDefLoad = undefined;
 
-        const { values, suppressSorting } = handlerParams.filterParams;
-
-        const currentProvidedValues = this.providedValues;
-        const currentSuppressSorting = this.params.handlerParams.filterParams.suppressSorting;
+        const values = handlerParams.filterParams.values;
+        const oldHandlerParams = this.params.handlerParams;
+        // the params change only with the column definition, so the API's values never read as its own
+        const valuesChanged = (values ?? null) !== (oldHandlerParams.filterParams.values ?? null);
 
         this.params = params;
         this.updateParams(params);
 
-        // Rebuild values when values or their sort order changes
-        if ((values ?? null) !== currentProvidedValues || suppressSorting !== currentSuppressSorting) {
+        if (valuesChanged) {
             this.setProvidedValues(values);
             this.colDefLoad = this.updateAllValues();
             return true;
         }
+        // the loaded values, the API's included, are sorted again; a load still pending sorts when it answers
+        if (this.current?.answered && isOrderChanged(oldHandlerParams, handlerParams)) {
+            const keys = this.sortKeys(this.allValues);
+            const available = this.availableKeys;
+            const nextAvailable = new Set<string | null>();
+            for (let i = 0, len = keys.length; i < len; ++i) {
+                const key = keys[i];
+                if (available.has(key)) {
+                    nextAvailable.add(key);
+                }
+            }
+            this.allKeys = AgPromise.resolve(keys);
+            this.availableKeys = nextAvailable;
+        }
         return false;
     }
 
-    private setProvidedValues(values: SetFilterValues<any, TValue> | undefined): void {
+    /** The one writer of the values used, so their kind always matches them; `undefined` reads the rows. */
+    public setProvidedValues(values: SetFilterValues<any, TValue> | undefined): void {
         this.providedValues = values ?? null;
         if (!isProvidedValues(values)) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
@@ -110,12 +141,17 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         }
     }
 
+    /** Overtakes a load still pending rather than waiting on it, as its answer may never come. */
     public refreshValues(forColDef: boolean): AgPromise<unknown> {
         if (!forColDef) {
-            return this.refreshAll();
+            return this.updateAllValues();
         }
-        this.colDefLoad ??= this.refreshAll();
-        return this.colDefLoad;
+        let load = this.colDefLoad;
+        if (!load) {
+            load = this.updateAllValues();
+            this.colDefLoad = load;
+        }
+        return load;
     }
 
     private updateParams(params: SetValueModelParams<TValue>): void {
@@ -163,54 +199,78 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public updateAllValues(): AgPromise<(string | null)[]> {
+        const { valuesType, providedValues } = this;
+        const overtaken = this.current;
+        const wasLoading = this.isLoading();
+        const fromCallback = valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK;
+        const load: ValuesLoad = { settle: () => {}, answered: false, fromCallback };
+        this.current = load;
+        this.readRowsWhenReady = undefined;
+        if (wasLoading !== fromCallback) {
+            this.dispatchLocalEvent({ type: fromCallback ? 'loadingStart' : 'loadingEnd' });
+        }
         this.allKeys = new AgPromise<(string | null)[]>((resolve) => {
-            switch (this.valuesType) {
-                case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
-                    this.getValuesFromRowsAsync().then((values) => {
-                        if (this.isAlive()) {
-                            resolve(this.processAllValues(values));
-                        }
-                    });
-
+            load.settle = resolve;
+            const resolveLoaded = (values: Map<string | null, TValue | null> | null) => {
+                load.answered = true;
+                if (fromCallback) {
+                    this.dispatchLocalEvent({ type: 'loadingEnd' });
+                }
+                resolve(this.processAllValues(values));
+            };
+            switch (valuesType) {
+                case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES: {
+                    const readRows = () => {
+                        this.readRowsWhenReady = undefined;
+                        resolveLoaded(this.getValuesFromRows(null));
+                    };
+                    if (!this.csrmValuesExtractor || (this.beans.rowModel as IClientSideRowModel).rowCountReady) {
+                        readRows();
+                    } else {
+                        this.readRowsWhenReady = readRows;
+                    }
                     break;
+                }
                 case SetFilterModelValuesType.PROVIDED_LIST: {
-                    resolve(
-                        this.processAllValues(
-                            this.uniqueValues(this.validateProvidedValues(this.providedValues as (TValue | null)[]))
-                        )
-                    );
+                    resolveLoaded(this.uniqueValues(this.validateProvidedValues(providedValues as (TValue | null)[])));
 
                     break;
                 }
 
                 case SetFilterModelValuesType.PROVIDED_CALLBACK: {
-                    this.dispatchLocalEvent({ type: 'loadingStart' });
-
-                    const callback = this.providedValues as SetFilterValuesFunc<any, TValue>;
+                    const callback = providedValues as SetFilterValuesFunc<any, TValue>;
                     const { column, colDef } = this.params.handlerParams;
                     const params: SetFilterValuesFuncParams<any, TValue> = _addGridCommonParams(this.gos, {
+                        // an answer to a load since overtaken, or to a destroyed filter, or a second answer, is not read
                         success: (values) => {
-                            if (this.isAlive()) {
-                                this.dispatchLocalEvent({ type: 'loadingEnd' });
-
-                                resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(values))));
+                            if (this.current === load && this.isAlive() && !load.answered) {
+                                resolveLoaded(this.uniqueValues(this.validateProvidedValues(values)));
                             }
                         },
                         colDef,
                         column,
                     });
 
-                    window.setTimeout(() => callback(params), 0);
+                    window.setTimeout(() => {
+                        if (this.current === load && this.isAlive()) {
+                            callback(params);
+                        }
+                    }, 0);
 
                     break;
                 }
             }
         });
-
         this.allKeys.then((values) => {
-            this.updateAvailableKeys(values ?? []);
-            this.initialised = true;
+            if (this.current === load) {
+                this.updateAvailableKeys(values ?? []);
+                this.initialised = true;
+            }
         });
+        // The load overtaken settles with this one's keys, as its own answer may never come.
+        if (overtaken && !overtaken.answered) {
+            this.allKeys.then(overtaken.settle);
+        }
 
         return this.allKeys;
     }
@@ -219,16 +279,9 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return this.sortKeys(this.getValuesFromRows(predicate));
     }
 
-    public overrideValues(valuesToUse: (TValue | null)[]): AgPromise<void> {
-        return this.allKeys.then(() => {
-            this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
-            this.providedValues = valuesToUse;
-        });
-    }
-
     public refreshAvailable(): AgPromise<boolean> {
         return new AgPromise((resolve) => {
-            if (this.showAvailableOnly()) {
+            if (this.isValuesTakenFromGrid()) {
                 this.allKeys.then((keys) => {
                     const updatedKeys = keys ?? [];
                     this.updateAvailableKeys(updatedKeys);
@@ -240,22 +293,9 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         });
     }
 
-    public refreshAll(): AgPromise<void> {
-        return new AgPromise((resolve) => {
-            this.allKeys.then(() => {
-                this.updateAllValues().then(() => {
-                    resolve();
-                });
-            });
-        });
-    }
-
     public isLoading(): boolean {
-        return !this.initialised && this.valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK;
-    }
-
-    public isInitialised(): boolean {
-        return this.initialised;
+        const current = this.current;
+        return !!current && !current.answered && current.fromCallback;
     }
 
     public getValueForFormatter(key: string | null): TValue | string | null {
@@ -266,34 +306,22 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return this.initialised ? values.filter((v) => this.availableKeys.has(v)) : values;
     }
 
-    private getParamsForValuesFromRows(
-        removeUnavailableValues: boolean
-    ): Map<string | null, TValue | null> | undefined {
-        if (!this.csrmValuesExtractor) {
+    /** The values' keys, or only the available ones, under their case-folded form. */
+    public mapFormattedKeys(availableOnly?: boolean): Map<string | null, string | null> {
+        return mapFormattedKeys(availableOnly ? this.availableKeys : this.allValues.keys(), this.caseFormat);
+    }
+
+    private getValuesFromRows(
+        predicate: ((node: RowNode) => boolean) | null
+    ): Map<string | null, TValue | null> | null {
+        const csrmValuesExtractor = this.csrmValuesExtractor;
+        if (!csrmValuesExtractor) {
             this.error(113);
-            return undefined;
+            return null;
         }
-
         const existingValues =
-            removeUnavailableValues && !this.params.handlerParams.filterParams.caseSensitive
-                ? this.allValues
-                : undefined;
-
-        return existingValues;
-    }
-
-    private getValuesFromRows(predicate: (node: RowNode) => boolean): Map<string | null, TValue | null> | null {
-        const existingValues = this.getParamsForValuesFromRows(true);
-
-        return this.csrmValuesExtractor?.extractUniqueValues(predicate, existingValues) ?? null;
-    }
-
-    private getValuesFromRowsAsync(): AgPromise<Map<string | null, TValue | null> | null> {
-        const existingValues = this.getParamsForValuesFromRows(false);
-
-        return (
-            this.csrmValuesExtractor?.extractUniqueValuesAsync(() => true, existingValues) ?? AgPromise.resolve(null)
-        );
+            predicate && !this.params.handlerParams.filterParams.caseSensitive ? this.allValues : undefined;
+        return csrmValuesExtractor.extractUniqueValues(predicate, existingValues);
     }
 
     private processAllValues(values: Map<string | null, TValue | null> | null): (string | null)[] {
@@ -364,12 +392,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return sortedKeys;
     }
 
-    private showAvailableOnly(): boolean {
+    public isValuesTakenFromGrid(): boolean {
         return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private updateAvailableKeys(allKeys: (string | null)[]): void {
-        const availableKeys = this.showAvailableOnly()
+        const availableKeys = this.isValuesTakenFromGrid()
             ? this.getAvailableValues((node) => this.params.handlerParams.doesRowPassOtherFilter(node))
             : allKeys;
 
@@ -382,6 +410,24 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         });
     }
 }
+
+/** Whether an input the order is read from differs; a change to the keys reloads the values instead. */
+const isOrderChanged = (
+    oldParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, any>>,
+    newParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, any>>
+): boolean => {
+    const oldFilterParams = oldParams.filterParams;
+    const newFilterParams = newParams.filterParams;
+    return (
+        oldFilterParams.suppressSorting !== newFilterParams.suppressSorting ||
+        oldFilterParams.excelMode !== newFilterParams.excelMode ||
+        oldFilterParams.comparator !== newFilterParams.comparator ||
+        oldParams.colDef.comparator !== newParams.colDef.comparator ||
+        oldFilterParams.treeList !== newFilterParams.treeList ||
+        // the order reads only whether there is one; the data type builds its own afresh with every definition
+        !oldFilterParams.treeListPathGetter !== !newFilterParams.treeListPathGetter
+    );
+};
 
 /** Whether the Set Filter lists these values rather than the ones in the rows; an empty list is still a list. */
 export const isProvidedValues = <V>(values: SetFilterValues<any, V> | undefined): values is SetFilterValues<any, V> =>

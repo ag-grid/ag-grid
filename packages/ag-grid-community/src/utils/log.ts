@@ -8,8 +8,20 @@ export function _logDebug(message: string, ...args: any[]) {
     console.log('AG Grid: ' + message, ...args);
 }
 
+// Set by `enableDevValidations({ debug: true })`. Global, so it enables debug logging for every grid.
+let devDebugLogging = false;
+
+export function _setDevDebugLogging(enabled: boolean): void {
+    devDebugLogging = enabled;
+}
+
+/** Whether debug logging is on, either through the deprecated `debug` grid option or `enableDevValidations`. */
+export function _isDebugLoggingEnabled(gridOptionsDebug: boolean | undefined): boolean {
+    return !!gridOptionsDebug || devDebugLogging;
+}
+
 export function _logIfDebug(gos: GridOptionsService, message: string, ...args: any[]) {
-    if (gos.get('debug')) {
+    if (_isDebugLoggingEnabled(gos.get('debug'))) {
         _logDebug(message, ...args);
     }
 }

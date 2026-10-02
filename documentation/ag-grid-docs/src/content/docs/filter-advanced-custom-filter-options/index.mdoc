@@ -11,7 +11,7 @@ The Advanced Filter accepts [Custom Filter Options](./filter-conditions/#custom-
 
 {% interfaceDocumentation interfaceName="IFilterOptionDef" config={description: ""} /%}
 
-Options taking two values are validated like `is between`: the first value must be less than the second, or equal to it where `inRangeInclusive = true`.
+On a number, bigint or date column, options taking two values are validated like `is between`: the first value must be less than the second, or equal to it where `inRangeInclusive = true`. As in the Column Filter, a pair of text values is left to the option's `predicate`.
 
 The `predicate` only runs with the Client-Side Row Model. With the Server-Side Row Model the option is sent to the server as its `displayKey` in the filter model, as for the [Set Filter options](./filter-advanced-columns/#set-filters).
 

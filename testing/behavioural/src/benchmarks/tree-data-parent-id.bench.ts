@@ -4,7 +4,7 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, benchDefaults, rebuildRows } from './bench-utils';
 
 suite('treeData with parentId', () => {
     const gridsManager = new BenchGridsManager({
@@ -16,9 +16,9 @@ suite('treeData with parentId', () => {
     const rowData1 = buildUpdatedRowData(rowData);
 
     const options = benchDefaults({
-        noiseFactor: 3,
-        setup: () => {
-            api ??= gridsManager.createGrid('G', {
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('G', {
                 columnDefs: [{ field: 'label' }],
                 autoGroupColumnDef: { headerName: 'Parent Id' },
                 rowData: [],
@@ -28,18 +28,11 @@ suite('treeData with parentId', () => {
                 getRowId: ({ data }: { data: TreeDataParentIdRow }) => data.id,
             });
         },
-        teardown: async () => {
-            api = undefined!;
-            await gridsManager.reset();
-        },
-    }); // noisy suite (~3.4% rme @1×)
+    });
 
     bench(
         'build from scratch ' + rowData.length + ' rows',
-        () => {
-            api.setGridOption('rowData', []);
-            api.setGridOption('rowData', rowData);
-        },
+        rebuildRows(() => api, rowData),
         options
     );
 
@@ -48,6 +41,7 @@ suite('treeData with parentId', () => {
         'update rowData ' + rowData1.length + ' rows',
         () => {
             api.setGridOption('rowData', updateForward ? rowData1 : rowData);
+            api.flushAllAnimationFrames();
             updateForward = !updateForward;
         },
         options
