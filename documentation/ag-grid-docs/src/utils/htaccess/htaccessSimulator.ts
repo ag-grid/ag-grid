@@ -804,7 +804,8 @@ type ExprToken =
     | { kind: 'regex'; regex: RegExp }
     | { kind: 'num'; value: number }
     | { kind: 'str'; value: string }
-    | { kind: 'op'; value: string };
+    | { kind: 'op'; value: string }
+    | { kind: 'list'; values: string[] };
 
 function tokenizeExpr(expr: string): ExprToken[] {
     const tokens: ExprToken[] = [];
@@ -829,7 +830,20 @@ function tokenizeExpr(expr: string): ExprToken[] {
             }
             tokens.push({ kind: 'regex', regex: new RegExp(body, flags) });
             i = j;
-        } else if ((m = rest.match(/^(-(?:eq|ne|lt|le|gt|ge|[def])\b|=~|!~|==|!=|&&|\|\||<=|>=|[!()<>])/))) {
+        } else if ((m = rest.match(/^\{([^}]*)\}/))) {
+            // A word list, the right-hand side of -in: { 'a', 'b' }.
+            tokens.push({
+                kind: 'list',
+                values: m[1].split(',').map((item) => {
+                    const word = item.trim().match(/^'([^']*)'$/);
+                    if (!word) {
+                        throw new Error(`Unsupported ap_expr list item "${item}" in ${expr}`);
+                    }
+                    return word[1];
+                }),
+            });
+            i += m[0].length;
+        } else if ((m = rest.match(/^(-(?:eq|ne|lt|le|gt|ge|in|[def])\b|=~|!~|==|!=|&&|\|\||<=|>=|[!()<>])/))) {
             tokens.push({ kind: 'op', value: m[1] });
             i += m[0].length;
         } else if ((m = rest.match(/^-?\d+/))) {
@@ -895,6 +909,13 @@ export function evaluateExpr(
         const op = tokens[pos++];
         if (op?.kind !== 'op') {
             throw new Error(`Expected an operator in ${expr}`);
+        }
+        if (op.value === '-in') {
+            const list = tokens[pos++];
+            if (list?.kind !== 'list') {
+                throw new Error(`Expected a word list after -in in ${expr}`);
+            }
+            return list.values.includes(String(left));
         }
         if (op.value === '=~' || op.value === '!~') {
             const regex = tokens[pos++];

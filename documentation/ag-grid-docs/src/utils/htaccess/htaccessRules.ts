@@ -947,6 +947,11 @@ export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMo
         `Header always unset Permissions-Policy ${condition}`,
         `Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}" ${condition}`,
         getBlogCspExprOverride(options, mode),
+        // Ghost sends its theme assets with max-age=31536000; the site-wide rule caps any client
+        // cache at 7 days. Plain `set`, not `always`: Ghost's header arrives in headers_out, which
+        // `always` (err_headers_out) would add a second copy beside rather than replace. Limited to
+        // 200, 206 and 304, so Ghost's own no-cache on a 404 is left alone.
+        `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`,
     ].join('\n');
 }
 
