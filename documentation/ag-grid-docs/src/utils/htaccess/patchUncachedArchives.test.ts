@@ -227,9 +227,16 @@ describe('patchUncachedArchives.sh', () => {
     // in the old one must stop, not report success for a file that is no longer live.
     it('stops a patch whose docroot a production switch replaced while it waited', async () => {
         const b = box(generated(null, null));
-        // The production layout: charts and studio live inside the grid docroot.
-        for (const dir of ['archive', 'charts', 'studio', 'ecommerce', 'support', '__shared', 'blog']) {
-            mkdirSync(join(b.docroot, dir));
+        // The production layout: every directory the switch carries over from the old docroot (charts
+        // and studio among them) lives inside it. Read from the script, so a new one cannot break this.
+        const switchScript = readFileSync(
+            fileURLToPath(
+                new URL('../../../../../scripts/deployments/release/switchReleaseRemote.sh', import.meta.url)
+            ),
+            'utf8'
+        );
+        for (const [, dir] of switchScript.matchAll(/public_html_\$TIMESTAMP\/([\w.-]+)/g)) {
+            mkdirSync(join(b.docroot, dir), { recursive: true });
         }
         const www = b.root;
         mkdirSync(join(www, 'public_html_tmp'));
