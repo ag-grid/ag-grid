@@ -21,6 +21,7 @@ const SESSION_TERMINATION_TIMEOUT_MILLIS = 4 * 60 * 60 * 1000;
 let state: 'stopped' | 'starting' | 'running' = 'stopped';
 let sdk: typeof Dash0 | undefined;
 let cspViolations: CspViolationReporter | undefined;
+let stopTrackingPageViews: (() => void) | undefined;
 
 /**
  * Real user monitoring through Dash0: page views, uncaught errors, fetch/XHR spans and web vitals.
@@ -35,7 +36,7 @@ let cspViolations: CspViolationReporter | undefined;
  *
  * Also reports the page's CSP violations, which the SDK does not.
  *
- * @returns a function that stops listening for CSP violations
+ * @returns a function that stops listening for CSP violations and page navigations
  */
 export function initWebsiteMonitoring(config: WebsiteMonitoringConfig): () => void {
     cspViolations = createCspViolationReporter((attributes) =>
@@ -47,7 +48,10 @@ export function initWebsiteMonitoring(config: WebsiteMonitoringConfig): () => vo
     globals[WEBSITE_MONITORING_QUEUE] = { push: (command: unknown) => runCommand(command, config) };
     queued.forEach((command) => runCommand(command, config));
 
-    return cspViolations.dispose;
+    return () => {
+        cspViolations?.dispose();
+        stopTrackingPageViews?.();
+    };
 }
 
 function runCommand(command: unknown, config: WebsiteMonitoringConfig) {
@@ -83,10 +87,13 @@ async function startMonitoring({
             endpoint: { url: endpointUrl, authToken },
             sessionInactivityTimeoutMillis: SESSION_INACTIVITY_TIMEOUT_MILLIS,
             sessionTerminationTimeoutMillis: SESSION_TERMINATION_TIMEOUT_MILLIS,
+            // Recorded on astro:page-load instead, see trackVirtualPageViews
+            pageViewInstrumentation: { trackVirtualPageViews: false },
         });
         sdk = dash0;
         state = 'running';
         cspViolations?.start();
+        stopTrackingPageViews = trackVirtualPageViews(dash0);
     } catch (error) {
         // Let the next start retry, e.g. after a transient network failure loading the SDK
         if (state === 'starting') {
@@ -95,6 +102,27 @@ async function startMonitoring({
         // eslint-disable-next-line no-console
         console.warn('Website monitoring failed to start', error);
     }
+}
+
+/**
+ * Records a page view for each Astro ClientRouter navigation, once the new page is in place.
+ *
+ * The SDK's own virtual page views are sent from inside `history.pushState`, where the router has
+ * set `document.title` back to the previous page's title, so they pair the new URL with the old
+ * title. Like the SDK, this only records a change of path.
+ *
+ * @returns a function that stops recording
+ */
+function trackVirtualPageViews(dash0: typeof Dash0) {
+    let currentPath = window.location.pathname;
+    const onPageLoad = () => {
+        if (window.location.pathname !== currentPath) {
+            currentPath = window.location.pathname;
+            dash0.startView(document.title);
+        }
+    };
+    document.addEventListener('astro:page-load', onPageLoad);
+    return () => document.removeEventListener('astro:page-load', onPageLoad);
 }
 
 function stopMonitoring() {
