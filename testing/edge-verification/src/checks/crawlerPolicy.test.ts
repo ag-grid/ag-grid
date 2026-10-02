@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { runOne } from '../core/runner';
 import { AI_GROUP } from '../expected/robots';
-import { FakeAws, FakeHttp, fakeCtx, healthyCloudFront } from '../testing/fakes';
+import { FakeAws, FakeHttp, cfAclHandlers, fakeCtx, healthyCloudFront } from '../testing/fakes';
 import { crawlerPolicyChecks } from './crawlerPolicy';
 
 const check = (id: string) => crawlerPolicyChecks().find((c) => c.id === id)!;
@@ -118,4 +118,31 @@ describe('crawler-policy.robots.charts-host: the whole legacy-host prohibition',
             assert.match(outcome.detail ?? '', pattern);
         });
     }
+});
+
+describe('crawler-policy checks never pass over nothing', () => {
+    const run = async (id: string, robots: string) => {
+        const http = new FakeHttp(() => ({ status: 200, headers: { 'content-type': 'text/plain' }, body: robots }));
+        try {
+            const check = crawlerPolicyChecks().find((c) => c.id === id)!;
+            return await check.run(await fakeCtx(new FakeAws({ ...healthyCloudFront(), ...cfAclHandlers() }), http));
+        } finally {
+            http.close();
+        }
+    };
+    const NO_DIRECTORIES = 'User-agent: *\nDisallow: /api\n\nUser-agent: GPTBot\nDisallow: /api\n';
+
+    for (const id of ['crawler-policy.robots.md-twins', 'crawler-policy.robots.md-twins-query']) {
+        it(`${id} fails when no directory Disallow yields a twin`, async () => {
+            const outcome = await run(id, NO_DIRECTORIES);
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /no directory Disallow/);
+        });
+    }
+
+    it('crawler-policy.robots-vs-waf fails when robots.txt has no AI group', async () => {
+        const outcome = await run('crawler-policy.robots-vs-waf', 'User-agent: *\nDisallow: /private/\n');
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /no AI crawler group/);
+    });
 });
