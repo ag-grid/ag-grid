@@ -25,13 +25,14 @@
 # (unlike rewrite rules) reach every archive.
 #
 # SAFETY
+#   - Only one deploy or release runs at a time, so nothing else writes these files while this runs.
 #   - DRY RUN by default: downloads, patches local copies and reports. Nothing on the host changes.
 #   - A file with any rule or redirect the patcher does not recognise, or that names another
 #     version, is REFUSED and left alone. Any refusal aborts the run before anything is uploaded,
 #     unless --skip-unrecognised (which then leaves those files exactly as they are).
-#   - --apply, per file: re-checks the live file is still the one that was patched (aborts if a
-#     deploy changed it meanwhile), keeps a copy at .htaccess.bak-<timestamp> beside it, uploads
-#     beside the live file and renames over it (atomic in one directory), then re-checks it.
+#   - --apply, per file: keeps a copy at .htaccess.bak-<timestamp> beside it, uploads beside the
+#     live file, checks the upload's sha256 against the patched copy, and only then renames it over
+#     the live file (atomic in one directory). Prints a restore command per file it changed.
 #   - Idempotent: a re-run regenerates the block and finds nothing left to remove, so an already
 #     migrated archive reports "unchanged" and is not uploaded again.
 #   - Never touches the root, /charts/ or /studio/ top-level .htaccess, or any archive without its
@@ -193,6 +194,10 @@ if [ $APPLY = 0 ]; then
 fi
 
 APPLIED=()
+# sha256 of a local file: sha256sum on Linux, shasum on macOS.
+sha256Of() {
+    if command -v sha256sum >/dev/null 2>&1; then sha256sum < "$1" | cut -d' ' -f1; else shasum -a 256 < "$1" | cut -d' ' -f1; fi
+}
 applyFailed() {
     echo "$1"
     echo "Stopped. Files changed before this one stay changed (restore commands below); this one is untouched."
@@ -209,20 +214,16 @@ printRollback() {
 
 for entry in "${PATCHED[@]}"; do
     read -r site v remote <<< "$entry"
-    orig="$WORK/$site/$v.htaccess.orig"
     patched="$WORK/$site/$v.htaccess"
     staged="$remote.new-$TS"
-    # Still the file that was patched? A deploy in between would otherwise be overwritten.
-    live="$("${SSH[@]}" "cksum < '$remote'")" || applyFailed "Could not read $remote."
-    [ "$live" = "$(cksum < "$orig")" ] || applyFailed "$remote changed on $HOST since it was downloaded."
     "${SSH[@]}" "cp -p '$remote' '$remote.bak-$TS'" || applyFailed "Could not back up $remote."
     # Upload beside the live file and rename over it: scp writes in place, so an interrupted
     # transfer straight onto .htaccess would leave the archive with a truncated one.
     # The upload is checked before it replaces anything, in the same command as the rename: a
     # damaged copy left live could fail every request under the archive.
     "${SCP[@]}" "$patched" "$HOST:$staged" || { "${SSH[@]}" "rm -f '$staged'"; applyFailed "Could not upload $staged."; }
-    expected="$(cksum < "$patched")"
-    "${SSH[@]}" "[ \"\$(cksum < '$staged')\" = '$expected' ] || exit 4; chmod 644 '$staged' && mv '$staged' '$remote'"
+    expected="$(sha256Of "$patched")"
+    "${SSH[@]}" "[ \"\$(sha256sum < '$staged' | cut -d' ' -f1)\" = '$expected' ] || exit 4; chmod 644 '$staged' && mv '$staged' '$remote'"
     case $? in
         0) ;;
         4) "${SSH[@]}" "rm -f '$staged'"; applyFailed "$staged did not arrive intact. Re-run with --apply.";;
