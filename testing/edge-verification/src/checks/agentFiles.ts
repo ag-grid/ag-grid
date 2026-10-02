@@ -130,17 +130,18 @@ function siteChecks(site: AgentSite): CheckDef[] {
                     }
                 }
                 const twins = [...new Set([...explicit, ...pages])];
-                for (const twin of twins) {
-                    if (KNOWN_BROKEN[twin] || IGNORED_LINKS.has(twin)) {
-                        continue;
-                    }
+                const eligible = twins.filter((twin) => !KNOWN_BROKEN[twin] && !IGNORED_LINKS.has(twin));
+                // A run that tested no twin proves nothing: no links, no page answering 200, or every
+                // twin known broken or ignored.
+                p.check(eligible.length > 0, `no eligible twin to test (of ${twins.length} found)`);
+                for (const twin of eligible) {
                     const res = await http.head(twin);
                     p.check(
                         res.status === 200 && /^text\/markdown/.test(header(res, 'content-type') ?? ''),
                         `${twin}: ${res.status} ${header(res, 'content-type')}`
                     );
                 }
-                return p.outcome(`${twins.length} twins`);
+                return p.outcome(`${eligible.length} twins`);
             }),
         },
         {

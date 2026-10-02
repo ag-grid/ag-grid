@@ -8,6 +8,7 @@ import {
     AI_GROUP,
     AI_TOKENS,
     AI_TOKEN_ADMISSION,
+    CHARTS_HOST_ROBOTS,
     CONTENT_SIGNAL,
     GHOST_DISALLOWS,
     MD_TWIN_POLICY,
@@ -263,7 +264,9 @@ export function crawlerPolicyChecks(): CheckDef[] {
                 const r = parseRobots(res.body);
                 const p = new Problems();
                 p.eq('status', res.status, 200);
-                p.check(!isAllowed(r, 'Googlebot', '/archive/10.0.0/').allowed, 'Googlebot may crawl the legacy host');
+                // The whole parsed policy, not one crawler on one path: an extra group, an Allow or a
+                // narrower Disallow all reopen part of the legacy host.
+                p.diff('robots', r, CHARTS_HOST_ROBOTS);
                 return p.outcome();
             },
         },
