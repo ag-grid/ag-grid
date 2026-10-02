@@ -891,16 +891,18 @@ export class LazyCache extends BeanStub {
         }
 
         const consistencyChecker = this.consistencyChecker;
-        const rowData =
-            consistencyChecker && includesOverlapRow
-                ? this.checkBlockConsistency(
-                      consistencyChecker,
-                      firstRowIndex,
-                      numberOfRowsExpected,
-                      response.rowData,
-                      grandTotalId
-                  )
-                : response.rowData;
+        let rowData = response.rowData;
+        if (consistencyChecker && includesOverlapRow) {
+            rowData = this.checkBlockConsistency(
+                consistencyChecker,
+                firstRowIndex,
+                numberOfRowsExpected,
+                rowData,
+                grandTotalId
+            );
+        } else {
+            consistencyChecker?.reset();
+        }
 
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
@@ -1242,7 +1244,7 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        this.consistencyChecker?.reset();
+        this.consistencyChecker?.forgetBoundaries();
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
         const nodesMap = this.nodeMap;
