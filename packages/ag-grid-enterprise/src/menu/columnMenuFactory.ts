@@ -98,8 +98,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         if (!column) {
             if (columnGroup && beans.colHeaderEditSvc?.isEditable(columnGroup)) {
-                result.push('editColumnName');
-                result.push(MENU_ITEM_SEPARATOR);
+                result.push('editColumnName', MENU_ITEM_SEPARATOR);
             }
             addColumnItems();
             return result;
@@ -150,8 +149,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         }
 
         if (menuSvc?.isFilterMenuItemEnabled(column)) {
-            result.push('columnFilter');
-            result.push(MENU_ITEM_SEPARATOR);
+            result.push('columnFilter', MENU_ITEM_SEPARATOR);
         }
 
         if (allowPinning) {
@@ -173,16 +171,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 result.push('calculatedColumn');
             }
             if (column?.isCalculatedCol) {
-                result.push('editCalculatedColumn');
-                result.push('removeCalculatedColumn');
+                result.push('editCalculatedColumn', 'removeCalculatedColumn');
             }
             result.push(MENU_ITEM_SEPARATOR);
         }
 
         if (column && beans.colHeaderEditSvc?.isEditable(column)) {
-            result.push(MENU_ITEM_SEPARATOR);
-            result.push('editColumnName');
-            result.push(MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR, 'editColumnName', MENU_ITEM_SEPARATOR);
         }
 
         if (allowPinning || allowValueAgg) {
@@ -193,8 +188,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             if (!colDef.suppressAutoSize) {
                 result.push('autoSizeThis');
             }
-            result.push('autoSizeAll');
-            result.push(MENU_ITEM_SEPARATOR);
+            result.push('autoSizeAll', MENU_ITEM_SEPARATOR);
         }
 
         if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
@@ -229,8 +223,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             (_isClientSideRowModel(gos) || gos.get('ssrmExpandAllAffectsAllRows')) &&
             (treeData || rowGroupCount > (colModel.pivotMode ? 1 : 0))
         ) {
-            result.push('expandAll');
-            result.push('contractAll');
+            result.push('expandAll', 'contractAll');
         }
 
         return result;

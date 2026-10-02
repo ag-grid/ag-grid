@@ -102,7 +102,7 @@ export class AgAngleSelect extends AgAbstractLabel<
                     value = '0';
                 }
                 value = this.eAngleValue.normalizeValue(value);
-                let floatValue = parseFloat(value);
+                let floatValue = Number.parseFloat(value);
                 if (floatValue > 180) {
                     floatValue = floatValue - 360;
                 }

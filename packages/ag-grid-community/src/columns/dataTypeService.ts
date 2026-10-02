@@ -708,7 +708,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (params.value == null) {
                     return '';
                 }
-                if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                if (!(params.value instanceof Date) || Number.isNaN(params.value.getTime())) {
                     return translate('invalidDate', 'Invalid Date');
                 }
                 return _serialiseDate(params.value, includeTime) ?? '';
@@ -744,7 +744,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     if (params.value == null) {
                         return '';
                     }
-                    if (typeof params.value !== 'number' || isNaN(params.value)) {
+                    if (typeof params.value !== 'number' || Number.isNaN(params.value)) {
                         return translate('invalidNumber', 'Invalid Number');
                     }
                     return String(params.value);

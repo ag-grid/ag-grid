@@ -222,8 +222,8 @@ const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
     ];
 
     const pattern = params.useIsoSeparator
-        ? '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$'
-        : '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$';
+        ? String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$`
+        : String.raw`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`;
 
     const schema = s.object({
         filterType: s.literal('date', 'Filter type identifier for date filters'),

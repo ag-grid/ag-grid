@@ -579,7 +579,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowSelected: () => this.onRowSelected(),
             rowIndexChanged: this.onRowIndexChanged.bind(this),
             topChanged: this.onTopChanged.bind(this),
-            ...(expansionSvc?.getRowExpandedListeners(this) ?? {}),
+            ...expansionSvc?.getRowExpandedListeners(this),
         });
 
         if (rowNode.detail) {
@@ -992,8 +992,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const classes: string[] = [];
 
-        classes.push('ag-row');
-        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
+        classes.push('ag-row', this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
 
         if (this.fadeInAnimation) {
             classes.push('ag-opacity-zero');

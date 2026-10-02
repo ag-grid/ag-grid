@@ -286,6 +286,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
         const currentPage = this.currentPage;
 
+        // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
         if (!isFinite(currentPage) || isNaN(currentPage) || currentPage < 0) {
             this.currentPage = 0;
         }

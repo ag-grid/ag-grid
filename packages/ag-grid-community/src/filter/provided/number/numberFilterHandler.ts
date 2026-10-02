@@ -32,6 +32,7 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
     }
 
     protected override isValid(value: number): boolean {
+        // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
         return !isNaN(value);
     }
 }

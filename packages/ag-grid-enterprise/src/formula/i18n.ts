@@ -134,7 +134,7 @@ const normaliseVariableValues = (values?: readonly unknown[]): string[] | undefi
     if (!values?.length) {
         return undefined;
     }
-    return values.map((value) => String(value));
+    return values.map(String);
 };
 
 export const getFormulaErrorDefinition = (errorId: FormulaErrorId): FormulaErrorDefinition => {

@@ -611,7 +611,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = this.isUp || this.isLeft ? -1 : 1;
                 return {
-                    value: parseFloat(valueForFunctions) + 1 * multiplier,
+                    value: Number.parseFloat(valueForFunctions) + 1 * multiplier,
                     fromUserFunction: false,
                 };
             }

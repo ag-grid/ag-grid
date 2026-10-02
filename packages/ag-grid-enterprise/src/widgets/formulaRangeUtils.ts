@@ -32,7 +32,7 @@ export const getRangeColorIndexFromClass = (colorClass?: string | null): number 
         return null;
     }
 
-    const parsed = parseInt(match[1], 10);
+    const parsed = Number.parseInt(match[1], 10);
     return Number.isFinite(parsed) ? parsed - 1 : null;
 };
 
@@ -70,8 +70,8 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string): FormulaR
         return null;
     }
 
-    const rowStartIndex = parseInt(startRow, 10) - 1;
-    const rowEndIndex = endRow ? parseInt(endRow, 10) - 1 : rowStartIndex;
+    const rowStartIndex = Number.parseInt(startRow, 10) - 1;
+    const rowEndIndex = endRow ? Number.parseInt(endRow, 10) - 1 : rowStartIndex;
 
     // guard against invalid rows so we don't tokenise refs outside the known row set.
     if (rowStartIndex < 0 || rowEndIndex < 0) {

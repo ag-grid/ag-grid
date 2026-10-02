@@ -51,6 +51,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const yearParser = (param: 'minValidYear' | 'maxValidYear', fallback: number) => {
             const value = params[param];
             if (value != null) {
+                // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
                 if (!isNaN(value)) {
                     return value == null ? fallback : Number(value);
                 } else {

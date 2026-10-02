@@ -216,6 +216,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
                 this.dispatchVisibleChangedEvent(false, false, column, columnGroup, defaultTab);
             },
             afterGuiAttached: (params) =>
+                // eslint-disable-next-line prefer-object-spread -- spreading `params` widens `container` to string
                 menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.

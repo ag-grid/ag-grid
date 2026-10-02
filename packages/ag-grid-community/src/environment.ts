@@ -112,6 +112,7 @@ export class Environment
         const oldRowHeight = eRootDiv.style.getPropertyValue('--ag-line-height').trim();
         const height = this.gos.get('rowHeight');
 
+        // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
         if (height == null || isNaN(height) || !isFinite(height)) {
             if (oldRowHeight !== null) {
                 eRootDiv.style.setProperty('--ag-line-height', null);

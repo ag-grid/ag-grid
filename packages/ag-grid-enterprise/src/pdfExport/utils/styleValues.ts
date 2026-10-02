@@ -50,9 +50,7 @@ export function parseCssNumber(value: string | number | undefined): number | und
         return value;
     }
 
-    const match = String(value)
-        .trim()
-        .match(/^-?\d+(?:\.\d+)?/);
+    const match = /^-?\d+(?:\.\d+)?/.exec(String(value).trim());
 
     if (!match) {
         return undefined;

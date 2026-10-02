@@ -104,7 +104,7 @@ export class RowStyleService extends BeanStub implements NamedBean {
             rowStyleFuncResult = rowStyleFunc(params);
         }
         if (rowStyleFuncResult || rowStyle) {
-            return Object.assign({}, rowStyle, rowStyleFuncResult);
+            return { ...rowStyle, ...rowStyleFuncResult };
         }
         return undefined;
     }

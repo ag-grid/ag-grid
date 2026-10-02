@@ -238,7 +238,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
         return null;
     }
 
-    const srgbMatch = normalised.match(/^color\(\s*srgb\s+(.+)\)$/);
+    const srgbMatch = /^color\(\s*srgb\s+(.+)\)$/.exec(normalised);
     if (srgbMatch) {
         // support css color() syntax with optional slash alpha channel.
         const raw = srgbMatch[1].trim();
@@ -284,7 +284,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
         return undefined;
     }
 
-    const rgbMatch = normalised.match(/^rgba?\((.+)\)$/);
+    const rgbMatch = /^rgba?\((.+)\)$/.exec(normalised);
     if (rgbMatch) {
         const inner = rgbMatch[1].trim();
         let channels: string[];
@@ -317,7 +317,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
         return { r, g, b, a: a ?? 1 };
     }
 
-    const hslMatch = normalised.match(/^hsla?\((.+)\)$/);
+    const hslMatch = /^hsla?\((.+)\)$/.exec(normalised);
     if (hslMatch) {
         const inner = hslMatch[1].trim();
         let channels: string[];

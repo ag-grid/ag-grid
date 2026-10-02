@@ -219,7 +219,7 @@ export class ColumnFilterService
 
         const gos = this.gos;
         const initialFilterModel = {
-            ...(gos.get('initialState')?.filter?.filterModel ?? {}),
+            ...gos.get('initialState')?.filter?.filterModel,
         };
         this.initialModel = initialFilterModel;
         this.model = {

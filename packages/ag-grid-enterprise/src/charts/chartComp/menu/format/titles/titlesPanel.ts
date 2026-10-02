@@ -39,9 +39,9 @@ export class TitlesPanel extends Component {
                     new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType))
                 );
             axisTitlePanels.push(
-                this.createManagedBean(new TitlePanel(createAxisParamsFactory('xAxis'), 'horizontalAxisTitle', 'title'))
-            );
-            axisTitlePanels.push(
+                this.createManagedBean(
+                    new TitlePanel(createAxisParamsFactory('xAxis'), 'horizontalAxisTitle', 'title')
+                ),
                 this.createManagedBean(new TitlePanel(createAxisParamsFactory('yAxis'), 'verticalAxisTitle', 'title'))
             );
         } else if (isPolar(seriesType)) {

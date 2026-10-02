@@ -92,11 +92,11 @@ export class AgInputRange<
 
     public override setValue(value: string, silent?: boolean): this {
         if (this.min != null) {
-            value = Math.max(parseFloat(value), this.min).toString();
+            value = Math.max(Number.parseFloat(value), this.min).toString();
         }
 
         if (this.max != null) {
-            value = Math.min(parseFloat(value), this.max).toString();
+            value = Math.min(Number.parseFloat(value), this.max).toString();
         }
 
         const ret = super.setValue(value, silent);

@@ -4,7 +4,7 @@ const VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION = 28;
 const VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION = 6;
 
 function isValidVersion(version: string) {
-    return version?.match(/\d+\.\d+\.\d+/);
+    return /\d+\.\d+\.\d+/.exec(version);
 }
 
 function isValidMajorVersion({
@@ -14,8 +14,8 @@ function isValidMajorVersion({
     gridMajorVersion: string;
     chartsMajorVersion: string;
 }): boolean {
-    const gridMajor = parseInt(gridMajorVersion, 10);
-    const chartsMajor = parseInt(chartsMajorVersion, 10);
+    const gridMajor = Number.parseInt(gridMajorVersion, 10);
+    const chartsMajor = Number.parseInt(chartsMajorVersion, 10);
 
     const gridMajorDifference = gridMajor - VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION;
     const chartsMajorDifference = chartsMajor - VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION;
@@ -38,7 +38,7 @@ export function gridChartVersion(gridVersion: string):
     const [gridMajor, gridMinor] = gridVersion.split('.') || [];
     const gridMajorMinor = `${gridMajor}.${gridMinor}.x`;
 
-    const gridMajorNumber = parseInt(gridMajor, 10);
+    const gridMajorNumber = Number.parseInt(gridMajor, 10);
     const chartsMajor =
         gridMajorNumber - VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION + VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION;
 

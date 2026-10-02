@@ -321,7 +321,7 @@ export class AgColorPanel<
             }
             e.preventDefault();
             const diff = isLeft ? -5 : 5;
-            x = parseFloat(slider.style.left) + offset + diff;
+            x = Number.parseFloat(slider.style.left) + offset + diff;
         }
 
         x = Math.max(x, 0);
@@ -401,8 +401,8 @@ export class AgColorPanel<
         const dragger = this.spectrumDragger;
         const draggerRect = dragger.getBoundingClientRect();
 
-        const x = parseFloat(dragger.style.left) + draggerRect.width / 2;
-        const y = parseFloat(dragger.style.top) + draggerRect.height / 2;
+        const x = Number.parseFloat(dragger.style.left) + draggerRect.width / 2;
+        const y = Number.parseFloat(dragger.style.top) + draggerRect.height / 2;
 
         return { x, y };
     }
@@ -426,7 +426,7 @@ export class AgColorPanel<
     private setColor(color: IColor, updateColorInput?: boolean): void {
         const [h, s, b] = color.toHSB();
 
-        this.H = (isNaN(h) ? 0 : h) / 360;
+        this.H = (Number.isNaN(h) ? 0 : h) / 360;
         this.A = color.a;
 
         const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
@@ -445,7 +445,7 @@ export class AgColorPanel<
             return;
         }
 
-        const id = parseInt(target.id, 10);
+        const id = Number.parseInt(target.id, 10);
 
         this.setValue(sharedRecentColors[id]);
         this.destroy();

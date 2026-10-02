@@ -229,9 +229,9 @@ export function escapePdfString(value: string): string {
         const byte = toWinAnsiByte(codePoint) ?? 0x3f;
 
         if (byte === 0x28) {
-            output += '\\(';
+            output += String.raw`\(`;
         } else if (byte === 0x29) {
-            output += '\\)';
+            output += String.raw`\)`;
         } else if (byte === 0x5c) {
             output += '\\\\';
         } else if (byte >= 0x20 && byte <= 0x7e) {

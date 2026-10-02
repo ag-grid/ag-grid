@@ -304,7 +304,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             }
                         }
 
-                        if ((typeof value === 'number' && !isNaN(value)) || typeof value === 'bigint') {
+                        if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'bigint') {
                             addValue(value);
                         }
                     });

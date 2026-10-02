@@ -176,7 +176,7 @@ export class ToolPanelWrapper extends Component {
         eGui.classList.add('ag-tool-panel-animating');
 
         const durationStr = getComputedStyle(eGui).transitionDuration;
-        if (!parseFloat(durationStr)) {
+        if (!Number.parseFloat(durationStr)) {
             cleanup();
             return;
         }

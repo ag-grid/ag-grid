@@ -175,7 +175,7 @@ class AgStatusBar extends Component implements FocusableContainer {
                 const existingStatusPanel = this.statusBarSvc.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
                     const newParams: IStatusPanelParams = _addGridCommonParams(this.gos, {
-                        ...(statusPanelConfig.statusPanelParams ?? {}),
+                        ...statusPanelConfig.statusPanelParams,
                         key,
                     });
                     const hasRefreshed = existingStatusPanel.refresh(newParams);

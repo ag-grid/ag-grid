@@ -221,7 +221,9 @@ export class CartesianAxisPanel extends Component {
             if (!testDatum) {
                 return false;
             }
-            return controller.getSelectedDimensions().every((col) => !isNaN(parseFloat(testDatum[col.colId])));
+            return controller
+                .getSelectedDimensions()
+                .every((col) => !Number.isNaN(Number.parseFloat(testDatum[col.colId])));
         };
         if (
             ['heatmap', 'histogram', 'boxPlot', 'rangeBar', 'scatter', 'bubble'].includes(chartType) ||

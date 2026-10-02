@@ -434,6 +434,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public hasExpandableMasterRows(): boolean {
         return !!this.cache
             .getNodes()
+            // eslint-disable-next-line unicorn/prefer-array-some -- getNodes() is a MultiIndexMap, not an array
             .find(({ node }) => (node.master && node.isExpandable()) || !!node.childStore?.hasExpandableMasterRows());
     }
 

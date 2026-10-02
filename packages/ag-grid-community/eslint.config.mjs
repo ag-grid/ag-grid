@@ -1,8 +1,9 @@
-import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
+import rootESLint, { sonarCleanupConfig, sonarCleanupTypeAwareRules, sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
     ...sonarjsConfig,
+    ...sonarCleanupConfig,
     {
         languageOptions: {
             parserOptions: {
@@ -79,6 +80,8 @@ export default [
             'no-console': 'error',
 
             'unicorn/prefer-modern-dom-apis': 'error',
+
+            ...sonarCleanupTypeAwareRules,
         },
     },
     {

@@ -571,7 +571,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     public isEnterprise = () => this.agChartsExports.isEnterprise;
 
     private getCellRanges(): CellRange[] {
-        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter((r) => r);
+        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(Boolean);
     }
 
     private createCellRange(

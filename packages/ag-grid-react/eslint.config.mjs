@@ -1,8 +1,9 @@
-import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
+import rootESLint, { sonarCleanupConfig, sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
     ...sonarjsConfig,
+    ...sonarCleanupConfig,
     {
         rules: {
             'no-empty': 'error',

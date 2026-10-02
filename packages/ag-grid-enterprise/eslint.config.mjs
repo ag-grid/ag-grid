@@ -1,8 +1,9 @@
-import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
+import rootESLint, { sonarCleanupConfig, sonarCleanupTypeAwareRules, sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
     ...sonarjsConfig,
+    ...sonarCleanupConfig,
     {
         languageOptions: {
             parserOptions: {
@@ -98,6 +99,8 @@ export default [
             'sonarjs/use-type-alias': 0,
             'sonarjs/no-nested-template-literals': 0,
             'unicorn/prefer-modern-dom-apis': 'error',
+
+            ...sonarCleanupTypeAwareRules,
         },
     },
     {

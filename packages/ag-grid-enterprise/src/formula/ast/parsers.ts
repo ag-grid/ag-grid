@@ -48,7 +48,7 @@ const parseOperand = (
 
     // numbers
     const num = Number(trimmed);
-    if (!isNaN(num)) {
+    if (!Number.isNaN(num)) {
         return num;
     }
 
@@ -384,8 +384,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
         // Function start: IDENT '('
         if (isFormulaIdentStart(token[0]) && tokens[i + 1] === '(') {
             const name = token;
-            ops.push({ kind: 'function', name, args: [] });
-            ops.push({ kind: 'parenthesis', outLen: output.length });
+            ops.push({ kind: 'function', name, args: [] }, { kind: 'parenthesis', outLen: output.length });
             i += 2;
             continue;
         }

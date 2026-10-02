@@ -14,7 +14,7 @@ export function toolPanelCreateColumnTree(
         if (isColGroupDef(abstractColDef)) {
             // creating 'dummy' group which is not associated with grid column group
             const groupDef = abstractColDef;
-            const groupId = typeof groupDef.groupId !== 'undefined' ? groupDef.groupId : groupDef.headerName;
+            const groupId = groupDef.groupId !== undefined ? groupDef.groupId : groupDef.headerName;
             const group = new AgProvidedColumnGroup(groupDef, groupId!, false, depth);
             const children: (AgColumn | AgProvidedColumnGroup)[] = [];
             for (const def of groupDef.children) {
@@ -94,14 +94,14 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
                 // skip over padding groups
                 leafPathTree = childDef;
             } else {
-                const groupDef = Object.assign({}, node.getColGroupDef());
+                const groupDef = { ...node.getColGroupDef() };
                 // ensure group contains groupId
                 groupDef.groupId = node.getGroupId();
                 groupDef.children = [childDef];
                 leafPathTree = groupDef;
             }
         } else {
-            const colDef = Object.assign({}, node.colDef);
+            const colDef = { ...node.colDef };
             // ensure col contains colId
             colDef.colId = node.colId;
             leafPathTree = colDef;

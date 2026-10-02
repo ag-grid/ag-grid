@@ -6,6 +6,7 @@ import { criteriaToPredicate, isRangeParam, isValueParam, take } from '../utils'
 export const COUNT = ({ values }: FormulaFunctionParams): number => {
     let count = 0;
     for (const v of values) {
+        // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
         if (v != null && v !== '' && !isNaN(v as any)) {
             count++;
         }

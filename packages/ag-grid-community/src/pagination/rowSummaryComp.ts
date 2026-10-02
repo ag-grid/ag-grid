@@ -123,7 +123,11 @@ export class RowSummaryComp extends Component {
         const strOf = localeTextFunc('of', 'of');
         this.ariaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
 
-        const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\s+/g, ' ');
+        const esc = (s: string) =>
+            s
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, String.raw`\'`)
+                .replace(/\s+/g, ' ');
         this.getGui().style.setProperty(
             '--ag-internal-pagination-width-string',
             `'${lbRecordCount} ${esc(strTo)} ${lbRecordCount} ${esc(strOf)} ${lbRecordCount}'`.replaceAll(/\d/g, '0')

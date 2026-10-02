@@ -279,6 +279,7 @@ class OperandParser implements Parser {
         // Read from the argument, not `this.modelValue`, which keeps the raw text when the parser rejects it.
         number: (modelValue) => {
             // A column's own `numberParser` reports unreadable input as null, where `Number` gives NaN.
+            // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
             if (modelValue == null || isNaN(modelValue as number)) {
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
             }

@@ -76,7 +76,7 @@ function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | n
 }
 
 function isValidDate(value: any): boolean {
-    return value instanceof Date && !isNaN(value.getTime());
+    return value instanceof Date && !Number.isNaN(value.getTime());
 }
 
 // Merged onto `colDef.filterParams` by `setColDefPropsForDataType`, so nothing else tells one from the author's.

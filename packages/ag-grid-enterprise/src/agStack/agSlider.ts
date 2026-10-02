@@ -103,7 +103,7 @@ export class AgSlider<
     public onValueChange(callbackFn: (newValue: number) => void) {
         this.addManagedListeners(this.eText, {
             fieldValueChanged: () => {
-                const textValue = parseFloat(this.eText.getValue()!);
+                const textValue = Number.parseFloat(this.eText.getValue()!);
                 this.eSlider.setValue(textValue.toString(), true);
                 callbackFn(textValue || 0);
             },
@@ -113,7 +113,7 @@ export class AgSlider<
             fieldValueChanged: () => {
                 const sliderValue = this.eSlider.getValue()!;
                 this.eText.setValue(sliderValue, true);
-                callbackFn(parseFloat(sliderValue));
+                callbackFn(Number.parseFloat(sliderValue));
             },
         });
 

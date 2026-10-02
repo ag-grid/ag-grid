@@ -98,7 +98,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         super(config);
         this.formulaSvc = config.formulaSvc;
         this.notesSvc = config.notesSvc;
-        this.config = Object.assign({}, config);
+        this.config = { ...config };
         this.workbook = config.workbook;
 
         this.stylesByIds = {};
@@ -822,7 +822,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         } else if (type === 'n') {
             const numberValue = Number(value);
 
-            if (isNaN(numberValue)) {
+            if (Number.isNaN(numberValue)) {
                 return { type: 'empty', value: null, escaped: false };
             } else {
                 value = numberValue.toString();
@@ -898,7 +898,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (typeof value === 'bigint') {
             return false;
         }
-        return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
+        // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
+        return isFinite(value) && value !== '' && !Number.isNaN(Number.parseFloat(value));
     }
 
     private getStyleById(styleId?: string | null): ExcelStyle | null {

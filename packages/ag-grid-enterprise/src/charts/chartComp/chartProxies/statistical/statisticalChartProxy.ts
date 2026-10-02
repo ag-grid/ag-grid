@@ -36,7 +36,7 @@ export abstract class StatisticalChartProxy<
                 // `null` & `NaN` values are omitted from calculations
                 const seriesValues = categoryData
                     .map((datum) => datum[field.colId])
-                    .filter((value) => typeof value === 'number' && !isNaN(value));
+                    .filter((value) => typeof value === 'number' && !Number.isNaN(value));
 
                 const computed = computeStatsFn(seriesValues);
                 for (const statKey of Object.keys(computed)) {

@@ -920,7 +920,7 @@ const getTokenIndex = (tokenEl: HTMLElement): number | null => {
     if (!raw) {
         return null;
     }
-    const parsed = parseInt(raw, 10);
+    const parsed = Number.parseInt(raw, 10);
     return Number.isFinite(parsed) ? parsed : null;
 };
 

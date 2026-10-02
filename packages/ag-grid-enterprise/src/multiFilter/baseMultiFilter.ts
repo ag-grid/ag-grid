@@ -239,7 +239,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                     const isFirst = index === 0;
                     const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
                     const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;
-                    const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus: suppressFocusForFilter };
+                    const afterGuiAttachedParams = { ...params, suppressFocus: suppressFocusForFilter };
                     const wrapper = wrappers[index];
                     const filter = wrapper ? this.getFilterFromWrapper(wrapper) : undefined;
                     if (wrapper) {

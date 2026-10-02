@@ -45,6 +45,7 @@ export function processNumberFilterValue(value?: number | null): number | null {
     if (value == null) {
         return null;
     }
+    // eslint-disable-next-line unicorn/prefer-number-properties -- value can be a non-number at runtime, where the global and Number versions differ
     return isNaN(value) ? null : value;
 }
 

@@ -261,7 +261,7 @@ export class ChartDatasource extends BeanStub {
 
                     // aggregated value
                     if (value && _hasOwn(value, 'toString')) {
-                        value = parseFloat(value.toString());
+                        value = Number.parseFloat(value.toString());
                     }
 
                     data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
@@ -357,7 +357,7 @@ export class ChartDatasource extends BeanStub {
                     if (params.crossFiltering) {
                         // filtered data
                         const dataToAgg = groupItem.__children
-                            .filter((child: any) => typeof child[colId] !== 'undefined')
+                            .filter((child: any) => child[colId] !== undefined)
                             .map((child: any) => child[colId]);
 
                         const aggResult: any = aggFunc({
@@ -371,12 +371,12 @@ export class ChartDatasource extends BeanStub {
                             api,
                             context,
                         });
-                        groupItem[colId] = typeof aggResult?.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[colId] = aggResult?.value !== undefined ? aggResult.value : aggResult;
 
                         // filtered out data
                         const filteredOutColId = `${colId}-filtered-out`;
                         const dataToAggFiltered = groupItem.__children
-                            .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
+                            .filter((child: any) => child[filteredOutColId] !== undefined)
                             .map((child: any) => child[filteredOutColId]);
 
                         const aggResultFiltered: any = aggFunc({
@@ -391,9 +391,7 @@ export class ChartDatasource extends BeanStub {
                             context,
                         });
                         groupItem[filteredOutColId] =
-                            typeof aggResultFiltered?.value !== 'undefined'
-                                ? aggResultFiltered.value
-                                : aggResultFiltered;
+                            aggResultFiltered?.value !== undefined ? aggResultFiltered.value : aggResultFiltered;
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[colId]);
                         const aggResult = aggFunc({
@@ -408,7 +406,7 @@ export class ChartDatasource extends BeanStub {
                             context,
                         });
 
-                        groupItem[colId] = typeof aggResult?.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[colId] = aggResult?.value !== undefined ? aggResult.value : aggResult;
                     }
                 }
             }

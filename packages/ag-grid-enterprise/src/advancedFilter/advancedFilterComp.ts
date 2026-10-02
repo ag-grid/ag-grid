@@ -317,7 +317,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private forceLastSelection({ key, displayValue }: AutocompleteEntry, searchString: string): boolean {
-        return !!searchString.toLocaleLowerCase().match(`^${(displayValue ?? key).toLocaleLowerCase()}\\s*$`);
+        return !!searchString.toLocaleLowerCase().match(String.raw`^${(displayValue ?? key).toLocaleLowerCase()}\s*$`);
     }
 
     private openBuilder(): void {

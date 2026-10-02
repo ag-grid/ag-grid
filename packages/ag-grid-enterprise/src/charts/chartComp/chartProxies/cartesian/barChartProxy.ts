@@ -64,8 +64,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
             };
 
             // for bar/column charts, proportion of whole is achieved as a stacked bar/column
-            allSeries.push(primarySeries);
-            allSeries.push(filteredOutSeries as unknown as AgBarSeriesOptions);
+            allSeries.push(primarySeries, filteredOutSeries as unknown as AgBarSeriesOptions);
         }
         return allSeries;
     }

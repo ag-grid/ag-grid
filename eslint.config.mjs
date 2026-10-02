@@ -58,7 +58,6 @@ export const sonarjsConfig = [
             'sonarjs/no-fallthrough': 0,
 
             // Unicorn rules, as referenced from the SonarCloud documentation.
-            // 'unicorn/prefer-number-properties': 1,
             // 'unicorn/prefer-modern-dom-apis': 1,
             // 'unicorn/no-array-for-each': 1,
             'unicorn/prefer-export-from': 0,
@@ -70,6 +69,28 @@ export const sonarjsConfig = [
         },
     },
 ];
+
+/** Safe, mechanical fixes for issues SonarCloud reports, kept as errors so they stay fixed. */
+export const sonarCleanupConfig = [
+    {
+        files: ['**/*.{js,ts,tsx}'],
+        rules: {
+            'unicorn/prefer-single-call': 'error',
+            'unicorn/no-useless-fallback-in-spread': 'error',
+            'unicorn/prefer-string-raw': 'error',
+            'prefer-object-spread': 'error',
+            'unicorn/no-typeof-undefined': 'error',
+            'unicorn/prefer-array-some': 'error',
+            'unicorn/prefer-native-coercion-functions': 'error',
+            'unicorn/prefer-number-properties': 'error',
+        },
+    },
+];
+
+/** Cleanup rules that need type information, so can only be enabled in packages that provide it. */
+export const sonarCleanupTypeAwareRules = {
+    '@typescript-eslint/prefer-regexp-exec': 'error',
+};
 
 export default [
     { languageOptions: { globals: { ...globals.browser, ...globals.node } } },

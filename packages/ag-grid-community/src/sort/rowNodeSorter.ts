@@ -163,5 +163,5 @@ const absoluteValueTransformer = (value: any): number | bigint | null => {
         return value < 0n ? -value : value;
     }
     const numberValue = Number(value);
-    return isNaN(numberValue) ? value : Math.abs(numberValue);
+    return Number.isNaN(numberValue) ? value : Math.abs(numberValue);
 };

@@ -34,7 +34,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const tabGuardCtrlRef = useRef<TabGuardCtrl>();
 
     const setTabIndex = (value?: string | null) => {
-        const processedValue = value == null ? undefined : parseInt(value, 10).toString();
+        const processedValue = value == null ? undefined : Number.parseInt(value, 10).toString();
 
         for (const tabGuard of [topTabGuardRef, bottomTabGuardRef]) {
             if (processedValue === undefined) {

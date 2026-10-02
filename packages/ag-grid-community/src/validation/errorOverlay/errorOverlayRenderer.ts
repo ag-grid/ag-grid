@@ -69,7 +69,7 @@ function getRawMessage(diagnostic: CapturedDiagnostic): string {
  * @knipIgnore Used in tests
  */
 export function parseDiagnosticText(raw: string): DiagnosticContent {
-    const docLink = raw.match(MORE_INFO_LINK_REGEX)?.[1];
+    const docLink = MORE_INFO_LINK_REGEX.exec(raw)?.[1];
     const text = raw.replace(DOC_LINK_REGEX, '').replace(MORE_INFO_LINK_REGEX, '').trim();
     return { ...splitCodeSnippet(text), docLink };
 }
