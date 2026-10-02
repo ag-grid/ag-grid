@@ -170,6 +170,7 @@ const announcementBannerProps = {
             ))
         }
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
+        <slot name="head" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <ClientRouter />
