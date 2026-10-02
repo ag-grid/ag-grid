@@ -8,6 +8,7 @@ import {
     AI_GROUP,
     AI_TOKENS,
     AI_TOKEN_ADMISSION,
+    CHARTS_HOST_ROBOTS,
     CONTENT_SIGNAL,
     GHOST_DISALLOWS,
     MD_TWIN_POLICY,
@@ -138,31 +139,29 @@ export function crawlerPolicyChecks(): CheckDef[] {
                 return p.outcome();
             },
         },
-        ...ROBOTS_MATRIX.map(
-            (row): CheckDef => ({
-                id: `crawler-policy.robots.url.${row.url}`,
-                area: 'crawler-policy',
-                title: `${row.url}: ${row.star ? 'allowed' : 'disallowed'} for search crawlers, ${row.ai ? 'allowed' : 'disallowed'} for the AI group`,
-                refs: row.refs,
-                pending: row.pending,
-                knownIssue: row.knownIssue,
-                fixedBy: row.fixedBy,
-                async run({ http }) {
-                    const r = await wwwRobots(http);
-                    const p = new Problems();
-                    for (const [tokens, expected] of [
-                        [STAR_TOKENS, row.star],
-                        [AI_TOKENS, row.ai],
-                    ] as const) {
-                        for (const token of tokens) {
-                            const v = isAllowed(r, token, row.url);
-                            p.check(v.allowed === expected, `${token}: ${describeVerdict(v)}`);
-                        }
+        ...ROBOTS_MATRIX.map((row): CheckDef => ({
+            id: `crawler-policy.robots.url.${row.url}`,
+            area: 'crawler-policy',
+            title: `${row.url}: ${row.star ? 'allowed' : 'disallowed'} for search crawlers, ${row.ai ? 'allowed' : 'disallowed'} for the AI group`,
+            refs: row.refs,
+            pending: row.pending,
+            knownIssue: row.knownIssue,
+            fixedBy: row.fixedBy,
+            async run({ http }) {
+                const r = await wwwRobots(http);
+                const p = new Problems();
+                for (const [tokens, expected] of [
+                    [STAR_TOKENS, row.star],
+                    [AI_TOKENS, row.ai],
+                ] as const) {
+                    for (const token of tokens) {
+                        const v = isAllowed(r, token, row.url);
+                        p.check(v.allowed === expected, `${token}: ${describeVerdict(v)}`);
                     }
-                    return p.outcome(describeVerdict(isAllowed(r, 'Googlebot', row.url)));
-                },
-            })
-        ),
+                }
+                return p.outcome(describeVerdict(isAllowed(r, 'Googlebot', row.url)));
+            },
+        })),
         {
             id: 'crawler-policy.robots.md-twins',
             area: 'crawler-policy',
@@ -224,26 +223,22 @@ export function crawlerPolicyChecks(): CheckDef[] {
         },
         ...Object.entries(AI_TOKEN_ADMISSION)
             .filter(([, v]) => v.knownIssue)
-            .map(
-                ([token, v]): CheckDef => ({
-                    id: `crawler-policy.robots-vs-waf.${token}`,
-                    area: 'crawler-policy',
-                    title: `${token}: welcomed by robots and admitted by the p11 UA regex`,
-                    refs: ['SE-78', 'SE-184'],
-                    knownIssue: v.knownIssue,
-                    async run({ live }) {
-                        const rule = (await live.cfAcl()).Rules.find(
-                            (x: any) => x.Name === 'block-nonbrowser-except-ai-assistants'
-                        );
-                        const ua = leaves(rule.Statement).filter(
-                            (l) => l.kind === 'regex' && l.field === 'header:user-agent'
-                        ) as any[];
-                        return ua.some((l) => regexLeafMatches(l, token))
-                            ? pass()
-                            : fail('not in the p11 UA allowlist');
-                    },
-                })
-            ),
+            .map(([token, v]): CheckDef => ({
+                id: `crawler-policy.robots-vs-waf.${token}`,
+                area: 'crawler-policy',
+                title: `${token}: welcomed by robots and admitted by the p11 UA regex`,
+                refs: ['SE-78', 'SE-184'],
+                knownIssue: v.knownIssue,
+                async run({ live }) {
+                    const rule = (await live.cfAcl()).Rules.find(
+                        (x: any) => x.Name === 'block-nonbrowser-except-ai-assistants'
+                    );
+                    const ua = leaves(rule.Statement).filter(
+                        (l) => l.kind === 'regex' && l.field === 'header:user-agent'
+                    ) as any[];
+                    return ua.some((l) => regexLeafMatches(l, token)) ? pass() : fail('not in the p11 UA allowlist');
+                },
+            })),
         {
             id: 'crawler-policy.robots.charts',
             area: 'crawler-policy',
@@ -273,7 +268,9 @@ export function crawlerPolicyChecks(): CheckDef[] {
                 const r = parseRobots(res.body);
                 const p = new Problems();
                 p.eq('status', res.status, 200);
-                p.check(!isAllowed(r, 'Googlebot', '/archive/10.0.0/').allowed, 'Googlebot may crawl the legacy host');
+                // The whole parsed policy, not one crawler on one path: an extra group, an Allow or a
+                // narrower Disallow all reopen part of the legacy host.
+                p.diff('robots', r, CHARTS_HOST_ROBOTS);
                 return p.outcome();
             },
         },
@@ -301,21 +298,19 @@ export function crawlerPolicyChecks(): CheckDef[] {
                     NEW_FINDING('blog.ag-grid.com/robots.txt 301s to /blog/robots.txt, which is a 404'),
                 ],
             ] as const
-        ).map(
-            ([url, knownIssue]): CheckDef => ({
-                id: `crawler-policy.robots.legacy.${new URL(url).host}`,
-                area: 'crawler-policy',
-                title: `${url} 301s to the www robots.txt`,
-                refs: knownIssue ? ['SE-89', 'SE-4', FIRST_RUN] : ['SE-89', 'SE-4'],
-                knownIssue,
-                async run({ http }) {
-                    const res = await http.head(url);
-                    const p = new Problems();
-                    p.eq('status', res.status, 301);
-                    p.eq('Location', header(res, 'location'), `${WWW}/robots.txt`);
-                    return p.outcome();
-                },
-            })
-        ),
+        ).map(([url, knownIssue]): CheckDef => ({
+            id: `crawler-policy.robots.legacy.${new URL(url).host}`,
+            area: 'crawler-policy',
+            title: `${url} 301s to the www robots.txt`,
+            refs: knownIssue ? ['SE-89', 'SE-4', FIRST_RUN] : ['SE-89', 'SE-4'],
+            knownIssue,
+            async run({ http }) {
+                const res = await http.head(url);
+                const p = new Problems();
+                p.eq('status', res.status, 301);
+                p.eq('Location', header(res, 'location'), `${WWW}/robots.txt`);
+                return p.outcome();
+            },
+        })),
     ];
 }

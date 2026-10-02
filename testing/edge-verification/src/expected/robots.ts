@@ -1,3 +1,4 @@
+import type { Robots } from '../core/robots';
 import { type Lifecycle, PENDING, finding } from './lifecycle';
 
 /** SE-78 / SE-184: the named AI-crawler group, exactly. */
@@ -134,6 +135,16 @@ export const ROBOTS_FILES = {
     charts: 'https://www.ag-grid.com/charts/robots.txt',
     studio: 'https://www.ag-grid.com/studio/robots.txt',
     chartsHost: 'https://charts.ag-grid.com/robots.txt',
+};
+
+/**
+ * The legacy charts.ag-grid.com host's robots.txt, parsed, exactly (live 2026-10-01): one group,
+ * every crawler, the whole host disallowed. Any other group (a named crawler gets its own rules),
+ * any Allow, or a narrower Disallow reopens the host.
+ */
+export const CHARTS_HOST_ROBOTS: Robots = {
+    groups: [{ agents: ['*'], rules: [{ type: 'disallow', pattern: '/' }], fields: {} }],
+    sitemaps: [],
 };
 
 /**
