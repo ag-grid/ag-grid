@@ -1,13 +1,3 @@
-.test-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-#myGrid {
-    flex: 1 1 0px;
-}
-
 .form-container {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;

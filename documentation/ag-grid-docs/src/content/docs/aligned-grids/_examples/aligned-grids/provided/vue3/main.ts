@@ -29,15 +29,15 @@ ModuleRegistry.registerModules([
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
-            <div class="example-controls" style="flex: 0 1 auto;">
+        <div class="example-wrapper">
+            <div class="example-controls">
                 <div class="controls-row">
                     <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
                     <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
                     <label><input type="checkbox" checked @change="onCbCountry($event.target.checked)"/>Country</label>
                 </div>
             </div>
-            <ag-grid-vue style="flex: 1 1 auto;"
+            <ag-grid-vue
                          ref="topGrid"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
@@ -45,8 +45,7 @@ const VueExample = defineComponent({
                          :gridOptions="topOptions"
                          @grid-ready="onGridReady($event)">
             </ag-grid-vue>
-            <div style='height: 5%'></div>
-            <ag-grid-vue style="flex: 1 1 auto;"
+            <ag-grid-vue
                          ref="bottomGrid"
                          :columnDefs="columnDefs"
                          :rowData="rowData"

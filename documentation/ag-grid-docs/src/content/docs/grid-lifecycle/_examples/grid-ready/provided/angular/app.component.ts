@@ -18,8 +18,8 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `
-        <div class="test-container">
-            <div class="test-header">
+        <div class="example-wrapper">
+            <div class="example-header">
                 <div class="example-controls" style="margin-bottom: 1rem;">
                     <div class="controls-row">
                         <input type="checkbox" id="pinFirstColumnOnLoad" />

@@ -1,13 +1,3 @@
-.outer-div {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.interaction-bar {
-    margin-bottom: 1rem;
-}
-
 .grid-sizer {
     width: 100%;
     height: 100%;

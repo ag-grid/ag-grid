@@ -17,7 +17,6 @@
 
 .grid-wrapper {
     display: flex;
-    flex: 1 1 0px;
 }
 
 .grid-wrapper > div {
@@ -25,10 +24,7 @@
     height: 100%;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.example-wrapper {
     gap: 8px;
 }
 

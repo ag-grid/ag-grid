@@ -35,8 +35,8 @@ ModuleRegistry.registerModules([
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `
-        <div class="test-container">
-            <div class="test-header example-controls">
+        <div class="example-wrapper">
+            <div class="example-controls">
                 <div class="controls-row">
                     <div class="button-group" role="group" aria-label="Age filter">
                         <input

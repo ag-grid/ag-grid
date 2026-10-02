@@ -58,8 +58,8 @@ const dateFilterParams: IDateFilterParams = {
 
 const VueExample = defineComponent({
     template: `
-        <div class="test-container">
-            <div class="test-header example-controls">
+        <div class="example-wrapper">
+            <div class="example-controls">
                 <div class="controls-row">
                     <div class="button-group" role="group" aria-label="Age filter">
                         <input type="radio" name="filter" id="everyone" checked v-on:change="onAgeTypeChanged('everyone')">
