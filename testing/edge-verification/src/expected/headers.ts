@@ -228,16 +228,18 @@ export const HEADER_ROWS: HeaderRow[] = [
                 `${PENDING.gridNoCache}; ${PENDING.studioHosts}`,
             ],
         ] as const
-    ).map(([site, url, pending]): HeaderRow => ({
-        id: `markdown.archive-noindex.${site}`,
-        title: `Archived ${site} .md twin sends X-Robots-Tag: noindex, like archived HTML`,
-        url,
-        method: 'HEAD',
-        status: 200,
-        expect: { 'content-type': /^text\/markdown/, 'x-robots-tag': /\bnoindex\b/ },
-        refs: [finding(11), 'SE-24'],
-        pending,
-    })),
+    ).map(
+        ([site, url, pending]): HeaderRow => ({
+            id: `markdown.archive-noindex.${site}`,
+            title: `Archived ${site} .md twin sends X-Robots-Tag: noindex, like archived HTML`,
+            url,
+            method: 'HEAD',
+            status: 200,
+            expect: { 'content-type': /^text\/markdown/, 'x-robots-tag': /\bnoindex\b/ },
+            refs: [finding(11), 'SE-24'],
+            pending,
+        })
+    ),
 
     // ---- non-200 and non-HTML: no Link header (SE-81 scoping) ---------------------------------
     {
@@ -398,28 +400,32 @@ export const HEADER_ROWS: HeaderRow[] = [
                 ['SE-166'],
             ],
         ] as const
-    ).map(([kind, url, pending, refs]): HeaderRow => ({
-        id: `redirect.no-cache.${kind}`,
-        title: `${kind} 301 sends Cache-Control: no-cache (${url})`,
-        url,
-        method: 'HEAD',
-        status: 301,
-        expect: { 'cache-control': NO_CACHE },
-        refs: [...new Set([...refs, finding(4)])],
-        pending,
-    })),
+    ).map(
+        ([kind, url, pending, refs]): HeaderRow => ({
+            id: `redirect.no-cache.${kind}`,
+            title: `${kind} 301 sends Cache-Control: no-cache (${url})`,
+            url,
+            method: 'HEAD',
+            status: 301,
+            expect: { 'cache-control': NO_CACHE },
+            refs: [...new Set([...refs, finding(4)])],
+            pending,
+        })
+    ),
 
     // ---- SE-187: internal hosts noindexed ------------------------------------------------------
     ...[
         'https://ecommerce.ag-grid.com/',
         'https://registry.ag-grid.com/',
         'https://registry.ag-grid.com/-/verdaccio/data/packages',
-    ].map((url, i): HeaderRow => ({
-        id: `internal-host.noindex.${i}`,
-        title: `${url} sends X-Robots-Tag: noindex, nofollow`,
-        url,
-        method: 'HEAD',
-        expect: { 'x-robots-tag': /noindex/ },
-        refs: ['SE-187'],
-    })),
+    ].map(
+        (url, i): HeaderRow => ({
+            id: `internal-host.noindex.${i}`,
+            title: `${url} sends X-Robots-Tag: noindex, nofollow`,
+            url,
+            method: 'HEAD',
+            expect: { 'x-robots-tag': /noindex/ },
+            refs: ['SE-187'],
+        })
+    ),
 ];

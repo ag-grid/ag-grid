@@ -236,38 +236,42 @@ export function cloudfrontChecks(): CheckDef[] {
                 return info(shadowed.length ? `shadowed: ${shadowed.join(', ')}` : 'none');
             },
         },
-        ...CACHE_POLICIES.map((exp): CheckDef => ({
-            id: `cloudfront.cache-policy.${exp.name}`,
-            area: 'cloudfront',
-            title: `Cache policy ${exp.name}: TTL ${exp.minTtl}/${exp.defaultTtl}/${exp.maxTtl}, key headers [${exp.keyHeaders.join(', ')}]`,
-            refs: exp.pending ? ['waf-finding.md §4'] : ['waf-finding.md §8'],
-            pending: exp.pending,
-            async run({ live }) {
-                let raw: any;
-                if (exp.id) {
-                    raw = await live.cachePolicy(exp.id);
-                } else {
-                    const found = (await live.customCachePolicies()).find((x) => x.CachePolicyConfig.Name === exp.name);
-                    if (!found) {
-                        return { status: 'fail', detail: `no cache policy named ${exp.name}` };
+        ...CACHE_POLICIES.map(
+            (exp): CheckDef => ({
+                id: `cloudfront.cache-policy.${exp.name}`,
+                area: 'cloudfront',
+                title: `Cache policy ${exp.name}: TTL ${exp.minTtl}/${exp.defaultTtl}/${exp.maxTtl}, key headers [${exp.keyHeaders.join(', ')}]`,
+                refs: exp.pending ? ['waf-finding.md §4'] : ['waf-finding.md §8'],
+                pending: exp.pending,
+                async run({ live }) {
+                    let raw: any;
+                    if (exp.id) {
+                        raw = await live.cachePolicy(exp.id);
+                    } else {
+                        const found = (await live.customCachePolicies()).find(
+                            (x) => x.CachePolicyConfig.Name === exp.name
+                        );
+                        if (!found) {
+                            return { status: 'fail', detail: `no cache policy named ${exp.name}` };
+                        }
+                        raw = await live.cachePolicy(found.Id);
                     }
-                    raw = await live.cachePolicy(found.Id);
-                }
-                const p = new Problems();
-                // Header names are case-insensitive; the Comment is prose.
-                const config = structuredClone(raw.CachePolicyConfig);
-                const headers = config.ParametersInCacheKeyAndForwardedToOrigin?.HeadersConfig?.Headers;
-                if (headers?.Items) {
-                    headers.Items = headers.Items.map((h: string) => h.toLowerCase());
-                }
-                p.diff(
-                    'policy',
-                    cloudFrontProjection(omit(config, ['Comment'])),
-                    cloudFrontProjection(declaredCachePolicy(exp))
-                );
-                return p.outcome();
-            },
-        })),
+                    const p = new Problems();
+                    // Header names are case-insensitive; the Comment is prose.
+                    const config = structuredClone(raw.CachePolicyConfig);
+                    const headers = config.ParametersInCacheKeyAndForwardedToOrigin?.HeadersConfig?.Headers;
+                    if (headers?.Items) {
+                        headers.Items = headers.Items.map((h: string) => h.toLowerCase());
+                    }
+                    p.diff(
+                        'policy',
+                        cloudFrontProjection(omit(config, ['Comment'])),
+                        cloudFrontProjection(declaredCachePolicy(exp))
+                    );
+                    return p.outcome();
+                },
+            })
+        ),
         {
             id: 'cloudfront.origin-request-policy.Managed-AllViewer',
             area: 'cloudfront',

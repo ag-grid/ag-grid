@@ -444,16 +444,18 @@ export function seoContentChecks(): CheckDef[] {
                 p.check(n === 0, `${n} ${OLD_BLOG_HREF}… attributes`);
             }
         ),
-        ...['SE-44', 'SE-46'].map((ticket): CheckDef => ({
-            id: `seo-content.not-checkable.${ticket}`,
-            area: 'seo-content',
-            title: `${ticket} needs a real browser (client-rendered DOM) - not checked here`,
-            refs: [ticket, finding(15)],
-            async run() {
-                return info(
-                    `${finding(15)}: ${ticket === 'SE-44' ? 'consent banner is client-injected (OneTrust replaced by Enzuzo)' : 'hero grid alt text is client-rendered'}`
-                );
-            },
-        })),
+        ...['SE-44', 'SE-46'].map(
+            (ticket): CheckDef => ({
+                id: `seo-content.not-checkable.${ticket}`,
+                area: 'seo-content',
+                title: `${ticket} needs a real browser (client-rendered DOM) - not checked here`,
+                refs: [ticket, finding(15)],
+                async run() {
+                    return info(
+                        `${finding(15)}: ${ticket === 'SE-44' ? 'consent banner is client-injected (OneTrust replaced by Enzuzo)' : 'hero grid alt text is client-rendered'}`
+                    );
+                },
+            })
+        ),
     ];
 }

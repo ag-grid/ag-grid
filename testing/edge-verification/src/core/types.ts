@@ -56,7 +56,15 @@ export interface CheckDef {
 }
 
 export type FinalStatus =
-    'pass' | 'fail' | 'warn' | 'info' | 'skip' | 'pending' | 'pending-live' | 'known' | 'known-fixed';
+    | 'pass'
+    | 'fail'
+    | 'warn'
+    | 'info'
+    | 'skip'
+    | 'pending'
+    | 'pending-live'
+    | 'known'
+    | 'known-fixed';
 
 export interface Result {
     check: CheckDef;

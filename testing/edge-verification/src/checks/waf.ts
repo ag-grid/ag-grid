@@ -297,13 +297,15 @@ export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): s
 function assetScopeDownLeaves(): Leaf[] {
     return [
         { kind: 'regex', field: 'UriPath', value: CF_ACL.assetScopeDownRegex, transforms: ['LOWERCASE'] },
-        ...CF_ACL.assetScopeDownPrefixes.map((value): Leaf => ({
-            kind: 'byte',
-            field: 'UriPath',
-            value,
-            positional: 'STARTS_WITH',
-            transforms: ['LOWERCASE'],
-        })),
+        ...CF_ACL.assetScopeDownPrefixes.map(
+            (value): Leaf => ({
+                kind: 'byte',
+                field: 'UriPath',
+                value,
+                positional: 'STARTS_WITH',
+                transforms: ['LOWERCASE'],
+            })
+        ),
     ];
 }
 
@@ -312,13 +314,15 @@ function p11SafeLeaves(): Leaf[] {
     const nb = CF_ACL.nonBrowser;
     return [
         ...nb.safePathRegexes.map((value): Leaf => ({ kind: 'regex', field: 'UriPath', value, transforms: ['NONE'] })),
-        ...nb.safePathPrefixes.map((value): Leaf => ({
-            kind: 'byte',
-            field: 'UriPath',
-            value,
-            positional: 'STARTS_WITH',
-            transforms: ['NONE'],
-        })),
+        ...nb.safePathPrefixes.map(
+            (value): Leaf => ({
+                kind: 'byte',
+                field: 'UriPath',
+                value,
+                positional: 'STARTS_WITH',
+                transforms: ['NONE'],
+            })
+        ),
     ];
 }
 
@@ -485,22 +489,26 @@ function pendingOverrideChecks(
     acl: (live: Live) => Promise<any>
 ): CheckDef[] {
     return Object.entries(groups).flatMap(([rule, group]) =>
-        (group.pendingOverrides ?? []).map((o): CheckDef => ({
-            id: `waf-config.${prefix}.${groupSlug(rule)}.${o.name}`,
-            area: 'waf-config',
-            title: `${rule} ${o.name} overridden to ${o.action}`,
-            refs: [finding(5)],
-            pending: o.pending,
-            async run({ live }) {
-                const r = (await acl(live)).Rules.find((x: any) => x.Name === rule);
-                const found = (r?.Statement?.ManagedRuleGroupStatement?.RuleActionOverrides ?? []).find(
-                    (x: any) => x.Name === o.name
-                );
-                return found && overrideKey(found.Name, found.ActionToUse) === declaredOverride(o)
-                    ? pass()
-                    : fail(`no ${o.action} override (${found ? overrideKey(found.Name, found.ActionToUse) : 'none'})`);
-            },
-        }))
+        (group.pendingOverrides ?? []).map(
+            (o): CheckDef => ({
+                id: `waf-config.${prefix}.${groupSlug(rule)}.${o.name}`,
+                area: 'waf-config',
+                title: `${rule} ${o.name} overridden to ${o.action}`,
+                refs: [finding(5)],
+                pending: o.pending,
+                async run({ live }) {
+                    const r = (await acl(live)).Rules.find((x: any) => x.Name === rule);
+                    const found = (r?.Statement?.ManagedRuleGroupStatement?.RuleActionOverrides ?? []).find(
+                        (x: any) => x.Name === o.name
+                    );
+                    return found && overrideKey(found.Name, found.ActionToUse) === declaredOverride(o)
+                        ? pass()
+                        : fail(
+                              `no ${o.action} override (${found ? overrideKey(found.Name, found.ActionToUse) : 'none'})`
+                          );
+                },
+            })
+        )
     );
 }
 
@@ -565,41 +573,43 @@ export function wafChecks(): CheckDef[] {
         },
         ...CF_ACL.rules
             .filter((r) => r.pending || RULE_SHAPES[r.name])
-            .map((exp): CheckDef => ({
-                id: `waf-config.cf.rule.${exp.name}`,
-                area: 'waf-config',
-                title: exp.pending
-                    ? `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`
-                    : `${exp.name}: statement as declared, ${exp.action}`,
-                refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
-                pending: exp.pending,
-                async run({ live }) {
-                    const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
-                    const i = rules.findIndex((r: any) => r.Name === exp.name);
-                    if (i < 0) {
-                        return fail('rule not present');
-                    }
-                    const p = new Problems();
-                    // Once deployed, waf-config.cf.rules checks its exact position.
-                    const between = exp.pending ? pendingSiblingOrder(rules, exp) : undefined;
-                    if (between) {
-                        p.add(between);
-                    }
-                    p.eq('action', ruleAction(rules[i]), exp.action);
-                    p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
-                    if (exp.pending) {
-                        // Once deployed, waf-config.cf.rules compares every field.
-                        compareRule(p, rules[i], cfDeclaredRules().get(exp.name)!);
-                    }
-                    const shape = RULE_SHAPES[exp.name];
-                    if (!shape) {
-                        p.add(`no statement check declared for ${exp.name}`);
-                    } else {
-                        await shape.check(rules[i], live, p);
-                    }
-                    return p.outcome(`priority ${rules[i].Priority}`);
-                },
-            })),
+            .map(
+                (exp): CheckDef => ({
+                    id: `waf-config.cf.rule.${exp.name}`,
+                    area: 'waf-config',
+                    title: exp.pending
+                        ? `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`
+                        : `${exp.name}: statement as declared, ${exp.action}`,
+                    refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
+                    pending: exp.pending,
+                    async run({ live }) {
+                        const rules = [...(await live.cfAcl()).Rules].sort((a: any, b: any) => a.Priority - b.Priority);
+                        const i = rules.findIndex((r: any) => r.Name === exp.name);
+                        if (i < 0) {
+                            return fail('rule not present');
+                        }
+                        const p = new Problems();
+                        // Once deployed, waf-config.cf.rules checks its exact position.
+                        const between = exp.pending ? pendingSiblingOrder(rules, exp) : undefined;
+                        if (between) {
+                            p.add(between);
+                        }
+                        p.eq('action', ruleAction(rules[i]), exp.action);
+                        p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
+                        if (exp.pending) {
+                            // Once deployed, waf-config.cf.rules compares every field.
+                            compareRule(p, rules[i], cfDeclaredRules().get(exp.name)!);
+                        }
+                        const shape = RULE_SHAPES[exp.name];
+                        if (!shape) {
+                            p.add(`no statement check declared for ${exp.name}`);
+                        } else {
+                            await shape.check(rules[i], live, p);
+                        }
+                        return p.outcome(`priority ${rules[i].Priority}`);
+                    },
+                })
+            ),
         {
             id: 'waf-config.cf.verify-header-rules',
             area: 'waf-config',

@@ -142,23 +142,25 @@ function declaredAlarm(exp: AlarmExpectation): any {
 
 export function infraChecks(): CheckDef[] {
     return [
-        ...ALARMS.map((exp): CheckDef => ({
-            id: `infra.alarm.${exp.name}`,
-            area: 'infra',
-            title: `Alarm ${exp.name}: exists, notifies ${exp.topic}, and watches the declared metric, statistic and threshold`,
-            refs: ['waf-finding.md §14'],
-            pending: exp.pending,
-            async run({ aws }) {
-                const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
-                const a = r.MetricAlarms?.[0];
-                if (!a) {
-                    return fail('alarm not found');
-                }
-                const p = new Problems();
-                p.diff('alarm', projectAlarm(a), declaredAlarm(exp));
-                return p.outcome(`state ${a.StateValue}`);
-            },
-        })),
+        ...ALARMS.map(
+            (exp): CheckDef => ({
+                id: `infra.alarm.${exp.name}`,
+                area: 'infra',
+                title: `Alarm ${exp.name}: exists, notifies ${exp.topic}, and watches the declared metric, statistic and threshold`,
+                refs: ['waf-finding.md §14'],
+                pending: exp.pending,
+                async run({ aws }) {
+                    const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
+                    const a = r.MetricAlarms?.[0];
+                    if (!a) {
+                        return fail('alarm not found');
+                    }
+                    const p = new Problems();
+                    p.diff('alarm', projectAlarm(a), declaredAlarm(exp));
+                    return p.outcome(`state ${a.StateValue}`);
+                },
+            })
+        ),
         {
             id: 'infra.alarm.captcha-alarms-track-live-rule',
             area: 'infra',
