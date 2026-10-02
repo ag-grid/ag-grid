@@ -1,8 +1,5 @@
 .example-wrapper {
-    display: flex;
-    flex-direction: column;
     gap: 10px;
-    height: 100%;
 }
 
 .toolbar-row {
@@ -29,8 +26,4 @@
 #note-text {
     min-height: 72px;
     resize: vertical;
-}
-
-#myGrid {
-    flex: 1 1 0;
 }

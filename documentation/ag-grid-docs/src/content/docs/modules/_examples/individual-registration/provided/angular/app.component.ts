@@ -35,7 +35,7 @@ ModuleRegistry.registerModules(sharedModules);
     standalone: true,
     imports: [AgGridAngular],
     template: `
-        <div class="example-wrapper">
+        <div class="example-wrapper example-wrapper--row">
             <div class="inner-col">
                 <ag-grid-angular
                     [gridId]="'Left'"

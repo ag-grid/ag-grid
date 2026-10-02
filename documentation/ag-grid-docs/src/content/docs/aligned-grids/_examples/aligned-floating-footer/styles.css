@@ -1,11 +1,6 @@
 .bold-row {
     font-weight: bold;
 }
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
 
 .top {
     flex: 1 1 auto;

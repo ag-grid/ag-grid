@@ -39,8 +39,6 @@ const rowSelection: RowSelectionOptions = {
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
-    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({ height: '90%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>([
         { row: 'Row 1', name: 'Michael Phelps' },
         { row: 'Row 2', name: 'Natalie Coughlin' },
@@ -103,7 +101,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div style={containerStyle}>
+            <div className="example-wrapper">
                 <div className="example-controls">
                     <div className="controls-row">
                         <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
@@ -112,7 +110,7 @@ const GridExample = () => {
                     </div>
                 </div>
 
-                <div style={gridStyle}>
+                <div className="grid-wrapper">
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
