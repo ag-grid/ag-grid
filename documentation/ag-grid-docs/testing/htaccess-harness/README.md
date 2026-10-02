@@ -131,8 +131,10 @@ GRID_REF=origin/latest ./testing/htaccess-harness/run.sh
 
 Besides each row's own assertions, every response the run receives (redirects, 304s and 404s
 included) is held to the site-wide browser-cache cap: a `Cache-Control` max-age of at most 7 days
-(604800s) and no `Expires` more than 7 days after `Date`; `s-maxage` is exempt. Any response over it
-is listed under `BROWSER CACHE CAP` and fails the run (`lib/cacheCap.mjs`).
+(604800s) and no `Expires` more than 7 days after `Date`; `s-maxage` is exempt. A response a browser
+may cache heuristically (a status cacheable by default, with a `Last-Modified` but neither
+`Cache-Control` nor `Expires`) breaks it too. Any such response is listed under `BROWSER CACHE CAP`
+and fails the run (`lib/cacheCap.mjs`).
 
 ### Options
 

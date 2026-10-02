@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 285
+# @min-rows 295
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -250,9 +250,9 @@ www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-star
 www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/	hops=1	final=200
 
 # @category caching-live
-# Content-addressed assets: long cache, by hash SHAPE; unhashed /_astro is never cached.
+# Content-addressed assets: long cache, by hash SHAPE; unhashed /_astro is never long-cached.
 www	/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000	ct~javascript	link-describedby
-www	/_astro/index.js	200		cc=absent
+www	/_astro/index.js	200		cc=public, max-age=86400
 www	/_astro/fonts/0123456789abcdef.woff2	200		cc=public, max-age=604800, s-maxage=31536000
 # Unhashed static assets: a bounded one-day cache.
 www	/images/logo.png	200		cc=public, max-age=86400	ct=image/png	link-describedby
@@ -264,6 +264,18 @@ www	/videos/intro.json	200		cc=public, max-age=86400
 www	/scripts/banner.js	200		cc=public, max-age=86400	ct~javascript
 www	/robots.txt	200		cc=public, max-age=86400	ct~^text/plain
 www	/favicon.ico	200		cc=public, max-age=86400
+# Classes with no rule of their own take the root's default day rather than a browser's heuristic
+# lifetime (a Last-Modified and no Cache-Control). An archive keeps its own long cache.
+www	/sitemap-index.xml	200		cc=public, max-age=86400
+www	/sitemap-0.xml	200		cc=public, max-age=86400
+www	/llms.txt	200		cc=public, max-age=86400	ct~^text/plain
+www	/.well-known/mcp/server-card.json	200		cc=public, max-age=86400
+www	/changelog/changelog.json	200		cc=public, max-age=86400
+www	/files/ag-grid-community/styles/ag-grid.css	200		cc=public, max-age=86400
+www	/fonts/pdf-export/IBMPlexSansJP-Bold.ttf	200		cc=public, max-age=86400
+www	/charts/sitemap-0.xml	200		cc=public, max-age=86400
+www	/studio/llms.txt	200		cc=public, max-age=86400
+www	/archive/36.2.0/sitemap-0.xml	200		cc=public, max-age=604800, s-maxage=31536000
 # /example/ is a live demo page: HTML no-cache, never the day-long asset cache.
 www	/example/	200		accept=html	cc=no-cache	ct~^text/html
 # Live 404: the root ErrorDocument, revalidated, no agent Link header.

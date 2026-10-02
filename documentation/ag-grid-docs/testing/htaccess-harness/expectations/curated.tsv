@@ -2,11 +2,12 @@
 # optional assertions). A first response whose Location is already the final target proves a
 # single hop; rows can also follow the chain locally with hops=/final=.
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 285
+# @min-rows 288
 # @category curated-tickets
 
 # --- SE-30 ---
 www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server	301	/introducing-the-ag-grid-model-context-protocol-mcp-server/	hops=2
 
 # --- SE-60 (grid; the /charts/* ones are asserted in the charts section) ---
 www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/
@@ -34,6 +35,8 @@ www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gau
 # --- SE-61 main (non-/charts) ---
 www	/javascript-grid-cell-style/	301	/javascript-data-grid/cell-styles/
 www	/forum/	301	/community/
+www	/forum	301	/forum/	hops=2	final=200
+www	/javascript-grid-virtual-paging/anything/	301	/javascript-data-grid/infinite-scrolling/	hops=1	final=200
 www	/community-forums/	301	/community/
 www	/forum/showthread.php	410
 www	/testimonials.php	410

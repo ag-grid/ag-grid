@@ -74,6 +74,13 @@ export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 export const BROWSER_CACHE_CAP_SECONDS = 604800;
 
 /**
+ * Statuses cacheable by default (RFC 9110 §15.1): sent with a Last-Modified and neither
+ * Cache-Control nor Expires, a browser may cache one heuristically (RFC 9111 §4.2.2, typically 10%
+ * of its age), so an old file for well over the cap.
+ */
+export const HEURISTICALLY_CACHEABLE = new Set([200, 203, 204, 206, 300, 301, 308, 404, 405, 410, 414, 501]);
+
+/**
  * One URL of every response class, for headers.browser-cache-cap: the HEADER_ROWS URLs below plus,
  * found on the pages at run time, a hashed /_astro/ asset per site and archive, a blog post and the
  * blog's theme assets.
@@ -81,14 +88,11 @@ export const BROWSER_CACHE_CAP_SECONDS = 604800;
 export const BROWSER_CACHE_ROWS = [
     'html.home',
     'html.grid-docs',
-    'markdown.twin',
     'asset.image-svg',
     'asset.example-assets',
     'asset.script',
     'root.favicon',
     'root.robots',
-    'root.sitemap-index',
-    'root.llms',
     'markdown.archive-negotiated',
     'markdown.archive-noindex.grid',
     'markdown.archive-noindex.charts',
@@ -102,6 +106,37 @@ export const BROWSER_CACHE_PAGES = {
     html: [`${WWW}/charts/`, `${WWW}/studio/`, `${WWW}/charts/archive/14.2.0/react/quick-start/`],
     blog: `${WWW}/blog/`,
 };
+
+/**
+ * Classes served today with a Last-Modified and no Cache-Control, left to a browser's heuristic.
+ * The grid root .htaccess default (and no-cache on live markdown) covers them, /charts/ and
+ * /studio/ included, as both inherit it.
+ */
+export const BROWSER_CACHE_HEURISTIC_URLS = [
+    `${WWW}/sitemap-index.xml`,
+    `${WWW}/sitemap-0.xml`,
+    `${WWW}/llms.txt`,
+    `${WWW}/AGENTS.md`,
+    `${WWW}/react-data-grid/getting-started.md`,
+    `${WWW}/.well-known/mcp/server-card.json`,
+    `${WWW}/changelog/changelog.json`,
+    `${WWW}/charts/sitemap-0.xml`,
+    `${WWW}/charts/llms.txt`,
+    `${WWW}/charts/robots.txt`,
+    `${WWW}/studio/sitemap-0.xml`,
+    `${WWW}/studio/llms.txt`,
+];
+
+/**
+ * What Ghost sends with max-age=31536000 beyond its theme assets: uploaded images (and, found on
+ * posts, media and files) under /blog/content/, and every 301 it issues itself.
+ */
+export const BROWSER_CACHE_BLOG_CONTENT_URLS = [
+    `${WWW}/blog/content/images/2021/02/logo-white.svg`,
+    // Ghost's own redirects: a slash-less URL and /amp/.
+    `${WWW}/blog/rss`,
+    `${WWW}/blog/amp/`,
+];
 
 /**
  * Compressed pages revalidated with the -gzip ETag they were sent (waf-finding.md §19). The archive
