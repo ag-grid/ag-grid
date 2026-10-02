@@ -179,6 +179,17 @@ export const REDIRECTS: RedirectRow[] = [
     r(`${CHARTS_HOST}/react/toolbar/`, `${WWW}/charts/react/financial-charts-toolbar/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/react/line/`, `${WWW}/charts/react/line-series/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/sitemap.xml`, `${WWW}/charts/sitemap-0.xml`, ['SE-186']),
+    // SE-66 B3 (Sean, 2026-10-02): every charts framework root lands on its quick start in one hop,
+    // slash-less or slashed, from www, the apex and an alias host, as /charts/javascript does today.
+    ...['react', 'angular', 'vue'].flatMap((fw) =>
+        [WWW, APEX, 'https://react-grid.ag-grid.com'].flatMap((host) =>
+            ['', '/'].map((slash) =>
+                r(`${host}/charts/${fw}${slash}`, `${WWW}/charts/${fw}/quick-start/`, ['SE-66'], {
+                    pending: PENDING.chartsFrameworkRoots,
+                })
+            )
+        )
+    ),
     // Exactly #bullet-series, as Nick's 07-20 QA has it: today the bare Redirect adds a slash to it.
     ...['angular', 'javascript', 'vue'].map((fw) =>
         r(`${WWW}/charts/${fw}/bullet-series/`, `${WWW}/charts/${fw}/linear-gauge/#bullet-series`, ['SE-29', 'SE-66'], {
