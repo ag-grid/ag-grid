@@ -21,6 +21,17 @@ STUDIO_ROOT_DIR="@STUDIO_ROOT_DIR@"
 GRID_ROOT_DIR="@GRID_ROOT_DIR@"
 WWW_ROOT_DIR="@WWW_ROOT_DIR@"
 
+# Hold the root .htaccess lock that patchUncachedArchives.sh (and ag-charts' charts-only copy) take
+# for their check-and-rename, so an in-flight patch can never land between their check and their
+# rename while this replaces the docroot. A patch waiting on it sees the docroot was replaced and
+# stops with a re-run message. Released when this script exits.
+exec 9>>"$GRID_ROOT_DIR/.htaccess.lock"
+if ! flock -w 300 9
+then
+    echo "Could not take $GRID_ROOT_DIR/.htaccess.lock - an in-flight patch is holding it. Re-run this."
+    exit 1
+fi
+
 # create a backup of the html folder ONLY if it doesn't already exist - this handles the situation where multiple deployments are done on the same day
 # in that case we only want to backup the original html folder, not the subsequent attempts (for rollback)
 if [ -d "$WWW_ROOT_DIR/public_html_$TIMESTAMP" ];

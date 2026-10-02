@@ -127,14 +127,18 @@ fi
 # The check and the rename run under an exclusive flock on .htaccess.lock beside the live file, so
 # two patchers (grid and charts release candidates at once) cannot both pass the check against the
 # same file and then both rename; the second sees the first's change and stops. ag-charts
-# tools/archive/ uses the same protocol, and the same lock file, for its charts-only copy. A docs
-# deploy does not take the lock, but it replaces the whole file, which resets the block anyway.
+# tools/archive/ uses the same protocol, and the same lock file, for its charts-only copy, and the
+# deploys that replace the root .htaccess (switchReleaseRemote.sh, the staging deploys) hold it too,
+# so none can land between the check and the rename. A production switch replaces the whole docroot
+# directory, so once the lock is held the swap also checks that the directory it is in is still the
+# live one.
 if ! scp -i $SSH_LOCATION -P $SSH_PORT "$LIVE_HTACCESS" $CURRENT_HOST:$STAGED
 then
     patchFailed "Could not upload the patched root .htaccess.";
 fi
 SWAP="cd $GRID_ROOT_DIR || exit 5; \
     exec 9>>.htaccess.lock && flock -w 60 9 || { echo 'could not lock .htaccess.lock'; exit 6; }; \
+    [ .htaccess.lock -ef $GRID_ROOT_DIR/.htaccess.lock ] || { echo 'the docroot was replaced while waiting'; exit 3; }; \
     [ \"\$(sha256sum < $REMOTE | cut -d' ' -f1)\" = $SNAPSHOT_SHA ] || { echo 'live file changed since it was fetched'; exit 3; }; \
     [ \"\$(sha256sum < $STAGED | cut -d' ' -f1)\" = $PATCHED_SHA ] || { echo 'uploaded file does not match the patched one'; exit 4; }; \
     cp -p $REMOTE $BACKUP && chmod 644 $STAGED && mv $STAGED $REMOTE"
