@@ -10,6 +10,9 @@ export const isHarnessHost = (host, extraHosts) =>
 /** The listener a request goes to: the https stand-in, or the plain-http one. */
 const portFor = (scheme, ctx) => (scheme === 'http' ? ctx.httpPort : ctx.port);
 
+/** Every response the run received, for the run-wide checks (the browser-cache cap). */
+export const responses = [];
+
 export function request({ port, host, path, accept, requestHeaders = {} }) {
     return new Promise((resolvePromise, reject) => {
         const headers = { ...requestHeaders, Host: host, 'User-Agent': 'ag-htaccess-harness' };
@@ -19,14 +22,16 @@ export function request({ port, host, path, accept, requestHeaders = {} }) {
         const req = http.request({ host: '127.0.0.1', port, path, method: 'GET', headers, agent }, (res) => {
             const chunks = [];
             res.on('data', (c) => chunks.push(c));
-            res.on('end', () =>
-                resolvePromise({
+            res.on('end', () => {
+                const response = {
                     status: res.statusCode,
                     // rawHeaders keeps duplicates (two CSP headers must count as two)
                     raw: res.rawHeaders,
                     body: Buffer.concat(chunks).toString('utf8').slice(0, 2000),
-                })
-            );
+                };
+                responses.push({ request: `${port} ${host}${path}`, response });
+                resolvePromise(response);
+            });
         });
         req.on('error', reject);
         req.setTimeout(10000, () => req.destroy(new Error(`timeout ${host}${path}`)));
