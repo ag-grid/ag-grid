@@ -206,7 +206,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
 
-                const { dataTypes, expressionPickers, applyMode } = calculatedColumns;
+                const { dataTypes, expressionPickers, applyMode, processColDef } = calculatedColumns;
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
                         return _createValidationWarning(321, {
@@ -228,6 +228,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return _createValidationWarning(320, {
                         property: 'calculatedColumns.applyMode',
                         allowed: ['live', 'deferred'],
+                    });
+                }
+                if (processColDef != null && typeof processColDef !== 'function') {
+                    return _createValidationWarning(321, {
+                        property: 'calculatedColumns.processColDef',
+                        expected: 'a function',
                     });
                 }
 
