@@ -79,7 +79,8 @@ jobs:
 
       # Bounded and retried via the shared wrapper (AG-18231): a stalled apt mirror fails this step instead of
       # hanging the job until the time limit cancels it, which would skip the report upload below. The cache
-      # holds the browsers, not the OS libraries, so a hit only needs install-deps.
+      # holds the browsers, not the OS libraries, so a hit only needs install-deps. The cache key is shared
+      # with doc-tests.yml, which expects all three browsers in it, so a miss always installs all three.
       - name: Install Playwright browsers
         env:
           PW_BROWSERS: ${{ inputs.browsers == 'chromium' && 'chromium' || 'chromium firefox webkit' }}
@@ -89,7 +90,7 @@ jobs:
           if [ "${PW_CACHE_HIT}" = "true" ]; then
             bash "${PW_INSTALL}" deps ${PW_BROWSERS}
           else
-            bash "${PW_INSTALL}" full ${PW_BROWSERS}
+            bash "${PW_INSTALL}" full chromium firefox webkit
           fi
 
       # The gate builds the UMD bundles the specs load, runs Playwright, and writes the elapsed time to the
@@ -98,7 +99,7 @@ jobs:
         id: run
         env:
           TEST_PATTERN: ${{ inputs.test_pattern }}
-          BROWSER_FLAG: ${{ inputs.browsers == 'chromium' && '' || '--all-browsers' }}
+          BROWSER_FLAG: ${{ inputs.browsers == 'chromium' && '--project=chromium' || '--all-browsers' }}
         run: ./grid-e2e.sh ${TEST_PATTERN} ${BROWSER_FLAG}
 
       - name: Upload Playwright reports
