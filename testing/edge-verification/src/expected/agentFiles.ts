@@ -109,6 +109,12 @@ export const SERVER_CARD = {
     mcpServers: { 'ag-mcp': { command: 'npx', args: ['ag-mcp'], type: 'stdio' } },
 };
 
+/** The grid llms.txt names the MCP server among its curated links (SE-79). */
+export const GRID_LLMS_MCP_LINE = '[MCP server](https://www.ag-grid.com/javascript-data-grid/mcp-server/)';
+
+/** The npm package the server card's `npx ag-mcp` installs. */
+export const NPM_LATEST = 'https://registry.npmjs.org/ag-mcp/latest';
+
 /** A rebuilt archive's llms.txt should point inside the archive, not at the current docs. */
 export const ARCHIVE_LLMS = {
     url: 'https://www.ag-grid.com/archive/36.2.0/llms.txt',

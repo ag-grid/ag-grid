@@ -9,12 +9,16 @@ import {
     stripTags,
     validJsonLdNodes,
 } from '../core/html';
-import type { Http } from '../core/http';
+import { type Http, header } from '../core/http';
 import { type CheckDef, Problems, budgeted, fail, info, pass } from '../core/types';
 import { FIRST_RUN, NEW_FINDING, PENDING, finding } from '../expected/lifecycle';
 import { WWW } from '../expected/redirects';
 import {
+    CHANGELOG_SEARCH,
+    CHARTS_H1,
+    CHARTS_OFFER,
     DOCS_OFFER,
+    DOCS_SOURCE_PLATFORMS,
     FAQ_COUNT,
     HOME_GRAPH_TYPES,
     HOME_H1,
@@ -77,6 +81,77 @@ function offersIn(node: unknown): unknown[] {
 const withoutAriaHidden = (html: string): string =>
     html.replace(/<span\b[^>]*aria-hidden="true"[^>]*>[^<]*<\/span>/gi, '');
 
+/** What a reader sees of a heading: no <noscript> fallback, no aria-hidden layout copies. */
+const visibleOnly = (html: string): string => withoutAriaHidden(html.replace(/<noscript\b[\s\S]*?<\/noscript>/gi, ''));
+
+/**
+ * Text as a reader sees it: no <script> or <style> content (the JSON-LD itself would otherwise
+ * supply every question), with the entities JSON-LD strings never carry decoded.
+ */
+const readableText = (html: string): string =>
+    stripTags(html.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' '))
+        .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+        .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+        .replace(/&apos;/g, "'")
+        .replace(/&quot;/g, '"')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
+
+/** The Organization facts every site's pages must agree on (SE-71). */
+function organizationProblems(nodes: unknown[], p: Problems): void {
+    const orgs = nodesOfType(nodes as any, 'Organization') as any[];
+    p.eq('Organization nodes', orgs.length, 1);
+    const o = orgs[0] ?? {};
+    for (const k of ['@id', 'url', 'name', 'legalName', 'description', 'foundingDate'] as const) {
+        p.eq(k, o[k], ORGANIZATION[k]);
+    }
+    p.eq('streetAddress', o.address?.streetAddress, ORGANIZATION.streetAddress);
+    const ids = Object.fromEntries((o.identifier ?? []).map((i: any) => [i.propertyID, i.value]));
+    p.eq('identifiers', ids, ORGANIZATION.identifiers);
+    const sameAs: string[] = o.sameAs ?? [];
+    for (const url of ORGANIZATION.sameAsMustInclude) {
+        p.check(sameAs.includes(url), `sameAs lacks ${url}`);
+    }
+    for (const host of ORGANIZATION.sameAsMustIncludeHost) {
+        p.check(
+            sameAs.some((s) => new URL(s).host === host),
+            `sameAs lacks a ${host} entry`
+        );
+    }
+    for (const re of ORGANIZATION.sameAsMustExclude) {
+        p.check(!sameAs.some((s) => re.test(s)), `sameAs contains ${re}`);
+    }
+    p.eq(
+        'founder',
+        { type: o.founder?.['@type'], name: o.founder?.name },
+        { type: 'Person', name: ORGANIZATION.founder.name }
+    );
+    p.check([o.founder?.sameAs].flat().includes(ORGANIZATION.founder.sameAs), 'founder sameAs lacks the Wikidata item');
+    p.check(
+        (o.contactPoint ?? []).length > 0 &&
+            (o.contactPoint ?? []).every((c: any) => c.areaServed === ORGANIZATION.contactAreaServed),
+        'contactPoint entries lack areaServed Worldwide'
+    );
+}
+
+/** The single image URL a JSON-LD image or logo value names (a string, an ImageObject or a list). */
+const imageUrl = (value: any): string | undefined =>
+    typeof value === 'string' ? value : Array.isArray(value) ? imageUrl(value[0]) : (value?.url ?? value?.contentUrl);
+
+/** HEADs an image: 200 with an image/* content type, or why not. */
+async function imageProblem(http: Http, url: string | undefined): Promise<string | undefined> {
+    if (!url) {
+        return 'no image URL';
+    }
+    const res = await http.head(url);
+    const type = header(res, 'content-type') ?? '';
+    return res.status === 200 && /^image\//.test(type) ? undefined : `${url}: ${res.status} ${type}`;
+}
+
+/** Blog links on the main-site pages that link the blog most (SE-113): each must answer 200 itself. */
+const BLOG_TARGET_PAGES: PageKey[] = ['home', 'whatsNew', 'chartsWhatsNew', 'studioCommunity'];
+
 const oneMain = (html: string, p: Problems) => p.eq('<main> count', countTags(html, 'main'), 1);
 const viewport = (html: string, p: Problems) => {
     const v = metaContents(html, 'viewport');
@@ -128,10 +203,34 @@ export function seoContentChecks(): CheckDef[] {
             { knownIssue: `${finding(15)} (charts home page has two H1s)`, fixedBy: PENDING.chartsSeo }
         ),
         perPage(
+            'h1.charts-home-text',
+            'Charts home: one H1 whose visible text (no <noscript>, no aria-hidden copies) is the hero line',
+            ['SE-41', 'ag-charts#8440 / #8441'],
+            ['chartsHome'],
+            (html, p) => {
+                const h1 = headings(visibleOnly(html)).filter((h) => h.level === 1);
+                p.eq('H1 count', h1.length, 1);
+                p.check(CHARTS_H1.test(h1[0]?.text ?? ''), `H1 text "${h1[0]?.text}"`);
+            }
+        ),
+        perPage(
             'headings.no-empty',
             'No empty heading elements in the server HTML',
             ['SE-42', 'SE-8'],
             ['home', 'reactDocs'],
+            (html, p) => {
+                const empty = headings(html).filter((h) => !h.text);
+                p.check(
+                    !empty.length,
+                    `${empty.length} empty headings (${empty.map((h) => 'h' + h.level).join(', ')})`
+                );
+            }
+        ),
+        perPage(
+            'headings.no-empty-subsites',
+            'No empty heading elements in the server HTML on charts and studio',
+            ['SE-42'],
+            ['chartsHome', 'studioHome'],
             (html, p) => {
                 const empty = headings(html).filter((h) => !h.text);
                 p.check(
@@ -209,6 +308,23 @@ export function seoContentChecks(): CheckDef[] {
             }
         ),
         perPage(
+            'json-ld.faq-visible',
+            'Every FAQPage question is visible on the page, not only in the markup',
+            ['SE-47'],
+            ['home'],
+            (html, p) => {
+                const faq = nodesOfType(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    'FAQPage'
+                )[0] as any;
+                const questions: string[] = (faq?.mainEntity ?? []).map((q: any) => String(q.name ?? ''));
+                p.check(questions.length > 0, 'no FAQPage questions');
+                const text = readableText(html);
+                const hidden = questions.filter((q) => !text.includes(q.replace(/\s+/g, ' ').trim()));
+                p.check(!hidden.length, `not in the page text: ${hidden.map((q) => JSON.stringify(q)).join(', ')}`);
+            }
+        ),
+        perPage(
             'json-ld.faq-home-only',
             'FAQPage appears only on the home page',
             ['SE-47'],
@@ -231,42 +347,7 @@ export function seoContentChecks(): CheckDef[] {
             ['home', 'about', 'reactDocs'],
             (html, p) => {
                 const nodes = validJsonLdNodes(html, (m) => p.add(m));
-                const orgs = nodesOfType(nodes, 'Organization') as any[];
-                p.eq('Organization nodes', orgs.length, 1);
-                const o = orgs[0] ?? {};
-                for (const k of ['@id', 'url', 'name', 'legalName', 'description', 'foundingDate'] as const) {
-                    p.eq(k, o[k], ORGANIZATION[k]);
-                }
-                p.eq('streetAddress', o.address?.streetAddress, ORGANIZATION.streetAddress);
-                const ids = Object.fromEntries((o.identifier ?? []).map((i: any) => [i.propertyID, i.value]));
-                p.eq('identifiers', ids, ORGANIZATION.identifiers);
-                const sameAs: string[] = o.sameAs ?? [];
-                for (const url of ORGANIZATION.sameAsMustInclude) {
-                    p.check(sameAs.includes(url), `sameAs lacks ${url}`);
-                }
-                for (const host of ORGANIZATION.sameAsMustIncludeHost) {
-                    p.check(
-                        sameAs.some((s) => new URL(s).host === host),
-                        `sameAs lacks a ${host} entry`
-                    );
-                }
-                for (const re of ORGANIZATION.sameAsMustExclude) {
-                    p.check(!sameAs.some((s) => re.test(s)), `sameAs contains ${re}`);
-                }
-                p.eq(
-                    'founder',
-                    { type: o.founder?.['@type'], name: o.founder?.name },
-                    { type: 'Person', name: ORGANIZATION.founder.name }
-                );
-                p.check(
-                    [o.founder?.sameAs].flat().includes(ORGANIZATION.founder.sameAs),
-                    'founder sameAs lacks the Wikidata item'
-                );
-                p.check(
-                    (o.contactPoint ?? []).length > 0 &&
-                        (o.contactPoint ?? []).every((c: any) => c.areaServed === ORGANIZATION.contactAreaServed),
-                    'contactPoint entries lack areaServed Worldwide'
-                );
+                organizationProblems(nodes, p);
                 const app = nodesOfType(nodes, 'SoftwareApplication')[0] as any;
                 p.check(
                     [app?.sameAs].flat().includes(ORGANIZATION.softwareSameAs),
@@ -275,6 +356,34 @@ export function seoContentChecks(): CheckDef[] {
                 p.eq('SoftwareApplication publisher', app?.publisher?.['@id'], ORGANIZATION['@id']);
             }
         ),
+        perPage(
+            'json-ld.organization-subsites',
+            'Charts and studio pages carry the same Organization node as grid',
+            ['SE-71'],
+            ['chartsHome', 'studioHome'],
+            (html, p) =>
+                organizationProblems(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    p
+                )
+        ),
+        {
+            id: 'seo-content.json-ld.organization-logo',
+            area: 'seo-content',
+            title: 'The home Organization logo loads as an image',
+            refs: ['SE-43'],
+            async run({ http }) {
+                const p = new Problems();
+                const org = nodesOfType(
+                    validJsonLdNodes(await page(http, 'home'), (m) => p.add(m)),
+                    'Organization'
+                )[0] as any;
+                const url = imageUrl(org?.logo);
+                const problem = await imageProblem(http, url);
+                p.check(!problem, `Organization.logo ${problem}`);
+                return p.outcome(url);
+            },
+        },
         perPage(
             'json-ld.docs-offers',
             'Docs SoftwareApplication carries only the Community offer (no priceless Enterprise offer)',
@@ -290,6 +399,24 @@ export function seoContentChecks(): CheckDef[] {
                     'offers',
                     offers.map((o: any) => ({ name: o.name, price: o.price })),
                     [DOCS_OFFER]
+                );
+            }
+        ),
+        perPage(
+            'json-ld.charts-offers',
+            'Charts docs SoftwareApplication carries only the AG Charts Community offer',
+            ['SE-162'],
+            ['chartsDocs'],
+            (html, p) => {
+                const app = nodesOfType(
+                    validJsonLdNodes(html, (m) => p.add(m)),
+                    'SoftwareApplication'
+                )[0] as any;
+                const offers = [app?.offers ?? []].flat();
+                p.eq(
+                    'offers',
+                    offers.map((o: any) => ({ name: o.name, price: o.price })),
+                    [CHARTS_OFFER]
                 );
             }
         ),
@@ -319,6 +446,22 @@ export function seoContentChecks(): CheckDef[] {
             }
         ),
         perPage(
+            'json-ld.docs-source-per-framework',
+            "Each framework's docs page describes its own examples' platform, about that page's article",
+            ['SE-63'],
+            DOCS_SOURCE_PLATFORMS.map((d) => d.page),
+            (html, p, key) => {
+                const nodes = validJsonLdNodes(html, (m) => p.add(m));
+                const sources = nodesOfType(nodes, 'SoftwareSourceCode') as any[];
+                const expected = DOCS_SOURCE_PLATFORMS.find((d) => d.page === key)!.runtimePlatform;
+                p.check(sources.length > 0, 'no SoftwareSourceCode node');
+                for (const source of sources) {
+                    p.eq('runtimePlatform', source.runtimePlatform, expected);
+                    p.eq('about', source.about?.['@id'], `${WWW}${PAGES[key]}#article`);
+                }
+            }
+        ),
+        perPage(
             'canonical.self',
             'Self-referencing canonical',
             ['SE-85', 'SE-63'],
@@ -333,6 +476,17 @@ export function seoContentChecks(): CheckDef[] {
             (html, p) => {
                 // Testimonial cards use <footer> for the quote attribution; the site footer is the one
                 // whose link lists are labelled by footer-* ids.
+                const site = sections(html, 'footer').filter((f) => /aria-labelledby="footer-/.test(f));
+                p.eq('site footers', site.length, 1);
+                p.check(!site.some((f) => /<h[1-6]\b/i.test(f)), 'heading element inside the site footer');
+            }
+        ),
+        perPage(
+            'footer.no-headings-subsites',
+            'Footer column titles are not headings on charts and studio',
+            ['SE-45'],
+            ['chartsHome', 'studioHome'],
+            (html, p) => {
                 const site = sections(html, 'footer').filter((f) => /aria-labelledby="footer-/.test(f));
                 p.eq('site footers', site.length, 1);
                 p.check(!site.some((f) => /<h[1-6]\b/i.test(f)), 'heading element inside the site footer');
@@ -373,6 +527,21 @@ export function seoContentChecks(): CheckDef[] {
                     ? pass(img)
                     : fail(`${img}: ${res.status}`);
             },
+        },
+        {
+            id: 'seo-content.social-images.resolve-subsites',
+            area: 'seo-content',
+            title: 'The charts and studio og:image loads',
+            refs: ['SE-48'],
+            run: budgeted(async ({ http }, p) => {
+                for (const key of ['chartsHome', 'studioHome'] as const) {
+                    const img = metaContents(await page(http, key), 'og:image')[0];
+                    // Relative on both today (seo-content.social-images.absolute-*): resolved as a browser would.
+                    const problem = await imageProblem(http, img && new URL(img, `${WWW}${PAGES[key]}`).href);
+                    p.check(!problem, `${PAGES[key]} og:image ${problem}`);
+                }
+                return p.outcome();
+            }),
         },
         perPage(
             'landmark.main',
@@ -438,12 +607,53 @@ export function seoContentChecks(): CheckDef[] {
             'links.no-old-blog-host',
             'No link points at blog.ag-grid.com',
             ['SE-113', 'SE-87'],
-            ['home', 'reactDocs', 'chartsHome', 'studioHome', 'chartsWhatsNew', 'studioCommunity'],
+            ['home', 'reactDocs', 'chartsHome', 'studioHome', 'chartsWhatsNew', 'studioCommunity', 'whatsNew'],
             (html, p) => {
                 const n = html.split(OLD_BLOG_HREF).length - 1;
                 p.check(n === 0, `${n} ${OLD_BLOG_HREF}… attributes`);
             }
         ),
+        {
+            id: 'seo-content.links.blog-targets-direct',
+            area: 'seo-content',
+            title: `Blog links on ${BLOG_TARGET_PAGES.map((k) => PAGES[k]).join(', ')} answer 200 without a redirect`,
+            refs: ['SE-113'],
+            run: budgeted(async ({ http }, p) => {
+                const targets = new Set<string>();
+                for (const key of BLOG_TARGET_PAGES) {
+                    for (const href of anchorHrefs(await page(http, key))) {
+                        const url = new URL(href.replace(/&amp;/g, '&'), `${WWW}${PAGES[key]}`);
+                        if (url.host === 'www.ag-grid.com' && url.pathname.startsWith('/blog/')) {
+                            targets.add(url.href.split('#')[0]);
+                        }
+                    }
+                }
+                p.check(targets.size > 0, 'no blog links found');
+                for (const url of targets) {
+                    const res = await http.head(url);
+                    p.check(res.status === 200, `${url}: ${res.status} ${header(res, 'location') ?? ''}`.trim());
+                }
+                return p.outcome(`${targets.size} blog links`);
+            }),
+        },
+        {
+            id: 'seo-content.changelog.search-query-loads',
+            area: 'seo-content',
+            title: `${CHANGELOG_SEARCH.path} still loads for a visitor (robots only keeps crawlers off it)`,
+            refs: ['SE-183'],
+            async run({ http }) {
+                const res = await http.get(`${WWW}${CHANGELOG_SEARCH.path}`);
+                const p = new Problems();
+                p.eq('status', res.status, 200);
+                p.check(
+                    /^text\/html/.test(header(res, 'content-type') ?? ''),
+                    `content-type ${header(res, 'content-type')}`
+                );
+                const title = /<title>([^<]*)<\/title>/i.exec(res.body)?.[1] ?? '';
+                p.check(CHANGELOG_SEARCH.title.test(title), `title "${title}"`);
+                return p.outcome(title);
+            },
+        },
         ...['SE-44', 'SE-46'].map((ticket): CheckDef => ({
             id: `seo-content.not-checkable.${ticket}`,
             area: 'seo-content',

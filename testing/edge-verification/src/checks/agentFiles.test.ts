@@ -158,3 +158,36 @@ describe('agent-files md-twins needs a twin to test', () => {
         assert.match(result.detail ?? '', /no eligible twin to test/);
     });
 });
+
+describe('agent-files.grid.llms.mcp-line and agent-files.server-card.npm', () => {
+    async function run(id: string, respond: (url: string) => FakeResponse) {
+        const http = new FakeHttp((req) => respond(req.url));
+        try {
+            return await check(id).run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+    const text = (body: string): FakeResponse => ({ status: 200, headers: { 'content-type': 'text/plain' }, body });
+
+    it('passes llms.txt naming the MCP server, fails one that only links it', async () => {
+        const named = '- [MCP server](https://www.ag-grid.com/javascript-data-grid/mcp-server/): ag-mcp';
+        assert.equal((await run('agent-files.grid.llms.mcp-line', () => text(named))).status, 'pass');
+        const outcome = await run('agent-files.grid.llms.mcp-line', () =>
+            text('- [MCP](https://www.ag-grid.com/javascript-data-grid/mcp-server/)')
+        );
+        assert.equal(outcome.status, 'fail', outcome.detail);
+    });
+
+    it('passes a published ag-mcp with its binary, fails one without', async () => {
+        const npm = (latest: unknown) => () => text(JSON.stringify(latest));
+        const ok = await run(
+            'agent-files.server-card.npm',
+            npm({ name: 'ag-mcp', version: '1.0.0', bin: { 'ag-mcp': 'dist/index.js' } })
+        );
+        assert.equal(ok.status, 'pass', ok.detail);
+        const outcome = await run('agent-files.server-card.npm', npm({ name: 'ag-mcp', version: '1.0.1' }));
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /has no ag-mcp/);
+    });
+});

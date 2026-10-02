@@ -96,6 +96,13 @@ export const REDIRECTS: RedirectRow[] = [
         r(`${h}/react-data-grid/getting-started/${Q}`, `${WWW}/react-data-grid/getting-started/${Q}`, ['SE-26'])
     ),
     r('https://react-grid.ag-grid.com/', `${WWW}/`, ['SE-26']),
+    // Nick's SE-26 QA was over http: CloudFront upgrades the scheme first, then the host rule runs.
+    ...PHASE1_HOSTS.map((h) =>
+        r(`${h.replace('https:', 'http:')}/`, `${h}/`, ['SE-26'], {
+            hops: 2,
+            note: 'CloudFront http->https precedes the host rule',
+        })
+    ),
     r(`${CHARTS_HOST}/react/quick-start/${Q}`, `${WWW}/charts/react/quick-start/${Q}`, ['SE-29', 'SE-182']),
 
     // /charts and /studio on alias hosts: the child .htaccess files replace the root rewrite rules.
@@ -160,11 +167,26 @@ export const REDIRECTS: RedirectRow[] = [
         `${WWW}/charts/react/linear-gauge/?ref=blog.ag-grid.com`,
         ['SE-28']
     ),
+    ...['cone-funnel-series', 'pyramid-series', 'candlestick-series', 'ohlc-series', 'api-state', 'radial-gauge'].map(
+        (page) =>
+            r(
+                `${CHARTS_HOST}/react/${page}?ref=blog.ag-grid.com`,
+                `${WWW}/charts/react/${page}/?ref=blog.ag-grid.com`,
+                ['SE-28']
+            )
+    ),
     r(`${CHARTS_HOST}/javascript/toolbar/`, `${WWW}/charts/javascript/financial-charts-toolbar/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/react/toolbar/`, `${WWW}/charts/react/financial-charts-toolbar/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/react/line/`, `${WWW}/charts/react/line-series/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/sitemap.xml`, `${WWW}/charts/sitemap-0.xml`, ['SE-186']),
-    rp(`${WWW}/charts/angular/bullet-series/`, `${WWW}/charts/angular/linear-gauge/`, ['SE-29', 'SE-66']),
+    // Exactly #bullet-series, as Nick's 07-20 QA has it: today the bare Redirect adds a slash to it.
+    ...['angular', 'javascript', 'vue'].map((fw) =>
+        r(`${WWW}/charts/${fw}/bullet-series/`, `${WWW}/charts/${fw}/linear-gauge/#bullet-series`, ['SE-29', 'SE-66'], {
+            knownIssue: finding(2),
+            fixedBy: PENDING.chartsHosts,
+            note: 'bare Redirect appends the trailing slash to the anchor (#bullet-series/)',
+        })
+    ),
     r(`${WWW}/charts/react/bullet-series/`, `${WWW}/charts/react/linear-gauge/#bullet-series`, ['SE-29', 'SE-66'], {
         knownIssue: finding(2),
         fixedBy: PENDING.chartsHosts,
@@ -477,6 +499,9 @@ export const REDIRECTS: RedirectRow[] = [
     r(`${BLOG_HOST}/tag/angular/`, `${WWW}/blog/tag/angular/`, ['SE-91']),
     r(`${BLOG_HOST}/page/2/`, `${WWW}/blog/page/2/`, ['SE-91']),
     r(`${BLOG_HOST}/rss/`, `${WWW}/blog/rss/`, ['SE-91', 'SE-90']),
+    r(`${BLOG_HOST}/author/adam/`, `${WWW}/blog/author/adam/`, ['SE-91']),
+    r(`${BLOG_HOST}/newsletter/`, `${WWW}/blog/newsletter/`, ['SE-91']),
+    status(`${BLOG_HOST}/WHATS-NEW-IN-AG-GRID-V24/feed/`, 410, ['SE-91'], { note: 'upper-case slug' }),
     r(`${BLOG_HOST}/whats-new-in-ag-grid-35-3/amp/`, `${WWW}/blog/whats-new-in-ag-grid-35-3/`, ['SE-91']),
     status(`${BLOG_HOST}/ag-grid-vs-datatables/`, 410, ['SE-91']),
     status(`${BLOG_HOST}/whats-new-in-ag-grid-v24/`, 410, ['SE-91', 'SE-94']),

@@ -4,6 +4,8 @@ export const PAGES = {
     home: '/',
     reactDocs: '/react-data-grid/getting-started/',
     jsDocs: '/javascript-data-grid/getting-started/',
+    vueDocs: '/vue-data-grid/getting-started/',
+    whatsNew: '/whats-new/',
     about: '/about/',
     pricing: '/license-pricing/',
     letsCook: '/community/lets-cook/',
@@ -20,6 +22,8 @@ export const PAGES = {
 
 /** SE-41: the hero H1, server-rendered once with the default framework (aria-hidden layout copies excluded). */
 export const HOME_H1 = /^The Best\s*JavaScript\s*Grid in the World$/;
+/** SE-41: the charts hero H1, once <noscript> and aria-hidden copies are set aside. */
+export const CHARTS_H1 = /^The Best\s*JavaScript\s*Charts in the World$/;
 /** SE-41: the other framework words must not be in the server-rendered H1 at all. */
 export const OTHER_FRAMEWORKS = /\b(React|Angular|Vue)\b/;
 
@@ -64,6 +68,16 @@ export const ORGANIZATION = {
 
 /** SE-162: docs pages carry only the valid Community offer. */
 export const DOCS_OFFER = { name: 'AG Grid Community', price: '0' };
+export const CHARTS_OFFER = { name: 'AG Charts Community', price: '0' };
+
+/** SE-63: each framework's docs page describes its own examples, tied to that page's article. */
+export const DOCS_SOURCE_PLATFORMS: Array<{ page: 'reactDocs' | 'vueDocs'; runtimePlatform: string }> = [
+    { page: 'reactDocs', runtimePlatform: 'React' },
+    { page: 'vueDocs', runtimePlatform: 'Vue' },
+];
+
+/** SE-183: a disallowed changelog search URL still loads for a visitor. */
+export const CHANGELOG_SEARCH = { path: '/changelog/?searchQuery=edge-check', title: /Changelog/ };
 
 /** SE-166: internal link targets that redirect; none may appear as an href on these pages. */
 export const REDIRECTING_HREFS = [

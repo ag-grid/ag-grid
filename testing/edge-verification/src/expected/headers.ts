@@ -70,6 +70,12 @@ export const NOT_MODIFIED_PROBE = `${WWW}/charts/archive/14.2.0/react/quick-star
 /** The long archive cache its 200 must carry (as archive.grid-released expects) for the 304 to keep. */
 export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 
+/** SE-38: X-Frame-Options is deliberately absent (CSP frame-ancestors allows the *.ag-grid.com embeds). */
+export const NO_X_FRAME_OPTIONS_URLS = [`${WWW}/`, `${WWW}/react-data-grid/getting-started/`, `${WWW}/blog/`];
+
+/** SE-93: the old blog host's 301 carries the site-wide security headers, not just HSTS. */
+export const BLOG_HOST_REDIRECT = { url: 'https://blog.ag-grid.com/', location: `${WWW}/blog/` };
+
 /** Sean's site-wide rule: no browser may cache a response for more than 7 days (s-maxage exempt). */
 export const BROWSER_CACHE_CAP_SECONDS = 604800;
 
@@ -383,6 +389,15 @@ export const HEADER_ROWS: HeaderRow[] = [
         refs: ['SE-189', 'SE-186'],
     },
     {
+        id: 'root.favicon.type',
+        title: '/favicon.ico is served as an icon',
+        url: `${WWW}/favicon.ico`,
+        method: 'HEAD',
+        status: 200,
+        expect: { 'content-type': /^image\/(vnd\.microsoft\.icon|x-icon)$/ },
+        refs: ['SE-186'],
+    },
+    {
         id: 'root.llms',
         title: '/llms.txt: text/plain, no Link',
         url: `${WWW}/llms.txt`,
@@ -439,6 +454,15 @@ export const HEADER_ROWS: HeaderRow[] = [
         refs: ['SE-24', 'SE-29'],
     },
     {
+        id: 'archive.charts-host-noindex.deep-page',
+        title: 'A deep page under charts.ag-grid.com/archive/ serves X-Robots-Tag: noindex, nofollow',
+        url: 'https://charts.ag-grid.com/archive/10.0.2/react/quick-start/',
+        method: 'HEAD',
+        status: 200,
+        expect: { 'x-robots-tag': 'noindex, nofollow' },
+        refs: ['SE-24'],
+    },
+    {
         id: 'archive.charts-404-not-cached',
         title: 'A missing page under a charts archive is not cacheable for a year',
         url: `${WWW}/charts/archive/14.2.0/edge-check-missing-page/`,
@@ -479,12 +503,13 @@ export const HEADER_ROWS: HeaderRow[] = [
         'https://ecommerce.ag-grid.com/',
         'https://registry.ag-grid.com/',
         'https://registry.ag-grid.com/-/verdaccio/data/packages',
+        'https://registry.ag-grid.com/@ag-grid-community/core',
     ].map((url, i): HeaderRow => ({
         id: `internal-host.noindex.${i}`,
         title: `${url} sends X-Robots-Tag: noindex, nofollow`,
         url,
         method: 'HEAD',
-        expect: { 'x-robots-tag': /noindex/ },
+        expect: { 'x-robots-tag': /noindex,\s*nofollow/ },
         refs: ['SE-187'],
     })),
 ];

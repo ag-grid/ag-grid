@@ -93,6 +93,8 @@ export const ROBOTS_MATRIX: RobotsRow[] = [
     both('/blog/ghost/api/admin/', false, ['SE-89']),
     both('/blog/members/api/comments/counts/', false, ['SE-89']),
     both('/debug/anything/', false, ['SE-78']),
+    // An example under a nested /debug/ stays closed to the AI group too (robotsTxt.ts includes('/debug/')).
+    both('/charts/debug/docs-examples/', false, ['SE-78']),
     { url: '/examples/anything/', star: false, ai: true, refs: ['SE-78', 'SE-182'] },
     { url: '/charts/react/bar-series/examples/basic/', star: false, ai: true, refs: ['SE-78'] },
     both('/charts/react/benchmarks/', false, ['SE-78']),
@@ -122,6 +124,7 @@ export const ROBOTS_MATRIX: RobotsRow[] = [
     { url: '/archive/36.2.0/react-data-grid/getting-started/', star: false, ai: true, refs: ['SE-182', finding(12)] },
     { url: '/charts/archive/11.2.0/', star: false, ai: true, refs: ['SE-182', finding(12)] },
     { url: '/studio/archive/1.0.0/', star: false, ai: true, refs: ['SE-182', finding(12)] },
+    { url: '/studio/archive/', star: false, ai: true, refs: ['SE-182'] },
     // SE-182 / waf-finding.md §12: the archive roots should be crawlable so their 301 is visible.
     both('/archive/', true, ['SE-182', finding(12), 'grid#15434 / #15435'], { pending: PENDING.gridRobotsTwins }),
     both('/charts/archive/', true, ['SE-182', finding(12), 'grid#15434 / #15435'], {
@@ -130,6 +133,8 @@ export const ROBOTS_MATRIX: RobotsRow[] = [
     // ...and only the roots: Allow: /archive/$ must not open the archived pages to search.
     { url: '/archive/36.2.0/', star: false, ai: true, refs: ['SE-182', 'grid#15434 / #15435'] },
     { url: '/charts/archive/14.2.0/', star: false, ai: true, refs: ['SE-182', 'grid#15434 / #15435'] },
+    // ...nor a query string on the root: Allow: /archive/$ ends there.
+    { url: '/archive/?utm_source=edge-check', star: false, ai: true, refs: ['SE-182', 'grid#15434 / #15435'] },
 ];
 
 /** Every robots.txt the site serves. */
