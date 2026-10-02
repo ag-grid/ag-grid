@@ -774,6 +774,133 @@ describe('SSRM level consistency check', () => {
             expect(events[1].inconsistencies).toEqual([{ type: 'duplicated', boundaryIndex: 10, rowIds: ['G0-9'] }]);
         });
     });
+    describe('dispatch per level', () => {
+        const enabled: GridOptions<Row> = { serverSideCheckLevelConsistency: true };
+
+        async function respondTo(server: ReturnType<typeof createDeferredServer>, startRow: number) {
+            await waitFor(() => expect([...server.pending.keys()]).toEqual([startRow]));
+            server.respond(startRow);
+        }
+
+        test('keeps a pending report through a refresh started before the level settles', async () => {
+            const server = createDeferredServer();
+            const { api, events } = startGrid(server.getRows, { ...enabled, serverSideInitialRowCount: TOTAL_ROWS });
+            await respondTo(server, 0);
+            server.rows.splice(3, 1);
+            await respondTo(server, 10);
+            await waitFor(() => expect([...server.pending.keys()]).toEqual([20]));
+
+            api.refreshServerSide({ purge: false });
+            server.respond(20);
+            await respondTo(server, 0);
+            server.rows.splice(14, 1);
+            await respondTo(server, 10);
+            server.respondToAll();
+            await waitFor(() => expect(events).toHaveLength(1));
+            await waitForLoadingFinished(api);
+
+            expect(events).toHaveLength(1);
+            expect(events[0].inconsistencies).toEqual([
+                { type: 'dropped', boundaryIndex: 10, rowIds: [] },
+                { type: 'duplicated', boundaryIndex: 20, rowIds: ['21'] },
+            ]);
+        });
+
+        test('reports a level without waiting for another level to finish loading', async () => {
+            const inconsistent = createServer({ 0: (rows) => rows.splice(3, 1) });
+            const held: IServerSideGetRowsParams<Row>[] = [];
+            const { api, events } = await createGrid(
+                (params) => {
+                    const [groupKey] = params.request.groupKeys;
+                    if (groupKey === undefined) {
+                        params.success({ rowData: [{ id: 'G0' }, { id: 'G1' }], rowCount: 2 });
+                    } else if (groupKey === 'G1') {
+                        held.push(params);
+                    } else {
+                        inconsistent.getRows(params);
+                    }
+                },
+                {
+                    ...enabled,
+                    maxConcurrentDatasourceRequests: 2,
+                    columnDefs: [{ field: 'id', rowGroup: true, hide: true }],
+                    getRowId: ({ data, level, parentKeys }) => (level === 0 ? data.id : `${parentKeys![0]}-${data.id}`),
+                }
+            );
+
+            api.getRowNode('G1')!.setExpanded(true);
+            await waitFor(() => expect(held).toHaveLength(1));
+            api.getRowNode('G0')!.setExpanded(true);
+            await waitFor(() => expect(events).toHaveLength(1));
+
+            expect(held).toHaveLength(1);
+            expect(events[0].route).toEqual(['G0']);
+            expect(events[0].inconsistencies).toEqual([{ type: 'dropped', boundaryIndex: 10, rowIds: [] }]);
+
+            held[0].success({ rowData: [{ id: 'x' }], rowCount: 1 });
+            await waitFor(() => expect(api.getRowNode('G1-x')).toBeDefined());
+            await waitForLoadingFinished(api);
+            expect(events).toHaveLength(1);
+        });
+
+        test('coalesces a level loading block by block with no row count into one event', async () => {
+            const server = createServer({
+                0: (rows) => rows.splice(3, 1),
+                10: (rows) => rows.splice(12, 1),
+            });
+            const getRows = (params: IServerSideGetRowsParams<Row>) => {
+                server.getRows({ ...params, success: ({ rowData }) => params.success({ rowData }) });
+            };
+            const { api, events } = await createGrid(getRows, enabled);
+
+            expect(server.requests.map(([start]) => start)).toEqual([0, 10, 20]);
+            expect(api.getDisplayedRowCount()).toBe(28);
+            expect(events).toHaveLength(1);
+            expect(events[0].inconsistencies).toEqual([
+                { type: 'dropped', boundaryIndex: 10, rowIds: [] },
+                { type: 'dropped', boundaryIndex: 20, rowIds: [] },
+            ]);
+        });
+
+        test('delivers reports while the same level is refreshed on every response against shifting data', async () => {
+            const server = createServer();
+            let responsesLeft = 0;
+            let added = 0;
+            const getRows = (params: IServerSideGetRowsParams<Row>) => {
+                server.getRows(params);
+                if (responsesLeft > 0) {
+                    server.rows.unshift({ id: `new${added++}` });
+                    if (--responsesLeft % 3 === 0) {
+                        api.refreshServerSide({ purge: false });
+                    }
+                }
+            };
+            const { api, events } = await createGrid(getRows, enabled);
+            expect(events).toEqual([]);
+
+            for (let cycle = 1; cycle <= 2; ++cycle) {
+                responsesLeft = 9;
+                api.refreshServerSide({ purge: false });
+                await waitFor(() => expect(responsesLeft).toBe(0));
+                await waitFor(() => expect(events).toHaveLength(cycle));
+                await waitForLoadingFinished(api);
+            }
+
+            expect(events).toHaveLength(2);
+            for (const { inconsistencies } of events) {
+                const boundaries = inconsistencies.map(({ boundaryIndex }) => boundaryIndex);
+                expect(new Set(boundaries).size).toBe(boundaries.length);
+                for (const { boundaryIndex, rowIds } of inconsistencies) {
+                    expect(boundaryIndex % BLOCK_SIZE).toBe(0);
+                    expect(new Set(rowIds).size).toBe(rowIds.length);
+                }
+            }
+            const displayed = displayedIds(api);
+            expect(new Set(displayed).size).toBe(displayed.length);
+            expect(displayed).toEqual(server.rows.map(({ id }) => id));
+        });
+    });
+
     describe('tree data against a server snapshot replaced once a second', () => {
         const FOLDER_COUNT = 25;
         const LEAF_COUNT = 25;
