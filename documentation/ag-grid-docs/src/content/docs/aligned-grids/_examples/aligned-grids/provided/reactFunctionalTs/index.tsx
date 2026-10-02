@@ -90,8 +90,8 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="container">
-                <div className="header example-controls">
+            <div className="example-wrapper">
+                <div className="example-controls">
                     <div className="controls-row">
                         <label>
                             <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
@@ -119,8 +119,6 @@ const GridExample = () => {
                         autoSizeStrategy={autoSizeStrategy}
                     />
                 </div>
-
-                <div className="divider"></div>
 
                 <div className="grid">
                     <AgGridReact

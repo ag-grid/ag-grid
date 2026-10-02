@@ -60,8 +60,8 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="test-container">
-                <div className="test-header example-controls">
+            <div className="example-wrapper">
+                <div className="example-controls">
                     <div className="controls-row" id="firstDataRendered">
                         First Data Rendered: <span className="value">-</span>
                     </div>

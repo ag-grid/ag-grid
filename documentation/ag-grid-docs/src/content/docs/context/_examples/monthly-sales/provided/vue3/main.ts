@@ -41,8 +41,8 @@ ModuleRegistry.registerModules([
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
-            <div class="test-container">
-                <div class="test-header example-controls">
+            <div class="example-wrapper">
+                <div class="example-controls">
                     <div class="controls-row">
                         <input type="text" id="filter-text-box" style="width: 100px;" v-on:input="onQuickFilterChanged()" placeholder="Filter...">
                         <span style="padding-left: 20px;">
