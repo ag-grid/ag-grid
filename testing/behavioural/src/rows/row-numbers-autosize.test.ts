@@ -152,6 +152,24 @@ describe('Row numbers column autosize', () => {
         expect(rowNumberWidth(api)).toBe(60);
     });
 
+    test('sizes and latches on the valueFormatter output, not the bare row number', async () => {
+        const api = await createGrid(97, {
+            rowNumbers: { valueFormatter: ({ value }) => `Row ${value}` },
+        });
+        expect(rowNumberWidth(api)).toBe(widthFor('Row 98'));
+
+        api.applyTransaction({ add: makeRows(1, 97) });
+        await pastDebounce();
+        expect(rowNumberWidth(api)).toBe(widthFor('Row 98'));
+
+        api.applyTransaction({ add: makeRows(2, 98) });
+        await expectWidth(api, 'Row 101');
+
+        api.applyTransaction({ remove: makeRows(5, 95) });
+        await pastDebounce();
+        expect(rowNumberWidth(api)).toBe(widthFor('Row 101'));
+    });
+
     test('a full rowData reset still re-sizes to fit, including shrinking', async () => {
         const api = await createGrid(100, { getRowId: undefined });
 
