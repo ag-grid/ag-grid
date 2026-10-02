@@ -156,17 +156,17 @@ function siteChecks(site: AgentSite): CheckDef[] {
                 const all = linksIn(sections, site.index);
                 const chosen = opts.fullLinks ? all : sample(all, INDEX_SAMPLE_SIZE);
                 const checked = await checkAll(http, chosen, p);
-                if (!opts.fullLinks) {
-                    const direct: string[] = [];
-                    for (const link of chosen) {
-                        const twin = twinOf(link);
-                        if (twin && (await http.head(link)).status === 200) {
-                            direct.push(twin);
-                        }
+                // The twins of the default sample, in either mode: --full-links widens the page check
+                // but must not drop the twin check (twins of every index page would double the run).
+                const direct: string[] = [];
+                for (const link of opts.fullLinks ? sample(all, INDEX_SAMPLE_SIZE) : chosen) {
+                    const twin = twinOf(link);
+                    if (twin && (await http.head(link)).status === 200) {
+                        direct.push(twin);
                     }
-                    await checkAll(http, direct, p);
                 }
-                return p.outcome(`${checked} of ${all.length} index links (+ twins)`);
+                const twins = await checkAll(http, direct, p);
+                return p.outcome(`${checked} of ${all.length} index links (+ ${twins} twins)`);
             }),
         },
         {
