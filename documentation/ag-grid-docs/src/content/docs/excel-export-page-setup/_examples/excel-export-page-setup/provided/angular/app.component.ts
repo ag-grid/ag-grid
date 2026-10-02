@@ -32,7 +32,7 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     selector: 'my-app',
-    template: `<div class="container">
+    template: `<div class="example-wrapper">
         <form class="example-controls" (submit)="onFormSubmit($event)">
             <div class="columns controls-row">
                 <div class="column">

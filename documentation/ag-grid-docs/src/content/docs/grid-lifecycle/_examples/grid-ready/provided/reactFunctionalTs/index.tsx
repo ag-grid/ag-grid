@@ -48,8 +48,8 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="test-container">
-                    <div className="test-header">
+                <div className="example-wrapper">
+                    <div className="example-header">
                         <div className="example-controls" style={{ marginBottom: '1rem' }}>
                             <div className="controls-row">
                                 <input type="checkbox" id="pinFirstColumnOnLoad" />

@@ -43,8 +43,8 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     selector: 'my-app',
-    template: `<div class="test-container">
-        <div class="test-header example-controls">
+    template: `<div class="example-wrapper">
+        <div class="example-controls">
             <div class="controls-row">
                 <input
                     type="text"

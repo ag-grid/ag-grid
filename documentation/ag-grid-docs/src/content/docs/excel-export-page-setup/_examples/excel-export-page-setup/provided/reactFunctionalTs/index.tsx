@@ -100,7 +100,7 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="container">
+                <div className="example-wrapper">
                     <form
                         className="example-controls"
                         onSubmit={(e: React.FormEvent<HTMLFormElement>) => onFormSubmit(e)}

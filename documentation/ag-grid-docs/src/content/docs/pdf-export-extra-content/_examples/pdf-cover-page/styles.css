@@ -1,12 +1,5 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.example-wrapper {
     gap: 8px;
-}
-
-.grid-wrapper {
-    flex: 1 1 0;
 }
 
 #myGrid {

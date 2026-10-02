@@ -28,7 +28,7 @@ ModuleRegistry.registerModules([
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
-            <div class="container">
+            <div class="example-wrapper">
                 <form class="example-controls" @submit="this.onFormSubmit">
                     <div class="columns controls-row">
                         <div class="column">

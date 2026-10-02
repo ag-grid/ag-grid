@@ -194,8 +194,8 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="test-container">
-                    <div className="test-header example-controls">
+                <div className="example-wrapper">
+                    <div className="example-controls">
                         <div className="controls-row">
                             <input
                                 type="text"

@@ -1,13 +1,3 @@
-.test-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.test-header {
+.example-header {
     margin-bottom: 0.5rem;
-}
-
-#myGrid {
-    flex: 1 1 0px;
 }

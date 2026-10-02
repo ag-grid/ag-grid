@@ -1,23 +1,13 @@
-.test-grid {
-    flex: 1 1 auto;
-}
-
-.test-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.test-header {
+.example-header {
     margin-bottom: 1rem;
 }
 
-.test-header label {
+.example-header label {
     margin-left: 10px;
     margin-right: 10px;
 }
 
-.test-header label:first-child {
+.example-header label:first-child {
     margin-left: 0;
 }
 
