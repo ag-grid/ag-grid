@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     addFilterCard: 'Tilføj filter',
     agTextColumnFilterDisplayName: 'Simpelt filter',
     agNumberColumnFilterDisplayName: 'Simpelt filter',
+    agBigIntColumnFilterDisplayName: 'Simpelt filter',
     agDateColumnFilterDisplayName: 'Simpelt filter',
     agSetColumnFilterDisplayName: 'Valgfilter',
     agMultiColumnFilterDisplayName: 'Kombinationsfilter',

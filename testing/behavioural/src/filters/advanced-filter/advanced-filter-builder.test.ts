@@ -517,6 +517,29 @@ describe('Advanced Filter - Builder UI', () => {
             );
         });
 
+        test("an operand typed into a pill is trimmed by the column's `trimInput`, as a typed expression is", async () => {
+            const api = gridsManager.createGrid('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter', filterParams: { trimInput: true } }],
+            });
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel({ filterType: 'text', colId: 'athlete', type: 'contains', filter: 'x' });
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            await builder.setValue((await builder.conditionItems())[0], '  Bolt  ');
+            await builder.apply();
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'contains',
+                filter: 'Bolt',
+            });
+            expect(getDisplayedAthletes(api)).toEqual(['Usain Bolt']);
+        });
+
         test('clearing model via null removes filter', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
             await new GridColumns(api, `clearing model via null removes filter setup`).checkColumns(`
@@ -595,5 +618,24 @@ describe('Advanced Filter - Builder UI', () => {
                 'is not blank',
             ]);
         });
+    });
+
+    test('turning the Advanced Filter off closes an open Builder, reporting it hidden once', async () => {
+        const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+        const visibility: { source: string; visible: boolean }[] = [];
+        api.addEventListener('advancedFilterBuilderVisibleChanged', ({ source, visible }) =>
+            visibility.push({ source, visible })
+        );
+        api.showAdvancedFilterBuilder();
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder')).not.toBeNull();
+
+        api.setGridOption('enableAdvancedFilter', false);
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-advanced-filter-builder')).toBeNull();
+        expect(visibility).toEqual([
+            { source: 'api', visible: true },
+            { source: 'api', visible: false },
+        ]);
     });
 });

@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     addFilterCard: 'Filtre Ekle',
     agTextColumnFilterDisplayName: 'Basit Filtre',
     agNumberColumnFilterDisplayName: 'Basit Filtre',
+    agBigIntColumnFilterDisplayName: 'Basit Filtre',
     agDateColumnFilterDisplayName: 'Basit Filtre',
     agSetColumnFilterDisplayName: 'Seçim Filtresi',
     agMultiColumnFilterDisplayName: 'Karma Filtre',

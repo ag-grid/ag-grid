@@ -44,17 +44,20 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
     /** Returns the full list of unique values used by the Set Filter. */
     getFilterValues(): (V | null)[];
 
-    /** Sets the values used in the Set Filter on the fly. */
+    /**
+     * Sets the values used in the Set Filter on the fly. They stay until `filterParams.values` changes or a
+     * parameter update resets the filter.
+     */
     setFilterValues(values: (V | null)[]): void;
     /**
-     * Refreshes the values shown in the filter from the original source. For example, if a
-     * callback was provided, the callback will be executed again and the filter will refresh using
-     * the values returned.
+     * Refreshes the values shown in the filter from their source: values set with `setFilterValues`, the
+     * rows after `resetFilterValues`, else the provided `values` or the rows. For example, if a callback was
+     * provided, the callback will be executed again and the filter will refresh using the values returned.
      */
     refreshFilterValues(): void;
     /**
      * Resets the Set Filter to use values from the grid, rather than any values that have been
-     * provided directly.
+     * provided directly, until `filterParams.values` changes.
      */
     resetFilterValues(): void;
 
@@ -74,17 +77,20 @@ export interface SetFilterHandler<TValue = string> {
     /** Returns the full list of unique values used by the Set Filter. */
     getFilterValues(): (TValue | null)[];
 
-    /** Sets the values used in the Set Filter on the fly. */
+    /**
+     * Sets the values used in the Set Filter on the fly. They stay until `filterParams.values` changes or a
+     * parameter update resets the filter.
+     */
     setFilterValues(values: (TValue | null)[]): void;
     /**
-     * Refreshes the values shown in the filter from the original source. For example, if a
-     * callback was provided, the callback will be executed again and the filter will refresh using
-     * the values returned.
+     * Refreshes the values shown in the filter from their source: values set with `setFilterValues`, the
+     * rows after `resetFilterValues`, else the provided `values` or the rows. For example, if a callback was
+     * provided, the callback will be executed again and the filter will refresh using the values returned.
      */
     refreshFilterValues(): void;
     /**
      * Resets the Set Filter to use values from the grid, rather than any values that have been
-     * provided directly.
+     * provided directly, until `filterParams.values` changes.
      */
     resetFilterValues(): void;
 }

@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     addFilterCard: 'إضافة فلتر',
     agTextColumnFilterDisplayName: 'فلتر بسيط',
     agNumberColumnFilterDisplayName: 'فلتر بسيط',
+    agBigIntColumnFilterDisplayName: 'فلتر بسيط',
     agDateColumnFilterDisplayName: 'فلتر بسيط',
     agSetColumnFilterDisplayName: 'فلتر اختيار',
     agMultiColumnFilterDisplayName: 'فلتر مركب',

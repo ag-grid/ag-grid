@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     addFilterCard: 'フィルターを追加',
     agTextColumnFilterDisplayName: 'シンプルフィルター',
     agNumberColumnFilterDisplayName: 'シンプルフィルター',
+    agBigIntColumnFilterDisplayName: 'シンプルフィルター',
     agDateColumnFilterDisplayName: 'シンプルフィルター',
     agSetColumnFilterDisplayName: 'セレクションフィルター',
     agMultiColumnFilterDisplayName: 'コンボフィルター',
