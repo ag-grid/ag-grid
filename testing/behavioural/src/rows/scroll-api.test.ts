@@ -3,11 +3,17 @@ import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
-import { CellSpanModule, ClientSideRowModelModule, RowAutoHeightModule, ScrollApiModule } from 'ag-grid-community';
+import {
+    CellSpanModule,
+    ClientSideRowModelModule,
+    GridStateModule,
+    RowAutoHeightModule,
+    ScrollApiModule,
+} from 'ag-grid-community';
 
 describe('scroll API', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ScrollApiModule],
+        modules: [ClientSideRowModelModule, GridStateModule, ScrollApiModule],
     });
 
     afterEach(() => {
@@ -16,6 +22,110 @@ describe('scroll API', () => {
 
     const getViewport = (api: GridApi) =>
         TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+
+    describe('fake scrollbars', () => {
+        // the viewport's one scroll event serves both axes, so scrolling one axis must not take over the other
+        const createScrollGrid = () => {
+            // wider than the grid, so it scrolls both ways
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 300 })),
+                rowData: Array.from({ length: 200 }, () => ({})),
+            });
+            const root = TestGridsManager.getHTMLElement(api)!;
+            const scroll = (selector: string, axis: 'scrollTop' | 'scrollLeft', value: number) => {
+                const element = root.querySelector<HTMLElement>(selector)!;
+                element[axis] = value;
+                element.dispatchEvent(new Event('scroll'));
+            };
+            return { api, root, viewport: getViewport(api), scroll };
+        };
+
+        test('the vertical scrollbar scrolls the rows', () => {
+            const { viewport, scroll } = createScrollGrid();
+            scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 100);
+            expect(viewport.scrollTop).toBe(100);
+        });
+
+        test('the vertical scrollbar scrolls the rows straight after a horizontal scroll of the viewport', () => {
+            const { viewport, scroll } = createScrollGrid();
+            scroll('.ag-grid-viewport', 'scrollLeft', 30);
+            scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 100);
+            expect(viewport.scrollTop).toBe(100);
+        });
+
+        test('the horizontal scrollbar scrolls the columns', () => {
+            const { viewport, scroll } = createScrollGrid();
+            scroll('.ag-body-horizontal-scroll-viewport', 'scrollLeft', 30);
+            expect(viewport.scrollLeft).toBe(30);
+        });
+
+        test('the horizontal scrollbar scrolls the columns straight after a vertical scroll of the viewport', () => {
+            const { viewport, scroll } = createScrollGrid();
+            scroll('.ag-grid-viewport', 'scrollTop', 100);
+            scroll('.ag-body-horizontal-scroll-viewport', 'scrollLeft', 30);
+            expect(viewport.scrollLeft).toBe(30);
+        });
+
+        test('a vertical scroll reports only its own axis, and the horizontal one at its position', async () => {
+            const { api, scroll } = createScrollGrid();
+            const events: { direction: string; left: number; top: number }[] = [];
+            api.addEventListener('bodyScroll', ({ direction, left, top }) => events.push({ direction, left, top }));
+
+            scroll('.ag-grid-viewport', 'scrollTop', 100);
+            await waitFor(() => expect(events).toEqual([{ direction: 'vertical', left: 0, top: 100 }]));
+            scroll('.ag-grid-viewport', 'scrollLeft', 30);
+            await waitFor(() =>
+                expect(events).toEqual([
+                    { direction: 'vertical', left: 0, top: 100 },
+                    { direction: 'horizontal', left: 30, top: 100 },
+                ])
+            );
+        });
+
+        test('a horizontal scroll reports the vertical axis at its position, not unset', async () => {
+            const { api, scroll } = createScrollGrid();
+            const events: { direction: string; left: number; top: number }[] = [];
+            api.addEventListener('bodyScroll', ({ direction, left, top }) => events.push({ direction, left, top }));
+
+            scroll('.ag-grid-viewport', 'scrollLeft', 30);
+            await waitFor(() => expect(events).toEqual([{ direction: 'horizontal', left: 30, top: 0 }]));
+        });
+
+        test('a viewport scroll brings a vertical scrollbar that fell out of step back to the viewport', () => {
+            const { root, scroll } = createScrollGrid();
+            scroll('.ag-grid-viewport', 'scrollTop', 100);
+            const fakeVertical = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
+            fakeVertical.scrollTop = 0;
+
+            scroll('.ag-grid-viewport', 'scrollLeft', 30);
+
+            expect(fakeVertical.scrollTop).toBe(100);
+        });
+
+        test('the viewport scrolls the columns straight after a horizontal scroll the grid made', () => {
+            const { api, root, viewport, scroll } = createScrollGrid();
+            const fakeHorizontal = root.querySelector<HTMLElement>('.ag-body-horizontal-scroll-viewport')!;
+            api.setState({ scroll: { left: 300, top: 0 } });
+            // the browser then reports both elements the grid moved, the viewport first
+            viewport.dispatchEvent(new Event('scroll'));
+            fakeHorizontal.dispatchEvent(new Event('scroll'));
+
+            scroll('.ag-grid-viewport', 'scrollLeft', 600);
+
+            expect(fakeHorizontal.scrollLeft).toBe(600);
+        });
+
+        test('a viewport check brings a horizontal scrollbar that fell out of step back to the viewport', () => {
+            const { api, root, scroll } = createScrollGrid();
+            scroll('.ag-grid-viewport', 'scrollLeft', 30);
+            const fakeHorizontal = root.querySelector<HTMLElement>('.ag-body-horizontal-scroll-viewport')!;
+            fakeHorizontal.scrollLeft = 0;
+
+            api.setGridOption('alwaysShowHorizontalScroll', true);
+
+            expect(fakeHorizontal.scrollLeft).toBe(30);
+        });
+    });
 
     describe('ensureIndexVisible', () => {
         // Only a row still loading or still to be measured is worth scrolling to again; here neither can happen,
