@@ -10,11 +10,17 @@ import type {
     ServerSideLevelInconsistentEvent,
 } from 'ag-grid-community';
 import { GRAND_TOTAL_ROW_ID, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+    TreeDataModule,
+} from 'ag-grid-enterprise';
 
 interface Row {
     id: string;
     value?: number;
+    group?: boolean;
 }
 
 const BLOCK_SIZE = 10;
@@ -442,7 +448,7 @@ describe('SSRM level consistency check', () => {
             // Known limitation: no row is missing, but the row at the boundary has changed identity.
             expect(events).toHaveLength(1);
             expect(events[0].inconsistencies).toEqual([{ type: 'dropped', boundaryIndex: 10, rowIds: [] }]);
-            expect(displayedIds(api)).toEqual([...ids(0, 10), 'X', ...ids(11, 30)]);
+            expect(displayedIds(api)).toEqual(server.rows.map(({ id }) => id));
         });
 
         test('compares a reloaded block only with neighbours still in the cache', async () => {
@@ -534,18 +540,69 @@ describe('SSRM level consistency check', () => {
             expect(events).toEqual([]);
         });
 
-        test('reports data changing between the block reads of a refresh', async () => {
-            const hooks: Record<number, (rows: Row[]) => void> = {};
-            const server = createServer(hooks);
-            const { api, events } = await createGrid(server.getRows, enabled);
-            expect(events).toEqual([]);
-
-            hooks[0] = (rows) => rows.splice(3, 1);
-            api.refreshServerSide({ purge: false });
+        test('reports a duplicate that the grid has already resolved by the time the event fires', async () => {
+            const server = createServer({ 0: (rows) => rows.unshift({ id: 'new' }) });
+            const { api, events } = startGrid(server.getRows, enabled);
+            const displayedOnEvent: (string | undefined)[][] = [];
+            api.addEventListener('serverSideLevelInconsistent', () => displayedOnEvent.push(displayedIds(api)));
             await waitFor(() => expect(events).toHaveLength(1));
+            await waitForLoadingFinished(api);
 
-            expect(events[0].inconsistencies).toEqual([{ type: 'dropped', boundaryIndex: 10, rowIds: [] }]);
+            const serverIds = server.rows.map(({ id }) => id);
+            expect(events[0].inconsistencies).toEqual([{ type: 'duplicated', boundaryIndex: 10, rowIds: ['9'] }]);
+            expect(displayedOnEvent).toEqual([serverIds]);
+            expect(displayedIds(api)).toEqual(serverIds);
         });
+
+        test.each<
+            [boolean, string, (rows: Row[]) => void, ServerSideLevelInconsistentEvent<Row>['inconsistencies'], string[]]
+        >([
+            [
+                false,
+                'a deletion',
+                (rows) => rows.splice(3, 1),
+                [{ type: 'dropped', boundaryIndex: 10, rowIds: [] }],
+                [...ids(0, 10), ...ids(11, 30)],
+            ],
+            [
+                true,
+                'a deletion',
+                (rows) => rows.splice(3, 1),
+                [{ type: 'dropped', boundaryIndex: 10, rowIds: [] }],
+                [...ids(0, 10), ...ids(11, 30)],
+            ],
+            [
+                false,
+                'an insertion',
+                (rows) => rows.unshift({ id: 'new' }),
+                [{ type: 'duplicated', boundaryIndex: 10, rowIds: ['9'] }],
+                ['new', ...ids(0, 30)],
+            ],
+            [
+                true,
+                'an insertion',
+                (rows) => rows.unshift({ id: 'new' }),
+                [{ type: 'duplicated', boundaryIndex: 10, rowIds: ['9'] }],
+                ['new', ...ids(0, 30)],
+            ],
+        ])(
+            'reports a refresh (purge: %s) when %s above a boundary lands between its block reads',
+            async (purge, _, mutate, inconsistencies, displayed) => {
+                const hooks: Record<number, (rows: Row[]) => void> = {};
+                const server = createServer(hooks);
+                const { api, events } = await createGrid(server.getRows, enabled);
+                expect(events).toEqual([]);
+
+                hooks[0] = mutate;
+                api.refreshServerSide({ purge });
+                await waitFor(() => expect(events).toHaveLength(1));
+                await waitForLoadingFinished(api);
+
+                expect(events[0].inconsistencies).toEqual(inconsistencies);
+                expect(displayedIds(api)).toEqual(displayed);
+                expect(events).toHaveLength(1);
+            }
+        );
 
         test.each<[string, (api: GridApi<Row>, rows: Row[]) => void]>([
             [
@@ -715,6 +772,162 @@ describe('SSRM level consistency check', () => {
 
             expect(events[1].route).toEqual(['G0']);
             expect(events[1].inconsistencies).toEqual([{ type: 'duplicated', boundaryIndex: 10, rowIds: ['G0-9'] }]);
+        });
+    });
+    describe('tree data against a server snapshot replaced once a second', () => {
+        const FOLDER_COUNT = 25;
+        const LEAF_COUNT = 25;
+        const MS_PER_REQUEST = 500;
+
+        interface Snapshot {
+            root: Row[];
+            children: Record<string, Row[]>;
+        }
+
+        function makeSnapshot(): Snapshot {
+            const root = ids(0, FOLDER_COUNT, 'F').map((id, i) => ({ id, value: 1000 - i, group: true }));
+            const children: Record<string, Row[]> = {};
+            for (const { id } of root) {
+                children[id] = ids(0, LEAF_COUNT, `${id}-L`).map((leafId, i) => ({ id: leafId, value: 100 - i }));
+            }
+            return { root, children };
+        }
+
+        /** Every request takes `MS_PER_REQUEST` of server time; each second the next change replaces the snapshot. */
+        function createTreeServer(changes: ((snapshot: Snapshot) => void)[]) {
+            let snapshot = makeSnapshot();
+            let clock = 0;
+            const sorted = (rows: Row[], sortModel: IServerSideGetRowsParams['request']['sortModel']) => {
+                const [sort] = sortModel;
+                const direction = sort?.sort === 'asc' ? 1 : -1;
+                return sort ? [...rows].sort((a, b) => direction * (a.value! - b.value!)) : rows;
+            };
+            return {
+                getRows: (params: IServerSideGetRowsParams<Row>) => {
+                    const { groupKeys, startRow, endRow, sortModel } = params.request;
+                    const rows = groupKeys.length ? snapshot.children[groupKeys[0]] : snapshot.root;
+                    params.success({ rowData: sorted(rows, sortModel).slice(startRow, endRow), rowCount: rows.length });
+                    clock += MS_PER_REQUEST;
+                    const change = clock % 1000 === 0 ? changes.shift() : undefined;
+                    if (change) {
+                        const next = structuredClone(snapshot);
+                        change(next);
+                        snapshot = next;
+                    }
+                },
+                sortedIds: (rows: (snapshot: Snapshot) => Row[]) =>
+                    sorted(rows(snapshot), [{ colId: 'value', sort: 'desc' }]).map(({ id }) => id),
+            };
+        }
+
+        function levelIds(api: GridApi<Row>, level: number): (string | undefined)[] {
+            return displayedIds(api).filter((id) => api.getRowNode(id!)?.level === level);
+        }
+
+        async function runScenario(changes: ((snapshot: Snapshot) => void)[]) {
+            const server = createTreeServer(changes);
+            const grid = await createGrid(
+                server.getRows,
+                {
+                    ...{ serverSideCheckLevelConsistency: true },
+                    treeData: true,
+                    isServerSideGroup: (data) => !!data.group,
+                    getServerSideGroupKey: (data) => data.id,
+                    columnDefs: [{ field: 'value', sort: 'desc' }],
+                    autoGroupColumnDef: { field: 'id' },
+                },
+                [TreeDataModule]
+            );
+            const rootEvents = [...grid.events];
+
+            grid.api.getRowNode('F0')!.setExpanded(true);
+            await waitFor(() =>
+                expect(levelIds(grid.api, 1)).toHaveLength(server.sortedIds((s) => s.children.F0).length)
+            );
+            await waitForLoadingFinished(grid.api);
+            return { ...grid, server, rootEvents };
+        }
+
+        const bumpLeaf = (folder: string, leaf: number, value: number) => (snapshot: Snapshot) => {
+            snapshot.children[folder].find(({ id }) => id === `${folder}-L${leaf}`)!.value = value;
+        };
+        const insertLeaf = (folder: string, id: string, value: number) => (snapshot: Snapshot) => {
+            snapshot.children[folder].push({ id: `${folder}-${id}`, value });
+        };
+
+        test('reports each level that a change stream shifts while it is read', async () => {
+            const { api, events, rootEvents, server } = await runScenario([
+                (snapshot) => {
+                    snapshot.root.find(({ id }) => id === 'F2')!.value = 0;
+                    snapshot.root.splice(5, 1);
+                },
+                insertLeaf('F0', 'new1', 500),
+                bumpLeaf('F0', 20, 400),
+                insertLeaf('F0', 'new2', 300),
+                bumpLeaf('F0', 3, -1),
+                insertLeaf('F0', 'new3', 200),
+            ]);
+
+            expect(rootEvents.map(({ route }) => route)).toEqual([[]]);
+            expect(events.map(({ route }) => route)).toEqual([[], ['F0']]);
+            expect(events.map(({ route, inconsistencies }) => ({ route, inconsistencies }))).toMatchInlineSnapshot(`
+              [
+                {
+                  "inconsistencies": [
+                    {
+                      "boundaryIndex": 10,
+                      "rowIds": [
+                        "F10",
+                        "F11",
+                      ],
+                      "type": "duplicated",
+                    },
+                    {
+                      "boundaryIndex": 20,
+                      "rowIds": [
+                        "F2",
+                      ],
+                      "type": "duplicated",
+                    },
+                  ],
+                  "route": [],
+                },
+                {
+                  "inconsistencies": [
+                    {
+                      "boundaryIndex": 10,
+                      "rowIds": [
+                        "F0-L8",
+                        "F0-L7",
+                      ],
+                      "type": "duplicated",
+                    },
+                    {
+                      "boundaryIndex": 20,
+                      "rowIds": [
+                        "F0-L17",
+                      ],
+                      "type": "duplicated",
+                    },
+                  ],
+                  "route": [
+                    "F0",
+                  ],
+                },
+              ]
+            `);
+            const displayed = displayedIds(api);
+            expect(new Set(displayed).size).toBe(displayed.length);
+            expect(levelIds(api, 0)).toEqual(server.sortedIds((s) => s.root));
+            expect(levelIds(api, 1)).toEqual(server.sortedIds((s) => s.children.F0));
+        });
+
+        test('does not report when the snapshot does not change', async () => {
+            const { api, events, server } = await runScenario([]);
+
+            expect(events).toEqual([]);
+            expect(levelIds(api, 0)).toEqual(server.sortedIds((s) => s.root));
+            expect(levelIds(api, 1)).toEqual(server.sortedIds((s) => s.children.F0));
         });
     });
 });
