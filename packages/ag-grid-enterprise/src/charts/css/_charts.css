@@ -1,4 +1,4 @@
-/* stylelint-disable selector-max-specificity */
+/* stylelint-disable selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-chart {
     position: relative;
     display: flex;
@@ -455,7 +455,7 @@
 
 :where(.ag-dragging-range-handle) .ag-dialog,
 :where(.ag-dragging-fill-handle) .ag-dialog {
-    /* stylelint-disable-next-line ag/no-low-performance-key-selector */
+    /* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     .ag-charts-canvas-center,
     .ag-charts-series-area,
     .ag-charts-proxy-elem,
