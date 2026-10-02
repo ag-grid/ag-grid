@@ -1,7 +1,12 @@
 import fs from 'node:fs';
 
 import { ghaWarning } from '../slack/_ci-notification-utils.mjs';
-import { getPullRequestsInRange, renderPullRequestBlame } from '../slack/_pr-blame.mjs';
+import {
+    getPullRequestsInRange,
+    isRangeTooWide,
+    renderPullRequestBlame,
+    renderRangeSummary,
+} from '../slack/_pr-blame.mjs';
 import { getSlackUserConfig } from '../slack/get-slack-user-config.mjs';
 import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.mjs';
 
@@ -17,6 +22,10 @@ const currentCommitSha = process.env.CURRENT_COMMIT_SHA || '';
 const previousCommitSha = process.env.PREV_COMMIT_SHA || '';
 const slackFile = process.env.SLACK_FILE || './slack.json';
 const isSuccess = process.env.IS_SUCCESS === 'true';
+// Set when the previous run already failed, so the channel has had the full message for this break
+// once. A repeat failure is the same break seen again: it gets the header and the counts and
+// nothing else, rather than a second round of pings for people who were told the first time.
+const isRepeatFailure = process.env.IS_REPEAT_FAILURE === 'true';
 const lastFailedStep = process.env.LAST_FAILED_STEP || '';
 const library = process.env.AG_LIBRARY;
 const repository = process.env.GITHUB_REPOSITORY || '';
@@ -59,14 +68,19 @@ const diffLinks = getGitDiffLinks(
     parsedReport
 );
 const statsTemplate = getStats(parsedReport, context);
-const blame = await getPullRequestBlameSection();
-const content = getSlackMessage([header, statsTemplate, blame, diffLinks].filter(Boolean));
+// Attribution is for failures only. A back-to-green message says the break is over, which is the
+// whole of what the channel needs from it, and a repeat failure has already had the full message
+// once - so neither spends the API calls, and neither pings anybody.
+const blame = isSuccess || isRepeatFailure ? undefined : await getPullRequestBlameSection();
+const blocks = isRepeatFailure ? [header, statsTemplate] : [header, statsTemplate, blame, diffLinks];
+const content = getSlackMessage(blocks.filter(Boolean));
 
 fs.writeFileSync(slackFile, JSON.stringify(content) + '\n', 'utf8');
 
 /**
  * Names the PRs that landed between the last verified run and this one, so a failure points at
- * the change that could have caused it and reaches its author directly.
+ * the change that could have caused it and reaches its author directly. Failures only - see the
+ * caller.
  *
  * Best-effort throughout: the notification is the only signal the channel gets, so a missing
  * token or an unreachable GitHub/Notion drops this section rather than failing the step. Callers
@@ -78,25 +92,21 @@ async function getPullRequestBlameSection() {
         return undefined;
     }
     try {
-        const { pullRequests, truncated } = await getPullRequestsInRange({
+        const { pullRequests, totalCommits } = await getPullRequestsInRange({
             repository,
             token: githubToken,
             baseSha: previousCommitSha,
             currentSha: currentCommitSha,
         });
-        if (pullRequests.length === 0) {
+        if (totalCommits === 0) {
             return undefined;
         }
-        const text = renderPullRequestBlame({
-            pullRequests,
-            users: await getUsers(),
-            // A failure pings the authors, because they are the people who have to act on it. The
-            // back-to-green message names them without notifying: the break is already over.
-            mention: isSuccess ? 'name' : 'slack',
-            isSuccess,
-            truncated,
-        });
-        return text ? section(text) : undefined;
+        // The user directory is only fetched on the path that names people, so a range reported as
+        // a count costs no Notion request on top of the lookups it already skipped.
+        const blame = isRangeTooWide({ pullRequests, totalCommits })
+            ? undefined
+            : renderPullRequestBlame({ pullRequests, users: await getUsers() });
+        return section(blame ?? renderRangeSummary({ totalCommits }));
     } catch (error) {
         ghaWarning(`Could not work out which PRs are in this range: ${error.message}`, {
             title: 'PR attribution unavailable',

@@ -168,6 +168,10 @@ jobs:
           CURRENT_COMMIT_SHA: ${{ github.sha }}
           PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
           IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}
+          # One break notifies the channel in full once. While the suite stays red every further
+          # run posts the header and the test counts only, with no PR attribution and no second
+          # round of @-mentions for the people who were told the first time.
+          IS_REPEAT_FAILURE: ${{ steps.run_tests.outcome == 'failure' && steps.prev_run.outputs.outcome == 'failure' }}
           # Names the PRs between the last verified run and this one, and @-mentions their
           # authors on a failure, so a break reaches whoever landed it.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

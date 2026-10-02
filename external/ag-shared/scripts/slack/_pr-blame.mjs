@@ -1,7 +1,5 @@
 import { getUserDisplay, ghaWarning, githubApi, updateWithJiraUrl } from './_ci-notification-utils.mjs';
 
-const MAX_COMMITS_INSPECTED = 60;
-const MAX_LISTED_PRS = 10;
 const LOOKUP_CONCURRENCY = 5;
 // Slack rejects a section over 3,000 characters, which ten untrimmed titles plus their link
 // markup can reach on their own.
@@ -9,9 +7,18 @@ const MAX_TITLE_LENGTH = 120;
 // The same 3,000-character limit applies to the finished section, and breaching it costs the
 // whole message, so the budget keeps headroom for the markup Slack counts but a reader does not.
 const MAX_SECTION_LENGTH = 2800;
-// One author line cannot be allowed to run away on its own: a wide range of single-PR authors
-// would otherwise spend the entire budget naming them.
-const MAX_AUTHOR_LIST_LENGTH = 400;
+// Two bounds on how wide a range the message will try to attribute. Past either of them it stops
+// naming PRs and reports the commit count instead: nobody reads twenty names looking for the one
+// that broke the site, and what landed is what the Git diff link already describes. The commit
+// bound doubles as the guard against a bad baseline, because the runs list the workflow reads it
+// from is an edge-cached endpoint that has been seen serving pages over a week stale, and the
+// only visible symptom was a suspect list dozens of PRs long.
+const MAX_BLAMEABLE_COMMITS = 20;
+const MAX_LISTED_PRS = 10;
+// Only a list short enough to be a real suspect list earns a ping each. Past this the authors are
+// named without being notified: the message cannot say which of the PRs broke anything, so
+// pinging all of them asks everyone to answer for somebody else's change.
+const MAX_MENTIONED_PRS = 3;
 
 // Fallbacks for when the associated-pulls endpoint gives us nothing: a squash merge puts the
 // number in a trailing `(#123)`, and a true merge commit uses GitHub's own subject line.
@@ -19,39 +26,30 @@ const SQUASH_PR_RE = /\(#(\d+)\)\s*$/;
 const MERGE_PR_RE = /^Merge pull request #(\d+)\b/;
 
 /**
- * The pull requests whose commits land in baseSha..currentSha, newest first.
+ * The pull requests whose commits land in baseSha..currentSha, newest first, with the range's own
+ * commit count beside them so the caller can tell a narrow range from one too wide to attribute.
  *
  * Commits are resolved through the associated-pulls endpoint rather than by reading the commit
  * message, because the three repos do not share a merge style: ag-grid and ag-studio squash (the
  * number is in the subject), while ag-charts carries both squashes and real merge commits whose
  * branch commits mention no number at all. The endpoint answers all three, and several commits
  * from one branch collapse onto a single PR once deduped.
- *
- * Returns `truncated: true` when the range was too wide to inspect in full, so the caller can say
- * so rather than presenting a partial list as complete.
  */
 export async function getPullRequestsInRange({ repository, token, baseSha, currentSha }) {
     if (!repository || !token || !baseSha || !currentSha || baseSha === currentSha) {
-        return { pullRequests: [], truncated: false };
+        return { pullRequests: [], totalCommits: 0 };
     }
 
-    const { commits, truncated: rangeTruncated } = await listCommits({
-        repository,
-        token,
-        baseSha,
-        currentSha,
-    });
-    // The oldest are kept, not the newest: the range starts at the last run that passed, so a
-    // range wide enough to need the cap is a long red period whose first commit is the suspect.
-    const inspected = commits.slice(-MAX_COMMITS_INSPECTED);
-    if (inspected.length < commits.length) {
-        ghaWarning(
-            `Range holds ${commits.length} commits; only the oldest ${MAX_COMMITS_INSPECTED} were checked for a pull request.`,
-            { title: 'PR attribution truncated' }
-        );
+    const { commits, totalCommits } = await listCommits({ repository, token, baseSha, currentSha });
+
+    // Tested before the per-commit lookups rather than after them: a range this wide is reported
+    // as a count, so resolving each of its commits to a pull request first would spend dozens of
+    // API calls building a list that is then thrown away.
+    if (totalCommits > MAX_BLAMEABLE_COMMITS) {
+        return { pullRequests: [], totalCommits };
     }
 
-    const perCommit = await mapWithConcurrency(inspected, LOOKUP_CONCURRENCY, (commit) =>
+    const perCommit = await mapWithConcurrency(commits, LOOKUP_CONCURRENCY, (commit) =>
         pullRequestForCommit({ repository, token, commit })
     );
 
@@ -62,80 +60,53 @@ export async function getPullRequestsInRange({ repository, token, baseSha, curre
         }
     }
 
-    return {
-        pullRequests: [...byNumber.values()],
-        truncated: rangeTruncated || inspected.length < commits.length,
-    };
+    return { pullRequests: [...byNumber.values()], totalCommits };
 }
 
 /**
- * Renders the blame section as Slack mrkdwn, or undefined when there is nothing to show.
- *
- * `mention` is 'slack' to ping each author and 'name' to name them without notifying.
+ * True when the range is wider than a suspect list can usefully be, so the message should report
+ * its size rather than name the pull requests in it.
  */
-export function renderPullRequestBlame({ pullRequests, users = [], mention = 'slack', isSuccess, truncated }) {
+export function isRangeTooWide({ pullRequests, totalCommits }) {
+    return totalCommits > MAX_BLAMEABLE_COMMITS || pullRequests.length > MAX_LISTED_PRS;
+}
+
+/**
+ * The stand-in for a range too wide to attribute, and the fallback whenever the list cannot be
+ * rendered. One line, no names and no pings: what a reader needs from it is how far back the last
+ * passing run was, and the Git diff link below the section already says what landed.
+ */
+export function renderRangeSummary({ totalCommits }) {
+    const commits = totalCommits === 1 ? '1 commit' : `${totalCommits} commits`;
+    return `${commits} since the last passing run, too wide to point at a suspect; see the Git diff below.`;
+}
+
+/**
+ * Renders the blame section as Slack mrkdwn, or undefined when there is nothing to show or the
+ * result would not fit Slack's section limit. The caller falls back to `renderRangeSummary` in
+ * either case, so an over-budget section degrades to a count rather than silently dropping PRs -
+ * and breaching the limit would cost the whole message, not just this block.
+ *
+ * Only a failure gets this section. A back-to-green message is read as "it is fixed", and the
+ * range that led there answers a question nobody is asking by then.
+ */
+export function renderPullRequestBlame({ pullRequests, users = [] }) {
     if (!pullRequests?.length) {
         return undefined;
     }
 
+    // The authors are pinged only while the list is short enough for each of them to be a
+    // plausible cause; past that they are named without being notified.
+    const mention = pullRequests.length <= MAX_MENTIONED_PRS ? 'slack' : 'name';
     const display = (pullRequest) => authorDisplay(pullRequest, mention, users);
-    const heading = isSuccess
-        ? 'PRs since the last passing run:'
-        : pullRequests.length === 1
-          ? 'Suspect PR:'
-          : 'Suspect PRs since the last passing run:';
+    const heading = pullRequests.length === 1 ? 'Suspect PR:' : 'Suspect PRs since the last passing run:';
 
-    // Slack rejects the entire message when a section runs over its limit, so the section is
-    // assembled and then shrunk a line at a time until it fits. A range wide enough to need that
-    // is a long red period, and naming fewer of its PRs beats losing the notification outright.
-    for (let shown = Math.min(pullRequests.length, MAX_LISTED_PRS); ; shown--) {
-        const text = assembleBlame({ pullRequests, heading, shown, display, truncated });
-        if (text.length <= MAX_SECTION_LENGTH || shown === 0) {
-            return text;
-        }
-    }
-}
-
-function assembleBlame({ pullRequests, heading, shown, display, truncated }) {
-    const lines = pullRequests.slice(0, shown).map((pullRequest) => {
+    const lines = pullRequests.map((pullRequest) => {
         const title = updateWithJiraUrl(shorten(pullRequest.title || `#${pullRequest.number}`));
         return `• ${display(pullRequest)} - ${title} (<${pullRequest.url}|#${pullRequest.number}>)`;
     });
-
-    // The overflow still names its authors: the point of the section is that whoever landed the
-    // change hears about it, and being the eleventh PR in the range does not excuse them.
-    const hidden = pullRequests.slice(shown);
-    if (hidden.length > 0) {
-        const authors = joinAuthorsWithinBudget([...new Set(hidden.map(display))]);
-        lines.push(
-            shown > 0
-                ? `• ...and ${hidden.length} more from ${authors}`
-                : `• ${hidden.length} PRs in range, from ${authors}`
-        );
-    }
-    if (truncated) {
-        lines.push('• _the range was too wide to list in full; older PRs are not shown_');
-    }
-    return `${heading}\n${lines.join('\n')}`;
-}
-
-/** Names as many authors as the allowance holds and counts the rest, so the line stays bounded. */
-function joinAuthorsWithinBudget(names) {
-    const kept = [];
-    let length = 0;
-    for (const name of names) {
-        const addition = (kept.length > 0 ? 2 : 0) + name.length;
-        if (length + addition > MAX_AUTHOR_LIST_LENGTH) {
-            break;
-        }
-        kept.push(name);
-        length += addition;
-    }
-    const remaining = names.length - kept.length;
-    if (remaining === 0) {
-        return kept.join(', ');
-    }
-    return kept.length > 0 ? `${kept.join(', ')} and ${remaining} others` : `${names.length} authors`;
+    const text = `${heading}\n${lines.join('\n')}`;
+    return text.length <= MAX_SECTION_LENGTH ? text : undefined;
 }
 
 /** Guarded against a missing login, which would otherwise match a directory row that records none. */
@@ -153,7 +124,7 @@ async function listCommits({ repository, token, baseSha, currentSha }) {
     const commits = (comparison.commits ?? [])
         .map(({ sha, commit }) => ({ sha, message: commit?.message ?? '' }))
         .reverse();
-    return { commits, truncated: (comparison.total_commits ?? commits.length) > commits.length };
+    return { commits, totalCommits: comparison.total_commits ?? commits.length };
 }
 
 async function pullRequestForCommit({ repository, token, commit }) {
