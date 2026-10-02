@@ -61,11 +61,24 @@ const firstMatch = (html: string, pattern: RegExp): string | undefined => patter
 
 /**
  * HEADs each URL (no redirect followed, so a 301 is judged itself) and holds it to the cap, and,
- * where `expected` names one, to its exact Cache-Control.
+ * where `expected` names one, to its exact Cache-Control. Each URL must also answer with the status
+ * of the class it samples (`statuses`, default 200): a WAF 403, a 503 or a missing page carries
+ * different headers, so passing it would claim a class that was never reached.
  */
-async function checkBrowserCache(http: Http, p: Problems, urls: Set<string>, expected: Record<string, string> = {}) {
+async function checkBrowserCache(
+    http: Http,
+    p: Problems,
+    urls: Set<string>,
+    expected: Record<string, string> = {},
+    statuses: Record<string, number> = {}
+) {
     for (const url of urls) {
         const res = await http.head(url);
+        const status = statuses[url] ?? 200;
+        if (res.status !== status) {
+            p.add(`${url}: expected ${status}, got ${res.status}, so its class was not reached`);
+            continue;
+        }
         const problem = browserCacheProblem(res);
         p.check(!problem, `${url} (${res.status}): ${problem}`);
         if (expected[url] !== undefined) {
@@ -204,12 +217,14 @@ export function headerChecks(): CheckDef[] {
             title: 'No response class is cached by a browser for more than 7 days (max-age, Expires; s-maxage exempt)',
             refs: ['SE-189'],
             run: budgeted(async ({ http }, p) => {
+                const statuses: Record<string, number> = {};
                 const urls = new Set<string>([
                     ...BROWSER_CACHE_ROWS.map((id) => {
                         const row = HEADER_ROWS.find((r) => r.id === id);
                         if (!row) {
                             throw new Error(`headers.browser-cache-cap: no header row ${id}`);
                         }
+                        statuses[row.url] = row.status ?? 200;
                         return row.url;
                     }),
                     ...BROWSER_CACHE_PAGES.html,
@@ -241,7 +256,7 @@ export function headerChecks(): CheckDef[] {
                         urls.add(new URL(found, BROWSER_CACHE_PAGES.blog).href);
                     }
                 }
-                return checkBrowserCache(http, p, urls);
+                return checkBrowserCache(http, p, urls, {}, statuses);
             }),
         },
         {
@@ -265,7 +280,15 @@ export function headerChecks(): CheckDef[] {
             title: "Ghost's uploads under /blog/content/ and its own 301s are cached for at most 7 days",
             refs: ['SE-189'],
             pending: PENDING.blogVhostCap,
-            run: budgeted(({ http }, p) => checkBrowserCache(http, p, new Set(BROWSER_CACHE_BLOG_CONTENT_URLS))),
+            run: budgeted(({ http }, p) =>
+                checkBrowserCache(
+                    http,
+                    p,
+                    new Set(Object.keys(BROWSER_CACHE_BLOG_CONTENT_URLS)),
+                    {},
+                    BROWSER_CACHE_BLOG_CONTENT_URLS
+                )
+            ),
         },
         {
             id: 'headers.html.no-x-frame-options',

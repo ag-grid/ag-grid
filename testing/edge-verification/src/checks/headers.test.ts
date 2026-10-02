@@ -2,10 +2,10 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import type { CheckDef } from '../core/types';
-import { BROWSER_CACHE_HEURISTIC_URLS } from '../expected/headers';
+import { BROWSER_CACHE_BLOG_CONTENT_URLS, BROWSER_CACHE_HEURISTIC_URLS, HEADER_ROWS } from '../expected/headers';
 import { PENDING } from '../expected/lifecycle';
 import { FakeAws, FakeHttp, type FakeResponse, fakeCtx, healthyCloudFront } from '../testing/fakes';
-import { headerChecks } from './headers';
+import { browserCacheProblem, headerChecks } from './headers';
 
 const agree = headerChecks().find((c) => c.id === 'headers.archive-validators-agree')!;
 const notModified = headerChecks().find((c) => c.id === 'headers.not-modified-keeps-cache')!;
@@ -102,10 +102,14 @@ describe('headers.browser-cache-cap', () => {
         '<a href="https://www.ag-grid.com/blog/a-post/">p</a><script src="/blog/assets/built/prism.js"></script>' +
         '<link href="/blog/public/cards.min.css">';
 
+    /** Each sampled URL answers with the status of the class it stands for, as production does. */
+    const rowStatus = (url: string): number =>
+        HEADER_ROWS.find((r) => r.url === url)?.status ?? BROWSER_CACHE_BLOG_CONTENT_URLS[url] ?? 200;
+
     async function runCap(
         cacheControl: (url: string) => string | undefined,
         expires?: (url: string) => string,
-        { check = cap, status = () => 200, lastModified = () => false }: CapOptions = {}
+        { check = cap, status = rowStatus, lastModified = () => false }: CapOptions = {}
     ) {
         const http = new FakeHttp((req) => {
             const url = new URL(req.url);
@@ -129,6 +133,16 @@ describe('headers.browser-cache-cap', () => {
             http.close();
         }
     }
+
+    it('fails a sampled URL that did not reach its class (a WAF 403 or a 503), naming it', async () => {
+        for (const got of [403, 503]) {
+            const outcome = await runCap(() => 'no-cache', undefined, {
+                status: (url) => (url.endsWith('/robots.txt') ? got : rowStatus(url)),
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', new RegExp(`robots\\.txt: expected 200, got ${got}`));
+        }
+    });
 
     it('passes when every class is within 7 days, whatever s-maxage says', async () => {
         const outcome = await runCap(() => 'public, max-age=604800, s-maxage=31536000');
@@ -161,10 +175,12 @@ describe('headers.browser-cache-cap', () => {
     });
 
     it('leaves a response with no Last-Modified, or a status not cacheable by default, to pass', async () => {
-        for (const options of [{}, { lastModified: () => true, status: () => 302 }]) {
-            const outcome = await runCap(() => undefined, undefined, options);
-            assert.equal(outcome.status, 'pass', outcome.detail);
-        }
+        assert.equal((await runCap(() => undefined)).status, 'pass');
+        const fake = (status: number, headers: Record<string, string>) =>
+            ({ status, headers: new Map(Object.entries(headers).map(([k, v]) => [k, [v]])) }) as any;
+        const lastModified = { 'last-modified': 'Thu, 01 Jan 2015 00:00:00 GMT' };
+        assert.equal(browserCacheProblem(fake(302, lastModified)), null);
+        assert.match(browserCacheProblem(fake(200, lastModified)) ?? '', /Last-Modified with no Cache-Control/);
     });
 
     describe('headers.browser-cache-cap.heuristic', () => {
@@ -218,6 +234,15 @@ describe('headers.browser-cache-cap', () => {
             assert.equal(outcome.status, 'fail', outcome.detail);
             assert.match(outcome.detail ?? '', /\/blog\/content\/images\/[^ ]+ \(200\): max-age=31536000/);
             assert.match(outcome.detail ?? '', /\/blog\/rss \(301\): max-age=31536000/);
+        });
+
+        it('fails when a probe misses its class, e.g. the image 404s or a 301 becomes a no-cache 404', async () => {
+            const outcome = await runCap(ghost('public, max-age=604800'), undefined, {
+                check: blog,
+                status: (url) => (url.includes('/content/') ? 404 : 301),
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /logo-white\.svg: expected 200, got 404/);
         });
 
         it('passes once the vhost caps them at 7 days', async () => {
@@ -275,4 +300,35 @@ describe('headers.html.no-x-frame-options and headers.redirect.blog-host-301', (
         assert.equal(outcome.status, 'fail', outcome.detail);
         assert.match(outcome.detail ?? '', /referrer-policy: expected exactly one copy, got 0/);
     });
+});
+
+describe('headers.archive.charts-404-not-cached', () => {
+    const check = headerChecks().find((c) => c.id === 'headers.archive.charts-404-not-cached')!;
+    async function run(cacheControl?: string) {
+        const http = new FakeHttp(() => ({
+            status: 404,
+            headers: cacheControl ? { 'cache-control': cacheControl } : ({} as Record<string, string>),
+        }));
+        try {
+            return await check.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+
+    it('passes only on exactly no-cache', async () => {
+        assert.equal((await run('no-cache')).status, 'pass');
+    });
+
+    // A missing header leaves the 404 to CloudFront's default TTL, so it is as wrong as a long one.
+    for (const [why, value] of [
+        ['a missing Cache-Control', undefined],
+        ['the 7-day archive cache', 'public, max-age=604800'],
+        ['the year-long archive cache', 'public, max-age=604800, s-maxage=31536000'],
+    ] as const) {
+        it(`fails on ${why}`, async () => {
+            const outcome = await run(value);
+            assert.equal(outcome.status, 'fail', outcome.detail);
+        });
+    }
 });

@@ -142,12 +142,12 @@ export const BROWSER_CACHE_HEURISTIC_URLS: Record<string, string> = {
  * What Ghost sends with max-age=31536000 beyond its theme assets: uploaded images (and, found on
  * posts, media and files) under /blog/content/, and every 301 it issues itself.
  */
-export const BROWSER_CACHE_BLOG_CONTENT_URLS = [
-    `${WWW}/blog/content/images/2021/02/logo-white.svg`,
+export const BROWSER_CACHE_BLOG_CONTENT_URLS: Record<string, number> = {
+    [`${WWW}/blog/content/images/2021/02/logo-white.svg`]: 200,
     // Ghost's own redirects: a slash-less URL and /amp/.
-    `${WWW}/blog/rss`,
-    `${WWW}/blog/amp/`,
-];
+    [`${WWW}/blog/rss`]: 301,
+    [`${WWW}/blog/amp/`]: 301,
+};
 
 /**
  * Compressed pages revalidated with the -gzip ETag they were sent (waf-finding.md §19). The archive
@@ -473,7 +473,8 @@ export const HEADER_ROWS: HeaderRow[] = [
         url: `${WWW}/charts/archive/14.2.0/edge-check-missing-page/`,
         method: 'HEAD',
         status: 404,
-        expect: { 'cache-control': /^(?!.*s-maxage)/ },
+        // Exactly no-cache: without a Cache-Control a 404 would take CloudFront's default TTL.
+        expect: { 'cache-control': 'no-cache' },
         refs: [finding(4)],
         knownIssue: finding(4),
     },
