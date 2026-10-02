@@ -68,7 +68,6 @@ export class RowNumbersService
 
     private rowNumberOverrides: RowNumbersOptions | null = null;
     private lastColumnResized: number = 0;
-    private pendingForceAutoSize: boolean = false;
     private autoSizedTextLength: number = 0;
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
@@ -81,15 +80,9 @@ export class RowNumbersService
                 this.lastColumnResized = Date.now();
             },
             cellFocused: this.onGridCellFocused.bind(this),
-            modelUpdated: (params) => {
-                this.pendingForceAutoSize ||= !params.keepRenderedRows;
-                onRowsChanged_debounced();
-            },
+            modelUpdated: (params) => onRowsChanged_debounced(!params.keepRenderedRows),
             rangeSelectionChanged: () => this.refreshCells(true),
-            pinnedRowsChanged: () => {
-                this.pendingForceAutoSize = true;
-                onRowsChanged_debounced();
-            },
+            pinnedRowsChanged: () => onRowsChanged_debounced(true),
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
@@ -180,8 +173,11 @@ export class RowNumbersService
         this.refreshSelectionIntegration();
         const had = this.column !== null;
         this.autoSizedTextLength = 0;
-        if (this.refreshCols()) {
+        const column = this.refreshCols();
+        if (column) {
             this.refreshColDef(source);
+            // re-applying the colDef width counts as a deliberate resize, but it replaced any user width
+            column.resetWidthOwnership();
         } else if (had) {
             this.beans.colModel.refreshAll(source);
         }
@@ -307,19 +303,12 @@ export class RowNumbersService
         this.focusFirstRenderedCellAtRowPosition();
     }
 
-    private onRowsChanged(): void {
-        const force = this.pendingForceAutoSize;
-        this.pendingForceAutoSize = false;
+    private onRowsChanged(forceAutoSize: boolean): void {
         const column = this.column;
         if (!column) {
             return;
         }
-        const text = this.getLargestRowNumberText(column);
-        // only grow between forced autosizes, so row counts hovering around a digit boundary don't cause width jank
-        if (force || text.length > this.autoSizedTextLength) {
-            this.autoSizedTextLength = text.length;
-            this.autoSize(column, text, !force);
-        }
+        this.autoSize(column, forceAutoSize);
         this.refreshCells(false);
     }
 
@@ -331,30 +320,38 @@ export class RowNumbersService
         this.beans.rowRenderer.refreshCells({ columns: [column], force });
     }
 
-    private autoSize(column: AgColumn, text: string, growOnly: boolean): void {
-        const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
-        // growing must not narrow a column the user has already widened past the measured width
-        if (width == null || (growOnly && width <= column.getActualWidth())) {
+    private autoSize(column: AgColumn, force: boolean): void {
+        // a width the user dragged to is theirs, even across new row data
+        if (column.isUserSized()) {
             return;
         }
-        this.beans.colResize?.setColumnWidths([{ key: column, newWidth: width }], false, true, 'rowNumbersService');
+        const text = this.getLargestRowNumberText(column);
+        // only grow between forced autosizes, so row counts hovering around a digit boundary don't cause width jank
+        if (!force && text.length <= this.autoSizedTextLength) {
+            return;
+        }
+        this.autoSizedTextLength = text.length;
+        const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
+        if (width != null) {
+            this.beans.colResize?.setColumnWidths([{ key: column, newWidth: width }], false, true, 'rowNumbersService');
+        }
     }
 
     private getLargestRowNumberText(column: AgColumn): string {
-        const value = String(this.beans.rowModel.getRowCount() + 1);
+        let value = String(this.beans.rowModel.getRowCount() + 1);
         const rowNumberOverrides = this.rowNumberOverrides;
-        if (typeof rowNumberOverrides?.valueFormatter !== 'function') {
-            return value;
+        if (typeof rowNumberOverrides?.valueFormatter === 'function') {
+            const valueFormatterParams: ValueFormatterParams = _addGridCommonParams(this.gos, {
+                data: undefined,
+                value,
+                node: null,
+                column,
+                colDef: column.colDef,
+            });
+            // the measurement row has no data, so a formatter reading data may return nothing
+            value = rowNumberOverrides.valueFormatter(valueFormatterParams) ?? '';
         }
-        const valueFormatterParams: ValueFormatterParams = _addGridCommonParams(this.gos, {
-            data: undefined,
-            value,
-            node: null,
-            column,
-            colDef: column.colDef,
-        });
-        // the measurement row has no data, so a formatter reading data may return nothing
-        return rowNumberOverrides.valueFormatter(valueFormatterParams) ?? '';
+        return value;
     }
 
     private createDummyElement(text: string): HTMLDivElement {
