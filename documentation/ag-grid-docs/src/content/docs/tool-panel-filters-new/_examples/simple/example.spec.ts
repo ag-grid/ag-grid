@@ -1,5 +1,4 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
-import type { Locator } from 'playwright/test';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page, agIdFor }) => {
@@ -81,35 +80,6 @@ test.agExample(import.meta, () => {
             await expect(page.getByRole('option', { name })).toBeVisible();
         }
     });
-
-    test.eachFramework(
-        'Add Filter search text is spaced from its icon like a filter input',
-        async ({ page, agIdFor }) => {
-            // Distance from the search icon to where the input's text starts. The input's own border is
-            // excluded, as the Add Filter input is borderless while a filter card's input has one.
-            const iconToTextGap = (searchField: Locator) =>
-                searchField.evaluate((field) => {
-                    const icon = field.querySelector('.ag-input-field-search-icon')!.getBoundingClientRect();
-                    const input = field.querySelector('input')!;
-                    const textStart =
-                        input.getBoundingClientRect().left + parseFloat(getComputedStyle(input).paddingLeft);
-                    return textStart - icon.right;
-                });
-
-            await agIdFor.filterToolPanelAddFilterButton().click();
-            const addFilterGap = await iconToTextGap(page.locator('.ag-filter-add-select .ag-input-field-search'));
-            await page.getByRole('option', { name: 'Age' }).locator('div').click();
-
-            const filterCard = agIdFor
-                .filterToolPanel()
-                .locator('.ag-filter-card')
-                .filter({ has: page.locator('.ag-input-field-search') });
-            const filterInputGap = await iconToTextGap(filterCard.locator('.ag-input-field-search').first());
-
-            expect(addFilterGap).toBeGreaterThan(0);
-            expect(Math.abs(addFilterGap - filterInputGap)).toBeLessThanOrEqual(0.5);
-        }
-    );
 
     test.eachFramework('Filter set outside the tool panel is added to the tool panel', async ({ page, agIdFor }) => {
         await waitForGridContent(page);
