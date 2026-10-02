@@ -70,6 +70,39 @@ export const NOT_MODIFIED_PROBE = `${WWW}/charts/archive/14.2.0/react/quick-star
 /** The long archive cache its 200 must carry (as archive.grid-released expects) for the 304 to keep. */
 export const NOT_MODIFIED_CACHE_CONTROL = HASHED_CACHE;
 
+/** Sean's site-wide rule: no browser may cache a response for more than 7 days (s-maxage exempt). */
+export const BROWSER_CACHE_CAP_SECONDS = 604800;
+
+/**
+ * One URL of every response class, for headers.browser-cache-cap: the HEADER_ROWS URLs below plus,
+ * found on the pages at run time, a hashed /_astro/ asset per site and archive, a blog post and the
+ * blog's theme assets.
+ */
+export const BROWSER_CACHE_ROWS = [
+    'html.home',
+    'html.grid-docs',
+    'markdown.twin',
+    'asset.image-svg',
+    'asset.example-assets',
+    'asset.script',
+    'root.favicon',
+    'root.robots',
+    'root.sitemap-index',
+    'root.llms',
+    'markdown.archive-negotiated',
+    'markdown.archive-noindex.grid',
+    'markdown.archive-noindex.charts',
+    'redirect.301-headers',
+    'html.404',
+];
+export const BROWSER_CACHE_PAGES = {
+    /** Pages whose first hashed /_astro/ script or stylesheet is sampled. */
+    astro: [`${WWW}/`, `${WWW}/charts/`, `${WWW}/studio/`, `${WWW}/archive/36.2.0/react-data-grid/getting-started/`],
+    /** HTML pages sampled directly, beside the HEADER_ROWS ones. */
+    html: [`${WWW}/charts/`, `${WWW}/studio/`, `${WWW}/charts/archive/14.2.0/react/quick-start/`],
+    blog: `${WWW}/blog/`,
+};
+
 /**
  * Compressed pages revalidated with the -gzip ETag they were sent (waf-finding.md §19). The archive
  * page is a charts one, for the reason NOT_MODIFIED_PROBE gives: a grid archive's hosts disagree.

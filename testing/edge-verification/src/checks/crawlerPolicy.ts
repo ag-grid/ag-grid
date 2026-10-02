@@ -168,7 +168,7 @@ export function crawlerPolicyChecks(): CheckDef[] {
             id: 'crawler-policy.robots.md-twins',
             area: 'crawler-policy',
             title: 'robots.txt: the .md twin of every disallowed page directory is disallowed for the same group',
-            refs: ['grid#15424', 'waf-finding.md §11'],
+            refs: ['grid#15434 / #15435', 'waf-finding.md §11'],
             pending: MD_TWIN_POLICY.pending,
             async run({ http }) {
                 const { open, checked } = crawlableTwins(await wwwRobots(http), '');
@@ -184,7 +184,7 @@ export function crawlerPolicyChecks(): CheckDef[] {
             id: 'crawler-policy.robots.md-twins-query',
             area: 'crawler-policy',
             title: 'robots.txt: a query string does not reopen the .md twin of a disallowed page',
-            refs: ['grid#15424', 'waf-finding.md §11'],
+            refs: ['grid#15434 / #15435', 'waf-finding.md §11'],
             pending: MD_TWIN_POLICY.queryPending,
             async run({ http }) {
                 const { open, checked } = crawlableTwins(await wwwRobots(http), MD_TWIN_POLICY.query);

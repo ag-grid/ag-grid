@@ -94,8 +94,8 @@ These are enforced in code, not by convention:
   `Deployed`, every markdown probe is refused, because the config is control-plane state the edges
   may not serve yet. Two separate reads could pair a Deployed status with a newer config. If the live config cannot
   be read, every markdown
-  probe is refused, whatever the declared behaviours say; if the function code cannot be read (the
-  profile lacks `cloudfront:GetFunction` today) or does not pass that static check, every probe on a
+  probe is refused, whatever the declared behaviours say; if the function code cannot be read (for
+  example, it does not exist yet) or does not pass that static check, every probe on a
   caching behaviour is refused. This is what prevents a repeat of the 2026-09 `/example/` markdown
   cache poisoning.
 - **Secrets never print.** WAF verify-header values and the origin custom header are registered with
@@ -111,17 +111,20 @@ insert after p11, in either order) and the WAF log query (its text, result parsi
 byte cap), and the HTTP checks most exposed to a wrong verdict (the archive cache split, the archive
 validator agreement, and the link checks under the request cap) have offline tests that use
 a fake AWS client, a fake HTTP transport behind the real client, and no network (`src/**/*.test.ts`, fixtures in `src/testing/fakes.ts`). They are
-not part of the repo's Vitest workspace or `./behave.sh`; run them with:
+this project's `test` target, so `nx test` and CI's affected `test` run them (CI's node-env tooling
+step); they are not part of the repo's Vitest workspace or `./behave.sh`. `test:edge-live` is the
+manual live run. Run them with:
 
 ```bash
-NX_DAEMON=false yarn nx run ag-grid-edge-verification:test:offline
+NX_DAEMON=false yarn nx run ag-grid-edge-verification:test
 # or, from testing/edge-verification:
 node --import tsx --test "src/**/*.test.ts"
 ```
 
 ## What it covers
 
-Areas, in report order (the `--only` names). Counts are checks per area (pending / known issue).
+Areas, in report order (the `--only` names). The comment at the top of `src/main.ts` has the same
+areas as a short table, without counts. Counts are checks per area (pending / known issue).
 
 | Area             | Checks        | What it verifies                                                                                                                                                                                                                                                                                                                                                                    |
 | ---------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -129,8 +132,8 @@ Areas, in report order (the `--only` names). Counts are checks per area (pending
 | `waf-config`     | 32 (9 / 3)    | Rule order and every field of every rule on both web ACLs (each managed group's complete override set included), both ACLs' settings, the shared-secret Allow rules, the `build-server` and `salience-bot` IP sets, Bot Control, AntiDDoS, the credential-scanner regex (SE-185), the non-browser rule and its allowlists (SE-78/184), rate rules, logging, redaction and retention |
 | `infra`          | 20 (1 / 1)    | Every field of each alarm (metric, dimensions, statistic, threshold, actions), the viewer certificate, Shield Advanced, the ALB, its security group and attributes, recent CloudTrail edge writes, 24h 5xx rate, origin share and healthy hosts                                                                                                                                     |
 | `redirects`      | 170 (32 / 17) | First status, Location (query string included) and hop count for every host alias and legacy URL in the SE ticket QA tables                                                                                                                                                                                                                                                         |
-| `migration`      | 21 (15 / 0)   | The grid#15430 archive `.htaccess` migration: alias hosts one hop to the same archive URL on www (slash-less directory URLs too, pending grid#15434/#15435), the grid rules that left the archive, markdown negotiation on 36.1.0/36.2.0, backups never served. Samples the lowest and highest version per site; `--only migration` checks all 16 (55 checks)                       |
-| `headers`        | 49 (18 / 1)   | Response headers per content class: Link, security headers sent once, Cache-Control, Vary, X-Robots-Tag, markdown content types, 304 revalidation, internal hosts                                                                                                                                                                                                                   |
+| `migration`      | 21 (15 / 0)   | The grid#15434 / #15435 archive `.htaccess` migration: alias hosts one hop to the same archive URL on www (slash-less directory URLs too, pending grid#15434/#15435), the grid rules that left the archive, markdown negotiation on 36.1.0/36.2.0, backups never served. Samples the lowest and highest version per site; `--only migration` checks all 16 (55 checks)              |
+| `headers`        | 50 (18 / 1)   | Response headers per content class: the 7-day browser-cache cap on every class (s-maxage exempt), Link, security headers sent once, Cache-Control, Vary, X-Robots-Tag, markdown content types, 304 revalidation, internal hosts                                                                                                                                                     |
 | `caching`        | 25 (3 / 0)    | A repeat request is a hit on every caching behaviour, never-cached pages never hit, Host in the cache key, and HTML-markdown-HTML poisoning probes                                                                                                                                                                                                                                  |
 | `waf-behaviour`  | 24 (0 / 2)    | WAF decisions from this machine: the agent 403 guidance, safe paths, scanner blocks, AI crawler UAs and the automated-browser challenge                                                                                                                                                                                                                                             |
 | `crawler-policy` | 46 (3 / 8)    | robots.txt groups, the AI group mirroring `*`, a URL verdict matrix for search and AI crawlers, and agreement with the live WAF UA allowlist                                                                                                                                                                                                                                        |
@@ -169,18 +172,18 @@ says so on every run (parents SE-8 and SE-181 are covered through their children
 
 ### Caching and WAF
 
-| Concern                                        | Checks                                                                                                                                                                                                                                                                                  |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Behaviour order and policies                   | `cloudfront.behaviours.order`, `cloudfront.behaviour.*`, `cloudfront.cache-policy.*`                                                                                                                                                                                                    |
-| Markdown cache poisoning (2026-09 `/example/`) | `cloudfront.behaviours.negotiated-pages-uncached`, `caching.markdown-does-not-poison.*`, `caching.never-hit.*`, the markdown guard                                                                                                                                                      |
-| Archive caching and the markdown key split     | `cloudfront.behaviour./archive/*`, `cloudfront.function.archive-markdown-cache-key`, `caching.archive-markdown-split`, `caching.hit./archive/*` (pending)                                                                                                                               |
-| Redirects and live markdown never cached       | `headers.redirect.no-cache.*`, `headers.markdown.*-no-cache` (pending grid c0eadabc4e3), `headers.not-modified-keeps-cache`                                                                                                                                                             |
-| Archived markdown noindexed                    | `headers.markdown.archive-noindex.*` (pending)                                                                                                                                                                                                                                          |
-| Revalidation (304s) on gzip and across hosts   | `headers.revalidate-gzip.*` (pending grid a5ea9272023), `headers.archive-validators-agree` on the first archive uploaded after grid d1087c3088f (pending; agreement is SKIP: no host evidence). Archives deployed before it keep per-host validators, which is accepted and not checked |
-| Origin bypass                                  | `waf-config.alb.*`, `infra.alb.security-group`                                                                                                                                                                                                                                          |
-| Secrets in WAF logs                            | `waf-config.*.logging.redaction`, `waf-config.*.log-retention`, `waf-config.cf.verify-secrets-distinct`                                                                                                                                                                                 |
-| Bot and agent policy                           | `waf-config.cf.nonbrowser-rule*`, `waf-config.cf.bot-control*`, `waf-behaviour.*`, `crawler-policy.robots-vs-waf*`                                                                                                                                                                      |
-| What real bots and agents received             | `bot-outcomes.*` (WAF logs, the last `--bot-window`)                                                                                                                                                                                                                                    |
+| Concern                                        | Checks                                                                                                                                                                                                                                                                                                           |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Behaviour order and policies                   | `cloudfront.behaviours.order`, `cloudfront.behaviour.*`, `cloudfront.cache-policy.*`                                                                                                                                                                                                                             |
+| Markdown cache poisoning (2026-09 `/example/`) | `cloudfront.behaviours.negotiated-pages-uncached`, `caching.markdown-does-not-poison.*`, `caching.never-hit.*`, the markdown guard                                                                                                                                                                               |
+| Archive caching and the markdown key split     | `cloudfront.behaviour./archive/*`, `cloudfront.function.archive-markdown-cache-key`, `caching.archive-markdown-split`, `caching.hit./archive/*` (pending)                                                                                                                                                        |
+| Redirects and live markdown never cached       | `headers.redirect.no-cache.*`, `headers.markdown.*-no-cache` (pending grid#15434 / #15435), `headers.not-modified-keeps-cache`                                                                                                                                                                                   |
+| Archived markdown noindexed                    | `headers.markdown.archive-noindex.*` (pending)                                                                                                                                                                                                                                                                   |
+| Revalidation (304s) on gzip and across hosts   | `headers.revalidate-gzip.*` (pending grid#15434 / #15435), `headers.archive-validators-agree` on the first archive uploaded after the extract fix in grid#15434 / #15435 (pending; agreement is SKIP: no host evidence). Archives deployed before it keep per-host validators, which is accepted and not checked |
+| Origin bypass                                  | `waf-config.alb.*`, `infra.alb.security-group`                                                                                                                                                                                                                                                                   |
+| Secrets in WAF logs                            | `waf-config.*.logging.redaction`, `waf-config.*.log-retention`, `waf-config.cf.verify-secrets-distinct`                                                                                                                                                                                                          |
+| Bot and agent policy                           | `waf-config.cf.nonbrowser-rule*`, `waf-config.cf.bot-control*`, `waf-behaviour.*`, `crawler-policy.robots-vs-waf*`                                                                                                                                                                                               |
+| What real bots and agents received             | `bot-outcomes.*` (WAF logs, the last `--bot-window`)                                                                                                                                                                                                                                                             |
 
 ## Post-deploy runbook
 
@@ -200,7 +203,7 @@ the step back as it says below before investigating.
 EV="npx tsx testing/edge-verification/src/main.ts"
 ```
 
-### grid#15424 (the docs release that carries seo-edge-unit-tests-v2)
+### grid#15434 / #15435 (the docs release)
 
 ```sh
 $EV --pending --only redirects,crawler-policy,agent-files,seo-content
@@ -209,7 +212,7 @@ $EV --pending --only redirects,crawler-policy,agent-files,seo-content
 - `NOW LIVE`: the ACME rows (`/.well-known/acme-challenge/...` answered 404 on www and the apex,
   never add-slashed), the slash-less `/react-data-grid/getting-started` rows on each alias host, the
   server-side and `/documentation/<fw>/charts*` samples, `crawler-policy.robots.md-twins`,
-  `crawler-policy.robots.md-twins-query` (2ed1049f81e adds a `<page>.md?` rule beside each
+  `crawler-policy.robots.md-twins-query` (it adds a `<page>.md?` rule beside each
   `<page>.md$`, so a query string no longer reopens a twin), `crawler-policy.robots.url./archive/`
   and `./charts/archive/`, `agent-files.link.grid-data-grid`. Delete each of these rows' `pending`
   markers once they show `NOW LIVE`, `PENDING.gridRobotsTwinsQuery` included.
@@ -219,7 +222,7 @@ $EV --pending --only redirects,crawler-policy,agent-files,seo-content
 - On failure: the release's `.htaccess` and `robots.txt` come from the docs build; redeploy the
   previous docs release (`switchReleaseRemote.sh`) if a deployed row fails.
 
-### ag-charts#8422 / #8432 (charts release), ag-studio#3084 / #3087 (studio release)
+### ag-charts#8440 / #8441 (charts release), ag-studio#3096 / #3097 (studio release)
 
 ```sh
 $EV --pending --only redirects,seo-content,agent-files,crawler-policy
@@ -233,7 +236,7 @@ $EV --pending --only redirects,seo-content,agent-files,crawler-policy
   `FIXED?` on `.landmark.main-studio`, `.social-images.absolute-studio`, `.viewport-studio`.
 - On failure: redeploy the previous charts or studio release.
 
-### grid#15430 archive migration (`migrateDeployedArchiveHtaccess.sh`, once per web host)
+### grid#15434 / #15435 archive migration (`migrateDeployedArchiveHtaccess.sh`, once per web host)
 
 Both web hosts serve every archive and CloudFront spreads requests across them, so do not verify
 after the first host: the results would be a mix of migrated and unmigrated responses.

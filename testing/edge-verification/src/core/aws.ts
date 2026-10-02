@@ -39,12 +39,8 @@ const STRIPPED_ENV = [
  * that needs one degrades to "unverifiable" rather than failing; the report prints this note for
  * every denied action it actually met.
  */
-export const KNOWN_IAM_GAPS: Record<string, string> = {
-    'cloudfront:DescribeFunction': 'the stage and runtime of the archive-markdown-cache-key function',
-    'cloudfront:GetFunction':
-        'the code of the archive-markdown-cache-key function (that it keys on Accept: text/markdown)',
-    'cloudfront:ListFunctions': 'that the archive-markdown-cache-key function exists',
-};
+// Empty since the profile gained the CloudFront function reads and wafv2:CheckCapacity (2026-10-02).
+export const KNOWN_IAM_GAPS: Record<string, string> = {};
 
 /**
  * Why an AWS read failed. Only the first four leave a check unverifiable: the read could not be

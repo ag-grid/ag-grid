@@ -120,7 +120,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'h1.charts-home',
             'Charts home: exactly one H1',
-            [finding(15), 'ag-charts#8432'],
+            [finding(15), 'ag-charts#8440 / #8441'],
             ['chartsHome'],
             (html, p) => {
                 p.eq('H1 count', headings(html).filter((h) => h.level === 1).length, 1);
@@ -296,7 +296,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'json-ld.studio-no-offers',
             'Studio structured data carries no offers at all (AG Studio has no free tier)',
-            ['SE-162', 'ag-studio#3087'],
+            ['SE-162', 'ag-studio#3096 / #3097'],
             ['studioHome', 'studioDocs'],
             (html, p) => {
                 const nodes = validJsonLdNodes(html, (m) => p.add(m));
@@ -348,7 +348,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'social-images.absolute-charts',
             'og:image and twitter:image are absolute on charts',
-            ['SE-48', finding(15), 'ag-charts#8432'],
+            ['SE-48', finding(15), 'ag-charts#8440 / #8441'],
             ['chartsHome'],
             absoluteSocialImages,
             { knownIssue: `${finding(15)} (SE-48 PARTIAL: relative on charts)`, fixedBy: PENDING.chartsSeo }
@@ -356,7 +356,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'social-images.absolute-studio',
             'og:image and twitter:image are absolute on studio',
-            ['SE-48', finding(15), 'ag-studio#3087'],
+            ['SE-48', finding(15), 'ag-studio#3096 / #3097'],
             ['studioHome'],
             absoluteSocialImages,
             { knownIssue: `${finding(15)} (SE-48 PARTIAL: relative on studio)`, fixedBy: PENDING.studioSeo }
@@ -384,7 +384,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'landmark.main-charts',
             'Exactly one <main> landmark on charts',
-            ['SE-49', finding(15), 'ag-charts#8432'],
+            ['SE-49', finding(15), 'ag-charts#8440 / #8441'],
             ['chartsHome', 'chartsDocs'],
             oneMain,
             { knownIssue: `${finding(15)} (SE-49 PARTIAL: no <main> on charts)`, fixedBy: PENDING.chartsSeo }
@@ -392,7 +392,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'landmark.main-studio',
             'Exactly one <main> landmark on studio',
-            ['SE-49', finding(15), 'ag-studio#3087'],
+            ['SE-49', finding(15), 'ag-studio#3096 / #3097'],
             ['studioHome', 'studioDocs'],
             oneMain,
             { knownIssue: `${finding(15)} (SE-49 PARTIAL: no <main> on studio)`, fixedBy: PENDING.studioSeo }
@@ -407,7 +407,7 @@ export function seoContentChecks(): CheckDef[] {
         perPage(
             'viewport-studio',
             'One viewport meta with initial-scale=1 on studio',
-            ['SE-50', finding(15), 'ag-studio#3087'],
+            ['SE-50', finding(15), 'ag-studio#3096 / #3097'],
             ['studioHome'],
             viewport,
             {

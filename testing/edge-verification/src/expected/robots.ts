@@ -100,17 +100,17 @@ export const ROBOTS_MATRIX: RobotsRow[] = [
     both('/charts/demos/', true, ['SE-182']),
     both('/studio/react/autosave-test/', false, ['SE-78']),
     both('/react-data-grid/cell-editing-batch-test/', false, ['SE-78']),
-    both('/react-data-grid/cell-editing-batch-test.md', false, [finding(11), 'grid#15424'], {
+    both('/react-data-grid/cell-editing-batch-test.md', false, [finding(11), 'grid#15434 / #15435'], {
         knownIssue: `${finding(11)} (Disallow lines end with /, so .md copies of disallowed pages stay crawlable)`,
         fixedBy: PENDING.gridRobotsTwins,
     }),
-    both('/studio/react/autosave-test.md', false, [finding(11), 'grid#15424'], {
+    both('/studio/react/autosave-test.md', false, [finding(11), 'grid#15434 / #15435'], {
         knownIssue: `${finding(11)} (the studio *-test pages' .md twins stay crawlable)`,
-        fixedBy: `${PENDING.gridRobotsTwins}, or ag-studio#3087 e6cd2ef86 (the published disallow list)`,
+        fixedBy: `${PENDING.gridRobotsTwins}, or ag-studio#3096 / #3097 (the published disallow list)`,
     }),
-    both('/charts/react/selection-test.md', false, [finding(11), 'grid#15424'], {
+    both('/charts/react/selection-test.md', false, [finding(11), 'grid#15434 / #15435'], {
         knownIssue: `${finding(11)} (the charts hidden pages' .md twins stay crawlable)`,
-        fixedBy: `${PENDING.gridRobotsTwins}, or ag-charts#8432 119ed88dc6 (the published disallow list)`,
+        fixedBy: `${PENDING.gridRobotsTwins}, or ag-charts#8440 / #8441 (the published disallow list)`,
     }),
     both('/changelog/?searchQuery=test', false, ['SE-183']),
     both('/pipeline/?searchQuery=test', false, ['SE-183']),
@@ -123,11 +123,13 @@ export const ROBOTS_MATRIX: RobotsRow[] = [
     { url: '/charts/archive/11.2.0/', star: false, ai: true, refs: ['SE-182', finding(12)] },
     { url: '/studio/archive/1.0.0/', star: false, ai: true, refs: ['SE-182', finding(12)] },
     // SE-182 / waf-finding.md §12: the archive roots should be crawlable so their 301 is visible.
-    both('/archive/', true, ['SE-182', finding(12), 'grid#15424'], { pending: PENDING.gridRobotsTwins }),
-    both('/charts/archive/', true, ['SE-182', finding(12), 'grid#15424'], { pending: PENDING.gridRobotsTwins }),
+    both('/archive/', true, ['SE-182', finding(12), 'grid#15434 / #15435'], { pending: PENDING.gridRobotsTwins }),
+    both('/charts/archive/', true, ['SE-182', finding(12), 'grid#15434 / #15435'], {
+        pending: PENDING.gridRobotsTwins,
+    }),
     // ...and only the roots: Allow: /archive/$ must not open the archived pages to search.
-    { url: '/archive/36.2.0/', star: false, ai: true, refs: ['SE-182', 'grid#15424'] },
-    { url: '/charts/archive/14.2.0/', star: false, ai: true, refs: ['SE-182', 'grid#15424'] },
+    { url: '/archive/36.2.0/', star: false, ai: true, refs: ['SE-182', 'grid#15434 / #15435'] },
+    { url: '/charts/archive/14.2.0/', star: false, ai: true, refs: ['SE-182', 'grid#15434 / #15435'] },
 ];
 
 /** Every robots.txt the site serves. */
@@ -148,7 +150,7 @@ export const CHARTS_HOST_ROBOTS: Robots = {
 };
 
 /**
- * grid#15424 pairs every directory rule with an exact `<page>.md$` rule. Evaluated over every
+ * grid#15434 / #15435 pairs every directory rule with an exact `<page>.md$` rule. Evaluated over every
  * directory Disallow in the live robots.txt (the page classes come from the charts and studio
  * builds, so they are not listed here), for the group that disallows the page.
  */
@@ -159,6 +161,6 @@ export const MD_TWIN_POLICY = {
     wildcardSample: 'edge-check',
     query: '?utm_source=edge-check',
     pending: PENDING.gridRobotsTwins,
-    /** grid#15424 2ed1049f81e adds a `<page>.md?` rule beside each `<page>.md$`, so a query string does not reopen it. */
+    /** grid#15434 / #15435 adds a `<page>.md?` rule beside each `<page>.md$`, so a query string does not reopen it. */
     queryPending: PENDING.gridRobotsTwinsQuery,
 };

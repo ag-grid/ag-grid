@@ -83,6 +83,7 @@ export const WAF_NONEXISTENT = awsFails(
 
 /** The function add-archive-cache-behaviors.sh publishes. */
 export const MARKDOWN_KEY_FUNCTION_CODE = `// Splits the cache key on the test Apache uses to serve the markdown twin
+// (RewriteCond %{HTTP_ACCEPT} text/markdown - case-sensitive substring).
 function handler(event) {
     var headers = event.request.headers;
     var accept = headers.accept ? headers.accept.value : '';

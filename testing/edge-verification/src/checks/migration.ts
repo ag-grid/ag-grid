@@ -112,7 +112,7 @@ function versionChecks(site: MigratedSite, version: string, i: number): CheckDef
         area: 'migration',
         title: `${base}/${BACKUP_NAME} is not served (403; a 404 is inconclusive)`,
         ...lifecycle,
-        refs: ['grid#15430'],
+        refs: ['grid#15434 / #15435'],
         async run({ http }) {
             const res = await http.head(`${WWW}${base}/${BACKUP_NAME}`);
             // A .ht* denial answers 403 whether or not the file exists; a 404 may only mean no

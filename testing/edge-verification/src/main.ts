@@ -1,7 +1,44 @@
 /**
  * Post-deploy verification of www.ag-grid.com against PRODUCTION: SEO tickets, AI-crawler policy,
- * CloudFront caching and WAF configuration. Read-only AWS (ddos-report-readonly) and low-volume
- * GET/HEAD only. See README.md.
+ * CloudFront caching and WAF configuration. What the live run checks, by area (`--only <area>`):
+ *
+ *   redirects      every alias host (apex, blog., react-grid., charts. ...) and legacy URL reaches the
+ *                  right www URL in one hop, query string kept; archive URLs stay inside their archive
+ *   bot-outcomes   queries recent WAF logs: each crawler/agent family (Googlebot, OAI-SearchBot,
+ *                  DuckAssistBot, Meta, LINE ...) is actually allowed, under a non-allowed threshold
+ *   headers        Cache-Control per page type (HTML no-cache, archives 7 days, images 1 day), the
+ *                  7-day browser-cache cap on every response class, Vary: Accept on negotiable HTML,
+ *                  markdown negotiation, noindex on archive .md, 304 revalidation
+ *   crawler-policy robots.txt parsed with an RFC 9309 evaluator: per URL, what search crawlers and the
+ *                  AI group may fetch, including each .md twin
+ *   waf-config     every WAF rule and ACL setting on both ACLs, field by field: order, actions,
+ *                  regexes, managed-group overrides, rate limits, logging and redaction, and the
+ *                  pending script shapes
+ *   cloudfront     distribution, origin and every behaviour field by field; cache/origin-request
+ *                  policies, real-time logs, the archive markdown function
+ *   seo-content    sample pages: one H1, <main>, viewport, canonical, absolute og:image, structured
+ *                  data (FAQPage only on the home page)
+ *   caching        the live cache: repeat requests hit for cached paths, never for HTML;
+ *                  HTML -> markdown -> HTML stays HTML (cache poisoning)
+ *   waf-behaviour  real requests: curl gets the guidance 403, curl with Accept: text/markdown gets
+ *                  markdown, credential-scanner probes blocked, allowed agents served
+ *   migration      migrated archives redirect alias hosts in one hop; .htaccess.bak-* files never served
+ *   agent-files    llms.txt and AGENTS.md for all three sites: content type, sections, every
+ *                  advertised .md link resolves
+ *   infra          alarms watch the right metric and notify the right topic; Shield protections; ALB
+ *                  settings
+ *   blog           Ghost blog headers (one CSP, Referrer/Permissions-Policy, no X-Robots-Tag) and its
+ *                  sitemap
+ *
+ * AWS is read-only: the ddos-report-readonly profile is hard-wired, and only allowlisted read calls
+ * are made. HTTP is GET/HEAD only, at low volume (a request cap, concurrency and a minimum gap).
+ *
+ * Verdicts: PASS and FAIL; WARN, a problem that fails only under --strict; KNOWN, an accepted known issue (FIXED? when it no longer reproduces);
+ * PENDING, an expectation whose change is not deployed yet (NOW LIVE when it already holds); SKIP,
+ * could not be verified (e.g. a denied read, or no request budget left); INFO, reported, not judged.
+ * --pending also evaluates the pending expectations (they never fail the run); --strict makes KNOWN
+ * and WARN fail the run too. The offline unit tests (src/**\/*.test.ts) run under `nx test`. See
+ * README.md.
  */
 import { writeFileSync } from 'node:fs';
 

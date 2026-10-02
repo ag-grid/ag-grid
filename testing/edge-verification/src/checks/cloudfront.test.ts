@@ -404,6 +404,25 @@ describe('distribution settings, the origin, and the policies', () => {
         });
     }
 
+    // add-archive-cache-behaviors.sh's planner: a copy of CachingOptimizedWithHost with MinTTL and
+    // DefaultTTL 0 and x-ag-accept-markdown added to the key headers; nothing else differs.
+    it('declares CachingOptimizedWithHostAndMarkdown exactly as add-archive-cache-behaviors.sh builds it', () => {
+        const source = CACHE_POLICIES.find((p) => p.name === 'CachingOptimizedWithHost')!;
+        const declared = CACHE_POLICIES.find((p) => p.name === 'CachingOptimizedWithHostAndMarkdown')!;
+        assert.deepEqual(
+            { ...declared, id: undefined, pending: undefined },
+            {
+                ...source,
+                id: undefined,
+                pending: undefined,
+                name: 'CachingOptimizedWithHostAndMarkdown',
+                minTtl: 0,
+                defaultTtl: 0,
+                keyHeaders: [...source.keyHeaders, 'x-ag-accept-markdown'],
+            }
+        );
+    });
+
     it('cache policies pass whatever their comment says, and compare header names case-insensitively', async () => {
         for (const p of CACHE_POLICIES) {
             const outcome = await run(`cloudfront.cache-policy.${p.name}`, { policy: (c) => (c.Comment = 'changed') });

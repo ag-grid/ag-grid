@@ -67,13 +67,13 @@ export interface AdvertisedLink extends Lifecycle {
 export const ADVERTISED_LINKS: AdvertisedLink[] = [
     {
         // §20.3: /javascript-data-grid/ only forwards in the browser (no sitemap entry, no .md twin).
-        // grid#15424 points the link at the JavaScript getting-started page (user decision 2026-10-01).
+        // grid#15434 / #15435 points the link at the JavaScript getting-started page (user decision 2026-10-01).
         id: 'grid-data-grid',
         file: 'https://www.ag-grid.com/llms.txt',
         label: 'Data Grid',
         url: 'https://www.ag-grid.com/javascript-data-grid/getting-started/',
         notUrl: 'https://www.ag-grid.com/javascript-data-grid/',
-        refs: [finding(20), 'grid#15424', 'SE-77'],
+        refs: [finding(20), 'grid#15434 / #15435', 'SE-77'],
         pending: PENDING.gridLlmsDataGrid,
     },
     ...['https://www.ag-grid.com/charts/llms.txt', 'https://www.ag-grid.com/charts/AGENTS.md'].map(
@@ -82,7 +82,7 @@ export const ADVERTISED_LINKS: AdvertisedLink[] = [
             file,
             url: 'https://www.ag-grid.com/charts/options/',
             notUrl: 'https://www.ag-grid.com/charts/javascript/options/',
-            refs: [finding(13), 'ag-charts#8432', 'SE-77'],
+            refs: [finding(13), 'ag-charts#8440 / #8441', 'SE-77'],
             pending: PENDING.chartsSeo,
         })
     ),
