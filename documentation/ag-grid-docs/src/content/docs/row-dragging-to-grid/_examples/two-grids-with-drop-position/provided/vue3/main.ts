@@ -54,7 +54,7 @@ const createRowBlock = (blocks) =>
 
 const VueExample = defineComponent({
     /* html */
-    template: `<div class="example-wrapper">
+    template: `<div class="example-wrapper example-wrapper--row">
 
             <div class="inner-col">
                 <div class="toolbar example-controls">

@@ -23,6 +23,7 @@
     --range-track-bg: #efefef;
 
     --row-gap: 6px;
+    --controls-gap: calc(var(--row-gap) * 2);
 
     --select-chevron: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
@@ -54,6 +55,47 @@
 
     --select-chevron: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%239CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232a343e' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
+}
+
+/* Example page layout.
+ *
+ * An example is a column: the controls sit at their natural height, and whatever else the
+ * wrapper holds -- the grid, a chart, a canvas -- takes the height that is left. Examples
+ * used to spell this out in their own stylesheet, which drifted into dozens of variants of
+ * the same three rules.
+ *
+ * The grow rule keys off "not the controls" rather than naming the example's own element,
+ * because that element differs per framework: a plain `div` in vanilla and React,
+ * `ag-grid-angular` in Angular, `ag-grid-vue` in Vue. There is no one selector to name, and
+ * a few examples put a second controls block underneath the grid.
+ *
+ * `.example-header` is the other block that must keep its natural height. It is sometimes a
+ * wrapper around the controls and sometimes a line of prose about the example, so it cannot
+ * be folded into `.example-controls`.
+ */
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--controls-gap);
+}
+
+.example-wrapper > .example-controls,
+.example-wrapper > .example-header {
+    flex: 0 0 auto;
+}
+
+.example-wrapper:not(.example-wrapper--row) > :not(.example-controls, .example-header) {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+/* A handful of examples lay their root out as a horizontal split -- two grids side by side, or a
+   grid beside a panel -- rather than as controls above an example. They opt out with this
+   modifier: the layout turns back into a row, and the grow rule above stops claiming their
+   children, so the example's own `flex` values on those children are left to govern. */
+.example-wrapper--row {
+    flex-direction: row;
 }
 
 /* Hide codesandbox highlighter */

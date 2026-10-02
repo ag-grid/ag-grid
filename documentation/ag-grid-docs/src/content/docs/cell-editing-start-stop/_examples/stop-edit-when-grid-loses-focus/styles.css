@@ -1,21 +1,7 @@
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-#myGrid {
-    flex: 1 1 0px;
-    width: 100%;
-}
-
-.example-header {
-    margin-bottom: 5px;
-}
-
 .ag-cell-inline-editing {
     border: 1px solid lightgreen !important;
 }
+
 .yearSelect {
     padding: 4px;
     border: 1px solid var(--ag-border-color);

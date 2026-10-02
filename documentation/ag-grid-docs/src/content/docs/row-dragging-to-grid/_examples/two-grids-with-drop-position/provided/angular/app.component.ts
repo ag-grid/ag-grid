@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `
-        <div class="example-wrapper">
+        <div class="example-wrapper example-wrapper--row">
             <div class="inner-col">
                 <div class="toolbar example-controls">
                     <div class="controls-row">
