@@ -139,7 +139,11 @@ body > #highlighter {
     appearance: none;
     display: inline-block;
     height: 36px;
-    padding: 5px 14px 7px;
+    /* Even padding, so the text centres in the 36px box. The 5px/7px it replaces sat the text a
+       pixel high, which only showed once a control with no box of its own -- a checkbox and its
+       label, say -- stood next to a button in the same row: `.controls-row` centres the two boxes
+       on each other, so that pixel became a visible step between their two runs of text. */
+    padding: 6px 14px;
     white-space: nowrap;
     border-radius: 6px;
     color: var(--button-fg);
