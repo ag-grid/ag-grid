@@ -3,7 +3,7 @@
 // and more regular. Param value type and default are derived by the shared layer
 // (getParamType by name suffix + the rendered theme), so only presentation hints
 // live here.
-export type LengthIcon = 'radius' | 'verticalSpacing' | 'horizontalSpacing';
+import type { LengthIcon } from '@ag-website-shared/components/theme-builder/icons';
 
 export interface StudioParamConfig {
     key: string;

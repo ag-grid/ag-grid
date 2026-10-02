@@ -6,7 +6,7 @@ export interface ICellRangeFeature {
     unsetComp(): void;
     scheduleRefreshRangeStyleAndHandle(): void;
     reattachHandle(eParent: HTMLElement): void;
-    updateRangeBordersIfRangeCount(): void;
+    onDisplayedColumnsChanged(): void;
     onCellSelectionChanged(): void;
     destroy(): void;
 }

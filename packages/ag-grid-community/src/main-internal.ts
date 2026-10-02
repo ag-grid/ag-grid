@@ -194,7 +194,6 @@ export type {
     IRowContainerComp,
     RowContainerName,
     RowContainerOptions,
-    RowContainerType,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export { GridCtrl } from './gridComp/gridCtrl';

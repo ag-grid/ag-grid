@@ -26,7 +26,6 @@ import type {
     RowEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
     _addGridCommonParams,
     _getRowHeightForNode,
@@ -94,14 +93,13 @@ export interface IRowComp {
 export interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
-    containerType: RowContainerType;
     compBean: BeanStub;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PinnedCellGroupWidths = PinnedSectionWidths;
 
-interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
+export interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
     renderLeft: boolean;
     renderRight: boolean;
 }
@@ -117,6 +115,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private rowGui: RowGui | undefined;
     private readonly rowModeFeature: IRowModeFeature;
+    private mappedPinnedWidths: MappedPinnedCellGroupWidths | undefined = undefined;
 
     /** A spanned row's cell height belongs to the rows it covers, so auto height reaches it via the span. */
     public readonly spannedRow: boolean = false;
@@ -216,16 +215,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.businessKey = _escapeString(businessKey);
     }
 
-    public setComp(
-        rowComp: IRowComp,
-        element: HTMLElement,
-        containerType: RowContainerType,
-        compBean: BeanStub<any> | undefined
-    ): void {
+    public setComp(rowComp: IRowComp, element: HTMLElement, compBean: BeanStub<any> | undefined): void {
         const { context, rowRenderer } = this.beans;
         const rowCompBean = setupCompBean(this, context, compBean);
 
-        const rowGui: RowGui = { rowComp, element, containerType, compBean: rowCompBean };
+        const rowGui: RowGui = { rowComp, element, compBean: rowCompBean };
         this.rowGui = rowGui;
 
         this.initialiseRowComp();
@@ -244,10 +238,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.setupFocus?.();
     }
 
-    public unsetComp(containerType: RowContainerType): void {
-        if (this.rowGui?.containerType === containerType) {
-            this.rowGui = undefined;
-        }
+    public unsetComp(): void {
+        this.rowGui = undefined;
     }
 
     public isCacheable(): boolean {
@@ -400,7 +392,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private executeProcessRowPostCreateFunc(): void {
         const func = this.gos.getCallback('processRowPostCreate');
         const rowGui = this.rowGui;
-        if (this.isClientSideLoadingRow() || !func || rowGui?.containerType !== 'center') {
+        if (this.isClientSideLoadingRow() || !func || rowGui === undefined) {
             return;
         }
 
@@ -458,6 +450,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         rowGui.rowComp.refreshPinnedSections();
     }
 
+    /** The same object while the widths are unchanged, so a comp skips an unchanged refresh by identity. */
     public getMappedPinnedCellGroupWidths(): MappedPinnedCellGroupWidths {
         let { leftWidth, centerWidth, rightWidth } = this.getPinnedCellGroupWidths();
 
@@ -471,18 +464,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const isFullWidth = this.isFullWidth();
-
-        return {
-            leftWidth,
-            centerWidth,
-            rightWidth,
-            // Pinned lanes are omitted from the DOM when they have no width to
-            // improve rendering performance. Full width rows always render the
-            // lanes, because the row renderer requires a reference to them even
-            // when they are empty.
-            renderLeft: leftWidth > 0 || isFullWidth,
-            renderRight: rightWidth > 0 || isFullWidth,
-        };
+        // an empty pinned lane is left out of the DOM, but a full-width row's renderer needs every lane
+        const renderLeft = leftWidth > 0 || isFullWidth;
+        const renderRight = rightWidth > 0 || isFullWidth;
+        let widths = this.mappedPinnedWidths;
+        if (
+            widths?.leftWidth !== leftWidth ||
+            widths.centerWidth !== centerWidth ||
+            widths.rightWidth !== rightWidth ||
+            widths.renderLeft !== renderLeft ||
+            widths.renderRight !== renderRight
+        ) {
+            widths = { leftWidth, centerWidth, rightWidth, renderLeft, renderRight };
+            this.mappedPinnedWidths = widths;
+        }
+        return widths;
     }
 
     public getPinnedCellGroupWidths(): PinnedCellGroupWidths {
@@ -493,8 +489,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
      * CellCtrls for rows whose normal-mode feature eagerly created cells in the constructor.
      * React uses this to seed first render and avoid an empty row flash on bulk add.
      */
-    public getInitialCellCtrls(containerType: RowContainerType): CellCtrl[] | null {
-        return this.rowModeFeature.getInitialCellCtrls?.(containerType) ?? null;
+    public getInitialCellCtrls(): CellCtrl[] | null {
+        return this.rowModeFeature.getInitialCellCtrls?.() ?? null;
     }
 
     public getDomOrder(): boolean {
@@ -566,10 +562,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowType === 'FullWidthLoading' ? 'gridcell' : 'presentation';
     }
 
-    public getContainerType(): RowContainerType | undefined {
-        return this.rowGui?.containerType;
-    }
-
     public shouldCreateCellSections(): boolean {
         return this.rowModeFeature.shouldCreateCellSections();
     }
@@ -634,9 +626,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                     this.updateRowIndexes();
                 }
                 this.refreshFirstAndLastRowStyles();
-            },
-            columnMoved: () => {
-                this.rowModeFeature.onColumnMoved();
             },
         });
 
@@ -1408,8 +1397,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     /** The column's own cell, else the drawn cell spanning it; a span search runs a pending layout first. */
-    public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | undefined {
-        return this.rowModeFeature.getCellCtrl?.(column, skipColSpanSearch);
+    public getCellCtrl(column: AgColumn): CellCtrl | undefined {
+        return this.rowModeFeature.getCellCtrl?.(column);
+    }
+
+    /** The cell drawn for the column itself, never one spanning it. */
+    public getOwnCellCtrl(column: AgColumn): CellCtrl | undefined {
+        return this.rowModeFeature.getOwnCellCtrl?.(column);
     }
 
     protected onRowIndexChanged(): void {

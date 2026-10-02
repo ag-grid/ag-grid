@@ -39,7 +39,6 @@ export class RowContainerComp extends Component {
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
-    private readonly options: RowContainerOptions;
 
     private rowCompsNoSpan: { [id: RowCtrlInstanceId]: RowComp } = {};
     private rowCompsWithSpan: { [id: RowCtrlInstanceId]: RowComp } = {};
@@ -53,11 +52,10 @@ export class RowContainerComp extends Component {
     constructor(params?: { name: string }) {
         super();
         this.name = params?.name as RowContainerName;
-        this.options = _getRowContainerOptions(this.name);
     }
 
     public postConstruct(): void {
-        this.setTemplate(getElementParams(this.name, this.options, this.beans));
+        this.setTemplate(getElementParams(this.name, _getRowContainerOptions(this.name), this.beans));
         this.initialiseComp();
     }
 
@@ -111,7 +109,7 @@ export class RowContainerComp extends Component {
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[], spanContainer?: boolean): void {
-        const { beans, options } = this;
+        const beans = this.beans;
 
         const container = spanContainer ? this.eSpannedContainer : this.eContainer;
         if (!container) {
@@ -143,7 +141,7 @@ export class RowContainerComp extends Component {
                 if (!rowCtrl.rowNode.displayed) {
                     continue;
                 }
-                rowComp = new RowComp(rowCtrl, beans, options.type);
+                rowComp = new RowComp(rowCtrl, beans);
             }
             newComps[instanceId] = rowComp;
             orderedRows.push([rowComp, !existingRowComp]);

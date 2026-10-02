@@ -14,6 +14,7 @@ import GridDark from '@ag-website-shared/images/inline-svgs/grid-dark.svg?react'
 import GridLight from '@ag-website-shared/images/inline-svgs/grid-light.svg?react';
 import StudioDark from '@ag-website-shared/images/inline-svgs/studio-dark.svg?react';
 import StudioLight from '@ag-website-shared/images/inline-svgs/studio-light.svg?react';
+import type { CSSProperties } from 'react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 
 import styles from './ProductDropdown.module.scss';
@@ -51,11 +52,19 @@ const isGrouped = (menu: ProductMenu): menu is ProductGroup[] => {
 
 export const ProductDropdown = ({ items, children }: { items: ProductMenu; children?: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [triggerOffset, setTriggerOffset] = useState<number>();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
 
     const groups: ProductGroup[] = isGrouped(items) ? items : [{ label: '', items }];
+    const popupStyle =
+        triggerOffset == null ? undefined : ({ '--switcher-popup-left': `${triggerOffset}px` } as CSSProperties);
 
     const handleMenuToggle = () => {
+        // offsetLeft shares the popup's containing block (.headerInner), so the two agree.
+        if (!isOpen) {
+            setTriggerOffset(triggerRef.current?.offsetLeft);
+        }
         setIsOpen(!isOpen);
     };
 
@@ -137,6 +146,7 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
     return (
         <div ref={dropdownRef} className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}>
             <button
+                ref={triggerRef}
                 className={`${styles.customTrigger} ${isOpen ? styles.open : ''}`}
                 onClick={handleMenuToggle}
                 tabIndex={0}
@@ -150,7 +160,7 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
              * the parent `.open` class so the dropdown is fully removed from
              * the accessibility tree and pointer interactions while collapsed.
              */}
-            <div className={styles.customContent}>
+            <div className={styles.customContent} style={popupStyle}>
                 {groups.map((group, groupIndex) => (
                     <div key={groupIndex} className={styles.column}>
                         {group.label && <div className={styles.columnHeading}>{group.label}</div>}

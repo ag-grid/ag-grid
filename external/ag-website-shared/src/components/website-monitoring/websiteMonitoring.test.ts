@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import { vi } from 'vitest';
 
 import {
@@ -10,6 +11,7 @@ import {
 const dash0 = vi.hoisted(() => ({
     init: vi.fn(),
     sendEvent: vi.fn(),
+    startView: vi.fn(),
     reportError: vi.fn(),
     terminateSession: vi.fn(),
 }));
@@ -209,6 +211,163 @@ describe('initWebsiteMonitoring', () => {
         await initWebsiteMonitoring();
         await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
         expect(dash0.init).not.toHaveBeenCalled();
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('page views', () => {
+    // What the ClientRouter does once a navigation has finished: the new path and title are in place
+    function finishNavigation(path: string, title: string) {
+        replaceHistoryUrl(path);
+        document.title = title;
+        document.dispatchEvent(new Event('astro:page-load'));
+    }
+
+    afterEach(() => {
+        replaceHistoryUrl('/');
+    });
+
+    test('turns off the SDK virtual page views, which would pair the new path with the old title', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledWith(
+            expect.objectContaining({ pageViewInstrumentation: { trackVirtualPageViews: false } })
+        );
+    });
+
+    test('records a navigation under the title of the page navigated to', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        finishNavigation('/charts/line-series/', 'Line Series');
+
+        expect(dash0.startView).toHaveBeenCalledTimes(1);
+        expect(dash0.startView).toHaveBeenCalledWith('Line Series');
+    });
+
+    test('does not record the page that the SDK has already recorded as the initial page view', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        document.dispatchEvent(new Event('astro:page-load'));
+
+        expect(dash0.startView).not.toHaveBeenCalled();
+    });
+
+    test('does not record a navigation that keeps the path, such as to a heading', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+        finishNavigation('/charts/line-series/', 'Line Series');
+        dash0.startView.mockClear();
+
+        finishNavigation('/charts/line-series/#options', 'Line Series');
+
+        expect(dash0.startView).not.toHaveBeenCalled();
+    });
+
+    test('records nothing before monitoring has started', async () => {
+        await initWebsiteMonitoring();
+
+        finishNavigation('/charts/line-series/', 'Line Series');
+
+        expect(dash0.startView).not.toHaveBeenCalled();
+    });
+});
+
+describe('URL scrubbing', () => {
+    const urlAttributes = (url: string) => {
+        const { href, pathname, hostname, protocol, hash, search } = new URL(url);
+        return {
+            'url.full': href,
+            'url.path': pathname,
+            'url.domain': hostname,
+            'url.scheme': protocol.replace(':', ''),
+            'url.fragment': hash ? hash.replace('#', '') : undefined,
+            'url.query': search ? search.replace('?', '') : undefined,
+        };
+    };
+
+    test('is applied to the URLs the SDK adds to its telemetry', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledWith(expect.objectContaining({ urlAttributeScrubber: scrubErrorPageQuery }));
+    });
+
+    test('redacts the query of an error page, which holds the error arguments', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        const attributes = urlAttributes(
+            'https://www.ag-grid.com/javascript-data-grid/errors/200/?_version_=36.2.0&row=%7B%22name%22%3A%22Ada%22%7D'
+        );
+
+        expect(scrubErrorPageQuery(attributes)).toEqual({
+            ...attributes,
+            'url.full': 'https://www.ag-grid.com/javascript-data-grid/errors/200/?REDACTED',
+            'url.query': 'REDACTED',
+        });
+    });
+
+    test('keeps the fragment of an error page', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+
+        expect(
+            scrubErrorPageQuery(urlAttributes('https://www.ag-grid.com/react-data-grid/errors/7?a=1#details'))
+        ).toEqual(
+            expect.objectContaining({
+                'url.full': 'https://www.ag-grid.com/react-data-grid/errors/7?REDACTED#details',
+                'url.fragment': 'details',
+            })
+        );
+    });
+
+    test('keeps the query of any other page', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        const attributes = urlAttributes('https://www.ag-grid.com/charts/?utm_source=newsletter');
+
+        expect(scrubErrorPageQuery(attributes)).toBe(attributes);
+    });
+
+    test('leaves an error page without a query as it is', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        const attributes = urlAttributes('https://www.ag-grid.com/javascript-data-grid/errors/200/');
+
+        expect(scrubErrorPageQuery(attributes)).toBe(attributes);
+    });
+});
+
+describe('error pages', () => {
+    const ERROR_PAGE_URL = '/javascript-data-grid/errors/200/?_version_=36.2.0&row=%7B%22name%22%3A%22Ada%22%7D';
+
+    afterEach(() => {
+        replaceHistoryUrl('/');
+    });
+
+    test('are never monitored, as the SDK reports the URL of the document it loaded on', async () => {
+        replaceHistoryUrl(ERROR_PAGE_URL);
+        await initWebsiteMonitoring();
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).not.toHaveBeenCalled();
+    });
+
+    test('stay unmonitored after the visitor navigates to another page', async () => {
+        replaceHistoryUrl(ERROR_PAGE_URL);
+        await initWebsiteMonitoring();
+        replaceHistoryUrl('/javascript-data-grid/getting-started/');
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).not.toHaveBeenCalled();
+    });
+
+    test('are monitored when the visitor navigates to one from another page', async () => {
+        await initWebsiteMonitoring();
+        replaceHistoryUrl(ERROR_PAGE_URL);
 
         await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
 

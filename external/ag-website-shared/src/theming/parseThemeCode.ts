@@ -1,4 +1,4 @@
-import type { Part } from 'ag-grid-community';
+import type { Part } from 'ag-stack';
 
 import { RGBAColor } from './RGBAColor';
 import { paramValueToCss } from './api';
@@ -31,20 +31,13 @@ export type ParseThemeCodeOptions = {
      * can omit this - parts will always be empty.
      */
     extractParts?: (identifiers: string[]) => Part<any>[];
-    /**
-     * What to say when the code holds nothing this host recognises. Defaults to
-     * the grid/Studio builder-chain form.
-     */
-    noParamsError?: string;
+    /** What to say when the code holds nothing this host recognises. Called only on that branch. */
+    noParamsError: () => string;
 };
 
 export function parseThemeCode(code: string, options: ParseThemeCodeOptions): ParseThemeResult {
     const tokens = tokenizeThemeCode(code);
-    const {
-        isRecognizedParam,
-        extractParts,
-        noParamsError = 'Could not find any theme parameters. Expected code like: themeQuartz.withParams({ backgroundColor: "#fff" })',
-    } = options;
+    const { isRecognizedParam, extractParts, noParamsError } = options;
     const params: Record<string, unknown> = {};
     const variableWarnings: string[] = [];
     let i = 0;
@@ -76,7 +69,7 @@ export function parseThemeCode(code: string, options: ParseThemeCodeOptions): Pa
     if (Object.keys(params).length + parts.length === 0) {
         return {
             success: false,
-            error: variableWarnings.length > 0 ? variableWarnings.join('\n') : noParamsError,
+            error: variableWarnings.length > 0 ? variableWarnings.join('\n') : noParamsError(),
             params: undefined,
             parts: undefined,
             variableWarnings: undefined,
