@@ -519,7 +519,7 @@ export class SetFilter<V = string>
             value: formatTreeKey(item, this.params.treeListFormatter) ?? item.treeKey,
             depth: item.depth,
             isGroup: !!children,
-            isKeyOnly: !!item.keyOnly,
+            isKeyOnly: item.keyOnly,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
                 this.onTreeItemSelected(e.item, e.isSelected),
             expandedListener: children
@@ -1320,6 +1320,10 @@ class TreeModelWrapper implements VirtualListModel {
         if (oldRow == null && newRow == null) {
             return true;
         }
-        return oldRow?.treeKey === newRow?.treeKey && oldRow?.depth === newRow?.depth;
+        return (
+            oldRow?.treeKey === newRow?.treeKey &&
+            oldRow?.depth === newRow?.depth &&
+            oldRow?.keyOnly === newRow?.keyOnly
+        );
     }
 }

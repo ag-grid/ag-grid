@@ -214,6 +214,9 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     /** The handlers hold the values an applied expression names, so `preservePreviousValuesLimit` spares them. */
     private refreshAppliedValues(): void {
+        if (!this.columns.size) {
+            return;
+        }
         const appliedModel = this.beans.advancedFilter?.getModel();
         for (const [colId, setColumn] of this.columns) {
             setColumn?.handler.holdKeys(getAppliedSetValues(appliedModel, colId));

@@ -14,7 +14,7 @@ import type {
 import { AgPromise, BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
-import { createTreeDataOrGroupingComparator, mapFormattedKeys, setFilterNullIfBlank } from './setFilterUtils';
+import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } from './setFilterUtils';
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
 
@@ -71,7 +71,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private valuesType: SetFilterModelValuesType;
 
     private keyComparator: (a: string | null, b: string | null) => number;
-    private entryComparator: (a: [string | null, TValue | null], b: [string | null, TValue | null]) => number;
+    private valueComparator: (a: TValue | null, b: TValue | null) => number;
     private compareByValue: boolean;
 
     private providedValues: SetFilterValues<any, TValue> | null = null;
@@ -135,8 +135,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         }
         if (replace) {
             const current = this.current;
-            if (current && !current.answered) {
-                // its answer is keyed by the new rules, so it replaces rather than loading again
+            // its answer is keyed by the new rules, so it replaces kept keys rather than loading again
+            if (current && !current.answered && this.isPreserving()) {
                 current.replace = true;
                 this.colDefLoad = this.allKeys;
                 return false;
@@ -208,21 +208,15 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
         const keyComparator = comparator ?? (colDef.comparator as (a: any, b: any) => number);
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
-        let entryComparator: (a: [string | null, TValue | null], b: [string | null, TValue | null]) => number;
+        let valueComparator: (a: TValue | null, b: TValue | null) => number;
         if (treeDataOrGrouping && !keyComparator) {
-            entryComparator = createTreeDataOrGroupingComparator() as any;
+            valueComparator = treeDataOrGroupingComparator as any;
         } else if (treeList && !treeListPathGetter && !keyComparator) {
-            entryComparator = (
-                [_aKey, aValue]: [string | null, TValue | null],
-                [_bKey, bValue]: [string | null, TValue | null]
-            ) => _defaultComparator(aValue, bValue);
+            valueComparator = _defaultComparator;
         } else {
-            entryComparator = (
-                [_aKey, aValue]: [string | null, TValue | null],
-                [_bKey, bValue]: [string | null, TValue | null]
-            ) => keyComparator(aValue, bValue);
+            valueComparator = keyComparator;
         }
-        this.entryComparator = entryComparator;
+        this.valueComparator = valueComparator;
         this.keyComparator = (keyComparator as any) ?? _defaultComparator;
         // If using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys.
         // Also if tree data, grouping, or date with tree list, then need to do value sort
@@ -424,7 +418,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return this.sortKeys(this.allValues);
     }
 
-    /** Folds the fresh values into the kept ones in place; a key in another case is the kept key when not case sensitive. */
+    /** Folds the fresh values into the kept ones in place; one in another case keeps the kept key and value, its first-seen case. */
     private mergeValues(freshValues: Map<string | null, TValue | null>): void {
         const { caseFormat, missingKeys, keyOnlyKeys } = this;
         const allValues = this.allValues;
@@ -445,9 +439,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                 key = freshKey;
                 index.set(formattedKey, key);
             }
-            // A kept key keeps its position, so first-seen order holds under `suppressSorting`.
-            allValues.set(key, value);
-            if (key !== freshKey) {
+            if (key === freshKey) {
+                // A kept key keeps its position, so first-seen order holds under `suppressSorting`.
+                allValues.set(key, value);
+            } else {
                 remappedKeys ??= new Set();
                 remappedKeys.add(key);
             }
@@ -536,7 +531,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     private sortKeys(nullableValues: Map<string | null, TValue | null> | null): (string | null)[] {
-        let values = nullableValues ?? new Map();
+        const values = nullableValues ?? new Map<string | null, TValue | null>();
 
         const filterParams = this.params.handlerParams.filterParams;
 
@@ -544,35 +539,52 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             return Array.from(values.keys());
         }
 
-        const keyOnlyKeys = this.keyOnlyKeys;
-        let sortedKeyOnlyKeys: (string | null)[] | undefined;
-        if (keyOnlyKeys.size && values === this.allValues) {
-            // Their values are unknown, so no comparator is handed one: ordered by key, after the rest.
-            sortedKeyOnlyKeys = Array.from(keyOnlyKeys).sort(_defaultComparator);
-            values = new Map(values);
-            for (const key of keyOnlyKeys) {
-                values.delete(key);
+        // Their values are unknown, so no comparator is handed one: ordered by key, after the rest.
+        const keyOnlyKeys = this.keyOnlyKeys.size > 0 && values === this.allValues ? this.keyOnlyKeys : undefined;
+        // Excel Mode lists the blank last, so it is left out of the sort.
+        const blankLast = !!filterParams.excelMode && values.has(null);
+        const keys: (string | null)[] = [];
+        const sortValues: (TValue | null)[] | undefined = this.compareByValue ? [] : undefined;
+        values.forEach(function collectSortedKey(value, key) {
+            if ((key === null && blankLast) || keyOnlyKeys?.has(key)) {
+                return;
             }
-        }
+            keys.push(key);
+            if (sortValues) {
+                sortValues.push(value);
+            }
+        });
 
-        let sortedKeys;
-        if (this.compareByValue) {
-            sortedKeys = Array.from(values.entries())
-                .sort(this.entryComparator)
-                .map(([key]) => key);
+        let sortedKeys: (string | null)[];
+        if (sortValues) {
+            const valueComparator = this.valueComparator;
+            const len = keys.length;
+            const order: number[] = [];
+            for (let i = 0; i < len; ++i) {
+                order.push(i);
+            }
+            order.sort(function compareSortValues(a, b) {
+                return valueComparator(sortValues[a], sortValues[b]);
+            });
+            sortedKeys = [];
+            for (let i = 0; i < len; ++i) {
+                sortedKeys.push(keys[order[i]]);
+            }
         } else {
-            sortedKeys = Array.from(values.keys()).sort(this.keyComparator);
+            sortedKeys = keys.sort(this.keyComparator);
         }
 
-        if (sortedKeyOnlyKeys) {
+        if (keyOnlyKeys) {
+            const sortedKeyOnlyKeys = Array.from(keyOnlyKeys).sort(_defaultComparator);
             for (let i = 0, len = sortedKeyOnlyKeys.length; i < len; ++i) {
-                sortedKeys.push(sortedKeyOnlyKeys[i]);
+                const key = sortedKeyOnlyKeys[i];
+                if (key !== null || !blankLast) {
+                    sortedKeys.push(key);
+                }
             }
         }
 
-        if (filterParams.excelMode && nullableValues?.has(null)) {
-            // ensure the blank value always appears last
-            sortedKeys = sortedKeys.filter((v) => v != null);
+        if (blankLast) {
             sortedKeys.push(null);
         }
 

@@ -9,7 +9,6 @@ import {
 } from 'ag-test-utils';
 
 import type { ColDef } from 'ag-grid-community';
-import { MultiFilterModule } from 'ag-grid-enterprise';
 
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
 
@@ -485,7 +484,7 @@ describe('Advanced Filter - Set Filter editing a written list', () => {
 });
 
 describe('Advanced Filter - Set Filter value list', () => {
-    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, MultiFilterModule] });
+    const gridsManager = new TestGridsManager({ modules: SET_MODULES });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -742,8 +741,9 @@ describe('Advanced Filter - Set Filter value list', () => {
         expect(api.getAdvancedFilterModel()).toBeNull();
     });
 
-    test('a tree list value known only from the applied expression is never handed to the formatter', async () => {
+    test('a tree list value known only from the applied expression is never handed to the path getter or formatter', async () => {
         const treeListFormatter = vi.fn((pathKey: string | null) => `#${pathKey}`);
+        const treeListPathGetter = vi.fn((value: string | null) => [value ?? '']);
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -754,7 +754,7 @@ describe('Advanced Filter - Set Filter value list', () => {
                     filterParams: {
                         preservePreviousValues: true,
                         treeList: true,
-                        treeListPathGetter: (value: string | null) => [value ?? ''],
+                        treeListPathGetter,
                         treeListFormatter,
                     },
                 },
@@ -767,34 +767,10 @@ describe('Advanced Filter - Set Filter value list', () => {
         const formatted = treeListFormatter.mock.calls.map(([pathKey]) => pathKey);
         expect(formatted).toContain('Poland');
         expect(formatted).not.toContain('Atlantis');
-    });
-
-    test("a Multi Filter's Set Filter child asking to preserve values is made up front", async () => {
-        const api = await gridsManager.createGridAndWait('grid1', {
-            ...DEFAULT_OPTIONS,
-            columnDefs: [
-                { field: 'athlete' },
-                {
-                    field: 'country',
-                    filter: 'agMultiColumnFilter',
-                    filterParams: {
-                        filters: [
-                            { filter: 'agTextColumnFilter' },
-                            { filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
-                        ],
-                    },
-                },
-            ],
-        });
-        api.setGridOption(
-            'rowData',
-            ROW_DATA.filter((row) => row.country !== 'Jamaica')
-        );
-        await asyncSetTimeout(0);
-
-        const af = AdvancedFilterHarness.get(api);
-        await af.applyExpression('[Country] is any of ["Jamaica"]');
-        expect(af.getModel().values).toEqual(['Jamaica']);
+        // A path asked for 'Atlantis' would be asked of its missing value, beside the blank row's.
+        const pathsFor = (value: string | null) => treeListPathGetter.mock.calls.filter(([v]) => v === value).length;
+        expect(pathsFor('Poland')).toBeGreaterThan(0);
+        expect(pathsFor(null)).toBe(pathsFor('Poland'));
     });
 
     test('an applied value outlives the limit: it filters again when it returns, and can be applied while away', async () => {

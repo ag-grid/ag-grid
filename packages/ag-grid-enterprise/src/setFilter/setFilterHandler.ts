@@ -160,13 +160,15 @@ export class SetFilterHandler<TValue = string>
 
     /** How a tree list builds its path keys; the case rule only folds them. */
     private getKeyShape(): string {
-        if (!this.isTreeDataOrGrouping()) {
+        if (this.treeDataTreeList) {
+            return 'treeData';
+        }
+        if (!this.groupingTreeList) {
             return '';
         }
-        const groupColIds = this.groupingTreeList
-            ? this.beans.rowGroupColsSvc!.columns.map((col) => col.getColId()).join()
-            : '';
-        return `${this.treeDataTreeList}${this.gos.get('groupAllowUnbalanced')}${groupColIds}`;
+        // `processDataPath` reads `groupAllowUnbalanced` only when grouping
+        const groupColIds = this.beans.rowGroupColsSvc!.columns.map((col) => col.getColId()).join();
+        return `${this.gos.get('groupAllowUnbalanced')}${groupColIds}`;
     }
 
     /** A group column's tree list keys are paths over the grouping, which changes without a refresh. */
@@ -720,6 +722,7 @@ export class SetFilterHandler<TValue = string>
     public override destroy(): void {
         (this.beans.setFilterSvc as SetFilterService).removeHandler(this.colId, this);
         this.appliedModel.destroy();
+        this.heldKeyIndex.destroy();
         super.destroy();
         (this.valueModel as any) = undefined;
     }

@@ -2,7 +2,12 @@ import { _getDateParts } from 'ag-stack';
 
 import type { LogService, TextFormatter } from 'ag-grid-community';
 
-import type { ISetDisplayValueModel, SetFilterModelTreeItem, SetFilterTreeItems } from './iSetDisplayValueModel';
+import type {
+    ISetDisplayValueModel,
+    SetFilterModelTreeItem,
+    SetFilterTreeItems,
+    SetFilterTreeListFormatter,
+} from './iSetDisplayValueModel';
 import { NO_SET_FILTER_KEYS, SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
 import { formatTreeKey } from './setFilterUtils';
 
@@ -37,15 +42,14 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private readonly log: LogService,
         private readonly formatter: TextFormatter,
         private treeListPathGetter: ((value: V | null) => string[] | null) | undefined,
-        private treeListFormatter:
-            ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined,
+        private treeListFormatter: SetFilterTreeListFormatter | undefined,
         private readonly treeDataOrGrouping: boolean,
         private readonly getKeyOnlyKeys: () => ReadonlySet<string | null>
     ) {}
 
     public updateParams(
         treeListPathGetter?: (value: V | null) => string[] | null,
-        treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string
+        treeListFormatter?: SetFilterTreeListFormatter
     ) {
         this.treeListPathGetter = treeListPathGetter;
         this.treeListFormatter = treeListFormatter;
@@ -178,11 +182,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         }
         // infer from data
         let isDate = false;
-        const keyOnlyKeys = this.getKeyOnlyKeys();
         for (const availableKey of availableKeys) {
-            if (keyOnlyKeys.has(availableKey)) {
-                continue;
-            }
             // find the first non-null value
             const value = getValue(availableKey);
             if (value instanceof Date) {

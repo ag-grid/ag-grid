@@ -154,6 +154,16 @@ describe('Set Filter preservePreviousValues - integration', () => {
             expect(filterParams).not.toHaveBeenCalled();
         });
 
+        test('not for a filter that holds no Set Filter, whose filterParams function is never called', async () => {
+            const filterParams = vi.fn(() => ({ preservePreviousValues: true }));
+            const colDef: ColDef<Row> = { field: 'value', filter: 'agTextColumnFilter', filterParams };
+            const api = createGrid(rows('A', 'B', 'C'), colDef);
+            await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', [{ ...colDef }]);
+            await asyncSetTimeout(0);
+            expect(filterParams).not.toHaveBeenCalled();
+        });
+
         test('when a column definition update turns the option on', async () => {
             const api = createGrid(rows('A', 'B', 'C'), { filter: 'agSetColumnFilter' });
             await asyncSetTimeout(0);
@@ -168,6 +178,19 @@ describe('Set Filter preservePreviousValues - integration', () => {
             api.setGridOption('enableAdvancedFilter', false);
             await asyncSetTimeout(0);
             await expectCRetained(api);
+        });
+
+        test('afresh once the Advanced Filter is turned on and off, which replaces the filter that kept them', async () => {
+            const api = createGrid(rows('A', 'B', 'C'), setFilter());
+            await asyncSetTimeout(0);
+            await setRowData(api, rows('A', 'B'));
+            expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B', 'C']);
+
+            api.setGridOption('enableAdvancedFilter', true);
+            await asyncSetTimeout(0);
+            api.setGridOption('enableAdvancedFilter', false);
+            await asyncSetTimeout(0);
+            expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B']);
         });
 
         test('by the column filter alone once the Advanced Filter, which made its own, is turned off', async () => {
@@ -267,6 +290,22 @@ describe('Set Filter preservePreviousValues - integration', () => {
             await asyncSetTimeout(0);
 
             expect(upFront.reads.count).toBe(later.reads.count);
+        });
+
+        test('not for a selectable filter while its Set Filter is not the selected one', async () => {
+            const api = createGrid(
+                rows('A', 'B', 'C'),
+                {
+                    filter: 'agSelectableColumnFilter',
+                    filterParams: { defaultFilterParams: { preservePreviousValues: true }, defaultFilterIndex: 0 },
+                },
+                { enableFilterHandlers: true, sideBar: 'filters-new' }
+            );
+            await asyncSetTimeout(0);
+            await setRowData(api, rows('A', 'B'));
+            api.setState({ filter: { selectableFilters: { value: 1 } } });
+            await asyncSetTimeout(0);
+            expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B']);
         });
 
         test('for a selectable filter whose default params ask for it', async () => {
@@ -528,17 +567,6 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(missingLabels(popup())).toEqual([]);
     });
 
-    test('with filter handlers enabled, a checked value survives its rows leaving', async () => {
-        const api = createGrid(rows('A', 'B', 'C'), setFilter(), { enableFilterHandlers: true });
-        await asyncSetTimeout(0);
-        await setModel(api, 'value', { filterType: 'set', values: ['B'] });
-
-        await setRowData(api, rows('A', 'C'));
-        expect(modelOf(api)?.values).toEqual(['B']);
-        await setRowData(api, rows('A', 'B', 'C'));
-        expect(shown(api)).toEqual(['B']);
-    });
-
     test('suppressSorting lists values in first-seen order, retained ones after', async () => {
         const api = createGrid(rows('C', 'A', 'B'), setFilter({ suppressSorting: true }));
         await asyncSetTimeout(0);
@@ -610,7 +638,9 @@ describe('Set Filter preservePreviousValues - integration', () => {
         api.setGridOption('columnDefs', [colDef(true)]);
         await asyncSetTimeout(0);
         expect(modelOf(api)).toBeNull();
-        expect(handlerOf(api).getFilterKeys()).toEqual(['pear']);
+        // the filter it is reset to keeps values from the start, so it sees 'pear' leave
+        await setRowData(api, rows('fig'));
+        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['fig', 'pear']);
 
         // Without a model the filter is kept, and its values reload without the retained ones.
         await setRowData(api, rows('pear', 'fig'));
@@ -790,6 +820,35 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(handler.getFilterKeys().sort()).toEqual(['A#x', 'z']);
     });
 
+    test('groupAllowUnbalanced changes no key under Tree Data, so retained keys stay', async () => {
+        const api = gridsManager.createGrid('tree-unbalanced', {
+            columnDefs: [],
+            autoGroupColumnDef: {
+                filter: 'agSetColumnFilter',
+                filterParams: {
+                    preservePreviousValues: true,
+                    treeList: true,
+                    keyCreator: (params: KeyCreatorParams) => params.value.join('/'),
+                },
+            },
+            treeData: true,
+            getDataPath: (data) => data.path,
+            getRowId: ({ data }) => data.path.join('/'),
+            rowData: [{ path: ['A', 'a1'] }, { path: ['B', 'b1'] }],
+        });
+        await asyncSetTimeout(0);
+        await setModel(api, 'ag-Grid-AutoColumn', { filterType: 'set', values: ['A/a1', 'X/x1'] });
+        api.setGridOption('rowData', [{ path: ['A', 'a1'] }]);
+        await asyncSetTimeout(0);
+        const handler = api.getColumnFilterHandler('ag-Grid-AutoColumn') as SetFilterHandler;
+        expect(handler.getFilterKeys().sort()).toEqual(['A/a1', 'B/b1', 'X/x1']);
+
+        api.setGridOption('groupAllowUnbalanced', true);
+        await asyncSetTimeout(0);
+        expect(handler.getFilterKeys().sort()).toEqual(['A/a1', 'B/b1', 'X/x1']);
+        expect(api.getColumnFilterModel<any>('ag-Grid-AutoColumn')?.values).toEqual(['A/a1', 'X/x1']);
+    });
+
     const groupedAthletes = (filterParams: ISetFilterParams<any, string[]>, options: GridOptions = {}): GridApi =>
         gridsManager.createGrid('grouped', {
             columnDefs: [
@@ -866,11 +925,14 @@ describe('Set Filter preservePreviousValues - integration', () => {
 
         api.setGridOption('columnDefs', [colDef({ caseSensitive: true })]);
         await waitFor(() => expect(values).toHaveBeenCalledTimes(2));
+        // a second load would call back after its own timeout
+        await asyncSetTimeout(0);
         await asyncSetTimeout(0);
         expect(values).toHaveBeenCalledTimes(2);
 
         api.setGridOption('columnDefs', [colDef({ caseSensitive: true, preservePreviousValues: false })]);
         await waitFor(() => expect(values).toHaveBeenCalledTimes(3));
+        await asyncSetTimeout(0);
         await asyncSetTimeout(0);
         expect(values).toHaveBeenCalledTimes(3);
     });
@@ -897,6 +959,27 @@ describe('Set Filter preservePreviousValues - integration', () => {
         await asyncSetTimeout(0);
         expect(values).toHaveBeenCalledTimes(2);
         expect(handlerOf(api).getFilterKeys()).toEqual(['apple', 'pear']);
+    });
+
+    test('without the option, a key rule change while the first load is pending loads again by the new definition', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const values = vi.fn((params: SetFilterValuesFuncParams) => pending.push(params.success));
+        const colDef = (caseSensitive: boolean): ColDef<Row> => ({
+            field: 'value',
+            filter: 'agSetColumnFilter',
+            filterParams: { values, caseSensitive },
+        });
+        const api = createGrid(rows('apple', 'pear'), colDef(false));
+        handlerOf(api);
+        await waitFor(() => expect(values).toHaveBeenCalledTimes(1));
+
+        api.setGridOption('columnDefs', [colDef(true)]);
+        await waitFor(() => expect(values).toHaveBeenCalledTimes(2));
+        expect(values.mock.calls[1][0].colDef.filterParams.caseSensitive).toBe(true);
+        pending[0](['fig']);
+        pending[1](['apple', 'APPLE']);
+        await asyncSetTimeout(0);
+        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['APPLE', 'apple']);
     });
 
     test('a key rule change still replaces the kept keys when a newer load overtakes its own', async () => {
@@ -1037,8 +1120,14 @@ describe('Set Filter preservePreviousValues - chart cross-filtering', () => {
         expect(api.getColumnFilterModel<any>('country')?.values).toEqual(['A', 'B']);
 
         // The grid's own cross-filter listener, reached through the chart's public options.
-        const [series] = (chartRef.chart.getOptions() as any).series;
+        const [series] = (chartRef.chart.getOptions() as { series: CrossFilterSeries[] }).series;
         series.listeners.seriesNodeClick({ xKey: 'country', datum: { country: 'C' }, event: { ctrlKey: true } });
         await waitFor(() => expect(api.getColumnFilterModel<any>('country')?.values).toEqual(['A', 'B', 'C']));
     });
 });
+
+interface CrossFilterSeries {
+    listeners: {
+        seriesNodeClick(event: { xKey: string; datum: object; event: { ctrlKey: boolean } }): void;
+    };
+}

@@ -236,7 +236,7 @@ In the following example, **Country** uses a Set Filter with a `cellRenderer` th
 
 ### Writing the Value List
 
-Typing inside the list suggests the column's Set Filter values, with no opening quote required. Selecting one writes it quoted and ready for the next; values already in the list are not suggested again, and deleting one returns it to the list. Values kept by [`preservePreviousValues`](./filter-set-data-updates/#preserving-previous-values) are not suggested, but are still accepted. In the [Advanced Filter Builder](./filter-advanced/#advanced-filter-builder) the value pill opens the column's own Set Filter.
+Typing inside the list suggests the column's Set Filter values, with no opening quote required. Selecting one writes it quoted and ready for the next; values already in the list are not suggested again, and deleting one returns it to the list. Values that [`preservePreviousValues`](./filter-set-data-updates/#preserving-previous-values) keeps after they leave the data are not suggested, but are still accepted. In the [Advanced Filter Builder](./filter-advanced/#advanced-filter-builder) the value pill opens the column's own Set Filter.
 
 The square brackets are part of the grammar: a list written without them cannot be applied. Quotes, on the other hand, are only needed where a value would otherwise be read as something else. A value containing `,` or `]`, or beginning with a quote, is one such: typed bare, those characters end the value, close the list, or open a quoted one. Choose such a value from the suggestions, which writes it quoted, or open a quote before typing it, after which they are all ordinary and the suggestions still narrow as you type. A value written without quotes may contain spaces, and is trimmed:
 
@@ -274,7 +274,7 @@ A path can also be written a segment at a time, `["Europe" > "Italy"]`, which is
 
 ### Data Updates
 
-Advanced Filter expressions are the source of truth, so changes to the row data never change what they filter; text naming a value before it loaded is written again once it does. An expression naming a value the data no longer holds is reported against that value and cannot be applied while the value is missing. Submitted in that state, with Enter or the `Apply` button, it is applied by the next change to the columns that lets it, while the input still shows it; a change to the row data that restores the value does not apply it. An expression already applied keeps its model and keeps filtering.
+Advanced Filter expressions are the source of truth, so changes to the row data never change what they filter; text naming a value before it loaded is written again once it does. An expression naming a value the data no longer holds is reported against that value and cannot be applied while the value is missing, unless the column's Set Filter keeps it with [`preservePreviousValues`](./filter-set-data-updates/#preserving-previous-values). Submitted in that state, with Enter or the `Apply` button, it is applied by the next change to the columns that lets it, while the input still shows it; a change to the row data that restores the value does not apply it. An expression already applied keeps its model and keeps filtering.
 
 ### Enabling and Disabling the Set Options
 

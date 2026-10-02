@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, GridApi, ISetFilterParams, SetFilterHandler } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ISetFilterParams, SetFilterHandler } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -27,9 +27,11 @@ describe('Set Filter preservePreviousValues', () => {
     function createGrid(
         rowData: Row[],
         filterParams: ISetFilterParams = {},
-        colDef: Partial<ColDef<Row>> = {}
+        colDef: Partial<ColDef<Row>> = {},
+        options: GridOptions<Row> = {}
     ): GridApi<Row> {
         return gridsManager.createGrid<Row>('grid', {
+            ...options,
             columnDefs: [
                 {
                     field: 'value',
@@ -61,22 +63,25 @@ describe('Set Filter preservePreviousValues', () => {
         await asyncSetTimeout(0);
     };
 
-    test('a checked value survives its rows leaving, and its rows pass again on return', async () => {
-        const api = createGrid(rows('A', 'B', 'C'));
-        await asyncSetTimeout(0);
-        await setModel(api, ['B']);
-        expect(shown(api)).toEqual(['B']);
+    test('a checked value survives its rows leaving, and its rows pass again on return, with or without filter handlers', async () => {
+        for (const enableFilterHandlers of [false, true]) {
+            const api = createGrid(rows('A', 'B', 'C'), {}, {}, { enableFilterHandlers });
+            await asyncSetTimeout(0);
+            await setModel(api, ['B']);
+            expect(shown(api)).toEqual(['B']);
 
-        await setRowData(api, rows('A', 'C'));
-        expect(modelOf(api)).toEqual({ filterType: 'set', values: ['B'] });
-        expect(shown(api)).toEqual([]);
-        expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B', 'C']);
-        // Kept with its value, not re-created from the model as a key alone.
-        expect(handlerOf(api).getFilterValues()[handlerOf(api).getFilterKeys().indexOf('B')]).toBe('B');
+            await setRowData(api, rows('A', 'C'));
+            expect(modelOf(api)).toEqual({ filterType: 'set', values: ['B'] });
+            expect(shown(api)).toEqual([]);
+            expect(handlerOf(api).getFilterKeys().sort()).toEqual(['A', 'B', 'C']);
+            // Kept with its value, not re-created from the model as a key alone.
+            expect(handlerOf(api).getFilterValues()[handlerOf(api).getFilterKeys().indexOf('B')]).toBe('B');
 
-        await setRowData(api, rows('A', 'B', 'C'));
-        expect(modelOf(api)).toEqual({ filterType: 'set', values: ['B'] });
-        expect(shown(api)).toEqual(['B']);
+            await setRowData(api, rows('A', 'B', 'C'));
+            expect(modelOf(api)).toEqual({ filterType: 'set', values: ['B'] });
+            expect(shown(api)).toEqual(['B']);
+            api.destroy();
+        }
     });
 
     test('an unchecked value that leaves stays excluded when it returns, and the model is not nulled', async () => {
@@ -161,8 +166,8 @@ describe('Set Filter preservePreviousValues', () => {
         expect(shown(api)).toEqual(['B']);
     });
 
-    test('grid state restores selected retained values', async () => {
-        const api = createGrid(rows('A', 'B', 'C'));
+    test('grid state restores selected retained values, and unselected ones stay filtered out on return', async () => {
+        const api = createGrid(rows('A', 'B', 'C', 'D'));
         await asyncSetTimeout(0);
         await setModel(api, ['A', 'B']);
         await setRowData(api, rows('A', 'C'));
@@ -184,8 +189,19 @@ describe('Set Filter preservePreviousValues', () => {
             'C',
         ]);
 
-        await setRowData(restored, rows('A', 'B', 'C'));
+        await setRowData(restored, rows('A', 'B', 'C', 'D'));
         expect(shown(restored)).toEqual(['A', 'B']);
+    });
+
+    test('in Excel Mode an empty model is cleared, with or without the option', async () => {
+        for (const preservePreviousValues of [true, false]) {
+            const api = createGrid(rows('A', 'B'), { excelMode: 'windows', preservePreviousValues });
+            await asyncSetTimeout(0);
+            await setModel(api, []);
+            expect(modelOf(api)).toBeNull();
+            expect(shown(api)).toEqual(['A', 'B']);
+            api.destroy();
+        }
     });
 
     test('a selected blank that leaves the data stays selected, and its rows pass again on return', async () => {
@@ -224,7 +240,7 @@ describe('Set Filter preservePreviousValues', () => {
         expect(modelOf(api)).toBeNull();
     });
 
-    test('a value re-added in another case keeps one entry under its first key', async () => {
+    test('a value re-added in another case keeps one entry, listed and modelled in its first case', async () => {
         const api = createGrid(rows('apple', 'pear'));
         await asyncSetTimeout(0);
         await setModel(api, ['apple']);
@@ -233,8 +249,7 @@ describe('Set Filter preservePreviousValues', () => {
         await setRowData(api, rows('APPLE', 'pear'));
         const handler = handlerOf(api);
         expect(handler.getFilterKeys().sort()).toEqual(['apple', 'pear']);
-        // The key stays; the value is the current one.
-        expect(handler.getFilterValues()[handler.getFilterKeys().indexOf('apple')]).toBe('APPLE');
+        expect(handler.getFilterValues()[handler.getFilterKeys().indexOf('apple')]).toBe('apple');
         expect(modelOf(api)?.values).toEqual(['apple']);
         expect(shown(api)).toEqual(['APPLE']);
     });

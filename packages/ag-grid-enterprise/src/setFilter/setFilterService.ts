@@ -1,5 +1,5 @@
 import type { AgColumn, IFilterDef, IFilterParams, ISetFilterService, NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _getDefaultFilter, _getFilterKey } from 'ag-grid-community';
 
 import type { SetFilterHandler } from './setFilterHandler';
 
@@ -94,7 +94,17 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
 
     /** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
     private wantsPreservedValues(column: AgColumn, def: IFilterDef): boolean {
-        const filterParams: PreservingFilterParams | undefined = this.beans.colFilter!.resolveFilterParams(column, def);
+        const beans = this.beans;
+        const filterKey = _getFilterKey(beans, def.filter, _getDefaultFilter(beans, column));
+        // No other filter holds a Set Filter, so its params, maybe the app's function, are never read.
+        if (
+            filterKey !== 'agSetColumnFilter' &&
+            filterKey !== 'agMultiColumnFilter' &&
+            filterKey !== 'agSelectableColumnFilter'
+        ) {
+            return false;
+        }
+        const filterParams: PreservingFilterParams | undefined = beans.colFilter!.resolveFilterParams(column, def);
         if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
             return true;
         }

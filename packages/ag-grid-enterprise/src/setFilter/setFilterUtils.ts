@@ -12,7 +12,7 @@ import type {
 } from 'ag-grid-community';
 import { _isBlank } from 'ag-grid-community';
 
-import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { SetFilterModelTreeItem, SetFilterTreeListFormatter } from './iSetDisplayValueModel';
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 
@@ -40,8 +40,7 @@ export function areAllTreeKeysIn(item: SetFilterModelTreeItem, keys: ReadonlySet
 /** A tree item's label; a key-only leaf is labelled by its key, having no value for the formatter to describe. */
 export function formatTreeKey(
     item: SetFilterModelTreeItem,
-    treeListFormatter:
-        ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined
+    treeListFormatter: SetFilterTreeListFormatter | undefined
 ): string | null {
     return treeListFormatter && !item.keyOnly
         ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
@@ -147,25 +146,20 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans
     }
 }
 
-export function createTreeDataOrGroupingComparator(): (
-    a: [string | null, string[] | null],
-    b: [string | null, string[] | null]
-) => number {
-    return ([_aKey, aValue]: [string | null, string[] | null], [_bKey, bValue]: [string | null, string[] | null]) => {
-        if (aValue == null) {
-            return bValue == null ? 0 : -1;
-        } else if (bValue == null) {
+export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: string[] | null): number {
+    if (aValue == null) {
+        return bValue == null ? 0 : -1;
+    } else if (bValue == null) {
+        return 1;
+    }
+    for (let i = 0; i < aValue.length; i++) {
+        if (i >= bValue.length) {
             return 1;
         }
-        for (let i = 0; i < aValue.length; i++) {
-            if (i >= bValue.length) {
-                return 1;
-            }
-            const diff = _defaultComparator(aValue[i], bValue[i]);
-            if (diff !== 0) {
-                return diff;
-            }
+        const diff = _defaultComparator(aValue[i], bValue[i]);
+        if (diff !== 0) {
+            return diff;
         }
-        return 0;
-    };
+    }
+    return 0;
 }

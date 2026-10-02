@@ -436,10 +436,20 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(label(items[items.length - 1])).toBe('Jamaica');
     });
 
-    test('with preservePreviousValues from filterParams given as a function, a value leaving before first use is kept, on a Set Filter or a Multi Filter child', async () => {
+    test('with preservePreviousValues from filterParams as objects or functions, a value leaving before first use is kept, on a Set Filter or a Multi Filter child', async () => {
         const setParams = { preservePreviousValues: true };
         const defs: ColDef[] = [
             { field: 'country', filter: 'agSetColumnFilter', filterParams: () => setParams },
+            {
+                field: 'country',
+                filter: 'agMultiColumnFilter',
+                filterParams: {
+                    filters: [
+                        { filter: 'agTextColumnFilter' },
+                        { filter: 'agSetColumnFilter', filterParams: setParams },
+                    ],
+                },
+            },
             {
                 field: 'country',
                 filter: 'agMultiColumnFilter',
@@ -476,7 +486,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
             gridsManager.reset();
         }
 
-        expect(retained).toEqual([['Jamaica'], ['Jamaica']]);
+        expect(retained).toEqual([['Jamaica'], ['Jamaica'], ['Jamaica']]);
     });
 
     test('the Advanced Filter caps the values it keeps, sparing those its applied expression names in either case rule', async () => {
@@ -517,7 +527,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         ]);
     });
 
-    test('clearPreservedValues, for the column or every column, clears the values it keeps but those its expression names', async () => {
+    test('the clear actions, and turning the option off, discard the values it keeps but those its expression names', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -552,6 +562,22 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         api.doFilterAction({ action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(await missingInPicker()).toEqual(['Jamaica']);
+
+        await removeCountries('Jamaica', 'United States');
+        expect(await missingInPicker()).toEqual(['Jamaica', 'United States']);
+        api.doFilterAction({ colId: 'country', action: 'clearUnselectedPreservedValues' });
+        await asyncSetTimeout(0);
+        expect(await missingInPicker()).toEqual(['Jamaica']);
+
+        // Turning the option off discards them all, the expression's value included.
+        await removeCountries('Jamaica', 'Poland');
+        expect(await missingInPicker()).toEqual(['Jamaica', 'Poland']);
+        api.setGridOption('columnDefs', [
+            { field: 'athlete', filter: 'agTextColumnFilter' },
+            { field: 'country', filter: 'agSetColumnFilter' },
+        ]);
+        await asyncSetTimeout(0);
+        expect(await missingInPicker()).toEqual([]);
     });
 
     test("a Multi Filter's Set Filter child configures the picker, with the Multi Filter's params given as an object or a function", async () => {

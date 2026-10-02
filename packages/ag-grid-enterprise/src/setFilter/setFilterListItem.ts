@@ -125,7 +125,6 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private isExpanded: boolean | undefined;
     private isMissing: boolean;
     private readonly isKeyOnly: boolean;
-    // only used for select all
     private valueFunction?: () => string;
 
     private cellRendererParams: ISetFilterCellRendererParams;

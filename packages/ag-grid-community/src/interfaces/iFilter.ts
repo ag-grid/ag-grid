@@ -489,7 +489,9 @@ export interface FilterActionParams {
     colId?: string | string[];
     /**
      * Action to perform. `clearPreservedValues` discards the values the Set Filter's `preservePreviousValues` keeps,
-     * wherever the column keeps them, and `clearUnselectedPreservedValues` only those not in the applied filter model.
+     * wherever the column keeps them, except those an applied Advanced Filter expression names, and reconciles the
+     * filter model with what remains. `clearUnselectedPreservedValues` discards only those neither in the applied
+     * filter model nor named by an applied Advanced Filter expression, and leaves the model as it is.
      */
     action: FilterAction | 'clearPreservedValues' | 'clearUnselectedPreservedValues';
 }

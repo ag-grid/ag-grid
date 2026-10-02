@@ -91,7 +91,6 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         await setRowData(api, rows('C', 'D'));
 
         const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'C', 'D', 'A', 'B']);
         expect(missingItems()).toEqual(['A', 'B']);
         await new FilterDom(api, 'retained values', { colId: 'value' }).checkFilterDom(`
             COLUMN FILTER (set)
@@ -418,38 +417,6 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(missingItems()).toEqual(allLabels.slice(1));
     });
 
-    test('a retained tree list item drawn by a cell renderer is announced as not in the current data', async () => {
-        const row = (value: string): Row => ({ id: String(nextId++), value });
-        const api = gridsManager.createGrid<Row>('grid', {
-            columnDefs: [
-                {
-                    field: 'value',
-                    cellDataType: 'dateString',
-                    filter: 'agSetColumnFilter',
-                    filterParams: {
-                        preservePreviousValues: true,
-                        treeList: true,
-                        cellRenderer: (params: { valueFormatted: string }) => params.valueFormatted,
-                    },
-                },
-            ],
-            getRowId: ({ data }) => data.id,
-            rowData: [row('2024-01-01'), row('2024-01-02')],
-        });
-        await asyncSetTimeout(0);
-        await setRowData(api, [row('2024-01-02')]);
-
-        await ColumnFilterHarness.open(api, 'value');
-        popup().querySelector<HTMLElement>('.ag-set-filter-group-closed-icon')!.click();
-        await asyncSetTimeout(0);
-        const labels = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
-            el.getAttribute('aria-label')
-        );
-        expect(labels.filter((label) => label?.endsWith('not in current data'))).toEqual([
-            '01 Filter Value, not in current data',
-        ]);
-    });
-
     test('a tree list item drawn by a cell renderer loses its label once its value returns', async () => {
         const api = createGrid(rows('A', 'B'), {
             treeList: true,
@@ -457,7 +424,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
             cellRenderer: (params: { value: unknown }) => String(params.value),
         });
         await asyncSetTimeout(0);
-        await ColumnFilterHarness.open(api, 'value');
+        const filter = await ColumnFilterHarness.open(api, 'value');
         const labels = () =>
             Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
                 el.getAttribute('aria-label')
@@ -468,6 +435,8 @@ describe('Set Filter preservePreviousValues - filter list', () => {
 
         // Its row is reused in place, and labelled as its siblings are: by its renderer alone.
         await setRowData(api, rows('A', 'B'));
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B']);
+        expect(missingItems()).toEqual([]);
         expect(labels().filter((label) => label != null)).toEqual([]);
         const describedBy = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map(
             (el) => el.getAttribute('aria-describedby')
@@ -492,6 +461,41 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Z']);
         expect(treeListFormatter.mock.calls.map(([pathKey]) => pathKey)).not.toContain('Z');
         expect(cellRenderer.mock.calls.map(([params]) => params.value)).not.toContain('Z');
+    });
+
+    test('in Excel Mode the Add Selection row is never muted, though it holds no keys', async () => {
+        const api = createGrid(
+            rows('2024-01-01', '2025-01-01'),
+            { treeList: true, excelMode: 'windows' },
+            { cellDataType: 'dateString' }
+        );
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('2025-01-01'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        await filter.miniFilterSearch('2024');
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All Search Results)',
+            'Add current selection to filter',
+            '2024',
+        ]);
+        expect(missingItems()).toEqual(['2024']);
+    });
+
+    test('a tree list row drawn for a group is not reused for a model value with the same key', async () => {
+        const treeListFormatter = (pathKey: string | null, level: number) => (level === 0 ? 'Year' : String(pathKey));
+        const api = createGrid(
+            rows('2024-01-01'),
+            { treeList: true, treeListFormatter },
+            { cellDataType: 'dateString' }
+        );
+        await asyncSetTimeout(0);
+        await setModel(api, ['2024-01-01', '2024']);
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Year', '2024']);
+        await filter.miniFilterSearch('2024');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '2024']);
     });
 
     test('a tree list model value never seen in the data keeps its own row beside a group with the same label', async () => {

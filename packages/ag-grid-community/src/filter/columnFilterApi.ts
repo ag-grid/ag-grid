@@ -87,7 +87,9 @@ export function doFilterAction(beans: BeanCollection, params: FilterActionParams
     const { colId, action } = params;
     if (action === 'clearPreservedValues' || action === 'clearUnselectedPreservedValues') {
         // Set Filters keep these with or without filter handlers, the Advanced Filter's included.
-        beans.setFilterSvc?.clearPreservedValues(colId, action === 'clearUnselectedPreservedValues');
+        if (beans.gos.assertModuleRegistered('SetFilter', 'api.doFilterAction')) {
+            beans.setFilterSvc?.clearPreservedValues(colId, action === 'clearUnselectedPreservedValues');
+        }
         return;
     }
     if (!beans.gos.get('enableFilterHandlers')) {

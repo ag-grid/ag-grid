@@ -123,7 +123,7 @@ The following example demonstrates preserving previous values. Try the following
 
 - Click **Select Only B**, then **Apply Data Update 1**. `'B'` and `'C'` are no longer in the data but are still listed, muted. `'B'` stays selected, so no rows are shown, and the floating filter and the **Filter Summaries** panel still read `'B'`.
 - Click **Apply Data Update 2**. `'B'` rows are shown again, and `'C'` rows stay filtered out as `'C'` is still unselected.
-- Click **Apply Data Update 1** again, then **Clear Preserved Values** to discard `'B'` and `'C'`. `'B'` leaves the model with them, so no rows are shown until a value is selected again.
+- Click **Apply Data Update 1** again, then **Clear Preserved Values** to discard `'B'` and `'C'`. They leave the Filter List, and `'B'` leaves the model with them. The model then selects nothing, so no rows are shown until a value is selected again, even after **Apply Data Update 2** brings `'B'` back.
 
 {% gridExampleRunner title="Preserving Previous Values" name="preserve-previous-values"  exampleHeight=500 /%}
 
@@ -131,7 +131,7 @@ The [Advanced Filter](./filter-advanced/) only suggests current values as you ty
 
 {% gridExampleRunner title="Preserving Previous Values with the Advanced Filter" name="preserve-previous-values-advanced-filter"  exampleHeight=400 /%}
 
-In a [Tree List](./filter-set-tree-list/) on a group column, a value no longer in the data stays in its group, muted, and a group is muted once every value under it is gone. A model value that was never in the data is listed at the root by its key, in its own row even beside a group with the same label. The following examples show this with [Row Grouping](./grouping/) and [Tree Data](./tree-data/). Open the filter from the floating filter's button, then try the following:
+In a [Tree List](./filter-set-tree-list/) on a group column, a value no longer in the data stays in its group, muted, and a group is muted once every value under it is gone. A model value that was never in the data is listed at the root by its key, in its own row even beside a group with the same label. The following examples show this with [Row Grouping](./grouping/) and [Tree Data](./tree-data/). Try the following, opening the filter from the floating filter's button after each step, with its groups expanded, to see the result:
 
 - Click **Select Paris and Madrid** (or **Select report.pdf and old.zip**). Madrid (or old.zip) is not in the data, so it is listed at the root by its key, `'Spain#Madrid'` (or `'Archive/old.zip'`).
 - Click **Remove Rome** (or **Remove beach.jpg**). The value stays in its group, muted and unselected.
@@ -161,7 +161,7 @@ While the filter is inactive there is no model, so every retained value counts a
 
 ### Clearing Preserved Values
 
-Call `api.doFilterAction()` with the `clearPreservedValues` action to discard the preserved values that are not in the current data. Set `colId` to a column, or an array of columns, to clear only those; without it, every column is cleared. This works whether or not `enableFilterHandlers` is set:
+Call `api.doFilterAction()` with the `clearPreservedValues` action to discard the preserved values that are not in the current data. Set `colId` to a column ID, or an array of IDs, to clear only those; without it, every column is cleared. This works whether or not `enableFilterHandlers` is set:
 
 ```{% frameworkTransform=true %}
 api.doFilterAction({ colId: 'col1', action: 'clearPreservedValues' });
@@ -188,10 +188,10 @@ A filter only sees values while it exists, so a column with `preservePreviousVal
 Values are kept for the life of the filter. They are discarded if the filter is destroyed, for example with `api.destroyFilter`, after which the filter starts again from the current data. Turning the option off discards them too, as does turning the Advanced Filter on or off, which replaces the filters that kept them. They are also discarded when the rules that make their keys change:
 
 - A column definition update that changes how values are identified, such as `caseSensitive`, as listed in [Updating Set Filter Parameters](./filter-set/#updating-set-filter-parameters). With a filter applied, this resets the Set Filter. The values an applied Advanced Filter expression names stay listed, by their key.
-- For a [Tree List](./filter-set-tree-list/) on a group column that takes its values from the grid, the row group columns, `groupAllowUnbalanced` or Tree Data. These change the keys themselves, so model values that no longer match any value leave the model.
+- For a [Tree List](./filter-set-tree-list/) on a group column that takes its values from the grid, the row group columns, `groupAllowUnbalanced` with Row Grouping, or Tree Data. These change the keys themselves, so model values that no longer match any value leave the model.
 
 Preserved values are not saved with [Grid State](./grid-state/): a saved model restores the selected values, and unselected values stay filtered out because they are not in the model.
 
 Keeping values also keeps them in memory. Columns whose values change constantly, such as timestamps, unique IDs or frequently edited cells, add a value for every change, and a value that is a complex object keeps that object alive. Lower `preservePreviousValuesLimit` for such columns, or set it to `0` to keep only what is selected.
 
-Each filter that takes its values from the grid reloads them from every row when the data changes, and creating filters up front means every opted-in column pays that from the start, whether or not its filter is ever opened. Enable the option on the columns that need it rather than through `defaultColDef` on a wide grid.
+Each filter that takes its values from the grid reloads them from every row when the data changes, and reads every row again when another column's filter changes. Creating filters up front means every opted-in column pays that from the start, whether or not its filter is ever opened. Enable the option on the columns that need it rather than through `defaultColDef` on a wide grid.
