@@ -12427,7 +12427,7 @@ esbuild@^0.25.0:
     "@esbuild/win32-ia32" "0.25.12"
     "@esbuild/win32-x64" "0.25.12"
 
-esbuild@^0.27.0, esbuild@^0.27.3, esbuild@~0.27.0:
+esbuild@^0.27.0, esbuild@^0.27.3:
   version "0.27.7"
   resolved "https://registry.npmjs.org/esbuild/-/esbuild-0.27.7.tgz#bcadce22b2f3fd76f257e3a64f83a64986fea11f"
   integrity sha512-IxpibTjyVnmrIQo5aqNpCgoACA/dTKLTlhMHihVHhdkxKyPO1uBBthumT0rdHmcsk9uMonIWS0m4FljWzILh3w==
@@ -12459,7 +12459,7 @@ esbuild@^0.27.0, esbuild@^0.27.3, esbuild@~0.27.0:
     "@esbuild/win32-ia32" "0.27.7"
     "@esbuild/win32-x64" "0.27.7"
 
-"esbuild@^0.27.0 || ^0.28.0":
+"esbuild@^0.27.0 || ^0.28.0", esbuild@~0.28.0:
   version "0.28.2"
   resolved "https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz#0f43bd1bad955b72d24e2261e3abe5957ccf0816"
   integrity sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA==
@@ -13818,13 +13818,6 @@ get-tsconfig@4.14.0, get-tsconfig@^4.10.1:
   version "4.14.0"
   resolved "https://registry.npmjs.org/get-tsconfig/-/get-tsconfig-4.14.0.tgz#985d85c52a9903864280ccc2448d413fbf1efed8"
   integrity sha512-yTb+8DXzDREzgvYmh6s9vHsSVCHeC0G3PI5bEXNBHtmshPnO+S5O7qgLEOn0I5QvMy6kpZN8K1NKGyilLb93wA==
-  dependencies:
-    resolve-pkg-maps "^1.0.0"
-
-get-tsconfig@^4.7.5:
-  version "4.13.0"
-  resolved "https://registry.npmjs.org/get-tsconfig/-/get-tsconfig-4.13.0.tgz#fcdd991e6d22ab9a600f00e91c318707a5d9a0d7"
-  integrity sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
@@ -23242,13 +23235,12 @@ tsscmp@1.0.6:
   resolved "https://registry.npmjs.org/tsscmp/-/tsscmp-1.0.6.tgz#85b99583ac3589ec4bfef825b5000aa911d605eb"
   integrity sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==
 
-tsx@4.21.0, tsx@^4.21.0:
-  version "4.21.0"
-  resolved "https://registry.npmjs.org/tsx/-/tsx-4.21.0.tgz#32aa6cf17481e336f756195e6fe04dae3e6308b1"
-  integrity sha512-5C1sg4USs1lfG0GFb2RLXsdpXqBSEhAaA/0kPL01wxzpMqLILNxIxIOKiILz+cdg/pLnOUxFYOR5yhHU666wbw==
+tsx@4.23.15, tsx@^4.21.0:
+  version "4.23.15"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.23.15.tgz#f53901695685ad567fed0f08532f7782e631c251"
+  integrity sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==
   dependencies:
-    esbuild "~0.27.0"
-    get-tsconfig "^4.7.5"
+    esbuild "~0.28.0"
   optionalDependencies:
     fsevents "~2.3.3"
 
