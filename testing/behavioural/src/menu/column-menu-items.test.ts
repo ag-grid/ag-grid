@@ -14,13 +14,16 @@ import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'a
 
 let restoreOffsetParent: (() => void) | undefined;
 
+function fireContextMenu(element: HTMLElement): void {
+    element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+}
+
 /**
  * Fire a real `contextmenu` MouseEvent on the column entry's focus wrapper — the same path
  * AG Grid uses in production to open the context menu.
  */
 function openContextMenu(entry: HTMLElement): void {
-    const row = (entry.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry;
-    row.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+    fireContextMenu((entry.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry);
 }
 
 describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
@@ -137,10 +140,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
     });
 });
 
-function fireContextMenu(element: HTMLElement): void {
-    element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
-}
-
 function headerCell(colId: string): HTMLElement {
     return document.querySelector<HTMLElement>(`.ag-header-cell[col-id="${colId}"]`)!;
 }
@@ -183,6 +182,7 @@ describe('column menu item action params', () => {
     async function runLogParamsFrom(element: HTMLElement): Promise<IMenuActionParams> {
         fireContextMenu(element);
         (await openMenuOption('Log Params')).click();
+        await waitFor(() => expect(menuOption('Log Params')).toBeNull());
         expect(action).toHaveBeenCalledTimes(1);
         const params = action.mock.calls[0][0];
         action.mockReset();
