@@ -278,6 +278,67 @@ describe('page views', () => {
     });
 });
 
+describe('URL scrubbing', () => {
+    const urlAttributes = (url: string) => {
+        const { href, pathname, hostname, protocol, hash, search } = new URL(url);
+        return {
+            'url.full': href,
+            'url.path': pathname,
+            'url.domain': hostname,
+            'url.scheme': protocol.replace(':', ''),
+            'url.fragment': hash ? hash.replace('#', '') : undefined,
+            'url.query': search ? search.replace('?', '') : undefined,
+        };
+    };
+
+    test('is applied to the URLs the SDK adds to its telemetry', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledWith(expect.objectContaining({ urlAttributeScrubber: scrubErrorPageQuery }));
+    });
+
+    test('redacts the query of an error page, which holds the error arguments', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        const attributes = urlAttributes(
+            'https://www.ag-grid.com/javascript-data-grid/errors/200/?_version_=36.2.0&row=%7B%22name%22%3A%22Ada%22%7D'
+        );
+
+        expect(scrubErrorPageQuery(attributes)).toEqual({
+            ...attributes,
+            'url.full': 'https://www.ag-grid.com/javascript-data-grid/errors/200/?REDACTED',
+            'url.query': 'REDACTED',
+        });
+    });
+
+    test('keeps the fragment of an error page', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+
+        expect(
+            scrubErrorPageQuery(urlAttributes('https://www.ag-grid.com/react-data-grid/errors/7?a=1#details'))
+        ).toEqual(
+            expect.objectContaining({
+                'url.full': 'https://www.ag-grid.com/react-data-grid/errors/7?REDACTED#details',
+                'url.fragment': 'details',
+            })
+        );
+    });
+
+    test('keeps the query of any other page', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        const attributes = urlAttributes('https://www.ag-grid.com/charts/?utm_source=newsletter');
+
+        expect(scrubErrorPageQuery(attributes)).toBe(attributes);
+    });
+
+    test('leaves an error page without a query as it is', async () => {
+        const { scrubErrorPageQuery } = await initWebsiteMonitoring();
+        const attributes = urlAttributes('https://www.ag-grid.com/javascript-data-grid/errors/200/');
+
+        expect(scrubErrorPageQuery(attributes)).toBe(attributes);
+    });
+});
+
 describe('CSP violations', () => {
     test('are reported once monitoring starts, including those from before it started', async () => {
         await initWebsiteMonitoring();
