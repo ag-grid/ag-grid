@@ -89,11 +89,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     private queueLoadAction() {
+        this.dispatchLevelInconsistentEvents();
         const nextBlockToLoad = this.getBlockToLoad();
         if (!nextBlockToLoad) {
-            if (this.outboundRequests === 0) {
-                this.dispatchLevelInconsistentEvents();
-            }
             return;
         }
 
@@ -124,16 +122,36 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         }
     }
 
+    /** Reports each inconsistent level once it has nothing left to load, while other levels may still be loading. */
     private dispatchLevelInconsistentEvents() {
         const caches = this.inconsistentCaches;
         if (caches.size === 0) {
             return;
         }
-        const toDispatch = [...caches];
-        caches.clear();
+        const toDispatch = [...caches].filter((cache) => !this.isLevelLoading(cache));
+        for (let i = 0, len = toDispatch.length; i < len; ++i) {
+            caches.delete(toDispatch[i]);
+        }
         for (let i = 0, len = toDispatch.length; i < len; ++i) {
             toDispatch[i].dispatchLevelInconsistentEvent();
         }
+    }
+
+    private isLevelLoading(cache: LazyCache): boolean {
+        if (this.cacheLoadingNodesMap.get(cache)?.size || cache.getNodesToRefresh().size) {
+            return true;
+        }
+        const { firstRenderedRow, lastRenderedRow } = this.rowRenderer;
+        for (let i = firstRenderedRow; i <= lastRenderedRow; i++) {
+            const row = this.rowModel.getRow(i);
+            if (!row || (row.parent?.childStore as LazyStore | undefined)?.getCache() !== cache) {
+                continue;
+            }
+            if (row.__needsRefreshWhenVisible || (row.stub && !row.failedLoad)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private attemptLoad(cache: LazyCache, start: number, end: number) {

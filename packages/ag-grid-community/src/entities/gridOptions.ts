@@ -3066,7 +3066,7 @@ export interface GridOptions<TData = any> {
     onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
     /**
      * The blocks loaded for a level are not consistent with each other, because the data changed on the server between the block requests: rows were duplicated or dropped across a block boundary.
-     * Only fired when `serverSideCheckLevelConsistency` is enabled. Fired at most once per level each time the grid finishes loading blocks.
+     * Only fired when `serverSideCheckLevelConsistency` is enabled. Fired once each time a level whose blocks disagree finishes loading.
      */
     onServerSideLevelInconsistent?(event: ServerSideLevelInconsistentEvent<TData>): void;
 

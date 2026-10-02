@@ -2728,7 +2728,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         StoreRefreshedEvent<TData>
     >();
     /** The blocks loaded for a level are not consistent with each other, because the data changed on the server between the block requests: rows were duplicated or dropped across a block boundary.
-     * Only fired when `serverSideCheckLevelConsistency` is enabled. Fired at most once per level each time the grid finishes loading blocks.
+     * Only fired when `serverSideCheckLevelConsistency` is enabled. Fired once each time a level whose blocks disagree finishes loading.
      */
     @Output() public serverSideLevelInconsistent: EventEmitter<ServerSideLevelInconsistentEvent<TData>> =
         new EventEmitter<ServerSideLevelInconsistentEvent<TData>>();

@@ -1136,7 +1136,7 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
-        this.consistencyChecker?.reset();
+        this.consistencyChecker?.forgetBoundaries();
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;

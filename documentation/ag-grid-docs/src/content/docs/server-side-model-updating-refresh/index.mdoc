@@ -50,7 +50,7 @@ Enable `serverSideCheckLevelConsistency` to have the grid detect this. Note the 
 
 - Each block request asks for one extra row, i.e. `endRow` is one past the end of the block. The extra row is compared with the first row of the next block and is never displayed. The datasource must therefore return rows up to `endRow`.
 - [Row IDs](./server-side-model-configuration/#providing-row-ids) are required, as rows are compared by their ID.
-- Each time the grid finishes loading blocks, it fires `serverSideLevelInconsistent` once for each level whose blocks disagree. The event contains the `route` of the level and an `inconsistencies` entry for each affected block boundary, with its `type` (`duplicated` or `dropped`), `boundaryIndex` and the `rowIds` involved.
+- Each time a level whose blocks disagree finishes loading, the grid fires `serverSideLevelInconsistent` once for that level, even while other levels are still loading. The event contains the `route` of the level and an `inconsistencies` entry for each affected block boundary, with its `type` (`duplicated` or `dropped`), `boundaryIndex` and the `rowIds` involved.
 - When a row is returned twice, the grid moves it to its latest position and reloads the block it was previously in, so a `duplicated` boundary may already be resolved by the time the event fires. Dropped rows are not recovered. It is up to the application to decide how to respond.
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["serverSideCheckLevelConsistency"] config={"overrideBottomMargin":"0rem"} /%}
