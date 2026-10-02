@@ -6,6 +6,9 @@ import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/typ
 import {
     ARCHIVE_VALIDATOR_PROBE,
     ARCHIVE_VALIDATOR_REQUESTS,
+    BROWSER_CACHE_CAP_SECONDS,
+    BROWSER_CACHE_PAGES,
+    BROWSER_CACHE_ROWS,
     GZIP_REVALIDATION_PROBES,
     HEADER_ROWS,
     type HeaderRow,
@@ -14,6 +17,31 @@ import {
     SECURITY_HEADERS,
 } from '../expected/headers';
 import { PENDING, finding } from '../expected/lifecycle';
+
+/** Why a response breaks the 7-day browser-cache cap (max-age or Expires; s-maxage exempt), or null. */
+export function browserCacheProblem(res: Response): string | null {
+    const problems: string[] = [];
+    for (const value of headerAll(res, 'cache-control')) {
+        for (const [, seconds] of value.matchAll(/(?<![-\w])max-age\s*=\s*"?(\d+)/gi)) {
+            if (Number(seconds) > BROWSER_CACHE_CAP_SECONDS) {
+                problems.push(`max-age=${seconds}`);
+            }
+        }
+    }
+    for (const expires of headerAll(res, 'expires')) {
+        const until = Date.parse(expires);
+        const date = Date.parse(header(res, 'date') ?? '');
+        if (
+            !Number.isNaN(until) &&
+            (until - (Number.isNaN(date) ? Date.now() : date)) / 1000 > BROWSER_CACHE_CAP_SECONDS
+        ) {
+            problems.push(`Expires ${expires} is over 7 days after Date`);
+        }
+    }
+    return problems.length ? problems.join(', ') : null;
+}
+
+const firstMatch = (html: string, pattern: RegExp): string | undefined => pattern.exec(html)?.[0];
 
 export function expectHeader(p: Problems, res: Response, name: string, exp: string | RegExp | null): void {
     const values = headerAll(res, name);
@@ -138,6 +166,57 @@ function validatorsAgree(id: string, url: string, lifecycle: { pending?: string;
 
 export function headerChecks(): CheckDef[] {
     return [
+        {
+            id: 'headers.browser-cache-cap',
+            area: 'headers',
+            title: 'No response class is cached by a browser for more than 7 days (max-age, Expires; s-maxage exempt)',
+            refs: ['SE-189'],
+            run: budgeted(async ({ http }, p) => {
+                const urls = new Set<string>([
+                    ...BROWSER_CACHE_ROWS.map((id) => {
+                        const row = HEADER_ROWS.find((r) => r.id === id);
+                        if (!row) {
+                            throw new Error(`headers.browser-cache-cap: no header row ${id}`);
+                        }
+                        return row.url;
+                    }),
+                    ...BROWSER_CACHE_PAGES.html,
+                ]);
+                // Hashed assets, a blog post and the blog's theme assets are found on the pages.
+                for (const page of BROWSER_CACHE_PAGES.astro) {
+                    const asset = firstMatch(
+                        (await http.get(page)).body,
+                        /(?:\/[\w.-]+)*\/_astro\/[\w.-]+\.(?:js|css)/
+                    );
+                    p.check(!!asset, `no /_astro/ asset referenced from ${page}`);
+                    if (asset) {
+                        urls.add(new URL(asset, page).href);
+                    }
+                }
+                const blog = (await http.get(BROWSER_CACHE_PAGES.blog)).body;
+                urls.add(BROWSER_CACHE_PAGES.blog);
+                for (const [what, pattern] of [
+                    [
+                        'blog post',
+                        /https:\/\/www\.ag-grid\.com\/blog\/(?!tag\/|author\/|page\/|rss\/|assets\/|public\/|content\/)[\w-]+\/(?=")/,
+                    ],
+                    ['blog theme script', /\/blog\/assets\/built\/[\w.-]+\.js/],
+                    ['blog public stylesheet', /\/blog\/public\/[\w.-]+\.css/],
+                ] as const) {
+                    const found = firstMatch(blog, pattern);
+                    p.check(!!found, `no ${what} referenced from ${BROWSER_CACHE_PAGES.blog}`);
+                    if (found) {
+                        urls.add(new URL(found, BROWSER_CACHE_PAGES.blog).href);
+                    }
+                }
+                for (const url of urls) {
+                    const res = await http.head(url);
+                    const problem = browserCacheProblem(res);
+                    p.check(!problem, `${url} (${res.status}): ${problem}`);
+                }
+                return p.outcome(`${urls.size} responses, every class within 7 days`);
+            }),
+        },
         ...HEADER_ROWS.map(headerCheck),
         ...GZIP_REVALIDATION_PROBES.map((probe): CheckDef => ({
             id: `headers.revalidate-gzip.${probe.id}`,

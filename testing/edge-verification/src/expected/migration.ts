@@ -1,7 +1,7 @@
 import { PENDING, finding } from './lifecycle';
 
 /**
- * grid#15430: scripts/migrate-archive-htaccess.mjs, run on each web host by
+ * grid#15434 / #15435: scripts/migrate-archive-htaccess.mjs, run on each web host by
  * scripts/deployments/prep_and_archive/migrateDeployedArchiveHtaccess.sh, patches the .htaccess of
  * every already-deployed archive. Expectations derived from the script and its
  * __fixtures__/deployed-archives (regenerated from the grid 36.x, charts 14.x and studio 2.x/3.0
@@ -87,7 +87,7 @@ export const MIGRATED_SITES: MigratedSite[] = [
  * by anything today, so the samples cannot pass before the migration. The apex is used for no
  * version: a charts archive with no rewrite block of its own (14.0.x) inherits the live
  * /charts/.htaccess, whose apex rule already keeps the path (measured 2026-10-01), so an apex probe
- * of 14.0.1 reported NOW LIVE before the migration ran. Once ag-charts#8422 is live that file
+ * of 14.0.1 reported NOW LIVE before the migration ran. Once ag-charts#8440 / #8441 is live that file
  * canonicalises every alias host, so 14.0.x passes from then on regardless.
  */
 export const MIGRATION_HOSTS = {
@@ -100,7 +100,7 @@ export const MIGRATION_QUERY = '?utm_source=edge-check';
 /** A backup name the patcher's `.htaccess.bak-<timestamp>` pattern covers. */
 export const BACKUP_NAME = '.htaccess.bak-20261001000000';
 
-export const MIGRATION_REFS = ['grid#15430', finding(3), finding(20)];
+export const MIGRATION_REFS = ['grid#15434 / #15435', finding(3), finding(20)];
 export const MIGRATION_PENDING = PENDING.archiveMigration;
 /**
  * The slash-less directory rule the migration block now starts with, for every site

@@ -9,7 +9,7 @@ export const AREAS = {
     'waf-config': 'WAF web ACLs, logging and redaction (AWS, read-only)',
     infra: 'Alarms, Shield, origin security group, real-time logs, CloudTrail and health (AWS, read-only)',
     redirects: 'Single-hop redirects across every host alias',
-    migration: 'Already-deployed archives after the grid#15430 .htaccess migration',
+    migration: 'Already-deployed archives after the grid#15434 / #15435 .htaccess migration',
     headers: 'Response headers per content class',
     caching: 'CloudFront cache behaviour and markdown-poisoning guards',
     'waf-behaviour': 'WAF decisions as seen from this machine',
@@ -44,7 +44,7 @@ export interface CheckDef {
     title: string;
     /** Tickets (SE-x), findings (waf-finding.md §x), PRs and scripts this check verifies. */
     refs?: string[];
-    /** What deploys it, e.g. 'grid#15411' or 'redact-waf-log-secrets.sh'. */
+    /** What deploys it, e.g. 'grid#15434 / #15435' or 'redact-waf-log-secrets.sh'. */
     pending?: string;
     /** The waf-finding.md section that records the defect. */
     knownIssue?: string;

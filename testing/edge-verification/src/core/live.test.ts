@@ -5,15 +5,15 @@ import { ARCHIVE_POISON_PROBE } from '../expected/caching';
 import {
     DENIED,
     FakeAws,
+    FakeHttp,
     type Handler,
     MARKDOWN_KEY_FUNCTION_CODE,
     NO_CREDENTIALS,
     distributionConfig,
     functionCode,
     healthyCloudFront,
-    options,
 } from '../testing/fakes';
-import { Http, MARKDOWN_ACCEPT, RefusedProbe } from './http';
+import { MARKDOWN_ACCEPT, RefusedProbe } from './http';
 import { Live, markdownKeyFunctionProblems } from './live';
 
 const WWW = 'https://www.ag-grid.com';
@@ -99,7 +99,13 @@ describe('markdown guard', () => {
 
     it('refuses the probe before any request is sent', async () => {
         const { live } = await guardWith({ 'cloudfront get-distribution-config': NO_CREDENTIALS });
-        const http = new Http(options({ maxRequests: 10 }));
+        // A fake transport that fails if reached: the refusal must come before any request.
+        const http = new FakeHttp(
+            () => {
+                throw new Error('the request was sent');
+            },
+            { maxRequests: 10 }
+        );
         http.setMarkdownGuard(live.markdownGuard);
         try {
             await assert.rejects(
@@ -107,6 +113,7 @@ describe('markdown guard', () => {
                 RefusedProbe
             );
             assert.equal(http.requestCount, 0);
+            assert.deepEqual(http.sent, []);
         } finally {
             http.close();
         }

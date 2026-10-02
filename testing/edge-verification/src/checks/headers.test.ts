@@ -84,3 +84,54 @@ describe('headers.not-modified-keeps-cache', () => {
         assert.match(outcome.detail ?? '', /replaces/);
     });
 });
+
+describe('headers.browser-cache-cap', () => {
+    const cap = headerChecks().find((c) => c.id === 'headers.browser-cache-cap')!;
+    const PAGE = '<script src="/_astro/app.AbCd1234.js"></script>';
+    const BLOG =
+        '<a href="https://www.ag-grid.com/blog/a-post/">p</a><script src="/blog/assets/built/prism.js"></script>' +
+        '<link href="/blog/public/cards.min.css">';
+
+    async function runCap(cacheControl: (url: string) => string | undefined, expires?: (url: string) => string) {
+        const http = new FakeHttp((req) => {
+            const url = new URL(req.url);
+            const body = url.pathname === '/blog/' ? BLOG : PAGE;
+            const headers: Record<string, string> = { date: 'Thu, 01 Oct 2026 00:00:00 GMT' };
+            const cc = cacheControl(req.url);
+            if (cc) {
+                headers['cache-control'] = cc;
+            }
+            if (expires) {
+                headers.expires = expires(req.url);
+            }
+            return { status: 200, headers: { 'content-type': 'text/html', ...headers }, body };
+        });
+        try {
+            return await cap.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+        } finally {
+            http.close();
+        }
+    }
+
+    it('passes when every class is within 7 days, whatever s-maxage says', async () => {
+        const outcome = await runCap(() => 'public, max-age=604800, s-maxage=31536000');
+        assert.equal(outcome.status, 'pass', outcome.detail);
+    });
+
+    it("fails on Ghost's year-long max-age, naming the URL", async () => {
+        const outcome = await runCap((url) =>
+            url.includes('/blog/assets/') ? 'public, max-age=31536000' : 'no-cache'
+        );
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /\/blog\/assets\/built\/prism\.js \(200\): max-age=31536000/);
+    });
+
+    it('fails on an Expires more than 7 days after Date', async () => {
+        const outcome = await runCap(
+            () => undefined,
+            (url) => (url.endsWith('/favicon.ico') ? 'Fri, 01 Oct 2027 00:00:00 GMT' : 'Thu, 01 Oct 2026 01:00:00 GMT')
+        );
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /favicon\.ico.*Expires/);
+    });
+});

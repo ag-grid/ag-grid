@@ -62,11 +62,13 @@ export const CACHE_POLICIES: CachePolicyExpectation[] = [
         brotli: true,
     },
     {
-        // add-archive-cache-behaviors.sh copies CachingOptimizedWithHost and adds the markdown
-        // split header to the key; everything else is identical to the source.
+        // add-archive-cache-behaviors.sh copies CachingOptimizedWithHost, adds the markdown split
+        // header to the key, and sets MinTTL and DefaultTTL to 0 (archive responses meant to be
+        // cached all send s-maxage; a response without Cache-Control stays uncached, and an
+        // in-flight no-cache means no-cache). MaxTTL and everything else are the source's.
         name: 'CachingOptimizedWithHostAndMarkdown',
-        minTtl: 1,
-        defaultTtl: 86400,
+        minTtl: 0,
+        defaultTtl: 0,
         maxTtl: 31536000,
         keyHeaders: ['host', 'x-ag-accept-markdown'],
         cookies: 'none',

@@ -12,7 +12,7 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test:offline": {
+    "test": {
       "executor": "nx:run-commands",
       "inputs": ["{projectRoot}/src/**/*"],
       "outputs": [],

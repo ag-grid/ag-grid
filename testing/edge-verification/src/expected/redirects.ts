@@ -53,7 +53,7 @@ const status = (from: string, code: number, refs: string[], extra: Partial<Redir
 
 const Q = '?utm_source=edge-check';
 
-/** New archive builds get the fix from #15416/#15417; already-deployed archives only from the migration. */
+/** New archive builds get the fix from grid#15434 / #15435; already-deployed archives only from the migration. */
 const ARCHIVE_FIX = `${PENDING.gridArchiveRedirects} for new archive builds; ${PENDING.archiveMigration} for deployed ones`;
 
 /** A certificate-validation token that does not exist: it must be answered (404), never add-slashed. */
@@ -128,7 +128,7 @@ export const REDIRECTS: RedirectRow[] = [
     r(
         `${APEX}/archive/36.2.0/react-data-grid/getting-started/`,
         `${WWW}/archive/36.2.0/react-data-grid/getting-started/`,
-        ['SE-4', 'grid#15430'],
+        ['SE-4', 'grid#15434 / #15435'],
         {
             knownIssue: finding(3),
             fixedBy: ARCHIVE_FIX,
@@ -138,7 +138,7 @@ export const REDIRECTS: RedirectRow[] = [
     r(
         `${BLOG_HOST}/archive/36.2.0/react-data-grid/getting-started/`,
         `${WWW}/archive/36.2.0/react-data-grid/getting-started/`,
-        [finding(3), 'grid#15430'],
+        [finding(3), 'grid#15434 / #15435'],
         {
             // 36.2.0 is already deployed, so its own .htaccess only changes through the migration.
             pending: PENDING.archiveMigration,
@@ -171,19 +171,19 @@ export const REDIRECTS: RedirectRow[] = [
         note: 'bare Redirect appends the trailing slash to the anchor (#bullet-series/)',
     }),
 
-    // ---- in-flight: grid#15424 (seo-edge-unit-tests-v2) ---------------------------------------
+    // ---- in-flight: grid#15434 / #15435 ---------------------------------------
     // waf-finding.md §20.1: an ACME HTTP-01 token is answered where it is asked, never add-slashed.
     // Over http, CloudFront's redirect-to-https always answers first (Apache never sees port 80).
-    status(`${WWW}${ACME_PATH}`, 404, [finding(20), 'grid#15424'], {
+    status(`${WWW}${ACME_PATH}`, 404, [finding(20), 'grid#15434 / #15435'], {
         pending: PENDING.gridAcme,
         note: 'no add-slash 301',
     }),
-    r(`http://www.ag-grid.com${ACME_PATH}`, `${WWW}${ACME_PATH}`, [finding(20), 'grid#15424'], {
+    r(`http://www.ag-grid.com${ACME_PATH}`, `${WWW}${ACME_PATH}`, [finding(20), 'grid#15434 / #15435'], {
         pending: PENDING.gridAcme,
         final: 404,
         note: 'CloudFront https upgrade, then answered',
     }),
-    r(`${APEX}${ACME_PATH}`, `${WWW}${ACME_PATH}`, [finding(20), 'grid#15424'], {
+    r(`${APEX}${ACME_PATH}`, `${WWW}${ACME_PATH}`, [finding(20), 'grid#15434 / #15435'], {
         pending: PENDING.gridAcme,
         final: 404,
         note: 'host swap keeps the token unslashed',
@@ -196,7 +196,7 @@ export const REDIRECTS: RedirectRow[] = [
             note: 'slash-less, one hop',
         })
     ),
-    // /charts and /studio pages: their own .htaccess canonicalises, slash included (ag-charts#8422, ag-studio#3084).
+    // /charts and /studio pages: their own .htaccess canonicalises, slash included (ag-charts#8440 / #8441, ag-studio#3096 / #3097).
     ...[APEX, BLOG_HOST, 'https://react-grid.ag-grid.com'].map((h) =>
         r(`${h}/charts/react/quick-start`, `${WWW}/charts/react/quick-start/`, [finding(2), finding(20), 'SE-86'], {
             pending: PENDING.chartsHosts,
@@ -218,23 +218,28 @@ export const REDIRECTS: RedirectRow[] = [
     // Deployed behaviour (the first match already won), so these guard against a regression.
     r(`${WWW}/javascript-data-grid/building/`, `${WWW}/javascript-data-grid/installation/`, [
         finding(20),
-        'grid#15424',
+        'grid#15434 / #15435',
     ]),
     ...['angular', 'react', 'vue'].map((fw) =>
-        r(`${WWW}/${fw}-data-grid/building/`, `${WWW}/${fw}-data-grid/installation/`, [finding(20), 'grid#15424'], {
-            pending: PENDING.gridBuilding,
-        })
+        r(
+            `${WWW}/${fw}-data-grid/building/`,
+            `${WWW}/${fw}-data-grid/installation/`,
+            [finding(20), 'grid#15434 / #15435'],
+            {
+                pending: PENDING.gridBuilding,
+            }
+        )
     ),
     r(
         `${WWW}/javascript-data-grid/server-side-model-high-frequency/`,
         `${WWW}/javascript-data-grid/server-side-model-updating-transactions/`,
-        [finding(20), 'grid#15424']
+        [finding(20), 'grid#15434 / #15435']
     ),
     // The 24 server-side pages the /{framework}-grid/ prefix shadowed: a sample, from www and the apex.
     r(
         `${WWW}/react-grid/server-side-operations-graphql/`,
         `${WWW}/react-data-grid/server-side-model/`,
-        ['SE-66', 'grid#15424'],
+        ['SE-66', 'grid#15434 / #15435'],
         {
             pending: PENDING.gridServerSideOneHop,
         }
@@ -242,36 +247,46 @@ export const REDIRECTS: RedirectRow[] = [
     r(
         `${WWW}/vue-grid/server-side-model-high-frequency/`,
         `${WWW}/vue-data-grid/server-side-model-updating-transactions/`,
-        ['SE-66', 'grid#15424'],
+        ['SE-66', 'grid#15434 / #15435'],
         { pending: PENDING.gridServerSideOneHop }
     ),
     r(
         `${APEX}/angular-grid/server-side-model-transactions/`,
         `${WWW}/angular-data-grid/server-side-model-updating-transactions/`,
-        ['SE-66', 'grid#15424'],
+        ['SE-66', 'grid#15434 / #15435'],
         { pending: PENDING.gridServerSideOneHop, note: 'single-hop rewrites run on the apex too' }
     ),
     r(
         `${WWW}/javascript-grid/server-side-model-refresh/`,
         `${WWW}/javascript-data-grid/server-side-model-updating-refresh/`,
-        ['SE-66', 'grid#15424'],
+        ['SE-66', 'grid#15434 / #15435'],
         {
             pending: PENDING.gridServerSideOneHop,
         }
     ),
     // AG-17152: /documentation/<framework>/charts* moved to the charts site.
-    r(`${WWW}/documentation/react/charts-overview/`, `${WWW}/charts/react/quick-start/`, ['SE-66', 'grid#15424'], {
+    r(
+        `${WWW}/documentation/react/charts-overview/`,
+        `${WWW}/charts/react/quick-start/`,
+        ['SE-66', 'grid#15434 / #15435'],
+        {
+            pending: PENDING.gridServerSideOneHop,
+        }
+    ),
+    r(`${WWW}/documentation/vue/charts/`, `${WWW}/charts/vue/quick-start/`, ['SE-66', 'grid#15434 / #15435'], {
         pending: PENDING.gridServerSideOneHop,
     }),
-    r(`${WWW}/documentation/vue/charts/`, `${WWW}/charts/vue/quick-start/`, ['SE-66', 'grid#15424'], {
-        pending: PENDING.gridServerSideOneHop,
-    }),
-    r(`${WWW}/documentation/javascript/`, `${WWW}/javascript-data-grid/getting-started/`, ['SE-66', 'grid#15424'], {
-        pending: PENDING.gridServerSideOneHop,
-        note: 'not via the /javascript-data-grid/ forwarder',
-    }),
+    r(
+        `${WWW}/documentation/javascript/`,
+        `${WWW}/javascript-data-grid/getting-started/`,
+        ['SE-66', 'grid#15434 / #15435'],
+        {
+            pending: PENDING.gridServerSideOneHop,
+            note: 'not via the /javascript-data-grid/ forwarder',
+        }
+    ),
 
-    // ---- in-flight: ag-charts#8422 legacy-prefix redirects ------------------------------------
+    // ---- in-flight: ag-charts#8440 / #8441 legacy-prefix redirects ------------------------------------
     // From packages/ag-charts-website/src/utils/htaccess/redirects.ts: a renamed slug below a legacy
     // prefix lands on the renamed page's final URL, and a file below one keeps its path.
     ...(
@@ -283,26 +298,31 @@ export const REDIRECTS: RedirectRow[] = [
             ['/charts/vue-charts/vue/bullet-series/', '/charts/vue/linear-gauge/#bullet-series'],
         ] as const
     ).map(([from, to]) =>
-        r(`${WWW}${from}`, `${WWW}${to}`, [finding(2), 'SE-66', 'ag-charts#8422'], {
+        r(`${WWW}${from}`, `${WWW}${to}`, [finding(2), 'SE-66', 'ag-charts#8440 / #8441'], {
             pending: PENDING.chartsLegacyPrefixes,
             note: 'renamed slug under a legacy prefix',
         })
     ),
-    r(`${APEX}/charts/react-charts/react/fonts`, `${WWW}/charts/react/text/`, [finding(2), 'SE-66', 'ag-charts#8422'], {
-        pending: PENDING.chartsLegacyPrefixes,
-        note: 'alias host, slash-less, renamed slug',
-    }),
+    r(
+        `${APEX}/charts/react-charts/react/fonts`,
+        `${WWW}/charts/react/text/`,
+        [finding(2), 'SE-66', 'ag-charts#8440 / #8441'],
+        {
+            pending: PENDING.chartsLegacyPrefixes,
+            note: 'alias host, slash-less, renamed slug',
+        }
+    ),
     // Already live on 2026-10-01 (the first production run showed NOW LIVE), so deployed guards.
     r(
         `${WWW}/charts/react-charts/react/area-series/index.html`,
         `${WWW}/charts/react/area-series/index.html`,
-        [finding(2), 'ag-charts#8422'],
+        [finding(2), 'ag-charts#8440 / #8441'],
         { note: 'a file keeps its path' }
     ),
     r(
         `${WWW}/charts/react-charts/react/area-series.md`,
         `${WWW}/charts/react/area-series.md`,
-        [finding(2), 'ag-charts#8422'],
+        [finding(2), 'ag-charts#8440 / #8441'],
         {
             note: 'a markdown twin keeps its path',
         }
@@ -413,7 +433,7 @@ export const REDIRECTS: RedirectRow[] = [
         knownIssue: finding(2),
         fixedBy: PENDING.chartsHosts,
     }),
-    // Two hops on www today (DirectorySlash first); ag-charts#8422 makes them one.
+    // Two hops on www today (DirectorySlash first); the charts release (ag-charts#8440 / #8441) makes them one.
     r(`${WWW}/charts/react/line`, `${WWW}/charts/react/line-series/`, ['SE-66', FIRST_RUN], {
         pending: PENDING.chartsHosts,
     }),
@@ -428,7 +448,7 @@ export const REDIRECTS: RedirectRow[] = [
     }),
     r(`${WWW}/charts/server-side-rendering`, `${WWW}/charts/javascript/server-side-rendering/`, ['SE-66']),
     r(`${WWW}/charts/javascript/series`, `${WWW}/charts/javascript/bar-series/`, ['SE-66']),
-    r(`${WWW}/javascript-grid/`, `${WWW}/javascript-data-grid/getting-started/`, ['SE-66', 'grid#15424'], {
+    r(`${WWW}/javascript-grid/`, `${WWW}/javascript-data-grid/getting-started/`, ['SE-66', 'grid#15434 / #15435'], {
         knownIssue: finding(15),
         fixedBy: PENDING.gridServerSideOneHop,
         note: 'redirects.ts:455 -> /javascript-data-grid/ -> getting-started/',

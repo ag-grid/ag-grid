@@ -21,49 +21,39 @@ export const NEW_FINDING = (what: string): string => `${FIRST_RUN}: ${what} (not
 
 /** Pending changes, named once so every expectation that depends on one cites it identically. */
 export const PENDING = {
-    gridArchiveMarkdown: 'grid#15411 / #15412 (archive markdown negotiation, release-candidate archives uncached)',
-    gridVaryHtml: 'grid#15411 / #15412 (Vary: Accept on HTML incl. DirectoryIndex)',
-    gridArchiveRedirects: 'grid#15416 / #15417 (archive .htaccess redirects stay inside the archive)',
-    /** The #15416 follow-up commit on archive-rewrite-prefix. */
-    gridNoCache:
-        'grid#15416 follow-up c0eadabc4e3 (no-cache on 3xx and live markdown, X-Robots-Tag: noindex on archived markdown)',
-    /** The #15416 commit that strips mod_deflate's -gzip suffix from If-None-Match. */
-    gridGzipRevalidation: 'grid#15416 follow-up a5ea9272023 (If-None-Match without the -gzip ETag suffix)',
+    gridArchiveMarkdown: 'grid#15434 / #15435 (archive markdown negotiation, release-candidate archives uncached)',
+    gridVaryHtml: 'grid#15434 / #15435 (Vary: Accept on HTML incl. DirectoryIndex)',
+    gridArchiveRedirects: 'grid#15434 / #15435 (archive .htaccess redirects stay inside the archive)',
+    gridNoCache: 'grid#15434 / #15435 (no-cache on 3xx and live markdown, X-Robots-Tag: noindex on archived markdown)',
+    gridGzipRevalidation: 'grid#15434 / #15435 (If-None-Match without the -gzip ETag suffix)',
     /**
-     * The #15416 commit that stops uploadAndUnzipArchive.sh stamping extraction time on each host.
+     * The change that stops uploadAndUnzipArchive.sh stamping extraction time on each host.
      * It only helps an archive extracted after it: archives already deployed keep their per-host
      * mtimes, which is accepted, so only an archive uploaded after it is checked.
      */
-    archiveMtimes:
-        'grid#15416 follow-up d1087c3088f (archive extract keeps mtimes), first live with the 36.3.0 archive',
-    chartsHosts:
-        'ag-charts#8422 + charts test branch (one-hop host canonicalisation and redirects under /charts, Vary on HTML)',
-    /** ag-charts#8422 274611a3e7 and d60a274a40 (the latter committed locally, not yet pushed, on 2026-10-01). */
+    archiveMtimes: 'grid#15434 / #15435 (archive extract keeps mtimes), first live with the 36.3.0 archive',
+    chartsHosts: 'ag-charts#8440 / #8441 (one-hop host canonicalisation and redirects under /charts, Vary on HTML)',
     chartsLegacyPrefixes:
-        'ag-charts#8422 274611a3e7 + d60a274a40 (legacy-prefix redirects: files keep their path, renamed slugs in one hop)',
-    /** ag-charts#8432, branch charts-seo-edge-tests. */
-    chartsSeo:
-        'ag-charts#8432 (charts-seo-edge-tests: one H1 and one <main>, absolute social images, /charts/options/ link)',
-    studioHosts: 'ag-studio#3084 + studio test branch (one-hop host canonicalisation under /studio, Vary on HTML)',
-    /** ag-studio#3087, branch studio-seo-edge-tests. */
-    studioSeo: 'ag-studio#3087 (studio-seo-edge-tests 94e84280f: one <main>, absolute social images, initial-scale=1)',
-    studioNoOffers: 'ag-studio#3087 commit cfe305f0e (drops the "AG Studio Community" price-0 offer)',
-    /** grid#15424, branch seo-edge-unit-tests-v2; each marker names the commit that makes the change. */
+        'ag-charts#8440 / #8441 (legacy-prefix redirects: files keep their path, renamed slugs in one hop)',
+    chartsSeo: 'ag-charts#8440 / #8441 (one H1 and one <main>, absolute social images, /charts/options/ link)',
+    studioHosts: 'ag-studio#3096 / #3097 (one-hop host canonicalisation under /studio, Vary on HTML)',
+    studioSeo: 'ag-studio#3096 / #3097 (one <main>, absolute social images, initial-scale=1)',
+    studioNoOffers: 'ag-studio#3096 / #3097 (drops the "AG Studio Community" price-0 offer)',
     gridOneHopSlash:
-        'grid#15424 5c43810353b (slash-less directory URLs on alias hosts reach the slashed www URL in one hop)',
-    gridAcme: 'grid#15424 5c43810353b (add-slash rules skip /.well-known/acme-challenge/ and the other DCV tokens)',
+        'grid#15434 / #15435 (slash-less directory URLs on alias hosts reach the slashed www URL in one hop)',
+    gridAcme: 'grid#15434 / #15435 (add-slash rules skip /.well-known/acme-challenge/ and the other DCV tokens)',
     gridServerSideOneHop:
-        'grid#15424 14aedee533f (24 server-side single-hop rewrites, /documentation/<fw>/charts* ahead of the prefix)',
+        'grid#15434 / #15435 (24 server-side single-hop rewrites, /documentation/<fw>/charts* ahead of the prefix)',
     gridLlmsDataGrid:
-        'grid#15424 (llms.txt "Data Grid" points at /javascript-data-grid/getting-started/, not the JavaScript forwarder)',
-    gridBuilding: 'grid#15424 (/angular|react|vue-data-grid/building/ go to installation, like JavaScript)',
+        'grid#15434 / #15435 (llms.txt "Data Grid" points at /javascript-data-grid/getting-started/, not the JavaScript forwarder)',
+    gridBuilding: 'grid#15434 / #15435 (/angular|react|vue-data-grid/building/ go to installation, like JavaScript)',
     gridRobotsTwinsQuery:
-        'grid#15424 2ed1049f81e (a .md? twin rule beside each .md$ rule, so a query string does not reopen it)',
+        'grid#15434 / #15435 (a .md? twin rule beside each .md$ rule, so a query string does not reopen it)',
     gridRobotsTwins:
-        'grid#15424 0a48b836740 (a .md$ rule per directory Allow/Disallow, Allow: /archive/$ and /charts/archive/$)',
-    /** grid#15430: run once per web host; both hosts serve every archive, so verify after the second. */
+        'grid#15434 / #15435 (a .md$ rule per directory Allow/Disallow, Allow: /archive/$ and /charts/archive/$)',
+    /** Run once per web host; both hosts serve every archive, so verify after the second. */
     archiveMigration:
-        'grid#15430 migrateDeployedArchiveHtaccess.sh --apply on BOTH web hosts (patches already-deployed archive .htaccess files)',
+        'grid#15434 / #15435: migrateDeployedArchiveHtaccess.sh --apply on BOTH web hosts (patches already-deployed archive .htaccess files)',
     p11AgentAllowlist:
         'extend-p11-agent-allowlist.sh (18 agent UA tokens in the p11 allowlist + count-allowlisted-agents-rate)',
     redactLogs: 'redact-waf-log-secrets.sh',
