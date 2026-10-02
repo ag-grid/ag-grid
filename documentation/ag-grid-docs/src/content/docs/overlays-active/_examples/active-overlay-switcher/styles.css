@@ -1,16 +1,5 @@
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
 .button-row {
     padding: 12px;
-}
-
-.grid-wrapper {
-    flex: 1 1 0;
-    min-height: 0;
 }
 
 .status-overlay {

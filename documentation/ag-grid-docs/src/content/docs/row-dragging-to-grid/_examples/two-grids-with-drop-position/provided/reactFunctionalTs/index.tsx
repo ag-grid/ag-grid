@@ -216,7 +216,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="example-wrapper">
+            <div className="example-wrapper example-wrapper--row">
                 {getInnerGridCol('Left')}
                 <div className="inner-col vertical-toolbar">
                     <span className="bin" ref={eBin}>

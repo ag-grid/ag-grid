@@ -40,7 +40,7 @@ const createRowBlock = () =>
 
 const VueExample = defineComponent({
     /* html */
-    template: `<div class="example-wrapper">
+    template: `<div class="example-wrapper example-wrapper--row">
 
             <div class="inner-col">
                 <div style="height: 100%;" class="inner-col">

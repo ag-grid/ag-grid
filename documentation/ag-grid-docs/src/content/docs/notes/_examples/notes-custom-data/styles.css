@@ -1,8 +1,5 @@
 .example-wrapper {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
-    height: 100%;
 }
 
 .example-toolbar {
@@ -59,8 +56,4 @@
 .ag-cell.note-priority-low,
 .legend-chip.note-priority-low {
     --ag-note-indicator-size: 8px;
-}
-
-#myGrid {
-    flex: 1 1 0;
 }
