@@ -1,7 +1,14 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions, ISetFilterParams, SetFilterHandler } from 'ag-grid-community';
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    ISetFilterParams,
+    SetFilterHandler,
+    SetFilterValuesFuncParams,
+} from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -359,6 +366,21 @@ describe('Set Filter preservePreviousValues', () => {
         api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
         await asyncSetTimeout(0);
         expect(modelOf(api)).toBeNull();
+    });
+
+    test('clearPreservedValues during a pending values load discards a model value the load does not hold', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const api = createGrid(rows('A'), {
+            values: (params: SetFilterValuesFuncParams) => pending.push(params.success),
+        });
+        await waitFor(() => expect(pending).toHaveLength(1));
+
+        await setModel(api, ['X']);
+        api.doFilterAction({ colId: 'value', action: 'clearPreservedValues' });
+        pending[0](['A']);
+        await asyncSetTimeout(0);
+        expect(handlerOf(api).getFilterKeys()).toEqual(['A']);
+        expect(modelOf(api)?.values ?? []).toEqual([]);
     });
 
     test('clearPreservedValues discards a selected value when no rows are left', async () => {

@@ -423,11 +423,14 @@ export class SetFilterHandler<TValue = string>
         if (!this.valueModel.isPreserving()) {
             return;
         }
-        this.clearMissing(onlyUnselected).then(() => {
-            if (!onlyUnselected) {
-                // Asked for: whatever the data lacks now goes, model values never seen in it included.
-                this.reconcileModel(undefined, false, true);
-            }
+        // After a load in flight and the validation queued on it, which may add model keys the load lacks.
+        this.valueModel.allKeys.then(() => {
+            this.clearMissing(onlyUnselected).then(() => {
+                if (!onlyUnselected) {
+                    // Asked for: whatever the data lacks now goes, model values never seen in it included.
+                    this.reconcileModel(undefined, false, true);
+                }
+            });
         });
     }
 
