@@ -26,7 +26,7 @@ Behavioural tests run in happy-dom, which has no layout engine and models native
 | **Playwright e2e spec** | The behaviour depends on real browser input, layout, scrolling or native controls (typed text in an `<input>`, wheel scrolling, column virtualisation, popup positioning), or must hold in Firefox and WebKit. It needs its own grid configuration, community or enterprise. | `testing/e2e/e2e/*.spec.ts` |
 | **Docs-example spec** | The behaviour is what a docs example demonstrates, and the example must keep working in every framework. | `example.spec.ts` beside the example (see `docs-example-specs.md`) |
 
-A Playwright e2e spec builds its grid from `mountGrid(page, { enterprise?, options })` in `testing/e2e/src/mountGrid.ts`, which loads the UMD bundle into a blank page: no docs site and no dev server. The enterprise bundle registers every enterprise module, so a spec cannot test a partial module registration. If the behaviour is the same in happy-dom and in Chrome, it belongs in `testing/behavioural/` instead.
+A Playwright e2e spec builds its grid from `mountGrid(page, { enterprise?, options })` in `testing/e2e/src/mountGrid.ts`, which loads the UMD bundle into a blank page: no docs site and no dev server. By default it loads the local build; `--url <site>` (or `BASE_URL`) loads it from `<site>/files/<package>/dist/` instead, so the same specs run against a local dev server or `https://grid-staging.ag-grid.com`. The enterprise bundle registers every enterprise module, so a spec cannot test a partial module registration. If the behaviour is the same in happy-dom and in Chrome, it belongs in `testing/behavioural/` instead.
 
 The e2e suite is slower than the behavioural one and is **not part of the PR CI**. The `Grid E2E Tests` workflow runs it nightly on Chromium, Firefox and WebKit, writing its run time to the job summary. A failing nightly run notifies Slack and raises a JIRA ticket, so run `./grid-e2e.sh --all-browsers` locally before relying on a new spec.
 
@@ -64,7 +64,7 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 - `./behave.sh` — the whole unit suite (package + behavioural) as one multi-project Vitest run.
 - `./benches.sh` — behavioural benchmarks in headless Chromium.
 - `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
-- `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them.
+- `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them, `--url <site>` runs against a dev server or deployed site instead of the local build.
 
 ### Never block on a gate; read its log afterwards
 

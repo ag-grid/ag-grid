@@ -1,5 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
+
+// The dev server's certificate is self-signed. Left on only for a local `BASE_URL`, so a deployed site's real
+// certificate is still checked.
+const ignoreHTTPSErrors =
+    Boolean(process.env.BASE_URL) && LOCAL_HOSTNAMES.includes(new URL(process.env.BASE_URL!).hostname);
+
 export default defineConfig({
     testDir: './e2e',
     testMatch: '*.spec.ts',
@@ -25,6 +32,7 @@ export default defineConfig({
     ],
     outputDir: '../../reports/ag-e2e-testing-reports/',
     use: {
+        ignoreHTTPSErrors,
         trace: 'retain-on-failure',
         screenshot: 'only-on-failure',
         viewport: { width: 800, height: 600 },

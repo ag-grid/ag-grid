@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { NONE, captureUsage, isCI } from '../args.mjs';
+import { NONE, VALUE, captureUsage, isCI } from '../args.mjs';
 
 const ALL_BROWSERS = ['chromium', 'firefox', 'webkit'];
 const UMD_PROJECTS = 'ag-grid-community,ag-grid-enterprise';
@@ -38,6 +38,14 @@ export default {
     flags: {
         '--all-browsers': { takes: NONE, apply: (state) => (state.allBrowsers = true) },
         '--no-build': { takes: NONE, apply: (state) => (state.noBuild = true) },
+        '--url': {
+            takes: VALUE,
+            hint: 'e.g. https://grid-staging.ag-grid.com',
+            apply: (state, value) => {
+                process.env.BASE_URL = value;
+                state.noBuild = true;
+            },
+        },
     },
 
     // `--ui` and `--debug` hand the terminal to Playwright and never return on their own, so a captured or
@@ -108,6 +116,9 @@ unchanged) and, outside CI, installs the browsers it is about to use.
 Options:
   --all-browsers          Run all browsers (chromium, firefox, webkit)
   --no-build              Skip the UMD build; use the bundles already in each package's dist
+  --url <url>             Load the bundles from <url>/files/<package>/dist/ instead of the local build, e.g.
+                          https://localhost:4610 (dev server) or https://grid-staging.ag-grid.com. Implies
+                          --no-build. Also settable as BASE_URL.
   --help                  Show this help message
 
 Run capture (shared with ./behave.sh, ./checks.sh, ./benches.sh and ./docs-e2e.sh). Every run streams stdout+stderr to
@@ -129,5 +140,6 @@ Examples:
   ./grid-e2e.sh --project=firefox
   ./grid-e2e.sh "enterprise" --grep "row group"
   ./grid-e2e.sh --headed --no-build
+  ./grid-e2e.sh --url https://grid-staging.ag-grid.com
 `,
 };

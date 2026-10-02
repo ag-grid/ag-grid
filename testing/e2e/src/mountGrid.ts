@@ -5,6 +5,22 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 
 const GRID_SELECTOR = '#myGrid';
 const DIST = path.join(__dirname, '../../../packages');
+const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
+
+/**
+ * Where the UMD bundle comes from. With `BASE_URL` set it is the site's `/files/<package>/dist/` route, as the vanilla
+ * docs examples load it: non-minified from a local dev server, minified from a deployed site. Without it, the local
+ * build in each package's dist.
+ */
+function bundleSource(packageName: string): { path: string } | { url: string } {
+    const baseUrl = process.env.BASE_URL;
+    if (!baseUrl) {
+        return { path: path.join(DIST, `${packageName}/dist/${packageName}.js`) };
+    }
+    const base = new URL(baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`);
+    const minSuffix = LOCAL_HOSTNAMES.includes(base.hostname) ? '' : '.min';
+    return { url: new URL(`files/${packageName}/dist/${packageName}${minSuffix}.js`, base).href };
+}
 
 export interface MountGridParams {
     /** Load the enterprise bundle, which registers every enterprise module, instead of the community one. */
@@ -30,15 +46,11 @@ export async function mountGrid(
     page: Page,
     { enterprise = false, width = 800, height = 500, options }: MountGridParams
 ): Promise<MountedGrid> {
-    const bundle = enterprise
-        ? path.join(DIST, 'ag-grid-enterprise/dist/ag-grid-enterprise.js')
-        : path.join(DIST, 'ag-grid-community/dist/ag-grid-community.js');
-
     await page.setContent(
         `<!DOCTYPE html><html><head><style>*{margin:0}${GRID_SELECTOR}{width:${width}px;height:${height}px}</style></head>` +
             `<body><div id="myGrid"></div></body></html>`
     );
-    await page.addScriptTag({ path: bundle });
+    await page.addScriptTag(bundleSource(enterprise ? 'ag-grid-enterprise' : 'ag-grid-community'));
     await page.evaluate(
         ({ optionsSource, selector }) => {
             const gridOptions = new Function(`return (${optionsSource})()`)();
