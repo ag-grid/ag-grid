@@ -179,6 +179,23 @@ export const REDIRECTS: RedirectRow[] = [
     r(`${CHARTS_HOST}/react/toolbar/`, `${WWW}/charts/react/financial-charts-toolbar/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/react/line/`, `${WWW}/charts/react/line-series/`, ['SE-28', 'SE-60']),
     r(`${CHARTS_HOST}/sitemap.xml`, `${WWW}/charts/sitemap-0.xml`, ['SE-186']),
+    // SE-66 B3, as Sean decided on 2026-10-02: the charts framework roots are SE-144's indexable
+    // landing hubs (self-canonical, in the sitemap, linked from the footer and llms.txt), so they
+    // stay pages rather than going to their quick start as B3 first asked. Every host reaches the
+    // hub in one hop; on www the hub itself answers 200. The apex and alias hosts take two hops, or
+    // keep the alias host, until ag-charts#8440 / #8441 deploys.
+    ...['react', 'angular', 'vue'].flatMap((fw) => [
+        r(`${WWW}/charts/${fw}`, `${WWW}/charts/${fw}/`, ['SE-66', 'SE-144']),
+        status(`${WWW}/charts/${fw}/`, 200, ['SE-66', 'SE-144']),
+        r(`${APEX}/charts/${fw}`, `${WWW}/charts/${fw}/`, ['SE-66', 'SE-144'], { pending: PENDING.chartsHosts }),
+        r(`${APEX}/charts/${fw}/`, `${WWW}/charts/${fw}/`, ['SE-66', 'SE-144']),
+        r(`https://react-grid.ag-grid.com/charts/${fw}`, `${WWW}/charts/${fw}/`, ['SE-66', 'SE-144'], {
+            pending: PENDING.chartsHosts,
+        }),
+        r(`https://react-grid.ag-grid.com/charts/${fw}/`, `${WWW}/charts/${fw}/`, ['SE-66', 'SE-144'], {
+            pending: PENDING.chartsHosts,
+        }),
+    ]),
     // Exactly #bullet-series, as Nick's 07-20 QA has it: today the bare Redirect adds a slash to it.
     ...['angular', 'javascript', 'vue'].map((fw) =>
         r(`${WWW}/charts/${fw}/bullet-series/`, `${WWW}/charts/${fw}/linear-gauge/#bullet-series`, ['SE-29', 'SE-66'], {

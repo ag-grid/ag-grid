@@ -38,7 +38,6 @@ export const PENDING = {
     chartsSeo: 'ag-charts#8440 / #8441 (one H1 and one <main>, absolute social images, /charts/options/ link)',
     studioHosts: 'ag-studio#3096 / #3097 (one-hop host canonicalisation under /studio, Vary on HTML)',
     studioSeo: 'ag-studio#3096 / #3097 (one <main>, absolute social images, initial-scale=1)',
-    studioNoOffers: 'ag-studio#3096 / #3097 (drops the "AG Studio Community" price-0 offer)',
     gridDefaultCache:
         'grid#15434 / #15435 (a default Cache-Control in the root .htaccess, so nothing is left to a heuristic lifetime; no-cache on live markdown, feeds and example code)',
     /** Not a PR: Sean pastes the generated block into the Ghost box's vhost by hand. */
