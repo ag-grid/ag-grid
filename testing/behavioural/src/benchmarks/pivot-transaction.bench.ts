@@ -87,7 +87,7 @@ const pivotRowTotalsOptions: GridOptions = { ...pivotOptions, pivotRowTotals: 'b
 suite(
     `pivot ON — ${ROW_COUNT} rows, ${VALUE_COL_COUNT * PIVOT_VALUES} result cols, ${updateCount} updated rows`,
     () => {
-        benchAlternating(gridsManager, 'transaction update', pivotOptions, data, applyForward, applyReverse, 0.6);
+        benchAlternating(gridsManager, 'transaction update', pivotOptions, data, applyForward, applyReverse);
     }
 );
 
@@ -98,11 +98,10 @@ suite(`pivot ON + pivotRowTotals — ${ROW_COUNT} rows, ${updateCount} updated r
         pivotRowTotalsOptions,
         data,
         applyForward,
-        applyReverse,
-        0.5
+        applyReverse
     );
 });
 
 suite(`pivot OFF — ${ROW_COUNT} rows, ${updateCount} updated rows`, () => {
-    benchAlternating(gridsManager, 'transaction update', flatOptions, data, applyForward, applyReverse, 2);
+    benchAlternating(gridsManager, 'transaction update', flatOptions, data, applyForward, applyReverse);
 });
