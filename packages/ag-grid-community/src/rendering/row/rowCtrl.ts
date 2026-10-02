@@ -59,24 +59,35 @@ import { DOM_DATA_KEY_ROW_CTRL } from '../renderUtils';
 import { FullWidthRowFeature } from './fullWidthRowFeature';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import { NormalRowFeature } from './normalRowFeature';
+import type { RowComp } from './rowComp';
 
 type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
 let instanceIdSequence = 0;
+/** Never mutated, so every row with no style shares it, and React sees the same reference. */
+const NO_ROW_STYLE: RowStyle = {};
 export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     toggleCss(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean, colsVersion: number): void;
+    /** Called after a layout; a list is never mutated once given, so an unchanged lane is the same list. */
+    setCellCtrls(
+        left: CellCtrl[],
+        center: CellCtrl[],
+        right: CellCtrl[],
+        useFlushSync: boolean,
+        colsVersion: number
+    ): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
     refreshPinnedSections(): void;
     showFullWidth(compDetails: UserCompDetails): void;
     showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
-    getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
+    /** `undefined` or one entry per renderer slot, empty where a slot has none; the caller skips both. */
+    getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[] | undefined;
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
     getFullWidthCellRendererParamsForPinned?(pinned: ColumnPinnedType): ICellRendererParams | undefined;
     setTop(top: string): void;
@@ -110,6 +121,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
+    /** The vanilla row comp drawing this; a ctrl is drawn by one container's list for its whole life, so the field
+     *  is that container's. */
+    public drawnRowComp: RowComp | undefined = undefined;
 
     private readonly rowType: RowType;
 
@@ -130,7 +144,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private slideInAnimation = false;
     private fadeInAnimation = false;
 
-    private rowDragComps: Component[] = [];
+    /** Bound to the element of the comp it was made for, so it goes with that comp. */
+    private rowDragComp: Component | undefined = undefined;
 
     private paginationPage: number;
 
@@ -138,7 +153,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private rowLevel: number;
     public rowStyles: RowStyle;
-    private readonly emptyStyle: RowStyle = {};
     private readonly useTopPositioning: boolean;
 
     public rowId: string | null = null;
@@ -239,6 +253,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public unsetComp(): void {
+        this.destroyRowDragComp();
         this.rowGui = undefined;
     }
 
@@ -377,16 +392,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!rowDragComp) {
             return;
         }
-        const rowDragBean = this.createBean(rowDragComp, this.beans.context);
-        this.rowDragComps.push(rowDragBean);
-        rowGui.compBean.addDestroyFunc(() => {
-            this.rowDragComps = this.rowDragComps.filter((r) => r !== rowDragBean);
-            this.destroyBean(rowDragBean, this.beans.context);
-        });
+        this.rowDragComp = this.createBean(rowDragComp, this.beans.context);
     }
 
-    public getModeCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
-        return this.rowModeFeature.getModeCellRenderers?.() ?? [];
+    private destroyRowDragComp(): void {
+        this.rowDragComp = this.destroyBean(this.rowDragComp, this.beans.context);
+    }
+
+    public getModeCellRenderers(): (ICellRenderer<any> | null | undefined)[] | undefined {
+        return this.rowModeFeature.getModeCellRenderers?.();
     }
 
     private executeProcessRowPostCreateFunc(): void {
@@ -485,12 +499,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return getPinnedSectionWidths(this.beans.visibleCols, this.printLayout);
     }
 
-    /**
-     * CellCtrls for rows whose normal-mode feature eagerly created cells in the constructor.
-     * React uses this to seed first render and avoid an empty row flash on bulk add.
-     */
-    public getInitialCellCtrls(): CellCtrl[] | null {
-        return this.rowModeFeature.getInitialCellCtrls?.() ?? null;
+    /** A lane's cells for React's first render, so a row added in bulk shows no empty frame; `undefined` when the
+     *  row lays its cells out on an animation frame, is not a normal row, or was destroyed. */
+    public getInitialCellCtrls(lane: ColumnLane): CellCtrl[] | undefined {
+        return this.rowModeFeature.getInitialCellCtrls?.(lane);
     }
 
     public getDomOrder(): boolean {
@@ -498,6 +510,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return isEnsureDomOrder || _isDomLayout(this.gos, 'print');
     }
 
+    // ensureDomOrder is documented as initial, yet a framework prop change reaches rows unwarned and they
+    // follow it; investigate whether to make it truly initial, which would let this listener go (AG-18759).
     private listenOnDomOrder(gui: RowGui): void {
         const listener = () => {
             gui.rowComp.setDomOrder(this.getDomOrder());
@@ -572,7 +586,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addListeners(): void {
         const { beans, gos, rowNode } = this;
-        const { expansionSvc, eventSvc, context, rowSpanSvc } = beans;
+        const { expansionSvc, eventSvc, rowSpanSvc } = beans;
 
         this.addManagedListeners(this.rowNode, {
             heightChanged: () => this.onRowHeightChanged(),
@@ -638,10 +652,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             });
         }
 
-        this.addDestroyFunc(() => {
-            this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
-        });
-
         this.addManagedPropertyListeners(
             ['rowStyle', 'getRowStyle', 'rowClass', 'getRowClass', 'rowClassRules'],
             this.postProcessCss.bind(this)
@@ -653,7 +663,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.addRowDraggerToRow();
                 return;
             }
-            this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
+            this.destroyRowDragComp();
         });
     }
 
@@ -1058,8 +1068,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
         return this.isClientSideLoadingRow()
-            ? this.emptyStyle
-            : (this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle);
+            ? NO_ROW_STYLE
+            : (this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? NO_ROW_STYLE);
     }
 
     private onRowSelected(): void {
@@ -1235,6 +1245,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.dispatchLocalEvent(event);
         this.beans.eventSvc.dispatchEvent(event);
+        this.destroyRowDragComp();
         super.destroy();
     }
 

@@ -1,9 +1,15 @@
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, PinnedRowModule } from 'ag-grid-community';
 
-import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex, getFocusedRowPinned } from './navigation-test-utils';
+import {
+    dispatchKeyDown,
+    getActiveCellColId,
+    getFocusedColId,
+    getFocusedRowIndex,
+    getFocusedRowPinned,
+} from './navigation-test-utils';
 
 interface RowData {
     a: string;
@@ -170,5 +176,50 @@ describe('Pinned Row Navigation', () => {
             expect(getFocusedRowPinned(api)).toBe('top');
             expect(getFocusedColId(api)).toBe('a');
         });
+    });
+});
+
+describe('Pinned rows: a focused cell outside the column viewport', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, PinnedRowModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('setFocusedCell draws and focuses a cell scrolled out of view on a pinned row, as on a normal row', async () => {
+        const columnDefs: ColDef[] = [];
+        const row: Record<string, number> = {};
+        for (let i = 0; i < 120; ++i) {
+            columnDefs.push({ colId: `c${i}`, field: `c${i}`, width: 120 });
+            row[`c${i}`] = i;
+        }
+        const api = gridsManager.createGrid('pinnedFocusOutOfView', {
+            columnDefs,
+            rowData: [row],
+            pinnedTopRowData: [row],
+            pinnedBottomRowData: [row],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c60');
+
+        const focusedRowId = () => document.activeElement?.closest('.ag-row')?.getAttribute('row-id');
+        const rows = [
+            { rowPinned: 'top', rowId: api.getPinnedTopRow(0)?.id },
+            { rowPinned: null, rowId: api.getDisplayedRowAtIndex(0)?.id },
+            { rowPinned: 'bottom', rowId: api.getPinnedBottomRow(0)?.id },
+        ] as const;
+        for (const { rowPinned, rowId } of rows) {
+            expect(rowId).toBeDefined();
+            api.setFocusedCell(0, 'c60', rowPinned);
+            await asyncSetTimeout(0);
+            expect({ rowPinned, colId: getActiveCellColId(), rowId: focusedRowId() }).toEqual({
+                rowPinned,
+                colId: 'c60',
+                rowId,
+            });
+        }
     });
 });

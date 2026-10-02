@@ -555,6 +555,41 @@ describe('colSpan follows row data updates', () => {
         await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
     });
 
+    test('a pinned cell a span grows over stays kept for focus across a horizontal scroll, until focus moves on', async () => {
+        const columnDefs: ColDef<PriceRow>[] = [
+            { field: 'price', width: 100, pinned: 'left', colSpan: (params) => (params.data!.price > 0 ? 2 : 1) },
+            { field: 'symbol', width: 100, pinned: 'left' },
+        ];
+        for (let i = 0; i < 120; ++i) {
+            columnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }],
+            getRowId: (params) => params.data.id,
+            suppressColumnVirtualisation: false,
+        });
+        const pinnedCell = (colId: string) =>
+            getGridElement(api)!.querySelector<HTMLElement>(
+                `.ag-row[row-index="0"] .ag-grid-pinned-left-cells [col-id="${colId}"]`
+            );
+        await waitFor(() => expect(pinnedCell('symbol')).not.toBeNull());
+
+        api.setFocusedCell(0, 'symbol');
+        api.getRowNode('r0')!.setDataValue('price', 1);
+        await waitFor(() => expect(pinnedCell('price')?.style.width).toBe('200px'));
+        expect(pinnedCell('symbol')).not.toBeNull();
+
+        api.ensureColumnVisible('c60');
+        await waitFor(() =>
+            expect(getGridElement(api)!.querySelector('[row-index="0"] [col-id="c60"]')).not.toBeNull()
+        );
+        expect(pinnedCell('symbol')).not.toBeNull();
+
+        api.setFocusedCell(0, 'c60');
+        await waitFor(() => expect(pinnedCell('symbol')).toBeNull());
+    });
+
     test('a row index change lays a row out once, dropping the kept cell focus no longer holds', async () => {
         const calls: string[] = [];
         const rowData: PriceRow[] = [

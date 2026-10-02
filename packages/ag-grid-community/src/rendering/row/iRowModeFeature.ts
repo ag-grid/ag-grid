@@ -1,5 +1,5 @@
 import type { BeanStub } from '../../context/beanStub';
-import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
@@ -28,7 +28,7 @@ export interface IRowModeFeature {
     onSpannedCellsUpdated(pinned: ColumnPinnedType): void;
 
     // Optional Features
-    getModeCellRenderers?(): (ICellRenderer | null | undefined)[];
+    getModeCellRenderers?(): (ICellRenderer | null | undefined)[] | undefined;
     setupFocus?(): void;
     onRowFocused?(event?: CellFocusedEvent): void;
     renderFocusedCell?(): void;
@@ -44,7 +44,7 @@ export interface IRowModeFeature {
     getCellCtrl?(column: AgColumn): CellCtrl | undefined;
     getOwnCellCtrl?(column: AgColumn): CellCtrl | undefined;
     releaseKeptCells?(afterEdit: boolean): void;
-    getInitialCellCtrls?(): CellCtrl[] | null;
+    getInitialCellCtrls?(lane: ColumnLane): CellCtrl[] | undefined;
 
     // Target resolution
     getTargets?(): FullWidthTarget[];
