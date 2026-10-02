@@ -13,8 +13,9 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { detectApache, findMimeTypes, startHttpd, stopHttpd, writeHttpdConf } from './lib/apache.mjs';
+import { browserCacheViolation } from './lib/cacheCap.mjs';
 import { buildScaffold, placeRowFiles } from './lib/docroot.mjs';
-import { request, runRow } from './lib/probe.mjs';
+import { headerValues, request, responses, runRow } from './lib/probe.mjs';
 import { EXPECTATION_FILES, classifyRow, coverageErrors, expectationFileErrors } from './lib/report.mjs';
 import { parseFile, siteOf } from './lib/rows.mjs';
 import { LAYOUT, emitLayout, resolveSources, tsxEval } from './lib/sources.mjs';
@@ -210,6 +211,17 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: 8 }, worker));
 
+// Run-wide: no response at all, redirects, 304s and 404s included, may be cached by a browser for
+// more than 7 days (s-maxage is exempt).
+const cacheCapViolations = responses.flatMap(({ request: sent, response }) => {
+    const problem = browserCacheViolation({
+        'cache-control': headerValues(response, 'cache-control'),
+        expires: headerValues(response, 'expires'),
+        date: headerValues(response, 'date'),
+    });
+    return problem ? [`${sent} -> ${response.status}: ${problem}`] : [];
+});
+
 // ---------------------------------------------------------------- report
 const verbose = flag('VERBOSE');
 const tally = {};
@@ -252,6 +264,10 @@ for (const row of siteSkipped) {
 const featureSkipped = skipped.filter((r) => !sites[siteOf(r)].off);
 const coverageGaps = coverageErrors({ declared, minRows, executed: active, siteSkipped, featureSkipped });
 
+if (cacheCapViolations.length) {
+    console.log(`\n==> BROWSER CACHE CAP (${cacheCapViolations.length} responses over 7 days)`);
+    console.log(cacheCapViolations.map((v) => `  FAIL ${v}`).join('\n'));
+}
 if (failed.length) {
     console.log(`\n==> FAILURES (${failed.length})`);
     console.log(failed.map((f) => `  FAIL ${f}`).join('\n'));
@@ -303,6 +319,9 @@ for (const c of coverageGaps) {
 console.log(
     `\n==> ${totals.pass} passed, ${totals.fail} failed, ${totals.known} known-fail, ${totals.upass} unexpected-pass, ${skipped.length} skipped`
 );
+console.log(
+    `==> browser-cache cap (max-age and Expires at most 7 days): ${responses.length} responses, ${cacheCapViolations.length} over`
+);
 if (formOnlyFails) {
     console.log(
         `    (${formOnlyFails} of the failures differ only in Location form on the canonical host - relative vs absolute, same page)`
@@ -319,7 +338,7 @@ if (flag('KEEP_RUNNING')) {
     console.log(`httpd left running on :${PORT} and :${HTTP_PORT} (http) (stop: ${apache.httpd} -f ${conf} -k stop)`);
 }
 // explicit exit: the keep-alive agent would otherwise hold the process open
-process.exit(totals.fail || totals.upass || coverageGaps.length ? 1 : 0);
+process.exit(totals.fail || totals.upass || coverageGaps.length || cacheCapViolations.length ? 1 : 0);
 
 async function waitForPort() {
     for (let i = 0; i < 50; i++) {
