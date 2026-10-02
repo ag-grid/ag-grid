@@ -5,7 +5,7 @@
  *
  *   redirects      every alias host (apex, blog., react-grid., charts. ..., over http too) and legacy URL
  *                  reaches the right www URL in one hop, query string kept; archive URLs stay inside
- *                  their archive; the charts framework roots go to their quick start
+ *                  their archive
  *                  SE-4, SE-24, SE-26, SE-28, SE-29, SE-30, SE-40, SE-60, SE-61, SE-64, SE-66, SE-85,
  *                  SE-86, SE-88, SE-90, SE-91, SE-93, SE-94, SE-164, SE-166, SE-182, SE-186, SE-188
  *   bot-outcomes   queries recent WAF logs: each crawler/agent family (Googlebot, OAI-SearchBot,
