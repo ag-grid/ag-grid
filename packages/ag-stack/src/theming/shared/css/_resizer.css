@@ -8,7 +8,7 @@
 }
 
 :where(.ag-resizer) {
-    /* stylelint-disable-next-line selector-class-pattern */
+    /* stylelint-disable-next-line selector-class-pattern -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     &.ag-resizer-topLeft {
         top: 0;
         /* rtl:ignore */
@@ -28,7 +28,7 @@
         cursor: ns-resize;
     }
 
-    /* stylelint-disable-next-line selector-class-pattern */
+    /* stylelint-disable-next-line selector-class-pattern -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     &.ag-resizer-topRight {
         top: 0;
         /* rtl:ignore */
@@ -48,7 +48,7 @@
         cursor: ew-resize;
     }
 
-    /* stylelint-disable-next-line selector-class-pattern */
+    /* stylelint-disable-next-line selector-class-pattern -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     &.ag-resizer-bottomRight {
         bottom: 0;
         /* rtl:ignore */
@@ -68,7 +68,7 @@
         cursor: ns-resize;
     }
 
-    /* stylelint-disable-next-line selector-class-pattern */
+    /* stylelint-disable-next-line selector-class-pattern -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     &.ag-resizer-bottomLeft {
         bottom: 0;
         /* rtl:ignore */

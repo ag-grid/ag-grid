@@ -17,15 +17,20 @@
     line-height: normal;
     overflow: auto;
     overflow-y: hidden;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     -ms-overflow-style: none !important;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     scrollbar-width: none !important;
 }
 
 .ag-content-editable-field-input::-webkit-scrollbar {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     display: none !important;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-wrapper.ag-content-editable-field-input {
     line-height: var(--ag-internal-content-line-height);
 }
