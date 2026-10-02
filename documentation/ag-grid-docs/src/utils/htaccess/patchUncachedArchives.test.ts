@@ -32,12 +32,20 @@ if [[ "$src" == *:* && -n "$STUB_AFTER_FETCH" ]]; then bash -c "$STUB_AFTER_FETC
 if [[ "$dst" == *:* && -n "$STUB_DAMAGE_UPLOAD" ]]; then echo damaged >> "\${dst#*:}"; fi
 `;
 // flock -w <seconds> <fd>, as util-linux has it (macOS has none): an exclusive lock on the inherited
-// descriptor, which the calling shell then holds until it exits.
+// descriptor, which the calling shell then holds until it exits. With $STUB_FLOCK_HOLD it returns only
+// once that file exists, so a test can keep the lock held while it lines up the other side.
 const FLOCK_STUB = `#!/usr/bin/perl
 use Fcntl qw(:flock);
 my ($w, $secs, $fd) = @ARGV;
 open(my $fh, ">>&=", $fd) or exit 1;
-for (my $i = 0; $i < $secs * 10; $i++) { exit 0 if flock($fh, LOCK_EX | LOCK_NB); select(undef, undef, undef, 0.1); }
+for (my $i = 0; $i < $secs * 10; $i++) {
+    if (flock($fh, LOCK_EX | LOCK_NB)) {
+        # $STUB_FLOCK_HOLD: keep the caller waiting, lock held, until that file exists.
+        for (my $j = 0; $ENV{STUB_FLOCK_HOLD} && !-e $ENV{STUB_FLOCK_HOLD} && $j < 100; $j++) { select(undef, undef, undef, 0.1); }
+        exit 0;
+    }
+    select(undef, undef, undef, 0.1);
+}
 exit 1;
 `;
 // The rename at the end of the swap. With $STUB_MV_BARRIER set, each caller waits (up to 3s) until
@@ -47,7 +55,13 @@ if [ -n "$STUB_MV_BARRIER" ]; then
     touch "$STUB_MV_BARRIER/$$"
     for i in $(seq 1 30); do [ "$(ls "$STUB_MV_BARRIER" | wc -l)" -ge 2 ] && break; sleep 0.1; done
 fi
+[ -n "$STUB_MV_SLEEP" ] && sleep "$STUB_MV_SLEEP"
 exec /bin/mv "$@"
+`;
+// unzip -qo <zip> -d <dir>: copies the deploy's files from $STUB_UNZIP_FROM instead.
+const UNZIP_STUB = `#!/bin/bash
+while [ "$1" != -d ]; do shift; done
+cp -R "$STUB_UNZIP_FROM/." "$2/"
 `;
 
 function box(initial: string) {
@@ -61,6 +75,7 @@ function box(initial: string) {
         ['scp', SCP_STUB],
         ['flock', FLOCK_STUB],
         ['mv', MV_STUB],
+        ['unzip', UNZIP_STUB],
     ]) {
         writeFileSync(join(bin, name), body);
         chmodSync(join(bin, name), 0o755);
@@ -97,7 +112,27 @@ function box(initial: string) {
         });
     const live = () => readFileSync(join(docroot, '.htaccess'), 'utf8');
     const leftovers = () => readdirSync(docroot).filter((f) => f !== '.htaccess' && f !== '.htaccess.lock');
-    return { docroot, run, runAsync, live, leftovers };
+    // A deploy script from scripts/deployments, with its @TOKENS@ filled in for this box.
+    const deploy = (script: string, tokens: Record<string, string>, env: Record<string, string> = {}) => {
+        let body = readFileSync(
+            fileURLToPath(new URL(`../../../../../scripts/deployments/${script}`, import.meta.url)),
+            'utf8'
+        );
+        for (const [token, value] of Object.entries(tokens)) {
+            body = body.replaceAll(`@${token}@`, value);
+        }
+        return new Promise<{ status: number | null; output: string }>((resolve) => {
+            const child = spawn('bash', ['-c', body, 'deploy', ...(env.ARGS ? [env.ARGS] : [])], {
+                cwd: root,
+                env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, ...env },
+            });
+            let output = '';
+            child.stdout.on('data', (chunk) => (output += chunk));
+            child.stderr.on('data', (chunk) => (output += chunk));
+            child.on('close', (status) => resolve({ status, output }));
+        });
+    };
+    return { root, docroot, run, runAsync, deploy, live, leftovers };
 }
 
 const args = (grid: string, charts: string, action: string) => [grid, charts, action];
@@ -159,6 +194,71 @@ describe('patchUncachedArchives.sh', () => {
         const rerun = grid.status === 0 ? args('-', '14.3.0', 'set') : args('36.3.0', '-', 'set');
         expect(b.run(rerun).status).toBe(0);
         expect(b.live()).toBe(generated('36.3.0', '14.3.0'));
+    }, 30_000);
+
+    // A deploy that rewrites the root .htaccess must not land between a patch's check and its rename,
+    // or the rename puts back the pre-deploy file with the patch on top and the deploy is lost.
+    it('makes a staging deploy wait for a patch holding the lock, so the deploy is never undone', async () => {
+        const b = box(generated(null, null));
+        const barrier = join(b.root, 'barrier');
+        mkdirSync(barrier);
+        const deployed = `${generated(null, null)}# a newer deploy\n`;
+        const files = join(b.root, 'release');
+        mkdirSync(files);
+        writeFileSync(join(files, '.htaccess'), deployed);
+        writeFileSync(join(b.root, 'release.zip'), 'zip');
+        const patch = b.runAsync(args('36.3.0', '-', 'set'), { STUB_MV_BARRIER: barrier });
+        // Deploy while the patch is between its check and its rename.
+        for (let i = 0; i < 100 && !readdirSync(barrier).length; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        expect(readdirSync(barrier)).toHaveLength(1);
+        const result = await b.deploy(
+            'updateGridStagingRemote.sh',
+            { WWW_ROOT_DIR: b.root, FILENAME: 'release.zip' },
+            { STUB_UNZIP_FROM: files }
+        );
+        expect(result.status, result.output).toBe(0);
+        expect((await patch).status).toBe(0);
+        expect(b.live()).toBe(deployed);
+    }, 30_000);
+
+    // A production switch replaces the whole docroot directory: a patch that was waiting for the lock
+    // in the old one must stop, not report success for a file that is no longer live.
+    it('stops a patch whose docroot a production switch replaced while it waited', async () => {
+        const b = box(generated(null, null));
+        for (const dir of ['archive', 'ecommerce', 'support', '__shared', 'blog']) {
+            mkdirSync(join(b.docroot, dir));
+        }
+        const www = b.root;
+        mkdirSync(join(www, 'charts'));
+        mkdirSync(join(www, 'studio'));
+        mkdirSync(join(www, 'public_html_tmp'));
+        writeFileSync(join(www, 'public_html_tmp', '.htaccess'), `${generated(null, null)}# released\n`);
+        // The switch takes the lock and holds it until the patch is waiting for it in the old docroot.
+        const go = join(b.root, 'go');
+        const switched = b.deploy(
+            'release/switchReleaseRemote.sh',
+            {
+                GRID_ROOT_DIR: b.docroot,
+                WWW_ROOT_DIR: www,
+                CHARTS_ROOT_DIR: join(www, 'charts'),
+                STUDIO_ROOT_DIR: join(www, 'studio'),
+            },
+            { STUB_FLOCK_HOLD: go, ARGS: '20261002' }
+        );
+        const patch = b.runAsync(args('36.3.0', '-', 'set'));
+        // Uploaded beside the live file: from here the patch is in the old docroot, waiting for the lock.
+        for (let i = 0; i < 100 && !readdirSync(b.docroot).some((f) => f.startsWith('.htaccess.new-')); i++) {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        writeFileSync(go, '');
+        const [switchResult, patchResult] = await Promise.all([switched, patch]);
+        expect(switchResult.status, switchResult.output).toBe(0);
+        expect(patchResult.status).not.toBe(0);
+        expect(patchResult.stdout).toContain('changed while this ran');
+        expect(b.live()).toBe(`${generated(null, null)}# released\n`);
     }, 30_000);
 
     it('leaves the live file alone when the upload arrives damaged', () => {
