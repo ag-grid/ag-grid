@@ -227,12 +227,11 @@ describe('patchUncachedArchives.sh', () => {
     // in the old one must stop, not report success for a file that is no longer live.
     it('stops a patch whose docroot a production switch replaced while it waited', async () => {
         const b = box(generated(null, null));
-        for (const dir of ['archive', 'ecommerce', 'support', '__shared', 'blog']) {
+        // The production layout: charts and studio live inside the grid docroot.
+        for (const dir of ['archive', 'charts', 'studio', 'ecommerce', 'support', '__shared', 'blog']) {
             mkdirSync(join(b.docroot, dir));
         }
         const www = b.root;
-        mkdirSync(join(www, 'charts'));
-        mkdirSync(join(www, 'studio'));
         mkdirSync(join(www, 'public_html_tmp'));
         writeFileSync(join(www, 'public_html_tmp', '.htaccess'), `${generated(null, null)}# released\n`);
         // The switch takes the lock and holds it until the patch is waiting for it in the old docroot.
@@ -242,8 +241,8 @@ describe('patchUncachedArchives.sh', () => {
             {
                 GRID_ROOT_DIR: b.docroot,
                 WWW_ROOT_DIR: www,
-                CHARTS_ROOT_DIR: join(www, 'charts'),
-                STUDIO_ROOT_DIR: join(www, 'studio'),
+                CHARTS_ROOT_DIR: join(b.docroot, 'charts'),
+                STUDIO_ROOT_DIR: join(b.docroot, 'studio'),
             },
             { STUB_FLOCK_HOLD: go, ARGS: '20261002' }
         );
@@ -256,6 +255,7 @@ describe('patchUncachedArchives.sh', () => {
         writeFileSync(go, '');
         const [switchResult, patchResult] = await Promise.all([switched, patch]);
         expect(switchResult.status, switchResult.output).toBe(0);
+        expect(switchResult.output).not.toMatch(/cannot|No such file/);
         expect(patchResult.status).not.toBe(0);
         expect(patchResult.stdout).toContain('changed while this ran');
         expect(b.live()).toBe(`${generated(null, null)}# released\n`);
