@@ -27,18 +27,16 @@ suite(`map stage — flat (${ROW_COUNT} rows)`, () => {
         `remap ${ROW_COUNT} displayed rows`,
         () => {
             api.refreshClientSideRowModel('map');
+            api.flushAllAnimationFrames();
         },
         benchDefaults({
-            setup: () => {
-                api ??= gridsManager.createGrid('map-flat', {
+            setup: async () => {
+                await gridsManager.reset();
+                api = gridsManager.createGrid('map-flat', {
                     columnDefs: [{ field: 'name' }, { field: 'value' }],
                     rowData,
                     getRowId: ({ data }) => data.id,
                 });
-            },
-            teardown: async () => {
-                api = undefined!;
-                await gridsManager.reset();
             },
         })
     );
@@ -66,19 +64,17 @@ suite(`map stage — grouped (3 levels, ${ROW_COUNT} rows)`, () => {
             `remap with groups ${expanded ? 'expanded' : 'collapsed'}`,
             () => {
                 api.refreshClientSideRowModel('map');
+                api.flushAllAnimationFrames();
             },
             benchDefaults({
-                setup: () => {
-                    api ??= gridsManager.createGrid(`map-grouped-${expanded ? 'expanded' : 'collapsed'}`, {
+                setup: async () => {
+                    await gridsManager.reset();
+                    api = gridsManager.createGrid(`map-grouped-${expanded ? 'expanded' : 'collapsed'}`, {
                         columnDefs: groupColumnDefs,
                         rowData,
                         groupDefaultExpanded: expanded ? -1 : 0,
                         getRowId: ({ data }) => data.id,
                     });
-                },
-                teardown: async () => {
-                    api = undefined!;
-                    await gridsManager.reset();
                 },
             })
         );

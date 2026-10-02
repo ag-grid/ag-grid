@@ -180,7 +180,7 @@ Colour (off for an agent or a pipe, on for a terminal and CI) and `DEBUG_PRINT_L
 
 ### Benchmarks
 
-Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright) by **default**, so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
+Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright), so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
 
 ```bash
 # Run all benchmarks
@@ -192,11 +192,11 @@ Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`
 # Run a specific benchmark by name within matching files
 ./benches.sh "tree-data-path" -t "flattening"
 
-# V8 CPU profile (node-only) — writes a .cpuprofile for method-cost analysis
+# CPU profile of each bench's measured run (Chromium, CDP) — one .cpuprofile per bench
 ./benches.sh --profile "tree-data-path"
 ```
 
-For baseline/compare runs, `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` forwards to `bench-compare.mjs` (e.g. `./benches.sh --bench-compare all --runs 3`).
+For baseline/compare runs, `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` forwards to `bench-compare.mjs` (e.g. `./benches.sh --bench-compare all`, which measures this checkout against the sibling `../ag-grid2`, screens every bench and reruns only the unsettled ones in fresh processes).
 
 ### Per-package unit tests (Nx, retrocompat)
 

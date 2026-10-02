@@ -8,7 +8,7 @@ import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule } from 'ag-
 
 import type { FlatRow } from './bench-data';
 import { buildFlatData, buildFlatSortUpdate, buildFlatUpdate } from './bench-data';
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, benchDefaults, untimedPrepare } from './bench-utils';
 
 const ROW_COUNT = 15_000;
 const baseRowData = buildFlatData(ROW_COUNT);
@@ -24,19 +24,15 @@ suite('flat grid — filtering', () => {
     const updatedRowData = buildFlatUpdate(filterData, 0.1);
 
     const options = benchDefaults({
-        noiseFactor: 4,
-        setup: () => {
-            api ??= gridsManager.createGrid('flat-filter', {
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('flat-filter', {
                 columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }, { field: 'value' }],
                 rowData: filterData,
                 getRowId: ({ data }) => data.id,
             });
         },
-        teardown: async () => {
-            api = undefined!;
-            await gridsManager.reset();
-        },
-    }); // noisy suite (~8% rme @1×) — see bench-compare "Suggested noiseFactors"
+    });
 
     const filterAAA = { name: { filterType: 'text', type: 'contains', filter: 'aaa' } };
     let filterOn = false;
@@ -45,21 +41,25 @@ suite('flat grid — filtering', () => {
         () => {
             filterOn = !filterOn;
             api.setFilterModel(filterOn ? filterAAA : null);
+            api.flushAllAnimationFrames();
         },
         options
     );
 
     const filterBB = { name: { filterType: 'text', type: 'contains', filter: 'bb' } };
     let useUpdated = false;
+    let filtered = false;
     bench(
         `immutable data update with active filter ${FILTER_ROW_COUNT} rows`,
         () => {
-            // Keep a filter active across both directions, then swap the data each iteration.
-            if (!useUpdated) {
+            // The filter is set once, by the first call; every call then swaps the data under it.
+            if (!filtered) {
                 api.setFilterModel(filterBB);
+                filtered = true;
             }
             useUpdated = !useUpdated;
             api.setGridOption('rowData', useUpdated ? updatedRowData : filterData);
+            api.flushAllAnimationFrames();
         },
         options
     );
@@ -67,8 +67,7 @@ suite('flat grid — filtering', () => {
 
 suite('flat grid — sorting (delta vs full)', () => {
     const gridsManager = new BenchGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule] });
-    let deltaApi!: GridApi<FlatRow>;
-    let fullApi!: GridApi<FlatRow>;
+    let api!: GridApi<FlatRow>;
 
     // Smaller than the shared 15k dataset: the full re-sort here is GC-spike-bound (p99 ≫ median), and
     // fewer rows cut the pauses far more effectively than more samples would.
@@ -79,28 +78,19 @@ suite('flat grid — sorting (delta vs full)', () => {
     const updatedRowData = buildFlatSortUpdate(sortData, updateRatio, shuffleRatio);
     const updateLabel = `${Math.round(updateRatio * 100)}% updates (${Math.floor(SORT_ROW_COUNT * updateRatio)}/${SORT_ROW_COUNT})`;
 
-    const options = benchDefaults({
-        noiseFactor: 3,
-        setup: () => {
-            deltaApi ??= gridsManager.createGrid('flat-sort-delta', {
-                columnDefs: [{ field: 'name' }],
-                deltaSort: true,
-                rowData: sortData,
-                getRowId: ({ data }) => data.id,
-            });
-            fullApi ??= gridsManager.createGrid('flat-sort-full', {
-                columnDefs: [{ field: 'name' }],
-                deltaSort: false,
-                rowData: sortData,
-                getRowId: ({ data }) => data.id,
-            });
-        },
-        teardown: async () => {
-            deltaApi = undefined!;
-            fullApi = undefined!;
-            await gridsManager.reset();
-        },
-    }); // noisy suite (~3% rme @1×)
+    // The update benches start sorted, so each data swap is re-sorted; the sort bench starts unsorted.
+    const options = (deltaSort: boolean, sorted: boolean) =>
+        benchDefaults({
+            setup: async () => {
+                await gridsManager.reset();
+                api = gridsManager.createGrid('flat-sort', {
+                    columnDefs: [{ field: 'name', sort: sorted ? 'asc' : null }],
+                    deltaSort,
+                    rowData: sortData,
+                    getRowId: ({ data }) => data.id,
+                });
+            },
+        });
 
     const sortAsc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'asc' }] };
     const sortDesc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'desc' }] };
@@ -109,10 +99,11 @@ suite('flat grid — sorting (delta vs full)', () => {
     bench(
         `sort ${SORT_ROW_COUNT} rows`,
         () => {
-            deltaApi.applyColumnState(sortAscending ? sortAsc : sortDesc);
+            api.applyColumnState(sortAscending ? sortAsc : sortDesc);
+            api.flushAllAnimationFrames();
             sortAscending = !sortAscending;
         },
-        options
+        options(true, false)
     );
 
     let useUpdatedDelta = false;
@@ -120,9 +111,10 @@ suite('flat grid — sorting (delta vs full)', () => {
         `delta sort with ${updateLabel}`,
         () => {
             useUpdatedDelta = !useUpdatedDelta;
-            deltaApi.setGridOption('rowData', useUpdatedDelta ? updatedRowData : sortData);
+            api.setGridOption('rowData', useUpdatedDelta ? updatedRowData : sortData);
+            api.flushAllAnimationFrames();
         },
-        options
+        options(true, true)
     );
 
     let useUpdatedFull = false;
@@ -130,9 +122,10 @@ suite('flat grid — sorting (delta vs full)', () => {
         `full sort with ${updateLabel}`,
         () => {
             useUpdatedFull = !useUpdatedFull;
-            fullApi.setGridOption('rowData', useUpdatedFull ? updatedRowData : sortData);
+            api.setGridOption('rowData', useUpdatedFull ? updatedRowData : sortData);
+            api.flushAllAnimationFrames();
         },
-        options
+        options(false, true)
     );
 });
 
@@ -145,16 +138,13 @@ suite('flat grid — filter + sort pipeline', () => {
     const updatedRowData = buildFlatUpdate(baseRowData);
 
     const options = benchDefaults({
-        setup: () => {
-            api ??= gridsManager.createGrid('flat-pipeline', {
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('flat-pipeline', {
                 columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }, { field: 'value' }],
                 rowData: baseRowData,
                 getRowId: ({ data }) => data.id,
             });
-        },
-        teardown: async () => {
-            api = undefined!;
-            await gridsManager.reset();
         },
     });
 
@@ -164,23 +154,36 @@ suite('flat grid — filter + sort pipeline', () => {
 
     bench(
         `filter + sort ${ROW_COUNT} rows`,
-        () => {
-            // Remove then re-apply filter + sort, so every iteration runs the same full pipeline.
-            api.setFilterModel(null);
-            api.applyColumnState(noSort);
-            api.setFilterModel(filterAA);
-            api.applyColumnState(sortAsc);
-        },
+        // Filter and sort are removed untimed, so every call applies both to the full row set.
+        untimedPrepare(
+            () => {
+                api.setFilterModel(null);
+                api.applyColumnState(noSort);
+                api.flushAllAnimationFrames();
+            },
+            () => {
+                api.setFilterModel(filterAA);
+                api.applyColumnState(sortAsc);
+                api.flushAllAnimationFrames();
+            }
+        ),
         options
     );
 
+    let useUpdated = false;
+    let filtered = false;
     bench(
         `immutable update with filter + sort active ${ROW_COUNT} rows`,
         () => {
-            api.setFilterModel(filterAA);
-            api.applyColumnState(sortAsc);
-            api.setGridOption('rowData', updatedRowData);
-            api.setGridOption('rowData', baseRowData);
+            // Filter + sort are set on the first call; then the rows alternate between the two data sets.
+            if (!filtered) {
+                api.setFilterModel(filterAA);
+                api.applyColumnState(sortAsc);
+                filtered = true;
+            }
+            useUpdated = !useUpdated;
+            api.setGridOption('rowData', useUpdated ? updatedRowData : baseRowData);
+            api.flushAllAnimationFrames();
         },
         options
     );

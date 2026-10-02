@@ -1,7 +1,9 @@
+import { appendFile, mkdir, writeFile } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
 import type { ViteUserConfig } from 'vitest/config';
+import type { BrowserCommand, TestSequencerConstructor, TestSpecification } from 'vitest/node';
 
 import {
     TEST_TIMEOUT_MS,
@@ -25,10 +27,91 @@ const repoRoot = path.resolve(thisDir, '../..');
 const benchPackages = process.env.AG_BENCH_PACKAGES;
 const benchRoot = benchPackages ? path.resolve(benchPackages, '..') : repoRoot;
 
-// Per-checkout dep cache: bench-compare points AG_BENCH_PACKAGES at base vs test, which changes the
-// source aliases. Sharing one cacheDir makes each side invalidate the other's optimized deps (Vite
-// re-optimizes on every side switch); a key per checkout keeps the two caches separate.
-const benchCacheKey = benchPackages ? path.basename(benchRoot) : 'self';
+// One Vite dep cache per checkout and per side: base and test alias different sources, so a shared cache is
+// re-optimised on every switch, and a paired run's two concurrent processes must not share one.
+const benchSide = process.env.AG_BENCH_SIDE;
+const benchCacheKey = `${benchPackages ? path.basename(benchRoot) : 'self'}${benchSide ? `-${benchSide}` : ''}`;
+
+// Set by bench-compare: the turn server that pairs the two sides in time, and the file receiving every
+// call's time.
+const benchTurnUrl = process.env.AG_BENCH_TURN_URL;
+const benchSamplesPath = process.env.AG_BENCH_SAMPLES;
+// `./benches.sh --profile`: each bench's measured run is CPU-profiled through CDP into this directory.
+const benchProfileDir = process.env.BENCH_PROFILE
+    ? process.env.BENCH_PROFILE_DIR || path.resolve(thisDir, 'src/benchmarks/tmp/profiles')
+    : undefined;
+const pairedTinybenchPath = path.resolve(thisDir, 'src/benchmarks/paired-tinybench.ts');
+
+// Serves paired-tinybench.ts for the runner's `tinybench` import; the module itself still gets the real one.
+const pairedTinybenchPlugin = {
+    name: 'bench-paired-tinybench',
+    enforce: 'pre' as const,
+    resolveId(source: string, importer: string | undefined) {
+        if (source !== 'tinybench' || importer?.split('?')[0] === pairedTinybenchPath) {
+            return null;
+        }
+        return pairedTinybenchPath;
+    },
+};
+
+/** Bench name occurrences per `file::name`, so two same-named benches in one file get distinct keys. */
+const benchTurnCounts = new Map<string, number>();
+
+interface BenchTurn {
+    granted: boolean;
+    paired: boolean;
+    profile: boolean;
+}
+
+// A bench always runs inside a test file, so its path is set; '' only satisfies the type.
+const benchId = (testPath: string | undefined, name: string): string =>
+    `${path.relative(repoRoot, testPath ?? '')}::${name}`;
+
+/** Long-polls the turn server (it answers within ~20s) — short of any RPC timeout between browser and node. */
+async function waitBenchTurn(): Promise<BenchTurn> {
+    const response = await fetch(`${benchTurnUrl}/wait?side=${benchSide}`);
+    const body = (await response.json()) as { granted: boolean };
+    return { granted: body.granted, paired: true, profile: !!benchProfileDir };
+}
+
+const benchTurn: BrowserCommand<[name: string]> = async ({ testPath }, name) => {
+    const id = benchId(testPath, name);
+    const count = (benchTurnCounts.get(id) ?? 0) + 1;
+    benchTurnCounts.set(id, count);
+    if (!benchTurnUrl) {
+        return { granted: true, paired: false, profile: !!benchProfileDir };
+    }
+    await fetch(`${benchTurnUrl}/request?side=${benchSide}&key=${encodeURIComponent(`${id}#${count}`)}`);
+    return waitBenchTurn();
+};
+
+/** One NDJSON line per bench: its key and each slice's call times, run-length encoded. */
+const benchSamples: BrowserCommand<[name: string, slices: number[][]]> = async ({ testPath }, name, slices) => {
+    if (!benchSamplesPath) {
+        return;
+    }
+    const id = benchId(testPath, name);
+    await appendFile(benchSamplesPath, `${JSON.stringify([`${id}#${benchTurnCounts.get(id)}`, slices])}\n`);
+};
+
+/** One `.cpuprofile` per bench, named after its file and bench (and its occurrence, from the second), for DevTools. */
+const benchProfile: BrowserCommand<[name: string, profile: string]> = async ({ testPath }, name, profile) => {
+    const occurrence = benchTurnCounts.get(benchId(testPath, name)) ?? 1;
+    const benchFile = path.basename(testPath ?? '').replace(/\.bench\.tsx?$/, '');
+    const file = `${benchFile}--${name}${occurrence > 1 ? `-${occurrence}` : ''}`.replace(/[^\w.-]+/g, '-');
+    await mkdir(benchProfileDir!, { recursive: true });
+    await writeFile(path.join(benchProfileDir!, `${file}.cpuprofile`), profile);
+};
+
+// Paths, not cache stats, order the files: both paired sides must reach each bench in the same order.
+const benchSequencer = async (): Promise<TestSequencerConstructor> => {
+    const vitestNode = await import('vitest/node');
+    return class BenchSequencer extends vitestNode.BaseSequencer {
+        public override async sort(files: TestSpecification[]): Promise<TestSpecification[]> {
+            return [...files].sort((a, b) => a.moduleId.localeCompare(b.moduleId));
+        }
+    };
+};
 
 // Flips the grid's FAST_TEST_TIMINGS flag to true for this suite: hard-coded UX delays (menu activation,
 // drag intervals, announcements) are wall-clock a headless test would otherwise sit through. Matched on the
@@ -71,26 +154,18 @@ const cssInlinePlugin = {
     },
 };
 
-// Benchmarks default to a real Chromium (via Playwright) so layout-dependent work is measured
-// against a real layout engine; `BENCH_NODE=1` (`./benches.sh --node`) opts back into node/happy-dom.
-// Tests (mode 'test') always use happy-dom — only benchmark runs go to the browser.
+// Benchmarks run in a real Chromium (via Playwright) so layout-dependent work is measured against a real
+// layout engine. Tests (mode 'test') always use happy-dom — only benchmark runs go to the browser.
 // `BENCH_BROWSER_HEADED=1` (`./benches.sh --headed`) opens a visible window to watch the run.
 export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
     const isBench = mode === 'benchmark';
-    const browserEnabled = isBench && !process.env.BENCH_NODE;
     const browserHeadless = !process.env.BENCH_BROWSER_HEADED;
 
     // Imported here rather than at module scope: it pulls in playwright, which every `./behave.sh`
     // run would otherwise load for a browser it never starts.
-    const browserProvider = browserEnabled ? (await import('@vitest/browser-playwright')).playwright : undefined;
-
-    // `--profile` (BENCH_PROFILE, node-only — browser mode doesn't use the forks pool) emits a V8 CPU
-    // profile from the forked child. `--expose-gc` is always on so the harness can reclaim grids.
-    const benchExecArgv = ['--expose-gc'];
-    if (process.env.BENCH_PROFILE) {
-        const profileDir = process.env.BENCH_PROFILE_DIR || path.resolve(thisDir, 'profiles');
-        benchExecArgv.push('--cpu-prof', `--cpu-prof-dir=${profileDir}`);
-    }
+    const browserProvider = isBench ? (await import('@vitest/browser-playwright')).playwright : undefined;
+    // Every bench run gets the Task subclass: its warmup, slices and profiling apply outside bench-compare too.
+    const benchPlugins = isBench ? [cssInlinePlugin, pairedTinybenchPlugin] : [];
 
     return {
         // No `esbuild`/`oxc` block: Vite 8 transforms with oxc, whose defaults are already `target: esnext`
@@ -99,10 +174,10 @@ export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
         // A benchmark measures the shipped grid, so it keeps the real delays; only tests get the fast ones.
         resolve: { alias: isBench ? aliases.filter((alias) => alias !== fastTestTimingsAlias) : aliases },
         cacheDir: path.resolve(thisDir, 'node_modules', `.vite-bench-${benchCacheKey}`),
-        plugins: browserEnabled ? [cssInlinePlugin] : [],
+        plugins: benchPlugins,
         // Cross-origin isolation → `crossOriginIsolated`, dropping Chromium's `performance.now()` clamp
         // from 100µs to 5µs (essential for fast micro-benches). Browser benches only; tests stay on happy-dom.
-        server: browserEnabled
+        server: isBench
             ? {
                   headers: {
                       'Cross-Origin-Opener-Policy': 'same-origin',
@@ -120,23 +195,19 @@ export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
             diff: diffConfigFile,
             reporters: vitestReporters(),
             watch: false,
-            // Benchmarks run in a single forked child (clean process isolation, no file parallelism)
-            // so runs don't contend for cores or pay worker-migration noise. `--expose-gc` lives here
-            // (not in the shell wrappers) so `./benches.sh`, raw `vitest bench` and `bench-compare`
-            // all behave identically — the harness reclaims destroyed grids between benches when gc
-            // is present. Worker threads reject `--expose-gc`, hence forks. (Tests keep the defaults.)
-            pool: isBench ? 'forks' : 'threads',
+            pool: 'threads',
+            // One bench file at a time, so files don't contend for cores. (Tests keep the defaults.)
             fileParallelism: isBench ? false : undefined,
             maxWorkers: isBench ? 1 : undefined,
-            execArgv: isBench ? benchExecArgv : undefined,
             root: repoRoot,
             dir: path.resolve(thisDir, 'src'),
             include: ['**/*.test.ts', '**/*.test.tsx'],
             benchmark: { include: ['**/*.bench.ts', '**/*.bench.tsx'] },
-            css: browserEnabled,
+            sequence: isBench ? { sequencer: await benchSequencer() } : undefined,
+            css: isBench,
             browser: {
-                enabled: browserEnabled,
-                // expose-gc: window.gc for the harness to reclaim grids between benches. max-semi-space-size:
+                enabled: isBench,
+                // expose-gc: window.gc for the harness to collect before each measured run. max-semi-space-size:
                 // bigger young gen → fewer scavenge-GC spikes mid-measurement (the main residual noise).
                 // vsync flags drop frame-rate jitter. NB: don't add a `--disable-features` — Chromium keeps
                 // only the last occurrence, clobbering Playwright's noise-reduction defaults.
@@ -159,6 +230,7 @@ export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
                 // Large, fixed viewport so the grid (sized 100vw×100vh) renders a representative number
                 // of rows consistently across machines, and fills the window when headed.
                 viewport: { width: 1600, height: 1200 },
+                commands: isBench ? { benchTurn, benchTurnWait: waitBenchTurn, benchSamples, benchProfile } : undefined,
             },
         },
         clearScreen: false,

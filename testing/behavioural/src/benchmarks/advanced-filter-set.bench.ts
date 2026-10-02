@@ -4,7 +4,7 @@ import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextFilterModule, getGridElement } from 'ag-grid-community';
 import { AdvancedFilterModule, ColumnMenuModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, SimplePRNG, benchCooldown, benchDefaults } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, benchCooldown, benchDefaults, untimedPrepare } from './bench-utils';
 
 const ROW_COUNT = 20_000;
 
@@ -92,13 +92,13 @@ suite('advanced filter set values vs set filter mini filter', () => {
         );
     };
 
-    // The value list is built once and cached, so this measures reopening it, not the build.
+    // The value list is built once and cached, so this measures reopening it; the keystroke benches time real edits.
     bench(
         `advanced filter: reopen the value list (${ROW_COUNT} distinct)`,
-        () => {
-            typeInto(expressionInput, '');
-            typeInto(expressionInput, '[Code] is any of [');
-        },
+        untimedPrepare(
+            () => typeInto(expressionInput, ''),
+            () => typeInto(expressionInput, '[Code] is any of [')
+        ),
         { ...benchDefaults(), setup: setUpExpression }
     );
 

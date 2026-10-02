@@ -8,12 +8,12 @@
  */
 import { suite } from 'vitest';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { buildValueEdits, buildValuePartialUpdate } from './bench-data';
-import { BenchGridsManager, SimplePRNG, benchAlternating } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, benchAlternating, benchRebuild } from './bench-utils';
 
 const ROW_COUNT = 10_000;
 const VALUE_COL_COUNT = 3;
@@ -124,11 +124,6 @@ const baseGridOptions: GridOptions = {
     getRowId: ({ data }: { data: { id: string } }) => data.id,
 };
 
-const clearReload = (api: GridApi) => {
-    api.setGridOption('rowData', []);
-    api.setGridOption('rowData', dataA);
-};
-
 // Baseline and pivotComparator suites share structure: a full refresh (cold), immutable and
 // transaction updates. The comparator variant adds a pivotComparator + strict order so
 // computePivotOrder runs on every pipeline execution.
@@ -144,7 +139,7 @@ for (const withComparator of [false, true] as const) {
         : `pivot aggregation — ${descSuffix}`;
 
     suite(desc, () => {
-        benchAlternating(gridsManager, 'full refresh', gridOptions, [], clearReload, clearReload, 4);
+        benchRebuild(gridsManager, 'full refresh', gridOptions, dataA);
         benchAlternating(
             gridsManager,
             `immutable update (${updateCount} rows)`,

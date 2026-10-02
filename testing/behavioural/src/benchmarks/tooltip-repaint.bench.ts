@@ -91,7 +91,7 @@ suite('cell repaint — tooltip shapes', () => {
                 api.flushAllAnimationFrames();
             },
             {
-                ...benchDefaults({ noiseFactor: 3 }),
+                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     api = gridsManager.createGrid(id, { ...options, rowData: data });
