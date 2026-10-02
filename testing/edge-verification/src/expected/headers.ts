@@ -114,24 +114,29 @@ export const BROWSER_CACHE_PAGES = {
 };
 
 /**
- * Classes served today with a Last-Modified and no Cache-Control, left to a browser's heuristic.
- * The grid root .htaccess default (and no-cache on live markdown) covers them, /charts/ and
- * /studio/ included, as both inherit it.
+ * Classes served today with a Last-Modified and no Cache-Control, left to a browser's heuristic,
+ * and the header each gets from the grid root .htaccess (/charts/ and /studio/ inherit it): the
+ * one-day default, or no-cache for live markdown and for what page or example code fetches at
+ * runtime and a release changes (feeds, example libraries, the example runner, example sources).
  */
-export const BROWSER_CACHE_HEURISTIC_URLS = [
-    `${WWW}/sitemap-index.xml`,
-    `${WWW}/sitemap-0.xml`,
-    `${WWW}/llms.txt`,
-    `${WWW}/AGENTS.md`,
-    `${WWW}/react-data-grid/getting-started.md`,
-    `${WWW}/.well-known/mcp/server-card.json`,
-    `${WWW}/changelog/changelog.json`,
-    `${WWW}/charts/sitemap-0.xml`,
-    `${WWW}/charts/llms.txt`,
-    `${WWW}/charts/robots.txt`,
-    `${WWW}/studio/sitemap-0.xml`,
-    `${WWW}/studio/llms.txt`,
-];
+export const BROWSER_CACHE_HEURISTIC_URLS: Record<string, string> = {
+    [`${WWW}/sitemap-index.xml`]: DAY_CACHE,
+    [`${WWW}/sitemap-0.xml`]: DAY_CACHE,
+    [`${WWW}/llms.txt`]: DAY_CACHE,
+    [`${WWW}/.well-known/mcp/server-card.json`]: DAY_CACHE,
+    [`${WWW}/charts/sitemap-0.xml`]: DAY_CACHE,
+    [`${WWW}/charts/llms.txt`]: DAY_CACHE,
+    [`${WWW}/charts/robots.txt`]: DAY_CACHE,
+    [`${WWW}/studio/sitemap-0.xml`]: DAY_CACHE,
+    [`${WWW}/studio/llms.txt`]: DAY_CACHE,
+    [`${WWW}/AGENTS.md`]: NO_CACHE,
+    [`${WWW}/react-data-grid/getting-started.md`]: NO_CACHE,
+    [`${WWW}/changelog/changelog.json`]: NO_CACHE,
+    [`${WWW}/pipeline/pipeline.json`]: NO_CACHE,
+    [`${WWW}/files/ag-grid-community/dist/ag-grid-community.min.js`]: NO_CACHE,
+    [`${WWW}/example-runner/example-runner.js`]: NO_CACHE,
+    [`${WWW}/charts/dev/ag-charts-community/dist/umd/ag-charts-community.js`]: NO_CACHE,
+};
 
 /**
  * What Ghost sends with max-age=31536000 beyond its theme assets: uploaded images (and, found on

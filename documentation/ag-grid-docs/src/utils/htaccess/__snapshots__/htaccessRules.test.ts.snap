@@ -50,6 +50,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(ima
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
 
 
+# Unhashed files fetched at runtime that change at a release: always revalidate (a 304 when unchanged).
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/((charts|studio)/)?(changelog|pipeline|roadmap)/[^/]+\\.json$# || %{REQUEST_URI} =~ m#^/(files|studio/files|charts/dev)/# || %{REQUEST_URI} =~ m#/example-runner/# || %{REQUEST_URI} =~ m#/examples/.+\\.[A-Za-z0-9]+$#"
+
+
 # Released archive versions: fully immutable, so cache literally everything under them
 # indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
 # no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the

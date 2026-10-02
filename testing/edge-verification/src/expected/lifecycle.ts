@@ -40,7 +40,7 @@ export const PENDING = {
     studioSeo: 'ag-studio#3096 / #3097 (one <main>, absolute social images, initial-scale=1)',
     studioNoOffers: 'ag-studio#3096 / #3097 (drops the "AG Studio Community" price-0 offer)',
     gridDefaultCache:
-        'grid#15434 / #15435 (a default Cache-Control in the root .htaccess, so nothing is left to a heuristic lifetime; no-cache on live markdown)',
+        'grid#15434 / #15435 (a default Cache-Control in the root .htaccess, so nothing is left to a heuristic lifetime; no-cache on live markdown, feeds and example code)',
     /** Not a PR: Sean pastes the generated block into the Ghost box's vhost by hand. */
     blogVhostCap:
         "blog vhost block from generate-csp.ts --scope=blog (grid#15434 / #15435), pasted on the Ghost box: 7-day cap on /blog/content/ and on Ghost's 301s",

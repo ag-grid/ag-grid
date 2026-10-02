@@ -59,12 +59,18 @@ export function browserCacheProblem(res: Response): string | null {
 
 const firstMatch = (html: string, pattern: RegExp): string | undefined => pattern.exec(html)?.[0];
 
-/** HEADs each URL (no redirect followed, so a 301 is judged itself) and holds it to the cap. */
-async function checkBrowserCache(http: Http, p: Problems, urls: Set<string>) {
+/**
+ * HEADs each URL (no redirect followed, so a 301 is judged itself) and holds it to the cap, and,
+ * where `expected` names one, to its exact Cache-Control.
+ */
+async function checkBrowserCache(http: Http, p: Problems, urls: Set<string>, expected: Record<string, string> = {}) {
     for (const url of urls) {
         const res = await http.head(url);
         const problem = browserCacheProblem(res);
         p.check(!problem, `${url} (${res.status}): ${problem}`);
+        if (expected[url] !== undefined) {
+            p.eq(`${url} Cache-Control`, headerAll(res, 'cache-control'), [expected[url]]);
+        }
     }
     return p.outcome(`${urls.size} responses, every class within 7 days`);
 }
@@ -241,10 +247,17 @@ export function headerChecks(): CheckDef[] {
         {
             id: 'headers.browser-cache-cap.heuristic',
             area: 'headers',
-            title: 'Sitemaps, llms.txt, AGENTS.md, markdown twins and /.well-known/ files carry an explicit Cache-Control',
+            title: 'Sitemaps, llms.txt and /.well-known/ files get a day; markdown, feeds and example code revalidate',
             refs: ['SE-189'],
             pending: PENDING.gridDefaultCache,
-            run: budgeted(({ http }, p) => checkBrowserCache(http, p, new Set(BROWSER_CACHE_HEURISTIC_URLS))),
+            run: budgeted(({ http }, p) =>
+                checkBrowserCache(
+                    http,
+                    p,
+                    new Set(Object.keys(BROWSER_CACHE_HEURISTIC_URLS)),
+                    BROWSER_CACHE_HEURISTIC_URLS
+                )
+            ),
         },
         {
             id: 'headers.browser-cache-cap.blog-content',
