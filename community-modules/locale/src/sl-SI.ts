@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     clearFilter: 'Počisti',
     cancelFilter: 'Prekliči',
     cancelColumnToolPanel: 'Prekliči',
+    resetColumnToolPanel: 'Ponastavi',
 
     // Filter Titles
     textFilter: 'Filter besedila',

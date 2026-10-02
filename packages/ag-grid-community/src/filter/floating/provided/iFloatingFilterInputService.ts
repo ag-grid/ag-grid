@@ -11,4 +11,5 @@ export interface FloatingFilterInputService extends Bean {
     setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
     setValueClearedListener(listener: () => void): void;
     setParams(params: { ariaLabel: string; autoComplete?: boolean | string; placeholder?: string }): void;
+    setAriaLabel(ariaLabel: string): void;
 }

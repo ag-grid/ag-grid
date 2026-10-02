@@ -121,19 +121,14 @@ export function _getRowNode(beans: BeanCollection, gridRow: RowPosition): RowNod
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosition): CellCtrl | null {
+export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosition): CellCtrl | undefined {
     // if spanned, return cell ctrl from spanned renderer
     const spannedCellCtrl = beans.spannedRowRenderer?.getCellByPosition(cellPosition);
     if (spannedCellCtrl) {
         return spannedCellCtrl;
     }
 
-    const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
-    if (!rowCtrl) {
-        return null;
-    }
-
-    return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
+    return beans.rowRenderer.getRowByPosition(cellPosition)?.getCellCtrl(cellPosition.column as AgColumn);
 }
 
 export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {

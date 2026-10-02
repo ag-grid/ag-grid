@@ -93,7 +93,7 @@ on:
                 description: 'Pipeline stage'
                 type: choice
                 default: triage
-                options: [triage, resume, browser-verify, repro-rebuild, construct-repro, execute, open-investigation]
+                options: [triage, resume, browser-verify, repro-rebuild, construct-repro, execute]
             gh_issue:
                 description: 'GitHub issue number (triage)'
                 type: string

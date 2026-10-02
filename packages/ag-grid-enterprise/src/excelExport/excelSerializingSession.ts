@@ -28,6 +28,7 @@ import type {
 import {
     BaseGridSerializingSession,
     _addGridCommonParams,
+    _getDrawnColSpan,
     _isHiddenSingleChildGroup,
     _mergeDeep,
 } from 'ag-grid-community';
@@ -92,7 +93,6 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private spanningHeaderStyleRegistered = false;
     private skipFrozenRows = false;
     private frozenColumnCount: number = 0;
-    private skipFrozenColumns = false;
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
@@ -297,6 +297,28 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         this.emittedHeaderRowCount = 0;
         this.columnsToExport = [...columnsToExport];
         this.cols = columnsToExport.map((col, i) => this.convertColumnToExcel(col, i));
+        this.frozenColumnCount = this.countFrozenColumns(columnsToExport);
+    }
+
+    /** Leading columns `freezeColumns` freezes; counted on the columns, since a body cell can span several. */
+    private countFrozenColumns(columnsToExport: AgColumn[]): number {
+        const { freezeColumns, rightToLeft } = this.config;
+        if (!freezeColumns) {
+            return 0;
+        }
+        const frozenLane = rightToLeft ? 2 : 0;
+        const len = columnsToExport.length;
+        for (let i = 0; i < len; ++i) {
+            const column = columnsToExport[i];
+            const frozen =
+                freezeColumns === 'pinned'
+                    ? column.pinnedLane === frozenLane
+                    : typeof freezeColumns === 'function' && freezeColumns(_addGridCommonParams(this.gos, { column }));
+            if (!frozen) {
+                return i;
+            }
+        }
+        return len;
     }
 
     private registerSpanningHeaderStyle(): void {
@@ -437,26 +459,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         currentCells: ExcelCell[]
     ): (column: AgColumn, index: number, node: RowNode) => void {
         let skipCols = 0;
-        const { freezeColumns, rightToLeft } = this.config;
         return (column, index, node) => {
             if (skipCols > 0) {
                 skipCols -= 1;
                 return;
-            }
-
-            if (!this.skipFrozenColumns) {
-                const lane = column.pinnedLane;
-
-                if (freezeColumns === 'pinned' && lane !== 1 && (lane === 0) !== rightToLeft) {
-                    this.frozenColumnCount++;
-                } else if (
-                    typeof freezeColumns === 'function' &&
-                    freezeColumns(_addGridCommonParams(this.gos, { column }))
-                ) {
-                    this.frozenColumnCount++;
-                } else {
-                    this.skipFrozenColumns = true;
-                }
             }
 
             const { value: valueForCell, valueFormatted } = this.extractRowCellValue({
@@ -478,7 +484,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 node,
             });
             const excelStyleId: string | null = this.getStyleId(styleIds);
-            const colSpan = column.getColSpan(node);
+            const colSpan = _getDrawnColSpan(this.columnsToExport, index, node);
             const addedImage = this.addImage(rowIndex, column, valueForCellString);
             const note = this.resolveBodyCellNote({
                 accumulatedRowIndex: rowIndex,

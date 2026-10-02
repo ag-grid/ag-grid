@@ -57,7 +57,6 @@ export class TestGridsManager {
         suppressRowVirtualisation: false,
         suppressColumnVirtualisation: false,
         ensureDomOrder: false,
-        debug: false,
     };
 
     private gridsMap = new Map<HTMLElement, GridApi>();

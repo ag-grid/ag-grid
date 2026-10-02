@@ -8,6 +8,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
+import { _getColsForRow } from './columnSpanUtils';
 import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnViewportService extends BeanStub implements NamedBean {
@@ -170,19 +171,17 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
-    public getColsWithinViewport(rowNode: RowNode): AgColumn[] {
-        if (!this.colModel.colSpanActive) {
+    public getColsWithinViewport(rowNode: RowNode, colSpans: number[] | null | undefined): AgColumn[] {
+        if (this.visibleCols.colSpanColCount === 0) {
             return this.colsWithinViewport;
         }
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const inViewportCallback = this.isColumnVirtualisationSuppressed() ? undefined : this.inRowViewport;
-        const { visibleCols } = this;
-        const displayedColumnsCenter = visibleCols.centerCols;
-
-        return visibleCols.getColsForRow(
+        const inViewportCallback = this.isColumnVirtualisationSuppressed() ? null : this.inRowViewport;
+        return _getColsForRow(
             rowNode,
-            displayedColumnsCenter,
+            this.visibleCols.centerCols,
+            colSpans,
             inViewportCallback,
             this.emptySpaceBeforeColumn
         );

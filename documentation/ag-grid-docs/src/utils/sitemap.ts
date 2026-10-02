@@ -34,10 +34,8 @@ export const isTestPage = (page: string) => {
 const isRedirectPage = (page: string) => {
     return (
         page.endsWith('/documentation/') ||
-        (!page.endsWith('/landing-pages/react-data-grid/') && page.endsWith('/react-data-grid/')) ||
-        (!page.endsWith('/landing-pages/angular-data-grid/') && page.endsWith('/angular-data-grid/')) ||
+        // Only the JavaScript root forwards on; the others serve landing hubs.
         (!page.endsWith('/landing-pages/javascript-data-grid/') && page.endsWith('/javascript-data-grid/')) ||
-        (!page.endsWith('/landing-pages/vue-data-grid/') && page.endsWith('/vue-data-grid/')) ||
         page.includes(`/${FRAMEWORK_REDIRECT_PATH}/`) ||
         ['/reference/', '/licensing/'].includes(new URL(page).pathname)
     );
@@ -87,7 +85,7 @@ const filterIgnoredPages = (page: string) => {
  * Check the sitemap locally at `http://localhost:4611/sitemap-0.xml` and `http://localhost:4611/sitemap`
  */
 /**
- * SE-85: `blogSitemaps` lists Ghost's FLAT child sitemaps (posts, pages, authors, tags), not its
+ * SE-85: `blogSitemaps` lists Ghost's FLAT child sitemaps (posts, pages, authors), not its
  * index at /blog/sitemap.xml.
  *
  * That distinction matters. `customSitemaps` entries are emitted as <sitemap> members of our own
@@ -102,7 +100,7 @@ const filterIgnoredPages = (page: string) => {
  * the 282-row redirect map fell nine URLs behind the live 291. It also leaves each post's real
  * published/modified dates in Ghost's hands: SE-85 is explicit that the move must not touch them.
  *
- * The trade-off is that the four filenames are pinned in config. Ghost's set is fixed, but if it
+ * The trade-off is that the filenames are pinned in config. Ghost's set is fixed, but if it
  * ever gains a type, /blog/sitemap.xml is the place to spot it.
  */
 export function getSitemapConfig({

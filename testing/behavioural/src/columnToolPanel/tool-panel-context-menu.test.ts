@@ -355,6 +355,48 @@ describe('ToolPanelContextMenu', () => {
             expect(action).toHaveBeenCalled();
         });
 
+        test('custom item actions receive the column the menu was opened for', async () => {
+            const action = vi.fn();
+            const { gridApi, gridDiv, toolPanel } = await createGrid(columnDefs, {
+                getColumnMenuItems: () => [{ name: 'Highlight column', action }],
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'Highlight column');
+
+            expect(action).toHaveBeenCalledWith(expect.objectContaining({ column: gridApi.getColumn('athlete') }));
+        });
+
+        test('custom sub menu item actions receive the column the menu was opened for', async () => {
+            const action = vi.fn();
+            const { gridApi, gridDiv, toolPanel } = await createGrid(columnDefs, {
+                getColumnMenuItems: () => [{ name: 'More', subMenu: [{ name: 'Highlight column', action }] }],
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'More');
+            await clickMenuItem(gridDiv, 'Highlight column');
+
+            expect(action).toHaveBeenCalledWith(expect.objectContaining({ column: gridApi.getColumn('athlete') }));
+        });
+
+        test('postProcessPopup receives the column for sub menus', async () => {
+            const postProcessPopup = vi.fn();
+            const { gridApi, gridDiv, toolPanel } = await createGrid(columnDefs, {
+                getColumnMenuItems: () => [{ name: 'More', subMenu: [{ name: 'Highlight column', action: vi.fn() }] }],
+                postProcessPopup,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'More');
+
+            await waitFor(() =>
+                expect(postProcessPopup).toHaveBeenCalledWith(
+                    expect.objectContaining({ type: 'subMenu', column: gridApi.getColumn('athlete') })
+                )
+            );
+        });
+
         test('getColumnMenuItems fires with source "columnsToolPanel" and the built-in default items', async () => {
             const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
                 ...params.defaultItems,

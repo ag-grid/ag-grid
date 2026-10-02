@@ -238,9 +238,9 @@ export type FunctionCode = {
     config: Config;
 };
 
-export interface DocProperties {
+export interface DocProperties<P = PropertyViewModel> {
     type: 'properties';
-    properties: Record<string, PropertyViewModelMap>;
+    properties: Record<string, Record<string, P>>;
     meta: MetaTag;
 }
 export interface DocCode {
@@ -248,29 +248,29 @@ export interface DocCode {
     code: string;
 }
 
-export type InterfaceDocumentationModel = DocProperties | DocCode;
+export type InterfaceDocumentationModel<P = PropertyViewModel> = DocProperties<P> | DocCode;
 
-export interface SingleApiModel {
+export interface SingleApiModel<P = PropertyViewModel> {
     type: 'single';
     title: string;
-    properties: PropertyViewModelMap;
+    properties: Record<string, P>;
     config: Config;
     meta: MetaTag;
 }
 
-export interface MultipleApiModel {
+export interface MultipleApiModel<P = PropertyViewModel> {
     type: 'multiple';
     entries: [
         string,
         {
-            properties: PropertyViewModelMap;
+            properties: Record<string, P>;
             meta: MetaTag;
         },
     ][];
     config: Config;
 }
 
-export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;
+export type ApiDocumentationModel<P = PropertyViewModel> = SingleApiModel<P> | MultipleApiModel<P>;
 
 export interface GridModule {
     moduleName: string;

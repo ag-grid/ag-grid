@@ -59,6 +59,11 @@ export class FilterPanelService
             filterHandlerDestroyed: onFilterDestroyed,
             filterOpened: updateApplyButton,
             filterClosed: updateApplyButton,
+            columnHeaderNameChanged: ({ column }) => {
+                if (column) {
+                    this.updateFilterState(column.getColId(), 'name', getDisplayName(this.beans, column as AgColumn));
+                }
+            },
         });
         const refreshForColumn = ({ column }: { column: AgColumn }) => {
             this.states.get(column.colId)?.refresh?.();

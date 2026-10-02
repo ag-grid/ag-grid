@@ -320,7 +320,8 @@ export class RowNumbersService
     }
 
     private createDummyElement(column: AgColumn): HTMLDivElement {
-        const div = _createElement<HTMLDivElement>({ tag: 'div', cls: 'ag-cell-value ag-cell' });
+        // ag-row-number-cell gives the dummy the same font and tabular digits as the rendered cells
+        const div = _createElement<HTMLDivElement>({ tag: 'div', cls: 'ag-cell-value ag-cell ag-row-number-cell' });
 
         let value = String(this.beans.rowModel.getRowCount() + 1);
         const rowNumberOverrides = this.rowNumberOverrides;
@@ -460,7 +461,7 @@ export class RowNumbersService
             if (!rowNode) {
                 return;
             }
-            columns = beans.colViewport.getColsWithinViewport(rowNode);
+            columns = beans.colViewport.getColsWithinViewport(rowNode, null);
         } else {
             columns = pinnedCols;
         }

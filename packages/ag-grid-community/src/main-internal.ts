@@ -45,11 +45,13 @@ export { BaseSingleColService as _BaseSingleColService } from './columns/baseSin
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';
+export { _getDrawnColSpan } from './columns/columnSpanUtils';
 export {
     _convertColumnEventSourceType,
     _destroyColumnTreeAll,
     _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
+    _isHeaderNameChangeForGroup,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,
@@ -151,9 +153,11 @@ export {
     presetDateFilterTypeRelativeFromToMap as _PRESET_DATE_FILTER_RANGES,
 } from './filter/provided/date/relativeDateRanges';
 export type { FilterManager } from './filter/filterManager';
-export type { FilterValueService } from './filter/filterValueService';
+export type { FilterValueService, FilterValueSource } from './filter/filterValueService';
+export { _getFilterValueSource } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
+export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     _ADVANCED_FILTER_ONLY_OPTIONS,
@@ -190,7 +194,6 @@ export type {
     IRowContainerComp,
     RowContainerName,
     RowContainerOptions,
-    RowContainerType,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export { GridCtrl } from './gridComp/gridCtrl';
@@ -298,6 +301,12 @@ export type {
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
+export type {
+    AgFilterHandlerBaseParams,
+    AgFilterHandlerParams,
+    FilterGetValueFunc,
+    FilterValueGetter,
+} from './interfaces/iFilter';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
 export type { IFooterService } from './interfaces/iFooterService';
 export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';

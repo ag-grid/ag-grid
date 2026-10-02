@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { RootContainer } from './components/general/RootContainer';
 import { darkModePreset, lightModePreset } from './components/presets/presets';
 import './model/registerParamDocs';
-import './registerEditorConfig';
+import './registerThemeBuilderConfig';
 
 export const ThemeBuilder = () => {
     const isDarkMode = document.documentElement.dataset.darkMode === 'true';

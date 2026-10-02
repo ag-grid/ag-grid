@@ -180,6 +180,12 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         }
     }
 
+    protected refreshDisplay(): void {
+        this.eText.textContent = this.getDisplayValue();
+        this.setupAria();
+        this.tooltipFeature?.refreshTooltip();
+    }
+
     protected isRemovable(): boolean {
         return true;
     }

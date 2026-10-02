@@ -20,8 +20,9 @@ import {
     asyncSetTimeout,
     mockGridLayout,
 } from 'ag-test-utils';
+import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
-import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, Module } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
@@ -34,7 +35,7 @@ import {
     TextEditorModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../tooltip/legacyTooltipTestUtils';
 
@@ -675,64 +676,97 @@ describe('Column Features', () => {
     });
 
     describe('autoHeight', () => {
-        test('colDef.autoHeight on a visible col activates rowAutoHeight tracking', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ colId: 'a', autoHeight: true }, { colId: 'b' }],
-                rowData: [{ a: 1, b: 2 }],
-            });
-            await new GridColumns(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking setup`)
-                .checkColumns(`
-                    CENTER
-                    ├── a width:200
-                    └── b width:200
-                `);
-            await new GridRows(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0
-                `
-            );
+        test('auto row height follows the displayed columns: an autoHeight col in a collapsed group leaves it off', async () => {
+            // resetRowHeights warns and does nothing while auto row height is on
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [3] });
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            // a warning logs once, so each case gets its own grid
+            const warnsAboutAutoHeight = (openGroup: boolean) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        {
+                            groupId: 'g',
+                            children: [{ colId: 'a' }, { colId: 'tall', autoHeight: true, columnGroupShow: 'open' }],
+                        },
+                    ],
+                });
+                if (openGroup) {
+                    api.setColumnGroupOpened('g', true);
+                }
+                consoleWarnSpy.mockClear();
+                api.resetRowHeights();
+                gridsManager.reset();
+                return consoleWarnSpy.mock.calls.some((args) =>
+                    args.some((arg) => typeof arg === 'string' && arg.includes('Auto Row Height'))
+                );
+            };
 
-            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
-            await new GridRows(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking final state`)
-                .check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0
-                `);
+            let collapsed: boolean;
+            let opened: boolean;
+            try {
+                collapsed = warnsAboutAutoHeight(false);
+                opened = warnsAboutAutoHeight(true);
+            } finally {
+                consoleWarnSpy.mockRestore();
+            }
+
+            expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
         });
 
-        test('colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', autoHeight: true },
-                    { colId: 'b', colSpan: () => 2 },
-                ],
-                rowData: [{ a: 1, b: 2 }],
-            });
-            await new GridColumns(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
-            ).checkColumns(`
-                CENTER
-                ├── a width:200
-                └── b width:200
-            `);
-            await new GridRows(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
-            `);
+        test('hiding the taller of two auto-height columns shrinks the row to the other', async () => {
+            const cellHeights = new Map([
+                ['tall', 120],
+                ['short', 60],
+            ]);
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) =>
+                el.classList.contains('ag-cell-wrapper')
+                    ? cellHeights.get(el.closest('.ag-cell')?.getAttribute('col-id') ?? '')
+                    : undefined;
+            const uninstallResizeObserver = installMockResizeObserver();
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { colId: 'tall', autoHeight: true },
+                        { colId: 'short', autoHeight: true },
+                    ],
+                    rowData: [{ id: 'r0' }],
+                    getRowId: (params) => params.data.id,
+                });
+                const row = api.getRowNode('r0')!;
+                await waitFor(() => expect(row.rowHeight).toBe(120));
 
-            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
-            await new GridRows(
-                api,
-                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags final state`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:0
-            `);
+                api.setGridOption('columnDefs', [
+                    { colId: 'tall', autoHeight: true, hide: true },
+                    { colId: 'short', autoHeight: true },
+                ]);
+                await waitFor(() => expect(row.rowHeight).toBe(60));
+            } finally {
+                uninstallResizeObserver();
+                mockGridLayout.useRealOffsetDimensions = false;
+                mockGridLayout.elementHeightOverride = undefined;
+            }
+        });
+
+        test('colDef.colSpan + colDef.autoHeight on same grid draws the span and sets the auto-height cell up', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', autoHeight: true }, { colId: 'b', colSpan: () => 2 }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+
+            const cells = TestGridsManager.getHTMLElement(api)!.querySelectorAll<HTMLElement>(
+                '.ag-row[row-index="0"] .ag-cell'
+            );
+            expect(
+                Array.from(cells, (cell) => ({
+                    colId: cell.getAttribute('col-id'),
+                    width: cell.style.width,
+                    autoHeight: cell.classList.contains('ag-cell-auto-height'),
+                }))
+            ).toEqual([
+                { colId: 'a', width: '200px', autoHeight: true },
+                { colId: 'b', width: '400px', autoHeight: false },
+            ]);
         });
     });
 
@@ -1102,7 +1136,7 @@ describe('Column Features', () => {
             `);
         });
 
-        test('colSpan and rowSpan callbacks clamped min 1; default 1 when no callback', async () => {
+        test('colSpan and rowSpan callbacks clamped min 1 and rounded down; default 1 when no callback', async () => {
             // rowSpan without suppressRowTransform legitimately warns (#319); this test only checks
             // callback clamping, not row-span rendering. Suppress that id and silence the console noise.
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
@@ -1110,17 +1144,19 @@ describe('Column Features', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a' },
-                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2 },
-                    { colId: 'c', colSpan: () => 0 },
+                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2.5 },
+                    { colId: 'c', colSpan: () => 0, rowSpan: () => NaN },
+                    { colId: 'd', rowSpan: () => 1.5 },
                 ],
-                rowData: [{ a: 1, b: 2, c: 3 }],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
             });
             await new GridColumns(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
                 .checkColumns(`
                     CENTER
                     ├── a width:200
                     ├── b width:200
-                    └── c width:200
+                    ├── c width:200
+                    └── d width:200
                 `);
             await new GridRows(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
                 .check(`
@@ -1134,8 +1170,10 @@ describe('Column Features', () => {
             expect(api.getColumn('a')!.getRowSpan(node)).toBe(1);
             expect(api.getColumn('b')!.getColSpan(node)).toBe(3);
             expect(api.getColumn('b')!.getRowSpan(node)).toBe(2);
-            // Clamped from 0 → 1
+            // Clamped from 0 and NaN → 1
             expect(api.getColumn('c')!.getColSpan(node)).toBe(1);
+            expect(api.getColumn('c')!.getRowSpan(node)).toBe(1);
+            expect(api.getColumn('d')!.getRowSpan(node)).toBe(1);
             await new GridRows(
                 api,
                 `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback final state`
@@ -1302,12 +1340,16 @@ describe('Column Features', () => {
         const cellsFor = (api: GridApi, colId: string): HTMLElement[] =>
             Array.from(gridRoot(api).querySelectorAll<HTMLElement>(`.ag-cell[col-id="${colId}"]`));
 
-        const createVirtualisedGrid = (): GridApi =>
-            gridsManager.createGrid('virtualisedCells', {
-                columnDefs: virtualisedCols(120),
-                rowData: [virtualisedRow(120)],
-                suppressColumnVirtualisation: false,
-            });
+        const createVirtualisedGrid = (modules: Module[] = []): GridApi =>
+            gridsManager.createGrid(
+                'virtualisedCells',
+                {
+                    columnDefs: virtualisedCols(120),
+                    rowData: [virtualisedRow(120)],
+                    suppressColumnVirtualisation: false,
+                },
+                { modules }
+            );
 
         const renderedColIds = (api: GridApi): string[] =>
             renderedCells(api).map((cell) => cell.getAttribute('col-id')!);
@@ -1365,6 +1407,29 @@ describe('Column Features', () => {
             }
         });
 
+        test('a focused cell kept after a scroll or a column move takes it out of the viewport is removed once focus moves on', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c0');
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+            expect(cellFor(api, 'c0')).not.toBeNull();
+
+            api.setFocusedCell(0, 'c60');
+            await waitFor(() => expect(cellFor(api, 'c0')).toBeNull());
+
+            api.ensureColumnVisible('c0');
+            api.setFocusedCell(0, 'c0');
+            const order = api.getColumns()!.map((col) => ({ colId: col.getColId() }));
+            api.applyColumnState({ state: [...order.slice(1), order[0]], applyOrder: true });
+            await asyncSetTimeout(0);
+            expect(cellFor(api, 'c0')).not.toBeNull();
+
+            api.setFocusedCell(0, 'c1');
+            await waitFor(() => expect(cellFor(api, 'c0')).toBeNull());
+        });
+
         test('an unfocused cell is removed when its column scrolls out of the viewport', async () => {
             const api = createVirtualisedGrid();
             await asyncSetTimeout(0);
@@ -1394,6 +1459,59 @@ describe('Column Features', () => {
 
             expect(cellFor(api, 'c60')).not.toBeNull();
             expect(api.getEditingCells().map((cell) => cell.column?.getColId())).toEqual(['c60']);
+        });
+
+        test('a cell with a pending batch edit kept out of the viewport is removed once the batch is cancelled or commits', async () => {
+            const api = createVirtualisedGrid([BatchEditModule]);
+            await asyncSetTimeout(0);
+
+            const keepPendingEdit = async (step: string) => {
+                api.ensureColumnVisible('c60');
+                await asyncSetTimeout(0);
+                api.startBatchEdit();
+                api.startEditingCell({ rowIndex: 0, colKey: 'c60' });
+                await asyncSetTimeout(0);
+                api.stopEditing();
+                api.ensureColumnVisible('c0');
+                api.setFocusedCell(0, 'c0');
+                await asyncSetTimeout(0);
+                expect({ step, kept: cellFor(api, 'c60') !== null }).toEqual({ step, kept: true });
+            };
+
+            await keepPendingEdit('before cancel');
+            api.cancelBatchEdit();
+            await waitFor(() =>
+                expect({ step: 'cancel', kept: cellFor(api, 'c60') !== null }).toEqual({ step: 'cancel', kept: false })
+            );
+
+            await keepPendingEdit('before commit');
+            api.commitBatchEdit();
+            await waitFor(() =>
+                expect({ step: 'commit', kept: cellFor(api, 'c60') !== null }).toEqual({ step: 'commit', kept: false })
+            );
+        });
+
+        test('a row that moves off the focused index drops the cell it kept for focus', async () => {
+            const rows = [
+                { ...virtualisedRow(120), id: 'r0' },
+                { ...virtualisedRow(120), id: 'r1' },
+            ];
+            const api = gridsManager.createGrid('virtualisedCells', {
+                columnDefs: virtualisedCols(120),
+                rowData: rows,
+                getRowId: (params) => params.data.id,
+                suppressColumnVirtualisation: false,
+            });
+            const keptCell = () => gridRoot(api).querySelector('.ag-row[row-id="r0"] .ag-cell[col-id="c0"]');
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c0');
+            api.ensureColumnVisible('c60');
+            await asyncSetTimeout(0);
+            expect(keptCell()).not.toBeNull();
+
+            api.setGridOption('rowData', [rows[1], rows[0]]);
+            await waitFor(() => expect(keptCell()).toBeNull());
         });
 
         // A short scroll changes the viewport by only a few columns, which is where a row is most likely
