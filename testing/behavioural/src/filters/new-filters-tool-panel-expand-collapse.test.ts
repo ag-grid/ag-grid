@@ -1,8 +1,8 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, NewFiltersToolPanelState } from 'ag-grid-community';
-import { enableDevValidations, getGridElement } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('new filters tool panel expandFilters / collapseFilters', () => {
@@ -93,18 +93,14 @@ describe('new filters tool panel expandFilters / collapseFilters', () => {
         expect(getGridElement(api)!.querySelector('.ag-filter-card:not(.ag-filter-card-add) input')).toBe(nameInput);
     });
 
-    test('warns #167 for colIds without a card and does not add a card for them', async () => {
-        // This test deliberately supplies colIds without a card, which warns #167.
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [167] });
-        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    test('ignores colIds without a card, without warning or adding a card for them', async () => {
+        const consoleWarnSpy = vi.spyOn(console, 'warn');
         const api = createGrid([{ colId: 'name' }]);
         await waitForCards(api, { Name: false });
 
         api.getToolPanelInstance('filters-new')!.expandFilters(['name', 'age', 'unknown']);
         await waitForCards(api, { Name: true });
 
-        const warnings = consoleWarnSpy.mock.calls.filter((call) => String(call[0]).includes('warning #167'));
-        expect(warnings).toHaveLength(1);
-        expect(warnings[0]).toContainEqual(['age', 'unknown']);
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
 });

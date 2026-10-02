@@ -203,10 +203,6 @@ export class FilterPanelService
                 this.expand(id, expanded);
             }
         }
-        const unrecognisedColIds = ids?.filter((id) => !states.has(id));
-        if (unrecognisedColIds?.length) {
-            this.beans.log.warn(167, { unrecognisedColIds });
-        }
     }
 
     public updateType(id: string, filterDef: SelectableFilterDef): void {
