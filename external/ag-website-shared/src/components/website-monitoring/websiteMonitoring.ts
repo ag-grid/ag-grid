@@ -17,6 +17,25 @@ export interface WebsiteMonitoringConfig {
 const SESSION_INACTIVITY_TIMEOUT_MILLIS = 30 * 60 * 1000;
 const SESSION_TERMINATION_TIMEOUT_MILLIS = 4 * 60 * 60 * 1000;
 
+const REDACTED = 'REDACTED';
+// e.g. /javascript-data-grid/errors/200
+const ERROR_PAGE_PATH = /\/errors\/[^/]+/;
+
+/**
+ * Redacts the query string of an error page's URL, in the URL attributes the SDK adds to its
+ * telemetry. The grid links an error with its arguments in the query string, and those can hold
+ * data from the visitor's grid. The page itself still shows them. Other pages' queries, such as
+ * campaign parameters, are kept.
+ */
+export function scrubErrorPageQuery(attributes: Dash0.UrlAttributeRecord): Dash0.UrlAttributeRecord {
+    if (!attributes['url.query'] || !ERROR_PAGE_PATH.test(attributes['url.path'] ?? '')) {
+        return attributes;
+    }
+    const fullUrl = new URL(attributes['url.full']);
+    fullUrl.search = REDACTED;
+    return { ...attributes, 'url.full': fullUrl.href, 'url.query': REDACTED };
+}
+
 // 'starting' covers the SDK import, which a stop can overtake
 let state: 'stopped' | 'starting' | 'running' = 'stopped';
 let sdk: typeof Dash0 | undefined;
@@ -89,6 +108,7 @@ async function startMonitoring({
             sessionTerminationTimeoutMillis: SESSION_TERMINATION_TIMEOUT_MILLIS,
             // Recorded on astro:page-load instead, see trackVirtualPageViews
             pageViewInstrumentation: { trackVirtualPageViews: false },
+            urlAttributeScrubber: scrubErrorPageQuery,
         });
         sdk = dash0;
         state = 'running';
