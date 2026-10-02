@@ -26,6 +26,9 @@ const ERROR_PAGE_PATH = /\/errors\/[^/]+/;
  * telemetry. The grid links an error with its arguments in the query string, and those can hold
  * data from the visitor's grid. The page itself still shows them. Other pages' queries, such as
  * campaign parameters, are kept.
+ *
+ * The SDK also writes URLs outside these attributes, which this cannot reach: see
+ * `loadedOnErrorPage`, and the referrer policy of the error page.
  */
 export function scrubErrorPageQuery(attributes: Dash0.UrlAttributeRecord): Dash0.UrlAttributeRecord {
     if (!attributes['url.query'] || !ERROR_PAGE_PATH.test(attributes['url.path'] ?? '')) {
@@ -41,6 +44,11 @@ let state: 'stopped' | 'starting' | 'running' = 'stopped';
 let sdk: typeof Dash0 | undefined;
 let cspViolations: CspViolationReporter | undefined;
 let stopTrackingPageViews: (() => void) | undefined;
+// The SDK puts the URL the document loaded on, query string included, in its navigation timing log
+// without passing it through the URL scrubber. An error page's query can hold data from the
+// visitor's grid, so monitoring never starts in a document that loaded on one, even after the
+// visitor navigates away from it.
+let loadedOnErrorPage = false;
 
 /**
  * Real user monitoring through Dash0: page views, uncaught errors, fetch/XHR spans and web vitals.
@@ -55,9 +63,12 @@ let stopTrackingPageViews: (() => void) | undefined;
  *
  * Also reports the page's CSP violations, which the SDK does not.
  *
+ * Does not start in a document that loaded on an error page, see `loadedOnErrorPage`.
+ *
  * @returns a function that stops listening for CSP violations and page navigations
  */
 export function initWebsiteMonitoring(config: WebsiteMonitoringConfig): () => void {
+    loadedOnErrorPage = ERROR_PAGE_PATH.test(window.location.pathname);
     cspViolations = createCspViolationReporter((attributes) =>
         trackMonitoringEvent('csp_violation', attributes, 'WARN')
     );
@@ -88,7 +99,7 @@ async function startMonitoring({
     endpointUrl,
     authToken,
 }: WebsiteMonitoringConfig) {
-    if (state !== 'stopped') {
+    if (state !== 'stopped' || loadedOnErrorPage) {
         return;
     }
     state = 'starting';
