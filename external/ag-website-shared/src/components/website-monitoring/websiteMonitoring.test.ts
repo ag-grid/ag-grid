@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import { vi } from 'vitest';
 
 import {
@@ -10,6 +11,7 @@ import {
 const dash0 = vi.hoisted(() => ({
     init: vi.fn(),
     sendEvent: vi.fn(),
+    startView: vi.fn(),
     reportError: vi.fn(),
     terminateSession: vi.fn(),
 }));
@@ -213,6 +215,66 @@ describe('initWebsiteMonitoring', () => {
         await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
 
         expect(dash0.init).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('page views', () => {
+    // What the ClientRouter does once a navigation has finished: the new path and title are in place
+    function finishNavigation(path: string, title: string) {
+        replaceHistoryUrl(path);
+        document.title = title;
+        document.dispatchEvent(new Event('astro:page-load'));
+    }
+
+    afterEach(() => {
+        replaceHistoryUrl('/');
+    });
+
+    test('turns off the SDK virtual page views, which would pair the new path with the old title', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledWith(
+            expect.objectContaining({ pageViewInstrumentation: { trackVirtualPageViews: false } })
+        );
+    });
+
+    test('records a navigation under the title of the page navigated to', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        finishNavigation('/charts/line-series/', 'Line Series');
+
+        expect(dash0.startView).toHaveBeenCalledTimes(1);
+        expect(dash0.startView).toHaveBeenCalledWith('Line Series');
+    });
+
+    test('does not record the page that the SDK has already recorded as the initial page view', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        document.dispatchEvent(new Event('astro:page-load'));
+
+        expect(dash0.startView).not.toHaveBeenCalled();
+    });
+
+    test('does not record a navigation that keeps the path, such as to a heading', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+        finishNavigation('/charts/line-series/', 'Line Series');
+        dash0.startView.mockClear();
+
+        finishNavigation('/charts/line-series/#options', 'Line Series');
+
+        expect(dash0.startView).not.toHaveBeenCalled();
+    });
+
+    test('records nothing before monitoring has started', async () => {
+        await initWebsiteMonitoring();
+
+        finishNavigation('/charts/line-series/', 'Line Series');
+
+        expect(dash0.startView).not.toHaveBeenCalled();
     });
 });
 
