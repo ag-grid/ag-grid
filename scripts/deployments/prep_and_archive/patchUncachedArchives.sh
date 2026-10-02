@@ -98,37 +98,48 @@ then
     patchFailed "Could not fetch the live root .htaccess.";
 fi
 
-BEFORE=$(cksum < "$LIVE_HTACCESS")
+# sha256 of a local file: sha256sum on Linux (TeamCity), shasum on macOS.
+function sha256Of {
+    if command -v sha256sum >/dev/null 2>&1; then sha256sum < "$1" | cut -d' ' -f1; else shasum -a 256 < "$1" | cut -d' ' -f1; fi
+}
+
+SNAPSHOT_SHA=$(sha256Of "$LIVE_HTACCESS")
 OUTCOME=$(node "$PATCHER" "$LIVE_HTACCESS" "$ACTION" "$VERSION" "$CHARTS_VERSION") || patchFailed "Patching failed."
+PATCHED_SHA=$(sha256Of "$LIVE_HTACCESS")
 
 # A clear that finds nothing of ours leaves the file untouched. Stop here rather than
 # uploading it back: the write cannot fail a release it was never going to change, and a
 # stale invocation cannot overwrite a newer state it never looked at.
-if [ "$(cksum < "$LIVE_HTACCESS")" = "$BEFORE" ]
+if [ "$PATCHED_SHA" = "$SNAPSHOT_SHA" ]
 then
     rm -f "$LIVE_HTACCESS";
     echo "$GRID_ROOT_DIR/$REMOTE: $OUTCOME";
     exit 0;
 fi
 
-# Keep a timestamped copy on the box, so a bad patch is one cp away from being undone without
-# needing this script or a deploy.
-if ! ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cp $GRID_ROOT_DIR/$REMOTE $BACKUP"
-then
-    patchFailed "Could not back up the live root .htaccess.";
-fi
-
-# Upload beside the live file and rename over it: scp writes in place, so an interrupted
-# transfer straight onto .htaccess would leave the site with a truncated one. mv within the
-# same directory is atomic, so a reader sees either the old file or the new one.
+# Upload beside the live file, then swap it in only if nothing changed underneath: scp writes in
+# place, so an interrupted transfer straight onto .htaccess would leave the site with a truncated
+# one, and mv within the same directory is atomic. The patch was made against the copy fetched
+# above, so a change to the live file since then - the other product's in-flight entry, or a docs
+# deploy - would be silently lost by an unconditional mv. One remote command therefore checks that
+# the live file is still that copy and that the upload arrived intact, keeps a timestamped backup
+# (one cp away from undoing the patch without this script or a deploy), and only then renames.
+# ag-charts tools/archive/ uses the same protocol for its charts-only copy.
 if ! scp -i $SSH_LOCATION -P $SSH_PORT "$LIVE_HTACCESS" $CURRENT_HOST:$STAGED
 then
     patchFailed "Could not upload the patched root .htaccess.";
 fi
-if ! ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "chmod 644 $STAGED && mv $STAGED $GRID_ROOT_DIR/$REMOTE"
-then
-    patchFailed "Could not move the patched root .htaccess into place.";
-fi
+SWAP="cd $GRID_ROOT_DIR || exit 5; \
+    [ \"\$(sha256sum < $REMOTE | cut -d' ' -f1)\" = $SNAPSHOT_SHA ] || { echo 'live file changed since it was fetched'; exit 3; }; \
+    [ \"\$(sha256sum < $STAGED | cut -d' ' -f1)\" = $PATCHED_SHA ] || { echo 'uploaded file does not match the patched one'; exit 4; }; \
+    cp -p $REMOTE $BACKUP && chmod 644 $STAGED && mv $STAGED $REMOTE"
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "$SWAP"
+case $? in
+    0) ;;
+    3) patchFailed "The live root .htaccess changed while this ran (another in-flight update or a deploy). Re-run this to patch the current file.";;
+    4) patchFailed "The upload did not arrive intact. Re-run this.";;
+    *) patchFailed "Could not move the patched root .htaccess into place.";;
+esac
 rm -f "$LIVE_HTACCESS"
 
 echo "$GRID_ROOT_DIR/$REMOTE: $OUTCOME (previous copy at $BACKUP)"
