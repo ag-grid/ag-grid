@@ -33,6 +33,10 @@ const MATRIX: MatrixRow[] = [
     { column: 'minMax', typed: '55.555', expected: 55.55 },
     { column: 'precisionOnly', typed: '12.3456', expected: 12.34 },
     { column: 'precision8', typed: '0.00000015', expected: 1.5e-7 },
+    // Typed directly in exponent form, which a native number input accepts.
+    { column: 'minMax', typed: '1e21', expected: ORIGINAL },
+    { column: 'precisionOnly', typed: '1e21', expected: 1e21 },
+    { column: 'precision8', typed: '1.5e-7', expected: 1.5e-7 },
 ];
 
 test.describe('agNumberCellEditor with precision, scientific-notation input', () => {
