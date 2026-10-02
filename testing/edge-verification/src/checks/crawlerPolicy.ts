@@ -166,6 +166,9 @@ export function crawlerPolicyChecks(): CheckDef[] {
             pending: MD_TWIN_POLICY.pending,
             async run({ http }) {
                 const { open, checked } = crawlableTwins(await wwwRobots(http), '');
+                if (!checked) {
+                    return fail('no directory Disallow in either group to derive a twin from');
+                }
                 return open.length
                     ? fail(`${open.length}/${checked} twins crawlable, e.g. ${open.slice(0, 4).join('; ')}`)
                     : pass(`${checked} twins disallowed`);
@@ -179,6 +182,9 @@ export function crawlerPolicyChecks(): CheckDef[] {
             pending: MD_TWIN_POLICY.queryPending,
             async run({ http }) {
                 const { open, checked } = crawlableTwins(await wwwRobots(http), MD_TWIN_POLICY.query);
+                if (!checked) {
+                    return fail('no directory Disallow in either group to derive a twin from');
+                }
                 return open.length
                     ? fail(
                           `${open.length}/${checked} twins crawlable with a query, e.g. ${open.slice(0, 3).join('; ')}`
@@ -200,6 +206,10 @@ export function crawlerPolicyChecks(): CheckDef[] {
                     (l) => l.kind === 'regex' && l.field === 'header:user-agent'
                 ) as any[];
                 const p = new Problems();
+                // Nothing to compare is a failure, not a pass: a robots file without the AI group, or a
+                // p11 without its UA regexes, would otherwise agree vacuously.
+                p.check((aiGroup(r)?.agents ?? []).length > 0, 'robots.txt has no AI crawler group');
+                p.check(ua.length > 0, 'p11 has no user-agent regexes');
                 for (const token of aiGroup(r)?.agents ?? []) {
                     const declared = AI_TOKEN_ADMISSION[token];
                     if (!declared) {
