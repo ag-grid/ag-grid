@@ -28,6 +28,14 @@ inputs:
         description: 'Indicates if the workflow run was successful'
         required: false
         default: 'true'
+    IS_REPEAT_FAILURE:
+        description: >-
+            Set to 'true' when the previous run of this workflow also failed. The message then
+            carries only the header and the test counts: no pull request attribution and no
+            @-mentions, so one break notifies the channel in full once rather than once per run
+            for as long as it stays red.
+        required: false
+        default: 'false'
     GITHUB_TOKEN:
         description: >-
             GitHub token used to resolve the pull requests between PREV_COMMIT_SHA and
@@ -72,6 +80,7 @@ runs:
               SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
               SLACK_USERNAME: 'ag-grid CI'
               IS_SUCCESS: ${{ inputs.IS_SUCCESS == 'true' && !steps.last-failed-step.outputs.failed_step }}
+              IS_REPEAT_FAILURE: ${{ inputs.IS_REPEAT_FAILURE }}
               LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
               GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
               NOTION_API_TOKEN: ${{ inputs.NOTION_API_TOKEN }}
