@@ -403,6 +403,10 @@ export class EditService extends BeanStub implements NamedBean {
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         const cellCtrl = _getCellCtrl(this.beans, position)!;
+        // A row that left the displayed rows keeps its cells on screen while it animates out; it can't be edited.
+        if (cellCtrl && !cellCtrl.rowCtrl.isAlive()) {
+            return;
+        }
         if (cellCtrl && !cellCtrl.comp) {
             params.editable = undefined; // So we re-evaluate editable later
             // On the cell, so a second cell asking while this one waits to mount cannot displace it.
