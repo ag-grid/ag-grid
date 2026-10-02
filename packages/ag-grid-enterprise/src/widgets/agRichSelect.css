@@ -70,22 +70,7 @@
 .ag-rich-select-field-input {
     flex: 1 1 auto;
 
-    /*
-     * The input sits inside the rich select's own box, so it has no padding, border or shadow. The
-     * input style part's rules are emitted after this file, so rather than override their properties
-     * we zero the params they read. A search input keeps its start padding, as that comes from the
-     * search icon, not from inputPaddingStart.
-     */
-    --ag-input-padding-start: 0;
-    --ag-input-border: none;
-    --ag-input-focus-border: none;
-    --ag-input-disabled-border: none;
-    --ag-input-invalid-border: none;
-    --ag-input-focus-shadow: none;
-    --ag-focus-error-shadow: none;
-
     :where(.ag-input-field-input) {
-        padding-block: 0;
         text-overflow: ellipsis;
 
         &::placeholder {
@@ -94,6 +79,11 @@
     }
 
     left: var(--ag-spacing);
+}
+
+.ag-rich-select-typing-single {
+    /* because the first child is a frameless text input which has its own padding */
+    padding-inline-start: 0;
 }
 
 .ag-rich-select-typing-multi {
@@ -120,6 +110,8 @@
     }
 
     :where(.ag-rich-select-field-input) {
+        --ag-input-padding-start: 0;
+
         margin-left: 0.25rem;
         flex: 0 0 auto;
         min-width: 0;
